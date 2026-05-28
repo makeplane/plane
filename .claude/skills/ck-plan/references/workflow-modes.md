@@ -1,21 +1,23 @@
 # Workflow Modes
 
-## Auto-Detection (Default: `--auto`)
+## Auto-Detection (Default Planning Mode)
 
 When no flag specified, analyze task and pick mode:
 
-| Signal | Mode | Rationale |
-|--------|------|-----------|
-| Simple task, clear scope, no unknowns | fast | Skip research overhead |
-| Complex task, unfamiliar domain, new tech | hard | Research needed |
-| 3+ independent features/layers/modules | parallel | Enable concurrent agents |
-| Ambiguous approach, multiple valid paths | two | Compare alternatives |
+| Signal                                       | Mode     | Rationale                |
+| -------------------------------------------- | -------- | ------------------------ |
+| Simple task, clear scope, no unknowns        | fast     | Skip research overhead   |
+| Complex task, unfamiliar domain, new tech    | hard     | Research needed          |
+| Major refactor, 5+ areas, architectural debt | deep     | Need per-phase scouting  |
+| 3+ independent features/layers/modules       | parallel | Enable concurrent agents |
+| Ambiguous approach, multiple valid paths     | two      | Compare alternatives     |
 
 Use `AskUserQuestion` if detection is uncertain.
 
 ## Scope Challenge Integration
 
 Step 0 (Scope Challenge, see `scope-challenge.md`) runs before mode detection and can influence it:
+
 - If user selects **EXPANSION** → auto-suggest `--hard` or `--two`
 - If user selects **REDUCTION** → auto-suggest `--fast`
 - If user selects **HOLD** → proceed with auto-detected mode
@@ -30,9 +32,9 @@ No research. Analyze → Plan → Hydrate Tasks.
 1. Read codebase docs (`codebase-summary.md`, `code-standards.md`, `system-architecture.md`)
 2. Use `planner` subagent to create plan
 3. Hydrate tasks (unless `--no-tasks`)
-4. **Context reminder:** `/ck:cook --auto {absolute-plan-path}/plan.md`
+4. **Implementation option:** `/ck:cook {absolute-plan-path}/plan.md`
 
-**Why `--auto` cook flag?** Fast planning pairs with fast execution — skip review gates.
+**Why no default cook automation?** Fast planning reduces planning overhead, but implementation still requires a user choice. Add `--auto` only when the user explicitly asks to skip cook review gates.
 
 ## Hard Mode (`--hard`)
 
@@ -47,6 +49,56 @@ Research → Scout → Plan → Red Team → Validate → Hydrate Tasks.
 7. **Context reminder:** `/ck:cook {absolute-plan-path}/plan.md`
 
 **Why no cook flag?** Thorough planning needs interactive review gates.
+
+## Deep Mode (`--deep`)
+
+For major refactors touching 5+ areas with meaningful architectural debt.
+
+Research → Per-phase scouting → Plan → Red Team → Validate → Hydrate Tasks.
+
+1. Spawn 2-3 `researcher` agents for high-level architecture analysis
+2. Read all relevant docs and use `/ck:scout` across the affected areas
+3. For EACH planned phase, run focused scout work to:
+   - inventory files to create, modify, or delete
+   - count existing tests and identify missing coverage
+   - list functions or interfaces that need test protection
+   - identify duplicated code or risky dependency edges
+4. Planner embeds the scout data into each phase file
+5. Run red-team review
+6. Run validation
+7. Hydrate tasks unless `--no-tasks`
+8. Output the standard `/ck:cook {absolute-plan-path}/plan.md` reminder
+
+### Deep Phase Requirements
+
+Each phase file in deep mode should include:
+
+- a file inventory table
+- a test scenario matrix
+- a function or interface checklist
+- a dependency map for that phase
+
+## `--tdd` Flag (Composable)
+
+Combine with any mode: `--hard --tdd`, `--deep --tdd`, `--parallel --tdd`.
+
+`--tdd` adds tests-first structure to every implementation phase:
+
+```
+Phase N: [Topic]
+├── Step A: Write tests for current behavior
+├── Step B: Add shared infrastructure or seams
+├── Step C: Refactor existing code
+└── Step D: Verify compile + tests
+```
+
+Each TDD phase should include:
+
+- **Tests Before**: regression coverage written before refactoring
+- **Refactor**: code changes those tests protect
+- **Tests After**: new tests for new behavior created during the phase
+- **Regression Gate**: compile/type-check + test command that must pass after
+  the refactor
 
 ## Parallel Mode (`--parallel`)
 
@@ -64,6 +116,7 @@ Research → Scout → Plan with file ownership → Red Team → Validate → Hy
 7. **Context reminder:** `/ck:cook --parallel {absolute-plan-path}/plan.md`
 
 ### Parallel Phase Requirements
+
 - Each phase self-contained, no runtime deps on other phases
 - Clear file boundaries — each file modified in ONE phase only
 - Group by: architectural layer, feature domain, or technology stack
@@ -85,12 +138,13 @@ Research → Scout → Plan 2 approaches → Compare → Hydrate Tasks.
 
 ## Task Hydration Per Mode
 
-| Mode | Task Granularity | Dependency Pattern |
-|------|------------------|--------------------|
-| fast | Phase-level only | Sequential chain |
-| hard | Phase + critical steps | Sequential + step deps |
-| parallel | Phase + steps + ownership | Parallel groups + sequential deps |
-| two | After user selects approach | Sequential chain |
+| Mode     | Task Granularity              | Dependency Pattern                |
+| -------- | ----------------------------- | --------------------------------- |
+| fast     | Phase-level only              | Sequential chain                  |
+| hard     | Phase + critical steps        | Sequential + step deps            |
+| deep     | Phase + per-phase inventories | Sequential + validation gates     |
+| parallel | Phase + steps + ownership     | Parallel groups + sequential deps |
+| two      | After user selects approach   | Sequential chain                  |
 
 All modes: See `task-management.md` for TaskCreate patterns and metadata.
 
@@ -98,14 +152,16 @@ All modes: See `task-management.md` for TaskCreate patterns and metadata.
 
 Adversarial review that spawns hostile reviewers to find flaws before validation.
 
-**Available in:** hard, parallel, two modes. **Skipped in:** fast mode.
+**Available in:** hard, deep, parallel, two modes. **Skipped in:** fast mode.
 
 **Invocation:** Run `/ck:plan red-team {plan-directory-path}`.
+
 ```
 /ck:plan red-team {plan-directory-path}
 ```
 
 **Sequence:** Red team runs BEFORE validation because:
+
 1. Red team may change the plan (added risks, removed sections, new constraints)
 2. Validation should confirm the FINAL plan, not a pre-review draft
 3. Validating first then red-teaming would invalidate validation answers
@@ -114,39 +170,47 @@ Adversarial review that spawns hostile reviewers to find flaws before validation
 
 Check `## Plan Context` → `Validation: mode=X, questions=MIN-MAX`:
 
-| Mode | Behavior |
-|------|----------|
+| Mode     | Behavior                                                           |
+| -------- | ------------------------------------------------------------------ |
 | `prompt` | Ask: "Validate this plan with interview?" → Yes (Recommended) / No |
-| `auto` | Run `/ck:plan validate {plan-directory-path}` |
-| `off` | Skip validation |
+| `auto`   | Run `/ck:plan validate {plan-directory-path}`                      |
+| `off`    | Skip validation                                                    |
 
 **Invocation (when prompt mode, user says yes):** Run:
+
 ```
 /ck:plan validate {plan-directory-path}
 ```
 
-**Available in:** hard, parallel, two modes. **Skipped in:** fast mode.
+**Available in:** hard, deep, parallel, two modes. **Skipped in:** fast mode.
 
-## Context Reminder (MANDATORY)
+## Context Reminder
 
-After plan creation, MUST output with **actual absolute path**:
+After plan creation, output user-choice next steps with the **actual absolute path**:
 
-| Mode | Cook Command |
-|------|-----------------------------|
-| fast | `/ck:cook --auto {path}/plan.md` |
-| hard | `/ck:cook {path}/plan.md` |
+| Mode     | Cook Command                         |
+| -------- | ------------------------------------ |
+| fast     | `/ck:cook {path}/plan.md`            |
+| hard     | `/ck:cook {path}/plan.md`            |
+| deep     | `/ck:cook {path}/plan.md`            |
 | parallel | `/ck:cook --parallel {path}/plan.md` |
-| two | `/ck:cook {path}/plan.md` |
+| two      | `/ck:cook {path}/plan.md`            |
+
+If planning ran with `--tdd`, append `--tdd` to the reminder above so cook keeps
+the tests-first execution path. Example:
+`/ck:cook {path}/plan.md --tdd`
 
 > **Best Practice:** Run `/clear` before implementing to reduce planning-context carryover.
-> Then run the cook command above.
+> Then, if the user chooses implementation, run the cook command above.
+> Add `--auto` only when the user explicitly asks for autonomous implementation.
 
 **Why absolute path?** After `/clear`, the new session loses previous context.
-This reminder is **NON-NEGOTIABLE** — always output after presenting the plan.
+Always include the absolute path after presenting the plan so the user can choose a next step safely.
 
 ## Pre-Creation Check
 
 Check `## Plan Context` in injected context:
+
 - **"Plan: {path}"** → Ask "Continue with existing plan? [Y/n]"
 - **"Suggested: {path}"** → Branch hint only, ask if activate or create new
 - **"Plan: none"** → Create new using `Plan dir:` from `## Naming`

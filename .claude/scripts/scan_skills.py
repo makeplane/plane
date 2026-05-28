@@ -1,263 +1,373 @@
 #!/usr/bin/env python3
 """
-Scan .claude/skills directory and extract skill metadata.
+Scan .claude/skills and regenerate the checked-in skill registries.
+
+Modular design:
+  - validate-skill-frontmatter.py  — category constants + schema validation
+  - score-skill-description.py     — description scoring (Phase 2)
 """
 
+from __future__ import annotations
+
 import re
+import sys
+from collections import defaultdict
+from datetime import date
 from pathlib import Path
-from typing import Dict, List
+
+# yaml.safe_load preferred; falls back to hand-rolled parser if pyyaml unavailable.
 try:
-    import yaml
-except ModuleNotFoundError:
-    raise SystemExit(
-        "PyYAML is required. Install with: python3 -m pip install -r .claude/scripts/requirements.txt"
-    )
+    import yaml as _yaml
+    _HAS_YAML = True
+except ImportError:
+    _HAS_YAML = False
 
-# Exact mappings for high-signal CK skills to avoid falling into "other".
-EXACT_CATEGORY_MAP = {
-    # Utilities & Helpers
-    "ask": "utilities",
-    "bootstrap": "utilities",
-    "brainstorm": "utilities",
-    "ck-autoresearch": "utilities",
-    "ck-debug": "utilities",
-    "ck-loop": "utilities",
-    "ck-predict": "utilities",
-    "ck-scenario": "utilities",
-    "code-review": "utilities",
-    "coding-level": "utilities",
-    "context-engineering": "utilities",
-    "cook": "utilities",
-    "copywriting": "utilities",
-    "debug": "utilities",
-    "docs": "utilities",
-    "fix": "utilities",
-    "journal": "utilities",
-    "markdown-novel-viewer": "utilities",
-    "mermaidjs-v11": "utilities",
-    "plan": "utilities",
-    "ck-plan": "utilities",
-    "preview": "utilities",
-    "problem-solving": "utilities",
-    "project-management": "utilities",
-    "project-organization": "utilities",
-    "research": "utilities",
-    "retro": "utilities",
-    "sequential-thinking": "utilities",
-    "test": "utilities",
-    "watzup": "utilities",
-    # Development Tools
-    "find-skills": "dev-tools",
-    "git": "dev-tools",
-    "gkg": "dev-tools",
-    "kanban": "dev-tools",
-    "llms": "dev-tools",
-    "mintlify": "dev-tools",
-    "plans-kanban": "dev-tools",
-    "scout": "dev-tools",
-    "ship": "dev-tools",
-    "team": "dev-tools",
-    "use-mcp": "dev-tools",
-    "worktree": "dev-tools",
-    # Frontend & Design
-    "react-best-practices": "frontend",
-    "remotion": "frontend",
-    "shader": "frontend",
-    "stitch": "frontend",
-    "web-design-guidelines": "frontend",
-    # Frameworks & Platforms
-    "tanstack": "frameworks",
-    # Infrastructure & DevOps
-    "deploy": "infrastructure",
-    # Multimedia & Processing
-    "agent-browser": "multimedia",
-    "web-testing": "multimedia",
-    # Security (mapped to utilities)
-    "ck-security": "utilities",
-    "security-scan": "utilities",
-}
+# Kebab-case filenames require importlib for Python imports.
+import importlib.util as _ilu
 
-def extract_frontmatter(content: str) -> Dict:
-    """Extract YAML frontmatter from markdown content."""
-    match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
-    if match:
-        try:
-            return yaml.safe_load(match.group(1))
-        except:
+
+def _load_sibling(filename: str, module_name: str):
+    """Load a sibling Python module with a kebab-case filename."""
+    path = Path(__file__).with_name(filename)
+    spec = _ilu.spec_from_file_location(module_name, path)
+    mod = _ilu.module_from_spec(spec)  # type: ignore[arg-type]
+    sys.modules[module_name] = mod  # register so dataclasses can resolve
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
+_vsfm = _load_sibling("validate-skill-frontmatter.py", "validate_skill_frontmatter")
+CATEGORY_NAMES: dict[str, str] = _vsfm.CATEGORY_NAMES
+CATEGORY_ORDER: list[str] = _vsfm.CATEGORY_ORDER
+EXACT_CATEGORY_MAP: dict[str, str] = _vsfm.EXACT_CATEGORY_MAP
+VALID_CATEGORIES: frozenset[str] = _vsfm.VALID_CATEGORIES
+
+_scorer = _load_sibling("score-skill-description.py", "score_skill_description")
+
+FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
+
+# ── Frontmatter extraction ────────────────────────────────────────────────────
+
+def _fallback_frontmatter(content: str) -> dict:
+    """Hand-rolled parser used when pyyaml is unavailable."""
+    match = FRONTMATTER_RE.match(content)
+    if not match:
+        return {}
+    result: dict = {}
+    lines = match.group(1).splitlines()
+    idx = 0
+    while idx < len(lines):
+        line = lines[idx]
+        if not line.strip() or line.lstrip().startswith("#"):
+            idx += 1
+            continue
+        fm = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", line)
+        if not fm:
+            idx += 1
+            continue
+        key, value = fm.group(1), fm.group(2).strip()
+        if value in {">", ">-", "|", "|-"}:
+            block: list[str] = []
+            idx += 1
+            while idx < len(lines) and lines[idx].startswith("  "):
+                block.append(lines[idx][2:])
+                idx += 1
+            result[key] = " ".join(p.strip() for p in block if p.strip())
+            continue
+        if value:
+            v = value.strip()
+            is_quoted = len(v) >= 2 and v[0] == v[-1] and v[0] in {"'", '"'}
+            if is_quoted:
+                v = v[1:-1]
+            if v == "true":
+                result[key] = True
+            elif v == "false":
+                result[key] = False
+            elif not is_quoted and v.startswith("[") and v.endswith("]"):
+                result[key] = [
+                    item.strip().strip("'\"")
+                    for item in v[1:-1].split(",")
+                    if item.strip()
+                ]
+            else:
+                result[key] = v
+        idx += 1
+    return result
+
+
+def extract_frontmatter(content: str) -> dict:
+    """Extract YAML frontmatter. Uses yaml.safe_load when pyyaml is available."""
+    match = FRONTMATTER_RE.match(content)
+    if not match:
+        return {}
+    if not _HAS_YAML:
+        return _fallback_frontmatter(content)
+    try:
+        data = _yaml.safe_load(match.group(1))
+        if not isinstance(data, dict):
             return {}
-    return {}
+        result: dict = {}
+        for key, val in data.items():
+            if isinstance(val, (dict, list, bool, int, float)):
+                result[key] = val          # preserve typed metadata values
+            else:
+                result[key] = str(val) if val is not None else ""
+        return result
+    except _yaml.YAMLError:
+        return {}
+
 
 def extract_first_paragraph(content: str) -> str:
-    """Extract first meaningful paragraph after frontmatter."""
-    # Remove frontmatter
-    content = re.sub(r'^---\s*\n.*?\n---\s*\n', '', content, flags=re.DOTALL)
-
-    # Find first paragraph (after headings)
-    lines = content.split('\n')
-    paragraph = []
-
-    for line in lines:
-        line = line.strip()
-        # Skip headings and empty lines
-        if line.startswith('#') or not line:
-            if paragraph:  # If we've started collecting, stop
+    """Extract the first meaningful paragraph after frontmatter."""
+    body = FRONTMATTER_RE.sub("", content, count=1)
+    paragraph: list[str] = []
+    for raw_line in body.splitlines():
+        line = raw_line.strip()
+        if line.startswith("#") or not line:
+            if paragraph:
                 break
             continue
-
         paragraph.append(line)
-
-        # Stop after first paragraph
-        if line.endswith('.') and len(' '.join(paragraph)) > 50:
+        if line.endswith(".") and len(" ".join(paragraph)) > 50:
             break
+    return " ".join(paragraph)[:400]
 
-    return ' '.join(paragraph)[:200]
 
-def scan_skills(base_path: Path) -> List[Dict]:
-    """Scan all skill files and extract metadata."""
-    skills = []
+# ── Categorization ────────────────────────────────────────────────────────────
 
-    for skill_file in sorted(base_path.rglob('SKILL.md')):
-        # Get skill directory name
-        skill_dir = skill_file.parent
-        skill_name = skill_dir.name
+def categorize_skill(name: str, frontmatter: dict | None = None) -> str:
+    """Categorize skill. Prefers frontmatter 'category', falls back to heuristics."""
+    if frontmatter:
+        cat = frontmatter.get("category")
+        if cat and cat in VALID_CATEGORIES:
+            return cat
+    lower = name.lower()
+    if lower in EXACT_CATEGORY_MAP:
+        return EXACT_CATEGORY_MAP[lower]
+    if any(x in lower for x in ["ai-", "gemini", "multimodal", "adk"]):
+        return "ai-ml"
+    if any(x in lower for x in ["mcp", "skill-creator", "repomix", "docs-seeker"]):
+        return "dev-tools"
+    if any(x in lower for x in ["frontend", "ui", "design", "aesthetic", "threejs"]):
+        return "frontend"
+    if any(x in lower for x in ["backend", "auth", "payment"]):
+        return "backend"
+    if any(x in lower for x in ["devops", "docker", "cloudflare", "gcloud"]):
+        return "infrastructure"
+    if any(x in lower for x in ["database", "mongodb", "postgresql", "sql"]):
+        return "database"
+    if any(x in lower for x in ["media", "document-skills"]):
+        return "multimedia"
+    if any(x in lower for x in ["web-frameworks", "mobile", "shopify"]):
+        return "frameworks"
+    if any(x in lower for x in ["debug", "problem", "code-review", "planning", "research", "sequential"]):
+        return "utilities"
+    return "other"
 
-        # Skip template
-        if skill_name == 'template-skill':
+
+def normalize_display_name(internal_name: str, frontmatter: dict) -> str:
+    raw = frontmatter.get("name", "")
+    if raw.startswith("ck:"):
+        return raw[3:]
+    return raw if raw else internal_name
+
+
+# ── Scanner ───────────────────────────────────────────────────────────────────
+
+def scan_skills(base_path: Path) -> list[dict]:
+    """Scan all skill SKILL.md files and extract metadata. Skips symlinks."""
+    skills: list[dict] = []
+    resolved_base = base_path.resolve()
+
+    for skill_file in sorted(base_path.rglob("SKILL.md")):
+        if skill_file.is_symlink() or not skill_file.resolve().is_relative_to(resolved_base):
+            print(f"WARNING: Skipping symlinked or escaped path: {skill_file}", file=sys.stderr)
             continue
+        skill_dir = skill_file.parent
+        internal_name = skill_dir.name
+        if skill_dir.parent.name != "skills":
+            internal_name = f"{skill_dir.parent.name}/{internal_name}"
 
-        # Handle nested skills (like document-skills/*)
-        if skill_dir.parent.name != 'skills':
-            parent_name = skill_dir.parent.name
-            skill_name = f"{parent_name}/{skill_name}"
-
-        try:
-            content = skill_file.read_text()
-            frontmatter = extract_frontmatter(content)
-
-            description = frontmatter.get('description', '')
-            if not description:
-                description = extract_first_paragraph(content)
-
-            # Categorize based on content/name
-            category = categorize_skill(skill_name, description, content)
-
-            skill_entry = {
-                'name': skill_name,
-                'path': str(skill_file.relative_to(Path('.claude/skills'))),
-                'description': description,
-                'category': category,
-                'has_scripts': (skill_dir / 'scripts').exists(),
-                'has_references': (skill_dir / 'references').exists()
-            }
-
-            # Include argument-hint if present in frontmatter
-            argument_hint = frontmatter.get('argument-hint', '')
-            if argument_hint:
-                skill_entry['argument_hint'] = str(argument_hint)
-
-            skills.append(skill_entry)
-        except Exception as e:
-            print(f"Error processing {skill_file}: {e}")
-
+        content = skill_file.read_text(encoding="utf-8")
+        frontmatter = extract_frontmatter(content)
+        description = frontmatter.get("description") or extract_first_paragraph(content)
+        entry: dict = {
+            "name": internal_name,
+            "display_name": normalize_display_name(internal_name, frontmatter),
+            "path": str(skill_file.relative_to(base_path)),
+            "description": description,
+            "category": categorize_skill(internal_name, frontmatter),
+            "has_scripts": (skill_dir / "scripts").exists(),
+            "has_references": (skill_dir / "references").exists(),
+        }
+        for fm_key, entry_key in [("argument-hint", "argument_hint"), ("maturity", "maturity")]:
+            val = frontmatter.get(fm_key, "")
+            if val:
+                entry[entry_key] = val
+        for list_key in ("keywords", "requires", "related"):
+            val = frontmatter.get(list_key)
+            if isinstance(val, list) and val:
+                entry[list_key] = val
+        skills.append(entry)
     return skills
 
-def categorize_skill(name: str, description: str, content: str) -> str:
-    """Categorize skill based on name and content."""
-    lower_name = name.lower()
-    if lower_name in EXACT_CATEGORY_MAP:
-        return EXACT_CATEGORY_MAP[lower_name]
 
-    # AI/ML
-    if any(x in lower_name for x in ['ai-', 'gemini', 'multimodal', 'adk']):
-        return 'ai-ml'
-
-    # Frontend
-    if any(x in lower_name for x in ['frontend', 'ui', 'design', 'aesthetic', 'threejs']):
-        return 'frontend'
-
-    # Backend
-    if any(x in lower_name for x in ['backend', 'auth', 'payment']):
-        return 'backend'
-
-    # Infrastructure
-    if any(x in lower_name for x in ['devops', 'docker', 'cloudflare', 'gcloud']):
-        return 'infrastructure'
-
-    # Database
-    if any(x in lower_name for x in ['database', 'mongodb', 'postgresql', 'sql']):
-        return 'database'
-
-    # Development Tools
-    if any(x in lower_name for x in ['mcp', 'skill-creator', 'repomix', 'docs-seeker']):
-        return 'dev-tools'
-
-    # Multimedia
-    if any(x in lower_name for x in ['media', 'chrome-devtools', 'document-skills']):
-        return 'multimedia'
-
-    # Frameworks
-    if any(x in lower_name for x in ['web-frameworks', 'mobile', 'shopify']):
-        return 'frameworks'
-
-    # Utilities
-    if any(x in lower_name for x in ['debug', 'problem', 'code-review', 'planning', 'research', 'sequential']):
-        return 'utilities'
-
-    return 'other'
-
-def group_by_category(skills: List[Dict]) -> Dict[str, List[Dict]]:
-    """Group skills by category."""
-    categories = {}
-
+def group_by_category(skills: list[dict]) -> dict[str, list[dict]]:
+    cats: dict[str, list[dict]] = defaultdict(list)
     for skill in skills:
-        category = skill['category']
-        if category not in categories:
-            categories[category] = []
-        categories[category].append(skill)
+        cats[str(skill["category"])].append(skill)
+    return cats
 
-    return categories
 
-def main():
-    """Main execution."""
-    base_path = Path('.claude/skills')
+# ── Output writers ────────────────────────────────────────────────────────────
 
+def _qs(value: str) -> str:
+    """Quoted YAML scalar with full escape handling."""
+    return '"' + (
+        value
+        .replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+        .replace("\0", "")
+    ) + '"'
+
+
+def _yaml_list(items: list) -> str:
+    """YAML inline list with properly escaped items."""
+    return "[" + ", ".join(_qs(str(i)) for i in items) + "]"
+
+
+def _skill_yaml_lines(skill: dict, indent: str = "") -> list[str]:
+    lines = [
+        f'{indent}- name: {_qs(str(skill["display_name"]))}',
+        f'{indent}  path: {_qs(str(skill["path"]))}',
+        f'{indent}  description: {_qs(str(skill["description"]))}',
+        f'{indent}  category: {_qs(str(skill["category"]))}',
+        f'{indent}  has_scripts: {"true" if skill["has_scripts"] else "false"}',
+        f'{indent}  has_references: {"true" if skill["has_references"] else "false"}',
+    ]
+    for opt in ("argument_hint", "maturity"):
+        if opt in skill:
+            lines.append(f'{indent}  {opt}: {_qs(str(skill[opt]))}')
+    for lst in ("keywords", "requires", "related"):
+        if lst in skill:
+            lines.append(f'{indent}  {lst}: {_yaml_list(skill[lst])}')
+    return lines
+
+
+def write_skills_registry(skills: list[dict], repo_root: Path) -> Path:
+    out = repo_root / "claude" / "scripts" / "skills_data.yaml"
+    lines: list[str] = []
+    for skill in skills:
+        # Registry uses internal name (not display_name)
+        lines.extend(_skill_yaml_lines({**skill, "display_name": skill["name"]}))
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return out
+
+
+def write_catalog_yaml(skills: list[dict], repo_root: Path) -> Path:
+    cats = group_by_category(skills)
+    active = [c for c in CATEGORY_ORDER if cats.get(c)]
+    out = repo_root / "guide" / "SKILLS.yaml"
+    lines = [
+        "metadata:",
+        f"  title: {_qs('Skills Catalog')}",
+        f"  description: {_qs('Auto-generated catalog of all available skills in ClaudeKit Engineer')}",
+        f"  last_updated: '{date.today().isoformat()}'",
+        f"  total_skills: {len(skills)}",
+        "categories:",
+        *[f"  {c}: {_qs(CATEGORY_NAMES[c])}" for c in active],
+        "legend:",
+        f"  has_scripts: {_qs('Has executable scripts')}",
+        f"  has_references: {_qs('Has reference documentation')}",
+        "skills:",
+    ]
+    for cat in active:
+        lines.append(f"  {cat}:")
+        for skill in sorted(cats[cat], key=lambda s: str(s["display_name"]).lower()):
+            lines.extend(_skill_yaml_lines(skill, indent="  "))
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return out
+
+
+def write_catalog_markdown(skills: list[dict], repo_root: Path) -> Path:
+    cats = group_by_category(skills)
+    active = [c for c in CATEGORY_ORDER if cats.get(c)]
+    out = repo_root / "guide" / "SKILLS.md"
+    lines = [
+        "# Skills Catalog", "",
+        "Auto-generated catalog of all available skills in ClaudeKit Engineer.", "",
+        f"**Last Updated**: {date.today().isoformat()}", "",
+        f"**Total Skills**: {len(skills)}", "",
+        "## Categories", "",
+        *[f"- [{CATEGORY_NAMES[c]}](#{c})" for c in active],
+        "", "## Legend", "",
+        "- 📦 Has executable scripts", "- 📚 Has reference documentation", "",
+    ]
+    for cat in active:
+        lines.extend([f"## {CATEGORY_NAMES[cat]}", ""])
+        for skill in sorted(cats[cat], key=lambda s: str(s["display_name"]).lower()):
+            icons = ("📦 " if skill["has_scripts"] else "") + ("📚 " if skill["has_references"] else "")
+            desc_safe = str(skill["description"]).replace("\n", " ").strip()
+            lines.extend([
+                f"### {icons}`{skill['display_name']}`", "",
+                desc_safe, "",
+                f"**Location**: `.claude/skills/{skill['path']}`", "",
+            ])
+    out.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+    return out
+
+
+# ── Entry point ───────────────────────────────────────────────────────────────
+
+def main() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    base_path = repo_root / "claude" / "skills"
     if not base_path.exists():
-        print(f"Error: {base_path} not found")
-        return
+        raise SystemExit(f"Error: {base_path} not found")
+
+    strict = "--strict" in sys.argv
 
     print("Scanning skills...")
     skills = scan_skills(base_path)
+    print(f"Found {len(skills)} skills")
 
-    print(f"\nFound {len(skills)} skills\n")
+    cats = group_by_category(skills)
+    for cat in CATEGORY_ORDER:
+        cat_skills = cats.get(cat, [])
+        if not cat_skills:
+            continue
+        print(f"\n{CATEGORY_NAMES[cat]}:")
+        for skill in sorted(cat_skills, key=lambda s: str(s["display_name"]).lower()):
+            s_icon = "📦" if skill["has_scripts"] else "  "
+            r_icon = "📚" if skill["has_references"] else "  "
+            print(f"  {s_icon}{r_icon} {str(skill['display_name']):30} {str(skill['description'])[:80]}")
 
-    # Group by category
-    categories = group_by_category(skills)
+    registry = write_skills_registry(skills, repo_root)
+    cat_yaml = write_catalog_yaml(skills, repo_root)
+    cat_md = write_catalog_markdown(skills, repo_root)
+    print(f"\n✓ Saved registry to {registry.relative_to(repo_root)}")
+    print(f"✓ Saved catalog to {cat_yaml.relative_to(repo_root)}")
+    print(f"✓ Saved catalog to {cat_md.relative_to(repo_root)}")
 
-    category_names = {
-        'ai-ml': 'AI & Machine Learning',
-        'frontend': 'Frontend & Design',
-        'backend': 'Backend Development',
-        'infrastructure': 'Infrastructure & DevOps',
-        'database': 'Database & Storage',
-        'dev-tools': 'Development Tools',
-        'multimedia': 'Multimedia & Processing',
-        'frameworks': 'Frameworks & Platforms',
-        'utilities': 'Utilities & Helpers',
-        'other': 'Other'
-    }
+    # Format compliance scoring (Phase 2).
+    scores = [
+        _scorer.score_description(str(s["name"]), str(s["description"]))
+        for s in skills
+    ]
+    confusable = _scorer.check_confusable_pairs(skills)
+    cycles = _scorer.validate_dependency_graph(skills)
+    _scorer.print_format_compliance_report(scores, confusable, cycles)
 
-    for category, skills_list in sorted(categories.items()):
-        print(f"\n{category_names.get(category, category.upper())}:")
-        for skill in skills_list:
-            scripts = '📦' if skill['has_scripts'] else '  '
-            refs = '📚' if skill['has_references'] else '  '
-            print(f"  {scripts}{refs} {skill['name']:30} {skill['description'][:80]}")
+    if strict:
+        failures = [s for s in scores if not s.passed]
+        if failures or cycles:
+            print(f"\n[X] --strict: {len(failures)} description failures, {len(cycles)} cycles")
+            raise SystemExit(1)
 
-    # Output YAML to scripts directory
-    output_path = Path('.claude/scripts/skills_data.yaml')
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(yaml.dump(skills, allow_unicode=True, default_flow_style=False))
-    print(f"\n✓ Saved metadata to {output_path}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://claudekit.cc/schemas/skill-schema.json",
+  "title": "ClaudeKit Skill Frontmatter",
+  "description": "JSON Schema for SKILL.md YAML frontmatter validation",
+  "type": "object",
+  "required": ["name", "description", "when_to_use", "user-invocable"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Skill identifier, typically prefixed with 'ck:'"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 512,
+      "description": "Human-readable capability description for the skill"
+    },
+    "when_to_use": {
+      "type": "string",
+      "maxLength": 1024,
+      "description": "Additional invocation context. ClaudeKit caps the combined description and when_to_use listing text through inventory checks."
+    },
+    "user-invocable": {
+      "type": "boolean",
+      "const": true,
+      "description": "Shipped ClaudeKit skills must remain user-invocable. Control listing pressure with settings and bounded descriptions, not hidden skills."
+    },
+    "disable-model-invocation": {
+      "type": "boolean",
+      "const": false,
+      "description": "Shipped ClaudeKit skills must remain agent-invocable. Omit this field or set it to false."
+    },
+    "argument-hint": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Short hint shown to the user about what argument the skill accepts"
+    },
+    "arguments": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 20
+        }
+      ],
+      "description": "Named positional arguments for skill invocation"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier or license name"
+    },
+    "languages": {
+      "type": "string",
+      "description": "Comma-separated list of programming languages supported"
+    },
+    "allowed-tools": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 50
+        }
+      ],
+      "description": "Comma-separated list of Claude tools the skill is allowed to use"
+    },
+    "model": {
+      "type": "string",
+      "description": "Optional Claude Code model override for the skill"
+    },
+    "effort": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "xhigh", "max"],
+      "description": "Optional Claude Code reasoning effort override for the skill"
+    },
+    "context": {
+      "type": "string",
+      "description": "Optional Claude Code execution context for the skill"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Optional Claude Code subagent used to execute the skill"
+    },
+    "shell": {
+      "type": "string",
+      "description": "Optional shell hint for command-oriented skills"
+    },
+    "paths": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 50
+        }
+      ],
+      "description": "Optional path hints for skills that target specific files"
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional hook metadata for skills that integrate with Claude Code hooks"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ai-ml",
+        "frontend",
+        "backend",
+        "infrastructure",
+        "database",
+        "dev-tools",
+        "multimedia",
+        "frameworks",
+        "security",
+        "utilities",
+        "other"
+      ],
+      "description": "Skill category for catalog grouping"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 15,
+      "description": "Searchable keywords for skill discovery"
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9:-]*$"
+      },
+      "maxItems": 10,
+      "description": "Skill names this skill depends on (must be installed)"
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9:-]*$"
+      },
+      "maxItems": 10,
+      "description": "Related skill names (informational, no hard dependency)"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["experimental", "beta", "stable"],
+      "default": "stable",
+      "description": "Maturity level of the skill"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Author or maintainer of the skill"
+        },
+        "version": {
+          "type": "string",
+          "description": "Skill version (semver recommended)"
+        },
+        "attribution": {
+          "type": "string",
+          "description": "Attribution for third-party content or inspiration"
+        },
+        "license": {
+          "type": "string",
+          "description": "Per-skill license override"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Internal tags for categorization"
+        }
+      },
+      "description": "Arbitrary metadata block for author, version, attribution, etc."
+    }
+  }
+}

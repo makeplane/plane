@@ -1,6 +1,10 @@
 ---
 name: ck:remotion
-description: Best practices for Remotion - Video creation in React
+description: "Build video content with Remotion in React. Use for programmatic video creation, animated sequences, data-driven video rendering."
+user-invocable: true
+when_to_use: "Invoke for programmatic video generation with React."
+category: frontend
+keywords: [video, react, remotion, rendering]
 metadata:
   tags: remotion, video, react, animation, composition
   author: claudekit
@@ -25,6 +29,7 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/charts.md](rules/charts.md) - Chart and data visualization patterns for Remotion
 - [rules/compositions.md](rules/compositions.md) - Defining compositions, stills, folders, default props and dynamic metadata
 - [rules/display-captions.md](rules/display-captions.md) - Displaying captions in Remotion with TikTok-style pages and word highlighting
+- [rules/effects.md](rules/effects.md) - Applying Remotion's effects system, including blur, wave, and effect chains
 - [rules/extract-frames.md](rules/extract-frames.md) - Extract frames from videos at specific timestamps using Mediabunny
 - [rules/fonts.md](rules/fonts.md) - Loading Google Fonts and local fonts in Remotion
 - [rules/get-audio-duration.md](rules/get-audio-duration.md) - Getting the duration of an audio file in seconds with Mediabunny

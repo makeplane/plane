@@ -22,7 +22,7 @@
         ]
       },
       {
-        "matcher": "startup|resume",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
@@ -40,11 +40,6 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/subagent-init.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/team-context-inject.cjs",
-            "_origin": "engineer"
           }
         ]
       }
@@ -82,13 +77,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/dev-rules-reminder.cjs",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/usage-quota-cache-refresh.cjs",
+            "timeout": 30,
+            "_origin": "engineer"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/hooks/simplify-gate.cjs\"",
             "_origin": "engineer"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/usage-quota-cache-refresh.cjs",
-            "timeout": 30,
+            "command": "node \".claude/hooks/dev-rules-reminder.cjs\"",
+            "_origin": "engineer"
+          },
+          {
+            "type": "command",
+            "command": "node \".claude/hooks/usage-quota-cache-refresh.cjs\"",
             "_origin": "engineer"
           }
         ]
@@ -124,17 +133,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-simplify-reminder.cjs"
-          },
-          {
-            "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/plan-format-kanban.cjs",
             "_origin": "engineer"
           }
         ]
       },
       {
-        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "matcher": "Task|TaskCreate|TaskUpdate|TodoWrite",
         "hooks": [
           {
             "type": "command",
@@ -170,5 +175,7 @@
   "attribution": {
     "commit": "",
     "pr": ""
-  }
+  },
+  "skillListingBudgetFraction": 0.04,
+  "skillListingMaxDescChars": 512
 }

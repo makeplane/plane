@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fireworks Tech Graph"
+  short_description: "Generate polished SVG and PNG technical diagrams"
+  default_prompt: "Turn the user's system or workflow description into a polished SVG diagram and export a PNG."

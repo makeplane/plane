@@ -1,6 +1,10 @@
 ---
 name: ck:coding-level
-description: "Set coding experience level for tailored explanations and output format."
+description: "Set coding experience level for tailored output. Use for adjusting explanation depth, code complexity, and response format to user expertise."
+user-invocable: true
+when_to_use: "Invoke when response depth should match user expertise."
+category: utilities
+keywords: [experience, level, explanation, format]
 argument-hint: "[0-5]"
 metadata:
   author: claudekit
@@ -17,14 +21,14 @@ Set your coding experience level for tailored explanations and output format.
 
 ## Levels
 
-| Level | Name | Description |
-|-------|------|-------------|
-| 0 | ELI5 | Zero coding experience - analogies, no jargon, step-by-step |
-| 1 | Junior | 0-2 years - concepts explained, WHY not just HOW |
-| 2 | Mid-Level | 3-5 years - design patterns, system thinking |
-| 3 | Senior | 5-8 years - trade-offs, business context, architecture |
-| 4 | Tech Lead | 8-10 years - risk assessment, business impact, strategy |
-| 5 | God Mode | Expert - default behavior, maximum efficiency (default) |
+| Level | Name      | Description                                                 |
+| ----- | --------- | ----------------------------------------------------------- |
+| 0     | ELI5      | Zero coding experience - analogies, no jargon, step-by-step |
+| 1     | Junior    | 0-2 years - concepts explained, WHY not just HOW            |
+| 2     | Mid-Level | 3-5 years - design patterns, system thinking                |
+| 3     | Senior    | 5-8 years - trade-offs, business context, architecture      |
+| 4     | Tech Lead | 8-10 years - risk assessment, business impact, strategy     |
+| 5     | God Mode  | Expert - default behavior, maximum efficiency (default)     |
 
 ## How It Works
 
@@ -35,6 +39,7 @@ Set your coding experience level for tailored explanations and output format.
 ## Example
 
 Set level 1 in `.claude/.ck.json`:
+
 ```json
 {
   "codingLevel": 1,
@@ -43,6 +48,7 @@ Set level 1 in `.claude/.ck.json`:
 ```
 
 Next session, Claude will automatically:
+
 - Explain concepts and techniques clearly
 - Always explain WHY, not just HOW
 - Point out common mistakes
@@ -51,6 +57,7 @@ Next session, Claude will automatically:
 ## Optional: Manual Output Styles
 
 For finer control, you can also use `/output-style` with these styles:
+
 - `coding-level-0-eli5`
 - `coding-level-1-junior`
 - `coding-level-2-mid`

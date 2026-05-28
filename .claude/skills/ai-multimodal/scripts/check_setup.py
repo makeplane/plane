@@ -64,25 +64,26 @@ def check_dependencies():
     dependencies = {
         'google.genai': 'google-genai',
         'dotenv': 'python-dotenv',
-        'PIL': 'pillow'
+        'PIL': 'pillow',
+        'requests': 'requests',
     }
 
-    missing = []
+    availability = {}
 
     for module_name, package_name in dependencies.items():
         try:
             __import__(module_name)
             print_success(f"{package_name} is installed")
+            availability[package_name] = True
         except ImportError:
-            print_error(f"{package_name} is NOT installed")
-            missing.append(package_name)
+            print_warning(f"{package_name} is NOT installed")
+            availability[package_name] = False
 
+    missing = [name for name, present in availability.items() if not present]
     if missing:
-        print_error("\nMissing dependencies detected!")
-        print_info(f"Install with: pip install {' '.join(missing)}")
-        return False
+        print_info(f"Install missing packages with: pip install {' '.join(missing)}")
 
-    return True
+    return availability
 
 
 def check_centralized_resolver():
@@ -110,44 +111,32 @@ def check_centralized_resolver():
         return True  # Not critical, fallback works
 
 
-def find_api_key():
-    """Find and validate API key using centralized resolver."""
-    print_header("Checking API Key Configuration")
-
-    # Try to use centralized resolver
+def resolve_key(var_name):
+    """Resolve an environment variable via centralized resolver or environment."""
     claude_root = Path(__file__).parent.parent.parent.parent
     sys.path.insert(0, str(claude_root / 'scripts'))
     try:
         from resolve_env import resolve_env
-
-        print_info("Using centralized resolver...")
-        api_key = resolve_env('GEMINI_API_KEY', skill='ai-multimodal')
-
-        if api_key:
-            print_success("API key found via centralized resolver")
-            print_info(f"Key preview: {api_key[:20]}...{api_key[-4:]}")
-
-            # Show hierarchy
-            print_info("\nTo see where the key was found, run:")
-            print_info("python ~/.claude/scripts/resolve_env.py GEMINI_API_KEY --skill ai-multimodal --verbose")
-
-            return api_key
-        else:
-            print_error("API key not found in any location")
-            return None
-
+        return resolve_env(var_name, skill='ai-multimodal')
     except ImportError:
-        print_warning("Centralized resolver not available, using fallback")
+        return os.getenv(var_name)
 
-        # Fallback: check environment
-        api_key = os.getenv('GEMINI_API_KEY')
-        if api_key:
-            print_success("API key found in process.env")
-            print_info(f"Key preview: {api_key[:20]}...{api_key[-4:]}")
-            return api_key
-        else:
-            print_error("API key not found")
-            return None
+
+def find_api_key():
+    """Find and validate Gemini API key using centralized resolver."""
+    print_header("Checking API Key Configuration")
+    print_info("Using centralized resolver...")
+    api_key = resolve_key('GEMINI_API_KEY')
+
+    if api_key:
+        print_success("GEMINI_API_KEY found")
+        print_info(f"Key preview: {api_key[:20]}...{api_key[-4:]}")
+        print_info("\nTo see where the key was found, run:")
+        print_info("python ~/.claude/scripts/resolve_env.py GEMINI_API_KEY --skill ai-multimodal --verbose")
+        return api_key
+
+    print_warning("GEMINI_API_KEY not found")
+    return None
 
 
 def validate_api_key_format(api_key):
@@ -228,8 +217,10 @@ def provide_setup_instructions():
     print_header("Setup Instructions")
 
     print_info("To configure the ai-multimodal skill:")
-    print("\n1. Get a Gemini API key:")
-    print("   → Visit: https://aistudio.google.com/apikey")
+    print("\n1. Choose provider credentials:")
+    print("   → Gemini / AI Studio: https://aistudio.google.com/apikey")
+    print("   → OpenRouter: https://openrouter.ai/settings/keys")
+    print("   → MiniMax: https://platform.minimax.io/user-center/basic-information/interface-key")
 
     print("\n2. Configure the API key (choose one method):")
 
@@ -246,6 +237,8 @@ def provide_setup_instructions():
 
     print(f"\n   Option C: Runtime environment (temporary)")
     print(f"   $ export GEMINI_API_KEY='your-api-key-here'")
+    print(f"   $ export OPENROUTER_API_KEY='your-openrouter-key'  # optional image-gen alternative")
+    print(f"   $ export MINIMAX_API_KEY='your-minimax-key'        # optional image-gen/video fallback")
 
     print("\n3. Verify setup:")
     print(f"   $ python {Path(__file__)}")
@@ -268,41 +261,60 @@ def main():
     # Check centralized resolver
     check_centralized_resolver()
 
-    # Check dependencies
-    if not check_dependencies():
+    dependencies = check_dependencies()
+
+    gemini_api_key = find_api_key()
+    openrouter_api_key = resolve_key('OPENROUTER_API_KEY')
+    minimax_api_key = resolve_key('MINIMAX_API_KEY')
+
+    if not gemini_api_key and not openrouter_api_key and not minimax_api_key:
+        print_error("\n❌ No provider keys found (GEMINI_API_KEY, OPENROUTER_API_KEY, MINIMAX_API_KEY)")
         all_passed = False
         provide_setup_instructions()
         sys.exit(1)
 
-    # Check API key
-    api_key = find_api_key()
+    if gemini_api_key:
+        if not dependencies.get('google-genai', False):
+            print_error("google-genai is required for Gemini analysis and direct Google image generation")
+            all_passed = False
+        else:
+            if not validate_api_key_format(gemini_api_key):
+                all_passed = False
+            if not test_api_connection(gemini_api_key):
+                all_passed = False
+    else:
+        print_warning("Gemini key missing - analysis/transcription/document features will be unavailable")
 
-    if not api_key:
-        print_error("\n❌ GEMINI_API_KEY not found in any location")
-        all_passed = False
-        provide_setup_instructions()
-        sys.exit(1)
+    if openrouter_api_key:
+        if dependencies.get('requests', False):
+            print_success("OPENROUTER_API_KEY found - OpenRouter image generation path is available")
+        else:
+            print_error("requests is required for OpenRouter image generation")
+            all_passed = False
 
-    # Validate API key format
-    if not validate_api_key_format(api_key):
-        all_passed = False
-
-    # Test API connection
-    if not test_api_connection(api_key):
-        all_passed = False
+    if minimax_api_key:
+        if dependencies.get('requests', False):
+            print_success("MINIMAX_API_KEY found - MiniMax generation path is available")
+        else:
+            print_error("requests is required for MiniMax generation")
+            all_passed = False
 
     # Final summary
     print_header("Setup Summary")
 
     if all_passed:
-        print_success("✅ All checks passed! The ai-multimodal skill is ready to use.")
+        if gemini_api_key:
+            print_success("✅ Full Gemini multimodal setup is ready to use.")
+        else:
+            print_success("✅ Image-generation routing is ready to use.")
+            print_info("Gemini-dependent analysis features remain unavailable until GEMINI_API_KEY + google-genai are configured.")
         print_info("\nNext steps:")
         print("  • Read SKILL.md for usage examples")
         print("  • Try: python scripts/gemini_batch_process.py --help")
         print("\nImage generation models:")
-        print("  • gemini-2.5-flash-image    - Nano Banana Flash (DEFAULT - fast)")
-        print("  • imagen-4.0-generate-001   - Imagen 4 (alternative - production)")
-        print("  • gemini-3-pro-image-preview - Nano Banana Pro (4K text, reasoning)")
+        print("  • gemini-3.1-flash-image-preview - Nano Banana 2 (Google direct)")
+        print("  • google/gemini-3.1-flash-image-preview - Nano Banana 2 (OpenRouter)")
+        print("  • image-01 - MiniMax standard image model")
         print("\nExample (uses default model):")
         print("  python scripts/gemini_batch_process.py --task generate \\")
         print("    --prompt 'A sunset over mountains' --aspect-ratio 16:9 --size 2K")

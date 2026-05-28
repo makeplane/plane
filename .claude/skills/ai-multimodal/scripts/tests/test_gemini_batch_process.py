@@ -21,13 +21,34 @@ class TestAPIKeyFinder:
         monkeypatch.setenv('GEMINI_API_KEY', 'test_key_123')
         assert gbp.find_api_key() == 'test_key_123'
 
-    @patch('gemini_batch_process.load_dotenv')
-    def test_find_api_key_not_found(self, mock_load_dotenv, monkeypatch):
+    @patch('gemini_batch_process.resolve_env')
+    def test_find_api_key_not_found(self, mock_resolve_env, monkeypatch):
         """Test when API key is not found."""
         monkeypatch.delenv('GEMINI_API_KEY', raising=False)
-        # Mock load_dotenv to not actually load any files
-        mock_load_dotenv.return_value = None
+        mock_resolve_env.return_value = None
         assert gbp.find_api_key() is None
+
+
+class TestProviderRouting:
+    """Test provider inference and defaults."""
+
+    def test_infer_openrouter_provider_from_model(self):
+        assert gbp.infer_image_provider("google/gemini-3.1-flash-image-preview") == "openrouter"
+
+    def test_infer_minimax_provider_from_model(self):
+        assert gbp.infer_image_provider("image-01") == "minimax"
+
+    def test_default_model_uses_openrouter_when_requested(self, monkeypatch):
+        monkeypatch.setenv("IMAGE_GEN_PROVIDER", "openrouter")
+        monkeypatch.setenv("OPENROUTER_IMAGE_MODEL", "black-forest-labs/flux.2-flex")
+        assert gbp.get_default_model("generate") == "black-forest-labs/flux.2-flex"
+
+    def test_validate_openrouter_image_model(self):
+        gbp.validate_model_task_combination(
+            "google/gemini-3.1-flash-image-preview",
+            "generate",
+            "openrouter",
+        )
 
 
 class TestMimeTypeDetection:
@@ -309,6 +330,70 @@ class TestBatchProcessing:
         )
 
         assert results == []
+
+    @patch('gemini_batch_process.find_api_key')
+    @patch('gemini_batch_process.generate_openrouter_image')
+    @patch('gemini_batch_process.genai.Client')
+    def test_batch_process_openrouter_generation(self, mock_client_class, mock_openrouter, mock_find_key):
+        mock_find_key.return_value = None
+        mock_openrouter.return_value = {
+            'status': 'success',
+            'generated_images': ['docs/assets/test.png'],
+            'model': 'google/gemini-3.1-flash-image-preview',
+        }
+
+        results = gbp.batch_process(
+            files=[],
+            prompt='Generate',
+            model='google/gemini-3.1-flash-image-preview',
+            task='generate',
+            format_output='text',
+            provider='openrouter',
+            verbose=False,
+            dry_run=False
+        )
+
+        assert results[0]['status'] == 'success'
+        mock_openrouter.assert_called_once()
+
+    @patch('gemini_batch_process.find_openrouter_api_key')
+    @patch('gemini_batch_process.generate_openrouter_image')
+    @patch('gemini_batch_process.process_file')
+    @patch('gemini_batch_process.find_api_key')
+    @patch('gemini_batch_process.genai.Client')
+    def test_batch_process_auto_falls_back_to_openrouter_on_free_tier_error(
+        self,
+        mock_client_class,
+        mock_find_key,
+        mock_process_file,
+        mock_openrouter,
+        mock_find_openrouter_key,
+    ):
+        mock_find_key.return_value = 'test_key'
+        mock_find_openrouter_key.return_value = 'or_key'
+        mock_process_file.return_value = {
+            'status': 'error',
+            'error': gbp.FREE_TIER_NO_ACCESS_MSG,
+        }
+        mock_openrouter.return_value = {
+            'status': 'success',
+            'generated_images': ['docs/assets/openrouter.png'],
+            'model': 'google/gemini-3.1-flash-image-preview',
+        }
+
+        results = gbp.batch_process(
+            files=[],
+            prompt='Generate',
+            model='gemini-3.1-flash-image-preview',
+            task='generate',
+            format_output='text',
+            provider='auto',
+            verbose=False,
+            dry_run=False
+        )
+
+        assert results[0]['status'] == 'success'
+        mock_openrouter.assert_called_once()
 
 
 class TestResultsSaving:

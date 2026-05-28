@@ -31,7 +31,7 @@ DEFAULT_STATES = [
         "is_system": True,
     },
     {
-        "name": "Scheduled",
+        "name": "Todo",
         "color": "#60646C",
         "sequence": 20000,
         "group": StateGroup.UNSTARTED.value,

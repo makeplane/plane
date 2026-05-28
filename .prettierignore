@@ -8,3 +8,6 @@ node_modules/
 out/
 pnpm-lock.yaml
 storybook-static/
+
+# Intentionally invalid JSON fixtures (test malformed-input handling)
+.claude/hooks/__tests__/fixtures/workflow-artifacts/malformed-json/

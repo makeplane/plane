@@ -1,13 +1,9 @@
 {
   "name": "plans-kanban",
-  "version": "1.0.0",
-  "description": "Kanban dashboard for viewing and managing implementation plans",
-  "main": "scripts/server.cjs",
+  "version": "2.0.0",
+  "description": "Thin launcher for the ClaudeKit plans dashboard",
+  "main": "scripts/open-dashboard.cjs",
   "scripts": {
-    "start": "node scripts/server.cjs",
-    "test": "node scripts/tests/server.test.cjs"
-  },
-  "dependencies": {
-    "gray-matter": "^4.0.3"
+    "start": "node scripts/open-dashboard.cjs"
   }
 }

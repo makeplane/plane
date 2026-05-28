@@ -1,0 +1,11 @@
+{
+  "commands": [
+    {
+      "command": "node --test claude/hooks/__tests__/workflow-artifact-gate.test.cjs",
+      "status": "pass",
+      "exitCode": 0,
+      "timestamp": "2026-05-19T00:00:00.000Z",
+      "summary": "Workflow artifact gate tests passed."
+    }
+  ]
+}

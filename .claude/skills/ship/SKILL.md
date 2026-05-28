@@ -1,6 +1,10 @@
 ---
 name: ck:ship
 description: "Ship pipeline: merge main, test, review, commit, push, PR. Single command from feature branch to PR URL. Use for shipping official releases to main/master or beta releases to dev/beta branches."
+user-invocable: true
+when_to_use: "Invoke when a completed branch needs PR shipping workflow."
+category: dev-tools
+keywords: [ship, PR, merge, push, release]
 argument-hint: "[official|beta] [--skip-tests] [--skip-review] [--skip-journal] [--skip-docs] [--dry-run]"
 license: MIT
 metadata:
@@ -16,16 +20,16 @@ Single command to ship a feature branch. Fully automated — only stops for test
 
 ## Arguments
 
-| Flag | Effect |
-|------|--------|
-| `official` | Ship to default branch (main/master). Full pipeline with docs + journal |
-| `beta` | Ship to dev/beta branch. Lighter pipeline, skip docs update |
-| (none) | Auto-detect: if base branch is main/master → official, else → beta |
-| `--skip-tests` | Skip test step (use when tests already passed) |
-| `--skip-review` | Skip pre-landing review step |
-| `--skip-journal` | Skip journal writing step |
-| `--skip-docs` | Skip docs update step |
-| `--dry-run` | Show what would happen without executing |
+| Flag             | Effect                                                                  |
+| ---------------- | ----------------------------------------------------------------------- |
+| `official`       | Ship to default branch (main/master). Full pipeline with docs + journal |
+| `beta`           | Ship to dev/beta branch. Lighter pipeline, skip docs update             |
+| (none)           | Auto-detect: if base branch is main/master → official, else → beta      |
+| `--skip-tests`   | Skip test step (use when tests already passed)                          |
+| `--skip-review`  | Skip pre-landing review step                                            |
+| `--skip-journal` | Skip journal writing step                                               |
+| `--skip-docs`    | Skip docs update step                                                   |
+| `--dry-run`      | Show what would happen without executing                                |
 
 ## Ship Mode Detection
 
@@ -117,3 +121,9 @@ User says `/ck:ship official` → ship to main with full docs + journal.
 - **Framework-agnostic.** Works for Node, Python, Rust, Go, Ruby, Java, or any project with a test command.
 - **Subagent delegation.** Use `tester` for tests, `code-reviewer` for review, `journal-writer` for journal, `docs-manager` for docs. Don't inline.
 - **Background tasks.** Journal and docs run in background to not block the pipeline.
+
+## Workflow Position
+
+**Typically follows:** `/ck:code-review` (ship after review passes)
+**Typically precedes:** `/ck:journal` (document after shipping)
+**Related:** `/ck:code-review` (review before shipping), `/ck:test` (test before shipping)

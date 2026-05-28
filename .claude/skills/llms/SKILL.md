@@ -1,6 +1,10 @@
 ---
 name: ck:llms
 description: "Generate llms.txt files from docs or codebase scanning. Follows llmstxt.org spec. Use for LLM-friendly site indexes, documentation summaries, AI context optimization."
+user-invocable: true
+when_to_use: "Invoke to produce LLM-friendly indexes like llms.txt."
+category: dev-tools
+keywords: [llms-txt, documentation, AI-context]
 argument-hint: "[path|url] [--full] [--output path]"
 metadata:
   author: claudekit
@@ -35,9 +39,11 @@ This skill generates `llms.txt` and `llms-full.txt` files. Does NOT handle: host
 ### 1. Gather Sources
 
 **From docs directory (default):**
+
 ```bash
 # Scout docs directory for markdown files
 ```
+
 Use `/ck:scout` to find all `.md`, `.mdx` files in target directory.
 
 **From URL:**
@@ -46,6 +52,7 @@ Use `WebFetch` to retrieve existing documentation structure.
 ### 2. Analyze & Categorize
 
 For each discovered file:
+
 - Extract H1 title (first `# heading`)
 - Extract first paragraph as description
 - Categorize by section (API, Guides, Reference, etc.)
@@ -54,6 +61,7 @@ For each discovered file:
 ### 3. Generate llms.txt
 
 Run generation script:
+
 ```bash
 $HOME/.claude/skills/.venv/bin/python3 scripts/generate-llms-txt.py \
   --source <path> \
@@ -93,22 +101,22 @@ Follow llmstxt.org specification strictly:
 
 ## Format Rules (llmstxt.org Spec)
 
-| Element | Rule |
-|---------|------|
-| H1 | Required. Project/site name |
-| Blockquote | Recommended. Brief essential context |
-| Sections | H2-delimited groups of related links |
-| Links | `[Title](url): Optional description` |
+| Element       | Rule                                                  |
+| ------------- | ----------------------------------------------------- |
+| H1            | Required. Project/site name                           |
+| Blockquote    | Recommended. Brief essential context                  |
+| Sections      | H2-delimited groups of related links                  |
+| Links         | `[Title](url): Optional description`                  |
 | `## Optional` | Special section — skippable for short context windows |
-| Language | Concise, clear, no unexplained jargon |
+| Language      | Concise, clear, no unexplained jargon                 |
 
 See `references/llms-txt-specification.md` for full spec details.
 
 ## Output Files
 
-| File | Content |
-|------|---------|
-| `llms.txt` | Curated index with links and descriptions |
+| File            | Content                                                 |
+| --------------- | ------------------------------------------------------- |
+| `llms.txt`      | Curated index with links and descriptions               |
 | `llms-full.txt` | Expanded version with inline doc content (use `--full`) |
 
 ## Security

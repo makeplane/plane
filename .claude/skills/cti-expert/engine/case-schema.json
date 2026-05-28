@@ -1,0 +1,486 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "osint://engine/case-schema.json",
+  "title": "OSINT Case Engine Schema v3.0",
+  "description": "Canonical JSON Schema for OSINT case subjects, connections, findings, and activity history.",
+  "type": "object",
+  "required": ["version", "case_id", "created_at", "subjects", "connections"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "3.0.0",
+      "description": "Schema version."
+    },
+    "case_id": {
+      "$ref": "#/definitions/uuid",
+      "description": "Unique case identifier."
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 256,
+      "description": "Case name or title."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 4000,
+      "description": "Case summary and objectives."
+    },
+    "classification": {
+      "type": "string",
+      "enum": ["OPEN", "CONFIDENTIAL", "SENSITIVE", "RESTRICTED"],
+      "default": "OPEN",
+      "description": "Case classification level."
+    },
+    "created_at": {
+      "$ref": "#/definitions/timestamp"
+    },
+    "modified_at": {
+      "$ref": "#/definitions/timestamp"
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/subject"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/connection"
+      }
+    },
+    "finding_trails": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/findingTrail"
+      }
+    },
+    "activity_ledger": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ledgerEntry"
+      }
+    },
+    "workspace_metadata": {
+      "$ref": "#/definitions/workspaceMetadata"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  },
+  "definitions": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["VERIFIED", "STRONG", "MODERATE", "WEAK", "TENTATIVE", "CHALLENGED"],
+      "description": "Confidence in the accuracy of the data."
+    },
+    "findingType": {
+      "type": "string",
+      "enum": ["PRIMARY", "DERIVED", "CONFIRMED", "CONTESTED", "ANECDOTAL"],
+      "description": "Classification of the finding."
+    },
+    "trustScore": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "5=Authoritative, 4=Reliable, 3=Moderate, 2=Questionable, 1=Unverified."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp."
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "UUID identifier."
+    },
+    "workspaceMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "query_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subject_add_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "connection_add_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "auto_save_enabled": {
+          "type": "boolean"
+        },
+        "last_auto_save": {
+          "$ref": "#/definitions/timestamp"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "required": ["id", "type", "value", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL",
+            "ORG",
+            "DOMAIN",
+            "EMAIL",
+            "USERNAME",
+            "NETWORK_ADDR",
+            "IP_RANGE",
+            "PHONE",
+            "LOCALE",
+            "HARDWARE",
+            "DOCUMENT",
+            "MEDIA",
+            "INCIDENT",
+            "URL",
+            "WALLET",
+            "ASN",
+            "TECHNOLOGY",
+            "DEVICE",
+            "IMAGE",
+            "CRYPTO_ADDRESS",
+            "CUSTOM",
+            "OTHER"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "Primary identifier value."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable label."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Alternative identifiers."
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Type-specific attributes.",
+          "additionalProperties": true
+        },
+        "confidence": {
+          "$ref": "#/definitions/confidenceLevel"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/finding"
+          }
+        },
+        "origin_subjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/uuid"
+          },
+          "description": "Subject IDs that led to this discovery."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "VERIFIED", "CHALLENGED", "STALE", "ARCHIVED"],
+          "default": "ACTIVE"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "first_observed": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "last_observed": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "created_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "modified_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Subject revision counter."
+        },
+        "prior_revisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subjectRevision"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "subjectRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "type": "integer"
+        },
+        "modified_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "change_reason": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Analyst-supplied reason for the change."
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "old_value": {},
+              "new_value": {}
+            }
+          }
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "required": ["id", "from_id", "to_id", "type", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "from_id": {
+          "$ref": "#/definitions/uuid",
+          "description": "Source subject ID."
+        },
+        "to_id": {
+          "$ref": "#/definitions/uuid",
+          "description": "Target subject ID."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "CONTROLS",
+            "WORKS_AT",
+            "REACHES",
+            "REGISTERED",
+            "HOSTS",
+            "CITES",
+            "ENCOMPASSES",
+            "AUTHENTICATES",
+            "COMMUNICATES",
+            "SITUATED_AT",
+            "LINKED_TO",
+            "ALSO_KNOWN_AS",
+            "PARENT_OF",
+            "CHILD_OF",
+            "PEER_OF",
+            "OPPOSES",
+            "OTHER"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["DIRECTED", "BIDIRECTIONAL"],
+          "default": "DIRECTED"
+        },
+        "confidence": {
+          "$ref": "#/definitions/confidenceLevel"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/finding"
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Connection-specific attributes.",
+          "additionalProperties": true
+        },
+        "created_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "modified_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "type", "source", "recorded_at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "type": {
+          "$ref": "#/definitions/findingType"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source description."
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "trust_score": {
+          "$ref": "#/definitions/trustScore"
+        },
+        "source_reliability": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "E", "F"],
+          "description": "Source reliability grade. A=completely reliable, F=cannot be judged."
+        },
+        "content": {
+          "type": "string",
+          "description": "Finding content or excerpt."
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash for integrity verification."
+        },
+        "recorded_at": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "archived_copy": {
+          "type": "string",
+          "description": "Path to archived snapshot."
+        },
+        "confirmed_by": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/uuid"
+          },
+          "description": "Other finding IDs that confirm this item."
+        }
+      }
+    },
+    "findingTrail": {
+      "type": "object",
+      "description": "Tracks the reasoning path to a conclusion.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "conclusion_subject_id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "step_number": {
+                "type": "integer"
+              },
+              "subject_id": {
+                "$ref": "#/definitions/uuid"
+              },
+              "connection_id": {
+                "$ref": "#/definitions/uuid"
+              },
+              "reasoning": {
+                "type": "string"
+              },
+              "finding_id": {
+                "$ref": "#/definitions/uuid"
+              }
+            }
+          }
+        },
+        "created_at": {
+          "$ref": "#/definitions/timestamp"
+        }
+      }
+    },
+    "ledgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "SUBJECT_ADDED",
+            "SUBJECT_MODIFIED",
+            "SUBJECT_ARCHIVED",
+            "CONNECTION_FORMED",
+            "CONNECTION_MODIFIED",
+            "CONNECTION_REMOVED",
+            "FINDING_RECORDED",
+            "QUERY_RUN",
+            "WORKSPACE_SAVED",
+            "WORKSPACE_LOADED",
+            "EXPORTED",
+            "IMPORTED",
+            "MERGED",
+            "SEARCH_EXECUTED",
+            "FINDING_VERIFIED",
+            "CONFLICT_RESOLVED"
+          ]
+        },
+        "subject_id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "connection_id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "default": {
+    "version": "3.0.0",
+    "subjects": [],
+    "connections": [],
+    "finding_trails": [],
+    "activity_ledger": [],
+    "tags": []
+  }
+}

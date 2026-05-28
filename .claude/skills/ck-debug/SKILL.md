@@ -1,6 +1,10 @@
 ---
 name: ck:debug
 description: "Debug systematically with root cause analysis before fixes. Use for bugs, test failures, unexpected behavior, performance issues, call stack tracing, multi-layer validation, log analysis, CI/CD failures, database diagnostics, system investigation."
+user-invocable: true
+when_to_use: "Invoke when root cause must be proven before a fix."
+category: utilities
+keywords: [debug, root-cause, bugs, test-failures]
 languages: all
 argument-hint: "[error or issue description]"
 metadata:
@@ -82,7 +86,7 @@ Track investigation pipelines via Claude Native Tasks (TaskCreate, TaskUpdate, T
 
 ### 10. Frontend Verification (`references/frontend-verification.md`)
 
-Visual verification of frontend implementations via Chrome MCP (Claude Chrome Extension) or `ck:chrome-devtools` skill fallback. Detect if frontend-related → check Chrome MCP availability → screenshot + console error check → report. Skip if not frontend.
+Visual verification of frontend implementations via `ck:agent-browser`, `ck:chrome-profile`, Chrome MCP / `chrome-devtools-mcp`, or project-native browser tests. Detect if frontend-related → check browser tool availability → screenshot + console error check → report. Skip if not frontend.
 
 **Load when:** Implementation touches frontend files (tsx/jsx/vue/svelte/html/css), UI bugs, visual regressions
 
@@ -99,7 +103,7 @@ System issue   → investigation-methodology.md (5 steps)
   Slow system    → performance-diagnostics.md
   Need report    → reporting-standards.md
 
-Frontend fix   → frontend-verification.md (Chrome/devtools)
+Frontend fix   → frontend-verification.md (agent-browser/chrome-profile/Chrome MCP)
 ```
 
 ## Tools Integration
@@ -108,12 +112,13 @@ Frontend fix   → frontend-verification.md (Chrome/devtools)
 - **CI/CD:** `gh` CLI for GitHub Actions logs and pipeline debugging
 - **Codebase:** `ck:docs-seeker` skill for package/plugin docs; `ck:repomix` skill for codebase summary
 - **Scouting:** `/ck:scout` or `/ck:scout ext` for finding relevant files
-- **Frontend:** Chrome browser or `ck:chrome-devtools` skill for visual verification (screenshots, console, network)
+- **Frontend:** `ck:agent-browser`, `ck:chrome-profile`, Chrome MCP / `chrome-devtools-mcp`, or project-native browser tests for visual verification
 - **Skills:** Activate `ck:problem-solving` skill when stuck on complex issues
 
 ## Red Flags
 
 Stop and follow process if thinking:
+
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "It's probably X, let me fix that"
@@ -121,3 +126,9 @@ Stop and follow process if thinking:
 - "Tests pass, we're done"
 
 **All mean:** Return to systematic process.
+
+## Workflow Position
+
+**Typically follows:** `/ck:scout` (after locating relevant code)
+**Typically precedes:** `/ck:fix` (fix the diagnosed issue), `/ck:brainstorm` (explore solutions for complex problems)
+**Related:** `/ck:scout` (discover before debugging), `/ck:fix` (fix after diagnosing)

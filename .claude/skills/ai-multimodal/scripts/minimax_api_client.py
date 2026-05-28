@@ -16,10 +16,10 @@ from typing import Dict, Any, Optional
 
 try:
     import requests
+    REQUESTS_AVAILABLE = True
 except ImportError:
-    print("Error: requests package not installed")
-    print("Install with: pip install requests")
-    sys.exit(1)
+    requests = None
+    REQUESTS_AVAILABLE = False
 
 # Import centralized environment resolver
 CLAUDE_ROOT = Path(__file__).parent.parent.parent.parent
@@ -70,6 +70,8 @@ def get_headers(api_key: str) -> Dict[str, str]:
 def api_post(endpoint: str, payload: Dict[str, Any], api_key: str,
              verbose: bool = False, timeout: int = 120) -> Dict[str, Any]:
     """Make POST request to MiniMax API with error handling."""
+    if not REQUESTS_AVAILABLE:
+        raise RuntimeError("requests package not installed. Install with: pip install requests")
     url = f"{BASE_URL}/{endpoint}"
     headers = get_headers(api_key)
 
@@ -100,6 +102,8 @@ def api_post(endpoint: str, payload: Dict[str, Any], api_key: str,
 def api_get(endpoint: str, params: Dict[str, str], api_key: str,
             verbose: bool = False) -> Dict[str, Any]:
     """Make GET request to MiniMax API."""
+    if not REQUESTS_AVAILABLE:
+        raise RuntimeError("requests package not installed. Install with: pip install requests")
     url = f"{BASE_URL}/{endpoint}"
     headers = get_headers(api_key)
 
@@ -155,6 +159,8 @@ def poll_async_task(task_id: str, task_type: str, api_key: str,
 def download_file(file_id: str, api_key: str, output_path: str,
                   verbose: bool = False) -> str:
     """Download file from MiniMax file service."""
+    if not REQUESTS_AVAILABLE:
+        raise RuntimeError("requests package not installed. Install with: pip install requests")
     result = api_get("files/retrieve", {"file_id": file_id}, api_key, verbose)
 
     download_url = result.get("file", {}).get("download_url")

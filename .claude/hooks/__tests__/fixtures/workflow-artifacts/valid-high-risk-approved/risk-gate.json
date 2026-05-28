@@ -1,0 +1,7 @@
+{
+  "highRisk": true,
+  "reasons": ["deploy workflow touched"],
+  "autoStopRequired": true,
+  "humanApproved": true,
+  "largeDiff": false
+}
