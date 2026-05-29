@@ -264,6 +264,8 @@ Chi tiết trong `04-network-design.md`. Tóm tắt:
 | 1 SAN path hỏng        | Không tác động                  | Multipath failover trong < 1 giây                                                  |
 | Network partition      | App không kết nối DB            | App retry, alert → SRE check                                                       |
 
+> ⚠️ **Giai đoạn DC-only (Phase A — xem [00](./00-overview.md) §2):** mitigation "failover sang DR replica" CHƯA khả dụng (DR là Phase B). Khi đó **DATA node crash / LUN-1 hỏng → restore từ pgBackRest `shws-prod`** (RTO ~30–45 phút) thay vì failover. Mất toàn bộ DC → chỉ còn NAS offsite.
+
 **Giai đoạn 2:** Patroni + etcd cho auto-failover (RTO < 2 phút). Chi tiết trong `06-database-design.md`.
 
 ---

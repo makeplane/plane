@@ -1,8 +1,8 @@
 # 00 — Tổng quan dự án
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-26
-**Phiên bản:** 0.2
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.3
 **Owner:** duonglx
 
 ## 1. Mục đích
@@ -25,6 +25,21 @@ Triển khai **Shinhan Workspace (SHWS)** — hệ thống quản lý dự án n
 - Migration dữ liệu từ hệ thống cũ (chưa xác định)
 - Mobile app riêng (dùng web responsive)
 - HA tự động (giai đoạn 2)
+
+### Lộ trình triển khai phân kỳ (CHỐT 2026-05-29 — timeline gấp)
+
+Triển khai chia 2 phase do timeline gấp:
+
+| Phase                   | Phạm vi                                                                        | Cơ chế khôi phục                                                                                              | Tài liệu                |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **A — DC (PROD) trước** | APP + DATA native PG tại DC + UAT                                              | **Backup-only**: pgBackRest `shws-prod` (full/diff/incr + WAL) + offsite NAS daily. **CHƯA có** streaming DR. | `01`, `06` (trừ §10 DR) |
+| **B — DR sau**          | `shwsap1dr`/`shwsdb1dr`, streaming, stanza `shws-dr`, EMC platform replication | Streaming async + failover manual                                                                             | `03` (toàn bộ)          |
+
+**Posture giai đoạn DC-only (Phase A):**
+
+- RTO ~30–45 phút (restore từ pgBackRest), RPO ~60s (`archive_timeout`) — vẫn < 1h/15p cho sự cố **trong** DC.
+- ⚠️ **KHÔNG có bảo vệ thảm họa cấp site.** Mất toàn bộ DC/SAN → chỉ còn bản NAS offsite; RTO/RPO **vượt** mục tiêu Thông tư 09. **Rủi ro tạm chấp nhận** — cần Security/Compliance ký nhận + chốt ngày hoàn thành Phase B.
+- Caveat kỹ thuật bắt buộc khi DC-only: (1) **hoãn tạo slot `shws_dr_slot`** (`06` §10.1) đến khi seed DR; (2) **silence alert replication** (`08` §3.2/§7); (3) bật đầy đủ `archive_mode=on` + pgBackRest + NAS offsite ngay từ go-live DC (đường khôi phục duy nhất).
 
 ## 3. Stakeholder
 
@@ -130,6 +145,8 @@ Tóm tắt (chi tiết trong ADR):
 - [ ] Bank có Harbor/Nexus private registry không, hay dùng USB bundle?
 - [ ] Cert management: bank internal CA workflow như thế nào?
 - [x] ~~Maintenance window~~ → **CHỐT (2026-05-26):** Daily — checklist status các service **đầu giờ làm việc** (`03-operations/routine-maintenance.md`). Phân vai: `mon` xem status + log (read-only); thao tác rủi ro (patch/restart) do `shbvn`/`postgres` thực hiện cuối tuần ngoài giờ giao dịch (no root — xem `05-security-design.md` §7).
+- [ ] **Phase B (DR) target date** — chốt ngày hoàn thành DR sau go-live DC (timeline gấp, triển khai DC trước — xem §2). Cửa sổ DC-only không có bảo vệ thảm họa cấp site.
+- [ ] **Security/Compliance ký nhận rủi ro tạm thời** giai đoạn DC-only (RTO/RPO sự cố cấp site vượt Thông tư 09 cho tới khi DR online).
 
 ## 9. Tài liệu tham chiếu
 

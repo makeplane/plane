@@ -7,6 +7,10 @@
 
 ---
 
+> ⚠️ **PHASE B — TRIỂN KHAI SAU DC.** Theo lộ trình phân kỳ (timeline gấp, xem [`00-overview.md`](./00-overview.md) §2), DC/PROD go-live trước với **backup-only** (pgBackRest `shws-prod` + NAS offsite); **toàn bộ cơ chế trong tài liệu này (streaming, slot `shws_dr_slot`, stanza `shws-dr`, EMC platform replication) CHƯA áp dụng** cho đến Phase B. Trong giai đoạn DC-only KHÔNG có bảo vệ thảm họa cấp site — rủi ro tạm chấp nhận cần Security/Compliance ký nhận + chốt ngày hoàn thành DR.
+
+---
+
 ## 1. Tóm tắt thiết kế
 
 DR site cho **SHWS** triển khai **2 node** giống PROD topology, hoạt động ở **chế độ cold standby**, đồng bộ với PROD bằng **mô hình 2 lớp (two-layer replication)**:

@@ -1,8 +1,8 @@
 # 08 — Monitoring Design
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-26
-**Phiên bản:** 0.1
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.2
 **Owner:** duonglx
 **Liên quan:** [01-architecture-prod.md](./01-architecture-prod.md), [06-database-design.md](./06-database-design.md) §16, [05-security-design.md](./05-security-design.md) §6, [`../03-operations/monitoring-alerting.md`](../03-operations/monitoring-alerting.md)
 
@@ -160,6 +160,7 @@ Error budget vượt → review trong retro hàng tháng; điều chỉnh capaci
 - **Multi-window:** alert latency/error dùng cửa sổ 5m (tránh nhiễu spike ngắn); saturation disk dùng ngưỡng tuyệt đối.
 - **Daily manual check** (form, đầu giờ — xem [`routine-maintenance.md`](../03-operations/routine-maintenance.md)) là lớp xác nhận thủ công, **bổ sung** không thay thế alert tự động.
 - **Routing:** P1/P2 → oncall ngay (kênh do bank quy định: email/SMS/Teams); P3/P4 → ticket. Cấu hình Alertmanager cụ thể ở [`monitoring-alerting.md`](../03-operations/monitoring-alerting.md).
+- **Triển khai phân kỳ (DC-only, Phase A — xem [00](./00-overview.md) §2):** **silence** nhóm alert replication (`§3.2` replication lag/slot, `§3.5` DR, "streaming connection DOWN") cho tới khi DR online — DC-only chưa có standby nên các alert này là false positive. Bật lại khi seed DR (Phase B).
 
 ---
 

@@ -469,6 +469,8 @@ Tạo replication slot:
 SELECT pg_create_physical_replication_slot('shws_dr_slot');
 ```
 
+> ⚠️ **Triển khai phân kỳ (DC trước / DR sau — xem [00](./00-overview.md) §2):** **KHÔNG** tạo slot này ở giai đoạn **DC-only**. Slot không có standby tiêu thụ → WAL tích lũy trên primary đến khi `max_slot_wal_keep_size=4GB` auto-drop (alert vô ích, lãng phí `/u02`). Chỉ tạo slot **ngay trước** khi seed DR standby bằng `pg_basebackup -S shws_dr_slot` (Phase B). Tương tự, **silence alert replication** (`08` §3.2/§7) cho tới khi DR online.
+
 ### 10.2 Standby (`shwsdb1dr`) cấu hình
 
 DR node chạy pgBackRest stanza **riêng `shws-dr`**, repo nội bộ `/u03/pgbackup` của DR (backup lấy từ standby — "backup-of-backup", repo **độc lập từng site, KHÔNG ship qua WAN**). Đường đồng bộ real-time PROD→DR là **streaming replication** (slot `shws_dr_slot`); `restore_command` archive-get đọc repo **DR-local** làm fallback khi streaming hở.
