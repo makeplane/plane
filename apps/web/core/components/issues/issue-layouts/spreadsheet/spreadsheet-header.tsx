@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // constants
@@ -15,6 +16,7 @@ import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { WorkItemHeaderColumn } from "./columns/work-item-header-column";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {
@@ -41,6 +43,8 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
   } = props;
   // router
   const { projectId } = useParams();
+  // refs
+  const workItemHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth
@@ -52,6 +56,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
         {/* Single header column containing both identifier and workitem */}
         <th
           className="group/list-header md:sticky min-w-60 left-0 z-[15] h-11 bg-layer-1 text-13 font-medium border-r-[0.5px] border-subtle"
+          ref={workItemHeaderCellRef}
           tabIndex={-1}
         >
           <div className="flex items-center gap-2 h-full w-full px-page-x">
@@ -71,7 +76,12 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
                   />
                 </div>
               )}
-              <span className="text-13 font-medium">{`${isEpic ? "Epics" : "Work items"}`}</span>
+              <WorkItemHeaderColumn
+                label={isEpic ? "Epics" : "Work items"}
+                displayFilters={displayFilters}
+                handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                onClose={() => workItemHeaderCellRef?.current?.focus()}
+              />
             </div>
           </div>
         </th>

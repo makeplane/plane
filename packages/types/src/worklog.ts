@@ -65,9 +65,16 @@ export interface ITimesheetRow {
   project_id: string;
   days: Record<string, number>; // "YYYY-MM-DD" → minutes
   total_minutes: number;
+  // Count of the current user's logged children for the week — drives the expand
+  // chevron. Present when the backend annotates hierarchy; 0/absent means no chevron.
+  sub_issues_count?: number;
   // Cross-workspace extensions (present when fetching cross-workspace timesheet)
   workspace_slug?: string;
   workspace_name?: string;
+}
+
+export interface ITimesheetSubIssuesResponse {
+  rows: ITimesheetRow[];
 }
 
 export interface IAnalyticsTimesheetUserBreakdown {

@@ -4,7 +4,7 @@
 from collections import defaultdict
 from datetime import timedelta
 
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from django.utils import timezone
 
 from rest_framework import status
@@ -14,18 +14,7 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Issue, IssueWorkLog, ProjectMember, WorkspaceMember
 
-
-def _get_week_start(raw_date_str):
-    """Parse optional week_start string, snap to Monday. Returns (date, error_str)."""
-    if raw_date_str:
-        from datetime import date as _date
-        try:
-            d = _date.fromisoformat(raw_date_str)
-            return d - timedelta(days=d.weekday()), None
-        except ValueError:
-            return None, "Invalid date format. Use YYYY-MM-DD."
-    today = timezone.now().date()
-    return today - timedelta(days=today.weekday()), None
+from ._week import parse_week_start
 
 
 class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
@@ -41,10 +30,9 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        week_start, err = _get_week_start(request.query_params.get("week_start"))
+        week_start, week_end, err = parse_week_start(request.query_params.get("week_start"))
         if err:
             return Response({"error": err}, status=400)
-        week_end = week_start + timedelta(days=6)
 
         # When workspace_only=true, scope to the current workspace only
         workspace_only = request.query_params.get("workspace_only", "false").lower() == "true"
@@ -69,6 +57,16 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
         )
 
         logged_issue_ids = {wl["issue_id"] for wl in worklogs}
+        # Count of the current user's logged children grouped by parent (see grid
+        # endpoint). Rows here are dicts from .values(), so attach the count via this
+        # map rather than reading a model attribute.
+        child_counts = dict(
+            Issue.issue_objects.filter(id__in=logged_issue_ids)
+            .exclude(parent_id__isnull=True)
+            .values("parent_id")
+            .annotate(c=Count("id"))
+            .values_list("parent_id", "c")
+        )
         logged_issues = list(
             Issue.issue_objects.filter(id__in=logged_issue_ids)
             .select_related("project", "workspace")
@@ -103,6 +101,7 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
                 "workspace_name": issue["workspace__name"],
                 "days": days,
                 "total_minutes": total,
+                "sub_issues_count": child_counts.get(issue["id"], 0),
             })
 
         rows.sort(key=lambda r: -r["total_minutes"])

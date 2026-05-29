@@ -31,6 +31,8 @@ export type TIssueOrderByOptions =
   | "created_at"
   | "updated_at"
   | "-updated_at"
+  | "name"
+  | "-name"
   | "priority"
   | "-priority"
   | "sort_order"

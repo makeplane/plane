@@ -13,6 +13,7 @@ import type {
   IWorkLogSummary,
   ITimesheetGridResponse,
   ITimesheetBulkEntry,
+  ITimesheetRow,
   ICapacityReportResponse,
 } from "@plane/types";
 import { WorklogService } from "@/services/worklog.service";
@@ -51,6 +52,12 @@ export interface IWorklogStore {
     params?: Record<string, string>
   ): Promise<IWorkLogSummary>;
   fetchTimesheetGrid(workspaceSlug: string, projectId: string, weekStart?: string): Promise<ITimesheetGridResponse>;
+  fetchTimesheetSubIssues(
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    weekStart?: string
+  ): Promise<ITimesheetRow[]>;
   bulkUpdateTimesheet(workspaceSlug: string, projectId: string, entries: ITimesheetBulkEntry[]): Promise<void>;
   addEmptyTimesheetRow(issueId: string, issueName: string, issueIdentifier: string, projectId: string): void;
   fetchCapacityReport(
@@ -85,6 +92,7 @@ export class WorklogStore implements IWorklogStore {
       updateWorklog: action,
       deleteWorklog: action,
       fetchTimesheetGrid: action,
+      fetchTimesheetSubIssues: action,
       bulkUpdateTimesheet: action,
       addEmptyTimesheetRow: action,
       fetchCapacityReport: action,
@@ -206,6 +214,21 @@ export class WorklogStore implements IWorklogStore {
       });
       throw error;
     }
+  };
+
+  // Lazy per-row read: returns the current user's logged children for the week.
+  // Each row holds its own children in local component state, so there is no global
+  // observable here. Errors propagate to the caller, which owns try/catch/finally.
+  fetchTimesheetSubIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    weekStart?: string
+  ): Promise<ITimesheetRow[]> => {
+    const params: Record<string, string> = {};
+    if (weekStart) params["week_start"] = weekStart;
+    const data = await this.worklogService.getTimesheetSubIssues(workspaceSlug, projectId, parentId, params);
+    return data.rows;
   };
 
   bulkUpdateTimesheet = async (

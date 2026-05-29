@@ -149,6 +149,8 @@ const ISSUE_ORDERBY_KEY: Partial<Record<TIssueOrderByOptions, keyof TIssue>> = {
   "-created_at": "created_at",
   updated_at: "updated_at",
   "-updated_at": "updated_at",
+  name: "name",
+  "-name": "name",
   priority: "priority",
   "-priority": "priority",
   sort_order: "sort_order",
@@ -1765,6 +1767,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     switch (key) {
       case "sort_order":
         return getIssueIds(orderBy(array, "sort_order"));
+      // work item name (title) A→Z / Z→A
+      case "name":
+        return getIssueIds(orderBy(array, (issue) => issue?.name?.toLowerCase() ?? ""));
+      case "-name":
+        return getIssueIds(orderBy(array, (issue) => issue?.name?.toLowerCase() ?? "", ["desc"]));
       case "state__name":
         return getIssueIds(
           orderBy(array, (issue) =>
