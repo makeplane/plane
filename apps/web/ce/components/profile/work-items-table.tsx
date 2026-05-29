@@ -563,8 +563,9 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Table — opt into the always-visible horizontal scrollbar utility so mouse
+          users get a draggable bar (global CSS hides native scrollbars by default) */}
+      <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-surface-2 border-b border-subtle">
