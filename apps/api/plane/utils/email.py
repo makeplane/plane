@@ -1,4 +1,3 @@
-# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
 # SPDX-License-Identifier: LicenseRef-Plane-Commercial
 #
 # Licensed under the Plane Commercial License (the "License");

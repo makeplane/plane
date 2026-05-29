@@ -1,7 +1,3 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
-# SPDX-License-Identifier: AGPL-3.0-only
-# See the LICENSE file for details.
-
 # CSV utility functions for safe export
 # Characters that trigger formula evaluation in spreadsheet applications
 _CSV_FORMULA_TRIGGERS = frozenset(("=", "+", "-", "@", "\t", "\r", "\n"))

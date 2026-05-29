@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 // Usage:
 //   tsx packages/i18n/scripts/sync-check.ts          # Report only
 //   tsx packages/i18n/scripts/sync-check.ts --ci     # Exit 1 if issues found

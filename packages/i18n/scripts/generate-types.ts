@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 // Usage: npx tsx packages/i18n/scripts/generate-types.ts
 // Reads: src/locales/en/*.json
 // Writes: src/types/keys.generated.ts

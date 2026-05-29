@@ -1,7 +1,3 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
-# SPDX-License-Identifier: AGPL-3.0-only
-# See the LICENSE file for details.
-
 """
 Core utilities for Plane database routing and request scoping.
 This package contains essential components for managing read replica routing
