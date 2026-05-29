@@ -4,12 +4,14 @@
 
 # Python imports
 import logging
+import os
+from email.mime.image import MIMEImage
 
 # Third party imports
 from celery import shared_task
 
 # Django imports
-# Third party imports
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 
@@ -30,7 +32,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
         relativelink = f"/project-invitations/?invitation_id={project_member_invite.id}&email={email}&slug={project.workspace.slug}&project_id={str(project_id)}"  # noqa: E501
         abs_url = current_site + relativelink
 
-        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on WinSecOps"
 
         context = {
             "email": email,
@@ -76,6 +78,18 @@ def project_invitation(email, project_id, token, current_site, invitor):
         )
 
         msg.attach_alternative(html_content, "text/html")
+
+        try:
+            logo_path = os.path.join(settings.BASE_DIR, "static", "logos", "winsecops-logo-black.png")
+            with open(logo_path, "rb") as f:
+                logo_data = f.read()
+            logo_image = MIMEImage(logo_data)
+            logo_image.add_header("Content-ID", "<winsecops-logo-black>")
+            logo_image.add_header("Content-Disposition", "inline", filename="winsecops-logo-black.png")
+            msg.attach(logo_image)
+        except Exception as logo_err:
+            logging.getLogger("plane.worker").error(f"Failed to attach black logo: {logo_err}")
+
         msg.send()
         logging.getLogger("plane.worker").info("Email sent successfully.")
         return

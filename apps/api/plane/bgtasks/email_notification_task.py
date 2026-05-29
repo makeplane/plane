@@ -3,13 +3,16 @@
 # See the LICENSE file for details.
 
 import logging
+import os
 import re
 from datetime import datetime
+from email.mime.image import MIMEImage
 
 from bs4 import BeautifulSoup
 
 # Third party imports
 from celery import shared_task
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 
@@ -242,6 +245,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             # Send the mail
             subject = f"{issue.project.identifier}-{issue.sequence_id} {remove_unwanted_characters(issue.name)}"
             context = {
+                "current_site": base_api,
                 "data": template_data,
                 "summary": summary,
                 "actors_involved": len(set(actors_involved)),
@@ -280,6 +284,18 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     connection=connection,
                 )
                 msg.attach_alternative(html_content, "text/html")
+                
+                try:
+                    logo_path = os.path.join(settings.BASE_DIR, "static", "logos", "winsecops-logo-white.png")
+                    with open(logo_path, "rb") as f:
+                        logo_data = f.read()
+                    logo_image = MIMEImage(logo_data)
+                    logo_image.add_header("Content-ID", "<winsecops-logo-white>")
+                    logo_image.add_header("Content-Disposition", "inline", filename="winsecops-logo-white.png")
+                    msg.attach(logo_image)
+                except Exception as logo_err:
+                    logging.getLogger("plane.worker").error(f"Failed to attach white logo: {logo_err}")
+
                 msg.send()
                 logging.getLogger("plane.worker").info("Email Sent Successfully")
 

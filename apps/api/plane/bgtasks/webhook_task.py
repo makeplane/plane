@@ -8,8 +8,10 @@ import json
 import logging
 import uuid
 
+import os
 import requests
 from typing import Any, Dict, List, Optional, Union
+from email.mime.image import MIMEImage
 
 # Third party imports
 from celery import shared_task
@@ -218,6 +220,7 @@ def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_s
 
         # Send the mail
         context = {
+            "current_site": current_site,
             "email": receiver.email,
             "message": message,
             "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
@@ -244,6 +247,18 @@ def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_s
             connection=connection,
         )
         msg.attach_alternative(html_content, "text/html")
+
+        try:
+            logo_path = os.path.join(settings.BASE_DIR, "static", "logos", "winsecops-logo-black.png")
+            with open(logo_path, "rb") as f:
+                logo_data = f.read()
+            logo_image = MIMEImage(logo_data)
+            logo_image.add_header("Content-ID", "<winsecops-logo-black>")
+            logo_image.add_header("Content-Disposition", "inline", filename="winsecops-logo-black.png")
+            msg.attach(logo_image)
+        except Exception as logo_err:
+            logger.error(f"Failed to attach black logo: {logo_err}")
+
         msg.send()
         logger.info("Email sent successfully.")
     except Exception as e:
