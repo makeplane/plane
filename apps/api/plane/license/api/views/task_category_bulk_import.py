@@ -87,13 +87,14 @@ class TaskCategoryBulkImportView(BaseAPIView):
             is_batch_dup = name_lower in batch_main_names
             if is_db_dup or is_batch_dup:
                 if update_existing and is_db_dup and not is_batch_dup:
+                    code = str(row.get("code", "") or "").strip()
                     description = str(row.get("description", "") or "").strip()
                     sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
                     is_active = _parse_is_active(row.get("is_active"), default=True)
                     try:
                         with transaction.atomic():
                             qs = MainTaskCategory.objects.filter(name__iexact=name, deleted_at__isnull=True)
-                            qs.update(description=description, sort_order=sort_order, is_active=is_active)
+                            qs.update(code=code, description=description, sort_order=sort_order, is_active=is_active)
                             obj = qs.first()
                             if obj:
                                 main_updated.append(obj)
@@ -101,6 +102,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                         main_skipped.append({"row_number": i, "name": name, "reason": f"update error: {e}"})
                 continue
 
+            code = str(row.get("code", "") or "").strip()
             description = str(row.get("description", "") or "").strip() or ""
             sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
             is_active = _parse_is_active(row.get("is_active"), default=True)
@@ -109,6 +111,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                 with transaction.atomic():
                     obj = MainTaskCategory.objects.create(
                         name=name,
+                        code=code,
                         description=description,
                         sort_order=sort_order,
                         is_active=is_active,
@@ -159,6 +162,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
             is_batch_dup = pair in batch_sub_pairs
             if is_db_dup or is_batch_dup:
                 if update_existing and is_db_dup and not is_batch_dup:
+                    code = str(row.get("code", "") or "").strip()
                     description = str(row.get("description", "") or "").strip()
                     sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
                     is_active = _parse_is_active(row.get("is_active"), default=True)
@@ -167,7 +171,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                             qs = SubTaskCategory.objects.filter(
                                 main_category_id=main_id, name__iexact=name, deleted_at__isnull=True
                             )
-                            qs.update(description=description, sort_order=sort_order, is_active=is_active)
+                            qs.update(code=code, description=description, sort_order=sort_order, is_active=is_active)
                             obj = qs.first()
                             if obj:
                                 sub_updated.append(obj)
@@ -175,6 +179,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                         sub_skipped.append({"row_number": i, "name": name, "reason": f"update error: {e}"})
                 continue
 
+            code = str(row.get("code", "") or "").strip()
             description = str(row.get("description", "") or "").strip()
             sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
             is_active = _parse_is_active(row.get("is_active"), default=True)
@@ -184,6 +189,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                     obj = SubTaskCategory.objects.create(
                         main_category_id=main_id,
                         name=name,
+                        code=code,
                         description=description,
                         sort_order=sort_order,
                         is_active=is_active,

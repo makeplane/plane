@@ -59,14 +59,15 @@ export interface ITaskCategoryImportRow {
   type: string;
   main_category_name?: string;
   name: string;
+  code?: string;
   description?: string;
   sort_order?: number;
   is_active?: boolean;
 }
 
 export interface ITaskCategoryBulkImportRequest {
-  main_categories: Array<{ name: string; description?: string; sort_order?: number; is_active?: boolean }>;
-  sub_categories: Array<{ main_category_name: string; name: string; description?: string; sort_order?: number; is_active?: boolean }>;
+  main_categories: Array<{ name: string; code?: string; description?: string; sort_order?: number; is_active?: boolean }>;
+  sub_categories: Array<{ main_category_name: string; name: string; code?: string; description?: string; sort_order?: number; is_active?: boolean }>;
   update_existing?: boolean;
 }
 

@@ -14,14 +14,14 @@ import { useInstanceTaskCategory } from "@/hooks/store";
 
 const MAX_ROWS = 1000;
 const MAX_FILE_SIZE_MB = 5;
-const TEMPLATE_HEADERS = ["type", "main_category_name", "name", "description", "sort_order", "is_active"];
+const TEMPLATE_HEADERS = ["type", "main_category_name", "name", "code", "description", "sort_order", "is_active"];
 
 async function downloadTemplate() {
   const XLSX = await import("xlsx");
   const rows = [
     TEMPLATE_HEADERS,
-    ["main", "", "Engineering", "Engineering dept", 1, "TRUE"],
-    ["sub", "Engineering", "Backend", "", 2, "TRUE"],
+    ["main", "", "Engineering", "ENG", "Engineering dept", 1, "TRUE"],
+    ["sub", "Engineering", "Backend", "BACKEND", "", 2, "TRUE"],
   ];
   const sheet = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new();
@@ -98,6 +98,7 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
         .filter((r) => String(r.type).toLowerCase() === "main")
         .map((r) => ({
           name: String(r.name ?? "").trim(),
+          code: r.code ? String(r.code).trim() : undefined,
           description: r.description ? String(r.description).trim() : undefined,
           sort_order: r.sort_order !== undefined ? Number(r.sort_order) : undefined,
           is_active: r.is_active !== undefined ? r.is_active : undefined,
@@ -107,6 +108,7 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
         .map((r) => ({
           main_category_name: String(r.main_category_name ?? "").trim(),
           name: String(r.name ?? "").trim(),
+          code: r.code ? String(r.code).trim() : undefined,
           description: r.description ? String(r.description).trim() : undefined,
           sort_order: r.sort_order !== undefined ? Number(r.sort_order) : undefined,
           is_active: r.is_active !== undefined ? r.is_active : undefined,
@@ -211,7 +213,7 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
               <table className="min-w-full text-sm">
                 <thead className="bg-layer-1">
                   <tr>
-                    {["type", "main_category_name", "name", "description", "sort_order", "is_active"].map((col) => (
+                    {["type", "main_category_name", "name", "code", "description", "sort_order", "is_active"].map((col) => (
                       <th key={col} className="px-3 py-2 text-left font-medium text-tertiary whitespace-nowrap">
                         {col}
                       </th>
@@ -224,6 +226,7 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
                       <td className="px-3 py-2">{String(row.type ?? "")}</td>
                       <td className="px-3 py-2">{String(row.main_category_name ?? "")}</td>
                       <td className="px-3 py-2">{String(row.name ?? "")}</td>
+                      <td className="px-3 py-2">{String(row.code ?? "")}</td>
                       <td className="px-3 py-2">{String(row.description ?? "")}</td>
                       <td className="px-3 py-2">{String(row.sort_order ?? "")}</td>
                       <td className="px-3 py-2">{String(row.is_active ?? "")}</td>

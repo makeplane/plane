@@ -25,13 +25,14 @@ async function exportToExcel(
   mainById: Record<string, IMainTaskCategory>
 ) {
   const XLSX = await import("xlsx");
-  const headers = ["type", "main_category_name", "name", "description", "sort_order", "is_active"];
-  const mainRows = mains.map((m) => ["main", "", m.name, m.description ?? "", m.sort_order, m.is_active]);
+  const headers = ["type", "main_category_name", "name", "code", "description", "sort_order", "is_active"];
+  const mainRows = mains.map((m) => ["main", "", m.name, m.code ?? "", m.description ?? "", m.sort_order, m.is_active]);
   const subRows = subs.map((s) => [
     "sub",
     mainById[s.main_category]?.name ?? "",
     s.name,
-    "",
+    s.code ?? "",
+    s.description ?? "",
     s.sort_order,
     s.is_active,
   ]);
