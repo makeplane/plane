@@ -100,6 +100,7 @@ from .workspace.time_tracking import (
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
+    TimesheetSubIssuesEndpoint,
     TimesheetBulkUpdateEndpoint,
     WorkspaceAnalyticsTimesheetEndpoint,
     WorkspaceCapacityEndpoint,

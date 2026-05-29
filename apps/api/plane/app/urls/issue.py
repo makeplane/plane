@@ -34,6 +34,7 @@ from plane.app.views import (
     IssueWorkLogViewSet,
     ProjectWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
+    TimesheetSubIssuesEndpoint,
     TimesheetBulkUpdateEndpoint,
     ProjectCapacityEndpoint,
     ProjectCapacityDayDetailsEndpoint,
@@ -319,6 +320,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/timesheet/",
         TimesheetGridEndpoint.as_view(),
         name="project-timesheet-grid",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/timesheet/sub-issues/",
+        TimesheetSubIssuesEndpoint.as_view(),
+        name="project-timesheet-sub-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/timesheet/bulk/",

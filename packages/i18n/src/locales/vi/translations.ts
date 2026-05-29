@@ -441,6 +441,7 @@ export default {
   timesheet_week_of: "Tuần của",
   timesheet_this_week: "Tuần này",
   timesheet_total: "Tổng",
+  timesheet_show_sub_items: "Show sub-items",
   timesheet_coming_soon: "Sắp ra mắt ở Phase 8",
   timesheet_save_success: "Đã lưu bảng chấm công",
   timesheet_no_issues: "Không có issue nào cho tuần này",

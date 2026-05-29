@@ -6,6 +6,7 @@ import type {
   ICapacityReportResponse,
   ITimesheetBulkPayload,
   ITimesheetGridResponse,
+  ITimesheetSubIssuesResponse,
   IWorkLog,
   IWorkLogCreate,
   IWorkLogSummary,
@@ -130,6 +131,24 @@ export class WorklogService extends APIService {
       this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/timesheet/`, {
         params,
       }) as Promise<{ data: ITimesheetGridResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Lazy children for one timesheet row — the current user's logged sub-items.
+  async getTimesheetSubIssues(
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    params?: Record<string, string>
+  ): Promise<ITimesheetSubIssuesResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/timesheet/sub-issues/`, {
+        params: { parent_id: parentId, ...(params ?? {}) },
+      }) as Promise<{ data: ITimesheetSubIssuesResponse }>
     )
       .then(getData)
       .catch((error: { response?: { data: unknown } }) => {
