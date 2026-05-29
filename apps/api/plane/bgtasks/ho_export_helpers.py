@@ -138,24 +138,24 @@ def build_ho_export_queryset(user, filters: dict):
 
 _HEADERS = [
     "Department",
-    "Project",
-    "Work Item",
-    "Main Category",
-    "Sub Category",
+    "Team/Project",
+    "Main Task Category",
+    "Sub Task Category",
+    "Work Items",
     "Sub Items",
-    "Project Lead",
-    "Assignees",
-    "Bank Wide",
+    "Team/Project Lead",
+    "Assignee",
+    "Bank-wide Project",
     "Priority",
     "Status",
-    "Progress",
+    "Progress Tracking",
     "Modules",
-    "Cycle",
+    "Cycles",
     "Start Date",
     "Due Date",
     "Completed Date",
-    "Reference Links",
     "Total Log Time",
+    "Reference Links",
 ]
 
 
@@ -237,9 +237,9 @@ def write_ho_workbook(wb, issues) -> int:
             [
                 issue.project.workspace.name if issue.project_id else "-",
                 issue.project.name if issue.project_id else "-",
-                issue.name or "-",
                 issue.main_task_category.name if issue.main_task_category_id else "-",
                 issue.sub_task_category.name if issue.sub_task_category_id else "-",
+                issue.name or "-",
                 issue.sub_issues_count or 0,
                 (
                     issue.project.project_lead.display_name
@@ -256,8 +256,8 @@ def write_ho_workbook(wb, issues) -> int:
                 str(issue.start_date) if issue.start_date else "-",
                 str(issue.target_date) if issue.target_date else "-",
                 issue.completed_at.date().isoformat() if issue.completed_at else "-",
-                issue.reference_link_count or 0,
                 _format_minutes(subtree_totals.get(str(issue.id), 0)),
+                issue.reference_link_count or 0,
             ]
         )
         row_count += 1

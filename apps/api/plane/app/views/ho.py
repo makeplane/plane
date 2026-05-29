@@ -461,6 +461,7 @@ class HoCategorySummaryView(BaseAPIView):
                         "main_task_category_name": main_cat.name,
                         "main_task_category_description": main_cat.description or None,
                         "sub_task_category_name": sub.name,
+                        "sub_task_category_description": sub.description or None,
                     })
             elif not sub_task_category_filter:
                 # Show main-only row when no sub-category filter is active
