@@ -81,7 +81,7 @@ class WebhookEndpoint(BaseAPIView):
         serializer = WebhookSerializer(
             webhook,
             data=request.data,
-            context={request: request},
+            context={"request": request},
             partial=True,
             fields=(
                 "id",

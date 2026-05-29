@@ -52,7 +52,7 @@ from plane.db.models import (
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
-from plane.utils.ip_address import validate_url
+from plane.utils.url_security import pinned_fetch
 
 
 SERIALIZER_MAPPER = {
@@ -307,22 +307,20 @@ def webhook_send_task(
         return
 
     try:
-        # Re-validate the webhook URL at send time to prevent DNS-rebinding attacks
-        validate_url(
+        # Resolve + validate the webhook URL and pin the connection to the
+        # validated IP. Pinning closes the DNS-rebinding TOCTOU (validating the
+        # name then letting requests re-resolve it lets an attacker swap in an
+        # internal IP between the two lookups). Redirects are never followed, so
+        # a 3xx Location cannot bounce the request to an internal address
+        # (GHSA-mq87-52pf-hm3h / cluster C).
+        response = pinned_fetch(
+            "POST",
             webhook.url,
             allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
             allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
-        )
-
-        # Send the webhook event
-        # allow_redirects=False prevents SSRF via 3xx hops to internal addresses
-        # bypassing the validate_url() check above (GHSA-mq87-52pf-hm3h).
-        response = requests.post(
-            webhook.url,
             headers=headers,
             json=payload,
             timeout=30,
-            allow_redirects=False,
         )
 
         # Log the webhook request
@@ -365,6 +363,25 @@ def webhook_send_task(
                 )
             return
         raise requests.RequestException()
+
+    except ValueError as e:
+        # SSRF validation failure (blocked/internal target or unresolvable host).
+        # Not retryable — record it so the failure is visible to the admin, but
+        # do not raise (no Celery retry) and do not auto-deactivate (the cause
+        # may be transient DNS).
+        save_webhook_log(
+            webhook=webhook,
+            request_method=action,
+            request_headers=headers,
+            request_body=payload,
+            response_status=400,
+            response_headers="",
+            response_body=f"Webhook URL rejected: {e}",
+            retry_count=self.request.retries,
+            event_type=event,
+        )
+        logger.warning(f"Webhook {webhook.id} URL rejected: {e}")
+        return
 
     except Exception as e:
         log_exception(e)

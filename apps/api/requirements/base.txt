@@ -56,6 +56,9 @@ lxml==6.1.0
 boto3==1.34.96
 # http client (pinned to address CVE-2026-44431 and CVE-2026-44432)
 urllib3>=2.7.0
+# requests — used directly for webhook delivery & link unfurling; pinned to
+# >=2.32 for the get_connection_with_tls_context adapter hook (SSRF IP pinning)
+requests==2.33.0
 # password validator
 zxcvbn==4.4.28
 # timezone
