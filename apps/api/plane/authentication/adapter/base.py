@@ -8,10 +8,10 @@ import os
 import uuid
 from io import BytesIO
 
-import requests
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from plane.utils.url_security import pinned_fetch_following_redirects
 
 # Django imports
 from django.utils import timezone
@@ -146,8 +146,16 @@ class Adapter:
 
         try:
             headers = self.get_avatar_download_headers()
-            # Download the avatar image
-            response = requests.get(avatar_url, timeout=10, headers=headers)
+            # Download the avatar image over an SSRF-safe client: the avatar URL
+            # comes from the OAuth provider's (attacker-influenceable) profile
+            # data, so it must not be allowed to reach internal addresses. The
+            # connection is pinned to the validated IP (defeats DNS rebinding)
+            # and every redirect hop is re-validated, so a public URL cannot
+            # bounce the fetch to an internal target — GHSA-cv9p-325g-wmv5 /
+            # GHSA-hx79-5pj5-qh42 (avatar hop).
+            response, _ = pinned_fetch_following_redirects(
+                "GET", avatar_url, headers=headers, timeout=10, max_redirects=5
+            )
             response.raise_for_status()
 
             # Check content length before downloading
