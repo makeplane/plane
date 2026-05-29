@@ -23,6 +23,8 @@ import type { IProjectFieldPermissionStore } from "./project-field-permission.st
 import { ProjectFieldPermissionStore } from "./project-field-permission.store";
 import type { IProjectCopyStore } from "./project-copy.store";
 import { ProjectCopyStore } from "./project-copy.store";
+import type { IHelpCenterStore } from "./help-center/help-center.store";
+import { HelpCenterStore } from "./help-center/help-center.store";
 
 export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
@@ -34,6 +36,7 @@ export class RootStore extends CoreRootStore {
   hoIssue: IHoIssueStore;
   projectFieldPermission: IProjectFieldPermissionStore;
   projectCopy: IProjectCopyStore;
+  helpCenter: IHelpCenterStore;
 
   constructor() {
     super();
@@ -47,5 +50,6 @@ export class RootStore extends CoreRootStore {
     this.hoIssue = new HoIssueStore();
     this.projectFieldPermission = new ProjectFieldPermissionStore();
     this.projectCopy = new ProjectCopyStore();
+    this.helpCenter = new HelpCenterStore();
   }
 }
