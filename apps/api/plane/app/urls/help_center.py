@@ -6,30 +6,27 @@ from django.urls import path
 
 from plane.app.views.help_center import HelpArticleViewSet, HelpCategoryViewSet
 
+# Global (instance-wide) READ endpoints — any authenticated user, no workspace
+# scope. Authoring lives in the God Mode layer (plane/license/api).
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/help/categories/",
-        HelpCategoryViewSet.as_view({"get": "list", "post": "create"}),
+        "help/categories/",
+        HelpCategoryViewSet.as_view({"get": "list"}),
         name="help-categories",
     ),
     path(
-        "workspaces/<str:slug>/help/categories/<uuid:pk>/",
-        HelpCategoryViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        "help/categories/<uuid:pk>/",
+        HelpCategoryViewSet.as_view({"get": "retrieve"}),
         name="help-category-detail",
     ),
     path(
-        "workspaces/<str:slug>/help/articles/",
-        HelpArticleViewSet.as_view({"get": "list", "post": "create"}),
+        "help/articles/",
+        HelpArticleViewSet.as_view({"get": "list"}),
         name="help-articles",
     ),
     path(
-        "workspaces/<str:slug>/help/articles/<uuid:pk>/",
-        HelpArticleViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        "help/articles/<uuid:pk>/",
+        HelpArticleViewSet.as_view({"get": "retrieve"}),
         name="help-article-detail",
-    ),
-    path(
-        "workspaces/<str:slug>/help/articles/<uuid:pk>/translations/<str:locale>/",
-        HelpArticleViewSet.as_view({"put": "translation", "patch": "translation"}),
-        name="help-article-translation",
     ),
 ]

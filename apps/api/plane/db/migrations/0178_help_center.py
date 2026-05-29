@@ -115,11 +115,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
         ),
         migrations.AddField(
-            model_name='helpcategory',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='help_categories', to='db.workspace'),
-        ),
-        migrations.AddField(
             model_name='helparticletranslation',
             name='article',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='db.helparticle'),
@@ -149,18 +144,13 @@ class Migration(migrations.Migration):
             name='updated_by',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
         ),
-        migrations.AddField(
-            model_name='helparticle',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='help_articles', to='db.workspace'),
-        ),
         migrations.AddConstraint(
             model_name='helpcategorytranslation',
             constraint=models.UniqueConstraint(condition=models.Q(('deleted_at__isnull', True)), fields=('category', 'locale'), name='help_category_translation_unique_locale_active'),
         ),
         migrations.AddConstraint(
             model_name='helpcategory',
-            constraint=models.UniqueConstraint(fields=('workspace', 'slug'), name='help_category_unique_workspace_slug'),
+            constraint=models.UniqueConstraint(fields=('slug',), name='help_category_unique_slug'),
         ),
         migrations.AddConstraint(
             model_name='helparticletranslation',
@@ -168,10 +158,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='helparticle',
-            index=models.Index(fields=['workspace', 'status'], name='help_article_ws_status_idx'),
+            index=models.Index(fields=['status'], name='help_article_status_idx'),
         ),
         migrations.AddConstraint(
             model_name='helparticle',
-            constraint=models.UniqueConstraint(fields=('workspace', 'slug'), name='help_article_unique_workspace_slug'),
+            constraint=models.UniqueConstraint(fields=('slug',), name='help_article_unique_slug'),
         ),
     ]

@@ -6,9 +6,8 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from rest_framework.filters import SearchFilter
 
-from plane.app.permissions import ROLE
 from plane.app.serializers.help_center import sanitize_help_html
-from plane.db.models import HelpArticleTranslation, HelpCategoryTranslation, WorkspaceMember
+from plane.db.models import HelpArticleTranslation, HelpCategoryTranslation
 from plane.db.models.help_center import fold_accents
 
 VALID_LOCALES = {"vi", "en", "ko"}
@@ -25,17 +24,17 @@ class AccentInsensitiveSearchFilter(SearchFilter):
         return [fold_accents(term) for term in super().get_search_terms(request)]
 
 
-def generate_unique_slug(model, workspace, title):
-    """Server-side slug from a (possibly Vietnamese) title. Folds diacritics to
-    ASCII before slugify (django slugify alone is locale-dependent), then suffixes
-    -2, -3… on collision. Counts soft-deleted rows too (slugs are globally unique
-    per workspace and never reused), so old deep links 404 cleanly."""
-    base = slugify(fold_accents(title)) or "untitled"
-    slug, suffix = base, 2
-    while model.all_objects.filter(workspace=workspace, slug=slug).exists():
-        slug = f"{base}-{suffix}"
-        suffix += 1
-    return slug
+class HelpCenterReadMixin:
+    """Locale + search-term serializer context shared by the global read viewsets."""
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["locale"] = self.request.GET.get("locale")
+        context["search_term"] = self.request.GET.get("search")
+        return context
+
+
+# ---- Authoring helpers (reused by the God Mode / license write layer) ----
 
 
 def coerce_sort_order(value):
@@ -44,6 +43,19 @@ def coerce_sort_order(value):
         return float(value)
     except (TypeError, ValueError):
         raise ValidationError("sort_order must be a number.")
+
+
+def generate_unique_slug(model, title):
+    """Server-side slug from a (possibly Vietnamese) title. Folds diacritics to
+    ASCII before slugify, then suffixes -2, -3… on collision. Counts soft-deleted
+    rows too (slugs are globally unique and never reused), so old deep links 404
+    cleanly."""
+    base = slugify(fold_accents(title)) or "untitled"
+    slug, suffix = base, 2
+    while model.all_objects.filter(slug=slug).exists():
+        slug = f"{base}-{suffix}"
+        suffix += 1
+    return slug
 
 
 def pick_slug_source(translations, key):
@@ -93,25 +105,9 @@ def upsert_article_translations(article, translations):
         upsert_article_translation(article, locale, entry)
 
 
-def is_workspace_admin(user, slug):
-    return WorkspaceMember.objects.filter(
-        member=user, workspace__slug=slug, role=ROLE.ADMIN.value, is_active=True
-    ).exists()
-
-
-class HelpCenterViewSetMixin:
-    """Shared workspace-scope + admin-awareness + serializer context for the
-    Help Center viewsets. The single get_queryset override is where member
-    visibility is enforced (Findings 7/8)."""
-
-    def is_admin(self):
-        if not hasattr(self, "_is_admin_cache"):
-            self._is_admin_cache = is_workspace_admin(self.request.user, self.kwargs.get("slug"))
-        return self._is_admin_cache
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["locale"] = self.request.GET.get("locale")
-        context["is_admin"] = self.is_admin()
-        context["search_term"] = self.request.GET.get("search")
-        return context
+def has_titled_translation(article):
+    """Fresh query (avoids stale prefetch cache) for the publish invariant."""
+    return any(
+        (title or "").strip()
+        for title in HelpArticleTranslation.objects.filter(article=article).values_list("title", flat=True)
+    )

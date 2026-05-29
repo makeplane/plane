@@ -5,7 +5,7 @@
 import nh3
 from rest_framework import serializers
 
-from plane.db.models import HelpArticle, HelpCategory
+from plane.db.models import HelpArticle, HelpArticleTranslation, HelpCategory, HelpCategoryTranslation
 from plane.db.models.help_center import fold_accents
 from plane.utils.content_validator import ALLOWED_TAGS, ATTRIBUTES, MAX_SIZE, SAFE_PROTOCOLS
 
@@ -50,6 +50,9 @@ def resolve_translation(article, requested_locale):
     return None, None
 
 
+# ---- Reading serializers (plane/app — any authenticated user, published only) ----
+
+
 class HelpCategoryReadSerializer(BaseSerializer):
     """Locale-resolved category for the reading UI."""
 
@@ -70,7 +73,7 @@ class HelpCategoryReadSerializer(BaseSerializer):
         return next(iter(names.values()), obj.slug)
 
     def get_article_count(self, obj):
-        # Populated by the viewset queryset annotation (member vs admin scope).
+        # Populated by the viewset queryset annotation (published-only).
         return getattr(obj, "article_count", 0)
 
 
@@ -121,17 +124,17 @@ class HelpArticleListSerializer(BaseSerializer):
 
 
 class HelpArticleDetailSerializer(HelpArticleListSerializer):
-    """Adds rich content + available locales. `description_json` is exposed to
-    admins only (authoring fidelity); the reader renders sanitized html only."""
+    """Adds rich content + available locales. Readers get sanitized html only —
+    `description_json` is never on the read path (authoring fidelity lives in the
+    God Mode admin serializer)."""
 
     description_html = serializers.SerializerMethodField()
-    description_json = serializers.SerializerMethodField()
     available_locales = serializers.SerializerMethodField()
     requested_locale = serializers.SerializerMethodField()
 
     class Meta(HelpArticleListSerializer.Meta):
         fields = HelpArticleListSerializer.Meta.fields + [
-            "description_html", "description_json", "available_locales", "requested_locale",
+            "description_html", "available_locales", "requested_locale",
         ]
         read_only_fields = fields
 
@@ -139,14 +142,45 @@ class HelpArticleDetailSerializer(HelpArticleListSerializer):
         translation, _ = self._resolved(obj)
         return translation.description_html if translation else None
 
-    def get_description_json(self, obj):
-        if not self.context.get("is_admin"):
-            return None
-        translation, _ = self._resolved(obj)
-        return translation.description_json if translation else None
-
     def get_available_locales(self, obj):
         return [t.locale for t in obj.translations.all() if (t.title or "").strip()]
 
     def get_requested_locale(self, obj):
         return self.context.get("locale")
+
+
+# ---- Authoring serializers (God Mode / license layer — full per-locale content) ----
+
+
+class HelpCategoryTranslationSerializer(BaseSerializer):
+    class Meta:
+        model = HelpCategoryTranslation
+        fields = ["locale", "name"]
+
+
+class HelpArticleTranslationFullSerializer(BaseSerializer):
+    class Meta:
+        model = HelpArticleTranslation
+        fields = ["locale", "title", "description_html", "description_json"]
+
+
+class HelpCategoryAdminSerializer(BaseSerializer):
+    """All locales + raw fields for God Mode authoring."""
+
+    translations = HelpCategoryTranslationSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = HelpCategory
+        fields = ["id", "slug", "sort_order", "icon", "color", "is_active", "translations"]
+        read_only_fields = ["id", "slug"]
+
+
+class HelpArticleAdminSerializer(BaseSerializer):
+    """All locales (title + html + json) for God Mode authoring/edit fidelity."""
+
+    translations = HelpArticleTranslationFullSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = HelpArticle
+        fields = ["id", "slug", "category", "sort_order", "status", "translations", "created_at", "updated_at"]
+        read_only_fields = ["id", "slug", "created_at", "updated_at"]

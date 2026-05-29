@@ -34,11 +34,12 @@ def fold_accents(text):
 
 
 class HelpCategory(BaseModel):
-    """A function-area grouping of help articles, scoped to one workspace."""
+    """A function-area grouping of help articles.
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="help_categories"
-    )
+    Instance-global: the Help Center is ONE shared user guide rendered in every
+    workspace, so categories are NOT scoped to a workspace.
+    """
+
     slug = models.SlugField(max_length=255)
     sort_order = models.FloatField(default=65535)
     icon = models.CharField(max_length=100, blank=True)  # lucide icon name, e.g. "folder-kanban"
@@ -47,12 +48,12 @@ class HelpCategory(BaseModel):
 
     class Meta:
         constraints = [
-            # Globally unique per workspace — intentionally NOT conditioned on
-            # deleted_at, so a soft-deleted slug is never reused and old deep
-            # links to a removed category resolve to a clean 404.
+            # Globally unique — intentionally NOT conditioned on deleted_at, so a
+            # soft-deleted slug is never reused and old deep links resolve to a
+            # clean 404.
             models.UniqueConstraint(
-                fields=["workspace", "slug"],
-                name="help_category_unique_workspace_slug",
+                fields=["slug"],
+                name="help_category_unique_slug",
             )
         ]
         verbose_name = "Help Category"
@@ -61,16 +62,14 @@ class HelpCategory(BaseModel):
         ordering = ("sort_order", "-created_at")
 
     def __str__(self):
-        return f"{self.workspace_id} {self.slug}"
+        return self.slug
 
     def save(self, *args, **kwargs):
-        # Sequence new categories after existing ones in the same workspace so
-        # initial order is deterministic (not pure created_at). Reorder later
-        # rewrites sort_order between neighbours via partial_update.
+        # Sequence new categories after existing ones (instance-wide) so initial
+        # order is deterministic. Reorder later rewrites sort_order between
+        # neighbours via the God Mode update endpoint.
         if self._state.adding:
-            largest = HelpCategory.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
+            largest = HelpCategory.objects.aggregate(largest=models.Max("sort_order"))["largest"]
             if largest is not None:
                 self.sort_order = largest + 10000
         super().save(*args, **kwargs)
@@ -103,14 +102,12 @@ class HelpCategoryTranslation(BaseModel):
 
 
 class HelpArticle(BaseModel):
-    """A help article, scoped to one workspace and (optionally) a category.
+    """A help article, optionally grouped under a category.
 
-    Publish is article-level only (`status`); translations have no status field.
+    Instance-global (no workspace scope). Publish is article-level only
+    (`status`); translations have no status field.
     """
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="help_articles"
-    )
     category = models.ForeignKey(
         HelpCategory,
         on_delete=models.SET_NULL,
@@ -124,14 +121,14 @@ class HelpArticle(BaseModel):
 
     class Meta:
         constraints = [
-            # Globally unique per workspace (see HelpCategory note) — deep links stay stable.
+            # Globally unique slug (see HelpCategory note) — deep links stay stable.
             models.UniqueConstraint(
-                fields=["workspace", "slug"],
-                name="help_article_unique_workspace_slug",
+                fields=["slug"],
+                name="help_article_unique_slug",
             )
         ]
         indexes = [
-            models.Index(fields=["workspace", "status"], name="help_article_ws_status_idx"),
+            models.Index(fields=["status"], name="help_article_status_idx"),
         ]
         verbose_name = "Help Article"
         verbose_name_plural = "Help Articles"
@@ -139,14 +136,14 @@ class HelpArticle(BaseModel):
         ordering = ("sort_order", "-created_at")
 
     def __str__(self):
-        return f"{self.workspace_id} {self.slug}"
+        return self.slug
 
     def save(self, *args, **kwargs):
         # Sequence new articles after existing ones in the same category bucket.
         if self._state.adding:
-            largest = HelpArticle.objects.filter(
-                workspace=self.workspace, category=self.category
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            largest = HelpArticle.objects.filter(category=self.category).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             if largest is not None:
                 self.sort_order = largest + 10000
         super().save(*args, **kwargs)
