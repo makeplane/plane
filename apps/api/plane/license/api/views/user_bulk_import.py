@@ -13,7 +13,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import User
+from plane.db.models import Profile, User
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers.user import InstanceUserSerializer
 from plane.license.api.views.base import BaseAPIView
@@ -116,6 +116,12 @@ class InstanceUserBulkImportEndpoint(BaseAPIView):
                 user.set_password(password)
                 user.is_password_autoset = False
                 user.save()
+                # Admin-provisioned users already have name populated — mark the
+                # profile-setup onboarding step complete so first login skips it.
+                if user.first_name or user.last_name:
+                    profile, _ = Profile.objects.get_or_create(user=user)
+                    profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
+                    profile.save(update_fields=["onboarding_step"])
 
                 existing_emails.add(email)
                 created.append(InstanceUserSerializer(user).data)
