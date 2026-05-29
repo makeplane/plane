@@ -4,6 +4,9 @@
  * See the LICENSE file for details.
  */
 
+// The Help Center is instance-global (one shared guide across all workspaces).
+// The web app is READ-ONLY here; authoring is God Mode (apps/admin).
+
 export type THelpLocale = "vi" | "en" | "ko";
 export type THelpArticleStatus = "draft" | "published";
 
@@ -33,42 +36,12 @@ export type THelpArticleListItem = {
 
 export type THelpArticleDetail = THelpArticleListItem & {
   description_html: string | null;
-  description_json: Record<string, unknown> | null;
   available_locales: THelpLocale[];
   requested_locale: THelpLocale | null;
-};
-
-export type THelpArticleTranslation = {
-  locale: THelpLocale;
-  title: string;
-  description_html: string;
-  description_json: Record<string, unknown>;
-};
-
-export type THelpCategoryTranslation = {
-  locale: THelpLocale;
-  name: string;
 };
 
 export type THelpArticleFilters = {
   category?: string;
   locale?: THelpLocale | null;
   search?: string;
-  status?: THelpArticleStatus;
-};
-
-export type THelpCategoryPayload = {
-  icon?: string;
-  color?: string;
-  is_active?: boolean;
-  sort_order?: number;
-  translations?: THelpCategoryTranslation[];
-};
-
-export type THelpArticlePayload = {
-  category?: string | null;
-  status?: THelpArticleStatus;
-  slug?: string;
-  sort_order?: number;
-  translations?: Partial<THelpArticleTranslation>[];
 };
