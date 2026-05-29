@@ -44,17 +44,17 @@ which **minimizes** core touches: the PowerK static command + sidebar Help-menu 
 
 ## Phases
 
-| Phase | Name                                                                         | Priority | Effort | Status  |
-| ----- | ---------------------------------------------------------------------------- | -------- | ------ | ------- |
-| 1     | [Backend Data Model](./phase-01-backend-data-model.md)                       | P1       | 1.5d   | Pending |
-| 2     | [Backend API and Search](./phase-02-backend-api-and-search.md)               | P1       | 2d     | Pending |
-| 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Pending |
-| 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Pending |
-| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Pending |
-| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending |
-| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Pending |
-| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending |
-| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending |
+| Phase | Name                                                                         | Priority | Effort | Status                               |
+| ----- | ---------------------------------------------------------------------------- | -------- | ------ | ------------------------------------ |
+| 1     | [Backend Data Model](./phase-01-backend-data-model.md)                       | P1       | 1.5d   | Done (impl; live-migrate pending)    |
+| 2     | [Backend API and Search](./phase-02-backend-api-and-search.md)               | P1       | 2d     | Done (impl; live-DB tests in P8)     |
+| 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Done (47 keys × vi/en/ko; KO review) |
+| 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)              |
+| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Pending                              |
+| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending                              |
+| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Pending                              |
+| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                              |
+| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                              |
 
 **Estimated effort: ~15 dev-days** (full UX scope per D4; Cmd+K backend search dropped per D5). Original baseline was ~11d; the +4d covers fixed toolbar + live preview + visual icon picker + copy-between-locales (P6), in-article TOC + prev/next + related (P5), accent-folded multilingual search (P1/P2), and the matching tests (P8).
 
