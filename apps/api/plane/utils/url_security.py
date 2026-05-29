@@ -26,7 +26,7 @@ re-validating and re-pinning every hop.
 
 # Python imports
 import ipaddress
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import unquote, urljoin, urlsplit
 
 # Third party imports
 import requests
@@ -77,7 +77,12 @@ class PinnedIPAdapter(HTTPAdapter):
 
 
 def _split_target(url):
-    """Parse a URL into the pieces needed to build a pinned request."""
+    """Parse a URL into the pieces needed to build a pinned request.
+
+    Returns ``(scheme, hostname, port, path, auth)`` where ``auth`` carries any
+    URL-embedded credentials (``user:pass@host``) as a ``(user, pass)`` tuple so
+    HTTP Basic Auth still works once the URL is rewritten to an IP literal.
+    """
     parts = urlsplit(url)
     scheme = parts.scheme
     if scheme not in ("http", "https"):
@@ -89,11 +94,19 @@ def _split_target(url):
     path = parts.path or "/"
     if parts.query:
         path = f"{path}?{parts.query}"
-    return scheme, hostname, port, path
+    auth = None
+    if parts.username is not None or parts.password is not None:
+        auth = (unquote(parts.username or ""), unquote(parts.password or ""))
+    return scheme, hostname, port, path, auth
 
 
-def _request_to_ip(method, scheme, hostname, ip, port, path, *, headers, timeout, **kwargs):
-    """Issue a single request whose socket is pinned to ``ip``."""
+def _request_to_ip(method, scheme, hostname, ip, port, path, *, headers, timeout, auth=None, **kwargs):
+    """Issue a single request whose socket is pinned to ``ip``.
+
+    With ``stream=True`` the session is kept open until the caller closes the
+    response (closing the response also closes the session), so a streamed body
+    can be read with a real size cap; otherwise the session is closed eagerly.
+    """
     ip_obj = ipaddress.ip_address(ip)
     host_for_url = f"[{ip}]" if ip_obj.version == 6 else ip
     url = f"{scheme}://{host_for_url}:{port}{path}"
@@ -101,14 +114,17 @@ def _request_to_ip(method, scheme, hostname, ip, port, path, *, headers, timeout
     request_headers = dict(headers or {})
     default_port = 443 if scheme == "https" else 80
     # Host header (and TLS) carry the ORIGINAL hostname, not the IP literal.
-    request_headers["Host"] = hostname if port == default_port else f"{hostname}:{port}"
+    # An IPv6-literal hostname must be bracketed in the Host header.
+    host_label = f"[{hostname}]" if ":" in hostname else hostname
+    request_headers["Host"] = host_label if port == default_port else f"{host_label}:{port}"
 
     session = requests.Session()
     session.trust_env = False  # ignore ambient proxy / netrc / env (see _NO_PROXIES)
     if scheme == "https":
         session.mount("https://", PinnedIPAdapter(server_hostname=hostname))
+
     try:
-        return session.request(
+        response = session.request(
             method,
             url,
             headers=request_headers,
@@ -116,10 +132,29 @@ def _request_to_ip(method, scheme, hostname, ip, port, path, *, headers, timeout
             allow_redirects=False,
             verify=True,
             proxies=_NO_PROXIES,
+            auth=auth,
             **kwargs,
         )
-    finally:
+    except BaseException:
         session.close()
+        raise
+
+    if kwargs.get("stream"):
+        # Defer closing the session until the response is closed, so the
+        # streamed body remains readable. response.close() now also closes
+        # the session.
+        _orig_close = response.close
+
+        def _close_all(_orig=_orig_close, _sess=session):
+            try:
+                _orig()
+            finally:
+                _sess.close()
+
+        response.close = _close_all
+    else:
+        session.close()
+    return response
 
 
 def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, timeout, **kwargs):
@@ -132,7 +167,7 @@ def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, ti
     connection is STILL pinned to the resolved IP so a trusted hostname cannot
     be rebound to a different internal target between validation and connect.
     """
-    scheme, hostname, port, path = _split_target(url)
+    scheme, hostname, port, path, auth = _split_target(url)
 
     normalized_host = hostname.rstrip(".").lower()
     trusted = bool(allowed_hosts) and normalized_host in {
@@ -149,7 +184,7 @@ def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, ti
         try:
             response = _request_to_ip(
                 method, scheme, hostname, ip, port, path,
-                headers=headers, timeout=timeout, **kwargs,
+                headers=headers, timeout=timeout, auth=auth, **kwargs,
             )
             return response, normalized_host
         except requests.RequestException as exc:
@@ -225,10 +260,13 @@ def pinned_fetch_following_redirects(
             return response, current_url
 
         if redirects >= max_redirects:
+            response.close()
             raise requests.TooManyRedirects(
                 f"Exceeded {max_redirects} redirects for URL: {url}"
             )
         redirects += 1
+        # Release the intermediate hop's connection/session before following.
+        response.close()
         # Resolve the redirect target against the current URL; the next loop
         # iteration re-validates and re-pins it.
         current_url = urljoin(current_url, location)

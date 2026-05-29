@@ -153,49 +153,55 @@ class Adapter:
             # and every redirect hop is re-validated, so a public URL cannot
             # bounce the fetch to an internal target — GHSA-cv9p-325g-wmv5 /
             # GHSA-hx79-5pj5-qh42 (avatar hop).
+            # stream=True so the body is read incrementally and the size cap
+            # below actually bounds memory (without it, requests buffers the
+            # whole body before any check runs).
             response, _ = pinned_fetch_following_redirects(
-                "GET", avatar_url, headers=headers, timeout=10, max_redirects=5
+                "GET", avatar_url, headers=headers, timeout=10, max_redirects=5, stream=True
             )
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
 
-            # Check content length before downloading
-            content_length = response.headers.get("Content-Length")
-            max_size = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
-            if content_length and int(content_length) > max_size:
-                return None
-
-            # Get content type and determine file extension
-            content_type = response.headers.get("Content-Type", "image/jpeg")
-            extension_map = {
-                "image/jpeg": "jpg",
-                "image/jpg": "jpg",
-                "image/png": "png",
-                "image/gif": "gif",
-                "image/webp": "webp",
-            }
-            extension = extension_map.get(content_type)
-
-            if not extension:
-                return None
-
-            # Download with size limit
-            chunks = []
-            total_size = 0
-            for chunk in response.iter_content(chunk_size=8192):
-                total_size += len(chunk)
-                if total_size > max_size:
+                # Check content length before downloading
+                content_length = response.headers.get("Content-Length")
+                max_size = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+                if content_length and int(content_length) > max_size:
                     return None
-                chunks.append(chunk)
-            content = b"".join(chunks)
-            file_size = len(content)
+
+                # Get content type and determine file extension
+                content_type = response.headers.get("Content-Type", "image/jpeg")
+                extension_map = {
+                    "image/jpeg": "jpg",
+                    "image/jpg": "jpg",
+                    "image/png": "png",
+                    "image/gif": "gif",
+                    "image/webp": "webp",
+                }
+                extension = extension_map.get(content_type)
+
+                if not extension:
+                    return None
+
+                # Download with size limit
+                chunks = []
+                total_size = 0
+                for chunk in response.iter_content(chunk_size=8192):
+                    total_size += len(chunk)
+                    if total_size > max_size:
+                        return None
+                    chunks.append(chunk)
+                content = b"".join(chunks)
+                file_size = len(content)
+            finally:
+                response.close()
 
             # Generate unique filename
             filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
 
             storage = S3Storage(request=self.request)
 
-            # Create file-like object
-            file_obj = BytesIO(response.content)
+            # Create file-like object from the size-bounded buffer
+            file_obj = BytesIO(content)
             file_obj.seek(0)
 
             # Upload using boto3 directly

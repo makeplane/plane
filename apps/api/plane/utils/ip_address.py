@@ -135,7 +135,9 @@ def resolve_and_validate(hostname, allowed_ips=None, require_safe=True):
     """
     try:
         addr_info = socket.getaddrinfo(hostname, None)
-    except socket.gaierror:
+    except (socket.gaierror, UnicodeError):
+        # UnicodeError covers IDNA encoding/normalisation failures, which
+        # getaddrinfo raises before the address lookup for malformed hostnames.
         raise ValueError("Hostname could not be resolved")
 
     if not addr_info:

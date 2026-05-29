@@ -33,8 +33,6 @@ OAuth avatar (the still-unresolved family this change adds)
   * GHSA-hx79-5pj5-qh42  Gitea OAuth SSRF (avatar hop)                 -> TestOAuthAvatarSSRF
 """
 
-import ipaddress
-
 import pytest
 import requests
 from unittest.mock import MagicMock, patch

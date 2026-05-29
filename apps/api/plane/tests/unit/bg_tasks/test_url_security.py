@@ -325,3 +325,71 @@ class TestValidateUrlHardening:
             dns.return_value = [_addr(ip)]
             with pytest.raises(ValueError, match="private/internal"):
                 validate_url("http://attacker.example.com")
+
+
+# ---------------------------------------------------------------------------
+# Review-feedback fixes (PR #9163)
+# ---------------------------------------------------------------------------
+@pytest.mark.unit
+class TestReviewFixes:
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_url_embedded_credentials_become_basic_auth(self, mock_resolve, mock_session_cls):
+        # user:pass@host -> Basic Auth preserved as auth=, userinfo stripped from URL
+        mock_resolve.return_value = ["93.184.216.34"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+
+        pinned_fetch("GET", "https://user:p%40ss@example.com/hook")
+
+        _, url = session.request.call_args.args
+        kwargs = session.request.call_args.kwargs
+        assert url == "https://93.184.216.34:443/hook"  # no userinfo in the IP URL
+        assert kwargs["auth"] == ("user", "p@ss")  # percent-decoded
+        assert kwargs["headers"]["Host"] == "example.com"
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_no_credentials_passes_auth_none(self, mock_resolve, mock_session_cls):
+        mock_resolve.return_value = ["93.184.216.34"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+        pinned_fetch("GET", "https://example.com/x")
+        assert session.request.call_args.kwargs["auth"] is None
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_ipv6_literal_host_header_is_bracketed(self, mock_resolve, mock_session_cls):
+        mock_resolve.return_value = ["2606:4700:4700::1111"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+
+        pinned_fetch("GET", "https://[2606:4700:4700::1111]/x")
+
+        kwargs = session.request.call_args.kwargs
+        assert kwargs["headers"]["Host"] == "[2606:4700:4700::1111]"
+
+    def test_idna_unicode_error_is_treated_as_unresolvable(self):
+        # getaddrinfo can raise UnicodeError (IDNA) before any lookup; it must
+        # surface as ValueError so webhook_send_task records a URL rejection.
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as dns:
+            dns.side_effect = UnicodeError("label empty or too long")
+            with pytest.raises(ValueError, match="could not be resolved"):
+                resolve_and_validate("xn--bad-name")
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_stream_defers_session_close_until_response_close(self, mock_resolve, mock_session_cls):
+        # With stream=True the size cap can bound memory only if the session
+        # stays open until the body is read; closing the response closes it.
+        mock_resolve.return_value = ["93.184.216.34"]
+        session = mock_session_cls.return_value
+        resp = _resp(200)
+        session.request.return_value = resp
+
+        out = pinned_fetch("GET", "https://cdn.example.com/a.png", stream=True)
+
+        assert session.request.call_args.kwargs["stream"] is True
+        session.close.assert_not_called()  # deferred
+        out.close()
+        session.close.assert_called_once()

@@ -52,7 +52,8 @@ def validate_url_ip(url: str) -> None:
 
     try:
         addr_info = socket.getaddrinfo(hostname, None)
-    except socket.gaierror:
+    except (socket.gaierror, UnicodeError):
+        # UnicodeError covers IDNA failures raised before the address lookup.
         raise ValueError("Hostname could not be resolved")
 
     if not addr_info:
