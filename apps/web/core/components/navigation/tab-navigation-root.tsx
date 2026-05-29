@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
@@ -147,10 +146,13 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
       const targetItem = defaultTabItem || allNavigationItems.find((item) => item.key === DEFAULT_TAB_KEY);
 
       if (targetItem) {
-        navigate(targetItem.href, { replace: true });
+        void navigate(targetItem.href, { replace: true });
       }
     }
   }, [pathname, workspaceSlug, projectId, tabPreferences.defaultTab, allNavigationItems, navigate]);
+
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
+  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   if (allNavigationItems.length === 0) return null;
   if (!project) return null;
@@ -169,9 +171,6 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     workspaceSlug.toString(),
     project?.id
   );
-
-  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
-  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   return (
     <>
@@ -201,7 +200,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
               isAdmin={isAdmin}
               isAuthorized={isAuthorized}
               isInstanceAdmin={isInstanceAdmin}
-              onCopyText={handleCopyText}
+              onCopyText={() => void handleCopyText()}
               onLeaveProject={handleLeaveProject}
               onPublishModal={() => handlePublishModal(true)}
               onCopyToWorkspace={() => setCopyModalOpen(true)}

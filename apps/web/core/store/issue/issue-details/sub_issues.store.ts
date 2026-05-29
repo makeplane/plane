@@ -120,9 +120,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     if (!parentIssueId || !key || !value) return;
 
     update(this.subIssueHelpers, [parentIssueId, key], (_subIssueHelpers: string[] = []) => {
-      // issue_visibility: idempotent add (no toggle) to prevent StrictMode double-invoke from removing the entry
-      if (key === "issue_visibility")
-        return _subIssueHelpers.includes(value) ? _subIssueHelpers : concat(_subIssueHelpers, value);
       if (_subIssueHelpers.includes(value)) return pull(_subIssueHelpers, value);
       return concat(_subIssueHelpers, value);
     });

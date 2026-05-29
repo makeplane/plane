@@ -22,7 +22,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, ProjectUserProperty, User, WorkspaceMember, DraftIssue
+from plane.db.models import Project, ProjectMember, User, WorkspaceMember, DraftIssue
 from plane.app.views.workspace.invite import _add_admin_to_all_projects
 from plane.utils.cache import invalidate_cache
 

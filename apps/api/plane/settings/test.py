@@ -24,6 +24,6 @@ REDIS_SSL = False
 
 # Remove optional apps not available in test environment
 INSTALLED_APPS = [  # noqa
-    app for app in INSTALLED_APPS if app != "django_celery_beat"
+    app for app in INSTALLED_APPS if app != "django_celery_beat"  # noqa: F405
 ]
 INSTALLED_APPS.append("plane.tests")

@@ -215,7 +215,12 @@ class InstanceAdminSignUpEndpoint(View):
                 password=make_password(password),
                 is_password_autoset=False,
             )
-            _ = Profile.objects.create(user=user, company_name=company_name)
+            # Instance admin already provided name during signup — mark the
+            # profile-setup onboarding step complete so first login skips it.
+            profile = Profile.objects.create(user=user, company_name=company_name)
+            if user.first_name or user.last_name:
+                profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
+                profile.save(update_fields=["onboarding_step"])
             # settings last active for the user
             user.is_active = True
             user.last_active = timezone.now()
