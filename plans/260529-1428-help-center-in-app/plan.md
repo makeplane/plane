@@ -42,6 +42,14 @@ which **minimizes** core touches: the PowerK static command + sidebar Help-menu 
 | D4  | **Full UX recommendation set**                  | Apply the complete UX set: fixed toolbar, preview, accent-folded VI search (app-managed — prod DB has no `unaccent` extension), in-article TOC, prominent top-level sidebar Help nav entry, visual icon picker, copy-between-locales, prev/next + related articles.                                                                                                                                                                                             |
 | D5  | **NO Cmd+K Help search; all lookup in `/help`** | Drop the Cmd+K search-results help group (supersedes D4's UX g3). Cmd+K keeps ONLY the open-Help-Center command. ALL help lookup happens in the in-page `/help` search box, which MUST support **multilingual search (matches content across all 3 locales VI/EN/KO)** AND **Vietnamese accent-insensitive search** (folded `search_text` column + folded query term). `searchWorkspace()` / `IWorkspaceSearchResults` are NOT modified — keeps core untouched. |
 
+### User Decisions — Validation Session 3 (2026-05-30 — MAJOR PIVOT, do NOT reverse)
+
+| ID  | Decision                                    | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D6  | **Help Center is INSTANCE-GLOBAL / SHARED** | Bank runs ~100 workspaces (one per department). The Help Center is ONE shared platform user guide visible by default in EVERY workspace — NOT per-workspace content. **Reverses Locked Decision #4's workspace-scoping and supersedes D1.** READ = any authenticated user in any workspace (global published content). WRITE/authoring = **God Mode / Instance Admin only** (not workspace admin). Authoring UI moves to `apps/admin` (God Mode, English-only chrome; content still VI/EN/KO). Models DROP the `workspace` FK; slug is globally unique. Backend split: read = `plane/app/` (`IsAuthenticated`, global), write = `plane/license/api/` (`InstanceAdminPermission`). Image assets need a non-workspace strategy (TBD from scout). |
+
+**Impact on phases:** P1 (models+migration) and P2 (API) rewritten for global + God-Mode-write; P4 (FE read service/store) adjusted to global routes; P3 (i18n) unaffected; P5 (reading UI) stays in `apps/web` but fetches global data; **P6 (authoring UI) moves from `apps/web/ce` to `apps/admin` God Mode**. The workspace-scoped code committed in commits `e1584e83`/`5545e0d2` is the pre-pivot baseline and is being reworked on this same branch.
+
 ## Phases
 
 | Phase | Name                                                                         | Priority | Effort | Status                               |
@@ -72,6 +80,9 @@ which **minimizes** core touches: the PowerK static command + sidebar Help-menu 
 
 ## Key References
 
+- **AUTHORITATIVE global design (D6 pivot):** `plans/reports/from-scout-to-cook-help-center-global-redesign-report.md`
+  — three-layer split (read=`plane/app` `IsAuthenticated` global; write=`plane/license/api` God Mode; authoring UI=`apps/admin`),
+  models drop workspace FK, asset strategy. **Where phase-01/02/04/06 (workspace-scoped) conflict, D6 + this report win.**
 - Scout findings: project-scoped Pages only, no workspace wiki; `Page` model
   `apps/api/plane/db/models/page.py`; app label `db`. **Do NOT hardcode the migration number** —
   branch from `develop` and number relative to the then-current tail (`0168` was measured on the docs branch).
