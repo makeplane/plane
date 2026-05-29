@@ -21,7 +21,7 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@plane/types";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 import { RelationIssueProperty } from "./properties";

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+export * from "./activity";
 export * from "./project_filters";
 export * from "./projects";
 export * from "./project_link";

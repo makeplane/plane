@@ -8,7 +8,7 @@ import { API_BASE_URL } from "@plane/constants";
 import type { TIssueRelation, TIssue } from "@plane/types";
 // helpers
 // Plane-web
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

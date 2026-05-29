@@ -14,7 +14,7 @@ import useKeypress from "@/hooks/use-keypress";
 // plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 // plane web types
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@plane/types";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();

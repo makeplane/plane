@@ -50,7 +50,6 @@ export interface TNavigationPreferences {
   projects: TProjectNavigationPreferences;
 }
 
-// Default preferences
 export const DEFAULT_PERSONAL_PREFERENCES: TPersonalNavigationPreferences = {
   items: {
     stickies: { enabled: false, sort_order: 0 },
@@ -69,7 +68,6 @@ export const DEFAULT_WORKSPACE_PREFERENCES: TWorkspaceNavigationPreferences = {
   items: {},
 };
 
-// App Rail preferences
 export type TAppRailDisplayMode = "icon_only" | "icon_with_label";
 
 export interface TAppRailPreferences {

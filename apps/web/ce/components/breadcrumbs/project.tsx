@@ -14,7 +14,7 @@ import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@plane/types";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { getRelationActivityContent, useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@plane/types";
 //
 import { IssueActivityBlockComponent } from "./";
 

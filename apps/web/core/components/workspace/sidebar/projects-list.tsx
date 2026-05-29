@@ -30,7 +30,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@plane/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
 

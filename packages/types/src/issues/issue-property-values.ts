@@ -4,5 +4,5 @@
  * See the LICENSE file for details.
  */
 
-export * from "./projects";
-export * from "./project-activity";
+export type TIssuePropertyValues = object;
+export type TIssuePropertyValueErrors = object;

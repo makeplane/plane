@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TProjectBaseActivity } from "@plane/types";
+import type { TProjectBaseActivity } from "../activity";
 
 export type TProjectActivity = TProjectBaseActivity & {
   content: string;
