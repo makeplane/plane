@@ -2,8 +2,8 @@
 
 > Thiết kế chi tiết tầng dữ liệu (PostgreSQL) cho **Shinhan Workspace (SHWS)**: cluster topology, tuning, backup, replication, audit, maintenance.
 
-**Status:** 🟡 Draft v0.1 — chờ DBA review
-**Cập nhật:** 2026-05-18
+**Status:** 🟡 Draft v0.2 — chờ DBA review
+**Cập nhật:** 2026-05-29
 **Liên quan:** [01-architecture-prod.md](./01-architecture-prod.md), [03-architecture-dr-site.md](./03-architecture-dr-site.md), [05-security-design.md](./05-security-design.md), [07-storage-design.md](./07-storage-design.md), [08-monitoring-design.md](./08-monitoring-design.md)
 
 ---
@@ -240,18 +240,28 @@ File: `/u01/pgsql/15/data/pg_hba.conf`
 ```text
 # TYPE  DATABASE        USER            ADDRESS                 METHOD          OPTIONS
 local   all             postgres                                peer
-local   replication     replicator                              peer
+# pgBackRest: cron chạy bởi OS postgres → map sang DB role backup (xem pg_ident bên dưới)
+local   all             backup                                  peer            map=pgbackrest
 # Plane app từ shwsap1p (kết nối trực tiếp, chỉ IP cụ thể)
 host    plane           plane_app       10.94.10.10/32          scram-sha-256
 # Local maintenance từ chính shwsdb1p
 host    plane           plane_app       127.0.0.1/32            scram-sha-256
-# Monitoring exporter từ mgmt VLAN
-host    postgres        monitoring      10.94.10.0/24           scram-sha-256
-# Replication cert-based mTLS từ DR
+# Monitoring exporter (co-located DATA node) — `all` để đọc cả `plane` lẫn `postgres`
+host    all             monitoring      10.94.10.0/24           scram-sha-256
+# Replication cert-based mTLS từ DR (standby pull — LUỒNG CHÍNH)
 hostssl replication     replicator      10.94.20.11/32          cert            clientcert=verify-full
 # Mặc định deny mọi truy cập khác (không catch-all /16)
 host    all             all             0.0.0.0/0               reject
 ```
+
+**`pg_ident.conf`** (map OS user → DB role cho pgBackRest local peer):
+
+```text
+# MAPNAME      SYSTEM-USERNAME   PG-USERNAME
+pgbackrest     postgres          backup
+```
+
+> Bỏ dòng `local replication replicator peer` cũ (vô dụng — không có OS user `replicator`; DR standby pull qua `hostssl` cert; initial `pg_basebackup` chạy từ DR qua TCP).
 
 ---
 
@@ -267,7 +277,7 @@ App (api/worker/beat) kết nối **trực tiếp** PG `shwsdb1p:5432` (TLS). **
 
 ### 6.2 Cấu hình Django
 
-`plane.env` trên APP node:
+`/opt/shws-secrets/.env.app` (symlink `/opt/shws-deployment/.env`, owner `shbvn:shbvn` — xem `05` §4.2) trên APP node:
 
 ```ini
 DATABASE_URL=postgresql://plane_app:<PLANE_APP_PW>@10.94.10.11:5432/plane?sslmode=verify-ca
@@ -294,13 +304,13 @@ PgBouncer (transaction pool) chỉ cần khi **client ≫ backend**: thêm APP n
 
 ### 7.2 Role
 
-| Role         | Loại               | Quyền                                                  | Storage password                   |
-| ------------ | ------------------ | ------------------------------------------------------ | ---------------------------------- |
-| `postgres`   | superuser          | full                                                   | systemd service env, peer auth     |
-| `replicator` | login, replication | streaming repl only                                    | mTLS cert, no password             |
-| `plane_app`  | login              | DML + DDL trên DB `plane` (Plane migration cần CREATE) | `/opt/shws-secrets/postgres.env`   |
-| `monitoring` | login              | `pg_monitor` role + read pg*stat*\*                    | `/opt/shws-secrets/monitoring.env` |
-| `backup`     | login, replication | pgBackRest stanza                                      | `/etc/pgbackrest/pgbackrest.conf`  |
+| Role         | Loại               | Quyền                                                  | Storage password                    |
+| ------------ | ------------------ | ------------------------------------------------------ | ----------------------------------- |
+| `postgres`   | superuser          | full                                                   | systemd service env, peer auth      |
+| `replicator` | login, replication | streaming repl only                                    | mTLS cert, no password              |
+| `plane_app`  | login              | DML + DDL trên DB `plane` (Plane migration cần CREATE) | `/opt/shws-secrets/postgres.env`    |
+| `monitoring` | login              | `pg_monitor` role + read pg*stat*\*                    | `/opt/shws-secrets/monitoring.env`  |
+| `backup`     | login, replication | pgBackRest stanza                                      | local peer + pg_ident (no password) |
 
 > Inventory chi tiết + rotation policy đã ghi tại [05-security-design.md](./05-security-design.md) §3.
 
@@ -373,7 +383,7 @@ repo1-retention-archive=7
 repo1-retention-archive-type=diff
 repo1-cipher-type=aes-256-cbc
 # repo1-cipher-pass: passphrase string nạp vào conf qua include directive.
-# Quản lý: file /etc/pgbackrest/pgbackrest.conf.d/cipher.conf (mode 0600, root:postgres)
+# Quản lý: file /etc/pgbackrest/pgbackrest.conf.d/cipher.conf (mode 0600, postgres:postgres — no root)
 # chứa duy nhất dòng `repo1-cipher-pass=<32-byte hex generated by openssl rand -hex 32>`.
 # Backup cipher passphrase vào KeePass DBA + Infra Manager.
 process-max=4
@@ -410,8 +420,8 @@ File: `/etc/cron.d/pgbackrest-shws`
 # Expire (cleanup) — hàng ngày 04:00
 0 4 * * *  postgres  pgbackrest --stanza=shws-prod expire
 
-# Rsync repo sang NAS offsite — hàng ngày 05:00
-0 5 * * *  root      /usr/local/bin/shws-backup-to-nas.sh
+# Rsync repo sang NAS offsite — hàng ngày 05:00 (no root — postgres sở hữu /u03/pgbackup)
+0 5 * * *  postgres  /usr/local/bin/shws-backup-to-nas.sh
 
 # Verify (check repo integrity) — hàng tuần Chủ nhật 06:00
 0 6 * * 0  postgres  pgbackrest --stanza=shws-prod check
@@ -419,7 +429,7 @@ File: `/etc/cron.d/pgbackrest-shws`
 
 Script `shws-backup-to-nas.sh` (rsync wrapper) trách nhiệm:
 
-- Mount NAS share read-write nếu cần (TBD path từ Infra)
+- NAS share pre-mount qua `/etc/fstab` (autofs) — KHÔNG mount runtime bằng root; postgres chỉ rsync (TBD path từ Infra)
 - `rsync -aHAX --delete-after /u03/pgbackup/ /mnt/nas/shws-prod-backup/`
 - Log → `/var/log/shws/backup-to-nas.log`
 - Alert nếu rsync fail hoặc latency > 30 phút
@@ -436,7 +446,7 @@ Script `shws-backup-to-nas.sh` (rsync wrapper) trách nhiệm:
 ### 9.5 Backup encryption
 
 - `repo1-cipher-type=aes-256-cbc` enable encryption tại repo
-- Cipher pass lưu `/opt/shws-secrets/pgbackrest-cipher.txt` mode 0600
+- Cipher pass lưu **`/etc/pgbackrest/pgbackrest.conf.d/cipher.conf`** mode 0600 `postgres:postgres` (canonical — xem §9.2, `05` §4.2); backup passphrase vào KeePass DBA + Infra Mgr (DB-R-03)
 - WAL files & backup files đều encrypted at rest
 
 ---
@@ -461,21 +471,30 @@ SELECT pg_create_physical_replication_slot('shws_dr_slot');
 
 ### 10.2 Standby (`shwsdb1dr`) cấu hình
 
-DR node chạy pgBackRest stanza **riêng**, repo nội bộ `/u03/pgbackup` của DR (backup lấy từ standby — "backup-of-backup", repo **độc lập từng site, KHÔNG ship qua WAN**). Đường đồng bộ real-time PROD→DR là **streaming replication** (slot `shws_dr_slot`); `restore_command` archive-get chỉ đọc repo **DR-local** làm fallback khi streaming hở. Cơ chế seed/nuôi WAL cho repo DR-local — xem câu hỏi mở.
+DR node chạy pgBackRest stanza **riêng `shws-dr`**, repo nội bộ `/u03/pgbackup` của DR (backup lấy từ standby — "backup-of-backup", repo **độc lập từng site, KHÔNG ship qua WAN**). Đường đồng bộ real-time PROD→DR là **streaming replication** (slot `shws_dr_slot`); `restore_command` archive-get đọc repo **DR-local** làm fallback khi streaming hở.
+
+**Seed/nuôi WAL cho repo DR-local (CHỐT — không ship qua WAN):** DR standby bật `archive_mode = always` (PG12+) → standby tự `archive-push` WAL nó đã nhận qua streaming/replay vào repo DR-local `shws-dr`. Nhờ vậy `archive-get` luôn có WAL nội site, không cần WAN cho backup. pgBackRest stanza `shws-dr` đặt **`pg1-path` = data dir của standby** (`/u01/pgsql/15/data` trên `shwsdb1dr`), chạy full/diff/incr ngay trên node DR — **KHÔNG** bật tùy chọn `backup-standby` (vốn cần kết nối primary/WAN).
 
 `postgresql.auto.conf` (sau khi `pg_basebackup`):
 
 ```ini
 primary_conninfo = 'host=10.94.10.11 port=5432 user=replicator sslmode=verify-full sslcert=/u01/pgsql/15/data/replicator.crt sslkey=/u01/pgsql/15/data/replicator.key sslrootcert=/u01/pgsql/15/data/bank-ca.crt application_name=shws_dr'
 primary_slot_name = 'shws_dr_slot'
-restore_command = 'pgbackrest --stanza=shws-prod archive-get %f %p'
+restore_command = 'pgbackrest --stanza=shws-dr archive-get %f %p'   # repo DR-local
 recovery_target_timeline = 'latest'
 hot_standby = on
 ```
 
+Và trong `postgresql.conf` của DR (để standby archive WAL vào repo local — không qua WAN):
+
+```ini
+archive_mode = always                                              # PG12+: standby cũng archive
+archive_command = 'pgbackrest --stanza=shws-dr archive-push %p'    # repo DR-local
+```
+
 File `standby.signal` tồn tại trong `$PGDATA` để PG khởi động ở recovery mode.
 
-> **Câu hỏi mở (DBA):** Cách seed/nuôi WAL cho repo DR-local để `archive-get` liền mạch mà **KHÔNG ship qua WAN** — vd. DR backup từ standby + `archive_mode` phù hợp, hoặc seed từ NAS offsite nội site DR. (Đã loại phương án `pgbackrest server-start` TLS push qua WAN — WAN chỉ dành cho PG streaming + monitoring, xem [03](./03-architecture-dr-site.md) §8 + [04](./04-network-design.md) §9.)
+> **Xử lý slot-drop:** nếu DR down lâu khiến WAL trên primary vượt `max_slot_wal_keep_size=4GB` → PG auto-drop `shws_dr_slot` (chống fill `/u02` primary). Khi đó streaming không tự nối lại → **re-seed DR bằng `pg_basebackup`** (10–60 phút, xem [03](./03-architecture-dr-site.md) §4.2). GĐ1 chấp nhận thao tác manual; RTO khôi phục DR vẫn < 1h. (Đã loại `pgbackrest server-start` TLS push qua WAN — WAN chỉ cho PG streaming + monitoring, xem [03](./03-architecture-dr-site.md) §8 + [04](./04-network-design.md) §9.)
 
 ### 10.3 Monitor replication lag
 
@@ -682,7 +701,7 @@ Chi tiết xem [08-monitoring-design.md](./08-monitoring-design.md). Metrics c�
 3. **Maintenance window:** Có lịch maintenance bank chung (NPP, SAN downtime) cần align không?
 4. **DBA team:** Ai owner DB ops giai đoạn 1? On-call rotation?
 5. **Schema review process:** Plane upstream migration nào cần SHBVN review trước khi apply (vd. data migration)?
-6. **TDE (Transparent Data Encryption):** Bank có yêu cầu encryption at rest level filesystem? (Hiện chỉ encryption ở backup repo)
+6. **TDE / encryption-at-rest:** theo phát biểu canonical [05](./05-security-design.md) §10.1 — GĐ1 chỉ encrypt backup repo (AES-256) + VLAN/physical; disk-level TDE chờ bank confirm.
 7. **Resource scaling triggers:** Khi nào tăng RAM/CPU DB node? (Xem capacity-planning file 09)
 8. **Patroni Phase 2 timeline:** Mục tiêu năm 2027 có khả thi? Cần budget thêm 1 VM cho etcd quorum.
 9. **Cross-DB analytics:** Sau này có nhu cầu data warehouse / BI tool đọc Plane DB? → ảnh hưởng read-only replica strategy.

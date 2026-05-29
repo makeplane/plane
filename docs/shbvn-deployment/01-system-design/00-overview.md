@@ -93,17 +93,17 @@ Triển khai **Shinhan Workspace (SHWS)** — hệ thống quản lý dự án n
 
 ## 6. Thông số mục tiêu
 
-| Chỉ số          | Mục tiêu                                    | Đo lường                |
-| --------------- | ------------------------------------------- | ----------------------- |
-| Uptime SLA      | 99.5% (giai đoạn 1), 99.9% (giai đoạn 2 HA) | Monthly availability    |
-| API p95 latency | < 500ms                                     | Prometheus histogram    |
-| API p99 latency | < 1500ms                                    | Prometheus histogram    |
-| Error rate      | < 1%                                        | 4xx/5xx ratio           |
-| RPO (data loss) | < 15 phút                                   | WAL archive interval    |
-| RTO (recovery)  | < 1 giờ                                     | pgBackRest restore test |
-| CPU sustained   | < 70%                                       | node_exporter           |
-| RAM sustained   | < 80%                                       | node_exporter           |
-| Disk free       | > 20%                                       | Alert when below        |
+| Chỉ số          | Mục tiêu                                    | Đo lường                                            |
+| --------------- | ------------------------------------------- | --------------------------------------------------- |
+| Uptime SLA      | 99.5% (giai đoạn 1), 99.9% (giai đoạn 2 HA) | Monthly availability                                |
+| API p95 latency | < 500ms                                     | Prometheus histogram                                |
+| API p99 latency | < 1500ms                                    | Prometheus histogram                                |
+| Error rate      | < 1%                                        | 4xx/5xx ratio                                       |
+| RPO (data loss) | < 15 phút (thực đạt ~30s)                   | Streaming replay lag (chính) + WAL archive fallback |
+| RTO (recovery)  | < 1 giờ                                     | pgBackRest restore test                             |
+| CPU sustained   | < 70%                                       | node_exporter                                       |
+| RAM sustained   | < 80%                                       | node_exporter                                       |
+| Disk free       | > 20%                                       | Alert when below                                    |
 
 ## 7. Quyết định kiến trúc chính
 
@@ -129,7 +129,7 @@ Tóm tắt (chi tiết trong ADR):
 - [x] ~~Bank đã có Prometheus/Grafana?~~ → **CÓ SẴN (2026-05-26).** Tích hợp vào hạ tầng monitoring hiện hữu của bank, không dựng mới (xem `08-monitoring-design.md` khi viết)
 - [ ] Bank có Harbor/Nexus private registry không, hay dùng USB bundle?
 - [ ] Cert management: bank internal CA workflow như thế nào?
-- [x] ~~Maintenance window~~ → **CHỐT (2026-05-26):** Daily — checklist status các service **đầu giờ làm việc** (`03-operations/routine-maintenance.md`). Thao tác rủi ro (patch/restart): cuối tuần ngoài giờ giao dịch.
+- [x] ~~Maintenance window~~ → **CHỐT (2026-05-26):** Daily — checklist status các service **đầu giờ làm việc** (`03-operations/routine-maintenance.md`). Phân vai: `mon` xem status + log (read-only); thao tác rủi ro (patch/restart) do `shbvn`/`postgres` thực hiện cuối tuần ngoài giờ giao dịch (no root — xem `05-security-design.md` §7).
 
 ## 9. Tài liệu tham chiếu
 

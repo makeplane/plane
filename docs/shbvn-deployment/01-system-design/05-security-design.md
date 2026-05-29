@@ -1,8 +1,8 @@
 # 05 — Thiết kế Bảo mật — Shinhan Workspace (SHWS)
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-18
-**Phiên bản:** 0.1
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.2
 **Owner:** duonglx
 
 ---
@@ -86,10 +86,10 @@ User logged in, redirect dashboard
 | Account      | Mục đích                           | Stored where                                                                   |
 | ------------ | ---------------------------------- | ------------------------------------------------------------------------------ |
 | `replicator` | PG streaming replication PROD → DR | **mTLS client cert** (không password), key `/u01/pgsql/15/data/replicator.key` |
-| `pgbackrest` | Backup tool execute                | `.env` + pgBackRest config                                                     |
-| `plane_app`  | Django connect to PG               | `.env` trên APP node                                                           |
-| `minio_root` | MinIO admin                        | `.env` trên DATA node                                                          |
-| `monitoring` | postgres_exporter read-only        | `.env` trên monitoring stack                                                   |
+| `backup`     | pgBackRest stanza execute          | `/etc/pgbackrest/pgbackrest.conf` (+ cipher.conf §4.2)                         |
+| `plane_app`  | Django connect to PG               | `/opt/shws-secrets/.env.app` (APP); `postgres.env` (DATA, DBA ref)             |
+| `minio_root` | MinIO admin                        | `/opt/shws-secrets/.env.data` (DATA node)                                      |
+| `monitoring` | postgres_exporter read-only        | `/opt/shws-secrets/monitoring.env` (DATA — exporter co-located)                |
 
 **Rotation cadence:** Yearly (manual, lên runbook).
 
@@ -136,28 +136,35 @@ Plane built-in 4 role levels (xem `apps/api/plane/db/models/workspace.py`):
 
 ### 4.2 File storage convention
 
+Owner theo mô hình 3-user (§7) — **không owner `root`** do người tạo:
+
 ```
 /opt/shws-secrets/
-├── .env.app           mode 0600  owner root         # APP node
-├── .env.data          mode 0600  owner root         # DATA node
-├── .env.replicator    mode 0600  owner postgres     # DR DATA only
-└── README.md          mode 0644                     # Reference docs
+├── .env.app           mode 0600  owner shbvn:shbvn        # APP node (Docker env_file)
+├── .env.data          mode 0600  owner shbvn:shbvn        # DATA node (minio container)
+├── .env.replicator    mode 0600  owner postgres:postgres  # DR DATA only (mTLS — thực tế dùng cert)
+├── postgres.env       mode 0600  owner postgres:postgres  # plane_app pw (DBA tham chiếu)
+├── monitoring.env     mode 0600  owner shbvn:shbvn         # postgres_exporter (container do shbvn chạy)
+└── README.md          mode 0644                            # Reference docs
 
-/etc/pki/tls/private/                                    # Nginx (APP/UAT)
-├── shwsap1p.bank.local.key      mode 0600  owner root
-└── shws-uat.bank.local.key      mode 0600  owner root
+/etc/pki/tls/private/                                         # Nginx (APP/UAT) — proxy container bind-mount
+├── shwsap1p.bank.local.key      mode 0600  owner shbvn:shbvn
+└── shws-uat.bank.local.key      mode 0600  owner shbvn:shbvn
 
-/u01/pgsql/15/data/                                      # PostgreSQL certs trong PGDATA (khớp 06)
-├── server.key                   mode 0600  owner postgres   # PG server (shwsdb1p / shwsdb1dr)
-└── replicator.key               mode 0600  owner postgres   # mTLS replication client
+/u01/pgsql/15/data/                                          # PostgreSQL certs trong PGDATA (khớp 06)
+├── server.key                   mode 0600  owner postgres:postgres   # PG server (shwsdb1p / shwsdb1dr)
+└── replicator.key               mode 0600  owner postgres:postgres   # mTLS replication client
+
+/etc/pgbackrest/pgbackrest.conf.d/
+└── cipher.conf                  mode 0600  owner postgres:postgres   # repo cipher pass (canonical — khớp 06 §9.2)
 ```
 
 **Nguyên tắc:**
 
-- Secret file **OFF** working tree (`/opt/shws-secrets/`), KHÔNG đặt trong repo source
-- Mode `0600` (rw owner only) hoặc `0640` nếu cần group read
-- Owner phụ thuộc service: `root` cho Docker, `postgres` cho PG cert
-- Symlink từ `/opt/shws/deployment/.env` → `/opt/shws-secrets/.env.app`
+- Secret file **OFF** working tree (`/opt/shws-secrets/`), KHÔNG đặt trong repo source.
+- Mode `0600` (rw owner only); owner theo service: `shbvn` cho secret Docker đọc, `postgres` cho PG/backup.
+- Daemon Docker chạy root nhưng đọc `.env` qua `env_file` với UID người gọi (`shbvn`) — không cần secret owner root.
+- Symlink `/opt/shws-deployment/.env` → `/opt/shws-secrets/.env.app` (deployment dir nhất quán, dùng dấu gạch nối `shws-deployment`).
 
 ### 4.3 Rotation policy
 
@@ -254,6 +261,8 @@ hostssl replication replicator 10.94.20.11/32 cert clientcert=verify-full
 | shwsap1t.bank.local  | shwsap1t                | Yes            |
 | replicator-client    | shwsdb1dr (client mTLS) | Yes            |
 
+> **MinIO (9000) = HTTP** (nội VLAN private, không expose ngoài — chấp nhận plaintext, không cần cert). Khớp `04 §8.1` + `01 §2`.
+
 ---
 
 ## 6. Audit logging — 5 năm retention
@@ -319,12 +328,12 @@ rsyslog (local) — buffer + format RFC 5424
 
 ---
 
-## 7. SSH access via Hiware
+## 7. SSH access via Hiware & mô hình OS user
 
 Bank đã setup **Hiware PAM** làm SSH proxy. SHWS không cần config thêm cấp infrastructure:
 
 ```
-SRE/DBA workstation
+shbvn / postgres / mon workstation
    │
    ▼ Hiware client
 [Hiware PAM proxy]    ──► Audit + session recording
@@ -339,29 +348,57 @@ SRE/DBA workstation
 PermitRootLogin no
 PasswordAuthentication no       # Chỉ key, Hiware inject key
 PubkeyAuthentication yes
-AllowUsers app sre dba          # Whitelist users
-AllowGroups wheel               # Hoặc group
+AllowUsers shbvn postgres mon   # Whitelist 3 user — KHÔNG root
 ClientAliveInterval 300
 ClientAliveCountMax 2
 ```
 
-**Account local trên server:**
+### 7.1 Mô hình 3 OS user (no-root-login)
 
-- `app` — runtime user cho gunicorn, không sudo
-- `sre` — Ops, có sudo (restricted via sudoers)
-- `dba` — DBA, có sudo cho `systemctl restart postgresql-*`
-- `postgres` — PG service account, không SSH login
+Nguyên tắc **no-root-login thực dụng**: tắt login root + không vận hành routine bằng root. Các daemon hệ thống (`dockerd`, `multipathd`, `systemd`, `auditd`, `rsyslog`; `postgresql` do systemd start rồi drop xuống `postgres`) **vẫn chạy root** vì là dịch vụ OS quản lý — đây là ngoại lệ chấp nhận được, không phải thao tác người dùng.
 
-**Sudoers (`/etc/sudoers.d/shws`):**
+| User       | Loại          | Node       | Groups                   | SSH        | Mục đích                                                          |
+| ---------- | ------------- | ---------- | ------------------------ | ---------- | ----------------------------------------------------------------- |
+| `shbvn`    | admin         | app + data | `docker`                 | Hiware key | Quản trị app + Docker cả 2 node (api/web/proxy + minio/exporters) |
+| `postgres` | service + DBA | data       | —                        | Hiware key | PostgreSQL service account **kiêm** DBA ops qua sudo              |
+| `mon`      | read-only     | tất cả     | `adm`, `systemd-journal` | Hiware key | Đọc log + `systemctl status`, không thay đổi state                |
+
+> OS user PostgreSQL giữ tên chuẩn `postgres` (PGDG RPM hardcode). Yêu cầu "postgre" = `postgres`.
+
+**Sudoers (`/etc/sudoers.d/shws`) — least-privilege, NOPASSWD giới hạn:**
 
 ```
-sre ALL=(ALL) NOPASSWD: /bin/systemctl restart docker, \
-                         /usr/bin/docker compose *, \
-                         /usr/bin/journalctl *
-dba ALL=(postgres) ALL
-dba ALL=(ALL) NOPASSWD: /bin/systemctl * postgresql-*, \
-                         /usr/bin/pgbackrest *
+# shbvn: Docker + service docker (KHÔNG full root)
+shbvn ALL=(ALL) NOPASSWD: /usr/bin/docker compose *, \
+                          /bin/systemctl * docker, \
+                          /usr/bin/journalctl -u docker *
+
+# postgres: PG service + backup (DBA ops)
+postgres ALL=(ALL) NOPASSWD: /bin/systemctl * postgresql-15, \
+                             /usr/bin/pgbackrest *, \
+                             /usr/bin/pg_ctl *
+
+# mon: KHÔNG sudo — chỉ group adm + systemd-journal để đọc log
 ```
+
+### 7.2 Cảnh báo: `docker` group ≈ root-equivalent
+
+Cho `shbvn` vào group `docker` đồng nghĩa trao quyền **tương đương root** (Docker socket mount được host filesystem). Mitigation:
+
+- Mọi phiên SSH qua **Hiware PAM** → session recording + audit đầy đủ.
+- `auditd` log mọi `sudo` + truy cập file nhạy cảm.
+- Chỉ duy nhất `shbvn` trong group `docker`; `mon`/`postgres` tuyệt đối không.
+- **GĐ2 cân nhắc:** rootless Docker / sudo-scoped docker để loại bỏ docker-group (cần PoC trên RHEL air-gap).
+
+### 7.3 `mon` đọc log read-only (không docker group, không sudo)
+
+PROD/DR daemon.json dùng `log-driver=journald` (xem `04` §2.3) → log **mọi container** (proxy/nginx, api, worker, live…) vào journald. `mon` quan sát qua:
+
+- `journalctl -u docker`, `journalctl CONTAINER_NAME=plane-api` / `...proxy` (group `systemd-journal`) — gồm cả Nginx access/error log (nằm trong container `proxy`, không phải host)
+- `/var/log/postgresql/*` (PG **native** trên host; group `adm`; nếu PG log 0600 `postgres` → `setfacl -R -m g:adm:rX /var/log/postgresql`), `/var/log/pgbackrest/*`
+- `systemctl status <service>` (không cần quyền đặc biệt)
+
+`mon` **không** có quyền ghi/restart/exec — chỉ quan sát. Phù hợp checklist "đầu giờ" (xem [`00-overview.md`](./00-overview.md) §8).
 
 ---
 
@@ -411,7 +448,7 @@ Docker bridge network có **internal isolation**:
 
 - `proxy` container chỉ exposed external (host port 443)
 - Các container backend không bind host port (chỉ Docker network)
-- `plane-db`, `plane-redis`, `plane-mq` không reachable từ ngoài VM
+- `plane-redis`, `plane-mq` không reachable từ ngoài VM (PROD APP **không có** `plane-db` — PG native trên DATA node; UAT all-in-one mới có `plane-db` container)
 
 ---
 
@@ -446,18 +483,18 @@ Docker bridge network có **internal isolation**:
 
 ### 10.1 Thông tư 09/2020/TT-NHNN
 
-| Yêu cầu                            | Đáp ứng                                                    |
-| ---------------------------------- | ---------------------------------------------------------- |
-| Authentication mạnh                | SwingSSO (2FA theo policy bank) ✓                          |
-| Authorization rõ ràng              | Plane RBAC 4 levels ✓                                      |
-| Audit log đầy đủ + 5 năm retention | rsyslog → SIEM, 5 năm ✓                                    |
-| Encryption in transit              | TLS 1.2+, mTLS replication ✓                               |
-| Encryption at rest                 | EMC SAN level (TBD confirm) hoặc VLAN/physical security ⚠️ |
-| Backup + DR                        | pgBackRest + DR site streaming ✓                           |
-| Incident response                  | Runbook 03-operations/incident-response.md ✓               |
-| Vulnerability mgmt                 | Quarterly patch, annual pentest ✓                          |
-| Access control                     | Hiware PAM + sudo restricted ✓                             |
-| Change management                  | Plan + ADR + git history ✓                                 |
+| Yêu cầu                            | Đáp ứng                                                                                                                                                                                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Authentication mạnh                | SwingSSO (2FA theo policy bank) ✓                                                                                                                                                                                                         |
+| Authorization rõ ràng              | Plane RBAC 4 levels ✓                                                                                                                                                                                                                     |
+| Audit log đầy đủ + 5 năm retention | rsyslog → SIEM, 5 năm ✓                                                                                                                                                                                                                   |
+| Encryption in transit              | TLS 1.2+, mTLS replication ✓                                                                                                                                                                                                              |
+| Encryption at rest                 | **CANONICAL (06/07 trỏ về):** GĐ1 = pgBackRest repo encrypted AES-256 + VLAN/physical security (đủ theo đánh giá hiện tại); EMC array-level encryption do **ICTP** xác nhận; disk-level TDE **chưa bật** — chờ bank confirm yêu cầu (§14) |
+| Backup + DR                        | pgBackRest + DR site streaming ✓                                                                                                                                                                                                          |
+| Incident response                  | Runbook 03-operations/incident-response.md ✓                                                                                                                                                                                              |
+| Vulnerability mgmt                 | Quarterly patch, annual pentest ✓                                                                                                                                                                                                         |
+| Access control                     | Hiware PAM + sudo restricted ✓                                                                                                                                                                                                            |
+| Change management                  | Plan + ADR + git history ✓                                                                                                                                                                                                                |
 
 ### 10.2 Defense-in-depth checklist
 
@@ -472,28 +509,30 @@ Docker bridge network có **internal isolation**:
 
 ## 11. Risk & mitigation
 
-| Risk                                 | Severity | Probability | Mitigation                                                |
-| ------------------------------------ | -------- | ----------- | --------------------------------------------------------- |
-| Secret leak qua `.env` không protect | Critical | Low         | Mode 0600, owner root, KHÔNG commit                       |
-| TLS cert hết hạn không alert         | High     | Medium      | Monitor 60/30/7 ngày trước                                |
-| SwingSSO ngắt → user không login     | High     | Low         | Document temporary local admin reset (chỉ SRE qua Hiware) |
-| Audit log forward fail → mất log     | Medium   | Medium      | Local buffer 30 ngày trong rsyslog                        |
-| Container CVE Critical chưa fix      | High     | Medium      | Trivy gate, quarterly scan                                |
-| Replication mTLS cert mismatch       | High     | Low         | Document cert renew workflow + DR drill verify            |
-| Insider threat — admin abuse         | High     | Low         | Hiware session recording + audit                          |
-| god-mode panel exposed               | Critical | Low         | IP allowlist + audit log mọi access                       |
-| Container chạy as root               | Medium   | Low         | `user: "1000:1000"` in compose                            |
-| Postgres password leak qua log       | Critical | Low         | Plane app KHÔNG log password, Django filter               |
+| Risk                                 | Severity | Probability | Mitigation                                                        |
+| ------------------------------------ | -------- | ----------- | ----------------------------------------------------------------- |
+| Secret leak qua `.env` không protect | Critical | Low         | Mode 0600, owner `shbvn`/`postgres` (§4.2), KHÔNG commit          |
+| TLS cert hết hạn không alert         | High     | Medium      | Monitor 60/30/7 ngày trước                                        |
+| SwingSSO ngắt → user không login     | High     | Low         | Document temporary local admin reset (chỉ SRE qua Hiware)         |
+| Audit log forward fail → mất log     | Medium   | Medium      | Local buffer 30 ngày trong rsyslog                                |
+| Container CVE Critical chưa fix      | High     | Medium      | Trivy gate, quarterly scan                                        |
+| Replication mTLS cert mismatch       | High     | Low         | Document cert renew workflow + DR drill verify                    |
+| Insider threat — admin abuse         | High     | Low         | Hiware session recording + audit                                  |
+| god-mode panel exposed               | Critical | Low         | IP allowlist + audit log mọi access                               |
+| Container chạy as root               | Medium   | Low         | `user: "1000:1000"` (map UID `shbvn`) in compose; §7 no-root      |
+| `shbvn` trong `docker` group ≈ root  | High     | Low         | Hiware session recording + auditd; chỉ shbvn; rootless GĐ2 (§7.2) |
+| Postgres password leak qua log       | Critical | Low         | Plane app KHÔNG log password, Django filter                       |
 
 ---
 
 ## 12. Decisions liên quan (ADR)
 
-- Secret management approach (`.env` mode 0600) — pending `adr-010`
-- Audit retention 5 năm theo Thông tư 09 — pending `adr-011`
-- Container hardening config — pending `adr-012`
+- OS user/privilege model (3-user `shbvn`/`postgres`/`mon`, no-root-login) — [`adr-010`](../05-change-log/decisions/adr-010-os-user-privilege-model.md) ✅
+- Secret management approach (`.env` mode 0600) — pending `adr-011`
+- Audit retention 5 năm theo Thông tư 09 — pending `adr-012`
+- Container hardening config — pending `adr-013`
 
-(adr-009 đã dùng cho DC-DR replication 2 layer. Số ADR trên chốt khi tạo file ADR.)
+(adr-009 đã dùng cho DC-DR replication 2 layer. ADR-010 đã tạo cho mô hình user. Các ADR pending chốt khi tạo file.)
 
 ---
 

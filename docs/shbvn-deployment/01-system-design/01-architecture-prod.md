@@ -1,8 +1,8 @@
 # 01 — Kiến trúc PRODUCTION — Shinhan Workspace (SHWS)
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-26
-**Phiên bản:** 0.3
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.4
 **Owner:** duonglx
 **Supersedes:** `plans/reports/architecture-260513-1608-plane-2node-deployment.md` (raw draft)
 
@@ -12,7 +12,7 @@
 
 Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier separation** (SHWS được xây dựng trên Plane.so):
 
-- **APP NODE** — Docker compose stack: API, worker, beat, frontend, Redis, RabbitMQ, MinIO, Nginx
+- **APP NODE** — Docker compose stack: API, worker, beat-worker, live, frontend, Redis, RabbitMQ, Nginx (MinIO chạy trên DATA node)
 - **DATA NODE** — **Native PostgreSQL 15.7** trên RHEL 9.6 + EMC SAN multipath; **MinIO container** (tùy chọn) cho file storage
 
 **Nguyên tắc chính:**
@@ -41,7 +41,7 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
               ┌──────────────────────────────────────────────────┐
               │  APP NODE  (Hyper-V VM)                           │
               │  RHEL 9.6 · 8 vCPU / 16 GB RAM / 100 GB SSD       │
-              │  Hostname: shwsap1p · IP: 10.X.Y.10          │
+              │  Hostname: shwsap1p · IP: 10.94.10.10        │
               │                                                   │
               │  Docker Engine + Compose (docker-compose.shb.yml) │
               │                                                   │
@@ -62,7 +62,7 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
               ┌──────────────────────────────────────────────────┐
               │  DATA NODE  (Hyper-V VM)                          │
               │  RHEL 9.6 · 8 vCPU / 16 GB RAM                    │
-              │  Hostname: shwsdb1p · IP: 10.X.Y.11         │
+              │  Hostname: shwsdb1p · IP: 10.94.10.11        │
               │                                                   │
               │  ┌───────────────────────────────────────────┐   │
               │  │  NATIVE (systemd):                         │   │
@@ -102,17 +102,21 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
 **Docker:** Docker CE 27.x (offline RPM)
 **Compose file:** `docker-compose.shb.yml` (KHÔNG có service `plane-db`)
 
-| Container  | Image                                   | Vai trò                              |
-| ---------- | --------------------------------------- | ------------------------------------ |
-| `proxy`    | Build từ `apps/proxy/Dockerfile.ce`     | Nginx reverse proxy, TLS termination |
-| `web`      | Build từ `apps/web/Dockerfile`          | Frontend chính (React + Vite)        |
-| `space`    | Build từ `apps/space/Dockerfile`        | Public space frontend                |
-| `admin`    | Build từ `apps/admin/Dockerfile`        | God-mode admin panel                 |
-| `api`      | Build từ `apps/api/Dockerfile`          | Django REST API + gunicorn           |
-| `worker`   | Cùng image `api`, command Celery worker | Background jobs                      |
-| `beat`     | Cùng image `api`, command Celery beat   | Scheduled jobs                       |
-| `redis`    | `redis:7-alpine`                        | Cache + WebSocket pub/sub            |
-| `rabbitmq` | `rabbitmq:3.13.6-management-alpine`     | Celery broker                        |
+> Tên service khớp `docker-compose.shb.yml` thực tế. PROD dùng **image SHB prebuilt** load qua `docker load` (air-gap) — cột "Build từ" mô tả nguồn build trên build station.
+
+| Container     | Image                                   | Vai trò                                                   |
+| ------------- | --------------------------------------- | --------------------------------------------------------- |
+| `proxy`       | Build từ `apps/proxy/Dockerfile.ce`     | Nginx reverse proxy, TLS termination                      |
+| `web`         | Build từ `apps/web/Dockerfile`          | Frontend chính (React + Vite)                             |
+| `space`       | Build từ `apps/space/Dockerfile`        | Public space frontend                                     |
+| `admin`       | Build từ `apps/admin/Dockerfile`        | God-mode admin panel                                      |
+| `live`        | `makeplane/plane-live` (prebuilt SHB)   | WebSocket realtime (collaboration)                        |
+| `api`         | Build từ `apps/api/Dockerfile`          | Django REST API + gunicorn                                |
+| `worker`      | Cùng image `api`, command Celery worker | Background jobs                                           |
+| `beat-worker` | Cùng image `api`, command Celery beat   | Scheduled jobs                                            |
+| `migrator`    | Cùng image `api`, one-shot `migrate`    | Chạy DB migration lúc deploy rồi exit (không thường trực) |
+| `plane-redis` | `redis:7-alpine`                        | Cache + pub/sub                                           |
+| `plane-mq`    | `rabbitmq:3.13.6-management-alpine`     | Celery broker                                             |
 
 ### 3.2 DATA NODE
 
@@ -151,13 +155,14 @@ multipathd.service        enabled, running (SAN failover)
 | web                    | 0.5       | 512 MB       | 256 MB          | Vite preview / static serve                                      |
 | space                  | 0.3       | 256 MB       | 128 MB          |                                                                  |
 | admin                  | 0.3       | 256 MB       | 128 MB          |                                                                  |
-| api (gunicorn)         | 3.0       | 6 GB         | 4 GB            | **8 workers**, UvicornWorker (ASGI)                              |
+| live                   | 0.3       | 384 MB       | 192 MB          | WebSocket realtime (Node.js)                                     |
+| api (gunicorn)         | 2.7       | 5.5 GB       | 4 GB            | **8 workers**, UvicornWorker (ASGI)                              |
 | worker                 | 1.5       | 2 GB         | 1 GB            | **concurrency 4** (set `--concurrency`; Plane mặc định = số CPU) |
-| beat                   | 0.2       | 256 MB       | 128 MB          | Scheduler                                                        |
-| redis                  | 0.5       | 1 GB         | 512 MB          | maxmemory=1g, allkeys-lru                                        |
-| rabbitmq               | 0.7       | 1 GB         | 512 MB          | Default policies                                                 |
+| beat-worker            | 0.2       | 256 MB       | 128 MB          | Scheduler (Celery beat)                                          |
+| plane-redis            | 0.5       | 1 GB         | 512 MB          | maxmemory=1g, allkeys-lru                                        |
+| plane-mq               | 0.7       | 1 GB         | 512 MB          | RabbitMQ, default policies                                       |
 | **OS + Docker engine** | 0.5       | 4 GB         | —               | Page cache, syslog, audit                                        |
-| **Tổng**               | **~8**    | **~15.5 GB** |                 |                                                                  |
+| **Tổng**               | **~8**    | **~15.4 GB** |                 | `migrator` one-shot (deploy → exit) — không tính steady-state    |
 
 **Gunicorn config:**
 
@@ -282,7 +287,7 @@ Chi tiết trong `09-capacity-planning.md`. Projection:
 
 | Tiêu chí          | 1-VM all-in-one              | **2-node hybrid (CHỌN)**        |
 | ----------------- | ---------------------------- | ------------------------------- |
-| Tài nguyên tổng   | 8 vCPU / 16 GB               | 12 vCPU / 28 GB                 |
+| Tài nguyên tổng   | 8 vCPU / 16 GB               | 16 vCPU / 32 GB (2× 8/16)       |
 | Cô lập DB         | ❌ Tranh CPU với API         | ✅ DB riêng VM                  |
 | Backup            | Snapshot toàn VM (~16 GB)    | Chỉ DATA node (~12 GB)          |
 | Compliance bank   | ⚠️ Trung bình                | ✅ Tier separation rõ ràng      |
@@ -337,9 +342,9 @@ Chi tiết trong `09-capacity-planning.md`. Projection:
 
 ## 13. Câu hỏi mở
 
-- [ ] IP cụ thể của 2 node (chờ network team cấp): `10.X.Y.10`, `10.X.Y.11`
+- [ ] IP cụ thể của 2 node (placeholder `10.94.10.10`/`10.94.10.11` — chờ network team xác nhận dải thực tế)
 - [ ] Hostname theo chuẩn DNS bank: `shwsap1p.bank.local` / `shwsdb1p.bank.local`
 - [ ] LUN size cuối cùng có thể điều chỉnh theo capacity SAN
-- [ ] Có cần dedicated VM cho monitoring stack (Prometheus/Grafana) tách riêng, hay colocate trên APP node?
+- [x] ~~Có cần dedicated VM cho monitoring stack?~~ → **CHỐT:** dùng **Prometheus/Grafana sẵn có của bank**, KHÔNG dựng stack mới; SHWS chỉ cài exporter + cấp scrape target/alert/dashboard (xem `08-monitoring-design.md` §1). Bank Prometheus scrape qua mgmt VLAN (điểm `shws-mon` 10.94.40.20).
 - [ ] Disaster scenarios — bank có yêu cầu test cụ thể nào ngoài 8 failure modes ở §7?
 - [ ] PostgreSQL minor version bumping cadence — quarterly hay sau mỗi CVE?

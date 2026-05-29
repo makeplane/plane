@@ -1,8 +1,8 @@
 # 04 — Thiết kế Network — Shinhan Workspace (SHWS)
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-26
-**Phiên bản:** 0.2
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.3
 **Owner:** duonglx
 
 ---
@@ -39,36 +39,39 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
 
 ### 2.2 Bảng IP đề xuất
 
-| Server        | Hostname     | Subnet        | IP đề xuất    | Gateway    | Note            |
-| ------------- | ------------ | ------------- | ------------- | ---------- | --------------- |
-| **PROD APP**  | `shwsap1p`   | 10.94.10.0/24 | `10.94.10.10` | 10.94.10.1 | LAN PROD        |
-| **PROD DATA** | `shwsdb1p`   | 10.94.10.0/24 | `10.94.10.11` | 10.94.10.1 | LAN PROD        |
-| **DR APP**    | `shwsap1dr`  | 10.94.20.0/24 | `10.94.20.10` | 10.94.20.1 | LAN DR          |
-| **DR DATA**   | `shwsdb1dr`  | 10.94.20.0/24 | `10.94.20.11` | 10.94.20.1 | LAN DR          |
-| **UAT VM**    | `shwsap1t`   | 10.94.30.0/24 | `10.94.30.10` | 10.94.30.1 | LAN UAT         |
-| Build station | `shws-build` | 10.94.40.0/24 | `10.94.40.10` | 10.94.40.1 | Management      |
-| Monitoring    | `shws-mon`   | 10.94.40.0/24 | `10.94.40.20` | 10.94.40.1 | Mgmt (optional) |
+| Server        | Hostname     | Subnet        | IP đề xuất    | Gateway    | Note                                                                      |
+| ------------- | ------------ | ------------- | ------------- | ---------- | ------------------------------------------------------------------------- |
+| **PROD APP**  | `shwsap1p`   | 10.94.10.0/24 | `10.94.10.10` | 10.94.10.1 | LAN PROD                                                                  |
+| **PROD DATA** | `shwsdb1p`   | 10.94.10.0/24 | `10.94.10.11` | 10.94.10.1 | LAN PROD                                                                  |
+| **DR APP**    | `shwsap1dr`  | 10.94.20.0/24 | `10.94.20.10` | 10.94.20.1 | LAN DR                                                                    |
+| **DR DATA**   | `shwsdb1dr`  | 10.94.20.0/24 | `10.94.20.11` | 10.94.20.1 | LAN DR                                                                    |
+| **UAT VM**    | `shwsap1t`   | 10.94.30.0/24 | `10.94.30.10` | 10.94.30.1 | LAN UAT                                                                   |
+| Build station | `shws-build` | 10.94.40.0/24 | `10.94.40.10` | 10.94.40.1 | Management                                                                |
+| Monitoring    | `shws-mon`   | 10.94.40.0/24 | `10.94.40.20` | 10.94.40.1 | Mgmt — điểm scrape của **Prometheus bank** (không dựng stack mới, xem 08) |
 
 ### 2.3 Docker internal networks (KHÔNG trùng host VLAN)
 
 Để tránh đụng dải `10.94.0.0/16` của bank, Docker dùng **172.30.0.0/16**:
 
-| Stack                  | Bridge network  | CIDR             | Containers                                                   |
-| ---------------------- | --------------- | ---------------- | ------------------------------------------------------------ |
-| PROD APP (`shwsap1p`)  | `shws_prod_net` | `172.30.10.0/24` | proxy, web, space, admin, api, worker, beat, redis, rabbitmq |
-| UAT (`shwsap1t`)       | `shws_uat_net`  | `172.30.30.0/24` | All 11 containers (kể cả plane-db)                           |
-| DR APP (`shwsap1dr`)   | `shws_dr_net`   | `172.30.20.0/24` | All containers (down trừ khi failover)                       |
-| PROD DATA (`shwsdb1p`) | `shws_data_net` | `172.30.11.0/24` | plane-minio, postgres_exporter, node_exporter                |
-| DR DATA (`shwsdb1dr`)  | `shws_data_net` | `172.30.21.0/24` | Same as PROD DATA                                            |
+| Stack                  | Bridge network  | CIDR             | Containers                                                                                |
+| ---------------------- | --------------- | ---------------- | ----------------------------------------------------------------------------------------- |
+| PROD APP (`shwsap1p`)  | `shws_prod_net` | `172.30.10.0/24` | proxy, web, space, admin, live, api, worker, beat-worker, migrator, plane-redis, plane-mq |
+| UAT (`shwsap1t`)       | `shws_uat_net`  | `172.30.30.0/24` | All 11 containers (kể cả plane-db)                                                        |
+| DR APP (`shwsap1dr`)   | `shws_dr_net`   | `172.30.20.0/24` | All containers (down trừ khi failover)                                                    |
+| PROD DATA (`shwsdb1p`) | `shws_data_net` | `172.30.11.0/24` | plane-minio, postgres_exporter, node_exporter                                             |
+| DR DATA (`shwsdb1dr`)  | `shws_data_net` | `172.30.21.0/24` | Same as PROD DATA                                                                         |
 
 **Cấu hình `daemon.json`** (ví dụ PROD APP):
 
 ```json
 {
   "default-address-pools": [{ "base": "172.30.10.0/24", "size": 28 }],
-  "bip": "172.30.10.1/24"
+  "bip": "172.30.10.1/24",
+  "log-driver": "journald"
 }
 ```
+
+> **`log-driver: journald` (PROD/DR):** bắt buộc để `mon` đọc log container read-only qua `journalctl` (group `systemd-journal`, không cần docker group — xem `05` §7.3). UAT giữ `json-file` (không có user `mon`). **02-installation/prod runbook phải đồng bộ giá trị này.**
 
 ---
 
@@ -115,26 +118,29 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
 
 ### 4.1 `shwsap1p` (PROD APP) — Inbound
 
-| From source        | To dest    | Port | Protocol | Service        | Mục đích          |
-| ------------------ | ---------- | ---- | -------- | -------------- | ----------------- |
-| Bank user subnet   | `shwsap1p` | 443  | TCP/TLS  | Nginx proxy    | HTTPS user access |
-| Build station      | `shwsap1p` | 22   | TCP      | SSH            | Deploy + ops      |
-| `shws-mon`         | `shwsap1p` | 9100 | TCP      | node_exporter  | Metrics           |
-| `shws-mon`         | `shwsap1p` | 9323 | TCP      | Docker metrics | Container metrics |
-| Bank network admin | `shwsap1p` | ICMP | ICMP     | Ping           | Health check      |
-| **All other**      | `shwsap1p` | \*   | \*       | —              | **DENY**          |
+| From source            | To dest    | Port  | Protocol | Service           | Mục đích          |
+| ---------------------- | ---------- | ----- | -------- | ----------------- | ----------------- |
+| Bank user subnet       | `shwsap1p` | 443   | TCP/TLS  | Nginx proxy       | HTTPS user access |
+| Build station          | `shwsap1p` | 22    | TCP      | SSH               | Deploy + ops      |
+| Prometheus bank (mgmt) | `shwsap1p` | 9100  | TCP      | node_exporter     | System metrics    |
+| Prometheus bank (mgmt) | `shwsap1p` | 8080  | TCP      | cadvisor          | Container metrics |
+| Prometheus bank (mgmt) | `shwsap1p` | 9113  | TCP      | nginx-exporter    | HTTP req/4xx/5xx  |
+| Prometheus bank (mgmt) | `shwsap1p` | 9121  | TCP      | redis_exporter    | Redis metrics     |
+| Prometheus bank (mgmt) | `shwsap1p` | 15692 | TCP      | rabbitmq (plugin) | Queue metrics     |
+| Bank network admin     | `shwsap1p` | ICMP  | ICMP     | Ping              | Health check      |
+| **All other**          | `shwsap1p` | \*    | \*       | —                 | **DENY**          |
 
 ### 4.2 `shwsdb1p` (PROD DATA) — Inbound
 
-| From source               | To dest    | Port | Protocol | Service           | Mục đích                               |
-| ------------------------- | ---------- | ---- | -------- | ----------------- | -------------------------------------- |
-| `shwsap1p` (10.94.10.10)  | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | API → DB (kết nối trực tiếp)           |
-| `shwsap1p`                | `shwsdb1p` | 9000 | TCP/TLS  | MinIO API         | API → object storage                   |
-| `shwsdb1dr` (10.94.20.11) | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | DR pulls WAL (reverse setup, failback) |
-| Build station             | `shwsdb1p` | 22   | TCP      | SSH               | DBA ops                                |
-| `shws-mon`                | `shwsdb1p` | 9100 | TCP      | node_exporter     | Metrics                                |
-| `shws-mon`                | `shwsdb1p` | 9187 | TCP      | postgres_exporter | DB metrics                             |
-| **All other**             | `shwsdb1p` | \*   | \*       | —                 | **DENY**                               |
+| From source               | To dest    | Port | Protocol | Service           | Mục đích                                           |
+| ------------------------- | ---------- | ---- | -------- | ----------------- | -------------------------------------------------- |
+| `shwsap1p` (10.94.10.10)  | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | API → DB (kết nối trực tiếp)                       |
+| `shwsap1p`                | `shwsdb1p` | 9000 | TCP      | MinIO API         | API → object storage (HTTP, private VLAN)          |
+| `shwsdb1dr` (10.94.20.11) | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | **PG streaming — standby (DR) pull (LUỒNG CHÍNH)** |
+| Build station             | `shwsdb1p` | 22   | TCP      | SSH               | DBA ops                                            |
+| Prometheus bank (mgmt)    | `shwsdb1p` | 9100 | TCP      | node_exporter     | System metrics                                     |
+| Prometheus bank (mgmt)    | `shwsdb1p` | 9187 | TCP      | postgres_exporter | DB metrics                                         |
+| **All other**             | `shwsdb1p` | \*   | \*       | —                 | **DENY**                                           |
 
 ### 4.3 `shwsap1dr` (DR APP) — Inbound
 
@@ -142,27 +148,27 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
 | ------------------------ | ----------- | ---- | -------- | ------------- | --------------------------------------- |
 | Bank user subnet         | `shwsap1dr` | 443  | TCP/TLS  | Nginx         | **Chỉ sau failover**                    |
 | Build station            | `shwsap1dr` | 22   | TCP      | SSH           | Ops                                     |
-| `shws-mon`               | `shwsap1dr` | 9100 | TCP      | node_exporter | Metrics                                 |
+| Prometheus bank (mgmt)   | `shwsap1dr` | 9100 | TCP      | node_exporter | System metrics                          |
 | **Normal (no failover)** | \*          | \*   | \*       | —             | **DENY user traffic** (containers down) |
 
 ### 4.4 `shwsdb1dr` (DR DATA) — Inbound
 
-| From source              | To dest     | Port       | Protocol | Service              | Mục đích                           |
-| ------------------------ | ----------- | ---------- | -------- | -------------------- | ---------------------------------- |
-| `shwsdb1p` (10.94.10.11) | `shwsdb1dr` | 5432       | TCP/TLS  | PostgreSQL streaming | WAL replication target (DB tier ①) |
-| `shwsap1dr`              | `shwsdb1dr` | 5432, 9000 | TCP/TLS  | —                    | Sau failover                       |
-| Build station            | `shwsdb1dr` | 22         | TCP      | SSH                  | DBA ops                            |
-| `shws-mon`               | `shwsdb1dr` | 9100, 9187 | TCP      | exporters            | Metrics                            |
+| From source              | To dest     | Port       | Protocol            | Service    | Mục đích                                            |
+| ------------------------ | ----------- | ---------- | ------------------- | ---------- | --------------------------------------------------- |
+| `shwsdb1p` (10.94.10.11) | `shwsdb1dr` | 5432       | TCP/TLS             | PostgreSQL | **FAILBACK ONLY** (khi PROD làm standby pull từ DR) |
+| `shwsap1dr`              | `shwsdb1dr` | 5432, 9000 | 5432 TLS · 9000 TCP | —          | Sau failover (MinIO HTTP private VLAN)              |
+| Build station            | `shwsdb1dr` | 22         | TCP                 | SSH        | DBA ops                                             |
+| Prometheus bank (mgmt)   | `shwsdb1dr` | 9100, 9187 | TCP                 | exporters  | Metrics                                             |
 
 > **File MinIO DC→DR không dùng port 9000 app-level** (đã bỏ `mc mirror`). Đồng bộ qua **DELL EMC storage replication** (platform tier ②), do **ICTP (hạ tầng)** đảm nhiệm mặc định — ngoài phạm vi firewall server của SHWS (xem ADR-009).
 
 ### 4.5 `shwsap1t` (UAT) — Inbound
 
-| From source               | To dest    | Port | Protocol | Service       | Mục đích                  |
-| ------------------------- | ---------- | ---- | -------- | ------------- | ------------------------- |
-| Bank user (QA/dev) subnet | `shwsap1t` | 443  | TCP/TLS  | Nginx         | UAT access                |
-| Build station             | `shwsap1t` | 22   | TCP      | SSH           | Ops                       |
-| Optional `shws-mon`       | `shwsap1t` | 9100 | TCP      | node_exporter | Metrics (nếu bật sau này) |
+| From source               | To dest    | Port | Protocol | Service       | Mục đích                                |
+| ------------------------- | ---------- | ---- | -------- | ------------- | --------------------------------------- |
+| Bank user (QA/dev) subnet | `shwsap1t` | 443  | TCP/TLS  | Nginx         | UAT access                              |
+| Build station             | `shwsap1t` | 22   | TCP      | SSH           | Ops                                     |
+| Optional Prometheus bank  | `shwsap1t` | 9100 | TCP      | node_exporter | Metrics (UAT GĐ1 không bật — xem 02 §8) |
 
 ---
 
@@ -170,36 +176,36 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
 
 ### 5.1 `shwsap1p` (PROD APP) — Outbound
 
-| To dest                  | Port       | Protocol     | Service    | Mục đích               |
-| ------------------------ | ---------- | ------------ | ---------- | ---------------------- |
-| `shwsdb1p` (10.94.10.11) | 5432       | TCP/TLS      | PostgreSQL | API queries DB         |
-| `shwsdb1p` (10.94.10.11) | 9000       | TCP/TLS      | MinIO      | File upload/download   |
-| Bank LDAP server         | 636        | TCP/TLS      | LDAPS      | Auth                   |
-| Bank SwingSSO endpoint   | 443        | TCP/TLS      | HTTPS      | SSO auth               |
-| Bank SMTP server         | 587        | TCP/STARTTLS | SMTP       | Email notification     |
-| Bank NTP server          | 123        | UDP          | NTP        | Time sync              |
-| Bank DNS server          | 53         | UDP/TCP      | DNS        | Name resolution        |
-| Bank SIEM                | 514 / 6514 | TCP/TLS      | Syslog     | Audit log forward      |
-| **All other**            | \*         | \*           | —          | **DENY** (no internet) |
+| To dest                  | Port       | Protocol     | Service    | Mục đích                                  |
+| ------------------------ | ---------- | ------------ | ---------- | ----------------------------------------- |
+| `shwsdb1p` (10.94.10.11) | 5432       | TCP/TLS      | PostgreSQL | API queries DB                            |
+| `shwsdb1p` (10.94.10.11) | 9000       | TCP          | MinIO      | File upload/download (HTTP, private VLAN) |
+| Bank LDAP server         | 636        | TCP/TLS      | LDAPS      | Auth                                      |
+| Bank SwingSSO endpoint   | 443        | TCP/TLS      | HTTPS      | SSO auth                                  |
+| Bank SMTP server         | 587        | TCP/STARTTLS | SMTP       | Email notification                        |
+| Bank NTP server          | 123        | UDP          | NTP        | Time sync                                 |
+| Bank DNS server          | 53         | UDP/TCP      | DNS        | Name resolution                           |
+| Bank SIEM                | 514 / 6514 | TCP/TLS      | Syslog     | Audit log forward                         |
+| **All other**            | \*         | \*           | —          | **DENY** (no internet)                    |
 
 ### 5.2 `shwsdb1p` (PROD DATA) — Outbound
 
-| To dest                     | Port       | Protocol | Service    | Mục đích                               |
-| --------------------------- | ---------- | -------- | ---------- | -------------------------------------- |
-| `shwsdb1dr` (10.94.20.11)   | 5432       | TCP/TLS  | PostgreSQL | Streaming replication ship (DB tier ①) |
-| Bank NAS (optional offsite) | 445 / 2049 | TCP      | SMB / NFS  | pgBackRest offsite copy                |
-| Bank NTP server             | 123        | UDP      | NTP        | Time sync (rất quan trọng cho DB)      |
-| Bank DNS server             | 53         | UDP      | DNS        |                                        |
-| Bank SIEM                   | 514 / 6514 | TCP/TLS  | Syslog     | Audit log                              |
-| **All other**               | \*         | \*       | —          | **DENY**                               |
+| To dest                     | Port       | Protocol | Service    | Mục đích                                              |
+| --------------------------- | ---------- | -------- | ---------- | ----------------------------------------------------- |
+| `shwsdb1dr` (10.94.20.11)   | 5432       | TCP/TLS  | PostgreSQL | **FAILBACK ONLY** (luồng chính là DR pull — xem §5.3) |
+| Bank NAS (optional offsite) | 445 / 2049 | TCP      | SMB / NFS  | pgBackRest offsite copy                               |
+| Bank NTP server             | 123        | UDP      | NTP        | Time sync (rất quan trọng cho DB)                     |
+| Bank DNS server             | 53         | UDP      | DNS        |                                                       |
+| Bank SIEM                   | 514 / 6514 | TCP/TLS  | Syslog     | Audit log                                             |
+| **All other**               | \*         | \*       | —          | **DENY**                                              |
 
 ### 5.3 `shwsdb1dr` (DR DATA) — Outbound
 
-| To dest             | Port       | Protocol | Service    | Mục đích                                       |
-| ------------------- | ---------- | -------- | ---------- | ---------------------------------------------- |
-| `shwsdb1p`          | 5432       | TCP/TLS  | PostgreSQL | Pull-based streaming (standby kết nối primary) |
-| Bank NAS            | 445 / 2049 | TCP      | —          | DR backup offsite                              |
-| Bank NTP, DNS, SIEM | (như trên) | —        | —          | —                                              |
+| To dest             | Port       | Protocol | Service    | Mục đích                                                 |
+| ------------------- | ---------- | -------- | ---------- | -------------------------------------------------------- |
+| `shwsdb1p`          | 5432       | TCP/TLS  | PostgreSQL | **LUỒNG CHÍNH** — standby (DR) pull streaming từ primary |
+| Bank NAS            | 445 / 2049 | TCP      | —          | DR backup offsite                                        |
+| Bank NTP, DNS, SIEM | (như trên) | —        | —          | —                                                        |
 
 ### 5.4 `shwsap1t` (UAT) — Outbound
 
@@ -365,12 +371,14 @@ Trong giai đoạn ban đầu, build station có thể dùng `/etc/hosts` để 
 | `shwsdb1dr.bank.local`         | Server + Client (mTLS) | Bank internal CA | 1-2 năm  |
 | `shwsap1p` (replicator client) | Client (mTLS)          | Bank internal CA | 1 năm    |
 
+> **MinIO (port 9000) = HTTP, KHÔNG TLS:** MinIO chỉ phục vụ hop nội bộ APP↔DATA trong **VLAN private** (không expose ra ngoài), chấp nhận plaintext để đơn giản vận hành — không cấp cert MinIO. App nối `http://10.94.10.11:9000` (`AWS_S3_ENDPOINT_URL`). Đồng bộ `01 §2` + `05 §5.3` + install runbook `02-installation/prod`.
+
 ### 8.2 TLS endpoints
 
 - **External (user → proxy):** TLS 1.2/1.3, cipher theo policy bank
 - **Internal (api → PG):** PG `ssl=on`, `sslmode=verify-ca` từ phía client
 - **Replication (primary → standby):** mTLS bắt buộc
-- **MinIO:** TLS giữa các node (mặc dù VLAN private, vẫn nên TLS cho audit)
+- **MinIO:** HTTP nội VLAN private (APP↔DATA cùng tier, không expose ngoài) — chấp nhận plaintext, không TLS (xem §8.1)
 - **Syslog → SIEM:** RELP/TLS port 6514 (nếu bank hỗ trợ)
 
 ---
@@ -409,14 +417,14 @@ Mọi VLAN: **default DENY inbound** + DENY outbound, chỉ allow theo whitelist
 
 ### 10.2 Cross-VLAN rules
 
-| From      | To        | Allow              | Note                                                         |
-| --------- | --------- | ------------------ | ------------------------------------------------------------ |
-| User VLAN | PROD VLAN | 443/TCP            | User access only                                             |
-| PROD VLAN | DR VLAN   | 5432               | PG streaming (file/platform qua EMC — ngoài firewall server) |
-| DR VLAN   | PROD VLAN | 5432               | Failback scenario                                            |
-| UAT VLAN  | PROD VLAN | **DENY**           | Strict isolation                                             |
-| UAT VLAN  | DR VLAN   | **DENY**           | Strict isolation                                             |
-| Mgmt VLAN | All       | 22, exporter ports | Build + monitor                                              |
+| From      | To        | Allow              | Note                                                                                |
+| --------- | --------- | ------------------ | ----------------------------------------------------------------------------------- |
+| User VLAN | PROD VLAN | 443/TCP            | User access only                                                                    |
+| DR VLAN   | PROD VLAN | 5432               | **PG streaming LUỒNG CHÍNH** — standby pull (file/platform qua EMC, ngoài firewall) |
+| PROD VLAN | DR VLAN   | 5432               | **FAILBACK ONLY** (PROD tạm làm standby pull từ DR)                                 |
+| UAT VLAN  | PROD VLAN | **DENY**           | Strict isolation                                                                    |
+| UAT VLAN  | DR VLAN   | **DENY**           | Strict isolation                                                                    |
+| Mgmt VLAN | All       | 22, exporter ports | Build + monitor                                                                     |
 
 ### 10.3 Internet access
 

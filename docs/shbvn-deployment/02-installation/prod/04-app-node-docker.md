@@ -45,10 +45,13 @@ sudo tee /etc/docker/daemon.json >/dev/null <<'EOF'
   "data-root": "/u01/docker",
   "default-address-pools": [{ "base": "172.30.10.0/24", "size": 28 }],
   "bip": "172.30.10.1/24",
-  "log-driver": "json-file",
-  "log-opts": { "max-size": "50m", "max-file": "5" }
+  "log-driver": "journald",
+  "log-opts": { "tag": "{{.Name}}" }
 }
 EOF
+# journald log-driver: cho user `mon` đọc log container read-only qua `journalctl`
+# (group systemd-journal, không cần docker group) — xem 01-system-design/05 §7.3.
+# journald retention cấu hình ở /etc/systemd/journald.conf (SystemMaxUse).
 sudo systemctl enable --now docker
 docker info | grep -E "Docker Root Dir|Server Version"   # /u01/docker
 ```

@@ -43,7 +43,7 @@ Sizing cơ sở, dự báo tăng trưởng, và **scaling trigger** cho **Shinha
 
 ### 3.2 Cơ sở sizing APP node 8/16
 
-- api gunicorn 8 workers × ~500 MB = ~4–6 GB; worker Celery 4 × ~512 MB = ~2 GB; redis 1 GB; rabbitmq 1 GB; OS + Docker ~4 GB → ~15.5 GB (xem [01](./01-architecture-prod.md) §4.1). RAM là ràng buộc chính, không phải CPU.
+- api gunicorn 8 workers × ~500 MB = ~4–5.5 GB; worker Celery 4 × ~512 MB = ~2 GB; live ~384 MB; plane-redis 1 GB; plane-mq 1 GB; OS + Docker ~4 GB → ~15.4 GB (xem [01](./01-architecture-prod.md) §4.1). `migrator` one-shot không tính. RAM là ràng buộc chính, không phải CPU.
 
 ---
 

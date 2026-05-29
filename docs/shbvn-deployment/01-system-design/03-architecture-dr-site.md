@@ -1,8 +1,8 @@
 # 03 — Kiến trúc DR SITE — Shinhan Workspace (SHWS)
 
 **Status:** 🟡 Draft
-**Cập nhật:** 2026-05-26
-**Phiên bản:** 0.2
+**Cập nhật:** 2026-05-29
+**Phiên bản:** 0.3
 **Owner:** duonglx
 
 ---
@@ -11,7 +11,7 @@
 
 DR site cho **SHWS** triển khai **2 node** giống PROD topology, hoạt động ở **chế độ cold standby**, đồng bộ với PROD bằng **mô hình 2 lớp (two-layer replication)**:
 
-1. **Lớp nền tảng (platform tier) — DELL EMC Storage replication:** Đồng bộ DC↔DR cho mọi thành phần _không phải DB sống_: OS/config app node, Docker images & volumes, **file MinIO uploads**. Do **ICTP (hạ tầng)** đảm nhiệm mặc định ở mức storage — phía SHWS chỉ mention, không cấu hình chi tiết.
+1. **Lớp nền tảng (platform tier) — DELL EMC Storage replication:** Đồng bộ DC↔DR cho mọi thành phần _không phải DB sống_: OS/config app node, Docker images & volumes, **file MinIO uploads**. Do **ICTP (hạ tầng)** đảm nhiệm mặc định ở mức storage — phía SHWS chỉ mention, không cấu hình chi tiết. **⚠️ Loại trừ khỏi replication:** secret/`.env` DR-specific (`/opt/shws-secrets/.env.app` trên DR phải trỏ `shwsdb1dr`, không bị đè bởi bản PROD trỏ `shwsdb1p`). Nếu EMC replicate cả config dir → bước failover phải ghi đè lại `.env` DR (xem §5.3 bước 4).
 2. **Lớp database (data tier) — PostgreSQL native, đi đường riêng:** DB **KHÔNG** dựa vào block-replication của storage (tránh replicate live PG data dir → chỉ crash-consistent, rủi ro corruption). DB dùng chiến lược đồng bộ + backup riêng: **streaming replication async** (real-time) + **pgBackRest PITR chạy độc lập từng site** (mỗi site có repo riêng — DR backup từ standby, "backup-of-backup"), trên kênh WAN dành riêng giữa 2 site.
 
 **Mục tiêu DR:**
@@ -121,11 +121,12 @@ hot_standby_feedback = on     # Tránh vacuum xóa rows replica đang đọc
 
 Trên `shwsdb1dr` có file `standby.signal` (Postgres 12+) để PG biết là standby mode.
 
-**Backup tier DR:**
+**Backup tier DR (stanza `shws-dr`, repo DR-local — xem [06](./06-database-design.md) §10.2):**
 
-- pgBackRest cũng cài trên `shwsdb1dr` → backup từ DR copy
-- Lý do: Khi PROD primary mất hoàn toàn, có backup từ DR side dùng được luôn
-- Schedule: backup từ DR nhẹ tải hơn (DR là replica) → khuyến nghị
+- pgBackRest cài trên `shwsdb1dr`, stanza **`shws-dr`** với **standby là `pg1-path`** (KHÔNG dùng tùy chọn pgBackRest `backup-standby` — không kết nối primary/WAN); backup chạy ngay trên node DR vào repo `/u03/pgbackup` DR-local.
+- DR standby bật `archive_mode = always` → tự archive-push WAL vào repo DR-local (nuôi `archive-get` không qua WAN).
+- Lý do: khi PROD mất hoàn toàn, có backup + WAL từ DR side dùng được luôn.
+- Schedule (gợi ý, khớp PROD §9.3): full CN 03:00, diff hằng ngày 02:00, incr mỗi giờ — backup từ replica nhẹ tải.
 
 ---
 
@@ -140,10 +141,10 @@ Trên `shwsdb1dr` có file `standby.signal` (Postgres 12+) để PG biết là s
 ```ini
 # postgresql.conf
 wal_level = replica
-max_wal_senders = 5           # 2 cho DR + 3 buffer cho ad-hoc
+max_wal_senders = 5           # 1 DR streaming + 1 basebackup + buffer ad-hoc
 wal_keep_size = 4GB           # WAL giữ trên primary phòng standby lag
-hot_standby = off             # Primary không cần (đã có UI riêng)
-synchronous_commit = on       # Local commit (KHÔNG đợi DR ack — async)
+hot_standby = on              # Để on (mirror config 01/06) — primary bỏ qua, có hiệu lực khi node làm standby (failback)
+synchronous_commit = on       # Local commit (KHÔNG đợi DR ack — async, vì không set synchronous_standby_names)
 ```
 
 ```ini
@@ -172,11 +173,11 @@ systemctl start postgresql-15
 
 ### 4.3 Monitoring replication lag
 
-| Metric                    | Mục tiêu | Cảnh báo                |
-| ------------------------- | -------- | ----------------------- |
-| Replication lag (bytes)   | < 16 MB  | Alert > 64 MB           |
-| Replication lag (seconds) | < 30s    | Alert > 5 phút          |
-| Streaming connection      | UP       | Alert nếu DOWN > 1 phút |
+| Metric                    | Mục tiêu | Cảnh báo                                              |
+| ------------------------- | -------- | ----------------------------------------------------- |
+| Replication lag (bytes)   | < 16 MB  | Warn > 256 MB · Crit > 1 GB (đồng bộ 06 §16, 08 §3.2) |
+| Replication lag (seconds) | < 30s    | Warn > 30s · Crit > 5 phút                            |
+| Streaming connection      | UP       | Alert nếu DOWN > 1 phút                               |
 
 **Query monitor trên PROD primary:**
 
@@ -231,23 +232,25 @@ Trước khi promote, DBA verify:
 ### 5.3 Execute failover (DBA + ICTP)
 
 ```bash
-# 0. (ICTP) Đảm bảo dữ liệu platform & file MinIO đã sẵn sàng ở DR
+# Quy ước actor: [postgres]=DBA login postgres · [shbvn]=admin app/docker · [ICTP]=hạ tầng · KHÔNG root
+
+# 0. [ICTP] Đảm bảo dữ liệu platform & file MinIO đã sẵn sàng ở DR
 #    qua EMC storage replication. Phía SHWS chỉ chờ ICTP xác nhận.
 
-# 1. Trên shwsdb1dr — promote PG replica thành primary
-sudo -u postgres pg_ctl promote -D /u01/pgsql/15/data
-# Kiểm tra:
-sudo -u postgres psql -c "SELECT pg_is_in_recovery();"  # Phải trả về false
+# 1. [postgres @ shwsdb1dr] promote PG replica thành primary (login postgres, không cần sudo)
+pg_ctl promote -D /u01/pgsql/15/data
+psql -c "SELECT pg_is_in_recovery();"  # Phải trả về false
 
-# 2. Trên shwsdb1dr — start MinIO (sau khi ICTP xác nhận file sẵn sàng)
+# 2. [shbvn @ shwsdb1dr] start MinIO (sau khi ICTP xác nhận file sẵn sàng)
 docker compose up -d plane-minio
 docker compose logs --tail=50 plane-minio  # Verify bucket/uploads OK
 
-# 3. Update DNS hoặc VIP để traffic chuyển sang DR site
+# 3. [network team] Update DNS hoặc VIP để traffic chuyển sang DR site
 # (theo runbook network team — TBD section)
 
-# 4. Trên shwsap1dr — start app stack
+# 4. [shbvn @ shwsap1dr] start app stack
 cd /opt/shws-deployment
+grep DATABASE_URL .env   # XÁC NHẬN trỏ shwsdb1dr (10.94.20.11), KHÔNG phải shwsdb1p — phòng EMC đè .env (xem §1)
 docker compose up -d
 docker compose logs -f api  # Verify api kết nối DR DB OK
 

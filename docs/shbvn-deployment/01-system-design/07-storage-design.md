@@ -202,7 +202,7 @@ Offsite copy sang NAS bank (rsync daily, retention 90 ngày) — xem [06-databas
 3. **WWID LUN:** ICTP cấp WWID 3 LUN cho `multipath.conf`.
 4. **IOPS spec LUN:** test IOPS trước go-live (xem [`../04-testing/`](../04-testing/)); LUN-1 cần IOPS đủ cho random DB workload.
 5. **NAS offsite:** path, protocol (NFS/CIFS), capacity, retention — Infra confirm.
-6. **TDE / encryption at rest:** EMC array-level encryption có bật không? (hiện chỉ encrypt ở pgBackRest repo).
+6. **TDE / encryption-at-rest:** theo phát biểu canonical [05](./05-security-design.md) §10.1 — EMC array-level encryption do **ICTP** xác nhận; GĐ1 chỉ encrypt pgBackRest repo + VLAN/physical.
 
 ---
 

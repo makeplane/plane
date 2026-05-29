@@ -15,8 +15,9 @@ Quyết định kiến trúc đã chốt cho dự án. **Mỗi quyết định k
 | [ADR-007](./adr-007-app-stack-docker-compose.md)   | App stack — Docker Compose                             | 🟡 Proposed | 2026-05-27 |
 | [ADR-008](./adr-008-storage-emc-san.md)            | Storage — EMC SAN multipath + LVM + XFS                | 🟡 Proposed | 2026-05-27 |
 | [ADR-009](./adr-009-dc-dr-replication-layering.md) | DC-DR replication 2 layer (EMC storage + PG streaming) | 🟡 Proposed | 2026-05-26 |
+| [ADR-010](./adr-010-os-user-privilege-model.md)    | OS user/privilege model (3-user, no-root-login)        | 🟡 Proposed | 2026-05-29 |
 
-> **Lưu ý:** 9 ADR đã có file, status 🟡 Proposed (chờ duyệt stakeholder để chuyển 🟢 Accepted). Quyết định đã phản ánh trong tài liệu thiết kế (`01-system-design/`).
+> **Lưu ý:** 10 ADR đã có file, status 🟡 Proposed (chờ duyệt stakeholder để chuyển 🟢 Accepted). Quyết định đã phản ánh trong tài liệu thiết kế (`01-system-design/`). ADR-011 (secret mgmt), ADR-012 (audit retention), ADR-013 (container hardening) — planned, chưa viết file.
 
 ## Status legend
 

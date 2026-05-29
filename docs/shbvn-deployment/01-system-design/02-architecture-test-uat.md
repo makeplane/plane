@@ -99,11 +99,13 @@ Triển khai **SHWS TEST/UAT** trên **1 VM all-in-one** với Docker Compose m�
 | `web`          | Build từ `apps/web/Dockerfile`        | Frontend (React + Vite)                              | Giống PROD       |
 | `space`        | Build từ `apps/space/Dockerfile`      | Public space                                         | Giống PROD       |
 | `admin`        | Build từ `apps/admin/Dockerfile`      | God-mode panel                                       | Giống PROD       |
+| `live`         | `makeplane/plane-live` (prebuilt)     | WebSocket realtime                                   | Giống PROD       |
 | `api`          | Build từ `apps/api/Dockerfile`        | Django REST API                                      | Số worker ít hơn |
 | `worker`       | Cùng image `api`, command Celery      | Background jobs                                      | 2 concurrency    |
-| `beat`         | Cùng image `api`, command Celery beat | Cron                                                 | Giống PROD       |
-| `redis`        | `redis:7-alpine`                      | Cache + WebSocket pub/sub                            | Giống PROD       |
-| `rabbitmq`     | `rabbitmq:3.13.6-management-alpine`   | Celery broker                                        | Giống PROD       |
+| `beat-worker`  | Cùng image `api`, command Celery beat | Cron                                                 | Giống PROD       |
+| `migrator`     | Cùng image `api`, one-shot `migrate`  | DB migration lúc deploy rồi exit                     | Giống PROD       |
+| `plane-redis`  | `redis:7-alpine`                      | Cache + pub/sub                                      | Giống PROD       |
+| `plane-mq`     | `rabbitmq:3.13.6-management-alpine`   | Celery broker                                        | Giống PROD       |
 | **`plane-db`** | **`postgres:15.7-alpine`**            | **DATABASE — container (KHÁC PROD: PROD là native)** | ⚠️ KHÁC          |
 | `plane-minio`  | `minio/minio`                         | Object storage                                       | Giống PROD       |
 
@@ -119,15 +121,16 @@ UAT chạy đủ cho 30 user pilot, không cần stress test cao như PROD.
 | web                    | 0.3       | 384 MB       | Vite preview                     |
 | space                  | 0.2       | 256 MB       |                                  |
 | admin                  | 0.2       | 256 MB       |                                  |
+| live                   | 0.2       | 256 MB       | WebSocket realtime               |
 | api (gunicorn)         | 1.5       | 3 GB         | **4 workers** (vs 8 PROD)        |
 | worker                 | 1.0       | 1.5 GB       | **2 concurrency** (vs 4 PROD)    |
-| beat                   | 0.2       | 256 MB       |                                  |
-| plane-db               | 1.5       | 4 GB         | shared_buffers=1GB (vs PROD 3GB) |
-| redis                  | 0.3       | 512 MB       |                                  |
-| rabbitmq               | 0.5       | 512 MB       |                                  |
+| beat-worker            | 0.2       | 256 MB       | Celery beat                      |
+| plane-db               | 1.5       | 4 GB         | shared_buffers=1GB (vs PROD 4GB) |
+| plane-redis            | 0.3       | 512 MB       |                                  |
+| plane-mq               | 0.5       | 512 MB       | RabbitMQ                         |
 | plane-minio            | 0.3       | 512 MB       |                                  |
-| **OS + Docker engine** | 1.7       | ~4 GB        | Page cache, syslog               |
-| **Tổng**               | **~8**    | **~15.5 GB** |                                  |
+| **OS + Docker engine** | 1.5       | ~3.75 GB     | Page cache, syslog               |
+| **Tổng**               | **~8**    | **~15.4 GB** | `migrator` one-shot — không tính |
 
 **PG container config UAT (đơn giản):**
 
@@ -172,6 +175,8 @@ UAT VM filesystem layout
 }
 ```
 
+> UAT giữ `json-file` (không có user `mon` — khác PROD/DR dùng `journald` để `mon` đọc log read-only, xem `04` §2.3 + `05` §7.3).
+
 **Backup UAT:**
 
 - KHÔNG cần WAL archive
@@ -184,7 +189,7 @@ UAT VM filesystem layout
 
 ### 6.1 Network
 
-- VM IP: 10.X.Y.Z (LAN nội bộ bank — TBD)
+- VM IP: `10.94.30.10` (placeholder UAT VLAN — chờ network team xác nhận, xem `04` §2.2)
 - Port expose: chỉ 443 (HTTPS) qua Nginx proxy
 - DNS: `shwsap1t.bank.local` → IP UAT
 - Firewall: chỉ allow inbound từ subnet user bank
@@ -253,8 +258,8 @@ UAT là môi trường disposable. Quy trình reset chuẩn:
 ### 7.1 Soft reset (giữ data, reset cache/queue)
 
 ```bash
-docker compose restart redis rabbitmq
-docker exec shwsap1t-redis redis-cli FLUSHDB
+docker compose restart plane-redis plane-mq
+docker exec plane-redis redis-cli FLUSHDB
 ```
 
 ### 7.2 Full reset (xóa toàn bộ data)
@@ -294,7 +299,7 @@ Table này quan trọng — UAT giống PROD đủ để test, nhưng đơn gi�
 | Auth backend  | Chỉ SwingSSO                     | SwingSSO + local user                                           |
 | Monitoring    | Full Prometheus stack            | **Không có** (giai đoạn 1) — dùng `docker stats` ad-hoc khi cần |
 | Audit log     | Forward SIEM                     | Local only                                                      |
-| Resource      | 12 vCPU / 28 GB (2 VM)           | 8 vCPU / 16 GB (1 VM)                                           |
+| Resource      | 16 vCPU / 32 GB (2 VM)           | 8 vCPU / 16 GB (1 VM)                                           |
 | Update cycle  | Quarterly patching, careful      | Anytime, reset thoải mái                                        |
 | TLS cert      | Bank internal CA, mTLS giữa node | Bank internal CA, chỉ TLS edge                                  |
 | User capacity | 1000 user / 100 CCU              | 20–30 pilot user                                                |
