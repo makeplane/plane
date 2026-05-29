@@ -201,6 +201,7 @@ class IssueListEndpoint(BaseAPIView):
                 "archived_at",
                 "deleted_at",
                 "total_logged_minutes",
+                "frequency",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -493,6 +494,7 @@ class IssueViewSet(BaseViewSet):
                     "total_logged_minutes",
                     "main_task_category_id",
                     "sub_task_category_id",
+                    "frequency",
                 )
                 .first()
             )
@@ -1039,6 +1041,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "attachment_count",
             "sub_issues_count",
             "total_logged_minutes",
+            "frequency",
         ]
 
         if str(is_description_required).lower() == "true":

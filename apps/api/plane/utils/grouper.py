@@ -128,6 +128,7 @@ def issue_on_results(
         "archived_at",
         "state__group",
         "total_logged_minutes",
+        "frequency",
         "main_task_category_id",
         "sub_task_category_id",
         "main_task_category_name",
