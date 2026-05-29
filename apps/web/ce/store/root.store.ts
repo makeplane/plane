@@ -11,7 +11,6 @@ import { CEWorklogStore } from "./worklog.store";
 import type { ITimelineStore } from "./timeline";
 import { TimeLineStore } from "./timeline";
 import { DashboardStore } from "./dashboards/dashboard.store";
-import { ProjectWorklogStore } from "./project/worklog.store";
 import type { IWorkflowStore } from "./workflow.store";
 import { WorkflowStore } from "./workflow.store";
 import type { IModuleActivityStore } from "./module-activity.store";
@@ -29,7 +28,6 @@ export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
   worklog: ICEWorklogStore;
   customDashboard: DashboardStore;
-  projectWorklog: ProjectWorklogStore;
   workflowStore: IWorkflowStore;
   moduleActivity: IModuleActivityStore;
   taskCategoryStore: ITaskCategoryStore;
@@ -43,7 +41,6 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     this.worklog = new CEWorklogStore();
     this.customDashboard = new DashboardStore(this);
-    this.projectWorklog = new ProjectWorklogStore();
     this.workflowStore = new WorkflowStore();
     this.moduleActivity = new ModuleActivityStore();
     this.taskCategoryStore = new TaskCategoryStore();

@@ -38,7 +38,6 @@ export type TProjectSettingsTabs =
   | "labels"
   | "estimates"
   | "automations"
-  | "worklogs"
   | "features_time_tracking"
   | "workflows"
   | "bank_wide"
