@@ -91,7 +91,7 @@ export default {
       already_have_an_account: "이미 계정이 있으신가요?",
       login: "로그인",
       create_account: "계정 만들기",
-      new_to_plane: "Plane을 처음 사용하시나요?",
+      new_to_plane: "Shinhan Workspace을 처음 사용하시나요?",
       back_to_sign_in: "로그인으로 돌아가기",
       resend_in: "{seconds}초 후 다시 전송",
       sign_in_with_unique_code: "고유 코드로 로그인",
@@ -470,7 +470,7 @@ export default {
   full_changelog: "전체 변경 로그",
   support: "지원",
   discord: "디스코드",
-  powered_by_plane_pages: "Plane Pages 제공",
+  powered_by_plane_pages: "Shinhan Workspace Pages 제공",
   please_select_at_least_one_invitation: "최소 하나의 초대를 선택하세요.",
   please_select_at_least_one_invitation_description: "작업 공간에 참여하려면 최소 하나의 초대를 선택하세요.",
   we_see_that_someone_has_invited_you_to_join_a_workspace: "누군가가 작업 공간에 참여하도록 초대했습니다",
@@ -660,7 +660,7 @@ export default {
       not_right_now: "지금은 안 함",
       create_project: {
         title: "팀/프로젝트 생성",
-        description: "Plane에서 대부분의 작업은 팀/프로젝트로 시작됩니다.",
+        description: "Shinhan Workspace에서 대부분의 작업은 팀/프로젝트로 시작됩니다.",
         cta: "시작하기",
       },
       invite_team: {
@@ -674,7 +674,7 @@ export default {
         cta: "이 작업 공간 설정",
       },
       personalize_account: {
-        title: "Plane을 개인화하세요.",
+        title: "Shinhan Workspace을 개인화하세요.",
         description: "사진, 색상 등을 선택하세요.",
         cta: "지금 개인화",
       },
@@ -708,7 +708,7 @@ export default {
       },
     },
     new_at_plane: {
-      title: "Plane의 새로운 기능",
+      title: "Shinhan Workspace의 새로운 기능",
     },
     quick_tutorial: {
       title: "빠른 튜토리얼",
@@ -1386,7 +1386,7 @@ export default {
   },
   workspace_creation: {
     heading: "작업 공간 생성",
-    subheading: "Plane을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
+    subheading: "Shinhan Workspace을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
     form: {
       name: {
         label: "작업 공간 이름",
@@ -1440,11 +1440,11 @@ export default {
       general: {
         title: "팀/프로젝트, 활동 및 메트릭 개요",
         description:
-          "Plane에 오신 것을 환영합니다. 첫 번째 팀/프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
+          "Shinhan Workspace에 오신 것을 환영합니다. 첫 번째 팀/프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
         primary_button: {
           text: "첫 번째 팀/프로젝트 생성",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1609,7 +1609,7 @@ export default {
         primary_button: {
           text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1620,7 +1620,7 @@ export default {
         primary_button: {
           text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1771,7 +1771,7 @@ export default {
     page_label: "{workspace} - 일반 설정",
     key_created: "키 생성됨",
     copy_key:
-      "이 비밀 키를 Plane Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
+      "이 비밀 키를 Shinhan Workspace Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
     token_copied: "토큰이 클립보드에 복사되었습니다.",
     settings: {
       general: {
@@ -1953,7 +1953,7 @@ export default {
         delete: {
           title: "API 토큰 삭제",
           description:
-            "이 토큰을 사용하는 애플리케이션은 더 이상 Plane 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+            "이 토큰을 사용하는 애플리케이션은 더 이상 Shinhan Workspace 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
           success: {
             title: "성공!",
             message: "API 토큰이 성공적으로 삭제되었습니다",
@@ -1969,7 +1969,7 @@ export default {
       api_tokens: {
         title: "생성된 API 토큰 없음",
         description:
-          "Plane API를 사용하여 Plane의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요.",
+          "Shinhan Workspace API를 사용하여 Shinhan Workspace의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요.",
       },
       webhooks: {
         title: "추가된 웹훅 없음",
@@ -2080,7 +2080,7 @@ export default {
       activity: {
         title: "아직 활동 없음",
         description:
-          "새 작업 항목을 생성하여 시작하세요! 세부 정보와 속성을 추가하세요. Plane에서 더 많은 것을 탐색하여 활동을 확인하세요.",
+          "새 작업 항목을 생성하여 시작하세요! 세부 정보와 속성을 추가하세요. Shinhan Workspace에서 더 많은 것을 탐색하여 활동을 확인하세요.",
       },
       assigned: {
         title: "할당된 작업 항목 없음",
@@ -2329,12 +2329,12 @@ export default {
       label: "자동화",
       "auto-archive": {
         title: "완료된 작업 항목 자동 보관",
-        description: "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        description: "Shinhan Workspace은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
         duration: "다음 기간 동안 닫힌 작업 항목 자동 보관",
       },
       "auto-close": {
         title: "작업 항목 자동 닫기",
-        description: "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
+        description: "Shinhan Workspace은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
         duration: "다음 기간 동안 비활성 작업 항목 자동 닫기",
         auto_close_status: "자동 닫기 상태",
       },
@@ -2534,9 +2534,9 @@ export default {
         primary_button: {
           text: "첫 번째 작업 항목 생성",
           comic: {
-            title: "작업 항목은 Plane의 구성 요소입니다.",
+            title: "작업 항목은 Shinhan Workspace의 구성 요소입니다.",
             description:
-              "Plane UI 재설계, 회사 리브랜딩 또는 새로운 연료 주입 시스템 출시와 같은 작업 항목은 하위 작업 항목이 있을 가능성이 큽니다.",
+              "Shinhan Workspace UI 재설계, 회사 리브랜딩 또는 새로운 연료 주입 시스템 출시와 같은 작업 항목은 하위 작업 항목이 있을 가능성이 큽니다.",
           },
         },
       },
@@ -2639,9 +2639,10 @@ export default {
   project_page: {
     empty_state: {
       general: {
-        title: "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Plane의 AI 도우미가 시작을 도와줍니다",
+        title:
+          "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Shinhan Workspace의 AI 도우미가 시작을 도와줍니다",
         description:
-          "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 팀/프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
+          "페이지는 Shinhan Workspace에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 팀/프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Shinhan Workspace의 AI를 호출하세요.",
         primary_button: {
           text: "첫 번째 페이지 생성",
         },
@@ -3020,7 +3021,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+      "Shinhan Workspace이 시작되지 않았습니다. 이는 하나 이상의 Shinhan Workspace 서비스가 시작에 실패했기 때문일 수 있습니다.",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요.",
   },
@@ -3205,7 +3206,7 @@ export default {
     },
     help_actions: {
       open_keyboard_shortcuts: "키보드 단축키 열기",
-      open_plane_documentation: "Plane 문서 열기",
+      open_plane_documentation: "Shinhan Workspace 문서 열기",
       join_discord: "Discord 참여",
       report_bug: "버그 보고",
       chat_with_us: "채팅 문의",
