@@ -90,7 +90,7 @@ Khi đang ở trong một dự án hoặc trang cụ thể, bảng lệnh hiển
 - **Phạm vi tìm kiếm**: khi bảng lệnh mở ở cấp workspace (không trong dự án), chỉ thấy lệnh workspace. Khi đang ở trong dự án, thêm lệnh cấp dự án.
 - Chuyển đổi **Workspace / Project scope** bằng toggle ở chân bảng lệnh — giúp tìm kiếm nội dung đúng phạm vi.
 - Bảng lệnh **không** lưu lịch sử tìm kiếm — mỗi lần mở bắt đầu mới.
-- Trên thanh top navigation, thanh tìm kiếm **mở rộng** từ 364px sang 554px khi được focus — đây là thiết kế của bản fork.
+- Trên thanh điều hướng trên cùng, ô tìm kiếm tự **mở rộng** khi bạn bấm vào, tạo thêm không gian gõ từ khóa.
 
 ---
 

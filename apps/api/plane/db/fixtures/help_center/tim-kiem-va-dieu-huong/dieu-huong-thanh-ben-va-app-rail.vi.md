@@ -53,7 +53,7 @@ Khi danh sách dự án dài, click **More / Hide** ở cuối nhóm Workspace �
 
 ## App Rail
 
-App Rail là thanh icon dọc mỏng nằm bên trái sidebar (trên desktop). Trong bản CE của Shinhan Workspace, App Rail hiển thị lối tắt đến **Dự án** — biểu tượng logo Shinhan Workspace.
+App Rail là thanh icon dọc mỏng nằm bên trái sidebar (trên desktop). App Rail hiển thị lối tắt đến **Dự án** — biểu tượng logo Shinhan Workspace.
 
 ### Tùy chọn hiển thị App Rail
 
