@@ -4,37 +4,55 @@
  * See the LICENSE file for details.
  */
 
-import { observer } from "mobx-react";
-import { RichTextEditor } from "@/components/editor/rich-text";
-import { useWorkspace } from "@/hooks/store/use-workspace";
+import { MAX_FILE_SIZE } from "@plane/constants";
+import { RichTextEditorWithRef } from "@plane/editor";
+import type { TFileHandler } from "@plane/editor";
+import { getFileURL } from "@plane/utils";
 
 type Props = {
   articleId: string;
   descriptionHtml: string;
 };
 
-// Renders stored rich content read-only on the workspace-agnostic /help route.
-// The editor needs *a* workspaceId/slug only for its image asset-URL handler;
-// /help has no workspace in the URL, so we use any workspace the user belongs to
-// (text renders regardless; help images resolve from the global static path once
-// authored). Reader trusts the sanitized `description_html` only (never json).
-export const HelpContentRenderer = observer(function HelpContentRenderer({ articleId, descriptionHtml }: Props) {
-  const { workspaces } = useWorkspace();
-  const anyWorkspace = Object.values(workspaces ?? {})[0];
-  const workspaceId = anyWorkspace?.id ?? "";
-  const workspaceSlug = anyWorkspace?.slug ?? "";
+// Help images are instance-global (no workspace), so resolve a bare asset id to
+// the workspace-agnostic public static endpoint. The standalone /help reader has
+// NO workspace context — use the raw @plane/editor editor with a help-only file
+// handler instead of the workspace-scoped web wrapper.
+const resolveHelpAssetSrc = async (path: string): Promise<string> => {
+  if (!path) return "";
+  if (path.startsWith("http") || path.startsWith("/")) return getFileURL(path) ?? path;
+  return getFileURL(`/api/assets/v2/static/${path}/`) ?? "";
+};
 
+const READ_ONLY_FILE_HANDLER: TFileHandler = {
+  assetsUploadStatus: {},
+  checkIfAssetExists: async () => true,
+  getAssetSrc: resolveHelpAssetSrc,
+  getAssetDownloadSrc: resolveHelpAssetSrc,
+  upload: async () => "",
+  delete: async () => {},
+  restore: async () => {},
+  cancel: () => {},
+  duplicate: async (assetId: string) => assetId,
+  validation: { maxFileSize: MAX_FILE_SIZE },
+};
+
+// Reader trusts the sanitized `description_html` only (never json).
+export function HelpContentRenderer({ articleId, descriptionHtml }: Props) {
   return (
-    <RichTextEditor
+    <RichTextEditorWithRef
       key={articleId}
       id={articleId}
       editable={false}
       initialValue={descriptionHtml}
-      projectId={undefined}
-      workspaceId={workspaceId}
-      workspaceSlug={workspaceSlug}
+      disabledExtensions={[]}
+      flaggedExtensions={[]}
+      extendedEditorProps={{}}
+      fileHandler={READ_ONLY_FILE_HANDLER}
+      getEditorMetaData={() => ({ file_assets: [], user_mentions: [] })}
+      mentionHandler={{ renderComponent: () => null }}
       containerClassName="p-0 !pl-0 border-none"
       editorClassName="pl-0"
     />
   );
-});
+}

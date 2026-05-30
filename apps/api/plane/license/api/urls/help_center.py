@@ -5,6 +5,7 @@
 from django.urls import path
 
 from plane.license.api.views.help_center import (
+    InstanceHelpArticleAssetEndpoint,
     InstanceHelpArticleDetailEndpoint,
     InstanceHelpArticleEndpoint,
     InstanceHelpArticleTranslationEndpoint,
@@ -39,5 +40,15 @@ urlpatterns = [
         "help/articles/<uuid:pk>/translations/<str:locale>/",
         InstanceHelpArticleTranslationEndpoint.as_view(http_method_names=["put", "patch"]),
         name="instance-help-article-translation",
+    ),
+    path(
+        "help/articles/<uuid:pk>/assets/",
+        InstanceHelpArticleAssetEndpoint.as_view(http_method_names=["post"]),
+        name="instance-help-article-assets",
+    ),
+    path(
+        "help/articles/<uuid:pk>/assets/<uuid:asset_id>/",
+        InstanceHelpArticleAssetEndpoint.as_view(http_method_names=["patch"]),
+        name="instance-help-article-asset-detail",
     ),
 ]

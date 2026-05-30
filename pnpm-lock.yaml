@@ -210,6 +210,9 @@ importers:
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@plane/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
       '@plane/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -593,7 +596,7 @@ importers:
         version: 7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
       '@tailwindcss/typography':
         specifier: 0.5.19
-        version: 0.5.19
+        version: 0.5.19(tailwindcss@4.1.17)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -808,9 +811,12 @@ importers:
       '@react-router/dev':
         specifier: 'catalog:'
         version: 7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
+      '@tailwindcss/postcss':
+        specifier: 4.1.17
+        version: 4.1.17
       '@tailwindcss/typography':
         specifier: 0.5.19
-        version: 0.5.19
+        version: 0.5.19(tailwindcss@4.1.17)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -826,6 +832,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      tailwindcss:
+        specifier: 4.1.17
+        version: 4.1.17
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -4750,6 +4759,7 @@ packages:
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     resolution: {integrity: sha512-ppLRUgHVaGRWUx0R0Ut06Mjo9gBaBkg3v/8AxusGLhsIotbBLuRk51rAzqLC8gq6NyyAojEXglNjzf6R948DNw==}
@@ -8690,6 +8700,7 @@ packages:
   recharts@2.15.4:
     resolution: {integrity: sha512-UT/q6fwS3c1dHbXv2uFgYJ9BMFHu3fwnd7AYZaEQhXuYQ4hgsxLvsUXzGdKeZrW5xopzDCvuA2N41WJ88I7zIw==}
     engines: {node: '>=14'}
+    deprecated: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
     peerDependencies:
       react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -12942,9 +12953,10 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.17
 
-  '@tailwindcss/typography@0.5.19':
+  '@tailwindcss/typography@0.5.19(tailwindcss@4.1.17)':
     dependencies:
       postcss-selector-parser: 6.0.10
+      tailwindcss: 4.1.17
 
   '@tanstack/react-table@8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

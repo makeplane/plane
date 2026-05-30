@@ -1,13 +1,38 @@
 ---
 phase: 6
 title: "Authoring UI"
-status: pending
+status: done
 priority: P1
 effort: "3.5d"
 dependencies: [3, 4]
 ---
 
 # Phase 6: Authoring UI
+
+> **DONE (2026-05-30):** Built God Mode authoring in `apps/admin` (per D6/D7), NOT `apps/web/ce`
+> (this file's original workspace-admin design was superseded — see the D7 NOTE below).
+> **Delivered:**
+> - Backend global image assets: `HELP_ARTICLE_CONTENT` added to `FileAsset.EntityTypeContext` +
+>   `asset_url` static branch (`asset.py`); `StaticFileAssetEndpoint` allowlist + `is_deleted`→404 guard
+>   (`v2.py`); God Mode upload endpoint `InstanceHelpArticleAssetEndpoint` (presigned POST + mark-uploaded)
+>   in `license/api/views/help_center.py` + URLs. No migration (entity_type is a plain CharField).
+> - Editor ported into `apps/admin` (added `@plane/editor` dep + styles import) via a thin
+>   `HelpRichTextEditor` (RichTextEditorWithRef) + `editor.helper.ts` file handler (global static asset src,
+>   no workspace) + always-visible `HelpEditorToolbar` (headings/marks/lists/quote/code/table/image) +
+>   live preview (editable=false). Mentions disabled (stub handler).
+> - Data layer: `packages/types/src/help-center.ts`, `packages/services/.../instance-help-center.service.ts`
+>   (CRUD + translations + 3-step image upload), `apps/admin/store/instance-help-center.store.ts` + hook +
+>   root.store registration.
+> - UI (`apps/admin/app/(all)/(dashboard)/help-center/`): page + sidebar entry + route; category list/form
+>   (VI/EN/KO Propel Tabs + EmojiIconPicker lucide picker + active), article list, article create modal,
+>   article editor panel (slug editable-while-draft, publish guard ≥1 titled translation, delete confirm),
+>   translation tabs (per-locale title + WYSIWYG + preview + copy-between-locales), reorder via sort_order
+>   midpoint (no bespoke endpoint).
+> - Web reader L2 cleanup: `help-content-renderer.tsx` now uses a help-only read file handler resolving
+>   global `/api/assets/v2/static/{id}/` images — zero workspace dependency.
+> **Verified:** admin+web `tsc` clean; admin eslint 0 errors; `manage.py check` ok; URL reverse + asset_url
+> verified live; backend unit suite 240 pass (failures pre-existing). Code review: ship-ready (M1 delete-
+> toast fixed). Remaining live/e2e QA (image upload round-trip, light/dark, locale switch) folded into P8.
 
 > **D7 NOTE (2026-05-30):** Authoring moved to `apps/admin` God Mode (per D6) — this phase file's
 > `apps/web/ce` workspace-admin design is SUPERSEDED (see `plans/reports/from-scout-to-cook-help-center-global-redesign-report.md` §2 P6).

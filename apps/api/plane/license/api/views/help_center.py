@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import uuid
+
+from django.conf import settings
 from django.utils.text import slugify
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,11 +20,16 @@ from plane.app.views.help_center.base import (
     upsert_article_translations,
     upsert_category_translations,
 )
-from plane.db.models import HelpArticle, HelpCategory
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.db.models import FileAsset, HelpArticle, HelpCategory
 from plane.db.models.help_center import fold_accents
 from plane.license.api.views.base import BaseAPIView
+from plane.settings.storage import S3Storage
 
 CATEGORY_WRITABLE_FIELDS = ("icon", "color", "is_active")
+
+# Inline help images are bitmap-only, matching the avatar/cover upload allowlist.
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg", "image/gif"]
 
 
 class InstanceHelpCategoryEndpoint(BaseAPIView):
@@ -174,3 +182,57 @@ class InstanceHelpArticleTranslationEndpoint(BaseAPIView):
         article = HelpArticle.objects.get(pk=pk)
         upsert_article_translation(article, locale, request.data)
         return Response(InstanceHelpArticleEndpoint._detail(article.id), status=status.HTTP_200_OK)
+
+
+class InstanceHelpArticleAssetEndpoint(BaseAPIView):
+    """God Mode: presigned upload + completion for an article's inline image.
+
+    The guide is instance-global, so images are stored with no workspace
+    (workspace_id=NULL) and served from the workspace-agnostic public static
+    endpoint. Asset rows are bound to the article so a missing parent never
+    leaves an orphan.
+    """
+
+    def post(self, request, pk):
+        # Parent must exist before we mint an asset row for it.
+        article = HelpArticle.objects.get(pk=pk)
+        name = request.data.get("name")
+        file_type = request.data.get("type", "image/jpeg")
+        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if not name:
+            return Response({"error": "File name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if file_type not in ALLOWED_IMAGE_TYPES:
+            return Response(
+                {"error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        asset_key = f"{uuid.uuid4().hex}-{name}"
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": file_type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            entity_type=FileAsset.EntityTypeContext.HELP_ARTICLE_CONTENT,
+            entity_identifier=str(article.id),
+            user=request.user,
+            created_by=request.user,
+        )
+        storage = S3Storage(request=request)
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=file_type, file_size=size_limit
+        )
+        return Response(
+            {"upload_data": presigned_url, "asset_id": str(asset.id), "asset_url": asset.asset_url},
+            status=status.HTTP_200_OK,
+        )
+
+    def patch(self, request, pk, asset_id):
+        # Confirm the S3 upload finished; only then will the static endpoint serve it.
+        asset = FileAsset.objects.get(
+            id=asset_id, entity_type=FileAsset.EntityTypeContext.HELP_ARTICLE_CONTENT
+        )
+        asset.is_uploaded = True
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(asset.id))
+        asset.save(update_fields=["is_uploaded"])
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -41,6 +41,10 @@ class FileAsset(BaseModel):
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
+        # Inline images in the shared, instance-global help center. No workspace
+        # scope: a single guide is read across every workspace, so the asset is
+        # served from the workspace-agnostic public static endpoint.
+        HELP_ARTICLE_CONTENT = "HELP_ARTICLE_CONTENT"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -83,6 +87,7 @@ class FileAsset(BaseModel):
             or self.entity_type == self.EntityTypeContext.USER_AVATAR
             or self.entity_type == self.EntityTypeContext.USER_COVER
             or self.entity_type == self.EntityTypeContext.PROJECT_COVER
+            or self.entity_type == self.EntityTypeContext.HELP_ARTICLE_CONTENT
         ):
             return f"/api/assets/v2/static/{self.id}/"
 

@@ -80,7 +80,7 @@ light/dark, locale-switch) folded into P8.
 | 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Done (47 keys × vi/en/ko; KO review)                |
 | 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)                             |
 | 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done — standalone `/help` (D7), verified live       |
-| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending (+ global image assets for D7)              |
+| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Done — God Mode authoring in apps/admin + global image assets (D7) |
 | 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done — entry points → `/help` (D7), verified live   |
 | 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                                             |
 | 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                                             |

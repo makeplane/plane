@@ -6,6 +6,7 @@
 
 import {
   Activity,
+  BookOpen,
   Briefcase,
   CalendarDays,
   Image,
@@ -34,6 +35,7 @@ export type TCoreSidebarMenuKey =
   | "image"
   | "monitoring"
   | "task-categories"
+  | "help-center"
   | "job-positions"
   | "calendar";
 
@@ -103,6 +105,12 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Task Categories",
     description: "Manage main and sub task categories for work items.",
     href: `/task-categories/`,
+  },
+  "help-center": {
+    Icon: BookOpen,
+    name: "Help Center",
+    description: "Author the shared multilingual help guide for all workspaces.",
+    href: `/help-center/`,
   },
   "job-positions": {
     Icon: Briefcase,
