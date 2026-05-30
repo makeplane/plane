@@ -1,0 +1,9 @@
+[
+  { "name": "lam-quen-giao-dien-chinh", "path": "/{ws}/", "wait": 3000 },
+  { "name": "danh-sach-du-an", "path": "/{ws}/projects/", "wait": 3000 },
+  { "name": "cac-bo-cuc-hien-thi-five-layouts", "path": "/{ws}/projects/{pid}/issues/", "wait": 3500 },
+  { "name": "tao-va-quan-ly-cycles", "path": "/{ws}/projects/{pid}/cycles/", "wait": 3500 },
+  { "name": "tao-va-quan-ly-modules", "path": "/{ws}/projects/{pid}/modules/", "wait": 3500 },
+  { "name": "pages-list-tab-navigation", "path": "/{ws}/projects/{pid}/pages/", "wait": 3500 },
+  { "name": "cong-viec-cua-ban-dashboard", "path": "/{ws}/profile/{uid}/", "wait": 3500 }
+]

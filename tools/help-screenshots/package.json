@@ -1,0 +1,13 @@
+{
+  "name": "help-screenshots",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Capture Help Center screenshots against a running Shinhan Workspace instance",
+  "scripts": {
+    "capture": "node capture.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}
