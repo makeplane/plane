@@ -50,19 +50,26 @@ which **minimizes** core touches: the PowerK static command + sidebar Help-menu 
 
 **Impact on phases:** P1 (models+migration) and P2 (API) rewritten for global + God-Mode-write; P4 (FE read service/store) adjusted to global routes; P3 (i18n) unaffected; P5 (reading UI) stays in `apps/web` but fetches global data; **P6 (authoring UI) moves from `apps/web/ce` to `apps/admin` God Mode**. The workspace-scoped code committed in commits `e1584e83`/`5545e0d2` is the pre-pivot baseline and is being reworked on this same branch.
 
+**P5 done (2026-05-30):** Reading UI built in `apps/web` against the global API; reconciled with D6
+(workspace-prefixed route for the shell, global slug-less data, `IsAuthenticated`, **no Manage button**
+— authoring is admin/God-Mode in P6). Deep-link decision: **by slug** → added read endpoint
+`GET /api/help/articles/slug/<slug>/` (`retrieve_by_slug`, reuses the published+has-title queryset).
+tsc + eslint clean; code-review passed. Remaining manual/e2e QA (image render with `projectId=undefined`,
+light/dark, locale-switch) folded into P8.
+
 ## Phases
 
-| Phase | Name                                                                         | Priority | Effort | Status                               |
-| ----- | ---------------------------------------------------------------------------- | -------- | ------ | ------------------------------------ |
-| 1     | [Backend Data Model](./phase-01-backend-data-model.md)                       | P1       | 1.5d   | Done (impl; live-migrate pending)    |
-| 2     | [Backend API and Search](./phase-02-backend-api-and-search.md)               | P1       | 2d     | Done (impl; live-DB tests in P8)     |
-| 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Done (47 keys × vi/en/ko; KO review) |
-| 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)              |
-| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Pending                              |
-| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending                              |
-| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Pending                              |
-| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                              |
-| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                              |
+| Phase | Name                                                                         | Priority | Effort | Status                                              |
+| ----- | ---------------------------------------------------------------------------- | -------- | ------ | --------------------------------------------------- |
+| 1     | [Backend Data Model](./phase-01-backend-data-model.md)                       | P1       | 1.5d   | Done (impl; live-migrate pending)                   |
+| 2     | [Backend API and Search](./phase-02-backend-api-and-search.md)               | P1       | 2d     | Done (impl; live-DB tests in P8)                    |
+| 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Done (47 keys × vi/en/ko; KO review)                |
+| 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)                             |
+| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done (impl; tsc+lint clean; live img/dark QA in P8) |
+| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending                                             |
+| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Pending                                             |
+| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                                             |
+| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                                             |
 
 **Estimated effort: ~15 dev-days** (full UX scope per D4; Cmd+K backend search dropped per D5). Original baseline was ~11d; the +4d covers fixed toolbar + live preview + visual icon picker + copy-between-locales (P6), in-article TOC + prev/next + related (P5), accent-folded multilingual search (P1/P2), and the matching tests (P8).
 

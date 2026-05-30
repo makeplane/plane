@@ -1,13 +1,33 @@
 ---
 phase: 5
 title: "Reading UI"
-status: pending
+status: done
 priority: P1
 effort: "3d"
 dependencies: [3, 4]
 ---
 
 # Phase 5: Reading UI
+
+## Implementation Status — 2026-05-30 (done; tsc + lint clean)
+
+Built in `apps/web` (read-only, instance-global). **D6 reconciliation applied** (this phase file
+predates the pivot): route stays workspace-prefixed `/:workspaceSlug/help` so it inherits the shell,
+but ALL data is fetched from the global slug-less API; reader gates on `IsAuthenticated` only;
+**no "Manage" button** (authoring moved to `apps/admin` God Mode — Phase 6). Deep-link decision:
+**by slug** — added a small read endpoint `GET /api/help/articles/slug/<slug>/`
+(`retrieve_by_slug`) reusing the published+has-title queryset. Featured section = first (lowest
+`sort_order`) category (no `is_featured` field — YAGNI).
+
+Files: `apps/web/app/(all)/[workspaceSlug]/(projects)/help/{layout,page,article}.tsx`;
+`apps/web/ce/components/help-center/*` (13 components + barrel, all <150 LOC);
+`extended.ts` routes; `help-center.service.ts` + `article.store.ts` (slug fetch + slug computed);
+`i18n` added `help_center.on_this_page` (en/vi/ko); backend `article.py` + `urls/help_center.py`.
+
+Verified: `pnpm check:types` 0 errors in help files; eslint 0 errors/warnings; code-review pass
+(TOC index-space bug fixed → TOC now derives from live DOM; plan-ref comments removed per rules).
+**Deferred to P8 (manual/e2e QA):** g18 image-render with `projectId=undefined`; light+dark theme
+click-through; locale-switch re-fetch end-to-end.
 
 ## Overview
 
