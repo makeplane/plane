@@ -114,6 +114,40 @@ class TestScreenshotMarkerSurvival:
 
 
 @pytest.mark.unit
+class TestScreenshotMarkerCodeProtection:
+    """Markers inside inline-code or fenced-code blocks must NOT be converted.
+    They are literal documentation examples, not real screenshot placeholders."""
+
+    def test_inline_code_token_stays_literal(self):
+        # `{{screenshot:ten-kebab}}` inside backticks -> <code>{{screenshot:…}}</code>
+        # The loader must leave the content of the code span unchanged.
+        html = render_body("Cú pháp: `{{screenshot:ten-kebab}}`")
+        assert "<code>{{screenshot:ten-kebab}}</code>" in html
+        assert 'data-help-screenshot="ten-kebab"' not in html
+
+    def test_fenced_code_block_token_stays_literal(self):
+        # A token inside a fenced code block is a literal example, not a real marker.
+        md = "Ví dụ:\n\n```\n{{screenshot:fenced-example}}\n```"
+        html = render_body(md)
+        assert "{{screenshot:fenced-example}}" in html
+        assert 'data-help-screenshot="fenced-example"' not in html
+
+    def test_real_block_marker_outside_code_still_converts(self):
+        # A standalone paragraph token outside any code span must still become
+        # the block marker as before.
+        html = render_body("Xem hình:\n\n{{screenshot:abc}}\n\nKết thúc.")
+        assert '<p data-help-screenshot="abc"></p>' in html
+        assert "{{screenshot:abc}}" not in html
+
+    def test_real_inline_marker_in_prose_still_converts(self):
+        # An inline token in normal prose (not inside backticks) must still become
+        # the span marker as before.
+        html = render_body("Nhấn {{screenshot:abc}} để mở.")
+        assert '<span data-help-screenshot="abc"></span>' in html
+        assert "{{screenshot:abc}}" not in html
+
+
+@pytest.mark.unit
 class TestParseFrontmatter:
     def test_splits_meta_and_body(self):
         meta, body = parse_frontmatter("---\nslug: ho-so\ntitle: Hồ sơ\n---\nNội dung")

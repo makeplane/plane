@@ -37,6 +37,9 @@ _FRONTMATTER = re.compile(r"^---\s*\n(.*?)\n---\s*\n?(.*)$", re.DOTALL)
 # A lone `{{screenshot:NAME}}` paragraph -> block marker; inline ones -> span marker.
 _WRAPPED_TOKEN = re.compile(r"<p>\s*\{\{screenshot:([a-z0-9-]+)\}\}\s*</p>")
 _INLINE_TOKEN = re.compile(r"\{\{screenshot:([a-z0-9-]+)\}\}")
+# Matches any <code>…</code> or <pre>…</pre> span (possibly multiline) that must
+# be protected from screenshot-marker substitution (literal documentation examples).
+_CODE_REGION = re.compile(r"<(?:code|pre)\b[^>]*>.*?</(?:code|pre)>", re.DOTALL)
 
 
 def parse_frontmatter(text):
@@ -47,11 +50,39 @@ def parse_frontmatter(text):
     return (yaml.safe_load(match.group(1)) or {}), match.group(2)
 
 
+def _apply_screenshot_markers(html):
+    """Run screenshot-token substitution while preserving <code>/<pre> regions.
+
+    Strategy: extract all code/pre spans into a stash keyed by a non-ambiguous
+    placeholder token, substitute markers only on the non-code segments, then
+    restore the stashed spans. This guarantees that literal `{{screenshot:…}}`
+    examples inside inline-code or fenced code blocks are never converted.
+    """
+    stash = {}
+
+    def _stash(match):
+        key = f"\x00CODE{len(stash)}\x00"
+        stash[key] = match.group(0)
+        return key
+
+    # Mask all code/pre regions before substitution.
+    masked = _CODE_REGION.sub(_stash, html)
+
+    # Apply the two marker substitutions only on non-code text.
+    masked = _WRAPPED_TOKEN.sub(r'<p data-help-screenshot="\1"></p>', masked)
+    masked = _INLINE_TOKEN.sub(r'<span data-help-screenshot="\1"></span>', masked)
+
+    # Restore the original code/pre regions verbatim.
+    for key, original in stash.items():
+        masked = masked.replace(key, original)
+
+    return masked
+
+
 def render_body(md_body):
     """markdown -> sanitized HTML -> post-sanitize screenshot markers."""
     html = sanitize_help_html(_markdown(md_body or ""))
-    html = _WRAPPED_TOKEN.sub(r'<p data-help-screenshot="\1"></p>', html)
-    return _INLINE_TOKEN.sub(r'<span data-help-screenshot="\1"></span>', html)
+    return _apply_screenshot_markers(html)
 
 
 def locale_from_filename(filename):
