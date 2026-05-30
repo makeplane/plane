@@ -54,11 +54,30 @@ try {
   const me = await api("/api/users/me/");
   const projects = await api(`/api/workspaces/${WS}/projects/`);
   const list = Array.isArray(projects) ? projects : projects.results || [];
-  vars = { ws: WS, pid: list[0]?.id, uid: me.id };
+  const pid = list[0]?.id;
+  vars = { ws: WS, pid, uid: me.id };
+  // First issue id (best-effort) for the work-item detail shot.
+  try {
+    const issues = await api(`/api/workspaces/${WS}/projects/${pid}/issues/`);
+    const ilist = Array.isArray(issues) ? issues : issues.results || [];
+    vars.iid = ilist[0]?.id;
+  } catch {
+    /* issue detail shot will skip if unresolved */
+  }
   console.log("resolved vars:", vars);
 } catch (e) {
   console.error("Could not resolve API vars (auth/route issue):", e.message);
   console.error("Workspace-level shots may still work; project-level ones will be skipped.");
+}
+
+// Run optional interaction steps (open a modal, press Cmd+K, hover) before capture.
+async function runSteps(page, steps) {
+  for (const s of steps || []) {
+    if (s.press) await page.keyboard.press(s.press).catch(() => {});
+    else if (s.click) await page.click(s.click, { timeout: 6000 }).catch(() => {});
+    else if (s.hover) await page.hover(s.hover, { timeout: 6000 }).catch(() => {});
+    if (s.wait) await page.waitForTimeout(s.wait);
+  }
 }
 
 const page = await context.newPage();
@@ -92,6 +111,7 @@ for (const t of targets) {
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForTimeout(t.wait || 2500);
+    await runSteps(page, t.steps);
     await page.screenshot({ path: join(OUT, `${t.name}.png`) });
     console.log("OK  ", t.name, "<-", url);
     ok++;

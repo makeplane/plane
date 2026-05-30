@@ -2,8 +2,21 @@
   { "name": "lam-quen-giao-dien-chinh", "path": "/{ws}/", "wait": 3000 },
   { "name": "danh-sach-du-an", "path": "/{ws}/projects/", "wait": 3000 },
   { "name": "cac-bo-cuc-hien-thi-five-layouts", "path": "/{ws}/projects/{pid}/issues/", "wait": 3500 },
+  { "name": "loc-nhom-va-sap-xep-group-by", "path": "/{ws}/projects/{pid}/issues/", "wait": 3500 },
   { "name": "tao-va-quan-ly-cycles", "path": "/{ws}/projects/{pid}/cycles/", "wait": 3500 },
   { "name": "tao-va-quan-ly-modules", "path": "/{ws}/projects/{pid}/modules/", "wait": 3500 },
   { "name": "pages-list-tab-navigation", "path": "/{ws}/projects/{pid}/pages/", "wait": 3500 },
-  { "name": "cong-viec-cua-ban-dashboard", "path": "/{ws}/profile/{uid}/", "wait": 3500 }
+  { "name": "chi-tiet-cong-viec", "path": "/{ws}/projects/{pid}/issues/{iid}/", "wait": 3500 },
+  { "name": "cong-viec-cua-ban-dashboard", "path": "/{ws}/profile/{uid}/", "wait": 3500 },
+  { "name": "inbox-va-thong-bao", "path": "/{ws}/notifications/", "wait": 3000 },
+  { "name": "stickies-trang-day-du", "path": "/{ws}/stickies/", "wait": 3000 },
+  { "name": "workspace-settings-general-page", "path": "/{ws}/settings/", "wait": 3000 },
+  { "name": "workspace-members-settings-page", "path": "/{ws}/settings/members/", "wait": 3000 },
+  { "name": "du-an-toan-ngan-hang", "path": "/{ws}/bank-wide-projects/", "wait": 3000 },
+  { "name": "head-office-dashboard-department-tab", "path": "/{ws}/ho/", "wait": 4000 },
+  { "name": "cham-cong-timesheet-grid", "path": "/{ws}/time-tracking/", "wait": 4000 },
+  { "name": "capacity-va-bao-cao", "path": "/{ws}/time-tracking/capacity/", "wait": 4000 },
+  { "name": "ho-so-ca-nhan-form", "path": "/settings/profile/profile/", "wait": 3000 },
+  { "name": "tao-cong-viec-modal", "path": "/{ws}/", "wait": 2500, "steps": [{ "click": "text=New work item", "wait": 2000 }] },
+  { "name": "command-palette-cmd-k", "path": "/{ws}/", "wait": 2500, "steps": [{ "press": "Meta+k", "wait": 1500 }] }
 ]

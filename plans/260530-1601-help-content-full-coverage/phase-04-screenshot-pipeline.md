@@ -7,8 +7,11 @@ effort: "2.5d"
 dependencies: [3]
 ---
 
-> **Pilot done (2026-05-30):** Full pipeline built + proven end-to-end on a 7-screenshot pilot (the
-> core "navigate to a route" targets: home, projects, issues, cycles, modules, pages, your-work).
+> **Done — 20 core shots live (2026-05-30):** Full pipeline built + proven end-to-end; **20 of 155**
+> placeholders captured + injected (home, projects, issues, cycles, modules, pages, your-work, settings,
+> members, notifications, stickies, bank-wide, HO dashboard, timesheet, capacity, + interactive
+> create-work-item modal and Cmd+K palette via the `steps` mechanism). 135 markers remain (text ships
+> regardless). Earlier pilot note:
 > Components: `make_help_session` (session-cookie injection — the SPA needs an onboarded Profile, not
 > just `/api/users/me/` 200), `tools/help-screenshots/` (Playwright capture, `url`-scoped cookie for
 > both :3000/:8000, dynamic `{ws}/{pid}/{uid}` resolution via API), `inject_help_screenshots`
