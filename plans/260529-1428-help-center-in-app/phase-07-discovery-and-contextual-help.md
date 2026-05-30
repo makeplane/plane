@@ -11,19 +11,24 @@ dependencies: [5]
 
 ## Implementation Status — 2026-05-30 (entry points done; verified live)
 
-3 discovery entry points to `/:workspaceSlug/help` shipped + browser-verified:
-- **Cmd+K command** "Help Center" (open-only, D5-compliant — NO search-results group;
-  `searchWorkspace`/`IWorkspaceSearchResults` untouched) — `power-k/config/help-commands.ts`.
-- **Top-level sidebar nav** "Help Center" (LifeBuoy icon, after Bank-wide Projects) — mirrors the
-  fork's `ho`/`bank-wide-projects` pattern: catalog + link in `packages/constants/src/workspace.ts`,
-  whitelisted in CE `sidebar-item.tsx` `additionalStaticItems`, icon in CE `helper.tsx`.
-- **Sidebar Help dropdown** first-position "Help Center" item — `workspace/sidebar/help-section/root.tsx`.
+2 discovery entry points to `/:workspaceSlug/help`, browser-verified. **Design note (user-confirmed):**
+the Help Center IS the self-hosted guide, so it REPLACES the former (dead) `${origin}/docs` link
+that the fork had repointed for self-hosting (`fix(help-menu): customize docs link…`). No new
+top-level sidebar nav entry — the help guide lives in the existing help surfaces, not a per-workspace
+sidebar item.
 
-All use `t("help_center.menu_label")` (flat key) + `LifeBuoy` icon. Verified via Playwright: sidebar
-entry navigates to `/help/`; Cmd+K shows the "Help Center" command. eslint clean (1 pre-existing warning
-unrelated). `@plane/constants` rebuilt for the dev server to pick up the new nav item.
+- **Header "?" help menu** (`HelpMenuRoot`, top-right near the version, rendered in
+  `ce/components/navigations/top-navigation-root.tsx`): the "Documentation" item (→ dead `${origin}/docs`)
+  is REPLACED by a "Help Center" item routing to `/:workspaceSlug/help` — `workspace/sidebar/help-section/root.tsx`.
+- **Cmd+K command** "Help Center" (open-only, D5-compliant — no search-results group): replaces the
+  dead `open_plane_documentation` command — `power-k/config/help-commands.ts`.
 
-**Deferred:** `<HelpHint slug>` contextual "?" on ≤3 core screens (item 4) — optional polish, not built.
+Both use `t("help_center.menu_label")` + `LifeBuoy` icon. Verified via Playwright (authenticated session):
+the "?" dropdown shows "Help Center" (not "Documentation") above the version; Cmd+K shows "Help Center"
+(no "Documentation"); the left sidebar has NO Help entry. eslint clean (1 pre-existing unrelated warning).
+
+**Reverted from the first attempt:** the top-level left-sidebar nav entry (it showed in every one of
+the ~100 workspaces — too intrusive). **Deferred:** `<HelpHint slug>` contextual "?" on core screens.
 
 ## Overview
 
