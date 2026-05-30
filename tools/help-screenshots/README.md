@@ -44,6 +44,19 @@ docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screen
 Open `/help` to verify images render (served via `/api/assets/v2/static/{id}/` →
 vite `/uploads` proxy → MinIO).
 
+### Idempotency & cleanup
+
+- **Re-seeding refreshes article bodies from source**, which restores the raw
+  `data-help-screenshot` markers and drops any previously-injected `<img>`. Always
+  run `inject_help_screenshots` *after* `seed_help_center`, never before. Re-running
+  inject supersedes the prior asset for each `(article, name)` (old one soft-deleted),
+  so images stay stable and never duplicate.
+- **The loader is additive — it does not prune.** Articles in the DB whose slug is no
+  longer in the source tree (e.g. old hand-seeded or God-Mode-authored rows) are left
+  untouched, so re-seeding can never delete content an admin added in the UI. Remove a
+  retired seeded article by soft-deleting it explicitly (`HelpArticle.objects
+  .filter(slug=...).first().delete()` — reversible via `deleted_at`).
+
 ## Adding more screenshots
 
 `targets.json` is a list of `{name, path, wait}`. `name` must match a

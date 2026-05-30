@@ -15,6 +15,171 @@ Trung Tâm Trợ Giúp (Help Center) là một nguồn hướng dẫn toàn cầ
 
 ---
 
+## Nội Dung Dưới Dạng Mã (Content-as-Code)
+
+Ngoài giao diện Admin (God Mode), các nhà phát triển có thể quản lý nội dung trung tâm trợ giúp dưới dạng **markdown có cấu trúc** trong repository. Phương pháp này là **nguồn sự thật chính thức** cho nội dung seeded; nội dung UI của God Mode sẽ được đảo ngược khi re-seed lại từ mã.
+
+### Cấu Trúc Nguồn
+
+Tất cả tệp nguồn nằm ở: `apps/api/plane/db/fixtures/help_center/`
+
+```
+fixtures/help_center/
+├── categories.yaml                 # Định nghĩa danh mục (biểu tượng, thứ tự, tên đa ngôn ngữ)
+├── getting-started/
+│   ├── article-one.vi.md          # Bài viết VI (frontmatter + markdown)
+│   ├── article-one.en.md          # Bài viết EN
+│   └── article-one.ko.md          # Bài viết KO (tùy chọn)
+├── project-management/
+│   ├── create-project.vi.md
+│   └── ...
+└── [more-categories]/
+```
+
+### Thêm Danh Mục Mới
+
+Chỉnh sửa `apps/api/plane/db/fixtures/help_center/categories.yaml`:
+
+```yaml
+- slug: getting-started
+  icon: play_circle          # Tên biểu tượng Material Design
+  color: "5B5B5B"           # Màu HEX (tùy chọn)
+  sort_order: 10
+  names:
+    vi: "Bắt Đầu Nhanh"
+    en: "Getting Started"
+    ko: "빨리 시작하기"
+
+- slug: advanced-topics
+  icon: settings
+  sort_order: 20
+  names:
+    vi: "Chủ Đề Nâng Cao"
+    en: "Advanced Topics"
+    ko: "고급 주제"
+```
+
+**Lưu ý:** `sort_order` xác định thứ tự danh mục trên giao diện `/help`.
+
+### Viết Bài Viết Mới
+
+Tạo một tệp: `apps/api/plane/db/fixtures/help_center/<category-slug>/<article-slug>.<locale>.md`
+
+**Ví dụ:** `apps/api/plane/db/fixtures/help_center/getting-started/create-first-issue.vi.md`
+
+```markdown
+---
+category: getting-started
+slug: create-first-issue
+sort_order: 10
+title: Cách Tạo Công Việc Đầu Tiên
+status: published
+---
+
+Công việc (issue) là đơn vị cơ bản của dự án. Hướng dẫn này sẽ dạy bạn cách tạo công việc đầu tiên.
+
+## Bước 1: Mở Dự Án
+
+1. Đăng nhập vào Shinhan Workspace
+2. Chọn dự án từ danh sách bên trái
+
+## Bước 2: Tạo Công Việc
+
+Nhấp nút **"+ Công Việc"** ở góc trên cùng bên phải.
+
+{{screenshot:tao-cong-viec-modal}}
+
+Một modal sẽ mở ra. Nhập tiêu đề (ví dụ: "Sửa lỗi đăng nhập").
+
+## Bước 3: Lưu
+
+Nhấp **"Tạo"** để lưu công việc.
+```
+
+**Frontmatter (metadata):**
+- `category`: slug danh mục (phải tồn tại trong `categories.yaml`)
+- `slug`: định danh duy nhất toàn cầu của bài viết (không có khoảng trắng, dùng dấu gạch ngang)
+- `sort_order`: thứ tự trong danh mục (số nguyên)
+- `title`: tiêu đề hiển thị
+- `status`: `"published"` hoặc `"draft"`
+
+**Markdown Body:** Dùng Markdown tiêu chuẩn (tiêu đề, danh sách, bảng, v.v.).
+
+### Hình Ảnh & Ảnh Chụp Màn Hình
+
+Bài viết có thể bao gồm một **placeholder ảnh chụp màn hình** để được injected sau này:
+
+```markdown
+{{screenshot:NAME}}
+```
+
+Ví dụ: `{{screenshot:tao-cong-viec-modal}}` — tên phải khớp với một target trong `tools/help-screenshots/targets.json`.
+
+**Cách thức hoạt động:**
+1. Loader chuyển placeholder thành marker: `<p data-help-screenshot="NAME"></p>`
+2. Công cụ chụp ảnh (`tools/help-screenshots/`) chụp các ảnh và tạo tệp PNG (ví dụ: `tao-cong-viec-modal.png`)
+3. Lệnh `inject_help_screenshots` tải PNG lên, lưu trữ dưới dạng tài sản toàn cầu (không per-workspace), và thay thế marker bằng `<img>` tag
+4. Ảnh được phục vụ qua `/api/assets/v2/static/{id}/` — định danh instance-specific, **không hardcoded trong git**
+
+Xem hướng dẫn chụp ảnh ở `tools/help-screenshots/README.md`.
+
+### Dịch Sang Các Ngôn Ngữ Khác
+
+Tạo các tệp bổ sung:
+- `<article-slug>.en.md` (tiếng Anh)
+- `<article-slug>.ko.md` (tiếng Hàn, tùy chọn)
+
+**Lưu ý:** Các tệp dịch không cần frontmatter — chúng sử dụng metadata từ tệp VI. Chỉ cần nội dung markdown.
+
+**Sai:**
+```markdown
+---
+slug: my-article
+category: getting-started
+---
+Content in English
+```
+
+**Đúng:**
+```markdown
+Content in English (no frontmatter, metadata from .vi.md)
+```
+
+### Quy Trình Seed (Tải Nội Dung)
+
+Chạy lệnh này bên trong container API:
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
+```
+
+**Hành động:**
+- Đọc tất cả tệp `.md` từ `fixtures/help_center/`
+- Render markdown → HTML → sanitize → inject screenshot markers
+- Upsert các danh mục + bài viết vào database (idempotent)
+- **Không xóa** bài viết trong DB nếu chúng không tồn tại trong source tree (bảo vệ nội dung được viết bằng God Mode)
+
+**Quan trọng:** Seed là **additive only** — nó không xóa các bài viết hoặc danh mục. Nếu bạn muốn xóa nội dung seeded, xóa mềm nó một cách rõ ràng trong database.
+
+### Sanitization (Bảo Mật)
+
+Loader sử dụng một **whitelist HTML cứng** (`nh3` library):
+- Cho phép: `<p>`, `<h1>`–`<h6>`, `<strong>`, `<em>`, `<a>`, `<ul>`, `<ol>`, `<img>`, `<table>`, v.v.
+- Loại bỏ: `<script>`, `<iframe>`, `<video>`, `<style>`, `on*` attributes
+- **Raw HTML trong markdown được ESCAPE** trước sanitizing, vì vậy bạn không thể nhúng mã JavaScript
+
+Điều này có nghĩa là bạn có thể viết Markdown sạch mà không lo lắng về các cuộc tấn công XSS.
+
+### Perms & Ai Có Thể Làm Gì?
+
+- **God Mode (Admin):** Chỉnh sửa + xem trước bài viết trong giao diện `/admin/help-center`
+- **Nhà Phát Triển:** Chỉnh sửa tệp markdown + chạy `seed_help_center`
+- **Tất Cả Người Dùng Đã Xác Thực:** Xem bài viết tại `/help`
+
+Thay đổi từ developer (`git push`) và thay đổi từ admin UI là **bình đẳng** — re-seed sẽ đảo ngược UI edits và sử dụng markdown làm source of truth.
+
+---
+
 ## Giao Diện Admin (Nhà Soạn Thảo)
 
 ### Khu Vực Chính

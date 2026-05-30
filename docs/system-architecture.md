@@ -631,8 +631,6 @@ Roles per level:
 
 ## Help Center Subsystem (Instance-Global User Guide)
 
-> Implementation: Phase 9 (Documentation). Shipped on branch `duonglx/feat/help-center`.
-
 ### Overview
 
 Instance-global, multilingual in-app user guide for all ~100 department workspaces. NOT per-workspace. Instance admins (God Mode) author articles and categories; all logged-in users read at `/help`.
@@ -734,12 +732,23 @@ Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/l
 - Custom toolbar: fixed buttons for formatting, image insert, preview toggle
 - Image uploads: instance-global `FileAsset` (entity_type=HELP_ARTICLE_CONTENT, workspace_id=NULL)
 
+### Content Pipeline (Markdown-Source → Injected Assets)
+
+**Source-to-reader flow:**
+
+1. **Markdown source** — `apps/api/plane/db/fixtures/help_center/` (categories.yaml + article markdown files)
+2. **Loader** (`apps/api/plane/db/fixtures/help_center/loader.py`) — parses frontmatter, renders markdown → HTML, sanitizes with hardened allowlist (drops `<script>`, `<iframe>`, `<video>`, `<style>` attributes), **escapes raw HTML as text**, post-sanitizes to inject screenshot markers (`{{screenshot:NAME}}` → `<p data-help-screenshot="NAME"></p>` or span variant)
+3. **Database storage** — sanitized HTML in `HelpArticleTranslation.description_html`, never re-sanitized on read
+4. **Instance-global asset injection** — once per instance, `inject_help_screenshots` command uploads captured PNGs as workspace-less `FileAsset` (entity_type=HELP_ARTICLE_CONTENT), replaces markers with `<img src="/api/assets/v2/static/{id}/">`, asset IDs minted at upload (instance-specific, not in git)
+5. **Reader** — served sanitized HTML + injected images, no post-processing
+
+**Idempotency:** Seeding the content is additive (never deletes); re-seeding restores raw markers (requires re-inject). Re-injecting images supersedes prior assets per (article, screenshot-name).
+
 ### Content Security & Sanitization
 
-**HTML sanitization** (`plane/utils/help_center/sanitizer.py`):
-- Library: `nh3` (Rust + Python bindings, production-safe)
+**HTML sanitization** (`plane/app/serializers/help_center.py`, library `nh3`):
 - Allowlist: `<p>`, `<h1>`–`<h6>`, `<strong>`, `<em>`, `<u>`, `<s>`, `<a>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, `<code>`, `<pre>`, `<img>`, `<br>`, `<hr>`, `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<td>`, `<th>`
-- Drop: `<script>`, `<iframe>`, `<video>`, `<object>`, `<embed>`, `on*` attributes, `style` attribute
+- Drop: `<script>`, `<iframe>`, `<video>`, `<object>`, `<embed>`, `on*` attributes, `style` attribute (hardened vs. general content, style unsafe for broadcast security)
 - Keep: `rel` on `<a>` (for anti-tabnabbing `rel="noopener noreferrer"`)
 
 **Read path:** Reader served sanitized `description_html` ONLY. `description_json` (editor state) never exposed.

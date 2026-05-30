@@ -305,9 +305,13 @@ docker-compose up -d
 
 - `0178_help_center` — Instance-global Help Center (categories, articles, per-locale translations)
 
-### Help Center Post-Deployment Setup
+### Help Center Post-Deployment Setup (Content-as-Code Pipeline)
 
-After migration `0178_help_center`, optionally seed the Help Center with default content:
+After migration `0178_help_center`, the Help Center content pipeline runs in this order:
+
+#### Step 1: Seed Content from Markdown
+
+Source of truth: `apps/api/plane/db/fixtures/help_center/` (categories.yaml + article markdown files).
 
 ```bash
 # Development
@@ -315,14 +319,75 @@ cd apps/api
 python manage.py seed_help_center
 
 # Docker
-docker-compose exec api python manage.py seed_help_center
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
 ```
 
 **Properties:**
-- **Idempotent:** Safe to run multiple times (skips if already seeded)
+- **Idempotent:** Safe to run multiple times
 - **Instance-global:** Run ONCE per instance, not per workspace
-- **Content:** Seeds 5 categories + 5 articles in all 3 locales (VI/EN/KO) using Shinhan Workspace terminology
+- **Content:** Renders markdown → HTML → sanitizes (hardened allowlist, script/iframe/video dropped, style attribute removed) → injects screenshot markers (`{{screenshot:NAME}}` becomes `<p data-help-screenshot="NAME"></p>`)
 - **Publishing:** All seeded articles published (readers can access immediately)
+- **Additive only:** Does NOT delete articles/categories from the DB if missing from source tree (protects God-Mode-authored content)
+
+#### Step 2: Seed Demo Workspace (Staging / Dev Only — Never Production)
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'
+```
+
+Creates an isolated `help-demo` workspace with demo data for screenshot capture. **NEVER run on production.**
+
+#### Step 3: Capture Screenshots (If Re-Injecting Images)
+
+See `tools/help-screenshots/README.md` for the full Playwright + Node.js workflow.
+
+```bash
+# Mint a session cookie for the screenshot user
+SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
+
+# Run from host (needs web :3000 + api :8000 reachable)
+cd tools/help-screenshots
+npm install
+SHOT_COOKIE="$SHOT_COOKIE" npm run capture  # writes ./out/<name>.png
+```
+
+#### Step 4: Copy Screenshots into Container & Inject
+
+Screenshots are uploaded as instance-global assets (workspace_id=NULL, entity_type=HELP_ARTICLE_CONTENT). Asset IDs are **instance-specific** — minted at upload time, never in git.
+
+```bash
+docker exec planeso-api-1 sh -c 'rm -rf /tmp/help-shots && mkdir -p /tmp/help-shots'
+docker cp tools/help-screenshots/out/. planeso-api-1:/tmp/help-shots/
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots --dir /tmp/help-shots'
+```
+
+**Idempotency:** Re-running `inject_help_screenshots` supersedes prior assets per (article, screenshot-name), so images stay stable.
+
+#### Complete Per-Instance Sequence
+
+```bash
+# Seed content (creates markers)
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
+
+# [Staging/dev only] Create demo workspace for capture
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'
+
+# [If re-injecting images] Capture, copy, inject
+SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
+cd tools/help-screenshots && npm install && SHOT_COOKIE="$SHOT_COOKIE" npm run capture
+docker exec planeso-api-1 sh -c 'rm -rf /tmp/help-shots && mkdir -p /tmp/help-shots'
+docker cp tools/help-screenshots/out/. planeso-api-1:/tmp/help-shots/
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots --dir /tmp/help-shots'
+```
+
+**Important:** Re-running `seed_help_center` restores the raw screenshot markers (`data-help-screenshot` attributes), dropping previously-injected `<img>` tags. **Always re-inject after any re-seed.**
+
+#### Notes
+
+- Content authoring guide: `docs/help-center-authoring-guide.md` — how to add categories and articles as markdown
+- Screenshot tool reference: `tools/help-screenshots/README.md` — adding new targets, interaction steps
+- The loader is production-safe: all raw HTML is escaped before sanitizing; no XSS vectors
+- Search uses accent-insensitive text index (Vietnamese folding, no PostgreSQL extensions needed)
 
 ### Search Database Requirements
 
