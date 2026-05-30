@@ -39,8 +39,9 @@ Validated GO — `plans/reports/validation-260530-1124-standalone-help-route-d7-
   no `WorkspaceAuthWrapper`). Register `/help` + `/help/a/:articleSlug` in `extended.ts`.
 - **Standalone shell — NOT bare (red-team HIGH):** `(all)/help/layout.tsx` uses `AuthenticationWrapper`
   (`EPageTypes.AUTHENTICATED`) + a lightweight chrome carrying a **"Back to {workspace}" affordance**
-  (target = `user.userSettings…last_workspace_slug`, fallback first `useWorkspace().workspaces`); optional
-  workspace switcher (profile-sidebar pattern `ProfileSettingsSidebarWorkspaceOptions`). Decision D-1.
+  (target = `user.userSettings…last_workspace_slug`, fallback first `useWorkspace().workspaces`). The
+  chrome's full header design (product brand identity + signed-in user) is specified in
+  **Standalone shell header (D8)** below — **no workspace switcher** (D8 supersedes D-1's optional switcher).
 - **`help-content-renderer.tsx`:** DROP the `if(!workspaceId) return null` guard; render without a workspace.
   Renders text + images whose `src` is a global `/api/assets/v2/static/{id}/` URL. (Confirm at impl whether
   the read-only editor calls `getAssetSrc` at render — if it reads `description_html` directly, no
@@ -50,6 +51,57 @@ Validated GO — `plans/reports/validation-260530-1124-standalone-help-route-d7-
 - **Images:** uploaded images render only if their URL is the global static path — depends on P6 producing
   `HELP_ARTICLE_CONTENT` assets. Text-only / external-image articles render fully without P6.
 - **Effort:** small-medium (~2–3h); backend unchanged.
+
+### Standalone shell header (D8) — product identity + signed-in user
+
+The `/help` top bar (`help-center-header.tsx`, rendered by `(all)/help/layout.tsx`) carries the two things
+a workspace-agnostic shell otherwise hides: **which system** this is, and **who is signed in**. Single
+52px row (`h-[52px]`, `border-b border-subtle`), 3 zones, all semantic tokens:
+
+- **Left — brand (answers "which system"):** Shinhan Bank logo
+  (`import ShinhanBankLogo from "@/app/assets/logos/shinhan-bank-logo.svg?url"`, rendered ~`h-6`, the same
+  asset the auth screens use — `auth-screens/header.tsx`) + a thin `bg-border-strong` divider + the
+  `t("help_center.breadcrumb_home")` label. The whole brand block is a `<Link to="/help">`.
+- **Center — breadcrumb:** on an article page append `› {detail?.title ?? slug}` (current behaviour);
+  reactive via `observer()` so the title fills in after fetch + on locale switch.
+- **Right — account (answers "who is signed in"):** the existing **"Back to app"** link (resolves to
+  last/fallback workspace via `useWorkspace().getWorkspaceRedirectionUrl()`) + a **user avatar menu**
+  (new component `help-center-user-menu.tsx`).
+
+`help-center-user-menu.tsx` (new CE component in `apps/web/ce/components/help-center/`, <150 LOC,
+`observer()`) reuses the sidebar account pattern at
+`apps/web/core/components/workspace/sidebar/user-menu-root.tsx`:
+
+- `Avatar` (`@plane/ui`) with `getFileURL(currentUser?.avatar_url ?? "")` + `currentUser?.display_name`
+  (sizes ~20 in the trigger, ~40 in the panel), from `useUser()` (`@/hooks/store/user`).
+- `CustomMenu` (`@plane/ui`) dropdown, `placement="bottom-end"`: a header block with the larger avatar +
+  `{first_name} {last_name}` + `email`, then a **Sign out** item calling `useUser().signOut()` with the
+  existing `t("sign_out")` label and `t("sign_out.toast.error.*")` error toast (`setToast`/`TOAST_TYPE`
+  from `@plane/propel/toast`).
+- `useUser()`/`signOut()` are **workspace-independent**, so the menu works on `/help` and **for users who
+  belong to no workspace** (the auth-gate admits them per D7).
+
+**Brand, NOT a workspace switcher (D8):** `/help` is instance-global/shared (D6); showing one workspace's
+logo/name would mislead and would break for no-workspace users — the left zone shows the product brand only.
+
+**Not included (YAGNI):** a "Settings"/"Preferences" item via `toggleProfileSettingsModal` — that modal is
+not mounted in the `/help` layout. Add only if the profile-settings modal is first wired into the standalone
+shell (or the action navigates to a real settings route).
+
+**i18n:** add `help_center.account_menu_label` (avatar trigger `aria-label`, e.g. VI "Tài khoản") to
+en/vi/ko; reuse existing `help_center.breadcrumb_home`, `help_center.back_to_app`, top-level `sign_out`
+(+`sign_out.toast.error.title/message`). No hardcoded strings.
+
+**Files (D8 delta):** modify `apps/web/ce/components/help-center/help-center-header.tsx` (3-zone layout +
+brand block); create `apps/web/ce/components/help-center/help-center-user-menu.tsx` + export from the
+barrel `index.ts`; add the i18n key in `packages/i18n/src/locales/{en,vi,ko}/translations.ts`.
+
+**Implemented 2026-05-30:** built as specified (header 65 LOC, user-menu 66 LOC, both <150; `observer()`;
+semantic tokens; no `core/` edits). Sign-out error toast uses `t("auth.sign_out.toast.error.*")` — the
+top-level `sign_out.toast.*` path does NOT resolve (top-level `sign_out` is the string "Sign out"; the
+nested block lives under `auth`). No-workspace edge case verified safe: `getWorkspaceRedirectionUrl()`
+returns `/create-workspace` (never empty), so the back link never breaks. `check:types` (web + @plane/i18n)
++ eslint clean on changed files; code-review = 5/5 acceptance criteria PASS, no blocking issues.
 
 ## Overview
 
@@ -208,6 +260,9 @@ can't overwrite a newer one. Handle 404 (article not found / soft-deleted) expli
 - [ ] Category cards use Propel `Card`; empty/loading via Propel `EmptyState*`/`Spinner` — no hand-rolled chrome
 - [ ] Only semantic tokens used (no `bg-gray-*`/hex); UI verified in BOTH light and dark theme
 - [ ] Responsive: category grid `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`; a11y landmarks/aria set
+- [ ] **D8 header:** left brand block (Shinhan logo + "Trung tâm trợ giúp", links to `/help`) is visible on home AND article pages → the system is identifiable everywhere, incl. article deep-links
+- [ ] **D8 header:** right side shows the signed-in user (avatar + name/email) with a working **Sign out**; renders correctly for a user with NO workspace (no workspace switcher anywhere)
+- [ ] `help-center-user-menu.tsx` <150 LOC, `observer()`-wrapped, reuses `Avatar`/`CustomMenu`/`useUser`; only semantic tokens; new `help_center.account_menu_label` present in en/vi/ko
 - [ ] All components <150 LOC; no `core/` modified
 
 ## Risk Assessment

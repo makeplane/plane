@@ -14,6 +14,7 @@ export * from "./help-center-featured";
 export * from "./help-center-header";
 export * from "./help-center-home";
 export * from "./help-center-states";
+export * from "./help-center-user-menu";
 export * from "./help-content-renderer";
 export * from "./help-search-box";
 export * from "./locale-fallback-notice";

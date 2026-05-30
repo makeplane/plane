@@ -3755,6 +3755,7 @@ export default {
     back_to_help: "Back to Help Center",
     back_to_app: "Back to app",
     breadcrumb_home: "Help Center",
+    account_menu_label: "Account",
     shown_in_language_notice: "Shown in {language}",
     read_more: "Read more",
     last_updated: "Last updated",
