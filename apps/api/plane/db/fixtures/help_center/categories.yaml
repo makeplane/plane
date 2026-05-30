@@ -1,0 +1,102 @@
+# Help Center category metadata (instance-global, content-as-code).
+# Articles live in <slug>/<article-slug>.<locale>.md and reference these slugs.
+# icon = Lucide name; color = Shinhan brand blue; sort_order = display order.
+
+- slug: bat-dau
+  icon: rocket
+  color: "#174EFD"
+  sort_order: 10000
+  names:
+    vi: "Bắt đầu"
+    en: "Getting Started"
+    ko: "시작하기"
+
+- slug: du-an-cong-viec
+  icon: folder-kanban
+  color: "#174EFD"
+  sort_order: 20000
+  names:
+    vi: "Dự án & Công việc"
+    en: "Projects & Work Items"
+    ko: "프로젝트 및 작업"
+
+- slug: cycles-modules
+  icon: refresh-cw
+  color: "#174EFD"
+  sort_order: 30000
+  names:
+    vi: "Cycles & Modules"
+    en: "Cycles & Modules"
+    ko: "사이클 및 모듈"
+
+- slug: trang-tai-lieu
+  icon: file-text
+  color: "#174EFD"
+  sort_order: 40000
+  names:
+    vi: "Trang & Tài liệu"
+    en: "Pages & Docs"
+    ko: "페이지 및 문서"
+
+- slug: cai-dat
+  icon: settings
+  color: "#174EFD"
+  sort_order: 50000
+  names:
+    vi: "Cài đặt"
+    en: "Settings"
+    ko: "설정"
+
+- slug: xem-va-bo-cuc
+  icon: layout-grid
+  color: "#174EFD"
+  sort_order: 60000
+  names:
+    vi: "Hiển thị & Bố cục"
+    en: "Views & Layouts"
+    ko: "보기 및 레이아웃"
+
+- slug: tim-kiem-va-dieu-huong
+  icon: search
+  color: "#174EFD"
+  sort_order: 70000
+  names:
+    vi: "Tìm kiếm & Điều hướng"
+    en: "Search & Navigation"
+    ko: "검색 및 탐색"
+
+- slug: thong-bao-va-cong-viec-cua-ban
+  icon: bell
+  color: "#174EFD"
+  sort_order: 80000
+  names:
+    vi: "Thông báo & Công việc của bạn"
+    en: "Notifications & Your Work"
+    ko: "알림 및 내 작업"
+
+- slug: ho-so-va-tai-khoan
+  icon: user-cog
+  color: "#174EFD"
+  sort_order: 90000
+  names:
+    vi: "Hồ sơ & Tài khoản"
+    en: "Profile & Account"
+    ko: "프로필 및 계정"
+
+- slug: tinh-nang-shbvn
+  icon: building-2
+  color: "#174EFD"
+  sort_order: 100000
+  names:
+    vi: "Tính năng riêng SHBVN"
+    en: "SHBVN-Specific Features"
+    ko: "SHBVN 전용 기능"
+
+- slug: huong-dan-quan-tri
+  icon: shield
+  color: "#174EFD"
+  sort_order: 110000
+  names:
+    vi: "Hướng dẫn Quản trị (God Mode)"
+    en: "Admin / God Mode Guide"
+    ko: "관리자 (God Mode) 가이드"
