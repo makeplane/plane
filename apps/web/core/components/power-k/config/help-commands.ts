@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, MessageSquare, Rocket } from "lucide-react";
+import { FileText, LifeBuoy, MessageSquare, Rocket } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -18,8 +19,23 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
   // store
   const { toggleShortcutsListModal } = usePowerK();
   const { isEnabled: isChatSupportEnabled, openChatSupport } = useChatSupport();
+  const router = useRouter();
+  const { workspaceSlug } = useParams();
 
   return [
+    {
+      id: "open_help_center",
+      type: "action",
+      group: "help",
+      i18n_title: "help_center.menu_label",
+      icon: LifeBuoy,
+      action: () => {
+        if (workspaceSlug) router.push(`/${workspaceSlug.toString()}/help`);
+      },
+      isEnabled: () => !!workspaceSlug,
+      isVisible: () => !!workspaceSlug,
+      closeOnSelect: true,
+    },
     {
       id: "open_keyboard_shortcuts",
       type: "action",

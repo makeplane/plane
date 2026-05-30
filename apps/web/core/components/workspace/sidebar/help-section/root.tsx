@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { HelpCircle, MessagesSquare, Sparkles, User } from "lucide-react";
+import { HelpCircle, LifeBuoy, MessagesSquare, Sparkles, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { PageIcon } from "@plane/propel/icons";
@@ -74,6 +74,16 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         maxHeight="lg"
         closeOnSelect
       >
+        <CustomMenu.MenuItem
+          onClick={() => {
+            if (workspaceSlug) router.push(`/${workspaceSlug.toString()}/help`);
+          }}
+        >
+          <div className="flex items-center gap-x-2 rounded-sm text-11">
+            <LifeBuoy className="h-3.5 w-3.5 text-secondary" />
+            <span className="text-11">{t("help_center.menu_label")}</span>
+          </div>
+        </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => window.open(`${window.location.origin}/docs`, "_blank")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
@@ -92,7 +102,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             </button>
           </CustomMenu.MenuItem>
         )}
-        <CustomMenu.MenuItem onClick={handleStartProductTour}>
+        <CustomMenu.MenuItem onClick={() => handleStartProductTour()}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <Sparkles className="h-3.5 w-3.5 text-secondary" size={14} />
             <span className="text-11">{t("start_product_tour")}</span>

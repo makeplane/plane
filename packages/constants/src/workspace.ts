@@ -301,12 +301,21 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
+  help: {
+    key: "help",
+    labelTranslationKey: "help_center.menu_label",
+    href: `/help/`,
+    // Shared instance-global guide — readable by any authenticated role.
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
 };
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["ho"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["bank-wide-projects"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["help"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [

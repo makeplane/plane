@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Building2, Globe, Timer } from "lucide-react";
+import { Building2, Globe, LifeBuoy, Timer } from "lucide-react";
 import {
   AnalyticsIcon,
   ArchiveIcon,
@@ -48,6 +48,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <Building2 className={cn("size-4 flex-shrink-0", className)} />;
     case "bank-wide-projects":
       return <Globe className={cn("size-4 flex-shrink-0", className)} />;
+    case "help":
+      return <LifeBuoy className={cn("size-4 flex-shrink-0", className)} />;
     case "time-tracking":
       return <Timer className={cn("size-4 flex-shrink-0", className)} />;
   }
