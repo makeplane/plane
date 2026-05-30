@@ -3741,5 +3741,6 @@ export default {
     was_this_helpful: "이 문서가 도움이 되었나요?",
     manage: "관리",
     on_this_page: "이 페이지에서",
+    search_results_count: "{count, plural, other {결과 #개}}",
   },
 } as const;

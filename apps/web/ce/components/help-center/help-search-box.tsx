@@ -18,7 +18,7 @@ export const HelpSearchBox = ({ value, onChange }: Props) => {
   return (
     <div
       role="search"
-      className="flex items-center gap-2 rounded-lg border border-subtle bg-layer-2 px-3 py-2.5 focus-within:border-strong"
+      className="flex items-center gap-2 rounded-lg border border-subtle bg-layer-2 px-3 py-2.5 focus-within:border-strong focus-within:ring-1 focus-within:ring-accent-strong"
     >
       <Search className="size-4 shrink-0 text-icon-primary" />
       <input
@@ -34,7 +34,7 @@ export const HelpSearchBox = ({ value, onChange }: Props) => {
           type="button"
           onClick={() => onChange("")}
           aria-label={t("help_center.cancel")}
-          className="shrink-0 text-tertiary hover:text-primary"
+          className="shrink-0 rounded text-tertiary hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
         >
           <X className="size-4" />
         </button>

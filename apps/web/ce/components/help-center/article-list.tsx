@@ -6,7 +6,7 @@
 
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router";
-import type { THelpArticleListItem, THelpLocale } from "@/plane-web/types/help-center";
+import type { THelpArticleListItem, THelpCategory, THelpLocale } from "@/plane-web/types/help-center";
 import { HelpCenterEmpty, HelpLoading } from "./help-center-states";
 
 type Props = {
@@ -15,12 +15,15 @@ type Props = {
   loading?: boolean;
   emptyLabel: string;
   showMatchedLocale?: boolean;
+  /** When provided, shows a small category badge on each row (useful for search results). */
+  categoriesMap?: Record<string, THelpCategory>;
 };
 
 // Presentational list of article rows, reused for category browse and search
 // results. A small locale tag is shown when a search matched a different locale.
+// When categoriesMap is passed (search context), each row also shows its category.
 // Links are workspace-agnostic (standalone /help).
-export const ArticleList = ({ currentLocale, articles, loading, emptyLabel, showMatchedLocale }: Props) => {
+export const ArticleList = ({ currentLocale, articles, loading, emptyLabel, showMatchedLocale, categoriesMap }: Props) => {
   if (loading && articles.length === 0) return <HelpLoading />;
   if (articles.length === 0) return <HelpCenterEmpty title={emptyLabel} />;
 
@@ -28,11 +31,12 @@ export const ArticleList = ({ currentLocale, articles, loading, emptyLabel, show
     <ul className="divide-y divide-subtle overflow-hidden rounded-lg border border-subtle bg-surface-1">
       {articles.map((article) => {
         const crossLocale = showMatchedLocale && article.matched_locale && article.matched_locale !== currentLocale;
+        const categoryName = categoriesMap && article.category ? categoriesMap[article.category]?.name : null;
         return (
           <li key={article.id}>
             <Link
               to={`/help/a/${article.slug}`}
-              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2"
+              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
@@ -44,6 +48,12 @@ export const ArticleList = ({ currentLocale, articles, loading, emptyLabel, show
                   )}
                 </div>
                 {article.snippet && <p className="mt-0.5 line-clamp-1 text-13 text-tertiary">{article.snippet}</p>}
+                {/* Category badge — shown in search results to orient the user */}
+                {categoryName && (
+                  <span className="mt-1 inline-block rounded bg-surface-2 px-1.5 py-0.5 text-11 text-secondary">
+                    {categoryName}
+                  </span>
+                )}
               </div>
               <ChevronRight className="size-4 shrink-0 text-icon-primary" />
             </Link>

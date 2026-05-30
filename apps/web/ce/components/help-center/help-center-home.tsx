@@ -58,12 +58,19 @@ export const HelpCenterHome = observer(function HelpCenterHome() {
 
       {trimmed ? (
         <section className="mt-6">
+          {/* Search results count heading — shown once results/loading resolves */}
+          {!article.searchLoader && article.searchResults.length > 0 && (
+            <p className="mb-3 text-13 text-secondary">
+              {t("help_center.search_results_count", { count: article.searchResults.length })}
+            </p>
+          )}
           <ArticleList
             currentLocale={currentLocale}
             articles={article.searchResults}
             loading={article.searchLoader}
             emptyLabel={t("help_center.no_results")}
             showMatchedLocale
+            categoriesMap={category.categoriesMap}
           />
         </section>
       ) : categoryId ? (
@@ -71,10 +78,14 @@ export const HelpCenterHome = observer(function HelpCenterHome() {
           <button
             type="button"
             onClick={() => setSearchParams({})}
-            className="mb-4 text-13 text-accent-primary hover:underline"
+            className="mb-4 rounded text-13 text-accent-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
           >
             ← {t("help_center.all_categories")}
           </button>
+          {/* Category title — keeps user oriented when drilling into a category */}
+          {category.categoriesMap[categoryId] && (
+            <h2 className="mb-4 text-18 font-semibold text-primary">{category.categoriesMap[categoryId].name}</h2>
+          )}
           <ArticleList
             currentLocale={currentLocale}
             articles={article.getArticlesByCategory(categoryId)}

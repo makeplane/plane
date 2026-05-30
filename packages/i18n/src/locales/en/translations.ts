@@ -3794,5 +3794,6 @@ export default {
     was_this_helpful: "Was this helpful?",
     manage: "Manage",
     on_this_page: "On this page",
+    search_results_count: "{count, plural, one {# result} other {# results}}",
   },
 } as const;

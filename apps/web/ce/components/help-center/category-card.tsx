@@ -38,7 +38,7 @@ export const CategoryCard = ({ category, onSelect }: Props) => {
       tabIndex={0}
       onClick={() => onSelect(category.id)}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(category.id)}
-      className="cursor-pointer gap-3 transition-colors hover:bg-surface-2"
+      className="cursor-pointer gap-3 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
     >
       <span
         className="flex size-9 items-center justify-center rounded-md bg-surface-2"

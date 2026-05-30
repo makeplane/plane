@@ -96,6 +96,7 @@ export const HelpArticleToc = ({ html, contentRef }: Props) => {
               aria-current={active === heading.index ? "location" : undefined}
               className={cn(
                 "block w-full truncate border-l-2 py-0.5 text-left text-13 transition-colors hover:text-primary",
+                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong",
                 heading.level === 3 ? "pl-6" : heading.level === 2 ? "pl-4" : "pl-3",
                 active === heading.index
                   ? "border-accent-strong text-accent-primary"

@@ -18,10 +18,17 @@ export default function HelpCenterLayout() {
       <ProjectsAppPowerKProvider />
       <AuthenticationWrapper>
         <div className="relative flex h-full w-full flex-col overflow-hidden bg-canvas">
+          {/* Skip-to-content link — visible on focus for keyboard users */}
+          <a
+            href="#help-main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface-1 focus:px-3 focus:py-2 focus:text-13 focus:text-primary focus:ring-1 focus:ring-accent-strong"
+          >
+            Bỏ qua điều hướng
+          </a>
           <HelpCenterHeader />
-          <div className="flex-1 overflow-y-auto">
+          <main id="help-main-content" className="flex-1 overflow-y-auto">
             <Outlet />
-          </div>
+          </main>
         </div>
       </AuthenticationWrapper>
     </>

@@ -3791,5 +3791,6 @@ export default {
     was_this_helpful: "Bài viết này có hữu ích không?",
     manage: "Quản lý",
     on_this_page: "Trong trang này",
+    search_results_count: "{count, plural, other {# kết quả}}",
   },
 } as const;
