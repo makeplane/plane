@@ -301,6 +301,37 @@ docker-compose exec -T api python manage.py migrate
 docker-compose up -d
 ```
 
+**New migrations (2026-05):**
+
+- `0178_help_center` — Instance-global Help Center (categories, articles, per-locale translations)
+
+### Help Center Post-Deployment Setup
+
+After migration `0178_help_center`, optionally seed the Help Center with default content:
+
+```bash
+# Development
+cd apps/api
+python manage.py seed_help_center
+
+# Docker
+docker-compose exec api python manage.py seed_help_center
+```
+
+**Properties:**
+- **Idempotent:** Safe to run multiple times (skips if already seeded)
+- **Instance-global:** Run ONCE per instance, not per workspace
+- **Content:** Seeds 5 categories + 5 articles in all 3 locales (VI/EN/KO) using Shinhan Workspace terminology
+- **Publishing:** All seeded articles published (readers can access immediately)
+
+### Search Database Requirements
+
+Help Center search uses app-managed accent-folded text search **without pg_trgm or unaccent PostgreSQL extensions**:
+- Search column: `search_text` (pre-folded by app: NFKD + combining mark stripping + Vietnamese accent folding, e.g., `đ→d`)
+- Query: `icontains` over pre-folded column (no full-text search)
+- Locale-aware: Scans all 3 locale translations for matches
+- **Prerequisite:** None (no extension install required; production Postgres can be non-superuser)
+
 ### Environment Variables Checklist
 
 **Required (Production):**
@@ -382,5 +413,5 @@ backup_service:
 
 ---
 
-**Last Updated:** 2026-05-04
-**Version:** 2.0 (Modularized for offline-first GitLab CI/CD)
+**Last Updated:** 2026-05-30
+**Version:** 2.1 (Added Help Center migration & seed command documentation)
