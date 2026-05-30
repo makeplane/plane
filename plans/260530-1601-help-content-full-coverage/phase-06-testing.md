@@ -1,7 +1,7 @@
 ---
 phase: 6
 title: "Testing"
-status: pending
+status: done
 priority: P1
 effort: "1d"
 dependencies: [5]
@@ -53,11 +53,12 @@ guide. Extends the existing `test_help_center_seed.py`.
 
 ## Success Criteria
 
-- [ ] Loader tests: 11 cat / 54 articles, idempotent (body refreshed), no "Plane", sanitized HTML
-- [ ] Injection test: marker→`<img>`, workspace-less `HELP_ARTICLE_CONTENT`, idempotent, derived cols refresh
-- [ ] Reader regression: seeded articles listed, categories visible, accent-folded search hits
-- [ ] Manual QA checklist signed off (text + images + light/dark + search, all categories)
-- [ ] Backend suite green in container; no fakes
+- [x] Loader tests: 11 cat / 54 articles, idempotent (body refreshed), no "Plane", sanitized HTML
+- [x] Loader unit tests: MD→HTML (headings/list/table/code/strikethrough), raw HTML escaped, marker survival (block `<p>` + inline `<span>`)
+- [x] Injection test: marker→`<img>`, workspace-less `HELP_ARTICLE_CONTENT`, idempotent (supersede proven), derived cols refresh, unmatched/missing-dir handled
+- [x] Reader regression: seeded articles listed, all 11 categories visible (count≥1), accent-folded search hits real VI titles
+- [ ] Manual QA checklist signed off (text + images + light/dark + search, all categories) — checklist ready, awaiting human sign-off
+- [x] Backend suite green in container; no fakes — 88 help-center tests pass (`--reuse-db --nomigrations`)
 
 ## Risk Assessment
 

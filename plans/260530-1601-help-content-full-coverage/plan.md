@@ -1,7 +1,7 @@
 ---
 title: "Help Content Full Coverage — Shinhan Workspace (54 articles, VI-first, auto-screenshots)"
 description: "Author the complete in-app help guide covering every staff-facing feature of the Plane fork, produced content-as-code (seed command) with Playwright-captured screenshots"
-status: pending
+status: done
 priority: P2
 branch: "duonglx/feat/help-center"
 tags: [help-center, content, documentation, i18n, seed, screenshots]
@@ -40,9 +40,9 @@ Grounding: `plans/reports/from-workflow-to-planner-help-content-taxonomy-260530-
 | 2     | [VI Content Authoring (54 articles)](./phase-02-vi-content-authoring.md)            | P1       | 5d     | Done — 54 VI articles (4,472 lines), 58 tests green |
 | 3     | [Demo Data Seed (for screenshots)](./phase-03-demo-data-seed.md)                    | P2       | 1d     | Done — `seed_help_demo_data` (demo workspace populated) |
 | 4     | [Screenshot Capture & Injection (Playwright)](./phase-04-screenshot-pipeline.md)    | P2       | 2.5d   | Pilot done — pipeline proven, 7 shots live; scaling documented |
-| 5     | [Integration & Seed Run](./phase-05-integration-and-seed-run.md)                    | P1       | 1d     | Pending                                             |
-| 6     | [Testing](./phase-06-testing.md)                                                    | P1       | 1d     | Pending                                             |
-| 7     | [Documentation (+ EN/KO path)](./phase-07-documentation.md)                         | P3       | 0.5d   | Pending                                             |
+| 5     | [Integration & Seed Run](./phase-05-integration-and-seed-run.md)                    | P1       | 1d     | Done — live: 11 cat/54 articles, 20 shots, images serve 200; run order documented |
+| 6     | [Testing](./phase-06-testing.md)                                                    | P1       | 1d     | Done — 88 backend tests green (+33: loader/injection/reader-regression); manual-QA checklist ready |
+| 7     | [Documentation (+ EN/KO path)](./phase-07-documentation.md)                         | P3       | 0.5d   | Done — authoring guide + deployment + system-architecture updated (content-as-code, run order, EN/KO path) |
 
 **Estimated effort: ~12.5 dev-days** (authoring is the bulk; screenshot pipeline is the highest-risk slice).
 

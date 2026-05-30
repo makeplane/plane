@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: "Documentation (+ EN/KO path)"
-status: pending
+status: done
 priority: P3
 effort: "0.5d"
 dependencies: [6]
