@@ -1,13 +1,23 @@
 ---
 phase: 8
 title: "Testing"
-status: pending
+status: done
 priority: P1
 effort: "2d"
 dependencies: [2, 4, 5, 6, 7]
 ---
 
 # Phase 8: Testing
+
+> **Done (2026-05-30):** Backend automated suite = **51 tests, all green** across
+> `tests/unit/models/test_help_center_models.py` (14), `tests/contract/app/test_help_center_read.py` (20),
+> `tests/contract/license/test_help_center_admin.py` (17). Re-grounded to the instance-global model
+> (read=`IsAuthenticated`, write=God Mode `InstanceAdmin`); the pre-pivot workspace-scoped cases
+> (member-403-in-workspace, cross-workspace IDOR, `unique(workspace,slug)`) are obsolete and were
+> replaced by the global equivalents. D5 Cmd+K regression verified by static check (no `help` key in
+> `IWorkspaceSearchResults` / global search backend). FE store/service + author→read e2e have **no JS
+> harness** (no vitest/jest/playwright) → captured as `phase-08-manual-qa-checklist.md` (sign-off before
+> merge). Report: `plans/reports/from-tester-to-cook-help-center-phase8-backend-tests-report.md`.
 
 > **D7 additions (2026-05-30):** also cover the standalone `/help` route — (1) reader renders at
 > top-level `/help` with NO workspace context (no `workspaceId` guard regression); (2) backend unit test

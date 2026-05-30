@@ -1,9 +1,9 @@
 ---
 title: "Help Center In-App (Trung tam tro giup) - Shinhan Workspace"
 description: "In-app, multilingual (VI/EN/KO), staff-authored help center for Shinhan Workspace"
-status: pending
+status: done
 priority: P2
-branch: "duonglx/docs/shbvn-deployment-docs"
+branch: "duonglx/feat/help-center"
 tags: [help-center, documentation, i18n, ce]
 blockedBy: []
 blocks: []
@@ -82,8 +82,8 @@ light/dark, locale-switch) folded into P8.
 | 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done — standalone `/help` (D7), verified live       |
 | 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Done — God Mode authoring in apps/admin + global image assets (D7) |
 | 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done — entry points → `/help` (D7), verified live   |
-| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                                             |
-| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                                             |
+| 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Done — 51 backend tests green; FE/e2e = manual QA   |
+| 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Done — docs updated + VI authoring guide + seed cmd  |
 
 **Estimated effort: ~15 dev-days** (full UX scope per D4; Cmd+K backend search dropped per D5). Original baseline was ~11d; the +4d covers fixed toolbar + live preview + visual icon picker + copy-between-locales (P6), in-article TOC + prev/next + related (P5), accent-folded multilingual search (P1/P2), and the matching tests (P8).
 
