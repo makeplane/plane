@@ -52,6 +52,18 @@ Validated GO — `plans/reports/validation-260530-1124-standalone-help-route-d7-
   `HELP_ARTICLE_CONTENT` assets. Text-only / external-image articles render fully without P6.
 - **Effort:** small-medium (~2–3h); backend unchanged.
 
+### Reader image viewer (click-to-zoom) — implemented 2026-05-31
+
+Article images render small (editor default ~35% width) and full-screen was only reachable via the
+read-only image's hover toolbar (`custom-image` extension). Added the expected "click image to enlarge"
+affordance, **help-reader-scoped only**: `help-image-lightbox.tsx` (CE) wraps the read-only editor, delegates
+`click` on `img.read-only-image`, and opens the **platform's existing viewer** `ImageFullScreenModal`
+(zoom 0.5–2×, pinch ctrl+wheel, drag-pan, download, open-in-tab, Esc/±) — reused via a one-line additive
+export from `@plane/editor` (no fork, no behaviour change to other editors). `cursor:zoom-in` hints
+clickability; linked images still navigate (`img.closest("a")` guard); user-confirmed scope = help reader
+only (not platform-wide). `check:types` (web + @plane/editor) + eslint clean; code-review = no blocking
+issues. Deferred (optional): keyboard-open affordance for the image (modal itself is Esc-closable + a11y-labeled).
+
 ### Standalone shell header (D8) — product identity + signed-in user
 
 The `/help` top bar (`help-center-header.tsx`, rendered by `(all)/help/layout.tsx`) carries the two things

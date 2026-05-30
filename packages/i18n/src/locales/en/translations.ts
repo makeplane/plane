@@ -3756,6 +3756,7 @@ export default {
     back_to_app: "Back to app",
     breadcrumb_home: "Help Center",
     account_menu_label: "Account",
+    view_image_full_screen: "View image full screen",
     shown_in_language_notice: "Shown in {language}",
     read_more: "Read more",
     last_updated: "Last updated",

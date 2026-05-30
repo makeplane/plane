@@ -3703,6 +3703,7 @@ export default {
     back_to_app: "앱으로 돌아가기",
     breadcrumb_home: "도움말 센터",
     account_menu_label: "계정",
+    view_image_full_screen: "이미지 전체 화면 보기",
     shown_in_language_notice: "{language}(으)로 표시됨",
     read_more: "더 보기",
     last_updated: "마지막 업데이트",

@@ -8,6 +8,7 @@ import { MAX_FILE_SIZE } from "@plane/constants";
 import { RichTextEditorWithRef } from "@plane/editor";
 import type { TFileHandler } from "@plane/editor";
 import { getFileURL } from "@plane/utils";
+import { HelpImageLightbox } from "./help-image-lightbox";
 
 type Props = {
   articleId: string;
@@ -40,19 +41,21 @@ const READ_ONLY_FILE_HANDLER: TFileHandler = {
 // Reader trusts the sanitized `description_html` only (never json).
 export function HelpContentRenderer({ articleId, descriptionHtml }: Props) {
   return (
-    <RichTextEditorWithRef
-      key={articleId}
-      id={articleId}
-      editable={false}
-      initialValue={descriptionHtml}
-      disabledExtensions={[]}
-      flaggedExtensions={[]}
-      extendedEditorProps={{}}
-      fileHandler={READ_ONLY_FILE_HANDLER}
-      getEditorMetaData={() => ({ file_assets: [], user_mentions: [] })}
-      mentionHandler={{ renderComponent: () => null }}
-      containerClassName="p-0 !pl-0 border-none"
-      editorClassName="pl-0"
-    />
+    <HelpImageLightbox>
+      <RichTextEditorWithRef
+        key={articleId}
+        id={articleId}
+        editable={false}
+        initialValue={descriptionHtml}
+        disabledExtensions={[]}
+        flaggedExtensions={[]}
+        extendedEditorProps={{}}
+        fileHandler={READ_ONLY_FILE_HANDLER}
+        getEditorMetaData={() => ({ file_assets: [], user_mentions: [] })}
+        mentionHandler={{ renderComponent: () => null }}
+        containerClassName="p-0 !pl-0 border-none"
+        editorClassName="pl-0"
+      />
+    </HelpImageLightbox>
   );
 }

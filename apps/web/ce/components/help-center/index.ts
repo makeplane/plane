@@ -16,5 +16,6 @@ export * from "./help-center-home";
 export * from "./help-center-states";
 export * from "./help-center-user-menu";
 export * from "./help-content-renderer";
+export * from "./help-image-lightbox";
 export * from "./help-search-box";
 export * from "./locale-fallback-notice";

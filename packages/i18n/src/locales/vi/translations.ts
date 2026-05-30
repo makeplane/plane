@@ -3753,6 +3753,7 @@ export default {
     back_to_app: "Quay lại ứng dụng",
     breadcrumb_home: "Trung tâm trợ giúp",
     account_menu_label: "Tài khoản",
+    view_image_full_screen: "Xem ảnh toàn màn hình",
     shown_in_language_notice: "Đang hiển thị bằng {language}",
     read_more: "Xem thêm",
     last_updated: "Cập nhật lần cuối",
