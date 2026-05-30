@@ -5,7 +5,6 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
@@ -24,12 +23,10 @@ type TStatus = "loading" | "ready" | "notfound";
 // the content for the locale the user is now viewing.
 export const HelpArticleView = observer(function HelpArticleView({ articleSlug }: { articleSlug: string }) {
   const { t, currentLocale } = useTranslation();
-  const { workspaceSlug } = useParams();
   const { article: store } = useHelpCenter();
   const [detail, setDetail] = useState<THelpArticleDetail | null>(null);
   const [status, setStatus] = useState<TStatus>("loading");
   const contentRef = useRef<HTMLDivElement>(null);
-  const ws = workspaceSlug?.toString() ?? "";
 
   useEffect(() => {
     let cancelled = false;
@@ -50,7 +47,7 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
   }, [store, articleSlug, currentLocale]);
 
   if (status === "loading") return <HelpLoading />;
-  if (status === "notfound" || !detail) return <HelpArticleMissing workspaceSlug={ws} />;
+  if (status === "notfound" || !detail) return <HelpArticleMissing />;
 
   const fellBack = !!detail.resolved_locale && detail.resolved_locale !== currentLocale;
   const hasContent = !!detail.title && !!detail.description_html;
@@ -64,12 +61,12 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
           <h1 className="mb-4 text-2xl font-semibold text-primary">{detail.title ?? detail.slug}</h1>
           {hasContent && detail.description_html ? (
             <div ref={contentRef}>
-              <HelpContentRenderer workspaceSlug={ws} articleId={detail.id} descriptionHtml={detail.description_html} />
+              <HelpContentRenderer articleId={detail.id} descriptionHtml={detail.description_html} />
             </div>
           ) : (
             <HelpContentUnavailable />
           )}
-          <HelpArticleFooter workspaceSlug={ws} currentLocale={currentLocale} article={detail} />
+          <HelpArticleFooter currentLocale={currentLocale} article={detail} />
         </article>
         {hasContent && detail.description_html && (
           <aside className="hidden lg:block">

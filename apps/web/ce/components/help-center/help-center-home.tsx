@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { useHelpCenter } from "@/plane-web/hooks/store/use-help-center";
@@ -23,12 +23,10 @@ const SEARCH_DEBOUNCE_MS = 300;
 // store is observable) re-renders this component and re-runs the locale fetches.
 export const HelpCenterHome = observer(function HelpCenterHome() {
   const { t, currentLocale } = useTranslation();
-  const { workspaceSlug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { category, article } = useHelpCenter();
   const [query, setQuery] = useState("");
 
-  const ws = workspaceSlug?.toString() ?? "";
   const categoryId = searchParams.get("category");
   const trimmed = query.trim();
 
@@ -61,7 +59,6 @@ export const HelpCenterHome = observer(function HelpCenterHome() {
       {trimmed ? (
         <section className="mt-6">
           <ArticleList
-            workspaceSlug={ws}
             currentLocale={currentLocale}
             articles={article.searchResults}
             loading={article.searchLoader}
@@ -79,7 +76,6 @@ export const HelpCenterHome = observer(function HelpCenterHome() {
             ← {t("help_center.all_categories")}
           </button>
           <ArticleList
-            workspaceSlug={ws}
             currentLocale={currentLocale}
             articles={article.getArticlesByCategory(categoryId)}
             loading={article.listLoader}

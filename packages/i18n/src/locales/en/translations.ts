@@ -3753,6 +3753,7 @@ export default {
     all_categories: "All categories",
     category_count_articles: "{count, plural, one {# article} other {# articles}}",
     back_to_help: "Back to Help Center",
+    back_to_app: "Back to app",
     breadcrumb_home: "Help Center",
     shown_in_language_notice: "Shown in {language}",
     read_more: "Read more",

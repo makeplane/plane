@@ -10,7 +10,6 @@ import type { THelpArticleListItem, THelpLocale } from "@/plane-web/types/help-c
 import { HelpCenterEmpty, HelpLoading } from "./help-center-states";
 
 type Props = {
-  workspaceSlug: string;
   currentLocale: THelpLocale;
   articles: THelpArticleListItem[];
   loading?: boolean;
@@ -20,14 +19,8 @@ type Props = {
 
 // Presentational list of article rows, reused for category browse and search
 // results. A small locale tag is shown when a search matched a different locale.
-export const ArticleList = ({
-  workspaceSlug,
-  currentLocale,
-  articles,
-  loading,
-  emptyLabel,
-  showMatchedLocale,
-}: Props) => {
+// Links are workspace-agnostic (standalone /help).
+export const ArticleList = ({ currentLocale, articles, loading, emptyLabel, showMatchedLocale }: Props) => {
   if (loading && articles.length === 0) return <HelpLoading />;
   if (articles.length === 0) return <HelpCenterEmpty title={emptyLabel} />;
 
@@ -38,7 +31,7 @@ export const ArticleList = ({
         return (
           <li key={article.id}>
             <Link
-              to={`/${workspaceSlug}/help/a/${article.slug}`}
+              to={`/help/a/${article.slug}`}
               className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2"
             >
               <div className="min-w-0 flex-1">

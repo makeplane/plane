@@ -5,7 +5,7 @@
  */
 
 import { LifeBuoy, MessageSquare, Rocket } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -20,7 +20,6 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
   const { toggleShortcutsListModal } = usePowerK();
   const { isEnabled: isChatSupportEnabled, openChatSupport } = useChatSupport();
   const router = useRouter();
-  const { workspaceSlug } = useParams();
 
   return [
     {
@@ -29,11 +28,10 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       group: "help",
       i18n_title: "help_center.menu_label",
       icon: LifeBuoy,
-      action: () => {
-        if (workspaceSlug) router.push(`/${workspaceSlug.toString()}/help`);
-      },
-      isEnabled: () => !!workspaceSlug,
-      isVisible: () => !!workspaceSlug,
+      // Instance-global standalone reader — workspace-agnostic, visible to all users.
+      action: () => router.push("/help"),
+      isEnabled: () => true,
+      isVisible: () => true,
       closeOnSelect: true,
     },
     {

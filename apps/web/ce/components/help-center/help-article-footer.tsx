@@ -12,12 +12,13 @@ import { useTranslation } from "@plane/i18n";
 import { useHelpCenter } from "@/plane-web/hooks/store/use-help-center";
 import type { THelpArticleDetail, THelpLocale } from "@/plane-web/types/help-center";
 
-type Props = { workspaceSlug: string; currentLocale: THelpLocale; article: THelpArticleDetail };
+type Props = { currentLocale: THelpLocale; article: THelpArticleDetail };
 
 // Cross-article navigation: prev/next siblings within the same category
 // (by sort_order) + a short "more in this category" list. Derived from the
-// category article list — no extra dedicated endpoint.
-export const HelpArticleFooter = observer(function HelpArticleFooter({ workspaceSlug, currentLocale, article }: Props) {
+// category article list — no extra dedicated endpoint. Links are workspace-agnostic
+// (standalone /help).
+export const HelpArticleFooter = observer(function HelpArticleFooter({ currentLocale, article }: Props) {
   const { t } = useTranslation();
   const { article: store } = useHelpCenter();
   const categoryId = article.category;
@@ -42,7 +43,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ workspace
         <div className="flex items-stretch justify-between gap-4">
           {prev ? (
             <Link
-              to={`/${workspaceSlug}/help/a/${prev.slug}`}
+              to={`/help/a/${prev.slug}`}
               className="flex flex-1 items-center gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-left transition-colors hover:bg-surface-2"
             >
               <ChevronLeft className="size-4 shrink-0 text-icon-primary" />
@@ -53,7 +54,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ workspace
           )}
           {next ? (
             <Link
-              to={`/${workspaceSlug}/help/a/${next.slug}`}
+              to={`/help/a/${next.slug}`}
               className="flex flex-1 items-center justify-end gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-right transition-colors hover:bg-surface-2"
             >
               <span className="truncate text-13 text-secondary">{next.title ?? next.slug}</span>
@@ -71,7 +72,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ workspace
             {related.map((item) => (
               <li key={item.id}>
                 <Link
-                  to={`/${workspaceSlug}/help/a/${item.slug}`}
+                  to={`/help/a/${item.slug}`}
                   className="text-13 text-accent-primary hover:underline"
                 >
                   {item.title ?? item.slug}

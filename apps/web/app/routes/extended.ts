@@ -16,12 +16,6 @@ export const extendedRoutes: RouteConfigEntry[] = [
         layout("./(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx", [
           route(":workspaceSlug/bank-wide-projects", "./(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx"),
         ]),
-        // Help Center (instance-global, read-only) — workspace-prefixed so it
-        // inherits the sidebar/header shell and shows in every workspace.
-        layout("./(all)/[workspaceSlug]/(projects)/help/layout.tsx", [
-          route(":workspaceSlug/help", "./(all)/[workspaceSlug]/(projects)/help/page.tsx"),
-          route(":workspaceSlug/help/a/:articleSlug", "./(all)/[workspaceSlug]/(projects)/help/article.tsx"),
-        ]),
         layout("./(all)/[workspaceSlug]/(projects)/time-tracking/layout.tsx", [
           route(":workspaceSlug/time-tracking", "./(all)/[workspaceSlug]/(projects)/time-tracking/page.tsx"),
           route(
@@ -60,6 +54,13 @@ export const extendedRoutes: RouteConfigEntry[] = [
           ]),
         ]),
       ]),
+    ]),
+    // Help Center — STANDALONE top-level /help (instance-global, no workspace).
+    // Sibling of [workspaceSlug] under the (all) auth layout, mirroring
+    // settings/profile: auth-gated but workspace-agnostic.
+    layout("./(all)/help/layout.tsx", [
+      route("help", "./(all)/help/page.tsx"),
+      route("help/a/:articleSlug", "./(all)/help/article.tsx"),
     ]),
   ]),
 ];

@@ -75,11 +75,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
       >
         {/* Help Center replaces the former (dead) self-hosted /docs link — it IS the
             self-hosted guide. Routes to the instance-global reader. */}
-        <CustomMenu.MenuItem
-          onClick={() => {
-            if (workspaceSlug) router.push(`/${workspaceSlug.toString()}/help`);
-          }}
-        >
+        <CustomMenu.MenuItem onClick={() => router.push("/help")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <LifeBuoy className="h-3.5 w-3.5 text-secondary" />
             <span className="text-11">{t("help_center.menu_label")}</span>

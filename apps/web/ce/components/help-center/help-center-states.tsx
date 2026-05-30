@@ -27,7 +27,7 @@ export const HelpContentUnavailable = () => {
 };
 
 // Full-page state when a deep link points to a missing / unpublished article.
-export const HelpArticleMissing = ({ workspaceSlug }: { workspaceSlug: string }) => {
+export const HelpArticleMissing = () => {
   const { t } = useTranslation();
   return (
     <div className="flex h-full w-full items-center justify-center py-10">
@@ -35,7 +35,7 @@ export const HelpArticleMissing = ({ workspaceSlug }: { workspaceSlug: string })
         title={t("help_center.content_unavailable")}
         align="center"
         customButton={
-          <Link to={`/${workspaceSlug}/help`}>
+          <Link to="/help">
             <Button variant="primary" size="base">
               {t("help_center.back_to_help")}
             </Button>

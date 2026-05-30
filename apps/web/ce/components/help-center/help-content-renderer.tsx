@@ -9,24 +9,20 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
-  workspaceSlug: string;
   articleId: string;
   descriptionHtml: string;
 };
 
-// Renders stored rich content read-only. Reader trusts the sanitized
-// `description_html` only (never the json). The web RichTextEditor wrapper is
-// used (NOT DocumentEditor — that is collaborative/Hocuspocus-backed). Asset
-// URLs fall back to the workspace path when projectId is undefined.
-export const HelpContentRenderer = observer(function HelpContentRenderer({
-  workspaceSlug,
-  articleId,
-  descriptionHtml,
-}: Props) {
-  const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
-
-  if (!workspaceId) return null;
+// Renders stored rich content read-only on the workspace-agnostic /help route.
+// The editor needs *a* workspaceId/slug only for its image asset-URL handler;
+// /help has no workspace in the URL, so we use any workspace the user belongs to
+// (text renders regardless; help images resolve from the global static path once
+// authored). Reader trusts the sanitized `description_html` only (never json).
+export const HelpContentRenderer = observer(function HelpContentRenderer({ articleId, descriptionHtml }: Props) {
+  const { workspaces } = useWorkspace();
+  const anyWorkspace = Object.values(workspaces ?? {})[0];
+  const workspaceId = anyWorkspace?.id ?? "";
+  const workspaceSlug = anyWorkspace?.slug ?? "";
 
   return (
     <RichTextEditor

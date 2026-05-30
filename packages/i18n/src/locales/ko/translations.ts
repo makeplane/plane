@@ -3700,6 +3700,7 @@ export default {
     all_categories: "모든 카테고리",
     category_count_articles: "{count, plural, other {문서 #개}}",
     back_to_help: "도움말 센터로 돌아가기",
+    back_to_app: "앱으로 돌아가기",
     breadcrumb_home: "도움말 센터",
     shown_in_language_notice: "{language}(으)로 표시됨",
     read_more: "더 보기",

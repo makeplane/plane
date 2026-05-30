@@ -3750,6 +3750,7 @@ export default {
     all_categories: "Tất cả danh mục",
     category_count_articles: "{count, plural, other {# bài viết}}",
     back_to_help: "Quay lại Trung tâm trợ giúp",
+    back_to_app: "Quay lại ứng dụng",
     breadcrumb_home: "Trung tâm trợ giúp",
     shown_in_language_notice: "Đang hiển thị bằng {language}",
     read_more: "Xem thêm",
