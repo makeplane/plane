@@ -16,11 +16,15 @@ import { dirname, join } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const BASE = process.env.BASE_URL || "http://localhost:3000";
+const ADMIN_BASE = process.env.ADMIN_URL || "http://localhost:3001"; // God Mode app
 const API = process.env.API_URL || "http://localhost:8000";
 const COOKIE = process.env.SHOT_COOKIE;
 const WS = process.env.WS_SLUG || "help-demo";
 const THEME = process.env.THEME || "light";
 const OUT = join(here, "out");
+// A target's `base` selects which app to hit: "web" (default, :3000) or "admin"
+// (God Mode, :3001). Both share the same session cookie (instance-admin user).
+const baseFor = (t) => (t.base === "admin" ? ADMIN_BASE : BASE);
 
 if (!COOKIE) {
   console.error("Missing SHOT_COOKIE. Run: cd apps/api && python manage.py make_help_session");
@@ -40,6 +44,7 @@ const context = await browser.newContext({
 // browser sends it on same-origin fetches AND any direct :8000 calls.
 await context.addCookies([
   { name: "session-id", value: COOKIE, url: BASE },
+  { name: "session-id", value: COOKIE, url: ADMIN_BASE },
   { name: "session-id", value: COOKIE, url: API },
 ]);
 
@@ -56,14 +61,23 @@ try {
   const list = Array.isArray(projects) ? projects : projects.results || [];
   const pid = list[0]?.id;
   vars = { ws: WS, pid, uid: me.id };
-  // First issue id (best-effort) for the work-item detail shot.
-  try {
-    const issues = await api(`/api/workspaces/${WS}/projects/${pid}/issues/`);
-    const ilist = Array.isArray(issues) ? issues : issues.results || [];
-    vars.iid = ilist[0]?.id;
-  } catch {
-    /* issue detail shot will skip if unresolved */
-  }
+  // Resolve first-of-kind entity ids (best-effort) so detail/sub-routes can be
+  // templated as {iid}/{cid}/{mid}/{pgid}/{vid}. Each is independent: a failure
+  // only skips targets that reference that var.
+  const firstId = async (path) => {
+    try {
+      const data = await api(path);
+      const list = Array.isArray(data) ? data : data.results || [];
+      return list[0]?.id;
+    } catch {
+      return undefined;
+    }
+  };
+  vars.iid = await firstId(`/api/workspaces/${WS}/projects/${pid}/issues/`);
+  vars.cid = await firstId(`/api/workspaces/${WS}/projects/${pid}/cycles/`);
+  vars.mid = await firstId(`/api/workspaces/${WS}/projects/${pid}/modules/`);
+  vars.pgid = await firstId(`/api/workspaces/${WS}/projects/${pid}/pages/`);
+  vars.vid = await firstId(`/api/workspaces/${WS}/projects/${pid}/views/`);
   console.log("resolved vars:", vars);
 } catch (e) {
   console.error("Could not resolve API vars (auth/route issue):", e.message);
@@ -102,7 +116,7 @@ if (meStatus !== 200) {
 let ok = 0;
 let fail = 0;
 for (const t of targets) {
-  const url = BASE + t.path.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "__MISSING__");
+  const url = baseFor(t) + t.path.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "__MISSING__");
   if (url.includes("__MISSING__")) {
     console.log("SKIP", t.name, "(unresolved var) <-", url);
     fail++;
