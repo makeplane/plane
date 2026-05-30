@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, LifeBuoy, MessageSquare, Rocket } from "lucide-react";
+import { LifeBuoy, MessageSquare, Rocket } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -44,20 +44,6 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       icon: Rocket,
       modifierShortcut: "cmd+/",
       action: () => toggleShortcutsListModal(true),
-      isEnabled: () => true,
-      isVisible: () => true,
-      closeOnSelect: true,
-    },
-    {
-      id: "open_plane_documentation",
-      type: "action",
-      group: "help",
-      i18n_title: "power_k.help_actions.open_plane_documentation",
-      icon: FileText,
-      action: () => {
-        const docsUrl = `${window.location.origin}/docs`;
-        window.open(docsUrl, "_blank", "noopener,noreferrer");
-      },
       isEnabled: () => true,
       isVisible: () => true,
       closeOnSelect: true,

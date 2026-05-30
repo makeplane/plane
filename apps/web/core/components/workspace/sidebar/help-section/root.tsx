@@ -10,7 +10,6 @@ import { useParams, useRouter } from "next/navigation";
 import { HelpCircle, LifeBuoy, MessagesSquare, Sparkles, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { PageIcon } from "@plane/propel/icons";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
@@ -74,6 +73,8 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         maxHeight="lg"
         closeOnSelect
       >
+        {/* Help Center replaces the former (dead) self-hosted /docs link — it IS the
+            self-hosted guide. Routes to the instance-global reader. */}
         <CustomMenu.MenuItem
           onClick={() => {
             if (workspaceSlug) router.push(`/${workspaceSlug.toString()}/help`);
@@ -82,12 +83,6 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <LifeBuoy className="h-3.5 w-3.5 text-secondary" />
             <span className="text-11">{t("help_center.menu_label")}</span>
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={() => window.open(`${window.location.origin}/docs`, "_blank")}>
-          <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
-            <span className="text-11">{t("documentation")}</span>
           </div>
         </CustomMenu.MenuItem>
         {isChatSupportEnabled && (

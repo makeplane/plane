@@ -35,5 +35,5 @@ export const SidebarItem: FC<Props> = observer(function SidebarItem({ item }) {
     }
   }
 
-  return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho", "bank-wide-projects", "help"]} />;
+  return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho", "bank-wide-projects"]} />;
 });
