@@ -12,6 +12,8 @@ terminology (never "Plane").
 
 import pytest
 from django.core.management import call_command
+from django.urls import reverse
+from rest_framework import status
 
 from plane.db.models import HelpArticle, HelpArticleTranslation, HelpCategory, HelpCategoryTranslation
 
@@ -76,3 +78,41 @@ class TestSeedHelpCenter:
     def test_all_articles_published(self):
         call_command("seed_help_center")
         assert HelpArticle.objects.filter(status="published").count() == EXPECTED_ARTICLES
+
+
+@pytest.mark.contract
+class TestSeededContentReachesReader:
+    """End-to-end regression: content seeded by the loader must surface through
+    the global read API — every category visible, known articles listed, and
+    accent-folded search hitting real Vietnamese titles."""
+
+    @pytest.mark.django_db
+    def test_all_eleven_categories_visible_with_published_articles(self, session_client):
+        call_command("seed_help_center")
+        response = session_client.get(reverse("help-categories"))
+        assert response.status_code == status.HTTP_200_OK
+        rows = {row["slug"]: row for row in response.data}
+        # Every authored category has ≥1 published article, so none is hidden.
+        assert len(rows) == EXPECTED_CATEGORIES
+        for category in HelpCategory.objects.values_list("slug", flat=True):
+            assert category in rows
+            assert rows[category]["article_count"] >= 1
+
+    @pytest.mark.django_db
+    def test_seeded_article_retrievable_by_slug(self, session_client):
+        call_command("seed_help_center")
+        response = session_client.get(
+            reverse("help-article-by-slug", kwargs={"slug": "tao-va-quan-ly-cycles"})
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["slug"] == "tao-va-quan-ly-cycles"
+        assert response.data["title"] == "Tạo & quản lý Cycles"
+
+    @pytest.mark.django_db
+    def test_accent_folded_search_hits_seeded_titles(self, session_client):
+        call_command("seed_help_center")
+        # ASCII query (no diacritics) must match the folded Vietnamese title.
+        cycles = session_client.get(reverse("help-articles"), {"search": "quan ly cycles"})
+        projects = session_client.get(reverse("help-articles"), {"search": "lam viec voi du an"})
+        assert "tao-va-quan-ly-cycles" in {row["slug"] for row in cycles.data}
+        assert "lam-viec-voi-du-an" in {row["slug"] for row in projects.data}
