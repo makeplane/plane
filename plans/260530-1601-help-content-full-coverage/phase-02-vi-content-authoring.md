@@ -1,13 +1,20 @@
 ---
 phase: 2
 title: "VI Content Authoring (54 articles)"
-status: pending
+status: done
 priority: P1
 effort: "5d"
 dependencies: [1]
 ---
 
 # Phase 2: VI Content Authoring (54 articles)
+
+> **Done (2026-05-30):** All **54** VI article bodies authored (11-agent workflow, one per category,
+> each grounded in the taxonomy report + live routes/components). **4,472 content lines**, 57–155 lines
+> per article, **155 screenshot placeholders** for P4. QA pass: frontmatter intact, no stubs, valid
+> tokens, no raw HTML; 2 stray "Plane gốc" comparative refs reworded to "Shinhan Workspace" (+ dropped a
+> "bản CE" jargon leak). Re-seed renders cleanly (h2/h3, lists, code, tables, `/help/a/` cross-links
+> survive sanitize, markers preserved, zero "Plane"). 58 help tests green.
 
 ## Overview
 
