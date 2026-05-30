@@ -3789,5 +3789,6 @@ export default {
     more_in_category: "Xem thêm trong danh mục này",
     was_this_helpful: "Bài viết này có hữu ích không?",
     manage: "Quản lý",
+    on_this_page: "Trong trang này",
   },
 } as const;

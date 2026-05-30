@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from plane.app.serializers.help_center import HelpArticleDetailSerializer, HelpArticleListSerializer
 from plane.app.views.base import BaseViewSet
@@ -28,6 +30,13 @@ class HelpArticleViewSet(HelpCenterReadMixin, BaseViewSet):
 
     def get_serializer_class(self):
         return HelpArticleDetailSerializer if self.action == "retrieve" else HelpArticleListSerializer
+
+    def retrieve_by_slug(self, request, slug=None):
+        # Stable deep links use the globally-unique slug (slugs are never reused),
+        # so /help/a/<slug> resolves directly without an id round-trip.
+        article = get_object_or_404(self.get_queryset(), slug=slug)
+        serializer = HelpArticleDetailSerializer(article, context=self.get_serializer_context())
+        return Response(serializer.data)
 
     def get_queryset(self):
         queryset = (

@@ -23,8 +23,10 @@ export interface IHelpArticleStore {
   detailLoader: boolean;
   searchLoader: boolean;
   getArticlesByCategory: (categoryId: string) => THelpArticleListItem[];
+  getArticleDetailBySlug: (slug: string) => THelpArticleDetail | null;
   fetchArticles: (filters: THelpArticleFilters) => Promise<THelpArticleListItem[]>;
   fetchArticleById: (articleId: string, locale: THelpLocale) => Promise<THelpArticleDetail>;
+  fetchArticleBySlug: (slug: string, locale: THelpLocale) => Promise<THelpArticleDetail>;
   searchArticles: (query: string, locale: THelpLocale) => Promise<THelpArticleListItem[]>;
 }
 
@@ -46,6 +48,7 @@ export class HelpArticleStore implements IHelpArticleStore {
       searchLoader: observable,
       fetchArticles: action,
       fetchArticleById: action,
+      fetchArticleBySlug: action,
       searchArticles: action,
     });
   }
@@ -54,6 +57,10 @@ export class HelpArticleStore implements IHelpArticleStore {
     Object.values(this.articlesMap)
       .filter((article) => article.category === categoryId)
       .sort((a, b) => a.sort_order - b.sort_order)
+  );
+
+  getArticleDetailBySlug = computedFn(
+    (slug: string) => Object.values(this.articleDetailMap).find((article) => article.slug === slug) ?? null
   );
 
   fetchArticles = async (filters: THelpArticleFilters) => {
@@ -73,6 +80,19 @@ export class HelpArticleStore implements IHelpArticleStore {
     this.detailLoader = true;
     try {
       const article = await this.service.fetchArticleById(articleId, locale);
+      runInAction(() => set(this.articleDetailMap, [article.id], article));
+      return article;
+    } finally {
+      runInAction(() => {
+        this.detailLoader = false;
+      });
+    }
+  };
+
+  fetchArticleBySlug = async (slug: string, locale: THelpLocale) => {
+    this.detailLoader = true;
+    try {
+      const article = await this.service.fetchArticleBySlug(slug, locale);
       runInAction(() => set(this.articleDetailMap, [article.id], article));
       return article;
     } finally {

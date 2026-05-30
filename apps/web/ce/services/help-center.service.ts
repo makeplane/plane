@@ -45,4 +45,13 @@ export class HelpCenterService extends APIService {
         throw err?.response?.data;
       });
   }
+
+  // Deep links resolve by the globally-unique article slug.
+  async fetchArticleBySlug(slug: string, locale: THelpLocale): Promise<THelpArticleDetail> {
+    return this.get(`/api/help/articles/slug/${slug}/`, { params: { locale } })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
 }

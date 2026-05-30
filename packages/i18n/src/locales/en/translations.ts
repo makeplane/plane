@@ -3792,5 +3792,6 @@ export default {
     more_in_category: "More in this category",
     was_this_helpful: "Was this helpful?",
     manage: "Manage",
+    on_this_page: "On this page",
   },
 } as const;

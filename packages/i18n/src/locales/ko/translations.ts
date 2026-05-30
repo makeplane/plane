@@ -3739,5 +3739,6 @@ export default {
     more_in_category: "이 카테고리의 다른 문서",
     was_this_helpful: "이 문서가 도움이 되었나요?",
     manage: "관리",
+    on_this_page: "이 페이지에서",
   },
 } as const;

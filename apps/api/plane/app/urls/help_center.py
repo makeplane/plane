@@ -29,4 +29,9 @@ urlpatterns = [
         HelpArticleViewSet.as_view({"get": "retrieve"}),
         name="help-article-detail",
     ),
+    path(
+        "help/articles/slug/<slug:slug>/",
+        HelpArticleViewSet.as_view({"get": "retrieve_by_slug"}),
+        name="help-article-by-slug",
+    ),
 ]
