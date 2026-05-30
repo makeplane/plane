@@ -29,6 +29,28 @@ Verified: `pnpm check:types` 0 errors in help files; eslint 0 errors/warnings; c
 **Deferred to P8 (manual/e2e QA):** g18 image-render with `projectId=undefined`; light+dark theme
 click-through; locale-switch re-fetch end-to-end.
 
+## D7 Rework — standalone top-level `/help` (2026-05-30, validated; supersedes the route above)
+
+Per D7 the reader moves OUT of the workspace shell to a **standalone top-level `/help`** (no workspace).
+Validated GO — `plans/reports/validation-260530-1124-standalone-help-route-d7-report.md`. Changes:
+
+- **Route:** move from `(all)/[workspaceSlug]/(projects)/help/*` to **`apps/web/app/(all)/help/{layout,page,article}.tsx`**
+  (under `(all)` auth layout, OUTSIDE `[workspaceSlug]`). Precedent: `settings/profile/layout.tsx` (auth-only,
+  no `WorkspaceAuthWrapper`). Register `/help` + `/help/a/:articleSlug` in `extended.ts`.
+- **Standalone shell — NOT bare (red-team HIGH):** `(all)/help/layout.tsx` uses `AuthenticationWrapper`
+  (`EPageTypes.AUTHENTICATED`) + a lightweight chrome carrying a **"Back to {workspace}" affordance**
+  (target = `user.userSettings…last_workspace_slug`, fallback first `useWorkspace().workspaces`); optional
+  workspace switcher (profile-sidebar pattern `ProfileSettingsSidebarWorkspaceOptions`). Decision D-1.
+- **`help-content-renderer.tsx`:** DROP the `if(!workspaceId) return null` guard; render without a workspace.
+  Renders text + images whose `src` is a global `/api/assets/v2/static/{id}/` URL. (Confirm at impl whether
+  the read-only editor calls `getAssetSrc` at render — if it reads `description_html` directly, no
+  workspaceId is needed at all.) Does NOT block on P6.
+- **Links:** `help-center-header.tsx` (breadcrumb), `help-article-footer.tsx`, `article-list.tsx` change
+  `/${workspaceSlug}/help/...` → `/help/...`. `help-article-view.tsx` no longer reads `workspaceSlug` from params.
+- **Images:** uploaded images render only if their URL is the global static path — depends on P6 producing
+  `HELP_ARTICLE_CONTENT` assets. Text-only / external-image articles render fully without P6.
+- **Effort:** small-medium (~2–3h); backend unchanged.
+
 ## Overview
 
 The staff-facing Help Center: a branded `/:workspaceSlug/help` portal with a category grid

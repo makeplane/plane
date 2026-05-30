@@ -30,6 +30,17 @@ the "?" dropdown shows "Help Center" (not "Documentation") above the version; Cm
 **Reverted from the first attempt:** the top-level left-sidebar nav entry (it showed in every one of
 the ~100 workspaces — too intrusive). **Deferred:** `<HelpHint slug>` contextual "?" on core screens.
 
+### D7 Rework — retarget entry points to standalone `/help` (2026-05-30, validated)
+
+When the reader moves to standalone `/help` (D7), the two committed entry points retarget:
+- `help-section/root.tsx` + `help-commands.ts`: `router.push(/${workspaceSlug}/help)` → `router.push("/help")`.
+- **Discovery is GLOBAL (user-confirmed):** REMOVE the `!!workspaceSlug` gating so the help "?" menu item
+  and the Cmd+K command are visible+functional for EVERY authenticated user (push `/help`, no slug needed).
+  `/help` is auth-gated but visible to all logged-in users regardless of workspace.
+- **Reserve `help` in `RESTRICTED_URLS`** (`packages/constants/src/workspace.ts`) so no workspace slug
+  can be "help" and shadow the top-level route (decision D-5).
+- **Optional legacy redirect** `/{slug}/help[/a/:slug]` → `/help[...]` for already-shared links (decision D-3).
+
 ## Overview
 
 Make the Help Center discoverable: a Cmd+K (PowerK) "Help Center" command that OPENS `/help`, a

@@ -9,6 +9,20 @@ dependencies: [3, 4]
 
 # Phase 6: Authoring UI
 
+> **D7 NOTE (2026-05-30):** Authoring moved to `apps/admin` God Mode (per D6) — this phase file's
+> `apps/web/ce` workspace-admin design is SUPERSEDED (see `plans/reports/from-scout-to-cook-help-center-global-redesign-report.md` §2 P6).
+> **D7 makes the global image-asset strategy REQUIRED** (the standalone `/help` reader has no workspace,
+> so images must use workspace-agnostic URLs): implement redesign-report §4 — add `HELP_ARTICLE_CONTENT`
+> to `FileAsset.EntityTypeContext`, return `/api/assets/v2/static/{id}/` from `asset_url`, add it to the
+> `StaticFileAssetEndpoint` allowlist (AllowAny) **+ a `if asset.is_deleted: return 404` guard** (red-team MED),
+> and a God Mode upload endpoint creating `FileAsset(workspace_id=NULL, entity_type=HELP_ARTICLE_CONTENT)`.
+> On save, ensure sanitized `description_html` image `src` is ONLY the global static path (reject/rewrite
+> workspace-scoped src). Public image endpoint = accepted risk (UUIDv4, matches avatars) — decision D-2.
+> **L2 cleanup (when global assets land):** `help-content-renderer.tsx` currently feeds the read-only
+> editor a `workspaceId` from the user's first workspace (`Object.values(workspaces)[0]`) ONLY for image
+> asset-URL construction. Once help images use the global `/api/assets/v2/static/{id}/` path, drop that
+> first-workspace lookup so the standalone reader has zero workspace dependency.
+
 ## Overview
 
 Admin-only authoring surface so non-technical staff/BA create and maintain categories + articles

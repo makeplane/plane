@@ -9,6 +9,14 @@ dependencies: [2, 4, 5, 6, 7]
 
 # Phase 8: Testing
 
+> **D7 additions (2026-05-30):** also cover the standalone `/help` route — (1) reader renders at
+> top-level `/help` with NO workspace context (no `workspaceId` guard regression); (2) backend unit test
+> asserting `sanitize_help_html` keeps `rel="noopener noreferrer"` on author `<a target="_blank">`
+> (anti-tabnabbing, red-team MED); (3) image render without workspace via the global
+> `/api/assets/v2/static/{id}/` URL; (4) `StaticFileAssetEndpoint` returns 404 for a soft-deleted
+> `HELP_ARTICLE_CONTENT` asset. Note: g18 (`projectId=undefined` workspace-path image) is mooted by D7 —
+> help images now use the global static path, not the workspace path.
+
 ## Overview
 
 Verify correctness across layers: backend models/API (permissions, locale fallback, search,

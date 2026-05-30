@@ -57,6 +57,20 @@ which **minimizes** core touches: the PowerK static command + sidebar Help-menu 
 tsc + eslint clean; code-review passed. Remaining manual/e2e QA (image render with `projectId=undefined`,
 light/dark, locale-switch) folded into P8.
 
+### User Decisions — Validation Session 4 (2026-05-30 — D7 standalone route, do NOT reverse)
+
+| ID  | Decision                                          | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D7  | **Help Center is a STANDALONE top-level `/help`** | The reader moves from workspace-prefixed `/:workspaceSlug/help` to a **standalone top-level `/help`** (+ `/help/a/:articleSlug`), NO workspace context — matching the instance-global data model (a workspace-prefixed URL falsely implied per-workspace content). Auth-gated (logged-in), NOT public. Lives at `apps/web/app/(all)/help/*` under the `(all)` auth layout, OUTSIDE `[workspaceSlug]` (precedent: `/settings/profile`, `/create-workspace`). **Must NOT be a bare shell** — carries a lightweight "Back to {workspace}" affordance (red-team HIGH). Backend unchanged (read API already global). |
+
+**Validation:** GO — see `plans/reports/validation-260530-1124-standalone-help-route-d7-report.md` (7-agent workflow: feasibility + red-team, evidence-grounded). Backend = zero change; FE = small-medium.
+
+**Auth boundary LOCKED (2026-05-30, user-confirmed — do NOT reverse):** `/help` is visible to **ALL authenticated users**, regardless of workspace membership; content stays behind login (**NOT public/anonymous** — it is internal SHBVN staff documentation). Read API stays `IsAuthenticated`; route under the `(all)` auth gate. **Discovery is GLOBAL** — the entry doors (help "?" menu, Cmd+K) are visible to every logged-in user and push `/help` with NO `workspaceSlug` gating (resolves D-4 → global, not workspace-gated). Rationale: help is instance-level, not tied to any workspace; a short shareable `/help` URL.
+
+**Remaining impl-level decisions (defaults recommended, confirm at D7 impl):** D-1 back affordance — keep a graceful "Back to {last workspace}" link (red-team HIGH: not a bare shell), falls back to home/create-workspace if user has no workspace; D-2 help images via public AllowAny static endpoint (recommended, UUIDv4-unguessable, parity with avatars) vs IsAuthenticated for text-parity (P6 detail); D-3 add legacy `/{slug}/help → /help` redirect (recommended yes); D-5 reserve `help` in `RESTRICTED_URLS` (recommended yes).
+
+**Impact on phases (D7):** **P5** reading UI moves to standalone `/help` — drop the `workspaceId` guard in `help-content-renderer.tsx`, new `(all)/help/{layout,page,article}.tsx` shell with back-affordance, links → `/help/...`; renders text + global-URL images WITHOUT blocking on P6. **P7** entry-point targets change `/${workspaceSlug}/help` → `/help`; reserve slug; optional redirect. **P6** authoring must produce **global** image URLs (`HELP_ARTICLE_CONTENT` FileAsset → public `/api/assets/v2/static/{id}/` + `is_deleted` 404 guard) so images render in the workspace-less reader. **P8** add: standalone-route render, nh3 `rel` (anti-tabnabbing) test, image-render-without-workspace. Backend read API/models/slug endpoint UNCHANGED.
+
 ## Phases
 
 | Phase | Name                                                                         | Priority | Effort | Status                                              |
@@ -65,9 +79,9 @@ light/dark, locale-switch) folded into P8.
 | 2     | [Backend API and Search](./phase-02-backend-api-and-search.md)               | P1       | 2d     | Done (impl; live-DB tests in P8)                    |
 | 3     | [i18n Keys](./phase-03-i18n-keys.md)                                         | P2       | 0.5d   | Done (47 keys × vi/en/ko; KO review)                |
 | 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)                             |
-| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done (impl; tsc+lint clean; live img/dark QA in P8) |
-| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending                                             |
-| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done (entry points; HelpHint deferred)              |
+| 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done — standalone `/help` (D7), verified live       |
+| 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending (+ global image assets for D7)              |
+| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done — entry points → `/help` (D7), verified live   |
 | 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                                             |
 | 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                                             |
 
