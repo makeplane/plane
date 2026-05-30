@@ -1,13 +1,29 @@
 ---
 phase: 7
 title: "Discovery and Contextual Help"
-status: pending
+status: done
 priority: P2
 effort: "1d"
 dependencies: [5]
 ---
 
 # Phase 7: Discovery and Contextual Help
+
+## Implementation Status — 2026-05-30 (entry points done; verified live)
+
+3 discovery entry points to `/:workspaceSlug/help` shipped + browser-verified:
+- **Cmd+K command** "Help Center" (open-only, D5-compliant — NO search-results group;
+  `searchWorkspace`/`IWorkspaceSearchResults` untouched) — `power-k/config/help-commands.ts`.
+- **Top-level sidebar nav** "Help Center" (LifeBuoy icon, after Bank-wide Projects) — mirrors the
+  fork's `ho`/`bank-wide-projects` pattern: catalog + link in `packages/constants/src/workspace.ts`,
+  whitelisted in CE `sidebar-item.tsx` `additionalStaticItems`, icon in CE `helper.tsx`.
+- **Sidebar Help dropdown** first-position "Help Center" item — `workspace/sidebar/help-section/root.tsx`.
+
+All use `t("help_center.menu_label")` (flat key) + `LifeBuoy` icon. Verified via Playwright: sidebar
+entry navigates to `/help/`; Cmd+K shows the "Help Center" command. eslint clean (1 pre-existing warning
+unrelated). `@plane/constants` rebuilt for the dev server to pick up the new nav item.
+
+**Deferred:** `<HelpHint slug>` contextual "?" on ≤3 core screens (item 4) — optional polish, not built.
 
 ## Overview
 

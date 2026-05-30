@@ -67,7 +67,7 @@ light/dark, locale-switch) folded into P8.
 | 4     | [Frontend Store and Services](./phase-04-frontend-store-and-services.md)     | P1       | 1d     | Done (tsc + lint clean)                             |
 | 5     | [Reading UI](./phase-05-reading-ui.md)                                       | P1       | 3d     | Done (impl; tsc+lint clean; live img/dark QA in P8) |
 | 6     | [Authoring UI](./phase-06-authoring-ui.md)                                   | P1       | 3.5d   | Pending                                             |
-| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Pending                                             |
+| 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done (entry points; HelpHint deferred)              |
 | 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Pending                                             |
 | 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Pending                                             |
 
