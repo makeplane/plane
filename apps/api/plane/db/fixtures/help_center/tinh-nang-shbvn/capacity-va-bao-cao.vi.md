@@ -25,7 +25,7 @@ status: published
    - **Thẻ tổng giờ đã log** (góc trên bên trái).
    - **Heatmap** — mỗi hàng là một thành viên, mỗi cột là một ngày; màu ô thể hiện mức độ tải: xanh nhạt (bình thường), cam (quá tải), xám (thiếu việc/chưa log).
    - **Bảng danh mục**: phân bố giờ log theo Danh mục chính và Danh mục phụ.
-3. Bật công tắc **Cross Workspaces** (góc phải trên) để gộp dữ liệu từ tất cả workspace.
+3. Công tắc **Cross teams & workspaces** (góc phải trên) mặc định **bật** — gộp dữ liệu từ tất cả workspace bạn tham gia. Tắt công tắc này để chỉ xem dữ liệu workspace hiện tại. **Lưu ý:** khi Cross teams & workspaces đang bật, tùy chọn **Detailed Export** bị vô hiệu hóa.
 
 {{screenshot:capacity-va-bao-cao}}
 
@@ -50,7 +50,7 @@ status: published
 2. Chọn loại xuất:
    - **Summary CSV** — bảng tóm tắt tổng giờ mỗi thành viên.
    - **Detailed Export** — mở modal chọn thành viên cụ thể, sau đó xuất file chi tiết từng ngày.
-3. File tải xuống tự động; các lần xuất trước được lưu tại tab **Exports** trong HO Dashboard.
+3. File tải xuống tự động; các lần xuất trước được lưu tại tab **Exports** trong màn hình **Time Tracking** (sidebar → Time Tracking → tab Exports).
 
 {{screenshot:capacity-export-menu}}
 
@@ -58,7 +58,7 @@ status: published
 
 - **Ngưỡng màu heatmap**: được tính dựa trên lịch làm việc (business calendar) cấu hình trong God Mode — ngày lễ và ngày nghỉ tự động loại khỏi phép tính.
 - **Không có ước lượng**: nếu công việc chưa điền _Estimate_, heatmap chỉ hiển thị giờ thực tế; cột "vs ước lượng" sẽ trống.
-- **Cross Workspaces**: khi bật, dữ liệu gộp từ tất cả workspace người dùng tham gia — hữu ích cho nhân viên làm việc liên phòng ban.
+- **Cross teams & workspaces**: mặc định bật — gộp dữ liệu từ tất cả workspace người dùng tham gia, hữu ích cho nhân viên làm việc liên phòng ban. Khi bật, tùy chọn Detailed Export bị tắt; tắt Cross teams & workspaces để dùng Detailed Export.
 - **Bảng danh mục**: chỉ xuất hiện nếu công việc được gán Danh mục chính/phụ (cấu hình bởi admin dự án).
 
 ## Liên quan

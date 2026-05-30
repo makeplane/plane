@@ -36,7 +36,7 @@ Hiện tại Shinhan Workspace hỗ trợ khoá các trường sau:
 
 1. Vào **Cài đặt dự án → Phân quyền theo trường**.
 2. Mỗi trường hiển thị một toggle bật/tắt.
-3. Bật toggle → trường bị **khoá** với thành viên vai trò _Member_ và _Viewer_.
+3. Bật toggle → trường bị **khoá** với thành viên vai trò _Member_ và _Guest (Khách)_.
 4. Tắt toggle → trường được **mở** — mọi thành viên chỉnh sửa bình thường.
 
 > Thay đổi có hiệu lực ngay lập tức, không cần tải lại trang.
@@ -57,7 +57,7 @@ Hiện tại Shinhan Workspace hỗ trợ khoá các trường sau:
 | --------------- | ---------------------------------------- |
 | **Admin dự án** | Không bị ảnh hưởng — luôn chỉnh sửa được |
 | **Member**      | Bị khoá — chỉ đọc                        |
-| **Viewer**      | Bị khoá — chỉ đọc                        |
+| **Guest (Khách)** | Bị khoá — chỉ đọc                      |
 
 ## Mẹo & lưu ý
 

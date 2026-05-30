@@ -16,7 +16,7 @@ Bài viết này hướng dẫn cách tổ chức, khóa, chia sẻ và thực h
 
 - **Member** trở lên: tạo, sửa, chia sẻ trang Công khai; tạo và quản lý trang Riêng tư của mình.
 - **Admin dự án**: khóa/mở trang, di chuyển sang dự án khác, xóa vĩnh viễn bất kỳ trang nào.
-- Thành viên **Viewer** chỉ xem trang Công khai, không thực hiện được các thao tác dưới đây.
+- Thành viên **Guest (Khách)** chỉ xem trang Công khai, không thực hiện được các thao tác dưới đây.
 
 ---
 

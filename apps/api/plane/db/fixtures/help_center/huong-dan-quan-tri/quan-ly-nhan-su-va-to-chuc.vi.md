@@ -89,7 +89,7 @@ Tính năng **Auto-join** tự động thêm nhân viên vào workspace khi họ
 | **Bulk Linked**              | Liên kết hàng loạt phòng ban với workspace                              |
 | **Bulk Linked Categories**   | Gán danh mục công việc cho nhiều phòng ban                              |
 | **Export Linked Categories** | Xuất danh sách gán danh mục                                             |
-| **Rejoin**                   | Yêu cầu tất cả nhân viên gia nhập lại workspace theo liên kết phòng ban |
+| **Rejoin**                   | Join lại tất cả **trưởng phòng** làm Admin vào project (chọn All Projects hoặc Bank-wide Projects) — khác với Auto-join |
 
 {{screenshot:god-mode-departments-toolbar}}
 
@@ -97,7 +97,9 @@ Tính năng **Auto-join** tự động thêm nhân viên vào workspace khi họ
 
 ## C. Job Positions — Ngạch và chức danh
 
-1. Vào **God Mode** → **Job Positions**.
+> **Lưu ý truy cập:** Job Positions không hiển thị trên thanh bên God Mode. Truy cập trực tiếp qua URL: `/god-mode/job-positions`.
+
+1. Vào **God Mode** → điều hướng trực tiếp đến `/god-mode/job-positions`.
 2. Giao diện chia đôi: **Job Grades** (ngạch, bên trái) và **Job Positions** (chức danh thuộc ngạch, bên phải).
 
 ### Tạo ngạch (Job Grade)

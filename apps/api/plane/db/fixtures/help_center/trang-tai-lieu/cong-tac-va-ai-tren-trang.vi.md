@@ -64,16 +64,17 @@ AI Pi là trợ lý viết tích hợp sẵn trong trình soạn thảo. Có hai
 
 {{screenshot:page-editor-ai-menu}}
 
-#### Các tác vụ AI Pi hỗ trợ
+#### Tác vụ AI Pi hỗ trợ
 
-| Tác vụ                     | Mô tả                                                 |
-| -------------------------- | ----------------------------------------------------- |
-| **Ask Pi**                 | Đặt câu hỏi tự do hoặc yêu cầu tạo nội dung mới       |
-| **Improve writing**        | Cải thiện văn phong, sửa lỗi diễn đạt                 |
-| **Fix spelling & grammar** | Sửa lỗi chính tả và ngữ pháp                          |
-| **Make shorter**           | Rút gọn đoạn văn                                      |
-| **Make longer**            | Mở rộng, bổ sung chi tiết                             |
-| **Change tone**            | Đổi giọng văn (Chuyên nghiệp / Thân thiện / Mặc định) |
+Menu AI chỉ có một tác vụ duy nhất: **Ask Pi** — đặt câu hỏi tự do hoặc yêu cầu tạo/chỉnh sửa nội dung.
+
+Sau khi Pi trả lời, ba nút chọn giọng văn xuất hiện để tinh chỉnh kết quả:
+
+| Nút                    | Ý nghĩa                                |
+| ---------------------- | -------------------------------------- |
+| **Mặc định** (Default) | Giữ nguyên giọng văn Pi đề xuất        |
+| **Chuyên nghiệp** (Professional) | Viết lại theo phong cách trang trọng |
+| **Thân thiện** (Casual) | Viết lại theo phong cách gần gũi      |
 
 #### Sau khi Pi trả lời
 

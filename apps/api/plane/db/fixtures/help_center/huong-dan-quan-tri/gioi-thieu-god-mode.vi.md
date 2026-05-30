@@ -35,13 +35,13 @@ Sau khi vào God Mode, thanh bên hiển thị các mục chính:
 | **General**           | Tên instance, ID, bật/tắt telemetry            |
 | **Authentication**    | Cấu hình phương thức đăng nhập (local, SSO...) |
 | **Email**             | Thiết lập SMTP để gửi email hệ thống           |
-| **AI**                | API key cho tính năng AI (Ask Pi)              |
+| **Artificial intelligence** | API key cho tính năng AI (Ask Pi)        |
 | **Images**            | API key thư viện ảnh (Unsplash)                |
 | **Users**             | Danh sách, tạo, import người dùng              |
 | **Workspaces**        | Quản lý tất cả workspace trên instance         |
 | **Staff**             | Hồ sơ nhân sự SHBVN                            |
 | **Departments**       | Cây phòng ban, liên kết workspace              |
-| **Job Positions**     | Ngạch, chức danh                               |
+| **Job Positions**     | Ngạch, chức danh — truy cập qua URL `/god-mode/job-positions` (không hiển thị trên thanh bên) |
 | **Task Categories**   | Danh mục công việc                             |
 | **Business Calendar** | Lịch làm việc & ngày lễ                        |
 | **Monitoring**        | Email log, scheduled jobs, worker health       |

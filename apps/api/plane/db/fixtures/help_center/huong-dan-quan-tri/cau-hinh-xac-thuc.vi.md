@@ -64,6 +64,9 @@ Swing SSO là phương thức đăng nhập một lần tích hợp với hệ t
 | **Company code**  | Mã công ty gửi lên Swing, mặc định `VN`                                |
 
 3. Nhấn **Save changes**.
+
+> **Lưu ý quan trọng:** Khi bật Swing SSO, hệ thống tự động tắt LDAP (hai phương thức loại trừ lẫn nhau). Nếu đang dùng LDAP, hãy đảm bảo nhân viên đã sẵn sàng chuyển sang Swing SSO trước khi kích hoạt.
+
 4. Sau khi lưu, nhấn **Test Authentication** để xác minh kết nối hoạt động trước khi triển khai cho toàn bộ nhân viên.
 
 {{screenshot:god-mode-swing-sso-config}}

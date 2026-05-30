@@ -65,7 +65,7 @@ Vào **Cài đặt → Ước lượng** để bật tính năng và chọn ki�
 
 Vào **Cài đặt → Thành viên**:
 
-- **Mời thành viên**: nhập email → chọn vai trò (Viewer / Member / Admin) → Gửi lời mời.
+- **Mời thành viên**: nhập email → chọn vai trò (Guest / Member / Admin) → Gửi lời mời.
 - **Đổi vai trò**: bấm vai trò hiện tại của thành viên → chọn vai trò mới.
 - **Xóa thành viên**: bấm menu `…` → Xóa khỏi dự án.
 

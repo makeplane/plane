@@ -15,7 +15,7 @@ Trang (Pages) là nơi soạn thảo tài liệu nội bộ — biên bản họ
 ## Khi nào dùng / Yêu cầu
 
 - Cần quyền **Member** trở lên trong dự án để tạo và chỉnh sửa trang.
-- Thành viên có quyền **Viewer** chỉ đọc, không soạn thảo.
+- Thành viên có quyền **Guest (Khách)** chỉ đọc, không soạn thảo.
 - Trang được tạo trong một dự án — hãy vào đúng dự án trước khi bắt đầu.
 
 ---

@@ -29,7 +29,7 @@ Head Office Dashboard (gọi tắt: **HO Dashboard**) tổng hợp toàn bộ c�
 ### Xem bảng dữ liệu chi tiết (tab Datasheet)
 
 1. Chọn tab **Datasheet**.
-2. Bảng hiển thị tất cả công việc từ các workspace bạn có quyền xem, với tối đa **18 cột** có thể bật/tắt: Phòng ban, Tên dự án, Danh mục chính/phụ, Công việc, Lead, Assignee, Dự án toàn ngân hàng, Ưu tiên, Trạng thái, Tiến độ, Module, Cycle, Ngày bắt đầu, Ngày đến hạn, Ngày hoàn thành, Tổng giờ log, Liên kết tham chiếu.
+2. Bảng hiển thị tất cả công việc từ các workspace bạn có quyền xem, với tối đa **18 cột** có thể bật/tắt: Phòng ban, Tên dự án, Danh mục chính/phụ, Số lượng công việc con, Lead, Assignee, Dự án toàn ngân hàng, Ưu tiên, Trạng thái, Tiến độ, Module, Cycle, Ngày bắt đầu, Ngày đến hạn, Ngày hoàn thành, Tổng giờ log, Liên kết tham chiếu.
 3. Nhấp **vào tiêu đề cột** để sắp xếp tăng/giảm dần.
 4. Nhấp **biểu tượng lọc** trên tiêu đề cột để lọc theo phòng ban, assignee, trạng thái, ưu tiên, danh mục, v.v.
 5. Nhấp **Display** (góc phải trên) để bật/tắt từng cột hiển thị.

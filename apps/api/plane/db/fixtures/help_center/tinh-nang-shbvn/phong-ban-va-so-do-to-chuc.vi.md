@@ -12,21 +12,14 @@ Shinhan Workspace lưu trữ **cây phòng ban** phản ánh cơ cấu tổ ch�
 
 ## Khi nào dùng / Yêu cầu
 
-- **Xem sơ đồ tổ chức**: mọi nhân viên — truy cập từ sidebar workspace → **Org Chart**.
+- **Xem sơ đồ tổ chức**: tính năng đang được triển khai — hiện liên hệ quản trị viên để tra cứu cơ cấu tổ chức.
 - **Quản lý phòng ban** (tạo/sửa/xóa, liên kết workspace, import/export): yêu cầu quyền **Instance Admin** — thực hiện trong **God Mode → Departments**.
 
 ---
 
 ## Xem sơ đồ tổ chức (nhân viên)
 
-### Các bước
-
-1. Từ sidebar, chọn **Org Chart** (biểu tượng sơ đồ tổ chức).
-2. Cây phòng ban hiển thị theo phân cấp — mỗi nút là một phòng ban, nhánh con là các bộ phận trực thuộc.
-3. Nhấp vào nút phòng ban để xem thông tin và danh sách nhân sự (nếu được cấu hình).
-4. Nếu chưa có phòng ban nào được thiết lập, trang hiển thị trạng thái trống — liên hệ quản trị viên để cấu hình.
-
-{{screenshot:phong-ban-va-so-do-to-chuc}}
+> **Lưu ý:** Giao diện Org Chart dành cho nhân viên đang được triển khai. Hiện tại chưa có mục này trên thanh bên. Nếu cần tra cứu cơ cấu phòng ban, vui lòng liên hệ quản trị viên hệ thống.
 
 ---
 
@@ -77,7 +70,7 @@ Khi bật _Auto-join_ cho một phòng ban, nhân viên mới thuộc phòng ban
 
 ## Mẹo & lưu ý
 
-- **Rejoin All**: nút **Rejoin** trong God Mode → Departments chạy lại toàn bộ tự động gán workspace cho tất cả nhân viên theo cấu hình Auto-join hiện tại — dùng khi có thay đổi cơ cấu lớn.
+- **Rejoin All Managers**: nút **Rejoin** trong God Mode → Departments join lại tất cả **trưởng phòng** (department managers) làm Admin vào project — có thể chọn All Projects hoặc chỉ Bank-wide Projects. Khác với Auto-join (tự động thêm nhân viên mới vào workspace), Rejoin chỉ áp dụng cho trưởng phòng.
 - **Org Chart rỗng**: nếu org chart hiển thị trống với người dùng, kiểm tra xem phòng ban đã được liên kết đúng workspace trong God Mode chưa.
 - **Phân cấp không giới hạn**: cây phòng ban hỗ trợ nhiều cấp lồng nhau, nhưng nên giữ dưới 4 cấp để org chart dễ đọc.
 - **Quản lý nhân sự (Staff)**: danh sách nhân viên và trạng thái tuyển dụng quản lý riêng tại **God Mode → Staff** — xem bài [Hướng dẫn Quản trị (God Mode)](/help/a/quan-ly-nhan-su-va-to-chuc).

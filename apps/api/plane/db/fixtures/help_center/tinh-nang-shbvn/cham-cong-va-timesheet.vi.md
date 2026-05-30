@@ -42,10 +42,12 @@ Tính năng **Chấm công & Timesheet** cho phép nhân viên ghi nhận giờ 
 
 ### Xem Timesheet theo tuần (cấp dự án)
 
+> **Lưu ý:** Bảng Timesheet là **chỉ đọc** — không thể nhấp ô để nhập giờ trực tiếp. Để ghi nhận hoặc chỉnh sửa giờ, dùng nút **Log Time** trên từng công việc (xem mục [Log giờ trực tiếp từ công việc](#log-giờ-trực-tiếp-từ-công-việc) ở trên).
+
 1. Vào dự án → chọn tab **Time Tracking** (hoặc **Timesheet**) trên thanh điều hướng dự án.
 2. Bảng hiển thị các công việc bạn đã log trong tuần hiện tại — mỗi hàng là một công việc, mỗi cột là một ngày trong tuần.
 3. Nhấp **< >** (mũi tên tuần) để chuyển sang tuần trước hoặc tuần sau.
-4. Mỗi ô trong bảng là thời gian đã log cho công việc đó ngày hôm đó (ví dụ: `2h 30m`). Nhấp vào ô để chỉnh sửa trực tiếp — nhập theo định dạng `2h 30m` hoặc `90m`, rồi nhấn **Enter** hoặc nhấp ra ngoài để lưu tự động.
+4. Mỗi ô hiển thị tổng giờ đã log cho công việc đó trong ngày hôm đó (ví dụ: `2h 30m`); ô trống nếu chưa log.
 5. Hàng cuối bảng hiển thị **tổng giờ** mỗi ngày và **tổng cả tuần**.
 
 {{screenshot:cham-cong-timesheet-grid}}
@@ -53,24 +55,14 @@ Tính năng **Chấm công & Timesheet** cho phép nhân viên ghi nhận giờ 
 ### Xem Timesheet toàn workspace (đa dự án)
 
 1. Từ sidebar, chọn **Time Tracking** (biểu tượng đồng hồ).
-2. Bật công tắc **Cross Workspaces** (góc phải trên) để gộp giờ từ tất cả workspace bạn tham gia.
+2. Công tắc **Cross teams & workspaces** (góc phải trên) mặc định **bật** — gộp giờ từ tất cả workspace bạn tham gia. Tắt công tắc này để chỉ xem dữ liệu workspace hiện tại.
 3. Bảng hiển thị thêm cột **Workspace** để phân biệt nguồn gốc công việc.
-4. Nhấp **Export** để tải bảng dữ liệu tuần hiện tại ra file Excel (`.xlsx`).
 
 {{screenshot:cham-cong-timesheet}}
 
-### Nhập công việc vào timesheet
-
-Nếu công việc chưa xuất hiện trong bảng timesheet:
-
-1. Nhấp **+ Add Issue** (thêm công việc) phía dưới bảng.
-2. Tìm kiếm và chọn công việc muốn log giờ.
-3. Công việc được thêm vào bảng; điền giờ vào các ô ngày tương ứng.
-
 ## Mẹo & lưu ý
 
-- **Tự lưu**: ô timesheet lưu ngay khi bạn nhấn Enter hoặc nhấp ra ngoài — không có nút "Lưu" riêng.
-- **Định dạng giờ hợp lệ**: `2h`, `30m`, `2h 30m`, hoặc `90` (số nguyên = số phút). Ô hiển thị trống nếu chưa log.
+- **Bảng Timesheet là chỉ đọc**: không thể chỉnh sửa trực tiếp trong bảng — dùng nút **Log Time** trên từng công việc để ghi nhận hoặc sửa giờ.
 - **Ngày log không được trong tương lai**: hệ thống chỉ chấp nhận log ngày hôm nay hoặc các ngày đã qua.
 - **Lý do sửa bắt buộc**: khi chỉnh sửa worklog đã lưu, trường _Lý do thay đổi_ là bắt buộc — nhằm đảm bảo tính minh bạch trong kiểm tra chéo.
 - **Log giờ hiển thị trong HO Dashboard**: worklog của bạn được tổng hợp tại Head Office Dashboard cho cấp quản lý xem.
