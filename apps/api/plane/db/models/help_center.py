@@ -21,16 +21,22 @@ HELP_ARTICLE_STATUS = (("draft", "Draft"), ("published", "Published"))
 
 
 def fold_accents(text):
-    """Lowercase + strip diacritics for accent-insensitive search.
+    """Lowercase + reduce to ASCII letters for accent-insensitive search and
+    clean URL slugs.
 
     Vietnamese readers type unaccented queries ("tai chinh") expecting to match
     accented content ("Tài chính"). The prod DB has no `unaccent` extension, so
     folding is done in Python: NFKD-decompose, drop combining marks, lowercase.
-    The folded value is stored on `search_text` and the query term is folded the
-    same way, so a plain LIKE matches across accents without any DB extension.
+    `đ`/`Đ` (U+0111/U+0110) are the only Vietnamese letters NFKD does NOT
+    decompose, so they are mapped to `d` explicitly — otherwise "đầu" would fold
+    to "đau" (still non-ASCII) and a query like "dau" would miss it, and a slug
+    derived from such a title would drop the letter entirely.
+    The folded value backs `search_text` and is the base for `slugify(...)`
+    (slugify strips any remaining non-ASCII, e.g. Korean, to keep URLs clean).
     """
     decomposed = unicodedata.normalize("NFKD", text or "")
-    return "".join(ch for ch in decomposed if not unicodedata.combining(ch)).lower()
+    folded = "".join(ch for ch in decomposed if not unicodedata.combining(ch)).lower()
+    return folded.replace("đ", "d")
 
 
 class HelpCategory(BaseModel):
