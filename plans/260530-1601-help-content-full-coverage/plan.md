@@ -38,8 +38,8 @@ Grounding: `plans/reports/from-workflow-to-planner-help-content-taxonomy-260530-
 | ----- | ----------------------------------------------------------------------------------- | -------- | ------ | --------------------------------------------------- |
 | 1     | [Content Pipeline & Taxonomy Scaffold](./phase-01-content-pipeline-and-scaffold.md) | P1       | 1.5d   | Done — loader + 11 cat/54 stubs, 58 tests green     |
 | 2     | [VI Content Authoring (54 articles)](./phase-02-vi-content-authoring.md)            | P1       | 5d     | Done — 54 VI articles (4,472 lines), 58 tests green |
-| 3     | [Demo Data Seed (for screenshots)](./phase-03-demo-data-seed.md)                    | P2       | 1d     | Pending                                             |
-| 4     | [Screenshot Capture & Injection (Playwright)](./phase-04-screenshot-pipeline.md)    | P2       | 2.5d   | Pending                                             |
+| 3     | [Demo Data Seed (for screenshots)](./phase-03-demo-data-seed.md)                    | P2       | 1d     | Done — `seed_help_demo_data` (demo workspace populated) |
+| 4     | [Screenshot Capture & Injection (Playwright)](./phase-04-screenshot-pipeline.md)    | P2       | 2.5d   | Pilot done — pipeline proven, 7 shots live; scaling documented |
 | 5     | [Integration & Seed Run](./phase-05-integration-and-seed-run.md)                    | P1       | 1d     | Pending                                             |
 | 6     | [Testing](./phase-06-testing.md)                                                    | P1       | 1d     | Pending                                             |
 | 7     | [Documentation (+ EN/KO path)](./phase-07-documentation.md)                         | P3       | 0.5d   | Pending                                             |

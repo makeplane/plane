@@ -1,11 +1,22 @@
 ---
 phase: 4
 title: "Screenshot Capture & Injection (Playwright)"
-status: pending
+status: pilot-done
 priority: P2
 effort: "2.5d"
 dependencies: [3]
 ---
+
+> **Pilot done (2026-05-30):** Full pipeline built + proven end-to-end on a 7-screenshot pilot (the
+> core "navigate to a route" targets: home, projects, issues, cycles, modules, pages, your-work).
+> Components: `make_help_session` (session-cookie injection — the SPA needs an onboarded Profile, not
+> just `/api/users/me/` 200), `tools/help-screenshots/` (Playwright capture, `url`-scoped cookie for
+> both :3000/:8000, dynamic `{ws}/{pid}/{uid}` resolution via API), `inject_help_screenshots`
+> (boto3 `put_object` upload — the custom `S3Storage` rejects `FileField.save()`; marker→`<img>` with a
+> re-findable `data-help-screenshot` attr for idempotent re-runs). **Verified live:** images render in
+> the `/help` reader (302 → 200 `/uploads/` via vite→MinIO, `<img>` 1440×900). **Scaling the remaining
+> ~148 placeholders** (modals/popovers/Cmd+K/God-Mode) needs per-target interaction steps in
+> `capture.mjs` — documented in `tools/help-screenshots/README.md`; text ships regardless (images additive).
 
 # Phase 4: Screenshot Capture & Injection (Playwright)
 

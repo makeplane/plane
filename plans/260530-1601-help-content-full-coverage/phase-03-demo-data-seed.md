@@ -1,13 +1,19 @@
 ---
 phase: 3
 title: "Demo Data Seed (for screenshots)"
-status: pending
+status: done
 priority: P2
 effort: "1d"
 dependencies: [1]
 ---
 
 # Phase 3: Demo Data Seed (for screenshots)
+
+> **Done (2026-05-30):** `seed_help_demo_data` command — creates an isolated `help-demo` workspace +
+> a dedicated screenshot user (`help-screenshot@shinhan.local`, instance admin, **onboarded Profile**
+> so the SPA renders the app instead of redirecting to sign-in) and populates it via the existing
+> `workspace_seed` (1 project, 7 issues, 2 cycles, 3 modules, 2 pages). Idempotent (skips re-seed if
+> populated). Verified: authenticated capture shows real content.
 
 ## Overview
 
