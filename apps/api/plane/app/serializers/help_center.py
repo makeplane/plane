@@ -34,6 +34,35 @@ def sanitize_help_html(html):
         raise serializers.ValidationError({"description_html": "Failed to sanitize HTML content."})
 
 
+SNIPPET_WINDOW = 200
+SNIPPET_LEAD = 40
+
+
+def build_search_snippet(body, folded_term):
+    """Build a result snippet centered on the first match of the folded term.
+
+    Folding (lowercase + drop diacritics) is length-preserving for typical
+    precomposed Vietnamese/English text, so the index found in the folded body
+    maps onto the original body. When that does not hold (folding changed the
+    length — e.g. NFKD-decomposing scripts such as Korean Hangul — or the match
+    was in the title rather than the body) we fall back to the head of the body
+    so a snippet is always shown.
+    """
+    body = body or ""
+    if not body:
+        return ""
+    folded_body = fold_accents(body)
+    index = folded_body.find(folded_term)
+    if index <= 0 or len(folded_body) != len(body):
+        return body[:SNIPPET_WINDOW]
+    start = max(0, index - SNIPPET_LEAD)
+    end = min(len(body), start + SNIPPET_WINDOW)
+    snippet = body[start:end].strip()
+    prefix = "… " if start > 0 else ""
+    suffix = " …" if end < len(body) else ""
+    return f"{prefix}{snippet}{suffix}"
+
+
 def resolve_translation(article, requested_locale):
     """Deterministic resolution: requested -> en -> vi -> any usable translation.
 
@@ -99,14 +128,30 @@ class HelpArticleListSerializer(BaseSerializer):
         return obj._resolved_cache
 
     def _matched(self, obj):
+        # Cache like _resolved so get_matched_locale + get_snippet don't each
+        # recompute (re-folding the whole body) for the same row.
+        if not hasattr(obj, "_matched_cache"):
+            obj._matched_cache = self._compute_matched(obj)
+        return obj._matched_cache
+
+    def _compute_matched(self, obj):
         # Which locale row matched the (accent-folded) search term, plus a snippet.
         term = self.context.get("search_term")
-        if not term:
+        if not term or not term.strip():
             return None, None
         folded = fold_accents(term)
-        for t in obj.translations.all():
+        # Search is locale-scoped: report the locale it actually ran in (UI locale,
+        # or vi after source fallback) so matched_locale + snippet stay consistent
+        # with what was searched. Fall back to a plain scan if no scope was set.
+        search_locale = self.context.get("search_locale")
+        translations = list(obj.translations.all())
+        if search_locale:
+            scoped = next((t for t in translations if t.locale == search_locale), None)
+            if scoped:
+                return scoped.locale, build_search_snippet(scoped.description_stripped, folded)
+        for t in translations:
             if t.search_text and folded in t.search_text:
-                return t.locale, (t.description_stripped or "")[:200]
+                return t.locale, build_search_snippet(t.description_stripped, folded)
         return None, None
 
     def get_title(self, obj):

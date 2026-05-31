@@ -6,8 +6,9 @@
 
 The shared guide is readable by ANY authenticated user (no workspace scope,
 no role gate). These tests assert published-only visibility, locale fallback,
-accent-folded + multilingual in-page search, the json-never-on-read-path
-sanitization contract, and the workspace-agnostic static asset 404 guard.
+accent-folded + locale-scoped in-page search (with source-language fallback),
+the json-never-on-read-path sanitization contract, and the workspace-agnostic
+static asset 404 guard.
 """
 
 import pytest
@@ -194,19 +195,40 @@ class TestInPageSearch:
         assert {r["slug"] for r in project.data} == {"project"}
 
     @pytest.mark.django_db
-    def test_multilingual_search_matches_term_in_other_locale(self, session_client):
-        # VI title has no "finance"; only the EN translation does. A vi-locale
-        # query for "finance" must still find it, resolved to vi, matched on en.
+    def test_search_is_scoped_to_requested_locale(self, session_client):
+        # "finance" exists ONLY in the en translation. A vi-locale search must NOT
+        # surface it — search is scoped to the user's language; vi IS the source,
+        # so there is no fallback and the result set is empty.
         make_article("doc", {"vi": ("Hướng dẫn", "<p>vi</p>"), "en": ("Finance guide", "<p>en</p>")})
 
-        response = session_client.get(
-            reverse("help-articles"), {"search": "finance", "locale": "vi"}
-        )
+        response = session_client.get(reverse("help-articles"), {"search": "finance", "locale": "vi"})
+
+        assert [r["slug"] for r in response.data] == []
+
+    @pytest.mark.django_db
+    def test_search_matches_within_requested_locale(self, session_client):
+        # The same article searched in en (where the term lives) is found, matched en.
+        make_article("doc", {"vi": ("Hướng dẫn", "<p>vi</p>"), "en": ("Finance guide", "<p>en</p>")})
+
+        response = session_client.get(reverse("help-articles"), {"search": "finance", "locale": "en"})
 
         rows = {r["slug"]: r for r in response.data}
         assert "doc" in rows
-        assert rows["doc"]["resolved_locale"] == "vi"
         assert rows["doc"]["matched_locale"] == "en"
+        assert rows["doc"]["resolved_locale"] == "en"
+
+    @pytest.mark.django_db
+    def test_search_falls_back_to_source_when_ui_locale_has_no_match(self, session_client):
+        # vi-only content. An en-locale user finds nothing in en, so the search
+        # falls back to the vi source -> found, with matched + resolved both vi.
+        make_article("fin", {"vi": ("Tài chính doanh nghiệp", "<p>vi</p>")})
+
+        response = session_client.get(reverse("help-articles"), {"search": "tai chinh", "locale": "en"})
+
+        rows = {r["slug"]: r for r in response.data}
+        assert "fin" in rows
+        assert rows["fin"]["matched_locale"] == "vi"
+        assert rows["fin"]["resolved_locale"] == "vi"
 
     @pytest.mark.django_db
     def test_draft_excluded_from_search(self, session_client):

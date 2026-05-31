@@ -31,6 +31,9 @@ class HelpCenterReadMixin:
         context = super().get_serializer_context()
         context["locale"] = self.request.GET.get("locale")
         context["search_term"] = self.request.GET.get("search")
+        # The locale the search actually ran in (UI locale, or vi after fallback);
+        # the serializer reports matched_locale + snippet from this translation.
+        context["search_locale"] = getattr(self, "_resolved_search_locale", None)
         return context
 
 
