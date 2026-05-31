@@ -32,8 +32,8 @@ Trên thanh tab phía trên, chọn loại phân tích muốn xem. Bản đang c
 
 | Tab | Nội dung |
 | --- | --- |
-| **Tổng quan** (Overview) | Chỉ số tổng hợp và danh sách dự án đang hoạt động |
-| **Dự án** (Projects) | Thống kê theo từng dự án |
+| **Tổng quan** (Overview) | Chỉ số tổng hợp và danh sách Teams/Projects đang hoạt động |
+| **Teams/Projects** | Thống kê theo từng nhóm (team) hoặc dự án |
 | **Người dùng** (Users) | Phân bổ công việc theo người phụ trách |
 | **Mục công việc** (Work Items) | Thẻ chỉ số, biểu đồ tạo mới/hoàn thành và bảng số liệu tùy biến |
 | **Cycles** | Phân bổ và bảng số liệu theo chu kỳ |

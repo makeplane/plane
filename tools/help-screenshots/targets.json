@@ -1192,8 +1192,29 @@
     "wait": 3000
   },
   {
-    "name": "cycles-modules-tab-active",
-    "path": "/{ws}/projects/{pid}/cycles/",
-    "wait": 2800
+    "name": "analytics-overview-tab",
+    "path": "/{ws}/analytics/overview",
+    "wait": 4500
+  },
+  {
+    "name": "analytics-filters",
+    "path": "/{ws}/analytics/work-items",
+    "wait": 4500
+  },
+  {
+    "name": "dashboard-list",
+    "path": "/{ws}/dashboards",
+    "wait": 3500
+  },
+  {
+    "name": "dashboard-widget-config",
+    "path": "/{ws}/dashboards/{did}",
+    "wait": 3000,
+    "steps": [
+      {
+        "click": "text=Add Widget",
+        "wait": 2500
+      }
+    ]
   }
 ]

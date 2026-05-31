@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from plane.bgtasks.workspace_seed_task import workspace_seed
-from plane.db.models import Profile, Project, User, Workspace, WorkspaceMember
+from plane.db.models import Dashboard, Profile, Project, User, Workspace, WorkspaceMember
 
 DEMO_SLUG = "help-demo"
 SHOT_EMAIL = "help-screenshot@shinhan.local"
@@ -64,10 +64,27 @@ class Command(BaseCommand):
             workspace_seed(workspace.id)  # projects, states, labels, issues, cycles, modules, pages, views
             self.stdout.write(self.style.SUCCESS(f"Seeded demo content into '{DEMO_SLUG}'."))
 
+        # A demo Dashboard so the Custom Dashboards screenshots (list card + the
+        # widget-config modal opened from its detail page) have a real target.
+        self._ensure_demo_dashboard(workspace, user)
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"Help screenshot user: {SHOT_EMAIL} (id={user.id}); demo workspace: /{DEMO_SLUG}/"
             )
+        )
+
+    @staticmethod
+    def _ensure_demo_dashboard(workspace, user):
+        Dashboard.objects.get_or_create(
+            workspace=workspace,
+            name="Báo cáo công việc (mẫu)",
+            defaults={
+                "description": "Dashboard mẫu minh hoạ trong Trợ giúp",
+                "access": 1,  # public — visible on the demo dashboards list
+                "created_by": user,
+                "updated_by": user,
+            },
         )
 
     @staticmethod

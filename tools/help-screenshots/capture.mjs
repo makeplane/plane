@@ -78,6 +78,7 @@ try {
   vars.mid = await firstId(`/api/workspaces/${WS}/projects/${pid}/modules/`);
   vars.pgid = await firstId(`/api/workspaces/${WS}/projects/${pid}/pages/`);
   vars.vid = await firstId(`/api/workspaces/${WS}/projects/${pid}/views/`);
+  vars.did = await firstId(`/api/workspaces/${WS}/dashboards/`);
   console.log("resolved vars:", vars);
 } catch (e) {
   console.error("Could not resolve API vars (auth/route issue):", e.message);
@@ -113,9 +114,18 @@ if (meStatus !== 200) {
   process.exit(2);
 }
 
+// Optional filter: capture only the named targets (comma-separated), e.g.
+//   SHOT_ONLY="analytics-overview-tab,dashboard-list" node capture.mjs
+const only = (process.env.SHOT_ONLY || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const selected = only.length ? targets.filter((t) => only.includes(t.name)) : targets;
+if (only.length) console.log("SHOT_ONLY ->", selected.map((t) => t.name).join(", ") || "(no match)");
+
 let ok = 0;
 let fail = 0;
-for (const t of targets) {
+for (const t of selected) {
   const url = baseFor(t) + t.path.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "__MISSING__");
   if (url.includes("__MISSING__")) {
     console.log("SKIP", t.name, "(unresolved var) <-", url);
