@@ -14,7 +14,7 @@ Bài viết là bảng thuật ngữ chuẩn của Shinhan Workspace, chốt đ�
 
 | Thuật ngữ | Ý nghĩa |
 | --- | --- |
-| **Workspace** | Không gian làm việc của một phòng ban hoặc nhóm. Mỗi workspace có danh sách dự án và thành viên riêng; bạn có thể thuộc nhiều workspace. |
+| **Workspace** | Không gian làm việc của **một đơn vị tổ chức** — một **phòng ban**, **chi nhánh** hoặc **Division**. Theo thiết kế hiện tại mỗi workspace tương ứng với một đơn vị, được quản trị viên liên kết qua **God Mode → Departments**. Mỗi workspace có danh sách dự án và thành viên riêng; bạn có thể thuộc nhiều workspace. |
 | **Dự án** _(Project)_ | Nhóm các công việc hướng tới một mục tiêu chung, nằm bên trong một workspace. |
 | **Mục công việc** _(Work item)_ | Đơn vị công việc nhỏ nhất — một nhiệm vụ cụ thể có người được giao, trạng thái, ưu tiên, hạn. Còn gọi tắt là **Công việc**. |
 | **Cycle** _(Chu kỳ)_ | Khoảng thời gian có điểm đầu–cuối (giống sprint) để gom công việc cần hoàn thành trong giai đoạn đó. |

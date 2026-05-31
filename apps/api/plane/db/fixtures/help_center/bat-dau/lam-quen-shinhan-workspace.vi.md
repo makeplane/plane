@@ -16,7 +16,7 @@ Shinhan Workspace tổ chức công việc theo ba cấp:
 
 | Cấp | Tên           | Ý nghĩa                                                                                      |
 | --- | ------------- | -------------------------------------------------------------------------------------------- |
-| 1   | **Workspace** | Không gian làm việc của toàn bộ phòng ban hoặc nhóm. Bạn có thể thuộc nhiều workspace.       |
+| 1   | **Workspace** | Không gian làm việc tương ứng với **một đơn vị tổ chức** của ngân hàng — một **phòng ban**, **chi nhánh** hoặc **Division**. Theo thiết kế hiện tại, mỗi workspace gắn với một đơn vị (quản trị viên liên kết qua God Mode → Departments). Bạn có thể thuộc nhiều workspace. |
 | 2   | **Dự án**     | Nhóm các công việc liên quan đến một mục tiêu chung (ví dụ: "Triển khai hệ thống X").        |
 | 3   | **Công việc** | Đơn vị nhỏ nhất — một nhiệm vụ cụ thể cần thực hiện, giao cho người phụ trách, đặt deadline. |
 
