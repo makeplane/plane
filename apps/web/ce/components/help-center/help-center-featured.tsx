@@ -25,7 +25,7 @@ export const HelpCenterFeatured = ({ category, onSelect }: Props) => {
         <p className="text-13 font-medium uppercase tracking-wide text-accent-primary">
           {t("help_center.get_started_here")}
         </p>
-        <h2 className="mt-1 truncate text-16 font-semibold text-primary">{category.name}</h2>
+        <h2 className="mt-1 truncate text-18 font-semibold text-primary">{category.name}</h2>
       </div>
       <ArrowRight className="size-5 shrink-0 text-icon-primary" />
     </button>

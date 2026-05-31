@@ -12,6 +12,7 @@ import type { THelpCategory, THelpLocale } from "@/plane-web/types/help-center";
 export interface IHelpCategoryStore {
   categoriesMap: Record<string, THelpCategory>;
   loader: boolean;
+  error: boolean;
   categoriesSorted: THelpCategory[];
   fetchCategories: (locale: THelpLocale) => Promise<THelpCategory[]>;
 }
@@ -19,11 +20,15 @@ export interface IHelpCategoryStore {
 export class HelpCategoryStore implements IHelpCategoryStore {
   categoriesMap: Record<string, THelpCategory> = {};
   loader = false;
+  // True when the last fetch rejected — lets the UI show a retry state instead
+  // of masking an outage as an empty "no categories yet".
+  error = false;
 
   constructor(private service: HelpCenterService) {
     makeObservable(this, {
       categoriesMap: observable,
       loader: observable,
+      error: observable,
       categoriesSorted: computed,
       fetchCategories: action,
     });
@@ -35,6 +40,9 @@ export class HelpCategoryStore implements IHelpCategoryStore {
 
   fetchCategories = async (locale: THelpLocale) => {
     this.loader = true;
+    runInAction(() => {
+      this.error = false;
+    });
     try {
       const response = await this.service.fetchCategories(locale);
       runInAction(() => {
@@ -42,6 +50,11 @@ export class HelpCategoryStore implements IHelpCategoryStore {
         response.forEach((category) => set(this.categoriesMap, [category.id], category));
       });
       return response;
+    } catch (error) {
+      runInAction(() => {
+        this.error = true;
+      });
+      throw error;
     } finally {
       runInAction(() => {
         this.loader = false;

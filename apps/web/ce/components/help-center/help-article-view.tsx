@@ -15,6 +15,7 @@ import { HelpArticleToc } from "./help-article-toc";
 import { HelpArticleMissing, HelpContentUnavailable, HelpLoading } from "./help-center-states";
 import { HelpContentRenderer } from "./help-content-renderer";
 import { LocaleFallbackNotice } from "./locale-fallback-notice";
+import { useHelpArticleHeadings } from "./use-help-article-headings";
 
 type TStatus = "loading" | "ready" | "notfound";
 
@@ -27,6 +28,9 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
   const [detail, setDetail] = useState<THelpArticleDetail | null>(null);
   const [status, setStatus] = useState<TStatus>("loading");
   const contentRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  // One observer feeds both the desktop sidebar and the mobile TOC disclosure.
+  const toc = useHelpArticleHeadings(contentRef, detail?.description_html ?? "");
 
   useEffect(() => {
     let cancelled = false;
@@ -46,6 +50,15 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
     };
   }, [store, articleSlug, currentLocale]);
 
+  // On article change, reset the scroll position and move focus to the title.
+  // A SPA route swap otherwise leaves keyboard/SR focus on the old link with no
+  // announcement that new content loaded.
+  useEffect(() => {
+    if (status !== "ready") return;
+    document.getElementById("help-main-content")?.scrollTo({ top: 0 });
+    headingRef.current?.focus({ preventScroll: true });
+  }, [articleSlug, status]);
+
   if (status === "loading") return <HelpLoading />;
   if (status === "notfound" || !detail) return <HelpArticleMissing />;
 
@@ -58,11 +71,23 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-8">
         <article className="min-w-0">
           {fellBack && detail.resolved_locale && <LocaleFallbackNotice resolvedLocale={detail.resolved_locale} />}
-          <h1 className="mb-4 text-2xl font-semibold text-primary">{detail.title ?? detail.slug}</h1>
+          {/* arbitrary size: the project's font scale has no text-3xl token, so an
+              explicit 1.75rem keeps the title clearly above the 1.5rem content H2 */}
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            className="mb-4 text-[1.75rem] font-semibold leading-tight text-primary outline-none"
+          >
+            {detail.title ?? detail.slug}
+          </h1>
           {hasContent && detail.description_html ? (
-            <div ref={contentRef}>
-              <HelpContentRenderer articleId={detail.id} descriptionHtml={detail.description_html} />
-            </div>
+            <>
+              {/* Mobile-only jump list (desktop uses the sticky sidebar below) */}
+              <HelpArticleToc variant="mobile" className="mb-6 lg:hidden" {...toc} />
+              <div ref={contentRef}>
+                <HelpContentRenderer articleId={detail.id} descriptionHtml={detail.description_html} />
+              </div>
+            </>
           ) : (
             <HelpContentUnavailable />
           )}
@@ -70,7 +95,7 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
         </article>
         {hasContent && detail.description_html && (
           <aside className="hidden lg:block">
-            <HelpArticleToc html={detail.description_html} contentRef={contentRef} />
+            <HelpArticleToc {...toc} />
           </aside>
         )}
       </div>

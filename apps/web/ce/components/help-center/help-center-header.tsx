@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import { ArrowLeft, LifeBuoy } from "lucide-react";
+import { ArrowLeft, ChevronRight, LifeBuoy } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import ShinhanBankLogo from "@/app/assets/logos/shinhan-bank-logo.svg?url";
 import { useHelpCenter } from "@/plane-web/hooks/store/use-help-center";
+import { HelpHeaderSearch } from "./help-header-search";
 import { HelpCenterUserMenu } from "./help-center-user-menu";
 
 // Top bar for the standalone (workspace-agnostic) /help route. Three zones:
@@ -37,22 +38,25 @@ export const HelpCenterHeader = observer(function HelpCenterHeader() {
           <img src={ShinhanBankLogo} alt="Shinhan Bank" className="h-6 w-auto" />
           <span className="h-5 border-l border-subtle" aria-hidden />
           <span className="flex items-center gap-1.5 font-medium text-primary">
-            <LifeBuoy className="size-4 text-icon-primary" />
-            <span>{t("help_center.breadcrumb_home")}</span>
+            <LifeBuoy className="size-4 shrink-0 text-icon-primary" />
+            {/* Logo alone represents home on small screens so the article title gets the space */}
+            <span className="hidden sm:inline">{t("help_center.breadcrumb_home")}</span>
           </span>
         </Link>
         {slug && (
           <>
-            <span className="text-tertiary">›</span>
+            <ChevronRight className="size-3.5 shrink-0 text-tertiary" aria-hidden />
             <span className="truncate text-secondary">{detail?.title ?? slug}</span>
           </>
         )}
       </nav>
 
-      {/* Account zone: back-to-app + the signed-in user (who am I + sign out) */}
+      {/* Right zone: in-article search + back-to-app + signed-in user (who am I + sign out) */}
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        {slug && <HelpHeaderSearch />}
         <Link
           to={backUrl}
+          aria-label={t("help_center.back_to_app")}
           className="flex items-center gap-1.5 rounded-md px-2 py-1 text-13 text-secondary transition-colors hover:bg-surface-2 hover:text-primary"
         >
           <ArrowLeft className="size-4" />

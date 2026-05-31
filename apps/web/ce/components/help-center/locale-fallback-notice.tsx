@@ -25,3 +25,26 @@ export const LocaleFallbackNotice = ({ resolvedLocale }: { resolvedLocale: THelp
     </div>
   );
 };
+
+// Shown above search results when the user's UI language had no match and the
+// search fell back to the source language, so the language switch is explained.
+export const SearchFallbackNotice = ({
+  uiLocale,
+  fallbackLocale,
+}: {
+  uiLocale: THelpLocale;
+  fallbackLocale: THelpLocale;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="mb-3 flex items-center gap-2 rounded-md border border-subtle bg-surface-2 px-3 py-2 text-13 text-secondary">
+      <Info className="size-4 shrink-0 text-icon-primary" />
+      <span>
+        {t("help_center.search_locale_fallback", {
+          language: t(LOCALE_LABEL_KEY[uiLocale]),
+          fallback: t(LOCALE_LABEL_KEY[fallbackLocale]),
+        })}
+      </span>
+    </div>
+  );
+};

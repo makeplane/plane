@@ -3797,5 +3797,11 @@ export default {
     manage: "Manage",
     on_this_page: "On this page",
     search_results_count: "{count, plural, one {# result} other {# results}}",
+    skip_to_content: "Skip navigation",
+    load_error: "Couldn't load help right now",
+    retry: "Try again",
+    no_results_hint: "Try different keywords, or browse all categories.",
+    browse_all_categories: "Browse all categories",
+    search_locale_fallback: "No results in {language} — showing results in {fallback}.",
   },
 } as const;

@@ -3794,5 +3794,11 @@ export default {
     manage: "Quản lý",
     on_this_page: "Trong trang này",
     search_results_count: "{count, plural, other {# kết quả}}",
+    skip_to_content: "Bỏ qua điều hướng",
+    load_error: "Hiện chưa tải được trợ giúp",
+    retry: "Thử lại",
+    no_results_hint: "Thử từ khoá khác, hoặc duyệt tất cả danh mục.",
+    browse_all_categories: "Duyệt tất cả danh mục",
+    search_locale_fallback: "Không có kết quả bằng {language} — đang hiển thị kết quả bằng {fallback}.",
   },
 } as const;

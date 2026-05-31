@@ -3744,5 +3744,11 @@ export default {
     manage: "관리",
     on_this_page: "이 페이지에서",
     search_results_count: "{count, plural, other {결과 #개}}",
+    skip_to_content: "탐색 건너뛰기",
+    load_error: "지금 도움말을 불러오지 못했습니다",
+    retry: "다시 시도",
+    no_results_hint: "다른 키워드를 시도하거나 모든 카테고리를 살펴보세요.",
+    browse_all_categories: "모든 카테고리 보기",
+    search_locale_fallback: "{language} 결과가 없어 {fallback} 결과를 표시합니다.",
   },
 } as const;

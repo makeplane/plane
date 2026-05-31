@@ -22,11 +22,14 @@ export interface IHelpArticleStore {
   listLoader: boolean;
   detailLoader: boolean;
   searchLoader: boolean;
+  listError: boolean;
+  searchError: boolean;
   getArticlesByCategory: (categoryId: string) => THelpArticleListItem[];
   getArticleDetailBySlug: (slug: string) => THelpArticleDetail | null;
   fetchArticles: (filters: THelpArticleFilters) => Promise<THelpArticleListItem[]>;
   fetchArticleById: (articleId: string, locale: THelpLocale) => Promise<THelpArticleDetail>;
   fetchArticleBySlug: (slug: string, locale: THelpLocale) => Promise<THelpArticleDetail>;
+  beginSearch: () => void;
   searchArticles: (query: string, locale: THelpLocale) => Promise<THelpArticleListItem[]>;
 }
 
@@ -37,6 +40,10 @@ export class HelpArticleStore implements IHelpArticleStore {
   listLoader = false;
   detailLoader = false;
   searchLoader = false;
+  // Per-surface fetch-failure flags so the list / search UI can offer a retry
+  // instead of rendering a failed request as an empty result set.
+  listError = false;
+  searchError = false;
 
   constructor(private service: HelpCenterService) {
     makeObservable(this, {
@@ -46,6 +53,9 @@ export class HelpArticleStore implements IHelpArticleStore {
       listLoader: observable,
       detailLoader: observable,
       searchLoader: observable,
+      listError: observable,
+      searchError: observable,
+      beginSearch: action,
       fetchArticles: action,
       fetchArticleById: action,
       fetchArticleBySlug: action,
@@ -65,10 +75,18 @@ export class HelpArticleStore implements IHelpArticleStore {
 
   fetchArticles = async (filters: THelpArticleFilters) => {
     this.listLoader = true;
+    runInAction(() => {
+      this.listError = false;
+    });
     try {
       const response = await this.service.fetchArticles(filters);
       runInAction(() => response.forEach((article) => set(this.articlesMap, [article.id], article)));
       return response;
+    } catch (error) {
+      runInAction(() => {
+        this.listError = true;
+      });
+      throw error;
     } finally {
       runInAction(() => {
         this.listLoader = false;
@@ -102,14 +120,30 @@ export class HelpArticleStore implements IHelpArticleStore {
     }
   };
 
+  // Mark a search as pending immediately (before the debounce fires) so the UI
+  // shows a loader instead of the previous query's stale results/count.
+  beginSearch = () => {
+    this.searchLoader = true;
+    this.searchError = false;
+    this.searchResults = [];
+  };
+
   searchArticles = async (query: string, locale: THelpLocale) => {
     this.searchLoader = true;
+    runInAction(() => {
+      this.searchError = false;
+    });
     try {
       const response = await this.service.fetchArticles({ search: query, locale });
       runInAction(() => {
         this.searchResults = response;
       });
       return response;
+    } catch (error) {
+      runInAction(() => {
+        this.searchError = true;
+      });
+      throw error;
     } finally {
       runInAction(() => {
         this.searchLoader = false;
