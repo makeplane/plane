@@ -8,7 +8,7 @@ status: published
 
 ## Mục đích
 
-Xem tiến độ hoàn thành công việc trong một Cycle qua thanh sidebar phân tích — bao gồm biểu đồ burndown/burnup theo ngày, phân bố trạng thái, và thống kê thành viên/lead.
+Xem tiến độ hoàn thành công việc trong một Cycle qua thanh sidebar phân tích — bao gồm biểu đồ tiến độ (burndown) theo ngày, phân bố trạng thái, và thống kê theo người phụ trách và nhãn.
 
 ## Các bước
 
@@ -16,7 +16,7 @@ Xem tiến độ hoàn thành công việc trong một Cycle qua thanh sidebar p
 
 1. Mở dự án, chọn **Cycles** trong menu bên trái.
 2. Nhấn vào tên Cycle để vào trang chi tiết.
-3. Nhấn biểu tượng **thông tin (ⓘ)** hoặc **Sidebar** góc trên phải để mở thanh phân tích bên phải màn hình.
+3. Nhấn biểu tượng **khung bên phải** (▤, PanelRight) ở góc trên bên phải để bật/tắt thanh phân tích bên phải màn hình. Khi bật, nút đổi sang màu nhấn.
 
 {{screenshot:theo-doi-tien-do-cycle}}
 
@@ -37,13 +37,17 @@ Nhấn vào thanh **Progress** để mở rộng xem chi tiết:
 
 {{screenshot:cycle-progress-sidebar}}
 
-- **Biểu đồ Burndown/Burnup** — trực quan hóa tốc độ hoàn thành theo ngày. Chỉ hiển thị khi Cycle có ngày bắt đầu và kết thúc hợp lệ.
-- **Chuyển loại biểu đồ**: chọn **Burn-down** hoặc **Burn-up** từ dropdown góc phải biểu đồ.
+- **Biểu đồ tiến độ (burndown)** — trực quan hóa tốc độ hoàn thành theo ngày. Chỉ hiển thị khi Cycle có ngày bắt đầu và kết thúc hợp lệ.
+- Biểu đồ có hai đường: **Current** (thực tế — số việc còn lại theo từng ngày) và **Ideal** (lý tưởng — đường giảm đều nếu hoàn thành đúng nhịp). So sánh hai đường để biết Cycle đang đi nhanh hay chậm hơn kế hoạch. (Bản hiện tại của Shinhan Workspace chỉ có biểu đồ hoàn thành này, không có tuỳ chọn đổi sang Burn-up.)
 - **Chuyển đơn vị**: chọn **Work items** (số lượng công việc) hoặc **Estimates** (điểm ước lượng) — tùy chọn này chỉ xuất hiện khi dự án có bật Estimates.
 
-### Xem phân bố trạng thái
+### Xem phân bố tiến độ (Progress Stats)
 
-Bên dưới biểu đồ, phần **Progress Stats** hiển thị số công việc (hoặc điểm) theo từng nhóm trạng thái:
+Bên dưới biểu đồ, phần **Progress Stats** có **3 tab**: **States** (Trạng thái), **Assignees** (Người phụ trách) và **Labels** (Nhãn) — mặc định mở tab **Assignees**. Chọn tab phù hợp để xem khối lượng công việc theo từng cách phân nhóm:
+
+- **Assignees** — số việc theo từng thành viên, hữu ích để theo dõi khối lượng từng người.
+- **Labels** — số việc theo từng nhãn.
+- **States** — số công việc (hoặc điểm) theo từng nhóm trạng thái:
 
 | Nhóm          | Ý nghĩa                         |
 | ------------- | ------------------------------- |
@@ -53,7 +57,7 @@ Bên dưới biểu đồ, phần **Progress Stats** hiển thị số công vi�
 | **Completed** | Đã hoàn thành                   |
 | **Cancelled** | Đã hủy                          |
 
-Nhấn vào một nhóm trạng thái để lọc danh sách công việc theo nhóm đó ngay trong Cycle.
+Nhấn vào một mục trong bất kỳ tab nào (nhóm trạng thái, một người phụ trách, hoặc một nhãn) để lọc danh sách công việc theo mục đó ngay trong Cycle.
 
 ### Cycle đã kết thúc (Completed)
 
@@ -61,13 +65,13 @@ Khi Cycle chuyển sang trạng thái **Completed**, sidebar sẽ hiển thị s
 
 ## Mẹo & lưu ý
 
-- Biểu đồ burndown/burnup **chỉ xuất hiện** khi Cycle có cả ngày bắt đầu lẫn ngày kết thúc hợp lệ, và ngày bắt đầu đã qua.
+- Biểu đồ tiến độ **chỉ xuất hiện** khi Cycle có cả ngày bắt đầu lẫn ngày kết thúc hợp lệ, và ngày bắt đầu đã qua.
 - Nếu không thấy phần **Points**, tính năng Estimates chưa được bật hoặc loại ước lượng của dự án không phải dạng điểm số.
-- Lọc theo assignee hoặc nhãn từ sidebar sẽ thu hẹp danh sách công việc bên trái mà không mất dữ liệu phân bố.
+- Lọc theo người phụ trách (Assignees) hoặc nhãn (Labels) từ sidebar sẽ thu hẹp danh sách công việc bên trái mà không mất dữ liệu phân bố.
 - Cycle ở trạng thái **Draft** (chưa có ngày) không có biểu đồ tiến độ.
+- Ngoài thanh sidebar phân tích, trên thanh tiêu đề trang chi tiết Cycle còn có nút **Analytics** riêng — mở một bảng phân tích sâu hơn dưới dạng cửa sổ, khác với thanh sidebar tiến độ ở đây.
 
 ## Liên quan
 
 - [Tạo & quản lý Cycles](/help/a/tao-va-quan-ly-cycles)
-- [Active Cycles toàn workspace](/help/a/cycles-modules-tab-active)
 - [Lập kế hoạch với Cycles và Modules](/help/a/lap-ke-hoach-voi-cycles)

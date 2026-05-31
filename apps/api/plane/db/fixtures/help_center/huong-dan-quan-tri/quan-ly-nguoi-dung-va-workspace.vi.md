@@ -30,26 +30,25 @@ Trang **Users** và **Workspaces** trong God Mode cho phép Instance Admin xem t
 ### 2. Tạo người dùng đơn lẻ
 
 1. Nhấn **Create user** (góc trên phải).
-2. Điền họ tên, email, và mật khẩu ban đầu.
+2. Điền **First name** (bắt buộc), **Last name** (tùy chọn), **Email** (bắt buộc), và **Password** ban đầu (bắt buộc, tối thiểu 8 ký tự).
 3. Nhấn **Create** — tài khoản tạo ngay, người dùng có thể đăng nhập và đổi mật khẩu.
 
 {{screenshot:god-mode-create-user-form}}
 
-### 3. Import người dùng hàng loạt (CSV / Excel)
+### 3. Import người dùng hàng loạt (CSV)
 
 1. Nhấn **Bulk import** → trang import mở ra.
-2. Tải về file mẫu để xem đúng định dạng cột (email, first name, last name, role...).
-3. Điền dữ liệu vào file mẫu, lưu dưới dạng CSV hoặc Excel.
-4. Tải file lên → xem trước danh sách → nhấn **Import**.
-5. Hệ thống tạo tài khoản cho tất cả dòng hợp lệ; các dòng lỗi hiển thị riêng để sửa lại.
+2. Chuẩn bị file CSV (UTF-8) có dòng tiêu đề với đúng các cột: `first_name`, `last_name`, `email`, `password` (mật khẩu tối thiểu 8 ký tự). Trang không có file mẫu tải sẵn — làm theo danh sách cột hiển thị trên trang. Mỗi lần import tối đa **500 dòng**, file ≤ **5MB**.
+3. Chọn file CSV → nhấn **Import users**.
+4. Sau khi chạy, hệ thống hiển thị số tài khoản đã tạo và bảng các dòng bị bỏ qua kèm lý do (email trống/sai định dạng, thiếu tên, mật khẩu dưới 8 ký tự, hoặc email đã tồn tại).
 
 {{screenshot:god-mode-bulk-import-users}}
 
 ### 4. Xem chi tiết & đặt lại mật khẩu
 
 1. Nhấn vào tên người dùng trong danh sách → trang chi tiết mở.
-2. Tại đây xem thông tin tài khoản, các workspace đã tham gia.
-3. Nhấn **Reset password** để gửi email đặt lại mật khẩu cho người dùng đó.
+2. Tại đây xem thông tin tài khoản và các workspace đã tham gia. Nhấn **Add to Workspace** để gán nhân viên vào một hoặc nhiều workspace và chọn vai trò (**Admin** / **Member** / **Guest**) — đây là cách chính để cấp quyền truy cập workspace cho nhân viên.
+3. Nhấn **Reset Password** → hệ thống sinh một mật khẩu ngẫu nhiên mới và hiển thị ngay trong hộp thoại; Admin nhấn biểu tượng copy rồi gửi cho nhân viên qua kênh an toàn. Mật khẩu chỉ hiển thị một lần và **không** gửi email tự động.
 
 {{screenshot:god-mode-user-detail}}
 
@@ -79,12 +78,12 @@ Khuyến nghị SHBVN: **bật toggle** để kiểm soát số lượng workspa
 
 ### 3. Tạo workspace đơn lẻ
 
-1. Nhấn **Create workspace** → điền tên, slug (URL định danh), và chọn owner.
-2. Nhấn **Create** — workspace sẵn sàng sử dụng ngay.
+1. Nhấn **Create workspace** → điền **Tên workspace**, **URL/slug** (URL định danh), và chọn **quy mô** (số người dùng dự kiến — bắt buộc; nút Create bị vô hiệu nếu để trống). Owner mặc định là Instance Admin đang tạo.
+2. Nhấn **Create workspace** — workspace sẵn sàng sử dụng ngay.
 
 ### 4. Tạo workspace hàng loạt & gán thành viên
 
-God Mode cung cấp ba luồng hàng loạt:
+God Mode cung cấp các luồng hàng loạt:
 
 | Nút                       | Chức năng                                   |
 | ------------------------- | ------------------------------------------- |
@@ -93,7 +92,7 @@ God Mode cung cấp ba luồng hàng loạt:
 | **Bulk Import Projects**  | Import dự án vào workspace từ file          |
 | **Bulk Import Modules**   | Import module từ file                       |
 
-Mỗi luồng đều có trang riêng với hướng dẫn định dạng file và xem trước trước khi thực thi.
+Khác với import người dùng, các luồng Bulk Workspace dùng định dạng **Excel (.xlsx)**, có nút **Download template** để tải file mẫu (vd: Bulk Create Workspace cần cột `name` + `organization_size`) và có bước **xem trước** trước khi thực thi.
 
 {{screenshot:god-mode-workspace-bulk-actions}}
 
@@ -101,7 +100,7 @@ Mỗi luồng đều có trang riêng với hướng dẫn định dạng file v
 
 - Chỉ vào được trang chi tiết workspace nếu Instance Admin là **thành viên hoặc Admin** của workspace đó — không phải mọi workspace đều truy cập trực tiếp được từ God Mode.
 - Khi import người dùng hàng loạt, email trùng lặp sẽ bị bỏ qua (không ghi đè tài khoản hiện có).
-- Đặt lại mật khẩu gửi email — yêu cầu SMTP đã cấu hình hoạt động (xem [Email, AI & thư viện ảnh](/help/a/email-ai-va-thu-vien-anh)).
+- Mật khẩu mới (khi tạo tài khoản hoặc Reset Password) do Admin tự bàn giao thủ công; God Mode **không** gửi email tự động cho việc tạo/đổi mật khẩu nhân viên.
 
 ## Liên quan
 

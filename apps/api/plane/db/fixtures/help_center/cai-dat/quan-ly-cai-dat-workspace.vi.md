@@ -26,21 +26,23 @@ Quản trị viên workspace có thể cập nhật thông tin định danh, mú
 
 ### Cập nhật logo và tên
 
-3. Nhấn vào ô logo hiện tại (hình vuông, góc trên form) để mở trình tải ảnh lên.
-4. Chọn ảnh từ máy tính, cắt vừa khung rồi nhấn **Lưu**.
-5. Sửa **Tên workspace** trong ô văn bản tương ứng.
+3. Nhấn vào ô logo hiện tại (hình vuông, góc trên form) để mở cửa sổ **Upload image**.
+4. Kéo-thả hoặc chọn ảnh (.jpeg/.jpg/.png/.webp, tối đa 5 MB) rồi nhấn **Upload & Save**. Để gỡ logo hiện tại, nhấn nút **Remove** ở góc trái cửa sổ.
+5. Sửa **Tên không gian làm việc** trong ô văn bản tương ứng.
 
 {{screenshot:workspace-logo-upload}}
 
+> Logo được lưu ngay khi nhấn **Upload & Save** trong cửa sổ (thao tác lưu riêng), không phụ thuộc nút **Cập nhật không gian làm việc** ở cuối form.
+
 ### Cập nhật thông tin workspace
 
-6. Chọn **Quy mô tổ chức** từ danh sách thả xuống (2–10, 11–50, v.v.).
-7. Chọn **Múi giờ workspace** — ảnh hưởng đến hiển thị thời gian trong toàn workspace.
-8. Trường **URL workspace** chỉ để xem; sao chép bằng cách nhấn vào đoạn văn bản bên dưới logo.
+6. Chọn **Quy mô công ty** từ danh sách thả xuống (Just myself, 2–10, 11–50, v.v.).
+7. Chọn **Múi giờ không gian làm việc** — ảnh hưởng đến hiển thị thời gian trong toàn workspace.
+8. Trường **URL không gian làm việc** chỉ để xem; sao chép bằng cách nhấn vào đoạn văn bản bên dưới logo.
 
 ### Lưu thay đổi
 
-9. Nhấn **Cập nhật workspace** (nút xanh dương, cuối form) để áp dụng.
+9. Nhấn **Cập nhật không gian làm việc** (nút xanh dương, cuối form) để áp dụng.
 
 {{screenshot:workspace-settings-update-button}}
 
@@ -53,7 +55,7 @@ Quản trị viên workspace có thể cập nhật thông tin định danh, mú
 
 ## Mẹo & lưu ý
 
-- **Tên workspace** được kiểm tra hợp lệ ngay khi nhập; tên quá ngắn, quá dài hoặc có ký tự đặc biệt sẽ hiển thị lỗi inline.
+- **Tên không gian làm việc** được kiểm tra khi nhấn **Cập nhật không gian làm việc**: tên bị bỏ trống, dài quá 80 ký tự hoặc chứa ký tự đặc biệt (`< > " { }` v.v.) sẽ báo lỗi inline.
 - **URL workspace không thể đổi** sau khi tạo; trường này chỉ đọc.
 - **Xóa workspace** (Delete Workspace) đã bị ẩn trong phiên bản SHBVN — liên hệ Instance Admin nếu cần giải thể workspace.
 - Thay đổi múi giờ chỉ ảnh hưởng cách hiển thị thời gian; dữ liệu lịch sử không bị thay đổi.

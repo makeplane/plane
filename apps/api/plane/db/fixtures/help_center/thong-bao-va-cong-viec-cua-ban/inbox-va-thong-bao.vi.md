@@ -18,10 +18,10 @@ Dùng Inbox hằng ngày để không bỏ sót cập nhật quan trọng. Tất
 
 ### Mở Inbox
 
-1. Trên thanh bên trái (App Rail), nhấn biểu tượng **Inbox** (chuông/phong bì) hoặc chọn mục **Notifications** trong sidebar.
+1. Trên **thanh điều hướng trên cùng**, nhấn biểu tượng **Hộp thư đến** (Inbox) ở góc phải — biểu tượng có **chấm tròn đỏ** khi có thông báo chưa đọc. Trang thông báo (`/notifications/`) mở ra.
 2. Danh sách thông báo hiện ra ở cột trái, chia theo các tab:
-   - **All** — toàn bộ thông báo.
-   - **Mentions** — chỉ những chỗ bạn bị nhắc đến bằng `@`.
+   - **Tất cả** — toàn bộ thông báo.
+   - **Đề cập** — chỉ những chỗ bạn bị nhắc đến bằng `@`.
 
 {{screenshot:inbox-va-thong-bao}}
 
@@ -35,37 +35,38 @@ Dùng Inbox hằng ngày để không bỏ sót cập nhật quan trọng. Tất
 
 ### Lọc và sắp xếp thông báo
 
-6. Nhấn biểu tượng **Bộ lọc** (filter) trong thanh tiêu đề Inbox để lọc theo: trạng thái đã đọc/chưa đọc, đã lưu trữ, đã gác lại (snoozed).
-7. Các bộ lọc đang áp dụng hiện thành **chip** bên dưới thanh tab — nhấn `×` trên mỗi chip để bỏ bộ lọc đó.
+6. Nhấn biểu tượng **Bộ lọc** (hình phễu) trong thanh tiêu đề Inbox để lọc theo **nguồn** thông báo: **Được giao cho tôi**, **Được tạo bởi tôi**, **Được đăng ký bởi tôi**.
+7. Nhấn biểu tượng **ba chấm dọc** (⋮) ngay cạnh biểu tượng Bộ lọc để bật các chế độ xem khác: **Hiển thị chưa đọc**, **Hiển thị đã lưu trữ**, **Hiển thị đã tạm hoãn**.
+8. Các bộ lọc **theo nguồn** đang áp dụng hiện thành **chip** bên dưới thanh tab — nhấn `×` trên mỗi chip để bỏ bộ lọc đó, hoặc nhấn **Xóa tất cả** để bỏ mọi chip cùng lúc. (Các chế độ chưa đọc / đã lưu trữ / đã tạm hoãn bật từ menu ⋮ không hiển thị dưới dạng chip.)
 
 ### Đánh dấu và quản lý thông báo
 
-8. Di chuột vào một thông báo để hiện **menu hành động** ở cạnh phải:
+9. Di chuột vào một thông báo để hiện **menu hành động** ở cạnh phải:
    - **Đánh dấu đã đọc / chưa đọc** — đổi trạng thái đọc của thông báo.
-   - **Gác lại (Snooze)** — hoãn thông báo đến một thời điểm cụ thể; thông báo sẽ trở lại sau thời gian đã chọn.
-   - **Lưu trữ (Archive)** — chuyển thông báo vào kho lưu trữ, bỏ khỏi danh sách chính.
-9. Để **đánh dấu tất cả đã đọc** một lúc: nhấn biểu tượng ✓✓ (dấu tích kép) ở góc trên phải danh sách.
-10. Để **làm mới** danh sách: nhấn biểu tượng làm mới (mũi tên tròn) cạnh biểu tượng ✓✓.
+   - **Gác lại (Snooze)** — hoãn thông báo theo các mốc dựng sẵn: **1 ngày**, **3 ngày**, **5 ngày**, **1 tuần**, **2 tuần**, hoặc **Tùy chỉnh** (chọn ngày/giờ). Thông báo sẽ trở lại sau thời gian đã chọn. Khi đang gác lại, menu này có thêm **Hủy tạm hoãn** để đưa thông báo trở lại ngay.
+   - **Lưu trữ (Archive)** — chuyển thông báo vào kho lưu trữ, bỏ khỏi danh sách chính. Với thông báo đã lưu trữ, dùng **Hủy lưu trữ** để đưa trở lại danh sách.
+10. Để **đánh dấu tất cả đã đọc** một lúc: nhấn biểu tượng ✓✓ (dấu tích kép) ở góc trên phải danh sách.
+11. Để **làm mới** danh sách: nhấn biểu tượng làm mới (mũi tên tròn) cạnh biểu tượng ✓✓.
 
 {{screenshot:inbox-thong-bao-menu-hanh-dong}}
 
 ### Điều khiển theo dõi công việc
 
-11. Để dừng nhận thông báo từ một công việc cụ thể: mở công việc đó → thanh bên phải → nhấn **Unsubscribe** (hủy theo dõi).
-12. Để theo dõi thêm một công việc: mở công việc → nhấn **Subscribe** (theo dõi).
+12. Để dừng nhận thông báo từ một công việc cụ thể: mở công việc đó → thanh bên phải → nhấn **Unsubscribe** (hủy theo dõi).
+13. Để theo dõi thêm một công việc: mở công việc → nhấn **Subscribe** (theo dõi).
 
-> **Lưu ý:** Bạn tự động theo dõi các công việc do mình tạo hoặc được gán. Chỉ hủy theo dõi nếu thực sự không cần nhận cập nhật.
+> **Lưu ý:** Bạn tự động theo dõi các công việc do mình tạo hoặc được gán. Chỉ hủy theo dõi nếu thực sự không cần nhận cập nhật. Người có quyền **Khách (Guest)** không thể tự Subscribe/Unsubscribe — cần vai trò **Thành viên (Member)** trở lên trong dự án (nút sẽ bị vô hiệu hóa với Khách).
 
 ## Mẹo & lưu ý
 
-- **Thông báo @mention** được tính riêng; số đếm màu xanh trên App Rail hiển thị `@ N` khi có mention chưa đọc, hoặc số thông báo chưa đọc thông thường nếu không có mention.
-- Thông báo từ **Intake** mở giao diện xét duyệt ngay trong Inbox — không cần chuyển sang trang Intake riêng.
-- Thông báo đã lưu trữ vẫn xem lại được: bật bộ lọc **Archived** trong menu filter.
-- Thông báo đã gác lại (Snoozed) tự động quay lại danh sách đúng giờ; xem trước bằng bộ lọc **Snoozed**.
+- Khi có thông báo chưa đọc, biểu tượng **Hộp thư đến** trên thanh điều hướng trên cùng hiển thị một **chấm tròn đỏ** nhỏ ở góc (không phải con số). Chấm này biến mất khi bạn đã đọc hết thông báo.
+- Thông báo từ **Intake** mở giao diện xét duyệt ngay trong Inbox — không cần chuyển sang trang Intake riêng. Chỉ khi bấm vào thẻ để mở peek thì thông báo mới được tự đánh dấu đã đọc.
+- Thông báo đã lưu trữ vẫn xem lại được: bật **Hiển thị đã lưu trữ** trong menu ba chấm dọc (⋮) ở thanh tiêu đề Inbox.
+- Thông báo đã gác lại tự động quay lại danh sách đúng giờ; xem trước bằng **Hiển thị đã tạm hoãn** trong menu ba chấm dọc (⋮).
 - Inbox chỉ hiển thị thông báo trong workspace hiện tại. Chuyển workspace để xem Inbox của workspace khác.
 
 ## Liên quan
 
 - [Theo dõi & lịch sử công việc](/help/a/theo-doi-va-thong-bao-cong-viec)
 - [Công việc nháp & Intake](/help/a/cong-viec-nhap-va-intake)
-- [Điều hướng thanh bên & App Rail](/help/a/dieu-huong-thanh-ben-va-app-rail)
+- [Thanh bên & Thanh điều hướng trên cùng](/help/a/dieu-huong-thanh-ben-va-app-rail)

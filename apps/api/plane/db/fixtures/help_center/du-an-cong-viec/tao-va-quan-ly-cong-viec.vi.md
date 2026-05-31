@@ -12,7 +12,7 @@ Tạo, gán và quản lý công việc (work item) trong Shinhan Workspace. M�
 
 ## Khi nào dùng / Yêu cầu
 
-- Tất cả thành viên có vai trò **Member** trở lên đều tạo được công việc trong dự án mình tham gia.
+- Chỉ vai trò **Thành viên** (Member) trở lên mới tạo được công việc trong dự án mình tham gia. Vai trò **Khách** (Guest) **không** tạo được công việc (vẫn xem và bình luận được), nên sẽ không thấy nút tạo.
 - Để tạo công việc _nháp_ (chưa gán vào dự án), xem bài [Công việc nháp & Intake](/help/a/cong-viec-nhap-va-intake).
 
 ## Các bước
@@ -20,7 +20,7 @@ Tạo, gán và quản lý công việc (work item) trong Shinhan Workspace. M�
 ### Tạo công việc mới
 
 1. Mở dự án từ thanh bên trái.
-2. Trong bất kỳ chế độ xem nào (List, Kanban, v.v.), bấm **+ Tạo công việc** ở cuối danh sách hoặc nhấn `C` để mở hộp thoại nhanh.
+2. Trong bất kỳ chế độ xem nào (List, Kanban, v.v.), bấm **+ Mục công việc mới** ở cuối danh sách; hoặc nhấn `Cmd/Ctrl + K` để mở Power-K rồi chọn **Tạo mục công việc**.
 
 {{screenshot:tao-cong-viec-modal}}
 
@@ -32,21 +32,13 @@ Tạo, gán và quản lý công việc (work item) trong Shinhan Workspace. M�
    - **Ưu tiên** — Khẩn cấp / Cao / Trung bình / Thấp / Không có.
    - **Ngày bắt đầu** và **Ngày đến hạn**.
    - **Nhãn**, **Module**, **Cycle** (nếu dự án đã cấu hình).
-5. Bấm **Tạo công việc** để lưu; hoặc bấm **Lưu nháp** để lưu vào mục Công việc nháp mà không xuất hiện trong dự án.
+5. Bấm **Lưu** để tạo công việc. Nếu đóng hộp thoại khi đang nhập dở, hệ thống hỏi **"Lưu vào bản nháp?"** — chọn **Lưu vào bản nháp** để giữ trong mục Công việc nháp mà không xuất hiện trong dự án.
 
 > **Tạo thêm liên tiếp:** Bật toggle **Tạo thêm** ngay trước nút Tạo — sau khi lưu, hộp thoại mở lại sẵn sàng để nhập công việc tiếp theo.
 
-### Thêm nhanh từ dòng trống (inline)
+### Thêm nhanh theo nhóm trạng thái
 
-Trong chế độ **List**, bấm dấu `+` ở cuối nhóm trạng thái → gõ tiêu đề → `Enter`. Công việc được tạo ngay với trạng thái của nhóm đó.
-
-{{screenshot:them-nhanh-inline}}
-
-### Sử dụng mẫu (template)
-
-1. Trong hộp thoại tạo công việc, bấm biểu tượng **Mẫu** (template) ở góc trên bên phải.
-2. Chọn mẫu — tiêu đề, mô tả và thuộc tính sẽ được điền sẵn.
-3. Chỉnh sửa thêm nếu cần, rồi bấm **Tạo công việc**.
+Trong chế độ **List** hoặc **Kanban**, bấm nút **+ Mục công việc mới** ở cuối mỗi nhóm trạng thái. Hộp thoại tạo công việc mở ra và **điền sẵn trạng thái của nhóm đó** — bạn chỉ cần nhập tiêu đề rồi bấm **Lưu**.
 
 ### Chỉnh sửa công việc hiện có
 
@@ -64,7 +56,7 @@ Trong chế độ **List**, bấm dấu `+` ở cuối nhóm trạng thái → g
 ## Mẹo & lưu ý
 
 - **Mã định danh** (ví dụ `SHB-42`) được tạo tự động và không thể thay đổi — dùng để tìm kiếm nhanh hoặc tham chiếu trong bình luận.
-- Khi bật **Phát hiện trùng lặp**, hệ thống sẽ gợi ý các công việc có tiêu đề tương tự ngay khi bạn gõ — giúp tránh tạo trùng.
+- Để chia một công việc lớn, dùng nút **+** ở mục _Mục công việc con_ trong trang Chi tiết — xem [Quan hệ & công việc con](/help/a/quan-he-va-cong-viec-con).
 - Công việc tạo từ **Intake** (yêu cầu bên ngoài) có thể nhập vào dự án sau khi được duyệt — xem [Công việc nháp & Intake](/help/a/cong-viec-nhap-va-intake).
 - Một công việc chỉ thuộc **một dự án** tại một thời điểm.
 

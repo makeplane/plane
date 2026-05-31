@@ -29,15 +29,15 @@ God Mode cung cấp bốn mục quản lý cơ cấu tổ chức SHBVN: **Staff*
 
 ### Tạo hồ sơ nhân viên
 
-1. Nhấn **Add Staff** (góc trên phải).
-2. Điền thông tin: họ tên, email, phòng ban, chức danh, trạng thái (Active / Probation...).
-3. Nhấn **Save** — hồ sơ gắn với tài khoản người dùng qua email.
+1. Nhấn **Add Staff** (góc trên phải) — mở **trang tạo mới** riêng (không phải hộp thoại).
+2. Điền các trường bắt buộc: **Staff ID**, **First name**, **Last name**, **Email** (cùng phòng ban, trạng thái Active / Probation...). Để chọn **Position** (chức danh), phải chọn **Job grade** (ngạch) trước.
+3. Nhấn **Create staff** — hồ sơ gắn với tài khoản người dùng qua email.
 
 ### Import hàng loạt
 
-1. Nhấn **Import** → tải file mẫu CSV.
-2. Điền dữ liệu nhân sự theo cột mẫu.
-3. Tải file lên → xem trước → **Import**.
+1. Nhấn **Import** → mở hộp thoại **Bulk Import Staff**. Tải file mẫu (có sẵn cả **Template (.csv)** và **Template (.xlsx)**).
+2. Điền dữ liệu nhân sự theo cột mẫu. Nhập **Default password** (tối thiểu 8 ký tự — dùng cho các tài khoản mới; nút Import bị vô hiệu nếu để trống). Hỗ trợ CSV hoặc Excel, tối đa **500 dòng** mỗi lần.
+3. Chọn tùy chọn xử lý trùng: **Skip existing staff** (bỏ qua) hoặc **Update existing staff fields** (cập nhật). Nhấn **Import**.
 
 ### Export
 
@@ -45,7 +45,9 @@ Nhấn **Export** → tải về file `staff-export.csv` chứa toàn bộ hồ 
 
 ### Chỉnh sửa hồ sơ
 
-Nhấn vào biểu tượng chỉnh sửa trên dòng nhân viên → modal **Edit Staff** mở → sửa thông tin → **Save**.
+Nhấn nút **Edit** trên dòng nhân viên → hộp thoại **Edit Staff Profile** mở → sửa thông tin → **Save changes**.
+
+Ngoài Edit, mỗi dòng nhân viên còn có các thao tác quản lý vòng đời: **Transfer** (chuyển phòng ban — có cảnh báo khi liên quan nhiều workspace), **Deactivate** (vô hiệu hóa), và **Delete** (xóa vĩnh viễn, không thể hoàn tác).
 
 {{screenshot:god-mode-staff-edit-modal}}
 
@@ -64,32 +66,31 @@ Nhấn vào biểu tượng chỉnh sửa trên dòng nhân viên → modal **Ed
 
 1. Nhấn **Add Department**.
 2. Điền tên và chọn phòng ban cha (nếu là phòng ban con).
-3. **Save** — phòng ban xuất hiện đúng vị trí trong cây.
+3. Nhấn **Create** — phòng ban xuất hiện đúng vị trí trong cây. (Khi sửa, nút lưu là **Save changes**.)
 
 ### Sửa / Xóa
 
 - Nhấn biểu tượng bút chì trên hàng phòng ban để chỉnh sửa.
 - Nhấn biểu tượng thùng rác → xác nhận xóa. **Lưu ý:** xóa phòng ban cha sẽ xóa toàn bộ nhánh con — không thể hoàn tác.
 
-### Auto-join: gắn workspace với phòng ban
+### Liên kết workspace & Auto Join
 
-Tính năng **Auto-join** tự động thêm nhân viên vào workspace khi họ được gán vào phòng ban tương ứng.
+Trên mỗi hàng phòng ban có **hai control riêng biệt**:
 
-1. Nhấn biểu tượng **Auto-join** trên hàng phòng ban.
-2. Chọn workspace cần liên kết và vai trò mặc định.
-3. **Save** — từ đây nhân viên mới trong phòng ban được tự động gia nhập workspace.
+- **Link workspace** (biểu tượng liên kết): dropdown để gán phòng ban với **một** workspace. Sau khi gán, nhân viên trong phòng ban được thêm vào workspace và trưởng phòng được thêm làm **Admin** (không có ô chọn vai trò). Đây là cơ chế thực sự liên kết phòng ban ↔ workspace.
+- **Auto Join** (biểu tượng thêm người): mở hộp thoại _"Auto Join — {tên phòng ban}"_ để join **trưởng phòng** làm **Admin** vào project. Chọn phạm vi **All Projects** (mọi project trong workspace đã liên kết) hoặc **Bank-wide Projects** (chỉ project được đánh dấu toàn ngân hàng). Auto Join **không** có ô chọn workspace hay vai trò.
 
 ### Import / Export phòng ban
 
 | Nút                          | Chức năng                                                               |
 | ---------------------------- | ----------------------------------------------------------------------- |
-| **Export Dept**              | Tải cây phòng ban ra CSV                                                |
-| **Import Dept**              | Import cây phòng ban từ CSV                                             |
+| **Export Dept**              | Tải cây phòng ban ra Excel (`.xlsx`)                                    |
+| **Import Dept**              | Import cây phòng ban từ file Excel (`.xlsx`/`.xls`, theo mẫu tải về)     |
 | **Export Workspace Linked**  | Danh sách phòng ban đã liên kết workspace                               |
 | **Bulk Linked**              | Liên kết hàng loạt phòng ban với workspace                              |
 | **Bulk Linked Categories**   | Gán danh mục công việc cho nhiều phòng ban                              |
 | **Export Linked Categories** | Xuất danh sách gán danh mục                                             |
-| **Rejoin**                   | Join lại tất cả **trưởng phòng** làm Admin vào project (chọn All Projects hoặc Bank-wide Projects) — khác với Auto-join |
+| **Rejoin**                   | Join lại tất cả **trưởng phòng** làm Admin vào project (chọn All Projects hoặc Bank-wide Projects) — áp dụng cho toàn bộ phòng ban, khác với Auto Join trên từng hàng |
 
 {{screenshot:god-mode-departments-toolbar}}
 
@@ -104,12 +105,12 @@ Tính năng **Auto-join** tự động thêm nhân viên vào workspace khi họ
 
 ### Tạo ngạch (Job Grade)
 
-1. Nhấn **Add Job Grade** → điền tên ngạch → **Save**.
+1. Nhấn **Add Job Grade** → điền tên ngạch → **Create**.
 
 ### Tạo chức danh (Job Position)
 
 1. Chọn ngạch ở danh sách bên trái.
-2. Nhấn **Add Job Position** → điền tên chức danh → **Save**.
+2. Nhấn **Add Job Position** → điền tên chức danh → **Create**.
 
 {{screenshot:god-mode-job-positions}}
 
@@ -129,12 +130,12 @@ Danh mục công việc dùng để phân loại công việc khi chấm công v
 
 ### Tạo danh mục chính
 
-1. Nhấn **Add Main Category** → điền tên, mã (code), thứ tự sắp xếp → **Save**.
+1. Nhấn **Add Main Category** → điền tên, mã (code), thứ tự sắp xếp → **Create**.
 
 ### Tạo danh mục con
 
 1. Chọn danh mục chính ở cột trái.
-2. Nhấn **Add Sub Category** ở cột phải → điền thông tin → **Save**.
+2. Nhấn **Add Sub Category** ở cột phải → điền thông tin → **Create**.
 
 {{screenshot:god-mode-task-categories}}
 

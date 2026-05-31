@@ -18,9 +18,9 @@ Mọi thành viên dự án đều có thể dùng. Lọc & nhóm là cài đặ
 
 ### 1. Lọc công việc
 
-1. Mở dự án và vào trang **Công việc**.
-2. Nhấn nút **Lọc** (biểu tượng phễu hoặc chữ "Filters") trên thanh tiêu đề.
-3. Chọn tiêu chí lọc. Các tiêu chí có sẵn:
+1. Mở dự án và vào tab **Mục công việc**.
+2. Nhấn nút **biểu tượng phễu** trên thanh tiêu đề để bật hàng lọc.
+3. Nhấn **Thêm bộ lọc** (Add filter) rồi chọn tiêu chí. Các tiêu chí có sẵn:
 
 | Tiêu chí            | Mô tả                                                   |
 | ------------------- | ------------------------------------------------------- |
@@ -29,6 +29,7 @@ Mọi thành viên dự án đều có thể dùng. Lọc & nhóm là cài đặ
 | **Người phụ trách** | Chọn một hoặc nhiều thành viên                          |
 | **Nhãn**            | Chọn một hoặc nhiều nhãn                                |
 | **Người tạo**       | Lọc công việc do ai tạo                                 |
+| **Nhắc đến**        | Lọc công việc có nhắc tới một thành viên cụ thể         |
 | **Ngày bắt đầu**    | Trước / sau / trong khoảng ngày                         |
 | **Ngày hết hạn**    | Trước / sau / trong khoảng ngày                         |
 | **Module**          | Thuộc module nào                                        |
@@ -39,7 +40,7 @@ Mọi thành viên dự án đều có thể dùng. Lọc & nhóm là cài đặ
 
 {{screenshot:loc-nhom-va-sap-xep-filter-pills}}
 
-5. Để xóa một tiêu chí, nhấn **×** trên pill tương ứng. Để xóa tất cả, nhấn **Xóa lọc** (Clear Filters).
+5. Để xóa một tiêu chí, nhấn **×** trên pill tương ứng. Để xóa tất cả, nhấn **Xóa lọc** (Clear all).
 
 ### 2. Nhóm công việc
 
@@ -52,9 +53,9 @@ Mọi thành viên dự án đều có thể dùng. Lọc & nhóm là cài đặ
 | Ưu tiên                | —                             |
 | Người phụ trách        | —                             |
 | Nhãn                   | —                             |
+| Người tạo              | Gom công việc theo người tạo  |
 | Cycle                  | Chỉ hiện khi dự án bật Cycle  |
 | Module                 | Chỉ hiện khi dự án bật Module |
-| Ngày bắt đầu / Hết hạn | Nhóm theo tuần/tháng          |
 | Không nhóm             | Danh sách phẳng               |
 
 {{screenshot:loc-nhom-va-sap-xep-group-by}}
@@ -71,20 +72,22 @@ Mọi thành viên dự án đều có thể dùng. Lọc & nhóm là cài đặ
 | Tùy chọn              | Ý nghĩa                    |
 | --------------------- | -------------------------- |
 | **Thủ công**          | Kéo-thả tự xếp             |
-| **Tạo mới nhất**      | Công việc mới tạo lên trên |
-| **Cập nhật mới nhất** | Mới cập nhật lên trên      |
+| **Mới tạo nhất**      | Công việc mới tạo lên trên |
+| **Mới cập nhật nhất** | Mới cập nhật lên trên      |
 | **Ngày bắt đầu**      | Tăng dần                   |
 | **Ngày hết hạn**      | Tăng dần                   |
 | **Ưu tiên**           | Urgent → None              |
 
 > Chỉ có thể kéo-thả sắp xếp thủ công khi chọn **Thủ công**.
+>
+> Sắp xếp theo **Ngày hết hạn** chỉ khả dụng ở bố cục **List** và **Kanban**; Spreadsheet và Gantt không có tùy chọn này.
 
 ### 4. Các tùy chọn hiển thị thêm
 
 Trong menu **Hiển thị**, cuối cùng có hai tùy chọn phụ:
 
 - **Hiển thị công việc con** (Show sub-issues): hiện/ẩn công việc con lồng bên trong công việc cha (bật mặc định; không áp dụng trong Spreadsheet).
-- **Hiển thị nhóm rỗng** (Show empty groups): hiện/ẩn các nhóm không có công việc nào.
+- **Hiển thị nhóm rỗng** (Show empty groups): hiện/ẩn các nhóm không có công việc nào — chỉ áp dụng ở bố cục có nhóm (List/Kanban).
 
 ## Mẹo & lưu ý
 

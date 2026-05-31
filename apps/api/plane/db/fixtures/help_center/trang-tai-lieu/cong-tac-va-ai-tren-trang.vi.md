@@ -8,14 +8,13 @@ status: published
 
 ## Mục đích
 
-Shinhan Workspace cho phép nhiều thành viên cùng chỉnh sửa một trang đồng thời theo thời gian thực. Bài viết này mô tả cách cộng tác hoạt động, ý nghĩa của các badge trạng thái đồng bộ, và cách dùng trợ lý AI **Pi** để tạo nội dung hoặc cải thiện văn bản đang có.
+Shinhan Workspace cho phép nhiều thành viên cùng chỉnh sửa một trang đồng thời theo thời gian thực. Bài viết này mô tả cách cộng tác hoạt động và ý nghĩa của các badge trạng thái đồng bộ.
 
 ---
 
 ## Khi nào dùng / Yêu cầu
 
-- **Member** trở lên: soạn thảo đồng thời và dùng AI Pi.
-- Tính năng AI Pi yêu cầu quản trị viên hệ thống đã cấu hình API key AI trong God Mode (Settings → AI). Nếu menu AI không xuất hiện, liên hệ quản trị viên.
+- **Thành viên** trở lên: soạn thảo đồng thời trên cùng một trang.
 - Tính năng cộng tác thời gian thực hoạt động khi có kết nối internet ổn định.
 
 ---
@@ -26,11 +25,8 @@ Shinhan Workspace cho phép nhiều thành viên cùng chỉnh sửa một trang
 
 Khi mở một trang, Shinhan Workspace tự động kết nối phiên làm việc của bạn với các thành viên khác đang mở cùng trang đó.
 
-- **Thấy avatar đồng nghiệp:** Góc trên bên phải trang hiển thị avatar của những người đang xem/sửa cùng lúc.
-- **Con trỏ màu:** Mỗi người dùng có màu con trỏ riêng — bạn thấy ngay vị trí họ đang gõ.
-- **Thay đổi hiện ngay:** Nội dung đồng nghiệp gõ xuất hiện trên màn hình bạn mà không cần tải lại trang.
-
-{{screenshot:page-realtime-collaboration-cursors}}
+- **Thay đổi hiện ngay:** Nội dung đồng nghiệp gõ xuất hiện trên màn hình bạn mà không cần tải lại trang — toàn bộ thay đổi được đồng bộ tự động theo thời gian thực.
+- **Tự gộp thay đổi:** Hai người sửa cùng lúc ở các vị trí khác nhau đều được giữ lại; hệ thống tự gộp mà không ghi đè lên nhau.
 
 ### Hiểu badge trạng thái đồng bộ
 
@@ -38,6 +34,7 @@ Khi mở một trang, Shinhan Workspace tự động kết nối phiên làm vi�
 | ----------------------- | ------------------------------------------ | ----------------------------------------------------- |
 | _(không có badge)_      | Đang đồng bộ bình thường                   | Không cần làm gì                                      |
 | **Syncing...**          | Đang gửi thay đổi lên server               | Chờ một vài giây                                      |
+| **Connection lost**     | Mất kết nối tới máy chủ realtime           | Thay đổi vẫn được lưu mỗi 10 giây; chờ kết nối lại    |
 | **Offline**             | Mất kết nối internet                       | Tiếp tục gõ — thay đổi sẽ đồng bộ khi có mạng trở lại |
 | Banner vàng ở đầu trang | Trang đạt giới hạn dung lượng, đồng bộ tắt | Tạo trang mới hoặc chia nội dung sang trang con       |
 
@@ -45,53 +42,17 @@ Khi mở một trang, Shinhan Workspace tự động kết nối phiên làm vi�
 
 **Chế độ Offline:** Khi mất mạng, badge **Offline** xuất hiện ở góc trên bên phải. Bạn vẫn gõ bình thường — nội dung được lưu cục bộ và đồng bộ ngay khi kết nối phục hồi. Không cần làm gì thêm.
 
-### Dùng AI Pi để tạo và cải thiện nội dung
+### Trợ lý Pi trên trang
 
-AI Pi là trợ lý viết tích hợp sẵn trong trình soạn thảo. Có hai cách kích hoạt:
-
-**Cách 1 — Từ menu lệnh `/`:**
-
-1. Đặt con trỏ vào dòng cần thêm nội dung.
-2. Gõ `/` để mở menu lệnh → tìm và chọn **Ask Pi**.
-3. Nhập yêu cầu vào ô văn bản (ví dụ: _"Viết tóm tắt quy trình phê duyệt hồ sơ vay"_) → nhấn Enter.
-4. Pi trả về nội dung đề xuất. Nhấn **Insert** để chèn vào trang.
-
-**Cách 2 — Từ văn bản đang chọn:**
-
-1. Bôi đen đoạn văn bản cần chỉnh sửa.
-2. Thanh công cụ nổi hiện ra → nhấn biểu tượng **Sparkles** (AI).
-3. Menu AI mở ra với các tùy chọn:
-
-{{screenshot:page-editor-ai-menu}}
-
-#### Tác vụ AI Pi hỗ trợ
-
-Menu AI chỉ có một tác vụ duy nhất: **Ask Pi** — đặt câu hỏi tự do hoặc yêu cầu tạo/chỉnh sửa nội dung.
-
-Sau khi Pi trả lời, ba nút chọn giọng văn xuất hiện để tinh chỉnh kết quả:
-
-| Nút                    | Ý nghĩa                                |
-| ---------------------- | -------------------------------------- |
-| **Mặc định** (Default) | Giữ nguyên giọng văn Pi đề xuất        |
-| **Chuyên nghiệp** (Professional) | Viết lại theo phong cách trang trọng |
-| **Thân thiện** (Casual) | Viết lại theo phong cách gần gũi      |
-
-#### Sau khi Pi trả lời
-
-- **Replace selection** — thay thế đoạn đang chọn bằng nội dung Pi đề xuất.
-- **Add to next line** (biểu tượng mũi tên xuống) — giữ nguyên đoạn gốc, chèn nội dung Pi vào dòng tiếp theo.
-- **Re-generate** (biểu tượng vòng tròn) — yêu cầu Pi viết lại với kết quả khác.
-
-> **Lưu ý bảo mật:** Khi dùng AI Pi, văn bản bạn chọn được gửi tới dịch vụ AI bên thứ ba (OpenAI hoặc Anthropic tùy cấu hình của quản trị viên). Không nhập thông tin bảo mật, số tài khoản, mật khẩu, hay dữ liệu khách hàng vào ô AI Pi.
+> **Hiện chưa khả dụng:** Trợ lý viết AI **Pi** trong trình soạn thảo trang đang được **tắt** trên Shinhan Workspace. Trình soạn thảo không hiển thị nút AI nào (trong menu lệnh `/`, trên thanh công cụ nổi, hay ở lề trái khối nội dung). Khi tính năng được mở lại, hướng dẫn sử dụng sẽ được cập nhật tại đây và thông báo tới người dùng.
 
 ---
 
 ## Mẹo & lưu ý
 
-- **Xung đột chỉnh sửa:** Shinhan Workspace xử lý tự động theo thuật toán OT (Operational Transformation) — thay đổi của hai người không ghi đè lên nhau mà được gộp thông minh.
+- **Xung đột chỉnh sửa:** Shinhan Workspace dùng cơ chế đồng bộ tự gộp thay đổi (công nghệ CRDT của Yjs) — thay đổi của hai người không ghi đè lên nhau mà được gộp thông minh.
 - **Giới hạn dung lượng trang:** Khi trang quá lớn, đồng bộ thời gian thực tắt và banner cảnh báo xuất hiện. Tạo trang con (chia nhỏ nội dung) là cách khắc phục được khuyến nghị.
-- **AI Pi không ghi nhớ ngữ cảnh:** Mỗi yêu cầu Pi là độc lập — Pi không nhớ cuộc hội thoại trước đó trong cùng trang.
-- **Không có AI Pi trên trang đang khóa:** Khi trang ở chế độ khóa, trình soạn thảo chỉ đọc nên menu AI không kích hoạt được.
+- **Mất kết nối máy chủ realtime:** Khi badge **Connection lost** xuất hiện, thay đổi vẫn được lưu mỗi 10 giây và sẽ đồng bộ lại khi kết nối phục hồi — không cần lo mất dữ liệu.
 - **Thay đổi offline được bảo toàn:** Nếu trình duyệt đóng đột ngột khi offline, nội dung chưa đồng bộ được phục hồi lần mở tiếp theo nhờ cơ chế lưu cục bộ.
 
 ---

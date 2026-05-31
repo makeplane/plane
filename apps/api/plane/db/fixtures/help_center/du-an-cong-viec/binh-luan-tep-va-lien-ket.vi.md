@@ -8,50 +8,49 @@ status: published
 
 ## Mục đích
 
-Cộng tác trực tiếp trong công việc qua bình luận có thể mention đồng nghiệp, đính kèm tệp, và thêm liên kết ngoài — tất cả ghi lại trong luồng Activity của công việc.
+Cộng tác trực tiếp trong công việc qua bình luận có thể mention đồng nghiệp, đính kèm tệp, và thêm liên kết ngoài — tất cả ghi lại trong luồng Hoạt động của công việc.
 
 ## Các bước
 
 ### Thêm bình luận
 
 1. Mở trang Chi tiết công việc.
-2. Cuộn xuống phần **Activity** → bấm vào ô soạn thảo.
+2. Cuộn xuống phần **Hoạt động** → bấm vào ô soạn thảo.
 3. Nhập nội dung — hỗ trợ rich-text (đậm, in nghiêng, danh sách, code, liên kết).
 4. Dùng `@` để **mention** thành viên — họ sẽ nhận thông báo.
-5. Bấm **Gửi** hoặc nhấn `Ctrl/Cmd + Enter`.
+5. Bấm nút **Bình luận** hoặc nhấn `Enter` để gửi (`Shift + Enter` để xuống dòng).
 
 {{screenshot:binh-luan-tep-va-lien-ket}}
 
-### Trả lời bình luận
+### Phản hồi nhanh bằng cảm xúc
 
-- Bấm **Trả lời** dưới một bình luận để thread trả lời gắn vào bình luận gốc.
+- Mỗi bình luận có nút thả **biểu tượng cảm xúc (emoji)** — dùng để phản hồi nhanh thay cho việc viết bình luận mới.
 
-### Bình luận riêng tư
+### Sửa, xóa & sao chép liên kết bình luận
 
-- Bấm biểu tượng **ổ khoá** (hoặc chọn **Riêng tư**) trước khi gửi để bình luận chỉ hiện với thành viên có quyền xem loại này trong dự án.
-
-> Bình luận riêng tư hiển thị nền khác biệt để dễ phân biệt.
+- Mở menu **…** trên bình luận **của chính bạn** để **Sửa** hoặc **Xóa** — menu sửa/xóa chỉ hiện trên bình luận do bạn tạo.
+- Mục **Sao chép liên kết** trong menu cho phép sao chép đường dẫn trực tiếp tới một bình luận cụ thể để chia sẻ.
 
 ### Đính kèm tệp
 
-1. Trong trang Chi tiết, tìm mục **Tệp đính kèm** (thường nằm ở tab hoặc cuối panel thuộc tính).
-2. Kéo-thả tệp hoặc bấm **Tải lên** → chọn tệp từ máy tính.
+1. Trong trang Chi tiết, mở mục **Tệp đính kèm** (khu vực có thể thu gọn trong trang chi tiết).
+2. Kéo-thả tệp hoặc bấm **Tải lên** → chọn tệp từ máy tính (mỗi lần chỉ tải lên **một tệp**).
 3. Tệp được lưu và hiển thị tên, dung lượng, người tải lên.
-4. Bấm tên tệp để tải xuống; bấm biểu tượng thùng rác để xóa (yêu cầu vai trò Member trở lên).
+4. Bấm tên tệp để tải xuống; bấm biểu tượng thùng rác để xóa (chỉ **Admin** dự án hoặc **người đã tải lên** tệp đó mới xóa được).
 
-> Shinhan Workspace hỗ trợ đính kèm **ảnh và tệp văn bản/dữ liệu**; **không hỗ trợ nhúng video trực tiếp**. Với video, hãy đính kèm tệp hoặc dán liên kết ngoài.
+> Hỗ trợ đính kèm **mọi loại tệp** tới giới hạn dung lượng do hệ thống cấu hình; tệp vượt quá sẽ bị từ chối. Với video lớn, nên lưu ở nơi khác và dán liên kết.
 
 ### Thêm liên kết ngoài
 
-1. Trong tab **Liên kết** hoặc phần tương ứng ở Chi tiết, bấm **+ Thêm liên kết**.
-2. Nhập **URL** và **Tiêu đề mô tả** (tuỳ chọn).
-3. Bấm **Lưu** — liên kết xuất hiện dưới dạng thẻ có thể bấm.
+1. Mở mục **Liên kết** (khu vực có thể thu gọn) → bấm nút **+**.
+2. Nhập **URL** và **Tiêu đề hiển thị** (tuỳ chọn).
+3. Bấm **Thêm liên kết** — liên kết xuất hiện dưới dạng thẻ có thể bấm.
 
 ## Mẹo & lưu ý
 
-- Mention `@` chỉ gợi ý thành viên trong cùng workspace.
-- Chỉnh sửa bình luận: bấm biểu tượng **bút chì** → sửa → Lưu. Bình luận đã chỉnh sửa hiển thị nhãn _(đã chỉnh sửa)_.
-- Xóa bình luận của người khác yêu cầu vai trò **Admin** dự án.
+- Mention `@` chỉ gợi ý thành viên của dự án hiện tại.
+- Chỉnh sửa bình luận: mở menu **…** trên bình luận của bạn → **Sửa** → Lưu. Bình luận đã chỉnh sửa hiển thị nhãn _(đã chỉnh sửa)_.
+- Trong giao diện, mỗi người chỉ sửa/xóa được bình luận của **chính mình**.
 - Ảnh đính kèm trong bình luận không có alt-text tự động — thêm mô tả bằng văn bản khi cần thiết cho khả năng tiếp cận.
 
 ## Liên quan

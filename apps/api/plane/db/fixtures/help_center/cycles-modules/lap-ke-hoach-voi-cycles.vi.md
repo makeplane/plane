@@ -35,20 +35,22 @@ status: published
 
 1. Mở dự án từ thanh bên trái.
 2. Chọn **Cycles** trong menu dự án.
-3. Trang hiển thị 3 tab: **Active** (đang chạy), **Upcoming** (sắp tới), **Completed** (đã kết thúc).
+3. Trang hiển thị Cycle **đang chạy** (Active) nổi bật ở đầu, kèm hai nhóm có thể mở/thu: **Upcoming** (sắp tới) và **Completed** (đã kết thúc).
 
 ### Truy cập Modules của dự án
 
 1. Mở dự án từ thanh bên trái.
 2. Chọn **Modules** trong menu dự án.
-3. Trang hiển thị danh sách các module, có thể chuyển giữa chế độ **List** và **Grid** bằng biểu tượng bố cục góc trên phải.
+3. Trang hiển thị danh sách các module, có thể chuyển giữa các bố cục **List** (Danh sách), **Gallery** (Thư viện) và **Timeline** (Dòng thời gian) bằng các biểu tượng bố cục góc trên phải.
 
 ## Mẹo & lưu ý
 
 - Một công việc có thể thuộc nhiều Module cùng lúc, nhưng chỉ thuộc **một Cycle đang active** trong cùng thời điểm.
-- Khi một Cycle kết thúc, các công việc chưa hoàn thành có thể được **chuyển sang Cycle tiếp theo** (Transfer Issues).
-- Cycles và Modules hỗ trợ xem theo tất cả bố cục: List, Board, Gantt — chọn bố cục phù hợp với cách làm việc của nhóm.
-- Nếu tab **Cycles** hoặc **Modules** không xuất hiện trong menu dự án, hãy yêu cầu quản trị viên dự án bật tính năng.
+- Khi một Cycle đã kết thúc (completed) mà còn công việc chưa hoàn thành, nút **Transfer work items** sẽ hiện ở đầu danh sách công việc để chuyển sang Cycle khác. Nút này chỉ xuất hiện khi mở Cycle đã kết thúc và vẫn còn việc dang dở — không thấy nút này khi Cycle còn đang chạy.
+- Bên trong một Cycle hoặc Module, công việc có thể xem theo nhiều bố cục: List, Board, Calendar, Table và Timeline — chọn bố cục phù hợp với cách làm việc của nhóm.
+- **Module** có thể gán **Lead** (người phụ trách chính) và danh sách **Members** riêng — điểm khác biệt so với Cycle, phù hợp khi cần tổ chức công việc theo nhóm chức năng.
+- **Member** trở lên có thể tạo và sửa Cycle/Module, nhưng **xóa** Cycle/Module chỉ dành cho **Quản trị viên** hoặc người đã tạo ra nó — Thành viên không xóa được Cycle/Module do người khác tạo.
+- Nếu mục **Cycles** hoặc **Modules** không xuất hiện trong menu dự án, hãy yêu cầu quản trị viên dự án bật tính năng.
 
 ## Liên quan
 

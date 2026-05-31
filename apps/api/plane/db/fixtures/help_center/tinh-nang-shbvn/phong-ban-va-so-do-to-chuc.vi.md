@@ -31,8 +31,8 @@ Shinhan Workspace lưu trữ **cây phòng ban** phản ánh cơ cấu tổ ch�
 
 1. Vào **God Mode** → **Departments**.
 2. Nhấp **Add Department** (nút xanh, góc phải trên).
-3. Điền tên phòng ban, chọn phòng ban cha (nếu là bộ phận trực thuộc).
-4. Nhấp **Save** — phòng ban xuất hiện ngay trong cây.
+3. Điền **Name** (bắt buộc), chọn **Parent department** (nếu là bộ phận trực thuộc). Các trường tùy chọn: **Code**, **Short name** (IN HOA, tối thiểu 2 ký tự, duy nhất), **Dept code** (đúng 4 chữ số), **Dept Type** (HO / BRX / OSR), **Sort Order**.
+4. Nhấp **Create** — phòng ban xuất hiện ngay trong cây. (Khi sửa phòng ban, nút này là **Save changes**.)
 
 {{screenshot:phong-ban-god-mode-department-tree}}
 
@@ -43,36 +43,38 @@ Shinhan Workspace lưu trữ **cây phòng ban** phản ánh cơ cấu tổ ch�
 
 ### Liên kết workspace với phòng ban
 
-1. Trên dòng phòng ban → nhấp **Link Workspace**.
-2. Chọn workspace muốn liên kết — mỗi phòng ban có thể liên kết một hoặc nhiều workspace.
-3. Liên kết này giúp HO Dashboard nhóm công việc đúng theo phòng ban.
+1. Trên dòng phòng ban → nhấp **Link workspace** (dropdown nội tuyến, chỉ hiện khi phòng ban chưa liên kết workspace nào).
+2. Chọn workspace muốn liên kết — mỗi phòng ban liên kết **đúng một** workspace. Khi liên kết, hệ thống tự thêm toàn bộ nhân viên phòng ban vào workspace (chạy nền nếu trên 20 người) và thêm trưởng phòng làm **Admin** (có popup "Managers added as Admin").
+3. Sau khi liên kết, dòng phòng ban hiện tên workspace cùng nút **Unlink**; muốn đổi, nhấp Unlink rồi liên kết lại.
+4. Liên kết này giúp HO Dashboard nhóm công việc đúng theo phòng ban.
 
-### Cấu hình Auto-join
+### Auto Join (join trưởng phòng vào project)
 
-Khi bật _Auto-join_ cho một phòng ban, nhân viên mới thuộc phòng ban đó tự động được thêm vào workspace liên kết:
+**Auto Join** (biểu tượng người+ trên dòng phòng ban) join **trưởng phòng** (manager) của phòng ban đó làm **Admin** vào các project trong workspace liên kết. Đây **không** phải toggle tự động thêm nhân viên mới vào workspace.
 
-1. Nhấp **Auto Join** trên dòng phòng ban.
-2. Chọn workspace và vai trò mặc định → **Save**.
+1. Trên dòng phòng ban → nhấp **Auto Join**.
+2. Chọn phạm vi: **All Projects** (mọi project trong workspace liên kết) hoặc **Bank-wide Projects** → nhấp **Auto Join**. (Không có lựa chọn workspace hay vai trò — vai trò luôn là Admin.)
 
 ### Import / Export phòng ban
 
-- **Export Dept**: tải về file CSV danh sách phòng ban hiện tại.
-- **Import Dept**: vào **Departments → Import** → tải lên file CSV theo mẫu để tạo hàng loạt.
+- **Export Dept**: tải về file Excel (.xlsx) danh sách phòng ban hiện tại.
+- **Import Dept**: vào **Departments → Import** → nhấn **Download template** để lấy file mẫu, rồi tải lên file Excel (.xlsx/.xls) theo mẫu để tạo hàng loạt (CSV không được chấp nhận). Tối đa **500 dòng**, **5 MB**. Cột bắt buộc: `name`, `short_name`, `dept_code`, `dept_type`; cột tùy chọn: `code`, `parent_code`, `manager_email`.
 - **Export Workspace Linked**: xuất danh sách liên kết phòng ban ↔ workspace.
 - **Export Linked Categories**: xuất danh sách liên kết phòng ban ↔ danh mục công việc.
 
 {{screenshot:phong-ban-god-mode-import-export}}
 
-### Liên kết danh mục công việc với phòng ban
+### Liên kết hàng loạt (Bulk)
 
-1. Nhấp **Bulk Linked Categories** để gán hàng loạt danh mục công việc (Task Categories) cho các phòng ban.
-2. Danh mục được liên kết sẽ tự động gợi ý khi nhân viên phòng ban đó tạo công việc.
+1. Nhấp **Bulk Linked** để liên kết workspace cho nhiều phòng ban cùng lúc — mở modal "Bulk Link Departments to Workspaces", tải lên file Excel có 2 cột `code` và `workspace_slug` (tối đa 500 dòng). Hữu ích khi quản lý nhiều workspace.
+2. Nhấp **Bulk Linked Categories** để gán hàng loạt danh mục công việc (Task Categories) cho các phòng ban.
+3. Danh mục được liên kết sẽ tự động gợi ý khi nhân viên phòng ban đó tạo công việc — phạm vi gợi ý dựa trên phòng ban liên kết với workspace đó cộng các phòng ban cấp cha (ancestor), nên danh mục của phòng ban cha cũng có thể xuất hiện.
 
 ## Mẹo & lưu ý
 
-- **Rejoin All Managers**: nút **Rejoin** trong God Mode → Departments join lại tất cả **trưởng phòng** (department managers) làm Admin vào project — có thể chọn All Projects hoặc chỉ Bank-wide Projects. Khác với Auto-join (tự động thêm nhân viên mới vào workspace), Rejoin chỉ áp dụng cho trưởng phòng.
+- **Rejoin All Managers**: nút **Rejoin** trong God Mode → Departments join lại tất cả **trưởng phòng** (department managers) làm Admin vào project — có thể chọn All Projects hoặc chỉ Bank-wide Projects. Đây là phiên bản áp dụng cho mọi phòng ban; **Auto Join** (xem mục trên) làm điều tương tự nhưng chỉ cho trưởng phòng của một phòng ban cụ thể.
 - **Org Chart rỗng**: nếu org chart hiển thị trống với người dùng, kiểm tra xem phòng ban đã được liên kết đúng workspace trong God Mode chưa.
-- **Phân cấp không giới hạn**: cây phòng ban hỗ trợ nhiều cấp lồng nhau, nhưng nên giữ dưới 4 cấp để org chart dễ đọc.
+- **Phân cấp tối đa 6 cấp**: cây phòng ban hỗ trợ lồng nhau đến 6 cấp, nên giữ dưới 4 cấp để org chart dễ đọc.
 - **Quản lý nhân sự (Staff)**: danh sách nhân viên và trạng thái tuyển dụng quản lý riêng tại **God Mode → Staff** — xem bài [Hướng dẫn Quản trị (God Mode)](/help/a/quan-ly-nhan-su-va-to-chuc).
 
 ## Liên quan

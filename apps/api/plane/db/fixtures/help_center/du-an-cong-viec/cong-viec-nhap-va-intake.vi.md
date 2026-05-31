@@ -14,60 +14,59 @@ status: published
 
 ### Tạo công việc nháp
 
-1. Trong hộp thoại tạo công việc, bấm **Lưu nháp** thay vì _Tạo công việc_.
-2. Hoặc vào **Nháp** (Drafts) trên thanh bên trái → bấm **+ Tạo nháp**.
+1. Khi đóng hộp thoại tạo công việc lúc còn nội dung chưa lưu, hệ thống hỏi **Save this draft?** → bấm **Lưu vào bản nháp** (Save to Drafts).
+2. Hoặc vào **Bản nháp** ở sidebar → bấm **Nháp một mục công việc** (nút chỉ hiện khi bạn đã tham gia ít nhất một dự án).
 
 {{screenshot:cong-viec-nhap-va-intake}}
 
 ### Xem và quản lý nháp
 
-- Vào **Nháp** ở sidebar để xem tất cả công việc nháp của bạn trong workspace.
+- Vào **Bản nháp** ở sidebar để xem tất cả công việc nháp của bạn trong workspace.
 - Nháp **chỉ hiển thị với người tạo** — không xuất hiện trong dự án hay view công khai.
+- Chỉ **Thành viên** và **Quản trị viên** cấp workspace mới tạo được nháp; **Khách** không tạo được.
 
 ### Chuyển nháp thành công việc thật
 
-1. Mở công việc nháp → bấm **Chuyển vào dự án** (hoặc _Move to Project_).
-2. Chọn dự án đích.
-3. Gán trạng thái, người phụ trách nếu chưa có → bấm **Xác nhận**.
+1. Mở công việc nháp → bấm **Di chuyển đến nhóm/dự án** (Move to team/project).
+2. Chọn nhóm hoặc dự án đích.
+3. Gán trạng thái, người phụ trách nếu chưa có → bấm **Thêm vào nhóm/dự án** (Add to project).
 4. Công việc xuất hiện trong dự án như một công việc bình thường.
 
 ---
 
 ## Intake (Tiếp nhận yêu cầu)
 
-Intake cho phép người dùng **ngoài nhóm** (hoặc bất kỳ thành viên nào) gửi yêu cầu vào dự án. Quản lý dự án xem xét từng yêu cầu trước khi đưa vào backlog.
+Intake cho phép bất kỳ ai có quyền truy cập dự án (Khách / Thành viên / Quản trị viên) gửi yêu cầu vào dự án. Quản trị viên dự án xem xét từng yêu cầu trước khi đưa vào backlog.
 
 > Intake phải được **bật** trong Cài đặt dự án → Tính năng. Chỉ Admin dự án mới bật/tắt được.
 
 ### Gửi yêu cầu qua Intake
 
 1. Vào dự án → tab **Intake**.
-2. Bấm **+ Tạo yêu cầu** → điền tiêu đề và mô tả → Gửi.
+2. Bấm **Thêm mục công việc** → điền tiêu đề và mô tả (và thuộc tính nếu cần) → bấm **Tạo mục công việc**.
 
-### Xử lý yêu cầu Intake (dành cho Admin / Lead)
+> Khi gửi yêu cầu, nếu có tiêu đề/mô tả giống công việc đã có, hệ thống cảnh báo "tìm thấy N công việc trùng" để bạn kiểm tra trước.
 
-Mỗi yêu cầu Intake có 3 hành động:
+### Xử lý yêu cầu Intake (dành cho Quản trị viên dự án)
 
-| Hành động             | Kết quả                                             |
-| --------------------- | --------------------------------------------------- |
-| **Duyệt (Accept)**    | Tạo công việc chính thức trong dự án từ yêu cầu này |
-| **Trì hoãn (Snooze)** | Ẩn yêu cầu tạm thời, xem lại sau theo ngày đã đặt   |
-| **Từ chối (Decline)** | Đóng yêu cầu; yêu cầu nhập **lý do từ chối**        |
+Chỉ **Quản trị viên dự án** mới thực hiện được các hành động xử lý dưới đây (Thành viên thấy nút nhưng sẽ báo từ chối quyền khi bấm). Mỗi yêu cầu có 4 hành động:
 
-> Khi từ chối, lý do được lưu trong Activity và có thể gửi thông báo cho người gửi.
+| Hành động                          | Kết quả                                                              |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| **Duyệt (Accept)**                 | Tạo công việc chính thức trong dự án từ yêu cầu này                  |
+| **Từ chối (Decline)**              | Đóng yêu cầu (không thể hoàn tác); hệ thống chỉ hỏi xác nhận, không yêu cầu nhập lý do |
+| **Trì hoãn / Bỏ trì hoãn (Snooze/Unsnooze)** | Ẩn yêu cầu tới ngày đã đặt; khi đang trì hoãn, mục menu đổi thành **Bỏ trì hoãn** để đưa lại danh sách mở |
+| **Đánh dấu trùng (Mark as duplicate)** | Gõ tìm và chọn một công việc đã có để liên kết yêu cầu là bản trùng (đóng yêu cầu) |
 
-### Nhận biết nguồn gốc (source pill)
+> _Duyệt_ và _Từ chối_ là nút nổi trên thanh tiêu đề; _Trì hoãn_ và _Đánh dấu trùng_ nằm trong menu **…**.
 
-Mỗi công việc được tạo từ Intake hiển thị nhãn **Intake** màu sắc riêng biệt trong trang Chi tiết — giúp phân biệt với công việc tạo trực tiếp.
-
-### Phát hiện trùng lặp khi duyệt
-
-Khi bấm **Duyệt**, hệ thống tự động kiểm tra xem có công việc tương tự đã tồn tại không và gợi ý danh sách trùng. Bạn có thể chọn **gộp** vào việc đã có thay vì tạo mới.
+> Hành động từ chối được ghi vào nhật ký **Hoạt động** của công việc; nguồn gốc Intake cũng thể hiện qua nhật ký (ví dụ "accepted this work item from intake").
 
 ## Mẹo & lưu ý
 
 - Công việc nháp **không bị mất** khi đóng trình duyệt — được lưu server.
-- Yêu cầu Intake bị từ chối vẫn lưu trong tab _Đã từ chối_ để tham chiếu sau.
+- Yêu cầu bị từ chối (cùng yêu cầu đã duyệt) nằm trong tab **Đã đóng** (Closed) để tham chiếu sau. Sidebar Intake chỉ có hai tab: _Đang mở_ và _Đã đóng_.
+- Từ chối yêu cầu **không thể hoàn tác** — cân nhắc trước khi xác nhận.
 - Nếu dự án không hiển thị tab Intake, hãy yêu cầu Admin bật tính năng trong Cài đặt dự án.
 
 ## Liên quan

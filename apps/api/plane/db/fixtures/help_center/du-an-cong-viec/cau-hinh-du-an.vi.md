@@ -12,12 +12,12 @@ Cài đặt dự án cho phép Admin điều chỉnh tên, mã, múi giờ, bộ
 
 ## Khi nào dùng / Yêu cầu
 
-Chỉ thành viên có vai trò **Admin** của dự án (hoặc Admin workspace) mới truy cập được phần lớn cài đặt dưới đây.
+Phần lớn cài đặt dưới đây chỉ dành cho **Quản trị viên** của dự án (hoặc Admin workspace). Tuy nhiên **Thành viên** cũng truy cập được các mục _Trạng thái_, _Nhãn_ và _Workflows_; mục _Thông tin chung_ và _Thành viên_ thì cả _Khách_ cũng xem được.
 
 ## Mở Cài đặt dự án
 
-1. Bấm biểu tượng **bánh răng** cạnh tên dự án ở sidebar.
-2. Hoặc vào trang dự án → bấm **Cài đặt** ở thanh điều hướng trên cùng.
+1. Di chuột tới dự án ở sidebar → bấm biểu tượng **…** (thêm) → chọn **Cài đặt** (Settings).
+2. Hoặc trên trang Nhóm/Dự án, mở menu **…** của thẻ dự án → **Cài đặt**.
 
 {{screenshot:cau-hinh-du-an}}
 
@@ -28,10 +28,10 @@ Chỉ thành viên có vai trò **Admin** của dự án (hoặc Admin workspace
 | Trường             | Mô tả                                                                   |
 | ------------------ | ----------------------------------------------------------------------- |
 | **Tên**            | Tên hiển thị của dự án                                                  |
-| **Mã dự án**       | Tiền tố mã công việc (ví dụ `SHB`) — **không thể thay đổi sau khi tạo** |
+| **Mã dự án (Project ID)** | Tiền tố mã công việc (ví dụ `SHB`), tối đa 10 ký tự; Admin có thể đổi (hệ thống kiểm tra trùng) |
 | **Mô tả**          | Giới thiệu ngắn về mục đích dự án                                       |
 | **Múi giờ**        | Dùng để tính toán báo cáo và thống kê                                   |
-| **Quyền truy cập** | Secret (chỉ thành viên) hoặc Public (toàn workspace xem)                |
+| **Quyền truy cập** | Riêng tư (chỉ truy cập bằng lời mời) hoặc Công khai (mọi người trong workspace, trừ Khách, có thể tham gia) |
 | **Icon & Bìa**     | Biểu tượng và ảnh bìa hiển thị trong danh sách dự án                    |
 
 ---
@@ -42,7 +42,8 @@ Vào **Cài đặt → Trạng thái** để quản lý vòng đời công việ
 
 1. Bấm **+ Thêm trạng thái** → nhập tên, chọn nhóm (_Backlog / Unstarted / Started / Completed / Cancelled_) và màu sắc.
 2. Kéo-thả để sắp xếp lại thứ tự.
-3. Bấm biểu tượng bút chì để sửa; biểu tượng thùng rác để xóa (chỉ xóa được nếu không có công việc đang dùng trạng thái đó).
+3. Bấm biểu tượng bút chì để sửa; biểu tượng thùng rác để xóa. Không xóa được trạng thái **mặc định**, hoặc trạng thái **duy nhất còn lại** trong một nhóm; nếu còn công việc đang dùng trạng thái đó, hãy chuyển chúng sang trạng thái khác trước.
+4. Bấm **Đánh dấu mặc định** để chọn trạng thái khởi tạo cho công việc mới (trạng thái mặc định không thể xóa).
 
 ---
 
@@ -57,7 +58,7 @@ Vào **Cài đặt → Nhãn** để tạo và quản lý nhãn phân loại cô
 
 ## Ước lượng (Estimates)
 
-Vào **Cài đặt → Ước lượng** để bật tính năng và chọn kiểu: _Điểm_ (1, 2, 3, 5, 8…) hoặc _Giờ_. Khi bật, trường Ước lượng xuất hiện trong mỗi công việc.
+Vào **Cài đặt → Ước lượng** để bật tính năng và chọn kiểu: _Điểm_ (1, 2, 3, 5, 8…) hoặc _Phân loại_ (ví dụ T-Shirt Sizes: XS/S/M/L…). Khi bật, trường Ước lượng xuất hiện trong mỗi công việc.
 
 ---
 
@@ -65,7 +66,7 @@ Vào **Cài đặt → Ước lượng** để bật tính năng và chọn ki�
 
 Vào **Cài đặt → Thành viên**:
 
-- **Mời thành viên**: nhập email → chọn vai trò (Guest / Member / Admin) → Gửi lời mời.
+- **Thêm thành viên**: bấm **Thêm thành viên** → chọn đồng nghiệp đã có trong workspace từ danh sách → gán vai trò (Khách / Thành viên / Quản trị viên) → bấm **Thêm**. (Mời người mới qua email được thực hiện ở cấp workspace, không phải ở đây.)
 - **Đổi vai trò**: bấm vai trò hiện tại của thành viên → chọn vai trò mới.
 - **Xóa thành viên**: bấm menu `…` → Xóa khỏi dự án.
 
@@ -73,14 +74,16 @@ Vào **Cài đặt → Thành viên**:
 
 ## Tính năng bật/tắt
 
-Vào **Cài đặt → Tính năng** để bật/tắt:
+Trong nhóm **Tính năng** của Cài đặt dự án, mỗi tính năng là một mục riêng có công tắc bật/tắt:
 
-| Tính năng                  | Chú thích                       |
-| -------------------------- | ------------------------------- |
-| **Cycles**                 | Vòng lặp sprint                 |
-| **Modules**                | Nhóm công việc theo chủ đề      |
-| **Intake**                 | Cổng tiếp nhận yêu cầu          |
-| **Trang tài liệu (Pages)** | Ghi chú và tài liệu trong dự án |
+| Tính năng                       | Chú thích                       |
+| ------------------------------- | ------------------------------- |
+| **Cycles**                      | Vòng lặp sprint                 |
+| **Modules**                     | Nhóm công việc theo chủ đề      |
+| **Views (Chế độ xem)**          | Chế độ xem tùy biến của dự án   |
+| **Trang tài liệu (Pages)**      | Ghi chú và tài liệu trong dự án |
+| **Intake**                      | Cổng tiếp nhận yêu cầu          |
+| **Time-tracking (Theo dõi thời gian)** | Ghi nhận thời gian làm việc |
 
 ---
 

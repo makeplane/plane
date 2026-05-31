@@ -15,15 +15,21 @@ Trang Chi tiết là nơi xem và chỉnh sửa đầy đủ một công việc 
 ### Mở trang Chi tiết
 
 - **Bấm vào tiêu đề** công việc trong bất kỳ chế độ xem nào (List, Kanban, Spreadsheet…) để mở panel Peek (xem nhanh ở cạnh phải màn hình).
-- Bấm **biểu tượng mũi tên mở rộng** (↗) hoặc nhấn `Ctrl/Cmd + Enter` để mở trang chi tiết toàn màn hình.
+- Panel có 3 chế độ bố cục chọn qua menu chế độ xem: **Side peek** (cạnh phải), **Modal** (giữa màn hình) và **Full screen** (toàn màn hình).
+- Bấm **biểu tượng mở rộng toàn màn hình** (mũi tên chéo) hoặc chọn chế độ **Full screen** trong menu để mở trang chi tiết toàn màn hình.
 
 {{screenshot:chi-tiet-cong-viec}}
 
 ### Chỉnh sửa tiêu đề và mô tả
 
-1. Bấm vào tiêu đề để sửa inline — nhấn `Enter` để lưu.
+1. Bấm vào tiêu đề để sửa trực tiếp; thay đổi tự động lưu sau vài giây hoặc khi bạn bấm ra ngoài (tiêu đề tối đa 255 ký tự).
 2. Phần **Mô tả** dùng editor rich-text: hỗ trợ tiêu đề, danh sách, bảng, ảnh, đoạn code, trích dẫn và liên kết.
 3. Thay đổi tự động lưu sau vài giây.
+
+### Lịch sử phiên bản mô tả
+
+- Cạnh phần reaction dưới mô tả có biểu tượng **lịch sử** (Chỉnh sửa lần cuối bởi…). Bấm để mở danh sách các bản chỉnh sửa trước.
+- Chọn một bản cũ rồi bấm **Khôi phục** để đưa mô tả về bản đó. Áp dụng cho cả panel Peek lẫn trang toàn màn hình.
 
 ### Mã định danh & sao chép liên kết
 
@@ -44,16 +50,16 @@ Cột bên phải hiển thị tất cả thuộc tính: Trạng thái, Người
 
 > Chi tiết từng thuộc tính: xem [Thuộc tính công việc](/help/a/thuoc-tinh-cong-viec).
 
-### Tab Activity (lịch sử)
+### Hoạt động (lịch sử)
 
-Cuộn xuống hoặc chọn tab **Activity** để xem toàn bộ nhật ký thay đổi: ai thay đổi gì, lúc nào. Bình luận và hoạt động hệ thống xen kẽ nhau theo thứ tự thời gian.
+Cuộn xuống phần **Hoạt động** để xem toàn bộ nhật ký thay đổi: ai thay đổi gì, lúc nào. Bình luận và hoạt động hệ thống xen kẽ nhau theo thứ tự thời gian. Dùng nút sắp xếp (tăng/giảm thời gian) và bộ lọc dạng tích chọn để bật/tắt hiển thị riêng _Bình luận_, _Hoạt động_, _Worklog_.
 
 ## Mẹo & lưu ý
 
 - **Peek panel** (xem nhanh) cho phép chỉnh sửa đầy đủ mà không rời khỏi danh sách — tiện khi cần xử lý nhiều việc liên tiếp.
 - Mã định danh (`SHB-123`) không thay đổi kể cả khi đổi tên công việc hay chuyển sang dự án khác.
 - Ảnh đính kèm trong mô tả hiện **không có alt-text** — khi chia sẻ ảnh quan trọng, nên thêm chú thích bên dưới.
-- Shinhan Workspace chưa hỗ trợ **lịch sử phiên bản** cho phần mô tả — chỉnh sửa không thể hoàn tác về bản cũ qua giao diện (dùng lịch sử Activity để biết ai đã thay đổi).
+- Phần Mô tả có **lịch sử phiên bản**: dùng biểu tượng lịch sử cạnh phần reaction để xem và **Khôi phục** bản cũ.
 
 ## Liên quan
 

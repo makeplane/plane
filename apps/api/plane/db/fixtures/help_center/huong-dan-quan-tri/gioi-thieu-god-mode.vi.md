@@ -12,23 +12,19 @@ God Mode là bảng điều khiển quản trị toàn hệ thống dành riêng
 
 ## Khi nào dùng / Yêu cầu
 
-Chỉ tài khoản có vai trò **Instance Admin** mới truy cập được God Mode. Nhân viên thông thường không thấy mục này trong giao diện.
+Chỉ tài khoản có vai trò **Instance Admin** mới truy cập được God Mode. Quyền này được kiểm soát ở tầng máy chủ (backend) — người không phải Instance Admin sẽ bị từ chối ngay cả khi mở trực tiếp đường dẫn.
 
 ## Các bước truy cập God Mode
 
 1. Đăng nhập vào Shinhan Workspace bằng tài khoản Instance Admin.
-2. Nhấn vào **avatar** ở góc dưới bên trái thanh bên để mở User Menu.
-3. Chọn **God Mode** trong menu xuất hiện.
-
-{{screenshot:god-mode-user-menu}}
-
-4. Trình duyệt chuyển sang trang quản trị tại địa chỉ `/god-mode/` — giao diện tiếng Anh riêng biệt với Shinhan Workspace thông thường.
+2. Truy cập trực tiếp địa chỉ `/god-mode/` trên trình duyệt (vd: `https://<domain>/god-mode/`).
+3. Trình duyệt mở trang quản trị tại `/god-mode/` — giao diện tiếng Anh riêng biệt với Shinhan Workspace thông thường.
 
 {{screenshot:god-mode-dashboard}}
 
 ## Tổng quan bảng điều khiển God Mode
 
-Sau khi vào God Mode, thanh bên hiển thị các mục chính:
+Sau khi vào God Mode, thanh bên hiển thị **13 mục**. Bảng dưới liệt kê thêm Job Positions (truy cập qua URL, không nằm trên thanh bên):
 
 | Mục                   | Mô tả ngắn                                     |
 | --------------------- | ---------------------------------------------- |
@@ -36,7 +32,7 @@ Sau khi vào God Mode, thanh bên hiển thị các mục chính:
 | **Authentication**    | Cấu hình phương thức đăng nhập (local, SSO...) |
 | **Email**             | Thiết lập SMTP để gửi email hệ thống           |
 | **Artificial intelligence** | API key cho tính năng AI (Ask Pi)        |
-| **Images**            | API key thư viện ảnh (Unsplash)                |
+| **Images in Plane**   | API key thư viện ảnh (Unsplash)                |
 | **Users**             | Danh sách, tạo, import người dùng              |
 | **Workspaces**        | Quản lý tất cả workspace trên instance         |
 | **Staff**             | Hồ sơ nhân sự SHBVN                            |
@@ -51,9 +47,9 @@ Sau khi vào God Mode, thanh bên hiển thị các mục chính:
 
 Tại trang **General**, quản trị viên có thể:
 
-- Sửa **tên instance** (hiện thị trong một số email hệ thống).
+- Sửa **tên định danh instance** (Name of instance).
 - Xem **email admin** và **Instance ID** (chỉ đọc — dùng khi liên hệ hỗ trợ).
-- Bật/tắt **thu thập dữ liệu ẩn danh** (telemetry) — không thu thập thông tin cá nhân.
+- Bật/tắt **thu thập dữ liệu ẩn danh** (telemetry) — không thu thập thông tin cá nhân. Trang còn có cụm **Chat + telemetry** (live chat Intercom): tắt telemetry sẽ tự động tắt luôn Intercom.
 
 {{screenshot:god-mode-general-settings}}
 

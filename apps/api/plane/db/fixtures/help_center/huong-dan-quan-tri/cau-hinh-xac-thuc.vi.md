@@ -8,7 +8,7 @@ status: published
 
 ## Mục đích
 
-Trang **Authentication** trong God Mode cho phép Instance Admin bật/tắt các phương thức đăng nhập và kiểm soát chính sách đăng ký. Shinhan Workspace hỗ trợ đăng nhập nội bộ (email + mật khẩu), SSO Swing (đặc thù SHBVN), và các nhà cung cấp OAuth tiêu chuẩn.
+Trang **Authentication** trong God Mode cho phép Instance Admin bật/tắt các phương thức đăng nhập và kiểm soát chính sách đăng ký. Shinhan Workspace hỗ trợ đăng nhập bằng mã gửi qua email (Unique codes), email + mật khẩu, LDAP/Active Directory, và SSO Swing (đặc thù SHBVN).
 
 ## Khi nào dùng / Yêu cầu
 
@@ -26,24 +26,21 @@ Trang **Authentication** trong God Mode cho phép Instance Admin bật/tắt cá
 
 ### 2. Kiểm soát chính sách đăng ký
 
-- **Toggle bật** (_Allow sign up without invite_): bất kỳ ai có email hợp lệ đều tự đăng ký được.
+- **Toggle bật** (_Allow anyone to sign up even without an invite_): bất kỳ ai có email hợp lệ đều tự đăng ký được.
 - **Toggle tắt** (khuyến nghị SHBVN): chỉ người nhận lời mời mới tạo được tài khoản.
 
 Thay đổi có hiệu lực ngay, không cần nhấn Save.
 
 ### 3. Bật/tắt từng phương thức xác thực
 
-Mỗi phương thức hiển thị dưới dạng thẻ có toggle riêng. Nhấn toggle để bật hoặc tắt:
+Trang hiển thị đúng 4 phương thức, mỗi phương thức là một thẻ có toggle riêng. Nhấn toggle để bật hoặc tắt:
 
-| Phương thức          | Ghi chú                                |
-| -------------------- | -------------------------------------- |
-| **Email — Password** | Đăng nhập bằng email + mật khẩu nội bộ |
-| **Google**           | OAuth Google Workspace                 |
-| **GitHub**           | OAuth GitHub                           |
-| **GitLab**           | OAuth GitLab                           |
-| **Gitea**            | OAuth Gitea tự host                    |
-| **LDAP**             | Active Directory / LDAP nội bộ         |
-| **Swing SSO**        | SSO riêng của SHBVN — xem mục bên dưới |
+| Phương thức       | Ghi chú                                                                  |
+| ----------------- | ------------------------------------------------------------------------ |
+| **Unique codes**  | Đăng nhập/đăng ký bằng mã gửi qua email — yêu cầu đã cấu hình SMTP        |
+| **Passwords**     | Đăng nhập bằng email + mật khẩu nội bộ                                    |
+| **LDAP**          | Active Directory / LDAP nội bộ                                           |
+| **Swing SSO**     | SSO riêng của SHBVN — xem mục bên dưới                                   |
 
 > **Lưu ý bảo vệ:** Hệ thống không cho phép tắt phương thức **cuối cùng** đang bật. Nếu cố tắt, thông báo lỗi xuất hiện: _"At least one authentication method must remain enabled."_
 
@@ -67,21 +64,23 @@ Swing SSO là phương thức đăng nhập một lần tích hợp với hệ t
 
 > **Lưu ý quan trọng:** Khi bật Swing SSO, hệ thống tự động tắt LDAP (hai phương thức loại trừ lẫn nhau). Nếu đang dùng LDAP, hãy đảm bảo nhân viên đã sẵn sàng chuyển sang Swing SSO trước khi kích hoạt.
 
-4. Sau khi lưu, nhấn **Test Authentication** để xác minh kết nối hoạt động trước khi triển khai cho toàn bộ nhân viên.
+4. Nút **Test Authentication** chỉ hiện sau khi đã lưu đủ Swing SSO URL, Client ID và Client Secret. Nhấn nút này để mở hộp thoại thử đăng nhập: nhập username và mật khẩu của một tài khoản mạng nội bộ để xác minh kết nối hoạt động trước khi triển khai cho toàn bộ nhân viên.
 
 {{screenshot:god-mode-swing-sso-config}}
 
-### 5. Cấu hình OAuth khác (Google, GitHub, GitLab, Gitea)
+### 5. Cấu hình LDAP
 
-Mỗi nhà cung cấp OAuth có trang cấu hình riêng với trường **Client ID** và **Client Secret**. Quy trình chung:
+Nhấn **Configure** trên thẻ LDAP → điền các trường máy chủ LDAP → **Save changes**:
 
-1. Nhấn **Configure** trên thẻ tương ứng.
-2. Điền Client ID và Client Secret lấy từ console của nhà cung cấp.
-3. Nhấn **Save changes** và quay lại trang Authentication.
+| Trường               | Mô tả                                                                  |
+| -------------------- | ---------------------------------------------------------------------- |
+| **Server URI**       | Địa chỉ máy chủ LDAP (vd: `ldap://ad.example.com:389`)                  |
+| **Bind DN**          | DN của tài khoản dịch vụ dùng để tra cứu người dùng                    |
+| **Bind password**    | Mật khẩu tài khoản dịch vụ — được lưu mã hóa                           |
+| **User search base** | Base DN để tìm người dùng (vd: `OU=Users,DC=example,DC=com`)           |
+| **User filter**      | Bộ lọc tìm người dùng, dùng `%(user)s` thay cho tên đăng nhập          |
 
-### 6. Cấu hình LDAP
-
-Tương tự OAuth: nhấn **Configure** → điền thông tin máy chủ LDAP (host, port, bind DN, base DN, filter...) → **Save changes**.
+Bật thêm toggle **Use STARTTLS** nếu máy chủ yêu cầu mã hóa kết nối.
 
 ## Mẹo & lưu ý
 

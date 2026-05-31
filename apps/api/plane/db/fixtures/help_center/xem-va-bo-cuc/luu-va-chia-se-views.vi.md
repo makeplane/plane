@@ -15,59 +15,59 @@ status: published
 
 ## Khi nào dùng / Yêu cầu
 
-| Loại View                  | Ai tạo được                               | Ai xem được                    |
-| -------------------------- | ----------------------------------------- | ------------------------------ |
-| View dự án — **Công khai** | Thành viên dự án (vai trò Member trở lên) | Toàn bộ thành viên dự án       |
-| View dự án — **Riêng tư**  | Bất kỳ thành viên nào                     | Chỉ người tạo                  |
-| Global View                | Thành viên workspace (Admin hoặc Member)  | Toàn workspace (nếu công khai) |
+| Loại View   | Ai tạo được                                 | Ai xem được              |
+| ----------- | ------------------------------------------- | ------------------------ |
+| View dự án  | Thành viên dự án (vai trò Thành viên trở lên) | Toàn bộ thành viên dự án |
+| Global View | Thành viên workspace (Quản trị viên hoặc Thành viên) | Toàn workspace   |
+
+> Hiện mọi View đều hiển thị cho toàn bộ thành viên trong phạm vi của nó (View dự án: trong dự án; Global View: trong workspace). Bản đang chạy chưa hỗ trợ tạo View riêng tư qua giao diện.
 
 ## Các bước
 
 ### Tạo View dự án
 
 1. Mở dự án → vào mục **Views** (biểu tượng kính mắt) ở thanh điều hướng trái.
-2. Nhấn **+ Tạo View** (hoặc nút **+** góc trên phải).
+2. Nhấn **Add view** (hoặc nút **+** góc trên phải).
 3. Điền tên, mô tả (tùy chọn) và chọn **Icon** đại diện.
-4. Chọn **quyền truy cập**: Công khai (Public) hoặc Riêng tư (Private).
-5. Chọn **bố cục mặc định** (List, Kanban, v.v.).
-6. Cấu hình **Bộ lọc** (Filters) và **Hiển thị** (Display) theo nhu cầu.
-7. Nhấn **Tạo View**.
+4. Chọn **bố cục mặc định** (List, Kanban, v.v.).
+5. Cấu hình **Bộ lọc** (Filters) và **Hiển thị** (Display) theo nhu cầu.
+6. Nhấn **Tạo chế độ xem** để lưu.
 
 {{screenshot:luu-va-chia-se-views-project-view-form}}
 
 ### Tạo Global View
 
-1. Từ thanh bên trái, nhấn **Workspace Views** (hoặc vào `/{workspace}/workspace-views`).
+1. Từ thanh bên trái, nhấn mục **Chế độ xem** (Views ở cấp workspace; đường dẫn `/{workspace}/workspace-views`).
 2. Trên thanh tab phía trên, nhấn biểu tượng **+** bên phải danh sách tab.
 3. Điền tên, mô tả, chọn bộ lọc đa dự án (có thể lọc theo nhiều dự án, trạng thái, người dùng cùng lúc).
-4. Nhấn **Tạo View**.
+4. Nhấn **Tạo chế độ xem** để lưu.
 
 {{screenshot:luu-va-chia-se-views-global-view-create}}
 
-> Global View mặc định sẵn có: **Tất cả công việc**, **Công việc của tôi**, **Được tạo bởi tôi**, **Đề cập đến tôi**. Các view này không thể xóa.
+> Global View không có tùy chọn chọn bố cục khi tạo (khác View dự án); mặc định hiển thị dạng **Bảng tính** (Spreadsheet).
+>
+> Global View mặc định sẵn có: **Tất cả mục công việc**, **Đã giao**, **Đã tạo**, **Đã đăng ký**. Các view này không thể xóa.
 
 ### Mở và dùng lại View đã lưu
 
 - **View dự án**: Mở dự án → mục **Views** → nhấp vào tên view.
-- **Global View**: Nhấp vào tab tên view trên thanh **Workspace Views**.
+- **Global View**: Nhấp vào tab tên view trên thanh **Chế độ xem** (Views ở cấp workspace).
 
 Mỗi lần mở, hệ thống áp dụng ngay bộ lọc + bố cục đã lưu.
 
-### Chỉnh sửa hoặc xóa View
+> Với **View dự án**, nhấn biểu tượng **ngôi sao** bên cạnh view để thêm vào mục yêu thích, giúp truy cập nhanh từ thanh bên.
+
+### Chỉnh sửa, sao chép liên kết hoặc xóa View
 
 1. Tìm view trong danh sách (Views dự án) hoặc tab (Global View).
-2. Nhấn menu **···** (ba chấm) bên cạnh tên.
-3. Chọn **Chỉnh sửa** để mở lại form; hoặc **Xóa** (xác nhận) để xóa.
+2. Nhấn menu **···** (ba chấm) bên cạnh tên. Menu gồm: **Chỉnh sửa**, **Mở trong tab mới**, **Sao chép liên kết**, **Xóa**.
+3. Chọn **Chỉnh sửa** để mở lại form; **Sao chép liên kết** để chia sẻ view cho đồng nghiệp; hoặc **Xóa** (xác nhận) để xóa.
 
-> Chỉ người tạo hoặc Admin mới có thể sửa/xóa view công khai. View mặc định (Default) không thể sửa/xóa.
+> **Chỉ người tạo** mới sửa được view. **Người tạo hoặc Quản trị viên** có thể xóa view. View mặc định (Default, có biểu tượng khóa) do hệ thống tạo sẵn cho mỗi dự án — không thể tự đặt view khác làm mặc định và cũng không thể sửa/xóa view mặc định.
 
-### Đặt View làm mặc định
+### Xuất Excel
 
-View mặc định sẽ mở tự động khi bạn vào trang Views của dự án. Trong menu **···** → chọn **Đặt làm mặc định** (Set as default).
-
-### Xuất Excel từ Global View
-
-Khi đang xem một Global View, nhấn nút **Xuất Excel** (Export) trên thanh tiêu đề. File `.xlsx` sẽ được tải xuống máy bạn, chứa tất cả công việc đang hiển thị trong view — bao gồm các cột SHBVN như Phòng ban, Danh mục, Tổng giờ công.
+Tính năng **Xuất** có ở **cả Global View và View dự án** (tại trang chi tiết view). Khi đang xem view, nhấn nút **Xuất** trên thanh tiêu đề. File `.xlsx` sẽ được tải xuống máy bạn, chứa tất cả công việc đang hiển thị trong view — bao gồm các cột SHBVN như **Bộ phận**, **Danh mục chính/phụ**, **Thời gian ghi**.
 
 > Nếu view có hơn 500 công việc, hệ thống sẽ hiện cảnh báo trước khi xuất để tránh chờ lâu.
 
@@ -75,11 +75,10 @@ Khi đang xem một Global View, nhấn nút **Xuất Excel** (Export) trên tha
 
 ## Mẹo & lưu ý
 
-- **View riêng tư** chỉ có bạn thấy — phù hợp khi bạn muốn lọc "việc của mình hôm nay" mà không muốn chia sẻ với nhóm.
 - **Global View** lọc được công việc từ nhiều dự án; View dự án chỉ hiện công việc trong một dự án.
-- Bộ lọc trong View là **tĩnh** — nếu bạn thêm công việc mới thỏa điều kiện, chúng tự động xuất hiện trong view; không cần cập nhật thủ công.
+- **Định nghĩa bộ lọc** của View được lưu cố định, nhưng **áp dụng động** mỗi lần mở: thêm công việc mới thỏa điều kiện thì chúng tự xuất hiện, không cần cập nhật thủ công.
 - Thay đổi bộ lọc khi đang xem View **không tự động lưu** lại vào View đó — bạn phải nhấn Chỉnh sửa → lưu để cập nhật.
-- Tính năng **Xuất Excel** chỉ có ở Global View, không có ở View dự án.
+- Tính năng **Xuất** ra Excel có ở **cả Global View và View dự án**.
 
 ## Liên quan
 

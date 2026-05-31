@@ -41,13 +41,15 @@ Gắn một hoặc nhiều nhãn màu để phân loại nội dung. Nhãn do Ad
 
 ### Lý do thay đổi ngày (SHBVN)
 
-Khi bạn **thay đổi** ngày đến hạn (hoặc ngày bắt đầu) của một công việc **đã có ngày từ trước**, hệ thống yêu cầu nhập **lý do**. Quy tắc này giúp bộ phận quản lý theo dõi các thay đổi kế hoạch.
+Khi bạn **thay đổi** ngày đến hạn (hoặc ngày hoàn thành) của một công việc **đã có ngày từ trước**, hệ thống yêu cầu nhập **lý do**. Quy tắc này giúp bộ phận quản lý theo dõi các thay đổi kế hoạch.
 
 1. Chọn ngày mới trong bộ chọn ngày.
 2. Hộp thoại **Lý do thay đổi** xuất hiện — nhập lý do (ví dụ: _Chờ phê duyệt từ Ban giám đốc_).
 3. Bấm **Xác nhận** để lưu.
 
-> Việc đặt ngày **lần đầu** (từ trống sang có ngày) không yêu cầu lý do. Chỉ việc **thay đổi** ngày đã có mới cần.
+> Quy tắc nhập lý do chỉ áp dụng cho **ngày đến hạn** và **ngày hoàn thành** — **không** áp dụng cho ngày bắt đầu. Việc đặt ngày **lần đầu** (từ trống sang có ngày) cũng không yêu cầu lý do; chỉ việc **thay đổi** ngày đã có mới cần.
+>
+> Quy tắc này vẫn áp dụng khi cập nhật hàng loạt ở chế độ **Spreadsheet** — đổi ngày đến hạn trong lưới vẫn bị hỏi lý do.
 
 {{screenshot:ly-do-thay-doi-ngay}}
 
@@ -57,23 +59,31 @@ Khi bạn **thay đổi** ngày đến hạn (hoặc ngày bắt đầu) của m
 
 Trường **Danh mục** (Task Category) giúp phân loại mục đích công việc theo cấu trúc tổ chức ngân hàng (ví dụ: _Vận hành_, _Phát triển kinh doanh_, _Tuân thủ_). Danh mục do Admin instance cấu hình.
 
-- Bấm vào trường **Danh mục** trong sidebar để chọn.
+- Danh mục có **hai cấp**: chọn **Danh mục chính** trước trong sidebar; nếu danh mục chính có danh mục con thì hiện thêm trường **Danh mục con** để chọn.
+- Đổi danh mục chính sẽ **xóa** lựa chọn danh mục con đang có.
+- Trường Danh mục chỉ hiển thị khi workspace đã cấu hình ít nhất một danh mục chính (hoặc công việc đã có sẵn giá trị) — nếu workspace chưa cấu hình danh mục, bạn sẽ không thấy trường này.
 - Danh mục ảnh hưởng đến báo cáo Worklog và bảng Head Office Dashboard.
 
 ---
 
 ## Tần suất lặp (Frequency)
 
-Công việc định kỳ có thể gán **tần suất lặp**: Hằng ngày / Hằng tuần / Hằng tháng / Hằng quý / Hằng năm. Khi công việc hoàn thành, hệ thống tự tạo công việc tiếp theo theo chu kỳ.
+Công việc định kỳ có thể gán **tần suất lặp**: Hằng ngày / Hai tuần một lần / Hằng tuần / Hằng tháng / Hằng quý / Nửa năm / Hằng năm / Đột xuất (Ad-hoc). Tần suất là **nhãn phân loại** cho công việc định kỳ, dùng để lọc và báo cáo.
 
 - Bấm trường **Tần suất** trong sidebar → chọn chu kỳ.
-- Để huỷ lặp, chọn **Không lặp**.
+- Để bỏ tần suất, chọn **Không có** (None).
+
+> Lưu ý: tần suất chỉ là nhãn phân loại — hệ thống **không** tự tạo công việc của kỳ tiếp theo. Bạn vẫn cần tạo công việc cho mỗi kỳ thủ công.
 
 ---
 
 ## Thời điểm hoàn thành (Completed At)
 
-Trường chỉ đọc — ghi lại **ngày giờ** công việc chuyển sang trạng thái _Completed_. Dùng để tính thời gian xử lý thực tế trong báo cáo.
+Ghi lại **ngày giờ** công việc hoàn thành — dùng để tính thời gian xử lý thực tế trong báo cáo. Trường này chỉ xuất hiện khi công việc đang ở trạng thái thuộc nhóm **Hoàn thành** (Completed).
+
+- Quản trị viên và Thành viên có thể chỉnh sửa thủ công ngày giờ hoàn thành.
+- Giống ngày đến hạn, **mỗi lần thay đổi** giá trị đã có đều yêu cầu nhập **lý do**.
+- Trường có thể bị khóa theo [Quyền chỉnh sửa trường](/help/a/phan-quyen-truong-du-lieu); khi bị khóa và đã có giá trị, trường hiển thị dạng chỉ đọc.
 
 ---
 
@@ -83,7 +93,7 @@ Trường chỉ đọc — ghi lại **ngày giờ** công việc chuyển sang 
 
 ## Mẹo & lưu ý
 
-- Một số trường có thể bị **khoá** theo vai trò của bạn (xem [Phân quyền theo trường](/help/a/phan-quyen-truong-du-lieu)) — trường bị khoá hiển thị tooltip "Trường bị khoá".
+- Một số trường có thể bị **khoá** theo vai trò của bạn (xem [Phân quyền theo trường](/help/a/phan-quyen-truong-du-lieu)) — trường bị khoá hiển thị dạng chỉ đọc với tooltip "Bị khóa bởi quản trị viên dự án".
 - Bạn có thể sửa nhiều thuộc tính cùng lúc từ chế độ **Spreadsheet** — tiện cho việc cập nhật hàng loạt.
 
 ## Liên quan

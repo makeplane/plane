@@ -20,7 +20,7 @@ Trang Bảo mật cho phép bạn đổi mật khẩu đăng nhập Shinhan Work
 
 ### Đổi mật khẩu
 
-1. Nhấn **ảnh đại diện** → **Cài đặt tài khoản** → chọn tab **Bảo mật** trong menu bên trái.
+1. Nhấn **ảnh đại diện** → chọn **Cài đặt** để mở cửa sổ Cài đặt hồ sơ → chọn tab **Bảo mật** trong menu bên trái.
 2. Điền vào form đổi mật khẩu:
    - **Mật khẩu hiện tại** — bắt buộc nếu tài khoản đã có mật khẩu trước đó.
    - **Mật khẩu mới** — phải đạt đủ độ mạnh (xem thanh chỉ báo phía dưới ô nhập).
@@ -33,13 +33,14 @@ Trang Bảo mật cho phép bạn đổi mật khẩu đăng nhập Shinhan Work
 
 ### Yêu cầu mật khẩu hợp lệ
 
-Thanh **Độ mạnh mật khẩu** hiển thị trực tiếp khi bạn gõ. Mật khẩu phải:
+Thanh **Độ mạnh mật khẩu** hiển thị khi mật khẩu chưa hợp lệ (thông điệp bằng tiếng Anh: _Password is weak_ / _Password is strong_); khi mật khẩu đạt yêu cầu, thanh này ẩn đi. Mật khẩu phải:
 
 - Có ít nhất **8 ký tự**.
-- Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt để đạt mức **Mạnh**.
+- Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt.
 - **Khác hoàn toàn** với mật khẩu hiện tại — hệ thống sẽ báo lỗi nếu trùng.
+- **Tránh mật khẩu phổ biến/dễ đoán**: dù đủ ký tự theo quy tắc trên, hệ thống vẫn có thể từ chối với lỗi _mật khẩu quá yếu_ (ví dụ `Password1!`). Nên chọn chuỗi không theo từ điển hay khuôn mẫu dễ đoán.
 
-> Nút **Đổi mật khẩu** chỉ kích hoạt khi tất cả điều kiện trên được thỏa mãn và hai ô mật khẩu mới khớp nhau.
+> Nút **Đổi mật khẩu** chỉ kích hoạt khi các điều kiện ký tự được thỏa mãn và hai ô mật khẩu mới khớp nhau.
 
 {{screenshot:bao-mat-password-strength}}
 
@@ -57,6 +58,8 @@ Nhấn biểu tượng **mắt** ở phía phải mỗi ô nhập để chuyển
    - Bước 1: nhập email mới.
    - Bước 2: nhập mã xác minh gửi đến email mới.
 
+> Sau khi xác minh thành công, hệ thống **đăng xuất phiên hiện tại** — bạn cần đăng nhập lại bằng **email mới**. (Khác với đổi mật khẩu: đổi mật khẩu không đăng xuất bạn.)
+>
 > Liên kết đổi email chỉ xuất hiện khi quản trị viên đã bật tính năng gửi email (SMTP). Nếu không thấy liên kết, liên hệ quản trị viên.
 
 ## Mẹo & lưu ý

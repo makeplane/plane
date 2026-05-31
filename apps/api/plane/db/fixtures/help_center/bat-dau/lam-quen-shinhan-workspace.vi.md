@@ -26,8 +26,8 @@ Shinhan Workspace tổ chức công việc theo ba cấp:
 
 Khi đăng nhập, bạn sẽ thấy bố cục chính gồm:
 
-1. **App Rail** (thanh biểu tượng bên trái ngoài cùng) — chuyển nhanh giữa các mục chính: Trang chủ, Hộp thư, Công việc của bạn, Ghi chú, Nháp, Dự án.
-2. **Thanh bên trái** (Sidebar) — hiển thị danh sách dự án và điều hướng trong workspace hiện tại.
+1. **Thanh điều hướng trên cùng** — chứa menu Workspace, ô tìm kiếm (Power K), biểu tượng **Hộp thư** (thông báo), nút **Trợ giúp** và menu người dùng (ảnh đại diện) ở góc trên bên phải.
+2. **Thanh bên trái** (Sidebar) — chứa toàn bộ điều hướng: Trang chủ, các mục cá nhân (**Ghi chú nhanh**, **Công việc của tôi**, **Bản nháp**) và danh sách **Nhóm/Dự án** trong workspace hiện tại.
 3. **Vùng nội dung chính** — nơi hiển thị danh sách công việc, bảng Kanban, Gantt, lịch, trang tài liệu, v.v.
 4. **Trang chủ** — màn hình chào với lời chào theo giờ, các widget tiện ích (Quick Links, Hoạt động gần đây, My Stickies).
 
@@ -36,18 +36,19 @@ Khi đăng nhập, bạn sẽ thấy bố cục chính gồm:
 {{screenshot:lam-quen-tao-cong-viec-dau-tien}}
 
 1. Trên thanh bên trái, chọn một **dự án** bạn muốn làm việc.
-2. Nhấn nút **+ Thêm công việc** (hoặc phím tắt **C**) để mở hộp thoại tạo nhanh.
-3. Điền **tiêu đề** công việc — đây là trường bắt buộc duy nhất.
-4. Tùy chọn: chọn **trạng thái**, **người được giao**, **mức ưu tiên**, **ngày đến hạn**.
-5. Nhấn **Lưu** hoặc **Enter** để tạo. Công việc xuất hiện ngay trong danh sách.
+2. Nhấn nút **+ Mục công việc mới** (hoặc phím tắt **N rồi I**).
+3. Có hai cách tạo:
+   - **Tạo nhanh (inline):** ô nhập cuối danh sách/cột chỉ cần điền **tiêu đề** rồi nhấn **Enter**. Công việc xuất hiện ngay; nhấn Enter tiếp để thêm mục khác.
+   - **Tạo đầy đủ (cửa sổ):** mở cửa sổ tạo có đủ các trường tùy chọn — **trạng thái**, **người được giao**, **mức ưu tiên**, **ngày đến hạn**, mô tả, nhãn...
+4. Tiêu đề là trường bắt buộc, tối đa **255 ký tự**.
 
-> **Mẹo:** Nhấn **Shift + Enter** trong hộp thoại tạo nhanh để mở trang chi tiết đầy đủ trước khi lưu.
+> **Mẹo:** Form tạo nhanh chỉ nhập tiêu đề; khi cần điền thêm chi tiết, dùng cửa sổ tạo đầy đủ.
 
 ## Điều hướng cơ bản
 
 - **Chuyển workspace:** Nhấn tên workspace ở góc trên thanh bên, chọn workspace khác từ danh sách thả xuống.
 - **Tìm nhanh:** Nhấn **Cmd+K** (macOS) hoặc **Ctrl+K** (Windows) để mở Command Palette — gõ tên dự án, công việc, hoặc trang để điều hướng ngay lập tức.
-- **Xem công việc của mình:** Nhấn biểu tượng **Công việc của bạn** trên App Rail để xem tất cả công việc bạn đang được giao, phân theo trạng thái và ưu tiên.
+- **Xem công việc của mình:** Nhấn **Công việc của tôi** trên thanh bên (sidebar) để xem tất cả công việc bạn đang được giao, phân theo trạng thái và ưu tiên.
 
 ## Mẹo & lưu ý
 

@@ -14,9 +14,9 @@ Shinhan Workspace tự động lưu từng phiên bản chỉnh sửa của tran
 
 ## Khi nào dùng / Yêu cầu
 
-- **Member** trở lên: xem lịch sử và xuất trang.
-- **Người tạo trang** hoặc **Admin dự án**: được phép khôi phục về phiên bản cũ (trang không bị khóa).
-- Trang bị **khóa** sẽ không cho phép khôi phục — cần mở khóa trước.
+- **Thành viên** trở lên: xem lịch sử và xuất trang.
+- **Khôi phục** phiên bản cũ: với trang **Công khai**, bất kỳ Thành viên trở lên đều khôi phục được; với trang **Riêng tư**, chỉ người tạo trang.
+- Trang đang bị **khóa** hoặc đã **lưu trữ (archived)** sẽ không cho phép khôi phục — cần mở khóa hoặc khôi phục trang khỏi lưu trữ trước.
 
 ---
 
@@ -27,8 +27,10 @@ Shinhan Workspace tự động lưu từng phiên bản chỉnh sửa của tran
 Bảng điều hướng nằm bên phải trình soạn thảo, gồm ba tab: **Outline** (mục lục), **Info** (thông tin & lịch sử phiên bản), **Assets** (tài nguyên đính kèm).
 
 1. Mở trang cần xem.
-2. Nhấn biểu tượng **bảng điều hướng** ở góc trên bên phải (hoặc nhấn **...** → **Version history**).
-3. Tab **Info** tự động được chọn, hiển thị danh sách các phiên bản đã lưu.
+2. Mở bảng điều hướng theo một trong hai cách:
+   - Nhấn **...** (More options) → **Version history**: bảng mở sẵn ở tab **Info** (lịch sử phiên bản).
+   - Nhấn biểu tượng **bảng điều hướng** ở góc trên bên phải: bảng mở ở tab **Outline** — hãy nhấn sang tab **Info** để xem lịch sử.
+3. Trong tab **Info**, danh sách các phiên bản đã lưu hiển thị ở phần **Version history**.
 
 {{screenshot:page-navigation-pane-info-tab}}
 
@@ -43,10 +45,9 @@ Bảng điều hướng nằm bên phải trình soạn thảo, gồm ba tab: **
 ### Khôi phục về phiên bản cũ
 
 1. Sau khi xem phiên bản cần khôi phục, nhấn nút **Restore** ở góc trên bên phải vùng xem phiên bản.
-2. Hộp thoại xác nhận hiện ra — nhấn **Restore** để áp dụng.
-3. Nội dung trang hiện tại bị thay thế bằng nội dung của phiên bản đã chọn; Shinhan Workspace tự động lưu một phiên bản mới tại thời điểm khôi phục.
+2. Nội dung phiên bản đó được áp dụng **ngay lập tức** vào trang (không có bước xác nhận) — hệ thống hiện thông báo _Page version restored._ Nội dung trang hiện tại bị thay bằng nội dung phiên bản đã chọn.
 
-> **Lưu ý:** Khôi phục không xóa các phiên bản trung gian — bạn vẫn có thể quay lại xem chúng sau.
+> **Lưu ý:** Không có nút Hoàn tác (Undo) riêng cho thao tác khôi phục — hãy chắc chắn trước khi nhấn **Restore**. Nếu cần quay lại, hãy khôi phục tiếp về phiên bản trước đó trong lịch sử (miễn là phiên bản đó vẫn còn trong danh sách 20 phiên bản gần nhất; phiên bản quá cũ có thể đã bị tự động xóa).
 
 ### Xem mục lục trang (Outline)
 
@@ -57,7 +58,8 @@ Bảng điều hướng nằm bên phải trình soạn thảo, gồm ba tab: **
 ### Xem tài nguyên đính kèm (Assets)
 
 1. Nhấn tab **Assets** để xem danh sách ảnh và tệp đã nhúng vào trang.
-2. Nhấn vào một ảnh để xem trước; nhấn **Copy link** để lấy đường dẫn trực tiếp.
+2. Nhấn vào một mục ảnh để nhảy tới vị trí của ảnh đó trong trang.
+3. Rê chuột lên một mục và nhấn nút **Download** (Tải xuống) để lưu ảnh về máy.
 
 ### Xuất trang
 
@@ -93,10 +95,11 @@ Bảng điều hướng nằm bên phải trình soạn thảo, gồm ba tab: **
 
 ## Mẹo & lưu ý
 
-- **Lịch sử phiên bản không giới hạn số lượng** — Shinhan Workspace lưu mọi lần chỉnh sửa tự động; danh sách có thể rất dài với trang được chỉnh sửa thường xuyên.
+- **Giới hạn 20 phiên bản:** Shinhan Workspace chỉ lưu **tối đa 20 phiên bản gần nhất** cho mỗi trang. Khi vượt quá, phiên bản cũ nhất sẽ tự động bị xóa — nếu cần lưu trữ lâu dài một mốc quan trọng, hãy xuất trang ra PDF/Markdown trước khi nó bị đẩy ra khỏi danh sách.
+- **Sao chép Markdown nhanh:** Ngoài Export, menu **...** còn có **Copy markdown** — sao chép toàn bộ nội dung trang dưới dạng Markdown vào bộ nhớ tạm để dán nhanh sang công cụ khác mà không cần tải file.
 - **PDF không có alt-text cho ảnh:** Ảnh nhúng vào trang hiện không có mô tả thay thế (alt-text) khi xuất PDF — cần bổ sung thủ công nếu tài liệu yêu cầu tiêu chuẩn accessibility.
 - **Lịch sử chỉ xem, không chỉnh sửa:** Giao diện xem phiên bản cũ luôn ở chế độ **View only** — phải nhấn Restore mới áp dụng vào trang chính.
-- **Trang bị khóa:** Nút Restore bị ẩn khi trang đang khóa. Mở khóa trước (xem bài [Quản lý & chia sẻ trang](/help/a/quan-ly-va-chia-se-trang)), sau đó mới khôi phục được.
+- **Trang bị khóa hoặc đã lưu trữ:** Nút Restore bị ẩn khi trang đang khóa hoặc đã lưu trữ. Mở khóa hoặc khôi phục trang khỏi lưu trữ trước (xem bài [Quản lý & chia sẻ trang](/help/a/quan-ly-va-chia-se-trang)), sau đó mới khôi phục phiên bản được.
 - **Xuất Markdown:** Nội dung được sao chép nguyên bản theo cú pháp Markdown; ảnh xuất thành thẻ `![](url)` trỏ về URL gốc trên server — cần internet để hiển thị ảnh.
 
 ---

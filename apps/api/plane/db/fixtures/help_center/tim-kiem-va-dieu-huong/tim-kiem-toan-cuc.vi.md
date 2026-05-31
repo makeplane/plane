@@ -8,7 +8,7 @@ status: published
 
 ## Mục đích
 
-Tìm kiếm toàn cục cho phép bạn tra cứu nhanh **công việc, dự án, trang tài liệu, cycle, module, view và nhãn** trong toàn bộ workspace — chỉ bằng vài từ khóa, không cần nhớ tên đầy đủ hay biết công việc thuộc dự án nào.
+Tìm kiếm toàn cục cho phép bạn tra cứu nhanh **công việc, dự án, trang tài liệu, cycle, module và view** trong toàn bộ workspace — chỉ bằng vài từ khóa, không cần nhớ tên đầy đủ hay biết công việc thuộc dự án nào.
 
 {{screenshot:tim-kiem-toan-cuc}}
 
@@ -39,17 +39,17 @@ Kết quả được **nhóm theo loại**:
 | **Cycles**             | Tên cycle                               |
 | **Modules**            | Tên module                              |
 | **Views**              | Tên view đã lưu                         |
-| **Workspace**          | Thông tin cấp workspace                 |
+| **Workspaces**         | Tên workspace khớp từ khóa              |
 
 Mỗi kết quả hiển thị tên và thuộc dự án/nhóm nào. Click vào để điều hướng trực tiếp.
 
 ### 3. Tìm theo mã định danh
 
-Nếu bạn biết mã công việc (ví dụ: `SHB-456`), gõ trực tiếp mã đó vào ô tìm kiếm — hệ thống sẽ trả về đúng công việc đó ở đầu kết quả.
+Nếu bạn biết mã công việc (ví dụ: `SHB-456`), gõ trực tiếp mã đó — hoặc chỉ gõ phần số `456` — vào ô tìm kiếm. Hệ thống khớp theo số thứ tự của công việc và trả về đúng công việc đó trong kết quả.
 
 ### 4. Chuyển phạm vi tìm kiếm
 
-Mặc định, tìm kiếm chạy ở cấp **workspace** (toàn bộ dự án bạn tham gia). Khi đang ở trong một dự án cụ thể, bạn có thể thu hẹp phạm vi chỉ trong dự án đó bằng toggle **Workspace / Project** ở chân bảng lệnh.
+Khi **không** ở trong dự án nào, tìm kiếm luôn quét toàn bộ workspace (mọi dự án bạn tham gia). Khi đang ở trong một dự án cụ thể, mặc định tìm kiếm **chỉ trong dự án đó**; bật công tắc **Cấp không gian làm việc** (Workspace level) ở chân bảng lệnh để mở rộng tìm kiếm ra toàn workspace. Công tắc chỉ khả dụng khi bạn đang ở trong một dự án.
 
 ### 5. Điều hướng kết quả bằng phím
 
@@ -67,6 +67,8 @@ Mặc định, tìm kiếm chạy ở cấp **workspace** (toàn bộ dự án b
 - **Độ trễ debounce 500ms**: hệ thống chờ bạn ngừng gõ trước khi gửi yêu cầu tìm kiếm — tránh tải quá nhiều lần.
 - **Không tìm nội dung bên trong trang tài liệu**: chỉ tìm theo _tiêu đề_. Để tìm nội dung bên trong trang, mở trang và dùng `Ctrl/Cmd + F` của trình duyệt.
 - **Phạm vi giới hạn bởi quyền**: bạn chỉ thấy kết quả từ các dự án và workspace mà bạn được phép truy cập.
+- **Không bao gồm mục đã lưu trữ**: dự án, công việc, cycle, module, view hay trang đã được lưu trữ (archived) sẽ không xuất hiện trong kết quả.
+- **Giới hạn 100 công việc**: danh sách công việc trả về tối đa 100 kết quả. Nếu không thấy công việc cần tìm, hãy gõ từ khóa cụ thể hơn để thu hẹp.
 - Nếu từ khóa để trống, bảng kết quả không hiện gì — cần gõ ít nhất 1 ký tự.
 - Kết quả không được lưu — mỗi lần mở bảng lệnh mới là tìm kiếm mới.
 
@@ -75,5 +77,5 @@ Mặc định, tìm kiếm chạy ở cấp **workspace** (toàn bộ dự án b
 ## Liên quan
 
 - [Command Palette (Cmd+K)](/help/a/command-palette-cmd-k)
-- [Điều hướng thanh bên & App Rail](/help/a/dieu-huong-thanh-ben-va-app-rail)
+- [Thanh bên & Thanh điều hướng trên cùng](/help/a/dieu-huong-thanh-ben-va-app-rail)
 - [Lưu & chia sẻ Views](/help/a/luu-va-chia-se-views)

@@ -14,9 +14,10 @@ Trang (Pages) là nơi soạn thảo tài liệu nội bộ — biên bản họ
 
 ## Khi nào dùng / Yêu cầu
 
-- Cần quyền **Member** trở lên trong dự án để tạo và chỉnh sửa trang.
-- Thành viên có quyền **Guest (Khách)** chỉ đọc, không soạn thảo.
+- Cần quyền **Thành viên** trở lên trong dự án để tạo và chỉnh sửa trang.
+- Thành viên có vai trò **Khách** chỉ đọc, không soạn thảo.
 - Trang được tạo trong một dự án — hãy vào đúng dự án trước khi bắt đầu.
+- Nếu không thấy mục **Pages** trong dự án, có thể Quản trị viên dự án đã tắt tính năng Pages; liên hệ Quản trị viên để bật trong cài đặt dự án.
 
 ---
 
@@ -36,7 +37,7 @@ Trang (Pages) là nơi soạn thảo tài liệu nội bộ — biên bản họ
 2. Cửa sổ tạo trang mở ra — nhập tiêu đề và chọn quyền truy cập:
    - **Public** — tất cả thành viên dự án đều thấy.
    - **Private** — chỉ mình bạn thấy.
-3. Nhấn **Create page** để mở trình soạn thảo.
+3. Nhấn **Create Page** để mở trình soạn thảo.
 
 {{screenshot:create-page-modal}}
 
@@ -47,7 +48,7 @@ Trình soạn thảo hỗ trợ các loại nội dung sau (gõ `/` để mở m
 | Loại nội dung                   | Cách dùng                           |
 | ------------------------------- | ----------------------------------- |
 | Văn bản thường                  | Gõ trực tiếp                        |
-| Tiêu đề (H1–H3)                 | Gõ `#` / `##` / `###` rồi nhấn Cách |
+| Tiêu đề (H1–H6)                 | Gõ `#` … `######` rồi nhấn Cách     |
 | Danh sách gạch đầu dòng         | Gõ `-` hoặc `*` rồi nhấn Cách       |
 | Danh sách đánh số               | Gõ `1.` rồi nhấn Cách               |
 | Danh sách công việc (checklist) | Gõ `[]` rồi nhấn Cách               |
@@ -62,7 +63,7 @@ Trình soạn thảo hỗ trợ các loại nội dung sau (gõ `/` để mở m
 ### Chỉnh tiêu đề và biểu tượng trang
 
 1. Nhấn vào **Untitled** ở đầu trang để đặt tiêu đề.
-2. Nhấn vào biểu tượng emoji bên cạnh tiêu đề để chọn icon đại diện cho trang.
+2. Rê chuột lên vùng đầu trang (phía trên tiêu đề) để hiện nút **Icon** (biểu tượng mặt cười) — nút này luôn hiển thị khi tiêu đề còn trống. Nhấn vào để chọn emoji hoặc icon đại diện cho trang; sau khi đã chọn, nhấn lại vào icon đó để đổi.
 
 ### Bật chế độ toàn chiều rộng
 
@@ -87,6 +88,8 @@ _Lưu ý: Sticky toolbar chỉ xuất hiện khi trang đang ở chế độ ch�
 - **Giới hạn dung lượng trang:** Khi trang đạt giới hạn nội dung, banner cảnh báo xuất hiện ở đầu trang — lúc này hãy tạo trang con mới hoặc chia nội dung sang trang khác để tiếp tục đồng bộ thời gian thực.
 - **Tiêu đề trang:** Để dễ tìm kiếm, hãy đặt tiêu đề rõ ràng và có từ khóa liên quan (ví dụ: "Biên bản họp tuần 22/2026 – Nhóm IT").
 - **Phím tắt:** Bôi đậm `Ctrl+B`, in nghiêng `Ctrl+I`, gạch chân `Ctrl+U`.
+- **Không gõ được?** Nếu trang đang bị **khóa** hoặc đã **lưu trữ**, trình soạn thảo chuyển sang chỉ đọc — kể cả Thành viên cũng không sửa được. Mở khóa hoặc khôi phục trang khỏi lưu trữ để soạn thảo lại.
+- **Trang Riêng tư:** Chỉ người tạo mới đọc và sửa được trang Riêng tư; các Thành viên khác không sửa được. Người tạo (hoặc Quản trị viên với trang Công khai) có thể chuyển trang giữa Công khai và Riêng tư.
 
 ---
 

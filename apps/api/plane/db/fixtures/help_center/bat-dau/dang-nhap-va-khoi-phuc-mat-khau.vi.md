@@ -26,16 +26,17 @@ Bài viết này hướng dẫn cách đăng nhập vào Shinhan Workspace bằn
 > - Mã nhân viên 8 chữ số → đăng nhập qua **Swing SSO** (nếu được bật) hoặc chuyển thành email nội bộ `sh[mã]@swing.shinhan.com`.
 > - Email đầy đủ → đăng nhập trực tiếp bằng mật khẩu hệ thống.
 > - Nếu LDAP được bật, có thể nhập thêm **username** LDAP.
+> - Nếu được bật, bạn cũng có thể đăng nhập bằng **mã dùng một lần** gửi qua email (magic link) thay vì mật khẩu — hữu ích cho lần đầu hoặc khi quên mật khẩu (mỗi giờ chỉ gửi được tối đa vài mã).
 
 ## Đặt mật khẩu lần đầu
 
 Nếu đây là lần đầu bạn truy cập và chưa có mật khẩu:
 
-1. Liên hệ quản trị viên hệ thống để được gửi **email kích hoạt tài khoản**.
-2. Mở email, nhấn liên kết **Set Password** trong thư.
+1. Quản trị viên cấp **mật khẩu ban đầu** khi tạo hoặc nhập tài khoản nhân viên (hoặc gửi liên kết đặt lại mật khẩu cho bạn).
+2. Khi đăng nhập lần đầu mà tài khoản chưa có mật khẩu, hệ thống đưa bạn tới trang **đặt mật khẩu** (`/accounts/set-password`).
 3. Nhập **mật khẩu mới** và **xác nhận mật khẩu** (hai ô phải khớp nhau).
-4. Hệ thống hiển thị **thanh đo độ mạnh mật khẩu** — mật khẩu phải đạt mức **Valid** (thường cần ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số).
-5. Nhấn **Update Password** để hoàn tất.
+4. Hệ thống hiển thị **thanh đo độ mạnh mật khẩu**. Mật khẩu phải có ít nhất **8 ký tự**, gồm **chữ hoa**, **chữ thường**, **chữ số** và **ít nhất 1 ký tự đặc biệt**; khi đủ điều kiện, thanh đo hiển thị **Password is strong** và nút mới bật.
+5. Nhấn **Set password** để hoàn tất.
 
 ## Quên mật khẩu
 
@@ -43,9 +44,9 @@ Nếu đây là lần đầu bạn truy cập và chưa có mật khẩu:
 
 1. Trên màn hình đăng nhập, nhấn liên kết **Forgot password?** (hiển thị bên dưới ô mật khẩu).
    - Nếu đã nhập mã nhân viên hoặc email ở bước trước, hệ thống tự điền email vào form quên mật khẩu.
-2. Trên trang **Forgot Password**, xác nhận địa chỉ email và nhấn **Send reset link**.
-3. Kiểm tra hộp thư — nhấn liên kết **Reset Password** trong email nhận được.
-4. Nhập **mật khẩu mới** và **xác nhận mật khẩu**, sau đó nhấn **Update Password**.
+2. Trên trang **Reset password**, xác nhận địa chỉ email và nhấn **Send reset link**.
+3. Kiểm tra hộp thư — nhấn liên kết **Reset password** trong email nhận được.
+4. Nhập **mật khẩu mới** và **xác nhận mật khẩu**, sau đó nhấn **Set password**.
 
 > **Lưu ý:** Liên kết đặt lại mật khẩu chỉ có hiệu lực trong một khoảng thời gian ngắn. Nếu hết hạn, thực hiện lại từ bước 1.
 >
@@ -53,15 +54,17 @@ Nếu đây là lần đầu bạn truy cập và chưa có mật khẩu:
 
 ## Đăng xuất
 
-1. Nhấn vào **ảnh đại diện** hoặc **tên** của bạn ở góc dưới thanh bên trái.
-2. Chọn **Sign Out** từ menu hiện ra.
+1. Nhấn vào **ảnh đại diện** của bạn ở **góc trên bên phải** màn hình (cạnh biểu tượng hộp thư và trợ giúp).
+2. Chọn **Sign out** từ menu hiện ra.
 
 > Luôn đăng xuất khi sử dụng máy tính chung hoặc rời khỏi bàn làm việc.
 
 ## Mẹo & lưu ý
 
 - Nếu Swing SSO đang được bật, nút **Forgot password?** có thể không hiển thị — mật khẩu được quản lý qua hệ thống SSO của ngân hàng, liên hệ IT để đặt lại.
-- Đăng nhập thất bại nhiều lần liên tiếp có thể khoá tài khoản tạm thời — liên hệ quản trị viên để mở khoá.
+- Nếu hệ thống chưa cấu hình gửi email (SMTP), liên kết **Forgot password?** sẽ chuyển thành một thông báo cho biết không thể gửi email đặt lại — khi đó hãy liên hệ quản trị viên IT thay vì chờ email.
+- Mật khẩu mới bắt buộc có **ít nhất 1 ký tự đặc biệt** (ngoài chữ hoa, chữ thường, chữ số và 8 ký tự) thì nút đặt mật khẩu mới bật.
+- Nếu gửi quá nhiều yêu cầu trong thời gian ngắn, hệ thống có thể tạm thời từ chối (lỗi **Too many requests**); chờ ít phút rồi thử lại.
 - Mật khẩu phân biệt chữ hoa/chữ thường.
 
 ## Liên quan
