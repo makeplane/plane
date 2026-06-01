@@ -6,6 +6,7 @@
 
 import { createRequire } from "module";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
 import { createKeyGenerator, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
@@ -50,10 +51,11 @@ Font.register({
   ],
 });
 
-// Resolve Vazirmatn font files from the fonts directory at the package root.
+// Resolve Vazirmatn font files relative to the compiled bundle (dist/start.js),
+// so the path is stable regardless of where the process is started from.
 // Place the woff files at apps/live/fonts/vazirmatn/ before starting the server.
 // Download from: https://github.com/rastikerdar/vazirmatn/releases
-const vazirmatnFontDir = path.resolve(process.cwd(), "fonts/vazirmatn");
+const vazirmatnFontDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../fonts/vazirmatn");
 
 Font.register({
   family: "Vazirmatn",
