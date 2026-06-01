@@ -47,6 +47,7 @@ export interface IHoIssueStore {
   isFetchingIssues: boolean;
   isFilterOptionsLoading: boolean;
   filterParams: Record<string, string>;
+  exportParams: Record<string, string>;
   error: string | null;
   currentPage: number;
   totalCount: number;
@@ -138,6 +139,7 @@ export class HoIssueStore implements IHoIssueStore {
       isFetchingIssues: observable,
       isFilterOptionsLoading: observable,
       filterParams: computed,
+      exportParams: computed,
       error: observable,
       currentPage: observable,
       totalCount: observable,
@@ -167,6 +169,13 @@ export class HoIssueStore implements IHoIssueStore {
 
   get filterParams(): Record<string, string> {
     return this._filterParams();
+  }
+
+  get exportParams(): Record<string, string> {
+    const visibleColumns = Object.entries(this.displayProperties)
+      .filter(([, visible]) => visible)
+      .map(([key]) => key);
+    return { ...this.filterParams, columns: visibleColumns.join(",") };
   }
 
   private _filterParams = (): Record<string, string> => {
