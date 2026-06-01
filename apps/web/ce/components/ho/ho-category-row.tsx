@@ -18,7 +18,7 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
 
   return (
     <tr
-      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
+      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group")}
     >
       <td
         className={cn(
@@ -34,13 +34,18 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate font-medium">{row.main_task_category_name || "—"}</div>
         {row.main_task_category_description && (
-          <div className="truncate text-xs text-custom-text-300 font-normal italic mt-0.5">
+          <div className="text-xs text-tertiary font-normal italic mt-0.5">
             {row.main_task_category_description}
           </div>
         )}
       </td>
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate">{row.sub_task_category_name || "—"}</div>
+        {row.sub_task_category_description && (
+          <div className="text-xs text-tertiary font-normal italic mt-0.5">
+            {row.sub_task_category_description}
+          </div>
+        )}
       </td>
     </tr>
   );

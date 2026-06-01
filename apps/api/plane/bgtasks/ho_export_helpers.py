@@ -158,6 +158,32 @@ _HEADERS = [
     "Reference Links",
 ]
 
+# Parallel to _HEADERS — maps frontend displayProperties keys to column indices.
+# "name" is always included (Work Items is never hidden in the UI).
+_COLUMN_KEYS = [
+    "department_name",
+    "project_name",
+    "main_task_category",
+    "sub_task_category",
+    "name",
+    "sub_issue_count",
+    "project_lead",
+    "assignee",
+    "bank_wide_project",
+    "priority",
+    "state",
+    "progress_tracking",
+    "modules",
+    "cycle",
+    "start_date",
+    "due_date",
+    "completed_date",
+    "total_log_time",
+    "reference_link",
+]
+
+_TOTAL_LOG_TIME_IDX = _COLUMN_KEYS.index("total_log_time")
+
 
 def _bulk_subtree_worklog_totals(issue_ids: list) -> dict:
     """Return {str(issue_id): total_minutes} for each issue including all descendants.
@@ -213,18 +239,31 @@ def _format_minutes(minutes) -> str:
     return f"{h}h {m:02d}m" if h else f"{m}m"
 
 
-def write_ho_workbook(wb, issues) -> int:
+def write_ho_workbook(wb, issues, columns=None) -> int:
     """Write all issues to a single 'Datasheet' sheet. Returns row count.
 
-    Materializes the queryset first so prefetch_related works, then computes
-    subtree worklog totals in one bulk CTE query.
+    columns: comma-separated frontend displayProperties keys. When provided, only
+    those columns are written. "name" (Work Items) is always included. When None,
+    all columns are exported.
     """
+    # Determine which column indices to include.
+    if columns:
+        requested = set(columns.split(",")) | {"name"}  # name/Work Items always present
+        active_indices = [i for i, k in enumerate(_COLUMN_KEYS) if k in requested]
+    else:
+        active_indices = list(range(len(_COLUMN_KEYS)))
+
     ws = wb.create_sheet(title="Datasheet")
-    ws.append(_HEADERS)
+    ws.append([_HEADERS[i] for i in active_indices])
 
     # Materialize so prefetch_related (assignees, modules, cycles) is applied.
     issue_list = list(issues)
-    subtree_totals = _bulk_subtree_worklog_totals([issue.id for issue in issue_list])
+
+    # Skip the expensive recursive CTE when Total Log Time is not exported.
+    if _TOTAL_LOG_TIME_IDX in active_indices:
+        subtree_totals = _bulk_subtree_worklog_totals([issue.id for issue in issue_list])
+    else:
+        subtree_totals = {}
 
     row_count = 0
     for issue in issue_list:
@@ -233,33 +272,32 @@ def write_ho_workbook(wb, issues) -> int:
         cycles = [ic.cycle for ic in issue.issue_cycle.all() if ic.cycle_id]
         cycle_name = cycles[0].name if cycles else "-"
 
-        ws.append(
-            [
-                issue.project.workspace.name if issue.project_id else "-",
-                issue.project.name if issue.project_id else "-",
-                issue.main_task_category.name if issue.main_task_category_id else "-",
-                issue.sub_task_category.name if issue.sub_task_category_id else "-",
-                issue.name or "-",
-                issue.sub_issues_count or 0,
-                (
-                    issue.project.project_lead.display_name
-                    if issue.project_id and issue.project.project_lead_id
-                    else "-"
-                ),
-                assignee_names,
-                "Y" if (issue.project_id and issue.project.is_bank_wide) else "N",
-                issue.priority or "-",
-                issue.state.name if issue.state_id else "-",
-                _progress_label(issue.target_date),
-                module_names,
-                cycle_name,
-                str(issue.start_date) if issue.start_date else "-",
-                str(issue.target_date) if issue.target_date else "-",
-                issue.completed_at.date().isoformat() if issue.completed_at else "-",
-                _format_minutes(subtree_totals.get(str(issue.id), 0)),
-                issue.reference_link_count or 0,
-            ]
-        )
+        full_row = [
+            issue.project.workspace.name if issue.project_id else "-",
+            issue.project.name if issue.project_id else "-",
+            issue.main_task_category.name if issue.main_task_category_id else "-",
+            issue.sub_task_category.name if issue.sub_task_category_id else "-",
+            issue.name or "-",
+            issue.sub_issues_count or 0,
+            (
+                issue.project.project_lead.display_name
+                if issue.project_id and issue.project.project_lead_id
+                else "-"
+            ),
+            assignee_names,
+            "Y" if (issue.project_id and issue.project.is_bank_wide) else "N",
+            issue.priority or "-",
+            issue.state.name if issue.state_id else "-",
+            _progress_label(issue.target_date),
+            module_names,
+            cycle_name,
+            str(issue.start_date) if issue.start_date else "-",
+            str(issue.target_date) if issue.target_date else "-",
+            issue.completed_at.date().isoformat() if issue.completed_at else "-",
+            _format_minutes(subtree_totals.get(str(issue.id), 0)),
+            issue.reference_link_count or 0,
+        ]
+        ws.append([full_row[i] for i in active_indices])
         row_count += 1
 
     return row_count
