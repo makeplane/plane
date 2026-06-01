@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 import type { IMainTaskCategory } from "@plane/types";
 import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useInstanceTaskCategory } from "@/hooks/store";
@@ -23,6 +24,7 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
   const { mainCategoryIds, mainCategories, deleteMainCategory } = useInstanceTaskCategory();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -42,8 +44,28 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
     return <div className="text-center py-12 text-tertiary text-13">No main categories yet. Create the first one.</div>;
   }
 
+  const q = searchQuery.toLowerCase();
+  const filteredIds = q
+    ? mainCategoryIds.filter((id) => {
+        const cat = mainCategories[id];
+        return cat.name.toLowerCase().includes(q) || (cat.code ?? "").toLowerCase().includes(q);
+      })
+    : mainCategoryIds;
+
   return (
     <>
+      <div className="space-y-2">
+        <Input
+          placeholder="Search by name or code..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
+        />
+        {filteredIds.length === 0 ? (
+          <div className="text-center py-8 text-tertiary text-13 rounded-lg border border-subtle bg-layer-1">
+            No categories match &quot;{searchQuery}&quot;.
+          </div>
+        ) : (
       <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
         <table className="w-full text-13">
           <thead>
@@ -57,7 +79,7 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle">
-            {mainCategoryIds.map((id) => {
+            {filteredIds.map((id) => {
               const cat = mainCategories[id];
               const isSelected = selectedMainId === id;
               return (
@@ -100,6 +122,8 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
             })}
           </tbody>
         </table>
+      </div>
+        )}
       </div>
 
       <Dialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)} modal>

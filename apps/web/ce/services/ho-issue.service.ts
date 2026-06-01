@@ -45,6 +45,7 @@ export type THoCategorySummary = {
   main_task_category_name: string | null;
   main_task_category_description: string | null;
   sub_task_category_name: string | null;
+  sub_task_category_description: string | null;
 };
 
 export type THoWorkspaceProject = {
