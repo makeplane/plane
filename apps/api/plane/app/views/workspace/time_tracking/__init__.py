@@ -11,6 +11,7 @@ from .cross_workspace import (
 from .summary import ProjectWorkLogSummaryEndpoint, WorkspaceWorkLogSummaryEndpoint
 from .timesheet_bulk import TimesheetBulkUpdateEndpoint
 from .timesheet_grid import TimesheetGridEndpoint
+from .timesheet_sub_issues import TimesheetSubIssuesEndpoint
 from .workspace_analytics_timesheet import WorkspaceAnalyticsTimesheetEndpoint
 from .workspace_capacity import WorkspaceCapacityEndpoint, WorkspaceCapacityDayDetailsEndpoint
 from .capacity_export import CapacityExportEndpoint
@@ -23,6 +24,7 @@ __all__ = [
     "ProjectWorkLogSummaryEndpoint",
     "WorkspaceWorkLogSummaryEndpoint",
     "TimesheetGridEndpoint",
+    "TimesheetSubIssuesEndpoint",
     "TimesheetBulkUpdateEndpoint",
     "WorkspaceAnalyticsTimesheetEndpoint",
     "WorkspaceCapacityEndpoint",

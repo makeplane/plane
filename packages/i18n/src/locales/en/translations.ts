@@ -439,6 +439,7 @@ export default {
   timesheet_week_of: "Week of",
   timesheet_this_week: "This Week",
   timesheet_total: "Total",
+  timesheet_show_sub_items: "Show sub-items",
   timesheet_coming_soon: "Coming in Phase 8",
   timesheet_save_success: "Timesheet saved",
   timesheet_no_issues: "No issues assigned for this week",

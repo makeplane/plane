@@ -1,0 +1,20 @@
+%% SHWS DC-DR — 2-layer replication (PG streaming + EMC storage)
+%% Nguồn chuẩn: ../../01-system-design/03-architecture-dr-site.md §2 + ADR-009
+%% Render: mermaid v11. ① DB tier = SHWS quản; ② Platform tier = ICTP (EMC).
+flowchart LR
+    subgraph DC["PROD SITE (DC)"]
+        ap1["shwsap1p (APP)<br/>Docker ACTIVE · serving"]
+        db1["shwsdb1p (DATA)<br/>PG 15.7 PRIMARY (native)<br/>/u01 data · /u02 wal · /u03 backup<br/>/u01 minio"]
+        ap1 -->|5432 / 9000| db1
+    end
+
+    subgraph DR["DR SITE"]
+        ap2["shwsap1dr (APP)<br/>cold standby · image preloaded<br/>containers DOWN"]
+        db2["shwsdb1dr (DATA)<br/>PG 15.7 STANDBY (hot_standby)<br/>standby.signal · repo riêng"]
+        ap2 -.->|sau failover| db2
+    end
+
+    db1 ==>|"① PG streaming async + WAL<br/>slot shws_dr_slot · mTLS · RPO ~30s"| db2
+    db1 -."② EMC storage replication (ICTP)<br/>app config · Docker vol · file MinIO".-> db2
+
+    note["WAN 1 Gbps dedicated · TLS<br/>① DB tier: SHWS quản (streaming + pgBackRest riêng từng site)<br/>② Platform tier: ICTP quản (DELL EMC) — KHÔNG block-replicate live PG data dir"]

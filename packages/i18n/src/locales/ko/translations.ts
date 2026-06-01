@@ -432,6 +432,7 @@ export default {
   timesheet_week_of: "주간",
   timesheet_this_week: "이번 주",
   timesheet_total: "합계",
+  timesheet_show_sub_items: "Show sub-items",
   timesheet_coming_soon: "8단계에서 출시 예정",
   timesheet_save_success: "타임시트 저장됨",
   timesheet_no_issues: "이번 주 할당된 이슈 없음",
