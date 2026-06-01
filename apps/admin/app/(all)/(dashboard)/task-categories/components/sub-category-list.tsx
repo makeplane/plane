@@ -26,7 +26,9 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => { setSearchQuery(""); }, [selectedMainId]);
+  useEffect(() => {
+    setSearchQuery("");
+  }, [selectedMainId]);
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -55,9 +57,7 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
 
   const q = searchQuery.toLowerCase();
   const filteredSubs = q
-    ? subCategories.filter(
-        (cat) => cat.name.toLowerCase().includes(q) || (cat.code ?? "").toLowerCase().includes(q)
-      )
+    ? subCategories.filter((cat) => cat.name.toLowerCase().includes(q) || (cat.code ?? "").toLowerCase().includes(q))
     : subCategories;
 
   return (

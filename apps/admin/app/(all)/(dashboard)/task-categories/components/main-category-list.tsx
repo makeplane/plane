@@ -66,63 +66,63 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
             No categories match &quot;{searchQuery}&quot;.
           </div>
         ) : (
-      <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
-        <table className="w-full text-13">
-          <thead>
-            <tr className="border-b border-subtle bg-layer-2">
-              <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
-              <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
-              <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
-              <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {filteredIds.map((id) => {
-              const cat = mainCategories[id];
-              const isSelected = selectedMainId === id;
-              return (
-                <tr
-                  key={id}
-                  onClick={() => onSelect(id)}
-                  className={`cursor-pointer transition-colors hover:bg-layer-2 ${isSelected ? "bg-custom-primary-100/10" : ""}`}
-                >
-                  <td className="px-3 py-2 font-medium">
-                    <span className={isSelected ? "text-custom-primary-100" : ""}>{cat.name}</span>
-                  </td>
-                  <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
-                  <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
-                  <td className="px-3 py-2 text-center">
-                    <span
-                      className={`text-11 px-2 py-0.5 rounded font-medium ${
-                        cat.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"
-                      }`}
-                    >
-                      {cat.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-center text-secondary">{cat.sort_order}</td>
-                  <td className="px-3 py-2 text-right">
-                    <div
-                      role="presentation"
-                      className="flex items-center justify-end gap-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button variant="ghost" size="sm" onClick={() => onEdit(cat)}>
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setDeleteId(id)}>
-                        <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
-                      </Button>
-                    </div>
-                  </td>
+          <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
+            <table className="w-full text-13">
+              <thead>
+                <tr className="border-b border-subtle bg-layer-2">
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
+                  <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
+                  <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
+                  <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-subtle">
+                {filteredIds.map((id) => {
+                  const cat = mainCategories[id];
+                  const isSelected = selectedMainId === id;
+                  return (
+                    <tr
+                      key={id}
+                      onClick={() => onSelect(id)}
+                      className={`cursor-pointer transition-colors hover:bg-layer-2 ${isSelected ? "bg-custom-primary-100/10" : ""}`}
+                    >
+                      <td className="px-3 py-2 font-medium">
+                        <span className={isSelected ? "text-custom-primary-100" : ""}>{cat.name}</span>
+                      </td>
+                      <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
+                      <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
+                      <td className="px-3 py-2 text-center">
+                        <span
+                          className={`text-11 px-2 py-0.5 rounded font-medium ${
+                            cat.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"
+                          }`}
+                        >
+                          {cat.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-center text-secondary">{cat.sort_order}</td>
+                      <td className="px-3 py-2 text-right">
+                        <div
+                          role="presentation"
+                          className="flex items-center justify-end gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button variant="ghost" size="sm" onClick={() => onEdit(cat)}>
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setDeleteId(id)}>
+                            <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
