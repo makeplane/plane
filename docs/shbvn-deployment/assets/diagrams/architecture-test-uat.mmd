@@ -1,0 +1,36 @@
+%% SHWS TEST/UAT — 1 VM all-in-one Docker (giữ plane-db container)
+%% Nguồn chuẩn: ../../01-system-design/02-architecture-test-uat.md §2
+%% Render: mermaid v11. KHÁC PROD: DB chạy trong container (postgres:15.7-alpine).
+flowchart TB
+    user["Tester / QA / Power user<br/>(20-30 pilot) · HTTPS 443<br/>SwingSSO hoặc local user"]
+
+    subgraph VM["UAT VM — shwsap1t (10.94.30.10)<br/>RHEL 9.6 · 8 vCPU / 16 GB · Docker all-in-one"]
+        proxy["proxy (Nginx TLS)"]
+        fe["web · space · admin"]
+        live["live (WebSocket)"]
+        api["api (Django + gunicorn)<br/>4 workers"]
+        workers["worker · beat-worker<br/>(Celery, 2 concurrency)"]
+        subgraph STATE["Stateful containers (volumes trên /u01/docker)"]
+            db["plane-db<br/>postgres:15.7-alpine<br/>shared_buffers 1GB"]
+            redis["plane-redis"]
+            mq["plane-mq (RabbitMQ)"]
+            minio["plane-minio"]
+        end
+    end
+
+    ext["Bank services<br/>LDAP/SwingSSO 636 · SMTP 587"]
+
+    user -->|HTTPS 443| proxy
+    proxy --> fe
+    proxy --> live
+    proxy --> api
+    api --> db
+    api --> redis
+    api --> mq
+    api --> minio
+    mq --> workers
+    workers --> db
+    workers --> minio
+    api -->|auth / mail| ext
+
+    %% Reset: docker compose down -v / Hyper-V checkpoint revert

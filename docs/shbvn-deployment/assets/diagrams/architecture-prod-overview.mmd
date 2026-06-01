@@ -1,0 +1,49 @@
+%% SHWS PROD — kiến trúc 2-node hybrid (APP Docker + DATA native PostgreSQL)
+%% Nguồn chuẩn: ../../01-system-design/01-architecture-prod.md §2
+%% Render: mermaid v11. IP là placeholder, network team cấp số chính thức.
+flowchart TB
+    user["End User (Bank)<br/>~100 CCU / 1000 users"]
+
+    subgraph APP["APP NODE — shwsap1p (10.94.10.10)<br/>RHEL 9.x · 8 vCPU / 16 GB · Docker Compose"]
+        proxy["proxy (Nginx)<br/>TLS termination"]
+        fe["web · space · admin<br/>(frontend)"]
+        live["live<br/>(WebSocket realtime)"]
+        api["api (Django + gunicorn)"]
+        workers["worker · beat-worker<br/>(Celery)"]
+        redis["redis / valkey<br/>(cache + pub/sub)"]
+        mq["rabbitmq<br/>(Celery broker)"]
+    end
+
+    subgraph DATA["DATA NODE — shwsdb1p (10.94.10.11)<br/>RHEL 9.x · 8 vCPU / 16 GB · EMC SAN multipath"]
+        pg["PostgreSQL 15.7 (native, systemd)<br/>shared_buffers 4GB"]
+        pgbr["pgBackRest (native)"]
+        minio["plane-minio (Docker)<br/>object storage"]
+        exp["postgres_exporter · node_exporter<br/>(Docker, metrics)"]
+        subgraph LUN["EMC SAN — 3 LUN /u0X"]
+            u01["/u01 (LUN-1, 600GB, R10)<br/>PGDATA + MinIO"]
+            u02["/u02 (LUN-2, 100GB, R10)<br/>WAL pg_wal"]
+            u03["/u03 (LUN-3, 1TB, R5)<br/>pgBackRest repo"]
+        end
+    end
+
+    dr["DR SITE — shwsdb1dr<br/>PG standby (hot_standby)<br/>xem 03-architecture-dr-site.md"]
+
+    user -->|HTTPS 443 · LDAP/SwingSSO| proxy
+    proxy --> fe
+    proxy --> live
+    proxy --> api
+    api --> redis
+    api --> mq
+    mq --> workers
+    workers --> redis
+
+    api -->|TCP 5432 TLS/mTLS| pg
+    api -->|TCP 9000 TLS| minio
+    workers -->|5432 / 9000| pg
+
+    pg --> u01
+    pg --> u02
+    pgbr --> u03
+    minio --> u01
+
+    pg -->|WAL stream async + pgBackRest push| dr
