@@ -5,7 +5,7 @@
  */
 
 import type { AxiosInstance } from "axios";
-import axios from "axios";
+import { create } from "axios";
 import { env } from "@/env";
 import { AppError } from "@/lib/errors";
 
@@ -16,7 +16,7 @@ export abstract class APIService {
 
   constructor(baseURL?: string) {
     this.baseURL = baseURL || env.API_BASE_URL;
-    this.axiosInstance = axios.create({
+    this.axiosInstance = create({
       baseURL: this.baseURL,
       withCredentials: true,
       timeout: 20000,
