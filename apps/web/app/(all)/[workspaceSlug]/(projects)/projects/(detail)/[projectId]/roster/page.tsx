@@ -1,3 +1,3 @@
 "use client";
 
-export { default } from "./roster-page";
+export { RosterPage as default } from "@/plane-web/features/roster";

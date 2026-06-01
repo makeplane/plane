@@ -2,7 +2,7 @@ import { Download, FileText, X } from "lucide-react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { DOCUMENT_PREVIEW_STYLE } from "../../../../../app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/media-library/[mediaId]/media-detail-utils";
+import { DOCUMENT_PREVIEW_STYLE } from "@/plane-web/features/media-library/utils/media-detail-utils";
 
 import type { TWebhookArtifact } from "./webhook-artifacts-types";
 import { WEBHOOK_DOCUMENT_PREVIEW_HEIGHT_CLASS } from "./webhook-artifacts-constants";

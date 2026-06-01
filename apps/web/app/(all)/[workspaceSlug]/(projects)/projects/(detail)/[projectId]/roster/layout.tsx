@@ -2,8 +2,7 @@
 
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-import { ProjectRosterHeader } from "./header";
-import { RosterProvider } from "./roster-context";
+import { ProjectRosterHeader, RosterProvider } from "@/plane-web/features/roster";
 
 export default function ProjectRosterLayout({ children }: { children: React.ReactNode }) {
   return (

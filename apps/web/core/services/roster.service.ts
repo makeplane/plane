@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import type { IRosterFilters, IRosterPlayer, IRosterPlayerPayload } from "@plane/types";
+import type { IRosterPlayer, IRosterPlayerPayload } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 type TRosterImportPayload = {
@@ -18,8 +18,8 @@ export class RosterService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getRoster(workspaceSlug: string, projectId: string, filters?: IRosterFilters): Promise<IRosterPlayer[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/roster/`, { params: filters })
+  async getRoster(workspaceSlug: string, projectId: string): Promise<IRosterPlayer[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/roster/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

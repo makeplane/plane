@@ -327,6 +327,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderTitle: "Old",
     icon: "CalendarClock",
   },
+  start_time: {
+    i18n_title: "starting_time",
+    ascendingOrderKey: "start_time",
+    ascendingOrderTitle: "Early",
+    descendingOrderKey: "-start_time",
+    descendingOrderTitle: "Late",
+    icon: "Clock",
+  },
   state: {
     i18n_title: "common.state",
     ascendingOrderKey: "state__name",
