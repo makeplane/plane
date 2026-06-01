@@ -23,6 +23,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from plane.db.fixtures.help_center.loader import seed_help_content
+from plane.db.models import HelpArticle
 
 
 class Command(BaseCommand):
@@ -34,8 +35,24 @@ class Command(BaseCommand):
             action="store_true",
             help="Seed article text only; do not inject the committed screenshots.",
         )
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            help="Overwrite existing content from the markdown source (default: refuse if content exists).",
+        )
 
     def handle(self, *args, **options):
+        # One-time bootstrap per environment: once an instance has Help Center content
+        # (biz teams then own it via God Mode), re-seeding would overwrite those edits
+        # from the repo markdown. Refuse by default; require --force to re-seed.
+        if not options["force"] and HelpArticle.objects.exists():
+            self.stdout.write(
+                self.style.WARNING(
+                    "Help Center already has content in this instance — skipping to protect "
+                    "God-Mode edits. Re-run with --force to overwrite from the markdown source."
+                )
+            )
+            return
         # Keep the content upsert in its own transaction; image injection (which also
         # writes to object storage) runs afterwards in its own transaction, so a
         # storage hiccup can't roll back the seeded text.

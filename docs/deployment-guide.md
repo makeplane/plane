@@ -374,7 +374,9 @@ The committed PNGs are the source of truth that `seed_help_center` injects. Asse
 docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
 ```
 
-Text + committed images, no Playwright, no network. `seed_help_center` re-renders bodies (restoring raw markers) and then auto-injects the committed screenshots, so the guide is always fully populated after a re-seed. Use `--skip-screenshots` for text only.
+Text + committed images, no Playwright, no network. `seed_help_center` renders bodies and auto-injects the committed screenshots — one command yields a fully-populated guide. Use `--skip-screenshots` for text only.
+
+> **One-time per environment.** `seed_help_center` is a **bootstrap**: it refuses to run if the instance already has Help Center content, so it can never overwrite edits the business team made in God Mode. Pass `--force` only to deliberately re-seed from the repo markdown (e.g. on dev). After the bootstrap, each environment's guide lives independently in its own DB + object storage and is owned via God Mode.
 
 **Maintainer (refresh images after a UI change) — capture against a running demo instance, then commit:**
 
@@ -384,6 +386,24 @@ SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make
 cd tools/help-screenshots && npm install && SHOT_COOKIE="$SHOT_COOKIE" npm run capture
 # then copy matching PNGs into _screenshots/ (Step 4) and commit
 ```
+
+#### Promote a reviewed guide between environments (UAT → Production)
+
+Each environment is seeded once, then the business team reviews/edits it in God Mode (rows in the DB, images in that instance's object storage). To push a reviewed UAT guide to production, **export a bundle, copy it across, import it** — no re-typing, no broken images:
+
+```bash
+# On UAT — write a portable bundle (manifest.json + assets/<id>.png pulled from MinIO)
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py export_help_center --out help_center_export'
+docker cp planeso-api-1:/code/help_center_export ./help_center_export   # then scp / USB to prod
+
+# On PROD — load it: upsert rows + upload images to PROD's object storage + rewrite image URLs
+docker cp ./help_center_export planeso-api-1:/code/help_center_export
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py import_help_center --in help_center_export'
+```
+
+- **Import is additive upsert by slug** — it updates/creates from the bundle and never deletes guide content the target already has. Per imported article, its prior images are superseded and re-created from the bundle, so re-importing stays clean.
+- **Asset ids are per-environment.** Only the image *bytes* travel in the bundle; `import_help_center` uploads them to the target's own storage and rewrites the inline `/api/assets/v2/static/<id>/` references (in both the rendered HTML and the editor JSON) to the new ids.
+- Same commands double as a **per-environment backup/restore** of the Help Center.
 
 #### Notes
 
