@@ -111,6 +111,8 @@ services:
 
   plane-db:
     container_name: plane-db
+    ports: 
+      - 5444:5432  
     image: postgres:15.7-alpine
     restart: always
     command: postgres -c 'max_connections=1000'
@@ -155,7 +157,7 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
-  # Comment this if you already have a reverse proxy running
+  # Host Caddy handles SSL termination and forwards to port 8080
   proxy:
     container_name: proxy
     build:
@@ -163,11 +165,11 @@ services:
       dockerfile: Dockerfile.ce
     restart: always
     ports:
-      - ${LISTEN_HTTP_PORT}:80
-      - ${LISTEN_HTTPS_PORT}:443
+      - 8080:80
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: :80
     depends_on:
       - web
       - api

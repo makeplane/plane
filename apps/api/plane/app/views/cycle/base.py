@@ -57,7 +57,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from .. import BaseAPIView, BaseViewSet
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
 
 
@@ -499,6 +499,21 @@ class CycleViewSet(BaseViewSet):
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
+
+        # Send the webhook activity
+        webhook_activity.delay(
+            event="cycle",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=str(request.user.id),
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=str(pk),
+            old_identifier=None,
+            new_identifier=None,
+        )
 
         # Delete the user favorite cycle
         UserFavorite.objects.filter(

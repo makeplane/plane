@@ -62,7 +62,7 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.timezone_converter import user_timezone_converter
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
@@ -740,6 +740,20 @@ class ModuleViewSet(BaseViewSet):
             for issue in module_issues
         ]
         module.delete()
+        # Send the webhook activity
+        webhook_activity.delay(
+            event="module",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=str(request.user.id),
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=str(pk),
+            old_identifier=None,
+            new_identifier=None,
+        )
         # Delete the module issues
         ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()
         # Delete the user favorite module
