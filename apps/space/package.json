@@ -56,6 +56,7 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@react-router/dev": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
