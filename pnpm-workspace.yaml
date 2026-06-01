@@ -185,7 +185,7 @@ catalog:
   "uuid": "14.0.0"
   "vite": "7.3.2"
   "vite-tsconfig-paths": "^5.1.4"
-  "vitest": "^4.0.8"
+  "vitest": "^4.1.0"
   "winston": "^3.17.0"
   "ws": "8.20.1"
   "y-indexeddb": "^9.0.12"
