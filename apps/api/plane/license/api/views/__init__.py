@@ -51,6 +51,13 @@ from .task_category import (
     InstanceSubTaskCategoryEndpoint,
     InstanceSubTaskCategoryDetailEndpoint,
 )
+from .help_center import (
+    InstanceHelpCategoryEndpoint,
+    InstanceHelpCategoryDetailEndpoint,
+    InstanceHelpArticleEndpoint,
+    InstanceHelpArticleDetailEndpoint,
+    InstanceHelpArticleTranslationEndpoint,
+)
 from .job_position import (
     InstanceJobPositionEndpoint,
     InstanceJobPositionDetailEndpoint,

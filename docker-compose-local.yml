@@ -210,26 +210,28 @@ services:
       - plane-db
       - plane-redis
 
-  # proxy:
-  #   build:
-  #     context: ./apps/proxy
-  #     dockerfile: Dockerfile.ce
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   ports:
-  #     - ${LISTEN_HTTP_PORT}:80
-  #     - ${LISTEN_HTTPS_PORT}:443
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-  #     BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-  #   depends_on:
-  #     - api
-  #     - web
-  #     - space
-  #     - admin
+  # Single-origin reverse proxy for local dev: serves the whole app on one
+  # http://localhost (port 80) and routes /god-mode, /spaces, /live, /api to
+  # the right place. Uses the prebuilt caddy image + Caddyfile.dev (NOT
+  # Dockerfile.ce/Caddyfile.ce — those route to docker service names like
+  # web:3000/admin:3000 that don't exist here, since the frontends run on the
+  # HOST via `pnpm dev`). Caddyfile.dev routes /* and /god-mode/* to
+  # host.docker.internal:3000/3001, preserving vite HMR (hot reload intact).
+  proxy:
+    image: caddy:2.10.0-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - ${LISTEN_HTTP_PORT:-80}:80
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    volumes:
+      - ./apps/proxy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+    # Only the backend runs in docker; web/admin/space/live are on the host.
+    depends_on:
+      - api
 
 volumes:
   redisdata:

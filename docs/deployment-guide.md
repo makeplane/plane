@@ -301,6 +301,130 @@ docker-compose exec -T api python manage.py migrate
 docker-compose up -d
 ```
 
+**New migrations (2026-05):**
+
+- `0178_help_center` — Instance-global Help Center (categories, articles, per-locale translations)
+
+### Help Center Post-Deployment Setup (Content-as-Code Pipeline)
+
+After migration `0178_help_center`, the Help Center content pipeline runs in this order:
+
+#### Step 1: Seed Content from Markdown
+
+Source of truth: `apps/api/plane/db/fixtures/help_center/` (categories.yaml + article markdown files).
+
+```bash
+# Development
+cd apps/api
+python manage.py seed_help_center
+
+# Docker
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
+```
+
+**Properties:**
+- **Idempotent:** Safe to run multiple times
+- **Instance-global:** Run ONCE per instance, not per workspace
+- **Content:** Renders markdown → HTML → sanitizes (hardened allowlist, script/iframe/video dropped, style attribute removed) → injects screenshot markers (`{{screenshot:NAME}}` becomes `<p data-help-screenshot="NAME"></p>`)
+- **Publishing:** All seeded articles published (readers can access immediately)
+- **Additive only:** Does NOT delete articles/categories from the DB if missing from source tree (protects God-Mode-authored content)
+- **Screenshots auto-injected:** After seeding text, the command injects the screenshots committed under `apps/api/plane/db/fixtures/help_center/_screenshots/` (opt out with `--skip-screenshots`). The PNGs ship with the repo, so **offline / air-gapped instances need no capture step** — `seed_help_center` alone yields a fully-populated guide (uploading the images to the instance's own object storage).
+
+> **Production / offline deploy = Step 1 only.** Steps 2–4 below are for **maintainers refreshing the committed screenshot set** (e.g. after a UI change); they are NOT needed to deploy.
+
+#### Step 2: Seed Demo Workspace (Staging / Dev Only — Never Production)
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'
+```
+
+Creates an isolated `help-demo` workspace with demo data for screenshot capture. **NEVER run on production.**
+
+#### Step 3: Capture Screenshots (If Re-Injecting Images)
+
+See `tools/help-screenshots/README.md` for the full Playwright + Node.js workflow.
+
+```bash
+# Mint a session cookie for the screenshot user
+SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
+
+# Run from host (needs web :3000 + api :8000 reachable)
+cd tools/help-screenshots
+npm install
+SHOT_COOKIE="$SHOT_COOKIE" npm run capture  # writes ./out/<name>.png
+```
+
+#### Step 4: Refresh the committed screenshot set
+
+The capture tool writes to `tools/help-screenshots/out/` (gitignored scratch). To make new/updated images ship with the repo, copy the ones matching a current `{{screenshot:NAME}}` marker into the committed folder and commit them:
+
+```bash
+cp tools/help-screenshots/out/<name>.png \
+   apps/api/plane/db/fixtures/help_center/_screenshots/
+git add apps/api/plane/db/fixtures/help_center/_screenshots/
+```
+
+The committed PNGs are the source of truth that `seed_help_center` injects. Asset rows in the DB are still instance-specific (minted at upload), but the *image bytes* now travel with the code.
+
+#### Complete Per-Instance Sequence
+
+**Deploy (production / offline) — one command:**
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
+```
+
+Text + committed images, no Playwright, no network. `seed_help_center` renders bodies and auto-injects the committed screenshots — one command yields a fully-populated guide. Use `--skip-screenshots` for text only.
+
+> **One-time per environment.** `seed_help_center` is a **bootstrap**: it refuses to run if the instance already has Help Center content, so it can never overwrite edits the business team made in God Mode. Pass `--force` only to deliberately re-seed from the repo markdown (e.g. on dev). After the bootstrap, each environment's guide lives independently in its own DB + object storage and is owned via God Mode.
+
+**Maintainer (refresh images after a UI change) — capture against a running demo instance, then commit:**
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'   # staging/dev only
+SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
+cd tools/help-screenshots && npm install && SHOT_COOKIE="$SHOT_COOKIE" npm run capture
+# then copy matching PNGs into _screenshots/ (Step 4) and commit
+```
+
+#### Promote a reviewed guide between environments (UAT → Production)
+
+Each environment is seeded once, then the business team reviews/edits it in God Mode (rows in the DB, images in that instance's object storage). To push a reviewed UAT guide to production, **export a bundle, copy it across, import it** — no re-typing, no broken images:
+
+```bash
+# On UAT — write a portable bundle (manifest.json + assets/<id>.png pulled from MinIO)
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py export_help_center --out help_center_export'
+docker cp planeso-api-1:/code/help_center_export ./help_center_export   # then scp / USB to prod
+
+# On PROD — load it: upsert rows + upload images to PROD's object storage + rewrite image URLs
+docker cp ./help_center_export planeso-api-1:/code/help_center_export
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py import_help_center --in help_center_export'
+```
+
+- **Import is additive upsert by slug** — it updates/creates from the bundle and never deletes guide content the target already has. Images are uploaded fresh and references rewritten to the new ids, so re-importing never breaks images; the previously-referenced objects become orphans in storage (clean those up at the storage layer if repeated promotions make it worthwhile).
+- **It overwrites slug-matching articles**, so importing a *stale* bundle silently reverts later God-Mode edits on the target. Only import a bundle you actually intend to promote; the import is not reversible.
+- **Asset ids are per-environment.** Only the image *bytes* travel in the bundle; import uploads them to the target's own storage and rewrites the inline `/api/assets/v2/static/<id>/` references (in both the rendered HTML and the editor JSON) to the new ids.
+- Same commands double as a **per-environment backup/restore** of the Help Center.
+
+**Via God Mode UI (no shell access):** the same promotion is available as buttons on **God Mode → Help Center** — **Export bundle** downloads the `.zip`, **Import bundle** uploads it (behind an overwrite confirmation) and reports how many categories/articles/images landed. The UI bundle is the same layout as the CLI bundle, so the two are interchangeable.
+
+- **Upload size prerequisite.** A real bundle is tens of MB (it carries the guide's screenshots). The reverse proxy caps request bodies at `FILE_SIZE_LIMIT` (default **5 MB**) for every route **except** `POST /api/instances/help/import/`, which the bundled Caddyfiles raise to `HELP_BUNDLE_MAX_SIZE` (default **300 MB**); the API additionally caps the bundle at 256 MB. If you front the API with a different ingress (nginx, a cloud load balancer), raise the body limit for that one route there as well — otherwise a large UI import returns **413** at the proxy. The CLI `import_help_center` path is not proxied and has no such limit.
+
+#### Notes
+
+- Content authoring guide: `docs/help-center-authoring-guide.md` — how to add categories and articles as markdown
+- Screenshot tool reference: `tools/help-screenshots/README.md` — adding new targets, interaction steps
+- The loader is production-safe: all raw HTML is escaped before sanitizing; no XSS vectors
+- Search uses accent-insensitive text index (Vietnamese folding, no PostgreSQL extensions needed)
+
+### Search Database Requirements
+
+Help Center search uses app-managed accent-folded text search **without pg_trgm or unaccent PostgreSQL extensions**:
+- Search column: `search_text` (pre-folded by app: NFKD + combining mark stripping + Vietnamese accent folding, e.g., `đ→d`)
+- Query: `icontains` over pre-folded column (no full-text search)
+- Locale-aware: Scans all 3 locale translations for matches
+- **Prerequisite:** None (no extension install required; production Postgres can be non-superuser)
+
 ### Environment Variables Checklist
 
 **Required (Production):**
@@ -382,5 +506,5 @@ backup_service:
 
 ---
 
-**Last Updated:** 2026-05-04
-**Version:** 2.0 (Modularized for offline-first GitLab CI/CD)
+**Last Updated:** 2026-05-30
+**Version:** 2.1 (Added Help Center migration & seed command documentation)

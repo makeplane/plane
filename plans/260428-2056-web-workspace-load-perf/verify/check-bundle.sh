@@ -4,7 +4,7 @@
 # Usage: ./check-bundle.sh
 set -u
 
-REPO_ROOT="/Volumes/Data/SHBVN/plane.so"
+REPO_ROOT="/Users/duonglx/Data/SHBVN/plane.so"
 WEB_DIR="${REPO_ROOT}/apps/web"
 BUILD_DIR="${WEB_DIR}/build/client/assets"
 OUT_DIR="$(dirname "$0")/results"

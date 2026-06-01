@@ -252,6 +252,7 @@ from .notification.base import (
 )
 
 from .exporter.base import ExportIssuesEndpoint
+from .help_center import HelpCategoryViewSet, HelpArticleViewSet
 
 
 from .webhook.base import (

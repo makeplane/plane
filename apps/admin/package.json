@@ -24,6 +24,7 @@
     "@fontsource/material-symbols-rounded": "5.2.30",
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
+    "@plane/editor": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/propel": "workspace:*",
     "@plane/services": "workspace:*",
