@@ -13,8 +13,10 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { useInstanceHelpCenter } from "@/hooks/store";
 import { DeleteConfirmModal } from "./delete-confirm-modal";
+import { DiscardChangesModal } from "./discard-changes-modal";
 import { articleDisplayTitle } from "./display-helpers";
 import { TranslationTabs } from "./translation-tabs";
+import { useUnsavedChangesGuard } from "./use-unsaved-changes-guard";
 
 type Props = {
   articleId: string;
@@ -27,6 +29,10 @@ export const ArticleEditorPanel = observer(function ArticleEditorPanel({ article
   const [slug, setSlug] = useState(article?.slug ?? "");
   const [isMutating, setIsMutating] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [leaveRequested, setLeaveRequested] = useState(false);
+  // Hold in-app navigation (browser Back / sidebar) + warn on unload while dirty.
+  const blocker = useUnsavedChangesGuard(isDirty);
 
   useEffect(() => {
     setSlug(article?.slug ?? "");
@@ -74,20 +80,37 @@ export const ArticleEditorPanel = observer(function ArticleEditorPanel({ article
     }
   };
 
+  // Leaving is gated when a draft is dirty. Two routes in: the Back button
+  // (local state, no URL change) and the route blocker (browser Back / links).
+  const isBlocked = blocker.state === "blocked";
+  const isLeavePromptOpen = leaveRequested || isBlocked;
+
+  const handleBack = () => {
+    if (isDirty) setLeaveRequested(true);
+    else onClose();
+  };
+  const confirmLeave = () => {
+    setLeaveRequested(false);
+    if (isBlocked) blocker.proceed();
+    else onClose();
+  };
+  const cancelLeave = () => {
+    setLeaveRequested(false);
+    if (isBlocked) blocker.reset();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-subtle pb-3">
         <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={onClose}>
+          <Button variant="secondary" size="sm" onClick={handleBack}>
             <ArrowLeft className="size-4" />
             Back
           </Button>
           <h2 className="text-16 font-medium text-primary">{articleDisplayTitle(article)}</h2>
         </div>
         <div className="flex items-center gap-2">
-          <Tooltip
-            tooltipContent={isDraft ? "Slug can only change while in draft" : "Slug is frozen after publishing"}
-          >
+          <Tooltip tooltipContent={isDraft ? "Slug can only change while in draft" : "Slug is frozen after publishing"}>
             <div className="flex items-center gap-1.5">
               <span className="text-12 text-tertiary">/help/a/</span>
               <Input
@@ -114,7 +137,9 @@ export const ArticleEditorPanel = observer(function ArticleEditorPanel({ article
         </div>
       </div>
 
-      <TranslationTabs article={article} />
+      <TranslationTabs article={article} onDirtyChange={setIsDirty} />
+
+      <DiscardChangesModal open={isLeavePromptOpen} onConfirm={confirmLeave} onCancel={cancelLeave} />
 
       <DeleteConfirmModal
         open={deleteOpen}

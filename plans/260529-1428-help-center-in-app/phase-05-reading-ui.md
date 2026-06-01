@@ -301,3 +301,24 @@ can't overwrite a newer one. Handle 404 (article not found / soft-deleted) expli
   Handle edge cases: first/last article in category (no prev/next link shown).
 - **D2 branding** → search all user-visible strings in this phase's components for "Plane"; replace
   with "Shinhan Workspace". No change to internal code identifiers.
+
+## Follow-up — preview/reader parity + unsaved-changes guard (2026-06-01; tsc + lint clean, adversarial review pass)
+
+Two consistency fixes after review of the God Mode authoring screen vs the public reader:
+
+- **Seeded tables rendered at ~half width** (reader AND God Mode preview). Root cause: editor cell
+  `colwidth` defaults to `[150]` (`packages/editor/.../table/table-cell.ts`), so seeded tables — whose
+  stored HTML carries no `colwidth` — render at a fixed `150px×cols` inline width that beats the base
+  `table { width:100% }`. Fix = scoped CSS override `table { width:100% !important; table-layout:auto }`
+  in BOTH the reader wrapper (`apps/web/ce/components/help-center/help-image-lightbox.tsx`) and a NEW
+  God Mode preview wrapper. Deliberately NOT changing the shared editor default (would break doc-editor
+  column resize). Known limit: a genuinely wide table wraps instead of horizontal-scroll (fine for help).
+- **God Mode preview lacked image parity** → NEW `apps/admin/.../help-center/components/help-preview-content.tsx`
+  mirrors the reader: content images fill the column (read-only default is 35%) + click/Enter opens
+  `ImageFullScreenModal` (zoom/pan/download). Wrapped the preview branch in `translation-locale-editor.tsx`.
+  Both wrappers also reset per-image center/right alignment offsets so a full-width image stays flush.
+- **Unsaved-edit data loss on leave** → NEW `discard-changes-modal.tsx` + `use-unsaved-changes-guard.ts`
+  (`useBlocker` for in-app nav / browser Back + `beforeunload` for refresh/close). `translation-tabs.tsx`
+  computes `isDirty` (draft title/HTML vs saved); `article-editor-panel.tsx` Back button + the route
+  blocker both confirm before leaving. No false dirty (editor emits no onChange on mount), auto-clears
+  on save, no double-prompt on delete. English-only (admin), no `core/` edits.

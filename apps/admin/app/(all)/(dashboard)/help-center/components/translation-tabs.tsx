@@ -30,7 +30,12 @@ const buildDrafts = (article: IHelpArticle): Record<THelpLocale, Draft> => {
   return drafts;
 };
 
-export const TranslationTabs = observer(function TranslationTabs({ article }: { article: IHelpArticle }) {
+type Props = {
+  article: IHelpArticle;
+  onDirtyChange?: (isDirty: boolean) => void;
+};
+
+export const TranslationTabs = observer(function TranslationTabs({ article, onDirtyChange }: Props) {
   const { upsertTranslation, uploadArticleImage } = useInstanceHelpCenter();
   const [drafts, setDrafts] = useState<Record<THelpLocale, Draft>>(() => buildDrafts(article));
   const [savingLocale, setSavingLocale] = useState<THelpLocale | null>(null);
@@ -40,6 +45,24 @@ export const TranslationTabs = observer(function TranslationTabs({ article }: { 
   useEffect(() => {
     setDrafts(buildDrafts(article));
   }, [article.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A draft is dirty when its title/body differs from the saved translation. The
+  // editor never emits onChange on mount/content-sync (only real user edits), so
+  // this stays false until the author actually types. Compared against the live
+  // saved values so it clears the moment a locale is saved.
+  const savedByLocale = Object.fromEntries(article.translations.map((t) => [t.locale, t]));
+  const isDirty = HELP_LOCALES.some((l) => {
+    const draft = drafts[l.value];
+    const saved = savedByLocale[l.value];
+    return draft.title !== (saved?.title ?? "") || draft.descriptionHtml !== (saved?.description_html || "<p></p>");
+  });
+
+  // Report dirty state up to the editor panel (drives the leave/back guard) and
+  // always clear it on unmount so a closed/deleted article never blocks navigation.
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+    return () => onDirtyChange?.(false);
+  }, [isDirty, onDirtyChange]);
 
   const patchDraft = (locale: THelpLocale, patch: Partial<Draft>) =>
     setDrafts((prev) => ({ ...prev, [locale]: { ...prev[locale], ...patch } }));

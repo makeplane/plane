@@ -9,6 +9,7 @@ import { Eye, Pencil } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import type { TFileHandler } from "@plane/editor";
+import { HelpPreviewContent } from "./help-preview-content";
 import { HelpRichTextEditor } from "./help-rich-text-editor";
 
 type CopyOption = { locale: string; label: string };
@@ -83,12 +84,14 @@ export function TranslationLocaleEditor({
 
       {showPreview ? (
         <div className="rounded-md border border-subtle bg-surface-1 p-4">
-          <HelpRichTextEditor
-            id={`preview-${articleId}-${locale}-${editorKey}`}
-            key={`preview-${editorKey}`}
-            editable={false}
-            initialValue={descriptionHtml}
-          />
+          <HelpPreviewContent>
+            <HelpRichTextEditor
+              id={`preview-${articleId}-${locale}-${editorKey}`}
+              key={`preview-${editorKey}`}
+              editable={false}
+              initialValue={descriptionHtml}
+            />
+          </HelpPreviewContent>
         </div>
       ) : (
         <HelpRichTextEditor

@@ -6,7 +6,6 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ImageFullScreenModal } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
 
 type ZoomedImage = { src: string; width: string; aspectRatio: number };
 
@@ -22,19 +21,18 @@ const computeZoom = (img: HTMLImageElement): ZoomedImage | null => {
   return { src: img.currentSrc || img.src, width: `${width}px`, aspectRatio: height ? width / height : 1 };
 };
 
-// Wraps the read-only article content and turns every rendered image into a
-// click/keyboard target that opens the platform's full-screen image viewer
-// (zoom / pan / download). The read-only editor renders content images with the
-// `read-only-image` class but only exposes full-screen via a hover toolbar — this
-// adds the expected "click (or Enter/Space) to enlarge" affordance for help
-// readers. Scoped to the help reader only (no change to shared editor behaviour).
-export function HelpImageLightbox({ children }: { children: ReactNode }) {
+// Read-only preview wrapper for the God Mode help authoring screen. Mirrors the
+// public /help reader so authors preview exactly what readers see:
+//   - content images fill the column (the read-only renderer otherwise falls back
+//     to ~35% width, too small to read UI labels) and become click/Enter targets
+//     that open the platform full-screen viewer (zoom / pan / download);
+//   - seeded tables fill the column (the table node view writes an inline fixed
+//     px width — cell colwidth defaults to 150px when the source HTML carries no
+//     colwidth — which otherwise leaves them at ~half width).
+// English-only: the admin app has no i18n.
+export function HelpPreviewContent({ children }: { children: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoomed, setZoomed] = useState<ZoomedImage | null>(null);
-  const { t } = useTranslation();
-  // Latest t held in a ref so the observer/listener effect can stay mount-once
-  // (no teardown/rebuild on locale change); labels refresh via the effect below.
-  const tRef = useRef(t);
 
   const isTouchDevice = useMemo(
     () => typeof window !== "undefined" && ("ontouchstart" in window || (navigator.maxTouchPoints ?? 0) > 0),
@@ -50,7 +48,7 @@ export function HelpImageLightbox({ children }: { children: ReactNode }) {
     const enhance = () => {
       container.querySelectorAll<HTMLImageElement>(HELP_IMAGE_SELECTOR).forEach((img) => {
         if (img.closest("a")) return; // a linked image navigates — not a zoom target
-        img.setAttribute("aria-label", tRef.current("help_center.view_image_full_screen"));
+        img.setAttribute("aria-label", "View image full screen");
         if (img.dataset.helpZoomable === "true") return;
         img.dataset.helpZoomable = "true";
         img.setAttribute("role", "button");
@@ -58,7 +56,7 @@ export function HelpImageLightbox({ children }: { children: ReactNode }) {
       });
     };
     enhance();
-    // re-enhance images added after async editor hydration / article change
+    // re-enhance images added after async editor hydration / preview toggle
     const observer = new MutationObserver(() => enhance());
     observer.observe(container, { childList: true, subtree: true });
 
@@ -93,32 +91,14 @@ export function HelpImageLightbox({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Keep the ref current and refresh the (localized) aria-label on UI-locale
-  // change without rebuilding the observer/listeners above.
-  useEffect(() => {
-    tRef.current = t;
-    containerRef.current?.querySelectorAll<HTMLImageElement>(HELP_IMAGE_SELECTOR).forEach((img) => {
-      if (img.dataset.helpZoomable === "true") img.setAttribute("aria-label", t("help_center.view_image_full_screen"));
-    });
-  }, [t]);
-
   return (
-    <div ref={containerRef} className="help-content-zoomable">
-      {/*
-        Help-reader-scoped prose tweaks (no change to the shared editor):
-        - screenshots fill the column width (the read-only renderer otherwise
-          falls back to ~35%, too small to read UI labels) — override the inline
-          width with !important; aspect-ratio keeps height correct;
-        - zoom-in cursor hints that article images open the full-screen viewer;
-        - scroll-margin keeps a TOC jump's target below the 52px sticky header.
-      */}
+    <div ref={containerRef} className="help-preview-content">
       <style>{`
         /* Read-only screenshots default to ~35% width via an inline px width on
            the image's wrapper divs (not just the <img>), so widen the wrappers
-           AND the image to the full reading column — UI labels stay legible
-           without zooming. aspect-ratio keeps the height correct. */
-        .help-content-zoomable :has(> img.read-only-image),
-        .help-content-zoomable :has(> div > img.read-only-image) {
+           AND the image to the full column. aspect-ratio keeps the height right. */
+        .help-preview-content :has(> img.read-only-image),
+        .help-preview-content :has(> div > img.read-only-image) {
           width: 100% !important;
           max-width: 100% !important;
           display: block !important;
@@ -129,13 +109,9 @@ export function HelpImageLightbox({ children }: { children: ReactNode }) {
           margin-right: 0 !important;
           transform: none !important;
         }
-        .help-content-zoomable img.read-only-image { cursor: zoom-in; width: 100% !important; height: auto !important; }
-        /* Tables fill the reading column: the table node view writes an inline
-           fixed px width (cell colwidth defaults to 150px when the source HTML
-           carries no colwidth), which otherwise leaves seeded tables at ~half
-           width. Drop it so columns size to content and the table fills 100%. */
-        .help-content-zoomable .table-wrapper table { width: 100% !important; table-layout: auto !important; }
-        .help-content-zoomable :is(h1, h2, h3) { scroll-margin-top: 4rem; }
+        .help-preview-content img.read-only-image { cursor: zoom-in; width: 100% !important; height: auto !important; }
+        /* Tables fill the column: drop the node view's inline fixed px width. */
+        .help-preview-content .table-wrapper table { width: 100% !important; table-layout: auto !important; }
       `}</style>
       {children}
       {zoomed && (
