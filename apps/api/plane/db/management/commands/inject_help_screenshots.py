@@ -14,10 +14,18 @@ Reads a directory of PNGs named `<screenshot-name>.png` (the name matches a
 
 The image keeps the `data-help-screenshot` attribute so a re-run finds and
 replaces it again (idempotent — prior assets for the same name+article are
-soft-deleted first). Asset IDs are instance-specific; capture+inject runs once
-per serving instance.
+soft-deleted first). Asset IDs are instance-specific; inject runs once per
+serving instance (run after ``seed_help_center``, which now calls it
+automatically).
 
-    python manage.py inject_help_screenshots --dir tools/help-screenshots/out
+By default it reads the screenshots that ship WITH the repo under
+``plane/db/fixtures/help_center/_screenshots/`` (leading ``_`` so the content
+loader skips the folder) — so an air-gapped instance gets the images by running
+the seed command alone, no Playwright capture needed. Point ``--dir`` at the
+capture tool's ``out/`` only when refreshing the committed set.
+
+    python manage.py inject_help_screenshots                 # committed images
+    python manage.py inject_help_screenshots --dir <path>    # a custom set
 """
 
 import os
@@ -27,10 +35,12 @@ import uuid
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+import plane.db.fixtures.help_center as _help_fixtures
 from plane.db.models import FileAsset, HelpArticleTranslation
 from plane.settings.storage import S3Storage
 
-DEFAULT_DIR = "tools/help-screenshots/out"
+# Screenshots committed alongside the markdown content (portable, offline-ready).
+DEFAULT_DIR = os.path.join(os.path.dirname(os.path.abspath(_help_fixtures.__file__)), "_screenshots")
 
 
 def marker_pattern(name):

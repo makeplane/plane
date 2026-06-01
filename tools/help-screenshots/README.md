@@ -21,11 +21,17 @@ cd tools/help-screenshots
 npm install            # playwright JS pkg; browsers are already cached
 ```
 
-## Capture + inject (run order matters)
+> **Images ship with the repo.** Screenshots that match a `{{screenshot:NAME}}`
+> marker live committed under `apps/api/plane/db/fixtures/help_center/_screenshots/`.
+> `seed_help_center` injects them automatically, so **deploying needs only**
+> `seed_help_center` (no capture, works offline/air-gapped). This tool is for
+> **maintainers refreshing** that committed set after a UI change.
+
+## Refresh the committed screenshots (maintainer)
 
 ```bash
 # 1. Seed content (placeholders) + demo backdrop (in the api container)
-docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center --skip-screenshots'
 docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'
 
 # 2. Mint a session cookie for the screenshot user
@@ -33,12 +39,15 @@ SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make
 
 # 3. Capture (host; needs web :3000 + api :8000 reachable)
 SHOT_COOKIE="$SHOT_COOKIE" npm run capture        # writes ./out/<name>.png
-#   THEME=dark ...                                # optional dark-mode set
+#   SHOT_ONLY="name1,name2" ...                    # capture only specific targets
+#   THEME=dark ...                                 # optional dark-mode set
 
-# 4. Inject (in the api container — needs Django + object storage)
-docker exec planeso-api-1 sh -c 'rm -rf /tmp/help-shots && mkdir -p /tmp/help-shots'
-docker cp out/. planeso-api-1:/tmp/help-shots/
-docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots --dir /tmp/help-shots'
+# 4. Promote the new/updated PNGs into the committed set, then commit
+cp out/<name>.png ../../apps/api/plane/db/fixtures/help_center/_screenshots/
+git add apps/api/plane/db/fixtures/help_center/_screenshots/
+
+# 5. Inject the committed set (default dir is _screenshots/; seed does this for you)
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots'
 ```
 
 Open `/help` to verify images render (served via `/api/assets/v2/static/{id}/` →

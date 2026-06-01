@@ -328,6 +328,9 @@ docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
 - **Content:** Renders markdown → HTML → sanitizes (hardened allowlist, script/iframe/video dropped, style attribute removed) → injects screenshot markers (`{{screenshot:NAME}}` becomes `<p data-help-screenshot="NAME"></p>`)
 - **Publishing:** All seeded articles published (readers can access immediately)
 - **Additive only:** Does NOT delete articles/categories from the DB if missing from source tree (protects God-Mode-authored content)
+- **Screenshots auto-injected:** After seeding text, the command injects the screenshots committed under `apps/api/plane/db/fixtures/help_center/_screenshots/` (opt out with `--skip-screenshots`). The PNGs ship with the repo, so **offline / air-gapped instances need no capture step** — `seed_help_center` alone yields a fully-populated guide (uploading the images to the instance's own object storage).
+
+> **Production / offline deploy = Step 1 only.** Steps 2–4 below are for **maintainers refreshing the committed screenshot set** (e.g. after a UI change); they are NOT needed to deploy.
 
 #### Step 2: Seed Demo Workspace (Staging / Dev Only — Never Production)
 
@@ -351,36 +354,36 @@ npm install
 SHOT_COOKIE="$SHOT_COOKIE" npm run capture  # writes ./out/<name>.png
 ```
 
-#### Step 4: Copy Screenshots into Container & Inject
+#### Step 4: Refresh the committed screenshot set
 
-Screenshots are uploaded as instance-global assets (workspace_id=NULL, entity_type=HELP_ARTICLE_CONTENT). Asset IDs are **instance-specific** — minted at upload time, never in git.
+The capture tool writes to `tools/help-screenshots/out/` (gitignored scratch). To make new/updated images ship with the repo, copy the ones matching a current `{{screenshot:NAME}}` marker into the committed folder and commit them:
 
 ```bash
-docker exec planeso-api-1 sh -c 'rm -rf /tmp/help-shots && mkdir -p /tmp/help-shots'
-docker cp tools/help-screenshots/out/. planeso-api-1:/tmp/help-shots/
-docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots --dir /tmp/help-shots'
+cp tools/help-screenshots/out/<name>.png \
+   apps/api/plane/db/fixtures/help_center/_screenshots/
+git add apps/api/plane/db/fixtures/help_center/_screenshots/
 ```
 
-**Idempotency:** Re-running `inject_help_screenshots` supersedes prior assets per (article, screenshot-name), so images stay stable.
+The committed PNGs are the source of truth that `seed_help_center` injects. Asset rows in the DB are still instance-specific (minted at upload), but the *image bytes* now travel with the code.
 
 #### Complete Per-Instance Sequence
 
+**Deploy (production / offline) — one command:**
+
 ```bash
-# Seed content (creates markers)
 docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_center'
-
-# [Staging/dev only] Create demo workspace for capture
-docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'
-
-# [If re-injecting images] Capture, copy, inject
-SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
-cd tools/help-screenshots && npm install && SHOT_COOKIE="$SHOT_COOKIE" npm run capture
-docker exec planeso-api-1 sh -c 'rm -rf /tmp/help-shots && mkdir -p /tmp/help-shots'
-docker cp tools/help-screenshots/out/. planeso-api-1:/tmp/help-shots/
-docker exec planeso-api-1 sh -c 'cd /code && python manage.py inject_help_screenshots --dir /tmp/help-shots'
 ```
 
-**Important:** Re-running `seed_help_center` restores the raw screenshot markers (`data-help-screenshot` attributes), dropping previously-injected `<img>` tags. **Always re-inject after any re-seed.**
+Text + committed images, no Playwright, no network. `seed_help_center` re-renders bodies (restoring raw markers) and then auto-injects the committed screenshots, so the guide is always fully populated after a re-seed. Use `--skip-screenshots` for text only.
+
+**Maintainer (refresh images after a UI change) — capture against a running demo instance, then commit:**
+
+```bash
+docker exec planeso-api-1 sh -c 'cd /code && python manage.py seed_help_demo_data'   # staging/dev only
+SHOT_COOKIE=$(docker exec planeso-api-1 sh -c 'cd /code && python manage.py make_help_session' | tail -1)
+cd tools/help-screenshots && npm install && SHOT_COOKIE="$SHOT_COOKIE" npm run capture
+# then copy matching PNGs into _screenshots/ (Step 4) and commit
+```
 
 #### Notes
 
