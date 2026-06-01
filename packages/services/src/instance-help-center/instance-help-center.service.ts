@@ -13,6 +13,7 @@ import type {
   IHelpCategory,
   IHelpCategoryCreate,
   IHelpCategoryUpdate,
+  THelpBundleImportResult,
   THelpLocale,
   TFileSignedURLResponse,
 } from "@plane/types";
@@ -116,6 +117,28 @@ export class InstanceHelpCenterService extends APIService {
   ): Promise<IHelpArticle> {
     return this.patch(`/api/instances/help/articles/${articleId}/translations/${locale}/`, data)
       .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  // ── Bundle export / import ─────────────────────────────────────────────────
+
+  /** Downloads the full help-center content + images as a .zip bundle. */
+  async exportBundle(): Promise<Blob> {
+    return this.get("/api/instances/help/export/", {}, { responseType: "blob" })
+      .then((res) => res?.data as Blob)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  /** Imports a help-center bundle (.zip) into THIS environment, overwriting matching content. */
+  async importBundle(file: File): Promise<THelpBundleImportResult> {
+    const formData = new FormData();
+    formData.append("file", file);
+    return this.post("/api/instances/help/import/", formData)
+      .then((res) => res?.data as THelpBundleImportResult)
       .catch((err) => {
         throw err?.response?.data;
       });

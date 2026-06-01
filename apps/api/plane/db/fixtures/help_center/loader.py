@@ -26,6 +26,7 @@ import mistune
 import yaml
 
 from plane.app.serializers.help_center import sanitize_help_html
+from plane.db.fixtures.help_center.transfer import revive_by_slug
 from plane.db.models import HelpArticle, HelpCategory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -108,26 +109,8 @@ def _iter_article_files():
                 yield entry.name, os.path.join(entry.path, filename)
 
 
-def _revive(model, slug):
-    """Get the row for slug (reviving a God-Mode soft-deleted one), else create it.
-
-    The unique-slug constraint is NOT conditioned on deleted_at, so a soft-deleted
-    slug is invisible to the default manager but still collides on INSERT — look it
-    up through all_objects. Creating-when-missing (vs returning an unsaved instance)
-    keeps the caller's later .save() an UPDATE, so the model's add-time sort_order
-    auto-sequencing does not clobber the explicit order.
-    """
-    obj = model.all_objects.filter(slug=slug).first()
-    if obj is None:
-        return model.objects.create(slug=slug)
-    if getattr(obj, "deleted_at", None) is not None:
-        obj.deleted_at = None
-        obj.save(update_fields=["deleted_at"])
-    return obj
-
-
 def _upsert_category(entry):
-    category = _revive(HelpCategory, entry["slug"])
+    category = revive_by_slug(HelpCategory, entry["slug"])
     category.icon = entry.get("icon", "")
     category.color = entry.get("color", "")
     # Set sort_order on the UPDATE pass (object already saved), so the model's
@@ -176,7 +159,7 @@ def seed_help_content():
         counts["categories"] += 1
 
     for slug, record in _collect_articles().items():
-        article = _revive(HelpArticle, slug)
+        article = revive_by_slug(HelpArticle, slug)
         article.category = categories.get(record["category"])
         article.sort_order = record["sort_order"]
         article.status = record["status"]

@@ -11,7 +11,6 @@ ignores deleted_at), and rejecting path-traversal filenames in an untrusted bund
 Object storage is mocked (no MinIO in the test runner).
 """
 
-import json
 import os
 import uuid
 from unittest import mock
@@ -19,11 +18,13 @@ from unittest import mock
 import pytest
 from django.core.management import call_command
 
-from plane.db.management.commands.import_help_center import Command as ImportCommand
+from plane.db.fixtures.help_center.transfer import safe_basename
 from plane.db.models import FileAsset, HelpArticle, HelpArticleTranslation
 
-EXPORT_STORAGE = "plane.db.management.commands.export_help_center.S3Storage"
-IMPORT_STORAGE = "plane.db.management.commands.import_help_center.S3Storage"
+# Export + import share one storage seam now (the transfer core), so both phases
+# patch the same symbol.
+EXPORT_STORAGE = "plane.db.fixtures.help_center.transfer.S3Storage"
+IMPORT_STORAGE = "plane.db.fixtures.help_center.transfer.S3Storage"
 PNG = b"\x89PNG\r\n\x1a\n_fake_image_bytes_"
 
 
@@ -34,15 +35,15 @@ def _seed(tmp_path):
 
 @pytest.mark.contract
 class TestHelpCenterExportImport:
-    def test_safe_asset_path_rejects_traversal(self, tmp_path):
-        cmd = ImportCommand()
-        assert cmd._safe_asset_path(str(tmp_path), "/etc/passwd") is None
-        assert cmd._safe_asset_path(str(tmp_path), "../../etc/passwd") is None
-        assert cmd._safe_asset_path(str(tmp_path), "..") is None
-        # a real file inside assets/ resolves
-        os.makedirs(tmp_path / "assets", exist_ok=True)
-        (tmp_path / "assets" / "ok.png").write_bytes(PNG)
-        assert cmd._safe_asset_path(str(tmp_path), "ok.png") is not None
+    def test_safe_basename_rejects_traversal(self):
+        # A bundle crosses a trust boundary; asset names are reduced to a bare
+        # basename so a crafted ../ name can never escape the assets root.
+        assert safe_basename("/etc/passwd") is None
+        assert safe_basename("../../etc/passwd") is None
+        assert safe_basename("..") is None
+        assert safe_basename(".") is None
+        assert safe_basename("") is None
+        assert safe_basename("ok.png") == "ok.png"
 
     @pytest.mark.django_db
     def test_round_trip_text_content_is_faithful(self, tmp_path):

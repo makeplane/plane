@@ -93,3 +93,13 @@ export interface IHelpArticleTranslationUpsert {
   description_html?: string;
   description_json?: object;
 }
+
+// ── Bundle export/import ──────────────────────────────────────────────────────
+
+// Result of importing a help-center bundle (.zip) into the current environment.
+// Mirrors the API response of POST /api/instances/help/import/.
+export type THelpBundleImportResult = {
+  categories: number;
+  articles: number;
+  images: number;
+};

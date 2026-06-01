@@ -11,6 +11,8 @@ from plane.license.api.views.help_center import (
     InstanceHelpArticleTranslationEndpoint,
     InstanceHelpCategoryDetailEndpoint,
     InstanceHelpCategoryEndpoint,
+    InstanceHelpCenterExportEndpoint,
+    InstanceHelpCenterImportEndpoint,
 )
 
 # God Mode authoring of the shared (instance-global) Help Center.
@@ -50,5 +52,15 @@ urlpatterns = [
         "help/articles/<uuid:pk>/assets/<uuid:asset_id>/",
         InstanceHelpArticleAssetEndpoint.as_view(http_method_names=["patch"]),
         name="instance-help-article-asset-detail",
+    ),
+    path(
+        "help/export/",
+        InstanceHelpCenterExportEndpoint.as_view(http_method_names=["get"]),
+        name="instance-help-export",
+    ),
+    path(
+        "help/import/",
+        InstanceHelpCenterImportEndpoint.as_view(http_method_names=["post"]),
+        name="instance-help-import",
     ),
 ]

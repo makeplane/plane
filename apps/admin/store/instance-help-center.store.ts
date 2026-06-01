@@ -15,6 +15,7 @@ import type {
   IHelpCategory,
   IHelpCategoryCreate,
   IHelpCategoryUpdate,
+  THelpBundleImportResult,
   THelpLocale,
   TLoader,
 } from "@plane/types";
@@ -44,6 +45,8 @@ export interface IInstanceHelpCenterStore {
     data: IHelpArticleTranslationUpsert
   ) => Promise<IHelpArticle>;
   uploadArticleImage: (articleId: string, file: File) => Promise<string>;
+  exportBundle: () => Promise<Blob>;
+  importBundle: (file: File) => Promise<THelpBundleImportResult>;
 }
 
 const bySortOrder = (a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order;
@@ -74,6 +77,8 @@ export class InstanceHelpCenterStore implements IInstanceHelpCenterStore {
       deleteArticle: action,
       upsertTranslation: action,
       uploadArticleImage: action,
+      exportBundle: action,
+      importBundle: action,
     });
   }
 
@@ -93,10 +98,7 @@ export class InstanceHelpCenterStore implements IInstanceHelpCenterStore {
   fetchAll = async (): Promise<void> => {
     this.loader = "init-loader";
     try {
-      const [categories, articles] = await Promise.all([
-        this.service.listCategories(),
-        this.service.listArticles(),
-      ]);
+      const [categories, articles] = await Promise.all([this.service.listCategories(), this.service.listArticles()]);
       runInAction(() => {
         this.categories = {};
         this.articles = {};
@@ -161,4 +163,19 @@ export class InstanceHelpCenterStore implements IInstanceHelpCenterStore {
 
   uploadArticleImage = async (articleId: string, file: File): Promise<string> =>
     this.service.uploadArticleImage(articleId, file);
+
+  exportBundle = async (): Promise<Blob> => this.service.exportBundle();
+
+  importBundle = async (file: File): Promise<THelpBundleImportResult> => {
+    this.loader = "mutation";
+    try {
+      const result = await this.service.importBundle(file);
+      await this.fetchAll();
+      return result;
+    } finally {
+      runInAction(() => {
+        this.loader = undefined;
+      });
+    }
+  };
 }

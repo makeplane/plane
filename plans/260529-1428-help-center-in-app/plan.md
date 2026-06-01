@@ -79,6 +79,14 @@ light/dark, locale-switch) folded into P8.
 
 **Impact on phases (D8):** **P5** header gains a left brand block (logo + label → `/help`) and a right-side user avatar menu extracted into a new CE component `help-center-user-menu.tsx` (<150 LOC); `help-center-header.tsx` becomes a 3-zone composition. New i18n key `help_center.account_menu_label` (aria) in en/vi/ko; reuses `help_center.breadcrumb_home`, `help_center.back_to_app`, top-level `sign_out`(+`.toast.error.*`). No backend change. A "Settings/Preferences" item is intentionally NOT added (profile-settings modal is not mounted in the `/help` layout).
 
+### User Decisions — Validation Session 6 (2026-06-01 — D9 God Mode export/import bundle UI)
+
+| ID  | Decision                                                       | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D9  | **Per-environment guide lifecycle + God Mode export/import UI** | Each environment (dev/UAT/prod) is seeded ONCE, then edited **independently** in God Mode (rows in that env's DB, images in its MinIO) — never a shared live DB. Promotion is manual: **export a `.zip` bundle, copy it across, import it.** Surfaced as **God Mode → Help Center** buttons (Export bundle ⬇ / Import bundle ⬆ behind an overwrite confirm), backed by `plane/license` endpoints (`GET /help/export/` → zip, `POST /help/import/` → `{categories,articles,images}`, InstanceAdmin-gated) over a shared `transfer.py` core reused by the existing CLI commands. Import = additive upsert-by-slug (overwrites matching slugs, never deletes), re-sanitizes HTML, content-type allowlist, uploads images to the target's MinIO + rewrites `/static/<id>/` refs (HTML + editor JSON). A one-time **seed guard** protects God-Mode edits from re-seed. **Proxy body limit = route-scoped (user-confirmed over global-bump / CLI-only):** `/api/instances/help/import/` raised to `HELP_BUNDLE_MAX_SIZE` (default 300MB) in the bundled Caddyfiles so a real (~tens-of-MB) bundle does not 413; every other route stays at `FILE_SIZE_LIMIT` (5MB). API caps the bundle at 256MB. |
+
+**Impact on phases (D9):** new **P10** (God Mode export/import UI + endpoints). No change to P1–P9 read/author behavior — reuses P6's `HELP_ARTICLE_CONTENT` asset model + P1/P2 models. Backend refactor extracts the previously CLI-only export/import into `plane/db/fixtures/help_center/transfer.py`; the CLI commands (`export_help_center`/`import_help_center`) and `loader.py` become thin wrappers over it (behavior preserved; the existing CLI tests + 7 new endpoint guard tests are green). Adversarial review (4 lenses: security / refactor-parity / FE-contract / completeness) found 0 critical/high.
+
 ## Phases
 
 | Phase | Name                                                                         | Priority | Effort | Status                                              |
@@ -92,6 +100,7 @@ light/dark, locale-switch) folded into P8.
 | 7     | [Discovery and Contextual Help](./phase-07-discovery-and-contextual-help.md) | P2       | 1d     | Done — entry points → `/help` (D7), verified live   |
 | 8     | [Testing](./phase-08-testing.md)                                             | P1       | 2d     | Done — 51 backend tests green; FE/e2e = manual QA   |
 | 9     | [Documentation](./phase-09-documentation.md)                                 | P3       | 0.5d   | Done — docs updated + VI authoring guide + seed cmd  |
+| 10    | [God Mode Export/Import UI](./phase-10-god-mode-export-import-ui.md)          | P1       | 1d     | Done — license endpoints + admin buttons + route-scoped proxy; 121 backend tests green (D9) |
 
 **Estimated effort: ~15 dev-days** (full UX scope per D4; Cmd+K backend search dropped per D5). Original baseline was ~11d; the +4d covers fixed toolbar + live preview + visual icon picker + copy-between-locales (P6), in-article TOC + prev/next + related (P5), accent-folded multilingual search (P1/P2), and the matching tests (P8).
 
@@ -99,13 +108,14 @@ light/dark, locale-switch) folded into P8.
 
 ```
 01 ──> 02 ──> 04 ──┬─> 05 ──> 07 ──┐
-03 ────────────────┴─> 06 ─────────┼─> 08 ──> 09
+03 ────────────────┴─> 06 ─────────┼─> 08 ──> 09 ──> 10 (D9, follow-on)
 ```
 
 - P1 → P2 → P4 (backend before FE store).
 - P3 (i18n) is independent, must land before P5/P6 UI.
 - P5 + P6 depend on P4 (+ P3). P7 depends on P5/P6.
 - P8 (tests) depends on all impl phases. P9 (docs) last.
+- P10 (export/import UI, D9) is a follow-on: reuses P2 models + P6's `HELP_ARTICLE_CONTENT` asset model; landed after the core feature shipped.
 
 ## Key References
 

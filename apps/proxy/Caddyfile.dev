@@ -10,7 +10,19 @@
 :80 {
 	encode zstd gzip
 
-	request_body {
+	# A Help Center bundle import carries the guide's screenshots, so it needs a
+	# larger body than a single attachment. Raise the cap on just that route; every
+	# other upload stays at FILE_SIZE_LIMIT (the two matchers are mutually exclusive
+	# so each request hits exactly one request_body handler).
+	@help_bundle_import path /api/instances/help/import/
+	request_body @help_bundle_import {
+		max_size {$HELP_BUNDLE_MAX_SIZE:300MB}
+	}
+
+	@standard_upload {
+		not path /api/instances/help/import/
+	}
+	request_body @standard_upload {
 		max_size {$FILE_SIZE_LIMIT}
 	}
 

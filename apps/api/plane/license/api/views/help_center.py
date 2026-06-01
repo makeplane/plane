@@ -2,11 +2,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import io
+import json
 import uuid
+import zipfile
 
 from django.conf import settings
+from django.http import HttpResponse
 from django.utils.text import slugify
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from plane.app.serializers.help_center import HelpArticleAdminSerializer, HelpCategoryAdminSerializer
@@ -21,6 +26,7 @@ from plane.app.views.help_center.base import (
     upsert_category_translations,
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.db.fixtures.help_center.transfer import apply_bundle, build_bundle
 from plane.db.models import FileAsset, HelpArticle, HelpCategory
 from plane.db.models.help_center import fold_accents
 from plane.license.api.views.base import BaseAPIView
@@ -30,6 +36,18 @@ CATEGORY_WRITABLE_FIELDS = ("icon", "color", "is_active")
 
 # Inline help images are bitmap-only, matching the avatar/cover upload allowlist.
 ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg", "image/gif"]
+
+# Bundle transfer limits — admin-only, occasional op; generous but bounded so a
+# crafted upload can neither exhaust memory nor smuggle a decompression bomb.
+# A real guide bundle is a few hundred members (categories + articles + images);
+# the entry cap is the backstop against a central-directory amplification archive
+# whose ZipInfo objects materialise before the uncompressed-size guard runs.
+MAX_BUNDLE_UPLOAD_BYTES = 256 * 1024 * 1024
+MAX_MANIFEST_BYTES = 64 * 1024 * 1024
+MAX_TOTAL_UNCOMPRESSED_BYTES = 1024 * 1024 * 1024
+MAX_BUNDLE_ENTRIES = 10000
+# Bundle schema this importer understands; build_bundle stamps it (see transfer).
+SUPPORTED_BUNDLE_VERSION = 1
 
 
 class InstanceHelpCategoryEndpoint(BaseAPIView):
@@ -236,3 +254,90 @@ class InstanceHelpArticleAssetEndpoint(BaseAPIView):
             get_asset_object_metadata.delay(asset_id=str(asset.id))
         asset.save(update_fields=["is_uploaded"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InstanceHelpCenterExportEndpoint(BaseAPIView):
+    """God Mode: export the whole Help Center (content + images) as a .zip bundle.
+
+    Same layout as the ``export_help_center`` CLI command, zipped: a manifest.json
+    plus assets/<asset_id>.<ext>. Use it to promote a reviewed guide to another
+    environment via this UI's import (or the CLI's import_help_center).
+    """
+
+    def get(self, request):
+        manifest, blobs, _missing = build_bundle()
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as bundle:
+            bundle.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=1))
+            for blob in blobs:
+                bundle.writestr(f"assets/{blob['file']}", blob["data"])
+        response = HttpResponse(buffer.getvalue(), content_type="application/zip")
+        response["Content-Disposition"] = 'attachment; filename="help_center_bundle.zip"'
+        return response
+
+
+class InstanceHelpCenterImportEndpoint(BaseAPIView):
+    """God Mode: import a .zip bundle (from this UI's export, or the CLI).
+
+    Additive upsert by slug — overwrites matching articles in THIS instance with the
+    bundle's content and uploads its images here; it never deletes guide content the
+    target already has. The upload crosses a trust boundary, so it is size-capped,
+    the archive is read (never extracted to disk), and asset members are looked up
+    by basename only (no path traversal).
+    """
+
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        upload = request.FILES.get("file")
+        if not upload:
+            return Response({"error": "A .zip bundle file is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if upload.size and upload.size > MAX_BUNDLE_UPLOAD_BYTES:
+            return Response({"error": "Bundle exceeds the 256 MB limit."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            bundle = zipfile.ZipFile(upload)
+        except zipfile.BadZipFile:
+            return Response(
+                {"error": "The uploaded file is not a valid .zip bundle."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        with bundle:
+            entries = bundle.infolist()
+            if len(entries) > MAX_BUNDLE_ENTRIES:
+                return Response({"error": "Bundle has too many entries."}, status=status.HTTP_400_BAD_REQUEST)
+            if sum(info.file_size for info in entries) > MAX_TOTAL_UNCOMPRESSED_BYTES:
+                return Response({"error": "Bundle contents are too large."}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                manifest_info = bundle.getinfo("manifest.json")
+            except KeyError:
+                return Response({"error": "Bundle is missing manifest.json."}, status=status.HTTP_400_BAD_REQUEST)
+            if manifest_info.file_size > MAX_MANIFEST_BYTES:
+                return Response({"error": "Bundle manifest.json is too large."}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                manifest = json.loads(bundle.read("manifest.json"))
+            except ValueError:
+                return Response(
+                    {"error": "Bundle manifest.json is not valid JSON."}, status=status.HTTP_400_BAD_REQUEST
+                )
+            # Fail fast on a malformed manifest BEFORE any DB write, so a crafted
+            # bundle yields a clean 400 rather than a partial import + 500.
+            if not isinstance(manifest, dict):
+                return Response({"error": "Bundle manifest.json is malformed."}, status=status.HTTP_400_BAD_REQUEST)
+            if manifest.get("version", SUPPORTED_BUNDLE_VERSION) != SUPPORTED_BUNDLE_VERSION:
+                return Response(
+                    {"error": "Unsupported bundle version."}, status=status.HTTP_400_BAD_REQUEST
+                )
+            if not isinstance(manifest.get("categories", []), list) or not isinstance(
+                manifest.get("articles", []), list
+            ):
+                return Response({"error": "Bundle manifest.json is malformed."}, status=status.HTTP_400_BAD_REQUEST)
+
+            def get_asset_bytes(safe_name):
+                # safe_name is a validated basename (transfer.safe_basename); reading a
+                # named archive member touches no filesystem path.
+                try:
+                    return bundle.read(f"assets/{safe_name}")
+                except KeyError:
+                    return None
+
+            stats = apply_bundle(manifest, get_asset_bytes)
+        return Response(stats, status=status.HTTP_200_OK)

@@ -401,9 +401,14 @@ docker cp ./help_center_export planeso-api-1:/code/help_center_export
 docker exec planeso-api-1 sh -c 'cd /code && python manage.py import_help_center --in help_center_export'
 ```
 
-- **Import is additive upsert by slug** — it updates/creates from the bundle and never deletes guide content the target already has. Per imported article, its prior images are superseded and re-created from the bundle, so re-importing stays clean.
-- **Asset ids are per-environment.** Only the image *bytes* travel in the bundle; `import_help_center` uploads them to the target's own storage and rewrites the inline `/api/assets/v2/static/<id>/` references (in both the rendered HTML and the editor JSON) to the new ids.
+- **Import is additive upsert by slug** — it updates/creates from the bundle and never deletes guide content the target already has. Images are uploaded fresh and references rewritten to the new ids, so re-importing never breaks images; the previously-referenced objects become orphans in storage (clean those up at the storage layer if repeated promotions make it worthwhile).
+- **It overwrites slug-matching articles**, so importing a *stale* bundle silently reverts later God-Mode edits on the target. Only import a bundle you actually intend to promote; the import is not reversible.
+- **Asset ids are per-environment.** Only the image *bytes* travel in the bundle; import uploads them to the target's own storage and rewrites the inline `/api/assets/v2/static/<id>/` references (in both the rendered HTML and the editor JSON) to the new ids.
 - Same commands double as a **per-environment backup/restore** of the Help Center.
+
+**Via God Mode UI (no shell access):** the same promotion is available as buttons on **God Mode → Help Center** — **Export bundle** downloads the `.zip`, **Import bundle** uploads it (behind an overwrite confirmation) and reports how many categories/articles/images landed. The UI bundle is the same layout as the CLI bundle, so the two are interchangeable.
+
+- **Upload size prerequisite.** A real bundle is tens of MB (it carries the guide's screenshots). The reverse proxy caps request bodies at `FILE_SIZE_LIMIT` (default **5 MB**) for every route **except** `POST /api/instances/help/import/`, which the bundled Caddyfiles raise to `HELP_BUNDLE_MAX_SIZE` (default **300 MB**); the API additionally caps the bundle at 256 MB. If you front the API with a different ingress (nginx, a cloud load balancer), raise the body limit for that one route there as well — otherwise a large UI import returns **413** at the proxy. The CLI `import_help_center` path is not proxied and has no such limit.
 
 #### Notes
 

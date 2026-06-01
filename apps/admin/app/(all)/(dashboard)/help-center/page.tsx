@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus } from "lucide-react";
+import { Download, Plus, Upload } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Loader } from "@plane/ui";
@@ -20,9 +20,10 @@ import { ArticleList } from "./components/article-list";
 import { CategoryFormModal } from "./components/category-form-modal";
 import { CategoryList } from "./components/category-list";
 import { DeleteConfirmModal } from "./components/delete-confirm-modal";
+import { ImportBundleModal } from "./components/import-bundle-modal";
 
 const HelpCenterPage = observer(function HelpCenterPage() {
-  const { loader, fetchAll, deleteCategory, deleteArticle } = useInstanceHelpCenter();
+  const { loader, fetchAll, deleteCategory, deleteArticle, exportBundle } = useInstanceHelpCenter();
   useSWR("INSTANCE_HELP_CENTER", fetchAll);
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -32,10 +33,29 @@ const HelpCenterPage = observer(function HelpCenterPage() {
   const [articleModalOpen, setArticleModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<IHelpCategory | null>(null);
   const [articleToDelete, setArticleToDelete] = useState<IHelpArticle | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   const openNewCategory = () => {
     setEditCategory(null);
     setCategoryModalOpen(true);
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const blob = await exportBundle();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "help_center_bundle.zip";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Export failed" });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -43,6 +63,18 @@ const HelpCenterPage = observer(function HelpCenterPage() {
       header={{
         title: "Help Center",
         description: "Author the shared help guide shown to every workspace (multilingual VI/EN/KO).",
+        actions: (
+          <div className="flex gap-2">
+            <Button variant="secondary" size="sm" loading={isExporting} onClick={() => void handleExport()}>
+              <Download className="size-4" />
+              Export bundle
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setIsImportOpen(true)}>
+              <Upload className="size-4" />
+              Import bundle
+            </Button>
+          </div>
+        ),
       }}
     >
       {editingArticleId ? (
@@ -122,6 +154,7 @@ const HelpCenterPage = observer(function HelpCenterPage() {
         }}
         onClose={() => setArticleToDelete(null)}
       />
+      <ImportBundleModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
     </PageWrapper>
   );
 });
