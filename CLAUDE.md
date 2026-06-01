@@ -30,6 +30,13 @@
 - PM: pnpm | Lint: `pnpm check:lint` | Format: `pnpm check:format`
 - Backend tests: `cd apps/api && python run_tests.py`
 
+## Local Dev (this machine)
+
+- **Start everything: `pnpm dev:local`** (backend + Caddy proxy in Docker, frontends via turbo, hot reload). Stale ports? `pnpm dev:clean` kills strays first. Script: `scripts/dev-local.sh`.
+- **One origin: http://localhost** → web · **http://localhost/god-mode/** → admin · `/api` → backend. Caddy (:80) routes by path. Don't use raw `:3001` for god-mode (admin has no `/api` proxy).
+- Ports: web 3000 · admin/god-mode 3001 · space 3002 · live 3003 · api 8000 · db 5434 · MinIO 9000/9090.
+- **Pitfall:** running `pnpm dev` per-app twice cascades ports — a 2nd web lands on :3001 and impersonates admin (→ "no workspace"). Run `pnpm dev:local`, not per-app dev.
+
 ## File Standards
 
 - kebab-case, <200 lines code, <150 lines components
