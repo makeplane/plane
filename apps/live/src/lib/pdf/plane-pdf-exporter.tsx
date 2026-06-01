@@ -50,6 +50,25 @@ Font.register({
   ],
 });
 
+// Resolve Vazirmatn font files from the fonts directory at the package root.
+// Place the woff files at apps/live/fonts/vazirmatn/ before starting the server.
+// Download from: https://github.com/rastikerdar/vazirmatn/releases
+const vazirmatnFontDir = path.resolve(process.cwd(), "fonts/vazirmatn");
+
+Font.register({
+  family: "Vazirmatn",
+  fonts: [
+    {
+      src: path.join(vazirmatnFontDir, "vazirmatn-regular.woff"),
+      fontWeight: 400,
+    },
+    {
+      src: path.join(vazirmatnFontDir, "vazirmatn-bold.woff"),
+      fontWeight: 700,
+    },
+  ],
+});
+
 export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions = {}) => {
   const { title, author, subject, pageSize = "A4", pageOrientation = "portrait", metadata, noAssets } = options;
 
