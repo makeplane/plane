@@ -236,6 +236,12 @@ const EDITOR_PDF_FONT_FAMILY_STYLES: Styles = {
   ".courier-bold": {
     fontFamily: "Courier-Bold",
   },
+  // RTL content (Persian, Arabic, Hebrew, etc.) — use a font that carries
+  // the required Unicode shaping tables so letters connect correctly.
+  "[dir='rtl']": {
+    fontFamily: "Vazirmatn",
+    textAlign: "right",
+  },
 };
 
 const EDITOR_PDF_TYPOGRAPHY_STYLES: Styles = {
