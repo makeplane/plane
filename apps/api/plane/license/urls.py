@@ -31,6 +31,8 @@ from plane.license.api.views import (
     EmailLogMonitoringEndpoint,
     ScheduledJobMonitoringEndpoint,
     WorkerHealthMonitoringEndpoint,
+    UsageMonitorUsersEndpoint,
+    UsageMonitorDepartmentsEndpoint,
 )
 
 urlpatterns = [
@@ -152,5 +154,16 @@ urlpatterns = [
         "monitoring/worker-health/",
         WorkerHealthMonitoringEndpoint.as_view(),
         name="monitoring-worker-health",
+    ),
+    # Usage monitor (instance-wide worklog dashboards)
+    path(
+        "usage-monitor/users/",
+        UsageMonitorUsersEndpoint.as_view(),
+        name="usage-monitor-users",
+    ),
+    path(
+        "usage-monitor/departments/",
+        UsageMonitorDepartmentsEndpoint.as_view(),
+        name="usage-monitor-departments",
     ),
 ]

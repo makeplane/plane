@@ -45,7 +45,14 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { name: "", code: "", description: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true },
+    defaultValues: {
+      name: "",
+      code: "",
+      description: "",
+      main_category: defaultMainId ?? "",
+      sort_order: 0,
+      is_active: true,
+    },
   });
 
   useEffect(() => {
@@ -59,7 +66,14 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
         is_active: editCategory.is_active,
       });
     } else {
-      reset({ name: "", code: "", description: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true });
+      reset({
+        name: "",
+        code: "",
+        description: "",
+        main_category: defaultMainId ?? "",
+        sort_order: 0,
+        is_active: true,
+      });
     }
   }, [editCategory, defaultMainId, reset]);
 

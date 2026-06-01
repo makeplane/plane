@@ -45,6 +45,11 @@ from .monitoring import (
     WorkerHealthMonitoringEndpoint,
 )
 
+from .usage_monitor import (
+    UsageMonitorUsersEndpoint,
+    UsageMonitorDepartmentsEndpoint,
+)
+
 from .task_category import (
     InstanceMainTaskCategoryEndpoint,
     InstanceMainTaskCategoryDetailEndpoint,

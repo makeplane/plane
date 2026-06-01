@@ -114,7 +114,11 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
           is_active: r.is_active !== undefined ? r.is_active : undefined,
         }));
 
-      const data = await bulkImport({ main_categories: mainCategories, sub_categories: subCategories, update_existing: updateExisting });
+      const data = await bulkImport({
+        main_categories: mainCategories,
+        sub_categories: subCategories,
+        update_existing: updateExisting,
+      });
       setResult(data);
       const totalCreated = data.total_main_created + data.total_sub_created;
       const totalUpdated = data.total_main_updated + data.total_sub_updated;
@@ -213,11 +217,13 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
               <table className="min-w-full text-sm">
                 <thead className="bg-layer-1">
                   <tr>
-                    {["type", "main_category_name", "name", "code", "description", "sort_order", "is_active"].map((col) => (
-                      <th key={col} className="px-3 py-2 text-left font-medium text-tertiary whitespace-nowrap">
-                        {col}
-                      </th>
-                    ))}
+                    {["type", "main_category_name", "name", "code", "description", "sort_order", "is_active"].map(
+                      (col) => (
+                        <th key={col} className="px-3 py-2 text-left font-medium text-tertiary whitespace-nowrap">
+                          {col}
+                        </th>
+                      )
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-subtle">

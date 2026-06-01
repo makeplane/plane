@@ -17,6 +17,7 @@ import {
   Network,
   UserCheck,
   Tag,
+  Gauge,
 } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
@@ -37,7 +38,8 @@ export type TCoreSidebarMenuKey =
   | "task-categories"
   | "help-center"
   | "job-positions"
-  | "calendar";
+  | "calendar"
+  | "usage-monitor";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -123,5 +125,11 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Business Calendar",
     description: "Manage working schedules and public holidays.",
     href: `/calendar/`,
+  },
+  "usage-monitor": {
+    Icon: Gauge,
+    name: "Usage Monitor",
+    description: "Track user activity and logged-time usage.",
+    href: `/usage-monitor/`,
   },
 };
