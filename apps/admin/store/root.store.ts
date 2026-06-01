@@ -30,6 +30,8 @@ import type { IInstanceJobPositionStore } from "./instance-job-position.store";
 import { InstanceJobPositionStore } from "./instance-job-position.store";
 import type { IBusinessCalendarStore } from "./business-calendar.store";
 import { BusinessCalendarStore } from "./business-calendar.store";
+import type { IUsageMonitorStore } from "./usage-monitor.store";
+import { UsageMonitorStore } from "./usage-monitor.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -46,6 +48,7 @@ export class RootStore {
   instanceHelpCenter: IInstanceHelpCenterStore;
   instanceJobPosition: IInstanceJobPositionStore;
   businessCalendar: IBusinessCalendarStore;
+  usageMonitor: IUsageMonitorStore;
 
   constructor() {
     this.theme = new ThemeStore(this);
@@ -60,6 +63,7 @@ export class RootStore {
     this.instanceHelpCenter = new InstanceHelpCenterStore();
     this.instanceJobPosition = new InstanceJobPositionStore();
     this.businessCalendar = new BusinessCalendarStore();
+    this.usageMonitor = new UsageMonitorStore(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
@@ -84,5 +88,6 @@ export class RootStore {
     this.instanceHelpCenter = new InstanceHelpCenterStore();
     this.instanceJobPosition = new InstanceJobPositionStore();
     this.businessCalendar = new BusinessCalendarStore();
+    this.usageMonitor = new UsageMonitorStore(this);
   }
 }

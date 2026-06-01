@@ -23,5 +23,6 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks["task-categories"],
     coreSidebarMenuLinks["help-center"],
     coreSidebarMenuLinks["calendar"],
+    coreSidebarMenuLinks["usage-monitor"],
   ];
 }

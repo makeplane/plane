@@ -33,6 +33,9 @@ class IssueWorkLog(ProjectBaseModel):
         indexes = [
             models.Index(fields=["issue", "logged_by"]),
             models.Index(fields=["project", "logged_at"]),
+            # Instance-wide usage aggregation buckets by workspace over date ranges;
+            # without this, multi-year scans degrade to full-table reads.
+            models.Index(fields=["workspace", "logged_at"]),
         ]
 
     def __str__(self):
