@@ -1,0 +1,1220 @@
+[
+  {
+    "name": "lam-quen-giao-dien-chinh",
+    "path": "/{ws}/",
+    "wait": 3000
+  },
+  {
+    "name": "danh-sach-du-an",
+    "path": "/{ws}/projects/",
+    "wait": 3000
+  },
+  {
+    "name": "cac-bo-cuc-hien-thi-five-layouts",
+    "path": "/{ws}/projects/{pid}/issues/",
+    "wait": 3500
+  },
+  {
+    "name": "loc-nhom-va-sap-xep-group-by",
+    "path": "/{ws}/projects/{pid}/issues/",
+    "wait": 3500
+  },
+  {
+    "name": "tao-va-quan-ly-cycles",
+    "path": "/{ws}/projects/{pid}/cycles/",
+    "wait": 3500
+  },
+  {
+    "name": "tao-va-quan-ly-modules",
+    "path": "/{ws}/projects/{pid}/modules/",
+    "wait": 3500
+  },
+  {
+    "name": "pages-list-tab-navigation",
+    "path": "/{ws}/projects/{pid}/pages/",
+    "wait": 3500
+  },
+  {
+    "name": "chi-tiet-cong-viec",
+    "path": "/{ws}/projects/{pid}/issues/{iid}/",
+    "wait": 3500
+  },
+  {
+    "name": "cong-viec-cua-ban-dashboard",
+    "path": "/{ws}/profile/{uid}/",
+    "wait": 3500
+  },
+  {
+    "name": "inbox-va-thong-bao",
+    "path": "/{ws}/notifications/",
+    "wait": 3000
+  },
+  {
+    "name": "stickies-trang-day-du",
+    "path": "/{ws}/stickies/",
+    "wait": 3000
+  },
+  {
+    "name": "workspace-settings-general-page",
+    "path": "/{ws}/settings/",
+    "wait": 3000
+  },
+  {
+    "name": "workspace-members-settings-page",
+    "path": "/{ws}/settings/members/",
+    "wait": 3000
+  },
+  {
+    "name": "du-an-toan-ngan-hang",
+    "path": "/{ws}/bank-wide-projects/",
+    "wait": 3000
+  },
+  {
+    "name": "head-office-dashboard-department-tab",
+    "path": "/{ws}/ho/",
+    "wait": 4000
+  },
+  {
+    "name": "cham-cong-timesheet-grid",
+    "path": "/{ws}/time-tracking/",
+    "wait": 4000
+  },
+  {
+    "name": "capacity-va-bao-cao",
+    "path": "/{ws}/time-tracking/capacity/",
+    "wait": 4000
+  },
+  {
+    "name": "ho-so-ca-nhan-form",
+    "path": "/settings/profile/profile/",
+    "wait": 3000
+  },
+  {
+    "name": "tao-cong-viec-modal",
+    "path": "/{ws}/",
+    "wait": 2500,
+    "steps": [
+      {
+        "click": "text=New work item",
+        "wait": 2000
+      }
+    ]
+  },
+  {
+    "name": "command-palette-cmd-k",
+    "path": "/{ws}/",
+    "wait": 2500,
+    "steps": [
+      {
+        "press": "Meta+k",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "gia-nhap-chuyen-workspace",
+    "path": "/{ws}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has([class*=\"rounded-md\"]):near(:text(\"help-demo\"))",
+        "wait": 600
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "lam-quen-tao-cong-viec-dau-tien",
+    "path": "/{ws}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "[data-ph-element=\"sidebar_create_work_item_button\"]",
+        "wait": 1200
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "tong-quan-trang-chu-workspace",
+    "path": "/{ws}",
+    "wait": 2500
+  },
+  {
+    "name": "tong-quan-quick-links",
+    "path": "/{ws}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Add link\")",
+        "wait": 1000
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "binh-luan-tep-va-lien-ket",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 4000,
+    "steps": [
+      {
+        "press": "End",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "cau-hinh-du-an",
+    "path": "/{ws}/settings/projects/{pid}",
+    "wait": 2500
+  },
+  {
+    "name": "ma-dinh-danh-copy-link",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 4000
+  },
+  {
+    "name": "cong-viec-nhap-va-intake",
+    "path": "/{ws}/drafts",
+    "wait": 2500
+  },
+  {
+    "name": "tao-du-an-modal",
+    "path": "/{ws}/projects",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Project\")",
+        "wait": 800
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "luu-tru-cong-viec",
+    "path": "/{ws}/projects/{pid}/archives/issues",
+    "wait": 2500
+  },
+  {
+    "name": "phan-quyen-truong-du-lieu",
+    "path": "/{ws}/settings/projects/{pid}/field-permissions",
+    "wait": 2500
+  },
+  {
+    "name": "quan-he-va-cong-viec-con",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 4000,
+    "steps": [
+      {
+        "press": "End",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "them-nhanh-inline",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"work item\")",
+        "wait": 800
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "theo-doi-va-thong-bao-cong-viec",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 4000
+  },
+  {
+    "name": "thuoc-tinh-cong-viec",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 4000
+  },
+  {
+    "name": "tu-dong-hoa-va-quy-trinh",
+    "path": "/{ws}/settings/projects/{pid}/workflows",
+    "wait": 2500
+  },
+  {
+    "name": "active-cycles-upgrade-cta",
+    "path": "/{ws}/active-cycles/",
+    "wait": 2500
+  },
+  {
+    "name": "cycles-modules-feature-overview",
+    "path": "/{ws}/settings/projects/{pid}/features/cycles",
+    "wait": 2500
+  },
+  {
+    "name": "tao-cycle-modal",
+    "path": "/{ws}/projects/{pid}/cycles",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "[data-ph-element=\"right_header_add_cycle_button\"]",
+        "wait": 800
+      },
+      {
+        "wait": 700
+      }
+    ]
+  },
+  {
+    "name": "module-layout-switch",
+    "path": "/{ws}/projects/{pid}/modules/{mid}",
+    "wait": 2500
+  },
+  {
+    "name": "theo-doi-tien-do-cycle",
+    "path": "/{ws}/projects/{pid}/cycles/{cid}",
+    "wait": 2500
+  },
+  {
+    "name": "cycle-progress-sidebar",
+    "path": "/{ws}/projects/{pid}/cycles/{cid}",
+    "wait": 2500
+  },
+  {
+    "name": "page-editor-slash-command-menu",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "#editor-container",
+        "wait": 800
+      },
+      {
+        "press": "End"
+      },
+      {
+        "press": "Enter"
+      },
+      {
+        "press": "/",
+        "wait": 1200
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "create-page-modal",
+    "path": "/{ws}/projects/{pid}/pages",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text('Add page')",
+        "wait": 1500
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "page-editor-full-width-toggle",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": ".pi-ellipsis",
+        "wait": 1000
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "page-navigation-pane-info-tab",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}?paneTab=info",
+    "wait": 2500
+  },
+  {
+    "name": "page-export-modal",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": ".pi-ellipsis",
+        "wait": 1000
+      },
+      {
+        "click": "text=Export",
+        "wait": 1200
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "page-header-copy-link",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 2500,
+    "steps": [
+      {
+        "hover": "button[aria-label='Copy link']",
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "page-header-lock-control",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 2500
+  },
+  {
+    "name": "page-editor-ai-menu",
+    "path": "/{ws}/projects/{pid}/pages/{pgid}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "#editor-container",
+        "wait": 800
+      },
+      {
+        "press": "End"
+      },
+      {
+        "press": "Shift+Home",
+        "wait": 600
+      },
+      {
+        "click": "#ai-handle",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "workspace-logo-upload",
+    "path": "/{ws}/settings",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "text=/Upload logo|Tải lên logo|Edit logo|Chỉnh sửa logo/",
+        "wait": 800
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "workspace-settings-update-button",
+    "path": "/{ws}/settings",
+    "wait": 2500
+  },
+  {
+    "name": "workspace-invite-members-modal",
+    "path": "/{ws}/settings/members",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text('Add member'), button:has-text('Thêm thành viên')",
+        "wait": 800
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "workspace-webhooks-settings-page",
+    "path": "/{ws}/settings/webhooks",
+    "wait": 2500
+  },
+  {
+    "name": "workspace-create-webhook-modal",
+    "path": "/{ws}/settings/webhooks",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text('Add webhook'), button:has-text('Thêm webhook')",
+        "wait": 900
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "workspace-exports-settings-page",
+    "path": "/{ws}/settings/exports",
+    "wait": 2500
+  },
+  {
+    "name": "workspace-export-form",
+    "path": "/{ws}/settings/exports",
+    "wait": 2500
+  },
+  {
+    "name": "workspace-export-history-table",
+    "path": "/{ws}/settings/exports",
+    "wait": 2500
+  },
+  {
+    "name": "cac-bo-cuc-hien-thi-layout-switcher",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 2500
+  },
+  {
+    "name": "cac-bo-cuc-hien-thi-quick-add",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 2500
+  },
+  {
+    "name": "loc-nhom-va-sap-xep-filter-pills",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Bộ lọc\")",
+        "wait": 600
+      },
+      {
+        "click": "text=Trạng thái",
+        "wait": 400
+      },
+      {
+        "press": "Escape",
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "loc-nhom-va-sap-xep-swimlane",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg) >> nth=1",
+        "wait": 1500
+      },
+      {
+        "click": "button:has-text(\"Hiển thị\")",
+        "wait": 800
+      },
+      {
+        "click": "text=/Nhóm phụ|Sub-group/i",
+        "wait": 600
+      },
+      {
+        "press": "Escape",
+        "wait": 1000
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-cot-va-thuoc-tinh-display-menu",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Hiển thị\")",
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-cot-va-thuoc-tinh-properties-list",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Hiển thị\")",
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-cot-va-thuoc-tinh-inline-edit",
+    "path": "/{ws}/projects/{pid}/issues",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg) >> nth=3",
+        "wait": 1500
+      },
+      {
+        "click": "[role=\"row\"] button >> nth=2",
+        "wait": 1000
+      }
+    ]
+  },
+  {
+    "name": "luu-va-chia-se-views-project-view-form",
+    "path": "/{ws}/projects/{pid}/views",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"View\")",
+        "wait": 400
+      },
+      {
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "luu-va-chia-se-views-global-view-create",
+    "path": "/{ws}/workspace-views",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg.lucide-plus), button.sticky",
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "luu-va-chia-se-views-excel-export",
+    "path": "/{ws}/workspace-views/all-issues",
+    "wait": 2500
+  },
+  {
+    "name": "dieu-huong-thanh-ben-va-app-rail",
+    "path": "/{ws}/",
+    "wait": 2500
+  },
+  {
+    "name": "sidebar-workspace-group",
+    "path": "/{ws}/",
+    "wait": 2500
+  },
+  {
+    "name": "tim-kiem-toan-cuc",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "press": "Meta+k",
+        "wait": 800
+      },
+      {
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "tim-kiem-toan-cuc-results",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "press": "Meta+k",
+        "wait": 800
+      },
+      {
+        "click": "input[placeholder]"
+      },
+      {
+        "press": "a",
+        "wait": 400
+      },
+      {
+        "press": "s",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "command-palette-create-commands",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "press": "Meta+k",
+        "wait": 800
+      },
+      {
+        "click": "input[placeholder]"
+      },
+      {
+        "press": "c"
+      },
+      {
+        "press": "r"
+      },
+      {
+        "press": "e"
+      },
+      {
+        "press": "a"
+      },
+      {
+        "press": "t"
+      },
+      {
+        "press": "e",
+        "wait": 1000
+      },
+      {
+        "wait": 600
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-dieu-huong",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg.lucide-settings-2), button[class*='icon-button']:not([class*='toggle'])",
+        "wait": 800
+      },
+      {
+        "wait": 1000
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-dieu-huong-personal",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg.lucide-settings-2), button[class*='icon-button']:not([class*='toggle'])",
+        "wait": 800
+      },
+      {
+        "wait": 1000
+      }
+    ]
+  },
+  {
+    "name": "tuy-chinh-dieu-huong-projects",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(svg.lucide-settings-2), button[class*='icon-button']:not([class*='toggle'])",
+        "wait": 800
+      },
+      {
+        "wait": 1000
+      }
+    ]
+  },
+  {
+    "name": "cong-viec-cua-ban-bieu-do-uu-tien",
+    "path": "/{ws}/profile/{uid}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "text=Work items by Priority",
+        "wait": 800
+      },
+      {
+        "press": "End",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "cong-viec-cua-ban-nhat-ky-hoat-dong",
+    "path": "/{ws}/profile/{uid}/activity/",
+    "wait": 3000
+  },
+  {
+    "name": "stickies-ghi-chu-nhanh",
+    "path": "/{ws}/",
+    "wait": 2500,
+    "steps": [
+      {
+        "click": ".sticky-action-bar__item > button",
+        "wait": 1000
+      },
+      {
+        "hover": "text=Add sticky",
+        "wait": 400
+      },
+      {
+        "click": "text=Add sticky",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "stickies-widget-trang-chu",
+    "path": "/{ws}/",
+    "wait": 3000,
+    "steps": [
+      {
+        "press": "End",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "ho-so-ca-nhan",
+    "path": "/settings/profile/general",
+    "wait": 2500
+  },
+  {
+    "name": "bao-mat-va-email",
+    "path": "/settings/profile/security",
+    "wait": 2500
+  },
+  {
+    "name": "bao-mat-password-strength",
+    "path": "/settings/profile/security",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "#new_password",
+        "wait": 300
+      },
+      {
+        "press": "a",
+        "wait": 150
+      },
+      {
+        "press": "b",
+        "wait": 150
+      },
+      {
+        "press": "c",
+        "wait": 600
+      },
+      {
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "ngon-ngu-giao-dien-va-thong-bao",
+    "path": "/settings/profile/preferences",
+    "wait": 2500
+  },
+  {
+    "name": "giao-dien-theme-switcher",
+    "path": "/settings/profile/preferences",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button.border.border-subtle-1",
+        "wait": 1200
+      }
+    ]
+  },
+  {
+    "name": "thong-bao-email-settings",
+    "path": "/settings/profile/notifications",
+    "wait": 2500
+  },
+  {
+    "name": "api-token-va-nhat-ky-hoat-dong",
+    "path": "/settings/profile/api-tokens",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "text=Thêm token API",
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "nhat-ky-hoat-dong",
+    "path": "/settings/profile/activity",
+    "wait": 2500
+  },
+  {
+    "name": "capacity-filters",
+    "path": "/{ws}/projects/{pid}/time-tracking/capacity",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "div:has(> span:text-is(\"Cross Workspaces\")) button[role=switch], [role=switch]",
+        "wait": 1500
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "capacity-day-details-popover",
+    "path": "/{ws}/time-tracking/capacity",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "table td .cursor-pointer.rounded-md",
+        "wait": 1500
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "capacity-export-menu",
+    "path": "/{ws}/time-tracking/capacity",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Export\")",
+        "wait": 800
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "cham-cong-worklog-modal",
+    "path": "/{ws}/projects/{pid}/issues/{iid}",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button[title]:has(svg)",
+        "wait": 1000
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "cham-cong-timesheet",
+    "path": "/{ws}/time-tracking",
+    "wait": 2500
+  },
+  {
+    "name": "du-an-toan-ngan-hang-filters",
+    "path": "/{ws}/bank-wide-projects",
+    "wait": 2500
+  },
+  {
+    "name": "du-an-toan-ngan-hang-bank-wide-setting",
+    "path": "/{ws}/settings/projects/{pid}/bank-wide",
+    "wait": 2500
+  },
+  {
+    "name": "head-office-datasheet-columns",
+    "path": "/{ws}/ho?view=datasheet",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has-text(\"Display\")",
+        "wait": 800
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "head-office-worklog-breakdown",
+    "path": "/{ws}/ho?view=datasheet",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "tbody tr:first-child td:last-child",
+        "wait": 1200
+      },
+      {
+        "wait": 1500
+      }
+    ]
+  },
+  {
+    "name": "head-office-exports-tab",
+    "path": "/{ws}/ho?view=exports",
+    "wait": 2500
+  },
+  {
+    "name": "phong-ban-god-mode-department-tree",
+    "path": "/departments",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "phong-ban-god-mode-import-export",
+    "path": "/departments",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-user-menu",
+    "path": "/{ws}/",
+    "wait": 3500,
+    "steps": [
+      {
+        "click": "button:has(img):below(:text('Pi Chat'))",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-dashboard",
+    "path": "/general",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-general-settings",
+    "path": "/general",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-authentication-page",
+    "path": "/authentication",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-auth-methods-list",
+    "path": "/authentication",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-swing-sso-config",
+    "path": "/authentication/swing-sso",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-email-smtp-form",
+    "path": "/email",
+    "wait": 3500,
+    "base": "admin",
+    "steps": [
+      {
+        "click": "button[role='switch'], .toggle-switch",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-email-test-modal",
+    "path": "/email",
+    "wait": 3500,
+    "base": "admin",
+    "steps": [
+      {
+        "click": "button[role='switch'], .toggle-switch",
+        "wait": 1500
+      },
+      {
+        "click": "button:has-text('Send test email')",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-ai-config",
+    "path": "/ai",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-image-unsplash-form",
+    "path": "/image",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-users-list",
+    "path": "/users",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-create-user-form",
+    "path": "/users/create",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-bulk-import-users",
+    "path": "/users/bulk-import",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-user-detail",
+    "path": "/users/{uid}",
+    "wait": 3000,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-workspaces-list",
+    "path": "/workspace",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-workspace-bulk-actions",
+    "path": "/workspace",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-staff-list",
+    "path": "/staff",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-staff-edit-modal",
+    "path": "/staff",
+    "wait": 3500,
+    "base": "admin",
+    "steps": [
+      {
+        "click": "button:has-text('Edit')",
+        "wait": 1500
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-departments-tree",
+    "path": "/departments",
+    "wait": 3000,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-departments-toolbar",
+    "path": "/departments",
+    "wait": 3000,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-job-positions",
+    "path": "/job-positions",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-task-categories",
+    "path": "/task-categories",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-calendar-init",
+    "path": "/calendar",
+    "wait": 3000,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-calendar-detail",
+    "path": "/calendar",
+    "wait": 3500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-monitoring-tabs",
+    "path": "/monitoring",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-email-logs-tab",
+    "path": "/monitoring",
+    "wait": 2500,
+    "base": "admin"
+  },
+  {
+    "name": "god-mode-scheduled-jobs-tab",
+    "path": "/monitoring",
+    "wait": 3500,
+    "base": "admin",
+    "steps": [
+      {
+        "click": "button:has-text('Scheduled Jobs')",
+        "wait": 1200
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-worker-health-tab",
+    "path": "/monitoring",
+    "wait": 3500,
+    "base": "admin",
+    "steps": [
+      {
+        "click": "button:has-text('Worker Health')",
+        "wait": 1200
+      },
+      {
+        "wait": 800
+      }
+    ]
+  },
+  {
+    "name": "god-mode-help-center-editor",
+    "path": "/help-center",
+    "wait": 3000,
+    "base": "admin"
+  },
+  {
+    "name": "phong-ban-va-so-do-to-chuc",
+    "path": "/{ws}/org-chart/",
+    "wait": 3000
+  },
+  {
+    "name": "analytics-overview-tab",
+    "path": "/{ws}/analytics/overview",
+    "wait": 4500
+  },
+  {
+    "name": "analytics-filters",
+    "path": "/{ws}/analytics/work-items",
+    "wait": 4500
+  },
+  {
+    "name": "dashboard-list",
+    "path": "/{ws}/dashboards",
+    "wait": 3500
+  },
+  {
+    "name": "dashboard-widget-config",
+    "path": "/{ws}/dashboards/{did}",
+    "wait": 3000,
+    "steps": [
+      {
+        "click": "text=Add Widget",
+        "wait": 2500
+      }
+    ]
+  }
+]

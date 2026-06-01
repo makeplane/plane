@@ -1,13 +1,52 @@
 ---
 phase: 6
 title: "Authoring UI"
-status: pending
+status: done
 priority: P1
 effort: "3.5d"
 dependencies: [3, 4]
 ---
 
 # Phase 6: Authoring UI
+
+> **DONE (2026-05-30):** Built God Mode authoring in `apps/admin` (per D6/D7), NOT `apps/web/ce`
+> (this file's original workspace-admin design was superseded — see the D7 NOTE below).
+> **Delivered:**
+> - Backend global image assets: `HELP_ARTICLE_CONTENT` added to `FileAsset.EntityTypeContext` +
+>   `asset_url` static branch (`asset.py`); `StaticFileAssetEndpoint` allowlist + `is_deleted`→404 guard
+>   (`v2.py`); God Mode upload endpoint `InstanceHelpArticleAssetEndpoint` (presigned POST + mark-uploaded)
+>   in `license/api/views/help_center.py` + URLs. No migration (entity_type is a plain CharField).
+> - Editor ported into `apps/admin` (added `@plane/editor` dep + styles import) via a thin
+>   `HelpRichTextEditor` (RichTextEditorWithRef) + `editor.helper.ts` file handler (global static asset src,
+>   no workspace) + always-visible `HelpEditorToolbar` (headings/marks/lists/quote/code/table/image) +
+>   live preview (editable=false). Mentions disabled (stub handler).
+> - Data layer: `packages/types/src/help-center.ts`, `packages/services/.../instance-help-center.service.ts`
+>   (CRUD + translations + 3-step image upload), `apps/admin/store/instance-help-center.store.ts` + hook +
+>   root.store registration.
+> - UI (`apps/admin/app/(all)/(dashboard)/help-center/`): page + sidebar entry + route; category list/form
+>   (VI/EN/KO Propel Tabs + EmojiIconPicker lucide picker + active), article list, article create modal,
+>   article editor panel (slug editable-while-draft, publish guard ≥1 titled translation, delete confirm),
+>   translation tabs (per-locale title + WYSIWYG + preview + copy-between-locales), reorder via sort_order
+>   midpoint (no bespoke endpoint).
+> - Web reader L2 cleanup: `help-content-renderer.tsx` now uses a help-only read file handler resolving
+>   global `/api/assets/v2/static/{id}/` images — zero workspace dependency.
+> **Verified:** admin+web `tsc` clean; admin eslint 0 errors; `manage.py check` ok; URL reverse + asset_url
+> verified live; backend unit suite 240 pass (failures pre-existing). Code review: ship-ready (M1 delete-
+> toast fixed). Remaining live/e2e QA (image upload round-trip, light/dark, locale switch) folded into P8.
+
+> **D7 NOTE (2026-05-30):** Authoring moved to `apps/admin` God Mode (per D6) — this phase file's
+> `apps/web/ce` workspace-admin design is SUPERSEDED (see `plans/reports/from-scout-to-cook-help-center-global-redesign-report.md` §2 P6).
+> **D7 makes the global image-asset strategy REQUIRED** (the standalone `/help` reader has no workspace,
+> so images must use workspace-agnostic URLs): implement redesign-report §4 — add `HELP_ARTICLE_CONTENT`
+> to `FileAsset.EntityTypeContext`, return `/api/assets/v2/static/{id}/` from `asset_url`, add it to the
+> `StaticFileAssetEndpoint` allowlist (AllowAny) **+ a `if asset.is_deleted: return 404` guard** (red-team MED),
+> and a God Mode upload endpoint creating `FileAsset(workspace_id=NULL, entity_type=HELP_ARTICLE_CONTENT)`.
+> On save, ensure sanitized `description_html` image `src` is ONLY the global static path (reject/rewrite
+> workspace-scoped src). Public image endpoint = accepted risk (UUIDv4, matches avatars) — decision D-2.
+> **L2 cleanup (when global assets land):** `help-content-renderer.tsx` currently feeds the read-only
+> editor a `workspaceId` from the user's first workspace (`Object.values(workspaces)[0]`) ONLY for image
+> asset-URL construction. Once help images use the global `/api/assets/v2/static/{id}/` path, drop that
+> first-workspace lookup so the standalone reader has zero workspace dependency.
 
 ## Overview
 
@@ -22,7 +61,10 @@ by authors. Platform is "Shinhan Workspace" — do not reference "Plane" in user
   slug, status); edit each article's 3 locale translations (title + rich content) with WYSIWYG;
   publish/unpublish; reorder; delete with confirm.
 - Non-functional: ADMIN-gated (hidden + route-guarded + server-enforced); WYSIWYG = same Tiptap
-  family as Pages; components <150 LOC; CE only.
+  family as Pages; components <150 LOC; CE only. **Follow `plan.md` → "UI/UX Inheritance"**: locale tabs
+  via Propel `Tabs`; inputs via Propel `Input` (`bg-layer-2`); buttons via Propel `Button`; forms use
+  semantic tokens (`bg-surface-1` container, `border-subtle`, `text-primary`) — NO hardcoded colors; verify
+  light + dark theme.
 
 ## Architecture
 
@@ -45,13 +87,16 @@ Components (`apps/web/ce/components/help-center/authoring/`), each <150 LOC:
 - `help-admin-dashboard.tsx` — tabs/sections: Categories list + Articles list with edit/delete/reorder
   - "New" buttons.
 - `category-form.tsx` — locale tabs (vi/en/ko) name inputs, **visual icon picker** (see g12 below),
-  color, sort_order; uses `react-hook-form`.
+  color, sort_order; uses `react-hook-form`. Locale tabs = Propel `Tabs` (`@plane/propel/tabs`); name
+  fields = Propel `Input` (`@plane/propel/input`).
 - `article-form.tsx` — category select, status toggle, slug field. **Slug is generated SERVER-SIDE**
   (Finding 11) from the first available title (VI→EN→KO), diacritics transliterated, collision-suffixed —
   there is NO frontend slugify in the repo and django `slugify` strips Vietnamese diacritics. Slug shown
   read-only; editable only while `status=draft`, frozen after first publish. **Publish is disabled in the
   UI unless ≥1 locale has a non-empty title** (Finding 13; server enforces it too). Contains `<TranslationTabs/>`.
-- `translation-tabs.tsx` — VI/EN/KO tabs; each tab = title input + `<HelpRichTextEditor/>`; per-locale
+- `translation-tabs.tsx` — VI/EN/KO tabs built on Propel `Tabs` (`@plane/propel/tabs`:
+  `Tabs.Root/List/Trigger/Content` — inherits a11y + keyboard nav, do NOT hand-roll tab chrome); each
+  tab = title `Input` + `<HelpRichTextEditor/>`; per-locale
   "missing translation" badge; save calls `upsertTranslation`. **Copy-between-locales action** (D4/g13):
   when a target locale is empty, show "Copy from <locale>" button that prefills title + content from a
   filled sibling locale (client-side; calls Phase-4 helper); author then edits + saves normally.
@@ -156,6 +201,8 @@ saved/error toasts (`@plane/propel` toast/`setToast`).
 - [ ] **Empty locale can be prefilled from a sibling locale via "Copy from <locale>" action (D4/g13)**
 - [ ] Image upload works with projectId=undefined; uploaded assets display in editor + preview + reader
 - [ ] Reorder persists `sort_order` via `partial_update`; delete confirms + soft-deletes
+- [ ] Locale tabs use Propel `Tabs`; text fields use Propel `Input`; actions use Propel `Button` (no `@plane/ui` legacy)
+- [ ] Forms/toolbar use semantic tokens only (inputs `bg-layer-2`, container `bg-surface-1`); verified light + dark
 - [ ] Components <150 LOC; CE only; no `core/` edits
 - [ ] Image alt-text limitation documented in Phase 9 (not blocking this phase)
 

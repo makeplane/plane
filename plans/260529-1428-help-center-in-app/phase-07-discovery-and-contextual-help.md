@@ -1,13 +1,45 @@
 ---
 phase: 7
 title: "Discovery and Contextual Help"
-status: pending
+status: done
 priority: P2
 effort: "1d"
 dependencies: [5]
 ---
 
 # Phase 7: Discovery and Contextual Help
+
+## Implementation Status — 2026-05-30 (entry points done; verified live)
+
+2 discovery entry points to `/:workspaceSlug/help`, browser-verified. **Design note (user-confirmed):**
+the Help Center IS the self-hosted guide, so it REPLACES the former (dead) `${origin}/docs` link
+that the fork had repointed for self-hosting (`fix(help-menu): customize docs link…`). No new
+top-level sidebar nav entry — the help guide lives in the existing help surfaces, not a per-workspace
+sidebar item.
+
+- **Header "?" help menu** (`HelpMenuRoot`, top-right near the version, rendered in
+  `ce/components/navigations/top-navigation-root.tsx`): the "Documentation" item (→ dead `${origin}/docs`)
+  is REPLACED by a "Help Center" item routing to `/:workspaceSlug/help` — `workspace/sidebar/help-section/root.tsx`.
+- **Cmd+K command** "Help Center" (open-only, D5-compliant — no search-results group): replaces the
+  dead `open_plane_documentation` command — `power-k/config/help-commands.ts`.
+
+Both use `t("help_center.menu_label")` + `LifeBuoy` icon. Verified via Playwright (authenticated session):
+the "?" dropdown shows "Help Center" (not "Documentation") above the version; Cmd+K shows "Help Center"
+(no "Documentation"); the left sidebar has NO Help entry. eslint clean (1 pre-existing unrelated warning).
+
+**Reverted from the first attempt:** the top-level left-sidebar nav entry (it showed in every one of
+the ~100 workspaces — too intrusive). **Deferred:** `<HelpHint slug>` contextual "?" on core screens.
+
+### D7 Rework — retarget entry points to standalone `/help` (2026-05-30, validated)
+
+When the reader moves to standalone `/help` (D7), the two committed entry points retarget:
+- `help-section/root.tsx` + `help-commands.ts`: `router.push(/${workspaceSlug}/help)` → `router.push("/help")`.
+- **Discovery is GLOBAL (user-confirmed):** REMOVE the `!!workspaceSlug` gating so the help "?" menu item
+  and the Cmd+K command are visible+functional for EVERY authenticated user (push `/help`, no slug needed).
+  `/help` is auth-gated but visible to all logged-in users regardless of workspace.
+- **Reserve `help` in `RESTRICTED_URLS`** (`packages/constants/src/workspace.ts`) so no workspace slug
+  can be "help" and shadow the top-level route (decision D-5).
+- **Optional legacy redirect** `/{slug}/help[/a/:slug]` → `/help[...]` for already-shared links (decision D-3).
 
 ## Overview
 
@@ -55,13 +87,16 @@ the constant).
 
 **Sidebar Help dropdown item (sanctioned core edit — Finding 5)** — also add an internal item to
 `apps/web/core/components/workspace/sidebar/help-section/root.tsx` (the file opens `/docs` externally at
-line 56). Insert a `<CustomMenu.MenuItem>` → `router.push(/${workspaceSlug}/help)`, icon `HelpCircle`,
+line 77 — `CustomMenu` imported from `@plane/ui:15`). Insert a `<CustomMenu.MenuItem>` →
+`router.push(/${workspaceSlug}/help)`, icon `HelpCircle`,
 label `t("help_center.menu_label")` (flat-merged key — NOT `t("core.help_center")`, Finding 6). Place it
 FIRST in the dropdown so non-technical staff see it immediately ("Trung tâm trợ giúp" = vi value of
 `help_center.menu_label`). Isolated, ≤ a few lines.
 
 **Contextual `<HelpHint>`** (`apps/web/ce/components/help-center/help-hint.tsx`) — a small "?" icon
-button that links to `/help/a/:slug` (new tab or in-app). Reusable, self-contained in CE. Integrate on a
+button that links to `/help/a/:slug` (new tab or in-app). Reusable, self-contained in CE. Use Propel
+`Button` (ghost/icon variant) with a Lucide `HelpCircle` and `text-icon-primary` token so it matches the
+native icon-button look in core screens (do NOT hand-roll the button). Integrate on a
 CURATED few high-value screens only (project header, work-item, cycles) — each integration is a 1-line
 core touch; keep the set small to bound blast radius. Broad per-screen rollout = follow-up.
 
@@ -86,7 +121,7 @@ optionally surface a "Visit Help Center" link in existing feature empty states (
 
 - `apps/web/core/components/power-k/config/help-commands.ts:35-48` (copy `open_plane_documentation`)
 - `apps/web/core/components/power-k/config/commands.ts:17-35` (aggregator)
-- `apps/web/core/components/workspace/sidebar/help-section/root.tsx:56` (existing `/docs` item)
+- `apps/web/core/components/workspace/sidebar/help-section/root.tsx:77` (existing `/docs` item)
 - `apps/web/core/components/workspace/sidebar/sidebar-menu-items.tsx:100-102` (SidebarItem pattern)
 
 ## Implementation Steps

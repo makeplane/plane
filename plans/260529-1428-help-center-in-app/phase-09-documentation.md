@@ -1,13 +1,24 @@
 ---
 phase: 9
 title: "Documentation"
-status: pending
+status: done
 priority: P3
 effort: "0.5d"
 dependencies: [8]
 ---
 
 # Phase 9: Documentation
+
+> **Done (2026-05-30):** Updated `docs/system-architecture.md` (Help Center subsystem: 3-layer split,
+> 4-table data model, locale + accent-folded multilingual search, read-path sanitization, global image
+> assets, discovery), `docs/codebase-summary.md` (new backend/frontend/admin paths + seed command),
+> `docs/deployment-guide.md` (migration `0178_help_center`; NO pg_trgm/unaccent prerequisite; optional
+> idempotent `python manage.py seed_help_center` post-deploy). Created `docs/help-center-authoring-guide.md`
+> (Vietnamese; "Shinhan Workspace" throughout, 0 "Plane"; documents no-alt-text / images-only /
+> destructive-overwrite limitations in plain language). Seed command
+> `apps/api/plane/db/management/commands/seed_help_center.py` (instance-global, idempotent, 5 cats + 5
+> articles × vi/en/ko) verified by `tests/contract/app/test_help_center_seed.py` (4 tests). Shipped docs
+> swept clean of plan/finding/phase codes.
 
 ## Overview
 

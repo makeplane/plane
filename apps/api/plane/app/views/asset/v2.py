@@ -445,12 +445,22 @@ class StaticFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # A soft-deleted asset must not resolve, even though the row still exists
+        # (e.g. an author removed the image but kept the row for undo). Without
+        # this guard a public, unguessable URL would keep serving deleted content.
+        if asset.is_deleted:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         # Check if the entity type is allowed
         if asset.entity_type not in [
             FileAsset.EntityTypeContext.USER_AVATAR,
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.HELP_ARTICLE_CONTENT,
         ]:
             return Response(
                 {"error": "Invalid entity type.", "status": False},

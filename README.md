@@ -83,40 +83,39 @@ cd plane
 pnpm install
 ```
 
-**2. Setup Backend**
+**2. Create env files** (first time only)
 
 ```bash
-cd apps/api
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/admin/.env.example apps/admin/.env
 ```
 
-**3. Setup Frontend**
+**3. Start the full stack — one command**
 
 ```bash
-# In another terminal
-cd apps/web
-cp .env.example .env.local
-pnpm dev
+pnpm dev:local      # backend + Caddy proxy (Docker) + all frontends (turbo, hot reload)
+# ports busy from an old run?  ->  pnpm dev:clean
 ```
 
-**4. Start Services**
+`pnpm dev:local` brings up the backend (Django + Postgres + Redis + RabbitMQ + MinIO) and a Caddy reverse proxy in Docker, then runs the frontends on the host with hot reload. Everything is served through **one origin — http://localhost**:
 
-```bash
-# Docker Compose (in another terminal)
-docker-compose -f docker-compose.dev.yml up
-```
+| URL                          | App              | Host port    |
+| ---------------------------- | ---------------- | ------------ |
+| `http://localhost`           | Web app          | 3000         |
+| `http://localhost/god-mode/` | Admin (god mode) | 3001         |
+| `http://localhost/spaces/`   | Public spaces    | 3002         |
+| `http://localhost/live/`     | Live server      | 3003         |
+| `http://localhost/api/…`     | Backend API      | 8000 (Docker) |
 
-Visit http://localhost:3000 and log in with your superuser credentials.
+> Reach **god-mode at `http://localhost/god-mode/`** through the proxy — not `localhost:3001` directly (the admin dev server has no `/api` proxy of its own).
+> Backend is mounted live (Django autoreload); frontends hot-reload via Vite. Always start frontends with `pnpm dev:local`, never `cd apps/web && pnpm dev` repeatedly — duplicate dev servers cascade onto :3001 and shadow god-mode (you'd see the web app's "no workspace" at /god-mode/).
+
+Open **http://localhost** and sign in. For instance admin (god-mode) first-time setup, open `http://localhost/god-mode/`.
 
 **Full Guide:** [Deployment Guide → Local Development](./docs/deployment-guide.md#local-development-setup)
 
-**5. (Recommended) Setup Code Intelligence**
+**4. (Recommended) Setup Code Intelligence**
 
 ```bash
 ./scripts/gitnexus.sh pull       # pull pinned Docker image (~1.2GB)
@@ -358,19 +357,19 @@ redis-cli FLUSHDB
 rm -rf node_modules/.pnpm-store
 pnpm install
 
-# Clear Next.js cache
-rm -rf apps/web/.next
-pnpm dev:web
+# Clear Vite cache, then restart cleanly
+rm -rf apps/web/node_modules/.vite
+pnpm dev:clean
 ```
 
 ### WebSocket connection issues
 
 ```bash
-# Check if port 3003 is open
+# Check if the live server port is open (live runs on the host via pnpm)
 lsof -i :3003
 
-# Restart live server
-docker-compose restart live
+# Restart all frontends cleanly
+pnpm dev:clean
 ```
 
 **More:** [Deployment Guide → Troubleshooting](./docs/deployment-guide.md) (coming soon)
@@ -400,12 +399,14 @@ See [Code Standards → Pre-commit/Push Rules](./docs/code-standards.md#pre-comm
 
 ## Deployment
 
-### Local Docker
+### Local Docker (all-in-Docker, production-like)
 
 ```bash
-docker-compose up -d
+docker compose up -d
 # Services: web (3000), api (8000), admin (3001), space (3002), live (3003)
 ```
+
+> For day-to-day development with hot reload use **`pnpm dev:local`** (see [Local Development](#local-development-5-minutes) — frontends run on the host). The command above builds every app into a Docker image, which is slower and production-like.
 
 ### Production Checklist
 

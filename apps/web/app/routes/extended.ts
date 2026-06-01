@@ -55,5 +55,12 @@ export const extendedRoutes: RouteConfigEntry[] = [
         ]),
       ]),
     ]),
+    // Help Center — STANDALONE top-level /help (instance-global, no workspace).
+    // Sibling of [workspaceSlug] under the (all) auth layout, mirroring
+    // settings/profile: auth-gated but workspace-agnostic.
+    layout("./(all)/help/layout.tsx", [
+      route("help", "./(all)/help/page.tsx"),
+      route("help/a/:articleSlug", "./(all)/help/article.tsx"),
+    ]),
   ]),
 ];
