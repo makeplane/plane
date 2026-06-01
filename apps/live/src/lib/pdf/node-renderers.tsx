@@ -104,9 +104,8 @@ export const nodeRenderers: NodeRendererRegistry = {
   paragraph: (node: TipTapNode, children: ReactElement[], ctx: PDFRenderContext): ReactElement => {
     const textAlign = node.attrs?.textAlign as string | null;
     const dir = node.attrs?.dir as string | null | undefined;
-    const isRtl = dir === "rtl";
     // For RTL paragraphs with no explicit alignment, default to right-aligned
-    const effectiveTextAlign = textAlign ?? (isRtl ? "right" : null);
+    const effectiveTextAlign = textAlign ?? (dir === "rtl" ? "right" : null);
     const background = node.attrs?.backgroundColor as string | undefined;
     const alignStyle = getTextAlignStyle(effectiveTextAlign);
     const flexStyle = getFlexAlignStyle(effectiveTextAlign);
@@ -128,9 +127,8 @@ export const nodeRenderers: NodeRendererRegistry = {
     const style = pdfStyles[styleKey] || pdfStyles.heading1;
     const textAlign = node.attrs?.textAlign as string | null;
     const dir = node.attrs?.dir as string | null | undefined;
-    const isRtl = dir === "rtl";
     // For RTL headings with no explicit alignment, default to right-aligned
-    const effectiveTextAlign = textAlign ?? (isRtl ? "right" : null);
+    const effectiveTextAlign = textAlign ?? (dir === "rtl" ? "right" : null);
     const alignStyle = getTextAlignStyle(effectiveTextAlign);
     const flexStyle = getFlexAlignStyle(effectiveTextAlign);
     const rtlStyle = getRtlStyle(dir);

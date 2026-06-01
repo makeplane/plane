@@ -62,11 +62,11 @@ Font.register({
   fonts: [
     {
       src: path.join(vazirmatnFontDir, "vazirmatn-regular.woff"),
-      fontWeight: 400,
+      fontWeight: "normal",
     },
     {
       src: path.join(vazirmatnFontDir, "vazirmatn-bold.woff"),
-      fontWeight: 700,
+      fontWeight: "bold",
     },
   ],
 });
