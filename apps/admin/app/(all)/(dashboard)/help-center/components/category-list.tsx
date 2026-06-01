@@ -66,19 +66,13 @@ export const CategoryList = observer(function CategoryList({ selectedCategoryId,
             >
               {createElement(IconElement, { className: "size-4" })}
             </span>
-            <span className="flex-1 truncate text-13 font-medium text-primary">
-              {categoryDisplayName(category)}
-            </span>
+            <span className="flex-1 truncate text-13 font-medium text-primary">{categoryDisplayName(category)}</span>
             {!category.is_active && <span className="text-11 text-tertiary">Hidden</span>}
             <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
               <IconBtn label="Move up" disabled={index === 0} onClick={() => void reorder(index, -1)}>
                 <ChevronUp className="size-3.5" />
               </IconBtn>
-              <IconBtn
-                label="Move down"
-                disabled={index === ordered.length - 1}
-                onClick={() => void reorder(index, 1)}
-              >
+              <IconBtn label="Move down" disabled={index === ordered.length - 1} onClick={() => void reorder(index, 1)}>
                 <ChevronDown className="size-3.5" />
               </IconBtn>
               <IconBtn label="Edit" onClick={() => onEdit(category)}>

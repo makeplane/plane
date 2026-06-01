@@ -58,7 +58,12 @@ export const ArticleList = ({
   if (error && articles.length === 0 && onRetry) return <HelpCenterError onRetry={onRetry} />;
   if (articles.length === 0)
     return (
-      <HelpCenterEmpty title={emptyLabel} description={emptyDescription} assetKey={emptyAssetKey} action={emptyAction} />
+      <HelpCenterEmpty
+        title={emptyLabel}
+        description={emptyDescription}
+        assetKey={emptyAssetKey}
+        action={emptyAction}
+      />
     );
 
   const isListbox = activeIndex !== undefined;
