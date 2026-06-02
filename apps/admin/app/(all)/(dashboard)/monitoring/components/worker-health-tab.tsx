@@ -12,7 +12,7 @@ import { useMonitoring } from "@/hooks/store";
 
 const REFRESH_INTERVAL = 30_000;
 
-export const WorkerHealthTab = observer(() => {
+const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
   const { workerHealth, isLoading, fetchWorkerHealth } = useMonitoring();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -42,7 +42,7 @@ export const WorkerHealthTab = observer(() => {
         <button
           type="button"
           onClick={refresh}
-          className="rounded-md bg-primary/10 px-3 py-1.5 text-body-sm-medium text-primary hover:bg-primary/20 transition-colors"
+          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary hover:bg-accent-subtle-hover transition-colors"
         >
           Retry
         </button>
@@ -110,4 +110,4 @@ export const WorkerHealthTab = observer(() => {
   );
 });
 
-(WorkerHealthTab as any).displayName = "WorkerHealthTab";
+export const WorkerHealthTab = WorkerHealthTabComponent;

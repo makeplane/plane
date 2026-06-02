@@ -14,7 +14,7 @@ import type { TEmailLogFilters } from "@/store/monitoring.types";
 // local
 import { EmailLogStatusBadge } from "./email-log-status-badge";
 
-export const EmailLogsTab = observer(() => {
+const EmailLogsTabComponent = observer(function EmailLogsTab() {
   const { emailLogs, emailLogsPagination, emailLogsFilters, isLoading, error, fetchEmailLogs, setEmailLogsFilters } =
     useMonitoring();
   const [localFilters, setLocalFilters] = useState<TEmailLogFilters>(emailLogsFilters);
@@ -74,7 +74,7 @@ export const EmailLogsTab = observer(() => {
         <button
           type="button"
           onClick={handleApplyFilters}
-          className="rounded-md bg-primary/10 px-3 py-1.5 text-body-sm-medium text-primary hover:bg-primary/20 transition-colors"
+          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary hover:bg-accent-subtle-hover transition-colors"
         >
           Apply
         </button>
@@ -158,4 +158,4 @@ export const EmailLogsTab = observer(() => {
   );
 });
 
-(EmailLogsTab as any).displayName = "EmailLogsTab";
+export const EmailLogsTab = EmailLogsTabComponent;

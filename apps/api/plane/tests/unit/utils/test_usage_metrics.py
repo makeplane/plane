@@ -9,7 +9,7 @@ The base queryset passed in mirrors what the endpoint builds: it excludes bots,
 deactivated users, and worklogs whose parent workspace/project was soft-deleted.
 """
 
-from datetime import date, timedelta
+from datetime import date
 
 import pytest
 from django.utils import timezone
@@ -21,9 +21,9 @@ from plane.license.utils.usage_metrics import (
     bucket_key,
     department_aggregates,
     project_totals,
-    standard_users_pie,
     standard_users_series,
     total_active_users,
+    total_standard_users,
     user_day_totals,
     user_workspace_day_totals,
 )
@@ -143,6 +143,13 @@ class TestActiveUsersSeries:
 @pytest.mark.unit
 @pytest.mark.django_db
 class TestStandardMetrics:
+    """Standard is a per-day status: a user is standard on a day they log >= 8h.
+
+    The series counts the distinct standard users in each period bucket and the
+    total dedups standard users across the whole range — mirroring the active
+    metrics, not a fixed range-level classification.
+    """
+
     def test_standard_threshold_boundary(self):
         u479 = UserFactory()
         u480 = UserFactory()
@@ -155,42 +162,73 @@ class TestStandardMetrics:
         IssueWorkLogFactory(issue=issue, logged_by=usplit, duration_minutes=200, logged_at=day)
 
         rows = user_day_totals(base_qs())
-        pie = standard_users_pie(rows)
-        assert pie["standard_users"] == 2  # u480 + usplit(500)
-        assert pie["non_standard_users"] == 1  # u479
-        assert pie["total_active_users"] == 3
+        # u480 (=480) and usplit (300+200=500) clear the threshold; u479 (=479) does not
+        assert total_standard_users(rows) == 2
+        assert standard_users_series(rows, "day") == [{"period": "2026-05-07", "standard_users": 2}]
 
-    def test_series_non_overlapping(self):
+    def test_series_counts_distinct_standard_users_per_bucket(self):
         issue = IssueFactory()
         day = date(2026, 5, 8)
-        # 5 active user-days; 2 standard
+        # 5 active user-days; only 2 reach the standard threshold
         for mins in (480, 600):
             IssueWorkLogFactory(issue=issue, logged_by=UserFactory(), duration_minutes=mins, logged_at=day)
         for mins in (60, 120, 200):
             IssueWorkLogFactory(issue=issue, logged_by=UserFactory(), duration_minutes=mins, logged_at=day)
 
-        series = standard_users_series(user_day_totals(base_qs()), "day")
-        assert series == [
-            {"period": "2026-05-08", "standard_user_days": 2, "non_standard_user_days": 3}
-        ]
+        rows = user_day_totals(base_qs())
+        # bucket appears (it has activity) but reports only the 2 distinct standard users
+        assert standard_users_series(rows, "day") == [{"period": "2026-05-08", "standard_users": 2}]
 
-    def test_pie_standard_on_one_of_three_days(self):
+    def test_per_day_status_changes_across_days(self):
         user = UserFactory()
         issue = IssueFactory()
+        # standard on 05-09 and 05-11; active-but-short on 05-10
         IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=480, logged_at=date(2026, 5, 9))
         IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=60, logged_at=date(2026, 5, 10))
-        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=60, logged_at=date(2026, 5, 11))
+        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=520, logged_at=date(2026, 5, 11))
 
-        pie = standard_users_pie(user_day_totals(base_qs()))
-        assert pie == {"standard_users": 1, "non_standard_users": 0, "total_active_users": 1}
+        rows = user_day_totals(base_qs())
+        # an active bucket with no standard day still appears, reporting 0
+        assert standard_users_series(rows, "day") == [
+            {"period": "2026-05-09", "standard_users": 1},
+            {"period": "2026-05-10", "standard_users": 0},
+            {"period": "2026-05-11", "standard_users": 1},
+        ]
+        # the same user is deduped to 1 across the range
+        assert total_standard_users(rows) == 1
 
-    def test_active_but_never_standard_is_non_standard(self):
+    def test_active_but_never_standard(self):
         user = UserFactory()
         issue = IssueFactory()
         IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=60, logged_at=date(2026, 5, 12))
 
-        pie = standard_users_pie(user_day_totals(base_qs()))
-        assert pie == {"standard_users": 0, "non_standard_users": 1, "total_active_users": 1}
+        rows = user_day_totals(base_qs())
+        assert total_standard_users(rows) == 0
+        # active bucket present, standard count 0
+        assert standard_users_series(rows, "day") == [{"period": "2026-05-12", "standard_users": 0}]
+
+    def test_monthly_bucket_dedups_distinct_standard_users(self):
+        user = UserFactory()
+        issue = IssueFactory()
+        # two standard days in January -> one distinct standard user that month
+        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=480, logged_at=date(2026, 1, 5))
+        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=500, logged_at=date(2026, 1, 20))
+
+        rows = user_day_totals(base_qs())
+        assert standard_users_series(rows, "month") == [{"period": "2026-01", "standard_users": 1}]
+
+    def test_monthly_active_but_non_standard_bucket_reports_zero(self):
+        user = UserFactory()
+        issue = IssueFactory()
+        # standard in January, active-but-short in February -> Feb bucket shows 0
+        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=500, logged_at=date(2026, 1, 15))
+        IssueWorkLogFactory(issue=issue, logged_by=user, duration_minutes=120, logged_at=date(2026, 2, 15))
+
+        rows = user_day_totals(base_qs())
+        assert standard_users_series(rows, "month") == [
+            {"period": "2026-01", "standard_users": 1},
+            {"period": "2026-02", "standard_users": 0},
+        ]
 
 
 @pytest.mark.unit

@@ -14,23 +14,18 @@ export type TActiveUsersPoint = {
   active_users: number;
 };
 
+// Standard is a per-day status (a user logged >= 8h that day), so the series
+// mirrors the active series: distinct standard users counted per period bucket.
 export type TStandardUsersPoint = {
   period: string;
-  standard_user_days: number;
-  non_standard_user_days: number;
-};
-
-export type TStandardUsersPie = {
   standard_users: number;
-  non_standard_users: number;
-  total_active_users: number;
 };
 
 export type TUsageUsersResponse = {
   series_active: TActiveUsersPoint[];
   series_standard: TStandardUsersPoint[];
   total_active_users: number;
-  pie: TStandardUsersPie;
+  total_standard_users: number;
 };
 
 export type TDepartmentRow = {

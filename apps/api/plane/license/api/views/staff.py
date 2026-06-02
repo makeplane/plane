@@ -567,13 +567,18 @@ def _create_staff(department, data):
     if user_created:
         password = data.get("password") or secrets.token_urlsafe(16)
         user.set_password(password)
-        user.save(update_fields=["password"])
-        # Admin-provisioned staff already have name populated — mark the
-        # profile-setup onboarding step complete so first login skips it.
+        # Password is admin-provided (not auto-generated) — don't force a reset.
+        user.is_password_autoset = False
+        user.save(update_fields=["password", "is_password_autoset"])
+        # Admin-provisioned staff already have name, password, and (when the
+        # department has a linked workspace) membership — mark them fully
+        # onboarded so first login skips the entire onboarding flow, including
+        # the profile/name screen, instead of relying on a client-side step skip.
         if user.first_name or user.last_name:
             profile, _ = Profile.objects.get_or_create(user=user)
             profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
-            profile.save(update_fields=["onboarding_step"])
+            profile.is_onboarded = True
+            profile.save(update_fields=["onboarding_step", "is_onboarded"])
 
     # Auto-join linked_workspace if department has one
     if department and department.linked_workspace:

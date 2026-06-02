@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { cn } from "@plane/utils";
 // hooks
 import { useUsageMonitor } from "@/hooks/store/use-usage-monitor";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 // types
 import type { TUsageGranularity, TUsagePreset } from "@/store/usage-monitor.types";
+// local
+import { UsageWorkspaceSelect } from "./usage-workspace-select";
 
 const PRESETS: { key: TUsagePreset; label: string }[] = [
   { key: "week", label: "Week" },
@@ -26,12 +26,6 @@ const selectClass = "bg-layer-2 border-[0.5px] border-subtle rounded-md px-2 py-
 
 export const UsageFilterBar = observer(() => {
   const { filters, setFilters } = useUsageMonitor();
-  const workspaceStore = useWorkspace();
-  const { workspaceIds, workspaces, fetchWorkspaces } = workspaceStore;
-
-  useEffect(() => {
-    if (workspaceIds.length === 0) void fetchWorkspaces();
-  }, [workspaceIds.length, fetchWorkspaces]);
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -47,7 +41,7 @@ export const UsageFilterBar = observer(() => {
               className={cn(
                 "px-2.5 py-1.5 text-13 rounded-md transition-colors",
                 filters.preset === preset.key
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-accent-subtle text-accent-primary"
                   : "text-secondary hover:bg-surface-2 hover:text-primary"
               )}
             >
@@ -91,42 +85,28 @@ export const UsageFilterBar = observer(() => {
 
       {/* Granularity */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="usage-granularity" className="text-11 text-tertiary">
-          Granularity
-        </label>
-        <select
-          id="usage-granularity"
-          value={filters.granularity}
-          onChange={(e) => setFilters({ granularity: e.target.value as TUsageGranularity })}
-          className={selectClass}
-        >
+        <span className="text-11 text-tertiary">Granularity</span>
+        <div className="flex items-center gap-1">
           {GRANULARITIES.map((g) => (
-            <option key={g} value={g}>
-              {g.charAt(0).toUpperCase() + g.slice(1)}
-            </option>
+            <button
+              key={g}
+              type="button"
+              onClick={() => setFilters({ granularity: g })}
+              className={cn(
+                "px-2.5 py-1.5 text-13 rounded-md capitalize transition-colors",
+                filters.granularity === g
+                  ? "bg-accent-subtle text-accent-primary"
+                  : "text-secondary hover:bg-surface-2 hover:text-primary"
+              )}
+            >
+              {g}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* Workspace */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="usage-workspace" className="text-11 text-tertiary">
-          Workspace
-        </label>
-        <select
-          id="usage-workspace"
-          value={filters.workspace_id ?? ""}
-          onChange={(e) => setFilters({ workspace_id: e.target.value || undefined })}
-          className={selectClass}
-        >
-          <option value="">All workspaces</option>
-          {workspaceIds.map((id) => (
-            <option key={id} value={id}>
-              {workspaces[id]?.name ?? id}
-            </option>
-          ))}
-        </select>
-      </div>
+      <UsageWorkspaceSelect />
     </div>
   );
 });
