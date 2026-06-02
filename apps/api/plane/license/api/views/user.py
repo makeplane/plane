@@ -91,12 +91,14 @@ class InstanceUserEndpoint(BaseAPIView):
         user.set_password(data["password"])
         user.is_password_autoset = False
         user.save()
-        # Admin-provisioned users already have name populated — mark the
-        # profile-setup onboarding step complete so first login skips it.
+        # Admin-provisioned users already have name + password — mark them fully
+        # onboarded so first login skips the entire onboarding flow, including the
+        # profile/name screen, instead of relying on a client-side step skip.
         if user.first_name or user.last_name:
             profile, _ = Profile.objects.get_or_create(user=user)
             profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
-            profile.save(update_fields=["onboarding_step"])
+            profile.is_onboarded = True
+            profile.save(update_fields=["onboarding_step", "is_onboarded"])
 
         return Response(InstanceUserSerializer(user).data, status=status.HTTP_201_CREATED)
 
