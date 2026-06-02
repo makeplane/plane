@@ -12,7 +12,6 @@ import {
   ChevronDown,
   CircleDot,
   Eraser,
-  Eye,
   GraduationCap,
   Hash,
   MoveRight,
@@ -449,10 +448,6 @@ const RosterActionsMenu = observer(({ player }: { player: IRosterPlayer }) => {
         closeOnSelect
         buttonClassName="grid size-7 place-items-center rounded text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-100"
       >
-        <CustomMenu.MenuItem className="flex items-center gap-2" disabled>
-          <Eye className="h-3.5 w-3.5" />
-          View
-        </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           className={cn("flex items-center gap-2", !canManage && "text-custom-text-400")}
           disabled={!canManage}

@@ -37,6 +37,10 @@ export const ORDER_BY_OPTIONS: { key: TRosterOrderByOption; label: string }[] = 
 
 export const STATUS_VALUES: TRosterPlayerStatus[] = ["active", "injured", "inactive", "pending"];
 export const STATUS_OPTIONS = STATUS_VALUES.map(toDisplayLabel);
+export const STATUS_SELECT_OPTIONS = STATUS_VALUES.map((value) => ({
+  value,
+  label: toDisplayLabel(value),
+}));
 
 export const ROSTER_HEADER_MAP: Record<keyof IRosterPlayerPayload, string[]> = {
   player_name: ["player name", "name", "player"],

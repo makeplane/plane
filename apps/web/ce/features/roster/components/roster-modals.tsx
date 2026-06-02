@@ -1,16 +1,16 @@
 "use client";
 
-import type { ChangeEvent, ReactNode } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEvent, DragEvent, ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, FileSpreadsheet, Upload, X } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import type { IRosterPlayerPayload, TRosterPlayerStatus } from "@plane/types";
-import { AlertModalCore, CustomSelect, EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
+import { AlertModalCore, cn, CustomSelect, EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
 import type { TRosterFormState } from "../store/roster-context";
 import { getRosterFormState, useRoster } from "../store/roster-context";
-import { STATUS_OPTIONS } from "../constants/roster.constants";
-import { getPreviewRows, mapImportedRows, toDisplayStatus } from "../utils/roster.utils";
+import { STATUS_SELECT_OPTIONS } from "../constants/roster.constants";
+import { mapImportedRows, toDisplayStatus } from "../utils/roster.utils";
 
 const FieldLabel = ({ children }: { children: ReactNode }) => (
   <label className="text-xs font-medium uppercase tracking-wide text-custom-text-400">{children}</label>
@@ -117,9 +117,9 @@ export const AddPlayerModal = observer(({ isOpen, onClose }: { isOpen?: boolean;
               label={<span className="text-sm text-custom-text-200">{toDisplayStatus(formState.status)}</span>}
               buttonClassName="w-full justify-between rounded-md border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-200"
             >
-              {STATUS_OPTIONS.slice(1).map((option) => (
-                <CustomSelect.Option key={option} value={option.toLowerCase()}>
-                  {option}
+              {STATUS_SELECT_OPTIONS.map((option) => (
+                <CustomSelect.Option key={option.value} value={option.value}>
+                  {option.label}
                 </CustomSelect.Option>
               ))}
             </CustomSelect>
@@ -153,33 +153,33 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
   const handleClose = onClose ?? closeImportRosterModal;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState("");
-  const [previewRows, setPreviewRows] = useState<IRosterPlayerPayload[]>([]);
   const [parsedRows, setParsedRows] = useState<IRosterPlayerPayload[]>([]);
   const [parseError, setParseError] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (!modalOpen) {
       setSelectedFileName("");
-      setPreviewRows([]);
       setParsedRows([]);
       setParseError(null);
       setIsParsing(false);
+      setIsDragging(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [modalOpen]);
 
-  const previewTableRows = useMemo(() => getPreviewRows(previewRows), [previewRows]);
-
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const parseRosterFile = async (file: File) => {
     setSelectedFileName(file.name);
     setParseError(null);
     setIsParsing(true);
 
     try {
+      const normalizedFileName = file.name.trim().toLowerCase();
+      if (!normalizedFileName.endsWith(".xlsx") && !normalizedFileName.endsWith(".csv")) {
+        throw new Error("Only .xlsx and .csv files are supported.");
+      }
+
       const xlsxModule = await import("xlsx");
       const XLSX = "default" in xlsxModule ? xlsxModule.default : xlsxModule;
       const arrayBuffer = await file.arrayBuffer();
@@ -201,14 +201,30 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
       }
 
       setParsedRows(normalizedRows);
-      setPreviewRows(normalizedRows);
     } catch (error) {
       setParsedRows([]);
-      setPreviewRows([]);
       setParseError(error instanceof Error ? error.message : "The selected file could not be parsed.");
     } finally {
       setIsParsing(false);
     }
+  };
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    await parseRosterFile(file);
+    event.currentTarget.value = "";
+  };
+
+  const handleFileDrop = async (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const file = event.dataTransfer.files?.[0];
+    if (!file) return;
+
+    await parseRosterFile(file);
   };
 
   return (
@@ -232,7 +248,20 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
         </div>
       </div>
       <div className="space-y-5 p-5">
-        <div className="rounded-xl border border-dashed border-custom-border-300 bg-custom-background-90 p-6">
+        <div
+          className={cn(
+            "rounded-xl border border-dashed p-6 transition-colors",
+            isDragging
+              ? "border-custom-primary-100 bg-custom-primary-100/10"
+              : "border-custom-border-300 bg-custom-background-90"
+          )}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleFileDrop}
+        >
           <div className="flex flex-col items-center justify-center text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-custom-border-200 bg-custom-background-100 text-custom-text-300">
               <FileSpreadsheet className="h-5 w-5" />
@@ -278,9 +307,10 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
               </div>
             ) : null}
           </div>
-          <div className="overflow-x-auto rounded-lg border border-custom-border-200 bg-custom-background-100">
+          <div className="rounded-lg border border-custom-border-200 bg-custom-background-100">
+            <div className="max-h-[36vh] overflow-auto">
             <table className="min-w-full whitespace-nowrap">
-              <thead className="border-b border-custom-border-200 bg-custom-background-90">
+              <thead className="sticky top-0 z-[1] border-b border-custom-border-200 bg-custom-background-90">
                 <tr className="text-left text-xs font-medium uppercase tracking-wide text-custom-text-400">
                   <th className="px-4 py-3">Player</th>
                   <th className="px-4 py-3">Jersey #</th>
@@ -291,8 +321,8 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
                 </tr>
               </thead>
               <tbody>
-                {previewTableRows.length ? (
-                  previewTableRows.map((row, index) => (
+                {parsedRows.length ? (
+                  parsedRows.map((row, index) => (
                     <tr
                       key={`${row.player_name}-${row.jersey_number ?? index}`}
                       className="border-b border-custom-border-200 text-sm text-custom-text-200 last:border-b-0"
@@ -314,6 +344,7 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>
