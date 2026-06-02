@@ -14,7 +14,7 @@ import type { TEmailLogFilters } from "@/store/monitoring.types";
 // local
 import { EmailLogStatusBadge } from "./email-log-status-badge";
 
-const EmailLogsTabComponent = observer(() => {
+const EmailLogsTabComponent = observer(function EmailLogsTab() {
   const { emailLogs, emailLogsPagination, emailLogsFilters, isLoading, error, fetchEmailLogs, setEmailLogsFilters } =
     useMonitoring();
   const [localFilters, setLocalFilters] = useState<TEmailLogFilters>(emailLogsFilters);
@@ -157,7 +157,5 @@ const EmailLogsTabComponent = observer(() => {
     </div>
   );
 });
-
-EmailLogsTabComponent.displayName = "EmailLogsTab";
 
 export const EmailLogsTab = EmailLogsTabComponent;

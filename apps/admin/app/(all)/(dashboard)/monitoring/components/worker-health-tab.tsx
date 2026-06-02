@@ -12,7 +12,7 @@ import { useMonitoring } from "@/hooks/store";
 
 const REFRESH_INTERVAL = 30_000;
 
-const WorkerHealthTabComponent = observer(() => {
+const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
   const { workerHealth, isLoading, fetchWorkerHealth } = useMonitoring();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -109,7 +109,5 @@ const WorkerHealthTabComponent = observer(() => {
     </div>
   );
 });
-
-WorkerHealthTabComponent.displayName = "WorkerHealthTab";
 
 export const WorkerHealthTab = WorkerHealthTabComponent;
