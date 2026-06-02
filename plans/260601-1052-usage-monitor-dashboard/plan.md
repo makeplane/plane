@@ -58,6 +58,11 @@ Instance-admin dashboards tracking user usage across the Plane instance, built f
 - Filter bar: Granularity converted from `<select>` to a highlighted button group (consistent with Range presets + tabs).
 - Verification: 35 unit+contract tests pass; admin `tsc`/eslint/prettier clean; code-reviewer 0 Critical/High.
 
+### Follow-up (2026-06-02) — searchable Workspace filter
+
+- Workspace filter changed from a native `<select>` (first server page only) to a Propel `Combobox` with **server-side debounced search** (`fetchWorkspaces(search)` → backend `name__icontains`), so any workspace is reachable by typing. New component `usage-workspace-select.tsx`; caches the selected workspace name locally because the store resets its list per search. `aria-label` restores the label association; `loader` drives a "Searching…" hint during the fetch window.
+- Drive-by build fix: two monitoring tab components (`email-logs-tab`, `worker-health-tab`) shipped a `Component.displayName` assignment on a `() => Element` const (TS2339) — converted to named function expressions.
+
 ## Key Dependencies
 
 - 02 depends on 01; 03 depends on 02 (URL+JSON contract); 04 depends on 03; 05–06 depend on 04; 07 depends on all.
