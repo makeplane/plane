@@ -27,7 +27,9 @@ export const MonitoringTabs = ({ activeTab, onTabChange }: Props) => (
         onClick={() => onTabChange(tab.key)}
         className={cn(
           "px-3 py-1.5 text-body-sm-medium rounded-md transition-colors",
-          activeTab === tab.key ? "bg-primary/10 text-primary" : "text-secondary hover:bg-surface-2 hover:text-primary"
+          activeTab === tab.key
+            ? "bg-accent-subtle text-accent-primary"
+            : "text-secondary hover:bg-surface-2 hover:text-primary"
         )}
       >
         {tab.label}
