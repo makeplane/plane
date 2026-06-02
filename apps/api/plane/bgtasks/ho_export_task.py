@@ -61,7 +61,7 @@ def generate_ho_xlsx_export(self, job_id):
         wb = Workbook(write_only=True)
 
         qs = build_ho_export_queryset(job.requested_by, job.filters)
-        row_count = write_ho_workbook(wb, qs)
+        row_count = write_ho_workbook(wb, qs, columns=job.filters.get("columns"))
 
         buffer = io.BytesIO()
         wb.save(buffer)

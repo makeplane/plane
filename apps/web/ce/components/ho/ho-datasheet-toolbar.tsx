@@ -34,7 +34,7 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
     if (isExporting) return;
     setIsExporting(true);
     try {
-      await hoService.exportDatasheet(store.filterParams);
+      await hoService.exportDatasheet(store.exportParams);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("ho.export_queued") });
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: t("ho.export_failed") });
