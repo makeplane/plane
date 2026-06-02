@@ -5,7 +5,7 @@ Instance-admin dashboards tracking user usage across the Plane instance, built f
 ## Decisions (user-confirmed 2026-06-01)
 
 - **Active user (per day)** = user with a worklog-day whose summed `duration_minutes` > 0. Worklog-based proxy for activity — login history is NOT stored (`User.last_login_time` is a single overwritten value, `apps/api/plane/db/models/user.py:106`), so per-day login series can't be derived. Dashboards measure _users who logged time_; "Active Users" label keeps that meaning (document in UI subtitle).
-- **Standard user** = active user with a day whose logged total ≥ 480 min (8h). Per-day classification feeds the time-series day-counts; the **pie counts a user as standard if they have ≥1 standard day in the range** (user-confirmed to keep this range semantics).
+- **Standard user (per day)** = active user whose summed `duration_minutes` for that day ≥ 480 min (8h). "Standard" is a **per-day status**, not a fixed range-level label — a user can be standard one day, active-only the next. The Standard Users tab therefore **mirrors the Active Users tab**: a time series of **distinct standard users per period bucket** (a bucket counts a user once if they had ≥1 standard day in it; active-but-non-standard buckets still appear, reporting 0) + a headline card of **distinct standard users across the range** (deduped). The earlier range-level pie was removed (user correction 2026-06-02).
 - **User population** = exclude bots and deactivated accounts: base queryset filters `logged_by__is_bot=False, logged_by__is_active=True` (`apps/api/plane/db/models/user.py:97,115`).
 - **Live-parent only** = base queryset filters `workspace__deleted_at__isnull=True, project__deleted_at__isnull=True` (async soft-delete cascade leaves ghost worklogs; `apps/api/plane/db/mixins.py:73-79`).
 - **Cross-workspace standard** = global pie/standard uses per-(user,day) totals across scope; per-department standard uses per-(user,workspace,day) totals. Documented in Phase 01.
@@ -20,7 +20,7 @@ Instance-admin dashboards tracking user usage across the Plane instance, built f
 ## Dashboards
 
 1. **Active Users** — time series (daily/monthly/yearly) of distinct active users + total. Workspace filter.
-2. **Standard Users** — pie (standard vs non-standard over range) + time series of standard vs non-standard user-days. Workspace filter.
+2. **Standard Users** — headline card (distinct standard users in range, deduped) + time series of distinct standard users per period. Mirrors the Active Users tab; "standard" is a per-day status. Workspace filter.
 3. **Departments** — bar chart comparing workspaces (active/standard users, total logtime); drill into per-project totals (projects with logged time).
 
 ## Approach
@@ -49,6 +49,14 @@ Instance-admin dashboards tracking user usage across the Plane instance, built f
 - Review (code-reviewer): 0 Critical/High. Applied: surface fetch errors in dashboards (was silent empty-state on 400); compute preset date window from local parts not UTC (avoids UTC+9 off-by-one); endpoint default `date_to` uses `timezone.now().date()`.
 - Pre-existing repo migration drift (`makemigrations` sweeps unrelated field alters) and pre-existing failing tests (issue_field_permission, capacity_export) are out of scope.
 - **Manual smoke pending:** verify "Usage Monitor" renders in the God-Mode sidebar and charts load against live data (hand-maintained sidebar array edit + live SQL cross-check).
+
+### Correction (2026-06-02) — per-day Standard semantics
+
+- Reworked "Standard" from a range-level pie (≥1 standard day → standard for the whole range) to a **per-day status**, matching user intent. Standard Users tab now mirrors Active Users: headline card (`total_standard_users`, deduped over range) + `series_standard` line chart of distinct standard users per period bucket. Active-but-non-standard buckets report 0 so the two series share identical period keys.
+- Backend: `standard_users_series` rewritten + `total_standard_users` added; `standard_users_pie` removed. Endpoint `users/` envelope now `{series_active, series_standard, total_active_users, total_standard_users}` (no `pie`). Departments endpoint unchanged.
+- Types: `TStandardUsersPoint` → `{period, standard_users}`; `TStandardUsersPie` removed; `TUsageUsersResponse.total_standard_users` added.
+- Filter bar: Granularity converted from `<select>` to a highlighted button group (consistent with Range presets + tabs).
+- Verification: 35 unit+contract tests pass; admin `tsc`/eslint/prettier clean; code-reviewer 0 Critical/High.
 
 ## Key Dependencies
 

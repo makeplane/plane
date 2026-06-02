@@ -136,13 +136,12 @@ class TestUsageMonitorUsers:
             "series_active",
             "series_standard",
             "total_active_users",
-            "pie",
+            "total_standard_users",
         }
-        assert set(body["pie"].keys()) == {
-            "standard_users",
-            "non_standard_users",
-            "total_active_users",
-        }
+        # series_standard mirrors series_active: one count per period bucket
+        assert all(set(p.keys()) == {"period", "standard_users"} for p in body["series_standard"])
+        # the two series cover the exact same period buckets (standard <= active per bucket)
+        assert [p["period"] for p in body["series_standard"]] == [p["period"] for p in body["series_active"]]
         # No echoed filter fields in the envelope
         assert "granularity" not in body
         assert "date_from" not in body
@@ -151,22 +150,26 @@ class TestUsageMonitorUsers:
         response = admin_client.get(reverse("usage-monitor-users"), WIDE_RANGE)
         body = response.data
         assert body["total_active_users"] == 1
-        assert body["pie"]["standard_users"] == 1
-        assert body["pie"]["non_standard_users"] == 0
+        # the 500-min day on 05-10 makes the user standard at least once in range
+        assert body["total_standard_users"] == 1
+        # per-day status: standard on the 500-min day, not on the 120-min day
+        series = {p["period"]: p["standard_users"] for p in body["series_standard"]}
+        assert series.get("2026-05-10") == 1
+        assert series.get("2026-05-11") == 0
 
     def test_workspace_filter_narrows(self, admin_client, worklog_data):
         params = {**WIDE_RANGE, "workspace_id": str(worklog_data["ws_b"].id)}
         response = admin_client.get(reverse("usage-monitor-users"), params)
         assert response.status_code == status.HTTP_200_OK
-        # ws_b only has a 120-min day → active but not standard
-        assert response.data["pie"]["standard_users"] == 0
-        assert response.data["pie"]["non_standard_users"] == 1
+        # ws_b only has a 120-min day → active but never standard
+        assert response.data["total_active_users"] == 1
+        assert response.data["total_standard_users"] == 0
 
     def test_date_range_respected(self, admin_client, worklog_data):
         params = {"date_from": "2026-05-11", "date_to": "2026-05-11", "granularity": "day"}
         response = admin_client.get(reverse("usage-monitor-users"), params)
         # only the 120-min day on 05-11 is in range
-        assert response.data["pie"]["standard_users"] == 0
+        assert response.data["total_standard_users"] == 0
         assert response.data["total_active_users"] == 1
 
     def test_bad_granularity_returns_400(self, admin_client):

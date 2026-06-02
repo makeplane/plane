@@ -5,7 +5,8 @@
 """Instance-admin usage-monitor endpoints.
 
 Two GET endpoints expose the worklog-derived metrics:
-  * ``users/``       — active + standard user series and the standard pie
+  * ``users/``       — active + standard user series (distinct users per period)
+                       plus deduped range totals
   * ``departments/`` — per-workspace comparison and per-project drilldown
 
 Active and standard share a single ``user_day_totals`` pass, so the users
@@ -26,9 +27,9 @@ from plane.license.utils.usage_metrics import (
     active_users_series,
     department_aggregates,
     project_totals,
-    standard_users_pie,
     standard_users_series,
     total_active_users,
+    total_standard_users,
     user_day_totals,
     user_workspace_day_totals,
 )
@@ -113,7 +114,7 @@ class UsageMonitorUsersEndpoint(BaseAPIView):
                 "series_active": active_users_series(rows, granularity),
                 "series_standard": standard_users_series(rows, granularity),
                 "total_active_users": total_active_users(rows),
-                "pie": standard_users_pie(rows),
+                "total_standard_users": total_standard_users(rows),
             },
             status=status.HTTP_200_OK,
         )

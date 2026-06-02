@@ -47,7 +47,7 @@ export const UsageFilterBar = observer(() => {
               className={cn(
                 "px-2.5 py-1.5 text-13 rounded-md transition-colors",
                 filters.preset === preset.key
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-accent-subtle text-accent-primary"
                   : "text-secondary hover:bg-surface-2 hover:text-primary"
               )}
             >
@@ -91,21 +91,24 @@ export const UsageFilterBar = observer(() => {
 
       {/* Granularity */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="usage-granularity" className="text-11 text-tertiary">
-          Granularity
-        </label>
-        <select
-          id="usage-granularity"
-          value={filters.granularity}
-          onChange={(e) => setFilters({ granularity: e.target.value as TUsageGranularity })}
-          className={selectClass}
-        >
+        <span className="text-11 text-tertiary">Granularity</span>
+        <div className="flex items-center gap-1">
           {GRANULARITIES.map((g) => (
-            <option key={g} value={g}>
-              {g.charAt(0).toUpperCase() + g.slice(1)}
-            </option>
+            <button
+              key={g}
+              type="button"
+              onClick={() => setFilters({ granularity: g })}
+              className={cn(
+                "px-2.5 py-1.5 text-13 rounded-md capitalize transition-colors",
+                filters.granularity === g
+                  ? "bg-accent-subtle text-accent-primary"
+                  : "text-secondary hover:bg-surface-2 hover:text-primary"
+              )}
+            >
+              {g}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* Workspace */}

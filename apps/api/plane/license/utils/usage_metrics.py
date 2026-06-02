@@ -110,45 +110,31 @@ def total_active_users(rows) -> int:
 
 
 def standard_users_series(rows, granularity):
-    """Per bucket, non-overlapping counts of standard vs non-standard user-days.
+    """Distinct standard users per bucket, sorted by period.
 
-    standard + non_standard == active user-days for the bucket (standard ⊆ active).
+    "Standard" is a per-day status — a user is standard for a day when that day's
+    summed minutes reach the threshold — so a bucket counts the distinct users
+    with at least one standard day in it. Buckets that have activity but no
+    standard day still appear (reporting 0), keeping the series aligned with the
+    active-users series and showing true dips rather than gaps.
     """
-    buckets = defaultdict(lambda: {"standard": 0, "non_standard": 0})
+    buckets = defaultdict(set)
     for r in rows:
-        key = bucket_key(r["day"], granularity)
+        # Access (creating an empty set) so active-but-non-standard buckets show 0.
+        users = buckets[bucket_key(r["day"], granularity)]
         if r["total_minutes"] >= STANDARD_DAILY_MINUTES:
-            buckets[key]["standard"] += 1
-        else:
-            buckets[key]["non_standard"] += 1
+            users.add(r["user_id"])
     return [
-        {
-            "period": period,
-            "standard_user_days": counts["standard"],
-            "non_standard_user_days": counts["non_standard"],
-        }
-        for period, counts in sorted(buckets.items())
+        {"period": period, "standard_users": len(users)}
+        for period, users in sorted(buckets.items())
     ]
 
 
-def standard_users_pie(rows):
-    """Range-level split: a user is standard if they have >= 1 standard day.
-
-    Non-standard users are active users who never hit the daily threshold in range.
-    """
-    standard_users = set()
-    all_users = set()
-    for r in rows:
-        all_users.add(r["user_id"])
-        if r["total_minutes"] >= STANDARD_DAILY_MINUTES:
-            standard_users.add(r["user_id"])
-    total = len(all_users)
-    standard = len(standard_users)
-    return {
-        "standard_users": standard,
-        "non_standard_users": total - standard,
-        "total_active_users": total,
-    }
+def total_standard_users(rows) -> int:
+    """Distinct users with >= 1 standard day across the range (deduped)."""
+    return len(
+        {r["user_id"] for r in rows if r["total_minutes"] >= STANDARD_DAILY_MINUTES}
+    )
 
 
 def department_aggregates(ws_day_rows, project_rows, workspaces):
