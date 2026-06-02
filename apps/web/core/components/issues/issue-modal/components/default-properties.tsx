@@ -94,6 +94,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   minDate.setHours(0, 0, 0, 0);
 
   const isDateTimeLocked = !!id && !isDraft && isDateTimePast(initialStartDate, initialStartTime);
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const isSportLockedForCreation = !id && !!projectSport;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -207,6 +209,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               placeholder={t("sport_field")}
               buttonVariant="border-with-text"
               tabIndex={getIndex("sport")}
+              disabled={isSportLockedForCreation}
             />
           </div>
         )}

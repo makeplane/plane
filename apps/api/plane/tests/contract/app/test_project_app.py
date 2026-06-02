@@ -203,6 +203,7 @@ class TestProjectAPIPost(TestProjectBase):
             "name": "Full Project",
             "identifier": "FP",
             "description": "A comprehensive test project",
+            "sport": "Cricket",
             "network": 2,
             "cycle_view": True,
             "issue_views_view": False,
@@ -222,6 +223,7 @@ class TestProjectAPIPost(TestProjectBase):
 
         response_data = response.json()
         assert response_data["description"] == project_data["description"]
+        assert response_data["sport"] == project_data["sport"]
         assert response_data["network"] == project_data["network"]
 
 
@@ -378,6 +380,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         update_data = {
             "name": "Updated Project",
             "description": "Updated description",
+            "sport": "Football",
             "cycle_view": True,
             "module_view": False,
         }
@@ -390,8 +393,30 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         project.refresh_from_db()
         assert project.name == "Updated Project"
         assert project.description == "Updated description"
+        assert project.sport == "Football"
         assert project.cycle_view is True
         assert project.module_view is False
+
+    @pytest.mark.django_db
+    def test_partial_update_project_rejects_sport_change_once_set(self, session_client, workspace, create_user):
+        """Test project sport cannot be changed after it has been saved."""
+        project = Project.objects.create(
+            name="Locked Sport Project",
+            identifier="LSP",
+            workspace=workspace,
+            sport="Cricket",
+        )
+
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.patch(url, {"sport": "Football"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["sport"] == ["PROJECT_SPORT_ALREADY_LOCKED"]
+
+        project.refresh_from_db()
+        assert project.sport == "Cricket"
 
     @pytest.mark.django_db
     def test_partial_update_project_forbidden_non_admin(self, session_client, workspace):

@@ -89,6 +89,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
   const isDateTimeLocked = !isEditable || isDateTimePast(issue.start_date, issue.start_time);
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const isSportLocked = !isEditable || !!projectSport;
 
   const handleDateTimeUpdate = (data: Partial<TIssue>) => {
     if (
@@ -322,7 +324,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 onChange={(val: string | null) => {
                   issueOperations.update(workspaceSlug, projectId, issueId, { sport: val });
                 }}
-                disabled={!isEditable}
+                disabled={isSportLocked}
                 placeholder={t("add_sport")}
                 hideIcon
                 buttonVariant="transparent-with-text"

@@ -24,6 +24,7 @@ import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import { normalizeOppositionTeam, parseOppositionTeam, serializeOppositionTeam } from "@/helpers/opposition-team";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../../types/media-library.types";
 
@@ -45,6 +46,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const { t } = useTranslation();
 
   // store hooks
+  const { getProjectById } = useProject();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -99,6 +101,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   if (!issue && !mediaItem) return <></>;
 
+  const projectDetails = projectId ? getProjectById(projectId) : undefined;
+  const projectSport = projectDetails?.sport?.trim() || null;
+
   const createdByDetails = issue?.created_by ? getUserDetails(issue.created_by) : undefined;
   const createdByLabel =
     (createdByDetails?.display_name
@@ -115,6 +120,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const isReadOnly = disabled || !issue;
   const isDateTimeLocked = isReadOnly || isDateTimePast(resolvedStartDate, resolvedStartTime);
+  const isSportLocked = isReadOnly || !!projectSport;
 
   const buildManifestMeta = useCallback(
     (currentIssue: TIssue) => ({
@@ -306,7 +312,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_sport")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isReadOnly}
+            disabled={isSportLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${resolvedSport ? "text-custom-text-100" : "text-custom-text-400"}`}
             hideIcon

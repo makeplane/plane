@@ -108,6 +108,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const subIssueCount = issue?.sub_issues_count ?? 0;
   const isEventLocked = isDateTimePast(issue.start_date, issue.start_time);
   const isDateTimeLocked = isReadOnly || isEventLocked;
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const isSportLocked = isReadOnly || !!projectSport;
 
   const issueOperations = useMemo(
     () => ({
@@ -532,7 +534,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue?.sport ? "border-with-text" : "border-without-text"}
             clearIconClassName="!text-custom-text-100"
-            disabled={isReadOnly}
+            disabled={isSportLocked}
             renderByDefault={isMobile}
             showTooltip
           />

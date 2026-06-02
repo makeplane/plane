@@ -61,11 +61,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
+  const projectSport = projectDetails?.sport?.trim() || null;
 
   const minDate = new Date();
   minDate?.setDate(minDate.getDate());
   const isReadOnly = disabled;
   const isDateTimeLocked = isReadOnly || isDateTimePast(issue.start_date, issue.start_time);
+  const isSportLocked = isReadOnly || !!projectSport;
 
   const buildManifestMeta = useCallback(
     (currentIssue: TIssue) => ({
@@ -273,7 +275,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_sport")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isReadOnly}
+            disabled={isSportLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
             hideIcon

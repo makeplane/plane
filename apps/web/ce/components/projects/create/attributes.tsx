@@ -9,6 +9,7 @@ import { CustomSelect } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 
 type Props = {
@@ -86,6 +87,21 @@ const ProjectAttributes: FC<Props> = (props) => {
             );
           else return <></>;
         }}
+      />
+      <Controller
+        name="sport"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <div className="flex-shrink-0 h-7" tabIndex={getIndex("sport")}>
+            <SportDropdown
+              value={value ?? null}
+              onChange={onChange}
+              placeholder={t("add_sport")}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("sport")}
+            />
+          </div>
+        )}
       />
     </div>
   );

@@ -29,6 +29,7 @@ class ProjectCreateSerializer(BaseSerializer):
         fields = [
             "name",
             "description",
+            "sport",
             "project_lead",
             "default_assignee",
             "identifier",
@@ -60,6 +61,20 @@ class ProjectCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        if "sport" in data and isinstance(data["sport"], str):
+            data["sport"] = data["sport"].strip() or None
+
+        current_sport = getattr(self.instance, "sport", None)
+        if isinstance(current_sport, str):
+            current_sport = current_sport.strip() or None
+
+        next_sport = data.get("sport", current_sport)
+        if isinstance(next_sport, str):
+            next_sport = next_sport.strip() or None
+
+        if current_sport and next_sport != current_sport:
+            raise serializers.ValidationError({"sport": "Project sport cannot be changed once set."})
+
         if data.get("project_lead", None) is not None:
             # Check if the project lead is a member of the workspace
             if not WorkspaceMember.objects.filter(
@@ -158,6 +173,20 @@ class ProjectSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        if "sport" in data and isinstance(data["sport"], str):
+            data["sport"] = data["sport"].strip() or None
+
+        current_sport = getattr(self.instance, "sport", None)
+        if isinstance(current_sport, str):
+            current_sport = current_sport.strip() or None
+
+        next_sport = data.get("sport", current_sport)
+        if isinstance(next_sport, str):
+            next_sport = next_sport.strip() or None
+
+        if current_sport and next_sport != current_sport:
+            raise serializers.ValidationError({"sport": "Project sport cannot be changed once set."})
+
         # Check project lead should be a member of the workspace
         if (
             data.get("project_lead", None) is not None
@@ -223,6 +252,7 @@ class ProjectLiteSerializer(BaseSerializer):
             "id",
             "identifier",
             "name",
+            "sport",
             "cover_image",
             "icon_prop",
             "emoji",

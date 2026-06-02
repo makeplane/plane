@@ -162,6 +162,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // derived values
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
+  const projectSport = projectDetails?.sport?.trim() || null;
   const isDisabled = isSubmitting || isApplyingTemplate;
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
@@ -205,6 +206,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
+
+  useEffect(() => {
+    if (data?.id) return;
+
+    const currentSport = getValues("sport")?.trim() || null;
+    if (currentSport === projectSport) return;
+
+    setValue("sport", projectSport, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.id, projectSport, projectId]);
 
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
@@ -277,6 +288,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             ...DEFAULT_WORK_ITEM_FORM_VALUES,
             ...(isCreateMoreToggleEnabled ? { ...data } : {}),
             project_id: getValues<"project_id">("project_id"),
+            sport: projectSport,
             type_id: getValues<"type_id">("type_id"),
             description_html: data?.description_html ?? "<p></p>",
           });

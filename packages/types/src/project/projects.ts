@@ -27,6 +27,7 @@ export interface IPartialProject {
   guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
   network?: number;
+  sport?: string | null;
   // Timestamps
   created_at?: Date;
   updated_at?: Date;
@@ -71,6 +72,7 @@ export interface IProjectLite {
   name: string;
   identifier: string;
   logo_props: TLogoProps;
+  sport?: string | null;
 }
 
 export type ProjectPreferences = {

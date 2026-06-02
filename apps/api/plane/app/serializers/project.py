@@ -60,6 +60,20 @@ class ProjectSerializer(BaseSerializer):
         return identifier
 
     def validate(self, data):
+        if "sport" in data and isinstance(data["sport"], str):
+            data["sport"] = data["sport"].strip() or None
+
+        current_sport = getattr(self.instance, "sport", None)
+        if isinstance(current_sport, str):
+            current_sport = current_sport.strip() or None
+
+        next_sport = data.get("sport", current_sport)
+        if isinstance(next_sport, str):
+            next_sport = next_sport.strip() or None
+
+        if current_sport and next_sport != current_sport:
+            raise serializers.ValidationError({"sport": ["PROJECT_SPORT_ALREADY_LOCKED"]})
+
         # Validate description content for security
         if "description_html" in data and data["description_html"]:
             is_valid, error_msg, sanitized_html = validate_html_content(str(data["description_html"]))
@@ -89,6 +103,7 @@ class ProjectLiteSerializer(BaseSerializer):
             "id",
             "identifier",
             "name",
+            "sport",
             "cover_image",
             "cover_image_url",
             "logo_props",
