@@ -444,7 +444,6 @@ export default {
   capacity_no_data: "Không có dữ liệu.",
   work_management_description: "Quản lý công việc và nhóm/dự án của bạn một cách dễ dàng.",
   documentation: "Tài liệu",
-  message_support: "Liên hệ hỗ trợ",
   contact_sales: "Liên hệ bộ phận bán hàng",
   contact_point: "Liên hệ",
   contact_point_full_name: "Full name",

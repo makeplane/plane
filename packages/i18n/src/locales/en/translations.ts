@@ -440,7 +440,6 @@ export default {
   capacity_day_details: "Tasks on this day",
   work_management_description: "Manage your work and teams/projects with ease.",
   documentation: "Documentation",
-  message_support: "Message support",
   contact_sales: "Contact sales",
   contact_point: "Contact point",
   contact_point_full_name: "Full name",
@@ -3171,7 +3170,6 @@ export default {
       open_plane_documentation: "Open Plane documentation",
       join_discord: "Join our Discord",
       report_bug: "Report a bug",
-      chat_with_us: "Chat with us",
     },
     page_placeholders: {
       default: "Type a command or search",

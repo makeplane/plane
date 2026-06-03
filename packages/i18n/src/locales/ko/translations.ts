@@ -435,7 +435,6 @@ export default {
   capacity_no_data: "데이터 없음.",
   work_management_description: "작업 및 팀/프로젝트를 쉽게 관리합니다.",
   documentation: "문서",
-  message_support: "지원 메시지",
   contact_sales: "영업 문의",
   contact_point: "연락처",
   contact_point_full_name: "Full name",
