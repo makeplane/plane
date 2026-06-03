@@ -71,7 +71,7 @@ from plane.utils.grouper import (
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.issue_prefetch import prefetch_issue_custom_field_values
+from plane.utils.issue_prefetch import attach_custom_fields_to_issue_results, prefetch_issue_custom_field_values
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
 
@@ -248,7 +248,7 @@ class IssueViewSet(BaseViewSet):
             )
         )
 
-        return issues
+        return prefetch_issue_custom_field_values(issues)
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -848,7 +848,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         datetime_fields = ["created_at", "updated_at"]
         paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
-        return paginated_data
+        return attach_custom_fields_to_issue_results(list(paginated_data))
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):

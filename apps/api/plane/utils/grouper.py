@@ -9,6 +9,7 @@ from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 
 # Module imports
+from plane.utils.issue_prefetch import attach_custom_fields_to_issue_results
 from plane.db.models import (
     Cycle,
     Issue,
@@ -138,7 +139,7 @@ def issue_on_results(
         original_list.append(sub_group_by)
 
     required_fields.extend(original_list)
-    return list(issues.values(*required_fields))
+    return attach_custom_fields_to_issue_results(list(issues.values(*required_fields)))
 
 
 def issue_group_values(

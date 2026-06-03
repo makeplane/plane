@@ -8,6 +8,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { IIssueDisplayProperties, TIssue, TIssueCustomFields } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectCustomFields } from "@/plane-web/hooks/use-project-custom-fields";
 import { isCustomFieldVisibleOnCard } from "@/plane-web/helpers/custom-fields/format-display-value";
 import { CustomFieldCardDropdown } from "./custom-field-card-dropdown";
@@ -22,9 +23,14 @@ export type TWorkItemLayoutAdditionalProperties = {
 export const WorkItemLayoutAdditionalProperties = observer(function WorkItemLayoutAdditionalProperties(
   props: TWorkItemLayoutAdditionalProperties
 ) {
-  const { displayProperties, issue, isReadOnly = false, updateIssue } = props;
+  const { displayProperties, issue: issueProp, isReadOnly = false, updateIssue } = props;
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const projectId = issue.project_id ?? (routerProjectId ? routerProjectId.toString() : undefined);
+  const projectId = issueProp.project_id ?? (routerProjectId ? routerProjectId.toString() : undefined);
+
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const issue = getIssueById(issueProp.id) ?? issueProp;
 
   const { properties } = useProjectCustomFields(workspaceSlug?.toString(), projectId);
 

@@ -1,3 +1,4 @@
+import type { MouseEvent, SyntheticEvent } from "react";
 import type { TIssueProperty, TIssuePropertyOption } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -10,19 +11,40 @@ type Props = {
   onChange: (value: TCustomFieldValue) => void;
   disabled?: boolean;
   className?: string;
+  variant?: "default" | "card";
 };
 
-export function CustomFieldInput({ property, value, onChange, disabled, className }: Props) {
+const stopCardMouseDown = (e: SyntheticEvent) => {
+  e.stopPropagation();
+};
+
+const stopCardClick = (e: SyntheticEvent) => {
+  e.stopPropagation();
+  e.preventDefault();
+};
+
+function cardControlHandlers(variant: Props["variant"]) {
+  if (variant !== "card") return {};
+  return {
+    onMouseDown: stopCardMouseDown,
+    onClick: stopCardClick,
+  };
+}
+
+export function CustomFieldInput({ property, value, onChange, disabled, className, variant = "default" }: Props) {
   const type = property.property_type;
+  const cardHandlers = cardControlHandlers(variant);
 
   if (type === "boolean") {
     return (
-      <label className={cn("flex h-7.5 cursor-pointer items-center gap-2", className)}>
+      <label className={cn("flex h-7.5 cursor-pointer items-center gap-2", className)} {...cardHandlers}>
         <input
           type="checkbox"
           checked={Boolean(value)}
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
+          onMouseDown={stopCardMouseDown}
+          onClick={stopCardClick}
           className="size-4 rounded border-subtle"
         />
         <span className="text-body-xs-regular text-secondary">{value ? "Yes" : "No"}</span>
@@ -62,7 +84,9 @@ export function CustomFieldInput({ property, value, onChange, disabled, classNam
               key={opt.value}
               type="button"
               disabled={disabled}
-              onClick={() => {
+              onMouseDown={stopCardMouseDown}
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                if (variant === "card") stopCardClick(e);
                 const next = isSelected ? selected.filter((v) => v !== opt.value) : [...selected, opt.value];
                 onChange(next.length ? next : null);
               }}
@@ -93,6 +117,7 @@ export function CustomFieldInput({ property, value, onChange, disabled, classNam
         }}
         className={cn("h-7.5 w-full text-body-xs-regular", className)}
         placeholder={property.name}
+        {...cardHandlers}
       />
     );
   }
@@ -105,6 +130,7 @@ export function CustomFieldInput({ property, value, onChange, disabled, classNam
         disabled={disabled}
         onChange={(e) => onChange(e.target.value || null)}
         className={cn("h-7.5 w-full text-body-xs-regular", className)}
+        {...cardHandlers}
       />
     );
   }
@@ -117,6 +143,7 @@ export function CustomFieldInput({ property, value, onChange, disabled, classNam
       onChange={(e) => onChange(e.target.value || null)}
       className={cn("h-7.5 w-full text-body-xs-regular", className)}
       placeholder={property.name}
+      {...cardHandlers}
     />
   );
 }

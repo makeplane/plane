@@ -110,6 +110,13 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
+        if (key === "custom_fields" && issue.custom_fields && typeof issue.custom_fields === "object") {
+          set(this.issuesMap, [issueId, key], {
+            ...this.issuesMap[issueId].custom_fields,
+            ...issue.custom_fields,
+          });
+          return;
+        }
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });

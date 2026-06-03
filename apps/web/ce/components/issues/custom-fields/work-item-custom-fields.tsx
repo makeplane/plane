@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { SettingIcon } from "@/components/icons/attachment";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import type { TIssue, TIssueCustomFields } from "@plane/types";
@@ -38,11 +38,12 @@ export const WorkItemCustomFields = observer(function WorkItemCustomFields(props
   } = useIssueDetail();
 
   const issue = issueProp ?? getIssueById(issueId);
-  const values = useMemo(() => localValues ?? issue?.custom_fields ?? {}, [localValues, issue?.custom_fields]);
+  const savedFields = issue?.custom_fields;
 
   const handleChange = useCallback(
     async (key: string, newValue: TCustomFieldValue) => {
-      const next: TIssueCustomFields = { ...values, [key]: newValue as TIssueCustomFields[string] };
+      const currentValues = localValues ?? savedFields ?? {};
+      const next: TIssueCustomFields = { ...currentValues, [key]: newValue as TIssueCustomFields[string] };
 
       if (onLocalChange) {
         onLocalChange(next);
@@ -55,10 +56,10 @@ export const WorkItemCustomFields = observer(function WorkItemCustomFields(props
         custom_fields: next,
       });
     },
-    [values, onLocalChange, issueOperations, isEditable, workspaceSlug, projectId, issueId]
+    [localValues, savedFields, onLocalChange, issueOperations, isEditable, workspaceSlug, projectId, issueId]
   );
 
-  const visibleProperties = useMemo(() => properties.filter((p) => p.is_active), [properties]);
+  const visibleProperties = properties.filter((p) => p.is_active);
 
   if (isLoading || visibleProperties.length === 0) return null;
 
@@ -68,7 +69,12 @@ export const WorkItemCustomFields = observer(function WorkItemCustomFields(props
         <SidebarPropertyListItem key={property.id} icon={SettingIcon} label={property.name}>
           <CustomFieldInput
             property={property}
-            value={(values[property.key] ?? property.default_value ?? null) as TCustomFieldValue}
+            value={
+              (localValues?.[property.key] ??
+                savedFields?.[property.key] ??
+                property.default_value ??
+                null) as TCustomFieldValue
+            }
             disabled={!isEditable}
             onChange={(val) => {
               void handleChange(property.key, val);

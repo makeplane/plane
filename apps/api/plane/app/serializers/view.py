@@ -6,6 +6,7 @@
 from rest_framework import serializers
 
 # Module imports
+from plane.utils.issue_prefetch import custom_fields_from_issue
 from .base import DynamicBaseSerializer
 from plane.db.models import IssueView
 from plane.utils.issue_filters import issue_filters
@@ -49,6 +50,7 @@ class ViewIssueListSerializer(serializers.Serializer):
             "assignee_ids": self.get_assignee_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "module_ids": self.get_module_ids(instance),
+            "custom_fields": custom_fields_from_issue(instance),
         }
         return data
 
