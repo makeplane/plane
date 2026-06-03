@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "تنظیمات فضای کاری",
+    "page_label": "{workspace} - تنظیمات عمومی",
+    "key_created": "کلید ایجاد شد",
+    "copy_key": "این کلید محرمانه را کپی کرده و در Plane Pages ذخیره کنید. پس از بستن این پنجره دیگر نمی‌توانید این کلید را مشاهده کنید. یک فایل CSV حاوی کلید دانلود شده است.",
+    "token_copied": "توکن در کلیپ‌بورد کپی شد.",
+    "settings": {
+      "general": {
+        "title": "عمومی",
+        "upload_logo": "آپلود لوگو",
+        "edit_logo": "ویرایش لوگو",
+        "name": "نام فضای کاری",
+        "company_size": "اندازه شرکت",
+        "url": "آدرس فضای کاری",
+        "workspace_timezone": "منطقه زمانی فضای کاری",
+        "update_workspace": "به‌روزرسانی فضای کاری",
+        "delete_workspace": "حذف این فضای کاری",
+        "delete_workspace_description": "با حذف فضای کاری، تمام داده‌ها و منابع موجود در آن به‌طور دائمی حذف شده و قابل بازیابی نخواهند بود.",
+        "delete_btn": "حذف این فضای کاری",
+        "delete_modal": {
+          "title": "آیا مطمئن هستید که می‌خواهید این فضای کاری را حذف کنید؟",
+          "description": "یک دوره آزمایشی فعال برای یکی از طرح‌های پولی ما دارید. لطفاً ابتدا آن را لغو کنید.",
+          "dismiss": "رد کردن",
+          "cancel": "لغو دوره آزمایشی",
+          "success_title": "فضای کاری حذف شد.",
+          "success_message": "به زودی به صفحه نمایه خود منتقل می‌شوید.",
+          "error_title": "این کار انجام نشد.",
+          "error_message": "لطفاً دوباره تلاش کنید."
+        },
+        "errors": {
+          "name": {
+            "required": "نام الزامی است",
+            "max_length": "نام فضای کاری نباید بیشتر از ۸۰ کاراکتر باشد"
+          },
+          "company_size": {
+            "required": "اندازه شرکت الزامی است",
+            "select_a_range": "اندازه سازمان را انتخاب کنید"
+          }
+        }
+      },
+      "members": {
+        "title": "اعضا",
+        "add_member": "افزودن عضو",
+        "pending_invites": "دعوت‌نامه‌های در انتظار",
+        "invitations_sent_successfully": "دعوت‌نامه‌ها با موفقیت ارسال شدند",
+        "leave_confirmation": "آیا مطمئن هستید که می‌خواهید فضای کاری را ترک کنید؟ دیگر به این فضای کاری دسترسی نخواهید داشت. این عملیات قابل بازگشت نیست.",
+        "details": {
+          "full_name": "نام کامل",
+          "display_name": "نام نمایشی",
+          "email_address": "آدرس ایمیل",
+          "account_type": "نوع حساب",
+          "authentication": "احراز هویت",
+          "joining_date": "تاریخ عضویت"
+        },
+        "modal": {
+          "title": "دعوت افراد برای همکاری",
+          "description": "افراد را برای همکاری در فضای کاری خود دعوت کنید.",
+          "button": "ارسال دعوت‌نامه‌ها",
+          "button_loading": "در حال ارسال دعوت‌نامه‌ها",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "برای دعوت آن‌ها به یک آدرس ایمیل نیاز داریم.",
+            "invalid": "ایمیل نامعتبر است"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "صورتحساب و طرح‌ها",
+        "description": "طرح خود را انتخاب کنید، اشتراک‌ها را مدیریت کنید و با رشد نیازتان به راحتی ارتقا دهید.",
+        "title": "صورتحساب و طرح‌ها",
+        "current_plan": "طرح جاری",
+        "free_plan": "در حال حاضر از طرح رایگان استفاده می‌کنید",
+        "view_plans": "مشاهده طرح‌ها"
+      },
+      "exports": {
+        "heading": "خروجی‌ها",
+        "description": "داده‌های پروژه خود را در قالب‌های مختلف خروجی بگیرید و به تاریخچه خروجی‌ها با لینک دانلود دسترسی داشته باشید.",
+        "title": "خروجی‌ها",
+        "exporting": "در حال خروجی گرفتن",
+        "previous_exports": "خروجی‌های قبلی",
+        "export_separate_files": "خروجی داده‌ها در فایل‌های جداگانه",
+        "exporting_projects": "در حال خروجی گرفتن از پروژه",
+        "format": "فرمت",
+        "filters_info": "فیلترها را اعمال کنید تا تسک‌های خاصی بر اساس معیارهای شما خروجی گرفته شود.",
+        "modal": {
+          "title": "خروجی به",
+          "toasts": {
+            "success": {
+              "title": "خروجی موفق",
+              "message": "می‌توانید {entity} خروجی‌گرفته‌شده را از بخش خروجی‌های قبلی دانلود کنید."
+            },
+            "error": {
+              "title": "خروجی ناموفق",
+              "message": "خروجی ناموفق بود. لطفاً دوباره تلاش کنید."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "وب‌هوک‌ها",
+        "description": "اعلان‌های خودکار به سرویس‌های خارجی هنگام وقوع رویدادهای پروژه ارسال کنید.",
+        "title": "وب‌هوک‌ها",
+        "add_webhook": "افزودن وب‌هوک",
+        "modal": {
+          "title": "ایجاد وب‌هوک",
+          "details": "جزئیات وب‌هوک",
+          "payload": "آدرس Payload",
+          "question": "کدام رویدادها باید این وب‌هوک را فعال کنند؟",
+          "error": "آدرس URL الزامی است"
+        },
+        "secret_key": {
+          "title": "کلید محرمانه",
+          "message": "یک توکن برای ورود به payload وب‌هوک ایجاد کنید"
+        },
+        "options": {
+          "all": "همه چیز را برایم ارسال کن",
+          "individual": "انتخاب رویدادهای جداگانه"
+        },
+        "toasts": {
+          "created": {
+            "title": "وب‌هوک ایجاد شد",
+            "message": "وب‌هوک با موفقیت ایجاد شد"
+          },
+          "not_created": {
+            "title": "وب‌هوک ایجاد نشد",
+            "message": "وب‌هوک قابل ایجاد نبود"
+          },
+          "updated": {
+            "title": "وب‌هوک به‌روز شد",
+            "message": "وب‌هوک با موفقیت به‌روز شد"
+          },
+          "not_updated": {
+            "title": "وب‌هوک به‌روز نشد",
+            "message": "وب‌هوک قابل به‌روزرسانی نبود"
+          },
+          "removed": {
+            "title": "وب‌هوک حذف شد",
+            "message": "وب‌هوک با موفقیت حذف شد"
+          },
+          "not_removed": {
+            "title": "وب‌هوک حذف نشد",
+            "message": "وب‌هوک قابل حذف نبود"
+          },
+          "secret_key_copied": {
+            "message": "کلید محرمانه در کلیپ‌بورد کپی شد."
+          },
+          "secret_key_not_copied": {
+            "message": "هنگام کپی کلید محرمانه خطایی رخ داد."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "توکن‌های دسترسی",
+        "description": "توکن‌های API امن ایجاد کنید تا داده‌های خود را با سیستم‌ها و برنامه‌های خارجی یکپارچه کنید.",
+        "title": "توکن‌های دسترسی",
+        "add_token": "افزودن توکن دسترسی",
+        "create_token": "ایجاد توکن",
+        "never_expires": "هرگز منقضی نمی‌شود",
+        "generate_token": "تولید توکن",
+        "generating": "در حال تولید",
+        "delete": {
+          "title": "حذف توکن دسترسی",
+          "description": "هر برنامه‌ای که از این توکن استفاده می‌کند دیگر به داده‌های Plane دسترسی نخواهد داشت. این عملیات قابل بازگشت نیست.",
+          "success": {
+            "title": "موفق!",
+            "message": "توکن با موفقیت حذف شد"
+          },
+          "error": {
+            "title": "خطا!",
+            "message": "توکن قابل حذف نبود"
+          }
+        }
+      },
+      "integrations": {
+        "title": "یکپارچه‌سازی‌ها",
+        "heading": "یکپارچه‌سازی‌ها",
+        "description": "با ابزارها و سرویس‌های محبوب متصل شوید تا کارتان را در تمام اکوسیستم گردش کاری خود همگام کنید.",
+        "page_title": "با داده‌های Plane خود در برنامه‌های موجود یا برنامه خودتان کار کنید.",
+        "page_description": "تمام یکپارچه‌سازی‌های در حال استفاده توسط این فضای کاری یا شما را مشاهده کنید."
+      },
+      "imports": {
+        "title": "واردسازی‌ها",
+        "heading": "واردسازی‌ها",
+        "description": "برای بهبود یکپارچگی جریان کاری خود، داده‌ها را از ابزارهای مدیریت پروژه موجود متصل و وارد کنید."
+      },
+      "worklogs": {
+        "title": "گزارش‌های کاری",
+        "heading": "گزارش‌های کاری",
+        "description": "گزارش‌های کاری (برگه‌های زمانی) را برای هر کسی در هر پروژه‌ای دانلود کنید."
+      },
+      "group_syncing": {
+        "title": "همگام‌سازی گروه",
+        "heading": "همگام‌سازی گروه",
+        "description": "گروه‌های ارائه‌دهنده هویت را به پروژه‌ها و نقش‌ها مرتبط کنید. دسترسی کاربر به‌طور خودکار هنگام تغییر عضویت گروه در IdP شما به‌روز می‌شود و فرآیند ورود و خروج را ساده‌تر می‌کند.",
+        "enable": {
+          "title": "فعال‌سازی همگام‌سازی گروه",
+          "description": "کاربران را بر اساس گروه‌های ارائه‌دهنده هویت به‌طور خودکار به پروژه‌ها اضافه کنید."
+        },
+        "config": {
+          "title": "پیکربندی همگام‌سازی گروه",
+          "description": "نحوه نگاشت گروه‌های ارائه‌دهنده هویت به پروژه‌ها و نقش‌ها را تنظیم کنید.",
+          "sync_on_login": {
+            "title": "همگام‌سازی در هنگام ورود",
+            "description": "عضویت گروه و دسترسی پروژه را هنگام ورود کاربر به‌روز کنید."
+          },
+          "sync_offline": {
+            "title": "همگام‌سازی آفلاین",
+            "description": "هر شش ساعت یکبار به‌طور خودکار همگام‌سازی می‌کند، بدون نیاز به ورود کاربران."
+          },
+          "auto_remove": {
+            "title": "حذف خودکار",
+            "description": "کاربران را هنگامی که دیگر با گروه منطبق نیستند به‌طور خودکار از پروژه‌ها حذف کنید."
+          },
+          "group_attribute_key": {
+            "title": "کلید ویژگی گروه",
+            "description": "ویژگی ارائه‌دهنده هویت که برای شناسایی و همگام‌سازی گروه‌های کاربری استفاده می‌شود.",
+            "placeholder": "Groups"
+          }
+        },
+        "group_mapping": {
+          "title": "نگاشت گروه",
+          "description": "گروه‌های ارائه‌دهنده هویت را به پروژه‌ها و نقش‌ها مرتبط کنید.",
+          "button_text": "افزودن همگام‌سازی گروه جدید"
+        },
+        "toast": {
+          "updating": "در حال به‌روزرسانی ویژگی همگام‌سازی گروه",
+          "success": "ویژگی همگام‌سازی گروه با موفقیت به‌روز شد.",
+          "error": "به‌روزرسانی ویژگی همگام‌سازی گروه ناموفق بود!"
+        },
+        "delete_modal": {
+          "title": "حذف همگام‌سازی گروه",
+          "content": "کاربران جدید از این گروه هویتی دیگر به پروژه اضافه نخواهند شد. کاربرانی که قبلاً اضافه شده‌اند نقش فعلی خود را حفظ می‌کنند."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "گروه کاربری",
+            "required": "گروه کاربری الزامی است",
+            "placeholder": "نام گروه‌های IdP را وارد کنید"
+          },
+          "project": {
+            "text": "پروژه",
+            "required": "پروژه الزامی است",
+            "placeholder": "یک پروژه انتخاب کنید"
+          },
+          "default_role": {
+            "text": "نقش پروژه",
+            "required": "نقش پروژه الزامی است",
+            "placeholder": "یک نقش پروژه انتخاب کنید"
+          }
+        }
+      },
+      "identity": {
+        "title": "هویت",
+        "heading": "هویت",
+        "description": "دامنه خود را پیکربندی کنید و ورود یکپارچه (SSO) را فعال کنید"
+      },
+      "project_states": {
+        "title": "وضعیت‌های پروژه",
+        "heading": "مرور کلی پیشرفت تمام پروژه‌ها.",
+        "description": "وضعیت‌های پروژه یک ویژگی اختصاصی Plane برای ردیابی پیشرفت تمام پروژه‌های شما بر اساس هر ویژگی پروژه است.",
+        "go_to_settings": "رفتن به تنظیمات"
+      },
+      "projects": {
+        "title": "پروژه‌ها",
+        "description": "وضعیت‌های پروژه را مدیریت کنید و برچسب‌های پروژه و سایر پیکربندی‌ها را فعال کنید.",
+        "tabs": {
+          "states": "وضعیت‌های پروژه",
+          "labels": "برچسب‌های پروژه"
+        }
+      },
+      "templates": {
+        "title": "قالب‌ها",
+        "heading": "قالب‌ها",
+        "description": "با استفاده از قالب‌ها ۸۰٪ از زمان صرف‌شده برای ایجاد پروژه‌ها، تسک‌ها و صفحات را صرفه‌جویی کنید."
+      },
+      "relations": {
+        "title": "روابط",
+        "heading": "روابط",
+        "description": "انواع رابطه‌ای که تسک‌ها را در فضای کاری شما به هم متصل می‌کنند ایجاد و مدیریت کنید."
+      },
+      "cancel_trial": {
+        "title": "ابتدا دوره آزمایشی خود را لغو کنید.",
+        "description": "یک دوره آزمایشی فعال برای یکی از طرح‌های پولی ما دارید. لطفاً ابتدا آن را لغو کنید.",
+        "dismiss": "رد کردن",
+        "cancel": "لغو دوره آزمایشی",
+        "cancel_success_title": "دوره آزمایشی لغو شد.",
+        "cancel_success_message": "اکنون می‌توانید فضای کاری را حذف کنید.",
+        "cancel_error_title": "این کار انجام نشد.",
+        "cancel_error_message": "لطفاً دوباره تلاش کنید."
+      },
+      "applications": {
+        "internal": "داخلی",
+        "title": "برنامه‌ها",
+        "applicationId_copied": "شناسه برنامه در کلیپ‌بورد کپی شد",
+        "clientId_copied": "شناسه کلاینت در کلیپ‌بورد کپی شد",
+        "clientSecret_copied": "کلید محرمانه کلاینت در کلیپ‌بورد کپی شد",
+        "third_party_apps": "برنامه‌های شخص ثالث",
+        "your_apps": "برنامه‌های شما",
+        "connect": "اتصال",
+        "connected": "متصل شده",
+        "disconnect": "قطع اتصال",
+        "install": "نصب",
+        "installed": "نصب شده",
+        "configure": "پیکربندی",
+        "app_available": "این برنامه را برای استفاده با فضای کاری Plane در دسترس قرار داده‌اید",
+        "app_credentials_regenrated": {
+          "title": "اطلاعات ورود برنامه با موفقیت بازتولید شد",
+          "description": "کلید محرمانه را در همه جاهایی که استفاده می‌شود جایگزین کنید. کلید قبلی دیگر معتبر نیست."
+        },
+        "app_created": {
+          "title": "برنامه با موفقیت ایجاد شد",
+          "description": "از اطلاعات ورود برای نصب برنامه در فضای کاری Plane استفاده کنید"
+        },
+        "installed_apps": "برنامه‌های نصب‌شده",
+        "all_apps": "همه برنامه‌ها",
+        "internal_apps": "برنامه‌های داخلی",
+        "app_name_title": "نام برنامه",
+        "app_description_title": {
+          "label": "توضیحات کامل",
+          "placeholder": "یک توضیح کامل برای مارکت‌پلیس بنویسید. برای دستورات '/' بزنید."
+        },
+        "authorization_grant_type": {
+          "title": "نوع اتصال",
+          "description": "انتخاب کنید آیا برنامه شما باید یکبار برای فضای کاری نصب شود یا هر کاربر حساب خود را متصل کند"
+        },
+        "website": {
+          "title": "وب‌سایت",
+          "description": "لینک به وب‌سایت برنامه شما.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "سازنده برنامه",
+          "description": "شخص یا سازمانی که برنامه را می‌سازد."
+        },
+        "app_maker_error": "نام سازنده الزامی است",
+        "setup_url": {
+          "label": "آدرس راه‌اندازی",
+          "description": "کاربران پس از نصب برنامه به این آدرس هدایت می‌شوند.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "آدرس وب‌هوک",
+          "description": "رویدادها و به‌روزرسانی‌های وب‌هوک از فضاهای کاری که برنامه شما در آن‌ها نصب شده به این آدرس ارسال می‌شود.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "کلید محرمانه وب‌هوک",
+          "description": "کلید محرمانه برای تأیید درخواست‌های ورودی وب‌هوک.",
+          "placeholder": "یک کلید محرمانه تصادفی وارد کنید"
+        },
+        "redirect_uris": {
+          "label": "آدرس‌های بازگشت (با فاصله جدا شده)",
+          "description": "کاربران پس از احراز هویت با Plane به این مسیر هدایت می‌شوند.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "یک فضای کاری Plane متصل کنید تا شروع به استفاده کنید",
+        "client_id_and_secret": "شناسه و کلید محرمانه کلاینت",
+        "client_id_and_secret_description": "این کلید محرمانه را کپی کرده و در Pages ذخیره کنید. پس از بستن این پنجره دیگر این کلید را نخواهید دید.",
+        "client_id_and_secret_download": "می‌توانید یک CSV با کلید را از اینجا دانلود کنید.",
+        "application_id": "شناسه برنامه",
+        "client_id": "شناسه کلاینت",
+        "client_secret": "کلید محرمانه کلاینت",
+        "export_as_csv": "خروجی به صورت CSV",
+        "slug_already_exists": "این slug از قبل وجود دارد",
+        "failed_to_create_application": "ایجاد برنامه ناموفق بود",
+        "upload_logo": "آپلود لوگو",
+        "app_name_error": "نام برنامه الزامی است",
+        "app_short_description_title": "توضیحات کوتاه",
+        "app_short_description_error": "توضیحات کوتاه برنامه الزامی است",
+        "app_description_error": "توضیحات برنامه الزامی است",
+        "app_slug_title": "اسلاگ برنامه",
+        "app_slug_error": "اسلاگ برنامه الزامی است",
+        "invalid_website_error": "وب‌سایت نامعتبر است",
+        "webhook_url_title": "آدرس وب‌هوک",
+        "webhook_url_error": "آدرس وب‌هوک الزامی است",
+        "invalid_webhook_url_error": "آدرس وب‌هوک نامعتبر است",
+        "redirect_uris_title": "آدرس‌های بازگشت",
+        "redirect_uris_error": "آدرس‌های بازگشت الزامی هستند",
+        "invalid_redirect_uris_error": "آدرس‌های بازگشت نامعتبر هستند",
+        "redirect_uris_description": "آدرس‌های بازگشت را با فاصله از هم جدا کنید مثلاً https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "منابع مجاز JavaScript",
+        "authorized_javascript_origins_error": "منابع مجاز JavaScript الزامی هستند",
+        "invalid_authorized_javascript_origins_error": "منابع مجاز JavaScript نامعتبر هستند",
+        "authorized_javascript_origins_description": "منابع مجاز را با فاصله از هم جدا کنید مثلاً app.com example.com",
+        "create_app": "ایجاد برنامه",
+        "update_app": "به‌روزرسانی برنامه",
+        "build_your_own_app": "برنامه خودتان را بسازید",
+        "edit_app_details": "ویرایش جزئیات برنامه",
+        "regenerate_client_secret_description": "کلید محرمانه کلاینت را بازتولید کنید. پس از بازتولید می‌توانید کلید را کپی یا در یک فایل CSV دانلود کنید.",
+        "regenerate_client_secret": "بازتولید کلید محرمانه کلاینت",
+        "regenerate_client_secret_confirm_title": "مطمئن هستید که می‌خواهید کلید محرمانه کلاینت را بازتولید کنید؟",
+        "regenerate_client_secret_confirm_description": "برنامه‌هایی که از این کلید استفاده می‌کنند کار نخواهند کرد. باید کلید را در برنامه به‌روز کنید.",
+        "regenerate_client_secret_confirm_cancel": "انصراف",
+        "regenerate_client_secret_confirm_regenerate": "بازتولید",
+        "read_only_access_to_workspace": "دسترسی فقط‌خواندنی به فضای کاری شما",
+        "write_access_to_workspace": "دسترسی نوشتاری به فضای کاری شما",
+        "read_only_access_to_user_profile": "دسترسی فقط‌خواندنی به نمایه کاربری شما",
+        "write_access_to_user_profile": "دسترسی نوشتاری به نمایه کاربری شما",
+        "connect_app_to_workspace": "اتصال {app} به فضای کاری شما {workspace}",
+        "user_permissions": "مجوزهای کاربری",
+        "user_permissions_description": "مجوزهای کاربری برای اعطای دسترسی به نمایه کاربر استفاده می‌شوند.",
+        "workspace_permissions": "مجوزهای فضای کاری",
+        "workspace_permissions_description": "مجوزهای فضای کاری برای اعطای دسترسی به فضای کاری استفاده می‌شوند.",
+        "with_the_permissions": "با مجوزهای",
+        "app_consent_title": "{app} درخواست دسترسی به فضای کاری و نمایه Plane شما را دارد.",
+        "choose_workspace_to_connect_app_with": "یک فضای کاری برای اتصال برنامه انتخاب کنید",
+        "app_consent_workspace_permissions_title": "{app} می‌خواهد",
+        "app_consent_user_permissions_title": "{app} همچنین می‌تواند مجوز کاربری برای منابع زیر را درخواست کند. این مجوزها فقط توسط کاربر درخواست و تأیید می‌شوند.",
+        "app_consent_accept_title": "با پذیرفتن، شما",
+        "app_consent_accept_1": "به برنامه اجازه می‌دهید به داده‌های Plane شما دسترسی داشته باشد، چه در Plane و چه خارج از آن",
+        "app_consent_accept_2": "با سیاست حریم خصوصی و شرایط استفاده {app} موافقت می‌کنید",
+        "accepting": "در حال پذیرفتن...",
+        "accept": "پذیرفتن",
+        "categories": "دسته‌بندی‌ها",
+        "select_app_categories": "دسته‌بندی‌های برنامه را انتخاب کنید",
+        "categories_title": "دسته‌بندی‌ها",
+        "categories_error": "دسته‌بندی‌ها الزامی هستند",
+        "invalid_categories_error": "دسته‌بندی‌های نامعتبر",
+        "categories_description": "دسته‌بندی‌هایی را که بهترین توصیف برنامه هستند انتخاب کنید",
+        "supported_plans": "طرح‌های پشتیبانی‌شده",
+        "supported_plans_description": "طرح‌های فضای کاری که می‌توانند این برنامه را نصب کنند را انتخاب کنید. خالی بگذارید تا همه طرح‌ها مجاز باشند.",
+        "select_plans": "انتخاب طرح‌ها",
+        "privacy_policy_url_title": "آدرس سیاست حریم خصوصی",
+        "privacy_policy_url_error": "آدرس سیاست حریم خصوصی الزامی است",
+        "invalid_privacy_policy_url_error": "آدرس سیاست حریم خصوصی نامعتبر است",
+        "terms_of_service_url_title": "آدرس شرایط استفاده",
+        "terms_of_service_url_error": "آدرس شرایط استفاده الزامی است",
+        "invalid_terms_of_service_url_error": "آدرس شرایط استفاده نامعتبر است",
+        "support_url_title": "آدرس پشتیبانی",
+        "support_url_error": "آدرس پشتیبانی الزامی است",
+        "invalid_support_url_error": "آدرس پشتیبانی نامعتبر است",
+        "video_url_title": "آدرس ویدیو",
+        "video_url_error": "آدرس ویدیو الزامی است",
+        "invalid_video_url_error": "آدرس ویدیو نامعتبر است",
+        "setup_url_error": "آدرس راه‌اندازی الزامی است",
+        "invalid_setup_url_error": "آدرس راه‌اندازی نامعتبر است",
+        "configuration_url_title": "آدرس پیکربندی",
+        "configuration_url_error": "آدرس پیکربندی الزامی است",
+        "invalid_configuration_url_error": "آدرس پیکربندی نامعتبر است",
+        "contact_email_title": "ایمیل تماس",
+        "contact_email_error": "ایمیل تماس الزامی است",
+        "invalid_contact_email_error": "ایمیل تماس نامعتبر است",
+        "upload_attachments": "آپلود پیوست‌ها",
+        "uploading_images": "در حال آپلود {count} تصویر",
+        "drop_images_here": "تصاویر را اینجا رها کنید",
+        "click_to_upload_images": "برای آپلود تصاویر کلیک کنید",
+        "invalid_file_or_exceeds_size_limit": "فایل نامعتبر یا بیش از حد مجاز ({size} مگابایت)",
+        "uploading": "در حال آپلود...",
+        "upload_and_save": "آپلود و ذخیره",
+        "app_consent_no_access_title": "درخواست نصب",
+        "app_consent_no_access_description": "این برنامه فقط پس از نصب توسط مدیر فضای کاری قابل نصب است. برای ادامه با مدیر فضای کاری خود تماس بگیرید.",
+        "app_consent_unapproved_title": "این برنامه هنوز توسط Plane بررسی یا تأیید نشده است.",
+        "app_consent_unapproved_description": "قبل از اتصال به فضای کاری خود مطمئن شوید که به این برنامه اعتماد دارید.",
+        "go_to_app": "رفتن به برنامه",
+        "enable_app_mentions": "فعال‌سازی اشاره به برنامه",
+        "enable_app_mentions_tooltip": "وقتی این گزینه فعال است، کاربران می‌توانند تسک‌ها را به این برنامه اشاره یا تخصیص دهند.",
+        "scopes": "دامنه‌ها",
+        "select_scopes": "انتخاب دامنه‌ها",
+        "read_access_to": "دسترسی فقط‌خواندنی به",
+        "write_access_to": "دسترسی نوشتاری به",
+        "global_permission_expiration": "دامنه‌های جهانی به‌زودی منقضی می‌شوند. به جای آن از دامنه‌های دانه‌ریز استفاده کنید. مثلاً به جای یک read جهانی از project:read استفاده کنید.",
+        "selected_scopes": "{count} انتخاب شده",
+        "scopes_and_permissions": "دامنه‌ها و مجوزها",
+        "read": "خواندن",
+        "write": "نوشتن",
+        "scope_description": {
+          "projects": "دسترسی به پروژه‌ها و تمام موجودیت‌های مرتبط با پروژه",
+          "wiki": "دسترسی به ویکی و تمام موجودیت‌های مرتبط با ویکی",
+          "workspaces": "دسترسی به فضاهای کاری و تمام موجودیت‌های مرتبط با فضای کاری",
+          "stickies": "دسترسی به یادداشت‌های چسبنده و تمام موجودیت‌های مرتبط",
+          "profile": "دسترسی به اطلاعات نمایه کاربری",
+          "agents": "دسترسی به عوامل و تمام موجودیت‌های مرتبط با عامل",
+          "assets": "دسترسی به دارایی‌ها و تمام موجودیت‌های مرتبط با دارایی"
+        }
+      },
+      "plane-intelligence": {
+        "title": "هوش مصنوعی Plane",
+        "heading": "هوش مصنوعی Plane",
+        "description": "با هوش مصنوعی که به‌طور بومی به کار و پایگاه دانش شما متصل است، کارتان را هوشمندتر و سریع‌تر کنید."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "اسکریپت‌ها",
+        "new_script": "اسکریپت جدید",
+        "description": "گردش‌های کاری خود را با اسکریپت‌های سفارشی و قوانین اتوماسیون خودکار کنید."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "توکن دسترسی ایجاد نشده",
+        "description": "API های Plane می‌توانند برای یکپارچه‌سازی داده‌های Plane با هر سیستم خارجی استفاده شوند. برای شروع یک توکن ایجاد کنید."
+      },
+      "webhooks": {
+        "title": "وب‌هوکی اضافه نشده",
+        "description": "وب‌هوک ایجاد کنید تا به‌روزرسانی‌های لحظه‌ای دریافت کرده و اقدامات خودکار انجام دهید."
+      },
+      "exports": {
+        "title": "هنوز خروجی‌ای وجود ندارد",
+        "description": "هر بار که خروجی بگیرید، یک نسخه برای مرجع اینجا ذخیره می‌شود."
+      },
+      "imports": {
+        "title": "هنوز واردسازی‌ای وجود ندارد",
+        "description": "تمام واردسازی‌های قبلی خود را اینجا پیدا کرده و دانلود کنید."
+      }
+    }
+  }
+}
