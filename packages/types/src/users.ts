@@ -53,6 +53,9 @@ export interface IUser extends IUserLite {
   username: string;
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
+  // God-mode menu RBAC — present only on /api/instances/admins/me|session/ payloads
+  is_super_admin?: boolean;
+  allowed_menus?: string[];
 }
 
 export interface IUserAccount {

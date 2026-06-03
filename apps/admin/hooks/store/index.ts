@@ -16,3 +16,4 @@ export * from "./use-instance-task-category";
 export * from "./use-instance-help-center";
 export * from "./use-instance-job-position";
 export * from "./use-business-calendar";
+export * from "./use-admin-management";

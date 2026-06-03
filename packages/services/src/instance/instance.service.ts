@@ -73,6 +73,55 @@ export class InstanceService extends APIService {
   }
 
   /**
+   * Creates an instance admin with menu grants
+   * @param data email of an existing user + menu grants
+   * @returns {Promise<IInstanceAdmin>} the created instance admin
+   * @throws {Error} If the API request fails
+   */
+  async createAdmin(data: {
+    email: string;
+    allowed_menus?: string[];
+    is_super_admin?: boolean;
+  }): Promise<IInstanceAdmin> {
+    return this.post("/api/instances/admins/", data)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Updates an instance admin's menu grants / super-admin flag
+   * @param adminId instance admin row id
+   * @param data partial grant fields
+   * @returns {Promise<IInstanceAdmin>} the updated instance admin
+   * @throws {Error} If the API request fails
+   */
+  async updateAdmin(
+    adminId: string,
+    data: { allowed_menus?: string[]; is_super_admin?: boolean }
+  ): Promise<IInstanceAdmin> {
+    return this.patch(`/api/instances/admins/${adminId}/`, data)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Removes an instance admin
+   * @param adminId instance admin row id
+   * @throws {Error} If the API request fails
+   */
+  async deleteAdmin(adminId: string): Promise<void> {
+    return this.delete(`/api/instances/admins/${adminId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
    * Updates the instance information
    * @param {Partial<IInstance>} data Data to update the instance with
    * @returns {Promise<IInstance>} Promise resolving to the updated instance information

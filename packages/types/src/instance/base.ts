@@ -83,6 +83,8 @@ export interface IInstanceAdmin {
   updated_by: string;
   user: string;
   user_detail: IUserLite;
+  is_super_admin: boolean;
+  allowed_menus: string[];
 }
 
 export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
