@@ -32,7 +32,7 @@ def instance(db):
 
 @pytest.fixture
 def admin_user(db, create_user, instance):
-    InstanceAdmin.objects.create(instance=instance, user=create_user, role=15)
+    InstanceAdmin.objects.create(instance=instance, user=create_user, role=15, is_super_admin=True)
     return create_user
 
 

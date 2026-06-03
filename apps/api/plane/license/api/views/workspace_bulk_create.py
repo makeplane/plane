@@ -14,7 +14,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace, WorkspaceMember
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers import WorkspaceSerializer
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.general_director import (
@@ -58,7 +58,7 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
     Skips invalid rows with reason; creates valid ones with auto-generated slug.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         workspaces_data = request.data.get("workspaces", None)

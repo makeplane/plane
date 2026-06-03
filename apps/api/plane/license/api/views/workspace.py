@@ -10,7 +10,7 @@ from django.db.models import OuterRef, Func, F
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.db.models import Workspace, WorkspaceMember, Project
 from plane.license.api.serializers import WorkspaceSerializer
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
@@ -21,7 +21,7 @@ from plane.utils.workspace_owner_resolver import (
 
 
 class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         slug = request.GET.get("slug", False)
@@ -39,7 +39,7 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
 class InstanceWorkSpaceEndpoint(BaseAPIView):
     model = Workspace
     serializer_class = WorkspaceSerializer
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         project_count = (
@@ -122,7 +122,7 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
 
 
 class InstanceWorkSpaceDetailEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def delete(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)

@@ -72,7 +72,8 @@ def instance_admin_user(db, create_user):
     InstanceAdmin.objects.create(
         instance=instance,
         user=create_user,
-        role=15
+        role=15,
+        is_super_admin=True,
     )
     return create_user
 

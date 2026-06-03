@@ -9,7 +9,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.serializers.task_category import MainTaskCategorySerializer, SubTaskCategorySerializer
 from plane.db.models import MainTaskCategory, SubTaskCategory
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
 
@@ -17,7 +17,7 @@ from plane.utils.exception_logger import log_exception
 class InstanceMainTaskCategoryEndpoint(BaseAPIView):
     """Instance-level CRUD for main task categories (God Mode)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         categories = MainTaskCategory.objects.filter(deleted_at__isnull=True).order_by("sort_order", "name")
@@ -35,7 +35,7 @@ class InstanceMainTaskCategoryEndpoint(BaseAPIView):
 class InstanceMainTaskCategoryDetailEndpoint(BaseAPIView):
     """Instance-level detail/update/delete for a main task category."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request, pk):
         try:
@@ -72,7 +72,7 @@ class InstanceMainTaskCategoryDetailEndpoint(BaseAPIView):
 class InstanceSubTaskCategoryEndpoint(BaseAPIView):
     """Instance-level CRUD for sub task categories (God Mode)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         main_category_id = request.query_params.get("main_category_id")
@@ -93,7 +93,7 @@ class InstanceSubTaskCategoryEndpoint(BaseAPIView):
 class InstanceSubTaskCategoryDetailEndpoint(BaseAPIView):
     """Instance-level detail/update/delete for a sub task category."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request, pk):
         try:

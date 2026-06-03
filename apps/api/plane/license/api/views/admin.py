@@ -23,7 +23,8 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
+from plane.license.menu_registry import ALL_PERMISSION_KEYS
 from plane.license.api.serializers import (
     InstanceAdminMeSerializer,
     InstanceAdminSerializer,
@@ -42,7 +43,7 @@ from plane.utils.path_validator import get_safe_redirect_url
 
 
 class InstanceAdminEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     @invalidate_cache(path="/api/instances/", user=False)
     # Create an instance admin
@@ -230,8 +231,13 @@ class InstanceAdminSignUpEndpoint(View):
             user.token_updated_at = timezone.now()
             user.save()
 
-            # Register the user as an instance admin
-            _ = InstanceAdmin.objects.create(user=user, instance=instance)
+            # Register the first/setup admin as super-admin with every menu
+            _ = InstanceAdmin.objects.create(
+                user=user,
+                instance=instance,
+                is_super_admin=True,
+                allowed_menus=list(ALL_PERMISSION_KEYS),
+            )
             # Make the setup flag True
             instance.is_setup_done = True
             instance.instance_name = company_name
@@ -364,7 +370,7 @@ class InstanceAdminSignInEndpoint(View):
 
 
 class InstanceAdminUserMeEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         serializer = InstanceAdminMeSerializer(request.user)
@@ -385,7 +391,7 @@ class InstanceAdminUserSessionEndpoint(BaseAPIView):
 
 
 class InstanceAdminSignOutEndpoint(View):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         # Get user

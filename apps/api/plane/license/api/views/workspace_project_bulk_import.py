@@ -24,7 +24,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
     - member not in workspace → listed in created[].skipped_members
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         projects_data = request.data.get("projects", None)

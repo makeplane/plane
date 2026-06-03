@@ -16,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.workspace.invite import _add_admin_to_all_projects
 from plane.db.models import Profile, ProjectMember, User, Workspace, WorkspaceMember
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers.user import (
     InstanceUserAddToWorkspaceSerializer,
     InstanceUserCreateSerializer,
@@ -30,7 +30,7 @@ from plane.license.api.views.base import BaseAPIView
 class InstanceUserEndpoint(BaseAPIView):
     """CRUD for users in instance admin."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request, pk=None):
         if pk:
@@ -126,7 +126,7 @@ class InstanceUserEndpoint(BaseAPIView):
 class InstanceUserResetPasswordEndpoint(BaseAPIView):
     """Reset user password — auto-generates random password."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request, pk=None):
         try:
@@ -148,7 +148,7 @@ class InstanceUserResetPasswordEndpoint(BaseAPIView):
 class InstanceUserWorkspaceEndpoint(BaseAPIView):
     """Add user to workspace."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request, pk=None):
         """POST /api/instances/users/<pk>/workspaces/ — add to workspace."""

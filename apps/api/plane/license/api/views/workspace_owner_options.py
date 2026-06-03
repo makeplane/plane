@@ -10,7 +10,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import EmploymentStatus, StaffProfile
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.general_director import (
     AmbiguousGeneralDirector,
@@ -52,7 +52,7 @@ class InstanceWorkspaceOwnerOptionsEndpoint(BaseAPIView):
     owner picker. `default_owner` is null when no unambiguous GD resolves —
     the UI then requires an explicit pick; creation endpoints still 400."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         try:

@@ -21,7 +21,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.models import InstanceConfiguration
 from plane.license.api.serializers import InstanceConfigurationSerializer
 from plane.license.utils.encryption import encrypt_data
@@ -30,7 +30,7 @@ from plane.license.utils.instance_value import get_email_configuration
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
@@ -65,7 +65,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
 
 class DisableEmailFeatureEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request):

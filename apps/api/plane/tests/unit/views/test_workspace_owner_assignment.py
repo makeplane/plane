@@ -57,7 +57,8 @@ def instance(db):
 @pytest.fixture
 def admin_user(db, instance):
     user = _make_user("instance-admin")
-    InstanceAdmin.objects.create(instance=instance, user=user, role=20)
+    # Super-admin — the typical god-mode creator under menu RBAC
+    InstanceAdmin.objects.create(instance=instance, user=user, role=20, is_super_admin=True)
     return user
 
 

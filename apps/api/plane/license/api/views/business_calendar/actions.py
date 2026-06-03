@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from plane.db.models import DayOverride, Holiday, WorkSchedule
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.business_calendar.service import BusinessCalendarService
 from plane.utils.exception_logger import log_exception
@@ -40,7 +40,7 @@ class InstanceCalendarCopyYearEndpoint(BaseAPIView):
     Response:  {"copied_holidays": N, "copied_overrides": M, "skipped": K, "warnings": [...]}
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request, pk):
         try:

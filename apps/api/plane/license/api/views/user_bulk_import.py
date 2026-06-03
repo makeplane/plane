@@ -14,7 +14,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Profile, User
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers.user import InstanceUserSerializer
 from plane.license.api.views.base import BaseAPIView
 
@@ -31,7 +31,7 @@ class InstanceUserBulkImportEndpoint(BaseAPIView):
     Skips invalid rows, imports valid ones, returns summary.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
     parser_classes = [MultiPartParser]
 
     def post(self, request):

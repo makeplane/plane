@@ -16,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.db.models import Workspace
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers import InstanceSerializer
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
@@ -28,7 +28,7 @@ from django.views.decorators.cache import cache_control
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
         if self.request.method == "PATCH":
-            return [InstanceAdminPermission()]
+            return [InstanceAdminMenuPermission()]
         return [AllowAny()]
 
     @cache_response(60 * 60 * 2, user=False)
