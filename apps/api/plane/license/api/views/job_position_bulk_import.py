@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.db.models import JobGrade, JobPosition
 from plane.license.api.views.base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 MAX_ROWS = 500
 
@@ -39,7 +39,7 @@ class JobPositionBulkImportView(BaseAPIView):
     Returns summary with created/skipped counts for both types.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         grade_data = request.data.get("grades", [])

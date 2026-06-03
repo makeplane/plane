@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.db.models import Holiday, WorkSchedule
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers.business_calendar import HolidaySerializer
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
@@ -15,7 +15,7 @@ from plane.utils.exception_logger import log_exception
 class InstanceHolidayEndpoint(BaseAPIView):
     """List holidays for a schedule (with optional ?year= filter) or create a new one."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def _get_schedule(self, pk):
         try:
@@ -56,7 +56,7 @@ class InstanceHolidayEndpoint(BaseAPIView):
 class InstanceHolidayDetailEndpoint(BaseAPIView):
     """Partially update or delete a specific Holiday."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def _get_holiday(self, pk, holiday_pk):
         try:

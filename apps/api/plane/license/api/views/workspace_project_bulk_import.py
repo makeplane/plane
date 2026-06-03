@@ -24,7 +24,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
     - member not in workspace → listed in created[].skipped_members
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         projects_data = request.data.get("projects", None)
@@ -253,20 +253,24 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                         workspace=workspace,
                     )
 
-                    # Creator as Admin
+                    # Seed the workspace owner as project admin. The acting
+                    # instance admin gets no membership unless they ARE the
+                    # owner — attribution (created_by) stays the actor.
                     ProjectMember.objects.create(
                         project=project,
-                        member=request.user,
+                        member_id=workspace.owner_id,
                         role=ROLE.ADMIN.value,
                     )
 
-                    # Auto-add workspace admins
-                    already_added = {request.user.id}
+                    # Auto-add workspace admins, explicitly excluding the
+                    # acting instance admin: legacy admin-owned workspaces
+                    # may still carry them as an active role-20 member.
+                    already_added = {workspace.owner_id}
                     workspace_admins = WorkspaceMember.objects.filter(
                         workspace=workspace,
                         role=ROLE.ADMIN.value,
                         is_active=True,
-                    ).exclude(member_id__in=already_added).select_related("member")
+                    ).exclude(member_id__in=already_added | {request.user.id}).select_related("member")
 
                     for wm in workspace_admins:
                         ProjectMember.objects.get_or_create(

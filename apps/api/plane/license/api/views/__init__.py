@@ -38,6 +38,8 @@ from .workspace_bulk_create import InstanceWorkspaceBulkCreateEndpoint
 from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndpoint
 from .workspace_project_bulk_import import InstanceWorkspaceProjectBulkImportEndpoint
 from .workspace_module_bulk_import import InstanceWorkspaceModuleBulkImportEndpoint
+from .workspace_owner_options import InstanceWorkspaceOwnerOptionsEndpoint
+from .admin_user_options import InstanceAdminUserOptionsEndpoint
 
 from .monitoring import (
     EmailLogMonitoringEndpoint,

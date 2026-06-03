@@ -74,6 +74,7 @@ def instance_admin(setup_instance, admin_user):
         instance=setup_instance,
         user=admin_user,
         role=20,
+        is_super_admin=True,
     )
 
 

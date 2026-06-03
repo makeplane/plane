@@ -15,6 +15,7 @@ from plane.license.api.views import (
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
+    InstanceAdminUserOptionsEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
@@ -24,6 +25,7 @@ from plane.license.api.views import (
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
     InstanceWorkspaceBulkCreateEndpoint,
+    InstanceWorkspaceOwnerOptionsEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
     InstanceWorkspaceProjectBulkImportEndpoint,
     InstanceWorkspaceModuleBulkImportEndpoint,
@@ -39,6 +41,11 @@ urlpatterns = [
     path("", InstanceEndpoint.as_view(), name="instance"),
     path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
+    path(
+        "admins/user-options/",
+        InstanceAdminUserOptionsEndpoint.as_view(),
+        name="instance-admin-user-options",
+    ),
     path(
         "admins/session/",
         InstanceAdminUserSessionEndpoint.as_view(),
@@ -86,6 +93,12 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # Registered before the workspaces/<str:slug>/ catch-all below
+    path(
+        "workspaces/owner-options/",
+        InstanceWorkspaceOwnerOptionsEndpoint.as_view(),
+        name="instance-workspace-owner-options",
+    ),
     path(
         "workspaces/bulk-create/",
         InstanceWorkspaceBulkCreateEndpoint.as_view(),

@@ -14,6 +14,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { NewUserPopup } from "@/components/common/new-user-popup";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useMenuAccessGuard } from "@/hooks/use-menu-access-guard";
 // local components
 import type { Route } from "./+types/layout";
 import { AdminSidebar } from "./sidebar";
@@ -23,6 +24,8 @@ function AdminLayout(_props: Route.ComponentProps) {
   const { replace } = useRouter();
   // store hooks
   const { isUserLoggedIn } = useUser();
+  // redirect away from ungranted menus (backend still enforces 403)
+  useMenuAccessGuard();
 
   useEffect(() => {
     if (isUserLoggedIn === false) replace("/");
@@ -54,4 +57,6 @@ function AdminLayout(_props: Route.ComponentProps) {
   return <></>;
 }
 
-export default observer(AdminLayout);
+const ObservedAdminLayout = observer(AdminLayout);
+
+export default ObservedAdminLayout;

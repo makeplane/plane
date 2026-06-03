@@ -9,7 +9,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.serializers.job_position import JobGradeSerializer, JobPositionSerializer
 from plane.db.models import JobGrade, JobPosition
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
 
@@ -17,7 +17,7 @@ from plane.utils.exception_logger import log_exception
 class InstanceJobGradeEndpoint(BaseAPIView):
     """Instance-level CRUD for job grades — standalone parent (God Mode)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         grades = JobGrade.objects.filter(deleted_at__isnull=True).order_by("sort_order", "name")
@@ -34,7 +34,7 @@ class InstanceJobGradeEndpoint(BaseAPIView):
 class InstanceJobGradeDetailEndpoint(BaseAPIView):
     """Instance-level detail/update/delete for a job grade."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request, pk):
         try:
@@ -70,7 +70,7 @@ class InstanceJobGradeDetailEndpoint(BaseAPIView):
 class InstanceJobPositionEndpoint(BaseAPIView):
     """Instance-level CRUD for job positions — child of job grade (God Mode)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         job_grade_id = request.query_params.get("job_grade_id")
@@ -90,7 +90,7 @@ class InstanceJobPositionEndpoint(BaseAPIView):
 class InstanceJobPositionDetailEndpoint(BaseAPIView):
     """Instance-level detail/update/delete for a job position."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request, pk):
         try:
