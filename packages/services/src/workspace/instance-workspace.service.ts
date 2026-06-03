@@ -48,6 +48,21 @@ export interface ISlugCheckResponse {
   is_available: boolean;
 }
 
+export interface IWorkspaceOwnerOption {
+  id: string;
+  display_name: string;
+  email: string;
+}
+
+export interface IWorkspaceOwnerOptionsResponse {
+  // null when no unambiguous General Director resolves from staff data
+  default_owner: IWorkspaceOwnerOption | null;
+  // empty when the caller lacks staff-directory access
+  candidates: IWorkspaceOwnerOption[];
+}
+
+export type TWorkspaceCreatePayload = Partial<IWorkspace> & { owner_id?: string };
+
 import { APIService } from "../api.service";
 
 /**
@@ -79,7 +94,7 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as TWorkspacePaginationInfo)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -96,7 +111,7 @@ export class InstanceWorkspaceService extends APIService {
     return this.get<ISlugCheckResponse>(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data as ISlugCheckResponse)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -108,11 +123,29 @@ export class InstanceWorkspaceService extends APIService {
    * @returns {Promise<IWorkspace>} Promise resolving to the created workspace
    * @throws {Error} If the API request fails
    */
-  async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
+  async create(data: TWorkspaceCreatePayload): Promise<IWorkspace> {
     return this.post<IWorkspace>("/api/instances/workspaces/", data)
       .then((response) => response?.data as IWorkspace)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
+      });
+  }
+
+  /**
+   * Retrieves the default workspace owner (the General Director) and candidate
+   * users for the create-workspace owner picker
+   * @param {string} search - Optional search query against the staff directory
+   * @returns {Promise<IWorkspaceOwnerOptionsResponse>} default owner + candidates
+   * @throws {Error} If the API request fails
+   */
+  async getOwnerOptions(search?: string): Promise<IWorkspaceOwnerOptionsResponse> {
+    return this.get<IWorkspaceOwnerOptionsResponse>("/api/instances/workspaces/owner-options/", {
+      params: { search: search || undefined },
+    })
+      .then((response) => response?.data as IWorkspaceOwnerOptionsResponse)
+      .catch((error: unknown) => {
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -131,7 +164,7 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceBulkCreateResponse)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -145,7 +178,7 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceBulkAssignResponse)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -167,7 +200,7 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceProjectBulkImportResponse)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -187,7 +220,7 @@ export class InstanceWorkspaceService extends APIService {
     return this.post<IWorkspaceModuleBulkImportResponse>("/api/instances/bulk-import-modules/", { modules })
       .then((response) => response?.data as IWorkspaceModuleBulkImportResponse)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -197,7 +230,7 @@ export class InstanceWorkspaceService extends APIService {
     return this.delete<void>(`/api/instances/workspaces/${workspaceSlug}/`)
       .then((response) => response?.data as void)
       .catch((error: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });

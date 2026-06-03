@@ -19,8 +19,12 @@ import { validateSlug, validateWorkspaceName } from "@plane/utils";
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+// local components
+import { WorkspaceOwnerSelect } from "./owner-select";
 
 const instanceWorkspaceService = new InstanceWorkspaceService();
+
+type TCreateWorkspaceForm = IWorkspace & { owner_id: string };
 
 export function WorkspaceCreateForm() {
   // router
@@ -28,10 +32,11 @@ export function WorkspaceCreateForm() {
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-  const [defaultValues, setDefaultValues] = useState<Partial<IWorkspace>>({
+  const [defaultValues, setDefaultValues] = useState<Partial<TCreateWorkspaceForm>>({
     name: "",
     slug: "",
     organization_size: "",
+    owner_id: "",
   });
   // store hooks
   const { createWorkspace } = useWorkspace();
@@ -42,41 +47,44 @@ export function WorkspaceCreateForm() {
     setValue,
     getValues,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
+  } = useForm<TCreateWorkspaceForm>({ defaultValues, mode: "onChange" });
   // derived values
   const workspaceBaseURL = encodeURI(WEB_BASE_URL || window.location.origin + "/");
 
-  const handleCreateWorkspace = async (formData: IWorkspace) => {
-    await instanceWorkspaceService
-      .slugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.is_available === true && !RESTRICTED_URLS.includes(formData.slug)) {
-          setSlugError(false);
-          await createWorkspace(formData)
-            .then(async () => {
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Success!",
-                message: "Workspace created successfully.",
-              });
-              router.push(`/workspace`);
-            })
-            .catch(() => {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Workspace could not be created. Please try again.",
-              });
-            });
-        } else setSlugError(true);
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred while creating workspace. Please try again.",
-        });
+  const handleCreateWorkspace = async (formData: TCreateWorkspaceForm) => {
+    let res;
+    try {
+      res = await instanceWorkspaceService.slugCheck(formData.slug);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Some error occurred while creating workspace. Please try again.",
       });
+      return;
+    }
+
+    if (res.is_available !== true || RESTRICTED_URLS.includes(formData.slug)) {
+      setSlugError(true);
+      return;
+    }
+
+    setSlugError(false);
+    try {
+      await createWorkspace(formData);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Workspace created successfully.",
+      });
+      router.push(`/workspace`);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Workspace could not be created. Please try again.",
+      });
+    }
   };
 
   useEffect(
@@ -187,12 +195,27 @@ export function WorkspaceCreateForm() {
             )}
           </div>
         </div>
+        <div className="flex flex-col gap-1">
+          <h4 className="text-13 text-tertiary">Workspace owner</h4>
+          <div className="w-full">
+            <Controller
+              name="owner_id"
+              control={control}
+              rules={{ required: "Workspace owner is required." }}
+              render={({ field: { value, onChange } }) => <WorkspaceOwnerSelect value={value} onChange={onChange} />}
+            />
+            <p className="text-11 text-tertiary mt-1">
+              Defaults to the General Director. The workspace is created without you as a member.
+            </p>
+            {errors.owner_id && <span className="text-13 text-danger-primary">{errors.owner_id.message}</span>}
+          </div>
+        </div>
       </div>
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
           size="lg"
-          onClick={handleSubmit(handleCreateWorkspace)}
+          onClick={(e) => void handleSubmit(handleCreateWorkspace)(e)}
           disabled={!isValid}
           loading={isSubmitting}
         >

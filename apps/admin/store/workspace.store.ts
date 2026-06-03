@@ -13,6 +13,8 @@ import type {
   IWorkspaceBulkAssignResponse,
   IWorkspaceProjectBulkImportResponse,
   IWorkspaceModuleBulkImportResponse,
+  IWorkspaceOwnerOptionsResponse,
+  TWorkspaceCreatePayload,
 } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
@@ -23,6 +25,7 @@ export type {
   IWorkspaceBulkAssignResponse,
   IWorkspaceProjectBulkImportResponse,
   IWorkspaceModuleBulkImportResponse,
+  IWorkspaceOwnerOptionsResponse,
 };
 
 export interface IWorkspaceStore {
@@ -31,6 +34,7 @@ export interface IWorkspaceStore {
   workspaces: Record<string, IWorkspace>;
   paginationInfo: TPaginationInfo | undefined;
   searchQuery: string;
+  ownerOptions: IWorkspaceOwnerOptionsResponse | undefined;
   // computed
   workspaceIds: string[];
   // helper actions
@@ -40,8 +44,9 @@ export interface IWorkspaceStore {
   fetchWorkspaces: (search?: string) => Promise<IWorkspace[]>;
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   fetchAllWorkspaces: () => Promise<void>;
+  fetchOwnerOptions: (search?: string) => Promise<IWorkspaceOwnerOptionsResponse>;
   // curd actions
-  createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  createWorkspace: (data: TWorkspaceCreatePayload) => Promise<IWorkspace>;
   bulkCreateWorkspaces: (
     workspaces: Array<{ name: string; organization_size?: string }>
   ) => Promise<IWorkspaceBulkCreateResponse>;
@@ -79,6 +84,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   workspaces: Record<string, IWorkspace> = {};
   paginationInfo: TPaginationInfo | undefined = undefined;
   searchQuery: string = "";
+  ownerOptions: IWorkspaceOwnerOptionsResponse | undefined = undefined;
   // services
   instanceWorkspaceService;
 
@@ -89,6 +95,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       workspaces: observable,
       paginationInfo: observable,
       searchQuery: observable,
+      ownerOptions: observable,
       // computed
       workspaceIds: computed,
       // helper actions
@@ -98,6 +105,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       fetchWorkspaces: action,
       fetchNextWorkspaces: action,
       fetchAllWorkspaces: action,
+      fetchOwnerOptions: action,
       // curd actions
       createWorkspace: action,
       bulkCreateWorkspaces: action,
@@ -200,13 +208,26 @@ export class WorkspaceStore implements IWorkspaceStore {
     }
   };
 
+  /**
+   * @description Fetches the default owner (the General Director) + candidate
+   * users for the create-workspace owner picker
+   * @param search - optional staff-directory search query
+   */
+  fetchOwnerOptions = async (search?: string): Promise<IWorkspaceOwnerOptionsResponse> => {
+    const options = await this.instanceWorkspaceService.getOwnerOptions(search);
+    runInAction(() => {
+      this.ownerOptions = options;
+    });
+    return options;
+  };
+
   // curd actions
   /**
    * @description Creates a new workspace
-   * @param data - IWorkspace
+   * @param data - workspace payload (optional owner_id; backend defaults owner to the GD)
    * @returns Promise<IWorkspace>
    */
-  createWorkspace = async (data: IWorkspace): Promise<IWorkspace> => {
+  createWorkspace = async (data: TWorkspaceCreatePayload): Promise<IWorkspace> => {
     try {
       this.loader = "mutation";
       const workspace = await this.instanceWorkspaceService.create(data);
