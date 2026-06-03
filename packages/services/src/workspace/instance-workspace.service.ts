@@ -86,7 +86,7 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async list(params?: { search?: string; cursor?: string }): Promise<TWorkspacePaginationInfo> {
-    return this.get<TWorkspacePaginationInfo>(`/api/instances/workspaces/`, {
+    return this.get(`/api/instances/workspaces/`, {
       params: {
         cursor: params?.cursor,
         search: params?.search || undefined,
@@ -94,7 +94,7 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as TWorkspacePaginationInfo)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -107,10 +107,10 @@ export class InstanceWorkspaceService extends APIService {
    */
   async slugCheck(slug: string): Promise<ISlugCheckResponse> {
     const params = new URLSearchParams({ slug });
-    return this.get<ISlugCheckResponse>(`/api/instances/workspace-slug-check/?${params.toString()}`)
+    return this.get(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data as ISlugCheckResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -122,10 +122,10 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async create(data: TWorkspaceCreatePayload): Promise<IWorkspace> {
-    return this.post<IWorkspace>("/api/instances/workspaces/", data)
+    return this.post("/api/instances/workspaces/", data)
       .then((response) => response?.data as IWorkspace)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -138,12 +138,12 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async getOwnerOptions(search?: string): Promise<IWorkspaceOwnerOptionsResponse> {
-    return this.get<IWorkspaceOwnerOptionsResponse>("/api/instances/workspaces/owner-options/", {
+    return this.get("/api/instances/workspaces/owner-options/", {
       params: { search: search || undefined },
     })
       .then((response) => response?.data as IWorkspaceOwnerOptionsResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -156,12 +156,12 @@ export class InstanceWorkspaceService extends APIService {
   async bulkCreate(
     workspaces: Array<{ name: string; organization_size?: string }>
   ): Promise<IWorkspaceBulkCreateResponse> {
-    return this.post<IWorkspaceBulkCreateResponse>("/api/instances/workspaces/bulk-create/", {
+    return this.post("/api/instances/workspaces/bulk-create/", {
       workspaces,
     })
       .then((response) => response?.data as IWorkspaceBulkCreateResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -169,12 +169,12 @@ export class InstanceWorkspaceService extends APIService {
   async bulkAssignMembers(
     members: Array<{ email: string; workspace_slug: string; role: number }>
   ): Promise<IWorkspaceBulkAssignResponse> {
-    return this.post<IWorkspaceBulkAssignResponse>("/api/instances/workspaces/bulk-assign-members/", {
+    return this.post("/api/instances/workspaces/bulk-assign-members/", {
       members,
     })
       .then((response) => response?.data as IWorkspaceBulkAssignResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -190,12 +190,12 @@ export class InstanceWorkspaceService extends APIService {
       member_roles?: string;
     }>
   ): Promise<IWorkspaceProjectBulkImportResponse> {
-    return this.post<IWorkspaceProjectBulkImportResponse>("/api/instances/bulk-import-projects/", {
+    return this.post("/api/instances/bulk-import-projects/", {
       projects,
     })
       .then((response) => response?.data as IWorkspaceProjectBulkImportResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
@@ -211,19 +211,19 @@ export class InstanceWorkspaceService extends APIService {
       target_date?: string;
     }>
   ): Promise<IWorkspaceModuleBulkImportResponse> {
-    return this.post<IWorkspaceModuleBulkImportResponse>("/api/instances/bulk-import-modules/", { modules })
+    return this.post("/api/instances/bulk-import-modules/", { modules })
       .then((response) => response?.data as IWorkspaceModuleBulkImportResponse)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
 
   async destroy(workspaceSlug: string): Promise<void> {
-    return this.delete<void>(`/api/instances/workspaces/${workspaceSlug}/`)
+    return this.delete(`/api/instances/workspaces/${workspaceSlug}/`)
       .then((response) => response?.data as void)
       .catch((error: unknown) => {
-        const errorData = (error as Record<string, unknown>)?.response?.data;
+        const errorData = (error as { response?: { data?: unknown } })?.response?.data;
         throw errorData;
       });
   }
