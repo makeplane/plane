@@ -110,7 +110,11 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "created_at",
   "updated_at",
 ] as const;
-export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
+
+/** Rich-filter key for a project custom field (property UUID). */
+export type TCustomPropertyFilterProperty = `customproperty_${string}`;
+
+export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TCustomPropertyFilterProperty;
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
@@ -153,7 +157,7 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
+  layout?: unknown; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
@@ -175,6 +179,8 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  /** Per custom-field property id — show on layout cards when true */
+  custom_fields?: Record<string, boolean>;
 }
 
 export type TIssueKanbanFilters = {
@@ -268,6 +274,6 @@ export interface IssuePaginationOptions {
 export type TSpreadsheetColumn = React.FC<{
   issue: TIssue;
   onClose: () => void;
-  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: Record<string, unknown>) => void;
   disabled: boolean;
 }>;

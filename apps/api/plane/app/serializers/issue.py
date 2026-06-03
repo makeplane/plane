@@ -939,6 +939,15 @@ class IssueListDetailSerializer(serializers.Serializer):
     def get_assignee_ids(self, obj):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
 
+    def get_custom_fields(self, instance):
+        custom_fields = {}
+        for pv in instance.property_values.all():
+            if pv.deleted_at is not None:
+                continue
+            if pv.property and pv.property.deleted_at is None and pv.property.is_active:
+                custom_fields[pv.property.key] = pv.value
+        return custom_fields
+
     def to_representation(self, instance):
         data = {
             # Basic fields
@@ -968,6 +977,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            "custom_fields": self.get_custom_fields(instance),
         }
 
         # Handle expanded fields only when requested - using direct field access

@@ -36,7 +36,7 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
-from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 from .. import BaseViewSet
 from plane.utils.host import base_host
@@ -47,11 +47,13 @@ class ModuleIssueViewSet(BaseViewSet):
     model = ModuleIssue
     webhook_event = "module_issue"
     bulk = True
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
-        return (
+        from plane.utils.issue_prefetch import prefetch_issue_custom_field_values
+
+        annotated = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -80,6 +82,7 @@ class ModuleIssueViewSet(BaseViewSet):
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
+        return prefetch_issue_custom_field_values(annotated)
 
     def get_queryset(self):
         return (

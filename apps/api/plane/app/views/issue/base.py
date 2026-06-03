@@ -61,7 +61,7 @@ from plane.db.models import (
     ProjectMember,
     UserRecentVisit,
 )
-from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.filters import IssueComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
     issue_group_values,
@@ -71,6 +71,7 @@ from plane.utils.grouper import (
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.issue_prefetch import prefetch_issue_custom_field_values
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
 
@@ -78,7 +79,7 @@ from .. import BaseAPIView, BaseViewSet
 
 
 class IssueListEndpoint(BaseAPIView):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -197,7 +198,7 @@ class IssueViewSet(BaseViewSet):
     model = Issue
     webhook_event = "issue"
     search_fields = ["name"]
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     def get_serializer_class(self):
@@ -961,11 +962,11 @@ class IssuePaginatedViewSet(BaseViewSet):
 
 
 class IssueDetailEndpoint(BaseAPIView):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
-        return (
+        annotated = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -1011,6 +1012,7 @@ class IssueDetailEndpoint(BaseAPIView):
                 )
             )
         )
+        return prefetch_issue_custom_field_values(annotated)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):

@@ -45,7 +45,7 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
-from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
@@ -136,7 +136,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     def _get_project_permission_filters(self):
@@ -162,7 +162,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def apply_annotations(self, issues):
-        return (
+        from plane.utils.issue_prefetch import prefetch_issue_custom_field_values
+
+        annotated = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -208,6 +210,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 )
             )
         )
+        return prefetch_issue_custom_field_values(annotated)
 
     def get_queryset(self):
         return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))

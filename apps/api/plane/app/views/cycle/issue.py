@@ -33,14 +33,14 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
-from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (IssueComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     webhook_event = "cycle_issue"
@@ -75,7 +75,9 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     def apply_annotations(self, issues):
-        return (
+        from plane.utils.issue_prefetch import prefetch_issue_custom_field_values
+
+        annotated = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -104,6 +106,7 @@ class CycleIssueViewSet(BaseViewSet):
             )
             .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )
+        return prefetch_issue_custom_field_values(annotated)
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])

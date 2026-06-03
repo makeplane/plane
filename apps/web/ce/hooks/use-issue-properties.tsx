@@ -4,13 +4,23 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect } from "react";
 import type { TIssueServiceType } from "@plane/types";
+import { useProjectCustomFields } from "./use-project-custom-fields";
 
 export const useWorkItemProperties = (
   projectId: string | null | undefined,
   workspaceSlug: string | null | undefined,
-  workItemId: string | null | undefined,
+  _workItemId: string | null | undefined,
   _issueServiceType: TIssueServiceType
 ) => {
-  if (!projectId || !workspaceSlug || !workItemId) return;
+  const { properties, mutate } = useProjectCustomFields(workspaceSlug ?? undefined, projectId ?? undefined);
+
+  useEffect(() => {
+    if (projectId && workspaceSlug) {
+      void mutate();
+    }
+  }, [projectId, workspaceSlug, mutate]);
+
+  return { properties };
 };

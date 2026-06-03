@@ -12,6 +12,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ProjectDetailsForm } from "@/components/project/form";
 import { ProjectDetailsFormLoader } from "@/components/project/form-loader";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { CustomFieldsSettingsLink } from "@/plane-web/components/issues/custom-fields/custom-fields-settings-link";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -45,6 +46,11 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
         ) : (
           <ProjectDetailsFormLoader />
         )}
+
+        {isAdmin && currentProjectDetails && (
+          <CustomFieldsSettingsLink workspaceSlug={workspaceSlug} projectId={projectId} />
+        )}
+
         {isAdmin && <GeneralProjectSettingsControlSection projectId={projectId} />}
       </div>
     </SettingsContentWrapper>

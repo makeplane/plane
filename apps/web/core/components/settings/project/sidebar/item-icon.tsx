@@ -33,5 +33,6 @@ export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, LucideIcon | R
   states: StatePropertyIcon,
   labels: LabelPropertyIcon,
   estimates: EstimatePropertyIcon,
+  custom_fields: SettingIcon,
   automations: Zap,
 };

@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
-
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -32,6 +30,14 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
   props: TFilterValueInputProps<P, V>
 ) {
   const { condition, filterFieldConfig, isDisabled = false, onChange } = props;
+
+  const customPropertyMeta = (
+    filterFieldConfig as { customPropertyMeta?: { property_type: "text" | "number" } } | undefined
+  )?.customPropertyMeta;
+
+  if (customPropertyMeta?.property_type === "text" || customPropertyMeta?.property_type === "number") {
+    return <AdditionalFilterValueInput {...props} />;
+  }
 
   // Single select input
   if (filterFieldConfig?.type === FILTER_FIELD_TYPE.SINGLE_SELECT) {

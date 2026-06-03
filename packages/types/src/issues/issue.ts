@@ -11,6 +11,7 @@ import type { TIssueAttachment } from "./issue_attachment";
 import type { TIssueLink } from "./issue_link";
 import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import type { TIssueRelationTypes } from "./issue_relation";
+import type { TIssueCustomFields } from "./issue-property";
 
 export enum EIssueLayoutTypes {
   LIST = "list",
@@ -88,6 +89,7 @@ type IssueRelation = {
 };
 
 export type TIssue = TBaseIssue & {
+  custom_fields?: TIssueCustomFields;
   description_html?: string;
   is_subscribed?: boolean;
   parent?: Partial<TBaseIssue>;

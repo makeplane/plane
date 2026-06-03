@@ -2,7 +2,10 @@
 
 ## Commands
 
-- `pnpm dev` - Start all dev servers (web:3000, admin:3001)
+- `./setup.sh` - Production: build all Docker images from source and start full stack (proxy port from `LISTEN_HTTP_PORT` in `.env`, default 80)
+- `./setup.sh dev` - Dev env files + `pnpm install`; then `./dev.sh` for hot reload
+- `./dev.sh` - Docker backend + all dev servers from source (web:3000, admin:3001, space:3002, live:3100)
+- `pnpm dev` - Start all dev servers only (web:3000, admin:3001)
 - `pnpm build` - Build all packages and apps
 - `pnpm check` - Run all checks (format, lint, types)
 - `pnpm check:lint` - OxLint across all packages

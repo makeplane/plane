@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase } from "lucide-react";
+import { AtSign, Briefcase, Type } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
@@ -61,6 +61,8 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
+import { getCustomPropertyFilterConfig } from "@/plane-web/helpers/work-item-filters/custom-property-filters";
+import { useProjectCustomFields } from "@/plane-web/hooks/use-project-custom-fields";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 
 export type TWorkItemFiltersEntityProps = {
@@ -100,7 +102,19 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const { getUserDetails } = useMember();
   // derived values
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
-  const filtersToShow = useMemo(() => new Set(allowedFilters), [allowedFilters]);
+  const { properties: customFieldProperties } = useProjectCustomFields(workspaceSlug, projectId);
+
+  const customPropertyFilterKeys = useMemo(
+    () => customFieldProperties.map((property) => `customproperty_${property.id}` as TWorkItemFilterProperty),
+    [customFieldProperties]
+  );
+
+  const extendedAllowedFilters = useMemo(
+    () => [...allowedFilters, ...customPropertyFilterKeys],
+    [allowedFilters, customPropertyFilterKeys]
+  );
+
+  const filtersToShow = useMemo(() => new Set(extendedAllowedFilters), [extendedAllowedFilters]);
   const project = useMemo(() => getProjectById(projectId), [projectId, getProjectById]);
   const members: IUserLite[] | undefined = useMemo(
     () =>
@@ -131,10 +145,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [moduleIds, getModuleById]
   );
   const projects = useMemo(
-    () =>
-      projectIds
-        ? (projectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
-        : [],
+    () => (projectIds ? (projectIds.map((id) => getProjectById(id)).filter((p) => p) as IProject[]) : []),
     [projectIds, getProjectById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
@@ -356,15 +367,28 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("project_id") && projects !== undefined,
         filterIcon: Briefcase,
         projects: projects,
-        getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        getOptionIcon: (optionProject) => <Logo logo={optionProject.logo_props} size={12} />,
         ...operatorConfigs,
       }),
     [isFilterEnabled, projects, operatorConfigs]
   );
 
-  return {
-    areAllConfigsInitialized,
-    configs: [
+  const customPropertyFilterConfigs = useMemo(
+    () =>
+      customFieldProperties
+        .map((property) =>
+          getCustomPropertyFilterConfig({
+            property,
+            filterIcon: Type,
+            ...operatorConfigs,
+          })
+        )
+        .filter((config): config is TFilterConfig<TWorkItemFilterProperty> => config !== null),
+    [customFieldProperties, operatorConfigs]
+  );
+
+  const standardConfigs = useMemo(
+    () => [
       stateFilterConfig,
       stateGroupFilterConfig,
       assigneeFilterConfig,
@@ -381,6 +405,33 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       createdByFilterConfig,
       subscriberFilterConfig,
     ],
+    [
+      stateFilterConfig,
+      stateGroupFilterConfig,
+      assigneeFilterConfig,
+      priorityFilterConfig,
+      projectFilterConfig,
+      mentionFilterConfig,
+      labelFilterConfig,
+      cycleFilterConfig,
+      moduleFilterConfig,
+      startDateFilterConfig,
+      targetDateFilterConfig,
+      createdAtFilterConfig,
+      updatedAtFilterConfig,
+      createdByFilterConfig,
+      subscriberFilterConfig,
+    ]
+  );
+
+  const allConfigs = useMemo(
+    () => [...standardConfigs, ...customPropertyFilterConfigs],
+    [standardConfigs, customPropertyFilterConfigs]
+  );
+
+  return {
+    areAllConfigsInitialized,
+    configs: allConfigs,
     configMap: {
       project_id: projectFilterConfig,
       state_group: stateGroupFilterConfig,
@@ -397,6 +448,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       target_date: targetDateFilterConfig,
       created_at: createdAtFilterConfig,
       updated_at: updatedAtFilterConfig,
+      ...Object.fromEntries(customPropertyFilterConfigs.map((config) => [config.id, config] as const)),
     },
     isFilterEnabled,
     members: members ?? [],

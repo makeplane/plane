@@ -6,6 +6,12 @@ services:
       dockerfile: ./apps/web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
     restart: always
     depends_on:
       - api
@@ -17,6 +23,12 @@ services:
       dockerfile: ./apps/admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
     restart: always
     depends_on:
       - api
@@ -29,6 +41,12 @@ services:
       dockerfile: ./apps/space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
     restart: always
     depends_on:
       - api
@@ -41,6 +59,7 @@ services:
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
+    pull_policy: build
     restart: always
     command: ./bin/docker-entrypoint-api.sh
     env_file:
@@ -48,6 +67,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+      - plane-mq
 
   worker:
     container_name: bgworker
@@ -64,6 +84,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   beat-worker:
     container_name: beatworker
@@ -80,6 +101,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   migrator:
     container_name: plane-migrator
@@ -95,6 +117,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+      - plane-mq
 
   live:
     container_name: plane-live
@@ -103,7 +126,17 @@ services:
       dockerfile: ./apps/live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
+    pull_policy: build
     restart: always
+    env_file:
+      - ./apps/live/.env
+    environment:
+      API_BASE_URL: http://api:8000
+      REDIS_HOST: plane-redis
+      REDIS_URL: redis://plane-redis:6379/
+    depends_on:
+      - api
+      - plane-redis
 
   plane-db:
     container_name: plane-db
@@ -157,18 +190,27 @@ services:
     build:
       context: ./apps/proxy
       dockerfile: Dockerfile.ce
+    pull_policy: build
     restart: always
     ports:
       - ${LISTEN_HTTP_PORT}:80
       - ${LISTEN_HTTPS_PORT}:443
+    env_file:
+      - .env
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CERT_EMAIL: ${CERT_EMAIL:-}
+      CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      CERT_ACME_DNS: ${CERT_ACME_DNS:-}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
     depends_on:
       - web
       - api
       - space
       - admin
+      - live
 
 volumes:
   pgdata:
