@@ -597,6 +597,19 @@ Roles per level:
 - Workspace: ADMIN, MEMBER, GUEST
 - Project: ADMIN, MEMBER, GUEST
 
+**God Mode (instance admin) menu RBAC:**
+
+- `InstanceAdmin` carries `is_super_admin` + `allowed_menus` (12 grantable keys in `plane/license/menu_registry.py`; `authentication`/general/email/ai/image config screens share the grouped `settings` key — all five persist through one `InstanceConfigurationEndpoint`).
+- Enforcement is **route-group / URL-prefix based and fail-closed**: `InstanceAdminMenuPermission` resolves the required menu from `request.path` via `PREFIX_MENU_MAP` (longest-prefix). Unmapped paths deny scoped admins; identity/session paths (`admins/me|session|sign-*`) are shared; super-admins bypass. Views carry no per-class menu annotation.
+- Coverage is build-enforced: `plane/tests/unit/test_menu_registry_parity.py` fails if any `/api/instances/` route is unmapped, any view re-introduces the bare pre-RBAC `InstanceAdminPermission`, or the admin-app sidebar permission keys drift from the backend registry.
+- Management: `POST/PATCH/DELETE /api/instances/admins/` — only super-admins mint super-admins; `administrators`-menu admins grant only subsets of their own menus and never edit their own row. Lockout guards protect the last active loginable super-admin (ghost `user=NULL` and inactive rows never count) across admin demote/delete, user deactivation, password reset, and staff deactivation.
+- Admin app sidebar (`apps/admin/hooks/use-sidebar-menu/`) filters by `currentUser.allowed_menus`; a layout-level guard redirects ungranted direct navigation. UI filtering is cosmetic — the backend permission is the security boundary.
+
+**God-mode workspace ownership:**
+
+- Workspaces created from God Mode are owned by the **General Director** (the single active staff with `job_grade="GD"`, resolved by `plane/utils/general_director.py`) or an explicitly chosen user — never the acting instance admin, who receives no `WorkspaceMember`/`ProjectMember` row on any creation/import path (attribution `created_by` stays the actor).
+- Owner precedence: explicit `owner_id`/`owner_email` > GD; unresolvable or ambiguous GD fails with 400. `GET /api/instances/workspaces/owner-options/` feeds the create-form picker (staff-directory enumeration gated behind the `staff`/`users` menu).
+
 ### Data Security
 
 - **Soft delete:** Data preserved, not deleted
@@ -654,6 +667,7 @@ HelpArticleTranslation (per-locale title/content)
 ```
 
 **Key fields:**
+
 - `description_html` — Sanitized HTML served to readers (script/iframe/video dropped, style attr removed).
 - `description_json` — Rich-text editor JSON, internal only (never served to reader).
 - `description_stripped` — Plain text (future use: email notifications, transcripts).
@@ -669,20 +683,22 @@ HelpArticleTranslation (per-locale title/content)
 
 Files: `apps/api/plane/app/views/help_center/{base,article,category}.py`, serializers `apps/api/plane/app/serializers/help_center.py`, urls `apps/api/plane/app/urls/help_center.py`.
 
-| Method | Endpoint                                    | Auth | Purpose                                                    |
-|--------|---------------------------------------------|------|-------------------------------------------------------------|
-| GET    | `/api/help/categories/`                     | auth | List published categories + top N articles per category     |
-| GET    | `/api/help/articles/`                       | auth | List published articles (all categories), searchable        |
-| GET    | `/api/help/articles/<pk>/`                  | auth | Get single article (all locales, locale fallback)          |
-| GET    | `/api/help/articles/slug/<slug>/`           | auth | Get single article by slug (locale-resolved)               |
+| Method | Endpoint                          | Auth | Purpose                                                 |
+| ------ | --------------------------------- | ---- | ------------------------------------------------------- |
+| GET    | `/api/help/categories/`           | auth | List published categories + top N articles per category |
+| GET    | `/api/help/articles/`             | auth | List published articles (all categories), searchable    |
+| GET    | `/api/help/articles/<pk>/`        | auth | Get single article (all locales, locale fallback)       |
+| GET    | `/api/help/articles/slug/<slug>/` | auth | Get single article by slug (locale-resolved)            |
 
 **Locale resolution (read):**
+
 1. Accept-Language header or locale param → try to fetch that translation
 2. If missing → fallback to `en`
 3. If en missing → use any available translation (title-bearing)
 4. Response includes `resolved_locale` (used) + `matched_locale` (search match, if via search query)
 
 **Search:**
+
 - All 3 locale rows of matching articles scanned
 - `icontains` over pre-folded `search_text` column
 - Multilingual hits (e.g. Vietnamese search returns matching VI/EN/KO articles)
@@ -692,18 +708,18 @@ Files: `apps/api/plane/app/views/help_center/{base,article,category}.py`, serial
 
 Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/license/api/urls/help_center.py` (mounted under `/api/instances/help/...`).
 
-| Method | Endpoint                                        | Auth              | Purpose                                |
-|--------|-----------------------------------------------|-------------------|----------------------------------------|
-| GET    | `/api/instances/help/categories/`              | InstanceAdminPerm | List all categories (draft + published)  |
-| POST   | `/api/instances/help/categories/`              | InstanceAdminPerm | Create category                         |
-| PATCH  | `/api/instances/help/categories/<id>/`         | InstanceAdminPerm | Update category (icon, order)           |
-| DELETE | `/api/instances/help/categories/<id>/`         | InstanceAdminPerm | Soft-delete category                    |
-| GET    | `/api/instances/help/articles/`                | InstanceAdminPerm | List all articles                       |
-| POST   | `/api/instances/help/articles/`                | InstanceAdminPerm | Create article                          |
-| PATCH  | `/api/instances/help/articles/<id>/`           | InstanceAdminPerm | Update article (category, order, title) |
-| DELETE | `/api/instances/help/articles/<id>/`           | InstanceAdminPerm | Soft-delete article                     |
-| POST   | `/api/instances/help/articles/<id>/publish/`   | InstanceAdminPerm | Publish one locale translation          |
-| POST   | `/api/instances/help/articles/translate/`      | InstanceAdminPerm | Upsert translation (VI/EN/KO)           |
+| Method | Endpoint                                          | Auth              | Purpose                                 |
+| ------ | ------------------------------------------------- | ----------------- | --------------------------------------- |
+| GET    | `/api/instances/help/categories/`                 | InstanceAdminPerm | List all categories (draft + published) |
+| POST   | `/api/instances/help/categories/`                 | InstanceAdminPerm | Create category                         |
+| PATCH  | `/api/instances/help/categories/<id>/`            | InstanceAdminPerm | Update category (icon, order)           |
+| DELETE | `/api/instances/help/categories/<id>/`            | InstanceAdminPerm | Soft-delete category                    |
+| GET    | `/api/instances/help/articles/`                   | InstanceAdminPerm | List all articles                       |
+| POST   | `/api/instances/help/articles/`                   | InstanceAdminPerm | Create article                          |
+| PATCH  | `/api/instances/help/articles/<id>/`              | InstanceAdminPerm | Update article (category, order, title) |
+| DELETE | `/api/instances/help/articles/<id>/`              | InstanceAdminPerm | Soft-delete article                     |
+| POST   | `/api/instances/help/articles/<id>/publish/`      | InstanceAdminPerm | Publish one locale translation          |
+| POST   | `/api/instances/help/articles/translate/`         | InstanceAdminPerm | Upsert translation (VI/EN/KO)           |
 | POST   | `/api/instances/help/articles/<id>/upload-image/` | InstanceAdminPerm | Upload inline image (FileAsset)         |
 
 **Publishing:** Requires at least one locale's translation to have a non-empty title. Publishing OVERWRITES the previous translation destructively (no version history).
@@ -711,6 +727,7 @@ Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/l
 ### Frontend Architecture
 
 **Reader (`apps/web/app/(all)/help/*`, auth-gated):**
+
 - Route: `/help` (global, no workspace prefix, under `(all)` layout)
 - Components: `apps/web/ce/components/help-center/*`
   - `help-center-home.tsx` — Featured articles grid + search box
@@ -726,6 +743,7 @@ Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/l
 - Types: `apps/web/ce/types/help-center.ts`
 
 **Authoring (`apps/admin/(all)/(dashboard)/help-center`, God Mode only):**
+
 - Route: `/help-center` in admin panel (English-only UI)
 - Components: `apps/admin/app/(all)/(dashboard)/help-center/components/*`
 - Store: `apps/admin/store/instance-help-center.store.ts`
@@ -747,6 +765,7 @@ Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/l
 ### Content Security & Sanitization
 
 **HTML sanitization** (`plane/app/serializers/help_center.py`, library `nh3`):
+
 - Allowlist: `<p>`, `<h1>`–`<h6>`, `<strong>`, `<em>`, `<u>`, `<s>`, `<a>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, `<code>`, `<pre>`, `<img>`, `<br>`, `<hr>`, `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<td>`, `<th>`
 - Drop: `<script>`, `<iframe>`, `<video>`, `<object>`, `<embed>`, `on*` attributes, `style` attribute (hardened vs. general content, style unsafe for broadcast security)
 - Keep: `rel` on `<a>` (for anti-tabnabbing `rel="noopener noreferrer"`)
@@ -779,6 +798,7 @@ python manage.py seed_help_center
 ```
 
 **Behavior:**
+
 - Checks if seeded already (by checking for existence of seed marker in DB)
 - If yes, skips (idempotent)
 - If no: seeds 5 categories + 5 articles in all 3 locales
