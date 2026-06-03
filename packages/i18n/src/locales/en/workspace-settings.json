@@ -97,6 +97,91 @@
           }
         }
       },
+      "imports": {
+        "title": "Imports",
+        "heading": "Imports",
+        "description": "Bring your data into Plane. Connect a source and import projects, work items, sprints, and members.",
+        "previous_imports": "Previous imports",
+        "no_imports": "No imports yet. Start by importing from Jira.",
+        "jira": {
+          "title": "Jira",
+          "description": "Import boards, issues, sprints, and users from Jira Cloud.",
+          "cta": "Import from Jira",
+          "wizard_title": "Import from Jira",
+          "steps": {
+            "connect": "Connect",
+            "select": "Select board",
+            "users": "Users",
+            "mapping": "Map data",
+            "review": "Review"
+          },
+          "connect": {
+            "domain": "Jira domain",
+            "domain_placeholder": "your-domain.atlassian.net",
+            "email": "Account email",
+            "email_placeholder": "you@company.com",
+            "token": "API token",
+            "token_placeholder": "Atlassian API token",
+            "token_hint": "Create a token at id.atlassian.com under Security > API tokens.",
+            "connect_button": "Connect Jira",
+            "connected": "Connected as {user}",
+            "connect_failed": "Could not connect to Jira. Check your domain, email, and token."
+          },
+          "select": {
+            "board": "Source board",
+            "board_placeholder": "Select a Jira board",
+            "target": "Import into",
+            "new_project": "A new Plane project",
+            "existing_project": "An existing project",
+            "project_name": "Project name",
+            "project_identifier": "Identifier",
+            "select_project": "Select a project",
+            "include": "Include",
+            "include_comments": "Comments",
+            "include_attachments": "Attachments (as links)",
+            "include_components": "Components as modules",
+            "include_links": "Linked issues"
+          },
+          "users": {
+            "summary": "{matched} of {total} users matched by email.",
+            "invite": "Invite unmatched users to the workspace",
+            "skip": "Skip user data (assignees left blank, comments attributed to you)"
+          },
+          "mapping": {
+            "priorities": "Priority mapping",
+            "states": "Statuses",
+            "auto_create": "Auto-create missing statuses as states",
+            "auto_create_hint": "A Plane state is created for each Jira status, grouped by its Jira category.",
+            "issue_count": "{count} work items will be imported."
+          },
+          "review": {
+            "heading": "Review and confirm",
+            "board": "Board",
+            "target": "Target project",
+            "users": "Users",
+            "work_items": "Work items",
+            "confirm": "Start import"
+          },
+          "toasts": {
+            "started": {
+              "title": "Import started",
+              "message": "Your Jira import is running. You can track its progress below."
+            },
+            "error": {
+              "title": "Import failed to start",
+              "message": "Something went wrong. Please try again."
+            }
+          }
+        },
+        "status": {
+          "queued": "Queued",
+          "processing": "Importing",
+          "completed": "Completed",
+          "failed": "Failed"
+        },
+        "re_run": "Re-run",
+        "re_run_token_prompt": "Enter your Jira API token to re-run this import."
+      },
       "webhooks": {
         "heading": "Webhooks",
         "description": "Automate notifications to external services when project events occur.",

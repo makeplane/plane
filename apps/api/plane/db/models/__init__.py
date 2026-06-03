@@ -18,6 +18,7 @@ from .draft import (
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
+from .import_job import ImportJob
 from .intake import Intake, IntakeIssue
 from .integration import (
     GithubCommentSync,
@@ -79,7 +80,15 @@ from .workspace import (
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, ProjectIssueType
+
+from .issue_property import (
+    IssueProperty,
+    IssuePropertyOption,
+    IssuePropertyValue,
+    PropertyTypeEnum,
+    RelationTypeEnum,
+)
 
 from .recent_visit import UserRecentVisit
 

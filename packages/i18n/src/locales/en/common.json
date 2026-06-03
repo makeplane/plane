@@ -357,6 +357,7 @@
   "refresh_status": "Refresh status",
   "prev": "Prev",
   "next": "Next",
+  "back": "Back",
   "re_generating": "Re-generating",
   "re_generate": "Re-generate",
   "re_generate_key": "Re-generate key",

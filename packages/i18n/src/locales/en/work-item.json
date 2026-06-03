@@ -421,6 +421,21 @@
     "title": {
       "label": "Epic Title",
       "required": "Epic title is required."
+    },
+    "children": {
+      "title": "Child work items",
+      "progress": "{completed} of {total} done",
+      "add": "Add work items",
+      "empty": "No child work items yet.",
+      "remove": "Remove from epic",
+      "manage_hint": "Add, create, or remove child work items in the Sub-work items section.",
+      "groups": {
+        "backlog": "Backlog",
+        "unstarted": "Unstarted",
+        "started": "In progress",
+        "completed": "Done",
+        "cancelled": "Cancelled"
+      }
     }
   }
 }

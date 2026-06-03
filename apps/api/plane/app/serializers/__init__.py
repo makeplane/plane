@@ -124,6 +124,16 @@ from .notification import NotificationSerializer, UserNotificationPreferenceSeri
 
 from .exporter import ExporterHistorySerializer
 
+from .import_job import ImportJobSerializer
+
+from .issue_type import IssueTypeSerializer, ProjectIssueTypeSerializer
+
+from .issue_property import (
+    IssuePropertySerializer,
+    IssuePropertyOptionSerializer,
+    IssuePropertyValueSerializer,
+)
+
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .favorite import UserFavoriteSerializer

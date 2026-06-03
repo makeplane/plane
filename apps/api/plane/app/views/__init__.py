@@ -225,6 +225,21 @@ from .notification.base import (
 
 from .exporter.base import ExportIssuesEndpoint
 
+from .issue_type.base import (
+    IssueTypeViewSet,
+    IssuePropertyViewSet,
+    IssuePropertyOptionViewSet,
+    IssuePropertyValueEndpoint,
+)
+
+from .importer.base import (
+    JiraConnectEndpoint,
+    JiraBoardsEndpoint,
+    JiraMetadataEndpoint,
+    ImportJobEndpoint,
+    ImportJobReRunEndpoint,
+)
+
 
 from .webhook.base import (
     WebhookEndpoint,

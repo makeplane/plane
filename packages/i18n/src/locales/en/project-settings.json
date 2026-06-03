@@ -319,8 +319,56 @@
       }
     },
     "work_item_types": {
+      "title": "Work item types",
       "heading": "Work item Types",
-      "description": "Create and customize different types of work items with unique properties"
+      "description": "Create and customize different types of work items with unique properties",
+      "enable": {
+        "title": "Enable work item types",
+        "description": "Turn on work item types to add custom properties to your work items. A default Task type is created for you.",
+        "cta": "Enable"
+      },
+      "add_type": "Add type",
+      "add_property": "Add property",
+      "no_properties": "No custom properties yet.",
+      "default_badge": "Default",
+      "epic_badge": "Epic",
+      "type_modal": {
+        "create_title": "New work item type",
+        "edit_title": "Edit work item type",
+        "name": "Name",
+        "name_placeholder": "e.g. Bug",
+        "description": "Description",
+        "is_epic": "This is an epic"
+      },
+      "property_modal": {
+        "create_title": "Add property",
+        "edit_title": "Edit property",
+        "name": "Title",
+        "name_placeholder": "e.g. Severity",
+        "description": "Description",
+        "type": "Property type",
+        "required": "Mandatory property",
+        "active": "Active",
+        "multi": "Allow multiple values",
+        "options": "Options",
+        "add_option": "Add option",
+        "option_placeholder": "Option name"
+      },
+      "property_types": {
+        "TEXT": "Text",
+        "DECIMAL": "Number",
+        "BOOLEAN": "Checkbox",
+        "DATETIME": "Date",
+        "OPTION": "Dropdown",
+        "RELATION": "Member",
+        "URL": "URL"
+      },
+      "delete_type_confirm": "Delete this work item type and its properties?",
+      "delete_property_confirm": "Delete this property?",
+      "toasts": {
+        "saved": "Saved",
+        "error": "Something went wrong. Please try again."
+      }
     },
     "features": {
       "cycles": {
