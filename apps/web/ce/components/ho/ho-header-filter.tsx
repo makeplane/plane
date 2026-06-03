@@ -34,7 +34,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
   const SortIcon = isAscActive ? ArrowUpNarrowWide : isDescActive ? ArrowDownWideNarrow : ChevronsUpDown;
 
   // department + project filters bind to top-level state (mirrored with top-bar selectors)
-  const isTopLevelKey = filterKey === "department" || filterKey === "project";
+  const isTopLevelKey = filterKey === "project";
   const readTopLevel = (): string[] =>
     filterKey === "department" ? store.selectedDepartmentIds : filterKey === "project" ? store.selectedProjectIds : [];
   const writeTopLevel = (next: string[]) => {

@@ -27,7 +27,9 @@ from plane.license.api.views import (
     InstanceWorkspaceBulkCreateEndpoint,
     InstanceWorkspaceOwnerOptionsEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
+    InstanceWorkspaceBulkRemoveMembersEndpoint,
     InstanceWorkspaceProjectBulkImportEndpoint,
+    InstanceWorkspaceProjectBulkExportEndpoint,
     InstanceWorkspaceModuleBulkImportEndpoint,
     InstanceWorkSpaceDetailEndpoint,
     EmailLogMonitoringEndpoint,
@@ -110,9 +112,19 @@ urlpatterns = [
         name="instance-workspace-bulk-assign-members",
     ),
     path(
+        "workspaces/bulk-remove-members/",
+        InstanceWorkspaceBulkRemoveMembersEndpoint.as_view(),
+        name="instance-workspace-bulk-remove-members",
+    ),
+    path(
         "bulk-import-projects/",
         InstanceWorkspaceProjectBulkImportEndpoint.as_view(),
         name="instance-bulk-import-projects",
+    ),
+    path(
+        "bulk-export-projects/",
+        InstanceWorkspaceProjectBulkExportEndpoint.as_view(),
+        name="instance-bulk-export-projects",
     ),
     path(
         "bulk-import-modules/",
