@@ -48,7 +48,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
         message: "Estimate has been removed from your project.",
       });
       handleClose();
-    } catch (error) {
+    } catch (_error) {
       setButtonLoader(false);
       setToast({
         type: TOAST_TYPE.ERROR,

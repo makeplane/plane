@@ -89,19 +89,19 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   return (
     <>
       <div
-        className={cn("group relative flex items-center gap-3 text-caption-sm-regular py-2", {
+        className={cn("group relative flex items-center gap-3 py-2 text-caption-sm-regular", {
           "pb-0": ends === "bottom",
           "pt-0": ends === "top",
         })}
       >
         {/* icon */}
-        <span className="flex-shrink-0 w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center z-[4] bg-layer-2 text-secondary border border-subtle shadow-raised-100">
+        <span className="z-[4] flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-subtle bg-layer-2 text-secondary shadow-raised-100">
           <Timer className="h-4 w-4 text-tertiary" />
         </span>
 
         {/* message — clickable for admin to open edit modal */}
         <div
-          className={cn("flex-1 text-xs text-tertiary leading-5", {
+          className={cn("text-xs flex-1 leading-5 text-tertiary", {
             "cursor-pointer hover:text-secondary": isEditable,
           })}
           {...(isEditable
@@ -121,13 +121,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
           {worklog?.description && <span className="ml-1">— {worklog.description}</span>}
           {createdAt && <span className="ml-1">{createdAt}</span>}
           {isEditable && (
-            <Pencil className="ml-1 inline h-3 w-3 text-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Pencil className="ml-1 inline h-3 w-3 text-tertiary opacity-0 transition-opacity group-hover:opacity-100" />
           )}
         </div>
 
         {/* context menu: Edit / Delete — project admin only */}
         {isEditable && (
-          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
             <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
               <CustomMenu.MenuItem onClick={() => setIsEditModalOpen(true)}>{t("edit")}</CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>

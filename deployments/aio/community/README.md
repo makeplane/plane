@@ -59,7 +59,7 @@ docker run --name plane-aio --rm -it \
     -e AWS_ACCESS_KEY_ID=your-access-key \
     -e AWS_SECRET_ACCESS_KEY=your-secret-key \
     -e AWS_S3_BUCKET_NAME=your-bucket \
-    artifacts.plane.so/makeplane/plane-aio-community:latest
+    makeplane/plane-aio-community:latest
 ```
 
 ### Example with IP Address
@@ -78,7 +78,7 @@ docker run --name myaio --rm -it \
     -e AWS_S3_BUCKET_NAME=plane-app \
     -e AWS_S3_ENDPOINT_URL=http://${MYIP}:19000 \
     -e FILE_SIZE_LIMIT=10485760 \
-    artifacts.plane.so/makeplane/plane-aio-community:latest
+    makeplane/plane-aio-community:latest
 ```
 
 ## Configuration Options

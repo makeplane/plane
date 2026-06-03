@@ -9,7 +9,7 @@ import { action, makeObservable, runInAction } from "mobx";
 import { SitesIssueService } from "@plane/services";
 import type { IssuePaginationOptions, TLoader } from "@plane/types";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 // types
 import { BaseIssuesStore } from "./helpers/base-issues.store";
 import type { IBaseIssuesStore } from "./helpers/base-issues.store";
@@ -28,11 +28,11 @@ export interface IIssueStore extends IBaseIssuesStore {
 
 export class IssueStore extends BaseIssuesStore implements IIssueStore {
   // root store
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
   // services
   issueService: SitesIssueService;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     super(_rootStore);
     makeObservable(this, {
       // actions

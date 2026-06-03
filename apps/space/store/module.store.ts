@@ -11,7 +11,7 @@ import { SitesModuleService } from "@plane/services";
 // types
 import type { TPublicModule } from "@/types/modules";
 // root store
-import type { CoreRootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface IIssueModuleStore {
   // observables
@@ -26,9 +26,9 @@ export interface IIssueModuleStore {
 export class ModuleStore implements IIssueModuleStore {
   moduleMap: Record<string, TPublicModule> = {};
   moduleService: SitesModuleService;
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       moduleMap: observable,

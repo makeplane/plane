@@ -1,6 +1,6 @@
 {
   "name": "plane",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "description": "Open-source project management that unlocks customer value",
   "license": "AGPL-3.0",
@@ -24,7 +24,7 @@
     "lint-staged": "16.2.7",
     "oxfmt": "0.35.0",
     "oxlint": "1.51.0",
-    "turbo": "2.8.12"
+    "turbo": "2.9.4"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
@@ -37,7 +37,7 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4",
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "pnpm": {
     "overrides": {
       "express": "catalog:",
@@ -45,7 +45,7 @@
       "valibot": "1.2.0",
       "glob": "11.1.0",
       "js-yaml": "4.1.1",
-      "brace-expansion": "2.0.2",
+      "brace-expansion": "5.0.5",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
       "@babel/helpers": "7.26.10",
@@ -67,9 +67,16 @@
       "rollup": "4.59.0",
       "minimatch@3": "3.1.4",
       "minimatch@10": "10.2.3",
-      "serialize-javascript": "7.0.3",
+      "serialize-javascript": "7.0.5",
       "ajv@6": "6.14.0",
-      "ajv@8": "8.18.0"
+      "ajv@8": "8.18.0",
+      "undici@7": "7.24.0",
+      "flatted": "3.4.2",
+      "picomatch": "2.3.2",
+      "yaml@1": "1.10.3",
+      "yaml@2": "2.8.3",
+      "path-to-regexp": "0.1.13",
+      "defu": "6.1.5"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

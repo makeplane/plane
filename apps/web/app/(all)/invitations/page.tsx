@@ -81,7 +81,6 @@ function UserInvitationsPage() {
       .then(() => {
         mutate(USER_WORKSPACES_LIST);
         const firstInviteId = invitationsRespond[0];
-        const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
         updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {

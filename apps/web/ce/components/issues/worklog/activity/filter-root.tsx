@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { ACTIVITY_FILTER_TYPE_OPTIONS } from "@plane/constants";

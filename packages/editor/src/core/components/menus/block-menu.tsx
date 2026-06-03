@@ -42,7 +42,7 @@ export type BlockMenuOption = {
 };
 
 export function BlockMenu(props: Props) {
-  const { editor, workItemIdentifier } = props;
+  const { editor } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);

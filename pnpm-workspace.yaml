@@ -9,7 +9,7 @@ catalog:
   "@atlaskit/pragmatic-drag-and-drop-hitbox": 1.1.0
   "@atlaskit/pragmatic-drag-and-drop": 1.7.4
   "@bprogress/core": ^1.3.4
-  "@dotenvx/dotenvx": 1.51.1
+  "dotenv": 16.4.7
   "@react-router/dev": 7.13.1
   "@react-router/node": 7.13.1
   "@react-router/serve": 7.13.1
@@ -21,7 +21,7 @@ catalog:
   "@types/react": 18.3.11
   axios: 1.13.5
   express: 4.22.0
-  lodash-es: 4.17.23
+  lodash-es: 4.18.0
   lucide-react: 0.469.0
   mobx-react: 9.1.1
   mobx-utils: 6.0.8

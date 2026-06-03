@@ -124,7 +124,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
                     : "",
           }),
         });
-      } catch (error) {
+      } catch (_error) {
         setExportLoading(false);
         setToast({
           type: TOAST_TYPE.ERROR,

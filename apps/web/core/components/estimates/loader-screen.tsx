@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { Loader } from "@plane/ui";
 
 export function EstimateLoaderScreen() {

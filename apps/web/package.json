@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -25,7 +25,6 @@
     "@fontsource/ibm-plex-mono": "5.2.7",
     "@fontsource/material-symbols-rounded": "5.2.30",
     "@headlessui/react": "^1.7.19",
-    "@intercom/messenger-js-sdk": "^0.0.12",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/hooks": "workspace:*",
@@ -77,7 +76,6 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "catalog:",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@react-router/dev": "catalog:",
@@ -87,6 +85,7 @@
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "catalog:",
+    "dotenv": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^5.1.4"

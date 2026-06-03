@@ -39,7 +39,7 @@ export function WorkItemLayoutAdditionalProperties({ displayProperties, issue }:
         <Tooltip tooltipHeading={t("common.completed_at")} tooltipContent={formattedDate}>
           <div className="flex h-5 flex-shrink-0 items-center gap-1 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />
-            <span className="text-caption-sm-regular truncate max-w-28">{formattedDate}</span>
+            <span className="max-w-28 truncate text-caption-sm-regular">{formattedDate}</span>
           </div>
         </Tooltip>
       )}

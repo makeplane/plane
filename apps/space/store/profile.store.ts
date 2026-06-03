@@ -11,7 +11,7 @@ import { UserService } from "@plane/services";
 import type { TUserProfile } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -64,7 +64,7 @@ export class ProfileStore implements IProfileStore {
   // services
   userService: UserService;
 
-  constructor(public store: CoreRootStore) {
+  constructor(public store: RootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,

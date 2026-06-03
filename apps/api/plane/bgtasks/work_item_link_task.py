@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import base64
 import ipaddress
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from typing import Optional
 from plane.db.models import IssueLink
 from plane.utils.exception_logger import log_exception
@@ -66,6 +66,52 @@ def validate_url_ip(url: str) -> None:
 MAX_REDIRECTS = 5
 
 
+def safe_get(
+    url: str,
+    headers: Optional[Dict[str, str]] = None,
+    timeout: int = 1,
+) -> Tuple[requests.Response, str]:
+    """
+    Perform a GET request that validates every redirect hop against private IPs.
+    Prevents SSRF by ensuring no redirect lands on a private/internal address.
+
+    Args:
+        url: The URL to fetch
+        headers: Optional request headers
+        timeout: Request timeout in seconds
+
+    Returns:
+        A tuple of (final Response object, final URL after redirects)
+
+    Raises:
+        ValueError: If any URL in the redirect chain points to a private IP
+        requests.RequestException: On network errors
+        RuntimeError: If max redirects exceeded
+    """
+    validate_url_ip(url)
+
+    current_url = url
+    response = requests.get(
+        current_url, headers=headers, timeout=timeout, allow_redirects=False
+    )
+
+    redirect_count = 0
+    while response.is_redirect:
+        if redirect_count >= MAX_REDIRECTS:
+            raise RuntimeError(f"Too many redirects for URL: {url}")
+        redirect_url = response.headers.get("Location")
+        if not redirect_url:
+            break
+        current_url = urljoin(current_url, redirect_url)
+        validate_url_ip(current_url)
+        redirect_count += 1
+        response = requests.get(
+            current_url, headers=headers, timeout=timeout, allow_redirects=False
+        )
+
+    return response, current_url
+
+
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -86,26 +132,8 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        validate_url_ip(final_url)
-
         try:
-            # Manually follow redirects to validate each URL before requesting
-            redirect_count = 0
-            response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
-
-            while response.is_redirect and redirect_count < MAX_REDIRECTS:
-                redirect_url = response.headers.get("Location")
-                if not redirect_url:
-                    break
-                # Resolve relative redirects against current URL
-                final_url = urljoin(final_url, redirect_url)
-                # Validate the redirect target BEFORE making the request
-                validate_url_ip(final_url)
-                redirect_count += 1
-                response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
-
-            if redirect_count >= MAX_REDIRECTS:
-                logger.warning(f"Too many redirects for URL: {url}")
+            response, final_url = safe_get(url, headers=headers)
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
@@ -113,8 +141,10 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         except requests.RequestException as e:
             logger.warning(f"Failed to fetch HTML for title: {str(e)}")
+        except (ValueError, RuntimeError) as e:
+            logger.warning(f"URL validation failed: {str(e)}")
 
-        # Fetch and encode favicon using final URL (after redirects)
+        # Fetch and encode favicon using final URL (after redirects) for correct relative href resolution
         favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
 
         # Prepare result
@@ -204,9 +234,7 @@ def fetch_and_encode_favicon(
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
 
-        validate_url_ip(favicon_url)
-
-        response = requests.get(favicon_url, headers=headers, timeout=1)
+        response, _ = safe_get(favicon_url, headers=headers)
 
         # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")

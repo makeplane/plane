@@ -14,7 +14,7 @@ import type { ActorDetail, IUser } from "@plane/types";
 import type { IProfileStore } from "@/store/profile.store";
 import { ProfileStore } from "@/store/profile.store";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 type TUserErrorStatus = {
   status: string;
@@ -50,7 +50,7 @@ export class UserStore implements IUserStore {
   // service
   userService: UserService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     // stores
     this.profile = new ProfileStore(store);
     // service

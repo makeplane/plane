@@ -189,7 +189,7 @@ from .module.archive import ModuleArchiveUnarchiveEndpoint
 
 from .module.activity import ModuleActivityEndpoint
 
-from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
+from .api import ApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,

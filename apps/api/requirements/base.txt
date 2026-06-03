@@ -45,13 +45,13 @@ scout-apm==3.1.0
 # xlsx generation
 openpyxl==3.1.2
 # logging
-python-json-logger==3.3.0
+python-json-logger==4.0.0
 # html parser
 beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==46.0.5
+cryptography==46.0.6
 # html validator
 lxml==6.0.0
 # s3
@@ -61,7 +61,7 @@ zxcvbn==4.4.28
 # timezone
 pytz==2024.1
 # jwt
-PyJWT==2.8.0
+PyJWT==2.12.0
 # OpenTelemetry
 opentelemetry-api==1.28.1
 opentelemetry-sdk==1.28.1

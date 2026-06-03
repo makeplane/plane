@@ -23,7 +23,7 @@ import type {
 } from "@plane/types";
 // types
 import type { IIssue, TIssuesResponse } from "@/types/issue";
-import type { CoreRootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 // constants
 // helpers
 
@@ -81,7 +81,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // root store
   rootIssueStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
       loader: observable,

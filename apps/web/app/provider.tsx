@@ -13,8 +13,6 @@ import { TranslationProvider } from "@plane/i18n";
 import { Toast } from "@plane/propel/toast";
 // helpers
 import { resolveGeneralTheme } from "@plane/utils";
-// polyfills
-import "@/lib/polyfills";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
 
@@ -29,10 +27,6 @@ const StoreWrapper = lazy(function StoreWrapper() {
 
 const InstanceWrapper = lazy(function InstanceWrapper() {
   return import("@/lib/wrappers/instance-wrapper");
-});
-
-const ChatSupportModal = lazy(function ChatSupportModal() {
-  return import("@/components/global/chat-support-modal");
 });
 
 export interface IAppProvider {
@@ -53,7 +47,6 @@ export function AppProvider(props: IAppProvider) {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <ChatSupportModal />
                 <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>
             </InstanceWrapper>

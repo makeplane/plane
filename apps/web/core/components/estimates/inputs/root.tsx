@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane imports
 import type { TEstimateSystemKeys } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";

@@ -58,7 +58,7 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
-      .then((res) => {
+      .then((_res) => {
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -80,7 +80,7 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
-      .then((res) => {
+      .then((_res) => {
         handleClose();
 
         setToast({

@@ -223,6 +223,21 @@ def issue_attachment_docs(**kwargs):
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
+def work_item_relation_docs(**kwargs):
+    """Decorator for work item relation endpoints"""
+    defaults = {
+        "tags": ["Work Item Relations"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
 def module_docs(**kwargs):
     """Decorator for module management endpoints"""
     defaults = {
@@ -281,4 +296,30 @@ def sticky_docs(**kwargs):
         },
     }
 
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+def estimate_docs(**kwargs):
+    """Decorator for estimate-related endpoints"""
+    defaults = {
+        "tags": ["Estimates"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+def estimate_point_docs(**kwargs):
+    """Decorator for estimate point-related endpoints"""
+    defaults = {
+        "tags": ["Estimate Points"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
     return extend_schema(**_merge_schema_options(defaults, kwargs))

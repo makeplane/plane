@@ -117,7 +117,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       const moduleId = id ?? this.moduleId;
 
       moduleId && this.rootIssueStore.rootStore.module.updateModuleDistribution(distributionUpdates, moduleId);
-    } catch (e) {
+    } catch (_e) {
       console.warn("could not update module statistics");
     }
   };

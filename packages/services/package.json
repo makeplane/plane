@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -8,10 +8,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index-BliaS-AT.d.ts",
-      "import": "./dist/index.js"
-    },
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -28,7 +25,7 @@
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
     "axios": "catalog:",
-    "file-type": "^21.0.0"
+    "file-type": "^21.3.1"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",

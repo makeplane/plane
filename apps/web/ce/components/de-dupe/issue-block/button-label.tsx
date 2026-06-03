@@ -4,14 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-
 type TDeDupeIssueButtonLabelProps = {
   isOpen: boolean;
   buttonLabel: string;
 };
 
-export function DeDupeIssueButtonLabel(props: TDeDupeIssueButtonLabelProps) {
-  const { isOpen, buttonLabel } = props;
+export function DeDupeIssueButtonLabel(_props: TDeDupeIssueButtonLabelProps) {
   return <></>;
 }

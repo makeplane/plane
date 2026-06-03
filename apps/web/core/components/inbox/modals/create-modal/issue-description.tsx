@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, RefObject } from "react";
+import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";

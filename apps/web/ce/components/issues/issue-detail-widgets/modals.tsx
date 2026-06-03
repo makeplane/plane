@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane types
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 

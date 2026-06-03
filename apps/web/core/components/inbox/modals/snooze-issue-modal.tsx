@@ -26,7 +26,13 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
   const { t } = useTranslation();
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+    <ModalCore
+      isOpen={isOpen}
+      handleClose={handleClose}
+      position={EModalPosition.CENTER}
+      width={EModalWidth.SM}
+      className="w-auto"
+    >
       <div className="flex h-full w-full flex-col gap-y-1 px-5 py-8 sm:p-6">
         <Calendar
           className="rounded-md border border-subtle p-3"

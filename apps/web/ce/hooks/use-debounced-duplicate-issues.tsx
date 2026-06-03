@@ -7,10 +7,10 @@
 import type { TDeDupeIssue } from "@plane/types";
 
 export const useDebouncedDuplicateIssues = (
-  workspaceSlug: string | undefined,
-  workspaceId: string | undefined,
-  projectId: string | undefined,
-  formData: { name: string | undefined; description_html?: string | undefined; issueId?: string | undefined }
+  _workspaceSlug: string | undefined,
+  _workspaceId: string | undefined,
+  _projectId: string | undefined,
+  _formData: { name: string | undefined; description_html?: string | undefined; issueId?: string | undefined }
 ) => {
   const duplicateIssues: TDeDupeIssue[] = [];
 

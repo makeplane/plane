@@ -10,6 +10,6 @@ type TProps = {
   workspace?: IWorkspace;
 };
 
-export function SubscriptionPill(props: TProps) {
+export function SubscriptionPill(_props: TProps) {
   return <></>;
 }

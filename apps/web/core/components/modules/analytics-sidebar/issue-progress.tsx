@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -112,7 +111,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         await fetchModuleDetails(workspaceSlug, projectId, moduleId);
       }
       setLoader(false);
-    } catch (error) {
+    } catch (_error) {
       setLoader(false);
       setPlotType(moduleId, plotType);
     }

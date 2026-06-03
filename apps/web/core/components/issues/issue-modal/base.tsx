@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { xor } from "lodash-es";
+import { isEqual, xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
@@ -260,6 +260,67 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     }
   };
 
+  const handleCycleChange = async (data: Partial<TIssue> | undefined, payload: Partial<TIssue>) => {
+    if (!workspaceSlug || !data?.project_id || !data?.id) return;
+    // return if user is not trying to change the cycle, i.e
+    // - cycle_id is not present in payload
+    // - cycle_id is the same as the current cycle id
+    if (!("cycle_id" in payload) || isEqual(data?.cycle_id, payload.cycle_id)) return;
+
+    const slug = workspaceSlug.toString();
+
+    // Removing the cycle
+    const currentCycleId = data?.cycle_id;
+    if (currentCycleId && payload.cycle_id === null) {
+      await issues.removeIssueFromCycle(slug, data.project_id, currentCycleId, data.id);
+      fetchCycleDetails(slug, data.project_id, currentCycleId).catch((error) => {
+        console.error(error);
+      });
+    }
+
+    // Adding the cycle
+    const newCycleId = payload.cycle_id;
+    if (newCycleId && newCycleId !== "" && (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)) {
+      await addIssueToCycle(data as TBaseIssue, newCycleId);
+    }
+  };
+
+  const handleModuleChange = async (data: Partial<TIssue>, payload: Partial<TIssue>) => {
+    if (!workspaceSlug || !data?.project_id || !data?.id) return;
+    // return if user is not trying to change the module, i.e
+    // - module_ids is not present in payload
+    // - module_ids is not an array
+    // - module_ids is the same as the current module ids
+    if (
+      !("module_ids" in payload) ||
+      !Array.isArray(payload.module_ids) ||
+      isEqual(data?.module_ids, payload.module_ids)
+    )
+      return;
+
+    const updatedModuleIds = xor(data.module_ids, payload.module_ids);
+    const modulesToAdd: string[] = [];
+    const modulesToRemove: string[] = [];
+
+    for (const moduleId of updatedModuleIds) {
+      if (data.module_ids?.includes(moduleId)) {
+        modulesToRemove.push(moduleId);
+      } else {
+        modulesToAdd.push(moduleId);
+      }
+    }
+    // update modules if there are modules to add or remove
+    if (modulesToAdd.length > 0 || modulesToRemove.length > 0) {
+      await issues.changeModulesInIssue(
+        workspaceSlug.toString(),
+        data.project_id,
+        data.id,
+        modulesToAdd,
+        modulesToRemove
+      );
+    }
+  };
+
   const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
@@ -267,41 +328,10 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
-      // check if we should add/remove issue to/from cycle
-      if (
-        payload.cycle_id &&
-        payload.cycle_id !== "" &&
-        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
-      ) {
-        await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
-      }
-      if (data.cycle_id && !payload.cycle_id && data.project_id) {
-        await issues.removeIssueFromCycle(workspaceSlug.toString(), data.project_id, data.cycle_id, data.id);
-        fetchCycleDetails(workspaceSlug.toString(), data.project_id, data.cycle_id);
-      }
-
-      if (data.module_ids && payload.module_ids && data.project_id) {
-        const updatedModuleIds = xor(data.module_ids, payload.module_ids);
-        const modulesToAdd: string[] = [];
-        const modulesToRemove: string[] = [];
-
-        for (const moduleId of updatedModuleIds) {
-          if (data.module_ids.includes(moduleId)) {
-            modulesToRemove.push(moduleId);
-          } else {
-            modulesToAdd.push(moduleId);
-          }
-        }
-        await issues.changeModulesInIssue(
-          workspaceSlug.toString(),
-          data.project_id,
-          data.id,
-          modulesToAdd,
-          modulesToRemove
-        );
-      }
-
-      // add other property values
+      // Run cycle, module, and property changes sequentially to avoid
+      // optimistic store writes from racing against each other.
+      await handleCycleChange(data, payload);
+      await handleModuleChange(data, payload);
       await handleCreateUpdatePropertyValues({
         issueId: data.id,
         issueTypeId: payload.type_id,
