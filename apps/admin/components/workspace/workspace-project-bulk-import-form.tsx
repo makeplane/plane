@@ -7,7 +7,7 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Download, Upload } from "lucide-react";
+import { Download, FileDown, Upload } from "lucide-react";
 // plane imports
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -17,6 +17,7 @@ import { useWorkspace } from "@/hooks/store";
 // components
 import { WorkspaceProjectBulkImportPreview } from "./workspace-project-bulk-import-preview";
 import { WorkspaceProjectBulkImportResults } from "./workspace-project-bulk-import-results";
+import { WorkspaceProjectExportDialog } from "./workspace-project-export-dialog";
 import type { IProjectRow } from "./workspace-project-bulk-import-preview";
 
 const MAX_ROWS = 100;
@@ -52,7 +53,7 @@ async function parseExcel(file: File): Promise<IProjectRow[]> {
 }
 
 export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProjectBulkImportForm() {
-  const { bulkImportProjects } = useWorkspace();
+  const { bulkImportProjects, exportProjects } = useWorkspace();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -60,6 +61,8 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
   const [parseError, setParseError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<IWorkspaceProjectBulkImportResponse | null>(null);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -122,6 +125,46 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
     }
   };
 
+  const handleExport = useCallback(
+    async (workspaceSlugs?: string[]) => {
+      setIsExporting(true);
+      try {
+        const data = await exportProjects(workspaceSlugs);
+        if (data.projects.length === 0) {
+          setToast({ type: TOAST_TYPE.WARNING, title: "No projects found for the selected workspaces." });
+          return;
+        }
+        const XLSX = await import("xlsx");
+        const rows = [
+          ["workspace_slug", "name", "identifier", "description", "network", "project_leader", "members", "member_roles"],
+          ...data.projects.map((p) => [
+            p.workspace_slug,
+            p.name,
+            p.identifier,
+            p.description,
+            p.network,
+            p.project_leader,
+            p.members,
+            p.member_roles,
+          ]),
+        ];
+        const sheet = XLSX.utils.aoa_to_sheet(rows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, sheet, "Projects");
+        const date = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(workbook, `projects-export-${date}.xlsx`);
+        setToast({ type: TOAST_TYPE.SUCCESS, title: `${data.projects.length} project(s) exported.` });
+        setIsExportDialogOpen(false);
+      } catch (err) {
+        const error = err as Record<string, string>;
+        setToast({ type: TOAST_TYPE.ERROR, title: "Export failed", message: error?.error || "Something went wrong" });
+      } finally {
+        setIsExporting(false);
+      }
+    },
+    [exportProjects]
+  );
+
   return (
     <div className="flex flex-col gap-6 max-w-3xl">
       {/* Instructions */}
@@ -140,15 +183,25 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         </p>
       </div>
 
-      {/* Template download */}
-      <button
-        type="button"
-        onClick={() => void downloadTemplate()}
-        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
-      >
-        <Download className="h-4 w-4" />
-        Download template
-      </button>
+      {/* Template download + Export */}
+      <div className="flex items-center gap-6">
+        <button
+          type="button"
+          onClick={() => void downloadTemplate()}
+          className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+        >
+          <Download className="h-4 w-4" />
+          Download template
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsExportDialogOpen(true)}
+          className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+        >
+          <FileDown className="h-4 w-4" />
+          Export projects
+        </button>
+      </div>
 
       {/* File upload */}
       <div className="space-y-2">
@@ -190,6 +243,13 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
       </div>
 
       {result && <WorkspaceProjectBulkImportResults result={result} />}
+
+      <WorkspaceProjectExportDialog
+        isOpen={isExportDialogOpen}
+        isExporting={isExporting}
+        onClose={() => setIsExportDialogOpen(false)}
+        onExport={handleExport}
+      />
     </div>
   );
 });

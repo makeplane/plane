@@ -11,7 +11,9 @@ import { InstanceWorkspaceService } from "@plane/services";
 import type {
   IWorkspaceBulkCreateResponse,
   IWorkspaceBulkAssignResponse,
+  IWorkspaceBulkRemoveResponse,
   IWorkspaceProjectBulkImportResponse,
+  IWorkspaceProjectExportResponse,
   IWorkspaceModuleBulkImportResponse,
 } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
@@ -21,7 +23,9 @@ import type { RootStore } from "@/store/root.store";
 export type {
   IWorkspaceBulkCreateResponse,
   IWorkspaceBulkAssignResponse,
+  IWorkspaceBulkRemoveResponse,
   IWorkspaceProjectBulkImportResponse,
+  IWorkspaceProjectExportResponse,
   IWorkspaceModuleBulkImportResponse,
 };
 
@@ -48,6 +52,9 @@ export interface IWorkspaceStore {
   bulkAssignMembers: (
     members: Array<{ email: string; workspace_slug: string; role: number }>
   ) => Promise<IWorkspaceBulkAssignResponse>;
+  bulkRemoveMembers: (
+    members: Array<{ workspace_slug: string; email: string }>
+  ) => Promise<IWorkspaceBulkRemoveResponse>;
   bulkImportProjects: (
     projects: Array<{
       workspace_slug: string;
@@ -59,6 +66,7 @@ export interface IWorkspaceStore {
       member_roles?: string;
     }>
   ) => Promise<IWorkspaceProjectBulkImportResponse>;
+  exportProjects: (workspaceSlugs?: string[]) => Promise<IWorkspaceProjectExportResponse>;
   bulkImportModules: (
     modules: Array<{
       workspace_slug: string;
@@ -102,7 +110,9 @@ export class WorkspaceStore implements IWorkspaceStore {
       createWorkspace: action,
       bulkCreateWorkspaces: action,
       bulkAssignMembers: action,
+      bulkRemoveMembers: action,
       bulkImportProjects: action,
+      exportProjects: action,
       bulkImportModules: action,
       deleteWorkspace: action,
     });
@@ -247,6 +257,12 @@ export class WorkspaceStore implements IWorkspaceStore {
     return this.instanceWorkspaceService.bulkAssignMembers(members);
   };
 
+  bulkRemoveMembers = (
+    members: Array<{ workspace_slug: string; email: string }>
+  ): Promise<IWorkspaceBulkRemoveResponse> => {
+    return this.instanceWorkspaceService.bulkRemoveMembers(members);
+  };
+
   bulkImportProjects = (
     projects: Array<{
       workspace_slug: string;
@@ -259,6 +275,10 @@ export class WorkspaceStore implements IWorkspaceStore {
     }>
   ): Promise<IWorkspaceProjectBulkImportResponse> => {
     return this.instanceWorkspaceService.bulkImportProjects(projects);
+  };
+
+  exportProjects = (workspaceSlugs?: string[]): Promise<IWorkspaceProjectExportResponse> => {
+    return this.instanceWorkspaceService.exportProjects(workspaceSlugs);
   };
 
   bulkImportModules = (
