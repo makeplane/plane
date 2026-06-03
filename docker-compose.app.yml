@@ -1,0 +1,159 @@
+# App tier for GCP (VM2: plane-app).
+# Builds from this repo (custom fields). Requires data tier running first (docker-compose.data.yml on VM1).
+#
+# Usage:
+#   Configure apps/api/.env and apps/live/.env with PLANE_DATA_HOST (data VM internal IP).
+#   cp .env.app.example .env
+#   docker compose -f docker-compose.app.yml build
+#   docker compose -f docker-compose.app.yml run --rm migrator
+#   docker compose -f docker-compose.app.yml up -d
+
+services:
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
+    restart: always
+    depends_on:
+      - api
+
+  admin:
+    container_name: admin
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
+    restart: always
+    depends_on:
+      - api
+      - web
+
+  space:
+    container_name: space
+    build:
+      context: .
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost}
+        VITE_WEB_BASE_URL: ${VITE_WEB_BASE_URL:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${VITE_ADMIN_BASE_URL:-http://localhost}
+        VITE_SPACE_BASE_URL: ${VITE_SPACE_BASE_URL:-http://localhost}
+        VITE_LIVE_BASE_URL: ${VITE_LIVE_BASE_URL:-http://localhost}
+    pull_policy: build
+    restart: always
+    depends_on:
+      - api
+      - web
+
+  api:
+    container_name: api
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    pull_policy: build
+    restart: always
+    command: ./bin/docker-entrypoint-api.sh
+    env_file:
+      - ./apps/api/.env
+
+  worker:
+    container_name: bgworker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: ./bin/docker-entrypoint-worker.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+
+  beat-worker:
+    container_name: beatworker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: ./bin/docker-entrypoint-beat.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+
+  migrator:
+    container_name: plane-migrator
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: no
+    command: ./bin/docker-entrypoint-migrator.sh
+    env_file:
+      - ./apps/api/.env
+
+  live:
+    container_name: plane-live
+    build:
+      context: .
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    pull_policy: build
+    restart: always
+    env_file:
+      - ./apps/live/.env
+    environment:
+      API_BASE_URL: http://api:8000
+    depends_on:
+      - api
+
+  proxy:
+    container_name: proxy
+    build:
+      context: ./apps/proxy
+      dockerfile: Dockerfile.ce
+    pull_policy: build
+    restart: always
+    ports:
+      - ${LISTEN_HTTP_PORT}:80
+      - ${LISTEN_HTTPS_PORT}:443
+    env_file:
+      - .env
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CERT_EMAIL: ${CERT_EMAIL:-}
+      CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      CERT_ACME_DNS: ${CERT_ACME_DNS:-}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
+    depends_on:
+      - web
+      - api
+      - space
+      - admin
+      - live

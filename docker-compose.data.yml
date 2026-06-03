@@ -1,0 +1,70 @@
+# Data tier for GCP (VM1: plane-data).
+# Postgres, Valkey, RabbitMQ, MinIO — reachable from the app VM via this host's internal IP.
+#
+# Usage:
+#   cp .env.data.example .env   # set strong passwords
+#   docker compose -f docker-compose.data.yml up -d
+#
+# Restrict PLANE_BIND_ADDRESS to the data VM internal IP (e.g. 10.128.0.10) when the VM has a public NIC.
+
+services:
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.7-alpine
+    restart: always
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "${PLANE_BIND_ADDRESS:-0.0.0.0}:5432:5432"
+
+  plane-redis:
+    container_name: plane-redis
+    image: valkey/valkey:7.2.11-alpine
+    restart: always
+    volumes:
+      - redisdata:/data
+    ports:
+      - "${PLANE_BIND_ADDRESS:-0.0.0.0}:6379:6379"
+
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "${PLANE_BIND_ADDRESS:-0.0.0.0}:5672:5672"
+
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio
+    restart: always
+    command: server /export --console-address ":9090"
+    volumes:
+      - uploads:/export
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "${PLANE_BIND_ADDRESS:-0.0.0.0}:9000:9000"
+      - "${PLANE_BIND_ADDRESS:-0.0.0.0}:9090:9090"
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:
