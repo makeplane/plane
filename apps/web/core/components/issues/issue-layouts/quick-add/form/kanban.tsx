@@ -13,21 +13,21 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
   const { ref, projectDetail, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
-    <div className="m-1 overflow-hidden rounded-sm shadow-raised-200 bg-layer-2">
+    <div className="m-1 overflow-hidden rounded-sm bg-layer-2 shadow-raised-200">
       <form ref={ref} onSubmit={onSubmit} className="flex w-full items-center gap-x-3 p-3">
         <div className="w-full">
-          <h4 className="text-11 font-medium leading-5 text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
+          <h4 className="text-11 leading-5 font-medium text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
           <input
             autoComplete="off"
             placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
             {...register("name", {
               required: isEpic ? t("epic.title.required") : t("issue.title.required"),
             })}
-            className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-13 font-medium leading-5 text-secondary outline-none"
+            className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-13 leading-5 font-medium text-secondary outline-none"
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-11 italic text-tertiary bg-layer-3">
+      <div className="bg-layer-3 px-3 py-2 text-11 text-tertiary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </div>
     </div>

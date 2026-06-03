@@ -41,7 +41,7 @@ export function CoverImage(props: TCoverImageProps) {
 
   // Show loading skeleton when src is undefined/null and we don't want to show default
   if (!src && !showDefaultWhenEmpty) {
-    return <div className={cn("bg-layer-2 animate-pulse", className)} />;
+    return <div className={cn("animate-pulse bg-layer-2", className)} />;
   }
 
   const displayUrl = getCoverImageDisplayURL(src, fallbackUrl);

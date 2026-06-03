@@ -126,7 +126,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           {!disabled && (
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded-sm p-1 outline-none duration-300 hover:bg-surface-2 ${
+              className={`grid h-7 w-7 place-items-center rounded-sm p-1 duration-300 outline-none hover:bg-surface-2 ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => toggleIssueLinkModal(true)}

@@ -24,7 +24,7 @@ export const NewUserPopup = observer(function NewUserPopup() {
 
   if (!isNewUserPopup) return <></>;
   return (
-    <div className="absolute bottom-8 right-8 p-6 w-96 border border-subtle shadow-md rounded-lg bg-surface-1">
+    <div className="shadow-md absolute right-8 bottom-8 w-96 rounded-lg border border-subtle bg-surface-1 p-6">
       <div className="flex gap-4">
         <div className="grow">
           <div className="text-14 font-semibold">Create workspace</div>
@@ -41,7 +41,7 @@ export const NewUserPopup = observer(function NewUserPopup() {
             </Button>
           </div>
         </div>
-        <div className="shrink-0 flex items-center justify-center">
+        <div className="flex shrink-0 items-center justify-center">
           <img
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}

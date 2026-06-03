@@ -77,7 +77,7 @@ export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgr
         <>
           Yearly
           {yearlyDiscount > 0 && (
-            <span className="bg-accent-primary text-on-color rounded-full px-1.5 py-0.5 ml-1 text-caption-sm">
+            <span className="text-caption-sm ml-1 rounded-full bg-accent-primary px-1.5 py-0.5 text-on-color">
               -{yearlyDiscount}%
             </span>
           )}

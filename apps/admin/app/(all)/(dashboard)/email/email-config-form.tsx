@@ -179,7 +179,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             </CustomSelect>
           </div>
         </div>
-        <div className="flex flex-col gap-6 my-6 pt-4 border-t border-subtle">
+        <div className="my-6 flex flex-col gap-6 border-t border-subtle pt-4">
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
@@ -207,7 +207,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           </div>
         </div>
       </div>
-      <div className="flex max-w-4xl items-center py-1 gap-4">
+      <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
           size="lg"

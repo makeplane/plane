@@ -87,9 +87,9 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">
-                <h4 className="text-h5-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
+                <h4 className="pt-2 pb-2 text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</h4>
                 {searchedInvitationsIds && (
-                  <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
+                  <CountChip count={searchedInvitationsIds.length} className="m-auto ml-2 h-5" />
                 )}
               </div>{" "}
               <ChevronDownIcon className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />

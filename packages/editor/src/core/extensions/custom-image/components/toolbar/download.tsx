@@ -20,7 +20,7 @@ export function ImageDownloadAction(props: Props) {
       <button
         type="button"
         onClick={() => window.open(src, "_blank")}
-        className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+        className="grid h-full flex-shrink-0 place-items-center text-white/60 transition-colors hover:text-white"
         aria-label="Download image"
       >
         <Download className="size-3" />

@@ -65,7 +65,7 @@ export function BubbleMenuNodeSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm whitespace-nowrap transition-colors",
+          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
           {
             "bg-layer-1": context.open,
           }
@@ -74,14 +74,14 @@ export function BubbleMenuNodeSelector(props: Props) {
       menuButton={
         <>
           <span>{activeItem?.name}</span>
-          <ChevronDownIcon className="shrink-0 size-3" />
+          <ChevronDownIcon className="size-3 shrink-0" />
         </>
       }
       options={options}
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200">
+      <section className="mt-1 flex max-h-[90vh] w-48 flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200">
         {items.map((item) => (
           <button
             key={item.name}
@@ -102,7 +102,7 @@ export function BubbleMenuNodeSelector(props: Props) {
               <item.icon className="size-3 flex-shrink-0" />
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <CheckIcon className="size-3 text-tertiary flex-shrink-0" />}
+            {activeItem.name === item.name && <CheckIcon className="size-3 flex-shrink-0 text-tertiary" />}
           </button>
         ))}
       </section>

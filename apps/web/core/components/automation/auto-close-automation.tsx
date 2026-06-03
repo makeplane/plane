@@ -87,8 +87,8 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       />
       <div className="flex flex-col gap-4 py-2">
         <div className="flex items-center gap-3">
-          <div className="shrink-0 size-10 grid place-items-center rounded-sm bg-layer-2">
-            <ArchiveX className="shrink-0 size-4 text-danger-primary" />
+          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
+            <ArchiveX className="size-4 shrink-0 text-danger-primary" />
           </div>
           <SettingsControlItem
             title={t("project_settings.automations.auto-close.title")}
@@ -136,7 +136,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                         ))}
                         <button
                           type="button"
-                          className="flex w-full select-none items-center rounded-sm px-1 py-1.5 text-secondary hover:bg-layer-1"
+                          className="flex w-full items-center rounded-sm px-1 py-1.5 text-secondary select-none hover:bg-layer-1"
                           onClick={() => setmonthModal(true)}
                         >
                           {t("common.customize_time_range")}
@@ -146,7 +146,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                   </div>
                 </div>
 
-                <div className="ppy sm:py-10 flex w-full items-center justify-between gap-2 px-5 py-4">
+                <div className="ppy flex w-full items-center justify-between gap-2 px-5 py-4 sm:py-10">
                   <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>

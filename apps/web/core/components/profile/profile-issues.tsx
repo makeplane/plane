@@ -96,7 +96,7 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
         {({ filter: profileWorkItemsFilter }) => (
           <>
             {profileWorkItemsFilter && <ProfileIssuesInitFilters filter={profileWorkItemsFilter} />}
-            <div className="flex flex-col h-full w-full">
+            <div className="flex h-full w-full flex-col">
               {profileWorkItemsFilter && (
                 <WorkItemFiltersRow filter={profileWorkItemsFilter} extraRightActions={extraFilterRowActions} />
               )}

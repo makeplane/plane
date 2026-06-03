@@ -51,5 +51,5 @@ export function InboxStatusIcon({
   if (type === undefined) return null;
   const Icon = ICON_PROPERTIES[type];
   if (!Icon) return null;
-  return <Icon.icon size={size} className={cn(`w-3 h-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
+  return <Icon.icon size={size} className={cn(`h-3 w-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
 }

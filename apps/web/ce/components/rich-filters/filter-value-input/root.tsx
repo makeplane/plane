@@ -17,7 +17,7 @@ export const AdditionalFilterValueInput = observer(function AdditionalFilterValu
 >(_props: TFilterValueInputProps<P, V>) {
   return (
     // Fallback
-    <div className="h-full flex items-center px-4 text-11 text-placeholder transition-opacity duration-200 cursor-not-allowed">
+    <div className="flex h-full cursor-not-allowed items-center px-4 text-11 text-placeholder transition-opacity duration-200">
       Filter type not supported
     </div>
   );

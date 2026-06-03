@@ -30,7 +30,7 @@ export const AppliedProjectFilters = observer(function AppliedProjectFilters(pro
 
         return (
           <div key={projectId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
               <Logo logo={projectDetails.logo_props} size={12} />
             </span>
             <span className="normal-case">{projectDetails.name}</span>

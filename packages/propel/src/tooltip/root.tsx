@@ -56,7 +56,7 @@ export function Tooltip(props: ITooltipProps) {
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
-              "z-50 max-w-xs gap-1 overflow-hidden break-words rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 shadow-overlay-200",
+              "z-50 max-w-xs gap-1 overflow-hidden rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 break-words shadow-overlay-200",
               {
                 hidden: isMobile,
               },

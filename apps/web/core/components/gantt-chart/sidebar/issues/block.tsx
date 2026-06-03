@@ -54,7 +54,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
     >
       <Row
         className={cn(
-          "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+          "group flex w-full items-center gap-2 bg-layer-transparent pr-4 hover:bg-layer-transparent-hover",
           {
             "bg-layer-transparent-hover": isBlockHoveredOn,
             "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
@@ -66,12 +66,12 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
         }}
       >
         {enableSelection && selectionHelpers && (
-          <div className="flex items-center gap-2 absolute left-1">
+          <div className="absolute left-1 flex items-center gap-2">
             <MultipleSelectEntityAction
               className={cn(
-                "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
                 {
-                  "opacity-100 pointer-events-auto": isIssueSelected,
+                  "pointer-events-auto opacity-100": isIssueSelected,
                 }
               )}
               groupId={GANTT_SELECT_GROUP}

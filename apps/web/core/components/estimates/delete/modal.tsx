@@ -62,7 +62,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <div className="relative space-y-6 py-5">
         {/* heading */}
-        <div className="relative flex justify-between items-center gap-2 px-5">
+        <div className="relative flex items-center justify-between gap-2 px-5">
           <div className="text-18 font-medium text-primary">Delete Estimate System</div>
         </div>
 
@@ -75,7 +75,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
           </div>
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
+        <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
           <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
             Cancel
           </Button>

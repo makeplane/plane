@@ -44,7 +44,7 @@ export const BillingRoot = observer(function BillingRoot() {
     setProductBillingFrequency({ ...productBillingFrequency, [subscriptionType]: frequency });
 
   return (
-    <section className="relative size-full overflow-y-auto scrollbar-hide">
+    <section className="relative scrollbar-hide size-full overflow-y-auto">
       <div>
         <SettingsHeading
           title={t("workspace_settings.settings.billing_and_plans.heading")}

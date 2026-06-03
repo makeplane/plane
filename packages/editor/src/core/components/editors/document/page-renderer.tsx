@@ -61,7 +61,7 @@ export function PageRenderer(props: Props) {
   } = props;
   return (
     <div
-      className={cn("frame-renderer flex-grow w-full", {
+      className={cn("frame-renderer w-full flex-grow", {
         "wide-layout": displayConfig.wideLayout,
       })}
     >
@@ -82,7 +82,7 @@ export function PageRenderer(props: Props) {
                   editor={titleEditor}
                   id={id + "-title"}
                   tabIndex={tabIndex}
-                  className="no-scrollbar placeholder-placeholder bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
+                  className="no-scrollbar placeholder-placeholder w-full resize-none rounded-none border-none bg-transparent p-0 text-[2rem] leading-[2.375rem] font-bold tracking-[-2%] outline-none"
                 />
               </EditorContainer>
             </div>

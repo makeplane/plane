@@ -18,7 +18,7 @@ export const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader
   return (
     <span
       ref={ref}
-      className={cn(`block bg-[var(--illustration-fill-secondary)] rounded-sm`, { " animate-pulse": shouldAnimate })}
+      className={cn(`block rounded-sm bg-[var(--illustration-fill-secondary)]`, { "animate-pulse": shouldAnimate })}
       style={{ height: `${cardHeight}px` }}
     />
   );
@@ -38,10 +38,10 @@ export function KanbanColumnLoader({
   return (
     <div className="flex flex-col gap-3">
       {!ignoreHeader && (
-        <div className="flex items-center justify-between h-9 w-80">
-          <div className="flex item-center gap-3">
-            <span className={cn("h-6 w-6 bg-layer-1 rounded-sm", { " animate-pulse": shouldAnimate })} />
-            <span className={cn("h-6 w-24 bg-layer-1 rounded-sm", { " animate-pulse": shouldAnimate })} />
+        <div className="flex h-9 w-80 items-center justify-between">
+          <div className="item-center flex gap-3">
+            <span className={cn("h-6 w-6 rounded-sm bg-layer-1", { "animate-pulse": shouldAnimate })} />
+            <span className={cn("h-6 w-24 rounded-sm bg-layer-1", { "animate-pulse": shouldAnimate })} />
           </div>
         </div>
       )}
@@ -56,7 +56,7 @@ KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
 export function KanbanLayoutLoader({ cardsInEachColumn = [2, 3, 2, 4, 3] }: { cardsInEachColumn?: number[] }) {
   return (
-    <ContentWrapper className="flex-row gap-5 py-1.5 overflow-x-auto">
+    <ContentWrapper className="flex-row gap-5 overflow-x-auto py-1.5">
       {cardsInEachColumn.map((cardsInColumn, columnIndex) => (
         <KanbanColumnLoader key={columnIndex} cardsInColumn={cardsInColumn} />
       ))}

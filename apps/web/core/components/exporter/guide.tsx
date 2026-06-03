@@ -25,7 +25,7 @@ export const ExportGuide = observer(function ExportGuide() {
 
   return (
     <>
-      <div className="size-full flex flex-col gap-y-13">
+      <div className="flex size-full flex-col gap-y-13">
         <ExportForm
           workspaceSlug={workspaceSlug}
           provider={provider}

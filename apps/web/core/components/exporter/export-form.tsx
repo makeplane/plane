@@ -89,7 +89,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="flex-shrink-0 text-10 text-secondary">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),

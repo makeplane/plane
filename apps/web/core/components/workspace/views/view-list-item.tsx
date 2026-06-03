@@ -42,7 +42,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-13 font-medium leading-4">{truncateText(view.name, 75)}</p>
+                    <p className="truncate text-13 leading-4 font-medium">{truncateText(view.name, 75)}</p>
                     {isDefault && (
                       <span className="flex items-center gap-1 rounded bg-accent-primary/10 px-1.5 py-0.5 text-10 font-medium text-accent-primary">
                         <LockIcon className="h-3 w-3" />

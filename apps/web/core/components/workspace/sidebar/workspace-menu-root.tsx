@@ -98,9 +98,9 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   return (
     <Menu
       as="div"
-      className={cn("relative h-full flex max-w-48 w-fit whitespace-nowrap truncate", {
+      className={cn("relative flex h-full w-fit max-w-48 truncate whitespace-nowrap", {
         "w-full justify-center text-center": variant === "sidebar",
-        "flex-grow justify-stretch text-left truncate": variant === "top-navigation",
+        "flex-grow justify-stretch truncate text-left": variant === "top-navigation",
       })}
     >
       {({ open, close }: { open: boolean; close: () => void }) => {
@@ -116,7 +116,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
           <>
             {variant === "sidebar" && (
               <Menu.Button
-                className={cn("flex w-full items-center justify-center size-8 rounded-md", {
+                className={cn("flex size-8 w-full items-center justify-center rounded-md", {
                   "bg-layer-1": open,
                 })}
               >
@@ -137,14 +137,14 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
             {variant === "top-navigation" && (
               <Menu.Button
                 className={cn(
-                  "group/menu-button flex items-center gap-1 p-1 truncate rounded-sm text-13 font-medium text-secondary hover:bg-layer-1 focus:outline-none justify-between flex-grow",
+                  "group/menu-button flex flex-grow items-center justify-between gap-1 truncate rounded-sm p-1 text-13 font-medium text-secondary hover:bg-layer-1 focus:outline-none",
                   {
                     "bg-layer-1": open,
                   }
                 )}
                 aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
               >
-                <div className="flex-grow flex items-center gap-2 truncate">
+                <div className="flex flex-grow items-center gap-2 truncate">
                   <WorkspaceLogo
                     logo={activeWorkspace?.logo_url}
                     name={activeWorkspace?.name}
@@ -153,7 +153,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   <h4 className="truncate text-14 font-medium text-primary">{activeWorkspace?.name ?? t("loading")}</h4>
                 </div>
                 <ChevronDownIcon
-                  className={cn("flex-shrink-0 size-4 text-placeholder duration-300", {
+                  className={cn("size-4 flex-shrink-0 text-placeholder duration-300", {
                     "rotate-180": open,
                   })}
                 />
@@ -178,10 +178,10 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                     }
                   )}
                 >
-                  <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
-                    <div className="sticky top-0 z-21 flex-shrink-0 bg-surface-1 w-full flex flex-col px-4 pt-3 pb-2 gap-2">
-                      <span className="text-13 font-medium text-placeholder truncate w-full">{currentUser?.email}</span>
-                      <div className="relative flex items-center w-full">
+                  <div className="vertical-scrollbar flex scrollbar-sm max-h-96 flex-col items-start justify-start overflow-x-hidden overflow-y-scroll">
+                    <div className="sticky top-0 z-21 flex w-full flex-shrink-0 flex-col gap-2 bg-surface-1 px-4 pt-3 pb-2">
+                      <span className="w-full truncate text-13 font-medium text-placeholder">{currentUser?.email}</span>
+                      <div className="relative flex w-full items-center">
                         <Search className="absolute left-2.5 size-3.5 text-placeholder" />
                         <input
                           ref={searchInputRef}
@@ -194,7 +194,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                             }
                           }}
                           placeholder={t("search_workspace") || "Search workspace..."}
-                          className="w-full bg-layer-2 border border-subtle rounded-md pl-8 pr-8 py-1.5 text-13 text-secondary focus:outline-none focus:border-brand-base"
+                          className="focus:border-brand-base w-full rounded-md border border-subtle bg-layer-2 py-1.5 pr-8 pl-8 text-13 text-secondary focus:outline-none"
                         />
                         {searchQuery && (
                           <button
@@ -208,7 +208,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       </div>
                     </div>
                     {workspacesList ? (
-                      <div className="size-full flex flex-col items-start justify-start">
+                      <div className="flex size-full flex-col items-start justify-start">
                         {filteredWorkspaces.length > 0 ? (
                           filteredWorkspaces.map((workspace) => (
                             <SidebarDropdownItem
@@ -235,7 +235,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       </div>
                     )}
                   </div>
-                  <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-13">
+                  <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-13">
                     {!isWorkspaceCreationDisabled && (
                       <Link href="/create-workspace" className="w-full">
                         <Menu.Item

@@ -527,7 +527,7 @@
       --border-success-subtle: var(--green-200);
       --border-warning-strong: var(--amber-400);
       --border-warning-subtle: var(--amber-200);
-      --border-danger-strong: var(--red-400);
+      --border-danger-strong: var(--red-700);
       --border-danger-subtle: var(--red-200);
       /* Text colors */
       --txt-primary: var(--neutral-1200);

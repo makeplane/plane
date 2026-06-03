@@ -87,7 +87,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
+        `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -96,7 +96,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5">
+              <div className="absolute top-3.5 right-3.5">
                 <IconButton
                   variant="secondary"
                   icon={EditIcon}
@@ -123,7 +123,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                   className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary capitalize text-on-color">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary text-on-color capitalize">
                   {userData?.first_name?.[0]}
                 </div>
               )}
@@ -140,7 +140,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               {userDetails.map((detail) => (
                 <div key={detail.i18n_label} className="flex items-center gap-4 text-13">
                   <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
-                  <div className="w-3/5 break-words font-medium">{detail.value}</div>
+                  <div className="w-3/5 font-medium break-words">{detail.value}</div>
                 </div>
               ))}
             </div>
@@ -167,7 +167,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <Logo logo={projectDetails.logo_props} />
                             </span>
-                            <div className="truncate break-words text-13 font-medium">{projectDetails.name}</div>
+                            <div className="truncate text-13 font-medium break-words">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (

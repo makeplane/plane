@@ -35,7 +35,7 @@ export function GanttChartRowList(props: GanttChartBlocksProps) {
   } = props;
 
   return (
-    <div className="absolute top-0 left-0 min-w-full w-max">
+    <div className="absolute top-0 left-0 w-max min-w-full">
       {blockIds?.map((blockId) => (
         <>
           <RenderIfVisible
@@ -43,7 +43,7 @@ export function GanttChartRowList(props: GanttChartBlocksProps) {
             horizontalOffset={100}
             verticalOffset={200}
             classNames="relative min-w-full w-max"
-            placeholderChildren={<div className="w-full pointer-events-none" style={{ height: `${BLOCK_HEIGHT}px` }} />}
+            placeholderChildren={<div className="pointer-events-none w-full" style={{ height: `${BLOCK_HEIGHT}px` }} />}
             shouldRecordHeights={false}
           >
             <BlockRow

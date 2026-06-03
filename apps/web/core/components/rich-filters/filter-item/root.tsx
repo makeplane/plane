@@ -109,7 +109,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
         maxHeight="2xl"
         disabled={isOperatorSelectionDisabled}
         customButton={
-          <div className="flex items-center h-full" aria-disabled={isOperatorSelectionDisabled}>
+          <div className="flex h-full items-center" aria-disabled={isOperatorSelectionDisabled}>
             {filterConfig.getLabelForOperator(selectedOperatorOption)}
           </div>
         }

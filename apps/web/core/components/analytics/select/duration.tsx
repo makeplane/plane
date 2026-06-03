@@ -45,7 +45,7 @@ function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 p-1 ">
+        <div className="flex items-center gap-2 p-1">
           <Calendar className="h-4 w-4" />
           {value ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name : placeholder}
         </div>

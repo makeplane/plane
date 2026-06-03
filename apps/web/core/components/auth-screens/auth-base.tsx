@@ -11,30 +11,30 @@ type AuthBaseProps = {
 export function AuthBase({ authType }: AuthBaseProps) {
   return (
     <div
-      className="relative z-10 flex flex-col items-center justify-center w-screen h-screen overflow-hidden overflow-y-auto p-4 sm:p-8 font-sans subpixel-antialiased"
+      className="font-sans relative z-10 flex h-screen w-screen flex-col items-center justify-center overflow-hidden overflow-y-auto p-4 subpixel-antialiased sm:p-8"
       style={{ background: "linear-gradient(135deg, #e0faff 0%, #ffffff 50%, #d4f1f9 100%)", colorScheme: "light" }}
     >
-      <div className="w-full max-w-[1280px] min-h-[750px] flex flex-col md:flex-row-reverse items-center p-6 md:p-12 relative overflow-hidden gap-12 md:gap-16 rounded-2xl border border-[#ffffff]/80 shadow-[0_30px_60px_-15px_rgba(0,100,200,0.1)] backdrop-blur-md bg-[#ffffff]/50">
+      <div className="relative flex min-h-[750px] w-full max-w-[1280px] flex-col items-center gap-12 overflow-hidden rounded-2xl border border-[#ffffff]/80 bg-[#ffffff]/50 p-6 shadow-[0_30px_60px_-15px_rgba(0,100,200,0.1)] backdrop-blur-md md:flex-row-reverse md:gap-16 md:p-12">
         {/* Right Section: Login Form */}
-        <div className="w-full md:w-[420px] relative z-10 flex flex-col justify-center flex-shrink-0">
-          <div className="w-full overflow-hidden flex flex-col rounded-xl bg-[#ffffff] shadow-[0_15px_35px_-5px_rgba(0,100,200,0.15)]">
-            <div className="p-8 sm:p-10 bg-[#ffffff]">
+        <div className="relative z-10 flex w-full flex-shrink-0 flex-col justify-center md:w-[420px]">
+          <div className="flex w-full flex-col overflow-hidden rounded-xl bg-[#ffffff] shadow-[0_15px_35px_-5px_rgba(0,100,200,0.15)]">
+            <div className="bg-[#ffffff] p-8 sm:p-10">
               {/* Brand Header inside Card */}
-              <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="mb-6 flex items-center justify-center gap-3">
                 <div
-                  className="w-8 h-8 rounded-md flex items-center justify-center text-[#ffffff]"
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-[#ffffff]"
                   style={{ background: "linear-gradient(135deg, #0047cc, #00d4ff)" }}
                 >
-                  <span className="font-semibold text-[16px]">S</span>
+                  <span className="text-[16px] font-semibold">S</span>
                 </div>
-                <span className="text-[#0a1e3f] font-semibold text-[18px] tracking-tight">Daily Note</span>
+                <span className="text-[18px] font-semibold tracking-tight text-[#0a1e3f]">Daily Note</span>
               </div>
 
-              <div className="mb-4 pb-4 border-b border-[#f3f4f6] w-full text-center">
-                <h2 className="text-[30px] font-semibold text-[#0a1e3f] mb-1 tracking-tight">
+              <div className="mb-4 w-full border-b border-[#f3f4f6] pb-4 text-center">
+                <h2 className="mb-1 text-[30px] font-semibold tracking-tight text-[#0a1e3f]">
                   {authType === EAuthModes.SIGN_UP ? "Sign Up" : "Sign In"}
                 </h2>
-                <p className="text-[14px] text-[#6b7280] font-semibold">
+                <p className="text-[14px] font-semibold text-[#6b7280]">
                   {authType === EAuthModes.SIGN_UP ? "Create a new account" : "Use your Swing ID & password"}
                 </p>
               </div>
@@ -45,15 +45,15 @@ export function AuthBase({ authType }: AuthBaseProps) {
         </div>
 
         {/* Left Section: Copy & Illustration */}
-        <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10 w-full h-full">
-          <div className="w-full flex-1 flex flex-col items-center justify-center px-4 md:px-12 mt-8 md:mt-0">
+        <div className="relative z-10 flex h-full w-full flex-1 flex-col items-center justify-center text-center">
+          <div className="mt-8 flex w-full flex-1 flex-col items-center justify-center px-4 md:mt-0 md:px-12">
             {/* Welcome Top Logo */}
             <div className="mb-2 flex flex-col items-center">
-              <img src={ShinhanBankLogo} alt="Shinhan Bank Logo" className="h-14 w-auto mb-6 drop-shadow-md" />
-              <h1 className="text-[#0a1b3f] text-[36px] sm:text-[40px] font-semibold tracking-tight leading-snug mb-1 max-w-[500px]">
+              <img src={ShinhanBankLogo} alt="Shinhan Bank Logo" className="mb-6 h-14 w-auto drop-shadow-md" />
+              <h1 className="mb-1 max-w-[500px] text-[36px] leading-snug font-semibold tracking-tight text-[#0a1b3f] sm:text-[40px]">
                 Welcome to{" "}
                 <span
-                  className="text-transparent bg-clip-text"
+                  className="bg-clip-text text-transparent"
                   style={{
                     background: "linear-gradient(90deg, #003399 0%, #0066cc 100%)",
                     WebkitBackgroundClip: "text",
@@ -63,10 +63,10 @@ export function AuthBase({ authType }: AuthBaseProps) {
                   Daily Note
                 </span>
               </h1>
-              <h2 className="text-[#0a1b3f] text-[28px] sm:text-[32px] font-semibold tracking-tight leading-snug mb-4">
+              <h2 className="mb-4 text-[28px] leading-snug font-semibold tracking-tight text-[#0a1b3f] sm:text-[32px]">
                 Task Management System
               </h2>
-              <p className="text-[#4b5563] text-[17px] font-medium leading-[1.7] max-w-[500px] mb-2">
+              <p className="mb-2 max-w-[500px] text-[17px] leading-[1.7] font-medium text-[#4b5563]">
                 Smart, Centralized Task Management.
                 <br />
                 Easy tracking for teams, effortless oversight for leaders. Empowering Shinhan&apos;s workforce to
@@ -75,23 +75,23 @@ export function AuthBase({ authType }: AuthBaseProps) {
             </div>
 
             {/* Abstract Illustration Area */}
-            <div className="relative w-full max-w-[600px] h-[300px] sm:h-[400px] flex items-center justify-center">
-              <div className="relative w-[110%] z-20 flex justify-center items-center overflow-hidden rounded-xl">
-                <div className="absolute inset-0 shadow-[inset_0_0_120px_80px_#ffffff] pointer-events-none z-30 rounded-xl"></div>
+            <div className="relative flex h-[300px] w-full max-w-[600px] items-center justify-center sm:h-[400px]">
+              <div className="relative z-20 flex w-[110%] items-center justify-center overflow-hidden rounded-xl">
+                <div className="pointer-events-none absolute inset-0 z-30 rounded-xl shadow-[inset_0_0_120px_80px_#ffffff]"></div>
                 <img
                   src={LogonDashboardImage}
                   alt="Dashboard Illustration"
                   width={600}
                   height={400}
-                  className="w-full h-auto max-h-[100%] object-contain mix-blend-multiply"
+                  className="h-auto max-h-[100%] w-full object-contain mix-blend-multiply"
                 />
               </div>
 
               {/* Decorative Elements */}
-              <div className="absolute right-0 top-0 w-32 h-64 bg-cyan-400 rotate-45 transform origin-bottom-right rounded-t-full opacity-20 -z-10 blur-xl"></div>
-              <div className="absolute -left-10 top-10 w-24 h-24 bg-blue-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-[pulse_3s_ease-in-out_infinite]"></div>
+              <div className="bg-cyan-400 absolute top-0 right-0 -z-10 h-64 w-32 origin-bottom-right rotate-45 transform rounded-t-full opacity-20 blur-xl"></div>
+              <div className="bg-blue-300 absolute top-10 -left-10 h-24 w-24 animate-[pulse_3s_ease-in-out_infinite] rounded-full opacity-60 mix-blend-multiply blur-md"></div>
               <div
-                className="absolute right-10 bottom-10 w-32 h-32 bg-cyan-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-[pulse_3s_ease-in-out_infinite]"
+                className="bg-cyan-300 absolute right-10 bottom-10 h-32 w-32 animate-[pulse_3s_ease-in-out_infinite] rounded-full opacity-60 mix-blend-multiply blur-md"
                 style={{ animationDelay: "2s" }}
               ></div>
             </div>

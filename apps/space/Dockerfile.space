@@ -13,7 +13,7 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.6.3
+RUN pnpm add -g turbo@2.8.12
 
 COPY . .
 
@@ -86,7 +86,8 @@ WORKDIR /app/apps/space
 
 EXPOSE 3000
 
+RUN apk add --no-cache curl
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
+  CMD curl -fsS http://127.0.0.1:3000/spaces/ >/dev/null || exit 1
 
 CMD ["npx", "react-router-serve", "./build/server/index.js"]

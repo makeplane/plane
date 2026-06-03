@@ -8,6 +8,7 @@ from plane.api.views import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectSummaryAPIEndpoint,
 )
 
 urlpatterns = [
@@ -25,5 +26,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
         ProjectArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post", "delete"]),
         name="project-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/summary/",
+        ProjectSummaryAPIEndpoint.as_view(http_method_names=["get"]),
+        name="project-summary",
     ),
 ]

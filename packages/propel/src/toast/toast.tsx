@@ -122,9 +122,9 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       key={id}
       className={cn(
         // Base layout and positioning
-        "flex group items-center rounded-lg border shadow-raised-200 w-[350px]",
+        "group flex w-[350px] items-center rounded-lg border shadow-raised-200",
         "absolute right-3 bottom-3 z-[calc(1000-var(--toast-index))]",
-        "select-none transition-[opacity,transform] duration-500 ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;",
+        "ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb; transition-[opacity,transform] duration-500 select-none",
 
         // Default transform with stacking and scaling
         "[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+calc(min(var(--toast-index),10)*-10px)))_scale(calc(max(0,1-(var(--toast-index)*0.1))))]",
@@ -163,20 +163,20 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
         e.preventDefault();
       }}
     >
-      <BaseToast.Close className="absolute top-3 right-3 text-icon-secondary hover:text-icon-tertiary cursor-pointer">
+      <BaseToast.Close className="absolute top-3 right-3 cursor-pointer text-icon-secondary hover:text-icon-tertiary">
         <CloseIcon strokeWidth={1.5} width={16} height={16} />
       </BaseToast.Close>
-      <div className="flex items-start gap-2 w-full p-4">
+      <div className="flex w-full items-start gap-2 p-4">
         <div className="py-1">
           {data.icon && (
             <div
-              className={cn("flex items-center justify-center rounded-full size-4 flex-shrink-0", data.iconBgClassName)}
+              className={cn("flex size-4 flex-shrink-0 items-center justify-center rounded-full", data.iconBgClassName)}
             >
               {data.icon}
             </div>
           )}
         </div>
-        <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <BaseToast.Title className="text-h6-medium text-primary">
             {toastData.type === TOAST_TYPE.LOADING ? (toastData.title ?? "Loading...") : toastData.title}
           </BaseToast.Title>
@@ -211,21 +211,21 @@ export function ToastStatic({ type, title, message, actionItems, theme = "light"
       <div
         className={cn(
           // Base layout and positioning
-          "flex group items-start rounded-lg border border-subtle-1 rounded-lg shadow-overlay-100 w-[350px]",
+          "group flex w-[350px] items-start rounded-lg border border-subtle-1 shadow-overlay-100",
           "relative",
           data.backgroundColorClassName,
           data.borderColorClassName
         )}
       >
-        <div className="absolute top-1 right-1 text-icon-tertiary cursor-default">
+        <div className="absolute top-1 right-1 cursor-default text-icon-tertiary">
           <CloseIcon strokeWidth={1.5} width={14} height={14} />
         </div>
-        <div className="flex items-start gap-3 w-full p-4">
+        <div className="flex w-full items-start gap-3 p-4">
           <div className="py-1">
             {data.icon && (
               <div
                 className={cn(
-                  "flex items-center justify-center rounded-full size-4 flex-shrink-0",
+                  "flex size-4 flex-shrink-0 items-center justify-center rounded-full",
                   data.iconBgClassName
                 )}
               >
@@ -233,7 +233,7 @@ export function ToastStatic({ type, title, message, actionItems, theme = "light"
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="text-h6-medium text-primary">
               {type === TOAST_TYPE.LOADING ? (title ?? "Loading...") : title}
             </div>

@@ -58,7 +58,7 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
-    <div className="flex py-2 border-b border-subtle md:hidden bg-surface-1 w-full">
+    <div className="flex w-full border-b border-subtle bg-surface-1 py-2 md:hidden">
       <ProjectOrderByDropdown
         value={displayFilters?.order_by}
         onChange={(val) => {
@@ -69,13 +69,13 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
         }}
         isMobile
       />
-      <div className="border-l border-subtle flex justify-around w-full">
+      <div className="flex w-full justify-around border-l border-subtle">
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
           title={t("common.filters")}
           placement="bottom-end"
           menuButton={
-            <div className="flex text-13 items-center gap-2 text-secondary">
+            <div className="flex items-center gap-2 text-13 text-secondary">
               <ListFilter className="h-3 w-3" />
               {t("common.filters")}
               <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />

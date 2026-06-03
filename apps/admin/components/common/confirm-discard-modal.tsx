@@ -28,7 +28,7 @@ export function ConfirmDiscardModal(props: Props) {
               Changes you made will be lost if you go back. Do you wish to go back?
             </p>
           </div>
-          <div className="mt-6 flex justify-end items-center gap-2">
+          <div className="mt-6 flex items-center justify-end gap-2">
             <Button variant="secondary" size="lg" onClick={handleClose}>
               Keep editing
             </Button>

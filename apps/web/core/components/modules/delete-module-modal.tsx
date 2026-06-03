@@ -80,7 +80,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
       content={
         <>
           Are you sure you want to delete module-{" "}
-          <span className="break-all font-medium text-primary">{data?.name}</span>? All of the data related to the
+          <span className="font-medium break-all text-primary">{data?.name}</span>? All of the data related to the
           module will be permanently removed. This action cannot be undone.
         </>
       }

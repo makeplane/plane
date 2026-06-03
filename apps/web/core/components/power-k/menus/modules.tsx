@@ -23,7 +23,7 @@ export const PowerKModulesMenu = observer(function PowerKModulesMenu({ modules, 
     <PowerKMenuBuilder
       items={modules}
       getKey={(module) => module.id}
-      getIconNode={(module) => <ModuleStatusIcon status={module.status ?? "backlog"} className="shrink-0 size-3.5" />}
+      getIconNode={(module) => <ModuleStatusIcon status={module.status ?? "backlog"} className="size-3.5 shrink-0" />}
       getValue={(module) => module.name}
       getLabel={(module) => module.name}
       isSelected={(module) => !!value?.includes(module.id)}

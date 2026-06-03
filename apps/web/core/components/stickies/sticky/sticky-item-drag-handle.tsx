@@ -20,7 +20,7 @@ export const StickyItemDragHandle = observer(function StickyItemDragHandle(props
   return (
     <div
       className={cn(
-        "hidden group-hover/sticky:flex absolute top-3 left-1/2 -translate-x-1/2 items-center justify-center rounded-sm text-placeholder cursor-grab mr-2 rotate-90",
+        "absolute top-3 left-1/2 mr-2 hidden -translate-x-1/2 rotate-90 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/sticky:flex",
         {
           "cursor-grabbing": isDragging,
         }

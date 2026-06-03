@@ -32,7 +32,7 @@ export function ViewOrderByDropdown(props: Props) {
     : getButtonStyling("secondary", "lg");
 
   const icon = (
-    <>{!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}</>
+    <>{!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}</>
   );
   return (
     <CustomMenu
@@ -43,7 +43,7 @@ export function ViewOrderByDropdown(props: Props) {
         </span>
       }
       placement="bottom-end"
-      className="w-full flex justify-center"
+      className="flex w-full justify-center"
       maxHeight="lg"
       closeOnSelect
     >

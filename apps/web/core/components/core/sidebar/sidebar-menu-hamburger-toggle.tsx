@@ -21,7 +21,7 @@ export const SidebarHamburgerToggle = observer(function SidebarHamburgerToggle()
   return (
     <button
       type="button"
-      className="group flex-shrink-0 size-7 grid place-items-center rounded-sm hover:bg-layer-1 transition-all bg-surface-2"
+      className="group grid size-7 flex-shrink-0 place-items-center rounded-sm bg-surface-2 transition-all hover:bg-layer-1"
       onClick={handleClick}
     >
       <PanelRight className="size-3.5 text-secondary transition-all group-hover:text-primary" />

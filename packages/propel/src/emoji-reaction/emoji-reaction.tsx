@@ -68,7 +68,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
 
     return (
       <div className="text-11">
-        <div className="font-medium mb-1">{stringToEmoji(emoji)}</div>
+        <div className="mb-1 font-medium">{stringToEmoji(emoji)}</div>
         <div>
           {displayUsers.join(", ")}
           {remainingCount > 0 && ` and ${remainingCount} more`}
@@ -82,15 +82,15 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "inline-flex items-center rounded-full border px-1.5 text-11 gap-0.5 transition-all duration-200",
+        "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-11 transition-all duration-200",
         reacted
-          ? "bg-accent-primary/10 border-accent-strong text-accent-primary"
-          : "bg-surface-1 border-subtle text-tertiary hover:border-strong hover:bg-surface-2",
+          ? "border-accent-strong bg-accent-primary/10 text-accent-primary"
+          : "border-subtle bg-surface-1 text-tertiary hover:border-strong hover:bg-surface-2",
         className
       )}
       {...props}
     >
-      <span className="text-14 leading-unset">{emoji}</span>
+      <span className="leading-unset text-14">{emoji}</span>
       {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-11 leading-normal" />}
     </button>
   );

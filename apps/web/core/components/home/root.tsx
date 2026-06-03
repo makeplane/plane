@@ -48,14 +48,14 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   return (
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-backdrop transition-opacity overflow-y-auto">
+        <div className="fixed top-0 left-0 z-20 grid h-full w-full place-items-center overflow-y-auto bg-backdrop transition-opacity">
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
       <>
         <HomePeekOverviewsRoot />
-        <ContentWrapper className="gap-6 bg-surface-1 mx-auto scrollbar-hide px-page-x">
-          <div className="max-w-[800px] mx-auto w-full">
+        <ContentWrapper className="mx-auto scrollbar-hide gap-6 bg-surface-1 px-page-x">
+          <div className="mx-auto w-full max-w-[800px]">
             {currentUser && <UserGreetingsView user={currentUser} />}
             <DashboardWidgets />
           </div>

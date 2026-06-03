@@ -35,7 +35,7 @@ const HomePage = observer(function HomePage() {
 
   if (isInitializing)
     return (
-      <div className="bg-surface-1 flex h-screen min-h-[500px] w-full justify-center items-center">
+      <div className="flex h-screen min-h-[500px] w-full items-center justify-center bg-surface-1">
         <LogoSpinner />
       </div>
     );
@@ -43,7 +43,7 @@ const HomePage = observer(function HomePage() {
   if (currentUser && isAuthenticated) {
     if (nextPath && isValidNextPath(nextPath)) {
       return (
-        <div className="bg-surface-1 flex h-screen min-h-[500px] w-full justify-center items-center">
+        <div className="flex h-screen min-h-[500px] w-full items-center justify-center bg-surface-1">
           <LogoSpinner />
         </div>
       );

@@ -21,10 +21,10 @@ export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <button
-      className="size-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-layer-1-hover cursor-pointer group md:hidden"
+      className="group flex size-7 cursor-pointer items-center justify-center rounded-sm bg-layer-1 transition-all hover:bg-layer-1-hover md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
-      <Menu size={14} className="text-secondary group-hover:text-primary transition-all" />
+      <Menu size={14} className="text-secondary transition-all group-hover:text-primary" />
     </button>
   );
 });

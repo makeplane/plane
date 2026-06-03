@@ -44,8 +44,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_unread"),
       isActive: filters?.read,
-      prependIcon: <CheckCircle className="flex-shrink-0 h-3 w-3" />,
-      appendIcon: filters?.read ? <CheckIcon className="w-3 h-3" /> : undefined,
+      prependIcon: <CheckCircle className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.read ? <CheckIcon className="h-3 w-3" /> : undefined,
       onClick: () => handleFilterChange("read", !filters?.read),
     },
     {
@@ -53,8 +53,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_archived"),
       isActive: filters?.archived,
-      prependIcon: <ArchiveIcon className="flex-shrink-0 h-3 w-3" />,
-      appendIcon: filters?.archived ? <CheckIcon className="w-3 h-3" /> : undefined,
+      prependIcon: <ArchiveIcon className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.archived ? <CheckIcon className="h-3 w-3" /> : undefined,
       onClick: () =>
         handleBulkFilterChange({
           archived: !filters?.archived,
@@ -66,8 +66,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_snoozed"),
       isActive: filters?.snoozed,
-      prependIcon: <Clock className="flex-shrink-0 h-3 w-3" />,
-      appendIcon: filters?.snoozed ? <CheckIcon className="w-3 h-3" /> : undefined,
+      prependIcon: <Clock className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.snoozed ? <CheckIcon className="h-3 w-3" /> : undefined,
       onClick: () =>
         handleBulkFilterChange({
           snoozed: !filters?.snoozed,

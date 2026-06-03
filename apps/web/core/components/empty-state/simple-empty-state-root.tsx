@@ -38,7 +38,7 @@ export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props)
   const { title, description, size = "sm", assetPath } = props;
 
   return (
-    <div className="text-center flex flex-col gap-2.5 items-center">
+    <div className="flex flex-col items-center gap-2.5 text-center">
       {assetPath && (
         <div className={sizeConfig[size].container}>
           <img src={assetPath} alt={title} className="h-full w-full object-contain" />
@@ -47,7 +47,7 @@ export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props)
 
       <h3 className={getTitleClassName(!!description)}>{title}</h3>
 
-      {description && <p className="text-14 font-medium text-placeholder whitespace-pre-line">{description}</p>}
+      {description && <p className="text-14 font-medium whitespace-pre-line text-placeholder">{description}</p>}
     </div>
   );
 });

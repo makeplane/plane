@@ -24,6 +24,7 @@ export default {
     favorites: "Favorites",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Stickies",
   },
 
   auth: {

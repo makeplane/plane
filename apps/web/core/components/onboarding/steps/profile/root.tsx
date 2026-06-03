@@ -168,7 +168,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       />
       <div className="flex items-center gap-4">
         <button
-          className="size-12 rounded-full bg-accent-primary flex items-center justify-center text-on-color font-semibold text-18"
+          className="flex size-12 items-center justify-center rounded-full bg-accent-primary text-18 font-semibold text-on-color"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -177,7 +177,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
               src={getFileURL(userAvatar ?? "")}
               onClick={() => setIsImageUploadModalOpen(true)}
               alt={user?.display_name}
-              className="w-full h-full rounded-full object-cover"
+              className="h-full w-full rounded-full object-cover"
             />
           ) : (
             <>{watch("first_name")[0] ?? "R"}</>
@@ -185,7 +185,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-13 px-2 py-1"
+          className="flex items-center gap-1.5 px-2 py-1 text-13 text-tertiary hover:text-secondary"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -194,11 +194,11 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         </button>
       </div>
 
-      <div className="flex flex-col gap-6 w-full">
+      <div className="flex w-full flex-col gap-6">
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="block text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="first_name"
           >
             Name
@@ -224,7 +224,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 className={cn(
-                  "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
+                  "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
                   {
                     "border-strong": !errors.first_name,
                     "border-danger-strong": errors.first_name,

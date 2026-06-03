@@ -184,7 +184,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem className="items-center">
-          <div className="hidden items-center gap-2 md:flex ">
+          <div className="hidden items-center gap-2 md:flex">
             <div className="hidden @4xl:flex">
               <LayoutSelection
                 layouts={[
@@ -259,7 +259,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               icon={PanelRight}
               onClick={toggleSidebar}
               className={cn({
-                "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+                "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
               })}
             />
             <CycleQuickActions

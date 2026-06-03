@@ -80,14 +80,14 @@ export const StickyNote = observer(function StickyNote(props: TProps) {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("w-full h-fit flex flex-col rounded-sm group/sticky overflow-y-scroll", className)}
+        className={cn("group/sticky flex h-fit w-full flex-col overflow-y-scroll rounded-sm", className)}
         style={{
           backgroundColor,
         }}
       >
         {/* {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "} */}
         {onClose && (
-          <button type="button" className="flex-shrink-0 flex justify-end p-2.5" onClick={onClose}>
+          <button type="button" className="flex flex-shrink-0 justify-end p-2.5" onClick={onClose}>
             <Minimize2 className="size-4" />
           </button>
         )}

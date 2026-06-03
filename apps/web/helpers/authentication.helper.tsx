@@ -177,7 +177,7 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
@@ -213,7 +213,7 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
@@ -359,7 +359,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -371,7 +371,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.

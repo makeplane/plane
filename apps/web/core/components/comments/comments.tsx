@@ -56,9 +56,9 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
+    <div className="relative flex h-full flex-col gap-y-2 overflow-hidden">
       {renderCommentCreate}
-      <div className="flex-grow py-4 overflow-y-auto">
+      <div className="flex-grow overflow-y-auto py-4">
         {comments?.map((data, index) => {
           let comment;
           if (typeof data === "string") {

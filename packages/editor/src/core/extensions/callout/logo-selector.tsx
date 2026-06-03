@@ -42,8 +42,8 @@ export function CalloutBlockLogoSelector(props: Props) {
         closeOnSelect={true}
         isOpen={isOpen}
         handleToggle={handleOpen}
-        className="flex-shrink-0 grid place-items-center"
-        buttonClassName={cn("flex-shrink-0 size-8 grid place-items-center rounded-lg text-primary", {
+        className="grid flex-shrink-0 place-items-center"
+        buttonClassName={cn("grid size-8 flex-shrink-0 place-items-center rounded-lg text-primary", {
           "hover:bg-layer-1-hover": !disabled,
         })}
         label={<Logo logo={logoValue} size={18} type="lucide" />}

@@ -110,7 +110,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
       <div
         className={cn(
           "transition-opacity duration-200",
-          showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
+          showContentSkeleton && !isLoading && "pointer-events-none opacity-0"
         )}
       >
         <PageRenderer

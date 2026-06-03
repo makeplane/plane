@@ -223,18 +223,18 @@ export function RowDragHandle(props: RowDragHandleProps) {
 
   return (
     <>
-      <div className="table-row-handle-container absolute z-20 top-0 left-0 flex justify-center items-center h-full -translate-x-1/2">
+      <div className="table-row-handle-container absolute top-0 left-0 z-20 flex h-full -translate-x-1/2 items-center justify-center">
         <button
           ref={refs.setReference}
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn("py-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200", {
-            "!opacity-100 bg-accent-primary border-accent-strong": isDropdownOpen,
+          className={cn("rounded-sm border border-strong-1 bg-layer-1 py-1 transition-all duration-200 outline-none", {
+            "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
             "hover:bg-layer-1-hover": !isDropdownOpen,
           })}
         >
-          <Ellipsis className="size-4 text-primary rotate-90" />
+          <Ellipsis className="size-4 rotate-90 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (

@@ -83,7 +83,7 @@ export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
           horizontalOffset={100}
           verticalOffset={200}
           classNames="flex h-full w-full items-center"
-          placeholderChildren={<div className="h-8 w-full bg-layer-1 rounded-sm" />}
+          placeholderChildren={<div className="h-8 w-full rounded-sm bg-layer-1" />}
           shouldRecordHeights={false}
           forceRender={isCurrentDependencyDragging}
         >

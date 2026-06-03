@@ -36,15 +36,15 @@ export function RecentProject(props: BlockProps) {
       itemLink={projectLink}
       title={projectDetails?.name}
       prependTitleElement={
-        <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
             <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
-          <div className="font-medium text-placeholder text-13 whitespace-nowrap">{projectDetails?.identifier}</div>
+          <div className="text-13 font-medium whitespace-nowrap text-placeholder">{projectDetails?.identifier}</div>
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
+        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -73,7 +73,7 @@ export function RecentProject(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="my-auto !px-2 border-none py-3"
+      className="my-auto border-none !px-2 py-3"
       itemClassName="my-auto"
       onItemClick={(e) => {
         e.preventDefault();

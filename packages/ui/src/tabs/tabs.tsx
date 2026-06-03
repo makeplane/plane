@@ -69,9 +69,9 @@ export function Tabs(props: TTabsProps) {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex h-full w-full flex-col">
       <Tab.Group defaultIndex={currentTabIndex(selectedTab)}>
-        <div className={cn("flex flex-col w-full h-full gap-2", containerClassName)}>
+        <div className={cn("flex h-full w-full flex-col gap-2", containerClassName)}>
           <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
             <TabList
               tabs={tabs}

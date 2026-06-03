@@ -23,7 +23,7 @@ const meta: Meta<typeof Sortable<StoryItem>> = {
     ],
     render: (item: StoryItem) => (
       // <Draggable data={item} className="rounded-lg">
-      <div className="border ">{item.name}</div>
+      <div className="border">{item.name}</div>
       // </Draggable>
     ),
     onChange: (data) => console.log(data.map(({ id }) => id)),

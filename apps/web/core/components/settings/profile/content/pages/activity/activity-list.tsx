@@ -84,7 +84,7 @@ export const ActivityProfileSettingsList = observer(function ProfileActivityList
                         </div>
                       )}
 
-                      <span className="flex h-6 w-6 p-2 items-center justify-center rounded-full bg-layer-3 text-secondary">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-layer-3 p-2 text-secondary">
                         <MessageSquare className="!text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
@@ -126,9 +126,9 @@ export const ActivityProfileSettingsList = observer(function ProfileActivityList
                     <div className="relative flex items-start space-x-2">
                       <>
                         <div>
-                          <div className="relative px-1.5 mt-4">
+                          <div className="relative mt-4 px-1.5">
                             <div className="mt-1.5">
-                              <div className="flex h-6 w-6 items-center justify-center border border-subtle rounded-lg shadow-raised-100">
+                              <div className="flex h-6 w-6 items-center justify-center rounded-lg border border-subtle shadow-raised-100">
                                 {activityItem.field ? (
                                   activityItem.new_value === "restore" ? (
                                     <History className="h-5 w-5 text-secondary" />
@@ -154,7 +154,7 @@ export const ActivityProfileSettingsList = observer(function ProfileActivityList
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-subtle py-4">
-                          <div className="break-words text-caption-md-regular text-secondary">
+                          <div className="text-caption-md-regular break-words text-secondary">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (

@@ -48,7 +48,7 @@ const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
 
   if (!shouldRender) {
     return (
-      <div ref={dropDownButtonRef} className="h-full flex items-center">
+      <div ref={dropDownButtonRef} className="flex h-full items-center">
         {button}
       </div>
     );

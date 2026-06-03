@@ -29,7 +29,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col gap-2.5 overflow-y-scroll vertical-scrollbar scrollbar-sm px-4 py-4">
+    <div className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-2.5 overflow-y-scroll px-4 py-4">
       {sidebarMenu.map((item, index) => {
         const isActive = item.href === pathName || pathName?.includes(item.href);
         return (
@@ -38,9 +38,9 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
               <Tooltip tooltipContent={item.name} position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <div
                   className={cn(
-                    "group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none transition-colors",
+                    "group flex w-full items-center gap-3 rounded-md px-3 py-2 transition-colors outline-none",
                     {
-                      "text-primary !bg-layer-transparent-active": isActive,
+                      "!bg-layer-transparent-active text-primary": isActive,
                       "text-secondary hover:bg-layer-transparent-hover active:bg-layer-transparent-active": !isActive,
                     },
                     isSidebarCollapsed ? "justify-center" : "w-[260px]"
@@ -48,7 +48,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                 >
                   {<item.Icon className="h-4 w-4 flex-shrink-0" />}
                   {!isSidebarCollapsed && (
-                    <div className="w-full ">
+                    <div className="w-full">
                       <div className={cn(`text-body-xs-medium transition-colors`)}>{item.name}</div>
                       <div className={cn(`text-caption-sm-regular transition-colors`)}>{item.description}</div>
                     </div>

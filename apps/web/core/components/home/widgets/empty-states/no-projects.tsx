@@ -96,17 +96,17 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-on-color">
+            <span className="relative flex size-4 items-center justify-center rounded-full p-4 text-on-color capitalize">
               <img
                 src={getFileURL(currentUser?.avatar_url)}
-                className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
                 alt={currentUser?.display_name || currentUser?.email}
               />
             </span>
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 capitalize text-on-color text-13">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 text-13 text-on-color capitalize">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -136,10 +136,10 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="text-14 font-semibold text-tertiary">{t("home.empty.quickstart_guide")}</div>
         <button
-          className="text-tertiary font-medium text-13 flex items-center gap-1"
+          className="flex items-center gap-1 text-13 font-medium text-tertiary"
           onClick={() => {
             if (!storedValue) return;
             setValue({ ...storedValue, hide: true });
@@ -149,22 +149,22 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           {t("home.empty.not_right_now")}
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
-            <div key={item.id} className="flex flex-col p-4 bg-layer-2 rounded-xl border border-subtle">
+            <div key={item.id} className="flex flex-col rounded-xl border border-subtle bg-layer-2 p-4">
               <div
-                className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
-                  "text-accent-primary bg-accent-primary/10": !isStateComplete,
+                className={cn("mb-3 grid size-9 place-items-center rounded-full bg-surface-2 text-placeholder", {
+                  "bg-accent-primary/10 text-accent-primary": !isStateComplete,
                 })}
               >
-                <span className="text-24 my-auto">{item.icon}</span>
+                <span className="my-auto text-24">{item.icon}</span>
               </div>
-              <h3 className="text-13 font-medium text-primary mb-2">{t(item.title)}</h3>
-              <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
+              <h3 className="mb-2 text-13 font-medium text-primary">{t(item.title)}</h3>
+              <p className="mb-2 text-11 text-tertiary">{t(item.description)}</p>
               {isStateComplete ? (
-                <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
+                <div className="flex w-fit items-center gap-2 rounded-full bg-[#17a34a] p-1">
                   <CheckIcon className="size-3 text-accent-primary text-on-color" />
                 </div>
               ) : (
@@ -183,14 +183,14 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                         [item.flag]: true,
                       });
                     }}
-                    className={cn("text-accent-primary hover:text-accent-secondary text-13 font-medium", {})}
+                    className={cn("text-13 font-medium text-accent-primary hover:text-accent-secondary", {})}
                   >
                     {t(item.cta.text)}
                   </Link>
                 ) : (
                   <button
                     type="button"
-                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium text-left"
+                    className="text-left text-13 font-medium text-accent-primary hover:text-accent-secondary"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

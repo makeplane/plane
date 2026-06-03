@@ -52,13 +52,13 @@ const createShowcaseStory = (
   sections: Array<{ label: string; props: Partial<React.ComponentProps<typeof Input>> }>
 ): Story => ({
   render: () => (
-    <div className="space-y-4 w-[400px]">
+    <div className="w-[400px] space-y-4">
       <div className="space-y-2">
         <h3 className="text-13 font-medium">{title}</h3>
         <div className="space-y-2">
           {sections.map(({ label, props }, index) => (
             <div key={index} className="w-full">
-              <label className="text-11 text-gray-500">{label}</label>
+              <label className="text-gray-500 text-11">{label}</label>
               <Input className="w-full" {...props} />
             </div>
           ))}

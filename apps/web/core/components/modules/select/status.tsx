@@ -38,7 +38,7 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
             value={value}
             label={
               <div
-                className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-danger-primary" : ""}`}
+                className={`flex items-center justify-center gap-2 py-0.5 text-11 ${error ? "text-danger-primary" : ""}`}
               >
                 {value ? (
                   <ModuleStatusIcon status={value} />

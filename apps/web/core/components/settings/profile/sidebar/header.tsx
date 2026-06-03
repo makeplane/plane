@@ -16,7 +16,7 @@ export const ProfileSettingsSidebarHeader = observer(function ProfileSettingsSid
   const { data: currentUser } = useUser();
 
   return (
-    <div className="shrink-0 flex items-center gap-2">
+    <div className="flex shrink-0 items-center gap-2">
       <div className="shrink-0">
         <Avatar
           src={getFileURL(currentUser?.avatar_url ?? "")}
@@ -27,10 +27,10 @@ export const ProfileSettingsSidebarHeader = observer(function ProfileSettingsSid
         />
       </div>
       <div className="truncate">
-        <p className="text-body-sm-medium truncate">
+        <p className="truncate text-body-sm-medium">
           {currentUser?.first_name} {currentUser?.last_name}
         </p>
-        <p className="text-caption-md-regular truncate">{currentUser?.email}</p>
+        <p className="truncate text-caption-md-regular">{currentUser?.email}</p>
       </div>
     </div>
   );

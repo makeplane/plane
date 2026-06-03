@@ -98,7 +98,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   return (
     <div>
       <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
-      <div className={`w-full space-y-3 mt-3 ${disabled ? "opacity-60" : ""}`}>
+      <div className={`mt-3 w-full space-y-3 ${disabled ? "opacity-60" : ""}`}>
         <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
@@ -119,7 +119,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             projectId={projectId}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            className="w-full grow group"
+            className="group w-full grow"
             buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
             dropdownArrow
@@ -128,7 +128,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
-          <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "rounded border border-red-500")}>
+          <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "border-red-500 rounded border")}>
             <MemberDropdown
               value={issue?.assignee_ids ?? undefined}
               onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
@@ -137,7 +137,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               placeholder={t("issue.add.assignee")}
               multiple
               buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-              className="w-full grow group"
+              className="group w-full grow"
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
               hideIcon={issue.assignee_ids?.length === 0}
@@ -153,7 +153,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            className="w-full h-7.5 grow rounded-sm"
+            className="h-7.5 w-full grow rounded-sm"
             buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority ? "text-placeholder" : ""}`}
           />
@@ -169,7 +169,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         />
 
         <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
-          <div className={cn("w-full", fieldErrors.includes("frequency") && "rounded border border-red-500")}>
+          <div className={cn("w-full", fieldErrors.includes("frequency") && "border-red-500 rounded border")}>
             <FrequencyDropdown
               value={issue?.frequency}
               onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
@@ -194,14 +194,14 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               showTooltip
               userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
             />
-            <span className="grow truncate text-body-xs-medium text-secondary leading-5">
+            <span className="grow truncate text-body-xs-medium leading-5 text-secondary">
               {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
             </span>
           </SidebarPropertyListItem>
         )}
 
         <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
-          <div className={cn("w-full", fieldErrors.includes("start_date") && "rounded border border-red-500")}>
+          <div className={cn("w-full", fieldErrors.includes("start_date") && "border-red-500 rounded border")}>
             <DateDropdown
               value={issue.start_date}
               onChange={(val) =>
@@ -213,7 +213,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               buttonVariant="transparent-with-text"
               maxDate={maxDate ?? undefined}
               disabled={disabled}
-              className="w-full grow group"
+              className="group w-full grow"
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
               hideIcon
@@ -248,7 +248,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               projectId={projectId}
               disabled={disabled}
               buttonVariant="transparent-with-text"
-              className="w-full grow group"
+              className="group w-full grow"
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
               placeholder="None"
@@ -261,7 +261,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {projectDetails?.module_view && (
           <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
-            <div className={cn("w-full", fieldErrors.includes("module_ids") && "rounded border border-red-500")}>
+            <div className={cn("w-full", fieldErrors.includes("module_ids") && "border-red-500 rounded border")}>
               <IssueModuleSelect
                 className="w-full grow"
                 workspaceSlug={workspaceSlug}
@@ -281,7 +281,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             appendElement={<TransferHopInfo workItem={issue} />}
           >
             <IssueCycleSelect
-              className="w-full grow h-7.5"
+              className="h-7.5 w-full grow"
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueId={issueId}
@@ -293,7 +293,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
           <IssueParentSelectRoot
-            className="w-full h-7.5 grow"
+            className="h-7.5 w-full grow"
             disabled={disabled}
             issueId={issueId}
             issueOperations={issueOperations}

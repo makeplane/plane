@@ -34,7 +34,7 @@ export function ModuleLayoutIcon(props: ILayoutIcon) {
     <>
       {withContainer ? (
         <div
-          className={cn("flex items-center justify-center border rounded-sm p-0.5 flex-shrink-0", containerClassName)}
+          className={cn("flex flex-shrink-0 items-center justify-center rounded-sm border p-0.5", containerClassName)}
         >
           <Icon width={size} height={size} className={cn(className)} />
         </div>

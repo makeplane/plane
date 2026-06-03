@@ -40,8 +40,8 @@ export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleT
   // indicator element
   const indicatorElement = useMemo(
     () => (
-      <span className="flex items-center justify-center ">
-        <p className="text-14 text-tertiary !leading-3">{relationsCount}</p>
+      <span className="flex items-center justify-center">
+        <p className="text-14 !leading-3 text-tertiary">{relationsCount}</p>
       </span>
     ),
     [relationsCount]

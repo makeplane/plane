@@ -3,29 +3,33 @@
 # See the LICENSE file for details.
 
 # Python imports
+import logging
 import os
 import uuid
-import requests
 from io import BytesIO
+
+import requests
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 # Django imports
 from django.utils import timezone
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-from django.conf import settings
 
 # Third party imports
 from zxcvbn import zxcvbn
 
-# Module imports
-from plane.db.models import Profile, User, WorkspaceMemberInvite, FileAsset
-from plane.license.utils.instance_value import get_configuration_value
-from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
+
+# Module imports
+from plane.db.models import FileAsset, Profile, User, WorkspaceMemberInvite
+from plane.license.utils.instance_value import get_configuration_value
+from plane.settings.storage import S3Storage
+from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
-from plane.utils.exception_logger import log_exception
-from plane.settings.storage import S3Storage
+
+from .error import AUTHENTICATION_ERROR_CODES, AuthenticationException
 
 
 class Adapter:
@@ -37,6 +41,7 @@ class Adapter:
         self.callback = callback
         self.token_data = None
         self.user_data = None
+        self.logger = logging.getLogger("plane.authentication")
 
     def get_user_token(self, data, headers=None):
         raise NotImplementedError
@@ -59,6 +64,7 @@ class Adapter:
     def sanitize_email(self, email):
         # Check if email is present
         if not email:
+            self.logger.error("Email is not present")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
@@ -72,6 +78,7 @@ class Adapter:
         try:
             validate_email(email)
         except ValidationError:
+            self.logger.warning(f"Email is not valid: {email}")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
@@ -84,6 +91,7 @@ class Adapter:
         """Validate password strength"""
         results = zxcvbn(self.code)
         if results["score"] < 3:
+            self.logger.warning("Password is not strong enough")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
                 error_message="PASSWORD_TOO_WEAK",
@@ -101,6 +109,7 @@ class Adapter:
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
+            self.logger.warning("Sign up is disabled and invite is not present")
             # Raise exception
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],

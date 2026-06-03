@@ -23,22 +23,27 @@ declare module "@tiptap/core" {
   }
 }
 
-function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
-  // Find all ranges where we might want to join.
+function collectRanges(transactions: readonly Transaction[]): Array<number> {
   const ranges: Array<number> = [];
-  for (let i = 0; i < tr.mapping.maps.length; i++) {
-    const map = tr.mapping.maps[i];
-    for (let j = 0; j < ranges.length; j++) ranges[j] = map.map(ranges[j]);
-    map.forEach((_s, _e, from, to) => ranges.push(from, to));
+  for (const tr of transactions) {
+    for (let i = 0; i < tr.mapping.maps.length; i++) {
+      const map = tr.mapping.maps[i];
+      map.forEach((_s, _e, from, to) => ranges.push(from, to));
+    }
   }
+  return ranges;
+}
 
+function autoJoin(ranges: Array<number>, newTr: Transaction, nodeTypes: NodeType[]) {
+  const doc = newTr.doc;
   // Figure out which joinable points exist inside those ranges,
   // by checking all node boundaries in their parent nodes.
   const joinable: number[] = [];
   for (let i = 0; i < ranges.length; i += 2) {
     const from = ranges[i],
       to = ranges[i + 1];
-    const $from = tr.doc.resolve(from),
+    if (from >= doc.content.size) continue;
+    const $from = doc.resolve(from),
       depth = $from.sharedDepth(to),
       parent = $from.node(depth);
     for (let index = $from.indexAfter(depth), pos = $from.after(depth + 1); pos <= to; ++index) {
@@ -54,10 +59,10 @@ function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
 
   let joined = false;
 
-  // Join the joinable points
+  // Join the joinable points (reverse order to keep positions stable)
   joinable.sort((a, b) => a - b);
   for (let i = joinable.length - 1; i >= 0; i--) {
-    if (canJoin(tr.doc, joinable[i])) {
+    if (canJoin(doc, joinable[i])) {
       newTr.join(joinable[i]);
       joined = true;
     }
@@ -91,7 +96,6 @@ export const CustomKeymap = Extension.create({
       new Plugin({
         key: new PluginKey("ordered-list-merging"),
         appendTransaction(transactions, oldState, newState) {
-          // Create a new transaction.
           const newTr = newState.tr;
 
           const joinableNodes = [
@@ -100,12 +104,8 @@ export const CustomKeymap = Extension.create({
             newState.schema.nodes[CORE_EXTENSIONS.BULLET_LIST],
           ];
 
-          let joined = false;
-          for (const transaction of transactions) {
-            const anotherJoin = autoJoin(transaction, newTr, joinableNodes);
-            joined = anotherJoin || joined;
-          }
-          if (joined) {
+          const ranges = collectRanges(transactions);
+          if (ranges.length && autoJoin(ranges, newTr, joinableNodes)) {
             return newTr;
           }
         },

@@ -36,7 +36,7 @@ export function FormField({ label, htmlFor, children, className, optional = fals
     <div className={cn("flex flex-col gap-1.5", className)}>
       <Label htmlFor={htmlFor}>
         {label}
-        {optional && <span className="text-placeholder text-13"> (optional)</span>}
+        {optional && <span className="text-13 text-placeholder"> (optional)</span>}
       </Label>
       {children}
     </div>

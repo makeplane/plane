@@ -243,14 +243,14 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                       key={option.value}
                       option={option}
                       selectedValue={value}
-                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5"
+                      className="flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none"
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
               )}
             </div>
           </div>

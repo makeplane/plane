@@ -93,7 +93,7 @@ export function SendTestEmailModal(props: Props) {
             )}
             {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13 text-danger-primary">{error}</div>}
           </div>
-          <div className="mt-6 flex items-center gap-2 justify-end">
+          <div className="mt-6 flex items-center justify-end gap-2">
             <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={0}>
               {sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}
             </Button>

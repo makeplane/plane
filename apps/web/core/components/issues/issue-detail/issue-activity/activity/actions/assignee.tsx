@@ -36,7 +36,7 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
           href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center font-medium text-primary hover:underline capitalize"
+          className="inline-flex items-center font-medium text-primary capitalize hover:underline"
         >
           {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
         </a>

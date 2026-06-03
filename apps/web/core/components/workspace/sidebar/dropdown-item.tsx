@@ -50,17 +50,17 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           "hover:bg-layer-transparent-hover": workspace.id !== activeWorkspace?.id,
         })}
       >
-        <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
-          <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
+        <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary">
+          <div className="relative flex w-[80%] items-center justify-start gap-2.5">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center border-subtle p-2 text-14 font-medium uppercase ${
                 !workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
               }`}
             >
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
                   src={getFileURL(workspace.logo_url)}
-                  className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
+                  className="absolute top-0 left-0 h-full w-full rounded-sm object-cover"
                   alt={t("workspace_logo")}
                 />
               ) : (
@@ -69,13 +69,13 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             </span>
             <div className="w-[inherit]">
               <div
-                className={`truncate text-left text-ellipsis text-13 font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
+                className={`truncate text-left text-13 font-medium text-ellipsis ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
               >
                 {workspace.name}
               </div>
-              <div className="text-13 text-tertiary flex gap-2 capitalize w-fit">
+              <div className="flex w-fit gap-2 text-13 text-tertiary capitalize">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
-                <div className="w-1 h-1 bg-layer-1/50 rounded-full m-auto" />
+                <div className="m-auto h-1 w-1 rounded-full bg-layer-1/50" />
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
             </div>
@@ -98,10 +98,10 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                     e.stopPropagation();
                     handleClose();
                   }}
-                  className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
+                  className="flex gap-1.5 rounded-md border border-strong bg-layer-2 px-2.5 py-1.5 text-secondary transition-colors hover:border-strong hover:text-secondary hover:shadow-raised-100"
                 >
-                  <Settings className="h-4 w-4 my-auto flex-shrink-0" />
-                  <span className="text-13 font-medium my-auto whitespace-nowrap">{t("settings")}</span>
+                  <Settings className="my-auto h-4 w-4 flex-shrink-0" />
+                  <span className="my-auto text-13 font-medium whitespace-nowrap">{t("settings")}</span>
                 </Link>
               )}
               {[EUserPermissions.ADMIN].includes(workspace?.role) && (
@@ -111,10 +111,10 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                     e.stopPropagation();
                     handleClose();
                   }}
-                  className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
+                  className="flex gap-1.5 rounded-md border border-strong bg-layer-2 px-2.5 py-1.5 text-secondary transition-colors hover:border-strong hover:text-secondary hover:shadow-raised-100"
                 >
-                  <UserPlus className="h-4 w-4 my-auto flex-shrink-0" />
-                  <span className="text-13 font-medium my-auto whitespace-nowrap">
+                  <UserPlus className="my-auto h-4 w-4 flex-shrink-0" />
+                  <span className="my-auto text-13 font-medium whitespace-nowrap">
                     {t("project_settings.members.invite_members.title")}
                   </span>
                 </Link>

@@ -25,7 +25,6 @@ export * from "./create-icon";
 export * from "./cycle";
 export * from "./default-icon";
 export * from "./dice-icon";
-export * from "./discord-icon";
 export * from "./display-properties";
 export * from "./done-icon";
 export * from "./dropdown-icon";

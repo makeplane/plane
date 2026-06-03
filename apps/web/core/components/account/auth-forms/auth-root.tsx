@@ -170,8 +170,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
 function AuthContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col justify-center items-center flex-grow w-full h-full">
-      <div className="relative flex flex-col gap-6 w-full">{children}</div>
+    <div className="flex h-full w-full flex-grow flex-col items-center justify-center">
+      <div className="relative flex w-full flex-col gap-6">{children}</div>
     </div>
   );
 }

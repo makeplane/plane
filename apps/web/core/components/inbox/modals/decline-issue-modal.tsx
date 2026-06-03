@@ -51,7 +51,7 @@ export function DeclineIssueModal(props: Props) {
       content={
         <>
           Are you sure you want to decline work item{" "}
-          <span className="break-words font-medium text-primary">
+          <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? This action cannot be undone.

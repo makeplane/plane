@@ -129,7 +129,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     <Combobox.Options data-prevent-outside-click static>
       <div
         className={cn(
-          "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none z-30",
+          "z-30 my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
           optionsClassName
         )}
         ref={setPopperElement}
@@ -162,7 +162,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                       value={option.value}
                       className={({ active, selected }) =>
                         cn(
-                          "flex w-full select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
+                          "flex w-full items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                           active && "bg-layer-transparent-hover",
                           selected ? "text-primary" : "text-secondary",
                           isUserSuspended(option.value, workspaceSlug?.toString())
@@ -187,10 +187,10 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                   )
               )
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
           )}
         </div>
       </div>

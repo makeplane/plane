@@ -192,7 +192,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
       >
         {mergeDates ? (
           // Merged date display
-          <div className="flex items-center gap-1.5 w-full">
+          <div className="flex w-full items-center gap-1.5">
             {!hideIcon.from && <CalendarDays className="h-3 w-3 flex-shrink-0" />}
             {dateRange.from || dateRange.to ? (
               <MergedDateDisplay
@@ -227,7 +227,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
           <>
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
+                "flex h-full flex-grow items-center justify-center gap-1 rounded-xs",
                 buttonFromDateClassName
               )}
             >
@@ -237,7 +237,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
             <ArrowRight className="h-3 w-3 flex-shrink-0" />
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
+                "flex h-full flex-grow items-center justify-center gap-1 rounded-xs",
                 buttonToDateClassName
               )}
             >
@@ -246,7 +246,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
             </span>
             {isClearable && !disabled && hasDisplayedDates && (
               <CloseIcon
-                className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer ml-1", clearIconClassName)}
+                className={cn("ml-1 h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -263,7 +263,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const comboOptions = (
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 bg-surface-1 border-[0.5px] border-subtle-1 rounded-md overflow-hidden z-30"
+        className="z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}

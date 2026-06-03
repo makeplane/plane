@@ -63,11 +63,11 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-subtle rounded-sm relative flex items-center px-1 gap-2 text-14 my-1">
-          <div className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer">
+        <div className="relative my-1 flex items-center gap-2 rounded-sm border border-subtle px-1 text-14">
+          <div className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1">
             <GripVertical size={14} className="text-secondary" />
           </div>
-          <div ref={EstimatePointValueRef} className="py-2 w-full text-13">
+          <div ref={EstimatePointValueRef} className="w-full py-2 text-13">
             {estimatePoint?.value ? (
               `${estimateType === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value)) : estimatePoint?.value}`
             ) : (
@@ -75,14 +75,14 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
             )}
           </div>
           <div
-            className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
+            className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
             onClick={() => setEstimatePointEditToggle(true)}
           >
             <EditIcon width={14} height={14} className="text-secondary" />
           </div>
           {estimatePoints.length > estimateCount.min && (
             <div
-              className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
+              className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
               onClick={() =>
                 estimateId && estimatePointId
                   ? setEstimatePointDeleteToggle(true)

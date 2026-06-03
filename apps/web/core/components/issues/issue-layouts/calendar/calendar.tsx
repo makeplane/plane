@@ -145,7 +145,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
         <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
           <div
-            className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
+            className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
               "vertical-scrollbar scrollbar-lg": windowWidth > 768,
             })}
             ref={scrollableContainerRef}

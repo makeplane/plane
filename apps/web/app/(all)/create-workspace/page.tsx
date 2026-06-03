@@ -63,11 +63,11 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
 
   return (
     <AuthenticationWrapper>
-      <div className="flex relative size-full overflow-hidden bg-canvas rounded-lg transition-all ease-in-out duration-300">
-        <div className="size-full p-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden">
-          <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg bg-surface-1 shadow-md border border-subtle">
+      <div className="relative flex size-full overflow-hidden rounded-lg bg-canvas transition-all duration-300 ease-in-out">
+        <div className="size-full flex-grow overflow-hidden p-2 transition-all duration-300 ease-in-out">
+          <div className="shadow-md relative flex h-full w-full flex-col overflow-hidden rounded-lg border border-subtle bg-surface-1">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 flex-shrink-0 border-b border-subtle">
+            <div className="flex flex-shrink-0 items-center justify-between border-b border-subtle px-6 py-4">
               <Link href="/">
                 <PlaneLockup height={20} width={95} className="text-primary" />
               </Link>
@@ -77,28 +77,28 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
                   variant="link"
                   size="sm"
                   onClick={handleSignOut}
-                  className="!text-danger-primary hover:!text-danger-primary-hover no-underline"
+                  className="hover:!text-danger-primary-hover !text-danger-primary no-underline"
                 >
-                  <LogOut className="shrink-0 size-3.5 mr-1" />
+                  <LogOut className="mr-1 size-3.5 shrink-0" />
                   {t("sign_out")}
                 </Button>
               </div>
             </div>
 
             {/* Content */}
-            <div className="flex-grow overflow-y-auto flex items-center justify-center p-6 sm:p-10">
+            <div className="flex flex-grow items-center justify-center overflow-y-auto p-6 sm:p-10">
               {isWorkspaceCreationDisabled ? (
-                <div className="w-full max-w-sm flex flex-col items-center text-center gap-4">
+                <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
                   <img
                     src={WorkspaceCreationDisabled}
-                    className="w-64 h-auto object-contain"
+                    className="h-auto w-64 object-contain"
                     alt="Workspace creation disabled"
                   />
                   <div className="text-16 font-medium">{t("workspace_creation.errors.creation_disabled.title")}</div>
                   <p className="text-13 text-tertiary">
                     {t("workspace_creation.errors.creation_disabled.description")}
                   </p>
-                  <div className="flex gap-4 mt-2">
+                  <div className="mt-2 flex gap-4">
                     <Button variant="primary" onClick={() => router.back()}>
                       {t("common.go_back")}
                     </Button>

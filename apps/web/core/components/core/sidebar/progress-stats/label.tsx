@@ -41,12 +41,12 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
                 title={
                   <div className="flex items-center gap-2 truncate">
                     <span
-                      className="block h-3 w-3 rounded-full flex-shrink-0"
+                      className="block h-3 w-3 flex-shrink-0 rounded-full"
                       style={{
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-11 text-ellipsis truncate">{label.title ?? t("no_labels_yet")}</span>
+                    <span className="truncate text-11 text-ellipsis">{label.title ?? t("no_labels_yet")}</span>
                   </div>
                 }
                 completed={label.completed}

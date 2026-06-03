@@ -41,7 +41,7 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
     <div
       ref={groupRef}
       className={cn(
-        "relative flex flex-shrink-0 flex-col w-[350px] border-[1px] border-transparent p-2 pt-0 max-h-full overflow-y-auto bg-layer-1 rounded-md",
+        "relative flex max-h-full w-[350px] flex-shrink-0 flex-col overflow-y-auto rounded-md border-[1px] border-transparent bg-layer-1 p-2 pt-0",
         {
           "bg-layer-1": isDraggingOver,
         },
@@ -49,7 +49,7 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
       )}
     >
       {/* Group Header */}
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 px-1 py-2 cursor-pointer">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer px-1 py-2">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
@@ -93,8 +93,8 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
       )}
 
       {isDraggingOver && enableDragDrop && (
-        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-13 font-medium text-tertiary rounded-sm bg-layer-1/85 border-[1px] border-strong z-[2]">
-          <div className="p-3 my-8 flex flex-col rounded-sm items-center text-secondary">
+        <div className="absolute top-0 left-0 z-[2] flex h-full w-full items-center justify-center rounded-sm border-[1px] border-strong bg-layer-1/85 text-13 font-medium text-tertiary">
+          <div className="my-8 flex flex-col items-center rounded-sm p-3 text-secondary">
             {t("common.drop_here_to_move")}
           </div>
         </div>

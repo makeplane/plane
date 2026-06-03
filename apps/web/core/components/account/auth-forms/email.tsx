@@ -50,19 +50,19 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   return (
     <form onSubmit={(e) => void handleFormSubmit(e)} className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2">
+        <label htmlFor="email" className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]">
           {t("auth.common.email.label")}
         </label>
         <div
           className={cn(
-            `flex items-center bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]`,
+            `flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]`,
             !isFocused && Boolean(emailError?.email) ? `border-red-500` : `focus-within:border-shinhan-blue`
           )}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         >
           <svg
-            className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+            className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -82,7 +82,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className={`disable-autofill-style bg-transparent w-full text-[#111827] font-semibold placeholder-[#9ca3af] focus:outline-none text-[15px]`}
+            className={`w-full bg-transparent text-[15px] font-semibold text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none`}
             autoComplete="off"
             ref={inputRef}
           />
@@ -93,7 +93,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
                 setEmail("");
                 inputRef.current?.focus();
               }}
-              className="ml-2 size-5 grid place-items-center"
+              className="ml-2 grid size-5 place-items-center"
               aria-label={t("aria_labels.auth_forms.clear_email")}
               tabIndex={-1}
             >
@@ -102,7 +102,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
+          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
             <CircleAlert height={12} width={12} />
             {t(emailError.email)}
           </p>
@@ -113,7 +113,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         <button
           type="submit"
           disabled={isButtonDisabled}
-          className="w-full flex justify-center items-center py-[18px] text-white font-semibold text-[16px] tracking-wide rounded-md transition-all duration-200 bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd shadow-[0_8px_16px_rgba(0,112,224,0.3)] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
+          className="flex w-full items-center justify-center rounded-md bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd py-[18px] text-[16px] font-semibold tracking-wide text-white shadow-[0_8px_16px_rgba(0,112,224,0.3)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
         </button>

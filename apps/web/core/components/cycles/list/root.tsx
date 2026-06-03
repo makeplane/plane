@@ -46,7 +46,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
                 {({ open }) => (
                   <>
-                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                       <CycleListGroupHeader
                         title={t("project_cycles.upcoming_cycle.label")}
                         type="upcoming"
@@ -65,7 +65,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                     <CycleListGroupHeader
                       title={t("project_cycles.completed_cycle.label")}
                       type="completed"

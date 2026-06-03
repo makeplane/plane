@@ -89,7 +89,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
           </div>
         ) : (
           <div className="flex h-full w-full flex-col">
-            <div className="h-full w-full flex items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <EmptyStateCompact
                 assetKey="webhook"
                 title={t("settings_empty_state.webhooks.title")}

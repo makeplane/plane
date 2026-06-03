@@ -48,7 +48,7 @@ export function ProjectActionsMenu({
       customButton={
         <span
           ref={actionSectionRef}
-          className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
+          className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
@@ -85,7 +85,7 @@ export function ProjectActionsMenu({
             navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
           }}
         >
-          <div className="flex items-center justify-start gap-2 cursor-pointer">
+          <div className="flex cursor-pointer items-center justify-start gap-2">
             <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>{t("archives")}</span>
           </div>
@@ -96,7 +96,7 @@ export function ProjectActionsMenu({
           navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
         }}
       >
-        <div className="flex items-center justify-start gap-2 cursor-pointer">
+        <div className="flex cursor-pointer items-center justify-start gap-2">
           <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
           <span>{t("settings")}</span>
         </div>

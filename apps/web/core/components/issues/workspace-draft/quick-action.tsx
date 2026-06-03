@@ -53,7 +53,7 @@ export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftI
               <h5>{t(item.title || "")}</h5>
               {item.description && (
                 <p
-                  className={cn("text-tertiary whitespace-pre-line", {
+                  className={cn("whitespace-pre-line text-tertiary", {
                     "text-placeholder": item.disabled,
                   })}
                 >

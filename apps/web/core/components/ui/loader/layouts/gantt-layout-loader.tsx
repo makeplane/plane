@@ -11,55 +11,55 @@ import { getRandomLength } from "../utils";
 
 export function GanttLayoutListItemLoader() {
   return (
-    <div className="flex w-full items-center gap-4 px-6 " style={{ height: `${BLOCK_HEIGHT}px` }}>
-      <div className="px-3 h-6 w-8 bg-layer-1 rounded-sm" />
-      <div className={`px-3 h-6 w-${getRandomLength(["32", "52", "72"])} bg-layer-1 rounded-sm`} />
+    <div className="flex w-full items-center gap-4 px-6" style={{ height: `${BLOCK_HEIGHT}px` }}>
+      <div className="h-6 w-8 rounded-sm bg-layer-1 px-3" />
+      <div className={`h-6 px-3 w-${getRandomLength(["32", "52", "72"])} rounded-sm bg-layer-1`} />
     </div>
   );
 }
 
 export function GanttLayoutLoader() {
   return (
-    <div className="flex flex-col h-full overflow-x-auto animate-pulse">
-      <div className="min-h-10 w-full border-b border-subtle ">
-        <span className="h-6 w-12 bg-layer-1 rounded-sm" />
+    <div className="flex h-full animate-pulse flex-col overflow-x-auto">
+      <div className="min-h-10 w-full border-b border-subtle">
+        <span className="h-6 w-12 rounded-sm bg-layer-1" />
       </div>
       <div className="flex h-full">
         <div className="h-full w-[25.5rem] border-r border-subtle">
-          <Row className="flex items-end h-header py-2 border-b border-subtle">
-            <div className="flex items-center justify-between w-full">
-              <span className="h-5 w-14 bg-layer-1 rounded-sm" />
-              <span className="h-5 w-16 bg-layer-1 rounded-sm" />
+          <Row className="flex h-header items-end border-b border-subtle py-2">
+            <div className="flex w-full items-center justify-between">
+              <span className="h-5 w-14 rounded-sm bg-layer-1" />
+              <span className="h-5 w-16 rounded-sm bg-layer-1" />
             </div>
           </Row>
-          <Row className="flex flex-col gap-3 h-11 py-4 w-full">
+          <Row className="flex h-11 w-full flex-col gap-3 py-4">
             {range(6).map((index) => (
-              <div key={index} className="flex items-center gap-3  h-11 w-full">
-                <span className="h-6 w-6 bg-layer-1 rounded-sm" />
-                <span className={`h-6 w-${getRandomLength(["32", "52", "72"])} bg-layer-1 rounded-sm`} />
+              <div key={index} className="flex h-11 w-full items-center gap-3">
+                <span className="h-6 w-6 rounded-sm bg-layer-1" />
+                <span className={`h-6 w-${getRandomLength(["32", "52", "72"])} rounded-sm bg-layer-1`} />
               </div>
             ))}
           </Row>
         </div>
         <div className="h-full w-full border-r border-subtle">
-          <div className="flex flex-col justify-between gap-2 h-header py-1.5 px-4 border-b border-subtle">
+          <div className="flex h-header flex-col justify-between gap-2 border-b border-subtle px-4 py-1.5">
             <div className="flex items-center justify-start">
-              <span className="h-5 w-20 bg-layer-1 rounded-sm" />
+              <span className="h-5 w-20 rounded-sm bg-layer-1" />
             </div>
-            <div className="flex items-center gap-3 justify-between w-full">
+            <div className="flex w-full items-center justify-between gap-3">
               {range(15).map((index) => (
-                <span key={index} className="h-5 w-10 bg-layer-1 rounded-sm" />
+                <span key={index} className="h-5 w-10 rounded-sm bg-layer-1" />
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-3 h-11 p-4 w-full">
+          <div className="flex h-11 w-full flex-col gap-3 p-4">
             {range(6).map((index) => (
               <div
                 key={index}
-                className={`flex items-center gap-3 h-11 w-full`}
+                className={`flex h-11 w-full items-center gap-3`}
                 style={{ paddingLeft: getRandomLength(["115px", "208px", "260px"]) }}
               >
-                <span className={`h-6 w-40 w-${getRandomLength(["32", "52", "72"])} bg-layer-1 rounded-sm`} />
+                <span className={`h-6 w-40 w-${getRandomLength(["32", "52", "72"])} rounded-sm bg-layer-1`} />
               </div>
             ))}
           </div>

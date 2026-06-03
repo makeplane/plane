@@ -69,8 +69,8 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
       : user?.email;
 
   return (
-    <div className="flex flex-col gap-4 sticky top-0 z-10">
-      <div className="h-1.5 rounded-t-lg w-full bg-surface-1 overflow-hidden cursor-pointer">
+    <div className="sticky top-0 z-10 flex flex-col gap-4">
+      <div className="h-1.5 w-full cursor-pointer overflow-hidden rounded-t-lg bg-surface-1">
         <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-end">
           <div
             className="h-full bg-accent-primary transition-all duration-700 ease-out"
@@ -78,7 +78,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
           />
         </Tooltip>
       </div>
-      <div className={cn("flex items-center justify-between gap-6 w-full px-6", canGoBack && "pl-4 pr-6")}>
+      <div className={cn("flex w-full items-center justify-between gap-6 px-6", canGoBack && "pr-6 pl-4")}>
         <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>

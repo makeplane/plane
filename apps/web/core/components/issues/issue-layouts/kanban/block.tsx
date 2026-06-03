@@ -78,7 +78,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+      className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
@@ -125,13 +125,13 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-body-sm-medium text-primary">
+        <div className="line-clamp-1 w-full text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
+        className="flex flex-wrap items-center gap-2 pt-1.5 whitespace-nowrap text-tertiary"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
@@ -275,10 +275,10 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded-lg border outline-[0.5px] outline-transparent shadow-raised-100 w-full border-subtle bg-layer-2 text-13 transition-all p-3 hover:shadow-raised-200 hover:border-strong",
+            "block w-full rounded-lg border border-subtle bg-layer-2 p-3 text-13 shadow-raised-100 outline-[0.5px] outline-transparent transition-all hover:border-strong hover:shadow-raised-200",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
-            { "bg-layer-1 z-[100]": isCurrentBlockDragging }
+            { "z-[100] bg-layer-1": isCurrentBlockDragging }
           )}
           onClick={() => handleIssuePeekOverview(issue)}
           disabled={!!issue?.tempId}

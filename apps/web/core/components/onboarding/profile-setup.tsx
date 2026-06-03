@@ -245,8 +245,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   return (
     <div className="flex h-full w-full">
-      <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full mx-auto mt-2 space-y-4 sm:w-96">
+      <div className="mt-6 flex w-full flex-col items-center justify-center p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-2 w-full space-y-4 sm:w-96">
           {profileSetupStep !== EProfileSetupSteps.USER_PERSONALIZATION && (
             <>
               <Controller
@@ -265,12 +265,12 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   />
                 )}
               />
-              <div className="space-y-1 flex items-center justify-center">
+              <div className="flex items-center justify-center space-y-1">
                 <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-accent-primary uppercase">
+                        <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-full bg-accent-primary text-24 font-medium text-on-color uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
@@ -282,7 +282,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <div className="relative mr-3 h-16 w-16 overflow-hidden">
                       <img
                         src={getFileURL(userAvatar ?? "")}
-                        className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                        className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
                         onClick={() => setIsImageUploadModalOpen(true)}
                         alt={user?.display_name}
                       />
@@ -290,10 +290,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   )}
                 </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+                    className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                     htmlFor="first_name"
                   >
                     First name
@@ -331,7 +331,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+                    className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                     htmlFor="last_name"
                   >
                     Last name
@@ -370,7 +370,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               {!isPasswordAlreadySetup && (
                 <>
                   <div className="space-y-1">
-                    <label className="text-13 text-tertiary font-medium" htmlFor="password">
+                    <label className="text-13 font-medium text-tertiary" htmlFor="password">
                       Set a password ({t("common.optional")})
                     </label>
                     <Controller
@@ -411,7 +411,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+                    <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
                       {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                     </label>
                     <Controller
@@ -463,7 +463,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+                  className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -475,12 +475,12 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     required: "This field is required",
                   }}
                   render={({ field: { value, onChange } }) => (
-                    <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
+                    <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
                           className={cn(
-                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
+                            "shrink-0 rounded border-[0.5px] px-3 py-1.5 text-13 font-medium hover:cursor-pointer hover:bg-surface-2",
                             {
                               "border-accent-strong": value === userRole,
                               "border-strong": value !== userRole,
@@ -498,7 +498,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+                  className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one or more.
@@ -511,7 +511,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     validate: (value) => (value && value.length > 0) || "Please select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
-                    <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
+                    <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">
                       {USER_DOMAIN.map((userDomain) => {
                         const isSelected = value?.includes(userDomain) || false;
                         return (

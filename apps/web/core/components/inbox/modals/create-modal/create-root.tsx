@@ -197,10 +197,10 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <div className="flex gap-2 bg-transparent w-full">
-      <div className="rounded-lg w-full">
-        <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-surface-1">
+    <div className="flex w-full gap-2 bg-transparent">
+      <div className="w-full rounded-lg">
+        <form ref={formRef} onSubmit={handleFormSubmit} className="flex w-full flex-col">
+          <div className="space-y-5 rounded-t-lg bg-surface-1 p-5">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
@@ -232,9 +232,9 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1">
+          <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
             <div
-              className="inline-flex items-center gap-1.5 cursor-pointer"
+              className="inline-flex cursor-pointer items-center gap-1.5"
               onClick={() => setCreateMore((prevData) => !prevData)}
               role="button"
               tabIndex={getIndex("create_more")}
@@ -280,7 +280,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       {shouldRenderDuplicateModal && (
         <div
           ref={modalContainerRef}
-          className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+          className="shadow-xl bg-pi-50 relative flex flex-col gap-2.5 rounded-lg px-3 py-4"
           style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
         >
           <DuplicateModalRoot

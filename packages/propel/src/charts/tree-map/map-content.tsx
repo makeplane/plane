@@ -227,7 +227,7 @@ export function CustomTreeMapContent({
               x={pX + LAYOUT.TEXT.PADDING_LEFT + iconSpace}
               y={pY + LAYOUT.TEXT.VERTICAL_OFFSET}
               textAnchor="start"
-              className={cn("text-13 font-light tracking-wider select-none", textClassName || "text-tertiary")}
+              className={cn("tracking-wider text-13 font-light select-none", textClassName || "text-tertiary")}
               fill="currentColor"
             >
               {top.nameTruncated ? truncateText(name, availableTextWidth, LAYOUT.TEXT.FONT_SIZES.SM, iconSpace) : name}
@@ -243,7 +243,7 @@ export function CustomTreeMapContent({
                 x={pX + LAYOUT.TEXT.PADDING_LEFT}
                 y={pY + pHeight - LAYOUT.TEXT.PADDING_LEFT}
                 textAnchor="start"
-                className={cn("text-13 font-light tracking-wider select-none", textClassName || "text-tertiary")}
+                className={cn("tracking-wider text-13 font-light select-none", textClassName || "text-tertiary")}
                 fill="currentColor"
               >
                 {value.toLocaleString()}

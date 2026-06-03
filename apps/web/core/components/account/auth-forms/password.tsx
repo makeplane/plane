@@ -127,8 +127,8 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center p-2 rounded-md gap-2 border border-danger-strong/50 bg-danger-subtle">
-          <div className="w-4 h-4 shrink-0 relative flex justify-center items-center">
+        <div className="relative flex items-center gap-2 rounded-md border border-danger-strong/50 bg-danger-subtle p-2">
+          <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
             <Info size={16} className="text-danger-primary" />
           </div>
           <div className="w-full text-13 font-medium text-danger-primary">
@@ -136,10 +136,10 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           <button
             type="button"
-            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-danger-subtle-hover text-accent-primary/80"
+            className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary/80 transition-all hover:bg-danger-subtle-hover"
             onClick={() => setBannerMessage(false)}
           >
-            <CloseIcon className="w-4 h-4 shrink-0 text-danger-primary" />
+            <CloseIcon className="h-4 w-4 shrink-0 text-danger-primary" />
           </button>
         </div>
       )}
@@ -167,12 +167,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label htmlFor="email" className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2">
+          <label htmlFor="email" className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]">
             {t("auth.common.email.label")}
           </label>
-          <div className="flex items-center bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+          <div className="flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:border-shinhan-blue focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
             <svg
-              className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+              className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -192,13 +192,13 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              className="disable-autofill-style bg-transparent w-full text-[#111827] font-semibold placeholder-[#9ca3af] focus:outline-none text-[15px]"
+              className="w-full bg-transparent text-[15px] font-semibold text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none"
               disabled
             />
             {passwordFormData.email.length > 0 && (
               <button
                 type="button"
-                className="ml-2 size-5 grid place-items-center flex-shrink-0"
+                className="ml-2 grid size-5 flex-shrink-0 place-items-center"
                 onClick={handleEmailClear}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
               >
@@ -209,12 +209,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2">
+          <label htmlFor="password" className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
-          <div className="flex items-center relative bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+          <div className="relative flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:border-shinhan-blue focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
             <svg
-              className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+              className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -234,7 +234,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className={`disable-autofill-style bg-transparent w-full text-[#111827] placeholder-[#9ca3af] focus:outline-none pr-8 ${showPassword?.password ? "text-[15px] font-semibold" : "font-semibold tracking-[0.35em] text-[16px] translate-y-[2px]"}`}
+              className={`w-full bg-transparent pr-8 text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none ${showPassword?.password ? "text-[15px] font-semibold" : "translate-y-[2px] text-[16px] font-semibold tracking-[0.35em]"}`}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="off"
@@ -242,7 +242,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             <button
               type="button"
               onClick={() => handleShowPassword("password")}
-              className="absolute right-5 top-1/2 -translate-y-1/2 text-[#9ca3af] cursor-pointer hover:text-[#4b5563]"
+              className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer text-[#9ca3af] hover:text-[#4b5563]"
               aria-label={t(
                 showPassword?.password ? "aria_labels.auth_forms.hide_password" : "aria_labels.auth_forms.show_password"
               )}
@@ -257,13 +257,13 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <div className="space-y-1">
             <label
               htmlFor="confirm-password"
-              className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2"
+              className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]"
             >
               {t("auth.common.password.confirm_password.label")}
             </label>
-            <div className="flex items-center relative bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+            <div className="relative flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:border-shinhan-blue focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
               <svg
-                className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+                className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -283,14 +283,14 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className={`disable-autofill-style bg-transparent w-full text-[#111827] placeholder-[#9ca3af] focus:outline-none pr-8 ${showPassword?.retypePassword ? "text-[15px] font-semibold" : "font-semibold tracking-[0.35em] text-[16px] translate-y-[2px]"}`}
+                className={`w-full bg-transparent pr-8 text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none ${showPassword?.retypePassword ? "text-[15px] font-semibold" : "translate-y-[2px] text-[16px] font-semibold tracking-[0.35em]"}`}
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
                 autoComplete="off"
               />
               <button
                 type="button"
-                className="absolute right-5 top-1/2 -translate-y-1/2 text-[#9ca3af] cursor-pointer hover:text-[#4b5563]"
+                className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer text-[#9ca3af] hover:text-[#4b5563]"
                 aria-label={t(
                   showPassword?.retypePassword
                     ? "aria_labels.auth_forms.hide_password"
@@ -304,18 +304,18 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
-                <span className="text-13 text-[#dc2626] ml-2">{t("auth.common.password.errors.match")}</span>
+                <span className="ml-2 text-13 text-[#dc2626]">{t("auth.common.password.errors.match")}</span>
               )}
           </div>
         )}
 
-        <div className="pt-4 space-y-2.5">
+        <div className="space-y-2.5 pt-4">
           {mode === EAuthModes.SIGN_IN ? (
             <>
               <button
                 type="submit"
                 disabled={isButtonDisabled}
-                className="w-full flex justify-center items-center py-[18px] text-white font-semibold text-[16px] tracking-wide rounded-md transition-all duration-200 bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd shadow-[0_8px_16px_rgba(0,112,224,0.3)] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
+                className="flex w-full items-center justify-center rounded-md bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd py-[18px] text-[16px] font-semibold tracking-wide text-white shadow-[0_8px_16px_rgba(0,112,224,0.3)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
               >
                 {isSubmitting ? (
                   <Spinner height="20px" width="20px" />
@@ -330,7 +330,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                   type="button"
                   data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
-                  className="w-full flex justify-center items-center py-[18px] text-[#0a1e3f] font-semibold text-[16px] tracking-wide rounded-md border border-[#e5e7eb] bg-white transition-all duration-200 hover:bg-gray-50 focus:outline-none"
+                  className="hover:bg-gray-50 flex w-full items-center justify-center rounded-md border border-[#e5e7eb] bg-white py-[18px] text-[16px] font-semibold tracking-wide text-[#0a1e3f] transition-all duration-200 focus:outline-none"
                 >
                   {t("auth.common.sign_in_with_unique_code")}
                 </button>
@@ -340,7 +340,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             <button
               type="submit"
               disabled={isButtonDisabled}
-              className="w-full flex justify-center items-center py-[18px] text-white font-semibold text-[16px] tracking-wide rounded-md transition-all duration-200 bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd shadow-[0_8px_16px_rgba(0,112,224,0.3)] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
+              className="flex w-full items-center justify-center rounded-md bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd py-[18px] text-[16px] font-semibold tracking-wide text-white shadow-[0_8px_16px_rgba(0,112,224,0.3)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
             >
               {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
             </button>

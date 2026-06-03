@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
+import { Link } from "react-router";
 // helpers
 import { SUPPORT_EMAIL } from "@plane/constants";
 
@@ -129,8 +129,8 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
+          to={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -171,8 +171,8 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
+          to={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
         </Link>
@@ -317,7 +317,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" to={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -329,7 +329,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" to={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.

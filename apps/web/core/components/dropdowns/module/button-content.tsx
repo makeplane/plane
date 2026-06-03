@@ -48,7 +48,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
     return (
       <>
         {showCount ? (
-          <div className="relative flex items-center max-w-full gap-1">
+          <div className="relative flex max-w-full items-center gap-1">
             {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
               <div className="max-w-40 truncate">
@@ -61,7 +61,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
             )}
           </div>
         ) : value.length > 0 ? (
-          <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5 ">
+          <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5">
             {value.map((moduleId) => {
               const moduleDetails = getModuleById(moduleId);
               return (

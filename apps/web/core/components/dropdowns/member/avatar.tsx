@@ -56,6 +56,6 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
   return Icon ? (
     <Icon className="h-3 w-3 flex-shrink-0" />
   ) : (
-    <MembersPropertyIcon className={cn("h-3 w-3 mx-[4px] flex-shrink-0")} />
+    <MembersPropertyIcon className={cn("mx-[4px] h-3 w-3 flex-shrink-0")} />
   );
 });
