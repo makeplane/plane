@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("db", "0112_auto_20251124_0603"),
+        ("db", "0121_alter_estimate_type"),
     ]
 
     operations = [
