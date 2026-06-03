@@ -91,7 +91,10 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                 default_owner = get_general_director_user()
             except AmbiguousGeneralDirector:
                 return Response(
-                    {"error": "Ambiguous General Director — multiple active staff hold the GD grade. Fix staff data or provide owner_email per row."},
+                    {
+                        "error": "Ambiguous General Director — multiple active staff hold "
+                        "the GD grade. Fix staff data or provide owner_email per row."
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if default_owner is None:
