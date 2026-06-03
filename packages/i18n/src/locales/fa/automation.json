@@ -1,0 +1,273 @@
+{
+  "automations": {
+    "settings": {
+      "title": "اتوماسیون‌های سفارشی",
+      "create_automation": "ایجاد اتوماسیون"
+    },
+    "scope": {
+      "label": "محدوده",
+      "run_on": "اجرا روی"
+    },
+    "trigger": {
+      "label": "محرک",
+      "add_trigger": "افزودن محرک",
+      "sidebar_header": "پیکربندی محرک",
+      "input_label": "محرک این اتوماسیون چیست؟",
+      "input_placeholder": "یک گزینه انتخاب کنید",
+      "section_plane_events": "رویدادهای Plane",
+      "section_time_based": "مبتنی بر زمان",
+      "fixed_schedule": "زمان‌بندی ثابت",
+      "schedule": {
+        "frequency": "تناوب",
+        "select_day": "انتخاب روز",
+        "day_of_month": "روز ماه",
+        "monthly_every": "هر",
+        "monthly_day_aria": "روز {day}",
+        "time": "زمان",
+        "hour": "ساعت",
+        "minute": "دقیقه",
+        "hour_suffix": "ساعت",
+        "minute_suffix": "دقیقه",
+        "am": "قبل از ظهر",
+        "pm": "بعد از ظهر",
+        "timezone": "منطقه زمانی",
+        "timezone_placeholder": "یک منطقه زمانی انتخاب کنید",
+        "frequency_daily": "روزانه",
+        "frequency_weekly": "هفتگی",
+        "frequency_monthly": "ماهانه",
+        "on": "در",
+        "validation_weekly_day_required": "حداقل یک روز از هفته انتخاب کنید.",
+        "validation_monthly_date_required": "یک روز از ماه انتخاب کنید.",
+        "main_content_schedule_summary_daily": "هر روز در {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "هر هفته در روزهای {days} در {time} ({timezone}).",
+        "main_content_schedule_summary_monthly": "هر ماه در روز {day} در {time} ({timezone}).",
+        "schedule_mode": "حالت زمان‌بندی",
+        "schedule_mode_fixed": "ثابت",
+        "schedule_mode_cron": "Cron",
+        "cron_expression_label": "عبارت Cron را وارد کنید",
+        "cron_expression_placeholder": "0 9 * * 1-5",
+        "cron_invalid": "عبارت Cron نامعتبر است.",
+        "cron_preview": "این عبارت Cron «{description}» را اجرا می‌کند.",
+        "main_content_cron_summary": "{description} ({timezone})."
+      },
+      "button": {
+        "previous": "برگشت",
+        "next": "افزودن عملکرد"
+      },
+      "warning": {
+        "disabled_trigger_switching": "پس از ایجاد نمی‌توانید نوع محرک را تغییر دهید"
+      }
+    },
+    "condition": {
+      "label": "شرط",
+      "add_condition": "افزودن شرط",
+      "adding_condition": "در حال افزودن شرط"
+    },
+    "action": {
+      "label": "عملکرد",
+      "add_action": "افزودن عملکرد",
+      "sidebar_header": "عملکردها",
+      "input_label": "این اتوماسیون چه کاری انجام می‌دهد؟",
+      "input_placeholder": "یک گزینه انتخاب کنید",
+      "handler_name": {
+        "add_comment": "افزودن کامنت",
+        "change_property": "تغییر ویژگی",
+        "run_script": "اجرای اسکریپت"
+      },
+      "configuration": {
+        "label": "پیکربندی",
+        "change_property": {
+          "placeholders": {
+            "property_name": "یک ویژگی انتخاب کنید",
+            "change_type": "انتخاب",
+            "property_value_select": "{count, plural, one{انتخاب مقدار} other{انتخاب مقادیر}}",
+            "property_value_select_date": "انتخاب تاریخ"
+          },
+          "validation": {
+            "property_name_required": "نام ویژگی الزامی است",
+            "change_type_required": "نوع تغییر الزامی است",
+            "property_value_required": "مقدار ویژگی الزامی است"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "افزودن کامنت"
+      },
+      "run_script_block": {
+        "title": "اجرای اسکریپت"
+      },
+      "change_property_block": {
+        "title": "تغییر ویژگی"
+      },
+      "validation": {
+        "delete_only_action": "قبل از حذف تنها عملکرد اتوماسیون، آن را غیرفعال کنید."
+      }
+    },
+    "conjunctions": {
+      "and": "و",
+      "or": "یا",
+      "if": "اگر",
+      "then": "آنگاه"
+    },
+    "enable": {
+      "alert": "هنگامی که اتوماسیون شما کامل شد، «فعال‌سازی» را بزنید. پس از فعال‌سازی، اتوماسیون آماده اجرا خواهد بود.",
+      "validation": {
+        "required": "برای فعال‌سازی، اتوماسیون باید یک محرک و حداقل یک عملکرد داشته باشد."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "قبل از حذف اتوماسیون، آن را غیرفعال کنید."
+      }
+    },
+    "table": {
+      "title": "عنوان اتوماسیون",
+      "scope": "محدوده",
+      "projects": "پروژه‌ها",
+      "last_run_on": "آخرین اجرا در",
+      "created_on": "ایجادشده در",
+      "last_updated_on": "آخرین به‌روزرسانی در",
+      "last_run_status": "وضعیت آخرین اجرا",
+      "average_duration": "میانگین مدت زمان",
+      "owner": "مالک",
+      "executions": "اجراها"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "ایجاد اتوماسیون",
+        "update": "به‌روزرسانی اتوماسیون"
+      },
+      "title": {
+        "placeholder": "نام اتوماسیون خود را وارد کنید.",
+        "required_error": "عنوان الزامی است"
+      },
+      "description": {
+        "placeholder": "اتوماسیون خود را توضیح دهید."
+      },
+      "submit_button": {
+        "create": "ایجاد اتوماسیون",
+        "update": "به‌روزرسانی اتوماسیون"
+      }
+    },
+    "delete_modal": {
+      "heading": "حذف اتوماسیون"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "نمایش خطاها",
+        "all": "همه",
+        "only_activity": "فقط فعالیت",
+        "only_run_history": "فقط تاریخچه اجرا"
+      },
+      "run_history": {
+        "initiator": "آغازگر"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "موفق!",
+          "message": "اتوماسیون با موفقیت ایجاد شد."
+        },
+        "error": {
+          "title": "خطا!",
+          "message": "ایجاد اتوماسیون ناموفق بود."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "موفق!",
+          "message": "اتوماسیون با موفقیت به‌روزرسانی شد."
+        },
+        "error": {
+          "title": "خطا!",
+          "message": "به‌روزرسانی اتوماسیون ناموفق بود."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "موفق!",
+          "message": "اتوماسیون با موفقیت فعال شد."
+        },
+        "error": {
+          "title": "خطا!",
+          "message": "فعال‌سازی اتوماسیون ناموفق بود."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "موفق!",
+          "message": "اتوماسیون با موفقیت غیرفعال شد."
+        },
+        "error": {
+          "title": "خطا!",
+          "message": "غیرفعال‌سازی اتوماسیون ناموفق بود."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "اتوماسیون حذف شد",
+          "message": "{name}، این اتوماسیون، اکنون از پروژه شما حذف شده است."
+        },
+        "error": {
+          "title": "این بار نتوانستیم آن اتوماسیون را حذف کنیم.",
+          "message": "سعی کنید دوباره آن را حذف کنید یا بعداً به آن برگردید. اگر نتوانستید حذف کنید، با ما تماس بگیرید."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "خطا!",
+            "message": "ایجاد عملکرد ناموفق بود. لطفاً دوباره تلاش کنید!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "خطا!",
+            "message": "به‌روزرسانی عملکرد ناموفق بود. لطفاً دوباره تلاش کنید!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "هنوز اتوماسیونی برای نمایش وجود ندارد.",
+        "description": "اتوماسیون‌ها با تعریف محرک‌ها، شرایط و عملکردها به شما کمک می‌کنند وظایف تکراری را حذف کنید. یکی ایجاد کنید تا وقت صرفه‌جویی کنید و کار بدون توقف پیش برود."
+      },
+      "upgrade": {
+        "title": "اتوماسیون‌ها",
+        "description": "اتوماسیون‌ها روشی برای خودکارسازی وظایف در پروژه شما هستند.",
+        "sub_description": "با استفاده از اتوماسیون‌ها ۸۰٪ وقت اداری خود را پس بگیرید."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "پروژه‌هایی را انتخاب کنید که این اتوماسیون روی آن‌ها اجرا شود",
+        "all_projects": {
+          "label": "همه پروژه‌ها",
+          "description": "اتوماسیون برای همه پروژه‌های فضای کاری اجرا خواهد شد."
+        },
+        "select_projects": {
+          "label": "انتخاب پروژه‌ها",
+          "description": "اتوماسیون برای پروژه‌های انتخاب‌شده در فضای کاری اجرا خواهد شد.",
+          "placeholder": "پروژه‌ها را انتخاب کنید"
+        }
+      },
+      "settings": {
+        "sidebar_label": "اتوماسیون‌ها",
+        "title": "اتوماسیون‌ها",
+        "description": "فرآیندها را با اتوماسیون‌های سراسری در فضای کاری خود استانداردسازی کنید."
+      },
+      "table": {
+        "scope": {
+          "global": "سراسری",
+          "project": {
+            "label": "پروژه",
+            "multiple": "چندگانه",
+            "all": "همه"
+          }
+        }
+      }
+    }
+  }
+}
