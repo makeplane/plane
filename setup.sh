@@ -172,6 +172,10 @@ configure_production_env() {
   fi
 
   update_env_key "WEB_URL" "\"$web_url\"" "./apps/api/.env"
+  update_env_key "APP_BASE_URL" "\"$web_url\"" "./apps/api/.env"
+  update_env_key "ADMIN_BASE_URL" "\"$web_url\"" "./apps/api/.env"
+  update_env_key "SPACE_BASE_URL" "\"$web_url\"" "./apps/api/.env"
+  update_env_key "LIVE_BASE_URL" "\"${web_url}/live\"" "./apps/api/.env"
   update_env_key "CORS_ALLOWED_ORIGINS" "\"$web_url\"" "./apps/api/.env"
   update_env_key "AWS_S3_ENDPOINT_URL" "\"http://plane-minio:9000\"" "./apps/api/.env"
   update_env_key "POSTGRES_HOST" "\"plane-db\"" "./apps/api/.env"
