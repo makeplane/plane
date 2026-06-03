@@ -37,7 +37,12 @@ class TestValidateUrlIp:
                 validate_url_ip("http://example.com")
 
     def test_rejects_non_http_scheme(self):
+        # Use a URL with a hostname so the scheme guard fires; file:// has no
+        # hostname and is rejected earlier by the no-hostname guard instead.
         with pytest.raises(ValueError, match="Only HTTP and HTTPS"):
+            validate_url_ip("ftp://example.com")
+        # file:// (no host) is still blocked — defends against local file reads.
+        with pytest.raises(ValueError):
             validate_url_ip("file:///etc/passwd")
 
     def test_allows_public_ip(self):
