@@ -21,6 +21,7 @@ from plane.app.serializers.staff import (
 from plane.db.models import Department, Profile, StaffProfile, User, WorkspaceMember
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
+from plane.utils.instance_admin import is_last_active_super_admin
 
 
 class InstanceStaffEndpoint(BaseAPIView):
@@ -247,6 +248,14 @@ class InstanceStaffDeactivateEndpoint(BaseAPIView):
             return Response({"error": "Staff not found"}, status=status.HTTP_404_NOT_FOUND)
 
         user = staff.user
+
+        # Lockout guard: this endpoint disables the user account — never
+        # against the last loginable super-admin.
+        if is_last_active_super_admin(user):
+            return Response(
+                {"error": "Cannot deactivate the last super-admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         with transaction.atomic():
             # Remove role=15 WorkspaceMember(s) across all workspaces (never remove admins)

@@ -25,6 +25,7 @@ from plane.license.api.serializers.user import (
     InstanceUserWorkspaceSerializer,
 )
 from plane.license.api.views.base import BaseAPIView
+from plane.utils.instance_admin import is_active_super_admin, is_last_active_super_admin
 
 
 class InstanceUserEndpoint(BaseAPIView):
@@ -112,6 +113,17 @@ class InstanceUserEndpoint(BaseAPIView):
         serializer = InstanceUserUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # Lockout guard: deactivating the last loginable super-admin would
+        # leave the instance unmanageable.
+        if (
+            serializer.validated_data.get("is_active") is False
+            and is_last_active_super_admin(user)
+        ):
+            return Response(
+                {"error": "Cannot deactivate the last super-admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         for field, value in serializer.validated_data.items():
             setattr(user, field, value)
         user.save()
@@ -133,6 +145,14 @@ class InstanceUserResetPasswordEndpoint(BaseAPIView):
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Account-seizure guard: only a super-admin may reset another
+        # super-admin's password.
+        if is_active_super_admin(user) and not is_active_super_admin(request.user):
+            return Response(
+                {"error": "Only a super-admin can reset a super-admin's password"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Generate random 12-char password
         alphabet = string.ascii_letters + string.digits + "!@#$%"
