@@ -89,7 +89,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6 h-full overflow-y-auto custom-scrollbar">
+    <div className="custom-scrollbar flex h-full flex-col gap-4 overflow-y-auto p-6">
       {/* Header controls (Week navigator + Cross Workspaces toggle) */}
       <div className="flex items-center justify-between">
         <TimesheetWeekNavigator
@@ -105,7 +105,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
             type="button"
             disabled={!data || isLoading}
             onClick={handleExport}
-            className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary transition-colors hover:bg-layer-2 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t("workspace_views.export.button")}
           </button>
@@ -115,14 +115,14 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-13 text-secondary font-medium animate-pulse">Loading...</span>
+          <span className="animate-pulse text-13 font-medium text-secondary">Loading...</span>
         </div>
       )}
 
       {/* Error */}
       {!isLoading && error && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-13 text-danger-primary font-medium">{error}</span>
+          <span className="text-13 font-medium text-danger-primary">{error}</span>
         </div>
       )}
 

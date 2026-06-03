@@ -15,7 +15,7 @@ export const SpreadsheetProjectNameColumn = observer(function SpreadsheetProject
   const project = issue.project_id ? getProjectById(issue.project_id) : null;
 
   return (
-    <Row className="flex h-11 w-full cursor-default items-center border-b-[0.5px] border-subtle px-2 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
+    <Row className="flex h-11 w-full cursor-default items-center border-b-[0.5px] border-subtle px-2 text-11 group-[.selected-issue-row]:bg-accent-primary/5 hover:bg-layer-1 group-[.selected-issue-row]:hover:bg-accent-primary/10">
       <span className="truncate text-secondary">{project?.name ?? "—"}</span>
     </Row>
   );

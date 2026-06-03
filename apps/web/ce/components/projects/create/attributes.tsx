@@ -114,11 +114,11 @@ const ProjectAttributes = observer(function ProjectAttributes(props: Props) {
               <div
                 role="button"
                 tabIndex={0}
-                className="flex-shrink-0 h-7 flex items-center gap-2 rounded border border-subtle px-2 cursor-pointer"
+                className="flex h-7 flex-shrink-0 cursor-pointer items-center gap-2 rounded border border-subtle px-2"
                 onClick={handleClick}
                 onKeyDown={handleKeyDown}
               >
-                <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
+                <span className="flex-grow truncate text-left text-body-xs-medium leading-5">
                   {t("bank_wide_project.label")}
                 </span>
                 <ToggleSwitch value={value ?? false} onChange={handleClick} size="sm" />

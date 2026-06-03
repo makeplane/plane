@@ -27,8 +27,8 @@ function WorkspaceBulkAssignPage(_props: Route.ComponentProps) {
         description: "Upload an Excel file to add or remove workspace members at once.",
       }}
     >
-      <div className="pt-4 space-y-6">
-        <div className="flex gap-1 border-b border-border-subtle">
+      <div className="space-y-6 pt-4">
+        <div className="border-border-subtle flex gap-1 border-b">
           {TABS.map((tab) => (
             <button
               key={tab.id}

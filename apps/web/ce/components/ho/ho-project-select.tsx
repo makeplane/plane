@@ -24,7 +24,7 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
     value: p.id,
     query: `${p.name} ${p.identifier}`,
     content: (
-      <div className="flex items-center gap-2 max-w-[250px]">
+      <div className="flex max-w-[250px] items-center gap-2">
         <ProjectIcon className="h-4 w-4 flex-shrink-0" />
         <span className="truncate">{p.name}</span>
       </div>

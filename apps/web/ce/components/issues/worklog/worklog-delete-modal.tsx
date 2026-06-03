@@ -46,11 +46,11 @@ export const WorklogDeleteModal = (props: TWorklogDeleteModal) => {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
-      <div className="p-5 space-y-4" data-prevent-outside-click>
+      <div className="space-y-4 p-5" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center gap-2">
-          <span className="flex-shrink-0 rounded-full bg-red-500/10 p-1.5">
-            <AlertTriangle className="h-4 w-4 text-red-500" />
+          <span className="bg-red-500/10 flex-shrink-0 rounded-full p-1.5">
+            <AlertTriangle className="text-red-500 h-4 w-4" />
           </span>
           <h2 className="text-16 font-semibold text-primary">{t("worklog.confirm_delete_title")}</h2>
         </div>
@@ -68,7 +68,7 @@ export const WorklogDeleteModal = (props: TWorklogDeleteModal) => {
             onChange={(e) => setReason(e.target.value)}
             rows={2}
             placeholder={t("worklog.delete_reason_placeholder")}
-            className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary placeholder-tertiary focus:outline-none resize-none"
+            className="placeholder-tertiary resize-none rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary focus:outline-none"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />

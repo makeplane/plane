@@ -132,17 +132,17 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-surface-1 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div className="shadow-xl flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg bg-surface-1">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-subtle">
+        <div className="flex items-center justify-between border-b border-subtle px-6 py-4">
           <h2 className="text-16 font-semibold">Import Job Positions</h2>
-          <button type="button" onClick={handleClose} className="text-tertiary hover:text-primary text-xl leading-none">
+          <button type="button" onClick={handleClose} className="text-xl leading-none text-tertiary hover:text-primary">
             ×
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
           {/* Instructions */}
           <div className="space-y-1">
             <p className="text-sm text-tertiary">
@@ -160,7 +160,7 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
           <button
             type="button"
             onClick={() => void downloadTemplate()}
-            className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+            className="text-sm flex w-fit items-center gap-2 text-primary hover:underline"
           >
             <Download className="h-4 w-4" />
             Download template
@@ -178,7 +178,7 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+              className="border-border-subtle hover:bg-surface-hover flex w-full cursor-pointer items-center gap-3 rounded-md border border-dashed p-6 transition-colors"
             >
               <Upload className="h-5 w-5 text-tertiary" />
               <span className="text-sm">
@@ -191,11 +191,11 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
           {/* Preview table */}
           {parsedRows.length > 0 && (
             <div className="overflow-x-auto rounded-md border border-subtle">
-              <table className="min-w-full text-sm">
+              <table className="text-sm min-w-full">
                 <thead className="bg-layer-1">
                   <tr>
                     {["type", "grade_name", "name", "description", "sort_order", "is_active"].map((col) => (
-                      <th key={col} className="px-3 py-2 text-left font-medium text-tertiary whitespace-nowrap">
+                      <th key={col} className="px-3 py-2 text-left font-medium whitespace-nowrap text-tertiary">
                         {col}
                       </th>
                     ))}
@@ -215,7 +215,7 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
                 </tbody>
               </table>
               {parsedRows.length > 10 && (
-                <p className="px-3 py-2 text-xs text-tertiary border-t border-subtle">
+                <p className="text-xs border-t border-subtle px-3 py-2 text-tertiary">
                   Showing 10 of {parsedRows.length} rows
                 </p>
               )}
@@ -253,7 +253,7 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-subtle">
+        <div className="flex items-center justify-end gap-3 border-t border-subtle px-6 py-4">
           <Button variant="secondary" size="sm" onClick={handleClose}>
             {result ? "Close" : "Cancel"}
           </Button>

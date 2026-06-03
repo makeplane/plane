@@ -87,23 +87,23 @@ export const TimesheetRow: FC<TimesheetRowProps> = observer((props) => {
 
   return (
     <>
-      <tr className="border-b border-subtle hover:bg-layer-1-hover transition-colors">
+      <tr className="border-b border-subtle transition-colors hover:bg-layer-1-hover">
         {showWorkspaceColumn && (
           <td className="px-3 py-2 text-center">
-            <span className="text-12 text-secondary truncate max-w-[120px]">{row.workspace_name ?? "-"}</span>
+            <span className="max-w-[120px] truncate text-12 text-secondary">{row.workspace_name ?? "-"}</span>
           </td>
         )}
         {/* Issue cell — indent + chevron + peek trigger */}
-        <td className="px-3 py-2 min-w-0">
+        <td className="min-w-0 px-3 py-2">
           <div className="flex items-center gap-1">
             {nestingLevel > 0 && <div className="shrink-0" style={{ width: nestingLevel * 12 }} />}
-            <div className="grid place-items-center size-4 shrink-0">
+            <div className="grid size-4 shrink-0 place-items-center">
               {showChevron && (
                 <button
                   type="button"
                   aria-label={t("timesheet_show_sub_items")}
                   aria-expanded={isExpanded}
-                  className="grid place-items-center size-4 rounded-xs text-placeholder hover:text-tertiary disabled:opacity-50"
+                  className="grid size-4 place-items-center rounded-xs text-placeholder hover:text-tertiary disabled:opacity-50"
                   onClick={() => void handleToggleExpand()}
                   disabled={isLoading}
                 >
@@ -112,7 +112,7 @@ export const TimesheetRow: FC<TimesheetRowProps> = observer((props) => {
               )}
             </div>
             <button
-              className="group flex w-full min-w-0 max-w-full items-center gap-2 text-left"
+              className="group flex w-full max-w-full min-w-0 items-center gap-2 text-left"
               onClick={() =>
                 setPeekIssue({
                   workspaceSlug: rowWorkspaceSlug,
@@ -122,7 +122,7 @@ export const TimesheetRow: FC<TimesheetRowProps> = observer((props) => {
                 })
               }
             >
-              <span className="shrink-0 text-12 font-mono text-tertiary">{row.issue_identifier}</span>
+              <span className="font-mono shrink-0 text-12 text-tertiary">{row.issue_identifier}</span>
               <span
                 className="min-w-0 flex-1 truncate text-13 text-primary transition-colors group-hover:text-accent-primary"
                 title={row.issue_name}

@@ -23,7 +23,7 @@ export function StyleColorPresetSection({ control, showFillOpacity }: StyleColor
     <>
       {/* Color preset */}
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.color_preset")}</span>
+        <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.color_preset")}</span>
         <Controller
           name="config.color_preset"
           control={control}
@@ -39,7 +39,7 @@ export function StyleColorPresetSection({ control, showFillOpacity }: StyleColor
       {/* Fill opacity slider */}
       {showFillOpacity && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.fill_opacity")}</span>
+          <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.fill_opacity")}</span>
           <Controller
             name="config.fill_opacity"
             control={control}
@@ -54,7 +54,7 @@ export function StyleColorPresetSection({ control, showFillOpacity }: StyleColor
                   onChange={(e) => field.onChange(parseInt(e.target.value) / 100)}
                   className="h-2 flex-1 cursor-pointer appearance-none rounded-lg bg-layer-2"
                 />
-                <span className="text-sm text-tertiary min-w-[3rem] text-right">
+                <span className="text-sm min-w-[3rem] text-right text-tertiary">
                   {Math.round(((field.value as number) || 0) * 100)}%
                 </span>
               </div>

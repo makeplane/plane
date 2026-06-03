@@ -21,14 +21,14 @@ type TKpiCardProps = {
 };
 
 const KpiCard: FC<TKpiCardProps> = ({ label, value, valueClassName = "text-primary" }) => (
-  <div className="flex flex-col gap-1 flex-1 min-w-[140px] rounded-lg border border-subtle bg-surface-1 px-5 py-4">
-    <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{label}</span>
+  <div className="flex min-w-[140px] flex-1 flex-col gap-1 rounded-lg border border-subtle bg-surface-1 px-5 py-4">
+    <span className="text-12 font-medium tracking-wide text-tertiary uppercase">{label}</span>
     <span className={`text-2xl font-semibold ${valueClassName}`}>{value}</span>
   </div>
 );
 
 export const TimeTrackingSummaryCards: FC<TTimeTrackingSummaryCardsProps> = ({ summary }) => (
-  <div className="flex gap-4 flex-wrap">
+  <div className="flex flex-wrap gap-4">
     <KpiCard label="Total Logged" value={formatMinutesToDisplay(summary.total_duration_minutes)} />
   </div>
 );

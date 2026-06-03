@@ -30,7 +30,7 @@ export function FrequencyOptionsPanel(props: Props) {
     query: freq.title.toLowerCase(),
     content: (
       <div className="flex items-center gap-2">
-        <span className="size-2 rounded-full flex-shrink-0" style={{ backgroundColor: freq.color }} />
+        <span className="size-2 flex-shrink-0 rounded-full" style={{ backgroundColor: freq.color }} />
         <span className="flex-grow truncate">{freq.title}</span>
       </div>
     ),
@@ -63,7 +63,7 @@ export function FrequencyOptionsPanel(props: Props) {
           <Combobox.Option
             value={null}
             className={({ active }) =>
-              cn("w-full truncate flex items-center gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none", {
+              cn("flex w-full cursor-pointer items-center gap-2 truncate rounded-sm px-1 py-1.5 select-none", {
                 "bg-layer-transparent-hover": active,
               })
             }
@@ -82,7 +82,7 @@ export function FrequencyOptionsPanel(props: Props) {
                 value={option.value}
                 className={({ active, selected }) =>
                   cn(
-                    "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
+                    "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                     { "bg-layer-transparent-hover": active, "text-primary": selected, "text-secondary": !selected }
                   )
                 }
@@ -96,7 +96,7 @@ export function FrequencyOptionsPanel(props: Props) {
               </Combobox.Option>
             ))
           ) : (
-            <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
           )}
         </div>
       </div>

@@ -48,17 +48,17 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
     () => [
       // Issue column — opens peek sidebar on click
       columnHelper.accessor("issue_identifier", {
-        header: () => <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Issue</span>,
+        header: () => <span className="text-12 font-medium tracking-wide text-tertiary uppercase">Issue</span>,
         cell: (info) => {
           const row = info.row.original;
           return (
             <button
-              className="group flex w-full min-w-0 max-w-full items-center gap-2 text-left"
+              className="group flex w-full max-w-full min-w-0 items-center gap-2 text-left"
               onClick={() =>
                 setPeekIssue({ workspaceSlug, projectId: row.project_id, issueId: row.issue_id, nestingLevel: 0 })
               }
             >
-              <span className="shrink-0 text-12 font-mono text-tertiary">{row.issue_identifier}</span>
+              <span className="font-mono shrink-0 text-12 text-tertiary">{row.issue_identifier}</span>
               <span
                 className="min-w-0 flex-1 truncate text-13 text-primary transition-colors group-hover:text-accent-primary"
                 title={row.issue_name}
@@ -75,7 +75,7 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
           id: date,
           header: () => (
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{DAY_NAMES[idx]}</span>
+              <span className="text-12 font-medium tracking-wide text-tertiary uppercase">{DAY_NAMES[idx]}</span>
               <span className="text-12 text-secondary">{new Date(date).getDate()}</span>
             </div>
           ),
@@ -89,7 +89,7 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
       // Total column
       columnHelper.accessor("total_minutes", {
         header: () => (
-          <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{t("timesheet_total")}</span>
+          <span className="text-12 font-medium tracking-wide text-tertiary uppercase">{t("timesheet_total")}</span>
         ),
         cell: (info) => (
           <span className={cn("text-13 font-medium", info.getValue() > 0 ? "text-primary" : "text-tertiary")}>
@@ -130,7 +130,7 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors">
+            <tr key={row.id} className="border-b border-subtle transition-colors last:border-0 hover:bg-layer-1-hover">
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
@@ -145,8 +145,8 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
 
         {/* Footer with daily totals */}
         <tfoot>
-          <tr className="bg-layer-1-hover border-t border-subtle">
-            <td className="px-3 py-2 text-12 font-medium text-tertiary uppercase tracking-wide">
+          <tr className="border-t border-subtle bg-layer-1-hover">
+            <td className="px-3 py-2 text-12 font-medium tracking-wide text-tertiary uppercase">
               {t("timesheet_total")}
             </td>
             {weekDates.map((date) => (

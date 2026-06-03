@@ -58,7 +58,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
     <Popover>
       <Popover.Button
         className={cn(
-          "flex items-center gap-1 rounded px-1 py-0.5 text-xs text-tertiary outline-none transition-colors",
+          "text-xs flex items-center gap-1 rounded px-1 py-0.5 text-tertiary transition-colors outline-none",
           "hover:bg-layer-1 hover:text-primary focus-visible:ring-1 focus-visible:ring-accent-strong"
         )}
         title={t("worklog.total_logged")}
@@ -71,15 +71,15 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
         side="bottom"
         align="end"
         positionerClassName="z-[9999]"
-        className="z-[30] w-72 overflow-hidden rounded-md border border-subtle bg-surface-1 p-3 shadow-lg"
+        className="shadow-lg z-[30] w-72 overflow-hidden rounded-md border border-subtle bg-surface-1 p-3"
       >
         <div className="mb-2 flex items-center justify-between border-b border-subtle pb-2">
-          <span className="text-11 font-medium uppercase tracking-wide text-tertiary">{t("worklog.total")}</span>
-          <span className="text-13 font-semibold tabular-nums text-primary">
+          <span className="text-11 font-medium tracking-wide text-tertiary uppercase">{t("worklog.total")}</span>
+          <span className="text-13 font-semibold text-primary tabular-nums">
             {formatMinutesToDisplay(totalMinutes)}
           </span>
         </div>
-        <p className="mb-1.5 px-1 text-11 font-medium uppercase tracking-wide text-tertiary">{t("worklog.member")}</p>
+        <p className="mb-1.5 px-1 text-11 font-medium tracking-wide text-tertiary uppercase">{t("worklog.member")}</p>
         {memberTotals.length === 0 ? (
           <p className="px-1 py-4 text-center text-11 text-tertiary">{t("worklog.no_entries")}</p>
         ) : (
@@ -94,7 +94,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
                   <Avatar name={member.displayName} src={member.avatarUrl} size="sm" shape="circle" />
                   <span className="truncate text-11 text-primary">{member.displayName}</span>
                 </div>
-                <span className="flex-shrink-0 text-11 tabular-nums text-secondary">
+                <span className="flex-shrink-0 text-11 text-secondary tabular-nums">
                   {formatMinutesToDisplay(member.totalMinutes)}
                 </span>
               </div>

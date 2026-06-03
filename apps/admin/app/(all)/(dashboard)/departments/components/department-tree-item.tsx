@@ -35,7 +35,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
     <div>
       <div
         className={cn(
-          "group flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-layer-1-hover border border-transparent hover:border-subtle",
+          "group flex items-center gap-2 rounded-lg border border-transparent px-3 py-2 hover:border-subtle hover:bg-layer-1-hover",
           "text-14"
         )}
         style={{ paddingLeft: `${depth * 20 + 12}px` }}
@@ -44,20 +44,20 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className={cn("w-4 h-4 flex-shrink-0 text-tertiary", !hasChildren && "invisible")}
+          className={cn("h-4 w-4 flex-shrink-0 text-tertiary", !hasChildren && "invisible")}
         >
-          <ChevronRight className={cn("w-4 h-4 transition-transform", expanded && "rotate-90")} />
+          <ChevronRight className={cn("h-4 w-4 transition-transform", expanded && "rotate-90")} />
         </button>
 
         {/* Name + code */}
-        <span className="font-medium flex-1 truncate">{dept.name}</span>
-        <span className="text-12 text-tertiary font-mono">{dept.code}</span>
+        <span className="flex-1 truncate font-medium">{dept.name}</span>
+        <span className="font-mono text-12 text-tertiary">{dept.code}</span>
 
         {/* Level badge */}
-        <span className="text-11 px-1.5 py-0.5 rounded bg-layer-2 text-tertiary">L{dept.level}</span>
+        <span className="rounded bg-layer-2 px-1.5 py-0.5 text-11 text-tertiary">L{dept.level}</span>
 
         {/* Staff count */}
-        <span className="text-11 px-1.5 py-0.5 rounded bg-accent-subtle text-accent-primary">
+        <span className="rounded bg-accent-subtle px-1.5 py-0.5 text-11 text-accent-primary">
           {dept.staff_count} staff
         </span>
 
@@ -68,15 +68,15 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
         <DepartmentLinkTaskCategories dept={dept} />
 
         {/* Actions */}
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <Button variant="ghost" size="sm" onClick={() => onAutoJoin(dept)} title="Auto join manager to projects">
-            <UserPlus className="w-3.5 h-3.5" />
+            <UserPlus className="h-3.5 w-3.5" />
           </Button>
           <Button variant="secondary" size="sm" onClick={() => onEdit(dept)}>
-            <Pencil className="w-3.5 h-3.5" />
+            <Pencil className="h-3.5 w-3.5" />
           </Button>
           <Button variant="error-outline" size="sm" onClick={() => onDelete(dept.id)}>
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>

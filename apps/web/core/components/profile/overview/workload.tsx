@@ -26,7 +26,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
       <h3 className="flex items-center gap-1.5 text-16 font-medium">
         {t("profile.stats.workload")}
         <Tooltip tooltipContent={t("profile.stats.workload_assigned_only")}>
-          <Info className="size-3.5 text-custom-text-300 cursor-help" />
+          <Info className="text-custom-text-300 size-3.5 cursor-help" />
         </Tooltip>
       </h3>
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

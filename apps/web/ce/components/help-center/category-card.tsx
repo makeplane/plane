@@ -38,7 +38,7 @@ export const CategoryCard = ({ category, onSelect }: Props) => {
       tabIndex={0}
       onClick={() => onSelect(category.id)}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(category.id)}
-      className="cursor-pointer gap-3 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+      className="cursor-pointer gap-3 transition-colors hover:bg-surface-2 focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
     >
       <span
         className="flex size-9 items-center justify-center rounded-md bg-surface-2"
@@ -47,7 +47,7 @@ export const CategoryCard = ({ category, onSelect }: Props) => {
         {createElement(iconElement, { className: category.color ? "size-5" : "size-5 text-icon-primary" })}
       </span>
       <div className="min-w-0">
-        <h3 className="truncate text-15 font-medium text-primary">{category.name}</h3>
+        <h3 className="text-15 truncate font-medium text-primary">{category.name}</h3>
         <p className="mt-0.5 text-13 text-tertiary">
           {t("help_center.category_count_articles", { count: category.article_count })}
         </p>

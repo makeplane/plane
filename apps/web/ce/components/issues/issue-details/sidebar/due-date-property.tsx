@@ -88,7 +88,7 @@ export const DueDateProperty = observer(function DueDateProperty(props: TDueDate
       {showReadOnly ? (
         <Tooltip tooltipContent={t("project_settings.field_permissions.locked_tooltip")} position="top">
           <span
-            className={cn("flex items-center px-2 h-7.5 text-body-xs-regular cursor-default", {
+            className={cn("flex h-7.5 cursor-default items-center px-2 text-body-xs-regular", {
               "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateGroup),
               "text-secondary-200": !shouldHighlightIssueDueDate(issue.target_date, stateGroup),
             })}
@@ -97,7 +97,7 @@ export const DueDateProperty = observer(function DueDateProperty(props: TDueDate
           </span>
         </Tooltip>
       ) : (
-        <div className={cn("flex items-center gap-2 w-full", hasFieldError && "rounded border border-red-500")}>
+        <div className={cn("flex w-full items-center gap-2", hasFieldError && "border-red-500 rounded border")}>
           <DateDropdown
             placeholder={t("issue.add.due_date")}
             value={issue.target_date}

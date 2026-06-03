@@ -52,10 +52,10 @@ export const MonthGrid = function MonthGrid({
   const rows = Math.ceil(totalCells / 7);
 
   return (
-    <div className="border border-subtle rounded-lg bg-surface-1 p-3">
-      <div className="grid grid-cols-7 mb-2">
+    <div className="rounded-lg border border-subtle bg-surface-1 p-3">
+      <div className="mb-2 grid grid-cols-7">
         {DAY_HEADERS.map((d) => (
-          <div key={d} className="text-center text-caption-sm-medium text-tertiary py-1">
+          <div key={d} className="py-1 text-center text-caption-sm-medium text-tertiary">
             {d}
           </div>
         ))}
@@ -78,17 +78,17 @@ export const MonthGrid = function MonthGrid({
               title={label ? `${dateStr} — ${label}` : dateStr}
               onClick={() => onCellClick(dateStr, state)}
               className={cn(
-                "aspect-square flex flex-col p-2 rounded text-left transition-colors cursor-pointer text-caption-sm-regular",
+                "flex aspect-square cursor-pointer flex-col rounded p-2 text-left text-caption-sm-regular transition-colors",
                 className,
                 isToday && "ring-2 ring-accent-strong ring-inset"
               )}
               style={style}
             >
-              <div className="flex justify-between items-start text-body-sm-medium leading-none">
+              <div className="flex items-start justify-between text-body-sm-medium leading-none">
                 <span>{day}</span>
-                {badge && <span className="text-[8px] mt-0.5">{badge}</span>}
+                {badge && <span className="mt-0.5 text-[8px]">{badge}</span>}
               </div>
-              {label && <div className="text-[10px] leading-tight truncate mt-1 w-full">{label}</div>}
+              {label && <div className="mt-1 w-full truncate text-[10px] leading-tight">{label}</div>}
             </button>
           );
         })}

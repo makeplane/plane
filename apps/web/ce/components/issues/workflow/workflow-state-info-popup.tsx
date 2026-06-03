@@ -17,8 +17,8 @@ type Props = {
 
 /** State label badge — colored dot + name inside a rounded border. */
 const StateBadge = ({ name, color }: { name: string; color: string }) => (
-  <span className="inline-flex items-center gap-1 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] font-medium text-primary leading-none border border-subtle">
-    <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+  <span className="inline-flex items-center gap-1 rounded border border-subtle bg-surface-2 px-1.5 py-0.5 text-[11px] leading-none font-medium text-primary">
+    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
     {name}
   </span>
 );
@@ -81,7 +81,7 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
     <Popover className="relative">
       <Popover.Button as="div">{children}</Popover.Button>
 
-      <Popover.Panel className="absolute right-0 top-full z-[60] mt-1 w-56 rounded-lg border border-subtle bg-surface-1 p-2.5 shadow-xl">
+      <Popover.Panel className="shadow-xl absolute top-full right-0 z-[60] mt-1 w-56 rounded-lg border border-subtle bg-surface-1 p-2.5">
         <p className="mb-2 text-[12px] font-semibold text-primary">
           {t("project_settings.workflows.indicator_popup_title")}
         </p>
@@ -92,11 +92,11 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
           <div className="space-y-1.5">
             {incomingTransitions.map(({ sourceStateId, sourceStateName, sourceStateColor, approvers }) => (
               <div key={sourceStateId} className="rounded border border-subtle bg-layer-1 px-2 py-1.5">
-                <div className="flex items-center gap-1 flex-wrap text-[11px] text-secondary leading-snug">
+                <div className="flex flex-wrap items-center gap-1 text-[11px] leading-snug text-secondary">
                   <span>{t("project_settings.workflows.indicator_popup_for")}</span>
                   <StateBadge name={sourceStateName} color={sourceStateColor} />
                 </div>
-                <div className="flex items-center gap-1 flex-wrap text-[11px] text-secondary leading-snug mt-1">
+                <div className="mt-1 flex flex-wrap items-center gap-1 text-[11px] leading-snug text-secondary">
                   <span className="font-medium text-primary">{formatReviewerNames(approvers)}</span>
                   <span>{t("project_settings.workflows.indicator_popup_can_move")}</span>
                   {targetState && <StateBadge name={targetState.name} color={targetState.color} />}

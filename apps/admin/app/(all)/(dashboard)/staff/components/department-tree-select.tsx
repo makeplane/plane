@@ -46,7 +46,7 @@ const TreeNode = observer(function TreeNode({ dept, depth, selectedId, onSelect,
         type="button"
         onClick={() => onSelect(dept)}
         className={cn(
-          "w-full flex items-center gap-2 px-3 py-1.5 text-left text-13 rounded hover:bg-layer-1-hover",
+          "flex w-full items-center gap-2 rounded px-3 py-1.5 text-left text-13 hover:bg-layer-1-hover",
           isSelected && "bg-accent-subtle text-accent-primary"
         )}
         style={{ paddingLeft: `${depth * 16 + 12}px` }}
@@ -59,12 +59,12 @@ const TreeNode = observer(function TreeNode({ dept, depth, selectedId, onSelect,
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className={cn("w-4 h-4 flex-shrink-0 text-tertiary p-0 bg-transparent border-0", !hasChildren && "invisible")}
+          className={cn("h-4 w-4 flex-shrink-0 border-0 bg-transparent p-0 text-tertiary", !hasChildren && "invisible")}
         >
-          <ChevronRight className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-90")} />
+          <ChevronRight className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-90")} />
         </button>
-        <span className="truncate flex-1">{dept.name}</span>
-        <span className="text-11 font-mono text-tertiary flex-shrink-0">{dept.code}</span>
+        <span className="flex-1 truncate">{dept.name}</span>
+        <span className="font-mono flex-shrink-0 text-11 text-tertiary">{dept.code}</span>
       </button>
 
       {hasChildren && isExpanded && (
@@ -138,22 +138,22 @@ export const DepartmentTreeSelect = observer(function DepartmentTreeSelect({
         disabled={disabled}
         onClick={() => !disabled && setOpen((v) => !v)}
         className={cn(
-          "w-full flex items-center gap-2 rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13 text-left",
+          "flex w-full items-center gap-2 rounded-md border border-subtle bg-layer-2 px-3 py-2 text-left text-13",
           "hover:border-primary transition-colors",
-          disabled && "opacity-50 cursor-not-allowed"
+          disabled && "cursor-not-allowed opacity-50"
         )}
       >
         <span className="flex-1 truncate">{selectedName ?? <span className="text-tertiary">{placeholder}</span>}</span>
-        {value && <X className="w-3.5 h-3.5 text-tertiary hover:text-primary flex-shrink-0" onClick={handleClear} />}
-        <ChevronDown className={cn("w-4 h-4 text-tertiary flex-shrink-0 transition-transform", open && "rotate-180")} />
+        {value && <X className="h-3.5 w-3.5 flex-shrink-0 text-tertiary hover:text-primary" onClick={handleClear} />}
+        <ChevronDown className={cn("h-4 w-4 flex-shrink-0 text-tertiary transition-transform", open && "rotate-180")} />
       </button>
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full min-w-[240px] rounded-md border border-subtle bg-layer-2 shadow-lg">
+        <div className="shadow-lg absolute z-50 mt-1 w-full min-w-[240px] rounded-md border border-subtle bg-layer-2">
           {/* Search */}
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-subtle">
-            <Search className="w-3.5 h-3.5 text-tertiary flex-shrink-0" />
+          <div className="flex items-center gap-2 border-b border-subtle px-3 py-2">
+            <Search className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" />
             <input
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
@@ -174,7 +174,7 @@ export const DepartmentTreeSelect = observer(function DepartmentTreeSelect({
                 setQuery("");
               }}
               className={cn(
-                "w-full px-3 py-1.5 text-left text-13 text-tertiary rounded hover:bg-layer-1-hover",
+                "w-full rounded px-3 py-1.5 text-left text-13 text-tertiary hover:bg-layer-1-hover",
                 !value && "bg-accent-subtle text-accent-primary"
               )}
             >

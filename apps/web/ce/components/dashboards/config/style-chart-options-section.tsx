@@ -72,7 +72,7 @@ export function StyleChartOptionsSection({
       {/* Line type selector for LINE_CHART */}
       {showLineType && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.line_type")}</span>
+          <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.line_type")}</span>
           <Controller
             name="config.line_type"
             control={control}
@@ -83,7 +83,7 @@ export function StyleChartOptionsSection({
                     key={opt.value}
                     type="button"
                     onClick={() => field.onChange(opt.value)}
-                    className={`flex-1 rounded border px-3 py-1.5 text-sm transition-colors ${
+                    className={`text-sm flex-1 rounded border px-3 py-1.5 transition-colors ${
                       (field.value || "solid") === opt.value
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"
@@ -101,7 +101,7 @@ export function StyleChartOptionsSection({
       {/* Orientation toggle for BAR_CHART */}
       {showOrientation && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.orientation")}</span>
+          <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.orientation")}</span>
           <Controller
             name="config.orientation"
             control={control}
@@ -112,7 +112,7 @@ export function StyleChartOptionsSection({
                     key={opt}
                     type="button"
                     onClick={() => field.onChange(opt)}
-                    className={`flex-1 rounded border px-3 py-1.5 text-sm capitalize transition-colors ${
+                    className={`text-sm flex-1 rounded border px-3 py-1.5 capitalize transition-colors ${
                       (field.value || "vertical") === opt
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"

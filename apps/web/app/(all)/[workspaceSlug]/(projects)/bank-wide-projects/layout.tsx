@@ -51,14 +51,14 @@ export default function BankWideProjectsLayout() {
                   type="date"
                   value={fromDate}
                   onChange={(e) => updateParam("from_date", e.target.value)}
-                  className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
+                  className="focus:border-accent-primary rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary transition-colors outline-none"
                 />
                 <span className="text-13 font-medium text-secondary">To</span>
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => updateParam("to_date", e.target.value)}
-                  className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
+                  className="focus:border-accent-primary rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary transition-colors outline-none"
                 />
                 <button
                   onClick={() => updateParam("show_archived", showArchived ? "" : "true")}

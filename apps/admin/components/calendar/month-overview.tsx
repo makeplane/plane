@@ -102,14 +102,14 @@ export const MonthOverview = observer(function MonthOverview({ scheduleId }: Pro
     <div className="space-y-6">
       <MonthSummaryCard monthLabel={monthLabel} stats={monthStats} overrideCount={monthOverrides.length} />
 
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={() => shiftMonth(-1)}>
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-h6-semibold text-primary min-w-40 text-center">{monthLabel}</span>
+          <span className="min-w-40 text-center text-h6-semibold text-primary">{monthLabel}</span>
           <Button variant="secondary" size="sm" onClick={() => shiftMonth(1)}>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="secondary" size="sm" onClick={goToday}>
             Today
@@ -160,7 +160,7 @@ export const MonthOverview = observer(function MonthOverview({ scheduleId }: Pro
 
 const Legend = ({ swatch, label }: { swatch: string; label: string }) => (
   <span className="flex items-center gap-1">
-    <span className={cn("w-3 h-3 rounded inline-block", swatch)} />
+    <span className={cn("inline-block h-3 w-3 rounded", swatch)} />
     {label}
   </span>
 );

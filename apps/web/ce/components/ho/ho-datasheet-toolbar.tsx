@@ -60,14 +60,14 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
           type="date"
           value={store.fromDate}
           onChange={handleFromDate}
-          className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
+          className="focus:border-accent-primary rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary transition-colors outline-none"
         />
         <span className="text-13 font-medium text-secondary">{t("ho.to")}</span>
         <input
           type="date"
           value={store.toDate}
           onChange={handleToDate}
-          className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
+          className="focus:border-accent-primary rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary transition-colors outline-none"
         />
       </div>
 
@@ -83,7 +83,7 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
         <button
           type="button"
           onClick={() => setShowDisplayProps((v) => !v)}
-          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
+          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
         >
           <SlidersHorizontal className="h-4 w-4" />
           {t("ho.display")}
@@ -92,7 +92,7 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
           type="button"
           onClick={() => void handleExport()}
           disabled={isExporting}
-          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary transition-colors hover:bg-layer-2 hover:text-primary disabled:opacity-50"
         >
           {isExporting ? t("ho.exporting") : t("workspace_views.export.button")}
         </button>
@@ -100,7 +100,7 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
 
       {/* Display properties popover */}
       {showDisplayProps && (
-        <div ref={displayRef} className="absolute right-4 top-10 z-30">
+        <div ref={displayRef} className="absolute top-10 right-4 z-30">
           <HoDatasheetDisplayProps />
         </div>
       )}

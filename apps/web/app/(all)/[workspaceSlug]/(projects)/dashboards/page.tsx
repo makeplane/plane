@@ -112,7 +112,7 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
           ) : dashboards.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
               <LayoutDashboard className="h-12 w-12 text-tertiary" />
-              <p className="text-center text-sm text-secondary">
+              <p className="text-sm text-center text-secondary">
                 {t("analytics_dashboard.empty_title")}
                 <br />
                 {t("analytics_dashboard.create_first")}

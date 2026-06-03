@@ -48,12 +48,12 @@ export const ScheduleDetail = observer(function ScheduleDetail({ scheduleId }: P
           <div className="flex items-center gap-2">
             <h1 className="text-h5-semibold text-primary">{schedule.name}</h1>
             {schedule.is_default && (
-              <span className="px-2 py-0.5 rounded text-caption-sm-medium bg-accent-subtle text-accent-primary">
+              <span className="rounded bg-accent-subtle px-2 py-0.5 text-caption-sm-medium text-accent-primary">
                 Default
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 text-caption-sm-regular text-secondary flex-wrap">
+          <div className="flex flex-wrap items-center gap-2 text-caption-sm-regular text-secondary">
             <span>{schedule.timezone}</span>
             <span>·</span>
             <span>{schedule.country_code}</span>
@@ -71,7 +71,7 @@ export const ScheduleDetail = observer(function ScheduleDetail({ scheduleId }: P
               key={key}
               type="button"
               onClick={() => setActiveTab(key)}
-              className={`pb-3 text-body-sm-medium border-b-2 transition-colors ${
+              className={`border-b-2 pb-3 text-body-sm-medium transition-colors ${
                 activeTab === key
                   ? "border-accent-primary text-accent-primary"
                   : "border-transparent text-secondary hover:text-primary"
@@ -101,10 +101,10 @@ const WorkweekChip = ({ weekPattern, onEdit }: ChipProps) => (
     type="button"
     onClick={onEdit}
     title="Edit working week"
-    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-subtle hover:border-strong hover:bg-surface-2 transition-colors cursor-pointer"
+    className="inline-flex cursor-pointer items-center gap-1.5 rounded border border-subtle px-2 py-0.5 transition-colors hover:border-strong hover:bg-surface-2"
   >
     <span className="text-caption-sm-regular text-secondary">Working:</span>
-    <span className="flex items-center gap-0.5 font-mono">
+    <span className="font-mono flex items-center gap-0.5">
       {DAY_INITIALS.map((d, i) => (
         <span
           key={i}
@@ -117,6 +117,6 @@ const WorkweekChip = ({ weekPattern, onEdit }: ChipProps) => (
         </span>
       ))}
     </span>
-    <Pencil className="w-3 h-3 text-tertiary" />
+    <Pencil className="h-3 w-3 text-tertiary" />
   </button>
 );

@@ -104,7 +104,7 @@ const DashboardListPage = observer(function DashboardListPage() {
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-medium text-primary">{t("analytics_dashboard.empty")}</h3>
-                <p className="mt-1 text-sm text-secondary">{t("analytics_dashboard.empty_description")}</p>
+                <p className="text-sm mt-1 text-secondary">{t("analytics_dashboard.empty_description")}</p>
               </div>
               <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
                 {t("analytics_dashboard.create")}

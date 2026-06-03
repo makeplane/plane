@@ -27,7 +27,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
   return (
     <>
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.text_align")}</span>
+        <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.text_align")}</span>
         <Controller
           name="config.text_align"
           control={control}
@@ -38,7 +38,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
                   key={opt.value}
                   type="button"
                   onClick={() => field.onChange(opt.value)}
-                  className={`flex-1 rounded border px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`text-sm flex-1 rounded border px-3 py-1.5 font-medium transition-colors ${
                     (field.value || "center") === opt.value
                       ? "border-accent-strong bg-accent-subtle text-accent-primary"
                       : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"
@@ -53,7 +53,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
       </div>
 
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.text_color")}</span>
+        <span className="text-sm mb-2 block font-medium text-secondary">{t("analytics_dashboard.text_color")}</span>
         <Controller
           name="config.text_color"
           control={control}

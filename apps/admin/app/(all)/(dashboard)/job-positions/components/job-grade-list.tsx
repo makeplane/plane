@@ -39,20 +39,20 @@ export const JobGradeList = observer(function JobGradeList({ selectedGradeId, on
   };
 
   if (gradeIds.length === 0) {
-    return <div className="text-center py-12 text-tertiary text-13">No job grades yet. Create the first one.</div>;
+    return <div className="py-12 text-center text-13 text-tertiary">No job grades yet. Create the first one.</div>;
   }
 
   return (
     <>
-      <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
+      <div className="overflow-hidden rounded-lg border border-subtle bg-layer-1">
         <table className="w-full text-13">
           <thead>
             <tr className="border-b border-subtle bg-layer-2">
-              <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
-              <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
-              <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
+              <th className="px-3 py-2 text-left font-medium text-secondary">Name</th>
+              <th className="px-3 py-2 text-left font-medium text-secondary">Description</th>
+              <th className="px-3 py-2 text-center font-medium text-secondary">Active</th>
+              <th className="px-3 py-2 text-center font-medium text-secondary">Order</th>
+              <th className="px-3 py-2 text-right font-medium text-secondary">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle">
@@ -68,10 +68,10 @@ export const JobGradeList = observer(function JobGradeList({ selectedGradeId, on
                   <td className="px-3 py-2 font-medium">
                     <span className={isSelected ? "text-custom-primary-100" : ""}>{g.name}</span>
                   </td>
-                  <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{g.description || "—"}</td>
+                  <td className="max-w-[160px] truncate px-3 py-2 text-secondary">{g.description || "—"}</td>
                   <td className="px-3 py-2 text-center">
                     <span
-                      className={`text-11 px-2 py-0.5 rounded font-medium ${g.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"}`}
+                      className={`rounded px-2 py-0.5 text-11 font-medium ${g.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"}`}
                     >
                       {g.is_active ? "Active" : "Inactive"}
                     </span>
@@ -84,10 +84,10 @@ export const JobGradeList = observer(function JobGradeList({ selectedGradeId, on
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Button variant="ghost" size="sm" onClick={() => onEdit(g)}>
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="h-3.5 w-3.5" />
                       </Button>
                       <Button variant="ghost" size="sm" onClick={() => setDeleteId(id)}>
-                        <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
+                        <Trash2 className="h-3.5 w-3.5 text-danger-primary" />
                       </Button>
                     </div>
                   </td>

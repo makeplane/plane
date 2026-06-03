@@ -49,10 +49,10 @@ export const BankWideSettingsRoot = observer(function BankWideSettingsRoot(props
 
   return (
     <div className={`w-full ${!isAdmin ? "opacity-60" : ""}`}>
-      <div className="flex items-center justify-between gap-4 py-4 border-b border-subtle">
+      <div className="flex items-center justify-between gap-4 border-b border-subtle py-4">
         <div>
           <h4 className="text-sm font-medium text-primary">{t("bank_wide_project.settings.label")}</h4>
-          <p className="text-sm text-secondary mt-1">{t("bank_wide_project.settings.description")}</p>
+          <p className="text-sm mt-1 text-secondary">{t("bank_wide_project.settings.description")}</p>
         </div>
         <ToggleSwitch
           value={currentProjectDetails?.is_bank_wide ?? false}

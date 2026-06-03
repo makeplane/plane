@@ -68,12 +68,12 @@ export const TimesheetWeekNavigator: FC<TimesheetWeekNavigatorProps> = ({ weekSt
           size="sm"
           onClick={() => shiftWeek(-1)}
           aria-label="Previous week"
-          className="p-1 h-7 w-7 text-secondary"
+          className="h-7 w-7 p-1 text-secondary"
         >
           <ChevronLeft size={16} />
         </Button>
 
-        <span className="text-13 font-medium text-secondary min-w-[140px] text-center">
+        <span className="min-w-[140px] text-center text-13 font-medium text-secondary">
           {weekStart && weekEnd ? `${t("timesheet_week_of")} ${formatDate(weekStart)} – ${formatDate(weekEnd)}` : "..."}
         </span>
 
@@ -82,7 +82,7 @@ export const TimesheetWeekNavigator: FC<TimesheetWeekNavigatorProps> = ({ weekSt
           size="sm"
           onClick={() => shiftWeek(1)}
           aria-label="Next week"
-          className="p-1 h-7 w-7 text-secondary"
+          className="h-7 w-7 p-1 text-secondary"
         >
           <ChevronRight size={16} />
         </Button>

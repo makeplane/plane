@@ -107,7 +107,7 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                   <SearchIcon className="h-3.5 w-3.5 shrink-0 text-placeholder" />
                   <input
                     type="text"
-                    className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                    className="text-xs w-full bg-transparent py-1 text-secondary placeholder:text-placeholder focus:outline-none"
                     placeholder={t("task_category.search")}
                     value={mainQuery}
                     onChange={(e) => setMainQuery(e.target.value)}
@@ -128,7 +128,7 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
               ))}
               {filteredMainIds.length === 0 && (
                 <div
-                  className="px-2 py-1.5 text-xs italic text-placeholder"
+                  className="text-xs px-2 py-1.5 text-placeholder italic"
                   onClick={(e) => e.stopPropagation()}
                   role="presentation"
                   onKeyDown={(e) => e.stopPropagation()}
@@ -175,7 +175,7 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                       <SearchIcon className="h-3.5 w-3.5 shrink-0 text-placeholder" />
                       <input
                         type="text"
-                        className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                        className="text-xs w-full bg-transparent py-1 text-secondary placeholder:text-placeholder focus:outline-none"
                         placeholder={t("task_category.search")}
                         value={subQuery}
                         onChange={(e) => setSubQuery(e.target.value)}
@@ -195,7 +195,7 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                   ))}
                   {filteredSubCategories.length === 0 && (
                     <div
-                      className="px-2 py-1.5 text-xs italic text-placeholder"
+                      className="text-xs px-2 py-1.5 text-placeholder italic"
                       onClick={(e) => e.stopPropagation()}
                       role="presentation"
                       onKeyDown={(e) => e.stopPropagation()}

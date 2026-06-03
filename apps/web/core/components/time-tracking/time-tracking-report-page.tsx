@@ -55,7 +55,7 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
   const isEmpty = summary && summary.total_duration_minutes === 0 && summary.by_issue.length === 0;
 
   return (
-    <div className="flex flex-col gap-6 p-6 h-full">
+    <div className="flex h-full flex-col gap-6 p-6">
       {/* Filter bar */}
       <TimeTrackingFilters
         dateFrom={dateFrom}
@@ -77,7 +77,7 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
       {/* Error state */}
       {!isLoading && error && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-13 text-red-500">{error}</span>
+          <span className="text-red-500 text-13">{error}</span>
         </div>
       )}
 

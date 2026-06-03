@@ -35,7 +35,9 @@ async function parseExcelForDelete(file: File): Promise<IWorkspaceDeleteRow[]> {
   const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
   return raw.map((r) => ({
     workspace_slug: String(r.workspace_slug ?? "").trim(),
-    email: String(r.email ?? "").trim().toLowerCase(),
+    email: String(r.email ?? "")
+      .trim()
+      .toLowerCase(),
   }));
 }
 
@@ -100,17 +102,17 @@ export const WorkspaceBulkDeleteForm = observer(function WorkspaceBulkDeleteForm
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl">
-      <div className="rounded-md border border-border-subtle bg-surface-1 p-4 space-y-3">
+    <div className="flex max-w-3xl flex-col gap-6">
+      <div className="border-border-subtle space-y-3 rounded-md border bg-surface-1 p-4">
         <p className="text-sm font-semibold">Excel file requirements</p>
-        <div className="text-sm text-tertiary space-y-1">
+        <div className="text-sm space-y-1 text-tertiary">
           <p>Required columns (header row):</p>
-          <ul className="ml-4 space-y-1 list-disc">
+          <ul className="ml-4 list-disc space-y-1">
             <li>
-              <code className="text-primary font-mono">workspace_slug</code> — target workspace slug
+              <code className="font-mono text-primary">workspace_slug</code> — target workspace slug
             </li>
             <li>
-              <code className="text-primary font-mono">email</code> — existing user&apos;s email address
+              <code className="font-mono text-primary">email</code> — existing user&apos;s email address
             </li>
           </ul>
         </div>
@@ -122,7 +124,7 @@ export const WorkspaceBulkDeleteForm = observer(function WorkspaceBulkDeleteForm
       <button
         type="button"
         onClick={() => void downloadDeleteTemplate()}
-        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+        className="text-sm flex w-fit items-center gap-2 text-primary hover:underline"
       >
         <Download className="h-4 w-4" />
         Download template
@@ -139,7 +141,7 @@ export const WorkspaceBulkDeleteForm = observer(function WorkspaceBulkDeleteForm
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+          className="border-border-subtle hover:bg-surface-hover flex w-full cursor-pointer items-center gap-3 rounded-md border border-dashed p-6 transition-colors"
         >
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">

@@ -37,7 +37,7 @@ export const DepartmentTree = observer(function DepartmentTree({
   }
 
   return (
-    <div className="rounded-lg border border-custom-border-200 bg-custom-background-100">
+    <div className="border-custom-border-200 bg-custom-background-100 rounded-lg border">
       {departments.map((department) => (
         <DepartmentTreeItem
           key={department.id}

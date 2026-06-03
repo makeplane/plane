@@ -72,7 +72,7 @@ export const HoExportsList = observer(function HoExportsList() {
 
   return (
     <div className="h-full w-full overflow-auto bg-surface-1">
-      <div className="px-6 pt-6 pb-4 shrink-0">
+      <div className="shrink-0 px-6 pt-6 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
@@ -116,7 +116,7 @@ export const HoExportsList = observer(function HoExportsList() {
                   {COLUMN_KEYS.map((col) => (
                     <th
                       key={col}
-                      className={`px-4 py-2.5 text-12 font-semibold uppercase tracking-wide text-tertiary ${COLUMN_ALIGN[col]}`}
+                      className={`px-4 py-2.5 text-12 font-semibold tracking-wide text-tertiary uppercase ${COLUMN_ALIGN[col]}`}
                     >
                       {COLUMN_LABELS[col] ? t(COLUMN_LABELS[col]) : ""}
                     </th>

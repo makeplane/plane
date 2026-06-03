@@ -63,14 +63,14 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <Dialog.Title>Copy calendar year</Dialog.Title>
 
           {result ? (
             <div className="space-y-4">
               {/* Prominent lunar holiday warning */}
-              <div className="flex gap-3 p-4 rounded-lg bg-warning-subtle border border-warning-strong">
-                <AlertTriangle className="w-5 h-5 text-warning-primary shrink-0 mt-0.5" />
+              <div className="flex gap-3 rounded-lg border border-warning-strong bg-warning-subtle p-4">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning-primary" />
                 <div className="space-y-1">
                   <p className="text-body-sm-semibold text-warning-primary">
                     ⚠️ Tet and Hung Kings' Day are lunar holidays — please verify and edit manually
@@ -81,7 +81,7 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
                 </div>
               </div>
 
-              <div className="text-body-sm-regular text-secondary space-y-1">
+              <div className="space-y-1 text-body-sm-regular text-secondary">
                 <p>
                   Copied <strong>{result.copied_holidays}</strong> holidays and{" "}
                   <strong>{result.copied_overrides}</strong> overrides.
@@ -94,9 +94,9 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
               {result.warnings.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-body-xs-semibold text-secondary">Warnings:</p>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
+                  <ul className="max-h-40 space-y-1 overflow-y-auto">
                     {result.warnings.map((w, i) => (
-                      <li key={i} className="text-caption-sm-regular text-warning-primary flex gap-1.5">
+                      <li key={i} className="flex gap-1.5 text-caption-sm-regular text-warning-primary">
                         <span className="shrink-0">•</span>
                         <span>{w}</span>
                       </li>

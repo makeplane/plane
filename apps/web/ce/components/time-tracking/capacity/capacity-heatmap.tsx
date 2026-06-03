@@ -69,21 +69,21 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
   };
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-subtle bg-surface-1 shadow-sm horizontal-scrollbar scrollbar-sm">
-      <table className="w-full min-w-max text-13 text-left border-collapse">
-        <thead className="bg-surface-2/80 backdrop-blur-sm uppercase text-12 font-medium text-tertiary border-b border-subtle sticky top-0 z-[21]">
+    <div className="shadow-sm horizontal-scrollbar scrollbar-sm w-full overflow-x-auto rounded-xl border border-subtle bg-surface-1">
+      <table className="w-full min-w-max border-collapse text-left text-13">
+        <thead className="sticky top-0 z-[21] border-b border-subtle bg-surface-2/80 text-12 font-medium text-tertiary uppercase backdrop-blur-sm">
           <tr>
             <th
               scope="col"
-              className="px-3 py-2 sticky left-0 z-[22] bg-surface-2 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)] min-w-[200px]"
+              className="sticky left-0 z-[22] min-w-[200px] border-r border-subtle bg-surface-2 px-3 py-2 shadow-[1px_0_0_0_var(--color-border-subtle)]"
             >
               {t("capacity_member")}
             </th>
-            <th scope="col" className="px-3 py-2 text-right border-r border-subtle">
+            <th scope="col" className="border-r border-subtle px-3 py-2 text-right">
               {t("capacity_total_logged")}
             </th>
             {days.map((day) => (
-              <th key={day.toISOString()} scope="col" className="px-2 py-2 text-center min-w-[70px]">
+              <th key={day.toISOString()} scope="col" className="min-w-[70px] px-2 py-2 text-center">
                 {format(day, "MMM dd")}
               </th>
             ))}
@@ -101,14 +101,14 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
               const memberDays = member.days || {};
 
               return (
-                <tr key={member.member_id} className="group hover:bg-surface-2/50 transition-colors duration-200">
-                  <td className="px-3 py-2 font-medium text-primary sticky left-0 z-[21] bg-surface-1 group-hover:bg-surface-2/50 transition-colors duration-200 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)] min-w-[200px]">
-                    <div className="flex items-center gap-2.5 min-w-0">
+                <tr key={member.member_id} className="group transition-colors duration-200 hover:bg-surface-2/50">
+                  <td className="sticky left-0 z-[21] min-w-[200px] border-r border-subtle bg-surface-1 px-3 py-2 font-medium text-primary shadow-[1px_0_0_0_var(--color-border-subtle)] transition-colors duration-200 group-hover:bg-surface-2/50">
+                    <div className="flex min-w-0 items-center gap-2.5">
                       <Avatar name={member.display_name} src={member.avatar_url} size="sm" />
-                      <span className="truncate max-w-[250px] font-semibold">{member.display_name}</span>
+                      <span className="max-w-[250px] truncate font-semibold">{member.display_name}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2 text-right text-primary font-bold border-r border-subtle/30">
+                  <td className="border-r border-subtle/30 px-3 py-2 text-right font-bold text-primary">
                     {formatHours(member.total_logged_minutes)}h
                   </td>
 
@@ -146,12 +146,12 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           )}
         </tbody>
         {members.length > 0 && (
-          <tfoot className="bg-surface-2/50 border-t border-subtle font-bold text-primary">
+          <tfoot className="border-t border-subtle bg-surface-2/50 font-bold text-primary">
             <tr>
-              <td className="px-3 py-2 sticky left-0 z-[22] bg-surface-2 border-r border-subtle text-12 font-medium text-tertiary uppercase min-w-[200px]">
+              <td className="sticky left-0 z-[22] min-w-[200px] border-r border-subtle bg-surface-2 px-3 py-2 text-12 font-medium text-tertiary uppercase">
                 {t("total_logged_time")}
               </td>
-              <td className="px-3 py-2 text-right text-13 font-bold border-r border-subtle">
+              <td className="border-r border-subtle px-3 py-2 text-right text-13 font-bold">
                 {formatHours(members.reduce((acc, m) => acc + m.total_logged_minutes, 0))}h
               </td>
               {days.map((day) => {

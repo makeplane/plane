@@ -47,7 +47,7 @@ export const ProfileNavbar = observer(function ProfileNavbar(props: Props) {
             const tabLabel = (
               <span
                 className={cn(
-                  `flex whitespace-nowrap border-b-2 p-4 text-13 font-medium outline-none text-tertiary hover:text-primary ${
+                  `flex border-b-2 p-4 text-13 font-medium whitespace-nowrap text-tertiary outline-none hover:text-primary ${
                     pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
                       ? "border-accent-strong text-accent-primary hover:text-accent-primary"
                       : "border-transparent"

@@ -40,7 +40,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
     switch (widgetType) {
       case "BAR_CHART":
         return (
-          <div className="w-full h-full p-2">
+          <div className="h-full w-full p-2">
             <BarChart
               className="h-full w-full"
               data={sampleChartData}
@@ -61,7 +61,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
       case "LINE_CHART":
         return (
-          <div className="w-full h-full p-2">
+          <div className="h-full w-full p-2">
             <LineChart
               className="h-full w-full"
               data={sampleChartData}
@@ -84,7 +84,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
       case "AREA_CHART":
         return (
-          <div className="w-full h-full p-2">
+          <div className="h-full w-full p-2">
             <AreaChart
               className="h-full w-full"
               data={sampleChartData}
@@ -109,7 +109,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
       case "PIE_CHART":
         return (
-          <div className="w-full h-full p-2">
+          <div className="h-full w-full p-2">
             <PieChart
               className="h-full w-full"
               data={sampleChartData.map((d, i) => ({ ...d, key: `cell-${i}` }))}
@@ -122,7 +122,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
       case "DONUT_CHART":
         return (
-          <div className="w-full h-full p-2">
+          <div className="h-full w-full p-2">
             <PieChart
               className="h-full w-full"
               data={sampleChartData.map((d, i) => ({ ...d, key: `cell-${i}` }))}
@@ -136,7 +136,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
       case "NUMBER":
         return (
-          <div className="flex flex-col items-center justify-center h-full gap-1">
+          <div className="flex h-full flex-col items-center justify-center gap-1">
             <span className="text-4xl font-bold text-primary">{sampleNumberData.value}</span>
             <span className="text-xs text-tertiary">{chartMetric}</span>
           </div>

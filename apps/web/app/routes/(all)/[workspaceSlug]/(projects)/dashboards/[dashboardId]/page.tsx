@@ -106,7 +106,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden relative">
+      <div className="relative flex h-full flex-col overflow-hidden">
         <DashboardToolbar
           pageTitle={pageTitle}
           description={currentDashboard?.description}
@@ -117,7 +117,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
           onToggleEdit={() => setIsEditMode(!isEditMode)}
         />
 
-        <div className="flex-1 overflow-auto p-4 relative z-0">
+        <div className="relative z-0 flex-1 overflow-auto p-4">
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, i) => (

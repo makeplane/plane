@@ -27,8 +27,8 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
       <table className="w-full text-13">
         <thead>
           <tr className="border-b border-subtle bg-layer-1-hover">
-            <th className="px-4 py-3 text-left text-12 font-medium text-tertiary uppercase tracking-wide">Issue</th>
-            <th className="px-4 py-3 text-right text-12 font-medium text-tertiary uppercase tracking-wide w-32">
+            <th className="px-4 py-3 text-left text-12 font-medium tracking-wide text-tertiary uppercase">Issue</th>
+            <th className="w-32 px-4 py-3 text-right text-12 font-medium tracking-wide text-tertiary uppercase">
               Logged
             </th>
           </tr>
@@ -37,21 +37,21 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
           {byIssue.map((issue) => (
             <tr
               key={issue.issue_id}
-              className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors"
+              className="border-b border-subtle transition-colors last:border-0 hover:bg-layer-1-hover"
             >
               <td className="px-4 py-3">
                 {issue.issue_name ? (
                   <button
-                    className="text-primary font-medium text-left hover:text-accent-primary transition-colors"
+                    className="text-left font-medium text-primary transition-colors hover:text-accent-primary"
                     onClick={() => setPeekIssue({ workspaceSlug, projectId, issueId: issue.issue_id, nestingLevel: 0 })}
                   >
                     {issue.issue_name}
                   </button>
                 ) : (
-                  <span className="italic text-tertiary">(Deleted issue)</span>
+                  <span className="text-tertiary italic">(Deleted issue)</span>
                 )}
               </td>
-              <td className="px-4 py-3 text-right text-primary font-medium">
+              <td className="px-4 py-3 text-right font-medium text-primary">
                 {formatMinutesToDisplay(issue.total_minutes)}
               </td>
             </tr>

@@ -93,8 +93,8 @@ export const JobGradeFormModal = observer(function JobGradeFormModal({ open, onC
                 </label>
                 <Input id="jg-sort-order" type="number" {...register("sort_order")} placeholder="0" />
               </div>
-              <div className="space-y-1 flex flex-col justify-end">
-                <label className="flex items-center gap-2 text-13 font-medium cursor-pointer">
+              <div className="flex flex-col justify-end space-y-1">
+                <label className="flex cursor-pointer items-center gap-2 text-13 font-medium">
                   <input type="checkbox" {...register("is_active")} className="rounded" />
                   Active
                 </label>

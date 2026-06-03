@@ -53,7 +53,15 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [store.categorySummary, store.filters.department, store.filters.main_task_category, store.filters.sub_task_category, store.selectedDepartmentIds, store.accessibleWorkspaces, search]);
+  }, [
+    store.categorySummary,
+    store.filters.department,
+    store.filters.main_task_category,
+    store.filters.sub_task_category,
+    store.selectedDepartmentIds,
+    store.accessibleWorkspaces,
+    search,
+  ]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];
@@ -92,7 +100,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
         <button
           type="button"
           onClick={handleExport}
-          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
+          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
         >
           {t("workspace_views.export.button")}
         </button>
@@ -111,7 +119,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
       </div>
 
       {store.isCategoryLoading && store.categorySummary.length === 0 ? (
-        <div className="py-9 px-page-x space-y-2">
+        <div className="space-y-2 px-page-x py-9">
           <Loader className="space-y-2">
             <Loader.Item height="36px" />
             <Loader.Item height="36px" />
@@ -122,7 +130,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
         <>
           <HoCategoryTable data={sortedData} />
           {sortedData.length === 0 && (
-            <div className="flex h-32 items-center justify-center text-sm text-placeholder">
+            <div className="text-sm flex h-32 items-center justify-center text-placeholder">
               {search ? t("ho.no_matching_rows") : t("ho.no_data")}
             </div>
           )}

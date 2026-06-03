@@ -84,30 +84,30 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={() => setYear((y) => y - 1)}>
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-h6-semibold text-primary w-16 text-center">{year}</span>
+          <span className="w-16 text-center text-h6-semibold text-primary">{year}</span>
           <Button variant="secondary" size="sm" onClick={() => setYear((y) => y + 1)}>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-3 text-caption-sm-regular text-secondary">
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-danger-subtle inline-block" />
+              <span className="inline-block h-3 w-3 rounded bg-danger-subtle" />
               Holiday
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-warning-subtle inline-block border border-dashed border-warning-strong" />
+              <span className="inline-block h-3 w-3 rounded border border-dashed border-warning-strong bg-warning-subtle" />
               Make-up workday
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-success-subtle inline-block border border-dashed border-success-strong" />
+              <span className="inline-block h-3 w-3 rounded border border-dashed border-success-strong bg-success-subtle" />
               Make-up day off
             </span>
           </div>
           <Button variant="secondary" size="sm" onClick={() => setCopyOpen(true)}>
-            <Copy className="w-4 h-4" />
+            <Copy className="h-4 w-4" />
             Copy year
           </Button>
         </div>

@@ -66,15 +66,15 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
   };
 
   return (
-    <div className="border-b border-custom-border-200 last:border-b-0">
+    <div className="border-custom-border-200 border-b last:border-b-0">
       <div
-        className="flex items-center gap-3 py-3 px-4 hover:bg-custom-background-80"
+        className="hover:bg-custom-background-80 flex items-center gap-3 px-4 py-3"
         style={{ paddingLeft: `${level * 24 + 16}px` }}
       >
         {hasChildren ? (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-shrink-0 text-custom-text-300 hover:text-custom-text-200"
+            className="text-custom-text-300 hover:text-custom-text-200 flex-shrink-0"
           >
             {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
@@ -85,13 +85,13 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
         <div className="flex flex-1 items-center gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-custom-text-100">{department.name}</span>
+              <span className="text-custom-text-100 font-medium">{department.name}</span>
               <span className="text-xs text-custom-text-300">({department.code})</span>
             </div>
-            {department.description && <p className="mt-1 text-xs text-custom-text-300">{department.description}</p>}
+            {department.description && <p className="text-xs text-custom-text-300 mt-1">{department.description}</p>}
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-custom-text-300">
+          <div className="text-sm text-custom-text-300 flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               <span>{department.staff_count || 0}</span>

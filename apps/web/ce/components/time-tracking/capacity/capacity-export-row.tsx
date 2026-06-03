@@ -40,30 +40,30 @@ export function CapacityExportRow({ job }: Props) {
         <CapacityExportStatusBadge status={job.status} />
       </td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-primary">
+      <td className="px-4 py-2.5 text-13 whitespace-nowrap text-primary">
         <span className="tabular-nums">{formatDate(job.date_from)}</span>
         <span className="mx-1.5 text-tertiary">→</span>
         <span className="tabular-nums">{formatDate(job.date_to)}</span>
       </td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-secondary text-right tabular-nums">{membersLabel}</td>
+      <td className="px-4 py-2.5 text-right text-13 whitespace-nowrap text-secondary tabular-nums">{membersLabel}</td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-secondary text-right tabular-nums">{rowsLabel}</td>
+      <td className="px-4 py-2.5 text-right text-13 whitespace-nowrap text-secondary tabular-nums">{rowsLabel}</td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-secondary text-right tabular-nums">
+      <td className="px-4 py-2.5 text-right text-13 whitespace-nowrap text-secondary tabular-nums">
         {formatFileSize(job.file_size)}
       </td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-tertiary tabular-nums">{formatDate(job.created_at)}</td>
+      <td className="px-4 py-2.5 text-13 whitespace-nowrap text-tertiary tabular-nums">{formatDate(job.created_at)}</td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-tertiary tabular-nums">{formatDate(job.expires_at)}</td>
+      <td className="px-4 py-2.5 text-13 whitespace-nowrap text-tertiary tabular-nums">{formatDate(job.expires_at)}</td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-right">
+      <td className="px-4 py-2.5 text-right whitespace-nowrap">
         {canDownload ? (
           <a
             href={job.file_url!}
             download
-            className="inline-flex items-center gap-1.5 rounded-md border border-accent-primary/30 bg-accent-primary/10 px-2.5 py-1 text-12 font-medium text-accent-primary transition-colors hover:border-accent-primary/40 hover:bg-accent-primary/15"
+            className="border-accent-primary/30 hover:border-accent-primary/40 inline-flex items-center gap-1.5 rounded-md border bg-accent-primary/10 px-2.5 py-1 text-12 font-medium text-accent-primary transition-colors hover:bg-accent-primary/15"
           >
             <Download className="h-3 w-3" />
             {t("capacity_exports.download")}

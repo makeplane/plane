@@ -68,12 +68,12 @@ export function DailyLogtimeIndicator() {
   return (
     <Tooltip tooltipContent={tooltip} position="bottom">
       <div
-        className="relative flex items-center h-7 px-3 rounded-full cursor-default overflow-hidden"
+        className="relative flex h-7 cursor-default items-center overflow-hidden rounded-full px-3"
         style={{ background: color.bg, border: `1px solid ${color.border}` }}
         aria-label={tooltip}
       >
         <div
-          className="absolute left-0 top-0 bottom-0 transition-all duration-500 ease-in-out"
+          className="absolute top-0 bottom-0 left-0 transition-all duration-500 ease-in-out"
           style={{ width: `${progress * 100}%`, background: color.fill }}
         />
         {/* Base layer: dark-hued text, readable on tinted (unfilled) background */}
@@ -86,7 +86,7 @@ export function DailyLogtimeIndicator() {
         </div>
         {/* Overlay layer: white text clipped to the filled portion only */}
         <div
-          className="absolute inset-0 z-20 flex items-center px-3 gap-1.5 font-semibold whitespace-nowrap text-white pointer-events-none transition-[clip-path] duration-500 ease-in-out"
+          className="pointer-events-none absolute inset-0 z-20 flex items-center gap-1.5 px-3 font-semibold whitespace-nowrap text-white transition-[clip-path] duration-500 ease-in-out"
           style={{ fontSize: "12px", clipPath: `inset(0 ${100 - progress * 100}% 0 0)` }}
           aria-hidden="true"
         >

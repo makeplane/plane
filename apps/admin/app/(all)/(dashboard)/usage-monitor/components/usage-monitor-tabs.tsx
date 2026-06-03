@@ -26,7 +26,7 @@ export const UsageMonitorTabs = ({ activeTab, onTabChange }: Props) => (
         type="button"
         onClick={() => onTabChange(tab.key)}
         className={cn(
-          "px-3 py-1.5 text-body-sm-medium rounded-md transition-colors",
+          "rounded-md px-3 py-1.5 text-body-sm-medium transition-colors",
           activeTab === tab.key
             ? "bg-accent-subtle text-accent-primary"
             : "text-secondary hover:bg-surface-2 hover:text-primary"

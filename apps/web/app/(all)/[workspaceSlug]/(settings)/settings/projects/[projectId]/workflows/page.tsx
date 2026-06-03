@@ -78,13 +78,13 @@ function WorkflowsSettingsPage() {
       <ToggleSwitch value={isLive} onChange={(v) => void handleToggleLive(v)} size="sm" />
       <CustomMenu ellipsis customButtonClassName="flex items-center text-secondary hover:text-primary">
         <CustomMenu.MenuItem onClick={() => void handleReset()}>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="text-sm flex items-center gap-2">
             <RotateCcw className="h-4 w-4" />
             {t("project_settings.workflows.reset")}
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="text-sm flex items-center gap-2">
             <History className="h-4 w-4" />
             {t("project_settings.workflows.view_history")}
           </div>

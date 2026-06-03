@@ -337,7 +337,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             ) : (
               <div className="flex items-center gap-2">
                 {(project as IProject & { is_bank_wide?: boolean }).is_bank_wide && (
-                  <span className="rounded px-1.5 py-0.5 text-11 font-medium bg-layer-1 text-secondary">Bank-wide</span>
+                  <span className="rounded bg-layer-1 px-1.5 py-0.5 text-11 font-medium text-secondary">Bank-wide</span>
                 )}
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (

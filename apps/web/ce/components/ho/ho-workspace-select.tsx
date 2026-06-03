@@ -15,7 +15,7 @@ export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
     value: dept.id,
     query: dept.name,
     content: (
-      <div className="flex items-center gap-2 max-w-[250px]">
+      <div className="flex max-w-[250px] items-center gap-2">
         <Building2 className="h-4 w-4 flex-shrink-0" />
         <span className="truncate">{dept.name}</span>
       </div>

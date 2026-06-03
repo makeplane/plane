@@ -44,7 +44,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ currentLo
           {prev ? (
             <Link
               to={`/help/a/${prev.slug}`}
-              className="flex flex-1 items-center gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-left transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+              className="flex flex-1 items-center gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-left transition-colors hover:bg-surface-2 focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
             >
               <ChevronLeft className="size-4 shrink-0 text-icon-primary" />
               <span className="truncate text-13 text-secondary">{prev.title ?? prev.slug}</span>
@@ -55,7 +55,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ currentLo
           {next ? (
             <Link
               to={`/help/a/${next.slug}`}
-              className="flex flex-1 items-center justify-end gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-right transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+              className="flex flex-1 items-center justify-end gap-2 rounded-md border border-subtle bg-surface-1 px-4 py-3 text-right transition-colors hover:bg-surface-2 focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
             >
               <span className="truncate text-13 text-secondary">{next.title ?? next.slug}</span>
               <ChevronRight className="size-4 shrink-0 text-icon-primary" />
@@ -73,7 +73,7 @@ export const HelpArticleFooter = observer(function HelpArticleFooter({ currentLo
               <li key={item.id}>
                 <Link
                   to={`/help/a/${item.slug}`}
-                  className="rounded text-13 text-accent-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+                  className="rounded text-13 text-accent-primary hover:underline focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
                 >
                   {item.title ?? item.slug}
                 </Link>

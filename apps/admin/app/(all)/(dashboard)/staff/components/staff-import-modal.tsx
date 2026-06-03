@@ -64,10 +64,10 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <Dialog.Title>Bulk Import Staff</Dialog.Title>
 
-          <div className="rounded-md border border-subtle p-3 text-13 text-tertiary space-y-1">
+          <div className="space-y-1 rounded-md border border-subtle p-3 text-13 text-tertiary">
             <p>
               Columns:{" "}
               <code className="text-primary">
@@ -95,7 +95,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
               <button
                 type="button"
                 onClick={downloadCsvTemplate}
-                className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
+                className="text-xs text-custom-primary-100 flex w-fit items-center gap-1 hover:underline"
               >
                 <Download className="h-3.5 w-3.5" />
                 Template (.csv)
@@ -103,7 +103,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
               <button
                 type="button"
                 onClick={() => void downloadXlsxTemplate()}
-                className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
+                className="text-xs text-custom-primary-100 flex w-fit items-center gap-1 hover:underline"
               >
                 <Download className="h-3.5 w-3.5" />
                 Template (.xlsx)
@@ -113,7 +113,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-3 rounded-md border border-dashed border-subtle p-5 w-full hover:bg-layer-2 transition-colors"
+            className="flex w-full items-center gap-3 rounded-md border border-dashed border-subtle p-5 transition-colors hover:bg-layer-2"
           >
             <Upload className="h-5 w-5 text-tertiary" />
             <span className="text-13">{file ? file.name : "Click to select a file (CSV or Excel)"}</span>
@@ -164,25 +164,25 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
           {/* Results */}
           {result && (
             <div className="space-y-2">
-              <div className="flex gap-3 text-13 flex-wrap">
-                <span className="px-3 py-1.5 rounded bg-success-subtle text-success-primary">
+              <div className="flex flex-wrap gap-3 text-13">
+                <span className="rounded bg-success-subtle px-3 py-1.5 text-success-primary">
                   Created: {result.created}
                 </span>
                 {result.updated > 0 && (
-                  <span className="px-3 py-1.5 rounded bg-blue-100 text-blue-700">Updated: {result.updated}</span>
+                  <span className="bg-blue-100 text-blue-700 rounded px-3 py-1.5">Updated: {result.updated}</span>
                 )}
                 {result.skipped > 0 && (
-                  <span className="px-3 py-1.5 rounded bg-yellow-100 text-yellow-700">Skipped: {result.skipped}</span>
+                  <span className="bg-yellow-100 text-yellow-700 rounded px-3 py-1.5">Skipped: {result.skipped}</span>
                 )}
                 {result.errors.length > 0 && (
-                  <span className="px-3 py-1.5 rounded bg-danger-subtle text-danger-primary">
+                  <span className="rounded bg-danger-subtle px-3 py-1.5 text-danger-primary">
                     Errors: {result.errors.length}
                   </span>
                 )}
               </div>
               {result.errors.length > 0 && (
-                <div className="rounded-md border border-red-200 bg-red-50 p-3 max-h-40 overflow-y-auto">
-                  <ul className="space-y-1 text-12 text-red-700">
+                <div className="border-red-200 bg-red-50 max-h-40 overflow-y-auto rounded-md border p-3">
+                  <ul className="text-red-700 space-y-1 text-12">
                     {result.errors.map((err, i) => (
                       <li key={i}>{err}</li>
                     ))}

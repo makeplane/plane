@@ -89,7 +89,7 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
   );
 
   return (
-    <div className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full">
+    <div className="group relative mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular">
       {/* email input with autocomplete */}
       <div ref={fieldRef} className="relative min-w-0 flex-1">
         <Controller
@@ -173,7 +173,7 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
         />
       </div>
       {/* role selector + auto join checkbox + remove button */}
-      <div className="flex items-center justify-between gap-2 shrink-0">
+      <div className="flex shrink-0 items-center justify-between gap-2">
         <div className="flex flex-col gap-1">
           <Controller
             control={control}
@@ -184,7 +184,7 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
                 value={value}
                 label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
                 onChange={onChange}
-                className="flex-grow w-24"
+                className="w-24 flex-grow"
                 input
               >
                 {Object.entries(ROLE).map(([key, roleValue]) => {
@@ -204,12 +204,12 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
           control={control}
           name={`emails.${index}.auto_join`}
           render={({ field: { value, onChange } }) => (
-            <label className="flex cursor-pointer items-center gap-1.5 text-caption-sm-regular text-secondary whitespace-nowrap">
+            <label className="flex cursor-pointer items-center gap-1.5 text-caption-sm-regular whitespace-nowrap text-secondary">
               <input
                 type="checkbox"
                 checked={value}
                 onChange={(e) => onChange(e.target.checked)}
-                className="h-3.5 w-3.5 accent-accent-primary"
+                className="accent-accent-primary h-3.5 w-3.5"
               />
               Auto Join
             </label>

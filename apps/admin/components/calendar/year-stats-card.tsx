@@ -11,8 +11,8 @@ const formatDelta = (n: number): string => (n > 0 ? `+${n}` : n < 0 ? `${n}` : "
 type Props = { year: number; stats: YearStats };
 
 export const YearStatsCard = ({ year, stats }: Props) => (
-  <div className="bg-surface-1 border border-subtle rounded-lg p-4">
-    <p className="text-body-sm-semibold text-primary mb-3">{year} summary</p>
+  <div className="rounded-lg border border-subtle bg-surface-1 p-4">
+    <p className="mb-3 text-body-sm-semibold text-primary">{year} summary</p>
     <div className="grid grid-cols-4 gap-4">
       <div>
         <div className="text-h4-semibold text-primary">{stats.workingDays}</div>

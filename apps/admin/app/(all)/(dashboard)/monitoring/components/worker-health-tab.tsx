@@ -29,20 +29,20 @@ const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
   }, [refresh]);
 
   if (isLoading.workerHealth && !workerHealth) {
-    return <div className="text-secondary text-body-sm-regular py-8 text-center">Loading worker health...</div>;
+    return <div className="py-8 text-center text-body-sm-regular text-secondary">Loading worker health...</div>;
   }
 
   // Error state — no workers reachable
   if (workerHealth?.error) {
     return (
-      <div className="rounded-md border border-subtle p-6 text-center space-y-3">
+      <div className="space-y-3 rounded-md border border-subtle p-6 text-center">
         <AlertTriangle className="mx-auto h-8 w-8 text-warning-primary" />
-        <p className="text-primary text-body-sm-medium">Could not reach Celery workers</p>
-        <p className="text-secondary text-body-xs-regular">Workers may be offline or not responding.</p>
+        <p className="text-body-sm-medium text-primary">Could not reach Celery workers</p>
+        <p className="text-body-xs-regular text-secondary">Workers may be offline or not responding.</p>
         <button
           type="button"
           onClick={refresh}
-          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary hover:bg-accent-subtle-hover transition-colors"
+          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary transition-colors hover:bg-accent-subtle-hover"
         >
           Retry
         </button>
@@ -58,10 +58,10 @@ const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
       {/* Summary bar */}
       <div className="flex items-center gap-6 rounded-md border border-subtle bg-surface-2/50 px-4 py-3">
         <div className="text-body-sm-regular text-secondary">
-          Workers: <span className="text-primary font-medium">{summary?.total_workers ?? 0}</span>
+          Workers: <span className="font-medium text-primary">{summary?.total_workers ?? 0}</span>
         </div>
         <div className="text-body-sm-regular text-secondary">
-          Active Tasks: <span className="text-primary font-medium">{summary?.total_active_tasks ?? 0}</span>
+          Active Tasks: <span className="font-medium text-primary">{summary?.total_active_tasks ?? 0}</span>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <span className="text-body-xs-regular text-secondary">Auto-refresh: 30s</span>
@@ -69,7 +69,7 @@ const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
             type="button"
             onClick={refresh}
             disabled={isLoading.workerHealth}
-            className="rounded-md p-1.5 text-secondary hover:bg-surface-2 hover:text-primary transition-colors disabled:opacity-50"
+            className="rounded-md p-1.5 text-secondary transition-colors hover:bg-surface-2 hover:text-primary disabled:opacity-50"
             title="Refresh now"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading.workerHealth ? "animate-spin" : ""}`} />
@@ -79,12 +79,12 @@ const WorkerHealthTabComponent = observer(function WorkerHealthTab() {
 
       {/* Worker cards */}
       {workers.length === 0 ? (
-        <div className="text-secondary text-body-sm-regular py-8 text-center">No workers detected.</div>
+        <div className="py-8 text-center text-body-sm-regular text-secondary">No workers detected.</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {workers.map((worker) => (
-            <div key={worker.name} className="rounded-md border border-subtle p-4 space-y-2">
-              <div className="text-primary text-body-sm-medium truncate" title={worker.name}>
+            <div key={worker.name} className="space-y-2 rounded-md border border-subtle p-4">
+              <div className="truncate text-body-sm-medium text-primary" title={worker.name}>
                 {worker.name}
               </div>
               <div className="space-y-1 text-body-xs-regular text-secondary">

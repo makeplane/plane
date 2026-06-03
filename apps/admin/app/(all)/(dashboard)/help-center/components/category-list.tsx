@@ -56,7 +56,7 @@ export const CategoryList = observer(function CategoryList({ selectedCategoryId,
             onClick={() => onSelect(category.id)}
             onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(category.id)}
             className={cn(
-              "group flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-2 cursor-pointer hover:bg-surface-2",
+              "group flex cursor-pointer items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-2 hover:bg-surface-2",
               { "border-accent-strong": isSelected }
             )}
           >

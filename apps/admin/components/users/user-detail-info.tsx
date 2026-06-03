@@ -36,8 +36,8 @@ export const UserDetailInfo = observer(function UserDetailInfo({ user, userId }:
   };
 
   return (
-    <div className="flex items-start gap-4 p-4 border border-subtle rounded-lg bg-layer-1">
-      <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent-primary text-on-color text-16 uppercase">
+    <div className="flex items-start gap-4 rounded-lg border border-subtle bg-layer-1 p-4">
+      <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent-primary text-16 text-on-color uppercase">
         {user.avatar ? (
           <img src={user.avatar} className="h-full w-full rounded-full object-cover" alt={displayName} />
         ) : (
@@ -49,7 +49,7 @@ export const UserDetailInfo = observer(function UserDetailInfo({ user, userId }:
           <h2 className="text-18 font-medium">{displayName}</h2>
           <span
             className={cn(
-              "text-11 px-1.5 py-0.5 rounded-sm font-medium",
+              "rounded-sm px-1.5 py-0.5 text-11 font-medium",
               user.is_active ? "bg-success-subtle text-success-primary" : "bg-danger-subtle text-danger-primary"
             )}
           >
@@ -57,7 +57,7 @@ export const UserDetailInfo = observer(function UserDetailInfo({ user, userId }:
           </span>
         </div>
         <p className="text-13 text-tertiary">{user.email}</p>
-        <div className="flex items-center gap-6 text-12 text-secondary pt-1">
+        <div className="flex items-center gap-6 pt-1 text-12 text-secondary">
           <span>Joined {new Date(user.date_joined).toLocaleDateString()}</span>
           {user.last_login && <span>Last login {new Date(user.last_login).toLocaleDateString()}</span>}
         </div>

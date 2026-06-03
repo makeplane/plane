@@ -23,7 +23,7 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
   onDateToChange,
   onApply,
 }) => (
-  <div className="flex items-center gap-3 flex-wrap">
+  <div className="flex flex-wrap items-center gap-3">
     <div className="flex items-center gap-2">
       <label htmlFor="date-from" className="text-12 font-medium text-tertiary">
         From
@@ -33,7 +33,7 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
         type="date"
         value={dateFrom}
         onChange={(e) => onDateFromChange(e.target.value)}
-        className="text-12 border border-subtle rounded px-2 py-1.5 bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+        className="focus:ring-accent-primary rounded border border-subtle bg-surface-1 px-2 py-1.5 text-12 text-primary focus:ring-1 focus:outline-none"
       />
     </div>
     <div className="flex items-center gap-2">
@@ -45,13 +45,13 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
         type="date"
         value={dateTo}
         onChange={(e) => onDateToChange(e.target.value)}
-        className="text-12 border border-subtle rounded px-2 py-1.5 bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+        className="focus:ring-accent-primary rounded border border-subtle bg-surface-1 px-2 py-1.5 text-12 text-primary focus:ring-1 focus:outline-none"
       />
     </div>
     <button
       onClick={onApply}
       type="button"
-      className="text-12 font-medium px-3 py-1.5 rounded bg-accent-primary text-white hover:bg-accent-primary/90 transition-colors"
+      className="rounded bg-accent-primary px-3 py-1.5 text-12 font-medium text-white transition-colors hover:bg-accent-primary/90"
     >
       Apply
     </button>

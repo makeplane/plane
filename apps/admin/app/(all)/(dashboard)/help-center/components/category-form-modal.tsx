@@ -94,7 +94,7 @@ export const CategoryFormModal = observer(function CategoryFormModal({ open, onC
                   }}
                 />
               </div>
-              <label className="flex items-center gap-2 pb-2 text-13 font-medium cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2 pb-2 text-13 font-medium">
                 <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                 Active
               </label>

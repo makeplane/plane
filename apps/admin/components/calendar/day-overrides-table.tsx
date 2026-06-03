@@ -48,7 +48,7 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
 
   if (overrides.length === 0) {
     return (
-      <div className="py-8 text-center text-body-sm-regular text-secondary border border-dashed border-subtle rounded-lg">
+      <div className="rounded-lg border border-dashed border-subtle py-8 text-center text-body-sm-regular text-secondary">
         No overrides for this year
       </div>
     );
@@ -56,34 +56,34 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
 
   return (
     <>
-      <div className="overflow-x-auto border border-subtle rounded-lg">
+      <div className="overflow-x-auto rounded-lg border border-subtle">
         <table className="w-full text-body-sm-regular">
-          <thead className="bg-surface-2 border-b border-subtle">
+          <thead className="border-b border-subtle bg-surface-2">
             <tr>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Date</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Type</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Swap with</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Reason</th>
+              <th className="px-4 py-2 text-left text-body-xs-semibold text-secondary">Date</th>
+              <th className="px-4 py-2 text-left text-body-xs-semibold text-secondary">Type</th>
+              <th className="px-4 py-2 text-left text-body-xs-semibold text-secondary">Swap with</th>
+              <th className="px-4 py-2 text-left text-body-xs-semibold text-secondary">Reason</th>
               <th className="px-4 py-2" />
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle">
             {overrides.map((ov) => (
-              <tr key={ov.id} className="bg-surface-1 hover:bg-surface-2 transition-colors">
-                <td className="px-4 py-2.5 text-primary font-mono text-caption-sm-regular">{ov.date}</td>
+              <tr key={ov.id} className="bg-surface-1 transition-colors hover:bg-surface-2">
+                <td className="font-mono px-4 py-2.5 text-caption-sm-regular text-primary">{ov.date}</td>
                 <td className="px-4 py-2.5">
-                  <span className={`px-2 py-0.5 rounded text-caption-sm-medium ${TYPE_STYLE[ov.type] ?? ""}`}>
+                  <span className={`rounded px-2 py-0.5 text-caption-sm-medium ${TYPE_STYLE[ov.type] ?? ""}`}>
                     {TYPE_LABEL[ov.type] ?? ov.type}
                   </span>
                 </td>
-                <td className="px-4 py-2.5 text-secondary font-mono text-caption-sm-regular">
+                <td className="font-mono px-4 py-2.5 text-caption-sm-regular text-secondary">
                   {ov.swap_with_date ?? "—"}
                 </td>
-                <td className="px-4 py-2.5 text-secondary max-w-[200px] truncate">{ov.reason}</td>
+                <td className="max-w-[200px] truncate px-4 py-2.5 text-secondary">{ov.reason}</td>
                 <td className="px-4 py-2.5">
-                  <div className="flex items-center gap-1 justify-end">
+                  <div className="flex items-center justify-end gap-1">
                     <Button variant="secondary" size="sm" onClick={() => setEditOverride(ov)}>
-                      <Pencil className="w-3.5 h-3.5" />
+                      <Pencil className="h-3.5 w-3.5" />
                     </Button>
                     <Button
                       variant="secondary"
@@ -91,7 +91,7 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
                       onClick={() => void handleDelete(ov.id)}
                       disabled={deletingId === ov.id}
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
+                      <Trash2 className="h-3.5 w-3.5 text-danger-primary" />
                     </Button>
                   </div>
                 </td>

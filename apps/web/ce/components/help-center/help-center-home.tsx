@@ -165,7 +165,7 @@ export const HelpCenterHome = observer(function HelpCenterHome() {
           <button
             type="button"
             onClick={() => setSearchParams({})}
-            className="mb-4 flex items-center gap-1.5 rounded text-13 text-accent-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+            className="mb-4 flex items-center gap-1.5 rounded text-13 text-accent-primary hover:underline focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
           >
             <ArrowLeft className="size-4" />
             {t("help_center.all_categories")}

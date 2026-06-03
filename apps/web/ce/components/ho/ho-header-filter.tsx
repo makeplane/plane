@@ -104,19 +104,19 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
 
   return (
     <CustomMenu
-      className="!w-full h-full"
+      className="h-full !w-full"
       customButtonClassName="clickable !w-full h-full flex items-center px-4"
       customButton={
         <div
           className={cn(
-            "flex w-full items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary transition-colors",
+            "flex w-full items-center justify-between gap-1.5 py-2 text-13 text-secondary transition-colors hover:text-primary",
             (isActiveSort || isFiltered) && "text-accent-primary"
           )}
         >
-          <span className="truncate uppercase tracking-wider">{label}</span>
+          <span className="tracking-wider truncate uppercase">{label}</span>
           <div className="flex items-center gap-1">
             {isFiltered && (
-              <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-primary px-1 text-[10px] font-semibold leading-none text-on-color">
+              <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-primary px-1 text-[10px] leading-none font-semibold text-on-color">
                 {selectedCount}
               </span>
             )}
@@ -133,12 +133,12 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
         {/* SORT SECTION */}
         {hasSortSection && (
           <>
-            <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-tertiary">
+            <div className="tracking-wider px-3 pt-2 pb-1 text-[10px] font-semibold text-tertiary uppercase">
               {t("ho.sort")}
             </div>
             {asc && (
               <CustomMenu.MenuItem onClick={() => store.updateOrderBy(asc)}>
-                <div className="flex items-center justify-between gap-2 w-full">
+                <div className="flex w-full items-center justify-between gap-2">
                   <span className="flex items-center gap-2 text-13">
                     <ArrowUpNarrowWide className="h-3.5 w-3.5 text-secondary" />
                     {t("ho.ascending")}
@@ -149,7 +149,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
             )}
             {desc && (
               <CustomMenu.MenuItem onClick={() => store.updateOrderBy(desc)}>
-                <div className="flex items-center justify-between gap-2 w-full">
+                <div className="flex w-full items-center justify-between gap-2">
                   <span className="flex items-center gap-2 text-13">
                     <ArrowDownWideNarrow className="h-3.5 w-3.5 text-secondary" />
                     {t("ho.descending")}
@@ -167,7 +167,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
         {hasFilterSection && (
           <>
             <div className="flex items-center justify-between px-3 pt-2 pb-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-tertiary">{t("ho.filter")}</span>
+              <span className="tracking-wider text-[10px] font-semibold text-tertiary uppercase">{t("ho.filter")}</span>
               {selectedCount > 0 && (
                 <span className="text-[10px] font-medium text-accent-primary">
                   {t("ho.selected_count", { count: selectedCount })}
@@ -175,9 +175,9 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
               )}
             </div>
 
-            <div className="px-2 pb-1 pt-1">
-              <div className="flex items-center gap-2 rounded-md bg-layer-2 px-2 py-1.5 border border-subtle focus-within:border-accent-strong transition-colors">
-                <Search className="h-3.5 w-3.5 text-tertiary flex-shrink-0" />
+            <div className="px-2 pt-1 pb-1">
+              <div className="flex items-center gap-2 rounded-md border border-subtle bg-layer-2 px-2 py-1.5 transition-colors focus-within:border-accent-strong">
+                <Search className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" />
                 <input
                   type="text"
                   className="w-full bg-transparent text-12 text-primary outline-none placeholder:text-placeholder"
@@ -191,7 +191,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="text-tertiary hover:text-primary transition-colors"
+                    className="text-tertiary transition-colors hover:text-primary"
                     aria-label={t("ho.search")}
                   >
                     <X className="h-3 w-3" />
@@ -214,7 +214,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
                       handleToggleFilter(opt.value);
                     }}
                   >
-                    <div className="flex items-center gap-2.5 w-full">
+                    <div className="flex w-full items-center gap-2.5">
                       <span
                         className={cn(
                           "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-colors",
@@ -243,7 +243,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
                 <button
                   type="button"
                   onClick={handleClearFilter}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1.5 text-12 font-medium text-danger-primary hover:bg-danger-subtle/60 transition-colors"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1.5 text-12 font-medium text-danger-primary transition-colors hover:bg-danger-subtle/60"
                 >
                   <RotateCcw className="h-3 w-3" />
                   {t("ho.clear_filter")}
@@ -253,7 +253,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
                 <button
                   type="button"
                   onClick={handleClearSort}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1.5 text-12 font-medium text-secondary hover:bg-layer-1-hover hover:text-primary transition-colors"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1.5 text-12 font-medium text-secondary transition-colors hover:bg-layer-1-hover hover:text-primary"
                 >
                   <RotateCcw className="h-3 w-3" />
                   {t("ho.clear_sort")}

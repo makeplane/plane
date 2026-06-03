@@ -39,7 +39,7 @@ export const UsageFilterBar = observer(() => {
               type="button"
               onClick={() => setFilters({ preset: preset.key })}
               className={cn(
-                "px-2.5 py-1.5 text-13 rounded-md transition-colors",
+                "rounded-md px-2.5 py-1.5 text-13 transition-colors",
                 filters.preset === preset.key
                   ? "bg-accent-subtle text-accent-primary"
                   : "text-secondary hover:bg-surface-2 hover:text-primary"
@@ -93,7 +93,7 @@ export const UsageFilterBar = observer(() => {
               type="button"
               onClick={() => setFilters({ granularity: g })}
               className={cn(
-                "px-2.5 py-1.5 text-13 rounded-md capitalize transition-colors",
+                "rounded-md px-2.5 py-1.5 text-13 capitalize transition-colors",
                 filters.granularity === g
                   ? "bg-accent-subtle text-accent-primary"
                   : "text-secondary hover:bg-surface-2 hover:text-primary"

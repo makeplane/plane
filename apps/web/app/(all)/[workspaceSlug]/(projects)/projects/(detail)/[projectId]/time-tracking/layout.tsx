@@ -50,7 +50,7 @@ export default function TimeTrackingLayout() {
   // Feature flag guard: show empty state when time tracking is disabled
   if (currentProjectDetails?.is_time_tracking_enabled === false)
     return (
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex h-full w-full items-center justify-center">
         <DetailedEmptyState
           title={t("disabled_project.empty_state.time_tracking.title")}
           description={t("disabled_project.empty_state.time_tracking.description")}
@@ -66,7 +66,7 @@ export default function TimeTrackingLayout() {
     );
 
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden">
       {/* Top Breadcrumbs Header */}
       <AppHeader header={<TimeTrackingHeader />} />
 
@@ -82,7 +82,7 @@ export default function TimeTrackingLayout() {
                 role="button"
                 tabIndex={0}
                 className={cn(
-                  "text-13 relative flex items-center gap-2 h-full px-4 cursor-pointer transition-all font-semibold",
+                  "relative flex h-full cursor-pointer items-center gap-2 px-4 text-13 font-semibold transition-all",
                   isActive ? "text-accent-primary" : "text-secondary hover:text-primary"
                 )}
                 onClick={() => {
@@ -96,7 +96,7 @@ export default function TimeTrackingLayout() {
               >
                 <Icon size={14} className={isActive ? "text-accent-primary" : "text-tertiary"} />
                 <span>{t(tab.labelKey)}</span>
-                {isActive && <div className="absolute bottom-0 left-0 right-0 border-b-2 border-accent-primary" />}
+                {isActive && <div className="border-accent-primary absolute right-0 bottom-0 left-0 border-b-2" />}
               </div>
             );
           })}
@@ -105,7 +105,7 @@ export default function TimeTrackingLayout() {
 
       {/* Scrollable Content Area */}
       <div className="flex-grow overflow-hidden bg-surface-1">
-        <ContentWrapper className="!p-0 h-full">
+        <ContentWrapper className="h-full !p-0">
           <Outlet />
         </ContentWrapper>
       </div>

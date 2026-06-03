@@ -78,30 +78,30 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
     <div className="rounded-md border border-subtle bg-surface-1 p-3">
       {/* Top row */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="text-12 text-secondary whitespace-nowrap">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <span className="text-12 whitespace-nowrap text-secondary">
             {t("project_settings.workflows.change_state_to")}
           </span>
           <span className="text-12 text-secondary">→</span>
           {targetState ? (
             <div className="flex items-center gap-1.5 text-12 font-medium text-primary">
-              <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: targetState.color }} />
+              <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: targetState.color }} />
               {targetState.name}
             </div>
           ) : (
-            <span className="text-tertiary italic text-12">Unknown state</span>
+            <span className="text-12 text-tertiary italic">Unknown state</span>
           )}
 
           {/* Reviewer count */}
           {approvers.length > 0 && (
-            <span className="flex items-center gap-1 text-12 text-secondary ml-2">
+            <span className="ml-2 flex items-center gap-1 text-12 text-secondary">
               <Users className="h-3 w-3" />
               {t("project_settings.workflows.n_listed_reviewers", { count: approvers.length })}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-3">
           {/* Add reviewers dropdown */}
           {availableMembers.length > 0 && (
             <CustomSearchSelect
@@ -109,7 +109,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
               options={memberOptions}
               onChange={(val: string) => void handleAddReviewer(val)}
               customButton={
-                <div className="flex items-center gap-1 rounded border border-subtle bg-surface-1 hover:bg-layer-2 px-2.5 py-1 text-12 font-medium text-primary transition-colors shadow-sm cursor-pointer">
+                <div className="shadow-sm flex cursor-pointer items-center gap-1 rounded border border-subtle bg-surface-1 px-2.5 py-1 text-12 font-medium text-primary transition-colors hover:bg-layer-2">
                   {t("project_settings.workflows.add_reviewers")}
                 </div>
               }
@@ -121,7 +121,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
           <button
             type="button"
             onClick={() => onDeleteTransition(transitionId)}
-            className="flex-shrink-0 text-tertiary hover:text-error transition-colors"
+            className="hover:text-error flex-shrink-0 text-tertiary transition-colors"
             aria-label="Delete transition"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -130,11 +130,11 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
       </div>
 
       {/* Dashed separator */}
-      <div className="my-3 border-t border-dashed border-subtle w-full" />
+      <div className="my-3 w-full border-t border-dashed border-subtle" />
 
       {/* Expanded reviewer list */}
       <div>
-        <p className="flex items-center gap-1 text-12 text-secondary mb-2">
+        <p className="mb-2 flex items-center gap-1 text-12 text-secondary">
           {t("project_settings.workflows.when_reviewed_by")}
           <Info className="h-3 w-3" />
         </p>
@@ -161,7 +161,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
                   <button
                     type="button"
                     onClick={() => void handleRemoveApprover(userId)}
-                    className="flex-shrink-0 ml-0.5 text-tertiary hover:text-error transition-colors"
+                    className="hover:text-error ml-0.5 flex-shrink-0 text-tertiary transition-colors"
                     aria-label="Remove approver"
                   >
                     ×

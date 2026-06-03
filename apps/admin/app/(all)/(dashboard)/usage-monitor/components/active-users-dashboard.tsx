@@ -24,7 +24,7 @@ export const ActiveUsersDashboard = observer(() => {
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-subtle bg-surface-1 p-4">
-        <p className="text-11 uppercase tracking-wide text-tertiary">Active users in range</p>
+        <p className="text-11 tracking-wide text-tertiary uppercase">Active users in range</p>
         <p className="mt-1 text-24 font-semibold text-primary">{users?.total_active_users ?? 0}</p>
         <p className="mt-1 text-11 text-tertiary">Distinct users who logged time (deduped across workspaces).</p>
       </div>

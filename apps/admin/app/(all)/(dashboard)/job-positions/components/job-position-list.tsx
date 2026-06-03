@@ -40,8 +40,8 @@ export const JobPositionList = observer(function JobPositionList({ selectedGrade
 
   if (!selectedGradeId) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[200px] rounded-lg border border-subtle bg-layer-1">
-        <p className="text-secondary text-13">Select a job grade to view its positions.</p>
+      <div className="flex h-full min-h-[200px] items-center justify-center rounded-lg border border-subtle bg-layer-1">
+        <p className="text-13 text-secondary">Select a job grade to view its positions.</p>
       </div>
     );
   }
@@ -62,27 +62,27 @@ export const JobPositionList = observer(function JobPositionList({ selectedGrade
         </div>
 
         {positionList.length === 0 ? (
-          <div className="text-center py-10 text-tertiary text-13 rounded-lg border border-subtle bg-layer-1">
+          <div className="rounded-lg border border-subtle bg-layer-1 py-10 text-center text-13 text-tertiary">
             No positions yet.
           </div>
         ) : (
-          <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
+          <div className="overflow-hidden rounded-lg border border-subtle bg-layer-1">
             <table className="w-full text-13">
               <thead>
                 <tr className="border-b border-subtle bg-layer-2">
-                  <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
-                  <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
-                  <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
-                  <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
+                  <th className="px-3 py-2 text-left font-medium text-secondary">Name</th>
+                  <th className="px-3 py-2 text-center font-medium text-secondary">Active</th>
+                  <th className="px-3 py-2 text-center font-medium text-secondary">Order</th>
+                  <th className="px-3 py-2 text-right font-medium text-secondary">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-subtle">
                 {positionList.map((p) => (
-                  <tr key={p.id} className="hover:bg-layer-2 transition-colors">
+                  <tr key={p.id} className="transition-colors hover:bg-layer-2">
                     <td className="px-3 py-2 font-medium">{p.name}</td>
                     <td className="px-3 py-2 text-center">
                       <span
-                        className={`text-11 px-2 py-0.5 rounded font-medium ${p.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"}`}
+                        className={`rounded px-2 py-0.5 text-11 font-medium ${p.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"}`}
                       >
                         {p.is_active ? "Active" : "Inactive"}
                       </span>
@@ -91,10 +91,10 @@ export const JobPositionList = observer(function JobPositionList({ selectedGrade
                     <td className="px-3 py-2 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="ghost" size="sm" onClick={() => onEdit(p)}>
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="h-3.5 w-3.5" />
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => setDeleteId(p.id)}>
-                          <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
+                          <Trash2 className="h-3.5 w-3.5 text-danger-primary" />
                         </Button>
                       </div>
                     </td>

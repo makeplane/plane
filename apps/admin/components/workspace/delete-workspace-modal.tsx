@@ -52,9 +52,9 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
-        <div className="p-6 flex flex-col gap-6">
+        <div className="flex flex-col gap-6 p-6">
           <div className="flex items-start gap-4">
-            <span className="shrink-0 grid place-items-center rounded-full size-10 bg-danger-subtle text-danger-primary">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary">
               <AlertTriangle className="size-5" aria-hidden="true" />
             </span>
             <div className="flex flex-col gap-1">
@@ -68,7 +68,7 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
 
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-13 text-secondary mb-2">
+              <p className="mb-2 text-13 text-secondary">
                 Type <span className="font-medium text-primary">{workspace.name}</span> to continue.
               </p>
               <input
@@ -77,11 +77,11 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder={workspace.name}
                 autoComplete="off"
-                className="w-full rounded-md border border-subtle bg-layer-1 px-3 py-2 text-13 placeholder:text-placeholder focus:border-accent-primary focus:outline-none"
+                className="focus:border-accent-primary w-full rounded-md border border-subtle bg-layer-1 px-3 py-2 text-13 placeholder:text-placeholder focus:outline-none"
               />
             </div>
             <div>
-              <p className="text-13 text-secondary mb-2">
+              <p className="mb-2 text-13 text-secondary">
                 For final confirmation, type <span className="font-medium text-primary">delete my workspace</span>{" "}
                 below.
               </p>
@@ -91,7 +91,7 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
                 onChange={(e) => setConfirmInput(e.target.value)}
                 placeholder=""
                 autoComplete="off"
-                className="w-full rounded-md border border-subtle bg-layer-1 px-3 py-2 text-13 placeholder:text-placeholder focus:border-accent-primary focus:outline-none"
+                className="focus:border-accent-primary w-full rounded-md border border-subtle bg-layer-1 px-3 py-2 text-13 placeholder:text-placeholder focus:outline-none"
               />
             </div>
           </div>

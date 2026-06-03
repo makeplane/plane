@@ -48,21 +48,21 @@ function ManagersAddedModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
-        className="bg-layer-1 rounded-xl shadow-raised-200 border border-subtle w-80 max-w-full p-5"
+        className="w-80 max-w-full rounded-xl border border-subtle bg-layer-1 p-5 shadow-raised-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div>
             <p className="text-14 font-semibold text-primary">Managers added as Admin</p>
-            <p className="text-12 text-tertiary mt-0.5">{workspaceName}</p>
+            <p className="mt-0.5 text-12 text-tertiary">{workspaceName}</p>
           </div>
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-layer-2 text-tertiary">
-            <X className="w-4 h-4" />
+          <button type="button" onClick={onClose} className="rounded p-1 text-tertiary hover:bg-layer-2">
+            <X className="h-4 w-4" />
           </button>
         </div>
-        <ul className="space-y-2 max-h-60 overflow-auto">
+        <ul className="max-h-60 space-y-2 overflow-auto">
           {managers.map((m) => (
-            <li key={m.id} className="flex flex-col px-2 py-1.5 rounded bg-layer-2">
+            <li key={m.id} className="flex flex-col rounded bg-layer-2 px-2 py-1.5">
               <span className="text-13 font-medium text-primary">{m.display_name}</span>
               <span className="text-11 text-tertiary">{m.email}</span>
             </li>
@@ -71,7 +71,7 @@ function ManagersAddedModal({
         <button
           type="button"
           onClick={onClose}
-          className="mt-4 w-full py-1.5 rounded-lg bg-custom-primary-100 text-white text-13 font-medium hover:bg-custom-primary-200"
+          className="bg-custom-primary-100 hover:bg-custom-primary-200 mt-4 w-full rounded-lg py-1.5 text-13 font-medium text-white"
         >
           OK
         </button>
@@ -152,17 +152,17 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
 
       {dept.linked_workspace_detail ? (
         <div className="flex items-center gap-1">
-          <span className="text-11 px-1.5 py-0.5 rounded bg-success-subtle text-success-primary truncate max-w-[120px]">
+          <span className="max-w-[120px] truncate rounded bg-success-subtle px-1.5 py-0.5 text-11 text-success-primary">
             {dept.linked_workspace_detail.name}
           </span>
           <button
             type="button"
             disabled={isSubmitting}
             onClick={() => void handleUnlink()}
-            className="text-tertiary hover:text-danger-primary p-0.5 rounded"
+            className="rounded p-0.5 text-tertiary hover:text-danger-primary"
             title="Unlink workspace"
           >
-            <Unlink className="w-3 h-3" />
+            <Unlink className="h-3 w-3" />
           </button>
         </div>
       ) : (
@@ -171,14 +171,14 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
             type="button"
             disabled={isSubmitting}
             onClick={() => setOpen((v) => !v)}
-            className="flex items-center gap-1 text-11 text-tertiary hover:text-primary px-1.5 py-0.5 rounded hover:bg-layer-2"
+            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-11 text-tertiary hover:bg-layer-2 hover:text-primary"
           >
-            <Link2 className="w-3 h-3" />
+            <Link2 className="h-3 w-3" />
             Link workspace
-            <ChevronDown className="w-3 h-3" />
+            <ChevronDown className="h-3 w-3" />
           </button>
           {open && (
-            <div className="absolute right-0 top-full mt-1 z-50 w-56 rounded-lg border border-subtle bg-layer-1 shadow-raised-100 py-1 max-h-48 overflow-auto">
+            <div className="absolute top-full right-0 z-50 mt-1 max-h-48 w-56 overflow-auto rounded-lg border border-subtle bg-layer-1 py-1 shadow-raised-100">
               {loader === "init-loader" ? (
                 <p className="px-3 py-2 text-12 text-tertiary">Loading...</p>
               ) : workspaceIds.length === 0 ? (
@@ -192,10 +192,10 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
                       key={id}
                       type="button"
                       onClick={() => void handleLink(id)}
-                      className="w-full px-3 py-2 text-left text-13 hover:bg-layer-2 truncate"
+                      className="w-full truncate px-3 py-2 text-left text-13 hover:bg-layer-2"
                     >
                       {ws.name}
-                      <span className="text-tertiary ml-1">({ws.slug})</span>
+                      <span className="ml-1 text-tertiary">({ws.slug})</span>
                     </button>
                   );
                 })

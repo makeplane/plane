@@ -94,7 +94,7 @@ export const CapacityExportMenu = observer(function CapacityExportMenu(props: Pr
         {/* Item 1: CSV Summary (existing flow) */}
         <Menu.MenuItem onClick={hasData ? onSummaryExport : undefined} disabled={!hasData}>
           <div className="flex flex-col gap-0.5 py-0.5">
-            <span className="text-sm text-primary font-medium">{t("capacity_export.summary")}</span>
+            <span className="text-sm font-medium text-primary">{t("capacity_export.summary")}</span>
             <span className="text-xs text-tertiary">{t("capacity_export.summary_desc")}</span>
           </div>
         </Menu.MenuItem>

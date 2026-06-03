@@ -42,7 +42,7 @@ export const WorkflowSettingsRoot = observer(function WorkflowSettingsRoot({ wor
   const states = getProjectStates(projectId) ?? [];
 
   if (isLoading) {
-    return <div className="py-10 text-center text-sm text-tertiary">Loading...</div>;
+    return <div className="text-sm py-10 text-center text-tertiary">Loading...</div>;
   }
 
   return (
@@ -50,7 +50,7 @@ export const WorkflowSettingsRoot = observer(function WorkflowSettingsRoot({ wor
       {/* Activity log panel */}
       {showActivityLog && (
         <div className="rounded-lg border border-subtle bg-surface-1 p-4">
-          <h3 className="mb-3 text-sm font-medium text-primary">{t("project_settings.workflows.view_history")}</h3>
+          <h3 className="text-sm mb-3 font-medium text-primary">{t("project_settings.workflows.view_history")}</h3>
           <WorkflowActivityLog workspaceSlug={workspaceSlug} projectId={projectId} />
         </div>
       )}

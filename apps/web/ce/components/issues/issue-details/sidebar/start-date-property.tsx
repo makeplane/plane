@@ -55,7 +55,7 @@ export const StartDateProperty = observer(function StartDateProperty(props: TSta
   if (showReadOnly) {
     return (
       <Tooltip tooltipContent={t("project_settings.field_permissions.locked_tooltip")} position="top">
-        <span className="flex items-center px-2 h-7.5 text-body-xs-regular cursor-default text-secondary-200">
+        <span className="text-secondary-200 flex h-7.5 cursor-default items-center px-2 text-body-xs-regular">
           {renderFormattedDate(issue.start_date)}
         </span>
       </Tooltip>
@@ -63,7 +63,7 @@ export const StartDateProperty = observer(function StartDateProperty(props: TSta
   }
 
   return (
-    <div className={cn("w-full", hasFieldError && "rounded border border-red-500")}>
+    <div className={cn("w-full", hasFieldError && "border-red-500 rounded border")}>
       <DateDropdown
         placeholder={t("issue.add.start_date")}
         value={issue.start_date}

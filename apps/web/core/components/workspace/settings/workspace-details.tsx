@@ -303,7 +303,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     checked={!!value}
                     onChange={(e) => onChange(e.target.checked)}
                     disabled={!isInstanceAdmin}
-                    className="h-4 w-4 cursor-pointer accent-accent-primary disabled:cursor-not-allowed"
+                    className="accent-accent-primary h-4 w-4 cursor-pointer disabled:cursor-not-allowed"
                   />
                 )}
               />

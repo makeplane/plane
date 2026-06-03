@@ -19,14 +19,14 @@ type Props = {
 
 export function UserWorkspaceList({ workspaces }: Props) {
   if (workspaces.length === 0) {
-    return <div className="text-center py-8 text-tertiary">Not a member of any workspace.</div>;
+    return <div className="py-8 text-center text-tertiary">Not a member of any workspace.</div>;
   }
 
   return (
-    <div className="border border-subtle rounded-lg overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-subtle">
       <table className="w-full text-13">
         <thead>
-          <tr className="bg-layer-1 text-secondary text-left">
+          <tr className="bg-layer-1 text-left text-secondary">
             <th className="px-4 py-2.5 font-medium">Workspace</th>
             <th className="px-4 py-2.5 font-medium">Slug</th>
             <th className="px-4 py-2.5 font-medium">Role</th>
@@ -41,7 +41,7 @@ export function UserWorkspaceList({ workspaces }: Props) {
                 <td className="px-4 py-2.5 font-medium">{ws.workspace_name}</td>
                 <td className="px-4 py-2.5 text-tertiary">{ws.workspace_slug}</td>
                 <td className="px-4 py-2.5">
-                  <span className={cn("text-11 px-1.5 py-0.5 rounded-sm font-medium", role.className)}>
+                  <span className={cn("rounded-sm px-1.5 py-0.5 text-11 font-medium", role.className)}>
                     {role.label}
                   </span>
                 </td>

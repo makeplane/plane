@@ -176,7 +176,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
               render={() => (
                 <div className="max-h-40 overflow-y-auto rounded-md border border-subtle bg-layer-2">
                   {projects.length === 0 ? (
-                    <p className="p-3 text-sm text-tertiary">{t("analytics_dashboard.no_projects")}</p>
+                    <p className="text-sm p-3 text-tertiary">{t("analytics_dashboard.no_projects")}</p>
                   ) : (
                     projects.map((project) => {
                       if (!project) return null;
@@ -187,7 +187,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
                           type="button"
                           onClick={() => toggleProject(project.id)}
                           className={cn(
-                            "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors",
+                            "text-sm flex w-full items-center gap-2 px-3 py-2 text-left transition-colors",
                             "hover:bg-layer-1-hover",
                             isSelected && "bg-accent-subtle"
                           )}
@@ -201,7 +201,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
                             {isSelected && <Check className="h-3 w-3 text-on-color" />}
                           </span>
                           <span className="truncate text-primary">{project.name}</span>
-                          <span className="ml-auto shrink-0 text-xs text-tertiary">{project.identifier}</span>
+                          <span className="text-xs ml-auto shrink-0 text-tertiary">{project.identifier}</span>
                         </button>
                       );
                     })

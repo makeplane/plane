@@ -43,9 +43,9 @@ export const WorkflowDragBlockerCard = observer(function WorkflowDragBlockerCard
           .join(", ") + (reviewers.length > 2 ? ` +${reviewers.length - 2}` : "");
 
   return (
-    <div className="mx-2 mb-2 rounded-lg border border-custom-border-200 bg-surface-1 p-3 shadow-sm">
+    <div className="border-custom-border-200 shadow-sm mx-2 mb-2 rounded-lg border bg-surface-1 p-3">
       <div className="flex items-start gap-2">
-        <ShieldX className="h-4 w-4 flex-shrink-0 text-red-500 mt-0.5" />
+        <ShieldX className="text-red-500 mt-0.5 h-4 w-4 flex-shrink-0" />
         <div className="space-y-1">
           <p className="text-xs font-medium text-primary">{t("project_settings.workflows.drag_blocked_title")}</p>
           <p className="text-xs text-secondary">

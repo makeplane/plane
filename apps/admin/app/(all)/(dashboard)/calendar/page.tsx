@@ -52,14 +52,14 @@ const CalendarPage = observer(function CalendarPage() {
       }}
       size="lg"
     >
-      <div className="max-w-[1600px] mx-auto w-full">
+      <div className="mx-auto w-full max-w-[1600px]">
         {loader && schedules.length === 0 ? (
           <Loader className="space-y-3 py-4">
             <Loader.Item height="80px" width="100%" />
             <Loader.Item height="240px" width="100%" />
           </Loader>
         ) : !activeSchedule ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-subtle rounded-lg space-y-3">
+          <div className="flex flex-col items-center justify-center space-y-3 rounded-lg border border-dashed border-subtle py-16 text-center">
             <div className="space-y-1">
               <p className="text-body-sm-semibold text-secondary">No business calendar yet</p>
               <p className="text-caption-sm-regular text-tertiary">

@@ -32,7 +32,7 @@ export const HelpArticleToc = ({ headings, active, scrollTo, variant = "sidebar"
             aria-current={active === heading.index ? "location" : undefined}
             className={cn(
               "block w-full truncate border-l-2 py-1 text-left text-13 transition-colors hover:text-primary",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong",
+              "focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none",
               heading.level === 3 ? "pl-6" : heading.level === 2 ? "pl-4" : "pl-3",
               active === heading.index ? "border-accent-strong text-accent-primary" : "border-transparent text-tertiary"
             )}
@@ -47,7 +47,7 @@ export const HelpArticleToc = ({ headings, active, scrollTo, variant = "sidebar"
   if (variant === "mobile") {
     return (
       <details className={cn("rounded-lg border border-subtle bg-surface-1", className)}>
-        <summary className="cursor-pointer select-none px-4 py-2.5 text-13 font-semibold text-secondary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong">
+        <summary className="cursor-pointer px-4 py-2.5 text-13 font-semibold text-secondary select-none focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none">
           {t("help_center.on_this_page")}
         </summary>
         <nav aria-label={t("help_center.on_this_page")} className="px-4 pb-3">

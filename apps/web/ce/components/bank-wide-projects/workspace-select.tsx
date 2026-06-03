@@ -24,9 +24,9 @@ export const BankWideWorkspaceSelect = function BankWideWorkspaceSelect({ value,
       value: "",
       query: t("ho.all_workspaces"),
       content: (
-        <div className="flex items-center gap-2 max-w-[250px]">
-          <Building2 className="h-4 w-4 flex-shrink-0 text-custom-text-300" />
-          <span className="truncate text-custom-text-300">{t("ho.all_workspaces")}</span>
+        <div className="flex max-w-[250px] items-center gap-2">
+          <Building2 className="text-custom-text-300 h-4 w-4 flex-shrink-0" />
+          <span className="text-custom-text-300 truncate">{t("ho.all_workspaces")}</span>
         </div>
       ),
     },
@@ -34,7 +34,7 @@ export const BankWideWorkspaceSelect = function BankWideWorkspaceSelect({ value,
       value: ws.slug,
       query: ws.department_name,
       content: (
-        <div className="flex items-center gap-2 max-w-[250px]">
+        <div className="flex max-w-[250px] items-center gap-2">
           <Building2 className="h-4 w-4 flex-shrink-0" />
           <span className="truncate">{ws.department_name}</span>
         </div>

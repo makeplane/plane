@@ -117,7 +117,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-11">Discord</span>
           </div>
         </CustomMenu.MenuItem>*/}
-        <div className="px-1 pt-2 mt-1 text-11 text-secondary border-t border-subtle">
+        <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
           <PlaneVersionNumber />
         </div>
       </CustomMenu>

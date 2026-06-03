@@ -14,7 +14,7 @@ export const HelpSkipLink = () => {
   return (
     <a
       href="#help-main-content"
-      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface-1 focus:px-3 focus:py-2 focus:text-13 focus:text-primary focus:ring-1 focus:ring-accent-strong"
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-surface-1 focus:px-3 focus:py-2 focus:text-13 focus:text-primary focus:ring-1 focus:ring-accent-strong"
     >
       {t("help_center.skip_to_content")}
     </a>

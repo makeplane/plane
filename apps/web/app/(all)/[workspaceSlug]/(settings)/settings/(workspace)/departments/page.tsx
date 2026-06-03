@@ -88,7 +88,7 @@ const DepartmentsSettingsPage = observer(function DepartmentsSettingsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-xl font-semibold">Departments</h3>
-            <p className="mt-1 text-sm text-custom-text-400">
+            <p className="text-sm text-custom-text-400 mt-1">
               Manage your organization&apos;s departments and hierarchies
             </p>
           </div>

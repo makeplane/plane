@@ -30,13 +30,13 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
 
   if (isLoading) {
     return (
-      <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_loading")}</div>
+      <div className="text-sm py-6 text-center text-tertiary">{t("project_settings.workflows.activity_loading")}</div>
     );
   }
 
   if (activities.length === 0) {
     return (
-      <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_empty")}</div>
+      <div className="text-sm py-6 text-center text-tertiary">{t("project_settings.workflows.activity_empty")}</div>
     );
   }
 
@@ -46,7 +46,7 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
         <li key={activity.id} className="flex justify-between gap-4 px-0 py-4">
           <div className="flex-1">
             <p className="text-sm font-medium text-primary">{activity.actor_detail?.display_name ?? "Unknown"}</p>
-            <p className="text-xs text-secondary mt-1">
+            <p className="text-xs mt-1 text-secondary">
               {activity.field}: {activity.old_value} → {activity.new_value}
             </p>
           </div>

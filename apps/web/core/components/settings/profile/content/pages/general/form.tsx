@@ -229,7 +229,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       <div className="relative h-16 w-16 overflow-hidden">
                         <img
                           src={getFileURL(userAvatar)}
-                          className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
+                          className="absolute top-0 left-0 h-full w-full rounded-lg object-cover"
                           alt={currentUser?.display_name}
                         />
                       </div>

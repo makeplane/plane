@@ -115,11 +115,11 @@ export const ExcelExportButton = observer(function ExcelExportButton({ workspace
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md rounded-lg bg-surface-1 border border-subtle p-6 shadow-xl">
+                <Dialog.Panel className="shadow-xl w-full max-w-md rounded-lg border border-subtle bg-surface-1 p-6">
                   <Dialog.Title as="h3" className="text-base font-semibold text-primary">
                     {t("workspace_views.export.warning_title")}
                   </Dialog.Title>
-                  <p className="mt-2 text-sm text-secondary">
+                  <p className="text-sm mt-2 text-secondary">
                     {t("workspace_views.export.warning_message", { count: totalCount })}
                   </p>
                   <div className="mt-5 flex justify-end gap-2">

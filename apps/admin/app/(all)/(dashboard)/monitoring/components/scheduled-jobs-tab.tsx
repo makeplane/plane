@@ -17,11 +17,11 @@ export const ScheduledJobsTab = observer(() => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error.scheduledJobs) {
-    return <div className="text-danger-primary text-body-sm-regular py-8 text-center">{error.scheduledJobs}</div>;
+    return <div className="py-8 text-center text-body-sm-regular text-danger-primary">{error.scheduledJobs}</div>;
   }
 
   if (isLoading.scheduledJobs) {
-    return <div className="text-secondary text-body-sm-regular py-8 text-center">Loading scheduled jobs...</div>;
+    return <div className="py-8 text-center text-body-sm-regular text-secondary">Loading scheduled jobs...</div>;
   }
 
   return (
@@ -47,11 +47,11 @@ export const ScheduledJobsTab = observer(() => {
           ) : (
             scheduledJobs.map((job) => (
               <tr key={job.id} className="border-b border-subtle last:border-b-0 hover:bg-surface-2/50">
-                <td className="px-3 py-2 text-primary font-medium">{job.name}</td>
-                <td className="px-3 py-2 text-secondary font-mono text-body-xs-regular truncate max-w-[200px]">
+                <td className="px-3 py-2 font-medium text-primary">{job.name}</td>
+                <td className="font-mono max-w-[200px] truncate px-3 py-2 text-body-xs-regular text-secondary">
                   {job.task}
                 </td>
-                <td className="px-3 py-2 text-secondary font-mono text-body-xs-regular">{job.schedule_display}</td>
+                <td className="font-mono px-3 py-2 text-body-xs-regular text-secondary">{job.schedule_display}</td>
                 <td className="px-3 py-2">
                   <span
                     className={`inline-block h-2 w-2 rounded-full ${job.enabled ? "bg-success-primary" : "bg-danger-primary"}`}

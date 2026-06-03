@@ -81,7 +81,7 @@ export const FieldPermissionRow = observer(function FieldPermissionRow({
       <div className="flex flex-shrink-0 items-center gap-3">
         <span
           className={cn(
-            "hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium sm:inline-flex",
+            "text-xs hidden items-center gap-1.5 rounded-full px-2.5 py-1 font-medium sm:inline-flex",
             value ? "bg-success-subtle text-success-primary" : "bg-surface-2 text-secondary"
           )}
         >

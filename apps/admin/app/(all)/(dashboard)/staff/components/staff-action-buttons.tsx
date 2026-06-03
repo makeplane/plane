@@ -113,7 +113,7 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
         disabled={isLoading}
         title="Transfer to department"
       >
-        <ArrowRightLeft className="w-3.5 h-3.5" />
+        <ArrowRightLeft className="h-3.5 w-3.5" />
       </Button>
 
       <Button
@@ -123,11 +123,11 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
         disabled={isLoading}
         title="Deactivate"
       >
-        <UserMinus className="w-3.5 h-3.5" />
+        <UserMinus className="h-3.5 w-3.5" />
       </Button>
 
       <Button variant="error-outline" size="sm" onClick={() => void handleDelete()} disabled={isLoading} title="Delete">
-        <Trash2 className="w-3.5 h-3.5" />
+        <Trash2 className="h-3.5 w-3.5" />
       </Button>
 
       {/* Department picker dialog */}

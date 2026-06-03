@@ -136,7 +136,16 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         }
         const XLSX = await import("xlsx");
         const rows = [
-          ["workspace_slug", "name", "identifier", "description", "network", "project_leader", "members", "member_roles"],
+          [
+            "workspace_slug",
+            "name",
+            "identifier",
+            "description",
+            "network",
+            "project_leader",
+            "members",
+            "member_roles",
+          ],
           ...data.projects.map((p) => [
             p.workspace_slug,
             p.name,
@@ -166,7 +175,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
   );
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl">
+    <div className="flex max-w-3xl flex-col gap-6">
       {/* Instructions */}
       <div className="space-y-2">
         <p className="text-sm font-medium">Excel file requirements:</p>
@@ -188,7 +197,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         <button
           type="button"
           onClick={() => void downloadTemplate()}
-          className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+          className="text-sm flex w-fit items-center gap-2 text-primary hover:underline"
         >
           <Download className="h-4 w-4" />
           Download template
@@ -196,7 +205,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         <button
           type="button"
           onClick={() => setIsExportDialogOpen(true)}
-          className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+          className="text-sm flex w-fit items-center gap-2 text-primary hover:underline"
         >
           <FileDown className="h-4 w-4" />
           Export projects
@@ -215,7 +224,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+          className="border-border-subtle hover:bg-surface-hover flex w-full cursor-pointer items-center gap-3 rounded-md border border-dashed p-6 transition-colors"
         >
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">

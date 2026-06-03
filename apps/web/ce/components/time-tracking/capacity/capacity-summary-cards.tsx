@@ -27,19 +27,19 @@ export const CapacitySummaryCards = observer((props: ICapacitySummaryCardsProps)
   const formatHours = (minutes: number) => (minutes / 60).toFixed(1);
 
   return (
-    <div className="flex flex-col gap-4 mb-8">
+    <div className="mb-8 flex flex-col gap-4">
       {/* Total logged hours */}
-      <div className="group relative flex flex-col justify-center rounded-xl overflow-hidden border border-subtle bg-gradient-to-br from-surface-1 to-surface-2 p-4 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 w-48">
-        <div className="absolute top-0 right-0 w-12 h-12 bg-accent-primary/5 rounded-bl-[80px] transition-all group-hover:bg-accent-primary/10" />
-        <span className="text-12 tracking-wide font-medium uppercase text-tertiary">{t("capacity_total_logged")}</span>
-        <span className="text-2xl font-bold text-primary mt-2 tracking-tight">
+      <div className="group shadow-sm hover:shadow-md relative flex w-48 transform flex-col justify-center overflow-hidden rounded-xl border border-subtle bg-gradient-to-br from-surface-1 to-surface-2 p-4 transition-all duration-300 hover:-translate-y-1">
+        <div className="absolute top-0 right-0 h-12 w-12 rounded-bl-[80px] bg-accent-primary/5 transition-all group-hover:bg-accent-primary/10" />
+        <span className="text-12 font-medium tracking-wide text-tertiary uppercase">{t("capacity_total_logged")}</span>
+        <span className="text-2xl mt-2 font-bold tracking-tight text-primary">
           {formatHours(totalLoggedMinutes)}
-          <span className="text-13 font-medium text-secondary/60 ml-0.5">h</span>
+          <span className="ml-0.5 text-13 font-medium text-secondary/60">h</span>
         </span>
       </div>
 
       {/* Category distribution — 2 tables side by side */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <CategoryCountTable
           title={t("capacity_main_task_category")}
           categories={categoriesData?.main_task_categories ?? []}

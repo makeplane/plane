@@ -115,7 +115,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
 
   return (
     <tr
-      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
+      className={cn(rowBorder, "group h-11 transition-colors odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50")}
     >
       {displayProperties.department_name && renderTd("department_name", issue.department_name || "—")}
       {displayProperties.project_name && renderTd("project_name", issue.project_name || "—")}
@@ -129,7 +129,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
           type="button"
           disabled={isPeeking}
           onClick={() => void handleOpenPeek()}
-          className="text-accent-primary hover:underline line-clamp-1 text-left w-full disabled:opacity-60"
+          className="line-clamp-1 w-full text-left text-accent-primary hover:underline disabled:opacity-60"
         >
           {issue.name}
         </button>
@@ -145,7 +145,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
           ) : (
             <Tooltip
               tooltipContent={
-                <div className="max-w-[260px] whitespace-normal break-words">
+                <div className="max-w-[260px] break-words whitespace-normal">
                   {issue.assignees.map((a) => a.display_name).join(", ")}
                 </div>
               }
@@ -169,7 +169,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
             return (
               <span className="flex items-center gap-1.5">
                 {group && (
-                  <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
+                  <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: group.color }} />
                 )}
                 <span className="truncate">{group ? t(`workspace_projects.state.${group.key}`) : "—"}</span>
               </span>

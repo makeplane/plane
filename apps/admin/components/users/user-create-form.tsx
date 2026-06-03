@@ -52,7 +52,7 @@ export function UserCreateForm() {
   };
 
   return (
-    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="flex flex-col gap-4 max-w-lg">
+    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="flex max-w-lg flex-col gap-4">
       <div className="space-y-1">
         <label htmlFor="first_name" className="text-sm font-medium">
           First name *

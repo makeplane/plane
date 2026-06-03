@@ -73,10 +73,10 @@ const JobPositionsPage = observer(function JobPositionsPage() {
   return (
     <PageWrapper header={{ title: "Job Positions", description: "Manage job grades and their positions." }}>
       <div className="space-y-3">
-        <div className="pt-2 flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 pt-2">
           <div className="flex items-center gap-2 text-16 font-medium">
             Job Grades & Positions
-            {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
+            {loader === "mutation" && <LoaderIcon className="h-4 w-4 animate-spin text-tertiary" />}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -84,11 +84,11 @@ const JobPositionsPage = observer(function JobPositionsPage() {
               size="sm"
               onClick={() => void exportToExcel(Object.values(grades), Object.values(positions), grades)}
             >
-              <Download className="w-4 h-4" />
+              <Download className="h-4 w-4" />
               Export
             </Button>
             <Button variant="secondary" size="sm" onClick={() => setImportModalOpen(true)}>
-              <Upload className="w-4 h-4" />
+              <Upload className="h-4 w-4" />
               Import
             </Button>
           </div>
@@ -114,7 +114,7 @@ const JobPositionsPage = observer(function JobPositionsPage() {
                     setGradeModalOpen(true);
                   }}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="h-4 w-4" />
                   Add Job Grade
                 </Button>
               </div>

@@ -42,8 +42,7 @@ export const WorkspaceProjectExportDialog = observer(function WorkspaceProjectEx
   const filtered = search.trim()
     ? workspaceList.filter(
         (ws) =>
-          ws.name.toLowerCase().includes(search.toLowerCase()) ||
-          ws.slug.toLowerCase().includes(search.toLowerCase())
+          ws.name.toLowerCase().includes(search.toLowerCase()) || ws.slug.toLowerCase().includes(search.toLowerCase())
       )
     : workspaceList;
 
@@ -84,7 +83,7 @@ export const WorkspaceProjectExportDialog = observer(function WorkspaceProjectEx
 
             {/* Search */}
             <div className="flex items-center gap-2 rounded-md border border-subtle bg-layer-2 px-3 py-2">
-              <Search className="h-4 w-4 text-tertiary shrink-0" />
+              <Search className="h-4 w-4 shrink-0 text-tertiary" />
               <input
                 type="text"
                 placeholder="Search workspaces..."
@@ -96,37 +95,37 @@ export const WorkspaceProjectExportDialog = observer(function WorkspaceProjectEx
 
             {/* Select all (visible items) */}
             {filtered.length > 0 && (
-              <label className="flex items-center gap-2 cursor-pointer select-none">
+              <label className="flex cursor-pointer items-center gap-2 select-none">
                 <input
                   type="checkbox"
                   checked={allFilteredSelected}
                   onChange={toggleAllFiltered}
-                  className="h-4 w-4 accent-accent-primary"
+                  className="accent-accent-primary h-4 w-4"
                 />
                 <span className="text-13 font-medium">Select all ({filtered.length})</span>
               </label>
             )}
 
             {/* Workspace list */}
-            <div className="max-h-56 overflow-y-auto rounded-md border border-subtle p-1 space-y-0.5">
-              {isLoading && <p className="text-13 text-tertiary text-center py-6">Loading workspaces...</p>}
+            <div className="max-h-56 space-y-0.5 overflow-y-auto rounded-md border border-subtle p-1">
+              {isLoading && <p className="py-6 text-center text-13 text-tertiary">Loading workspaces...</p>}
               {!isLoading && filtered.length === 0 && (
-                <p className="text-13 text-tertiary text-center py-6">No workspaces found.</p>
+                <p className="py-6 text-center text-13 text-tertiary">No workspaces found.</p>
               )}
               {!isLoading &&
                 filtered.map((ws) => (
                   <label
                     key={ws.id}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-layer-1-hover cursor-pointer select-none"
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 select-none hover:bg-layer-1-hover"
                   >
                     <input
                       type="checkbox"
                       checked={selectedSlugs.has(ws.slug)}
                       onChange={() => toggleWorkspace(ws.slug)}
-                      className="h-4 w-4 accent-accent-primary shrink-0"
+                      className="accent-accent-primary h-4 w-4 shrink-0"
                     />
-                    <span className="text-13 text-primary flex-1 truncate">{ws.name}</span>
-                    <span className="text-13 text-tertiary shrink-0">{ws.slug}</span>
+                    <span className="flex-1 truncate text-13 text-primary">{ws.name}</span>
+                    <span className="shrink-0 text-13 text-tertiary">{ws.slug}</span>
                   </label>
                 ))}
             </div>

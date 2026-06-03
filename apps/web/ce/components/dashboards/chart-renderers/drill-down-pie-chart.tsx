@@ -35,7 +35,7 @@ export const DrillDownPieChart = ({ widget, data, isDonut = false, onDrillDown }
   );
 
   return (
-    <div className="relative w-full h-full p-2">
+    <div className="relative h-full w-full p-2">
       <ResponsiveContainer width="100%" height="100%">
         <CorePieChart margin={{ top: 5, right: 30, bottom: 5, left: 20 }}>
           <Pie

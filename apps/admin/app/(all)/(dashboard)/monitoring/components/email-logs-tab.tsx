@@ -36,13 +36,13 @@ const EmailLogsTabComponent = observer(function EmailLogsTab() {
   );
 
   if (error.emailLogs) {
-    return <div className="text-danger-primary text-body-sm-regular py-8 text-center">{error.emailLogs}</div>;
+    return <div className="py-8 text-center text-body-sm-regular text-danger-primary">{error.emailLogs}</div>;
   }
 
   return (
     <div className="space-y-3">
       {/* Filters */}
-      <div className="flex items-end gap-3 flex-wrap">
+      <div className="flex flex-wrap items-end gap-3">
         <label className="space-y-1">
           <span className="text-body-xs-medium text-secondary">Date From</span>
           <input
@@ -68,13 +68,13 @@ const EmailLogsTabComponent = observer(function EmailLogsTab() {
             placeholder="e.g. issue"
             value={localFilters.entity_name ?? ""}
             onChange={(e) => setLocalFilters((f) => ({ ...f, entity_name: e.target.value || undefined }))}
-            className="block rounded-md border border-subtle bg-surface-1 px-2 py-1 text-body-sm-regular text-primary w-32"
+            className="block w-32 rounded-md border border-subtle bg-surface-1 px-2 py-1 text-body-sm-regular text-primary"
           />
         </label>
         <button
           type="button"
           onClick={handleApplyFilters}
-          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary hover:bg-accent-subtle-hover transition-colors"
+          className="rounded-md bg-accent-subtle px-3 py-1.5 text-body-sm-medium text-accent-primary transition-colors hover:bg-accent-subtle-hover"
         >
           Apply
         </button>
@@ -82,7 +82,7 @@ const EmailLogsTabComponent = observer(function EmailLogsTab() {
 
       {/* Table */}
       {isLoading.emailLogs ? (
-        <div className="text-secondary text-body-sm-regular py-8 text-center">Loading email logs...</div>
+        <div className="py-8 text-center text-body-sm-regular text-secondary">Loading email logs...</div>
       ) : (
         <div className="overflow-x-auto rounded-md border border-subtle">
           <table className="w-full text-body-sm-regular">
@@ -130,10 +130,10 @@ const EmailLogsTabComponent = observer(function EmailLogsTab() {
               disabled={!emailLogsPagination.prev_page_results}
               onClick={() => handlePageChange(emailLogsPagination.prev_cursor)}
               className={cn(
-                "px-3 py-1 rounded-md border border-subtle",
+                "rounded-md border border-subtle px-3 py-1",
                 emailLogsPagination.prev_page_results
-                  ? "text-primary hover:bg-surface-2 cursor-pointer"
-                  : "text-secondary/50 cursor-not-allowed"
+                  ? "cursor-pointer text-primary hover:bg-surface-2"
+                  : "cursor-not-allowed text-secondary/50"
               )}
             >
               Prev
@@ -143,10 +143,10 @@ const EmailLogsTabComponent = observer(function EmailLogsTab() {
               disabled={!emailLogsPagination.next_page_results}
               onClick={() => handlePageChange(emailLogsPagination.next_cursor)}
               className={cn(
-                "px-3 py-1 rounded-md border border-subtle",
+                "rounded-md border border-subtle px-3 py-1",
                 emailLogsPagination.next_page_results
-                  ? "text-primary hover:bg-surface-2 cursor-pointer"
-                  : "text-secondary/50 cursor-not-allowed"
+                  ? "cursor-pointer text-primary hover:bg-surface-2"
+                  : "cursor-not-allowed text-secondary/50"
               )}
             >
               Next

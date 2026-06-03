@@ -86,7 +86,7 @@ export const SpreadsheetTotalLogTimeColumn = observer(function SpreadsheetTotalL
       <Popover.Panel
         side="bottom"
         align="start"
-        className="z-20 min-w-52 rounded-md border border-subtle bg-surface-1 shadow-lg"
+        className="shadow-lg z-20 min-w-52 rounded-md border border-subtle bg-surface-1"
       >
         <div className="p-2">
           <p className="mb-1.5 px-1 text-11 font-medium text-tertiary">{t("worklog.member")}</p>

@@ -73,7 +73,7 @@ export const HolidayFormModal = observer(function HolidayFormModal({
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.SM}>
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <Dialog.Title>{editHoliday ? "Edit holiday" : "Add holiday"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-3">
             <div className="space-y-1">

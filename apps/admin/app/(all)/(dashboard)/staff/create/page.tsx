@@ -90,7 +90,7 @@ const StaffCreatePage = observer(function StaffCreatePage() {
 
   return (
     <PageWrapper header={{ title: "Add Staff", description: "Create a new staff profile." }}>
-      <div className="pt-4 max-w-2xl">
+      <div className="max-w-2xl pt-4">
         <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-6">
           <StaffFormFields register={register} errors={errors} watch={watch} setValue={setValue} control={control} />
           <div className="flex items-center gap-4 pt-2">

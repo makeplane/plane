@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<IInstanceStaff["employment_status"], string> = {
 
 export function StaffStatusBadge({ status }: Props) {
   return (
-    <span className={cn("text-11 px-1.5 py-0.5 rounded font-medium capitalize", STATUS_STYLES[status])}>
+    <span className={cn("rounded px-1.5 py-0.5 text-11 font-medium capitalize", STATUS_STYLES[status])}>
       {STATUS_LABELS[status]}
     </span>
   );

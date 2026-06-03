@@ -85,7 +85,7 @@ export const CompletedAtProperty = observer(function CompletedAtProperty({ issue
       <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.completed_at")} childrenClassName="h-7.5">
         {showReadOnly ? (
           <Tooltip tooltipContent={t("project_settings.field_permissions.locked_tooltip")} position="top">
-            <span className="flex items-center gap-1.5 px-2 h-7.5 text-body-xs-regular text-secondary-200 cursor-default">
+            <span className="text-secondary-200 flex h-7.5 cursor-default items-center gap-1.5 px-2 text-body-xs-regular">
               {`${renderFormattedDate(completedAt)} ${renderFormattedTime(completedAt, "12-hour")}`}
             </span>
           </Tooltip>

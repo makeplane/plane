@@ -89,14 +89,14 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
               <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
             </div>
           )}
-          <div className="border-l border-subtle h-4" />
+          <div className="h-4 border-l border-subtle" />
           <button
             type="button"
             onClick={() => exportWorkItemsXLSX(issueList, `today-work-items-${todayStr}`)}
             disabled={!isDataReady || issueList.length === 0}
             className={cn(
-              "flex items-center gap-1 text-13 text-secondary hover:text-primary transition-colors",
-              (!isDataReady || issueList.length === 0) && "opacity-40 cursor-not-allowed"
+              "flex items-center gap-1 text-13 text-secondary transition-colors hover:text-primary",
+              (!isDataReady || issueList.length === 0) && "cursor-not-allowed opacity-40"
             )}
           >
             <Download className="h-3.5 w-3.5" />

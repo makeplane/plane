@@ -166,7 +166,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             />
           )}
           {/* Show Archived toggle */}
-          <div className="flex items-center gap-1.5 rounded-md border border-subtle px-2.5 py-1 text-xs">
+          <div className="text-xs flex items-center gap-1.5 rounded-md border border-subtle px-2.5 py-1">
             <ArchiveIcon className="size-3.5 text-tertiary" />
             <span className="text-13 whitespace-nowrap">Archived</span>
             <ToggleSwitch

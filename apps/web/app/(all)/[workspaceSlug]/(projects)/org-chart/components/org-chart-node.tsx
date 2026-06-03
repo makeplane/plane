@@ -15,37 +15,37 @@ export function OrgChartNode({ department }: Props) {
     <div className="flex flex-col">
       <div
         className={cn(
-          "flex items-center gap-2 px-3 py-2 rounded-md hover:bg-surface-2 group",
-          department.is_linked && "border-l-2 border-blue-500"
+          "group flex items-center gap-2 rounded-md px-3 py-2 hover:bg-surface-2",
+          department.is_linked && "border-blue-500 border-l-2"
         )}
       >
         {/* Expand/collapse toggle */}
         <button
           type="button"
-          className={cn("flex-shrink-0 p-0.5 rounded transition-transform", hasChildren ? "visible" : "invisible")}
+          className={cn("flex-shrink-0 rounded p-0.5 transition-transform", hasChildren ? "visible" : "invisible")}
           onClick={() => setIsExpanded((v) => !v)}
         >
           <ChevronRight className={cn("h-3.5 w-3.5 text-tertiary transition-transform", isExpanded && "rotate-90")} />
         </button>
 
         {/* Department info */}
-        <div className="flex flex-1 items-center gap-3 min-w-0">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-primary truncate">{department.name}</span>
+              <span className="text-sm truncate font-medium text-primary">{department.name}</span>
               <span className="text-xs text-tertiary">({department.code})</span>
-              <span className="text-xs px-1.5 py-0.5 rounded bg-surface-3 text-secondary">L{department.level}</span>
+              <span className="text-xs bg-surface-3 rounded px-1.5 py-0.5 text-secondary">L{department.level}</span>
               {department.is_linked && (
-                <span className="text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-900/30">
+                <span className="text-xs bg-blue-100 text-blue-600 dark:bg-blue-900/30 rounded px-1.5 py-0.5">
                   {department.linked_workspace_detail?.name ?? "Linked"}
                 </span>
               )}
             </div>
             {department.manager_detail && (
-              <p className="text-xs text-tertiary mt-0.5">Manager: {department.manager_detail.display_name}</p>
+              <p className="text-xs mt-0.5 text-tertiary">Manager: {department.manager_detail.display_name}</p>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1 flex-shrink-0 text-tertiary">
+          <div className="ml-auto flex flex-shrink-0 items-center gap-1 text-tertiary">
             <Users className="h-3.5 w-3.5" />
             <span className="text-xs">{department.staff_count}</span>
           </div>
@@ -54,7 +54,7 @@ export function OrgChartNode({ department }: Props) {
 
       {/* Recursive children */}
       {hasChildren && isExpanded && (
-        <div className="ml-6 border-l border-subtle pl-2 mt-0.5 flex flex-col gap-0.5">
+        <div className="mt-0.5 ml-6 flex flex-col gap-0.5 border-l border-subtle pl-2">
           {department.children.map((child) => (
             <OrgChartNode key={child.id} department={child} />
           ))}

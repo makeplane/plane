@@ -23,7 +23,7 @@ export const ColorPresetSelector = ({ selectedPreset, onChange }: ColorPresetSel
           "group flex w-full items-center gap-3 rounded-lg border-[1.5px] p-3 text-left transition-all",
           selectedPreset === preset.id
             ? "border-accent-strong bg-accent-subtle"
-            : "border-subtle hover:border-accent-strong hover:bg-layer-1-hover bg-surface-1"
+            : "border-subtle bg-surface-1 hover:border-accent-strong hover:bg-layer-1-hover"
         )}
       >
         <div className="flex gap-1">

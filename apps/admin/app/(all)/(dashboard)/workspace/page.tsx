@@ -175,7 +175,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   Bulk Import Modules
                 </Link>
                 <Button variant="secondary" onClick={() => void handleExport()} disabled={isExporting}>
-                  <Download className="w-4 h-4" />
+                  <Download className="h-4 w-4" />
                   {isExporting ? "Exporting..." : "Export"}
                 </Button>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
@@ -183,19 +183,19 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </Link>
               </div>
               <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary" />
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-tertiary" />
                 <input
                   type="text"
                   placeholder="Search workspaces..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-13 rounded-md border border-subtle bg-layer-2 text-primary placeholder:text-tertiary outline-none focus:border-accent-primary"
+                  className="focus:border-accent-primary w-full rounded-md border border-subtle bg-layer-2 py-1.5 pr-3 pl-9 text-13 text-primary outline-none placeholder:text-tertiary"
                 />
               </div>
             </div>
             <div className="flex flex-col gap-4 py-2">
               {workspaceIds.length === 0 && workspaceLoader === "loaded" ? (
-                <div className="flex flex-col items-center justify-center py-12 text-tertiary text-13">
+                <div className="flex flex-col items-center justify-center py-12 text-13 text-tertiary">
                   No workspaces match your search.
                 </div>
               ) : (

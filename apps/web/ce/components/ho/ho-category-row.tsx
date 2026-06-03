@@ -17,11 +17,11 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
 
   return (
-    <tr className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group")}>
+    <tr className={cn(rowBorder, "group transition-colors odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50")}>
       <td
         className={cn(
           CELL,
-          "min-w-[200px] sticky left-0 z-[5] transition-shadow",
+          "sticky left-0 z-[5] min-w-[200px] transition-shadow",
           isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "",
           frozenBg,
           "group-hover:bg-layer-2"
@@ -32,13 +32,13 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate font-medium">{row.main_task_category_name || "—"}</div>
         {row.main_task_category_description && (
-          <div className="text-xs text-tertiary font-normal italic mt-0.5">{row.main_task_category_description}</div>
+          <div className="text-xs font-normal mt-0.5 text-tertiary italic">{row.main_task_category_description}</div>
         )}
       </td>
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate">{row.sub_task_category_name || "—"}</div>
         {row.sub_task_category_description && (
-          <div className="text-xs text-tertiary font-normal italic mt-0.5">{row.sub_task_category_description}</div>
+          <div className="text-xs font-normal mt-0.5 text-tertiary italic">{row.sub_task_category_description}</div>
         )}
       </td>
     </tr>

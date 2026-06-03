@@ -126,7 +126,7 @@ export function InstanceSwingSSOConfigForm(props: Props) {
       />
       <SwingSSOTestAuthModal isOpen={isTestModalOpen} onClose={() => setIsTestModalOpen(false)} />
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-y-4 max-w-lg pt-1">
+        <div className="flex max-w-lg flex-col gap-y-4 pt-1">
           <div className="pt-2.5 text-18 font-medium">Swing SSO configuration</div>
           {SWING_SSO_FORM_FIELDS.map((field) => (
             <ControllerInput

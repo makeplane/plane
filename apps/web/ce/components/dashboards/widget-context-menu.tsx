@@ -46,37 +46,37 @@ export const WidgetContextMenu = observer(({ widget, workspaceSlug, onEdit, onDe
     <CustomMenu
       placement="bottom-end"
       customButton={
-        <button className="p-1 rounded hover:bg-layer-2 transition-colors text-tertiary hover:text-primary">
-          <MoreHorizontal className="w-4 h-4" />
+        <button className="rounded p-1 text-tertiary transition-colors hover:bg-layer-2 hover:text-primary">
+          <MoreHorizontal className="h-4 w-4" />
         </button>
       }
     >
       <CustomMenu.MenuItem onClick={onEdit}>
         <div className="flex items-center gap-2">
-          <Pencil className="w-4 h-4" />
+          <Pencil className="h-4 w-4" />
           <span>{t("analytics_dashboard.context_edit")}</span>
         </div>
       </CustomMenu.MenuItem>
 
       <CustomMenu.MenuItem onClick={handleOpenInNewTab}>
         <div className="flex items-center gap-2">
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="h-4 w-4" />
           <span>{t("analytics_dashboard.context_open_new_tab")}</span>
         </div>
       </CustomMenu.MenuItem>
 
       <CustomMenu.MenuItem onClick={handleCopyLink}>
         <div className="flex items-center gap-2">
-          <Link2 className="w-4 h-4" />
+          <Link2 className="h-4 w-4" />
           <span>{t("analytics_dashboard.context_copy_link")}</span>
         </div>
       </CustomMenu.MenuItem>
 
-      <div className="h-px bg-border-subtle my-1" />
+      <div className="bg-border-subtle my-1 h-px" />
 
       <CustomMenu.MenuItem onClick={onDelete}>
         <div className="flex items-center gap-2 text-danger-primary">
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="h-4 w-4" />
           <span>{t("analytics_dashboard.context_delete")}</span>
         </div>
       </CustomMenu.MenuItem>

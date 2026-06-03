@@ -25,9 +25,9 @@ export const CategoryCountTable: FC<CategoryPieChartProps> = ({ title, categorie
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-subtle bg-surface-1 p-4">
-      <span className="text-12 font-medium tracking-wide uppercase text-tertiary">{title}</span>
+      <span className="text-12 font-medium tracking-wide text-tertiary uppercase">{title}</span>
       {isLoading ? (
-        <div className="py-4 text-center text-12 text-tertiary animate-pulse">{t("common.loading")}</div>
+        <div className="animate-pulse py-4 text-center text-12 text-tertiary">{t("common.loading")}</div>
       ) : categories.length === 0 ? (
         <div className="py-4 text-center text-12 text-tertiary">{t("capacity_no_data")}</div>
       ) : (

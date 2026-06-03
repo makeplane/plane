@@ -28,7 +28,7 @@ export const DepartmentFormFields = ({
   <>
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium">
+        <label htmlFor="name" className="text-sm mb-1 block font-medium">
           Department Name
         </label>
         <Input
@@ -40,7 +40,7 @@ export const DepartmentFormFields = ({
         />
       </div>
       <div>
-        <label htmlFor="code" className="mb-1 block text-sm font-medium">
+        <label htmlFor="code" className="text-sm mb-1 block font-medium">
           Code
         </label>
         <Input
@@ -55,7 +55,7 @@ export const DepartmentFormFields = ({
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <label htmlFor="short_name" className="mb-1 block text-sm font-medium">
+        <label htmlFor="short_name" className="text-sm mb-1 block font-medium">
           Short Name
         </label>
         <Input
@@ -66,7 +66,7 @@ export const DepartmentFormFields = ({
         />
       </div>
       <div>
-        <label htmlFor="dept_code" className="mb-1 block text-sm font-medium">
+        <label htmlFor="dept_code" className="text-sm mb-1 block font-medium">
           Department Code
         </label>
         <Input
@@ -80,14 +80,14 @@ export const DepartmentFormFields = ({
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <label htmlFor="parent" className="mb-2 block text-sm font-medium">
+        <label htmlFor="parent" className="text-sm mb-2 block font-medium">
           Parent Department
         </label>
         <select
           id="parent"
           value={formData.parent}
           onChange={(e) => onChange({ ...formData, parent: e.target.value })}
-          className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+          className="border-custom-border-200 bg-custom-background-100 text-sm w-full rounded-md border px-3 py-2"
         >
           <option value="">None (Root Department)</option>
           {departments
@@ -100,7 +100,7 @@ export const DepartmentFormFields = ({
         </select>
       </div>
       <div>
-        <label htmlFor="level" className="mb-1 block text-sm font-medium">
+        <label htmlFor="level" className="text-sm mb-1 block font-medium">
           Level
         </label>
         <Input
@@ -115,7 +115,7 @@ export const DepartmentFormFields = ({
     </div>
 
     <div>
-      <label htmlFor="description" className="mb-1 block text-sm font-medium">
+      <label htmlFor="description" className="text-sm mb-1 block font-medium">
         Description
       </label>
       <TextArea

@@ -69,7 +69,7 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
 
       <div className="h-[calc(100%-3rem)]">
         {isLoading ? (
-          <div className="flex items-center justify-center h-full text-tertiary text-xs">
+          <div className="text-xs flex h-full items-center justify-center text-tertiary">
             {t("analytics_dashboard.loading")}
           </div>
         ) : (

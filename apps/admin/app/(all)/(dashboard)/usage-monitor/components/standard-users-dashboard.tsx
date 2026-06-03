@@ -24,7 +24,7 @@ export const StandardUsersDashboard = observer(() => {
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-subtle bg-surface-1 p-4">
-        <p className="text-11 uppercase tracking-wide text-tertiary">Standard users in range</p>
+        <p className="text-11 tracking-wide text-tertiary uppercase">Standard users in range</p>
         <p className="mt-1 text-24 font-semibold text-primary">{users?.total_standard_users ?? 0}</p>
         <p className="mt-1 text-11 text-tertiary">
           Distinct users with ≥1 full day (≥8h / 480 min) logged, deduped across the range.

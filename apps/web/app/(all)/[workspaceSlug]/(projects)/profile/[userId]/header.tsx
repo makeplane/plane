@@ -76,7 +76,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
             onClick={() => toggleProfileSidebar()}
             aria-label={profileSidebarCollapsed ? t("common.expand") : t("common.collapse")}
             aria-pressed={!profileSidebarCollapsed}
-            className="grid place-items-center rounded-md p-1.5 text-secondary outline-none transition-colors hover:bg-layer-1-hover hover:text-primary focus-visible:ring-2 focus-visible:ring-accent-strong"
+            className="grid place-items-center rounded-md p-1.5 text-secondary transition-colors outline-none hover:bg-layer-1-hover hover:text-primary focus-visible:ring-2 focus-visible:ring-accent-strong"
           >
             {profileSidebarCollapsed ? (
               <PanelRightOpen className="h-4 w-4" />

@@ -32,7 +32,7 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
   if (field === "worklog") {
     const isDeleted = activity.verb === "deleted";
     const icon = isDeleted ? (
-      <Trash2 className="h-3.5 w-3.5 text-red-500" />
+      <Trash2 className="text-red-500 h-3.5 w-3.5" />
     ) : (
       <PencilLine className="h-3.5 w-3.5 text-secondary" />
     );
@@ -44,7 +44,7 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
           {activity.new_value && (
             <>
               <br />
-              <span className="text-tertiary ml-0.5">
+              <span className="ml-0.5 text-tertiary">
                 {t("worklog.activity_reason")}: &quot;{activity.new_value}&quot;
               </span>
             </>
@@ -65,12 +65,12 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
         <span>
           {activity.new_value ? t("issue.activity_due_date_set") : t("issue.activity_due_date_removed")}
           {activity.new_value && (
-            <span className="font-medium text-primary ml-1">{renderFormattedDate(activity.new_value)}</span>
+            <span className="ml-1 font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           )}
           {activity.comment && (
             <>
               <br />
-              <span className="text-tertiary ml-0.5">
+              <span className="ml-0.5 text-tertiary">
                 {t("issue.activity_reason")}: &quot;{activity.comment}&quot;
               </span>
             </>
@@ -91,12 +91,12 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
         <span>
           {activity.new_value ? t("issue.activity_completed_at_set") : t("issue.activity_completed_at_removed")}
           {activity.new_value && (
-            <span className="font-medium text-primary ml-1">{renderFormattedDate(activity.new_value)}</span>
+            <span className="ml-1 font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           )}
           {activity.comment && (
             <>
               <br />
-              <span className="text-tertiary ml-0.5">
+              <span className="ml-0.5 text-tertiary">
                 {t("issue.activity_reason")}: &quot;{activity.comment}&quot;
               </span>
             </>

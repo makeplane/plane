@@ -45,11 +45,11 @@ export const ModuleActivityItem = ({ activity }: Props) => {
         name={displayName}
         src={avatarUrl}
         size="sm"
-        className="text-11 grid h-full w-full place-items-center rounded-full"
+        className="grid h-full w-full place-items-center rounded-full text-11"
       />
-      <div className="flex-1 min-w-0 text-sm text-12">
+      <div className="text-sm min-w-0 flex-1 text-12">
         <span className="font-medium text-primary">{displayName}</span> <span>{getActionText(activity, t)}</span>
-        <span className="ml-1.5 text-xs text-tertiary whitespace-nowrap">{calculateTimeAgo(activity.created_at)}</span>
+        <span className="text-xs ml-1.5 whitespace-nowrap text-tertiary">{calculateTimeAgo(activity.created_at)}</span>
       </div>
     </div>
   );

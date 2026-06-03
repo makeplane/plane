@@ -40,7 +40,7 @@ export const ModuleActivityList = observer(({ workspaceSlug, projectId, moduleId
   }
 
   if (!activities || activities.length === 0) {
-    return <p className="p-1 text-sm text-tertiary">{t("module.activity.no_activities")}</p>;
+    return <p className="text-sm p-1 text-tertiary">{t("module.activity.no_activities")}</p>;
   }
 
   return (
@@ -50,7 +50,7 @@ export const ModuleActivityList = observer(({ workspaceSlug, projectId, moduleId
       ))}
       {hasMore(moduleId) && (
         <button
-          className="mt-1 text-xs font-medium text-accent-primary text-left"
+          className="text-xs mt-1 text-left font-medium text-accent-primary"
           disabled={loader}
           onClick={() => void fetchActivities(workspaceSlug, projectId, moduleId, true).catch(console.error)}
         >

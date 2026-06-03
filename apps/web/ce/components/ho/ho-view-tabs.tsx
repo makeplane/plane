@@ -46,7 +46,7 @@ export const HoViewTabs = function HoViewTabs() {
           key={tab.key}
           to={`?view=${tab.key}`}
           className={cn(
-            "px-4 py-2.5 text-13 font-medium border-b-2 -mb-[1px] transition-colors whitespace-nowrap",
+            "-mb-[1px] border-b-2 px-4 py-2.5 text-13 font-medium whitespace-nowrap transition-colors",
             activeView === tab.key
               ? "border-accent-primary text-accent-primary"
               : "border-transparent text-secondary hover:text-primary"

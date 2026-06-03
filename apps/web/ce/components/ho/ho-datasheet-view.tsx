@@ -18,7 +18,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
 
   if (store.isLoading && store.issues.length === 0) {
     return (
-      <div className="py-9 px-page-x lg:px-12 space-y-2">
+      <div className="space-y-2 px-page-x py-9 lg:px-12">
         <Loader className="space-y-2">
           <Loader.Item height="36px" />
           <Loader.Item height="36px" />
@@ -42,7 +42,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
       <HoDatasheetTable issues={store.issues} displayProperties={store.displayProperties} />
 
       {store.issues.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-sm text-placeholder">{t("ho.no_work_items")}</div>
+        <div className="text-sm flex h-32 items-center justify-center text-placeholder">{t("ho.no_work_items")}</div>
       ) : (
         store.nextPageUrl && (
           <div className="flex justify-center py-4">
@@ -50,7 +50,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
               type="button"
               disabled={store.isLoading}
               onClick={() => void store.fetchNextPage()}
-              className="rounded border border-subtle px-4 py-1.5 text-sm text-secondary hover:text-primary disabled:opacity-50"
+              className="text-sm rounded border border-subtle px-4 py-1.5 text-secondary hover:text-primary disabled:opacity-50"
             >
               {store.isLoading
                 ? t("ho.loading")

@@ -47,7 +47,6 @@
     "date-fns": "^4.1.0",
     "emoji-picker-react": "^4.5.16",
     "export-to-csv": "^1.4.0",
-    "xlsx": "0.18.5",
     "isbot": "^5.1.31",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
@@ -73,7 +72,8 @@
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "swr": "catalog:",
     "use-font-face-observer": "^1.2.2",
-    "uuid": "catalog:"
+    "uuid": "catalog:",
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",

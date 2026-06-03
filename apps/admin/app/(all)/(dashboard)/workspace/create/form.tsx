@@ -204,7 +204,7 @@ export function WorkspaceCreateForm() {
               rules={{ required: "Workspace owner is required." }}
               render={({ field: { value, onChange } }) => <WorkspaceOwnerSelect value={value} onChange={onChange} />}
             />
-            <p className="text-11 text-tertiary mt-1">
+            <p className="mt-1 text-11 text-tertiary">
               Defaults to the General Director. The workspace is created without you as a member.
             </p>
             {errors.owner_id && <span className="text-13 text-danger-primary">{errors.owner_id.message}</span>}

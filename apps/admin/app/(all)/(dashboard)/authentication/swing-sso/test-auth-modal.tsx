@@ -107,7 +107,7 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
                 >
                   {result.success ? "Authentication Successful" : "Authentication Failed"}
                 </div>
-                <div className="rounded-md border border-subtle bg-layer-1 p-3 space-y-2 text-13">
+                <div className="space-y-2 rounded-md border border-subtle bg-layer-1 p-3 text-13">
                   {result.success ? (
                     <>
                       <Row label="Result Code" value={result.result_code} />
@@ -159,7 +159,7 @@ function Row({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex justify-between">
       <span className="text-secondary">{label}</span>
-      <span className="text-primary font-medium">{value || "—"}</span>
+      <span className="font-medium text-primary">{value || "—"}</span>
     </div>
   );
 }

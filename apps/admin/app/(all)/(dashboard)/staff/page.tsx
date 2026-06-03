@@ -69,8 +69,8 @@ const StaffPage = observer(function StaffPage() {
         {stats && (
           <div className="grid grid-cols-5 gap-3 pt-2">
             {(["total", "active", "probation", "resigned", "suspended"] as const).map((key) => (
-              <div key={key} className="rounded-lg border border-subtle bg-layer-1 p-3 space-y-1">
-                <p className="text-11 text-tertiary uppercase tracking-wide">{key}</p>
+              <div key={key} className="space-y-1 rounded-lg border border-subtle bg-layer-1 p-3">
+                <p className="text-11 tracking-wide text-tertiary uppercase">{key}</p>
                 <p className="text-20 font-semibold">{stats[key]}</p>
               </div>
             ))}
@@ -78,9 +78,9 @@ const StaffPage = observer(function StaffPage() {
         )}
 
         {/* Toolbar */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-placeholder" />
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative max-w-sm min-w-[200px] flex-1">
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-placeholder" />
             <Input
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search by name or email..."
@@ -117,15 +117,15 @@ const StaffPage = observer(function StaffPage() {
               </option>
             ))}
           </select>
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="ml-auto flex items-center gap-2">
             <Button variant="secondary" size="sm" onClick={() => setImportOpen(true)}>
-              <Upload className="w-4 h-4" /> Import
+              <Upload className="h-4 w-4" /> Import
             </Button>
             <Button variant="secondary" size="sm" onClick={() => void handleExport()}>
-              <Download className="w-4 h-4" /> Export
+              <Download className="h-4 w-4" /> Export
             </Button>
             <Link href="/job-positions/" className={getButtonStyling("secondary", "sm")}>
-              <Briefcase className="w-4 h-4" /> Job Position
+              <Briefcase className="h-4 w-4" /> Job Position
             </Link>
             <Link href="/staff/create" className={getButtonStyling("primary", "sm")}>
               Add Staff

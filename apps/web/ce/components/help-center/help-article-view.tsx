@@ -76,7 +76,7 @@ export const HelpArticleView = observer(function HelpArticleView({ articleSlug }
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="mb-4 text-[1.75rem] font-semibold leading-tight text-primary outline-none"
+            className="mb-4 text-[1.75rem] leading-tight font-semibold text-primary outline-none"
           >
             {detail.title ?? detail.slug}
           </h1>

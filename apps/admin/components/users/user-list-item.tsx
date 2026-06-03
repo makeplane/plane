@@ -21,10 +21,10 @@ export const UserListItem = observer(function UserListItem({ user }: Props) {
   return (
     <Link
       href={`/users/${user.id}`}
-      className="group flex items-center justify-between p-3 gap-2.5 border border-subtle hover:border-subtle-1 bg-layer-1 hover:bg-layer-1-hover hover:shadow-raised-100 rounded-lg"
+      className="group flex items-center justify-between gap-2.5 rounded-lg border border-subtle bg-layer-1 p-3 hover:border-subtle-1 hover:bg-layer-1-hover hover:shadow-raised-100"
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-primary text-on-color text-11 uppercase">
+        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-primary text-11 text-on-color uppercase">
           {user.avatar ? (
             <img src={user.avatar} className="h-full w-full rounded-full object-cover" alt={displayName} />
           ) : (
@@ -36,7 +36,7 @@ export const UserListItem = observer(function UserListItem({ user }: Props) {
             <h3 className="text-14 font-medium">{displayName}</h3>
             <span
               className={cn(
-                "text-11 px-1.5 py-0.5 rounded-sm font-medium",
+                "rounded-sm px-1.5 py-0.5 text-11 font-medium",
                 user.is_active ? "bg-success-subtle text-success-primary" : "bg-danger-subtle text-danger-primary"
               )}
             >

@@ -34,7 +34,7 @@ export function HoDatasheetTable({ issues, displayProperties }: Props) {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-170px)] bg-surface-1"
+      className="horizontal-scrollbar relative scrollbar-lg max-h-[calc(100vh-170px)] overflow-x-auto overflow-y-auto bg-surface-1"
     >
       <table className="w-full border-collapse text-left">
         <HoDatasheetHeader displayProperties={displayProperties} isScrolled={isScrolled} />

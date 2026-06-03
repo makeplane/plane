@@ -20,9 +20,9 @@ export const WorkspaceBulkAssignPreview = observer(function WorkspaceBulkAssignP
       <p className="text-sm font-medium">
         Preview — <span className="text-tertiary">{rows.length} row(s)</span>
       </p>
-      <div className="rounded-md border border-border-subtle overflow-auto max-h-64">
-        <table className="w-full text-sm">
-          <thead className="bg-surface-1 sticky top-0 z-10">
+      <div className="border-border-subtle max-h-64 overflow-auto rounded-md border">
+        <table className="text-sm w-full">
+          <thead className="sticky top-0 z-10 bg-surface-1">
             <tr>
               <th className="px-3 py-2 text-left font-medium">#</th>
               <th className="px-3 py-2 text-left font-medium">Email</th>
@@ -32,7 +32,7 @@ export const WorkspaceBulkAssignPreview = observer(function WorkspaceBulkAssignP
           </thead>
           <tbody>
             {rows.map((row, idx) => (
-              <tr key={idx} className="border-t border-border-subtle">
+              <tr key={idx} className="border-border-subtle border-t">
                 <td className="px-3 py-2 text-tertiary">{idx + 1}</td>
                 <td className="px-3 py-2">{row.email || <span className="text-danger-primary">—</span>}</td>
                 <td className="px-3 py-2">{row.workspace_slug || <span className="text-danger-primary">—</span>}</td>

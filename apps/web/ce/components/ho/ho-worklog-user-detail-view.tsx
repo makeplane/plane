@@ -41,7 +41,7 @@ export function HoWorklogUserDetailView({
 
   return (
     <div
-      className="p-3 text-left animate-in fade-in duration-200 ease-out"
+      className="animate-in fade-in p-3 text-left duration-200 ease-out"
       role="region"
       aria-label={member?.display_name ?? t("worklog.work_items")}
     >
@@ -71,7 +71,7 @@ export function HoWorklogUserDetailView({
           {formatLogTime(memberTotal)}
         </span>
       </div>
-      <p className="mb-1.5 px-1 text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.work_items")}</p>
+      <p className="mb-1.5 px-1 text-11 font-medium tracking-wide text-tertiary uppercase">{t("worklog.work_items")}</p>
 
       {isInitialLoading ? (
         <LoadingSpinner />
@@ -110,8 +110,8 @@ export function HoWorklogUserDetailView({
               className={cn(
                 "mt-1 w-full rounded border border-subtle px-2 py-1.5 text-11 font-medium",
                 "text-secondary hover:bg-layer-1 hover:text-primary",
-                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong",
-                "disabled:opacity-60 disabled:cursor-not-allowed"
+                "focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none",
+                "disabled:cursor-not-allowed disabled:opacity-60"
               )}
             >
               {isLoadingMore ? t("worklog.loading") : t("worklog.load_more")}

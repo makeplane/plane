@@ -32,15 +32,15 @@ export const DashboardToolbar = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-shrink-0 items-center justify-between border-b border-subtle bg-surface-1 px-4 py-3 relative z-10">
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div className="relative z-10 flex flex-shrink-0 items-center justify-between border-b border-subtle bg-surface-1 px-4 py-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <button className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2" onClick={onBack}>
           <ArrowLeft className="h-4 w-4 text-tertiary" />
         </button>
         <DashboardIcon className="h-5 w-5 text-accent-primary" />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-xl font-semibold">{pageTitle}</h1>
-          {description && <p className="truncate text-sm text-tertiary">{description}</p>}
+          <h1 className="text-xl truncate font-semibold">{pageTitle}</h1>
+          {description && <p className="text-sm truncate text-tertiary">{description}</p>}
         </div>
       </div>
       <div className="flex items-center gap-2">

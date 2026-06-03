@@ -62,12 +62,12 @@ export function ResetPasswordDialog({ open, onClose, userId }: Props) {
               </p>
             ) : (
               <div className="space-y-2">
-                <p className="text-13 text-success-primary font-medium">Password reset successfully!</p>
+                <p className="text-13 font-medium text-success-primary">Password reset successfully!</p>
                 <div className="flex items-center gap-2 rounded-md border border-subtle bg-layer-1 p-3">
-                  <code className="flex-1 text-13 font-mono">{generatedPassword}</code>
+                  <code className="font-mono flex-1 text-13">{generatedPassword}</code>
                   <button
                     onClick={() => void handleCopy()}
-                    className="p-1.5 rounded hover:bg-layer-1-hover"
+                    className="rounded p-1.5 hover:bg-layer-1-hover"
                     aria-label="Copy password"
                   >
                     {copied ? (

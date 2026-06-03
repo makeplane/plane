@@ -116,7 +116,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
-      <form onSubmit={handleSubmit} className="p-5 space-y-4" data-prevent-outside-click>
+      <form onSubmit={handleSubmit} className="space-y-4 p-5" data-prevent-outside-click>
         <h2 className="text-16 font-semibold text-primary">
           {existingWorklog ? t("worklog.edit_log") : t("worklog.log_time")}
         </h2>
@@ -140,7 +140,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
 
         {/* Duration: hours + minutes side by side */}
         <div className="flex gap-3">
-          <div className="flex flex-col gap-1 flex-1">
+          <div className="flex flex-1 flex-col gap-1">
             <label htmlFor="worklog-hours" className="text-11 font-medium text-tertiary">
               {t("worklog.hours")}
             </label>
@@ -154,7 +154,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
               className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary focus:outline-none"
             />
           </div>
-          <div className="flex flex-col gap-1 flex-1">
+          <div className="flex flex-1 flex-col gap-1">
             <label htmlFor="worklog-minutes" className="text-11 font-medium text-tertiary">
               {t("worklog.minutes")}
             </label>
@@ -181,7 +181,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             placeholder={t("worklog.description_placeholder")}
-            className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary placeholder-tertiary focus:outline-none resize-none"
+            className="placeholder-tertiary resize-none rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary focus:outline-none"
           />
         </div>
 
@@ -197,7 +197,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
               onChange={(e) => setReason(e.target.value)}
               rows={2}
               placeholder={t("worklog.reason_placeholder")}
-              className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary placeholder-tertiary focus:outline-none resize-none"
+              className="placeholder-tertiary resize-none rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary focus:outline-none"
               required
             />
           </div>

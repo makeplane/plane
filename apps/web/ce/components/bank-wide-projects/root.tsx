@@ -85,10 +85,10 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
   }
 
   return (
-    <div className="p-8 space-y-10">
+    <div className="space-y-10 p-8">
       {Object.entries(grouped).map(([workspaceSlug, workspaceProjects]) => (
         <section key={workspaceSlug}>
-          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4">
+          <h3 className="text-xs tracking-wider mb-4 font-semibold text-secondary uppercase">
             {workspaceProjects[0].workspace_name}
           </h3>
           {/* Same grid as ProjectCardList */}

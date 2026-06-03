@@ -24,21 +24,21 @@ export const StaffTable = observer(function StaffTable({ onEdit }: Props) {
     return (
       <div className="space-y-2 py-4">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-12 rounded bg-layer-2 animate-pulse" />
+          <div key={i} className="h-12 animate-pulse rounded bg-layer-2" />
         ))}
       </div>
     );
   }
 
   if (staffIds.length === 0) {
-    return <div className="text-center py-12 text-tertiary">No staff found.</div>;
+    return <div className="py-12 text-center text-tertiary">No staff found.</div>;
   }
 
   return (
     <div className="space-y-2">
-      <div className="rounded-lg border border-subtle overflow-hidden">
+      <div className="overflow-hidden rounded-lg border border-subtle">
         <table className="w-full text-13">
-          <thead className="bg-layer-2 border-b border-subtle">
+          <thead className="border-b border-subtle bg-layer-2">
             <tr>
               <th className="px-3 py-2.5 text-left font-medium text-tertiary">Staff ID</th>
               <th className="px-3 py-2.5 text-left font-medium text-tertiary">Name</th>
@@ -55,8 +55,8 @@ export const StaffTable = observer(function StaffTable({ onEdit }: Props) {
               if (!member) return null;
               const name = member.display_name || member.user_detail?.display_name || member.email;
               return (
-                <tr key={id} className="hover:bg-layer-1-hover transition-colors">
-                  <td className="px-3 py-2.5 font-mono text-12 text-tertiary">{member.staff_id}</td>
+                <tr key={id} className="transition-colors hover:bg-layer-1-hover">
+                  <td className="font-mono px-3 py-2.5 text-12 text-tertiary">{member.staff_id}</td>
                   <td className="px-3 py-2.5 font-medium">{name}</td>
                   <td className="px-3 py-2.5 text-tertiary">{member.email}</td>
                   <td className="px-3 py-2.5 text-tertiary">
@@ -80,7 +80,7 @@ export const StaffTable = observer(function StaffTable({ onEdit }: Props) {
         <div className="flex justify-center pt-2">
           <Button variant="link" size="lg" onClick={() => void fetchNextStaff()} disabled={loader === "pagination"}>
             Load more
-            {loader === "pagination" && <LoaderIcon className="w-3 h-3 animate-spin" />}
+            {loader === "pagination" && <LoaderIcon className="h-3 w-3 animate-spin" />}
           </Button>
         </div>
       )}

@@ -118,7 +118,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
   return (
     <div
       ref={containerRef}
-      className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-200px)] bg-surface-1"
+      className="horizontal-scrollbar relative scrollbar-lg max-h-[calc(100vh-200px)] overflow-x-auto overflow-y-auto bg-surface-1"
     >
       <table className="w-full border-collapse text-left">
         <thead className="sticky top-0 left-0 z-[20] border-b-[0.5px] border-subtle bg-layer-1">

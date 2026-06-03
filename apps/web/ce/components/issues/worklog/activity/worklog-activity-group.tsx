@@ -38,19 +38,19 @@ export const WorklogActivityGroup = observer(function WorklogActivityGroup(props
       <button
         type="button"
         onClick={() => setIsExpanded((prev) => !prev)}
-        className="flex items-center gap-2 py-1.5 w-full text-left group hover:bg-layer-2/50 rounded-md transition-colors"
+        className="group flex w-full items-center gap-2 rounded-md py-1.5 text-left transition-colors hover:bg-layer-2/50"
       >
-        <span className="flex-shrink-0 mt-0.5 rounded-full bg-layer-2 p-1">
+        <span className="mt-0.5 flex-shrink-0 rounded-full bg-layer-2 p-1">
           <Timer className="h-3 w-3 text-tertiary" />
         </span>
         <ChevronRight
-          className={cn("h-3 w-3 text-tertiary transition-transform flex-shrink-0", {
+          className={cn("h-3 w-3 flex-shrink-0 text-tertiary transition-transform", {
             "rotate-90": isExpanded,
           })}
         />
         <span className="text-xs text-tertiary">
           {count} {t("worklog.activity_logged")}
-          {totalMinutes > 0 && <span className="font-medium text-primary ml-1">({formattedTotal})</span>}
+          {totalMinutes > 0 && <span className="ml-1 font-medium text-primary">({formattedTotal})</span>}
         </span>
       </button>
 

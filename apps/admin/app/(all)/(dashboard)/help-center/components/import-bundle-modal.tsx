@@ -72,7 +72,7 @@ export const ImportBundleModal = observer(function ImportBundleModal({ isOpen, o
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-3 rounded-md border border-dashed border-subtle p-5 w-full hover:bg-layer-2 transition-colors"
+              className="flex w-full items-center gap-3 rounded-md border border-dashed border-subtle p-5 transition-colors hover:bg-layer-2"
             >
               <Upload className="size-5 text-tertiary" />
               <span className="text-13">{file ? file.name : "Click to select a bundle (.zip)"}</span>

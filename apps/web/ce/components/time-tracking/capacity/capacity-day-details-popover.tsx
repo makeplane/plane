@@ -77,19 +77,19 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
       }}
     >
       <Popover.Button
-        className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellClassName} font-medium text-12 tracking-wide`}
+        className={`shadow-sm hover:shadow-md mx-auto flex h-8 w-[50px] cursor-pointer items-center justify-center rounded-md border transition-all hover:scale-[1.15] ${cellClassName} text-12 font-medium tracking-wide`}
       >
         {cellLabel}
       </Popover.Button>
-      <Popover.Panel className="z-30 w-64 rounded-lg border border-subtle bg-surface-1 shadow-lg p-2 max-h-60 overflow-y-auto vertical-scrollbar scrollbar-sm">
+      <Popover.Panel className="shadow-lg vertical-scrollbar z-30 scrollbar-sm max-h-60 w-64 overflow-y-auto rounded-lg border border-subtle bg-surface-1 p-2">
         {isLoading ? (
-          <div className="py-4 text-center text-12 text-tertiary animate-pulse">{t("common.loading")}</div>
+          <div className="animate-pulse py-4 text-center text-12 text-tertiary">{t("common.loading")}</div>
         ) : tasks && tasks.length > 0 ? (
           <div className="flex flex-col gap-0.5">
             {tasks.map((task) => (
               <button
                 key={task.issue_id}
-                className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 text-left cursor-pointer"
+                className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left hover:bg-surface-2"
                 onClick={() =>
                   setPeekIssue({
                     workspaceSlug: task.workspace_slug,
@@ -99,13 +99,13 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
                   })
                 }
               >
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-11 font-mono text-tertiary shrink-0">{task.issue_identifier}</span>
-                  <span className="text-12 text-primary truncate group-hover:text-accent-primary transition-colors">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <span className="font-mono shrink-0 text-11 text-tertiary">{task.issue_identifier}</span>
+                  <span className="truncate text-12 text-primary transition-colors group-hover:text-accent-primary">
                     {task.issue_name}
                   </span>
                 </div>
-                <span className="text-12 font-medium text-secondary shrink-0">{formatMinutes(task.total_minutes)}</span>
+                <span className="shrink-0 text-12 font-medium text-secondary">{formatMinutes(task.total_minutes)}</span>
               </button>
             ))}
           </div>

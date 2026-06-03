@@ -49,9 +49,9 @@ export const BulkImportForm = observer(function BulkImportForm() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl">
+    <div className="flex max-w-2xl flex-col gap-6">
       {/* Instructions */}
-      <div className="rounded-md border border-border-subtle p-4 space-y-2">
+      <div className="border-border-subtle space-y-2 rounded-md border p-4">
         <p className="text-sm font-medium">CSV format requirements:</p>
         <p className="text-sm text-tertiary">
           File must have a header row with columns: <code className="text-primary">first_name</code>,{" "}
@@ -67,7 +67,7 @@ export const BulkImportForm = observer(function BulkImportForm() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+          className="border-border-subtle hover:bg-surface-hover flex w-full cursor-pointer items-center gap-3 rounded-md border border-dashed p-6 transition-colors"
         >
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">{selectedFile ? selectedFile.name : "Click to select a CSV file"}</span>
@@ -101,11 +101,11 @@ function BulkImportResults({ result }: { result: IInstanceUserBulkImportResponse
     <div className="space-y-4">
       {/* Summary */}
       <div className="flex gap-4">
-        <div className="rounded-md bg-success-primary/10 px-4 py-2 text-sm">
+        <div className="text-sm rounded-md bg-success-primary/10 px-4 py-2">
           Created: <strong>{result.total_created}</strong>
         </div>
         {result.total_skipped > 0 && (
-          <div className="rounded-md bg-danger-primary/10 px-4 py-2 text-sm">
+          <div className="text-sm rounded-md bg-danger-primary/10 px-4 py-2">
             Skipped: <strong>{result.total_skipped}</strong>
           </div>
         )}
@@ -115,8 +115,8 @@ function BulkImportResults({ result }: { result: IInstanceUserBulkImportResponse
       {result.skipped.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm font-medium">Skipped rows:</p>
-          <div className="rounded-md border border-border-subtle overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="border-border-subtle overflow-hidden rounded-md border">
+            <table className="text-sm w-full">
               <thead className="bg-surface-subtle">
                 <tr>
                   <th className="px-3 py-2 text-left font-medium">Row</th>
@@ -126,7 +126,7 @@ function BulkImportResults({ result }: { result: IInstanceUserBulkImportResponse
               </thead>
               <tbody>
                 {result.skipped.map((item, idx) => (
-                  <tr key={idx} className="border-t border-border-subtle">
+                  <tr key={idx} className="border-border-subtle border-t">
                     <td className="px-3 py-2">{item.row_number}</td>
                     <td className="px-3 py-2">{item.email || "—"}</td>
                     <td className="px-3 py-2 text-danger-primary">{item.reason}</td>

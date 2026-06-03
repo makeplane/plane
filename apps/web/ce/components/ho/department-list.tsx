@@ -62,7 +62,7 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
 
   if (isProfileLoading || isTreeLoading) {
     return (
-      <div className="py-9 px-page-x lg:px-12 space-y-3">
+      <div className="space-y-3 px-page-x py-9 lg:px-12">
         <Loader className="space-y-3">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
@@ -73,8 +73,8 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
   }
 
   return (
-    <div className="size-full py-9 px-page-x lg:px-12">
-      <div className="flex justify-between items-center pb-3.5">
+    <div className="size-full px-page-x py-9 lg:px-12">
+      <div className="flex items-center justify-between pb-3.5">
         <h4 className="text-h3-medium">Departments</h4>
         <div className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5">
           <SearchIcon className="h-4 w-4 text-tertiary" />
@@ -93,11 +93,11 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
         <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">No matching departments.</h4>
       ) : (
         <div className="divide-y-[0.5px] divide-subtle overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full border-collapse text-left">
             <thead>
               <tr className="border-b border-subtle bg-surface-1">
-                <th className="px-4 py-3 text-12 font-medium text-secondary uppercase tracking-wide">Name</th>
-                <th className="px-4 py-3 text-12 font-medium text-secondary uppercase tracking-wide">
+                <th className="px-4 py-3 text-12 font-medium tracking-wide text-secondary uppercase">Name</th>
+                <th className="px-4 py-3 text-12 font-medium tracking-wide text-secondary uppercase">
                   Linked Workspace
                 </th>
               </tr>

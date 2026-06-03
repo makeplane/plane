@@ -28,7 +28,7 @@ export const SchedulesList = observer(function SchedulesList() {
           <p className="text-body-sm-regular text-secondary">Manage work schedules and holidays for the instance.</p>
         </div>
         <Button variant="primary" size="sm" onClick={() => setCreateOpen(true)}>
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           New schedule
         </Button>
       </div>
@@ -40,14 +40,14 @@ export const SchedulesList = observer(function SchedulesList() {
           <Loader.Item height="100px" width="100%" />
         </Loader>
       ) : schedules.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-subtle rounded-lg">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-subtle py-16 text-center">
           <p className="text-body-sm-semibold text-secondary">No business calendars yet</p>
-          <p className="text-caption-sm-regular text-tertiary mt-1">
+          <p className="mt-1 text-caption-sm-regular text-tertiary">
             Create your first schedule to manage working days
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {schedules.map((s) => (
             <ScheduleCard key={s.id} schedule={s} />
           ))}

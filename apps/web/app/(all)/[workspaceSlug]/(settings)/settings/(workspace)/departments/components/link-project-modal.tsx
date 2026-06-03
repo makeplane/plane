@@ -66,19 +66,19 @@ export const LinkProjectModal = observer(function LinkProjectModal({
   if (!isOpen || !department) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-custom-backdrop">
-      <div className="w-full max-w-md rounded-lg bg-custom-background-100 p-6 shadow-lg">
-        <h2 className="mb-4 text-xl font-semibold">Link Project to {department.name}</h2>
+    <div className="bg-custom-backdrop fixed inset-0 z-50 flex items-center justify-center">
+      <div className="bg-custom-background-100 shadow-lg w-full max-w-md rounded-lg p-6">
+        <h2 className="text-xl mb-4 font-semibold">Link Project to {department.name}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="project" className="mb-2 block text-sm font-medium">
+            <label htmlFor="project" className="text-sm mb-2 block font-medium">
               Select Project
             </label>
             <select
               id="project"
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+              className="border-custom-border-200 bg-custom-background-100 text-sm w-full rounded-md border px-3 py-2"
               required
             >
               <option value="">Choose a project</option>

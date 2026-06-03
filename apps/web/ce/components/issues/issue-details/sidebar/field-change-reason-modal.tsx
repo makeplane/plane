@@ -42,12 +42,12 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
-      <form onSubmit={(e) => void handleSubmit(e)} className="p-5 space-y-4" data-prevent-outside-click>
-        <h2 className="text-base font-semibold text-custom-text-100">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 p-5" data-prevent-outside-click>
+        <h2 className="text-base text-custom-text-100 font-semibold">
           {t("issue.reason_modal_title", { field: fieldLabel })}
         </h2>
         <div className="flex flex-col gap-1">
-          <label htmlFor="field-change-reason" className="text-xs font-medium text-custom-text-300">
+          <label htmlFor="field-change-reason" className="text-xs text-custom-text-300 font-medium">
             {t("issue.reason_label")} <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -56,7 +56,7 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
             onChange={(e) => setReason(e.target.value)}
             rows={3}
             placeholder={t("issue.reason_placeholder")}
-            className="rounded-md border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none resize-none"
+            className="border-custom-border-200 bg-custom-background-100 text-sm text-custom-text-100 placeholder:text-custom-text-400 resize-none rounded-md border-[0.5px] px-3 py-2 focus:outline-none"
             required
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus

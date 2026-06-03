@@ -50,7 +50,7 @@ export const HelpSearchBox = ({ value, onChange, onKeyDown, controlsId, activeDe
           type="button"
           onClick={() => onChange("")}
           aria-label={t("help_center.cancel")}
-          className="shrink-0 rounded p-1 text-tertiary hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+          className="shrink-0 rounded p-1 text-tertiary hover:text-primary focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
         >
           <X className="size-4" />
         </button>

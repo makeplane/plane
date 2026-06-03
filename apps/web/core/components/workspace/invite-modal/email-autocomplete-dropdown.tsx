@@ -26,9 +26,9 @@ export const EmailAutocompleteDropdown = ({
   const { t } = useTranslation();
 
   return (
-    <div className="absolute top-full left-0 z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-sm border border-strong bg-surface-1 shadow-raised-200">
+    <div className="absolute top-full left-0 z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-sm border border-strong bg-surface-1 shadow-raised-200">
       {suggestions.length === 0 ? (
-        <div className="px-3 py-2 text-caption-sm-regular text-custom-text-300">
+        <div className="text-custom-text-300 px-3 py-2 text-caption-sm-regular">
           {t("workspace_settings.settings.members.modal.no_suggestions")}
         </div>
       ) : (
@@ -56,12 +56,12 @@ export const EmailAutocompleteDropdown = ({
               }}
             >
               <Avatar name={fullName} src={getFileURL(user.avatar_url ?? "")} size="sm" />
-              <div className="flex flex-col min-w-0">
+              <div className="flex min-w-0 flex-col">
                 <span className="truncate font-medium">
                   {fullName}
-                  {user.staff_id && <span className="ml-1 font-normal text-custom-primary-100">({user.staff_id})</span>}
+                  {user.staff_id && <span className="font-normal text-custom-primary-100 ml-1">({user.staff_id})</span>}
                 </span>
-                <span className="truncate text-custom-text-300 text-caption-sm-regular">{subtitle}</span>
+                <span className="text-custom-text-300 truncate text-caption-sm-regular">{subtitle}</span>
               </div>
             </button>
           );

@@ -82,8 +82,8 @@ export const TimesheetCell: FC<TimesheetCellProps> = ({ minutes, onSave }) => {
       mode="transparent"
       inputSize="sm"
       className={cn(
-        "w-full text-center hover:bg-layer-1-hover transition-colors rounded-sm text-13",
-        minutes > 0 ? "text-primary font-medium bg-surface-1" : "text-tertiary"
+        "w-full rounded-sm text-center text-13 transition-colors hover:bg-layer-1-hover",
+        minutes > 0 ? "bg-surface-1 font-medium text-primary" : "text-tertiary"
       )}
       title="Type hours/minutes (e.g. 2h 30m)"
     />

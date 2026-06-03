@@ -83,7 +83,7 @@ export const AddAdminDialog = observer(({ open, onClose }: TProps) => {
               <p className="text-13 text-tertiary">Pick one or more active staff members to promote.</p>
             </div>
             {callerIsSuper && (
-              <label className="flex items-center gap-2 text-13 text-primary cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2 text-13 text-primary">
                 <input
                   type="checkbox"
                   className="h-3.5 w-3.5"

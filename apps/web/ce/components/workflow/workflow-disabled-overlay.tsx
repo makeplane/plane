@@ -23,8 +23,8 @@ export type TWorkflowDisabledOverlayProps = {
 
 /** State label badge — colored dot + name inside a rounded border. */
 const StateBadge = ({ name, color }: { name: string; color: string }) => (
-  <span className="inline-flex items-center gap-1 rounded-full border border-subtle bg-surface-1 px-1.5 py-0.5 text-[11px] font-medium text-primary leading-none whitespace-nowrap">
-    <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+  <span className="inline-flex items-center gap-1 rounded-full border border-subtle bg-surface-1 px-1.5 py-0.5 text-[11px] leading-none font-medium whitespace-nowrap text-primary">
+    <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
     {name}
   </span>
 );
@@ -89,19 +89,19 @@ export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-2 my-2 w-full">
-      <div className="w-full max-w-[260px] rounded-lg border border-subtle bg-surface-1 p-2.5 shadow-sm">
+    <div className="my-2 flex w-full flex-col items-center justify-center p-2">
+      <div className="shadow-sm w-full max-w-[260px] rounded-lg border border-subtle bg-surface-1 p-2.5">
         {/* Header */}
-        <div className="flex items-start gap-1.5 mb-1.5">
-          <CircleAlert className="h-3.5 w-3.5 flex-shrink-0 text-red-500 mt-px" />
-          <p className="text-[12px] font-medium text-primary leading-tight">
+        <div className="mb-1.5 flex items-start gap-1.5">
+          <CircleAlert className="text-red-500 mt-px h-3.5 w-3.5 flex-shrink-0" />
+          <p className="text-[12px] leading-tight font-medium text-primary">
             {t("project_settings.workflows.drag_blocked_title")}
           </p>
         </div>
 
         {/* Source state */}
         {sourceState && (
-          <p className="text-[11px] text-secondary mb-2 ml-5 flex items-center gap-1 flex-wrap">
+          <p className="mb-2 ml-5 flex flex-wrap items-center gap-1 text-[11px] text-secondary">
             {t("project_settings.workflows.indicator_popup_for")}{" "}
             <StateBadge name={sourceState.name} color={sourceState.color} />
           </p>
@@ -112,7 +112,7 @@ export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay
           <div className="ml-5 space-y-1.5">
             {allowedTransitions.map(({ targetStateId, targetStateName, targetStateColor, approvers }) => (
               <div key={targetStateId} className="rounded-md border border-subtle bg-layer-1 px-2 py-1.5">
-                <p className="text-[11px] text-secondary leading-tight mb-1">
+                <p className="mb-1 text-[11px] leading-tight text-secondary">
                   <span className="font-medium text-primary">{formatReviewerNames(approvers)}</span>{" "}
                   {t("project_settings.workflows.indicator_popup_can_move")}
                 </p>

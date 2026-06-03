@@ -35,7 +35,7 @@ export const WidgetTypeSelector = ({ selectedType, onChange }: WidgetTypeSelecto
           "group flex flex-col items-start rounded-lg border-[1.5px] p-3 text-left transition-all",
           selectedType === type
             ? "border-accent-strong bg-accent-subtle"
-            : "border-subtle hover:border-accent-strong hover:bg-layer-1-hover bg-surface-1"
+            : "border-subtle bg-surface-1 hover:border-accent-strong hover:bg-layer-1-hover"
         )}
       >
         <Icon

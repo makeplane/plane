@@ -54,22 +54,22 @@ export const TimesheetTable: FC<TimesheetTableProps> = observer(
           <thead>
             <tr className="border-b border-subtle bg-layer-1-hover">
               {showWorkspaceColumn && (
-                <th className="px-3 py-2.5 w-20 text-center">
+                <th className="w-20 px-3 py-2.5 text-center">
                   <span className={HEADER_LABEL}>Workspace</span>
                 </th>
               )}
-              <th className="px-3 py-2.5 min-w-[260px] text-left">
+              <th className="min-w-[260px] px-3 py-2.5 text-left">
                 <span className={HEADER_LABEL}>Issue</span>
               </th>
               {weekDates.map((date, idx) => (
-                <th key={date} className="px-3 py-2.5 w-20 text-center">
+                <th key={date} className="w-20 px-3 py-2.5 text-center">
                   <div className="flex flex-col items-center gap-0.5">
                     <span className={HEADER_LABEL}>{DAY_NAMES[idx]}</span>
                     <span className="text-12 text-secondary">{new Date(date).getDate()}</span>
                   </div>
                 </th>
               ))}
-              <th className="px-3 py-2.5 w-20 text-center">
+              <th className="w-20 px-3 py-2.5 text-center">
                 <span className={HEADER_LABEL}>{t("timesheet_total")}</span>
               </th>
             </tr>
@@ -94,9 +94,9 @@ export const TimesheetTable: FC<TimesheetTableProps> = observer(
 
           {/* Footer with daily totals — top-level rows only (children are additive) */}
           <tfoot>
-            <tr className="bg-layer-1-hover border-t border-subtle">
+            <tr className="border-t border-subtle bg-layer-1-hover">
               {showWorkspaceColumn && <td className="px-3 py-2" />}
-              <td className="px-3 py-2 text-12 font-medium text-tertiary uppercase tracking-wide">
+              <td className="px-3 py-2 text-12 font-medium tracking-wide text-tertiary uppercase">
                 {t("timesheet_total")}
               </td>
               {weekDates.map((date) => (

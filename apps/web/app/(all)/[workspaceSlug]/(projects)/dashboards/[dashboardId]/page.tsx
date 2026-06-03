@@ -70,7 +70,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
-              className="text-secondary hover:text-primary text-sm"
+              className="text-sm text-secondary hover:text-primary"
             >
               {t("analytics_dashboard.breadcrumb_dashboards")}
             </button>
@@ -78,7 +78,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             <h1 className="text-base font-medium text-primary">{pageTitle}</h1>
           </div>
           <Button variant="primary" size="sm" onClick={() => setIsConfigOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" />
+            <Plus className="mr-1 h-4 w-4" />
             {t("analytics_dashboard.add_widget")}
           </Button>
         </div>
@@ -100,15 +100,15 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
               <Button onClick={() => setIsConfigOpen(true)}>{t("analytics_dashboard.add_widget")}</Button>
             </div>
           ) : (
-            <div className="grid grid-cols-12 gap-4 auto-rows-[200px]">
+            <div className="grid auto-rows-[200px] grid-cols-12 gap-4">
               {widgets.map((w) => (
                 <div
                   key={w.id}
-                  className="rounded-lg border border-subtle bg-surface-1 overflow-hidden"
+                  className="overflow-hidden rounded-lg border border-subtle bg-surface-1"
                   style={{ gridColumn: `span ${w.width ?? 6}`, gridRow: `span ${w.height ?? 2}` }}
                 >
-                  <div className="flex items-center justify-between px-3 py-2 border-b border-subtle">
-                    <span className="text-sm font-medium text-primary truncate">{w.name ?? "Widget"}</span>
+                  <div className="flex items-center justify-between border-b border-subtle px-3 py-2">
+                    <span className="text-sm truncate font-medium text-primary">{w.name ?? "Widget"}</span>
                     <WidgetContextMenu
                       widget={w}
                       workspaceSlug={workspaceSlug}

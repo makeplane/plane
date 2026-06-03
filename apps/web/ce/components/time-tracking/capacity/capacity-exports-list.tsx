@@ -60,7 +60,7 @@ export const CapacityExportsList = observer(function CapacityExportsList() {
   return (
     <div className="h-full w-full overflow-auto bg-surface-1">
       {/* Title block */}
-      <div className="px-6 pt-6 pb-4 shrink-0">
+      <div className="shrink-0 px-6 pt-6 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
@@ -88,7 +88,7 @@ export const CapacityExportsList = observer(function CapacityExportsList() {
 
       {/* Card container */}
       <div className="px-6 pb-6">
-        <div className="overflow-hidden rounded-lg border border-subtle bg-surface-1 shadow-sm">
+        <div className="shadow-sm overflow-hidden rounded-lg border border-subtle bg-surface-1">
           {/* Loading */}
           {isInitialLoading && (
             <div className="flex items-center justify-center gap-2 py-16 text-13 text-tertiary">
@@ -117,7 +117,7 @@ export const CapacityExportsList = observer(function CapacityExportsList() {
                     {COLUMN_KEYS.map((col) => (
                       <th
                         key={col}
-                        className={`px-4 py-2.5 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap ${COLUMN_ALIGN[col]}`}
+                        className={`px-4 py-2.5 text-12 font-semibold tracking-wide whitespace-nowrap text-tertiary uppercase ${COLUMN_ALIGN[col]}`}
                       >
                         {t(`capacity_exports.col.${col}`)}
                       </th>

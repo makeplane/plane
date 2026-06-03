@@ -37,21 +37,21 @@ export const LogtimeBreakdownPopover: FC<LogtimeBreakdownPopoverProps> = ({ tota
 
   return (
     <Popover>
-      <Popover.Button className="text-13 font-medium text-primary hover:text-accent-primary transition-colors cursor-pointer">
+      <Popover.Button className="cursor-pointer text-13 font-medium text-primary transition-colors hover:text-accent-primary">
         {formatMinutes(totalMinutes)}
       </Popover.Button>
-      <Popover.Panel className="z-30 w-52 rounded-lg border border-subtle bg-surface-1 shadow-lg p-2">
+      <Popover.Panel className="shadow-lg z-30 w-52 rounded-lg border border-subtle bg-surface-1 p-2">
         <div className="flex flex-col gap-1">
           {usersForDate.map((u) => (
             <div
               key={u.user_id}
-              className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2"
+              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2"
             >
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
                 <Avatar name={u.display_name} src={u.avatar_url} size="sm" />
-                <span className="text-12 text-primary truncate">{u.display_name}</span>
+                <span className="truncate text-12 text-primary">{u.display_name}</span>
               </div>
-              <span className="text-12 font-medium text-secondary shrink-0">{formatMinutes(u.minutes)}</span>
+              <span className="shrink-0 text-12 font-medium text-secondary">{formatMinutes(u.minutes)}</span>
             </div>
           ))}
         </div>

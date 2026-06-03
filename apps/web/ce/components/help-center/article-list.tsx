@@ -88,7 +88,7 @@ export const ArticleList = ({
             <Link
               to={`/help/a/${article.slug}`}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong",
+                "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2 focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none",
                 isActive && "bg-surface-2"
               )}
             >
@@ -96,7 +96,7 @@ export const ArticleList = ({
                 <div className="flex items-center gap-2">
                   <span className="truncate text-14 font-medium text-primary">{article.title ?? article.slug}</span>
                   {crossLocale && (
-                    <span className="shrink-0 rounded bg-surface-2 px-1.5 py-0.5 text-10 font-semibold uppercase text-tertiary">
+                    <span className="shrink-0 rounded bg-surface-2 px-1.5 py-0.5 text-10 font-semibold text-tertiary uppercase">
                       {article.matched_locale}
                     </span>
                   )}

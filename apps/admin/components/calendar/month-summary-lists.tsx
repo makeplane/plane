@@ -17,8 +17,8 @@ const OVERRIDE_LABEL: Record<IDayOverride["type"], string> = {
 type StatsProps = { monthLabel: string; stats: MonthStats; overrideCount: number };
 
 export const MonthSummaryCard = ({ monthLabel, stats, overrideCount }: StatsProps) => (
-  <div className="bg-surface-1 border border-subtle rounded-lg p-4">
-    <p className="text-body-sm-semibold text-primary mb-3">{monthLabel} summary</p>
+  <div className="rounded-lg border border-subtle bg-surface-1 p-4">
+    <p className="mb-3 text-body-sm-semibold text-primary">{monthLabel} summary</p>
     <div className="grid grid-cols-4 gap-4">
       <Stat label="Working" value={stats.workingDays} />
       <Stat label="Holidays" value={stats.holidayCount} />
@@ -42,12 +42,12 @@ type ListProps = {
 };
 
 export const MonthLists = ({ monthLabel, holidays, overrides }: ListProps) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
     <Panel title={`Holidays in ${monthLabel}`} empty="No holidays this month.">
       {holidays.map((h) => (
         <li key={h.id} className="flex justify-between gap-3">
           <DateBadge iso={h.date} />
-          <span className="text-primary truncate flex-1">{h.name}</span>
+          <span className="flex-1 truncate text-primary">{h.name}</span>
         </li>
       ))}
     </Panel>
@@ -55,10 +55,10 @@ export const MonthLists = ({ monthLabel, holidays, overrides }: ListProps) => (
       {overrides.map((o) => (
         <li key={o.id} className="flex justify-between gap-3">
           <DateBadge iso={o.date} />
-          <span className="text-primary truncate flex-1">{o.reason || OVERRIDE_LABEL[o.type]}</span>
+          <span className="flex-1 truncate text-primary">{o.reason || OVERRIDE_LABEL[o.type]}</span>
           <span
             className={cn(
-              "px-1.5 rounded text-caption-sm-medium shrink-0",
+              "shrink-0 rounded px-1.5 text-caption-sm-medium",
               o.type === "WORKDAY" ? "bg-warning-subtle text-warning-primary" : "bg-success-subtle text-success-primary"
             )}
           >
@@ -71,7 +71,7 @@ export const MonthLists = ({ monthLabel, holidays, overrides }: ListProps) => (
 );
 
 const DateBadge = ({ iso }: { iso: string }) => (
-  <span className="text-tertiary tabular-nums shrink-0">
+  <span className="shrink-0 text-tertiary tabular-nums">
     {iso.slice(8)}/{iso.slice(5, 7)}
   </span>
 );
@@ -79,10 +79,10 @@ const DateBadge = ({ iso }: { iso: string }) => (
 const Panel = ({ title, empty, children }: { title: string; empty: string; children: ReactNode[] }) => {
   const hasItems = Array.isArray(children) && children.length > 0;
   return (
-    <div className="bg-surface-1 border border-subtle rounded-lg p-4">
-      <p className="text-body-sm-semibold text-primary mb-3">{title}</p>
+    <div className="rounded-lg border border-subtle bg-surface-1 p-4">
+      <p className="mb-3 text-body-sm-semibold text-primary">{title}</p>
       {hasItems ? (
-        <ul className="space-y-1.5 text-caption-sm-regular max-h-60 overflow-y-auto">{children}</ul>
+        <ul className="max-h-60 space-y-1.5 overflow-y-auto text-caption-sm-regular">{children}</ul>
       ) : (
         <p className="text-caption-sm-regular text-tertiary">{empty}</p>
       )}

@@ -140,7 +140,7 @@ export function InstanceLDAPConfigForm(props: Props) {
         handleClose={() => setIsDiscardChangesModalOpen(false)}
       />
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-y-4 max-w-lg pt-1">
+        <div className="flex max-w-lg flex-col gap-y-4 pt-1">
           <div className="pt-2.5 text-18 font-medium">LDAP server configuration</div>
           {LDAP_FORM_FIELDS.map((field) => (
             <ControllerInput

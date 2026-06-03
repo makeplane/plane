@@ -40,7 +40,7 @@ export const ContactPointModal = observer(function ContactPointModal({ isOpen, h
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
       <div className="p-6">
-        <h3 className="text-base font-semibold text-primary mb-4">{t("contact_point")}</h3>
+        <h3 className="text-base mb-4 font-semibold text-primary">{t("contact_point")}</h3>
         <div className="space-y-3">
           {rows.map(({ key, label, value }) => (
             <div
@@ -54,11 +54,11 @@ export const ContactPointModal = observer(function ContactPointModal({ isOpen, h
               <button
                 type="button"
                 onClick={() => handleCopy(key, key)}
-                className="ml-3 rounded p-1 text-secondary hover:bg-layer-1 hover:text-primary transition-colors"
+                className="ml-3 rounded p-1 text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
                 title={copiedField === key ? t("contact_point_copied") : t("contact_point_copy")}
               >
                 {copiedField === key ? (
-                  <Check className="h-3.5 w-3.5 text-green-500" />
+                  <Check className="text-green-500 h-3.5 w-3.5" />
                 ) : (
                   <Copy className="h-3.5 w-3.5" />
                 )}

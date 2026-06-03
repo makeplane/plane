@@ -32,15 +32,15 @@ export function HoWorklogMembersView({
 }: Props) {
   return (
     <div
-      className="p-3 text-left animate-in fade-in duration-200 ease-out"
+      className="animate-in fade-in p-3 text-left duration-200 ease-out"
       role="region"
       aria-label={t("worklog.title")}
     >
       <div className="mb-2 flex items-center justify-between border-b border-subtle pb-2">
-        <span className="text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.total")}</span>
+        <span className="text-11 font-medium tracking-wide text-tertiary uppercase">{t("worklog.total")}</span>
         <span className="text-13 font-semibold text-primary tabular-nums">{formatLogTime(totalMinutes)}</span>
       </div>
-      <p className="mb-1.5 px-1 text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.member")}</p>
+      <p className="mb-1.5 px-1 text-11 font-medium tracking-wide text-tertiary uppercase">{t("worklog.member")}</p>
 
       {isInitialLoading ? (
         <LoadingSpinner />
@@ -58,7 +58,7 @@ export function HoWorklogMembersView({
               className={cn(
                 "group flex w-full items-center justify-between gap-3 rounded px-1.5 py-1.5 text-left",
                 "transition-colors duration-150 hover:bg-layer-1",
-                "focus-visible:bg-layer-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong"
+                "focus-visible:bg-layer-1 focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none"
               )}
               aria-label={`${m.display_name}, ${formatLogTime(m.total_minutes)}`}
             >
@@ -83,8 +83,8 @@ export function HoWorklogMembersView({
               className={cn(
                 "mt-1 w-full rounded border border-subtle px-2 py-1.5 text-11 font-medium",
                 "text-secondary hover:bg-layer-1 hover:text-primary",
-                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-strong",
-                "disabled:opacity-60 disabled:cursor-not-allowed"
+                "focus-visible:ring-1 focus-visible:ring-accent-strong focus-visible:outline-none",
+                "disabled:cursor-not-allowed disabled:opacity-60"
               )}
             >
               {isLoadingMore ? t("worklog.loading") : t("worklog.load_more")}

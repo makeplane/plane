@@ -13,11 +13,11 @@ export const WorkspaceBulkAssignResults = observer(function WorkspaceBulkAssignR
   return (
     <div className="space-y-4">
       <div className="flex gap-4">
-        <div className="rounded-md bg-green-500/10 px-4 py-2 text-sm">
+        <div className="bg-green-500/10 text-sm rounded-md px-4 py-2">
           Assigned: <strong>{result.total_assigned}</strong>
         </div>
         {result.total_skipped > 0 && (
-          <div className="rounded-md bg-red-500/10 px-4 py-2 text-sm">
+          <div className="bg-red-500/10 text-sm rounded-md px-4 py-2">
             Skipped: <strong>{result.total_skipped}</strong>
           </div>
         )}
@@ -25,8 +25,8 @@ export const WorkspaceBulkAssignResults = observer(function WorkspaceBulkAssignR
       {result.skipped.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm font-medium">Skipped rows:</p>
-          <div className="rounded-md border border-border-subtle overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="border-border-subtle overflow-hidden rounded-md border">
+            <table className="text-sm w-full">
               <thead className="bg-surface-1">
                 <tr>
                   <th className="px-3 py-2 text-left font-medium">Row</th>
@@ -37,11 +37,11 @@ export const WorkspaceBulkAssignResults = observer(function WorkspaceBulkAssignR
               </thead>
               <tbody>
                 {result.skipped.map((item, idx) => (
-                  <tr key={idx} className="border-t border-border-subtle">
+                  <tr key={idx} className="border-border-subtle border-t">
                     <td className="px-3 py-2">{item.row_number}</td>
                     <td className="px-3 py-2">{item.email || "—"}</td>
                     <td className="px-3 py-2">{item.workspace_slug || "—"}</td>
-                    <td className="px-3 py-2 text-red-500">{item.reason}</td>
+                    <td className="text-red-500 px-3 py-2">{item.reason}</td>
                   </tr>
                 ))}
               </tbody>

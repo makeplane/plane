@@ -97,14 +97,14 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
-      <div className="p-6 space-y-5">
+      <div className="space-y-5 p-6">
         {/* Title */}
         <h3 className="text-base font-semibold text-primary">{t("copy_project.modal_title")}</h3>
 
         {isJobActive ? (
           // In-progress state
           <div className="flex items-center gap-3 py-4">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" />
+            <span className="border-accent-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
             <span className="text-sm text-secondary">{t("copy_project.in_progress")}</span>
           </div>
         ) : (

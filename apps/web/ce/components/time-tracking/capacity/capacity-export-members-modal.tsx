@@ -69,12 +69,12 @@ export const CapacityExportMembersModal = observer(function CapacityExportMember
         </div>
 
         <div className="mt-5 space-y-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex cursor-pointer items-center gap-2">
             <input
               type="checkbox"
               checked={allMembers}
               onChange={(e) => handleAllMembersToggle(e.target.checked)}
-              className="h-4 w-4 rounded border-subtle bg-layer-2 accent-accent-primary"
+              className="accent-accent-primary h-4 w-4 rounded border-subtle bg-layer-2"
               disabled={isSubmitting}
             />
             <span className="text-13 text-primary">{t("capacity_export.all_members")}</span>

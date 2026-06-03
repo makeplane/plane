@@ -59,10 +59,10 @@ export const WorkweekToggle = observer(function WorkweekToggle({ schedule }: Pro
               aria-pressed={isActive}
               onClick={() => handleToggle(index, !isActive)}
               className={cn(
-                "flex-1 px-3 py-2 rounded-md border text-body-sm-medium text-center transition-colors cursor-pointer select-none",
+                "flex-1 cursor-pointer rounded-md border px-3 py-2 text-center text-body-sm-medium transition-colors select-none",
                 isActive
-                  ? "bg-accent-primary text-on-color border-accent-strong hover:bg-accent-strong"
-                  : "bg-surface-2 text-tertiary line-through border-subtle hover:bg-accent-subtle"
+                  ? "hover:bg-accent-strong border-accent-strong bg-accent-primary text-on-color"
+                  : "border-subtle bg-surface-2 text-tertiary line-through hover:bg-accent-subtle"
               )}
             >
               {label}

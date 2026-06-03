@@ -97,16 +97,16 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-1">
       {/* Title & Description Block */}
-      <div className="px-6 pt-6 pb-4 shrink-0">
+      <div className="shrink-0 px-6 pt-6 pb-4">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight text-primary flex items-center gap-2.5">
+            <h2 className="text-xl flex items-center gap-2.5 font-semibold tracking-tight text-primary">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
                 <BarChart2 className="h-4 w-4" />
               </div>
               {t("capacity_dashboard")}
             </h2>
-            <p className="text-13 text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
+            <p className="mt-1.5 ml-0.5 text-13 text-secondary">{t("capacity_dashboard_description")}</p>
           </div>
 
           {/* Cross Workspaces switch */}
@@ -117,9 +117,9 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
         </div>
       </div>
 
-      <div className="flex-grow overflow-y-auto vertical-scrollbar">
+      <div className="vertical-scrollbar flex-grow overflow-y-auto">
         {/* Filters Bar */}
-        <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-[22] backdrop-blur-md">
+        <div className="sticky top-0 z-[22] flex items-center justify-between border-y border-subtle bg-surface-2/30 px-6 py-2 backdrop-blur-md">
           <div className="flex items-center gap-4">
             {/* Member filter — shown only when in project mode and not cross-workspace */}
             {projectId && !isCrossWorkspace ? (
@@ -168,12 +168,12 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
           </div>
         </div>
 
-        <div className="p-6 relative min-h-[400px]">
+        <div className="relative min-h-[400px] p-6">
           {isCapacityLoading && (
-            <div className="absolute inset-0 z-40 flex items-center justify-center bg-surface-1/60 backdrop-blur-[2px] rounded-xl transition-all">
+            <div className="absolute inset-0 z-40 flex items-center justify-center rounded-xl bg-surface-1/60 backdrop-blur-[2px] transition-all">
               <div className="flex flex-col items-center gap-2">
                 <Spinner />
-                <span className="text-13 font-medium text-secondary animate-pulse">{t("common.loading")}...</span>
+                <span className="animate-pulse text-13 font-medium text-secondary">{t("common.loading")}...</span>
               </div>
             </div>
           )}

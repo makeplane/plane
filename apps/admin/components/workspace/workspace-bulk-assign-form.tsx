@@ -121,29 +121,29 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl">
-      <div className="rounded-md border border-border-subtle bg-surface-1 p-4 space-y-3">
+    <div className="flex max-w-3xl flex-col gap-6">
+      <div className="border-border-subtle space-y-3 rounded-md border bg-surface-1 p-4">
         <p className="text-sm font-semibold">Excel file requirements</p>
-        <div className="text-sm text-tertiary space-y-1">
+        <div className="text-sm space-y-1 text-tertiary">
           <p>Required columns (header row):</p>
-          <ul className="ml-4 space-y-1 list-disc">
+          <ul className="ml-4 list-disc space-y-1">
             <li>
-              <code className="text-primary font-mono">email</code> — existing user&apos;s email address
+              <code className="font-mono text-primary">email</code> — existing user&apos;s email address
             </li>
             <li>
-              <code className="text-primary font-mono">workspace_slug</code> — target workspace slug
+              <code className="font-mono text-primary">workspace_slug</code> — target workspace slug
             </li>
             <li>
-              <code className="text-primary font-mono">role</code> — one of:
+              <code className="font-mono text-primary">role</code> — one of:
               <span className="ml-1 inline-flex gap-2">
-                <code className="text-xs bg-surface-2 px-1 rounded">5</code> or{" "}
-                <code className="text-xs bg-surface-2 px-1 rounded">Guest</code>
+                <code className="text-xs rounded bg-surface-2 px-1">5</code> or{" "}
+                <code className="text-xs rounded bg-surface-2 px-1">Guest</code>
                 <span>·</span>
-                <code className="text-xs bg-surface-2 px-1 rounded">15</code> or{" "}
-                <code className="text-xs bg-surface-2 px-1 rounded">Member</code> (default)
+                <code className="text-xs rounded bg-surface-2 px-1">15</code> or{" "}
+                <code className="text-xs rounded bg-surface-2 px-1">Member</code> (default)
                 <span>·</span>
-                <code className="text-xs bg-surface-2 px-1 rounded">20</code> or{" "}
-                <code className="text-xs bg-surface-2 px-1 rounded">Admin</code>
+                <code className="text-xs rounded bg-surface-2 px-1">20</code> or{" "}
+                <code className="text-xs rounded bg-surface-2 px-1">Admin</code>
               </span>
             </li>
           </ul>
@@ -156,7 +156,7 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
       <button
         type="button"
         onClick={() => void downloadTemplate()}
-        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+        className="text-sm flex w-fit items-center gap-2 text-primary hover:underline"
       >
         <Download className="h-4 w-4" />
         Download template
@@ -173,7 +173,7 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+          className="border-border-subtle hover:bg-surface-hover flex w-full cursor-pointer items-center gap-3 rounded-md border border-dashed p-6 transition-colors"
         >
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">

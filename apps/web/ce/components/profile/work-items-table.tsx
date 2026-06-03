@@ -112,11 +112,11 @@ const ColHeader = ({
   };
 
   return (
-    <th className="py-2.5 pl-3 pr-3 whitespace-nowrap align-middle">
+    <th className="py-2.5 pr-3 pl-3 align-middle whitespace-nowrap">
       <Popover open={open} onOpenChange={handleOpenChange}>
         <Popover.Button
           className={cn(
-            "flex items-center gap-1.5 text-12 font-semibold uppercase tracking-wide transition-colors select-none cursor-pointer group",
+            "group flex cursor-pointer items-center gap-1.5 text-12 font-semibold tracking-wide uppercase transition-colors select-none",
             isActive ? "text-accent-primary" : "text-tertiary hover:text-secondary"
           )}
         >
@@ -128,17 +128,17 @@ const ColHeader = ({
               <ArrowDown className="h-3 w-3 flex-shrink-0" />
             )
           ) : isSortable ? (
-            <ArrowUpDown className="h-3 w-3 flex-shrink-0 opacity-0 group-hover:opacity-40 transition-opacity" />
+            <ArrowUpDown className="h-3 w-3 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-40" />
           ) : null}
-          {isFiltered && <span className="w-1.5 h-1.5 rounded-full bg-accent-primary flex-shrink-0" />}
+          {isFiltered && <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-primary" />}
         </Popover.Button>
 
         <Popover.Panel side="bottom" align="start" sideOffset={6}>
-          <div className="bg-surface-1 border border-subtle rounded-lg shadow-lg min-w-[190px] max-w-[230px] overflow-hidden">
+          <div className="shadow-lg max-w-[230px] min-w-[190px] overflow-hidden rounded-lg border border-subtle bg-surface-1">
             {/* Sort section */}
             {isSortable && (
               <div className="py-1">
-                <p className="px-3 pt-1.5 pb-1 text-10 font-semibold uppercase tracking-wider text-tertiary">Sort</p>
+                <p className="tracking-wider px-3 pt-1.5 pb-1 text-10 font-semibold text-tertiary uppercase">Sort</p>
                 {(["asc", "desc"] as SortDir[]).map((dir) => (
                   <button
                     key={dir}
@@ -148,7 +148,7 @@ const ColHeader = ({
                       setOpen(false);
                     }}
                     className={cn(
-                      "w-full flex items-center gap-2.5 px-3 py-2 text-13 hover:bg-surface-2 transition-colors",
+                      "flex w-full items-center gap-2.5 px-3 py-2 text-13 transition-colors hover:bg-surface-2",
                       isSorted && sortConfig?.dir === dir ? "text-accent-primary" : "text-primary"
                     )}
                   >
@@ -168,7 +168,7 @@ const ColHeader = ({
                       onSetSort(col, null);
                       setOpen(false);
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-13 text-tertiary hover:bg-surface-2 hover:text-danger-primary transition-colors"
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-13 text-tertiary transition-colors hover:bg-surface-2 hover:text-danger-primary"
                   >
                     <X className="h-3.5 w-3.5 flex-shrink-0" />
                     Clear sort
@@ -182,25 +182,25 @@ const ColHeader = ({
               <>
                 {isSortable && <div className="border-t border-subtle" />}
                 <div className="py-1">
-                  <p className="px-3 pt-1.5 pb-1 text-10 font-semibold uppercase tracking-wider text-tertiary">
+                  <p className="tracking-wider px-3 pt-1.5 pb-1 text-10 font-semibold text-tertiary uppercase">
                     Filter
                   </p>
                   {/* Search input */}
                   <div className="px-2 pb-1.5">
-                    <div className="flex items-center gap-1.5 bg-layer-2 border border-subtle rounded px-2 py-1">
-                      <Search className="h-3 w-3 text-tertiary flex-shrink-0" />
+                    <div className="flex items-center gap-1.5 rounded border border-subtle bg-layer-2 px-2 py-1">
+                      <Search className="h-3 w-3 flex-shrink-0 text-tertiary" />
                       <input
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search..."
-                        className="bg-transparent text-12 text-primary placeholder:text-tertiary outline-none w-full min-w-0"
+                        className="w-full min-w-0 bg-transparent text-12 text-primary outline-none placeholder:text-tertiary"
                       />
                       {search && (
                         <button
                           type="button"
                           onClick={() => setSearch("")}
-                          className="text-tertiary hover:text-secondary flex-shrink-0"
+                          className="flex-shrink-0 text-tertiary hover:text-secondary"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -217,12 +217,12 @@ const ColHeader = ({
                             key={val}
                             type="button"
                             onClick={() => onToggleFilter(col, val)}
-                            className="w-full flex items-center gap-2.5 px-3 py-1.5 text-13 hover:bg-surface-2 transition-colors"
+                            className="flex w-full items-center gap-2.5 px-3 py-1.5 text-13 transition-colors hover:bg-surface-2"
                           >
                             <span
                               className={cn(
-                                "w-3.5 h-3.5 flex-shrink-0 rounded border flex items-center justify-center transition-colors",
-                                checked ? "bg-accent-primary border-accent-primary" : "border-subtle"
+                                "flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded border transition-colors",
+                                checked ? "border-accent-primary bg-accent-primary" : "border-subtle"
                               )}
                             >
                               {checked && <Check className="h-2 w-2 text-white" />}
@@ -238,11 +238,11 @@ const ColHeader = ({
                   {/* Clear filter */}
                   {isFiltered && (
                     <>
-                      <div className="border-t border-subtle mt-1" />
+                      <div className="mt-1 border-t border-subtle" />
                       <button
                         type="button"
                         onClick={() => onClearFilter(col)}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-13 text-danger-primary hover:bg-surface-2 transition-colors"
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-13 text-danger-primary transition-colors hover:bg-surface-2"
                       >
                         <X className="h-3.5 w-3.5 flex-shrink-0" />
                         Clear filter ({filters[col].length})
@@ -397,24 +397,24 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
       <tr
         key={`${issue._workspaceSlug}-${issue.id}`}
         className={cn(
-          "hover:bg-surface-2 border-b border-subtle transition-colors group",
+          "group border-b border-subtle transition-colors hover:bg-surface-2",
           isChild && "bg-surface-2/30"
         )}
       >
         <td
           className={cn(
-            "sticky left-0 z-10 py-2.5 pr-3 group-hover:bg-surface-2 transition-colors border-r border-subtle min-w-[260px]",
+            "sticky left-0 z-10 min-w-[260px] border-r border-subtle py-2.5 pr-3 transition-colors group-hover:bg-surface-2",
             isChild ? "bg-surface-2/30" : "bg-surface-1"
           )}
           style={{ paddingLeft: `${16 + depth * 20}px` }}
         >
-          <div className="flex items-center gap-1.5 min-w-0">
+          <div className="flex min-w-0 items-center gap-1.5">
             {hasChildren ? (
               <button
                 type="button"
                 onClick={() => toggleExpand(issue.id)}
                 aria-label={isExpanded ? t("common.collapse") : t("common.expand")}
-                className="flex-shrink-0 p-0.5 -ml-0.5 rounded hover:bg-surface-2 text-tertiary hover:text-secondary transition-colors"
+                className="-ml-0.5 flex-shrink-0 rounded p-0.5 text-tertiary transition-colors hover:bg-surface-2 hover:text-secondary"
               >
                 <ChevronRight
                   className={cn("h-3.5 w-3.5 transition-transform duration-150", isExpanded && "rotate-90")}
@@ -423,7 +423,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
             ) : (
               <span aria-hidden className={cn("flex-shrink-0", isChild ? "w-2" : "w-4")} />
             )}
-            {isChild && <span aria-hidden className="flex-shrink-0 h-px w-2 bg-subtle" />}
+            {isChild && <span aria-hidden className="bg-subtle h-px w-2 flex-shrink-0" />}
             <button
               type="button"
               onClick={() =>
@@ -435,14 +435,14 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                   issueId: issue.id,
                 })
               }
-              className="flex items-center gap-1.5 text-left group/btn min-w-0 flex-1"
+              className="group/btn flex min-w-0 flex-1 items-center gap-1.5 text-left"
             >
-              <span className="flex-shrink-0 text-tertiary text-12 tabular-nums">
+              <span className="flex-shrink-0 text-12 text-tertiary tabular-nums">
                 {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
               </span>
               <span
                 className={cn(
-                  "truncate text-13 font-medium group-hover/btn:text-accent-primary transition-colors",
+                  "truncate text-13 font-medium transition-colors group-hover/btn:text-accent-primary",
                   isChild ? "text-secondary" : "text-primary"
                 )}
               >
@@ -451,22 +451,22 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
             </button>
           </div>
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-          <span className="truncate block">{issue._workspaceName}</span>
+        <td className="max-w-[90px] py-2.5 pr-3 pl-3 text-13 text-secondary">
+          <span className="block truncate">{issue._workspaceName}</span>
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-          <span className="truncate block">{issue._mainCategoryName ?? <span className="text-tertiary">—</span>}</span>
+        <td className="max-w-[90px] py-2.5 pr-3 pl-3 text-13 text-secondary">
+          <span className="block truncate">{issue._mainCategoryName ?? <span className="text-tertiary">—</span>}</span>
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-          <span className="truncate block">{issue._subCategoryName ?? <span className="text-tertiary">—</span>}</span>
+        <td className="max-w-[90px] py-2.5 pr-3 pl-3 text-13 text-secondary">
+          <span className="block truncate">{issue._subCategoryName ?? <span className="text-tertiary">—</span>}</span>
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-          <span className="truncate block">{project?.name ?? <span className="text-tertiary">—</span>}</span>
+        <td className="max-w-[90px] py-2.5 pr-3 pl-3 text-13 text-secondary">
+          <span className="block truncate">{project?.name ?? <span className="text-tertiary">—</span>}</span>
         </td>
-        <td className="py-2.5 pl-3 pr-3 max-w-[80px]">
+        <td className="max-w-[80px] py-2.5 pr-3 pl-3">
           {state ? (
             <span
-              className="inline-flex h-5 items-center rounded px-1.5 text-11 font-medium max-w-[80px] truncate"
+              className="inline-flex h-5 max-w-[80px] items-center truncate rounded px-1.5 text-11 font-medium"
               style={{
                 color: state.color,
                 backgroundColor: `${state.color}18`,
@@ -476,16 +476,16 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
               {state.name}
             </span>
           ) : (
-            <span className="text-tertiary text-13">—</span>
+            <span className="text-13 text-tertiary">—</span>
           )}
         </td>
-        <td className="py-2.5 pl-3 pr-3 max-w-[90px]">
+        <td className="max-w-[90px] py-2.5 pr-3 pl-3">
           <ProgressTrackingBadge targetDate={issue.target_date} />
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
+        <td className="py-2.5 pr-3 pl-3 text-13 whitespace-nowrap text-secondary tabular-nums">
           {formatDate(issue.start_date)}
         </td>
-        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
+        <td className="py-2.5 pr-3 pl-3 text-13 whitespace-nowrap text-secondary tabular-nums">
           {formatDate(issue.target_date)}
         </td>
       </tr>
@@ -523,15 +523,15 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
     <div>
       {/* Active sort/filter chips */}
       {hasAnyActive && (
-        <div className="flex items-center gap-1.5 flex-wrap px-4 py-2.5 border-b border-subtle bg-surface-2/40">
+        <div className="flex flex-wrap items-center gap-1.5 border-b border-subtle bg-surface-2/40 px-4 py-2.5">
           {sortConfig && (
-            <span className="inline-flex items-center gap-1 text-12 bg-surface-1 border border-subtle rounded-full px-2.5 py-0.5 text-secondary">
+            <span className="inline-flex items-center gap-1 rounded-full border border-subtle bg-surface-1 px-2.5 py-0.5 text-12 text-secondary">
               {sortConfig.dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
               {COL_LABELS[sortConfig.col]}
               <button
                 type="button"
                 onClick={() => handleSetSort(sortConfig.col, null)}
-                className="ml-1 hover:text-danger-primary transition-colors"
+                className="ml-1 transition-colors hover:text-danger-primary"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -540,13 +540,13 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
           {activeFilterEntries.map(({ col, val }) => (
             <span
               key={`${col}-${val}`}
-              className="inline-flex items-center gap-1 text-12 bg-accent-primary/10 border border-accent-primary/25 rounded-full px-2.5 py-0.5 text-accent-primary"
+              className="border-accent-primary/25 inline-flex items-center gap-1 rounded-full border bg-accent-primary/10 px-2.5 py-0.5 text-12 text-accent-primary"
             >
               {COL_LABELS[col]}: <span className="font-medium">{val}</span>
               <button
                 type="button"
                 onClick={() => handleToggleFilter(col, val)}
-                className="ml-1 hover:opacity-60 transition-opacity"
+                className="ml-1 transition-opacity hover:opacity-60"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -555,7 +555,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
           <button
             type="button"
             onClick={handleClearAll}
-            className="ml-auto text-12 text-tertiary hover:text-danger-primary flex items-center gap-1 transition-colors"
+            className="ml-auto flex items-center gap-1 text-12 text-tertiary transition-colors hover:text-danger-primary"
           >
             <X className="h-3.5 w-3.5" />
             Clear all
@@ -565,11 +565,11 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
 
       {/* Table — opt into the always-visible horizontal scrollbar utility so mouse
           users get a draggable bar (global CSS hides native scrollbars by default) */}
-      <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
+      <div className="horizontal-scrollbar scrollbar-sm overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-surface-2 border-b border-subtle">
-              <th className="sticky left-0 z-20 py-2.5 pl-4 pr-3 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap bg-surface-2 border-r border-subtle min-w-[260px]">
+            <tr className="border-b border-subtle bg-surface-2">
+              <th className="sticky left-0 z-20 min-w-[260px] border-r border-subtle bg-surface-2 py-2.5 pr-3 pl-4 text-12 font-semibold tracking-wide whitespace-nowrap text-tertiary uppercase">
                 {colLabel("work_item")}
               </th>
               {(["department", "main_category", "sub_category", "project", "state", "progress"] as const).map((c) => (
@@ -604,7 +604,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-subtle text-13 text-secondary">
+        <div className="flex items-center justify-between border-t border-subtle px-4 py-3 text-13 text-secondary">
           <span className="text-12 text-tertiary">
             {t(`profile.stats.${i18nNs}.pagination.showing`, {
               from: (page - 1) * PAGE_SIZE + 1,
@@ -617,8 +617,8 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className={cn(
-                "p-1.5 rounded hover:bg-surface-2 transition-colors",
-                page === 1 && "opacity-40 cursor-not-allowed"
+                "rounded p-1.5 transition-colors hover:bg-surface-2",
+                page === 1 && "cursor-not-allowed opacity-40"
               )}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -628,8 +628,8 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                 key={p}
                 onClick={() => setPage(p)}
                 className={cn(
-                  "min-w-[28px] h-7 px-1.5 rounded text-12 transition-colors",
-                  p === page ? "bg-accent-primary text-white font-medium" : "hover:bg-surface-2"
+                  "h-7 min-w-[28px] rounded px-1.5 text-12 transition-colors",
+                  p === page ? "bg-accent-primary font-medium text-white" : "hover:bg-surface-2"
                 )}
               >
                 {p}
@@ -639,8 +639,8 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
               className={cn(
-                "p-1.5 rounded hover:bg-surface-2 transition-colors",
-                page === totalPages && "opacity-40 cursor-not-allowed"
+                "rounded p-1.5 transition-colors hover:bg-surface-2",
+                page === totalPages && "cursor-not-allowed opacity-40"
               )}
             >
               <ChevronRight className="h-4 w-4" />

@@ -82,7 +82,7 @@ export const WorkflowStateCard = observer(function WorkflowStateCard(props: Prop
     query: target.name,
     content: (
       <div className="flex items-center gap-2">
-        <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: target.color }} />
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: target.color }} />
         <span className="text-12">{target.name}</span>
       </div>
     ),
@@ -90,22 +90,22 @@ export const WorkflowStateCard = observer(function WorkflowStateCard(props: Prop
 
   return (
     <>
-      <div className="rounded-lg border border-subtle bg-surface-1 overflow-hidden">
+      <div className="overflow-hidden rounded-lg border border-subtle bg-surface-1">
         {/* Card header */}
         <button
           type="button"
-          className="flex w-full items-center justify-between px-4 py-3 text-left bg-layer-1"
+          className="flex w-full items-center justify-between bg-layer-1 px-4 py-3 text-left"
           onClick={(e) => {
             if ((e.target as HTMLElement).closest("[data-no-collapse]")) return;
             setIsExpanded((prev) => !prev);
           }}
         >
           <div className="flex flex-wrap items-center gap-2">
-            <span className="h-3.5 w-3.5 rounded-full flex-shrink-0" style={{ backgroundColor: currentState.color }} />
-            <span className="text-13 font-medium text-primary leading-tight">{currentState.name}</span>
+            <span className="h-3.5 w-3.5 flex-shrink-0 rounded-full" style={{ backgroundColor: currentState.color }} />
+            <span className="text-13 leading-tight font-medium text-primary">{currentState.name}</span>
             {/* Summary badges */}
             {transitionList.length > 0 && (
-              <div className="flex items-center gap-1.5 ml-2 text-12 text-secondary">
+              <div className="ml-2 flex items-center gap-1.5 text-12 text-secondary">
                 <GitBranch className="h-3.5 w-3.5" />
                 <span>
                   {t("project_settings.workflows.n_permitted_state_changes", { count: transitionList.length })}
@@ -138,9 +138,9 @@ export const WorkflowStateCard = observer(function WorkflowStateCard(props: Prop
 
         {/* Expanded content */}
         {isExpanded && (
-          <div className="border-t border-subtle px-4 pb-4 pt-4 space-y-4">
+          <div className="space-y-4 border-t border-subtle px-4 pt-4 pb-4">
             {transitionList.length === 0 ? (
-              <p className="text-12 text-tertiary py-1">{t("project_settings.workflows.no_transitions")}</p>
+              <p className="py-1 text-12 text-tertiary">{t("project_settings.workflows.no_transitions")}</p>
             ) : (
               <div className="space-y-3">
                 {transitionList.map(([transitionId, transition]) => (
@@ -166,7 +166,7 @@ export const WorkflowStateCard = observer(function WorkflowStateCard(props: Prop
                   onChange={(val: string) => void handleAddTransition(val)}
                   options={stateOptions}
                   customButton={
-                    <div className="inline-flex items-center gap-1 rounded border border-subtle bg-surface-1 px-3 py-1.5 text-12 text-primary hover:bg-layer-2 transition-colors shadow-sm cursor-pointer">
+                    <div className="shadow-sm inline-flex cursor-pointer items-center gap-1 rounded border border-subtle bg-surface-1 px-3 py-1.5 text-12 text-primary transition-colors hover:bg-layer-2">
                       {t("project_settings.workflows.add_transition")}
                     </div>
                   }

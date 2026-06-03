@@ -43,7 +43,7 @@ function MultiSelectChips({
             key={opt.key}
             type="button"
             onClick={() => toggle(opt.key)}
-            className={`rounded-md border px-2 py-1 text-xs transition-colors ${
+            className={`text-xs rounded-md border px-2 py-1 transition-colors ${
               selected
                 ? "border-accent-strong bg-accent-subtle text-accent-primary"
                 : "border-subtle text-tertiary hover:bg-layer-2"
@@ -74,14 +74,14 @@ function DateRangeRow({
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
+          className="text-xs w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-secondary outline-none focus:border-accent-strong"
         />
         <span className="text-xs text-tertiary">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
+          className="text-xs w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-secondary outline-none focus:border-accent-strong"
         />
       </div>
     </div>

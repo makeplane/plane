@@ -73,15 +73,15 @@ export const CompletedAtDateTimePicker = observer(function CompletedAtDateTimePi
             ref={triggerRef}
             disabled={disabled}
             className={cn(
-              "flex items-center gap-1.5 px-2 h-7.5 rounded text-body-xs-regular w-full text-left",
-              disabled ? "cursor-default text-secondary-200" : "cursor-pointer text-secondary-200 hover:bg-surface-2"
+              "flex h-7.5 w-full items-center gap-1.5 rounded px-2 text-left text-body-xs-regular",
+              disabled ? "text-secondary-200 cursor-default" : "text-secondary-200 cursor-pointer hover:bg-surface-2"
             )}
           >
             <CalendarDays className="h-3 w-3 flex-shrink-0" />
             <span>{displayValue}</span>
           </Popover.Button>
 
-          <Popover.Panel className="absolute left-0 z-30 mt-1 bg-surface-1 shadow-raised-200 border border-strong rounded-md overflow-hidden p-3 w-max">
+          <Popover.Panel className="absolute left-0 z-30 mt-1 w-max overflow-hidden rounded-md border border-strong bg-surface-1 p-3 shadow-raised-200">
             <Calendar
               className="rounded-md"
               captionLayout="dropdown"
@@ -98,7 +98,7 @@ export const CompletedAtDateTimePicker = observer(function CompletedAtDateTimePi
               weekStartsOn={startOfWeek}
             />
             <div className="mt-2 flex items-center gap-2">
-              <label htmlFor="completed-at-time" className="text-body-xs-regular text-secondary-200 shrink-0">
+              <label htmlFor="completed-at-time" className="text-secondary-200 shrink-0 text-body-xs-regular">
                 Time
               </label>
               <input
@@ -113,7 +113,7 @@ export const CompletedAtDateTimePicker = observer(function CompletedAtDateTimePi
               <button
                 type="button"
                 onClick={(): void => close()}
-                className="rounded px-2.5 py-1 text-body-xs-regular text-secondary-200 hover:bg-surface-2"
+                className="text-secondary-200 rounded px-2.5 py-1 text-body-xs-regular hover:bg-surface-2"
               >
                 Cancel
               </button>

@@ -47,9 +47,9 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-layer-1 rounded-xl border border-subtle shadow-xl w-[420px] p-6 space-y-5">
+      <div className="shadow-xl w-[420px] space-y-5 rounded-xl border border-subtle bg-layer-1 p-6">
         <div className="flex items-center gap-2">
-          <UserPlus className="w-5 h-5 text-accent-primary" />
+          <UserPlus className="h-5 w-5 text-accent-primary" />
           <h2 className="text-16 font-semibold">Auto Join — {deptName}</h2>
         </div>
 
@@ -58,16 +58,16 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
             <p className="text-14 text-secondary">Manager joined to projects:</p>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="rounded-lg bg-layer-2 p-3">
-                <div className="text-20 font-bold text-success">{result.newly_added}</div>
-                <div className="text-11 text-tertiary mt-1">Newly added</div>
+                <div className="text-success text-20 font-bold">{result.newly_added}</div>
+                <div className="mt-1 text-11 text-tertiary">Newly added</div>
               </div>
               <div className="rounded-lg bg-layer-2 p-3">
                 <div className="text-20 font-bold text-tertiary">{result.already_member}</div>
-                <div className="text-11 text-tertiary mt-1">Already member</div>
+                <div className="mt-1 text-11 text-tertiary">Already member</div>
               </div>
               <div className="rounded-lg bg-layer-2 p-3">
                 <div className="text-20 font-bold">{result.total}</div>
-                <div className="text-11 text-tertiary mt-1">Total</div>
+                <div className="mt-1 text-11 text-tertiary">Total</div>
               </div>
             </div>
             <div className="flex justify-end pt-2">
@@ -98,10 +98,10 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
                   key={opt.value}
                   htmlFor={`auto-join-mode-${opt.value}`}
                   aria-label={opt.label}
-                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                     mode === opt.value
                       ? "border-accent-primary bg-accent-subtle"
-                      : "border-subtle hover:border-secondary"
+                      : "hover:border-secondary border-subtle"
                   }`}
                 >
                   <input
@@ -125,7 +125,7 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
                 Cancel
               </Button>
               <Button variant="primary" size="sm" onClick={() => void handleConfirm()} loading={loading}>
-                <UserPlus className="w-3.5 h-3.5" />
+                <UserPlus className="h-3.5 w-3.5" />
                 Auto Join
               </Button>
             </div>

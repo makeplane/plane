@@ -140,7 +140,7 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                 <label htmlFor="workspace-search" className="block text-13 font-medium text-primary">
                   Workspace
                 </label>
-                {selectedIds.size > 0 && <span className="text-11 text-accent">{selectedIds.size} selected</span>}
+                {selectedIds.size > 0 && <span className="text-accent text-11">{selectedIds.size} selected</span>}
               </div>
               {isLoading ? (
                 <Loader className="space-y-2">
@@ -152,14 +152,14 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                 <div className="rounded-md border border-subtle">
                   {/* Search input */}
                   <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-tertiary" />
+                    <Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-tertiary" />
                     <input
                       id="workspace-search"
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search workspace..."
-                      className="w-full rounded-t-md border-b border-subtle bg-layer-2 py-2 pl-8 pr-3 text-13 outline-none placeholder:text-tertiary"
+                      className="w-full rounded-t-md border-b border-subtle bg-layer-2 py-2 pr-3 pl-8 text-13 outline-none placeholder:text-tertiary"
                     />
                   </div>
                   {/* Select all toggle */}
@@ -167,7 +167,7 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                     <button
                       type="button"
                       onClick={toggleSelectAll}
-                      className="flex w-full items-center gap-2 border-b border-subtle px-3 py-1.5 text-left text-11 font-medium text-accent hover:bg-layer-3"
+                      className="text-accent flex w-full items-center gap-2 border-b border-subtle px-3 py-1.5 text-left text-11 font-medium hover:bg-layer-3"
                     >
                       <span
                         className={`flex h-3.5 w-3.5 items-center justify-center rounded border ${
@@ -216,7 +216,7 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
             {/* Role selector (applies to all selected workspaces) */}
             <div className="space-y-1">
               <label htmlFor="role-select" className="block text-13 font-medium text-primary">
-                Role <span className="text-tertiary font-normal">(applies to all selected)</span>
+                Role <span className="font-normal text-tertiary">(applies to all selected)</span>
               </label>
               <select
                 id="role-select"

@@ -106,13 +106,13 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
       <div>
         <label
           htmlFor="login-identifier"
-          className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2"
+          className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]"
         >
           {isLDAPEnabled ? "Employee No. / Email / Username" : "Employee No. / Email"}
         </label>
-        <div className="flex items-center bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+        <div className="flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:border-shinhan-blue focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
           <svg
-            className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+            className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -134,7 +134,7 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
               if (identifier.length > 0) validateIdentifier(identifier);
             }}
             placeholder="e.g. 20508888"
-            className="disable-autofill-style bg-transparent w-full text-[#111827] font-semibold placeholder-[#9ca3af] focus:outline-none text-[15px]"
+            className="w-full bg-transparent text-[15px] font-semibold text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none"
           />
           {identifier.length > 0 && (
             <button
@@ -143,7 +143,7 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
                 setIdentifier("");
                 setIdentifierError(undefined);
               }}
-              className="ml-2 size-5 grid place-items-center flex-shrink-0"
+              className="ml-2 grid size-5 flex-shrink-0 place-items-center"
               aria-label="Clear input"
               tabIndex={-1}
             >
@@ -151,20 +151,20 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
             </button>
           )}
         </div>
-        {identifierError && <p className="text-11 text-[#dc2626] px-0.5 mt-1">{identifierError}</p>}
+        {identifierError && <p className="mt-1 px-0.5 text-11 text-[#dc2626]">{identifierError}</p>}
       </div>
 
       {/* Password input */}
       <div>
         <label
           htmlFor="login-password"
-          className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2"
+          className="tracking-wider mb-2 ml-2 block text-[12px] font-semibold text-[#0a1e3f]"
         >
           Password
         </label>
-        <div className="flex items-center relative bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+        <div className="relative flex items-center rounded-md border border-transparent bg-[#f4f7f9] px-[18px] py-[14px] transition-all duration-200 focus-within:border-shinhan-blue focus-within:bg-[#ffffff] focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
           <svg
-            className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+            className="mr-3 h-5 w-5 flex-shrink-0 text-[#6b7280]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -184,13 +184,13 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="•••••••"
-            className={`disable-autofill-style bg-transparent w-full text-[#111827] placeholder-[#9ca3af] focus:outline-none pr-8 ${showPassword ? "text-[15px] font-semibold" : "font-semibold tracking-[0.35em] text-[16px] translate-y-[2px]"}`}
+            className={`w-full bg-transparent pr-8 text-[#111827] placeholder-[#9ca3af] disable-autofill-style focus:outline-none ${showPassword ? "text-[15px] font-semibold" : "translate-y-[2px] text-[16px] font-semibold tracking-[0.35em]"}`}
             autoComplete="on"
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-5 top-1/2 -translate-y-1/2 text-[#9ca3af] cursor-pointer hover:text-[#4b5563]"
+            className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer text-[#9ca3af] hover:text-[#4b5563]"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="size-[22px]" /> : <Eye className="size-[22px]" />}
@@ -206,12 +206,12 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
                     ? `/accounts/forgot-password?email=${encodeURIComponent(`${STAFF_EMAIL_PREFIX}${identifier}${STAFF_EMAIL_DOMAIN}`)}`
                     : "/accounts/forgot-password"
               }
-              className="text-[12px] font-semibold text-shinhan-blue hover:text-shinhan-dark ml-2 mt-3 inline-block"
+              className="mt-3 ml-2 inline-block text-[12px] font-semibold text-shinhan-blue hover:text-shinhan-dark"
             >
               Forgot password?
             </Link>
           ) : (
-            <div className="ml-2 mt-3">
+            <div className="mt-3 ml-2">
               <ForgotPasswordPopover />
             </div>
           ))}
@@ -221,7 +221,7 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
         <button
           type="submit"
           disabled={isButtonDisabled}
-          className="w-full flex justify-center items-center py-[18px] text-white font-semibold text-[16px] tracking-wide rounded-md transition-all duration-200 bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd shadow-[0_8px_16px_rgba(0,112,224,0.3)] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
+          className="flex w-full items-center justify-center rounded-md bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd py-[18px] text-[16px] font-semibold tracking-wide text-white shadow-[0_8px_16px_rgba(0,112,224,0.3)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign In"}
         </button>

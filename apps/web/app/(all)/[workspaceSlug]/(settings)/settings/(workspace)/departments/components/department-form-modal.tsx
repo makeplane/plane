@@ -103,9 +103,9 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-custom-backdrop">
-      <div className="w-full max-w-2xl rounded-lg bg-custom-background-100 p-6 shadow-lg">
-        <h2 className="mb-4 text-xl font-semibold">{department ? "Edit Department" : "Add Department"}</h2>
+    <div className="bg-custom-backdrop fixed inset-0 z-50 flex items-center justify-center">
+      <div className="bg-custom-background-100 shadow-lg w-full max-w-2xl rounded-lg p-6">
+        <h2 className="text-xl mb-4 font-semibold">{department ? "Edit Department" : "Add Department"}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <DepartmentFormFields
             formData={formData}

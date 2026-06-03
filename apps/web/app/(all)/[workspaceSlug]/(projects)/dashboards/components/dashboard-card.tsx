@@ -31,7 +31,7 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
 
   return (
     <div
-      className="group relative flex cursor-pointer flex-col rounded-lg border border-subtle bg-surface-1 p-4 transition-shadow hover:shadow-sm"
+      className="group hover:shadow-sm relative flex cursor-pointer flex-col rounded-lg border border-subtle bg-surface-1 p-4 transition-shadow"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -41,14 +41,14 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
     >
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent-subtle">
             <LayoutDashboard className="h-5 w-5 text-accent-primary" />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-medium text-primary">{dashboard.name}</h3>
             {/* Access badge */}
-            <span className="inline-flex items-center gap-1 text-xs text-secondary mt-0.5">
+            <span className="text-xs mt-0.5 inline-flex items-center gap-1 text-secondary">
               {isPublic ? (
                 <>
                   <Globe className="h-3 w-3" />
@@ -79,13 +79,13 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
             }
           >
             <Menu.MenuItem onClick={() => onEdit(dashboard)}>
-              <div className="flex items-center gap-2 text-sm text-secondary">
+              <div className="text-sm flex items-center gap-2 text-secondary">
                 <Pencil className="h-3.5 w-3.5" />
                 {t("analytics_dashboard.context_edit")}
               </div>
             </Menu.MenuItem>
             <Menu.MenuItem onClick={() => onDelete(dashboard)}>
-              <div className="flex items-center gap-2 text-sm text-danger-primary">
+              <div className="text-sm flex items-center gap-2 text-danger-primary">
                 <Trash2 className="h-3.5 w-3.5" />
                 {t("analytics_dashboard.context_delete")}
               </div>
@@ -95,11 +95,11 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
       </div>
 
       {/* Description */}
-      {dashboard.description && <p className="mb-3 line-clamp-2 text-sm text-secondary">{dashboard.description}</p>}
+      {dashboard.description && <p className="text-sm mb-3 line-clamp-2 text-secondary">{dashboard.description}</p>}
 
       {/* Footer: widget count */}
       {Array.isArray(dashboard.widgets) && (
-        <div className="mt-auto text-xs text-tertiary">
+        <div className="text-xs mt-auto text-tertiary">
           {t("analytics_dashboard.widget_count", { count: dashboard.widgets.length })}
         </div>
       )}

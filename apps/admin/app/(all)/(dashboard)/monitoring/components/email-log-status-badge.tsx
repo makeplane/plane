@@ -11,10 +11,10 @@ type Props = {
 
 export const EmailLogStatusBadge = ({ processedAt, sentAt }: Props) => {
   if (sentAt)
-    return <span className="text-success-primary bg-success-subtle px-2 py-0.5 rounded text-body-xs-medium">Sent</span>;
+    return <span className="rounded bg-success-subtle px-2 py-0.5 text-body-xs-medium text-success-primary">Sent</span>;
   if (processedAt)
     return (
-      <span className="text-warning-primary bg-warning-subtle px-2 py-0.5 rounded text-body-xs-medium">Processed</span>
+      <span className="rounded bg-warning-subtle px-2 py-0.5 text-body-xs-medium text-warning-primary">Processed</span>
     );
-  return <span className="text-secondary bg-surface-2 px-2 py-0.5 rounded text-body-xs-medium">Pending</span>;
+  return <span className="rounded bg-surface-2 px-2 py-0.5 text-body-xs-medium text-secondary">Pending</span>;
 };

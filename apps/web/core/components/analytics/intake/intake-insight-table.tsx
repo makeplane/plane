@@ -65,7 +65,7 @@ const IntakeInsightTable = observer(function IntakeInsightTable() {
       {
         accessorKey: "project__name",
         header: () => <div className="text-left">{columnsLabels["project__name"]}</div>,
-        cell: ({ row }) => <div className="text-left font-medium max-w-sm truncate">{row.original.project__name}</div>,
+        cell: ({ row }) => <div className="max-w-sm truncate text-left font-medium">{row.original.project__name}</div>,
         meta: {
           export: {
             key: columnsLabels["project__name"],

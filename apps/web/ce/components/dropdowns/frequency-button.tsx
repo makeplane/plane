@@ -27,9 +27,9 @@ export function FrequencyButtonContent(props: Props) {
   const frequencyItem = ISSUE_FREQUENCIES.find((f) => f.key === value);
 
   return (
-    <div className={cn("h-full w-full flex items-center gap-1.5 rounded-sm px-2", className)}>
+    <div className={cn("flex h-full w-full items-center gap-1.5 rounded-sm px-2", className)}>
       {value && frequencyItem ? (
-        <span className="size-2 rounded-full flex-shrink-0" style={{ backgroundColor: frequencyItem.color }} />
+        <span className="size-2 flex-shrink-0 rounded-full" style={{ backgroundColor: frequencyItem.color }} />
       ) : (
         <RefreshCw className="size-3 flex-shrink-0 text-placeholder" />
       )}

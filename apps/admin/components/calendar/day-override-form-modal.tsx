@@ -93,7 +93,7 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.SM}>
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <Dialog.Title>{editOverride ? "Edit day override" : "Add day override"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-3">
             <div className="space-y-1">
@@ -114,7 +114,7 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
               <div className="text-body-xs-medium text-secondary">Type *</div>
               <div className="flex gap-4">
                 {(["WORKDAY", "HOLIDAY"] as TDayOverrideType[]).map((t) => (
-                  <label key={t} htmlFor={`override-type-${t}`} className="flex items-center gap-2 cursor-pointer">
+                  <label key={t} htmlFor={`override-type-${t}`} className="flex cursor-pointer items-center gap-2">
                     <input
                       id={`override-type-${t}`}
                       type="radio"

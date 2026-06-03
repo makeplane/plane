@@ -97,11 +97,11 @@ export function BulkLinkModal({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-layer-1 rounded-lg shadow-xl w-full max-w-lg p-6 space-y-4">
+      <div className="shadow-xl w-full max-w-lg space-y-4 rounded-lg bg-layer-1 p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold">Bulk Link Departments to Workspaces</h2>
           <button onClick={onClose} className="text-tertiary hover:text-primary">
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
@@ -113,9 +113,9 @@ export function BulkLinkModal({ open, onClose }: Props) {
         <button
           type="button"
           onClick={() => void downloadTemplate()}
-          className="flex items-center gap-2 text-sm text-primary hover:underline"
+          className="text-sm flex items-center gap-2 text-primary hover:underline"
         >
-          <Download className="w-4 h-4" /> Download template
+          <Download className="h-4 w-4" /> Download template
         </button>
 
         <div className="space-y-1">
@@ -129,21 +129,21 @@ export function BulkLinkModal({ open, onClose }: Props) {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-4 w-full hover:bg-surface-hover transition-colors"
+            className="border-border-subtle hover:bg-surface-hover flex w-full items-center gap-3 rounded-md border border-dashed p-4 transition-colors"
           >
-            <Upload className="w-4 h-4 text-tertiary" />
+            <Upload className="h-4 w-4 text-tertiary" />
             <span className="text-sm">{fileName || "Click to select .xlsx/.xls file"}</span>
           </button>
           {fileError && <p className="text-sm text-danger-primary">{fileError}</p>}
         </div>
 
         {rows.length > 0 && (
-          <div className="overflow-x-auto rounded border border-subtle max-h-40">
-            <table className="min-w-full text-sm">
+          <div className="max-h-40 overflow-x-auto rounded border border-subtle">
+            <table className="text-sm min-w-full">
               <thead className="bg-layer-2">
                 <tr>
-                  <th className="px-3 py-1.5 text-left text-xs font-medium text-tertiary">code</th>
-                  <th className="px-3 py-1.5 text-left text-xs font-medium text-tertiary">workspace_slug</th>
+                  <th className="text-xs px-3 py-1.5 text-left font-medium text-tertiary">code</th>
+                  <th className="text-xs px-3 py-1.5 text-left font-medium text-tertiary">workspace_slug</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-subtle">
@@ -156,21 +156,21 @@ export function BulkLinkModal({ open, onClose }: Props) {
               </tbody>
             </table>
             {rows.length > 10 && (
-              <p className="px-3 py-1 text-xs text-tertiary border-t border-subtle">Showing 10 of {rows.length} rows</p>
+              <p className="text-xs border-t border-subtle px-3 py-1 text-tertiary">Showing 10 of {rows.length} rows</p>
             )}
           </div>
         )}
 
         {result && (
-          <div className="rounded border border-subtle p-3 space-y-2 text-sm">
+          <div className="text-sm space-y-2 rounded border border-subtle p-3">
             <p>
-              <span className="text-success-primary font-medium">{result.total_linked} linked</span>
+              <span className="font-medium text-success-primary">{result.total_linked} linked</span>
               {result.total_skipped > 0 && (
                 <span className="text-warning-primary">, {result.total_skipped} skipped</span>
               )}
             </p>
             {result.skipped.length > 0 && (
-              <ul className="space-y-0.5 max-h-28 overflow-y-auto">
+              <ul className="max-h-28 space-y-0.5 overflow-y-auto">
                 {result.skipped.map((s, i) => (
                   <li key={i} className="text-xs text-danger-primary">
                     Row {s.row}

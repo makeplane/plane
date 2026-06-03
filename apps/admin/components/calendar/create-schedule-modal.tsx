@@ -93,7 +93,7 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <Dialog.Title>Create business calendar</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-4">
             <div className="space-y-1">
@@ -125,16 +125,16 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
               <label htmlFor="schedule-workdays" className="text-body-xs-medium text-secondary">
                 Working days
               </label>
-              <div id="schedule-workdays" className="flex gap-2 flex-wrap">
+              <div id="schedule-workdays" className="flex flex-wrap gap-2">
                 {WEEK_DAYS.map(({ key, label, index }) => (
                   <button
                     key={key}
                     type="button"
                     onClick={() => toggleDay(index)}
-                    className={`px-3 py-1.5 rounded border text-body-xs-medium transition-colors ${
+                    className={`rounded border px-3 py-1.5 text-body-xs-medium transition-colors ${
                       weekPattern[index]
-                        ? "bg-accent-subtle text-accent-primary border-accent-strong"
-                        : "bg-surface-2 text-secondary border-subtle hover:border-strong"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                        : "border-subtle bg-surface-2 text-secondary hover:border-strong"
                     }`}
                   >
                     {label}

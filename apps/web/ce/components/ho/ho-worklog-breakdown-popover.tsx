@@ -122,7 +122,7 @@ export const HoWorklogBreakdownPopover = observer(function HoWorklogBreakdownPop
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <Popover.Button
         className={cn(
-          "inline-flex items-center gap-1.5 rounded px-2 py-1 text-11 outline-none transition-colors",
+          "inline-flex items-center gap-1.5 rounded px-2 py-1 text-11 transition-colors outline-none",
           "border border-subtle bg-layer-2 text-primary hover:bg-layer-1",
           "focus-visible:ring-1 focus-visible:ring-accent-strong"
         )}
@@ -134,7 +134,7 @@ export const HoWorklogBreakdownPopover = observer(function HoWorklogBreakdownPop
       <Popover.Panel
         side="bottom"
         align="end"
-        className="z-[25] w-80 overflow-hidden rounded-md border border-subtle bg-surface-1 shadow-lg"
+        className="shadow-lg z-[25] w-80 overflow-hidden rounded-md border border-subtle bg-surface-1"
       >
         {view === "members" ? (
           <HoWorklogMembersView

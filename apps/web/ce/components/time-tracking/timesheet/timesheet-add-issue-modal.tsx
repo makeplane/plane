@@ -91,11 +91,11 @@ export function TimesheetAddIssueModal({
       >
         <div className="relative m-1">
           <SearchIcon
-            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-13"
+            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-13"
             placeholder={t("common.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,7 +103,7 @@ export function TimesheetAddIssueModal({
             tabIndex={baseTabIndex}
           />
         </div>
-        <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md">
+        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
               Search results for <span className="text-primary">&quot;{searchTerm}&quot;</span>
@@ -124,13 +124,13 @@ export function TimesheetAddIssueModal({
               searchTerm={searchTerm}
             />
           ) : (
-            <ul className="text-13 p-2">
+            <ul className="p-2 text-13">
               {issues.map((issue) => (
                 <Combobox.Option
                   key={issue.id}
                   value={issue}
                   className={({ active, selected }) =>
-                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                    `group my-0.5 flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-secondary select-none ${
                       active ? "bg-layer-1 text-primary" : ""
                     } ${selected ? "text-primary" : ""}`
                   }

@@ -22,7 +22,7 @@ export const WorkflowIndicatorIcon = observer(function WorkflowIndicatorIcon({ p
     <WorkflowStateInfoPopup projectId={projectId} targetStateId={stateId}>
       <button
         type="button"
-        className="flex items-center justify-center rounded p-0.5 text-teal-500 hover:bg-teal-500/10 transition-colors"
+        className="text-teal-500 hover:bg-teal-500/10 flex items-center justify-center rounded p-0.5 transition-colors"
         aria-label={t("project_settings.workflows.indicator_popup_title")}
       >
         <GitMerge className="h-3.5 w-3.5" />
