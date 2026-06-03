@@ -3,7 +3,9 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.db.models import F, Q
+import datetime
+
+from django.db.models import Case, F, IntegerField, Q, Value, When
 from django.utils import timezone
 
 # Third party imports
@@ -34,7 +36,9 @@ class _BaseUserWorkItemsEndpoint(BaseAPIView):
         - project member active (excludes inaccessible projects)
         - project not archived
         - state group in {backlog, unstarted, started} (open tasks only)
-        - parent is null (exclude sub-tasks)
+
+        Sub-tasks assigned to the user are included so the frontend can render
+        them indented under their parent (only when the parent is also returned).
         """
         workspace_slug = request.query_params.get("workspace", None)
 
@@ -47,7 +51,6 @@ class _BaseUserWorkItemsEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 state__group__in=["backlog", "unstarted", "started"],
-                parent__isnull=True,
             )
             .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels")
@@ -60,23 +63,48 @@ class _BaseUserWorkItemsEndpoint(BaseAPIView):
         return qs
 
 
+def _progress_rank_annotation(today):
+    """
+    Compute progress-status rank in SQL (mirrors FE getProgressStatus):
+      0 = off_track  (target_date < today)
+      1 = due_today  (target_date == today)
+      2 = at_risk    (target_date == today + 1)
+      3 = on_track   (target_date >  today + 1)
+      9 = no target_date
+    """
+    tomorrow = today + datetime.timedelta(days=1)
+    return Case(
+        When(target_date__isnull=True, then=Value(9)),
+        When(target_date__lt=today, then=Value(0)),
+        When(target_date=today, then=Value(1)),
+        When(target_date=tomorrow, then=Value(2)),
+        default=Value(3),
+        output_field=IntegerField(),
+    )
+
+
 class UserWorkItemsTodayEndpoint(_BaseUserWorkItemsEndpoint):
     """
     GET /api/users/me/work-items/today/
     Returns open issues assigned to the current user where:
     - start_date is null OR start_date <= today (issue has started or has no start bound)
     - target_date is null OR target_date >= today (not yet overdue)
-    Capped at 200 items (KISS — sub-task exclusion + state filter keeps count low).
+    Ordered by progress status (off_track → due_today → at_risk → on_track → no date),
+    then target_date asc. Capped at 200.
     """
 
     def get(self, request):
         today = timezone.now().date()
         qs = self._get_base_queryset(request)
 
-        qs = qs.filter(
-            Q(start_date__isnull=True) | Q(start_date__lte=today),
-            Q(target_date__isnull=True) | Q(target_date__gte=today),
-        ).order_by(F("target_date").asc(nulls_last=True), "created_at")[:200]
+        qs = (
+            qs.filter(
+                Q(start_date__isnull=True) | Q(start_date__lte=today),
+                Q(target_date__isnull=True) | Q(target_date__gte=today),
+            )
+            .annotate(_progress_rank=_progress_rank_annotation(today))
+            .order_by("_progress_rank", F("target_date").asc(nulls_last=True), "created_at")[:200]
+        )
 
         serializer = UserCrossWorkspaceWorkItemSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -86,7 +114,7 @@ class UserWorkItemsOverdueEndpoint(_BaseUserWorkItemsEndpoint):
     """
     GET /api/users/me/work-items/overdue/
     Returns open issues assigned to the current user where target_date < today.
-    Capped at 200 items.
+    All overdue items rank as off_track; ordered by target_date asc. Capped at 200.
     """
 
     def get(self, request):

@@ -2,15 +2,23 @@
  * stitch-generate.ts — Generate UI designs from text prompts via Google Stitch SDK.
  *
  * Usage:
- *   npx tsx stitch-generate.ts "<prompt>" [--project <id>] [--device mobile|desktop|tablet] [--variants <count>]
+ *   npx tsx stitch-generate.ts "<prompt>" [--project <id>] [--project-name <title>] [--device mobile|desktop|tablet] [--variants <count>]
  *
  * Env: STITCH_API_KEY (required), STITCH_PROJECT_ID (optional default)
+ *
+ * Project resolution priority:
+ *   1. --project <id>          direct Stitch project ID
+ *   2. --project-name <title>  title-based lookup-or-create
+ *   3. STITCH_PROJECT_ID env   user's global override (direct ID)
+ *   4. auto-detect             git repo name from remote, or CWD basename
+ *   5. "claudekit-default"     last resort fallback
  */
 
 import { stitch } from "@google/stitch-sdk";
 import fs from "fs";
 import path from "path";
 import os from "os";
+import { execSync } from "child_process";
 
 // -- Quota helpers (inline to avoid cross-script import issues) --
 
@@ -19,9 +27,15 @@ const QUOTA_FILE = path.join(QUOTA_DIR, ".stitch-quota.json");
 // Stitch free tier: 400 daily credits. No API to fetch real usage.
 const DEFAULT_LIMIT = parseInt(process.env.STITCH_QUOTA_LIMIT || "400", 10);
 
-interface QuotaState { date: string; count: number; limit: number; }
+interface QuotaState {
+  date: string;
+  count: number;
+  limit: number;
+}
 
-function todayUTC(): string { return new Date().toISOString().slice(0, 10); }
+function todayUTC(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 
 function loadQuota(): QuotaState {
   try {
@@ -30,7 +44,9 @@ function loadQuota(): QuotaState {
       if (data.date !== todayUTC()) return { date: todayUTC(), count: 0, limit: data.limit || DEFAULT_LIMIT };
       return data;
     }
-  } catch { /* corrupted — start fresh */ }
+  } catch {
+    /* corrupted — start fresh */
+  }
   return { date: todayUTC(), count: 0, limit: DEFAULT_LIMIT };
 }
 
@@ -62,13 +78,74 @@ function getPositionalArgs(): string[] {
   return positional;
 }
 
+// -- Project name auto-detection --
+
+/**
+ * Detect project name from git remote origin (repo name) or CWD basename.
+ * Returns empty string if neither is available.
+ * Truncated to 50 chars to stay within Stitch title length limits.
+ */
+function autoDetectProjectName(): string {
+  try {
+    const remoteUrl = execSync("git remote get-url origin", {
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "ignore"],
+    }).trim();
+    // Extract repo name from SSH (git@github.com:org/repo.git) or HTTPS (https://github.com/org/repo.git)
+    const repoName =
+      remoteUrl
+        .replace(/\.git$/, "")
+        .split(/[/:}]/)
+        .pop() || "";
+    if (repoName) return repoName.slice(0, 50);
+  } catch {
+    /* not a git repo or no remote */
+  }
+  const cwdName = path.basename(process.cwd());
+  return cwdName ? cwdName.slice(0, 50) : "";
+}
+
 const prompt = getPositionalArgs()[0];
-const projectId =
-  getFlag("project") || process.env.STITCH_PROJECT_ID || "claudekit-default";
+
+// Resolve project identity per priority order
+const directProjectId = getFlag("project") || process.env.STITCH_PROJECT_ID;
+const projectNameFlag = getFlag("project-name");
+
+// Determine if we use a direct ID (no lookup) or a title (lookup-or-create)
+let projectId: string;
+let isNameBasedProject = false;
+let resolvedProjectName: string;
+
+if (directProjectId) {
+  // Priority 1 & 3: direct ID — no lookup needed
+  projectId = directProjectId;
+  resolvedProjectName = directProjectId;
+  console.error(`[i] Project: ${projectId} (direct ID)`);
+} else if (projectNameFlag) {
+  // Priority 2: explicit --project-name flag
+  projectId = projectNameFlag.slice(0, 50);
+  resolvedProjectName = projectId;
+  isNameBasedProject = true;
+  console.error(`[i] Project name: "${projectId}" (--project-name flag)`);
+} else {
+  // Priority 4 & 5: auto-detect or fallback
+  const detected = autoDetectProjectName();
+  projectId = detected || "claudekit-default";
+  resolvedProjectName = projectId;
+  isNameBasedProject = true;
+  if (detected) {
+    console.error(`[i] Project name: "${projectId}" (auto-detected from git/CWD)`);
+  } else {
+    console.error(`[i] Project name: "${projectId}" (fallback default)`);
+  }
+}
+
 // SDK expects uppercase device types: MOBILE, DESKTOP, TABLET, AGNOSTIC
 const deviceFlag = getFlag("device");
 const DEVICE_MAP: Record<string, "MOBILE" | "DESKTOP" | "TABLET"> = {
-  mobile: "MOBILE", desktop: "DESKTOP", tablet: "TABLET",
+  mobile: "MOBILE",
+  desktop: "DESKTOP",
+  tablet: "TABLET",
 };
 const deviceType = deviceFlag
   ? DEVICE_MAP[deviceFlag.toLowerCase()] || (deviceFlag.toUpperCase() as "MOBILE" | "DESKTOP" | "TABLET")
@@ -76,7 +153,9 @@ const deviceType = deviceFlag
 const variantCount = getFlag("variants") ? parseInt(getFlag("variants")!, 10) : 0;
 
 if (!prompt) {
-  console.error("Usage: npx tsx stitch-generate.ts <prompt> [--project <id>] [--device mobile|desktop|tablet] [--variants <count>]");
+  console.error(
+    "Usage: npx tsx stitch-generate.ts <prompt> [--project <id>] [--project-name <title>] [--device mobile|desktop|tablet] [--variants <count>]"
+  );
   process.exit(1);
 }
 
@@ -101,20 +180,19 @@ async function main() {
     console.error(`[i] Credits: ${remaining}/${quota.limit} remaining (this run costs ${creditsNeeded})`);
     console.error(`[i] Prompt: "${prompt}"`);
 
-    // Resolve project — use existing or create if "claudekit-default" doesn't exist
-    const isDefaultProject = projectId === "claudekit-default";
+    // Resolve project — name-based projects use lookup-or-create; direct IDs are used as-is
     let resolvedProjectId = projectId;
-    if (isDefaultProject) {
+    if (isNameBasedProject) {
       const projects = await stitch.projects();
-      const existing = projects.find(p => p.data?.title === "claudekit-default");
+      const existing = projects.find((p) => p.data?.title === resolvedProjectName);
       if (existing) {
         resolvedProjectId = existing.id;
-        console.error(`[i] Using project: ${resolvedProjectId}`);
+        console.error(`[i] Using existing project: "${resolvedProjectName}" (${resolvedProjectId})`);
       } else {
-        console.error("[i] Creating default project 'claudekit-default'...");
-        const created = await stitch.createProject("claudekit-default");
+        console.error(`[i] Creating project "${resolvedProjectName}"...`);
+        const created = await stitch.createProject(resolvedProjectName);
         resolvedProjectId = created.id;
-        console.error(`[OK] Created project: ${resolvedProjectId}`);
+        console.error(`[OK] Created project: "${resolvedProjectName}" (${resolvedProjectId})`);
       }
     } else {
       console.error(`[i] Using project: ${resolvedProjectId}`);

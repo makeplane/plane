@@ -15,6 +15,7 @@ from plane.license.api.views import (
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
+    InstanceAdminUserOptionsEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
@@ -24,19 +25,29 @@ from plane.license.api.views import (
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
     InstanceWorkspaceBulkCreateEndpoint,
+    InstanceWorkspaceOwnerOptionsEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
+    InstanceWorkspaceBulkRemoveMembersEndpoint,
     InstanceWorkspaceProjectBulkImportEndpoint,
+    InstanceWorkspaceProjectBulkExportEndpoint,
     InstanceWorkspaceModuleBulkImportEndpoint,
     InstanceWorkSpaceDetailEndpoint,
     EmailLogMonitoringEndpoint,
     ScheduledJobMonitoringEndpoint,
     WorkerHealthMonitoringEndpoint,
+    UsageMonitorUsersEndpoint,
+    UsageMonitorDepartmentsEndpoint,
 )
 
 urlpatterns = [
     path("", InstanceEndpoint.as_view(), name="instance"),
     path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
+    path(
+        "admins/user-options/",
+        InstanceAdminUserOptionsEndpoint.as_view(),
+        name="instance-admin-user-options",
+    ),
     path(
         "admins/session/",
         InstanceAdminUserSessionEndpoint.as_view(),
@@ -84,6 +95,12 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # Registered before the workspaces/<str:slug>/ catch-all below
+    path(
+        "workspaces/owner-options/",
+        InstanceWorkspaceOwnerOptionsEndpoint.as_view(),
+        name="instance-workspace-owner-options",
+    ),
     path(
         "workspaces/bulk-create/",
         InstanceWorkspaceBulkCreateEndpoint.as_view(),
@@ -95,9 +112,19 @@ urlpatterns = [
         name="instance-workspace-bulk-assign-members",
     ),
     path(
+        "workspaces/bulk-remove-members/",
+        InstanceWorkspaceBulkRemoveMembersEndpoint.as_view(),
+        name="instance-workspace-bulk-remove-members",
+    ),
+    path(
         "bulk-import-projects/",
         InstanceWorkspaceProjectBulkImportEndpoint.as_view(),
         name="instance-bulk-import-projects",
+    ),
+    path(
+        "bulk-export-projects/",
+        InstanceWorkspaceProjectBulkExportEndpoint.as_view(),
+        name="instance-bulk-export-projects",
     ),
     path(
         "bulk-import-modules/",
@@ -131,6 +158,8 @@ urlpatterns = [
     path("", include("plane.license.api.urls.staff")),
     # Task category management
     path("", include("plane.license.api.urls.task_category")),
+    # Help Center authoring (instance-global, God Mode)
+    path("", include("plane.license.api.urls.help_center")),
     # Job position management
     path("", include("plane.license.api.urls.job_position")),
     # Business calendar management (WorkSchedule / Holiday / DayOverride)
@@ -150,5 +179,16 @@ urlpatterns = [
         "monitoring/worker-health/",
         WorkerHealthMonitoringEndpoint.as_view(),
         name="monitoring-worker-health",
+    ),
+    # Usage monitor (instance-wide worklog dashboards)
+    path(
+        "usage-monitor/users/",
+        UsageMonitorUsersEndpoint.as_view(),
+        name="usage-monitor-users",
+    ),
+    path(
+        "usage-monitor/departments/",
+        UsageMonitorDepartmentsEndpoint.as_view(),
+        name="usage-monitor-departments",
     ),
 ]

@@ -11,7 +11,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // local components
@@ -28,10 +27,8 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   const { data: user } = useUser();
   const { data: userProfile, updateUserProfile, finishUserOnboarding } = useUserProfile();
   const { workspaces } = useWorkspace();
-  const { config: instanceConfig } = useInstance();
 
   const workspacesList = Object.values(workspaces ?? {});
-  const isSelfManaged = instanceConfig?.is_self_managed;
 
   // Calculate total steps based on whether invitations are available
   const hasInvitations = invitations.length > 0;
@@ -71,37 +68,24 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
     (step: EOnboardingSteps, skipInvites?: boolean) => {
       switch (step) {
         case EOnboardingSteps.PROFILE_SETUP:
-          if (isSelfManaged) {
-            // Skip role & use case steps for self-hosted
-            stepChange({ profile_complete: true });
-            if (workspacesList.length > 0) finishOnboarding();
-            else setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
-          } else {
-            setCurrentStep(EOnboardingSteps.ROLE_SETUP);
-          }
-          break;
-        case EOnboardingSteps.ROLE_SETUP:
-          setCurrentStep(EOnboardingSteps.USE_CASE_SETUP);
-          break;
-        case EOnboardingSteps.USE_CASE_SETUP:
-          stepChange({ profile_complete: true });
-          if (workspacesList.length > 0) finishOnboarding();
+          void stepChange({ profile_complete: true });
+          if (workspacesList.length > 0) void finishOnboarding();
           else setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
           break;
         case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
-          if (skipInvites) finishOnboarding();
+          if (skipInvites) void finishOnboarding();
           else {
             setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
-            stepChange({ workspace_create: true });
+            void stepChange({ workspace_create: true });
           }
           break;
         case EOnboardingSteps.INVITE_MEMBERS:
-          stepChange({ workspace_invite: true });
-          finishOnboarding();
+          void stepChange({ workspace_invite: true });
+          void finishOnboarding();
           break;
       }
     },
-    [stepChange, finishOnboarding, workspacesList, isSelfManaged]
+    [stepChange, finishOnboarding, workspacesList]
   );
 
   const updateCurrentStep = (step: EOnboardingSteps) => setCurrentStep(step);
@@ -129,7 +113,7 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col h-full">
       {/* Header with progress */}
       <OnboardingHeader
         currentStep={currentStep}

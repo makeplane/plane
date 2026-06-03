@@ -29,7 +29,6 @@ export type THoIssue = {
   completed_at: string | null;
   cycle_name: string | null;
   module_names: string[];
-  total_log_time: number;
   reference_link_count: number;
 };
 
@@ -46,6 +45,7 @@ export type THoCategorySummary = {
   main_task_category_name: string | null;
   main_task_category_description: string | null;
   sub_task_category_name: string | null;
+  sub_task_category_description: string | null;
 };
 
 export type THoWorkspaceProject = {
@@ -64,11 +64,48 @@ export type THoAccessibleWorkspace = {
   projects: THoWorkspaceProject[];
 };
 
-export type THoWorklogBreakdownEntry = {
+export type THoWorklogMember = {
   user_id: string;
   display_name: string;
   avatar_url: string;
   total_minutes: number;
+};
+
+export type THoWorklogBreakdown = {
+  total_minutes: number;
+  count: number;
+  next: string | null;
+  previous: string | null;
+  members: THoWorklogMember[];
+};
+
+export type THoWorklogByUserEntry = {
+  issue_id: string;
+  issue_name: string;
+  project_name: string;
+  total_minutes: number;
+};
+
+export type THoWorklogByUserResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: THoWorklogByUserEntry[];
+};
+
+export type THoExportJobStatus = "queued" | "processing" | "ready" | "failed" | "expired";
+
+export type THoExportJob = {
+  id: string;
+  status: THoExportJobStatus;
+  filters: Record<string, string>;
+  file_url: string | null;
+  file_size: number;
+  row_count: number;
+  error_message: string;
+  expires_at: string | null;
+  completed_at: string | null;
+  created_at: string;
 };
 
 export type THoFilterOptions = {
@@ -79,6 +116,8 @@ export type THoFilterOptions = {
   modules: string[];
   assignees: { id: string; display_name: string }[];
   leads: { id: string; display_name: string }[];
+  workspaces: { id: string; name: string }[];
+  projects: { id: string; name: string }[];
   priorities: string[];
   progress: string[];
 };
@@ -114,9 +153,17 @@ export class HoIssueService extends APIService {
       });
   }
 
-  async listIssueWorklogBreakdown(issueId: string): Promise<THoWorklogBreakdownEntry[]> {
-    return this.get(`/api/ho/issues/${issueId}/worklogs/`)
-      .then((res: { data: THoWorklogBreakdownEntry[] }) => res.data)
+  async listIssueWorklogBreakdown(issueId: string, page = 1): Promise<THoWorklogBreakdown> {
+    return this.get(`/api/ho/issues/${issueId}/worklogs/?page=${page}`)
+      .then((res: { data: THoWorklogBreakdown }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listIssueWorklogByUser(issueId: string, userId: string, page = 1): Promise<THoWorklogByUserResponse> {
+    return this.get(`/api/ho/issues/${issueId}/worklogs/by-user/${userId}/?page=${page}`)
+      .then((res: { data: THoWorklogByUserResponse }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
@@ -126,6 +173,22 @@ export class HoIssueService extends APIService {
     const query = new URLSearchParams(params).toString();
     return this.get(`/api/ho/filter-options/${query ? `?${query}` : ""}`)
       .then((res: { data: THoFilterOptions }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listMyExports(): Promise<THoExportJob[]> {
+    return this.get("/api/ho/exports/")
+      .then((res: { data: THoExportJob[] }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async exportDatasheet(filters: Record<string, string>): Promise<{ job_id: string; message: string }> {
+    return this.post("/api/ho/exports/", filters)
+      .then((res: { data: { job_id: string; message: string } }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

@@ -5,7 +5,7 @@
  */
 
 import type { LucideIcon } from "lucide-react";
-import { Users, Zap, Clock, FileText, GitMerge, Building2 } from "lucide-react";
+import { Users, Zap, Clock, GitMerge, Building2, Lock } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
 import {
@@ -34,8 +34,8 @@ export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, LucideIcon | R
   labels: LabelPropertyIcon,
   estimates: EstimatePropertyIcon,
   automations: Zap,
-  worklogs: FileText,
   features_time_tracking: Clock,
   workflows: GitMerge,
   bank_wide: Building2,
+  "field-permissions": Lock,
 };

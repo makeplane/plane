@@ -16,9 +16,10 @@ logger = logging.getLogger("plane.worker")
 
 REMINDER_SUBJECT = "Time tracking reminder"
 REMINDER_BODY = (
-    "Hey there! Just a friendly nudge — don't forget to log your working hours "
-    "for today. Keeping your timesheet up to date helps the whole team stay on "
-    "track. It only takes a minute! Head over to your project and log your time "
+    "Hey there! Just a friendly reminder 😊\n"
+    "Don't forget to log your working hours for today.\n"
+    "Keeping your timesheet up to date helps the whole team stay on track.\n"
+    "It only takes a minute! Head over to your team/project and log your time "
     "before the day wraps up."
 )
 

@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase } from "lucide-react";
+import { Activity, AtSign, Briefcase } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
@@ -44,6 +44,7 @@ import {
   getMentionFilterConfig,
   getModuleFilterConfig,
   getPriorityFilterConfig,
+  getProgressTrackingFilterConfig,
   getProjectFilterConfig,
   getStartDateFilterConfig,
   getStateFilterConfig,
@@ -305,6 +306,17 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isFilterEnabled, operatorConfigs]
   );
 
+  // progress tracking filter config
+  const progressTrackingFilterConfig = useMemo(
+    () =>
+      getProgressTrackingFilterConfig<TWorkItemFilterProperty>("progress_tracking")({
+        isEnabled: isFilterEnabled("progress_tracking"),
+        filterIcon: Activity,
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, operatorConfigs]
+  );
+
   // start date filter config
   const startDateFilterConfig = useMemo(
     () =>
@@ -369,6 +381,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       stateGroupFilterConfig,
       assigneeFilterConfig,
       priorityFilterConfig,
+      progressTrackingFilterConfig,
       projectFilterConfig,
       mentionFilterConfig,
       labelFilterConfig,
@@ -393,6 +406,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       created_by_id: createdByFilterConfig,
       subscriber_id: subscriberFilterConfig,
       priority: priorityFilterConfig,
+      progress_tracking: progressTrackingFilterConfig,
       start_date: startDateFilterConfig,
       target_date: targetDateFilterConfig,
       created_at: createdAtFilterConfig,

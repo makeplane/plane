@@ -1,27 +1,15 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Avatar } from "@plane/propel/avatar";
-import { Popover } from "@plane/propel/popover";
+import { STATE_GROUPS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { THoIssue, THoWorklogBreakdownEntry } from "@/plane-web/services/ho-issue.service";
-import { HoIssueService } from "@/plane-web/services/ho-issue.service";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { THoIssue } from "@/plane-web/services/ho-issue.service";
 import type { THoDisplayProperties } from "@/plane-web/store/ho/ho-issue.defaults";
 import { renderFormattedDate, cn } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { getProgressStatus } from "../issues/issue-layouts/progress-tracking-utils";
-
-const hoIssueService = new HoIssueService();
-
-/** Format total_log_time in minutes to "Xh Ym". */
-function formatLogTime(minutes: number): string {
-  if (!minutes) return "—";
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h === 0) return `${m}m`;
-  if (m === 0) return `${h}h`;
-  return `${h}h ${m}m`;
-}
+import { HoWorklogBreakdownPopover } from "./ho-worklog-breakdown-popover";
 
 type Props = {
   rowIndex: number;
@@ -48,12 +36,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
     issue: { fetchIssue },
     setPeekIssue,
   } = useIssueDetail();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
   const [isPeeking, setIsPeeking] = useState(false);
-  // Per-user worklog breakdown fetched via HO endpoint (bypasses project membership restriction)
-  const [userTotals, setUserTotals] = useState<THoWorklogBreakdownEntry[]>([]);
-  const [fetched, setFetched] = useState(false);
 
   const rowBorder = isNewDeptGroup
     ? "border-t-[1.5px] border-subtle"
@@ -64,21 +47,6 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
   const progress = isTerminalState ? null : getProgressStatus(issue.target_date);
 
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
-
-  const handleOpenChange = async (open: boolean) => {
-    setIsOpen(open);
-    // Lazy-fetch on first open using HO-scoped endpoint (no project membership required)
-    if (open && !fetched) {
-      setIsFetching(true);
-      try {
-        const breakdown = await hoIssueService.listIssueWorklogBreakdown(issue.id);
-        setUserTotals(breakdown);
-        setFetched(true);
-      } finally {
-        setIsFetching(false);
-      }
-    }
-  };
 
   const handleOpenPeek = async () => {
     if (!issue.workspace_slug || !issue.project_id || !issue.id || isPeeking) return;
@@ -172,24 +140,41 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {displayProperties.assignee &&
         renderTd(
           "assignee",
-          issue.assignees.length === 0
-            ? "—"
-            : issue.assignees
-                .slice(0, 3)
-                .map((a) => a.display_name)
-                .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : "")
+          issue.assignees.length === 0 ? (
+            "—"
+          ) : (
+            <Tooltip
+              tooltipContent={
+                <div className="max-w-[260px] whitespace-normal break-words">
+                  {issue.assignees.map((a) => a.display_name).join(", ")}
+                </div>
+              }
+            >
+              <span className="cursor-default">
+                {issue.assignees
+                  .slice(0, 3)
+                  .map((a) => a.display_name)
+                  .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : "")}
+              </span>
+            </Tooltip>
+          )
         )}
       {displayProperties.bank_wide_project && renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No")}
       {displayProperties.priority && renderTd("priority", issue.priority || "—", "capitalize")}
       {displayProperties.state &&
         renderTd(
           "state",
-          <span className="flex items-center gap-1.5">
-            {issue.state_color && (
-              <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: issue.state_color }} />
-            )}
-            <span className="truncate">{issue.state_name || "—"}</span>
-          </span>
+          (() => {
+            const group = issue.state_group ? STATE_GROUPS[issue.state_group as keyof typeof STATE_GROUPS] : null;
+            return (
+              <span className="flex items-center gap-1.5">
+                {group && (
+                  <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
+                )}
+                <span className="truncate">{group ? t(`workspace_projects.state.${group.key}`) : "—"}</span>
+              </span>
+            );
+          })()
         )}
       {displayProperties.progress_tracking &&
         renderTd(
@@ -208,53 +193,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {displayProperties.completed_date &&
         renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—")}
       {displayProperties.total_log_time &&
-        renderTd(
-          "total_log_time",
-          <Popover open={isOpen} onOpenChange={(open) => void handleOpenChange(open)}>
-            <Popover.Button
-              className={cn(
-                "w-full text-right outline-none transition-colors",
-                issue.total_log_time > 0 ? "text-accent-primary hover:underline" : "text-secondary cursor-default"
-              )}
-            >
-              {formatLogTime(issue.total_log_time)}
-            </Popover.Button>
-            {issue.total_log_time > 0 && (
-              <Popover.Panel
-                side="bottom"
-                align="end"
-                className="z-[25] min-w-52 rounded-md border border-subtle bg-surface-1 shadow-lg"
-              >
-                <div className="p-2 text-left">
-                  <p className="mb-1.5 px-1 text-11 font-medium text-tertiary">{t("worklog.member")}</p>
-                  {isFetching ? (
-                    <p className="px-1 py-2 text-11 text-tertiary">{t("loading")}</p>
-                  ) : userTotals.length === 0 ? (
-                    <p className="px-1 py-2 text-11 text-tertiary">{t("worklog.no_entries")}</p>
-                  ) : (
-                    <div className="space-y-0.5">
-                      {userTotals.map((entry) => (
-                        <div
-                          key={entry.user_id}
-                          className="flex items-center justify-between gap-3 rounded px-1 py-1 hover:bg-layer-1"
-                        >
-                          <div className="flex min-w-0 items-center gap-2">
-                            <Avatar name={entry.display_name} src={entry.avatar_url} size="sm" shape="circle" />
-                            <span className="truncate text-11 text-primary">{entry.display_name}</span>
-                          </div>
-                          <span className="flex-shrink-0 text-11 text-secondary">
-                            {formatLogTime(entry.total_minutes)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Popover.Panel>
-            )}
-          </Popover>,
-          "text-right"
-        )}
+        renderTd("total_log_time", <HoWorklogBreakdownPopover issueId={issue.id} />, "text-right")}
       {displayProperties.reference_link &&
         renderTd("reference_link", issue.reference_link_count > 0 ? issue.reference_link_count : "—", "text-right")}
     </tr>

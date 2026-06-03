@@ -80,6 +80,16 @@ export interface IInstanceAdmin {
   updated_by: string;
   user: string;
   user_detail: IUserLite;
+  is_super_admin: boolean;
+  allowed_menus: string[];
+}
+
+/** Candidate user for the Add-administrator picker (active staff not yet an admin). */
+export interface IAdminUserOption {
+  id: string;
+  display_name: string;
+  email: string;
+  staff_id: string;
 }
 
 export type TInstanceConfigurationKeys =

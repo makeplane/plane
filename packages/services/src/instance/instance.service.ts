@@ -7,6 +7,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  IAdminUserOption,
   IFormattedInstanceConfiguration,
   IInstance,
   IInstanceAdmin,
@@ -67,6 +68,70 @@ export class InstanceService extends APIService {
   async admins(): Promise<IInstanceAdmin[]> {
     return this.get("/api/instances/admins/", { validateStatus: null })
       .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Creates an instance admin with menu grants
+   * @param data email of an existing user + menu grants
+   * @returns {Promise<IInstanceAdmin>} the created instance admin
+   * @throws {Error} If the API request fails
+   */
+  async createAdmin(data: {
+    email: string;
+    allowed_menus?: string[];
+    is_super_admin?: boolean;
+  }): Promise<IInstanceAdmin> {
+    return this.post("/api/instances/admins/", data)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Searches active-staff users (by name, email, or staff ID) who are not yet
+   * instance admins — candidates for the Add-administrator picker.
+   * @param search optional query matched against name / email / staff_id
+   * @returns {Promise<IAdminUserOption[]>} candidate users
+   * @throws {Error} If the API request fails
+   */
+  async adminUserOptions(search?: string): Promise<IAdminUserOption[]> {
+    return this.get("/api/instances/admins/user-options/", { params: search ? { search } : {} })
+      .then((response) => response.data?.candidates ?? [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Updates an instance admin's menu grants / super-admin flag
+   * @param adminId instance admin row id
+   * @param data partial grant fields
+   * @returns {Promise<IInstanceAdmin>} the updated instance admin
+   * @throws {Error} If the API request fails
+   */
+  async updateAdmin(
+    adminId: string,
+    data: { allowed_menus?: string[]; is_super_admin?: boolean }
+  ): Promise<IInstanceAdmin> {
+    return this.patch(`/api/instances/admins/${adminId}/`, data)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Removes an instance admin
+   * @param adminId instance admin row id
+   * @throws {Error} If the API request fails
+   */
+  async deleteAdmin(adminId: string): Promise<void> {
+    return this.delete(`/api/instances/admins/${adminId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

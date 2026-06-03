@@ -597,6 +597,19 @@ Roles per level:
 - Workspace: ADMIN, MEMBER, GUEST
 - Project: ADMIN, MEMBER, GUEST
 
+**God Mode (instance admin) menu RBAC:**
+
+- `InstanceAdmin` carries `is_super_admin` + `allowed_menus` (12 grantable keys in `plane/license/menu_registry.py`; `authentication`/general/email/ai/image config screens share the grouped `settings` key — all five persist through one `InstanceConfigurationEndpoint`).
+- Enforcement is **route-group / URL-prefix based and fail-closed**: `InstanceAdminMenuPermission` resolves the required menu from `request.path` via `PREFIX_MENU_MAP` (longest-prefix). Unmapped paths deny scoped admins; identity/session paths (`admins/me|session|sign-*`) are shared; super-admins bypass. Views carry no per-class menu annotation.
+- Coverage is build-enforced: `plane/tests/unit/test_menu_registry_parity.py` fails if any `/api/instances/` route is unmapped, any view re-introduces the bare pre-RBAC `InstanceAdminPermission`, or the admin-app sidebar permission keys drift from the backend registry.
+- Management: `POST/PATCH/DELETE /api/instances/admins/` — only super-admins mint super-admins; `administrators`-menu admins grant only subsets of their own menus and never edit their own row. Lockout guards protect the last active loginable super-admin (ghost `user=NULL` and inactive rows never count) across admin demote/delete, user deactivation, password reset, and staff deactivation.
+- Admin app sidebar (`apps/admin/hooks/use-sidebar-menu/`) filters by `currentUser.allowed_menus`; a layout-level guard redirects ungranted direct navigation. UI filtering is cosmetic — the backend permission is the security boundary.
+
+**God-mode workspace ownership:**
+
+- Workspaces created from God Mode are owned by the **General Director** (the single active staff with `job_grade="GD"`, resolved by `plane/utils/general_director.py`) or an explicitly chosen user — never the acting instance admin, who receives no `WorkspaceMember`/`ProjectMember` row on any creation/import path (attribution `created_by` stays the actor).
+- Owner precedence: explicit `owner_id`/`owner_email` > GD; unresolvable or ambiguous GD fails with 400. `GET /api/instances/workspaces/owner-options/` feeds the create-form picker (staff-directory enumeration gated behind the `staff`/`users` menu).
+
 ### Data Security
 
 - **Soft delete:** Data preserved, not deleted
@@ -626,6 +639,171 @@ Roles per level:
 - Endpoint: `/health`
 - Checks: DB connection, Redis, RabbitMQ
 - Response: JSON status
+
+---
+
+## Help Center Subsystem (Instance-Global User Guide)
+
+### Overview
+
+Instance-global, multilingual in-app user guide for all ~100 department workspaces. NOT per-workspace. Instance admins (God Mode) author articles and categories; all logged-in users read at `/help`.
+
+**Design goals:** single shared guide + per-locale translations (VI/EN/KO) + Vietnamese accent-insensitive search + sanitized HTML content + instance-global image assets.
+
+### Data Model
+
+```
+HelpCategory (global, 1 row per category)
+  id, slug (globally unique), icon, display_order, created_at, updated_at
+
+HelpCategoryTranslation (per-locale title/description)
+  id, category_fk, locale (vi|en|ko), title, description_html, description_json, description_stripped, search_text
+
+HelpArticle (global, 1 row per article)
+  id, slug (globally unique), category_fk, display_order, is_published, created_by, updated_at
+
+HelpArticleTranslation (per-locale title/content)
+  id, article_fk, locale (vi|en|ko), title, description_html, description_json, description_stripped, search_text, created_at, updated_at
+```
+
+**Key fields:**
+
+- `description_html` — Sanitized HTML served to readers (script/iframe/video dropped, style attr removed).
+- `description_json` — Rich-text editor JSON, internal only (never served to reader).
+- `description_stripped` — Plain text (future use: email notifications, transcripts).
+- `search_text` — App-folded accent-insensitive index (NFKD + drop combining marks + `đ→d`, stored in DB column, no pg_trgm extension needed).
+
+**Migration:** `0178_help_center.py` creates all 4 tables with soft-delete support and uniqueness constraints.
+
+### Backend Architecture
+
+**Split by auth layer & responsibility:**
+
+#### Read Layer (`plane/app/` - Public, IsAuthenticated)
+
+Files: `apps/api/plane/app/views/help_center/{base,article,category}.py`, serializers `apps/api/plane/app/serializers/help_center.py`, urls `apps/api/plane/app/urls/help_center.py`.
+
+| Method | Endpoint                          | Auth | Purpose                                                 |
+| ------ | --------------------------------- | ---- | ------------------------------------------------------- |
+| GET    | `/api/help/categories/`           | auth | List published categories + top N articles per category |
+| GET    | `/api/help/articles/`             | auth | List published articles (all categories), searchable    |
+| GET    | `/api/help/articles/<pk>/`        | auth | Get single article (all locales, locale fallback)       |
+| GET    | `/api/help/articles/slug/<slug>/` | auth | Get single article by slug (locale-resolved)            |
+
+**Locale resolution (read):**
+
+1. Accept-Language header or locale param → try to fetch that translation
+2. If missing → fallback to `en`
+3. If en missing → use any available translation (title-bearing)
+4. Response includes `resolved_locale` (used) + `matched_locale` (search match, if via search query)
+
+**Search:**
+
+- All 3 locale rows of matching articles scanned
+- `icontains` over pre-folded `search_text` column
+- Multilingual hits (e.g. Vietnamese search returns matching VI/EN/KO articles)
+- Results ranked by relevance (exact match > partial)
+
+#### Write Layer (`plane/license/api/` - God Mode Admin Only)
+
+Files: `apps/api/plane/license/api/views/help_center.py`, urls `apps/api/plane/license/api/urls/help_center.py` (mounted under `/api/instances/help/...`).
+
+| Method | Endpoint                                          | Auth              | Purpose                                 |
+| ------ | ------------------------------------------------- | ----------------- | --------------------------------------- |
+| GET    | `/api/instances/help/categories/`                 | InstanceAdminPerm | List all categories (draft + published) |
+| POST   | `/api/instances/help/categories/`                 | InstanceAdminPerm | Create category                         |
+| PATCH  | `/api/instances/help/categories/<id>/`            | InstanceAdminPerm | Update category (icon, order)           |
+| DELETE | `/api/instances/help/categories/<id>/`            | InstanceAdminPerm | Soft-delete category                    |
+| GET    | `/api/instances/help/articles/`                   | InstanceAdminPerm | List all articles                       |
+| POST   | `/api/instances/help/articles/`                   | InstanceAdminPerm | Create article                          |
+| PATCH  | `/api/instances/help/articles/<id>/`              | InstanceAdminPerm | Update article (category, order, title) |
+| DELETE | `/api/instances/help/articles/<id>/`              | InstanceAdminPerm | Soft-delete article                     |
+| POST   | `/api/instances/help/articles/<id>/publish/`      | InstanceAdminPerm | Publish one locale translation          |
+| POST   | `/api/instances/help/articles/translate/`         | InstanceAdminPerm | Upsert translation (VI/EN/KO)           |
+| POST   | `/api/instances/help/articles/<id>/upload-image/` | InstanceAdminPerm | Upload inline image (FileAsset)         |
+
+**Publishing:** Requires at least one locale's translation to have a non-empty title. Publishing OVERWRITES the previous translation destructively (no version history).
+
+### Frontend Architecture
+
+**Reader (`apps/web/app/(all)/help/*`, auth-gated):**
+
+- Route: `/help` (global, no workspace prefix, under `(all)` layout)
+- Components: `apps/web/ce/components/help-center/*`
+  - `help-center-home.tsx` — Featured articles grid + search box
+  - `help-article-view.tsx` — Single article reader
+  - `help-article-toc.tsx` — Table of contents
+  - `help-search-box.tsx` — Search box with live results
+  - `locale-fallback-notice.tsx` — Notice when reader's locale unavailable
+- Store: `apps/web/ce/store/help-center/*`
+  - `help-center.store.ts` — Root store
+  - `category.store.ts` — Fetch categories
+  - `article.store.ts` — Fetch articles, search, locale resolution
+- Service: `apps/web/ce/services/help-center.service.ts` — API calls
+- Types: `apps/web/ce/types/help-center.ts`
+
+**Authoring (`apps/admin/(all)/(dashboard)/help-center`, God Mode only):**
+
+- Route: `/help-center` in admin panel (English-only UI)
+- Components: `apps/admin/app/(all)/(dashboard)/help-center/components/*`
+- Store: `apps/admin/store/instance-help-center.store.ts`
+- Custom toolbar: fixed buttons for formatting, image insert, preview toggle
+- Image uploads: instance-global `FileAsset` (entity_type=HELP_ARTICLE_CONTENT, workspace_id=NULL)
+
+### Content Pipeline (Markdown-Source → Injected Assets)
+
+**Source-to-reader flow:**
+
+1. **Markdown source** — `apps/api/plane/db/fixtures/help_center/` (categories.yaml + article markdown files)
+2. **Loader** (`apps/api/plane/db/fixtures/help_center/loader.py`) — parses frontmatter, renders markdown → HTML, sanitizes with hardened allowlist (drops `<script>`, `<iframe>`, `<video>`, `<style>` attributes), **escapes raw HTML as text**, post-sanitizes to inject screenshot markers (`{{screenshot:NAME}}` → `<p data-help-screenshot="NAME"></p>` or span variant)
+3. **Database storage** — sanitized HTML in `HelpArticleTranslation.description_html`, never re-sanitized on read
+4. **Instance-global asset injection** — once per instance, `inject_help_screenshots` command uploads captured PNGs as workspace-less `FileAsset` (entity_type=HELP_ARTICLE_CONTENT), replaces markers with `<img src="/api/assets/v2/static/{id}/">`, asset IDs minted at upload (instance-specific, not in git)
+5. **Reader** — served sanitized HTML + injected images, no post-processing
+
+**Idempotency:** Seeding the content is additive (never deletes); re-seeding restores raw markers (requires re-inject). Re-injecting images supersedes prior assets per (article, screenshot-name).
+
+### Content Security & Sanitization
+
+**HTML sanitization** (`plane/app/serializers/help_center.py`, library `nh3`):
+
+- Allowlist: `<p>`, `<h1>`–`<h6>`, `<strong>`, `<em>`, `<u>`, `<s>`, `<a>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, `<code>`, `<pre>`, `<img>`, `<br>`, `<hr>`, `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<td>`, `<th>`
+- Drop: `<script>`, `<iframe>`, `<video>`, `<object>`, `<embed>`, `on*` attributes, `style` attribute (hardened vs. general content, style unsafe for broadcast security)
+- Keep: `rel` on `<a>` (for anti-tabnabbing `rel="noopener noreferrer"`)
+
+**Read path:** Reader served sanitized `description_html` ONLY. `description_json` (editor state) never exposed.
+
+### Inline Images (Global Asset Management)
+
+- Model: `FileAsset` with `entity_type=HELP_ARTICLE_CONTENT`, `workspace_id=NULL` (instance-global)
+- Endpoint: `/api/assets/v2/static/{id}/` (`StaticFileAssetEndpoint`, AllowAny, serves public by ID, 404 on soft-deleted/not-uploaded)
+- Authoring: God Mode only; editor toolbar `Insert Image` button triggers upload flow
+- Image metadata stored in `description_json` (custom editor extension)
+- Metadata fields: `id`, `source` (S3 URL or local path), `width`, `height`, `aspectRatio`, `alignment` (left|center|right)
+- **Intentional limitation:** No `alt` attribute support in the custom image editor extension. Workaround: descriptive caption paragraph below images.
+
+### Discovery (Reader Entry Points)
+
+1. **Help (?) menu item** in workspace top nav → navigates to `/help`
+2. **Cmd+K quick action** — "Help Center" command pushes `/help` (global, no workspaceSlug)
+3. **Inline help links** in UI (future) — contextual `/help/a/:articleSlug`
+
+**Intentional:** No help search results group in global Cmd+K. All help search happens in-page at `/help`.
+
+### Management Command
+
+`apps/api/plane/db/management/commands/seed_help_center.py` — **Idempotent, instance-global, run ONCE per instance**:
+
+```bash
+python manage.py seed_help_center
+```
+
+**Behavior:**
+
+- Checks if seeded already (by checking for existence of seed marker in DB)
+- If yes, skips (idempotent)
+- If no: seeds 5 categories + 5 articles in all 3 locales
+- Content uses "Shinhan Workspace" terminology (not "Plane")
+- Publishes all translations (is_published=True)
 
 ---
 
@@ -718,5 +896,5 @@ def archive_and_close_old_issues(): ...
 
 ---
 
-**Last Updated:** 2026-04-28
-**Version:** 1.2
+**Last Updated:** 2026-05-30
+**Version:** 1.3

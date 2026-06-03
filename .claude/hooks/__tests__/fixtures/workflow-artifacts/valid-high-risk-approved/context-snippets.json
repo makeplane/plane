@@ -1,0 +1,10 @@
+{
+  "skill": "ck:cook",
+  "mode": "auto",
+  "task": "Change deploy workflow",
+  "acceptanceCriteria": ["high-risk auto can pass after human approval"],
+  "touchpoints": ["claude/hooks/workflow-artifact-gate.cjs"],
+  "publicContracts": ["manual validator command"],
+  "blastRadius": ["hook validation", "deploy workflow"],
+  "scoutSummary": "Existing hooks use Node and config-gated behavior."
+}

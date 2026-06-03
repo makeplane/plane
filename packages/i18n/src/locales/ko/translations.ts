@@ -91,7 +91,7 @@ export default {
       already_have_an_account: "이미 계정이 있으신가요?",
       login: "로그인",
       create_account: "계정 만들기",
-      new_to_plane: "Plane을 처음 사용하시나요?",
+      new_to_plane: "Shinhan Workspace을 처음 사용하시나요?",
       back_to_sign_in: "로그인으로 돌아가기",
       resend_in: "{seconds}초 후 다시 전송",
       sign_in_with_unique_code: "고유 코드로 로그인",
@@ -178,6 +178,19 @@ export default {
   },
   submit: "제출",
   cancel: "취소",
+  copy_project: {
+    menu_item: "다른 워크스페이스로 복사",
+    modal_title: "다른 워크스페이스로 프로젝트 복사",
+    target_workspace_label: "대상 워크스페이스",
+    project_name_label: "프로젝트 이름",
+    identifier_label: "식별자",
+    identifier_hint: "최대 12자 대문자 (A-Z, 0-9, -, _)",
+    identifier_conflict: "대상 워크스페이스에 이미 존재하는 식별자입니다",
+    search_workspace_placeholder: "워크스페이스 검색…",
+    copy_button: "프로젝트 복사",
+    in_progress: "복사 중…",
+    error: "프로젝트 복사를 시작하지 못했습니다",
+  },
   loading: "로딩 중",
   error: "오류",
   success: "성공",
@@ -411,7 +424,6 @@ export default {
   capacity_under_capacity: "보유 용량 확보",
   capacity_member: "멤버",
   capacity_issues: "작업 항목",
-  capacity_no_data: "이 기간에 해당되는 용량 데이터가 없습니다.",
   capacity_category_distribution: "카테고리별 분포",
   capacity_time_burndown: "시간 번다운",
   capacity_items: "항목",
@@ -420,11 +432,13 @@ export default {
   timesheet_week_of: "주간",
   timesheet_this_week: "이번 주",
   timesheet_total: "합계",
+  timesheet_show_sub_items: "Show sub-items",
   timesheet_coming_soon: "8단계에서 출시 예정",
   timesheet_save_success: "타임시트 저장됨",
   timesheet_no_issues: "이번 주 할당된 이슈 없음",
   timesheet_add_issue: "이슈 추가",
-  timesheet_cross_workspaces: "Cross Workspaces",
+  timesheet_cross_workspaces: "Cross teams & workspaces",
+  overall_management: "Overall Management",
   timesheet_load_error: "타임시트 데이터를 불러오지 못했습니다.",
   analytics_timesheet_load_error: "분석 데이터를 불러오지 못했습니다.",
   analytics_timesheet_no_data: "이번 주 시간 기록이 없습니다.",
@@ -437,6 +451,8 @@ export default {
   documentation: "문서",
   contact_sales: "영업 문의",
   contact_point: "연락처",
+  start_product_tour: "제품 둘러보기 시작",
+  start_product_tour_error: "제품 둘러보기를 시작하지 못했습니다",
   contact_point_full_name: "Full name",
   contact_point_email: "Email",
   contact_point_phone: "Phone",
@@ -454,7 +470,7 @@ export default {
   full_changelog: "전체 변경 로그",
   support: "지원",
   discord: "디스코드",
-  powered_by_plane_pages: "Plane Pages 제공",
+  powered_by_plane_pages: "Shinhan Workspace Pages 제공",
   please_select_at_least_one_invitation: "최소 하나의 초대를 선택하세요.",
   please_select_at_least_one_invitation_description: "작업 공간에 참여하려면 최소 하나의 초대를 선택하세요.",
   we_see_that_someone_has_invited_you_to_join_a_workspace: "누군가가 작업 공간에 참여하도록 초대했습니다",
@@ -644,7 +660,7 @@ export default {
       not_right_now: "지금은 안 함",
       create_project: {
         title: "팀/프로젝트 생성",
-        description: "Plane에서 대부분의 작업은 팀/프로젝트로 시작됩니다.",
+        description: "Shinhan Workspace에서 대부분의 작업은 팀/프로젝트로 시작됩니다.",
         cta: "시작하기",
       },
       invite_team: {
@@ -658,7 +674,7 @@ export default {
         cta: "이 작업 공간 설정",
       },
       personalize_account: {
-        title: "Plane을 개인화하세요.",
+        title: "Shinhan Workspace을 개인화하세요.",
         description: "사진, 색상 등을 선택하세요.",
         cta: "지금 개인화",
       },
@@ -692,7 +708,7 @@ export default {
       },
     },
     new_at_plane: {
-      title: "Plane의 새로운 기능",
+      title: "Shinhan Workspace의 새로운 기능",
     },
     quick_tutorial: {
       title: "빠른 튜토리얼",
@@ -720,6 +736,8 @@ export default {
   },
   common: {
     all: "모두",
+    expand: "펼치기",
+    collapse: "접기",
     no_items_in_this_group: "이 그룹에 항목이 없습니다",
     drop_here_to_move: "이동하려면 여기에 드롭하세요",
     states: "상태",
@@ -1138,7 +1156,7 @@ export default {
     },
     states: {
       active: "활성",
-      backlog: "Draft",
+      backlog: "Backlog",
     },
     comments: {
       placeholder: "댓글 추가",
@@ -1368,7 +1386,7 @@ export default {
   },
   workspace_creation: {
     heading: "작업 공간 생성",
-    subheading: "Plane을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
+    subheading: "Shinhan Workspace을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
     form: {
       name: {
         label: "작업 공간 이름",
@@ -1422,11 +1440,11 @@ export default {
       general: {
         title: "팀/프로젝트, 활동 및 메트릭 개요",
         description:
-          "Plane에 오신 것을 환영합니다. 첫 번째 팀/프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
+          "Shinhan Workspace에 오신 것을 환영합니다. 첫 번째 팀/프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
         primary_button: {
           text: "첫 번째 팀/프로젝트 생성",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1512,7 +1530,7 @@ export default {
     },
     created_vs_resolved: "생성됨 vs 해결됨",
     customized_insights: "맞춤형 인사이트",
-    backlog_work_items: "Draft {entity}",
+    backlog_work_items: "Backlog {entity}",
     active_projects: "활성 팀/프로젝트",
     trend_on_charts: "차트의 추세",
     completed: "완료됨",
@@ -1564,7 +1582,7 @@ export default {
       issue_delete: "작업 항목 삭제 실패",
     },
     state: {
-      backlog: "Draft",
+      backlog: "Backlog",
       unstarted: "시작되지 않음",
       started: "시작됨",
       completed: "완료됨",
@@ -1591,7 +1609,7 @@ export default {
         primary_button: {
           text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1602,7 +1620,7 @@ export default {
         primary_button: {
           text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            title: "Shinhan Workspace에서 모든 것은 팀/프로젝트로 시작됩니다",
             description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
@@ -1753,7 +1771,7 @@ export default {
     page_label: "{workspace} - 일반 설정",
     key_created: "키 생성됨",
     copy_key:
-      "이 비밀 키를 Plane Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
+      "이 비밀 키를 Shinhan Workspace Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
     token_copied: "토큰이 클립보드에 복사되었습니다.",
     settings: {
       general: {
@@ -1825,6 +1843,13 @@ export default {
             required: "초대하려면 이메일 주소가 필요합니다.",
             invalid: "이메일이 유효하지 않습니다",
           },
+        },
+        role_downgrade_modal: {
+          title: "멤버 역할을 변경하시겠습니까?",
+          description: "이 멤버가 참여한 모든 프로젝트에서 제거됩니다. 계속하시겠습니까?",
+          confirm: "예, 역할 변경",
+          cancel: "취소",
+          error: "멤버 역할을 업데이트하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
         },
       },
       billing_and_plans: {
@@ -1928,7 +1953,7 @@ export default {
         delete: {
           title: "API 토큰 삭제",
           description:
-            "이 토큰을 사용하는 애플리케이션은 더 이상 Plane 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+            "이 토큰을 사용하는 애플리케이션은 더 이상 Shinhan Workspace 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
           success: {
             title: "성공!",
             message: "API 토큰이 성공적으로 삭제되었습니다",
@@ -1944,7 +1969,7 @@ export default {
       api_tokens: {
         title: "생성된 API 토큰 없음",
         description:
-          "Plane API를 사용하여 Plane의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요.",
+          "Shinhan Workspace API를 사용하여 Shinhan Workspace의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요.",
       },
       webhooks: {
         title: "추가된 웹훅 없음",
@@ -1992,7 +2017,7 @@ export default {
       today_work_items: {
         title: "오늘의 작업 항목",
         empty: "오늘의 활성 작업 항목이 없습니다.",
-        cross_workspaces: "교차 워크스페이스",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "작업 항목",
           department: "부서",
@@ -2011,7 +2036,7 @@ export default {
       overdue_work_items: {
         title: "기한 초과 작업 항목",
         empty: "기한 초과 작업 항목이 없습니다.",
-        cross_workspaces: "교차 워크스페이스",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "작업 항목",
           department: "부서",
@@ -2039,16 +2064,23 @@ export default {
     },
     tabs: {
       summary: "요약",
+      summary_description:
+        "All work items were assigned to you and need to be completed (including cross teams & workspaces)",
       assigned: "할당됨",
+      assigned_description:
+        "All work items were assigned to you, including both completed and outstanding items (excluding cross teams & workspaces)",
       created: "생성됨",
+      created_description: "All work items that you have created (excluding cross teams & workspaces)",
       subscribed: "구독됨",
+      subscribed_description:
+        "All work items that you are monitoring and have subscribed (excluding cross teams & workspaces)",
       activity: "활동",
     },
     empty_state: {
       activity: {
         title: "아직 활동 없음",
         description:
-          "새 작업 항목을 생성하여 시작하세요! 세부 정보와 속성을 추가하세요. Plane에서 더 많은 것을 탐색하여 활동을 확인하세요.",
+          "새 작업 항목을 생성하여 시작하세요! 세부 정보와 속성을 추가하세요. Shinhan Workspace에서 더 많은 것을 탐색하여 활동을 확인하세요.",
       },
       assigned: {
         title: "할당된 작업 항목 없음",
@@ -2101,7 +2133,7 @@ export default {
     },
     states: {
       heading: "States",
-      description: "Define and customize workflow states to track the progress of your work items.",
+      description: "Define and customize workflow statuses to track the progress of your work items.",
       describe_this_state_for_your_members: "멤버를 위해 이 상태를 설명하세요.",
       empty_state: {
         title: "{groupKey} 그룹에 사용할 수 있는 상태 없음",
@@ -2203,6 +2235,48 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "필드 권한",
+      description: "프로젝트 멤버가 수정하거나 삭제할 수 있는 필드를 제어합니다.",
+      locked_tooltip: "프로젝트 관리자에 의해 잠김",
+      sections: {
+        dates: "날짜 필드",
+        dates_description: "기존 작업 항목의 날짜 필드를 편집할 수 있는 사용자를 제어합니다.",
+        destructive: "파괴적인 작업",
+        destructive_description: "되돌릴 수 없는 영향력 있는 작업입니다.",
+      },
+      status: {
+        enabled: "멤버 허용",
+        disabled: "관리자 전용",
+      },
+      rows: {
+        completed_date: {
+          title: "완료 날짜",
+          description: "멤버가 작업 항목의 완료 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        target_date: {
+          title: "마감일",
+          description: "멤버가 작업 항목의 마감일을 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        start_date: {
+          title: "시작 날짜",
+          description: "멤버가 작업 항목의 시작 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        delete_work_item: {
+          title: "작업 항목 삭제",
+          description: "멤버가 이 프로젝트의 작업 항목을 영구적으로 삭제할 수 있도록 허용합니다.",
+        },
+      },
+      toast: {
+        update_success: "필드 권한이 성공적으로 업데이트되었습니다.",
+        update_error: "필드 권한 업데이트에 실패했습니다. 다시 시도해 주세요.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "필드 권한",
+      },
+    },
     worklogs: {
       label: "작업 일지",
       heading: "작업 일지",
@@ -2255,12 +2329,12 @@ export default {
       label: "자동화",
       "auto-archive": {
         title: "완료된 작업 항목 자동 보관",
-        description: "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        description: "Shinhan Workspace은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
         duration: "다음 기간 동안 닫힌 작업 항목 자동 보관",
       },
       "auto-close": {
         title: "작업 항목 자동 닫기",
-        description: "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
+        description: "Shinhan Workspace은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
         duration: "다음 기간 동안 비활성 작업 항목 자동 닫기",
         auto_close_status: "자동 닫기 상태",
       },
@@ -2460,9 +2534,9 @@ export default {
         primary_button: {
           text: "첫 번째 작업 항목 생성",
           comic: {
-            title: "작업 항목은 Plane의 구성 요소입니다.",
+            title: "작업 항목은 Shinhan Workspace의 구성 요소입니다.",
             description:
-              "Plane UI 재설계, 회사 리브랜딩 또는 새로운 연료 주입 시스템 출시와 같은 작업 항목은 하위 작업 항목이 있을 가능성이 큽니다.",
+              "Shinhan Workspace UI 재설계, 회사 리브랜딩 또는 새로운 연료 주입 시스템 출시와 같은 작업 항목은 하위 작업 항목이 있을 가능성이 큽니다.",
           },
         },
       },
@@ -2565,9 +2639,10 @@ export default {
   project_page: {
     empty_state: {
       general: {
-        title: "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Plane의 AI 도우미가 시작을 도와줍니다",
+        title:
+          "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Shinhan Workspace의 AI 도우미가 시작을 도와줍니다",
         description:
-          "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 팀/프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
+          "페이지는 Shinhan Workspace에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 팀/프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Shinhan Workspace의 AI를 호출하세요.",
         primary_button: {
           text: "첫 번째 페이지 생성",
         },
@@ -2910,7 +2985,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Draft",
+      backlog: "Backlog",
       planned: "계획됨",
       in_progress: "진행 중",
       paused: "일시 중지됨",
@@ -2946,7 +3021,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+      "Shinhan Workspace이 시작되지 않았습니다. 이는 하나 이상의 Shinhan Workspace 서비스가 시작에 실패했기 때문일 수 있습니다.",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요.",
   },
@@ -3131,7 +3206,7 @@ export default {
     },
     help_actions: {
       open_keyboard_shortcuts: "키보드 단축키 열기",
-      open_plane_documentation: "Plane 문서 열기",
+      open_plane_documentation: "Shinhan Workspace 문서 열기",
       join_discord: "Discord 참여",
       report_bug: "버그 보고",
       chat_with_us: "채팅 문의",
@@ -3205,6 +3280,15 @@ export default {
     total_estimated: "총 예상",
     variance: "차이",
     member: "멤버",
+    unknown_member: "알 수 없는 멤버",
+    view_total: "보기",
+    total: "합계",
+    back: "뒤로",
+    work_items: "작업 항목",
+    load_more: "더 보기",
+    loading: "불러오는 중...",
+    load_failed: "불러오지 못했습니다. 다시 시도하세요.",
+    retry: "다시 시도",
     report: "시간 추적 보고서",
     activity_logged: "시간 기록함",
     updated: "업데이트됨",
@@ -3240,7 +3324,7 @@ export default {
     activity_reason: "사유",
     reminder_title: "근무 시간 기록 알림",
     reminder_message:
-      "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 팀/프로젝트에서 시간을 기록해 주세요!",
+      "안녕하세요! 가벼운 알림이에요 😊\n오늘의 근무 시간 기록을 잊지 마세요.\n타임시트를 최신 상태로 유지하면 팀 전체가 일정에 맞춰 진행할 수 있어요.\n1분이면 충분해요! 하루가 끝나기 전에 프로젝트로 이동해 시간을 기록해 주세요.",
     reminder_toggle: "작업 로그 알림",
     reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
   },
@@ -3481,6 +3565,7 @@ export default {
     sub_label: "서브 카테고리",
     select_main: "메인 카테고리 선택",
     select_sub: "메인 카테고리 선택",
+    no_main_categories: "사용 가능한 카테고리가 없습니다",
     no_sub_categories: "사용 가능한 서브 카테고리가 없습니다",
     search: "검색...",
   },
@@ -3494,6 +3579,7 @@ export default {
     from: "시작", // TODO: native review
     to: "종료", // TODO: native review
     show_archived: "보관된 항목 표시", // TODO: native review
+    show_sub_work_items: "하위 작업 표시", // TODO: native review
     no_work_items: "작업 항목을 찾을 수 없습니다.", // TODO: native review
     no_matching_rows: "일치하는 행이 없습니다.", // TODO: native review
     no_data: "데이터가 없습니다.", // TODO: native review
@@ -3501,6 +3587,10 @@ export default {
     loading: "로딩 중...", // TODO: native review
     category: "카테고리", // TODO: native review
     search: "검색...", // TODO: native review
+    sort: "정렬", // TODO: native review
+    filter: "필터", // TODO: native review
+    selected_count: "{count}개 선택됨", // TODO: native review
+    clear_filter: "필터 초기화", // TODO: native review
     clear_sort: "정렬 초기화", // TODO: native review
     clear_filters_sort: "필터 및 정렬 초기화", // TODO: native review
     ascending: "오름차순", // TODO: native review
@@ -3524,5 +3614,141 @@ export default {
       no_permission_title: "작업 항목을 열 수 없음", // TODO: native review
       no_permission_message: "이 작업 항목을 볼 권한이 없습니다.", // TODO: native review
     },
+    export_queued: "데이터가 내보내졌습니다. 이메일에서 확인하고 다운로드하세요.",
+    export_failed: "내보내기에 실패했습니다. 다시 시도해 주세요.",
+    exporting: "내보내는 중...",
+  },
+  capacity_export: {
+    menu: "Export",
+    summary: "Capacity summary",
+    summary_desc: "CSV with member × daily totals",
+    detailed: "Detailed work-item report",
+    detailed_desc: "XLSX with per-entry breakdown, one sheet per member",
+    queued_title: "Export queued",
+    queued_message: "We'll email you when ready",
+    failed_title: "Export failed",
+    failed_message: "Please try again",
+    cross_workspace_disabled: "Not available in Cross teams & workspaces mode",
+    already_queued: "An export is already queued. Please wait 30 seconds.",
+    no_data: "No data to export for the selected filters",
+    select_members_title: "내보낼 멤버 선택",
+    select_members_desc: "특정 멤버를 선택하거나 모든 멤버를 포함하세요.",
+    all_members: "모든 멤버 포함",
+    specific_members: "멤버",
+    pick_members: "멤버 선택",
+    export_button: "내보내기",
+    col: {
+      member: "Member",
+      date: "Date",
+      main_category: "Main Category",
+      sub_category: "Sub Category",
+      work_item: "Work Item",
+      time_spent_hours: "Time Spent (h)",
+      total_hours: "Total Hours",
+      entry_count: "Entry Count",
+      grand_total: "Grand Total",
+    },
+  },
+  ho_exports: {
+    tab: "HO 내보내기",
+    title: "HO 데이터시트 내보내기",
+    subtitle: "전체 관리 데이터시트 내보내기를 추적하고 다운로드하세요.",
+    refresh: "새로 고침",
+    empty: "아직 내보내기가 없습니다. 데이터시트 탭의 내보내기 버튼을 사용하세요.",
+    col_status: "상태",
+    col_range: "날짜 범위",
+    col_rows: "행",
+    col_size: "크기",
+    col_created: "생성일",
+    col_expires: "만료일",
+  },
+  capacity_exports: {
+    tab: "My Exports",
+    title: "My Exports",
+    subtitle: "상세 작업 항목 내보내기를 추적하고 다운로드하세요.",
+    empty: "아직 내보내기가 없습니다",
+    empty_hint: "Capacity 페이지에서 내보내기 → 상세 작업 항목 보고서로 생성하세요.",
+    footer_hint: "파일은 일정 시간 동안만 보관됩니다. 만료 전에 빠르게 다운로드하세요.",
+    refresh: "Refresh",
+    download: "Download",
+    copy_link: "Copy link",
+    all_members: "전체",
+    status: {
+      queued: "Queued",
+      processing: "Processing",
+      ready: "Ready",
+      failed: "Failed",
+      expired: "Expired",
+    },
+    col: {
+      status: "Status",
+      range: "Date range",
+      members: "Members",
+      rows: "Rows",
+      size: "Size",
+      created: "Created",
+      expires: "Expires",
+      actions: "Actions",
+    },
+  },
+  help_center: {
+    menu_label: "도움말 센터",
+    title: "도움말 센터",
+    subtitle: "Shinhan Workspace 가이드 및 도움말",
+    search_placeholder: "도움말 검색",
+    no_results: "일치하는 문서가 없습니다",
+    all_categories: "모든 카테고리",
+    category_count_articles: "{count, plural, other {문서 #개}}",
+    back_to_help: "도움말 센터로 돌아가기",
+    back_to_app: "앱으로 돌아가기",
+    breadcrumb_home: "도움말 센터",
+    account_menu_label: "계정",
+    view_image_full_screen: "이미지 전체 화면 보기",
+    shown_in_language_notice: "{language}(으)로 표시됨",
+    read_more: "더 보기",
+    last_updated: "마지막 업데이트",
+    content_unavailable: "이 문서는 아직 제공되지 않습니다",
+    new_article: "새 문서",
+    edit_article: "문서 편집",
+    new_category: "새 카테고리",
+    edit_category: "카테고리 편집",
+    delete: "삭제",
+    delete_confirm: "정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    publish: "게시",
+    unpublish: "게시 취소",
+    draft: "초안",
+    published: "게시됨",
+    status: "상태",
+    save: "저장",
+    saved: "저장됨",
+    cancel: "취소",
+    title_label: "제목",
+    content_label: "내용",
+    category_label: "카테고리",
+    locale_tab_vi: "베트남어",
+    locale_tab_en: "영어",
+    locale_tab_ko: "한국어",
+    reorder: "순서 변경",
+    move_up: "위로 이동",
+    move_down: "아래로 이동",
+    missing_translation: "번역 누락",
+    unsaved_changes_warning: "저장하지 않은 변경 사항이 있습니다. 나가시겠습니까?",
+    no_articles_yet: "아직 문서가 없습니다",
+    no_categories_yet: "아직 카테고리가 없습니다",
+    only_admins_can_edit: "워크스페이스 관리자만 도움말 콘텐츠를 편집할 수 있습니다",
+    copy_from: "{language}에서 복사",
+    preview: "미리 보기",
+    get_started_here: "여기서 시작하기",
+    more_in_category: "이 카테고리의 다른 문서",
+    was_this_helpful: "이 문서가 도움이 되었나요?",
+    manage: "관리",
+    on_this_page: "이 페이지에서",
+    search_results_count: "{count, plural, other {결과 #개}}",
+    skip_to_content: "탐색 건너뛰기",
+    load_error: "지금 도움말을 불러오지 못했습니다",
+    retry: "다시 시도",
+    no_results_hint: "다른 키워드를 시도하거나 모든 카테고리를 살펴보세요.",
+    browse_all_categories: "모든 카테고리 보기",
+    search_locale_fallback: "{language} 결과가 없어 {fallback} 결과를 표시합니다.",
   },
 } as const;

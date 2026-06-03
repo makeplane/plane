@@ -100,13 +100,6 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/automations/`,
   },
-  worklogs: {
-    key: "worklogs",
-    i18n_label: "project_settings.worklogs.label",
-    href: `/worklogs`,
-    access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/worklogs/`,
-  },
   workflows: {
     key: "workflows",
     i18n_label: "project_settings.workflows.label",
@@ -128,6 +121,13 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/bank-wide/`,
   },
+  "field-permissions": {
+    key: "field-permissions",
+    i18n_label: "project_settings.settings.field_permissions.title",
+    href: `/field-permissions`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/field-permissions/`,
+  },
 };
 
 export const PROJECT_SETTINGS_FLAT_MAP: TProjectSettingsItem[] = Object.values(PROJECT_SETTINGS);
@@ -136,7 +136,6 @@ export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjec
   [PROJECT_SETTINGS_CATEGORY.GENERAL]: [
     PROJECT_SETTINGS["general"],
     PROJECT_SETTINGS["members"],
-    PROJECT_SETTINGS["worklogs"],
     PROJECT_SETTINGS["bank_wide"],
   ],
   [PROJECT_SETTINGS_CATEGORY.FEATURES]: [
@@ -153,5 +152,5 @@ export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjec
     PROJECT_SETTINGS["estimates"],
     PROJECT_SETTINGS["workflows"],
   ],
-  [PROJECT_SETTINGS_CATEGORY.EXECUTION]: [PROJECT_SETTINGS["automations"]],
+  [PROJECT_SETTINGS_CATEGORY.EXECUTION]: [PROJECT_SETTINGS["automations"], PROJECT_SETTINGS["field-permissions"]],
 };

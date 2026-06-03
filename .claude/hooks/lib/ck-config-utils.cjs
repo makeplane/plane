@@ -5,13 +5,13 @@
  * used by session-init.cjs and dev-rules-reminder.cjs
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const { execFileSync } = require('child_process');
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
+const { execFileSync } = require("child_process");
 
-const LOCAL_CONFIG_PATH = '.claude/.ck.json';
-const GLOBAL_CONFIG_PATH = path.join(os.homedir(), '.claude', '.ck.json');
+const LOCAL_CONFIG_PATH = ".claude/.ck.json";
+const GLOBAL_CONFIG_PATH = path.join(os.homedir(), ".claude", ".ck.json");
 const SESSION_STATE_LOCK_TIMEOUT_MS = 500;
 const SESSION_STATE_LOCK_RETRY_MS = 10;
 const SESSION_STATE_LOCK_STALE_MS = 5000;
@@ -21,65 +21,72 @@ const CONFIG_PATH = LOCAL_CONFIG_PATH;
 
 const DEFAULT_CONFIG = {
   plan: {
-    namingFormat: '{date}-{issue}-{slug}',
-    dateFormat: 'YYMMDD-HHmm',
+    namingFormat: "{date}-{issue}-{slug}",
+    dateFormat: "YYMMDD-HHmm",
     issuePrefix: null,
-    reportsDir: 'reports',
+    reportsDir: "reports",
     resolution: {
       // CHANGED: Removed 'mostRecent' - only explicit session state activates plans
       // Branch matching now returns 'suggested' not 'active'
-      order: ['session', 'branch'],
-      branchPattern: '(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)'
+      order: ["session", "branch"],
+      branchPattern: "(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)",
     },
     validation: {
-      mode: 'prompt',  // 'auto' | 'prompt' | 'off'
+      mode: "prompt", // 'auto' | 'prompt' | 'off'
       minQuestions: 3,
       maxQuestions: 8,
-      focusAreas: ['assumptions', 'risks', 'tradeoffs', 'architecture']
-    }
+      focusAreas: ["assumptions", "risks", "tradeoffs", "architecture"],
+    },
   },
   paths: {
-    docs: 'docs',
-    plans: 'plans'
+    docs: "docs",
+    plans: "plans",
   },
   docs: {
-    maxLoc: 800  // Maximum lines of code per doc file before warning
+    maxLoc: 800, // Maximum lines of code per doc file before warning
   },
   locale: {
-    thinkingLanguage: null,  // Language for reasoning (e.g., "en" for precision)
-    responseLanguage: null   // Language for user-facing output (e.g., "vi")
+    thinkingLanguage: null, // Language for reasoning (e.g., "en" for precision)
+    responseLanguage: null, // Language for user-facing output (e.g., "vi")
   },
   trust: {
     passphrase: null,
-    enabled: false
+    enabled: false,
   },
   project: {
-    type: 'auto',
-    packageManager: 'auto',
-    framework: 'auto'
+    type: "auto",
+    packageManager: "auto",
+    framework: "auto",
   },
   skills: {
     research: {
-      useGemini: false  // Opt-in: set true only with working Gemini CLI
-    }
+      useGemini: false, // Opt-in: set true only with working Gemini CLI
+    },
   },
   assertions: [],
-  statusline: 'full',
+  statusline: "full",
   statuslineColors: true,
   statuslineQuota: true,
   hooks: {
-    'session-init': true,
-    'subagent-init': true,
-    'dev-rules-reminder': true,
-    'usage-context-awareness': true,
-    'context-tracking': true,
-    'scout-block': true,
-    'privacy-block': true,
-    'post-edit-simplify-reminder': true,
-    'task-completed-handler': true,
-    'teammate-idle-handler': true,
-    'session-state': true
-  }
+    "session-init": true,
+    "subagent-init": true,
+    "dev-rules-reminder": true,
+    "usage-context-awareness": true,
+    "context-tracking": true,
+    "scout-block": true,
+    "privacy-block": true,
+    "simplify-gate": true,
+    "task-completed-handler": true,
+    "teammate-idle-handler": true,
+    "session-state": true,
+    "workflow-artifact-gate": false,
+  },
+  workflowArtifactGate: {
+    enabled: true,
+    softStages: ["finalize", "commit"],
+    hardStages: ["ship", "push", "pr", "deploy"],
+    highRiskAutoStop: true,
+  },
 };
 
 /**
@@ -95,8 +102,8 @@ const DEFAULT_CONFIG = {
  * @returns {Object} Merged object
  */
 function deepMerge(target, source) {
-  if (!source || typeof source !== 'object') return target;
-  if (!target || typeof target !== 'object') return source;
+  if (!source || typeof source !== "object") return target;
+  if (!target || typeof target !== "object") return source;
 
   const result = { ...target };
   for (const key of Object.keys(source)) {
@@ -109,7 +116,7 @@ function deepMerge(target, source) {
     }
     // Objects: recurse (but not null)
     // SKIP empty objects - treat {} as "inherit from parent"
-    else if (sourceVal !== null && typeof sourceVal === 'object' && !Array.isArray(sourceVal)) {
+    else if (sourceVal !== null && typeof sourceVal === "object" && !Array.isArray(sourceVal)) {
       // Empty object = inherit (don't override parent values)
       if (Object.keys(sourceVal).length === 0) {
         // Keep target value unchanged - empty source means "no override"
@@ -133,7 +140,7 @@ function deepMerge(target, source) {
 function loadConfigFromPath(configPath) {
   try {
     if (!fs.existsSync(configPath)) return null;
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return JSON.parse(fs.readFileSync(configPath, "utf8"));
   } catch (e) {
     return null;
   }
@@ -158,7 +165,7 @@ function readSessionState(sessionId) {
   const tempPath = getSessionTempPath(sessionId);
   try {
     if (!fs.existsSync(tempPath)) return null;
-    return JSON.parse(fs.readFileSync(tempPath, 'utf8'));
+    return JSON.parse(fs.readFileSync(tempPath, "utf8"));
   } catch (e) {
     return null;
   }
@@ -173,13 +180,17 @@ function readSessionState(sessionId) {
 function writeSessionState(sessionId, state) {
   if (!sessionId) return false;
   const tempPath = getSessionTempPath(sessionId);
-  const tmpFile = tempPath + '.' + Math.random().toString(36).slice(2);
+  const tmpFile = tempPath + "." + Math.random().toString(36).slice(2);
   try {
     fs.writeFileSync(tmpFile, JSON.stringify(state, null, 2));
     fs.renameSync(tmpFile, tempPath);
     return true;
   } catch (e) {
-    try { fs.unlinkSync(tmpFile); } catch (_) { /* ignore */ }
+    try {
+      fs.unlinkSync(tmpFile);
+    } catch (_) {
+      /* ignore */
+    }
     return false;
   }
 }
@@ -187,7 +198,7 @@ function writeSessionState(sessionId, state) {
 function sleepSync(ms) {
   if (ms <= 0) return;
 
-  if (typeof SharedArrayBuffer === 'function' && typeof Atomics === 'object' && typeof Atomics.wait === 'function') {
+  if (typeof SharedArrayBuffer === "function" && typeof Atomics === "object" && typeof Atomics.wait === "function") {
     const signal = new Int32Array(new SharedArrayBuffer(4));
     Atomics.wait(signal, 0, 0, ms);
     return;
@@ -220,11 +231,11 @@ function acquireSessionStateLock(sessionId) {
 
   while (Date.now() <= deadline) {
     try {
-      const fd = fs.openSync(lockPath, 'wx');
+      const fd = fs.openSync(lockPath, "wx");
       fs.writeFileSync(fd, String(process.pid));
       return { fd, lockPath };
     } catch (error) {
-      if (error?.code !== 'EEXIST') return null;
+      if (error?.code !== "EEXIST") return null;
       removeStaleSessionStateLock(lockPath);
       sleepSync(SESSION_STATE_LOCK_RETRY_MS);
     }
@@ -235,8 +246,16 @@ function acquireSessionStateLock(sessionId) {
 
 function releaseSessionStateLock(lock) {
   if (!lock) return;
-  try { fs.closeSync(lock.fd); } catch (_) { /* ignore */ }
-  try { fs.unlinkSync(lock.lockPath); } catch (_) { /* ignore */ }
+  try {
+    fs.closeSync(lock.fd);
+  } catch (_) {
+    /* ignore */
+  }
+  try {
+    fs.unlinkSync(lock.lockPath);
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 /**
@@ -252,11 +271,9 @@ function updateSessionState(sessionId, updater) {
 
   try {
     const current = readSessionState(sessionId) || {};
-    const next = typeof updater === 'function'
-      ? updater({ ...current })
-      : { ...current, ...(updater || {}) };
+    const next = typeof updater === "function" ? updater({ ...current }) : { ...current, ...(updater || {}) };
 
-    if (!next || typeof next !== 'object') return false;
+    if (!next || typeof next !== "object") return false;
     return writeSessionState(sessionId, next);
   } finally {
     releaseSessionStateLock(lock);
@@ -283,17 +300,17 @@ const INVALID_FILENAME_CHARS = /[<>:"/\\|?*\x00-\x1f\x7f]/g;
  * @returns {string} Sanitized slug (empty string if nothing valid remains)
  */
 function sanitizeSlug(slug) {
-  if (!slug || typeof slug !== 'string') return '';
+  if (!slug || typeof slug !== "string") return "";
 
   let sanitized = slug
     // Remove invalid filename chars first
-    .replace(INVALID_FILENAME_CHARS, '')
+    .replace(INVALID_FILENAME_CHARS, "")
     // Replace any non-alphanumeric (except hyphen) with hyphen
-    .replace(/[^a-z0-9-]/gi, '-')
+    .replace(/[^a-z0-9-]/gi, "-")
     // Collapse multiple consecutive hyphens
-    .replace(/-+/g, '-')
+    .replace(/-+/g, "-")
     // Remove leading/trailing hyphens
-    .replace(/^-+|-+$/g, '')
+    .replace(/^-+|-+$/g, "")
     // Limit length (most filesystems support 255, but keep reasonable)
     .slice(0, 100);
 
@@ -325,8 +342,8 @@ function findMostRecentPlan(plansDir) {
     if (!fs.existsSync(plansDir)) return null;
     const entries = fs.readdirSync(plansDir, { withFileTypes: true });
     const planDirs = entries
-      .filter(e => e.isDirectory() && /^\d{6}/.test(e.name))
-      .map(e => e.name)
+      .filter((e) => e.isDirectory() && /^\d{6}/.test(e.name))
+      .map((e) => e.name)
       .sort()
       .reverse();
     return planDirs.length > 0 ? path.join(plansDir, planDirs[0]) : null;
@@ -352,9 +369,9 @@ const DEFAULT_EXEC_TIMEOUT_MS = 5000;
  */
 function execSafe(cmd, options = {}) {
   const allowedCommands = {
-    'git branch --show-current': ['git', ['branch', '--show-current']],
-    'git rev-parse --abbrev-ref HEAD': ['git', ['rev-parse', '--abbrev-ref', 'HEAD']],
-    'git rev-parse --show-toplevel': ['git', ['rev-parse', '--show-toplevel']]
+    "git branch --show-current": ["git", ["branch", "--show-current"]],
+    "git rev-parse --abbrev-ref HEAD": ["git", ["rev-parse", "--abbrev-ref", "HEAD"]],
+    "git rev-parse --show-toplevel": ["git", ["rev-parse", "--show-toplevel"]],
   };
   const commandSpec = allowedCommands[cmd];
   if (!commandSpec) {
@@ -366,11 +383,11 @@ function execSafe(cmd, options = {}) {
 
   try {
     return execFileSync(file, args, {
-      encoding: 'utf8',
+      encoding: "utf8",
       timeout,
       cwd,
-      stdio: ['pipe', 'pipe', 'pipe'],
-      windowsHide: true
+      stdio: ["pipe", "pipe", "pipe"],
+      windowsHide: true,
     }).trim();
   } catch (e) {
     return null;
@@ -390,14 +407,14 @@ function execSafe(cmd, options = {}) {
  * @returns {{ path: string|null, resolvedBy: 'session'|'branch'|null }} Resolution result with tracking
  */
 function resolvePlanPath(sessionId, config) {
-  const plansDir = config?.paths?.plans || 'plans';
+  const plansDir = config?.paths?.plans || "plans";
   const resolution = config?.plan?.resolution || {};
-  const order = resolution.order || ['session', 'branch'];
+  const order = resolution.order || ["session", "branch"];
   const branchPattern = resolution.branchPattern;
 
   for (const method of order) {
     switch (method) {
-      case 'session': {
+      case "session": {
         const state = readSessionState(sessionId);
         if (state?.activePlan) {
           // Issue #335: Handle both absolute and relative paths
@@ -408,21 +425,22 @@ function resolvePlanPath(sessionId, config) {
             // Resolve relative path using session origin directory
             resolvedPath = path.join(state.sessionOrigin, resolvedPath);
           }
-          return { path: resolvedPath, resolvedBy: 'session' };
+          return { path: resolvedPath, resolvedBy: "session" };
         }
         break;
       }
-      case 'branch': {
+      case "branch": {
         try {
-          const branch = execSafe('git branch --show-current');
+          const branch = execSafe("git branch --show-current");
           const slug = extractSlugFromBranch(branch, branchPattern);
           if (slug && fs.existsSync(plansDir)) {
-            const entries = fs.readdirSync(plansDir, { withFileTypes: true })
-              .filter(e => e.isDirectory() && e.name.includes(slug));
+            const entries = fs
+              .readdirSync(plansDir, { withFileTypes: true })
+              .filter((e) => e.isDirectory() && e.name.includes(slug));
             if (entries.length > 0) {
               return {
                 path: path.join(plansDir, entries[entries.length - 1].name),
-                resolvedBy: 'branch'
+                resolvedBy: "branch",
               };
             }
           }
@@ -443,7 +461,7 @@ function resolvePlanPath(sessionId, config) {
  * @returns {string|null} Normalized path or null if invalid
  */
 function normalizePath(pathValue) {
-  if (!pathValue || typeof pathValue !== 'string') return null;
+  if (!pathValue || typeof pathValue !== "string") return null;
 
   // Trim whitespace
   let normalized = pathValue.trim();
@@ -452,7 +470,7 @@ function normalizePath(pathValue) {
   if (!normalized) return null;
 
   // Remove trailing slashes (but keep root "/" or "C:\")
-  normalized = normalized.replace(/[/\\]+$/, '');
+  normalized = normalized.replace(/[/\\]+$/, "");
 
   // If it became empty (was just slashes), return null
   if (!normalized) return null;
@@ -522,12 +540,12 @@ function sanitizeConfig(config, projectRoot) {
     // Merge resolution defaults
     result.plan.resolution = {
       ...DEFAULT_CONFIG.plan.resolution,
-      ...result.plan.resolution
+      ...result.plan.resolution,
     };
     // Merge validation defaults
     result.plan.validation = {
       ...DEFAULT_CONFIG.plan.validation,
-      ...result.plan.validation
+      ...result.plan.validation,
     };
   }
 
@@ -584,7 +602,7 @@ function loadConfig(options = {}) {
     const result = {
       plan: merged.plan || DEFAULT_CONFIG.plan,
       paths: merged.paths || DEFAULT_CONFIG.paths,
-      docs: merged.docs || DEFAULT_CONFIG.docs
+      docs: merged.docs || DEFAULT_CONFIG.docs,
     };
 
     if (includeLocale) {
@@ -606,8 +624,10 @@ function loadConfig(options = {}) {
     result.skills = merged.skills || DEFAULT_CONFIG.skills;
     // Hooks configuration
     result.hooks = merged.hooks || DEFAULT_CONFIG.hooks;
+    // Workflow artifact review gate configuration
+    result.workflowArtifactGate = merged.workflowArtifactGate || DEFAULT_CONFIG.workflowArtifactGate;
     // Statusline mode
-    result.statusline = merged.statusline || 'full';
+    result.statusline = merged.statusline || "full";
     result.statuslineColors = merged.statuslineColors ?? true;
     result.statuslineQuota = merged.statuslineQuota ?? true;
     result.statuslineLayout = merged.statuslineLayout || undefined;
@@ -626,12 +646,13 @@ function getDefaultConfig(includeProject = true, includeAssertions = true, inclu
     plan: { ...DEFAULT_CONFIG.plan },
     paths: { ...DEFAULT_CONFIG.paths },
     docs: { ...DEFAULT_CONFIG.docs },
-    codingLevel: -1,  // Default: disabled (no injection, saves tokens)
+    codingLevel: -1, // Default: disabled (no injection, saves tokens)
     skills: { ...DEFAULT_CONFIG.skills },
     hooks: { ...DEFAULT_CONFIG.hooks },
-    statusline: 'full',
+    workflowArtifactGate: { ...DEFAULT_CONFIG.workflowArtifactGate },
+    statusline: "full",
     statuslineColors: true,
-    statuslineQuota: true
+    statuslineQuota: true,
   };
   if (includeLocale) {
     result.locale = { ...DEFAULT_CONFIG.locale };
@@ -650,12 +671,12 @@ function getDefaultConfig(includeProject = true, includeAssertions = true, inclu
  * Handles: backslash, double quote, dollar sign, backtick
  */
 function escapeShellValue(str) {
-  if (typeof str !== 'string') return str;
+  if (typeof str !== "string") return str;
   return str
-    .replace(/\\/g, '\\\\')   // Backslash first
-    .replace(/"/g, '\\"')     // Double quotes
-    .replace(/\$/g, '\\$')    // Dollar sign
-    .replace(/`/g, '\\`');    // Backticks (command substitution)
+    .replace(/\\/g, "\\\\") // Backslash first
+    .replace(/"/g, '\\"') // Double quotes
+    .replace(/\$/g, "\\$") // Dollar sign
+    .replace(/`/g, "\\`"); // Backticks (command substitution)
 }
 
 /**
@@ -681,13 +702,13 @@ function writeEnv(envFile, key, value) {
  * @returns {string} Reports path (absolute if baseDir provided, relative otherwise)
  */
 function getReportsPath(planPath, resolvedBy, planConfig, pathsConfig, baseDir = null) {
-  const reportsDir = normalizePath(planConfig?.reportsDir) || 'reports';
-  const plansDir = normalizePath(pathsConfig?.plans) || 'plans';
+  const reportsDir = normalizePath(planConfig?.reportsDir) || "reports";
+  const plansDir = normalizePath(pathsConfig?.plans) || "plans";
 
   let reportPath;
   // Only use plan-specific reports path if explicitly active (session state)
   // Issue #327: Validate normalized path to prevent whitespace-only paths creating invalid directories
-  const normalizedPlanPath = planPath && resolvedBy === 'session' ? normalizePath(planPath) : null;
+  const normalizedPlanPath = planPath && resolvedBy === "session" ? normalizePath(planPath) : null;
   if (normalizedPlanPath) {
     reportPath = `${normalizedPlanPath}/${reportsDir}`;
   } else {
@@ -701,7 +722,7 @@ function getReportsPath(planPath, resolvedBy, planConfig, pathsConfig, baseDir =
   if (baseDir) {
     return path.isAbsolute(reportPath) ? reportPath : path.join(baseDir, reportPath);
   }
-  return reportPath + '/';
+  return reportPath + "/";
 }
 
 /**
@@ -717,11 +738,7 @@ function formatIssueId(issueId, planConfig) {
  */
 function extractIssueFromBranch(branch) {
   if (!branch) return null;
-  const patterns = [
-    /(?:issue|gh|fix|feat|bug)[/-]?(\d+)/i,
-    /[/-](\d+)[/-]/,
-    /#(\d+)/
-  ];
+  const patterns = [/(?:issue|gh|fix|feat|bug)[/-]?(\d+)/i, /[/-](\d+)[/-]/, /#(\d+)/];
   for (const pattern of patterns) {
     const match = branch.match(pattern);
     if (match) return match[1];
@@ -737,16 +754,16 @@ function extractIssueFromBranch(branch) {
  */
 function formatDate(format) {
   const now = new Date();
-  const pad = (n, len = 2) => String(n).padStart(len, '0');
+  const pad = (n, len = 2) => String(n).padStart(len, "0");
 
   const tokens = {
-    'YYYY': now.getFullYear(),
-    'YY': String(now.getFullYear()).slice(-2),
-    'MM': pad(now.getMonth() + 1),
-    'DD': pad(now.getDate()),
-    'HH': pad(now.getHours()),
-    'mm': pad(now.getMinutes()),
-    'ss': pad(now.getSeconds())
+    YYYY: now.getFullYear(),
+    YY: String(now.getFullYear()).slice(-2),
+    MM: pad(now.getMonth() + 1),
+    DD: pad(now.getDate()),
+    HH: pad(now.getHours()),
+    mm: pad(now.getMinutes()),
+    ss: pad(now.getSeconds()),
   };
 
   let result = format;
@@ -764,14 +781,17 @@ function formatDate(format) {
  * @returns {{ valid: boolean, error?: string }} Validation result
  */
 function validateNamingPattern(pattern) {
-  if (!pattern || typeof pattern !== 'string') {
-    return { valid: false, error: 'Pattern is empty or not a string' };
+  if (!pattern || typeof pattern !== "string") {
+    return { valid: false, error: "Pattern is empty or not a string" };
   }
 
   // After removing {slug} placeholder, should still have content
-  const withoutSlug = pattern.replace(/\{slug\}/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  const withoutSlug = pattern
+    .replace(/\{slug\}/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
   if (!withoutSlug) {
-    return { valid: false, error: 'Pattern resolves to empty after removing {slug}' };
+    return { valid: false, error: "Pattern resolves to empty after removing {slug}" };
   }
 
   // Check for remaining unresolved placeholders (besides {slug})
@@ -781,8 +801,8 @@ function validateNamingPattern(pattern) {
   }
 
   // Pattern must contain {slug} for agents to substitute
-  if (!pattern.includes('{slug}')) {
-    return { valid: false, error: 'Pattern must contain {slug} placeholder' };
+  if (!pattern.includes("{slug}")) {
+    return { valid: false, error: "Pattern must contain {slug} placeholder" };
   }
 
   return { valid: true };
@@ -810,24 +830,24 @@ function resolveNamingPattern(planConfig, gitBranch) {
 
   // Build pattern by substituting {date} and {issue}, keep {slug}
   let pattern = namingFormat;
-  pattern = pattern.replace('{date}', formattedDate);
+  pattern = pattern.replace("{date}", formattedDate);
 
   if (fullIssue) {
-    pattern = pattern.replace('{issue}', fullIssue);
+    pattern = pattern.replace("{issue}", fullIssue);
   } else {
     // Remove {issue} and any trailing/leading dash
-    pattern = pattern.replace(/-?\{issue\}-?/, '-').replace(/--+/g, '-');
+    pattern = pattern.replace(/-?\{issue\}-?/, "-").replace(/--+/g, "-");
   }
 
   // Clean up the result:
   // - Remove leading/trailing hyphens
   // - Collapse multiple hyphens (except around {slug})
   pattern = pattern
-    .replace(/^-+/, '')           // Remove leading hyphens
-    .replace(/-+$/, '')           // Remove trailing hyphens
-    .replace(/-+(\{slug\})/g, '-$1')  // Single hyphen before {slug}
-    .replace(/(\{slug\})-+/g, '$1-')  // Single hyphen after {slug}
-    .replace(/--+/g, '-');        // Collapse other multiple hyphens
+    .replace(/^-+/, "") // Remove leading hyphens
+    .replace(/-+$/, "") // Remove trailing hyphens
+    .replace(/-+(\{slug\})/g, "-$1") // Single hyphen before {slug}
+    .replace(/(\{slug\})-+/g, "$1-") // Single hyphen after {slug}
+    .replace(/--+/g, "-"); // Collapse other multiple hyphens
 
   // Validate the resulting pattern
   const validation = validateNamingPattern(pattern);
@@ -847,7 +867,7 @@ function resolveNamingPattern(planConfig, gitBranch) {
  * @returns {string|null} Current branch name or null
  */
 function getGitBranch(cwd = null) {
-  return execSafe('git branch --show-current', { cwd: cwd || undefined });
+  return execSafe("git branch --show-current", { cwd: cwd || undefined });
 }
 
 /**
@@ -856,7 +876,7 @@ function getGitBranch(cwd = null) {
  * @returns {string|null} Git root absolute path or null if not in git repo
  */
 function getGitRoot(cwd = null) {
-  return execSafe('git rev-parse --show-toplevel', { cwd: cwd || undefined });
+  return execSafe("git rev-parse --show-toplevel", { cwd: cwd || undefined });
 }
 
 /**
@@ -869,7 +889,7 @@ function getGitRoot(cwd = null) {
  * @returns {string|null} Task list ID (plan directory name) or null
  */
 function extractTaskListId(resolved) {
-  if (!resolved || resolved.resolvedBy !== 'session' || !resolved.path) {
+  if (!resolved || resolved.resolvedBy !== "session" || !resolved.path) {
     return null;
   }
   return path.basename(resolved.path);
@@ -921,6 +941,5 @@ module.exports = {
   getGitBranch,
   getGitRoot,
   extractTaskListId,
-  isHookEnabled
+  isHookEnabled,
 };
-

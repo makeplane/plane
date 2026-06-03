@@ -1,9 +1,5 @@
 # =============================================================================
-# CI/CD Pipeline — Plane SHB
-#
-# Supports two environments via IS_AIRGAPPED variable:
-#   IS_AIRGAPPED=false (default): gitlab.com + self-hosted runner (Docker Executor, internet)
-#   IS_AIRGAPPED=true           : internal GitLab + Shell Executor (air-gapped, no internet)
+# CI/CD Pipeline — Plane SHB (gitlab.com / Docker Executor)
 #
 # Stages: lint → test → build → deploy → release
 # CI/CD targets only 3 dynamic services: web, admin, api
@@ -22,17 +18,12 @@ variables:
   NODE_OPTIONS: "--max-old-space-size=4096"
   # Docker image tag — short commit SHA (e.g. "a1b2c3d")
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  # Target servers — defined as CI/CD variables in GitLab (Settings → CI/CD → Variables)
-  #   TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST → UAT  (10.94.232.123)
-  #   PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD → Prod (10.94.125.86)
-  # Deploy directory — must match on ALL servers (test, prod, external VPS)
+  # Deploy directory — must match on ALL servers (dev, prod, external VPS)
   PLANE_DIR: "/opt/shb-deploy/plane-app"
-  # Toggle: "true"  = Shell Executor, local Docker daemon (Mac runner, air-gapped internal)
-  #         "false" = Docker Executor + DinD (gitlab.com shared runners)
-  # Override to "false" in GitLab Settings → CI/CD → Variables when running on gitlab.com
-  IS_AIRGAPPED: "true"
   # Full git history required for turbo --affected to detect changed packages
   GIT_DEPTH: 0
+  # Package registry name for release packages
+  PACKAGE_NAME: "plane-shb-release"
 
 # ─── Cache Templates ──────────────────────────────────────────────────────────
 
@@ -55,8 +46,7 @@ variables:
   cache:
     <<: *pnpm_cache
   before_script:
-    - command -v git || (command -v apk && apk add --no-cache git)
-    - if [ "$(uname)" = "Darwin" ]; then export PATH="/opt/homebrew/bin:$PATH"; fi
+    - command -v git || apk add --no-cache git
     - command -v pnpm || corepack enable pnpm
     - pnpm config set store-dir $PNPM_STORE_PATH
     - pnpm install --prefer-frozen-lockfile --offline
@@ -145,9 +135,8 @@ backend:lint:
 # STAGE 2: TEST
 # =============================================================================
 
-# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
 # Uses GitLab CI `services:` for ephemeral postgres + valkey containers
-backend:test:docker:
+backend:test:
   stage: test
   image: python:3.12-slim
   interruptible: true
@@ -172,97 +161,31 @@ backend:test:docker:
     - pip install -r requirements/test.txt
     - python run_tests.py --unit --verbose
   rules:
-    - if: >-
-        $CI_PIPELINE_SOURCE == "merge_request_event" &&
-        $IS_AIRGAPPED == "false"
-      changes:
-        - apps/api/**/*
-
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-# Connects to PostgreSQL + Valkey installed locally on the Runner machine
-# Runner prerequisite: psql client accessible, plane_user role created
-backend:test:shell:
-  stage: test
-  interruptible: true
-  variables:
-    POSTGRES_DB: plane_test
-    POSTGRES_USER: plane_user
-    POSTGRES_PASSWORD: plane_password
-    DATABASE_URL: "postgres://plane_user:plane_password@localhost:5432/plane_test"
-    REDIS_URL: "redis://localhost:6379/0"
-    PIP_CACHE_DIR: .pip-cache
-  cache:
-    <<: *pip_cache
-  script:
-    # Recreate test database (ignore error if it already exists)
-    - psql -U plane_user -h localhost -c "DROP DATABASE IF EXISTS plane_test;" 2>/dev/null || true
-    - psql -U plane_user -h localhost -c "CREATE DATABASE plane_test;" 2>/dev/null || true
-    - cd apps/api
-    - pip install -r requirements/test.txt
-    - python run_tests.py --unit --verbose
-  rules:
-    - if: >-
-        $CI_PIPELINE_SOURCE == "merge_request_event" &&
-        $IS_AIRGAPPED == "true"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - apps/api/**/*
 
 # =============================================================================
 # STAGE 3: BUILD (3 dynamic images only: web, admin, api)
-# Images exported as tar.gz because servers cannot pull from any registry
-#
-# Two variants per service (mirrors test job pattern):
-#   :docker — Docker executor + DinD (gitlab.com, IS_AIRGAPPED=false)
-#   :shell  — Shell executor, docker runs on host (air-gapped, IS_AIRGAPPED=true)
+# Images exported as tar.gz for offline transfer to internal servers.
 # =============================================================================
 
-# ─── Build Template (Shell Executor — macOS / Linux / Windows/Git Bash) ──────
-# Runner prerequisite (Windows): install Git for Windows, configure runner shell = "bash"
-
-.build_shell_base:
-  stage: build
-  variables:
-    DOCKER_TLS_CERTDIR: ""
-  before_script:
-    # Detect Docker socket: unix socket on macOS/Linux, named pipe on Windows (Git Bash)
-    - |
-      case "$(uname -s)" in
-        Darwin|Linux) export DOCKER_HOST="unix:///var/run/docker.sock" ;;
-        *)            export DOCKER_HOST="npipe:////./pipe/docker_engine" ;;
-      esac
-    # On macOS: auto-start Docker Desktop if daemon is not running
-    - |
-      if [ "$(uname -s)" = "Darwin" ] && ! docker info >/dev/null 2>&1; then
-        echo "Docker daemon not running — starting Docker Desktop..."
-        open -a Docker
-        for i in $(seq 1 30); do
-          sleep 3
-          docker info >/dev/null 2>&1 && echo "Docker ready." && break
-          echo "  waiting... ($((i * 3))s elapsed)"
-        done
-        docker info >/dev/null 2>&1 || { echo "ERROR: Docker Desktop failed to start after 90s"; exit 1; }
-      fi
-
-# ─── Build Template (Docker Executor + DinD) ──────────────────────────────────
-
-.build_docker_base:
+.build_base:
   stage: build
   image: docker:latest
   tags:
-    - docker # requires a Docker executor runner — never runs on Mac shell runner
+    - docker # requires a Docker executor runner
   services:
     - docker:dind
   variables:
-    # DinD service hostname — must match the service alias
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
 
 # ── Web ───────────────────────────────────────────────────────────────────────
 
-# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
 # Also produces .shb-version and version.env (dotenv) for the release stage
-build:web:docker:
-  extends: .build_docker_base
+build:web:
+  extends: .build_base
   script:
     # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
@@ -280,42 +203,12 @@ build:web:docker:
       dotenv: dist/version.env
     expire_in: 1 day
   rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "false"
-
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-# Docker runs on host — no DinD, use local daemon via unix socket
-# Also produces .shb-version and version.env (dotenv) for the release stage
-build:web:shell:
-  extends: .build_shell_base
-  script:
-    # Extract version from package.json — used as Docker tag + tar.gz filename
-    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
-    - SHB_VERSION=shb_v${VERSION}
-    # --platform linux/amd64: runner is arm64 (macOS) but target servers are x86_64
-    - docker build --platform linux/amd64 -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
-    - mkdir -p dist
-    - docker save makeplane/plane-frontend:${SHB_VERSION} | gzip > dist/plane-frontend-${SHB_VERSION}.tar.gz
-    - echo $SHB_VERSION > dist/.shb-version
-    - echo SHB_VERSION=$SHB_VERSION > dist/version.env
-  artifacts:
-    paths:
-      - dist/plane-frontend-*.tar.gz
-      - dist/.shb-version
-    reports:
-      dotenv: dist/version.env
-    expire_in: 1 day
-  rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "true"
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
 
 # ── Admin ─────────────────────────────────────────────────────────────────────
 
-# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
-build:admin:docker:
-  extends: .build_docker_base
+build:admin:
+  extends: .build_base
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
@@ -327,33 +220,12 @@ build:admin:docker:
       - dist/plane-admin-*.tar.gz
     expire_in: 1 day
   rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "false"
-
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-build:admin:shell:
-  extends: .build_shell_base
-  script:
-    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
-    - SHB_VERSION=shb_v${VERSION}
-    - docker build --platform linux/amd64 -t makeplane/plane-admin:${SHB_VERSION} -f apps/admin/Dockerfile.admin .
-    - mkdir -p dist
-    - docker save makeplane/plane-admin:${SHB_VERSION} | gzip > dist/plane-admin-${SHB_VERSION}.tar.gz
-  artifacts:
-    paths:
-      - dist/plane-admin-*.tar.gz
-    expire_in: 1 day
-  rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "true"
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
 
 # ── API ───────────────────────────────────────────────────────────────────────
 
-# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
-build:api:docker:
-  extends: .build_docker_base
+build:api:
+  extends: .build_base
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
@@ -366,98 +238,23 @@ build:api:docker:
       - dist/plane-backend-*.tar.gz
     expire_in: 1 day
   rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "false"
-
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-build:api:shell:
-  extends: .build_shell_base
-  script:
-    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
-    - SHB_VERSION=shb_v${VERSION}
-    # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
-    - docker build --platform linux/amd64 -t makeplane/plane-backend:${SHB_VERSION} -f apps/api/Dockerfile.api ./apps/api
-    - mkdir -p dist
-    - docker save makeplane/plane-backend:${SHB_VERSION} | gzip > dist/plane-backend-${SHB_VERSION}.tar.gz
-  artifacts:
-    paths:
-      - dist/plane-backend-*.tar.gz
-    expire_in: 1 day
-  rules:
-    - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
-        $IS_AIRGAPPED == "true"
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
 
 # =============================================================================
-# STAGE 4: DEPLOY
-# Deploy strategy: SCP tar.gz + scripts/ci-deploy.sh to server, then SSH execute
+# STAGE 4: DEPLOY (external test only — internal deploy is manual)
 # =============================================================================
 
-# ─── Deploy Before Script Template ──────────────────────────────────────────────
-# Custom image node:22-alpine already has sshpass/rsync/openssh installed.
-# Only need to set up .ssh directory.
-.deploy_before: &deploy_before
-  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-
-# ── Deploy Test — auto on merge to develop (air-gapped internal) ──────────────
-# Auth: password-based via sshpass — variables: TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST
-deploy:test:
-  stage: deploy
-  image: node:22-alpine
-  interruptible: false
-  before_script:
-    - *deploy_before
-    # Skip deploy if TEST_SERVER is not configured (e.g. during local CI testing)
-    - '[ -n "$TEST_SERVER" ] || { echo "TEST_SERVER not set — skipping deploy"; exit 0; }'
-    - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
-  script:
-    - '[ -n "$TEST_SERVER" ] || exit 0'
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
-    - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
-    - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
-    - SHB_VERSION=$(cat dist/.shb-version)
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -f /tmp/ci-deploy.sh"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "true"
-  environment:
-    name: test
-    url: https://uat-jms.shinhan.com.vn
-
-# ── Deploy Production — manual approve on merge to preview (air-gapped internal) ──
-# Auth: password-based via sshpass — variables: PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD
-deploy:production:
-  stage: deploy
-  image: node:22-alpine
-  interruptible: false
-  before_script:
-    - *deploy_before
-    # Skip deploy if PROD_SERVER is not configured
-    - '[ -n "$PROD_SERVER" ] || { echo "PROD_SERVER not set — skipping deploy"; exit 0; }'
-    - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
-  script:
-    - '[ -n "$PROD_SERVER" ] || exit 0'
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
-    - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
-    - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
-    - SHB_VERSION=$(cat dist/.shb-version)
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -f /tmp/ci-deploy.sh"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
-      when: manual
-      allow_failure: false
-  environment:
-    name: production
-    url: http://$PROD_SERVER
-
-# ── Deploy External Test — auto on merge to develop (external gitlab.com) ─────
-# Uses a temporary VPS as deploy target to validate SSH + SCP flow end-to-end
-# Auth: password-based via sshpass (VPS_PASSWORD variable) — no SSH key needed
+# Deploys to a temporary VPS to validate SSH + SCP flow end-to-end on develop merges.
 deploy:external-test:
   stage: deploy
   interruptible: false
+  needs:
+    - job: build:web
+      artifacts: true
+    - job: build:admin
+      artifacts: true
+    - job: build:api
+      artifacts: true
   before_script:
     - apt-get update -qq && apt-get install -y -qq sshpass
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
@@ -467,31 +264,27 @@ deploy:external-test:
     - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz dist/.shb-version $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
     - sshpass -p "$VPS_PASSWORD" scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
     - SHB_VERSION=$(cat dist/.shb-version)
-    # VPS uses home-based path (no sudo); internal servers use default path
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "rm -f /tmp/ci-deploy.sh"
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "false"
+    - if: $CI_COMMIT_BRANCH == "develop"
   environment:
     name: external-test
     url: http://$VPS_HOST
 
 # =============================================================================
 # STAGE 5: RELEASE
-# Runs after deploy:production succeeds (manual gate).
-# Creates a git tag + GitLab Release using the version from package.json.
-# Requires CI variable: GITLAB_TOKEN (project/group access token, scope: api)
-# Tag format: shb_v{version} — e.g. shb_v1.2.0 (matches .shb-version file)
+# Creates a tag + release on gitlab.com after a successful preview build.
+# Internal/production deploys are performed manually using:
+#   scripts/build-shb-images.sh   — build linux/amd64 tarballs locally
+#   scripts/upload-release.sh     — push package + tag to internal GitLab
 # =============================================================================
 
-# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
-# No real production server on external path — release runs after builds succeed.
-# On internal (IS_AIRGAPPED=true), release:production:shell waits for deploy:production.
-release:production:docker:
+release:production:
   stage: release
   image: alpine:latest
   needs:
-    - job: build:web:docker
+    - job: build:web
       artifacts: true # provides $SHB_VERSION from dotenv
   variables:
     GIT_STRATEGY: none
@@ -499,53 +292,20 @@ release:production:docker:
     - apk add --no-cache curl
   script:
     - echo "Creating tag + release for ${SHB_VERSION} ..."
-    # Create annotated git tag via GitLab API
     - |
       curl --fail -s \
         --request POST \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
-    # Create GitLab Release linked to the tag
     - |
       curl --fail -s \
         --request POST \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --header "Content-Type: application/json" \
-        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
+        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Release ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
     - echo "  ✓ Released ${SHB_VERSION}"
   rules:
-    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "false"
-      when: on_success
-
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-release:production:shell:
-  stage: release
-  needs:
-    - job: deploy:production
-    - job: build:web:shell
-      artifacts: true # provides $SHB_VERSION from dotenv
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - echo "Creating tag + release for ${SHB_VERSION} ..."
-    # Create annotated git tag via GitLab API
-    - |
-      curl --fail -s \
-        --request POST \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
-        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
-    # Create GitLab Release linked to the tag
-    - |
-      curl --fail -s \
-        --request POST \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --header "Content-Type: application/json" \
-        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
-        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
-    - echo "  ✓ Released ${SHB_VERSION}"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
+    - if: $CI_COMMIT_BRANCH == "preview"
       when: on_success

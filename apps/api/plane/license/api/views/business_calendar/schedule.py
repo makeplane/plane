@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.db.models import WorkSchedule
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers.business_calendar import WorkScheduleSerializer
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
@@ -15,7 +15,7 @@ from plane.utils.exception_logger import log_exception
 class InstanceWorkScheduleEndpoint(BaseAPIView):
     """List all WorkSchedules or create a new one (instance admin only)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         schedules = WorkSchedule.objects.filter(deleted_at__isnull=True).order_by("name")
@@ -33,7 +33,7 @@ class InstanceWorkScheduleEndpoint(BaseAPIView):
 class InstanceWorkScheduleDetailEndpoint(BaseAPIView):
     """Retrieve, partially update, or delete a WorkSchedule (instance admin only)."""
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def _get_schedule(self, pk):
         try:

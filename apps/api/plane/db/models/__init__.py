@@ -17,6 +17,12 @@ from .draft import (
 )
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
+from .help_center import (
+    HelpArticle,
+    HelpArticleTranslation,
+    HelpCategory,
+    HelpCategoryTranslation,
+)
 from .importer import Importer
 from .intake import Intake, IntakeIssue
 from .integration import (
@@ -33,6 +39,7 @@ from .issue import (
     Issue,
     IssueActivity,
     IssueAssignee,
+    IssueAttachment,
     IssueBlocker,
     IssueComment,
     IssueLabel,
@@ -108,3 +115,9 @@ from .workflow import (
 from .task_category import MainTaskCategory, SubTaskCategory, DepartmentTaskCategory
 from .job_position import JobPosition, JobGrade
 from .business_calendar import WorkSchedule, Holiday, DayOverride
+
+from .project_field_permission import ProjectFieldPermission
+
+from .project_copy import ProjectCopyJob
+from .capacity_export import CapacityExportJob
+from .ho_export import HoExportJob

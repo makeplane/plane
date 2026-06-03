@@ -27,14 +27,14 @@ from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.db.models import User
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.views.base import BaseAPIView
 from plane.license.models import Instance
 from plane.utils.path_validator import get_safe_redirect_url
 
 # Staff ID pattern: exactly 8 digits
 STAFF_ID_PATTERN = re.compile(r"^\d{8}$")
-RATE_LIMIT = 5
+RATE_LIMIT = 500
 RATE_WINDOW = 300  # 5 minutes
 
 
@@ -156,7 +156,7 @@ class SwingSSOSignInEndpoint(View):
 class SwingSSOTestEndpoint(BaseAPIView):
     """Test Swing SSO config — admin only, returns JSON with timing info."""
 
-    permission_classes = [IsAuthenticated, InstanceAdminPermission]
+    permission_classes = [IsAuthenticated, InstanceAdminMenuPermission]
 
     def post(self, request):
         username = request.data.get("username", "").strip()

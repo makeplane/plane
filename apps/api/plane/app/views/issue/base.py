@@ -35,6 +35,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
 from plane.utils.workflow_checker import check_workflow_creation, check_workflow_transition
+from plane.utils.work_item_permission_checker import check_work_item_field_permission
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -61,8 +62,10 @@ from plane.db.models import (
     ProjectUserProperty,
     ModuleIssue,
     Project,
+    ProjectFieldPermission,
     ProjectMember,
     UserRecentVisit,
+    WorkspaceMember,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
@@ -198,6 +201,7 @@ class IssueListEndpoint(BaseAPIView):
                 "archived_at",
                 "deleted_at",
                 "total_logged_minutes",
+                "frequency",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -490,6 +494,7 @@ class IssueViewSet(BaseViewSet):
                     "total_logged_minutes",
                     "main_task_category_id",
                     "sub_task_category_id",
+                    "frequency",
                 )
                 .first()
             )
@@ -726,6 +731,35 @@ class IssueViewSet(BaseViewSet):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
+        # Field-permission enforcement: check if member is allowed to modify locked date fields
+        project_fp = ProjectFieldPermission.objects.filter(
+            project_id=project_id, project__workspace__slug=slug
+        ).first()
+        user_project_role = (
+            ProjectMember.objects.filter(
+                member=request.user, workspace__slug=slug, project_id=project_id, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        user_workspace_role = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        fp_error = check_work_item_field_permission(
+            user_role_project=user_project_role,
+            user_role_workspace=user_workspace_role,
+            project_field_permission=project_fp,
+            request_payload=request.data,
+            current_instance=issue,
+            action="update",
+        )
+        if fp_error is not None:
+            return fp_error
+
         # Validate: reason required when *changing* an existing target_date or completed_at
         # (not when setting for the first time)
         REASON_REQUIRED_FIELDS = {"target_date", "completed_at"}
@@ -787,9 +821,38 @@ class IssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+
+        # Field-permission enforcement: check if member is allowed to delete work items
+        project_fp = ProjectFieldPermission.objects.filter(
+            project_id=project_id, project__workspace__slug=slug
+        ).first()
+        user_project_role = (
+            ProjectMember.objects.filter(
+                member=request.user, workspace__slug=slug, project_id=project_id, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        user_workspace_role = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        fp_error = check_work_item_field_permission(
+            user_role_project=user_project_role,
+            user_role_workspace=user_workspace_role,
+            project_field_permission=project_fp,
+            request_payload={},
+            current_instance=issue,
+            action="delete",
+        )
+        if fp_error is not None:
+            return fp_error
 
         issue.delete()
         # delete the issue from recent visits
@@ -978,6 +1041,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "attachment_count",
             "sub_issues_count",
             "total_logged_minutes",
+            "frequency",
         ]
 
         if str(is_description_required).lower() == "true":

@@ -1,0 +1,33 @@
+{
+  "wallMs": 1479,
+  "url": "http://localhost:3003/",
+  "inputs": [],
+  "bodyText": "🚧 Looks like Plane didn't start up correctly!\nSome services might have failed to start. Please check your container logs to identify and resolve the issue. If you're stuck, reach out to our support team for more help.\nContact Support",
+  "logs": [
+    "[console.debug] [vite] connecting...",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.isAbsolute\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibi",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.resolve\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibilit",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapConsumer\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externali",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapGenerator\" in client code. See https://vite.dev/guide/troubleshooting.html#module-external",
+    "[console.warn] Module \"url\" has been externalized for browser compatibility. Cannot access \"url.fileURLToPath\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatib",
+    "[console.warn] Module \"url\" has been externalized for browser compatibility. Cannot access \"url.pathToFileURL\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatib",
+    "[console.warn] Module \"fs\" has been externalized for browser compatibility. Cannot access \"fs.existsSync\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility",
+    "[console.warn] Module \"fs\" has been externalized for browser compatibility. Cannot access \"fs.readFileSync\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibili",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.dirname\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibilit",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.join\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility f",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapConsumer\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externali",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapGenerator\" in client code. See https://vite.dev/guide/troubleshooting.html#module-external",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.dirname\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibilit",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.relative\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibili",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.resolve\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibilit",
+    "[console.warn] Module \"path\" has been externalized for browser compatibility. Cannot access \"path.sep\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility fo",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapConsumer\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externali",
+    "[console.warn] Module \"source-map-js\" has been externalized for browser compatibility. Cannot access \"source-map-js.SourceMapGenerator\" in client code. See https://vite.dev/guide/troubleshooting.html#module-external",
+    "[console.warn] Module \"url\" has been externalized for browser compatibility. Cannot access \"url.pathToFileURL\" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatib",
+    "[console.info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+    "[console.debug] [vite] connected.",
+    "[console.error] Access to XMLHttpRequest at 'http://localhost:8000/api/instances/' from origin 'http://localhost:3003' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the reques",
+    "[reqfail] http://localhost:8000/api/instances/ net::ERR_FAILED",
+    "[console.error] Failed to load resource: net::ERR_FAILED"
+  ]
+}

@@ -31,7 +31,7 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
   const { t } = useTranslation();
 
   // store hooks
-  const { mainCategoryIds, mainCategories, getSubCategoriesByMain, fetchCategories } = useTaskCategory();
+  const { mainCategoryIds, mainCategories, getSubCategoriesByMain, fetchCategories, hasFetched } = useTaskCategory();
   const { getTaskCategoryFieldRules } = useIssueFormValidation();
 
   const [mainQuery, setMainQuery] = useState("");
@@ -50,7 +50,19 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
   } = useFormContext<TIssue>();
 
   const categoriesExist = mainCategoryIds.length > 0;
-  if (!categoriesExist) return null;
+
+  // Still loading — don't render yet
+  if (!hasFetched) return null;
+
+  // Fetched but no active categories — show disabled placeholder so field is visible
+  if (!categoriesExist)
+    return (
+      <div className="h-7 rounded-sm">
+        <div className="flex h-7 cursor-not-allowed items-center rounded-sm border-[0.5px] border-strong px-2 text-caption-sm-regular text-placeholder">
+          {t("task_category.no_main_categories")}
+        </div>
+      </div>
+    );
 
   const selectedMainId = watch("main_task_category_id");
   const subCategories = selectedMainId ? getSubCategoriesByMain(selectedMainId) : [];

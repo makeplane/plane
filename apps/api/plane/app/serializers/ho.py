@@ -28,7 +28,6 @@ class HoIssueSerializer(serializers.Serializer):
     completed_at = serializers.DateTimeField(allow_null=True)
     cycle_name = serializers.SerializerMethodField()
     module_names = serializers.SerializerMethodField()
-    total_log_time = serializers.IntegerField()
     reference_link_count = serializers.IntegerField()
 
     def get_workspace_slug(self, obj):
@@ -52,6 +51,12 @@ class HoIssueSerializer(serializers.Serializer):
         return None
 
     def get_assignees(self, obj):
+        # When the view supplies a subtree-aggregated map, return the union of
+        # assignees from this issue + all descendants. Falls back to direct
+        # assignees so the serializer remains usable without context.
+        subtree_map = self.context.get("subtree_assignees") if self.context else None
+        if subtree_map is not None:
+            return subtree_map.get(str(obj.id), [])
         return [
             {"id": str(a.id), "display_name": a.display_name, "avatar": a.avatar or ""}
             for a in obj.assignees.all()

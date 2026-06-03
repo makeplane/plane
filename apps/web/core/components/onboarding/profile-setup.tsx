@@ -68,7 +68,7 @@ const USER_DOMAIN = [
   "Legal",
   "Finance",
   "Human Resources",
-  "Project",
+  "Team/Project",
   "Other",
 ];
 
@@ -142,7 +142,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
-        finishOnboarding();
+        void finishOnboarding();
       }
     } catch {
       setToast({
@@ -163,12 +163,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       await Promise.all([
         updateCurrentUser(userDetailsPayload),
         formData.password && handleSetPassword(formData.password),
-      ]).then(() => {
-        if (formData.password) {
-        } else {
-          setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
-        }
-      });
+      ]);
+      if (!formData.password) setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -195,7 +191,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
-        finishOnboarding();
+        void finishOnboarding();
       }
     } catch {
       setToast({
@@ -213,9 +209,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     if (profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION) await handleSubmitUserPersonalization(formData);
   };
 
-  const handleDelete = (url: string | null | undefined) => {
-    if (!url) return;
+  const handleDelete = (url: string | null | undefined): Promise<void> => {
+    if (!url) return Promise.resolve();
     setValue("avatar_url", "");
+    return Promise.resolve();
   };
 
   // derived values
@@ -245,8 +242,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   return (
     <div className="flex h-full w-full">
-      <div className="mt-6 flex w-full flex-col items-center justify-center p-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-2 w-full space-y-4 sm:w-96">
+      <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
+        <form
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+          className="w-full mx-auto mt-2 space-y-4 sm:w-96"
+        >
           {profileSetupStep !== EProfileSetupSteps.USER_PERSONALIZATION && (
             <>
               <Controller
@@ -256,7 +256,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   <UserImageUploadModal
                     isOpen={isImageUploadModalOpen}
                     onClose={() => setIsImageUploadModalOpen(false)}
-                    handleRemove={async () => handleDelete(getValues("avatar_url"))}
+                    handleRemove={() => handleDelete(getValues("avatar_url"))}
                     onSuccess={(url) => {
                       onChange(url);
                       setIsImageUploadModalOpen(false);
@@ -265,12 +265,12 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   />
                 )}
               />
-              <div className="flex items-center justify-center space-y-1">
+              <div className="space-y-1 flex items-center justify-center">
                 <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-full bg-accent-primary text-24 font-medium text-on-color uppercase">
+                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-accent-primary uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
@@ -282,18 +282,17 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <div className="relative mr-3 h-16 w-16 overflow-hidden">
                       <img
                         src={getFileURL(userAvatar ?? "")}
-                        className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                        onClick={() => setIsImageUploadModalOpen(true)}
+                        className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                         alt={user?.display_name}
                       />
                     </div>
                   )}
                 </button>
               </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="first_name"
                   >
                     First name
@@ -315,7 +314,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         name="first_name"
                         type="text"
                         value={value}
-                        autoFocus
                         onChange={onChange}
                         ref={ref}
                         hasError={Boolean(errors.first_name)}
@@ -331,7 +329,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="last_name"
                   >
                     Last name
@@ -370,7 +368,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               {!isPasswordAlreadySetup && (
                 <>
                   <div className="space-y-1">
-                    <label className="text-13 font-medium text-tertiary" htmlFor="password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="password">
                       Set a password ({t("common.optional")})
                     </label>
                     <Controller
@@ -411,7 +409,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
                       {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                     </label>
                     <Controller
@@ -463,7 +461,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -475,12 +473,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     required: "This field is required",
                   }}
                   render={({ field: { value, onChange } }) => (
-                    <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">
+                    <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
                       {USER_ROLE.map((userRole) => (
-                        <div
+                        <button
+                          type="button"
                           key={userRole}
                           className={cn(
-                            "shrink-0 rounded border-[0.5px] px-3 py-1.5 text-13 font-medium hover:cursor-pointer hover:bg-surface-2",
+                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
                             {
                               "border-accent-strong": value === userRole,
                               "border-strong": value !== userRole,
@@ -489,7 +488,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
-                        </div>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -498,7 +497,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one or more.
@@ -511,11 +510,12 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     validate: (value) => (value && value.length > 0) || "Please select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
-                    <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">
+                    <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
                       {USER_DOMAIN.map((userDomain) => {
                         const isSelected = value?.includes(userDomain) || false;
                         return (
-                          <div
+                          <button
+                            type="button"
                             key={userDomain}
                             className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
                               isSelected ? "border-accent-strong" : "border-strong"
@@ -530,7 +530,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             }}
                           >
                             {userDomain}
-                          </div>
+                          </button>
                         );
                       })}
                     </div>

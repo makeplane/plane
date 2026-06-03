@@ -136,6 +136,10 @@ export function PageToolbar(props: Props) {
         placement="bottom-start"
         closeOnSelect
         maxHeight="lg"
+        // Portal the menu to body so its `position: fixed` panel escapes the toolbar's
+        // stacking context. Without this the panel renders behind the editor content in
+        // production builds (stacking depends on CSS cascade order, which differs from dev).
+        portalElement={typeof document !== "undefined" ? document.body : undefined}
         menuButtonOnClick={() => setIsTypographyMenuOpen((prev) => !prev)}
         onMenuClose={() => setIsTypographyMenuOpen(false)}
       >

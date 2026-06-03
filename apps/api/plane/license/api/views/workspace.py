@@ -10,14 +10,18 @@ from django.db.models import OuterRef, Func, F
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.db.models import Workspace, WorkspaceMember, Project
 from plane.license.api.serializers import WorkspaceSerializer
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.workspace_owner_resolver import (
+    WorkspaceOwnerResolutionError,
+    resolve_workspace_owner,
+)
 
 
 class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         slug = request.GET.get("slug", False)
@@ -28,14 +32,14 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
-        return Response({"status": not workspace}, status=status.HTTP_200_OK)
+        is_taken = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
+        return Response({"slug": slug, "is_available": not is_taken}, status=status.HTTP_200_OK)
 
 
 class InstanceWorkSpaceEndpoint(BaseAPIView):
     model = Workspace
     serializer_class = WorkspaceSerializer
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         project_count = (
@@ -87,12 +91,19 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Owner = explicit choice > General Director. The acting
+            # instance admin is never an implicit owner or member.
+            try:
+                owner = resolve_workspace_owner(owner_id=request.data.get("owner_id"))
+            except WorkspaceOwnerResolutionError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
             if serializer.is_valid(raise_exception=True):
-                serializer.save(owner=request.user)
-                # Create Workspace member
+                serializer.save(owner=owner)
+                # Seed the owner as the sole workspace admin member
                 _ = WorkspaceMember.objects.create(
                     workspace_id=serializer.data["id"],
-                    member=request.user,
+                    member=owner,
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
@@ -111,7 +122,7 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
 
 
 class InstanceWorkSpaceDetailEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def delete(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)

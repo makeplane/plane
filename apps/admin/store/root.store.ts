@@ -24,10 +24,16 @@ import type { IMonitoringStore } from "./monitoring.store";
 import { MonitoringStore } from "./monitoring.store";
 import type { IInstanceTaskCategoryStore } from "./instance-task-category.store";
 import { InstanceTaskCategoryStore } from "./instance-task-category.store";
+import type { IInstanceHelpCenterStore } from "./instance-help-center.store";
+import { InstanceHelpCenterStore } from "./instance-help-center.store";
 import type { IInstanceJobPositionStore } from "./instance-job-position.store";
 import { InstanceJobPositionStore } from "./instance-job-position.store";
 import type { IBusinessCalendarStore } from "./business-calendar.store";
 import { BusinessCalendarStore } from "./business-calendar.store";
+import type { IUsageMonitorStore } from "./usage-monitor.store";
+import { UsageMonitorStore } from "./usage-monitor.store";
+import type { IAdminManagementStore } from "./admin-management.store";
+import { AdminManagementStore } from "./admin-management.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -41,8 +47,11 @@ export class RootStore {
   instanceStaff: IInstanceStaffStore;
   monitoring: IMonitoringStore;
   instanceTaskCategory: IInstanceTaskCategoryStore;
+  instanceHelpCenter: IInstanceHelpCenterStore;
   instanceJobPosition: IInstanceJobPositionStore;
   businessCalendar: IBusinessCalendarStore;
+  usageMonitor: IUsageMonitorStore;
+  adminManagement: IAdminManagementStore;
 
   constructor() {
     this.theme = new ThemeStore(this);
@@ -54,8 +63,11 @@ export class RootStore {
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
     this.instanceTaskCategory = new InstanceTaskCategoryStore();
+    this.instanceHelpCenter = new InstanceHelpCenterStore();
     this.instanceJobPosition = new InstanceJobPositionStore();
     this.businessCalendar = new BusinessCalendarStore();
+    this.usageMonitor = new UsageMonitorStore(this);
+    this.adminManagement = new AdminManagementStore(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
@@ -77,7 +89,10 @@ export class RootStore {
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
     this.instanceTaskCategory = new InstanceTaskCategoryStore();
+    this.instanceHelpCenter = new InstanceHelpCenterStore();
     this.instanceJobPosition = new InstanceJobPositionStore();
     this.businessCalendar = new BusinessCalendarStore();
+    this.usageMonitor = new UsageMonitorStore(this);
+    this.adminManagement = new AdminManagementStore(this);
   }
 }

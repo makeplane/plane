@@ -71,32 +71,34 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
 
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
-      if (window && window.innerWidth < 768) {
+      if (window && window.innerWidth < 768 && profileSidebarCollapsed === false) {
         toggleProfileSidebar(true);
-      }
-      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
-        toggleProfileSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [profileSidebarCollapsed, toggleProfileSidebar]);
 
   return (
     <div
       className={cn(
-        `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar scrollbar-md fixed z-5 h-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-[width,margin] duration-300 ease-in-out md:relative shadow-raised-200`,
+        profileSidebarCollapsed ? "w-0 md:w-0 md:border-l-0" : "w-full md:w-[300px]",
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={
+        profileSidebarCollapsed && typeof window !== "undefined" && window.innerWidth < 768
+          ? { marginLeft: `${window.innerWidth}px` }
+          : {}
+      }
     >
       {userProjectsData ? (
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute top-3.5 right-3.5">
+              <div className="absolute right-3.5 top-3.5">
                 <IconButton
                   variant="secondary"
                   icon={EditIcon}
@@ -123,7 +125,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                   className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary text-on-color capitalize">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary capitalize text-on-color">
                   {userData?.first_name?.[0]}
                 </div>
               )}
@@ -140,7 +142,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               {userDetails.map((detail) => (
                 <div key={detail.i18n_label} className="flex items-center gap-4 text-13">
                   <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
-                  <div className="w-3/5 font-medium break-words">{detail.value}</div>
+                  <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}
             </div>
@@ -167,7 +169,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <Logo logo={projectDetails.logo_props} />
                             </span>
-                            <div className="truncate text-13 font-medium break-words">{projectDetails.name}</div>
+                            <div className="truncate break-words text-13 font-medium">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (

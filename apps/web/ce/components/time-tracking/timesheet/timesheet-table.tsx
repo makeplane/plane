@@ -3,19 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  *
- * Read-only timesheet grid using @tanstack/react-table.
- * Columns: [Workspace] | Issue | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Total
- * The Workspace column is shown only when showWorkspaceColumn is true (cross-workspace mode).
+ * Read-only timesheet grid. Hand-rolled table so rows can recursively expand the
+ * current user's logged sub-items (TimesheetRow). Header and body share one column
+ * order — [Workspace] | Issue | Mon..Sun | Total — to keep widths aligned.
+ * The Workspace column is shown only in cross-workspace mode.
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { FC } from "react";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
 import type { ITimesheetRow } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useWorklog } from "@/hooks/store/use-worklog";
 import { formatMinutes, getWeekDates } from "../utils/time-format";
+import type { FetchSubIssues } from "./timesheet-row";
+import { TimesheetRow } from "./timesheet-row";
 
 interface TimesheetTableProps {
   weekStart: string;
@@ -30,148 +33,82 @@ interface TimesheetTableProps {
 
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
-const columnHelper = createColumnHelper<ITimesheetRow>();
+const HEADER_LABEL = "text-12 font-medium text-tertiary uppercase tracking-wide";
 
-export const TimesheetTable: FC<TimesheetTableProps> = ({
-  weekStart,
-  rows,
-  dailyTotals,
-  grandTotal,
-  workspaceSlug,
-  showWorkspaceColumn,
-}) => {
-  const { t } = useTranslation();
-  const { setPeekIssue } = useIssueDetail();
-  const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
+export const TimesheetTable: FC<TimesheetTableProps> = observer(
+  ({ weekStart, rows, dailyTotals, grandTotal, workspaceSlug, showWorkspaceColumn }) => {
+    const { t } = useTranslation();
+    const { setPeekIssue } = useIssueDetail();
+    const worklog = useWorklog();
+    const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
 
-  const columns = useMemo(
-    () => [
-      // Workspace column — cross-workspace mode only
-      ...(showWorkspaceColumn
-        ? [
-            columnHelper.accessor("workspace_name" as keyof ITimesheetRow, {
-              header: () => (
-                <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Workspace</span>
-              ),
-              cell: (info) => (
-                <span className="text-12 text-secondary truncate max-w-[120px]">
-                  {(info.row.original as ITimesheetRow & { workspace_name?: string }).workspace_name ?? "-"}
-                </span>
-              ),
-            }),
-          ]
-        : []),
-      // Issue column — opens peek sidebar on click
-      columnHelper.accessor("issue_identifier", {
-        header: () => <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Issue</span>,
-        cell: (info) => {
-          const row = info.row.original;
-          const ws = (row as ITimesheetRow & { workspace_slug?: string }).workspace_slug ?? workspaceSlug;
-          return (
-            <button
-              className="flex items-center gap-2 min-w-[180px] group text-left"
-              onClick={() =>
-                setPeekIssue({ workspaceSlug: ws, projectId: row.project_id, issueId: row.issue_id, nestingLevel: 0 })
-              }
-            >
-              <span className="text-12 font-mono text-tertiary">{row.issue_identifier}</span>
-              <span
-                className="text-13 text-primary truncate max-w-[200px] group-hover:text-accent-primary transition-colors"
-                title={row.issue_name}
-              >
-                {row.issue_name}
-              </span>
-            </button>
-          );
-        },
-      }),
-      // Day columns — read-only display
-      ...weekDates.map((date, idx) =>
-        columnHelper.display({
-          id: date,
-          header: () => (
-            <div className="flex flex-col items-center gap-0.5">
-              <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{DAY_NAMES[idx]}</span>
-              <span className="text-12 text-secondary">{new Date(date).getDate()}</span>
-            </div>
-          ),
-          cell: (info) => {
-            const mins = info.row.original.days[date] ?? 0;
-            return (
-              <span className={cn("text-13 font-medium", mins > 0 ? "text-primary" : "text-tertiary")}>
-                {mins > 0 ? formatMinutes(mins) : "-"}
-              </span>
-            );
-          },
-        })
-      ),
-      // Total column
-      columnHelper.accessor("total_minutes", {
-        header: () => (
-          <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{t("timesheet_total")}</span>
-        ),
-        cell: (info) => (
-          <span className={cn("text-13 font-medium", info.getValue() > 0 ? "text-primary" : "text-tertiary")}>
-            {formatMinutes(info.getValue())}
-          </span>
-        ),
-      }),
-    ],
-    [weekDates, showWorkspaceColumn, workspaceSlug, setPeekIssue, t]
-  );
+    // Wrap the store action so it is invoked (not passed unbound) when handed to rows.
+    const fetchSubIssues: FetchSubIssues = useCallback(
+      (ws, projectId, parentId, ws_start) => worklog.fetchTimesheetSubIssues(ws, projectId, parentId, ws_start),
+      [worklog]
+    );
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions, this is expected
-  const table = useReactTable({
-    data: rows,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <div className="overflow-x-auto rounded-lg border border-subtle">
-      <table className="w-full text-13">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="border-b border-subtle bg-layer-1-hover">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className={cn("px-3 py-2.5", header.id !== "issue_identifier" && "text-center w-20")}
-                >
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+    return (
+      <div className="overflow-x-auto rounded-lg border border-subtle">
+        <table className="w-full text-13">
+          <thead>
+            <tr className="border-b border-subtle bg-layer-1-hover">
+              {showWorkspaceColumn && (
+                <th className="px-3 py-2.5 w-20 text-center">
+                  <span className={HEADER_LABEL}>Workspace</span>
+                </th>
+              )}
+              <th className="px-3 py-2.5 min-w-[260px] text-left">
+                <span className={HEADER_LABEL}>Issue</span>
+              </th>
+              {weekDates.map((date, idx) => (
+                <th key={date} className="px-3 py-2.5 w-20 text-center">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className={HEADER_LABEL}>{DAY_NAMES[idx]}</span>
+                    <span className="text-12 text-secondary">{new Date(date).getDate()}</span>
+                  </div>
                 </th>
               ))}
+              <th className="px-3 py-2.5 w-20 text-center">
+                <span className={HEADER_LABEL}>{t("timesheet_total")}</span>
+              </th>
             </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={cn("px-3 py-2", cell.column.id !== "issue_identifier" && "text-center")}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </thead>
+
+          <tbody>
+            {rows.map((row) => (
+              <TimesheetRow
+                key={row.issue_id}
+                row={row}
+                nestingLevel={0}
+                weekDates={weekDates}
+                weekStart={weekStart}
+                showWorkspaceColumn={showWorkspaceColumn}
+                workspaceSlug={workspaceSlug}
+                setPeekIssue={setPeekIssue}
+                fetchSubIssues={fetchSubIssues}
+                ancestorIds={new Set()}
+              />
+            ))}
+          </tbody>
+
+          {/* Footer with daily totals — top-level rows only (children are additive) */}
+          <tfoot>
+            <tr className="bg-layer-1-hover border-t border-subtle">
+              {showWorkspaceColumn && <td className="px-3 py-2" />}
+              <td className="px-3 py-2 text-12 font-medium text-tertiary uppercase tracking-wide">
+                {t("timesheet_total")}
+              </td>
+              {weekDates.map((date) => (
+                <td key={date} className="px-3 py-2 text-center text-13 font-medium text-primary">
+                  {formatMinutes(dailyTotals[date] ?? 0)}
                 </td>
               ))}
+              <td className="px-3 py-2 text-center text-13 font-bold text-primary">{formatMinutes(grandTotal)}</td>
             </tr>
-          ))}
-        </tbody>
-
-        {/* Footer with daily totals */}
-        <tfoot>
-          <tr className="bg-layer-1-hover border-t border-subtle">
-            {showWorkspaceColumn && <td className="px-3 py-2" />}
-            <td className="px-3 py-2 text-12 font-medium text-tertiary uppercase tracking-wide">
-              {t("timesheet_total")}
-            </td>
-            {weekDates.map((date) => (
-              <td key={date} className="px-3 py-2 text-center text-13 font-medium text-primary">
-                {formatMinutes(dailyTotals[date] ?? 0)}
-              </td>
-            ))}
-            <td className="px-3 py-2 text-center text-13 font-bold text-primary">{formatMinutes(grandTotal)}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  );
-};
+          </tfoot>
+        </table>
+      </div>
+    );
+  }
+);

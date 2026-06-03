@@ -23,6 +23,7 @@ from plane.app.serializers import (
 )
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Project, ProjectMember, User, WorkspaceMember, DraftIssue
+from plane.app.views.workspace.invite import _add_admin_to_all_projects
 from plane.utils.cache import invalidate_cache
 
 from .. import BaseViewSet
@@ -102,6 +103,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        old_role = workspace_member.role
+        new_role = int(request.data.get("role", old_role))
+
+        # Prevent downgrading the last workspace admin.
+        if old_role == 20 and new_role != 20:
+            admin_count = WorkspaceMember.objects.filter(
+                workspace__slug=slug, role=20, is_active=True
+            ).count()
+            if admin_count <= 1:
+                return Response(
+                    {"error": "You cannot downgrade the only admin of the workspace."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         # If a user is moved to a guest role he can't have any other role in projects
         if "role" in request.data and int(request.data.get("role")) == 5:
             ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
@@ -110,6 +125,18 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            if new_role == 20:
+                # Role upgrade to Admin via PATCH bypasses the post_save signal (created=False).
+                _add_admin_to_all_projects(
+                    workspace_member.workspace, workspace_member.member_id, request.user
+                )
+            elif old_role == 20:
+                # Admin downgrade: soft-remove from all workspace projects.
+                ProjectMember.objects.filter(
+                    workspace=workspace_member.workspace,
+                    member_id=workspace_member.member_id,
+                    deleted_at__isnull=True,
+                ).update(is_active=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

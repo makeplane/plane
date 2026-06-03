@@ -1,45 +1,108 @@
 ---
 name: ck:use-mcp
-description: "Utilize MCP server tools with intelligent discovery and execution."
+description: "Discover and execute MCP server tools. Two execution paths: Gemini CLI (LLM-driven, all tasks) or direct scripts (deterministic, specific tool/server). Use for MCP integrations, tool execution, capability discovery, persistent tool catalog."
+user-invocable: true
+when_to_use: "Invoke for MCP tool discovery or controlled tool execution."
+category: dev-tools
+keywords: [MCP, tools, execute, discovery, gemini, mcp-client]
 argument-hint: "[task]"
 metadata:
   author: claudekit
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
-# MCP Tool Execution
+# MCP Tool Discovery & Execution
 
-Execute MCP operations via **Gemini CLI** to preserve context budget.
+Two execution paths for the Model Context Protocol (MCP):
 
-## Execution Steps
+| Path               | When                                                                       | Trade-off                                               |
+| ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| **Gemini CLI**     | Default. LLM picks the right tool from natural language.                   | Non-deterministic; needs `gemini` installed.            |
+| **Direct Scripts** | Specific tool, specific server, scripted/CI workflows, Gemini unavailable. | Deterministic; you must know the tool name + arg shape. |
 
-1. **Execute task via Gemini CLI** (using stdin pipe for MCP support):
-   ```bash
-   # IMPORTANT: Use stdin piping, NOT -p flag (deprecated, skips MCP init)
-   # Read model from .claude/.ck.json: gemini.model (default: gemini-3-flash-preview)
-   echo "$ARGUMENTS. Return JSON only per GEMINI.md instructions." | gemini -y -m <gemini.model>
-   ```
+Both paths read MCP servers from `.claude/.mcp.json`. Both paths preserve main-context budget — the LLM never has to load every tool definition.
 
-2. **Fallback to mcp-manager subagent** (if Gemini CLI unavailable):
-   - Use `mcp-manager` subagent to discover and execute tools
-   - If the subagent got issues with the scripts of `ck:mcp-management` skill, use `ck:mcp-builder` skill to fix them
-   - **DO NOT** create ANY new scripts
-   - The subagent can only use MCP tools if any to achieve this task
-   - If the subagent can't find any suitable tools, just report it back to the main agent to move on to the next step
+## Path 1: Gemini CLI (primary)
+
+```bash
+# Use stdin piping for MCP tasks — historically more reliable for MCP server init.
+# Read model from .claude/.ck.json: gemini.model (default: gemini-3-flash-preview).
+echo "$ARGUMENTS. Return JSON only per GEMINI.md instructions." | gemini -y -m <gemini.model>
+```
+
+`GEMINI.md` at the project root is auto-loaded by Gemini CLI and enforces structured JSON responses:
+
+```json
+{"server":"name","tool":"name","success":true,"result":<data>,"error":null}
+```
+
+**Error detection.** Treat as failure when:
+
+- `gemini` exit code != 0
+- Output contains `GaxiosError` / `RESOURCE_EXHAUSTED` / `MODEL_CAPACITY_EXHAUSTED` / `PERMISSION_DENIED` / `UNAUTHENTICATED`
+
+On failure → fall through to Path 2.
+
+**Setup.** Symlink `.claude/.mcp.json` into Gemini's settings location:
+
+```bash
+mkdir -p .gemini && ln -sf .claude/.mcp.json .gemini/settings.json
+```
+
+See [`references/gemini-cli-integration.md`](references/gemini-cli-integration.md) for the full integration guide and error-marker reference.
+
+## Path 2: Direct Scripts (fallback / scripted workflows)
+
+The `scripts/` directory ships a self-contained MCP client built on `@modelcontextprotocol/sdk`. Use it when Gemini is unavailable, or when you need deterministic invocation of a specific tool with specific args (CI scripts, debugging, reproducible runs).
+
+```bash
+cd .claude/skills/use-mcp/scripts && npm install      # one-time
+npx tsx cli.ts list-tools                             # snapshot all tools → assets/tools.json
+npx tsx cli.ts list-prompts
+npx tsx cli.ts list-resources
+npx tsx cli.ts call-tool <server> <tool> '<json-args>'
+```
+
+`list-tools` persists the catalog to [`assets/tools.json`](assets/tools.json) with full schemas — useful for offline browsing, version-controlled tool inventories, and LLM-driven selection without a live MCP connection.
+
+**Module layout:**
+
+| File                    | Role                                                                                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/mcp-client.ts` | `MCPClientManager` class — config loader, multi-server stdio connector, list/call wrappers, lifecycle cleanup                                     |
+| `scripts/cli.ts`        | CLI entry: `list-tools`, `list-prompts`, `list-resources`, `call-tool`, plus signal handlers and global timeout (`MCP_TIMEOUT` env, default 120s) |
+| `scripts/package.json`  | Pinned `@modelcontextprotocol/sdk`, `tsx`, `typescript`                                                                                           |
+| `scripts/smoke-test.sh` | End-to-end smoke test (no server required) — `bash claude/skills/use-mcp/scripts/smoke-test.sh`                                                   |
+| `assets/tools.json`     | Persisted tool catalog (regenerated by `list-tools` — backed up + restored by smoke test)                                                         |
+
+## Pattern Reference
+
+| Pattern                               | Use                                                                                                                |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Gemini auto-execution**             | Default. Natural-language task → Gemini picks tool → JSON result.                                                  |
+| **Deterministic invocation**          | `cli.ts call-tool <server> <tool> '<json>'` when you know exactly what you want.                                   |
+| **LLM-driven selection from catalog** | Run `list-tools` once, then have the main LLM read `assets/tools.json` and pick. Cheaper than re-querying servers. |
+| **Multi-server orchestration**        | Each tool is tagged with its source server; the client routes calls correctly across N configured servers.         |
 
 ## Important Notes
 
-- **MUST use stdin piping** - the deprecated `-p` flag skips MCP initialization
-- Use `-y` flag to auto-approve tool execution
-- **GEMINI.md auto-loaded**: Gemini CLI automatically loads `GEMINI.md` from project root, enforcing JSON-only response format
-- **Parseable output**: Responses are structured JSON: `{"server":"name","tool":"name","success":true,"result":<data>,"error":null}`
+- **Stdin piping is mandatory for Gemini MCP tasks.** `--prompt` is fine for non-MCP tasks (research, analysis) but historically reports MCP init issues in headless mode.
+- **GEMINI.md is the response-format contract.** Don't bypass it — parseable JSON is what makes the output usable.
+- **Direct scripts are not optional infrastructure.** They are the only path when Gemini is unavailable, when MCP servers are stdio-only and not registered with Claude Code's own MCP layer, or when a task needs deterministic tool selection. Built-in `ListMcpResourcesTool` / `ReadMcpResourceTool` only see servers Claude Code itself has registered — different namespace from `.claude/.mcp.json`.
+- **`mcp-builder` is NOT a fallback for tool execution.** `mcp-builder` builds new MCP servers from templates; it does not consume existing ones. If a needed server is missing entirely, that's when `mcp-builder` applies.
 
-## Anti-Pattern (DO NOT USE)
+## Anti-Pattern for MCP Tasks
 
 ```bash
-# BROKEN - deprecated -p flag skips MCP server connections!
-gemini -y -m <gemini.model> -p "..."
+# AVOID for MCP tasks — historically reports MCP init issues in headless mode
+gemini -y -m <gemini.model> --prompt "..."
 
-# ALSO BROKEN - --model flag with -p
-gemini -y -p "..." --model gemini-3-flash-preview
+# Use stdin piping instead
+echo "..." | gemini -y -m <gemini.model>
 ```
+
+## Technical Details
+
+- [`references/configuration.md`](references/configuration.md) — `.mcp.json` schema, env file lookup order, validation
+- [`references/mcp-protocol.md`](references/mcp-protocol.md) — JSON-RPC details, transports (stdio / HTTP+SSE), error codes
+- [`references/gemini-cli-integration.md`](references/gemini-cli-integration.md) — Gemini setup, error markers, model-tier guidance

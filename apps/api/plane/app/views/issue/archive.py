@@ -8,7 +8,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import OuterRef, Q, Prefetch, Exists, Subquery, Count
+from django.db.models import OuterRef, Q, Prefetch, Exists, Subquery, Count, F, Sum
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -31,6 +31,7 @@ from plane.db.models import (
     IssueSubscriber,
     IssueReaction,
     CycleIssue,
+    IssueWorkLog,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -90,6 +91,18 @@ class IssueArchiveViewSet(BaseViewSet):
                     .annotate(count=Count("id"))
                     .values("count")
                 )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
         )

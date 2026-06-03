@@ -1,7 +1,7 @@
 node_modules
 .next
 .yarn
-.pnpm-store/
+.pnpm-store
 
 ### NextJS ###
 # Dependencies
@@ -121,3 +121,8 @@ temp/
 *.bak
 *.bak.*
 
+
+# Local release upload config (contains GitLab token — never commit)
+upload-release.env
+# Gemini CLI settings (contains user-specific config)
+.gemini/

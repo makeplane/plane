@@ -1,0 +1,251 @@
+{
+  "case": {
+    "id": "CTI-2026-001",
+    "label": "Acme Corporation Exposure Assessment",
+    "classification": "INTERNAL",
+    "analyst": "AI-Assisted CTI Analyst",
+    "date": "2026-03-30",
+    "subject": "acme-corp.com",
+    "status": "active",
+    "exposure_score": 72
+  },
+  "executive_summary": "Investigation of Acme Corporation's digital footprint revealed significant exposure across multiple attack vectors. Critical findings include exposed employee credentials in breach databases, misconfigured cloud storage buckets with sensitive data, and outdated SSL certificates on production infrastructure. The organization's overall exposure score of 72/100 indicates elevated risk requiring immediate remediation of identified vulnerabilities.",
+  "subjects": [
+    {
+      "id": "SUB-001",
+      "label": "acme-corp.com",
+      "type": "domain",
+      "confidence": 95,
+      "verified": true,
+      "aliases": ["acmecorp.com", "acme-corp.net"],
+      "first_seen": "2018-03-15",
+      "notes": "Primary corporate domain"
+    },
+    {
+      "id": "SUB-002",
+      "label": "John Smith",
+      "type": "person",
+      "confidence": 85,
+      "verified": true,
+      "aliases": ["jsmith", "john.smith.dev"],
+      "first_seen": "2019-06-20",
+      "notes": "CTO, primary technical contact"
+    },
+    {
+      "id": "SUB-003",
+      "label": "203.0.113.50",
+      "type": "ip",
+      "confidence": 90,
+      "verified": true,
+      "aliases": [],
+      "first_seen": "2020-01-10",
+      "notes": "Primary web server, AWS us-east-1"
+    },
+    {
+      "id": "SUB-004",
+      "label": "Acme Corporation",
+      "type": "organization",
+      "confidence": 95,
+      "verified": true,
+      "aliases": ["Acme Corp", "Acme Inc"],
+      "first_seen": "2017-01-01",
+      "notes": "Target organization"
+    },
+    {
+      "id": "SUB-005",
+      "label": "jane.doe@acme-corp.com",
+      "type": "email",
+      "confidence": 80,
+      "verified": false,
+      "aliases": [],
+      "first_seen": "2021-04-12",
+      "notes": "CFO email found in breach database"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FND-001",
+      "subject_id": "SUB-005",
+      "type": "credential",
+      "weight": "CRITICAL",
+      "description": "CFO email jane.doe@acme-corp.com found in 3 breach databases with plaintext password exposure dating from 2023.",
+      "source_url": "https://haveibeenpwned.com/",
+      "collected_at": "2026-03-28T10:00:00Z",
+      "confidence": 92,
+      "tags": ["breach", "credential", "executive"]
+    },
+    {
+      "id": "FND-002",
+      "subject_id": "SUB-001",
+      "type": "infrastructure",
+      "weight": "HIGH",
+      "description": "Open S3 bucket (acme-corp-backup) exposing internal documents including HR records and financial statements.",
+      "source_url": "https://grayhatwarfare.com/",
+      "collected_at": "2026-03-28T11:30:00Z",
+      "confidence": 88,
+      "tags": ["cloud", "s3", "data-exposure"]
+    },
+    {
+      "id": "FND-003",
+      "subject_id": "SUB-003",
+      "type": "infrastructure",
+      "weight": "HIGH",
+      "description": "SSL certificate on primary web server expired 45 days ago. TLS 1.0 still enabled.",
+      "source_url": "https://www.ssllabs.com/",
+      "collected_at": "2026-03-28T12:00:00Z",
+      "confidence": 95,
+      "tags": ["ssl", "tls", "certificate"]
+    },
+    {
+      "id": "FND-004",
+      "subject_id": "SUB-002",
+      "type": "identity",
+      "weight": "MEDIUM",
+      "description": "CTO John Smith's GitHub profile exposes internal project names and development stack details in public repositories.",
+      "source_url": "https://github.com/jsmith",
+      "collected_at": "2026-03-29T09:00:00Z",
+      "confidence": 85,
+      "tags": ["github", "opsec", "information-disclosure"]
+    },
+    {
+      "id": "FND-005",
+      "subject_id": "SUB-001",
+      "type": "exposure",
+      "weight": "MEDIUM",
+      "description": "Subdomain admin.acme-corp.com exposes login panel with default admin credentials attempted successfully.",
+      "source_url": "https://admin.acme-corp.com",
+      "collected_at": "2026-03-29T10:30:00Z",
+      "confidence": 78,
+      "tags": ["admin-panel", "default-creds", "subdomain"]
+    },
+    {
+      "id": "FND-006",
+      "subject_id": "SUB-004",
+      "type": "behavioral",
+      "weight": "LOW",
+      "description": "Multiple employee LinkedIn profiles mention internal project codenames and technology stack details.",
+      "source_url": "https://linkedin.com/company/acme-corp",
+      "collected_at": "2026-03-29T14:00:00Z",
+      "confidence": 70,
+      "tags": ["linkedin", "opsec", "social-media"]
+    },
+    {
+      "id": "FND-007",
+      "subject_id": "SUB-001",
+      "type": "infrastructure",
+      "weight": "CRITICAL",
+      "description": "DNS zone transfer enabled on ns1.acme-corp.com revealing complete internal subdomain structure including staging and dev environments.",
+      "source_url": "dig axfr acme-corp.com @ns1.acme-corp.com",
+      "collected_at": "2026-03-30T08:00:00Z",
+      "confidence": 98,
+      "tags": ["dns", "zone-transfer", "infrastructure"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "CON-001",
+      "from_id": "SUB-002",
+      "to_id": "SUB-004",
+      "relationship": "works_at",
+      "strength": "confirmed"
+    },
+    {
+      "id": "CON-002",
+      "from_id": "SUB-004",
+      "to_id": "SUB-001",
+      "relationship": "owns",
+      "strength": "confirmed"
+    },
+    {
+      "id": "CON-003",
+      "from_id": "SUB-001",
+      "to_id": "SUB-003",
+      "relationship": "owns",
+      "strength": "confirmed"
+    },
+    {
+      "id": "CON-004",
+      "from_id": "SUB-005",
+      "to_id": "SUB-004",
+      "relationship": "works_at",
+      "strength": "confirmed"
+    },
+    {
+      "id": "CON-005",
+      "from_id": "SUB-002",
+      "to_id": "SUB-001",
+      "relationship": "uses",
+      "strength": "confirmed"
+    }
+  ],
+  "timeline": [
+    { "date": "2018-03-15", "event": "Domain acme-corp.com registered" },
+    { "date": "2020-01-10", "event": "Primary server 203.0.113.50 first seen" },
+    { "date": "2021-04-12", "event": "CFO email appears in first breach database" },
+    { "date": "2023-09-01", "event": "S3 bucket acme-corp-backup first indexed" },
+    { "date": "2026-02-14", "event": "SSL certificate expired on primary server" },
+    { "date": "2026-03-28", "event": "Investigation initiated" },
+    { "date": "2026-03-30", "event": "DNS zone transfer vulnerability confirmed" }
+  ],
+  "sources": [
+    { "name": "Have I Been Pwned", "url": "https://haveibeenpwned.com/", "date": "2026-03-28" },
+    { "name": "GrayhatWarfare", "url": "https://grayhatwarfare.com/", "date": "2026-03-28" },
+    { "name": "SSL Labs", "url": "https://www.ssllabs.com/", "date": "2026-03-28" },
+    { "name": "GitHub", "url": "https://github.com/jsmith", "date": "2026-03-29" },
+    { "name": "Shodan", "url": "https://www.shodan.io/", "date": "2026-03-29" },
+    { "name": "crt.sh", "url": "https://crt.sh/", "date": "2026-03-30" },
+    { "name": "SecurityTrails", "url": "https://securitytrails.com/", "date": "2026-03-30" }
+  ],
+  "intelligence_gaps": [
+    "Unable to confirm whether S3 bucket data was accessed by unauthorized parties",
+    "Internal network topology beyond DNS enumeration remains unknown",
+    "Employee credential reuse across personal and corporate accounts not fully mapped",
+    "Physical security posture of office locations not assessed"
+  ],
+  "recommendations": [
+    "Immediately rotate all credentials found in breach databases, starting with executive accounts",
+    "Restrict S3 bucket permissions and audit all cloud storage configurations",
+    "Renew expired SSL certificates and disable TLS 1.0/1.1 on all servers",
+    "Disable DNS zone transfers on all authoritative nameservers",
+    "Implement security awareness training focused on OPSEC for social media",
+    "Deploy MFA across all corporate accounts and admin panels"
+  ],
+  "visitor_stats": {
+    "domain": "acme-corp.com",
+    "monthly_visits": 150000,
+    "bounce_rate": 45.2,
+    "pages_per_visit": 3.1,
+    "avg_duration_seconds": 125,
+    "traffic_sources": {
+      "direct": 42,
+      "search": 28,
+      "referral": 15,
+      "social": 10,
+      "paid": 5
+    },
+    "top_countries": [
+      { "country": "United States", "share": 38 },
+      { "country": "Vietnam", "share": 18 },
+      { "country": "United Kingdom", "share": 12 },
+      { "country": "Germany", "share": 8 },
+      { "country": "Japan", "share": 6 }
+    ],
+    "technology": {
+      "cms": ["WordPress 6.4"],
+      "analytics": ["Google Analytics 4", "Hotjar"],
+      "frameworks": ["React 18", "Next.js 14"],
+      "cdn": ["Cloudflare"],
+      "server": ["Nginx 1.24"],
+      "hosting": ["AWS (us-east-1)"],
+      "ssl": ["Let's Encrypt"],
+      "ad_networks": ["Google Ads"]
+    },
+    "confidence": "MODERATE"
+  },
+  "caveats": [
+    "This report is based exclusively on publicly available information gathered via web search and passive reconnaissance.",
+    "No active exploitation or intrusion was performed — all findings reflect external exposure only.",
+    "Correlation between accounts is inferred from shared identifiers and public associations.",
+    "Confidence ratings reflect the analyst's assessment at time of writing and may change with additional information."
+  ]
+}

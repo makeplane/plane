@@ -14,9 +14,17 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace, WorkspaceMember
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers import WorkspaceSerializer
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.general_director import (
+    AmbiguousGeneralDirector,
+    get_general_director_user,
+)
+from plane.utils.workspace_owner_resolver import (
+    WorkspaceOwnerResolutionError,
+    resolve_workspace_owner,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +58,7 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
     Skips invalid rows with reason; creates valid ones with auto-generated slug.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         workspaces_data = request.data.get("workspaces", None)
@@ -73,6 +81,28 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Fail-fast: rows without owner_email default to the GD. If the GD
+        # is unresolvable and any row relies on it, reject the whole batch
+        # with one clear error instead of N identical per-row skips.
+        rows_need_gd = any(not str(item.get("owner_email") or "").strip() for item in workspaces_data)
+        default_owner = None
+        if rows_need_gd:
+            try:
+                default_owner = get_general_director_user()
+            except AmbiguousGeneralDirector:
+                return Response(
+                    {
+                        "error": "Ambiguous General Director — multiple active staff hold "
+                        "the GD grade. Fix staff data or provide owner_email per row."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if default_owner is None:
+                return Response(
+                    {"error": "No resolvable General Director — provide owner_email for every workspace row."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         # Pre-fetch all existing slugs, normalized to lowercase for case-insensitive uniqueness
         existing_slugs = set(s.lower() for s in Workspace.objects.values_list("slug", flat=True))
 
@@ -82,6 +112,7 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
         for row_number, item in enumerate(workspaces_data, start=1):
             name = str(item.get("name") or "").strip()
             organization_size = str(item.get("organization_size") or "").strip()
+            owner_email = str(item.get("owner_email") or "").strip()
 
             # Validate name
             if not name:
@@ -107,6 +138,22 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                 })
                 continue
 
+            # Per-row owner: explicit owner_email wins, else the GD.
+            # The acting instance admin is never an implicit owner/member.
+            if owner_email:
+                try:
+                    owner = resolve_workspace_owner(owner_email=owner_email)
+                except WorkspaceOwnerResolutionError as e:
+                    skipped.append({
+                        "row_number": row_number,
+                        "name": name,
+                        "slug": slug,
+                        "reason": str(e),
+                    })
+                    continue
+            else:
+                owner = default_owner
+
             try:
                 # Atomic: workspace + membership must both succeed or both roll back
                 with transaction.atomic():
@@ -114,11 +161,11 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                         name=name,
                         slug=slug,
                         organization_size=organization_size,
-                        owner=request.user,
+                        owner=owner,
                     )
                     WorkspaceMember.objects.create(
                         workspace=workspace,
-                        member=request.user,
+                        member=owner,
                         role=20,
                     )
                 # Track newly created slug to prevent intra-batch duplicates

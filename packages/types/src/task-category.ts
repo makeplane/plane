@@ -30,6 +30,7 @@ export interface ISubTaskCategory {
   main_category: string;
   name: string;
   code?: string;
+  description?: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -40,6 +41,7 @@ export interface ISubTaskCategoryCreate {
   main_category: string;
   name: string;
   code?: string;
+  description?: string;
   sort_order?: number;
   is_active?: boolean;
 }
@@ -48,6 +50,7 @@ export interface ISubTaskCategoryUpdate {
   main_category?: string;
   name?: string;
   code?: string;
+  description?: string;
   sort_order?: number;
   is_active?: boolean;
 }
@@ -56,14 +59,29 @@ export interface ITaskCategoryImportRow {
   type: string;
   main_category_name?: string;
   name: string;
+  code?: string;
   description?: string;
   sort_order?: number;
   is_active?: boolean;
 }
 
 export interface ITaskCategoryBulkImportRequest {
-  main_categories: Array<{ name: string; description?: string; sort_order?: number; is_active?: boolean }>;
-  sub_categories: Array<{ main_category_name: string; name: string; sort_order?: number; is_active?: boolean }>;
+  main_categories: Array<{
+    name: string;
+    code?: string;
+    description?: string;
+    sort_order?: number;
+    is_active?: boolean;
+  }>;
+  sub_categories: Array<{
+    main_category_name: string;
+    name: string;
+    code?: string;
+    description?: string;
+    sort_order?: number;
+    is_active?: boolean;
+  }>;
+  update_existing?: boolean;
 }
 
 export interface ITaskCategoryBulkImportSkipped {
@@ -74,11 +92,15 @@ export interface ITaskCategoryBulkImportSkipped {
 
 export interface ITaskCategoryBulkImportResponse {
   main_created: IMainTaskCategory[];
+  main_updated: IMainTaskCategory[];
   main_skipped: ITaskCategoryBulkImportSkipped[];
   sub_created: ISubTaskCategory[];
+  sub_updated: ISubTaskCategory[];
   sub_skipped: ITaskCategoryBulkImportSkipped[];
   total_main_created: number;
+  total_main_updated: number;
   total_main_skipped: number;
   total_sub_created: number;
+  total_sub_updated: number;
   total_sub_skipped: number;
 }

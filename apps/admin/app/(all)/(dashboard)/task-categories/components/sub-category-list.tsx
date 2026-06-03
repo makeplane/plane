@@ -4,11 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 import type { ISubTaskCategory } from "@plane/types";
 import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useInstanceTaskCategory } from "@/hooks/store";
@@ -23,6 +24,11 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
   const { getSubCategoriesByMain, mainCategories, deleteSubCategory } = useInstanceTaskCategory();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setSearchQuery("");
+  }, [selectedMainId]);
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -49,6 +55,11 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
   const subCategories = getSubCategoriesByMain(selectedMainId);
   const mainName = mainCategories[selectedMainId]?.name ?? "";
 
+  const q = searchQuery.toLowerCase();
+  const filteredSubs = q
+    ? subCategories.filter((cat) => cat.name.toLowerCase().includes(q) || (cat.code ?? "").toLowerCase().includes(q))
+    : subCategories;
+
   return (
     <>
       <div className="space-y-2">
@@ -61,9 +72,20 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
           </Button>
         </div>
 
+        <Input
+          placeholder="Search by name or code..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
+        />
+
         {subCategories.length === 0 ? (
           <div className="text-center py-10 text-tertiary text-13 rounded-lg border border-subtle bg-layer-1">
             No sub categories yet.
+          </div>
+        ) : filteredSubs.length === 0 ? (
+          <div className="text-center py-10 text-tertiary text-13 rounded-lg border border-subtle bg-layer-1">
+            No sub categories match &quot;{searchQuery}&quot;.
           </div>
         ) : (
           <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
@@ -72,16 +94,18 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
                 <tr className="border-b border-subtle bg-layer-2">
                   <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
                   <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
                   <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
                   <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
                   <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-subtle">
-                {subCategories.map((cat) => (
+                {filteredSubs.map((cat) => (
                   <tr key={cat.id} className="hover:bg-layer-2 transition-colors">
                     <td className="px-3 py-2 font-medium">{cat.name}</td>
                     <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
+                    <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
                     <td className="px-3 py-2 text-center">
                       <span
                         className={`text-11 px-2 py-0.5 rounded font-medium ${

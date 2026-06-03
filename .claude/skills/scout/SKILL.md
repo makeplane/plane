@@ -1,6 +1,10 @@
 ---
 name: ck:scout
 description: "Fast codebase scouting using parallel agents. Use for file discovery, task context gathering, quick searches across directories. Supports internal (Explore) and external (Gemini/OpenCode) agents."
+user-invocable: true
+when_to_use: "Invoke for fast file discovery and codebase orientation."
+category: dev-tools
+keywords: [codebase, scouting, file-discovery, search]
 argument-hint: "[search-target] [ext]"
 metadata:
   author: claudekit
@@ -12,6 +16,7 @@ metadata:
 Fast, token-efficient codebase scouting using parallel agents to find files needed for tasks.
 
 ## Arguments
+
 - Default: Scout using built-in Explore subagents in parallel (`./references/internal-scouting.md`)
 - `ext`: Scout using external Gemini/OpenCode CLI tools in parallel (`./references/external-scouting.md`)
 
@@ -33,21 +38,25 @@ Fast, token-efficient codebase scouting using parallel agents to find files need
 ## Configuration
 
 Read from `.claude/.ck.json`:
+
 - `gemini.model` - Gemini model (default: `gemini-3-flash-preview`)
 
 ## Workflow
 
 ### 1. Analyze Task
+
 - Parse user prompt for search targets
 - Identify key directories, patterns, file types, lines of code
 - Determine optimal SCALE value of subagents to spawn
 
 ### 2. Divide and Conquer
+
 - Split codebase into logical segments per agent
 - Assign each agent specific directories or patterns
 - Ensure no overlap, maximize coverage
 
 ### 3. Register Scout Tasks
+
 - **Skip if:** Agent count ≤ 2 (overhead exceeds benefit)
 - **Skip if:** Task tools unavailable (VSCode extension) — use `TodoWrite` instead
 - `TaskList` first — check for existing scout tasks in session
@@ -55,11 +64,14 @@ Read from `.claude/.ck.json`:
 - See `references/task-management-scouting.md` for patterns and examples
 
 ### 4. Spawn Parallel Agents
+
 Load appropriate reference based on decision tree:
+
 - **Internal (Default):** `references/internal-scouting.md` (Explore subagents)
 - **External:** `references/external-scouting.md` (Gemini/OpenCode)
 
 **Notes:**
+
 - `TaskUpdate` each task to `in_progress` before spawning its agent (skip if Task tools unavailable)
 - Prompt detailed instructions for each subagent with exact directories or files it should read
 - Remember that each subagent has less than 200K tokens of context window
@@ -67,6 +79,7 @@ Load appropriate reference based on decision tree:
 - Each subagent must return a detailed summary report to a main agent
 
 ### 5. Collect Results
+
 **IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
 
 - Timeout: 3 minutes per agent (skip non-responders)
@@ -80,10 +93,12 @@ Load appropriate reference based on decision tree:
 # Scout Report
 
 ## Relevant Files
+
 - `path/to/file.ts` - Brief description
 - ...
 
 ## Unresolved Questions
+
 - Any gaps in findings
 ```
 
@@ -92,3 +107,8 @@ Load appropriate reference based on decision tree:
 - `references/internal-scouting.md` - Using Explore subagents
 - `references/external-scouting.md` - Using Gemini/OpenCode CLI
 - `references/task-management-scouting.md` - Claude Task patterns for scout coordination
+
+## Workflow Position
+
+**Typically precedes:** `/ck:debug` (debug after scouting), `/ck:fix` (fix after locating code), `/ck:code-review` (scout edge cases before review)
+**Related:** `/ck:debug` (investigate after scouting), `/ck:brainstorm` (explore after scouting)

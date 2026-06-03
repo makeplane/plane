@@ -32,12 +32,14 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
       label: t("spreadsheet.columns.department_name"),
       asc: "project__workspace__name",
       desc: "-project__workspace__name",
+      filterKey: "department",
       width: "min-w-[180px]",
     },
     project_name: {
       label: t("spreadsheet.columns.project_name"),
       asc: "project__name",
       desc: "-project__name",
+      filterKey: "project",
       width: "min-w-[180px]",
     },
     main_task_category: {
@@ -95,8 +97,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
     },
     state: {
       label: "Status",
-      asc: "state__name",
-      desc: "-state__name",
+      asc: "state__group",
+      desc: "-state__group",
       filterKey: "state",
       width: "min-w-[140px]",
     },
@@ -137,9 +139,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
     },
     total_log_time: {
       label: t("spreadsheet.columns.total_log_time"),
-      asc: "total_log_time",
-      desc: "-total_log_time",
-      isNumber: true,
+      // Subtree total is computed lazily on click — not sortable from the list endpoint.
       width: "min-w-[120px]",
     },
     reference_link: {
@@ -164,7 +164,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
       case "priority":
         return options.priorities?.map((p) => ({ value: p, label: t(`ho.priority.${p}`) }));
       case "state":
-        return options.states?.map((s) => ({ value: s, label: s }));
+        return options.states?.map((s) => ({ value: s, label: t(`workspace_projects.state.${s}`) }));
       case "main_task_category":
         return options.main_task_categories?.map((c) => ({ value: c, label: c }));
       case "sub_task_category":
@@ -179,6 +179,10 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
         return options.leads?.map((l) => ({ value: l.id, label: l.display_name }));
       case "progress":
         return options.progress?.map((p) => ({ value: p, label: t(`ho.progress_status.${p}`) }));
+      case "department":
+        return options.workspaces?.map((w) => ({ value: w.id, label: w.name }));
+      case "project":
+        return options.projects?.map((p) => ({ value: p.id, label: p.name }));
       default:
         return undefined;
     }

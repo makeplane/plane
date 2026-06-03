@@ -14,7 +14,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Module, Project, Workspace
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class InstanceWorkspaceModuleBulkImportEndpoint(BaseAPIView):
     - Invalid date format → null, row continues
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         modules_data = request.data.get("modules", None)

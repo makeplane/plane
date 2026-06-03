@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 import type { IMainTaskCategory } from "@plane/types";
 import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useInstanceTaskCategory } from "@/hooks/store";
@@ -23,6 +24,7 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
   const { mainCategoryIds, mainCategories, deleteMainCategory } = useInstanceTaskCategory();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -42,64 +44,86 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
     return <div className="text-center py-12 text-tertiary text-13">No main categories yet. Create the first one.</div>;
   }
 
+  const q = searchQuery.toLowerCase();
+  const filteredIds = q
+    ? mainCategoryIds.filter((id) => {
+        const cat = mainCategories[id];
+        return cat.name.toLowerCase().includes(q) || (cat.code ?? "").toLowerCase().includes(q);
+      })
+    : mainCategoryIds;
+
   return (
     <>
-      <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
-        <table className="w-full text-13">
-          <thead>
-            <tr className="border-b border-subtle bg-layer-2">
-              <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
-              <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
-              <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
-              <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
-              <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {mainCategoryIds.map((id) => {
-              const cat = mainCategories[id];
-              const isSelected = selectedMainId === id;
-              return (
-                <tr
-                  key={id}
-                  onClick={() => onSelect(id)}
-                  className={`cursor-pointer transition-colors hover:bg-layer-2 ${isSelected ? "bg-custom-primary-100/10" : ""}`}
-                >
-                  <td className="px-3 py-2 font-medium">
-                    <span className={isSelected ? "text-custom-primary-100" : ""}>{cat.name}</span>
-                  </td>
-                  <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
-                  <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
-                  <td className="px-3 py-2 text-center">
-                    <span
-                      className={`text-11 px-2 py-0.5 rounded font-medium ${
-                        cat.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"
-                      }`}
-                    >
-                      {cat.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-center text-secondary">{cat.sort_order}</td>
-                  <td className="px-3 py-2 text-right">
-                    <div
-                      role="presentation"
-                      className="flex items-center justify-end gap-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button variant="ghost" size="sm" onClick={() => onEdit(cat)}>
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setDeleteId(id)}>
-                        <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
-                      </Button>
-                    </div>
-                  </td>
+      <div className="space-y-2">
+        <Input
+          placeholder="Search by name or code..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
+        />
+        {filteredIds.length === 0 ? (
+          <div className="text-center py-8 text-tertiary text-13 rounded-lg border border-subtle bg-layer-1">
+            No categories match &quot;{searchQuery}&quot;.
+          </div>
+        ) : (
+          <div className="rounded-lg border border-subtle bg-layer-1 overflow-hidden">
+            <table className="w-full text-13">
+              <thead>
+                <tr className="border-b border-subtle bg-layer-2">
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
+                  <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
+                  <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
+                  <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-subtle">
+                {filteredIds.map((id) => {
+                  const cat = mainCategories[id];
+                  const isSelected = selectedMainId === id;
+                  return (
+                    <tr
+                      key={id}
+                      onClick={() => onSelect(id)}
+                      className={`cursor-pointer transition-colors hover:bg-layer-2 ${isSelected ? "bg-custom-primary-100/10" : ""}`}
+                    >
+                      <td className="px-3 py-2 font-medium">
+                        <span className={isSelected ? "text-custom-primary-100" : ""}>{cat.name}</span>
+                      </td>
+                      <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
+                      <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
+                      <td className="px-3 py-2 text-center">
+                        <span
+                          className={`text-11 px-2 py-0.5 rounded font-medium ${
+                            cat.is_active ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-500"
+                          }`}
+                        >
+                          {cat.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-center text-secondary">{cat.sort_order}</td>
+                      <td className="px-3 py-2 text-right">
+                        <div
+                          role="presentation"
+                          className="flex items-center justify-end gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button variant="ghost" size="sm" onClick={() => onEdit(cat)}>
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setDeleteId(id)}>
+                            <Trash2 className="w-3.5 h-3.5 text-danger-primary" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <Dialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)} modal>

@@ -39,41 +39,40 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
 
     setIsDeleteLoading(true);
 
-    await deleteState(workspaceSlug.toString(), data.project_id, data.id)
-      .then(() => {
-        handleClose();
-      })
-      .catch((err) => {
-        if (err.status === 400)
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message:
-              "This state contains some work items within it, please move them to some other state to delete this state.",
-          });
-        else
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "State could not be deleted. Please try again.",
-          });
-      })
-      .finally(() => {
-        setIsDeleteLoading(false);
-      });
+    try {
+      await deleteState(workspaceSlug.toString(), data.project_id, data.id);
+      handleClose();
+    } catch (err) {
+      const errorStatus = err as { status?: number };
+      if (errorStatus.status === 400)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message:
+            "This status contains some work items within it, please move them to some other status to delete this status.",
+        });
+      else
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Status could not be deleted. Please try again.",
+        });
+    } finally {
+      setIsDeleteLoading(false);
+    }
   };
 
   return (
     <AlertModalCore
       handleClose={handleClose}
-      handleSubmit={handleDeletion}
+      handleSubmit={() => void handleDeletion()}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete State"
+      title="Delete Status"
       content={
         <>
-          Are you sure you want to delete state- <span className="font-medium text-primary">{data?.name}</span>? All of
-          the data related to the state will be permanently removed. This action cannot be undone.
+          Are you sure you want to delete status- <span className="font-medium text-primary">{data?.name}</span>? All of
+          the data related to the status will be permanently removed. This action cannot be undone.
         </>
       }
     />

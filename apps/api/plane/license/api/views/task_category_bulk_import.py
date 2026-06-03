@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.db.models import MainTaskCategory, SubTaskCategory
 from plane.license.api.views.base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 MAX_ROWS = 500
 
@@ -39,11 +39,12 @@ class TaskCategoryBulkImportView(BaseAPIView):
     Returns summary with created/skipped counts for both types.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         main_data = request.data.get("main_categories", [])
         sub_data = request.data.get("sub_categories", [])
+        update_existing = bool(request.data.get("update_existing", False))
 
         if not isinstance(main_data, list) or not isinstance(sub_data, list):
             return Response(
@@ -57,6 +58,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
             )
 
         main_created = []
+        main_updated = []
         main_skipped = []
 
         # Fetch existing main category names (case-insensitive) to detect duplicates
@@ -81,10 +83,26 @@ class TaskCategoryBulkImportView(BaseAPIView):
                 main_skipped.append({"row_number": i, "name": name, "reason": "name must be ≤255 characters"})
                 continue
             name_lower = name.lower()
-            if name_lower in existing_main_names or name_lower in batch_main_names:
-                # Already exists — silently skip
+            is_db_dup = name_lower in existing_main_names
+            is_batch_dup = name_lower in batch_main_names
+            if is_db_dup or is_batch_dup:
+                if update_existing and is_db_dup and not is_batch_dup:
+                    code = str(row.get("code", "") or "").strip()
+                    description = str(row.get("description", "") or "").strip()
+                    sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
+                    is_active = _parse_is_active(row.get("is_active"), default=True)
+                    try:
+                        with transaction.atomic():
+                            qs = MainTaskCategory.objects.filter(name__iexact=name, deleted_at__isnull=True)
+                            qs.update(code=code, description=description, sort_order=sort_order, is_active=is_active)
+                            obj = qs.first()
+                            if obj:
+                                main_updated.append(obj)
+                    except Exception as e:
+                        main_skipped.append({"row_number": i, "name": name, "reason": f"update error: {e}"})
                 continue
 
+            code = str(row.get("code", "") or "").strip()
             description = str(row.get("description", "") or "").strip() or ""
             sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
             is_active = _parse_is_active(row.get("is_active"), default=True)
@@ -93,6 +111,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
                 with transaction.atomic():
                     obj = MainTaskCategory.objects.create(
                         name=name,
+                        code=code,
                         description=description,
                         sort_order=sort_order,
                         is_active=is_active,
@@ -107,6 +126,7 @@ class TaskCategoryBulkImportView(BaseAPIView):
 
         # ── Sub categories ───────────────────────────────────────────────
         sub_created = []
+        sub_updated = []
         sub_skipped = []
 
         # Collect existing (main_id, sub_name) pairs to detect duplicates
@@ -138,10 +158,29 @@ class TaskCategoryBulkImportView(BaseAPIView):
                 continue
 
             pair = (main_id, name.lower())
-            if pair in existing_sub_pairs or pair in batch_sub_pairs:
-                # Already exists — silently skip
+            is_db_dup = pair in existing_sub_pairs
+            is_batch_dup = pair in batch_sub_pairs
+            if is_db_dup or is_batch_dup:
+                if update_existing and is_db_dup and not is_batch_dup:
+                    code = str(row.get("code", "") or "").strip()
+                    description = str(row.get("description", "") or "").strip()
+                    sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
+                    is_active = _parse_is_active(row.get("is_active"), default=True)
+                    try:
+                        with transaction.atomic():
+                            qs = SubTaskCategory.objects.filter(
+                                main_category_id=main_id, name__iexact=name, deleted_at__isnull=True
+                            )
+                            qs.update(code=code, description=description, sort_order=sort_order, is_active=is_active)
+                            obj = qs.first()
+                            if obj:
+                                sub_updated.append(obj)
+                    except Exception as e:
+                        sub_skipped.append({"row_number": i, "name": name, "reason": f"update error: {e}"})
                 continue
 
+            code = str(row.get("code", "") or "").strip()
+            description = str(row.get("description", "") or "").strip()
             sort_order = _parse_sort_order(row.get("sort_order"), default=65535)
             is_active = _parse_is_active(row.get("is_active"), default=True)
 
@@ -150,6 +189,8 @@ class TaskCategoryBulkImportView(BaseAPIView):
                     obj = SubTaskCategory.objects.create(
                         main_category_id=main_id,
                         name=name,
+                        code=code,
+                        description=description,
                         sort_order=sort_order,
                         is_active=is_active,
                     )
@@ -168,12 +209,16 @@ class TaskCategoryBulkImportView(BaseAPIView):
         return Response(
             {
                 "main_created": MainTaskCategorySerializer(main_created, many=True).data,
+                "main_updated": MainTaskCategorySerializer(main_updated, many=True).data,
                 "main_skipped": main_skipped,
                 "sub_created": SubTaskCategorySerializer(sub_created, many=True).data,
+                "sub_updated": SubTaskCategorySerializer(sub_updated, many=True).data,
                 "sub_skipped": sub_skipped,
                 "total_main_created": len(main_created),
+                "total_main_updated": len(main_updated),
                 "total_main_skipped": len(main_skipped),
                 "total_sub_created": len(sub_created),
+                "total_sub_updated": len(sub_updated),
                 "total_sub_skipped": len(sub_skipped),
             },
             status=status.HTTP_200_OK,

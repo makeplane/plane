@@ -89,7 +89,11 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
       try {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
         await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-        setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+        // re-check after await: StrictMode double-invokes the effect and the outer guard is stale,
+        // so without this check a pure toggle would add-then-remove visibility.
+        if (!subIssueHelpersByIssueId(`${parentIssueId}_root`).issue_visibility.includes(parentIssueId)) {
+          setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+        }
       } catch (error) {
         console.error("Error fetching sub-work items:", error);
       } finally {

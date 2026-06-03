@@ -4,14 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader as LoaderIcon } from "lucide-react";
+import { Download, Loader as LoaderIcon, Search } from "lucide-react";
 // types
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { setPromiseToast } from "@plane/propel/toast";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { InstanceWorkspaceService } from "@plane/services";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -26,6 +27,9 @@ import type { Route } from "./+types/page";
 const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props: Route.ComponentProps) {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // store
   const { formattedConfig, fetchInstanceConfigurations, updateInstanceConfigurations } = useInstance();
   const {
@@ -38,6 +42,40 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   // derived values
   const disableWorkspaceCreation = formattedConfig?.DISABLE_WORKSPACE_CREATION ?? "";
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        void fetchWorkspaces(value);
+      }, 300);
+    },
+    [fetchWorkspaces]
+  );
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const service = new InstanceWorkspaceService();
+      const rows: { Name: string; Slug: string }[] = [];
+      let cursor: string | undefined;
+      do {
+        const data = await service.list({ cursor });
+        data.results.forEach((ws) => rows.push({ Name: ws.name, Slug: ws.slug }));
+        cursor = data.next_page_results ? data.next_cursor : undefined;
+      } while (cursor);
+      const XLSX = await import("xlsx");
+      const sheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, sheet, "Workspaces");
+      XLSX.writeFile(workbook, "workspaces.xlsx");
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Export failed", message: "Failed to export workspaces." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // fetch data
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
@@ -136,15 +174,33 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 <Link href="/workspace/bulk-import-modules" className={getButtonStyling("secondary", "base")}>
                   Bulk Import Modules
                 </Link>
+                <Button variant="secondary" onClick={() => void handleExport()} disabled={isExporting}>
+                  <Download className="w-4 h-4" />
+                  {isExporting ? "Exporting..." : "Export"}
+                </Button>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
                   Create workspace
                 </Link>
               </div>
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary" />
+                <input
+                  type="text"
+                  placeholder="Search workspaces..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-13 rounded-md border border-subtle bg-layer-2 text-primary placeholder:text-tertiary outline-none focus:border-accent-primary"
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-4 py-2">
-              {workspaceIds.map((workspaceId) => (
-                <WorkspaceListItem key={workspaceId} workspaceId={workspaceId} />
-              ))}
+              {workspaceIds.length === 0 && workspaceLoader === "loaded" ? (
+                <div className="flex flex-col items-center justify-center py-12 text-tertiary text-13">
+                  No workspaces match your search.
+                </div>
+              ) : (
+                workspaceIds.map((workspaceId) => <WorkspaceListItem key={workspaceId} workspaceId={workspaceId} />)
+              )}
             </div>
             {hasNextPage && (
               <div className="flex justify-center">

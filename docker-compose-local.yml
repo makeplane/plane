@@ -1,3 +1,8 @@
+x-backend-env: &backend-env
+  AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+  MINIO_EXTERNAL_ENDPOINT: http://localhost:9000
+  USE_MINIO: "1"
+
 services:
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
@@ -77,6 +82,8 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - plane-db
       - plane-redis
@@ -98,6 +105,8 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - api
       - plane-db
@@ -117,6 +126,8 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - api
       - plane-db
@@ -136,9 +147,34 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - plane-db
       - plane-redis
+
+  # Single-origin reverse proxy for local dev: serves the whole app on one
+  # http://localhost (port 80) and routes /god-mode, /spaces, /live, /api to
+  # the right place. Uses the prebuilt caddy image + Caddyfile.dev (NOT
+  # Dockerfile.ce/Caddyfile.ce — those route to docker service names like
+  # web:3000/admin:3000 that don't exist here, since the frontends run on the
+  # HOST via `pnpm dev`). Caddyfile.dev routes /* and /god-mode/* to
+  # host.docker.internal:3000/3001, preserving vite HMR (hot reload intact).
+  proxy:
+    image: caddy:2.10.0-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - ${LISTEN_HTTP_PORT:-80}:80
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    volumes:
+      - ./apps/proxy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+    # Only the backend runs in docker; web/admin/space/live are on the host.
+    depends_on:
+      - api
 
 volumes:
   redisdata:

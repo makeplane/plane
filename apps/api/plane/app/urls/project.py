@@ -21,6 +21,9 @@ from plane.app.views import (
     ProjectWorkLogViewSet,
     ProjectWorklogExportView,
     WorkspaceBankWideProjectsEndpoint,
+    ProjectFieldPermissionViewSet,
+    ProjectCopyView,
+    ProjectCopyStatusView,
 )
 
 
@@ -146,5 +149,20 @@ urlpatterns = [
         "workspaces/<str:slug>/bank-wide-projects/",
         WorkspaceBankWideProjectsEndpoint.as_view(),
         name="workspace-bank-wide-projects",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/field-permissions/",
+        ProjectFieldPermissionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        name="project-field-permissions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/copy/",
+        ProjectCopyView.as_view(),
+        name="project-copy",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/copy-status/<uuid:job_id>/",
+        ProjectCopyStatusView.as_view(),
+        name="project-copy-status",
     ),
 ]

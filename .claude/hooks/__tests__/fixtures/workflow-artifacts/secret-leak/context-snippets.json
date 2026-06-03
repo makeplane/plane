@@ -1,0 +1,10 @@
+{
+  "skill": "ck:cook",
+  "mode": "auto",
+  "task": "Add low-risk docs flow",
+  "acceptanceCriteria": ["validator returns pass for complete low-risk artifacts"],
+  "touchpoints": ["claude/hooks/workflow-artifact-gate.cjs"],
+  "publicContracts": ["manual validator command"],
+  "blastRadius": ["hook validation"],
+  "scoutSummary": "Existing hooks use Node and config-gated behavior."
+}

@@ -1,0 +1,9 @@
+{
+  "decision": "BLOCKED",
+  "score": 6.2,
+  "criticalCount": 1,
+  "acceptanceCoverage": ["covered by validator tests"],
+  "regressionProof": ["standalone node test passed"],
+  "contractStatus": "OK",
+  "blockingReasons": ["public contract regression"]
+}

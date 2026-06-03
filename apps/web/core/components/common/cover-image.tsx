@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { cn } from "@plane/utils";
 // helpers
 import { getCoverImageDisplayURL, DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
@@ -27,7 +28,7 @@ type TCoverImageProps = {
  * - Static images (local assets)
  * - Uploaded images (processed through getFileURL)
  * - External URLs
- * - Fallback to default cover image
+ * - Fallback to default cover image on load error
  */
 export function CoverImage(props: TCoverImageProps) {
   const {
@@ -36,15 +37,28 @@ export function CoverImage(props: TCoverImageProps) {
     className,
     showDefaultWhenEmpty = false,
     fallbackUrl = DEFAULT_COVER_IMAGE_URL,
+    onError,
     ...restProps
   } = props;
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   // Show loading skeleton when src is undefined/null and we don't want to show default
   if (!src && !showDefaultWhenEmpty) {
     return <div className={cn("animate-pulse bg-layer-2", className)} />;
   }
 
-  const displayUrl = getCoverImageDisplayURL(src, fallbackUrl);
+  const displayUrl = failedSrc === src ? fallbackUrl : getCoverImageDisplayURL(src, fallbackUrl);
 
-  return <img src={displayUrl} alt={alt} className={cn("object-cover", className)} {...restProps} />;
+  return (
+    <img
+      src={displayUrl}
+      alt={alt}
+      className={cn("object-cover", className)}
+      onError={(e) => {
+        setFailedSrc(src ?? null);
+        onError?.(e);
+      }}
+      {...restProps}
+    />
+  );
 }

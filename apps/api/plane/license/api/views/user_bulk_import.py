@@ -13,8 +13,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import User
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.db.models import Profile, User
+from plane.license.api.permissions import InstanceAdminMenuPermission
 from plane.license.api.serializers.user import InstanceUserSerializer
 from plane.license.api.views.base import BaseAPIView
 
@@ -31,7 +31,7 @@ class InstanceUserBulkImportEndpoint(BaseAPIView):
     Skips invalid rows, imports valid ones, returns summary.
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
     parser_classes = [MultiPartParser]
 
     def post(self, request):
@@ -116,6 +116,15 @@ class InstanceUserBulkImportEndpoint(BaseAPIView):
                 user.set_password(password)
                 user.is_password_autoset = False
                 user.save()
+                # Admin-provisioned users already have name + password — mark them
+                # fully onboarded so first login skips the entire onboarding flow,
+                # including the profile/name screen, instead of relying on a
+                # client-side step skip.
+                if user.first_name or user.last_name:
+                    profile, _ = Profile.objects.get_or_create(user=user)
+                    profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
+                    profile.is_onboarded = True
+                    profile.save(update_fields=["onboarding_step", "is_onboarded"])
 
                 existing_emails.add(email)
                 created.append(InstanceUserSerializer(user).data)

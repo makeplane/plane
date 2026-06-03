@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Capacity export failed</title>
+    <style>
+      body, table, td, p { margin: 0; padding: 0; }
+      img { border: 0; line-height: 100%; text-decoration: none; -ms-interpolation-mode: bicubic; }
+      table { border-collapse: collapse; }
+      @media only screen and (max-width: 600px) {
+        .email-container { width: 100% !important; }
+        .email-content { padding: 24px 20px !important; }
+        .email-footer { padding: 0 20px 16px 20px !important; }
+      }
+    </style>
+  </head>
+  <body bgcolor="#f9f9f9" style="margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:400;color:#474747;-webkit-font-smoothing:antialiased;background-color:#f9f9f9;">
+    <!-- Preheader -->
+    <span class="preheader" style="display:none;font-size:1px;color:transparent;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;">
+      We could not generate your capacity report for {{ workspace_name }}. Please try again.
+    </span>
+
+    <center class="email-body" style="width:100%;background-color:#f9f9f9;padding:40px 0">
+      <!-- HEADER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" style="background-color:#000000">
+              <tr>
+                <td style="padding:24px 40px;text-align:center">
+                  <img src="{{ logo_url }}" width="120" alt="Shinhan Workspace" style="height:auto;display:block;margin:0 auto" />
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- BODY -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" class="email-content" style="background-color:#ffffff;padding:32px 40px">
+              <tr>
+                <td style="font-size:16px;line-height:1.5;color:#474747;padding:24px">
+
+                  <h1 style="margin:0 0 12px;font-size:22px;line-height:1.35;font-weight:600;color:#111111">
+                    Capacity export could not be completed
+                  </h1>
+
+                  <p style="margin:0 0 16px">
+                    We're sorry — your capacity report request for <strong>{{ workspace_name }}</strong>
+                    ({{ date_from }} &ndash; {{ date_to }}) could not be generated at this time.
+                  </p>
+
+                  {% if error_message %}
+                  <!-- Error detail -->
+                  <table role="presentation" style="margin:0 0 20px;width:100%">
+                    <tr>
+                      <td style="background-color:#fef2f2;border-left:4px solid #ef4444;border-radius:4px;padding:12px 16px;font-size:13px;color:#7f1d1d;">
+                        {{ error_message }}
+                      </td>
+                    </tr>
+                  </table>
+                  {% endif %}
+
+                  <p style="margin:0 0 16px;font-size:14px;color:#374151;">
+                    Please return to the capacity dashboard and request a new export. If the problem persists,
+                    contact your workspace administrator or reach out to support.
+                  </p>
+
+                  <!-- Reference info -->
+                  <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">
+                    Job reference: <code style="font-family:monospace;background:#f3f4f6;padding:2px 6px;border-radius:3px;">{{ job_id }}</code>
+                  </p>
+                  <p style="margin:0;font-size:12px;color:#9ca3af;">
+                    Please include this reference if contacting support.
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- FOOTER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" class="email-footer" style="background-color:#ffffff;padding:0 40px 16px 40px">
+              <tr>
+                <td style="border-top:1px solid #e9e9e9;padding:24px;font-size:12px;line-height:1.6;color:#979797;text-align:left">
+                  <p style="margin:0">Shinhan Bank Vietnam - Shinhan Workspace</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </center>
+
+    <base target="_blank" />
+  </body>
+</html>

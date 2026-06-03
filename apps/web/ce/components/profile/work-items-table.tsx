@@ -274,8 +274,36 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
   const [page, setPage] = useState(1);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  // Group sub-items under their parents within the current dataset.
+  // Top-level rows = items with no parent_id, or whose parent isn't in this set (orphans).
+  const { topLevelIssues, childrenByParentId } = useMemo(() => {
+    const idSet = new Set(issues.map((i) => i.id));
+    const childrenMap = new Map<string, EnrichedIssue[]>();
+    const tops: EnrichedIssue[] = [];
+    for (const issue of issues) {
+      const pid = issue.parent_id;
+      if (pid && idSet.has(pid)) {
+        const arr = childrenMap.get(pid) ?? [];
+        arr.push(issue);
+        childrenMap.set(pid, arr);
+      } else {
+        tops.push(issue);
+      }
+    }
+    return { topLevelIssues: tops, childrenByParentId: childrenMap };
+  }, [issues]);
 
   const colLabel = useCallback((key: string) => t(`profile.stats.${i18nNs}.columns.${key}`), [t, i18nNs]);
+
+  const hasActiveFilters = useMemo(() => Object.values(filters).some((vals) => vals.length > 0), [filters]);
+
+  const issueMatchesFilters = useCallback(
+    (issue: EnrichedIssue) =>
+      Object.entries(filters).every(([col, vals]) => vals.length === 0 || vals.includes(getVal(issue, col))),
+    [filters]
+  );
 
   // Labels for active-filter strip
   const COL_LABELS: Record<string, string> = useMemo(
@@ -292,6 +320,8 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
     [colLabel]
   );
 
+  // Filter options must include sub-work items because filtered results can show
+  // child rows independently when "show sub-work items" data is present.
   const uniqueValues = useMemo(() => {
     const result: Record<string, string[]> = {};
     for (const col of FILTERABLE) result[col] = [...new Set(issues.map((i) => getVal(i, col)).filter(Boolean))].sort();
@@ -299,10 +329,16 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
   }, [issues]);
 
   const processedIssues = useMemo(() => {
-    let result = [...issues];
-    for (const [col, vals] of Object.entries(filters)) {
-      if (vals.length > 0) result = result.filter((i) => vals.includes(getVal(i, col)));
-    }
+    const result = [...topLevelIssues].filter((issue) => {
+      if (!hasActiveFilters) return true;
+      if (issueMatchesFilters(issue)) return true;
+
+      const children = childrenByParentId.get(issue.id) ?? [];
+      return children.some(issueMatchesFilters);
+    });
+
+    // Default order comes from the backend (off_track → due_today → at_risk → on_track).
+    // Only override when the user picks an explicit column sort.
     if (sortConfig) {
       result.sort((a, b) => {
         const va = getVal(a, sortConfig.col),
@@ -314,7 +350,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
       });
     }
     return result;
-  }, [issues, filters, sortConfig]);
+  }, [childrenByParentId, hasActiveFilters, issueMatchesFilters, sortConfig, topLevelIssues]);
 
   const totalPages = Math.max(1, Math.ceil(processedIssues.length / PAGE_SIZE));
   const paginatedIssues = processedIssues.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -341,6 +377,119 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
     setSortConfig(null);
     setFilters({});
     setPage(1);
+  };
+
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const renderRow = (issue: EnrichedIssue, depth: number, childCount: number, isExpanded: boolean) => {
+    const project = issue._project;
+    const state = issue._state;
+    const hasChildren = childCount > 0;
+    const isChild = depth > 0;
+    return (
+      <tr
+        key={`${issue._workspaceSlug}-${issue.id}`}
+        className={cn(
+          "hover:bg-surface-2 border-b border-subtle transition-colors group",
+          isChild && "bg-surface-2/30"
+        )}
+      >
+        <td
+          className={cn(
+            "sticky left-0 z-10 py-2.5 pr-3 group-hover:bg-surface-2 transition-colors border-r border-subtle min-w-[260px]",
+            isChild ? "bg-surface-2/30" : "bg-surface-1"
+          )}
+          style={{ paddingLeft: `${16 + depth * 20}px` }}
+        >
+          <div className="flex items-center gap-1.5 min-w-0">
+            {hasChildren ? (
+              <button
+                type="button"
+                onClick={() => toggleExpand(issue.id)}
+                aria-label={isExpanded ? t("common.collapse") : t("common.expand")}
+                className="flex-shrink-0 p-0.5 -ml-0.5 rounded hover:bg-surface-2 text-tertiary hover:text-secondary transition-colors"
+              >
+                <ChevronRight
+                  className={cn("h-3.5 w-3.5 transition-transform duration-150", isExpanded && "rotate-90")}
+                />
+              </button>
+            ) : (
+              <span aria-hidden className={cn("flex-shrink-0", isChild ? "w-2" : "w-4")} />
+            )}
+            {isChild && <span aria-hidden className="flex-shrink-0 h-px w-2 bg-subtle" />}
+            <button
+              type="button"
+              onClick={() =>
+                issue.project_id &&
+                issue.id &&
+                void setPeekIssue({
+                  workspaceSlug: issue._workspaceSlug,
+                  projectId: issue.project_id,
+                  issueId: issue.id,
+                })
+              }
+              className="flex items-center gap-1.5 text-left group/btn min-w-0 flex-1"
+            >
+              <span className="flex-shrink-0 text-tertiary text-12 tabular-nums">
+                {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
+              </span>
+              <span
+                className={cn(
+                  "truncate text-13 font-medium group-hover/btn:text-accent-primary transition-colors",
+                  isChild ? "text-secondary" : "text-primary"
+                )}
+              >
+                {issue.name}
+              </span>
+            </button>
+          </div>
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
+          <span className="truncate block">{issue._workspaceName}</span>
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
+          <span className="truncate block">{issue._mainCategoryName ?? <span className="text-tertiary">—</span>}</span>
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
+          <span className="truncate block">{issue._subCategoryName ?? <span className="text-tertiary">—</span>}</span>
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
+          <span className="truncate block">{project?.name ?? <span className="text-tertiary">—</span>}</span>
+        </td>
+        <td className="py-2.5 pl-3 pr-3 max-w-[80px]">
+          {state ? (
+            <span
+              className="inline-flex h-5 items-center rounded px-1.5 text-11 font-medium max-w-[80px] truncate"
+              style={{
+                color: state.color,
+                backgroundColor: `${state.color}18`,
+                outline: `1px solid ${state.color}40`,
+              }}
+            >
+              {state.name}
+            </span>
+          ) : (
+            <span className="text-tertiary text-13">—</span>
+          )}
+        </td>
+        <td className="py-2.5 pl-3 pr-3 max-w-[90px]">
+          <ProgressTrackingBadge targetDate={issue.target_date} />
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
+          {formatDate(issue.start_date)}
+        </td>
+        <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
+          {formatDate(issue.target_date)}
+        </td>
+      </tr>
+    );
   };
 
   const activeFilterEntries = Object.entries(filters).flatMap(([col, vals]) => vals.map((val) => ({ col, val })));
@@ -414,12 +563,13 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Table — opt into the always-visible horizontal scrollbar utility so mouse
+          users get a draggable bar (global CSS hides native scrollbars by default) */}
+      <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-surface-2 border-b border-subtle">
-              <th className="sticky left-0 z-20 py-2.5 pl-4 pr-3 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap bg-surface-2 border-r border-subtle">
+              <th className="sticky left-0 z-20 py-2.5 pl-4 pr-3 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap bg-surface-2 border-r border-subtle min-w-[260px]">
                 {colLabel("work_item")}
               </th>
               {(["department", "main_category", "sub_category", "project", "state", "progress"] as const).map((c) => (
@@ -431,81 +581,15 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
           </thead>
           <tbody className="divide-y divide-subtle">
             {paginatedIssues.length > 0 ? (
-              paginatedIssues.map((issue) => {
-                const project = issue._project;
-                const state = issue._state;
-                return (
-                  <tr
-                    key={`${issue._workspaceSlug}-${issue.id}`}
-                    className="hover:bg-surface-2 border-b border-subtle transition-colors group"
-                  >
-                    <td className="sticky left-0 z-10 py-2.5 pl-4 pr-3 bg-surface-1 group-hover:bg-surface-2 transition-colors border-r border-subtle">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          issue.project_id &&
-                          issue.id &&
-                          void setPeekIssue({
-                            workspaceSlug: issue._workspaceSlug,
-                            projectId: issue.project_id,
-                            issueId: issue.id,
-                          })
-                        }
-                        className="flex items-center gap-1.5 text-left max-w-[200px] group/btn"
-                      >
-                        <span className="flex-shrink-0 text-tertiary text-12 tabular-nums">
-                          {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
-                        </span>
-                        <span className="truncate text-13 text-primary font-medium group-hover/btn:text-accent-primary transition-colors">
-                          {issue.name}
-                        </span>
-                      </button>
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-                      <span className="truncate block">{issue._workspaceName}</span>
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-                      <span className="truncate block">
-                        {issue._mainCategoryName ?? <span className="text-tertiary">—</span>}
-                      </span>
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-                      <span className="truncate block">
-                        {issue._subCategoryName ?? <span className="text-tertiary">—</span>}
-                      </span>
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
-                      <span className="truncate block">
-                        {project?.name ?? <span className="text-tertiary">—</span>}
-                      </span>
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 max-w-[80px]">
-                      {state ? (
-                        <span
-                          className="inline-flex h-5 items-center rounded px-1.5 text-11 font-medium max-w-[80px] truncate"
-                          style={{
-                            color: state.color,
-                            backgroundColor: `${state.color}18`,
-                            outline: `1px solid ${state.color}40`,
-                          }}
-                        >
-                          {state.name}
-                        </span>
-                      ) : (
-                        <span className="text-tertiary text-13">—</span>
-                      )}
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 max-w-[90px]">
-                      <ProgressTrackingBadge targetDate={issue.target_date} />
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
-                      {formatDate(issue.start_date)}
-                    </td>
-                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
-                      {formatDate(issue.target_date)}
-                    </td>
-                  </tr>
-                );
+              paginatedIssues.flatMap((issue) => {
+                const children = childrenByParentId.get(issue.id) ?? [];
+                const visibleChildren = hasActiveFilters ? children.filter(issueMatchesFilters) : children;
+                const isExpanded = hasActiveFilters ? visibleChildren.length > 0 : expandedIds.has(issue.id);
+                const rows: React.ReactNode[] = [renderRow(issue, 0, visibleChildren.length, isExpanded)];
+                if (isExpanded && visibleChildren.length > 0) {
+                  for (const child of visibleChildren) rows.push(renderRow(child, 1, 0, false));
+                }
+                return rows;
               })
             ) : (
               <tr>

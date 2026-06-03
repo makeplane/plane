@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, MessageSquare, Rocket } from "lucide-react";
+import { LifeBuoy, Rocket } from "lucide-react";
+import { useRouter } from "next/navigation";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -16,8 +17,21 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
   // store
   const { toggleShortcutsListModal } = usePowerK();
+  const router = useRouter();
 
   return [
+    {
+      id: "open_help_center",
+      type: "action",
+      group: "help",
+      i18n_title: "help_center.menu_label",
+      icon: LifeBuoy,
+      // Instance-global standalone reader — workspace-agnostic, visible to all users.
+      action: () => router.push("/help"),
+      isEnabled: () => true,
+      isVisible: () => true,
+      closeOnSelect: true,
+    },
     {
       id: "open_keyboard_shortcuts",
       type: "action",
@@ -26,20 +40,6 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       icon: Rocket,
       modifierShortcut: "cmd+/",
       action: () => toggleShortcutsListModal(true),
-      isEnabled: () => true,
-      isVisible: () => true,
-      closeOnSelect: true,
-    },
-    {
-      id: "open_plane_documentation",
-      type: "action",
-      group: "help",
-      i18n_title: "power_k.help_actions.open_plane_documentation",
-      icon: FileText,
-      action: () => {
-        const docsUrl = `${window.location.origin}/docs`;
-        window.open(docsUrl, "_blank", "noopener,noreferrer");
-      },
       isEnabled: () => true,
       isVisible: () => true,
       closeOnSelect: true,

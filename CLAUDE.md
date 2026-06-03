@@ -30,6 +30,13 @@
 - PM: pnpm | Lint: `pnpm check:lint` | Format: `pnpm check:format`
 - Backend tests: `cd apps/api && python run_tests.py`
 
+## Local Dev (this machine)
+
+- **Start everything: `pnpm dev:local`** (backend + Caddy proxy in Docker, frontends via turbo, hot reload). Stale ports? `pnpm dev:clean` kills strays first. Script: `scripts/dev-local.sh`.
+- **One origin: http://localhost** → web · **http://localhost/god-mode/** → admin · `/api` → backend. Caddy (:80) routes by path. Don't use raw `:3001` for god-mode (admin has no `/api` proxy).
+- Ports: web 3000 · admin/god-mode 3001 · space 3002 · live 3003 · api 8000 · db 5434 · MinIO 9000/9090.
+- **Pitfall:** running `pnpm dev` per-app twice cascades ports — a 2nd web lands on :3001 and impersonates admin (→ "no workspace"). Run `pnpm dev:local`, not per-app dev.
+
 ## File Standards
 
 - kebab-case, <200 lines code, <150 lines components
@@ -80,48 +87,7 @@ When blocked by privacy hook, output contains JSON between `@@PRIVACY_PROMPT_STA
         design-guidelines.md | deployment-guide.md | system-architecture.md
 ```
 
-<!-- gitnexus:start -->
+## GitNexus
 
-# GitNexus — Code Intelligence
-
-This project is indexed by GitNexus as **plane** (60562 symbols, 105189 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
-
-> First-time setup? See [`docs/gitnexus-guide.md`](./docs/gitnexus-guide.md) (Docker-based, version pinned).
-> If any GitNexus tool warns the index is stale, run `./scripts/gitnexus.sh analyze` in terminal first.
-
-## Always Do
-
-- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
-- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
-- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
-- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
-
-## Never Do
-
-- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
-- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
-- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
-- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
-
-## Resources
-
-| Resource                               | Use for                                  |
-| -------------------------------------- | ---------------------------------------- |
-| `gitnexus://repo/plane/context`        | Codebase overview, check index freshness |
-| `gitnexus://repo/plane/clusters`       | All functional areas                     |
-| `gitnexus://repo/plane/processes`      | All execution flows                      |
-| `gitnexus://repo/plane/process/{name}` | Step-by-step execution trace             |
-
-## CLI
-
-| Task                                         | Read this skill file                                        |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md`       |
-| Blast radius / "What breaks if I change X?"  | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
-| Trace bugs / "Why is X failing?"             | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md`       |
-| Rename / extract / split / refactor          | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md`     |
-| Tools, resources, schema reference           | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md`           |
-| Index, status, clean, wiki CLI commands      | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md`             |
-
-<!-- gitnexus:end -->
+- Code-intelligence MCP rules: `.claude/rules/gitnexus-mcp-usage.md` (auto-loaded)
+- Setup guide: `docs/gitnexus-guide.md`

@@ -9,17 +9,22 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInstanceStaffCreate } from "@plane/services";
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { useInstanceStaff } from "@/hooks/store";
+import { useInstanceStaff, useInstanceDepartment } from "@/hooks/store";
 import { StaffFormFields } from "../components/staff-form-fields";
 import type { StaffFormValues } from "../components/staff-form-fields";
 
 const StaffCreatePage = observer(function StaffCreatePage() {
   const router = useRouter();
   const { createStaff } = useInstanceStaff();
+  const { fetchTree } = useInstanceDepartment();
+  // Department tree-select reads from MobX store — fetch on page load so the
+  // dropdown is populated even when navigating here cold (refresh, direct URL).
+  useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -102,6 +107,7 @@ const StaffCreatePage = observer(function StaffCreatePage() {
   );
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function meta() {
   return [{ title: "Add Staff - God Mode" }];
 }

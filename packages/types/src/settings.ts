@@ -16,8 +16,7 @@ export type TWorkspaceSettingsTabs =
   | "billing-and-plans"
   | "export"
   | "webhooks"
-  | "departments"
-  | "staff";
+  | "departments";
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;
   i18n_label: string;
@@ -38,10 +37,10 @@ export type TProjectSettingsTabs =
   | "labels"
   | "estimates"
   | "automations"
-  | "worklogs"
   | "features_time_tracking"
   | "workflows"
-  | "bank_wide";
+  | "bank_wide"
+  | "field-permissions";
 export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;

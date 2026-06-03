@@ -207,16 +207,16 @@ class ProjectCapacityCategoriesEndpoint(BaseAPIView):
             project_id=project_id,
         )
 
+        # Restrict to issues with worklogs (optionally by member / date range).
+        # Member filter uses logged_by (not assignees) so any logged time counts.
+        wl_filters = Q(workspace__slug=slug, project_id=project_id)
         if member_id:
-            base_qs = base_qs.filter(assignees__id=member_id)
-
-        # Filter to issues with worklogs in date range (if dates given)
-        if date_from or date_to:
-            wl_filters = Q(workspace__slug=slug, project_id=project_id)
-            if date_from:
-                wl_filters &= Q(logged_at__gte=date_from)
-            if date_to:
-                wl_filters &= Q(logged_at__lte=date_to)
+            wl_filters &= Q(logged_by_id=member_id)
+        if date_from:
+            wl_filters &= Q(logged_at__gte=date_from)
+        if date_to:
+            wl_filters &= Q(logged_at__lte=date_to)
+        if member_id or date_from or date_to:
             issue_ids_with_logs = (
                 IssueWorkLog.objects.filter(wl_filters)
                 .values_list("issue_id", flat=True)

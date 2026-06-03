@@ -28,11 +28,12 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
-  if (mainCategoryIds.length === 0) return null;
-
   const selectedMainId = issue.main_task_category_id;
   const subCategories = selectedMainId ? getSubCategoriesByMain(selectedMainId) : [];
   const selectedMain = selectedMainId ? mainCategories[selectedMainId] : null;
+
+  // No categories configured for this workspace AND no value set — nothing to show
+  if (mainCategoryIds.length === 0 && !selectedMainId) return null;
 
   const handleMainChange = (id: string) => {
     void issueOperations.update(workspaceSlug, projectId, issueId, {
@@ -45,15 +46,19 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
     void issueOperations.update(workspaceSlug, projectId, issueId, { sub_task_category_id: id });
   };
 
+  // Resolve display name: prefer store (editable) → fall back to serialized name on issue
+  const mainDisplayName = selectedMain?.name ?? issue.main_task_category_name ?? t("task_category.select_main");
+  const canEditCategories = mainCategoryIds.length > 0 && isEditable;
+
   return (
     <>
       <SidebarPropertyListItem icon={LayoutGrid} label={t("task_category.main_label")}>
         <CustomMenu
-          label={selectedMain?.name ?? t("task_category.select_main")}
+          label={mainDisplayName}
           buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
           placement="bottom-start"
           closeOnSelect
-          disabled={!isEditable}
+          disabled={!canEditCategories}
         >
           {mainCategoryIds.map((id) => (
             <CustomMenu.MenuItem key={id} onClick={() => handleMainChange(id)}>
@@ -63,20 +68,21 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
         </CustomMenu>
       </SidebarPropertyListItem>
 
-      {/* Sub Task Category — new line, shown when main has sub-categories */}
-      {selectedMainId && subCategories.length > 0 && (
+      {/* Sub Task Category — shown when main has sub-categories or issue has a sub set */}
+      {selectedMainId && (subCategories.length > 0 || issue.sub_task_category_id) && (
         <SidebarPropertyListItem icon={LayoutGrid} label={t("task_category.sub_label")}>
           <CustomMenu
             label={
               issue.sub_task_category_id
                 ? (subCategories.find((s) => s.id === issue.sub_task_category_id)?.name ??
+                  issue.sub_task_category_name ??
                   t("task_category.select_sub"))
                 : t("task_category.select_sub")
             }
             buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
             placement="bottom-start"
             closeOnSelect
-            disabled={!isEditable}
+            disabled={!canEditCategories}
           >
             {subCategories.map((sub) => (
               <CustomMenu.MenuItem key={sub.id} onClick={() => handleSubChange(sub.id)}>

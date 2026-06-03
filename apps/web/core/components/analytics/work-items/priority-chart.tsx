@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars, @typescript-eslint/restrict-template-expressions, react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/restrict-template-expressions, react-hooks/exhaustive-deps */
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";

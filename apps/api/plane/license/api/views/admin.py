@@ -23,7 +23,9 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
+from plane.license.menu_registry import ALL_PERMISSION_KEYS, PERMISSION_KEYS
+from plane.utils.instance_admin import is_last_active_super_admin
 from plane.license.api.serializers import (
     InstanceAdminMeSerializer,
     InstanceAdminSerializer,
@@ -41,17 +43,44 @@ from plane.utils.ip_address import get_client_ip
 from plane.utils.path_validator import get_safe_redirect_url
 
 
-class InstanceAdminEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+def _validate_menu_keys(menus):
+    """Return an error string for malformed/unknown menu keys, else None."""
+    if not isinstance(menus, list):
+        return "allowed_menus must be a list of menu keys"
+    unknown = set(menus) - set(PERMISSION_KEYS)
+    if unknown:
+        return f"Unknown menu keys: {', '.join(sorted(unknown))}"
+    return None
 
-    @invalidate_cache(path="/api/instances/", user=False)
+
+class InstanceAdminEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminMenuPermission]
+
+    def _caller_admin(self, request):
+        return InstanceAdmin.objects.filter(instance=Instance.objects.first(), user=request.user).first()
+
+    def _check_grant_authority(self, caller, is_super_admin, allowed_menus):
+        """Escalation guard: only super-admins mint super-admins; a non-super
+        administrators-menu admin may grant only a subset of their own menus."""
+        if is_super_admin and not caller.is_super_admin:
+            return "Only a super-admin can grant super-admin."
+        if not caller.is_super_admin and not set(allowed_menus) <= set(caller.allowed_menus or []):
+            return "You can only grant menus you hold yourself."
+        return None
+
     # Create an instance admin
+    @invalidate_cache(path="/api/instances/admins/", user=False)
     def post(self, request):
         email = request.data.get("email", False)
-        role = request.data.get("role", 20)
+        allowed_menus = request.data.get("allowed_menus", [])
+        is_super_admin = bool(request.data.get("is_super_admin", False))
 
         if not email:
             return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        menu_error = _validate_menu_keys(allowed_menus)
+        if menu_error:
+            return Response({"error": menu_error}, status=status.HTTP_400_BAD_REQUEST)
 
         instance = Instance.objects.first()
         if instance is None:
@@ -60,14 +89,35 @@ class InstanceAdminEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Fetch the user
-        user = User.objects.get(email=email)
+        caller = self._caller_admin(request)
+        authority_error = self._check_grant_authority(caller, is_super_admin, allowed_menus)
+        if authority_error:
+            return Response({"error": authority_error}, status=status.HTTP_403_FORBIDDEN)
 
-        instance_admin = InstanceAdmin.objects.create(instance=instance, user=user, role=role)
+        user = User.objects.filter(email__iexact=str(email).strip()).first()
+        if user is None:
+            return Response(
+                {"error": "No user exists with this email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if InstanceAdmin.objects.filter(instance=instance, user=user).exists():
+            return Response(
+                {"error": "This user is already an instance admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance_admin = InstanceAdmin.objects.create(
+            instance=instance,
+            user=user,
+            role=20,  # the only defined ROLE_CHOICES value; never trust client input here
+            is_super_admin=is_super_admin,
+            allowed_menus=list(allowed_menus),
+        )
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @cache_response(60 * 60 * 2, user=False)
+    @cache_response(60 * 60 * 2, path="/api/instances/admins/", user=False)
     def get(self, request):
         instance = Instance.objects.first()
         if instance is None:
@@ -79,10 +129,74 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admins, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="/api/instances/", user=False)
+    @invalidate_cache(path="/api/instances/admins/", user=False)
+    def patch(self, request, pk):
+        instance = Instance.objects.first()
+        admin_row = InstanceAdmin.objects.filter(instance=instance, pk=pk).select_related("user").first()
+        if admin_row is None:
+            return Response({"error": "Instance admin not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        caller = self._caller_admin(request)
+
+        # Self-edit of grants is forbidden for non-supers — only another
+        # (super-)admin changes your menus.
+        if not caller.is_super_admin and admin_row.user_id == request.user.id:
+            return Response(
+                {"error": "You cannot edit your own permissions"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if "is_super_admin" in request.data:
+            new_super = bool(request.data.get("is_super_admin"))
+            if not caller.is_super_admin:
+                return Response(
+                    {"error": "Only a super-admin can change the super-admin flag"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            if not new_super and admin_row.is_super_admin and is_last_active_super_admin(admin_row.user):
+                return Response(
+                    {"error": "Cannot demote the last super-admin"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            admin_row.is_super_admin = new_super
+
+        if "allowed_menus" in request.data:
+            allowed_menus = request.data.get("allowed_menus")
+            menu_error = _validate_menu_keys(allowed_menus)
+            if menu_error:
+                return Response({"error": menu_error}, status=status.HTTP_400_BAD_REQUEST)
+            if not caller.is_super_admin and not set(allowed_menus) <= set(caller.allowed_menus or []):
+                return Response(
+                    {"error": "You can only grant menus you hold yourself."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            admin_row.allowed_menus = list(allowed_menus)
+
+        admin_row.save()
+        serializer = InstanceAdminSerializer(admin_row)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @invalidate_cache(path="/api/instances/admins/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
+        admin_row = InstanceAdmin.objects.filter(instance=instance, pk=pk).select_related("user").first()
+        if admin_row is None:
+            return Response({"error": "Instance admin not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Lockout guards: never delete yourself, never delete the last
+        # active loginable super-admin.
+        if admin_row.user_id == request.user.id:
+            return Response(
+                {"error": "You cannot remove your own admin access"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if admin_row.is_super_admin and is_last_active_super_admin(admin_row.user):
+            return Response(
+                {"error": "Cannot remove the last super-admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        admin_row.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -215,7 +329,12 @@ class InstanceAdminSignUpEndpoint(View):
                 password=make_password(password),
                 is_password_autoset=False,
             )
-            _ = Profile.objects.create(user=user, company_name=company_name)
+            # Instance admin already provided name during signup — mark the
+            # profile-setup onboarding step complete so first login skips it.
+            profile = Profile.objects.create(user=user, company_name=company_name)
+            if user.first_name or user.last_name:
+                profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
+                profile.save(update_fields=["onboarding_step"])
             # settings last active for the user
             user.is_active = True
             user.last_active = timezone.now()
@@ -225,8 +344,13 @@ class InstanceAdminSignUpEndpoint(View):
             user.token_updated_at = timezone.now()
             user.save()
 
-            # Register the user as an instance admin
-            _ = InstanceAdmin.objects.create(user=user, instance=instance)
+            # Register the first/setup admin as super-admin with every menu
+            _ = InstanceAdmin.objects.create(
+                user=user,
+                instance=instance,
+                is_super_admin=True,
+                allowed_menus=list(ALL_PERMISSION_KEYS),
+            )
             # Make the setup flag True
             instance.is_setup_done = True
             instance.instance_name = company_name
@@ -359,7 +483,7 @@ class InstanceAdminSignInEndpoint(View):
 
 
 class InstanceAdminUserMeEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def get(self, request):
         serializer = InstanceAdminMeSerializer(request.user)
@@ -380,7 +504,7 @@ class InstanceAdminUserSessionEndpoint(BaseAPIView):
 
 
 class InstanceAdminSignOutEndpoint(View):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         # Get user

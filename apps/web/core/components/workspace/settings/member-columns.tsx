@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -11,6 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -22,6 +24,8 @@ import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+// components
+import { RoleDowngradeModal } from "./role-downgrade-modal";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -51,26 +55,26 @@ export function NameColumn(props: NameProps) {
   return (
     <Disclosure>
       {() => (
-        <div className="group relative">
-          <div className="flex w-72 items-center justify-between gap-x-4 gap-y-2">
-            <div className="flex flex-1 items-center gap-x-2 gap-y-2">
+        <div className="relative group">
+          <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
+            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {isSuspended ? (
-                <div className="rounded-full bg-layer-1">
+                <div className="bg-layer-1 rounded-full">
                   <SuspendedUserIcon className="size-6 text-placeholder" />
                 </div>
               ) : avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
+                  <span className="relative flex size-6 items-center justify-center rounded-full capitalize text-on-color">
                     <img
                       src={getFileURL(avatar_url)}
-                      className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
+                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                       alt={display_name || email}
                     />
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-tertiary capitalize">
+                  <span className="relative flex size-6 text-11 items-center justify-center rounded-full  capitalize text-tertiary bg-layer-3">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
@@ -90,7 +94,7 @@ export function NameColumn(props: NameProps) {
                   <div
                     role="button"
                     tabIndex={0}
-                    className="flex cursor-pointer items-center gap-x-3"
+                    className="flex items-center gap-x-3 cursor-pointer"
                     onClick={() => setRemoveMemberModal(rowData)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -114,6 +118,8 @@ export function NameColumn(props: NameProps) {
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, workspaceSlug } = props;
+  // states
+  const [pendingRole, setPendingRole] = useState<EUserPermissions | null>(null);
   // form info
   const {
     control,
@@ -121,11 +127,11 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   } = useForm();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-
   const {
     workspace: { updateMember },
   } = useMember();
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
@@ -133,60 +139,78 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   const isRoleNonEditable = isCurrentUser || !isAdminRole;
   const isSuspended = rowData.is_active === false;
 
+  const handleRoleChange = async (newRole: EUserPermissions) => {
+    if (!workspaceSlug) return;
+    try {
+      await updateMember(workspaceSlug.toString(), rowData.member.id, {
+        role: newRole as unknown as EUserPermissions,
+      });
+    } catch (err: unknown) {
+      const error = err as { error?: string | string[] };
+      const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: errorString ?? t("workspace_settings.settings.members.role_downgrade_modal.error"),
+      });
+    }
+  };
+
   return (
     <>
       {isSuspended ? (
-        <div className="flex w-32">
+        <div className="w-32 flex ">
           <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
             Suspended
           </Pill>
         </div>
       ) : isRoleNonEditable ? (
-        <div className="flex w-32">
+        <div className="w-32 flex ">
           <span>{ROLE[rowData.role]}</span>
         </div>
       ) : (
-        <Controller
-          name="role"
-          control={control}
-          rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
-            <CustomSelect
-              value={value as EUserPermissions}
-              onChange={async (value: EUserPermissions) => {
-                if (!workspaceSlug) return;
-                try {
-                  await updateMember(workspaceSlug.toString(), rowData.member.id, {
-                    role: value as unknown as EUserPermissions,
-                  });
-                } catch (err: unknown) {
-                  const error = err as { error?: string | string[] };
-                  const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
-
-                  setToast({
-                    type: TOAST_TYPE.ERROR,
-                    title: "Error!",
-                    message: errorString ?? "An error occurred while updating member role. Please try again.",
-                  });
+        <>
+          <Controller
+            name="role"
+            control={control}
+            rules={{ required: "Role is required." }}
+            render={({ field: { value } }) => (
+              <CustomSelect
+                value={value as EUserPermissions}
+                onChange={(value: EUserPermissions) => {
+                  if (!workspaceSlug) return;
+                  // Admin downgrade requires confirmation before proceeding.
+                  if (rowData.role === EUserPermissions.ADMIN && value !== EUserPermissions.ADMIN) {
+                    setPendingRole(value);
+                    return;
+                  }
+                  void handleRoleChange(value);
+                }}
+                label={
+                  <div className="flex ">
+                    <span>{ROLE[rowData.role]}</span>
+                  </div>
                 }
-              }}
-              label={
-                <div className="flex">
-                  <span>{ROLE[rowData.role]}</span>
-                </div>
-              }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
-              className="w-32 rounded-md p-0"
-              input
-            >
-              {Object.keys(ROLE).map((item) => (
-                <CustomSelect.Option key={item} value={item as unknown as EUserPermissions}>
-                  {ROLE[item as unknown as keyof typeof ROLE]}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
-          )}
-        />
+                buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
+                className="rounded-md p-0 w-32"
+                input
+              >
+                {Object.keys(ROLE).map((item) => (
+                  <CustomSelect.Option key={item} value={item as unknown as EUserPermissions}>
+                    {ROLE[item as unknown as keyof typeof ROLE]}
+                  </CustomSelect.Option>
+                ))}
+              </CustomSelect>
+            )}
+          />
+          <RoleDowngradeModal
+            isOpen={pendingRole !== null}
+            onClose={() => setPendingRole(null)}
+            onConfirm={async () => {
+              if (pendingRole !== null) await handleRoleChange(pendingRole);
+            }}
+          />
+        </>
       )}
     </>
   );

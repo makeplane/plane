@@ -18,6 +18,12 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 
-INSTALLED_APPS.append(  # noqa
-    "plane.tests"
-)
+# Disable Redis for unit tests (not needed, Celery runs in-process)
+REDIS_URL = None
+REDIS_SSL = False
+
+# Remove optional apps not available in test environment
+INSTALLED_APPS = [  # noqa
+    app for app in INSTALLED_APPS if app != "django_celery_beat"  # noqa: F405
+]
+INSTALLED_APPS.append("plane.tests")

@@ -60,6 +60,10 @@ class InstanceAdmin(BaseModel):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
     is_verified = models.BooleanField(default=False)
+    # Menu RBAC: super-admins bypass menu checks; scoped admins only reach
+    # god-mode route groups whose menu key is in allowed_menus (fail-closed).
+    is_super_admin = models.BooleanField(default=False)
+    allowed_menus = models.JSONField(default=list)
 
     class Meta:
         unique_together = ["instance", "user"]

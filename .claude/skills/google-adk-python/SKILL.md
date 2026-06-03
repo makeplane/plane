@@ -1,6 +1,10 @@
 ---
 name: ck:google-adk-python
 description: "Build AI agents with Google ADK Python. Multi-agent systems, A2A protocol, MCP tools, workflow agents, state/memory, callbacks/plugins, Vertex AI deployment, evaluation."
+user-invocable: true
+when_to_use: "Invoke for Google ADK agents, A2A, MCP, or Vertex deployment."
+category: ai-ml
+keywords: [google-adk, agents, a2a, mcp, vertex-ai]
 license: Apache-2.0
 argument-hint: "[agent or feature]"
 metadata:
@@ -70,39 +74,39 @@ Use `App` when needing plugins, event compaction, or custom lifecycle management
 
 ## CLI Tools
 
-| Command | Purpose |
-|---------|---------|
-| `adk web <agents_dir>` | Dev UI (recommended for development) |
-| `adk run <agent_dir>` | Interactive CLI testing |
-| `adk api_server <agents_dir>` | FastAPI production server |
-| `adk eval <agent> <evalset.json>` | Run evaluation suite |
+| Command                           | Purpose                              |
+| --------------------------------- | ------------------------------------ |
+| `adk web <agents_dir>`            | Dev UI (recommended for development) |
+| `adk run <agent_dir>`             | Interactive CLI testing              |
+| `adk api_server <agents_dir>`     | FastAPI production server            |
+| `adk eval <agent> <evalset.json>` | Run evaluation suite                 |
 
 ## Agent Types
 
-| Type | Use Case |
-|------|----------|
+| Type                 | Use Case                             |
+| -------------------- | ------------------------------------ |
 | `Agent` / `LlmAgent` | Dynamic routing, tool use, reasoning |
-| `SequentialAgent` | Fixed-order pipeline |
-| `ParallelAgent` | Concurrent execution |
-| `LoopAgent` | Iterative processing |
-| `RemoteA2aAgent` | Remote agent via A2A protocol |
+| `SequentialAgent`    | Fixed-order pipeline                 |
+| `ParallelAgent`      | Concurrent execution                 |
+| `LoopAgent`          | Iterative processing                 |
+| `RemoteA2aAgent`     | Remote agent via A2A protocol        |
 
 ## Key APIs
 
-| Feature | API |
-|---------|-----|
-| State | `tool_context.state[key] = value` |
-| Artifacts | `tool_context.save_artifact(name, part)` |
-| Callbacks | `before_agent_callback`, `after_model_callback`, etc. |
-| MCP Tools | `MCPToolset(connection_params=StdioConnectionParams(...))` |
-| Sub-agents | `Agent(..., sub_agents=[agent1, agent2])` |
-| Human-in-loop | `LongRunningFunctionTool(func=my_func)` |
-| Plugins | `App(..., plugins=[MyPlugin()])` |
+| Feature       | API                                                        |
+| ------------- | ---------------------------------------------------------- |
+| State         | `tool_context.state[key] = value`                          |
+| Artifacts     | `tool_context.save_artifact(name, part)`                   |
+| Callbacks     | `before_agent_callback`, `after_model_callback`, etc.      |
+| MCP Tools     | `MCPToolset(connection_params=StdioConnectionParams(...))` |
+| Sub-agents    | `Agent(..., sub_agents=[agent1, agent2])`                  |
+| Human-in-loop | `LongRunningFunctionTool(func=my_func)`                    |
+| Plugins       | `App(..., plugins=[MyPlugin()])`                           |
 
 ## Model Support
 
-Latest: `gemini-2.5-flash` (default), `gemini-2.5-pro`, `gemini-2.0-flash` (sunsets Mar 2026)
-Preview: `gemini-3-flash-preview`, `gemini-3-pro-preview`
+Flash: `gemini-2.5-flash` (default, stable), `gemini-3-flash-preview` (preview)
+Pro: `gemini-2.5-pro` (stable), `gemini-3.1-pro-preview` (preview)
 Also: Anthropic Claude, Ollama, LiteLLM, vLLM, Model Garden
 
 ## Best Practices

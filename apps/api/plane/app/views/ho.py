@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, OuterRef, Prefetch, Subquery, Sum, Q
-from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Count, Prefetch, Sum, Q
 
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -76,7 +76,7 @@ def _get_accessible_dept_ids(user):
 
     # Regular member: departments linked to joined workspaces + all ancestors
     member_ws_ids = WorkspaceMember.objects.filter(
-        member=user, deleted_at__isnull=True
+        member=user, is_active=True, deleted_at__isnull=True
     ).values_list("workspace_id", flat=True)
     depts = Department.objects.filter(
         linked_workspace_id__in=member_ws_ids,
@@ -106,6 +106,7 @@ def get_accessible_workspace_ids(user):
     # 1. Add workspaces where user is a member
     member_ws_ids = WorkspaceMember.objects.filter(
         member=user,
+        is_active=True,
         deleted_at__isnull=True,
     ).values_list("workspace_id", flat=True)
     accessible_ids.update(member_ws_ids)
@@ -152,7 +153,7 @@ def _get_user_scope_q(user, workspace_ids):
     # Split accessible workspaces by admin role
     admin_ws_ids = set(
         WorkspaceMember.objects.filter(
-            member=user, role=20, deleted_at__isnull=True,
+            member=user, role=20, is_active=True, deleted_at__isnull=True,
             workspace_id__in=workspace_ids
         ).values_list("workspace_id", flat=True)
     )
@@ -177,6 +178,14 @@ class HoIssuePagination(PageNumberPagination):
     max_page_size = 500
 
 
+class HoWorklogBreakdownPagination(PageNumberPagination):
+    """Smaller page size for in-popover lists (members / per-user work items)."""
+
+    page_size = 25
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 # ---------------------------------------------------------------------------
 # Views
 # ---------------------------------------------------------------------------
@@ -194,6 +203,8 @@ _ALLOWED_ORDER_BY = {
     "-priority",
     "state__name",
     "-state__name",
+    "state__group",
+    "-state__group",
     "start_date",
     "-start_date",
     "target_date",
@@ -212,8 +223,6 @@ _ALLOWED_ORDER_BY = {
     "-sub_issues_count",
     "reference_link_count",
     "-reference_link_count",
-    "total_log_time",
-    "-total_log_time",
 }
 
 
@@ -225,12 +234,14 @@ class HoIssueListView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Optional workspace filter — narrow to a single workspace by ID
+        # Optional workspace filter — narrow to one or more workspaces by ID (comma-separated)
         workspace_id = request.query_params.get("workspace_id")
         if workspace_id:
-            if workspace_id not in [str(wid) for wid in workspace_ids]:
+            allowed = {str(wid) for wid in workspace_ids}
+            requested = [wid.strip() for wid in workspace_id.split(",") if wid.strip()]
+            if not requested or any(wid not in allowed for wid in requested):
                 return Response({"detail": "Workspace not found or inaccessible."}, status=status.HTTP_404_NOT_FOUND)
-            workspace_ids = [workspace_id]
+            workspace_ids = requested
 
         # Optional project filter — validate UUIDs and enforce workspace boundary
         project_ids_param = request.query_params.get("project_id")
@@ -261,6 +272,7 @@ class HoIssueListView(BaseAPIView):
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
         include_archived = request.query_params.get("include_archived", "true").lower() == "true"
+        include_sub_issues = request.query_params.get("include_sub_issues", "false").lower() == "true"
 
         scope_q = _get_user_scope_q(request.user, workspace_ids)
         base_filters = {
@@ -270,6 +282,9 @@ class HoIssueListView(BaseAPIView):
         if not include_archived:
             base_filters["archived_at__isnull"] = True
             base_filters["project__archived_at__isnull"] = True
+        # Default: show only level-1 (parent-less) work items. Toggle includes sub-items.
+        if not include_sub_issues:
+            base_filters["parent__isnull"] = True
         qs = (
             Issue.objects.filter(
                 scope_q,
@@ -295,19 +310,6 @@ class HoIssueListView(BaseAPIView):
                 "issue_cycle__cycle",
             )
             .annotate(
-                # Use correlated subquery to avoid JOIN multiplication when scope_q
-                # adds M2M joins (assignees) that create N rows per issue, which would
-                # inflate SUM(duration_minutes) by the number of assignees.
-                total_log_time=Coalesce(
-                    Subquery(
-                        IssueWorkLog.objects  # SoftDeletionManager already excludes deleted records
-                        .filter(issue_id=OuterRef("pk"))
-                        .values("issue_id")
-                        .annotate(total=Sum("duration_minutes"))
-                        .values("total")
-                    ),
-                    0,
-                ),
                 sub_issues_count=Count("parent_issue", distinct=True),
                 reference_link_count=Count("issue_link", distinct=True),
             )
@@ -324,7 +326,7 @@ class HoIssueListView(BaseAPIView):
 
         state = request.query_params.get("state")
         if state:
-            qs = qs.filter(state__name__in=state.split(","))
+            qs = qs.filter(state__group__in=state.split(","))
 
         assignees = request.query_params.get("assignees")
         if assignees:
@@ -373,7 +375,19 @@ class HoIssueListView(BaseAPIView):
             if p_filters:
                 qs = qs.filter(p_filters)
 
-        qs = qs.order_by(order_by, "created_at")
+        # Default datasheet sort: hierarchical A-Z (department → project → main → sub → workitem).
+        # When user explicitly picks a different sort column, honor it then fall back to created_at.
+        if order_by == "project__workspace__name":
+            qs = qs.order_by(
+                "project__workspace__name",
+                "project__name",
+                "main_task_category__name",
+                "sub_task_category__name",
+                "name",
+                "created_at",
+            )
+        else:
+            qs = qs.order_by(order_by, "created_at")
 
         # Overlap filter: include issues where [start_date, target_date] overlaps [from_date, to_date]
         # Skip target_date lower-bound when progress filter is active (progress already filters by target_date)
@@ -384,7 +398,9 @@ class HoIssueListView(BaseAPIView):
 
         paginator = HoIssuePagination()
         page = paginator.paginate_queryset(qs, request)
-        serializer = HoIssueSerializer(page, many=True)
+        # Aggregate assignees across each row's subtree (issue + descendants) in one batched CTE.
+        subtree_assignees = _subtree_assignees_map([str(i.id) for i in page]) if page else {}
+        serializer = HoIssueSerializer(page, many=True, context={"subtree_assignees": subtree_assignees})
         return paginator.get_paginated_response(serializer.data)
 
 
@@ -445,6 +461,7 @@ class HoCategorySummaryView(BaseAPIView):
                         "main_task_category_name": main_cat.name,
                         "main_task_category_description": main_cat.description or None,
                         "sub_task_category_name": sub.name,
+                        "sub_task_category_description": sub.description or None,
                     })
             elif not sub_task_category_filter:
                 # Show main-only row when no sub-category filter is active
@@ -463,148 +480,249 @@ class HoFilterOptionsView(BaseAPIView):
     """GET /api/ho/filter-options/ - return unique values for filters."""
 
     def get(self, request):
-        workspace_ids = get_accessible_workspace_ids(request.user)
-        if not workspace_ids:
+        accessible_workspace_ids = get_accessible_workspace_ids(request.user)
+        if not accessible_workspace_ids:
             return Response({}, status=status.HTTP_200_OK)
 
-        # Optional workspace/project filters to narrow down options
+        # Optional workspace/project filters to narrow down options (comma-separated)
         workspace_id = request.query_params.get("workspace_id")
-        if workspace_id and workspace_id in [str(wid) for wid in workspace_ids]:
-            workspace_ids = [workspace_id]
+        narrowed_workspace_ids = accessible_workspace_ids
+        if workspace_id:
+            allowed = {str(wid) for wid in accessible_workspace_ids}
+            requested = [wid.strip() for wid in workspace_id.split(",") if wid.strip() in allowed]
+            if requested:
+                narrowed_workspace_ids = requested
 
         project_ids_param = request.query_params.get("project_id")
         project_ids = []
         if project_ids_param:
             raw_ids = [pid.strip() for pid in project_ids_param.split(",") if pid.strip()]
             project_ids = list(
-                Project.objects.filter(id__in=raw_ids, workspace_id__in=workspace_ids).values_list("id", flat=True)
+                Project.objects.filter(id__in=raw_ids, workspace_id__in=narrowed_workspace_ids).values_list(
+                    "id", flat=True
+                )
             )
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
         include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
-        filter_kwargs = {
-            "workspace_id__in": workspace_ids,
-            "is_draft": False,
-            "deleted_at__isnull": True,
-        }
-        if not include_archived:
-            filter_kwargs["archived_at__isnull"] = True
-            filter_kwargs["project__archived_at__isnull"] = True
-        base_qs = Issue.objects.filter(**filter_kwargs)
-        scope_q = _get_user_scope_q(request.user, workspace_ids)
-        base_qs = base_qs.filter(scope_q)
-        if project_ids:
-            base_qs = base_qs.filter(project_id__in=project_ids)
-        if from_date:
-            base_qs = base_qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
-        if to_date:
-            base_qs = base_qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
+        def _build_qs(ws_ids, apply_project_filter=True):
+            kw = {"workspace_id__in": ws_ids, "is_draft": False, "deleted_at__isnull": True}
+            if not include_archived:
+                kw["archived_at__isnull"] = True
+                kw["project__archived_at__isnull"] = True
+            qs = Issue.objects.filter(**kw).filter(_get_user_scope_q(request.user, ws_ids))
+            if apply_project_filter and project_ids:
+                qs = qs.filter(project_id__in=project_ids)
+            if from_date:
+                qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
+            if to_date:
+                qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
+            return qs
 
-        # Fix for duplicates: collect IDs first then extract distinct values
-        issue_ids = base_qs.values_list("id", flat=True).distinct()
-
-        # Extract options
-        states = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(state__isnull=True)
-            .values_list("state__name", flat=True)
-            .distinct()
-            .order_by("state__name")
-        )
-        raw_priorities = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(priority__isnull=True)
-            .values_list("priority", flat=True)
-            .distinct()
-        )
-        priorities = sorted(list(set(p.lower() for p in raw_priorities if p)))
-
-        main_cats = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(main_task_category__isnull=True)
-            .values_list("main_task_category__name", flat=True)
-            .distinct()
-            .order_by("main_task_category__name")
-        )
-        sub_cats = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(sub_task_category__isnull=True)
-            .values_list("sub_task_category__name", flat=True)
-            .distinct()
-            .order_by("sub_task_category__name")
+        # Materialize the main facet pool once to avoid re-evaluating the subquery
+        # against the issue table for every facet (~17 round-trips reduced to ~6).
+        issue_ids = list(
+            _build_qs(narrowed_workspace_ids).values_list("id", flat=True).distinct()
         )
 
-        cycles = (
-            Issue.objects.filter(id__in=issue_ids, issue_cycle__cycle__isnull=False)
-            .values_list("issue_cycle__cycle__name", flat=True)
+        # Workspace / project facet pools stay as subqueries since each is consumed
+        # exactly once below.
+        workspaces_issue_ids_sq = (
+            _build_qs(accessible_workspace_ids, apply_project_filter=False)
+            .values_list("id", flat=True)
             .distinct()
-            .order_by("issue_cycle__cycle__name")
         )
-        modules = (
-            Issue.objects.filter(id__in=issue_ids, issue_module__module__isnull=False)
-            .values_list("issue_module__module__name", flat=True)
+        projects_issue_ids_sq = (
+            _build_qs(narrowed_workspace_ids, apply_project_filter=False)
+            .values_list("id", flat=True)
             .distinct()
-            .order_by("issue_module__module__name")
         )
 
-        # Assignees: query IssueAssignee directly to exclude soft-deleted rows
-        User = get_user_model()
-        assignee_user_ids = (
-            IssueAssignee.objects.filter(
-                issue_id__in=issue_ids,
-                deleted_at__isnull=True,
+        # Single aggregate query for the six simple facets (states / priorities /
+        # main_cats / sub_cats / cycles / modules). Each ArrayAgg(distinct=True)
+        # emits a separate FILTER-aware aggregation but in one SQL statement.
+        if issue_ids:
+            facets = Issue.objects.filter(id__in=issue_ids).aggregate(
+                states=ArrayAgg("state__group", distinct=True, filter=Q(state__isnull=False)),
+                raw_priorities=ArrayAgg("priority", distinct=True, filter=Q(priority__isnull=False)),
+                main_cats=ArrayAgg(
+                    "main_task_category__name",
+                    distinct=True,
+                    filter=Q(main_task_category__isnull=False),
+                ),
+                sub_cats=ArrayAgg(
+                    "sub_task_category__name",
+                    distinct=True,
+                    filter=Q(sub_task_category__isnull=False),
+                ),
+                cycles=ArrayAgg(
+                    "issue_cycle__cycle__name",
+                    distinct=True,
+                    filter=Q(issue_cycle__cycle__isnull=False),
+                ),
+                modules=ArrayAgg(
+                    "issue_module__module__name",
+                    distinct=True,
+                    filter=Q(issue_module__module__isnull=False),
+                ),
             )
-            .values_list("assignee_id", flat=True)
-            .distinct()
-        )
-        assignees = (
-            User.objects.filter(id__in=assignee_user_ids)
-            .values("id", "display_name")
-            .order_by("display_name")
-        )
+        else:
+            facets = {k: [] for k in ("states", "raw_priorities", "main_cats", "sub_cats", "cycles", "modules")}
+
+        states = facets.get("states") or []
+        raw_priorities = facets.get("raw_priorities") or []
+        priorities = sorted({p.lower() for p in raw_priorities if p})
+        main_cats = facets.get("main_cats") or []
+        sub_cats = facets.get("sub_cats") or []
+        cycles = facets.get("cycles") or []
+        modules = facets.get("modules") or []
+
+        # Users: resolve assignees and leads via single queries each (subquery in SQL).
+        User = get_user_model()
         assignees_list = [
             {"id": str(a["id"]), "display_name": a["display_name"]}
-            for a in assignees
+            for a in (
+                User.objects.filter(
+                    id__in=IssueAssignee.objects.filter(
+                        issue_id__in=issue_ids,
+                        deleted_at__isnull=True,
+                    ).values("assignee_id")
+                )
+                .values("id", "display_name")
+                .order_by("display_name")
+                .distinct()
+            )
         ]
-
-        # Leads: get project lead User IDs, then resolve display names
-        lead_user_ids = (
-            Project.objects.filter(project_issue__id__in=issue_ids)
-            .exclude(project_lead__isnull=True)
-            .values_list("project_lead_id", flat=True)
-            .distinct()
-        )
-        leads = (
-            User.objects.filter(id__in=lead_user_ids)
-            .values("id", "display_name")
-            .order_by("display_name")
-        )
         leads_list = [
             {"id": str(lead["id"]), "display_name": lead["display_name"]}
-            for lead in leads
+            for lead in (
+                User.objects.filter(
+                    id__in=Project.objects.filter(project_issue__id__in=issue_ids)
+                    .exclude(project_lead__isnull=True)
+                    .values("project_lead_id")
+                )
+                .values("id", "display_name")
+                .order_by("display_name")
+                .distinct()
+            )
+        ]
+
+        # Workspaces / projects — single query each with subquery; "department" filter shows
+        # workspaces holding visible issues regardless of current workspace_id selection.
+        workspaces_list = [
+            {"id": str(w.id), "name": w.name}
+            for w in Workspace.objects.filter(
+                id__in=Issue.objects.filter(id__in=workspaces_issue_ids_sq).values("workspace_id")
+            )
+            .only("id", "name")
+            .order_by("name")
+            .distinct()
+        ]
+        projects_list = [
+            {"id": str(p.id), "name": p.name}
+            for p in Project.objects.filter(
+                id__in=Issue.objects.filter(id__in=projects_issue_ids_sq).values("project_id")
+            )
+            .only("id", "name")
+            .order_by("name")
+            .distinct()
         ]
 
         return Response({
-            "states": sorted(list(set(states))),
-            "main_task_categories": sorted(list(set(main_cats))),
-            "sub_task_categories": sorted(list(set(sub_cats))),
-            "cycles": sorted(list(set(cycles))),
-            "modules": sorted(list(set(modules))),
+            "states": sorted(set(states)),
+            "main_task_categories": sorted(set(main_cats)),
+            "sub_task_categories": sorted(set(sub_cats)),
+            "cycles": sorted(set(cycles)),
+            "modules": sorted(set(modules)),
             "assignees": assignees_list,
             "leads": leads_list,
+            "workspaces": workspaces_list,
+            "projects": projects_list,
             "priorities": priorities,
             "progress": ["off_track", "due_today", "at_risk", "on_track"],
         }, status=status.HTTP_200_OK)
 
 
-class HoIssueWorklogBreakdownView(BaseAPIView):
-    """GET /api/ho/issues/<issue_id>/worklogs/ — per-user worklog totals for a single HO issue.
+def _issue_subtree_ids(root_id):
+    """Return list of issue IDs in the subtree rooted at root_id (inclusive).
 
-    Uses HO workspace-level permissions instead of project membership, so HO users
-    who are not project members can still see the breakdown (fixing the mismatch
-    with total_log_time shown in the datasheet which is annotated without membership filter).
+    Uses a recursive CTE over Issue.parent_id, restricted to non-deleted, non-archived
+    issues. Returns at most 10 levels deep as a safety bound against pathological data.
+    """
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            WITH RECURSIVE subtree AS (
+                SELECT id, 1 AS depth
+                FROM issues
+                WHERE id = %s AND deleted_at IS NULL AND archived_at IS NULL
+                UNION ALL
+                SELECT i.id, s.depth + 1
+                FROM issues i
+                INNER JOIN subtree s ON i.parent_id = s.id
+                WHERE i.deleted_at IS NULL AND i.archived_at IS NULL AND s.depth < 10
+            )
+            SELECT id FROM subtree
+            """,
+            [str(root_id)],
+        )
+        return [row[0] for row in cursor.fetchall()]
+
+
+def _subtree_assignees_map(root_ids):
+    """Return {root_id_str: [{id, display_name, avatar}, ...]} — union of assignees
+    from each root issue and its descendants (inclusive, depth-bounded at 10).
+
+    One batched recursive CTE keyed by `root_id` so a single query covers the full page.
+    Excludes soft-deleted/archived issues and soft-deleted assignee rows.
+    """
+    if not root_ids:
+        return {}
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            WITH RECURSIVE subtree AS (
+                SELECT id AS root_id, id, 1 AS depth
+                FROM issues
+                WHERE id = ANY(%s::uuid[])
+                  AND deleted_at IS NULL
+                  AND archived_at IS NULL
+                UNION ALL
+                SELECT s.root_id, i.id, s.depth + 1
+                FROM issues i
+                INNER JOIN subtree s ON i.parent_id = s.id
+                WHERE i.deleted_at IS NULL
+                  AND i.archived_at IS NULL
+                  AND s.depth < 10
+            )
+            SELECT DISTINCT s.root_id, u.id, u.display_name, COALESCE(u.avatar, '')
+            FROM subtree s
+            INNER JOIN issue_assignees ia
+                ON ia.issue_id = s.id AND ia.deleted_at IS NULL
+            INNER JOIN users u ON u.id = ia.assignee_id
+            ORDER BY s.root_id, u.display_name
+            """,
+            [list(root_ids)],
+        )
+        result = {}
+        for root_id, user_id, display_name, avatar in cursor.fetchall():
+            result.setdefault(str(root_id), []).append(
+                {"id": str(user_id), "display_name": display_name, "avatar": avatar}
+            )
+        return result
+
+
+class HoIssueWorklogBreakdownView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/ — subtree-wide worklog breakdown.
+
+    Returns the total minutes across the issue + all descendants, plus per-user totals.
+    Uses HO workspace-level permissions instead of project membership.
     """
 
     def get(self, request, issue_id):
@@ -612,7 +730,6 @@ class HoIssueWorklogBreakdownView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Verify issue belongs to an accessible workspace
         issue_exists = Issue.objects.filter(
             id=issue_id,
             workspace_id__in=workspace_ids,
@@ -622,32 +739,96 @@ class HoIssueWorklogBreakdownView(BaseAPIView):
         if not issue_exists:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Aggregate total minutes per user (SoftDeletionManager already excludes deleted records)
-        breakdown = (
-            IssueWorkLog.objects.filter(issue_id=issue_id)
+        subtree_ids = _issue_subtree_ids(issue_id)
+
+        # Full subtree total (computed once, not paginated)
+        total_minutes = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids).aggregate(
+                total=Sum("duration_minutes")
+            )["total"]
+            or 0
+        )
+
+        # Per-user totals across subtree (SoftDeletionManager excludes deleted logs)
+        breakdown_qs = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids)
             .values("logged_by")
             .annotate(total_minutes=Sum("duration_minutes"))
             .order_by("-total_minutes")
         )
 
-        # Fetch user display details in one query
+        paginator = HoWorklogBreakdownPagination()
+        page = paginator.paginate_queryset(breakdown_qs, request) or []
+
         User = get_user_model()
-        user_ids = [row["logged_by"] for row in breakdown]
+        user_ids = [row["logged_by"] for row in page]
         user_map = {
             str(u.id): {"display_name": u.display_name, "avatar_url": u.avatar or ""}
             for u in User.objects.filter(id__in=user_ids).only("id", "display_name", "avatar")
         }
 
-        result = [
+        members = [
             {
                 "user_id": str(row["logged_by"]),
                 "display_name": user_map.get(str(row["logged_by"]), {}).get("display_name", ""),
                 "avatar_url": user_map.get(str(row["logged_by"]), {}).get("avatar_url", ""),
                 "total_minutes": row["total_minutes"],
             }
-            for row in breakdown
+            for row in page
         ]
-        return Response(result, status=status.HTTP_200_OK)
+        count = paginator.page.paginator.count if paginator.page else len(members)
+        return Response(
+            {
+                "total_minutes": total_minutes,
+                "count": count,
+                "next": paginator.get_next_link() if paginator.page else None,
+                "previous": paginator.get_previous_link() if paginator.page else None,
+                "members": members,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class HoIssueWorklogByUserView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/by-user/<user_id>/ — per-work-item totals
+    for one user within the issue subtree (inclusive)."""
+
+    def get(self, request, issue_id, user_id):
+        workspace_ids = get_accessible_workspace_ids(request.user)
+        if not workspace_ids:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+
+        issue_exists = Issue.objects.filter(
+            id=issue_id,
+            workspace_id__in=workspace_ids,
+            deleted_at__isnull=True,
+            archived_at__isnull=True,
+        ).exists()
+        if not issue_exists:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        subtree_ids = _issue_subtree_ids(issue_id)
+
+        rows_qs = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids, logged_by_id=user_id)
+            .values("issue_id", "issue__name", "issue__project__name")
+            .annotate(total_minutes=Sum("duration_minutes"))
+            .order_by("-total_minutes")
+        )
+
+        paginator = HoWorklogBreakdownPagination()
+        page = paginator.paginate_queryset(rows_qs, request) or []
+
+        result = [
+            {
+                "issue_id": str(row["issue_id"]),
+                "issue_name": row["issue__name"] or "",
+                "project_name": row["issue__project__name"] or "",
+                "total_minutes": row["total_minutes"],
+            }
+            for row in page
+        ]
+        return paginator.get_paginated_response(result)
 
 
 class HoAccessibleWorkspacesView(BaseAPIView):
@@ -658,6 +839,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
         member_ws_ids = list(
             WorkspaceMember.objects.filter(
                 member=request.user,
+                is_active=True,
                 deleted_at__isnull=True,
             ).values_list("workspace_id", flat=True)
         )

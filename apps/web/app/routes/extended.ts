@@ -26,15 +26,15 @@ export const extendedRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/time-tracking/capacity",
             "./(all)/[workspaceSlug]/(projects)/time-tracking/capacity/page.tsx"
           ),
+          route(
+            ":workspaceSlug/time-tracking/exports",
+            "./(all)/[workspaceSlug]/(projects)/time-tracking/exports/page.tsx"
+          ),
         ]),
       ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [
           layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/layout.tsx", [
-            route(
-              ":workspaceSlug/settings/projects/:projectId/worklogs",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/worklogs/page.tsx"
-            ),
             route(
               ":workspaceSlug/settings/projects/:projectId/workflows",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
@@ -47,9 +47,20 @@ export const extendedRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/bank-wide",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/page.tsx"
             ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/field-permissions",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/field-permissions/page.tsx"
+            ),
           ]),
         ]),
       ]),
+    ]),
+    // Help Center — STANDALONE top-level /help (instance-global, no workspace).
+    // Sibling of [workspaceSlug] under the (all) auth layout, mirroring
+    // settings/profile: auth-gated but workspace-agnostic.
+    layout("./(all)/help/layout.tsx", [
+      route("help", "./(all)/help/page.tsx"),
+      route("help/a/:articleSlug", "./(all)/help/article.tsx"),
     ]),
   ]),
 ];

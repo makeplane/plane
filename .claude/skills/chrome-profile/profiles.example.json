@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "personal": { "email": "you@gmail.com" },
+    "work": { "email": "you@work-company.com" },
+    "side-project": { "name_contains": "Side Project" }
+  }
+}

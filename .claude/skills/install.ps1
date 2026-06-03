@@ -34,6 +34,7 @@ if ($env:NON_INTERACTIVE -eq "1") {
 # ============================================================================
 $Script:INSTALLED_CRITICAL = [System.Collections.ArrayList]::new()
 $Script:INSTALLED_OPTIONAL = [System.Collections.ArrayList]::new()
+$Script:FAILED_CRITICAL = [System.Collections.ArrayList]::new()
 $Script:FAILED_OPTIONAL = [System.Collections.ArrayList]::new()
 $Script:SKIPPED_ADMIN = [System.Collections.ArrayList]::new()
 $Script:FINAL_EXIT_CODE = 0
@@ -60,6 +61,7 @@ function Track-Failure {
         [string]$Reason
     )
     if ($Category -eq "critical") {
+        [void]$Script:FAILED_CRITICAL.Add("${Name}: ${Reason}")
         $Script:FINAL_EXIT_CODE = 1
     } else {
         [void]$Script:FAILED_OPTIONAL.Add("${Name}: ${Reason}")
@@ -449,6 +451,46 @@ function Install-WithPackageManager {
     return $false
 }
 
+# Install rsvg-convert on Windows.
+# winget and Scoop do not currently ship a librsvg/rsvg-convert package, so do
+# not print dead package-manager commands.
+function Install-RsvgConvert {
+    $displayName = "librsvg (rsvg-convert)"
+
+    if (Test-Command "rsvg-convert") {
+        Write-Success "$displayName already installed"
+        Track-Success -Category "optional" -Name "librsvg"
+        return $true
+    }
+
+    if (Test-Command "choco") {
+        if ($WithAdmin -and (Test-Administrator)) {
+            Write-Info "Installing $displayName via chocolatey..."
+            choco install rsvg-convert -y 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "$displayName installed via chocolatey"
+                Track-Success -Category "optional" -Name $displayName
+                return $true
+            }
+
+            Write-Warning "$displayName chocolatey install failed"
+            Track-Failure -Category "optional" -Name $displayName -Reason "chocolatey install failed"
+            return $false
+        }
+
+        Write-Warning "$displayName requires Chocolatey with admin privileges"
+        Write-Info "Run from an elevated PowerShell: choco install rsvg-convert -y"
+        Track-Failure -Category "optional" -Name $displayName -Reason "requires Chocolatey admin install"
+        return $false
+    }
+
+    Write-Warning "$displayName is not available via winget or Scoop."
+    Write-Info "Install with Chocolatey: choco install rsvg-convert -y"
+    Write-Info "Or install MSYS2 and add its mingw64 bin directory to PATH: pacman -S mingw-w64-x86_64-librsvg"
+    Track-Failure -Category "optional" -Name $displayName -Reason "not available via winget/scoop"
+    return $false
+}
+
 # Get user input with support for redirected stdin
 function Get-UserInput {
     param(
@@ -577,6 +619,9 @@ function Install-SystemDeps {
             -Category "optional"
     }
 
+    # librsvg (rsvg-convert) — required only for tech-graph PNG export.
+    $null = Install-RsvgConvert
+
     # Docker (optional)
     if (Test-Command "docker") {
         $dockerVersion = (docker --version)
@@ -644,17 +689,6 @@ function Install-NodeDeps {
     # Install local npm packages for skills
     Write-Info "Installing local npm packages for skills..."
 
-    # chrome-devtools
-    $chromeDevToolsPath = Join-Path $ScriptDir "chrome-devtools\scripts"
-    $chromePackageJson = Join-Path $chromeDevToolsPath "package.json"
-    if ((Test-Path $chromeDevToolsPath) -and (Test-Path $chromePackageJson)) {
-        Write-Info "Installing chrome-devtools dependencies..."
-        Push-Location $chromeDevToolsPath
-        npm install --quiet
-        Pop-Location
-        Write-Success "chrome-devtools dependencies installed"
-    }
-
     # sequential-thinking
     $seqThinkingPath = Join-Path $ScriptDir "sequential-thinking"
     $seqPackageJson = Join-Path $seqThinkingPath "package.json"
@@ -664,17 +698,6 @@ function Install-NodeDeps {
         npm install --quiet
         Pop-Location
         Write-Success "sequential-thinking dependencies installed"
-    }
-
-    # mcp-management
-    $mcpManagementPath = Join-Path $ScriptDir "mcp-management\scripts"
-    $mcpPackageJson = Join-Path $mcpManagementPath "package.json"
-    if ((Test-Path $mcpManagementPath) -and (Test-Path $mcpPackageJson)) {
-        Write-Info "Installing mcp-management dependencies..."
-        Push-Location $mcpManagementPath
-        npm install --quiet
-        Pop-Location
-        Write-Success "mcp-management dependencies installed"
     }
 
     # markdown-novel-viewer (marked, highlight.js, gray-matter)
@@ -688,7 +711,18 @@ function Install-NodeDeps {
         Write-Success "markdown-novel-viewer dependencies installed"
     }
 
-    # plans-kanban (gray-matter)
+    # show-off capture script (puppeteer, sharp)
+    $showOffPath = Join-Path $ScriptDir "show-off\scripts"
+    $showOffPackageJson = Join-Path $showOffPath "package.json"
+    if ((Test-Path $showOffPath) -and (Test-Path $showOffPackageJson)) {
+        Write-Info "Installing show-off capture dependencies..."
+        Push-Location $showOffPath
+        npm install --quiet
+        Pop-Location
+        Write-Success "show-off capture dependencies installed"
+    }
+
+    # plans-kanban launcher package
     $plansKanbanPath = Join-Path $ScriptDir "plans-kanban"
     $plansKanbanPackageJson = Join-Path $plansKanbanPath "package.json"
     if ((Test-Path $plansKanbanPath) -and (Test-Path $plansKanbanPackageJson)) {
@@ -726,7 +760,8 @@ function Try-PipInstall {
     $packageName = ($PackageSpec -split '[=<>]')[0]
 
     # Phase 1: Try with prefer-binary (wheels first)
-    $output = pip install $PackageSpec --prefer-binary 2>&1
+    $pipArgs = @("install", $PackageSpec, "--prefer-binary")
+    $output = & python -m pip @pipArgs 2>&1
     $output | Out-File -Append $LogFile -Encoding UTF8
     if ($LASTEXITCODE -eq 0) {
         return $true
@@ -741,7 +776,8 @@ function Try-PipInstall {
 
     # Phase 3: Try source build
     Write-Info "Trying source build for $packageName..."
-    $output = pip install $PackageSpec --no-binary $packageName 2>&1
+    $pipArgs = @("install", $PackageSpec, "--no-binary", $packageName)
+    $output = & python -m pip @pipArgs 2>&1
     $output | Out-File -Append $LogFile -Encoding UTF8
     if ($LASTEXITCODE -eq 0) {
         Write-Success "$packageName installed (source build)"
@@ -1033,11 +1069,68 @@ function Test-Installations {
 # Final Report Functions
 # ============================================================================
 
+function Split-FailureItem {
+    param(
+        [string]$Item
+    )
+
+    $firstColon = $Item.IndexOf(':')
+    if ($firstColon -lt 0) {
+        return @{
+            Name = $Item.Trim()
+            Package = ""
+            Reason = ""
+        }
+    }
+
+    $name = $Item.Substring(0, $firstColon).Trim()
+    $details = $Item.Substring($firstColon + 1).Trim()
+    $reasonColon = $details.LastIndexOf(': ')
+
+    if ($reasonColon -lt 0) {
+        return @{
+            Name = $name
+            Package = ""
+            Reason = $details
+        }
+    }
+
+    return @{
+        Name = $name
+        Package = $details.Substring(0, $reasonColon).Trim()
+        Reason = $details.Substring($reasonColon + 2).Trim()
+    }
+}
+
+function Test-SystemFailureItem {
+    param([string]$Item)
+
+    $failure = Split-FailureItem -Item $Item
+    $name = $failure.Name.ToLowerInvariant()
+    return (
+        $name -eq "ffmpeg" -or
+        $name -eq "imagemagick" -or
+        $name -eq "librsvg" -or
+        $name -like "*rsvg-convert*"
+    )
+}
+
+function Get-SystemFailureItems {
+    return @($Script:FAILED_OPTIONAL | Where-Object { Test-SystemFailureItem -Item $_ })
+}
+
+function Get-PythonFailureItems {
+    return @($Script:FAILED_OPTIONAL | Where-Object { -not (Test-SystemFailureItem -Item $_) })
+}
+
 function Get-RemediationCommands {
     $hasSudoSkipped = $Script:SKIPPED_ADMIN.Count -gt 0
-    $hasPythonFailed = $Script:FAILED_OPTIONAL.Count -gt 0
+    $systemFailures = @(Get-SystemFailureItems)
+    $pythonFailures = @(Get-PythonFailureItems)
+    $hasSystemFailed = $systemFailures.Count -gt 0
+    $hasPythonFailed = $pythonFailures.Count -gt 0
 
-    if (-not $hasSudoSkipped -and -not $hasPythonFailed) {
+    if (-not $hasSudoSkipped -and -not $hasSystemFailed -and -not $hasPythonFailed) {
         return
     }
 
@@ -1060,18 +1153,37 @@ function Get-RemediationCommands {
         Write-Host ""
     }
 
+    if ($hasSystemFailed) {
+        Write-Host "# System packages:"
+        foreach ($item in $systemFailures) {
+            $failure = Split-FailureItem -Item $item
+            $name = $failure.Name
+            switch -Regex ($name) {
+                "^FFmpeg$" { Write-Host "winget install Gyan.FFmpeg" }
+                "^ImageMagick$" { Write-Host "winget install ImageMagick.ImageMagick" }
+                "rsvg-convert|librsvg" {
+                    Write-Host "# rsvg-convert is not available via winget or Scoop"
+                    Write-Host "# Option A (admin): choco install rsvg-convert -y"
+                    Write-Host "# Option B (MSYS2): pacman -S mingw-w64-x86_64-librsvg"
+                }
+                default { Write-Host "# ${name}: see documentation" }
+            }
+        }
+        Write-Host ""
+    }
+
     if ($hasPythonFailed) {
         Write-Host "# Python packages (may require build tools):"
         Write-Host "# Install Visual Studio Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/"
         Write-Host ".\.claude\skills\.venv\Scripts\Activate.ps1"
 
-        foreach ($item in $Script:FAILED_OPTIONAL) {
-            $pkg = ($item -split ':')[0]
-            # Extract package name from skill:package format
-            if ($pkg -match ':') {
-                $pkg = ($pkg -split ':')[1]
+        foreach ($item in $pythonFailures) {
+            $failure = Split-FailureItem -Item $item
+            $pkg = $failure.Package
+            if ([string]::IsNullOrWhiteSpace($pkg)) {
+                $pkg = $failure.Name
             }
-            Write-Host "pip install $pkg"
+            Write-Host "python -m pip install `"$pkg`""
         }
         Write-Host ""
     }
@@ -1108,12 +1220,34 @@ function Write-FinalReport {
         Write-Host ""
     }
 
+    if ($Script:FAILED_CRITICAL.Count -gt 0) {
+        Write-Host "Critical Failures ($($Script:FAILED_CRITICAL.Count)):" -ForegroundColor Red
+        foreach ($item in $Script:FAILED_CRITICAL) {
+            $failure = Split-FailureItem -Item $item
+            $name = $failure.Name
+            $reason = $failure.Reason
+            if ([string]::IsNullOrWhiteSpace($reason)) {
+                $reason = $failure.Package
+            }
+            Write-Host "  [X] $name ($reason)" -ForegroundColor Red
+        }
+        Write-Host ""
+    }
+
     # Degraded/Failed section
     if ($Script:FAILED_OPTIONAL.Count -gt 0) {
         Write-Host "Degraded ($($Script:FAILED_OPTIONAL.Count)):" -ForegroundColor Red
         foreach ($item in $Script:FAILED_OPTIONAL) {
-            $name = ($item -split ':')[0]
-            $reason = ($item -split ':')[1]
+            $failure = Split-FailureItem -Item $item
+            $name = $failure.Name
+            $reason = $failure.Reason
+            if (-not [string]::IsNullOrWhiteSpace($failure.Package)) {
+                if ([string]::IsNullOrWhiteSpace($reason)) {
+                    $reason = $failure.Package
+                } else {
+                    $reason = "$($failure.Package): $reason"
+                }
+            }
             Write-Host "  [!] $name ($reason)" -ForegroundColor Red
         }
         Write-Host ""
@@ -1143,13 +1277,13 @@ function Write-ErrorSummary {
     $summary = @{
         exit_code = $Script:FINAL_EXIT_CODE
         timestamp = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
-        critical_failures = @()
+        critical_failures = @($Script:FAILED_CRITICAL)
         optional_failures = @($Script:FAILED_OPTIONAL)
         skipped = @($Script:SKIPPED_ADMIN)
         remediation = @{
             winget_packages = "winget install Gyan.FFmpeg ImageMagick.ImageMagick"
             build_tools = "https://visualstudio.microsoft.com/visual-cpp-build-tools/"
-            pip_retry = ".\.claude\skills\.venv\Scripts\Activate.ps1; pip install <package>"
+            pip_retry = ".\.claude\skills\.venv\Scripts\Activate.ps1; python -m pip install `"<package>`""
         }
     }
 

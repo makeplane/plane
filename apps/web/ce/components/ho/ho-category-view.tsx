@@ -24,15 +24,19 @@ export const HoCategoryView = observer(function HoCategoryView() {
   useEffect(() => {
     void store.fetchCategorySummary();
     void store.fetchAccessibleWorkspaces();
-    void store.fetchFilterOptions();
   }, [store]);
 
   const filtered = useMemo(() => {
     let data: typeof store.categorySummary;
-    if (store.selectedDepartmentId) {
-      // selectedDepartmentId is a workspace ID — find its linked department for category filtering
-      const ws = store.accessibleWorkspaces.find((w) => w.id === store.selectedDepartmentId);
-      data = ws?.department_id ? store.categorySummary.filter((r) => r.department_id === ws.department_id) : [];
+    if (store.selectedDepartmentIds.length > 0) {
+      // selectedDepartmentIds are workspace IDs — collect linked department IDs for category filtering
+      const deptIds = new Set(
+        store.accessibleWorkspaces
+          .filter((w) => store.selectedDepartmentIds.includes(w.id))
+          .map((w) => w.department_id)
+          .filter(Boolean)
+      );
+      data = deptIds.size ? store.categorySummary.filter((r) => deptIds.has(r.department_id)) : [];
     } else {
       data = store.categorySummary;
     }
@@ -49,15 +53,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [
-    store.categorySummary,
-    store.selectedDepartmentId,
-    store.accessibleWorkspaces,
-    store.filters.department,
-    store.filters.main_task_category,
-    store.filters.sub_task_category,
-    search,
-  ]);
+  }, [store.categorySummary, store.filters.department, store.filters.main_task_category, store.filters.sub_task_category, store.selectedDepartmentIds, store.accessibleWorkspaces, search]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];

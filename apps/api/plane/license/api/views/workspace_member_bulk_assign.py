@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from plane.app.views.base import BaseAPIView
 from plane.db.models import User, Workspace, WorkspaceMember
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminMenuPermission
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class InstanceWorkspaceBulkAssignMembersEndpoint(BaseAPIView):
     Valid roles: 5 (Guest), 15 (Member), 20 (Admin).
     """
 
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [InstanceAdminMenuPermission]
 
     def post(self, request):
         members_data = request.data.get("members", None)

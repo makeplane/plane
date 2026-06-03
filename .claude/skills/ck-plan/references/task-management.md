@@ -35,13 +35,13 @@ The **hydration pattern** bridges sessions:
 **Skip with:** `--no-tasks` flag in planning request
 **3-Task Rule:** <3 phases → skip tasks (overhead exceeds benefit)
 
-| Scenario | Tasks? | Why |
-|----------|--------|-----|
-| Multi-phase feature (3+ phases) | Yes | Track progress, enable parallel |
-| Complex dependencies between phases | Yes | Automatic unblocking |
-| Plan will be executed by cook | Yes | Seamless handoff |
-| Single-phase quick fix | No | Just do it directly |
-| Trivial 1-2 step plan | No | Overhead not worth it |
+| Scenario                            | Tasks? | Why                             |
+| ----------------------------------- | ------ | ------------------------------- |
+| Multi-phase feature (3+ phases)     | Yes    | Track progress, enable parallel |
+| Complex dependencies between phases | Yes    | Automatic unblocking            |
+| Plan will be executed by cook       | Yes    | Seamless handoff                |
+| Single-phase quick fix              | No     | Just do it directly             |
+| Trivial 1-2 step plan               | No     | Overhead not worth it           |
 
 ## Task Creation Patterns
 
@@ -79,9 +79,11 @@ TaskCreate(
 **Optional metadata:** `step`, `critical`, `riskLevel`, `dependencies`
 
 **subject** (imperative): Action verb + deliverable, <60 chars
+
 - "Setup database migrations", "Implement OAuth2 flow", "Create user profile endpoints"
 
 **activeForm** (present continuous): Matches subject in -ing form
+
 - "Setting up database", "Implementing OAuth2", "Creating user profile endpoints"
 
 **description**: 1-2 sentences, concrete deliverables, reference phase file
@@ -98,13 +100,14 @@ Step 3.4 (addBlockedBy: [P2-id])   ← critical steps share phase dependency
 Use `addBlockedBy` for forward references ("I need X done first").
 Use `addBlocks` when creating parent first ("X blocks these children").
 
-## Cook Handoff Protocol
+## User-Approved Cook Continuation
 
-### Same-Session (planning → cook immediately)
+### Same-Session (user approves cook in current session)
 
 1. Planning hydrates tasks → tasks exist in session
-2. Cook Step 3: `TaskList` → finds existing tasks → picks them up
-3. Cook skips re-creation, begins implementation directly
+2. Agent stops and asks the user which next step they want
+3. If the user approves implementation, Cook Step 3: `TaskList` → finds existing tasks → picks them up
+4. Cook skips re-creation and begins the approved implementation path
 
 ### Cross-Session (new session, resume plan)
 
@@ -127,6 +130,7 @@ Use `addBlocks` when creating parent first ("X blocks these children").
 ## Quality Checks
 
 After task hydration, verify:
+
 - Dependency chain has no cycles
 - All phases have corresponding tasks
 - Required metadata fields present (phase, priority, effort, planDir, phaseFile)

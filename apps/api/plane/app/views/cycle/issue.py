@@ -8,7 +8,7 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import F, Func, OuterRef, Q, Subquery
+from django.db.models import F, Func, OuterRef, Q, Subquery, Sum
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from .. import BaseViewSet
 from plane.app.serializers import CycleIssueSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Cycle, CycleIssue, Issue, FileAsset, IssueLink
+from plane.db.models import Cycle, CycleIssue, Issue, FileAsset, IssueLink, IssueWorkLog
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -101,6 +101,18 @@ class CycleIssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
             )
             .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )

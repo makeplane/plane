@@ -1,0 +1,196 @@
+/Users/ngoctran/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  ! request error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+Target: http://localhost:8000/auth/email-check/
+Bursts: [100, 500, 1000, 1100, 1500, 2000]
+Cooldown between bursts: 75s (needed so the per-minute window decays)
+Probe: HTTP 200 body={"existing":false,"status":"CREDENTIAL"}
+
+=== Burst: 100 concurrent requests (workers=100) ===
+  wall-time      : 0.45s
+  effective rps  : 224.4
+  status counts  : {200: 100}
+  200 OK         : 100
+  429 throttled  : 0
+  other / errors : 0
+  latency p50/p95/p99 (s): 0.268 / 0.337 / 0.340
+  ... cooling down 75s
+
+=== Burst: 500 concurrent requests (workers=100) ===
+  wall-time      : 2.70s
+  effective rps  : 185.5
+  status counts  : {200: 500}
+  200 OK         : 500
+  429 throttled  : 0
+  other / errors : 0
+  latency p50/p95/p99 (s): 0.433 / 1.151 / 1.222
+  ... cooling down 75s
+
+=== Burst: 1000 concurrent requests (workers=100) ===
+  wall-time      : 4.56s
+  effective rps  : 219.3
+  status counts  : {200: 1000}
+  200 OK         : 1000
+  429 throttled  : 0
+  other / errors : 0
+  latency p50/p95/p99 (s): 0.438 / 0.605 / 0.698
+  ... cooling down 75s
+
+=== Burst: 1100 concurrent requests (workers=100) ===
+  wall-time      : 5.21s
+  effective rps  : 211.2
+  status counts  : {200: 1100}
+  200 OK         : 1100
+  429 throttled  : 0
+  other / errors : 0
+  latency p50/p95/p99 (s): 0.444 / 0.614 / 0.649
+  ... cooling down 75s
+
+=== Burst: 1500 concurrent requests (workers=100) ===
+  wall-time      : 10.06s
+  effective rps  : 149.1
+  status counts  : {200: 1420, -1: 80}
+  200 OK         : 1420
+  429 throttled  : 0
+  other / errors : 80
+  latency p50/p95/p99 (s): 0.483 / 3.082 / 3.425
+  ... cooling down 75s
+
+=== Burst: 2000 concurrent requests (workers=100) ===
+  wall-time      : 8.63s
+  effective rps  : 231.8
+  status counts  : {200: 1965, -1: 35}
+  200 OK         : 1965
+  429 throttled  : 0
+  other / errors : 35
+  latency p50/p95/p99 (s): 0.414 / 0.619 / 0.824
+
+
+=== Summary ===
+ burst   wall(s)      rps    200    429  other
+   100      0.45    224.4    100      0      0
+   500      2.70    185.5    500      0      0
+  1000      4.56    219.3   1000      0      0
+  1100      5.21    211.2   1100      0      0
+  1500     10.06    149.1   1420      0     80
+  2000      8.63    231.8   1965      0     35
+
+Interpretation:
+  - AuthenticationThrottle is set to 1000/minute (per IP, sliding window).
+  - Bursts <= 1000 within one minute should all 200.
+  - Bursts > 1000 should see 429s for the overflow once the window is full.
+  - The actual /auth/sign-in/ (password POST) is NOT DRF-throttled and is therefore bounded by DB / network / Django workers, not this limit.

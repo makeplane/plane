@@ -6,6 +6,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
+import { BarChart2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { Spinner } from "@plane/ui";
@@ -16,17 +17,15 @@ import { Switch } from "@plane/propel/switch";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 
-// import { CapacitySummaryCards } from "./capacity-summary-cards"; // TODO: hidden for future
 import { CapacityHeatmap } from "./capacity-heatmap";
-
-import { download, generateCsv, mkConfig } from "export-to-csv";
-import { format } from "date-fns";
+import { CapacityExportMenu } from "./capacity-export-menu";
+import { downloadCapacitySummaryCsv } from "./capacity-csv-export-handler";
 
 interface ICapacityDashboardProps {
   workspaceSlug: string;
   projectId?: string;
   /** When true, component is rendered at workspace level (no projectId required).
-   *  The cross-workspace toggle is shown; default is current workspace only. */
+   *  The cross-workspace toggle is shown; default is all workspaces. */
   isWorkspaceMode?: boolean;
 }
 
@@ -45,8 +44,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
     from: undefined,
     to: undefined,
   });
-  // Workspace mode defaults to current-workspace-only (toggle OFF)
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(true);
 
   // Derived date params
   const dateFrom = dateRange.from ? renderFormattedPayloadDate(dateRange.from) || "" : "";
@@ -75,36 +73,9 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
     fetchReport();
   }, [fetchReport]);
 
-  // TODO: Category distribution (project-scoped) — hidden for future implementation
-  // useEffect(() => {
-  //   if (isCrossWorkspace || !workspaceSlug || !projectId) return;
-  //   const params: Record<string, string> = {};
-  //   if (dateFrom) params["date_from"] = dateFrom;
-  //   if (dateTo) params["date_to"] = dateTo;
-  //   void worklogStore.fetchCapacityCategories(workspaceSlug, projectId, params);
-  // }, [workspaceSlug, projectId, dateFrom, dateTo, isCrossWorkspace, worklogStore]);
-
   const handleExport = () => {
     if (!capacityData) return;
-
-    const csvConfig = mkConfig({
-      fieldSeparator: ",",
-      filename: `${workspaceSlug}-capacity-report-${format(new Date(), "yyyy-MM-dd")}`,
-      decimalSeparator: ".",
-      useKeysAsHeaders: true,
-    });
-
-    const exportData = capacityData.members.map((member) => ({
-      "Member Name": member.display_name,
-      "Total Logged (h)": (member.total_logged_minutes / 60).toFixed(2),
-      ...Object.keys(member.days || {}).reduce<Record<string, string>>((acc, date) => {
-        acc[date] = (((member.days && member.days[date]) || 0) / 60).toFixed(2);
-        return acc;
-      }, {}),
-    }));
-
-    const csv = generateCsv(csvConfig)(exportData as Array<Record<string, string>>);
-    download(csvConfig)(csv);
+    downloadCapacitySummaryCsv(workspaceSlug, capacityData.members);
   };
 
   if (isCapacityLoading && !capacityData) {
@@ -131,14 +102,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-primary flex items-center gap-2.5">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
+                <BarChart2 className="h-4 w-4" />
               </div>
               {t("capacity_dashboard")}
             </h2>
@@ -154,16 +118,6 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
       </div>
 
       <div className="flex-grow overflow-y-auto vertical-scrollbar">
-        {/* TODO: Category summary charts — hidden for future implementation */}
-        {/* {!isCrossWorkspace && (
-          <div className="px-6 mb-4 text-primary">
-            <CapacitySummaryCards
-              totalLoggedMinutes={capacityData.project_total_logged}
-              categoriesData={worklogStore.categoriesData}
-            />
-          </div>
-        )} */}
-
         {/* Filters Bar */}
         <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-[22] backdrop-blur-md">
           <div className="flex items-center gap-4">
@@ -201,12 +155,16 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleExport}
-              className="px-3 py-1 rounded-md bg-accent-primary text-white text-12 font-medium hover:bg-accent-primary/90 transition-colors shadow-sm"
-            >
-              {t("export")}
-            </button>
+            <CapacityExportMenu
+              workspaceSlug={workspaceSlug}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              selectedMemberIds={selectedMembers}
+              isCrossWorkspace={isCrossWorkspace}
+              onSummaryExport={handleExport}
+              hasData={!!capacityData}
+              projectId={projectId}
+            />
           </div>
         </div>
 

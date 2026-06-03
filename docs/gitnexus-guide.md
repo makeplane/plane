@@ -32,7 +32,7 @@ GitNexus là **knowledge graph** của toàn bộ codebase: nó đọc code → 
 | Refactor an toàn           | Find/replace → vỡ runtime        | `gitnexus_rename` aware call graph    |
 | Verify scope trước commit  | `git diff` thuần                 | `gitnexus_detect_changes` map symbols |
 
-Quy tắc dự án (xem `CLAUDE.md`):
+Quy tắc dự án (xem `.claude/rules/gitnexus-mcp-usage.md`):
 
 - **MUST** chạy `gitnexus_impact` trước khi sửa function/class.
 - **MUST** chạy `gitnexus_detect_changes` trước commit để verify blast radius.
@@ -85,7 +85,8 @@ Mất ~2-3 phút trên codebase Plane (~5500 files). Sẽ tạo:
 
 - `.gitnexus/lbug` — graph DB (~150MB, gitignored)
 - `.gitnexus/meta.json` — metadata (commit SHA, stats)
-- Cập nhật block `<!-- gitnexus:start -->...<!-- gitnexus:end -->` trong `CLAUDE.md` & `AGENTS.md`
+
+> Wrapper script luôn pass `--skip-agents-md` ⇒ không bao giờ ghi vào `CLAUDE.md` hay `AGENTS.md`. Quy tắc cho Claude nằm tách riêng ở `.claude/rules/gitnexus-mcp-usage.md` (static, không churn theo stats).
 
 ### Bước 4 — Verify
 
@@ -424,16 +425,16 @@ GITNEXUS_NO_GITIGNORE=1 ./scripts/gitnexus.sh analyze   # bỏ qua .gitignore pa
 
 ## 10. Phụ lục: Files liên quan
 
-| File                                          | Vai trò                                    |
-| --------------------------------------------- | ------------------------------------------ |
-| `scripts/gitnexus.sh`                         | Wrapper Docker, các lệnh con               |
-| `.husky/post-commit`                          | Auto re-index sau commit                   |
-| `.husky/post-merge`                           | Auto re-index sau pull                     |
-| `.husky/post-checkout`                        | Auto re-index sau branch switch            |
-| `.mcp.json`                                   | Đăng ký MCP server với Claude Code         |
-| `.gitnexus/`                                  | Local index (gitignored)                   |
-| `.gitnexusignore`                             | Loại trừ paths khỏi index                  |
-| `CLAUDE.md` (block `<!-- gitnexus:start -->`) | Auto-generated stats, hướng dẫn cho Claude |
+| File                                  | Vai trò                                    |
+| ------------------------------------- | ------------------------------------------ |
+| `scripts/gitnexus.sh`                 | Wrapper Docker, các lệnh con               |
+| `.husky/post-commit`                  | Auto re-index sau commit                   |
+| `.husky/post-merge`                   | Auto re-index sau pull                     |
+| `.husky/post-checkout`                | Auto re-index sau branch switch            |
+| `.mcp.json`                           | Đăng ký MCP server với Claude Code         |
+| `.gitnexus/`                          | Local index (gitignored)                   |
+| `.gitnexusignore`                     | Loại trừ paths khỏi index                  |
+| `.claude/rules/gitnexus-mcp-usage.md` | Quy tắc MCP usage cho Claude (auto-loaded) |
 
 ---
 

@@ -18,9 +18,10 @@ from plane.app.serializers.staff import (
     StaffProfileCreateSerializer,
     StaffProfileSerializer,
 )
-from plane.db.models import Department, StaffProfile, User, WorkspaceMember
+from plane.db.models import Department, Profile, StaffProfile, User, WorkspaceMember
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
+from plane.utils.instance_admin import is_last_active_super_admin
 
 
 class InstanceStaffEndpoint(BaseAPIView):
@@ -153,22 +154,31 @@ class InstanceStaffDetailEndpoint(BaseAPIView):
 
 
 class InstanceStaffTransferEndpoint(BaseAPIView):
-    """Transfer staff to another department, updating workspace membership."""
+    """Transfer staff to another department, updating workspace membership.
+
+    Two-phase flow:
+    - Phase 1 (no confirm flag): detect cross-workspace, return info for confirm dialog.
+    - Phase 2 (confirm_workspace_transfer=true): execute full transfer atomically.
+    """
 
     def post(self, request, pk):
         new_dept_id = request.data.get("department_id")
         if not new_dept_id:
             return Response({"error": "department_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        new_dept = Department.objects.filter(pk=new_dept_id, deleted_at__isnull=True).first()
+        new_dept = Department.objects.filter(
+            pk=new_dept_id, deleted_at__isnull=True
+        ).select_related("linked_workspace").first()
         if not new_dept:
             return Response({"error": "Department not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+        confirm = request.data.get("confirm_workspace_transfer", False)
+
         with transaction.atomic():
             staff = (
-                StaffProfile.objects.select_for_update()
+                StaffProfile.objects.select_for_update(of=("self",))
                 .filter(pk=pk, deleted_at__isnull=True)
-                .select_related("department", "user")
+                .select_related("department__linked_workspace", "user")
                 .first()
             )
             if not staff:
@@ -178,32 +188,51 @@ class InstanceStaffTransferEndpoint(BaseAPIView):
             user = staff.user
             old_ws = old_dept.linked_workspace if old_dept else None
             new_ws = new_dept.linked_workspace
+            cross_workspace = new_ws and old_ws != new_ws
 
-            # Skip membership changes if same workspace
+            # Phase 1: cross-workspace detected — ask for confirmation before executing
+            if cross_workspace and not confirm:
+                return Response(
+                    {
+                        "requires_workspace_transfer": True,
+                        "target_workspace_name": new_ws.name,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
+            # Execute workspace membership transfer
             if old_ws != new_ws:
-                # Remove from old workspace (role=15 only, never remove admins)
+                # Soft-delete old workspace membership (preserve audit trail)
                 if old_ws:
                     WorkspaceMember.objects.filter(
                         workspace=old_ws, member=user, role=15
-                    ).delete()
-                # Add to new workspace
+                    ).update(is_active=False)
+                # Add to new workspace (or reactivate if previously soft-deleted)
                 if new_ws:
-                    WorkspaceMember.objects.get_or_create(
+                    role = 20 if staff.is_department_manager else 15
+                    obj, created = WorkspaceMember.objects.get_or_create(
                         workspace=new_ws,
                         member=user,
-                        defaults={"role": 15},
+                        defaults={"role": role, "is_active": True},
                     )
+                    if not created and not obj.is_active:
+                        obj.is_active = True
+                        obj.save(update_fields=["is_active"])
 
             staff.department = new_dept
-            staff.save(update_fields=["department"])
+            staff.employment_status = "transferred"
+            staff.save(update_fields=["department", "employment_status"])
 
             # If manager in new dept, join descendant workspaces
-            if staff.is_department_manager:
+            if staff.is_department_manager and new_ws:
                 from plane.license.api.views.department import _join_descendant_workspaces
                 _join_descendant_workspaces(new_dept, user)
 
-        serializer = StaffProfileSerializer(staff)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data = StaffProfileSerializer(staff).data
+        # Warn when target department has no linked workspace — department updated only
+        if not new_ws:
+            response_data["warning"] = "Target department has no linked workspace. Department updated only."
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceStaffDeactivateEndpoint(BaseAPIView):
@@ -219,6 +248,14 @@ class InstanceStaffDeactivateEndpoint(BaseAPIView):
             return Response({"error": "Staff not found"}, status=status.HTTP_404_NOT_FOUND)
 
         user = staff.user
+
+        # Lockout guard: this endpoint disables the user account — never
+        # against the last loginable super-admin.
+        if is_last_active_super_admin(user):
+            return Response(
+                {"error": "Cannot deactivate the last super-admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         with transaction.atomic():
             # Remove role=15 WorkspaceMember(s) across all workspaces (never remove admins)
@@ -539,7 +576,18 @@ def _create_staff(department, data):
     if user_created:
         password = data.get("password") or secrets.token_urlsafe(16)
         user.set_password(password)
-        user.save(update_fields=["password"])
+        # Password is admin-provided (not auto-generated) — don't force a reset.
+        user.is_password_autoset = False
+        user.save(update_fields=["password", "is_password_autoset"])
+        # Admin-provisioned staff already have name, password, and (when the
+        # department has a linked workspace) membership — mark them fully
+        # onboarded so first login skips the entire onboarding flow, including
+        # the profile/name screen, instead of relying on a client-side step skip.
+        if user.first_name or user.last_name:
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.onboarding_step = {**profile.onboarding_step, "profile_complete": True}
+            profile.is_onboarded = True
+            profile.save(update_fields=["onboarding_step", "is_onboarded"])
 
     # Auto-join linked_workspace if department has one
     if department and department.linked_workspace:

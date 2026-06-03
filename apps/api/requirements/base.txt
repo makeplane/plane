@@ -71,5 +71,7 @@ opentelemetry-exporter-otlp==1.28.1
 drf-spectacular==0.28.0
 # html sanitizer
 nh3==0.2.18
+# markdown -> html (help center content-as-code seed)
+mistune==3.0.2
 # ldap authentication
 python-ldap>=3.4.0

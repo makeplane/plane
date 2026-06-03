@@ -83,12 +83,21 @@ plane/
 | `apps/api/plane/settings/base.py`          | Django core config (DB, cache, middleware)                |
 | `apps/api/plane/settings/urls.py`          | API URL routing (v0, v1)                                  |
 | `apps/api/plane/db/models/`                | 37 ORM models (BaseModel, ProjectBaseModel)               |
+| `apps/api/plane/db/models/help_center.py`  | HelpCategory, HelpArticle + translation models            |
+| `apps/api/plane/db/migrations/0178_help_center.py` | Help Center schema migration                    |
 | `apps/api/plane/app/views/`                | 41+ DRF viewsets (@allow_permission)                      |
+| `apps/api/plane/app/views/help_center/`    | Read-layer views (base, category, article)                |
 | `apps/api/plane/app/serializers/v0/`       | Legacy serializers (session auth)                         |
 | `apps/api/plane/app/serializers/v1/`       | External API (API key auth, OpenAPI)                      |
+| `apps/api/plane/app/serializers/help_center.py` | Help Center read serializers                         |
+| `apps/api/plane/app/urls/help_center.py`   | Help Center read routes (/api/help/...)                   |
+| `apps/api/plane/license/api/views/help_center.py` | Write-layer admin views (InstanceAdminPerm)       |
+| `apps/api/plane/license/api/urls/help_center.py` | Write-layer admin routes (/api/instances/help/...) |
 | `apps/api/plane/utils/workflow_checker.py` | Workflow validation logic                                 |
+| `apps/api/plane/utils/help_center/sanitizer.py` | HTML sanitization (nh3 lib)                        |
 | `apps/api/plane/utils/business_calendar/`  | Business calendar service (holidays, schedule, overrides) |
 | `apps/api/plane/utils/celery_helpers.py`   | Celery decorators (@working_day_required)                 |
+| `apps/api/plane/db/management/commands/seed_help_center.py` | Idempotent seed command (run once per instance) |
 | `apps/api/plane/tasks/`                    | Celery async tasks (41 tasks)                             |
 | `apps/api/manage.py`                       | Django CLI                                                |
 
@@ -97,11 +106,17 @@ plane/
 | File/Dir                                    | Purpose                                      |
 | ------------------------------------------- | -------------------------------------------- |
 | `apps/web/app/`                             | Next.js app router entry (layouts, pages)    |
+| `apps/web/app/(all)/help/`                  | Help Center reader routes (layout, page, article) |
 | `apps/web/core/store/`                      | MobX root + 33+ feature stores               |
 | `apps/web/core/hooks/store/`                | Store hooks (useWorkspace, useProject, etc.) |
 | `apps/web/core/services/`                   | API client classes (axios)                   |
 | `apps/web/core/components/`                 | Reusable React components (layouts, modals)  |
 | `apps/web/ce/store/root.store.ts`           | CE root store (extends CoreRootStore)        |
+| `apps/web/ce/store/help-center/`            | Help Center stores (category, article, root) |
+| `apps/web/ce/services/help-center.service.ts` | Help Center API client                     |
+| `apps/web/ce/types/help-center.ts`          | Help Center TypeScript types                 |
+| `apps/web/ce/components/help-center/`       | Help Center UI (reader components)           |
+| `apps/web/ce/hooks/store/use-help-center.ts` | Help Center store hook                      |
 | `apps/web/ce/components/workflow/`          | Workflow UI + DnD hook                       |
 | `apps/web/ce/store/workflow.store.ts`       | Workflow MobX store                          |
 | `apps/web/core/hooks/store/use-workflow.ts` | Workflow hook (reads CE store)               |
@@ -144,6 +159,8 @@ BaseModel (id, created_at, updated_at)
 - **Analytics, AnalyticsData** (CE: dashboards, reports)
 - **TaskCategory** (CE: admin task categorization)
 - **MonitoringMetric** (CE: admin monitoring dashboard)
+- **HelpCategory, HelpCategoryTranslation** (Instance-global help center categories)
+- **HelpArticle, HelpArticleTranslation** (Instance-global help center articles, per-locale)
 - **WorkSchedule, Holiday, DayOverride** (CE: business calendar, Vietnam working-day rules)
 
 **Key Patterns:**
@@ -385,5 +402,5 @@ pnpm test
 
 ---
 
-**Last Updated:** 2026-04-08
-**Version:** 1.1
+**Last Updated:** 2026-05-30
+**Version:** 1.2

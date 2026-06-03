@@ -121,7 +121,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
     "DEFAULT_THROTTLE_CLASSES": ("rest_framework.throttling.AnonRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "30/minute",
+        "anon": "1000/minute",
         "asset_id": "5/minute",
     },
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -339,6 +339,13 @@ CELERY_IMPORTS = (
     "plane.bgtasks.worklog_export_task",
     # reminder tasks
     "plane.bgtasks.worklog_reminder_task",
+    # capacity detailed export tasks
+    "plane.bgtasks.capacity_export_task",
+    "plane.bgtasks.capacity_export_email_task",
+    "plane.bgtasks.capacity_export_cleanup_task",
+    # HO detailed export tasks
+    "plane.bgtasks.ho_export_task",
+    "plane.bgtasks.ho_export_email_task",
 )
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))

@@ -22,5 +22,6 @@ export * from "./label";
 export * from "./state";
 export * from "./issue";
 export * from "./task-category";
+export * from "./instance-help-center";
 export * from "./job-position";
 export * from "./business-calendar";

@@ -36,8 +36,12 @@ from .user import (
 from .user_bulk_import import InstanceUserBulkImportEndpoint
 from .workspace_bulk_create import InstanceWorkspaceBulkCreateEndpoint
 from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndpoint
+from .workspace_member_bulk_remove import InstanceWorkspaceBulkRemoveMembersEndpoint
 from .workspace_project_bulk_import import InstanceWorkspaceProjectBulkImportEndpoint
+from .workspace_project_bulk_export import InstanceWorkspaceProjectBulkExportEndpoint
 from .workspace_module_bulk_import import InstanceWorkspaceModuleBulkImportEndpoint
+from .workspace_owner_options import InstanceWorkspaceOwnerOptionsEndpoint
+from .admin_user_options import InstanceAdminUserOptionsEndpoint
 
 from .monitoring import (
     EmailLogMonitoringEndpoint,
@@ -45,11 +49,23 @@ from .monitoring import (
     WorkerHealthMonitoringEndpoint,
 )
 
+from .usage_monitor import (
+    UsageMonitorUsersEndpoint,
+    UsageMonitorDepartmentsEndpoint,
+)
+
 from .task_category import (
     InstanceMainTaskCategoryEndpoint,
     InstanceMainTaskCategoryDetailEndpoint,
     InstanceSubTaskCategoryEndpoint,
     InstanceSubTaskCategoryDetailEndpoint,
+)
+from .help_center import (
+    InstanceHelpCategoryEndpoint,
+    InstanceHelpCategoryDetailEndpoint,
+    InstanceHelpArticleEndpoint,
+    InstanceHelpArticleDetailEndpoint,
+    InstanceHelpArticleTranslationEndpoint,
 )
 from .job_position import (
     InstanceJobPositionEndpoint,

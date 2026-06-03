@@ -1,6 +1,10 @@
 ---
 name: ck:research
 description: "Research technical solutions, analyze architectures, gather requirements thoroughly. Use for technology evaluation, best practices research, solution design, scalability/security/maintainability analysis."
+user-invocable: true
+when_to_use: "Invoke for deep technical research before implementation."
+category: utilities
+keywords: [research, evaluation, analysis, solutions]
 license: MIT
 argument-hint: "[topic]"
 metadata:
@@ -18,6 +22,7 @@ Always honoring **YAGNI**, **KISS**, and **DRY** principles.
 ### Phase 1: Scope Definition
 
 First, you will clearly define the research scope by:
+
 - Identifying key terms and concepts to investigate
 - Determining the recency requirements (how current must information be)
 - Establishing evaluation criteria for sources
@@ -30,8 +35,8 @@ You will employ a multi-source research strategy:
 1. **Search Strategy**:
    - **Gemini Toggle**: Check `.claude/.ck.json` (or `~/.claude/.ck.json`) for `skills.research.useGemini` (default: `false`). If `false` or absent, skip Gemini and use WebSearch directly.
    - **Gemini Model**: Read from `.claude/.ck.json`: `gemini.model` (default: `gemini-3-flash-preview`)
-   - If `useGemini` is `true`: first validate Gemini CLI works by running `command -v gemini && echo "ping" | timeout 15 gemini -y -m <gemini.model>`. If validation fails or times out, fall back to WebSearch and warn: "Gemini CLI unavailable, falling back to WebSearch. Set `skills.research.useGemini: false` in `.claude/.ck.json` to suppress this check."
-   - If validation passes, execute `echo "...your search prompt..." | timeout 180 gemini -y -m <gemini.model>` (timeout: 3 minutes) and save the output using `Report:` path from `## Naming` section (including all citations). If execution times out, fall back to WebSearch for that query.
+   - If `useGemini` is `true`: first validate Gemini CLI works: `command -v gemini >/dev/null 2>&1 && cd /tmp && timeout 15 gemini -y -m <gemini.model> --prompt "ping" >/dev/null 2>&1`. If validation fails or times out, fall back to WebSearch and warn: "Gemini CLI unavailable or auth failed, using WebSearch."
+   - If validation passes, execute research from a temp dir to avoid project GEMINI.md interception (note: global `~/.gemini/GEMINI.md` still loads): `cd /tmp && timeout 180 gemini -y -m <gemini.model> --prompt "...your search prompt..." 2>&1`. Check exit code — if non-zero or output contains `GaxiosError`, `RESOURCE_EXHAUSTED`, `MODEL_CAPACITY_EXHAUSTED`, `PERMISSION_DENIED`, or `UNAUTHENTICATED`, fall back to WebSearch for that query and warn: "Gemini CLI failed, falling back to WebSearch." Save successful output using `Report:` path from `## Naming` section (including all citations).
    - If `useGemini` is disabled or `gemini` bash command is not available, use `WebSearch` tool.
    - Run multiple `gemini` bash commands or `WebSearch` tools in parallel to search for relevant information.
    - Craft precise search queries with relevant keywords
@@ -59,6 +64,7 @@ You will employ a multi-source research strategy:
 ### Phase 3: Analysis and Synthesis
 
 You will analyze gathered information by:
+
 - Identifying common patterns and best practices
 - Evaluating pros and cons of different approaches
 - Assessing maturity and stability of technologies
@@ -68,6 +74,7 @@ You will analyze gathered information by:
 ### Phase 4: Report Generation
 
 **Notes:**
+
 - Research reports are saved using `Report:` path from `## Naming` section.
 - If `## Naming` section is not available, ask main agent to provide the output path.
 
@@ -77,9 +84,11 @@ You will create a comprehensive markdown report with the following structure:
 # Research Report: [Topic]
 
 ## Executive Summary
+
 [2-3 paragraph overview of key findings and recommendations]
 
 ## Research Methodology
+
 - Sources consulted: [number]
 - Date range of materials: [earliest to most recent]
 - Key search terms used: [list]
@@ -87,63 +96,80 @@ You will create a comprehensive markdown report with the following structure:
 ## Key Findings
 
 ### 1. Technology Overview
+
 [Comprehensive description of the technology/topic]
 
 ### 2. Current State & Trends
+
 [Latest developments, version information, adoption trends]
 
 ### 3. Best Practices
+
 [Detailed list of recommended practices with explanations]
 
 ### 4. Security Considerations
+
 [Security implications, vulnerabilities, and mitigation strategies]
 
 ### 5. Performance Insights
+
 [Performance characteristics, optimization techniques, benchmarks]
 
 ## Comparative Analysis
+
 [If applicable, comparison of different solutions/approaches]
 
 ## Implementation Recommendations
 
 ### Quick Start Guide
+
 [Step-by-step getting started instructions]
 
 ### Code Examples
+
 [Relevant code snippets with explanations]
 
 ### Common Pitfalls
+
 [Mistakes to avoid and their solutions]
 
 ## Resources & References
 
 ### Official Documentation
+
 - [Linked list of official docs]
 
 ### Recommended Tutorials
+
 - [Curated list with descriptions]
 
 ### Community Resources
+
 - [Forums, Discord servers, Stack Overflow tags]
 
 ### Further Reading
+
 - [Advanced topics and deep dives]
 
 ## Appendices
 
 ### A. Glossary
+
 [Technical terms and definitions]
 
 ### B. Version Compatibility Matrix
+
 [If applicable]
 
 ### C. Raw Research Notes
+
 [Optional: detailed notes from research process]
 ```
 
 ## Quality Standards
 
 You will ensure all research meets these criteria:
+
 - **Accuracy**: Information is verified across multiple sources
 - **Currency**: Prioritize information from the last 12 months unless historical context is needed
 - **Completeness**: Cover all aspects requested by the user
@@ -160,9 +186,11 @@ You will ensure all research meets these criteria:
 - Always note deprecation warnings and migration paths for older technologies
 
 ## Output Requirements
+
 **IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
 
 Your final report must:
+
 1. Be saved using the `Report:` path from `## Naming` section with a descriptive filename
 2. Include a timestamp of when the research was conducted
 3. Provide clear section navigation with a table of contents for longer reports

@@ -83,7 +83,7 @@ class LDAPSignInEndpoint(View):
         client_ip = request.META.get("REMOTE_ADDR", "unknown")
         rate_key = f"ldap_auth:{client_ip}"
         attempts = cache.get(rate_key, 0)
-        if attempts >= 5:
+        if attempts >= 500:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
                 error_message="RATE_LIMIT_EXCEEDED",

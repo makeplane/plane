@@ -12,6 +12,7 @@ export const PROFILE_VIEWER_TAB = [
     key: "summary",
     route: "",
     i18n_label: "profile.tabs.summary",
+    i18n_description: "profile.tabs.summary_description",
     selected: "/",
   },
 ];
@@ -21,18 +22,21 @@ export const PROFILE_ADMINS_TAB = [
     key: "assigned",
     route: "assigned",
     i18n_label: "profile.tabs.assigned",
+    i18n_description: "profile.tabs.assigned_description",
     selected: "/assigned/",
   },
   {
     key: "created",
     route: "created",
     i18n_label: "profile.tabs.created",
+    i18n_description: "profile.tabs.created_description",
     selected: "/created/",
   },
   {
     key: "subscribed",
     route: "subscribed",
     i18n_label: "profile.tabs.subscribed",
+    i18n_description: "profile.tabs.subscribed_description",
     selected: "/subscribed/",
   },
   {

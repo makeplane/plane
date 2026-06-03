@@ -6,6 +6,7 @@
 
 // plane types
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import { LogTimeActionButton } from "@/plane-web/components/issues/worklog/log-time-action-button";
 
 export type TWorkItemAdditionalWidgetActionButtonsProps = {
   disabled: boolean;
@@ -16,6 +17,9 @@ export type TWorkItemAdditionalWidgetActionButtonsProps = {
   workspaceSlug: string;
 };
 
-export function WorkItemAdditionalWidgetActionButtons(_props: TWorkItemAdditionalWidgetActionButtonsProps) {
-  return null;
+export function WorkItemAdditionalWidgetActionButtons(props: TWorkItemAdditionalWidgetActionButtonsProps) {
+  const { disabled, projectId, workItemId, workspaceSlug } = props;
+  return (
+    <LogTimeActionButton workspaceSlug={workspaceSlug} projectId={projectId} issueId={workItemId} disabled={disabled} />
+  );
 }

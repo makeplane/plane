@@ -6,7 +6,15 @@ import factory
 from uuid import uuid4
 from django.utils import timezone
 
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    Project,
+    ProjectMember,
+    Issue,
+    IssueWorkLog,
+)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -18,6 +26,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     id = factory.LazyFunction(uuid4)
     email = factory.Sequence(lambda n: f"user{n}@plane.so")
+    username = factory.Sequence(lambda n: f"user{n}@plane.so")
     password = factory.PostGenerationMethodCall("set_password", "password")
     first_name = factory.Sequence(lambda n: f"First{n}")
     last_name = factory.Sequence(lambda n: f"Last{n}")
@@ -64,6 +73,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
     id = factory.LazyFunction(uuid4)
     name = factory.Sequence(lambda n: f"Project {n}")
+    identifier = factory.Sequence(lambda n: f"PRJ{n}")
     workspace = factory.SubFactory(WorkspaceFactory)
     created_by = factory.SelfAttribute("workspace.owner")
     updated_by = factory.SelfAttribute("workspace.owner")
@@ -83,3 +93,39 @@ class ProjectMemberFactory(factory.django.DjangoModelFactory):
     role = 20  # Admin role by default
     created_at = factory.LazyFunction(timezone.now)
     updated_at = factory.LazyFunction(timezone.now)
+
+
+class IssueFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Issue instances.
+
+    Only `name` and `project` are mandatory; `state` is auto-resolved (or left
+    null) by Issue.save(). `workspace` is overwritten from `project.workspace`
+    by ProjectBaseModel.save(), so it is never passed explicitly.
+    """
+
+    class Meta:
+        model = Issue
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"Issue {n}")
+    project = factory.SubFactory(ProjectFactory)
+    created_by = factory.SelfAttribute("project.workspace.owner")
+
+
+class IssueWorkLogFactory(factory.django.DjangoModelFactory):
+    """Factory for creating IssueWorkLog instances.
+
+    `issue` is a required non-null FK. `project` is taken from the issue so the
+    two stay consistent; `workspace` is NOT passed because ProjectBaseModel.save()
+    overwrites it from `project.workspace`.
+    """
+
+    class Meta:
+        model = IssueWorkLog
+
+    id = factory.LazyFunction(uuid4)
+    issue = factory.SubFactory(IssueFactory)
+    project = factory.SelfAttribute("issue.project")
+    logged_by = factory.SubFactory(UserFactory)
+    duration_minutes = 60
+    logged_at = factory.LazyFunction(lambda: timezone.now().date())

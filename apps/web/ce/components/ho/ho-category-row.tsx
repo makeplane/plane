@@ -17,9 +17,7 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
 
   return (
-    <tr
-      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
-    >
+    <tr className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group")}>
       <td
         className={cn(
           CELL,
@@ -34,13 +32,14 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate font-medium">{row.main_task_category_name || "—"}</div>
         {row.main_task_category_description && (
-          <div className="truncate text-xs text-custom-text-300 font-normal italic mt-0.5">
-            {row.main_task_category_description}
-          </div>
+          <div className="text-xs text-tertiary font-normal italic mt-0.5">{row.main_task_category_description}</div>
         )}
       </td>
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate">{row.sub_task_category_name || "—"}</div>
+        {row.sub_task_category_description && (
+          <div className="text-xs text-tertiary font-normal italic mt-0.5">{row.sub_task_category_description}</div>
+        )}
       </td>
     </tr>
   );

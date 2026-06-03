@@ -24,9 +24,8 @@ import {
   ParentPropertyIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { cn, getDate } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -43,10 +42,11 @@ import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transitio
 // plane web components
 // components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
+import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
+import { StartDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/start-date-property";
 import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueCycleSelect } from "./cycle-select";
@@ -93,10 +93,10 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
   return (
     <>
-      <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
+      <div className="flex items-center h-full w-full flex-col divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
-          <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
+          <div className={`mb-2 mt-4 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
             <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
@@ -126,7 +126,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
-              <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "border-red-500 rounded border")}>
+              <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "rounded border border-red-500")}>
                 <MemberDropdown
                   value={issue?.assignee_ids ?? undefined}
                   onChange={(val) =>
@@ -153,7 +153,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
-                className="h-7.5 w-full grow rounded-sm"
+                className="w-full h-7.5 grow rounded-sm"
                 buttonContainerClassName="size-full text-left"
                 buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
               />
@@ -184,7 +184,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {createdByDetails && (
               <SidebarPropertyListItem icon={UserCirclePropertyIcon} label={t("common.created_by")}>
-                <div className="flex gap-2 px-2">
+                <div className="px-2 flex gap-2">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
                   <span className="grow truncate text-body-xs-regular leading-5">{createdByDetails?.display_name}</span>
                 </div>
@@ -192,56 +192,30 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             )}
 
             <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
-              <div className={cn("w-full", fieldErrors.includes("start_date") && "border-red-500 rounded border")}>
-                <DateDropdown
-                  placeholder={t("issue.add.start_date")}
-                  value={issue.start_date}
-                  onChange={(val) =>
-                    void issueOperations.update(workspaceSlug, projectId, issueId, {
-                      start_date: val ? renderFormattedPayloadDate(val) : null,
-                    })
-                  }
-                  maxDate={maxDate ?? undefined}
-                  disabled={!isEditable}
-                  buttonVariant="transparent-with-text"
-                  className="group w-full grow"
-                  buttonContainerClassName="w-full text-left h-7.5"
-                  buttonClassName={`text-body-xs-regular ${issue?.start_date ? "" : "text-placeholder"}`}
-                  hideIcon
-                  clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                />
-              </div>
+              <StartDateProperty
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                isEditable={isEditable}
+                maxDate={maxDate ?? undefined}
+                hasFieldError={fieldErrors.includes("start_date")}
+                issue={issue}
+              />
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-              <div
-                className={cn(
-                  "flex w-full items-center gap-2",
-                  fieldErrors.includes("target_date") && "border-red-500 rounded border"
-                )}
-              >
-                <DateDropdown
-                  placeholder={t("issue.add.due_date")}
-                  value={issue.target_date}
-                  onChange={(val) =>
-                    void issueOperations.update(workspaceSlug, projectId, issueId, {
-                      target_date: val ? renderFormattedPayloadDate(val) : null,
-                    })
-                  }
-                  minDate={minDate ?? undefined}
-                  disabled={!isEditable}
-                  buttonVariant="transparent-with-text"
-                  className="group w-full grow"
-                  buttonContainerClassName="w-full text-left h-7.5"
-                  buttonClassName={cn("text-body-xs-regular", {
-                    "text-placeholder": !issue.target_date,
-                    "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-                  })}
-                  hideIcon
-                  clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
-                />
-                {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
-              </div>
+              <DueDateProperty
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                isEditable={isEditable}
+                stateGroup={stateDetails?.group}
+                minDate={minDate ?? undefined}
+                hasFieldError={fieldErrors.includes("target_date")}
+                issue={issue}
+              />
             </SidebarPropertyListItem>
 
             <CompletedAtProperty issueId={issueId} />
@@ -287,7 +261,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 appendElement={<TransferHopInfo workItem={issue} />}
               >
                 <IssueCycleSelect
-                  className="h-7.5 w-full grow"
+                  className="w-full grow h-7.5"
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   issueId={issueId}
@@ -299,7 +273,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
               <IssueParentSelectRoot
-                className="h-7.5 w-full grow"
+                className="w-full h-7.5 grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}

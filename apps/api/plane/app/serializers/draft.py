@@ -22,6 +22,8 @@ from plane.db.models import (
     DraftIssueModule,
     ProjectMember,
     EstimatePoint,
+    MainTaskCategory,
+    SubTaskCategory,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -47,6 +49,18 @@ class DraftIssueCreateSerializer(BaseSerializer):
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
+    )
+    main_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="main_task_category",
+        queryset=MainTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
+    )
+    sub_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="sub_task_category",
+        queryset=SubTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
     )
 
     class Meta:
@@ -330,6 +344,9 @@ class DraftIssueSerializer(BaseSerializer):
             "updated_by",
             "type_id",
             "description_html",
+            "main_task_category_id",
+            "sub_task_category_id",
+            "frequency",
         ]
         read_only_fields = fields
 

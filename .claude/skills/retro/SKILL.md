@@ -1,6 +1,10 @@
 ---
 name: ck:retro
-description: "Data-driven sprint retrospective. Gathers git metrics (commits, LOC, hotspots, churn), computes derived health indicators, and generates a structured markdown or HTML report. Use after sprints, weekly check-ins, or any review period."
+description: "Generate data-driven sprint retrospectives from any git history. Use for sprint reviews, commit analysis, code-health indicators, team-velocity reporting, and quarterly engineering reviews. Works on solo or team repos."
+user-invocable: true
+when_to_use: "Invoke to summarize engineering history from git activity."
+category: utilities
+keywords: [retrospective, sprint, metrics, review]
 license: MIT
 argument-hint: "[timeframe] [--compare] [--team] [--format html|md]"
 metadata:
@@ -14,12 +18,12 @@ You are a data-driven Engineering Retrospective Analyst. Your job is to collect 
 
 ## Flags
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `timeframe` | `7d` | Period to analyze. Accepts: `7d`, `2w`, `1m`, `sprint`, or `YYYY-MM-DD:YYYY-MM-DD` |
-| `--compare` | off | Compare metrics against the preceding equal-length period |
-| `--team` | off | Break down metrics per author |
-| `--format html\|md` | `md` | Output format. `html` generates a self-contained HTML report |
+| Flag                | Default | Description                                                                        |
+| ------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `timeframe`         | `7d`    | Period to analyze. Accepts: `7d`, `2w`, `1m`, `sprint`, or `YYYY-MM-DD:YYYY-MM-DD` |
+| `--compare`         | off     | Compare metrics against the preceding equal-length period                          |
+| `--team`            | off     | Break down metrics per author                                                      |
+| `--format html\|md` | `md`    | Output format. `html` generates a self-contained HTML report                       |
 
 ## Step 1 — Parse Timeframe
 
@@ -88,12 +92,12 @@ git log --since="$SINCE" --until="$UNTIL" --name-only --format="" \
 
 Compute from raw data. Show formula in report.
 
-| Metric | Formula |
-|--------|---------|
-| Commit frequency | `total_commits / days_in_period` |
-| Test-to-code ratio | `test_file_changes / total_file_changes * 100` |
-| Churn rate | `(LOC_added + LOC_removed) / max(LOC_net, 1)` |
-| Active day ratio | `days_with_commits / days_in_period * 100` |
+| Metric               | Formula                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Commit frequency     | `total_commits / days_in_period`                                                                         |
+| Test-to-code ratio   | `test_file_changes / total_file_changes * 100`                                                           |
+| Churn rate           | `(LOC_added + LOC_removed) / max(LOC_net, 1)`                                                            |
+| Active day ratio     | `days_with_commits / days_in_period * 100`                                                               |
 | Plan completion rate | Count closed GitHub issues in period (use `gh issue list --state closed --json closedAt,title --jq "[.[] | select(.closedAt >= \"$SINCE\")]"`) divided by opened; mark `N/A` if gh unavailable |
 
 ## Step 4 — Check Plans Directory
@@ -125,6 +129,7 @@ Where `YYMMDD` = today's date from `bash -c 'date +%y%m%d'` and `slug` = timefra
 ## Step 6 — HTML Format (optional)
 
 If `--format html` flag is set:
+
 - Wrap report in a self-contained HTML page
 - Use inline CSS for table styling (no external deps)
 - Save as `plans/reports/retro-{YYMMDD}-{slug}.html`

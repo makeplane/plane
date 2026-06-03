@@ -1,7 +1,11 @@
 ---
 name: ck:security
-description: "STRIDE + OWASP-based security audit with optional auto-fix. Scans code for vulnerabilities, categorizes by severity, and can iteratively fix findings using ck:autoresearch pattern."
-argument-hint: "<scope glob or 'full'> [--fix] [--iterations N]"
+description: "STRIDE + OWASP-based security audit with optional red-team persona discovery loop and auto-fix. Scans code for vulnerabilities from multiple attacker perspectives (auth attacker, supply chain, insider, infrastructure), categorizes by severity, and can iteratively fix findings using ck:autoresearch pattern."
+user-invocable: true
+when_to_use: "Invoke for threat-modeled security audit or auto-fix loops."
+category: utilities
+keywords: [security, STRIDE, OWASP, audit, red-team, penetration-testing, vulnerability-discovery]
+argument-hint: "<scope glob or 'full'> [--fix] [--red-team] [--iterations N]"
 metadata:
   author: claudekit
   attribution: "Security audit pattern adapted from autoresearch by Udit Goenka (MIT)"
@@ -29,21 +33,27 @@ Runs a structured STRIDE + OWASP security audit on a given scope. Produces a sev
 
 ## Modes
 
-| Mode | Invocation | Behavior |
-|------|-----------|----------|
-| Audit only | `/ck:security <scope>` | Scan → categorize → report |
-| Audit + Fix | `/ck:security <scope> --fix` | Scan → categorize → fix iteratively |
-| Bounded fix | `/ck:security <scope> --fix --iterations N` | Limit fix iterations to N |
+| Mode               | Invocation                                       | Behavior                                                  |
+| ------------------ | ------------------------------------------------ | --------------------------------------------------------- |
+| Audit only         | `/ck:security <scope>`                           | Scan → categorize → report (one-shot)                     |
+| Red-team discovery | `/ck:security <scope> --red-team`                | Iterate 4 attacker personas → STRIDE/OWASP sweep → report |
+| Bounded red-team   | `/ck:security <scope> --red-team --iterations N` | Cap persona discovery to N iterations total               |
+| Audit + Fix        | `/ck:security <scope> --fix`                     | Scan → categorize → fix iteratively                       |
+| Red-team + Fix     | `/ck:security <scope> --red-team --fix`          | Full persona discovery → fix confirmed Critical/High      |
+| Bounded fix        | `/ck:security <scope> --fix --iterations N`      | Limit fix iterations to N                                 |
 
 ---
 
 ## Audit Methodology
 
 ### 1. Scope Resolution
+
 Expand the provided glob or `full` keyword into a file list. Read all in-scope files before analysis.
 
 ### 2. STRIDE Analysis
+
 Evaluate each threat category systematically:
+
 - **S**poofing — identity/authentication weaknesses
 - **T**ampering — input validation, integrity controls
 - **R**epudiation — audit logging gaps
@@ -52,19 +62,24 @@ Evaluate each threat category systematically:
 - **E**levation of Privilege — broken access control, RBAC gaps
 
 ### 3. OWASP Top 10 Check
+
 Map findings to OWASP categories (A01–A10). See `references/stride-owasp-checklist.md` for per-category checks.
 
 ### 4. Dependency Audit
+
 Run the appropriate package audit tool for the detected stack:
+
 - Node.js: `npm audit`
 - Python: `pip-audit`
 - Go: `govulncheck`
 - Ruby: `bundle audit`
 
 ### 5. Secret Detection
+
 Scan for hardcoded API keys, passwords, tokens, and private keys using regex patterns. See `references/stride-owasp-checklist.md` → Secret Patterns.
 
 ### 6. Finding Categorization
+
 Assign each finding a severity level (see Severity Definitions below).
 
 ---
@@ -88,6 +103,36 @@ Assign each finding a severity level (see Severity Definitions below).
 
 ---
 
+## Red-Team Discovery Mode (--red-team)
+
+When `--red-team` is provided, the audit runs a **multi-persona iterative discovery loop** before (or instead of) the standard one-shot STRIDE/OWASP sweep. Each persona represents a distinct attacker mindset with its own threat model and probe targets.
+
+### Persona Execution Order
+
+1. **Security Adversary** — external hacker; auth bypass, injection, IDOR, privilege escalation
+2. **Supply Chain Attacker** — dependency/CI poisoning; CVEs, unsigned artifacts, overly permissive CI
+3. **Insider Threat** — compromised internal account; horizontal/vertical escalation, bulk export, audit gaps
+4. **Infrastructure Attacker** — runtime/deployment foothold; SSRF, secrets in env, container misconfig
+
+Each persona phase follows the autoresearch iteration protocol:
+
+- Select next untested attack vector from persona's probe list
+- Assume that attacker's mindset — reason as adversary, not defender
+- Probe relevant code, trace data flows, find missing guards
+- Validate with proof (file:line, attack scenario, impact)
+- Log to `security-audit-results.tsv` with `persona` column
+- Chain: prior persona findings compound into later phases
+
+After all 4 personas complete, a standard STRIDE/OWASP sweep fills remaining coverage gaps.
+
+> See `references/red-team-personas.md` for the full persona catalog: threat models, typical attack vectors, and per-persona probe checklists.
+
+### Credential Hygiene (Mandatory)
+
+All findings across every persona MUST mask secret values before logging. Never emit raw JWTs (`eyJ...`), 32+ char hex strings, AWS key prefixes (`AKIA`, `ASIA`), or connection strings with embedded passwords. Use `<REDACTED_TOKEN>`, `<REDACTED_PASSWORD>`, or reference the env var name only.
+
+---
+
 ## Fix Mode (--fix)
 
 When `--fix` is provided, apply fixes iteratively after the audit:
@@ -107,13 +152,13 @@ When `--fix` is provided, apply fixes iteratively after the audit:
 
 ## Severity Definitions
 
-| Severity | Description | Fix Priority |
-|----------|-------------|-------------|
-| Critical | Exploitable now, data breach or RCE risk | Immediate — block release |
-| High | Exploitable with moderate effort, significant impact | This sprint |
-| Medium | Limited exploitability or impact | Next sprint |
-| Low | Theoretical risk, defense-in-depth improvement | Backlog |
-| Info | Best practice suggestion, no direct risk | Optional |
+| Severity | Description                                          | Fix Priority              |
+| -------- | ---------------------------------------------------- | ------------------------- |
+| Critical | Exploitable now, data breach or RCE risk             | Immediate — block release |
+| High     | Exploitable with moderate effort, significant impact | This sprint               |
+| Medium   | Limited exploitability or impact                     | Next sprint               |
+| Low      | Theoretical risk, defense-in-depth improvement       | Backlog                   |
+| Info     | Best practice suggestion, no direct risk             | Optional                  |
 
 ---
 
@@ -129,16 +174,32 @@ When `--fix` is provided, apply fixes iteratively after the audit:
 ## Example Invocations
 
 ```bash
-# Audit API layer only
+# One-shot audit — API layer only
 /ck:security src/api/**/*.ts
 
-# Audit entire src/ and auto-fix, max 15 iterations
-/ck:security src/ --fix --iterations 15
+# Red-team discovery — full codebase, all 4 personas
+/ck:security full --red-team
 
-# Full codebase audit (no fix)
-/ck:security full
+# Red-team discovery — bounded to 20 iterations total
+/ck:security src/ --red-team --iterations 20
+
+# Red-team discovery + auto-fix confirmed Critical/High
+/ck:security full --red-team --fix
+
+# One-shot audit + auto-fix, max 15 iterations
+/ck:security src/ --fix --iterations 15
 ```
 
 ---
 
 See `references/stride-owasp-checklist.md` for the detailed per-category checklist and secret detection regex patterns.
+
+See `references/red-team-personas.md` for the full persona catalog: threat models, attack vectors, probe checklists, discovery loop integration, and TSV schema extension for `--red-team` mode.
+
+---
+
+## Lineage
+
+Faithful absorption (in scope) of upstream `/autoresearch:security` ([uditgoenka/autoresearch](https://github.com/uditgoenka/autoresearch), MIT). The local version supports both one-shot STRIDE + OWASP audit and the red-team-personas iterative discovery loop (closed in #730).
+
+See `/ck:autoresearch` for the full family map.

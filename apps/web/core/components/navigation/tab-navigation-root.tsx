@@ -4,9 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
+import useSWR from "swr";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
@@ -17,6 +18,9 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
+import { CopyToWorkspaceModal } from "@/plane-web/components/projects/copy-to-workspace-modal";
+// services
+import { UserService } from "@/services/user.service";
 // local imports
 import { LeaveProjectModal } from "../project/leave-project-modal";
 import { PublishProjectModal } from "../project/publish-project/modal";
@@ -29,6 +33,8 @@ import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
 import { useResponsiveTabLayout } from "./use-responsive-tab-layout";
 import { useTabPreferences } from "./use-tab-preferences";
+
+const userService = new UserService();
 
 // Local type definition for navigation items with app-specific fields
 export type TNavigationItem = {
@@ -106,6 +112,9 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     activeItem,
   });
 
+  // Copy to workspace state
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
+
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
     .filter((item) => item.shouldRender)
@@ -137,10 +146,13 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
       const targetItem = defaultTabItem || allNavigationItems.find((item) => item.key === DEFAULT_TAB_KEY);
 
       if (targetItem) {
-        navigate(targetItem.href, { replace: true });
+        void navigate(targetItem.href, { replace: true });
       }
     }
   }, [pathname, workspaceSlug, projectId, tabPreferences.defaultTab, allNavigationItems, navigate]);
+
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
+  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   if (allNavigationItems.length === 0) return null;
   if (!project) return null;
@@ -168,10 +180,18 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
         isOpen={leaveProjectModalOpen}
         onClose={() => handleLeaveProjectModal(false)}
       />
+      <CopyToWorkspaceModal
+        isOpen={copyModalOpen}
+        onClose={() => setCopyModalOpen(false)}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        projectName={project?.name ?? ""}
+        projectIdentifier={project?.identifier ?? ""}
+      />
 
       {/* container for the tab navigation */}
-      <div className="flex size-full items-center gap-3 overflow-hidden">
-        <div className="flex shrink-0 items-center gap-2">
+      <div className="flex items-center gap-3 overflow-hidden size-full">
+        <div className="flex items-center gap-2 shrink-0">
           <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
@@ -179,16 +199,18 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
               project={project}
               isAdmin={isAdmin}
               isAuthorized={isAuthorized}
-              onCopyText={handleCopyText}
+              isInstanceAdmin={isInstanceAdmin}
+              onCopyText={() => void handleCopyText()}
               onLeaveProject={handleLeaveProject}
               onPublishModal={() => handlePublishModal(true)}
+              onCopyToWorkspace={() => setCopyModalOpen(true)}
             />
           </div>
         </div>
 
-        <div className="h-5 w-1 shrink-0 border-l border-subtle" />
+        <div className="shrink-0 h-5 w-1 border-l border-subtle" />
 
-        <div ref={containerRef} className="flex h-full min-w-0 flex-1 items-center overflow-hidden">
+        <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
           <TabNavigationList className="h-full">
             {/* Render visible tab items */}
             {visibleItems.map((item) => {
@@ -223,7 +245,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </TabNavigationList>
 
           {hasOverflow && (
-            <div className="pointer-events-none absolute -z-10 opacity-0">
+            <div className="absolute opacity-0 pointer-events-none -z-10">
               {visibleNavigationItems.map((item) => {
                 const itemIsActive = isActive(item);
                 const originalIndex = allNavigationItems.indexOf(item);

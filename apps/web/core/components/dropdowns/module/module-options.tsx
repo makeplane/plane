@@ -133,7 +133,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             displayValue={(assigned: any) => assigned?.name ?? ""}
             onKeyDown={searchInputKeyDown}
           />

@@ -11,6 +11,8 @@ from .project.base import (
     ProjectArchiveUnarchiveEndpoint,
 )
 
+from .project.copy import ProjectCopyView, ProjectCopyStatusView
+
 from .project.worklog import ProjectWorkLogViewSet, ProjectWorklogExportView
 
 from .project.bank_wide import WorkspaceBankWideProjectsEndpoint
@@ -98,10 +100,12 @@ from .workspace.time_tracking import (
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
+    TimesheetSubIssuesEndpoint,
     TimesheetBulkUpdateEndpoint,
     WorkspaceAnalyticsTimesheetEndpoint,
     WorkspaceCapacityEndpoint,
     WorkspaceCapacityDayDetailsEndpoint,
+    CapacityExportEndpoint,
 )
 
 from .state.base import StateViewSet, IntakeStateEndpoint
@@ -248,6 +252,7 @@ from .notification.base import (
 )
 
 from .exporter.base import ExportIssuesEndpoint
+from .help_center import HelpCategoryViewSet, HelpArticleViewSet
 
 
 from .webhook.base import (
@@ -295,3 +300,7 @@ from .workflow import (
     WorkflowTransitionViewSet,
     WorkflowTransitionApproverViewSet,
 )
+
+from .project.field_permission import ProjectFieldPermissionViewSet
+
+from .ho_export import HoExportView

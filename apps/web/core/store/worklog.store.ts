@@ -5,6 +5,7 @@
  */
 
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { mutate } from "swr";
 import type {
   IWorkLog,
   IWorkLogCreate,
@@ -12,6 +13,7 @@ import type {
   IWorkLogSummary,
   ITimesheetGridResponse,
   ITimesheetBulkEntry,
+  ITimesheetRow,
   ICapacityReportResponse,
 } from "@plane/types";
 import { WorklogService } from "@/services/worklog.service";
@@ -50,6 +52,12 @@ export interface IWorklogStore {
     params?: Record<string, string>
   ): Promise<IWorkLogSummary>;
   fetchTimesheetGrid(workspaceSlug: string, projectId: string, weekStart?: string): Promise<ITimesheetGridResponse>;
+  fetchTimesheetSubIssues(
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    weekStart?: string
+  ): Promise<ITimesheetRow[]>;
   bulkUpdateTimesheet(workspaceSlug: string, projectId: string, entries: ITimesheetBulkEntry[]): Promise<void>;
   addEmptyTimesheetRow(issueId: string, issueName: string, issueIdentifier: string, projectId: string): void;
   fetchCapacityReport(
@@ -84,6 +92,7 @@ export class WorklogStore implements IWorklogStore {
       updateWorklog: action,
       deleteWorklog: action,
       fetchTimesheetGrid: action,
+      fetchTimesheetSubIssues: action,
       bulkUpdateTimesheet: action,
       addEmptyTimesheetRow: action,
       fetchCapacityReport: action,
@@ -129,6 +138,7 @@ export class WorklogStore implements IWorklogStore {
       const existing = this.worklogsByIssueId[issueId] ?? [];
       this.worklogsByIssueId[issueId] = [worklog, ...existing];
     });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     return worklog;
   };
 
@@ -146,6 +156,7 @@ export class WorklogStore implements IWorklogStore {
       if (idx !== -1) list[idx] = updated;
       this.worklogsByIssueId[issueId] = [...list];
     });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     return updated;
   };
 
@@ -165,6 +176,7 @@ export class WorklogStore implements IWorklogStore {
     });
     try {
       await this.worklogService.deleteWorklog(workspaceSlug, projectId, issueId, worklogId, reason);
+      void mutate("USER_DAILY_WORKLOG_TOTAL");
     } catch (error) {
       runInAction(() => {
         this.worklogsByIssueId[issueId] = prevList;
@@ -204,12 +216,28 @@ export class WorklogStore implements IWorklogStore {
     }
   };
 
+  // Lazy per-row read: returns the current user's logged children for the week.
+  // Each row holds its own children in local component state, so there is no global
+  // observable here. Errors propagate to the caller, which owns try/catch/finally.
+  fetchTimesheetSubIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    weekStart?: string
+  ): Promise<ITimesheetRow[]> => {
+    const params: Record<string, string> = {};
+    if (weekStart) params["week_start"] = weekStart;
+    const data = await this.worklogService.getTimesheetSubIssues(workspaceSlug, projectId, parentId, params);
+    return data.rows;
+  };
+
   bulkUpdateTimesheet = async (
     workspaceSlug: string,
     projectId: string,
     entries: ITimesheetBulkEntry[]
   ): Promise<void> => {
     await this.worklogService.bulkUpdateTimesheet(workspaceSlug, projectId, { entries });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     // Re-fetch grid to get updated data
     const weekStart = this.timesheetData?.week_start;
     await this.fetchTimesheetGrid(workspaceSlug, projectId, weekStart ?? undefined);

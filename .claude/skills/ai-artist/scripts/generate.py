@@ -26,29 +26,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from core import search
 
-# Gemini API setup
-CLAUDE_ROOT = Path.home() / '.claude'
-sys.path.insert(0, str(CLAUDE_ROOT / 'scripts'))
-PROJECT_CLAUDE = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(PROJECT_CLAUDE / 'scripts'))
-try:
-    from resolve_env import resolve_env
-    CENTRALIZED_RESOLVER = True
-except ImportError:
-    CENTRALIZED_RESOLVER = False
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path.home() / '.claude' / '.env')
-        load_dotenv(Path.home() / '.claude' / 'skills' / '.env')
-    except ImportError:
-        pass
-
-try:
-    from google import genai
-    from google.genai import types
-    GENAI_AVAILABLE = True
-except ImportError:
-    GENAI_AVAILABLE = False
+CLAUDE_DIR = Path(__file__).parent.parent.parent.parent
+AI_MULTIMODAL_SCRIPTS = CLAUDE_DIR / "skills" / "ai-multimodal" / "scripts"
+sys.path.insert(0, str(AI_MULTIMODAL_SCRIPTS))
+import gemini_batch_process as multimodal_batch
 
 
 # ============ CONFIGURATION ============
@@ -57,15 +38,11 @@ NANO_BANANA_MODELS = {
     "flash": "gemini-2.5-flash-image",
     "pro": "gemini-3-pro-image-preview",
 }
+OPENROUTER_NANO_BANANA_MODELS = {
+    key: f"google/{value}" for key, value in NANO_BANANA_MODELS.items()
+}
 DEFAULT_MODEL = "flash2"
 ASPECT_RATIOS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"]
-
-
-def get_api_key() -> str:
-    """Get Gemini API key from environment."""
-    if CENTRALIZED_RESOLVER:
-        return resolve_env('GEMINI_API_KEY', skill='ai-multimodal')
-    return os.getenv('GEMINI_API_KEY')
 
 
 def adapt_prompt(template_prompt: str, concept: str, **kwargs) -> str:
@@ -220,62 +197,53 @@ def generate_image(
     prompt: str,
     output_path: str,
     model: str = DEFAULT_MODEL,
+    provider: str = "auto",
     aspect_ratio: str = "1:1",
     size: str = "2K",
     verbose: bool = False
 ) -> dict:
-    """Generate image using Nano Banana (Gemini image models)."""
+    """Generate image via ai-multimodal's provider-aware routing."""
 
-    if not GENAI_AVAILABLE:
-        return {"status": "error", "error": "google-genai not installed. Run: pip install google-genai"}
+    resolved_provider = provider
+    if resolved_provider == "auto":
+        env_provider = os.getenv("IMAGE_GEN_PROVIDER", "auto").lower()
+        if env_provider in {"google", "openrouter"}:
+            resolved_provider = env_provider
+        else:
+            resolved_provider = "openrouter" if (
+                multimodal_batch.find_openrouter_api_key() and not multimodal_batch.find_api_key()
+            ) else "google"
 
-    api_key = get_api_key()
-    if not api_key:
-        return {"status": "error", "error": "GEMINI_API_KEY not found"}
-
-    model_id = NANO_BANANA_MODELS.get(model, model)
+    model_map = OPENROUTER_NANO_BANANA_MODELS if resolved_provider == "openrouter" else NANO_BANANA_MODELS
+    model_id = model_map.get(model, model)
 
     if verbose:
-        print(f"\n[Nano Banana Generation]")
+        print(f"\n[Image Generation]")
+        print(f"  Provider: {resolved_provider}")
         print(f"  Model: {model_id}")
         print(f"  Aspect: {aspect_ratio}")
         print(f"  Prompt: {prompt[:100]}...")
 
     try:
-        client = genai.Client(api_key=api_key)
-
-        # Build config
-        image_config_args = {'aspect_ratio': aspect_ratio}
-        if 'pro' in model_id.lower() and size:
-            image_config_args['image_size'] = size
-
-        config = types.GenerateContentConfig(
-            response_modalities=['IMAGE'],
-            image_config=types.ImageConfig(**image_config_args)
-        )
-
-        response = client.models.generate_content(
+        results = multimodal_batch.batch_process(
+            files=[],
+            prompt=prompt,
             model=model_id,
-            contents=[prompt],
-            config=config
+            task='generate',
+            provider=resolved_provider,
+            format_output='text',
+            aspect_ratio=aspect_ratio,
+            num_images=1,
+            size=size,
+            output_file=output_path,
+            verbose=verbose,
         )
-
-        output_file = Path(output_path)
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-
-        if hasattr(response, 'candidates') and response.candidates:
-            for part in response.candidates[0].content.parts:
-                if part.inline_data:
-                    with open(output_file, 'wb') as f:
-                        f.write(part.inline_data.data)
-
-                    if verbose:
-                        print(f"  Generated: {output_file}")
-
-                    return {"status": "success", "output": str(output_file), "model": model_id}
-
-        return {"status": "error", "error": "No image in response"}
-
+        if not results:
+            return {"status": "error", "error": "No generation result returned"}
+        result = results[0]
+        if result.get("status") != "success":
+            return {"status": "error", "error": result.get("error", "Image generation failed")}
+        return {"status": "success", "output": output_path, "model": result.get("model", model_id)}
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
@@ -310,6 +278,8 @@ Examples:
     parser.add_argument("--output", "-o", required=True, help="Output image path")
     parser.add_argument("--mode", "-m", choices=["search", "creative", "wild", "all"],
                        default="search", help="Generation mode")
+    parser.add_argument("--provider", choices=["auto", "google", "openrouter"],
+                       default="auto", help="Image provider route")
     parser.add_argument("--model", choices=list(NANO_BANANA_MODELS.keys()),
                        default=DEFAULT_MODEL, help="Model: flash2 (default, Nano Banana 2), flash, or pro")
     parser.add_argument("--aspect-ratio", "-ar", choices=ASPECT_RATIOS, default="1:1")
@@ -356,6 +326,7 @@ Examples:
             prompt=prompt,
             output_path=output_path,
             model=args.model,
+            provider=args.provider,
             aspect_ratio=args.aspect_ratio,
             size=args.size,
             verbose=args.verbose

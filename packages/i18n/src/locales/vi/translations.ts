@@ -91,7 +91,7 @@ export default {
       already_have_an_account: "Đã có tài khoản?",
       login: "Đăng nhập",
       create_account: "Tạo tài khoản",
-      new_to_plane: "Lần đầu sử dụng Plane?",
+      new_to_plane: "Lần đầu sử dụng Shinhan Workspace?",
       back_to_sign_in: "Quay lại đăng nhập",
       resend_in: "Gửi lại sau {seconds} giây",
       sign_in_with_unique_code: "Đăng nhập bằng mã duy nhất",
@@ -181,6 +181,19 @@ export default {
   },
   submit: "Gửi",
   cancel: "Hủy",
+  copy_project: {
+    menu_item: "Sao chép sang Workspace",
+    modal_title: "Sao chép Dự án sang Workspace Khác",
+    target_workspace_label: "Workspace đích",
+    project_name_label: "Tên dự án",
+    identifier_label: "Mã định danh",
+    identifier_hint: "Tối đa 12 ký tự viết hoa (A-Z, 0-9, -, _)",
+    identifier_conflict: "Mã định danh đã tồn tại trong workspace đích",
+    search_workspace_placeholder: "Tìm kiếm workspace…",
+    copy_button: "Sao chép dự án",
+    in_progress: "Đang sao chép…",
+    error: "Không thể bắt đầu sao chép dự án",
+  },
   loading: "Đang tải",
   error: "Lỗi",
   success: "Thành công",
@@ -420,7 +433,6 @@ export default {
   capacity_under_capacity: "Còn trống",
   capacity_member: "Thành viên",
   capacity_issues: "Công việc",
-  capacity_no_data: "Không có dữ liệu công suất cho giai đoạn này.",
   capacity_category_distribution: "Phân bổ theo danh mục",
   capacity_time_burndown: "Biểu đồ Burndown thời gian",
   capacity_items: "mục",
@@ -429,11 +441,13 @@ export default {
   timesheet_week_of: "Tuần của",
   timesheet_this_week: "Tuần này",
   timesheet_total: "Tổng",
+  timesheet_show_sub_items: "Show sub-items",
   timesheet_coming_soon: "Sắp ra mắt ở Phase 8",
   timesheet_save_success: "Đã lưu bảng chấm công",
   timesheet_no_issues: "Không có issue nào cho tuần này",
   timesheet_add_issue: "Thêm công việc",
-  timesheet_cross_workspaces: "Cross Workspaces",
+  timesheet_cross_workspaces: "Cross teams & workspaces",
+  overall_management: "Overall Management",
   timesheet_load_error: "Không thể tải dữ liệu bảng chấm công.",
   analytics_timesheet_load_error: "Không thể tải dữ liệu phân tích.",
   analytics_timesheet_no_data: "Không có nhật ký thời gian nào trong tuần này.",
@@ -446,6 +460,8 @@ export default {
   documentation: "Tài liệu",
   contact_sales: "Liên hệ bộ phận bán hàng",
   contact_point: "Liên hệ",
+  start_product_tour: "Bắt đầu hướng dẫn sản phẩm",
+  start_product_tour_error: "Không thể bắt đầu hướng dẫn sản phẩm",
   contact_point_full_name: "Full name",
   contact_point_email: "Email",
   contact_point_phone: "Phone",
@@ -463,7 +479,7 @@ export default {
   full_changelog: "Nhật ký thay đổi đầy đủ",
   support: "Hỗ trợ",
   discord: "Discord",
-  powered_by_plane_pages: "Được hỗ trợ bởi Plane Pages",
+  powered_by_plane_pages: "Được hỗ trợ bởi Shinhan Workspace Pages",
   please_select_at_least_one_invitation: "Vui lòng chọn ít nhất một lời mời.",
   please_select_at_least_one_invitation_description:
     "Vui lòng chọn ít nhất một lời mời để tham gia không gian làm việc.",
@@ -658,7 +674,7 @@ export default {
       not_right_now: "Không phải bây giờ",
       create_project: {
         title: "Tạo nhóm/dự án",
-        description: "Trong Plane, hầu hết mọi thứ đều bắt đầu từ nhóm/dự án.",
+        description: "Trong Shinhan Workspace, hầu hết mọi thứ đều bắt đầu từ nhóm/dự án.",
         cta: "Bắt đầu",
       },
       invite_team: {
@@ -672,7 +688,7 @@ export default {
         cta: "Cấu hình không gian làm việc này",
       },
       personalize_account: {
-        title: "Cá nhân hóa Plane cho bạn",
+        title: "Cá nhân hóa Shinhan Workspace cho bạn",
         description: "Chọn ảnh đại diện, màu sắc và nhiều hơn nữa.",
         cta: "Cá nhân hóa ngay",
       },
@@ -707,7 +723,7 @@ export default {
       },
     },
     new_at_plane: {
-      title: "Tính năng mới của Plane",
+      title: "Tính năng mới của Shinhan Workspace",
     },
     quick_tutorial: {
       title: "Hướng dẫn nhanh",
@@ -735,6 +751,8 @@ export default {
   },
   common: {
     all: "Tất cả",
+    expand: "Mở rộng",
+    collapse: "Thu gọn",
     no_items_in_this_group: "Không có mục nào trong nhóm này",
     drop_here_to_move: "Thả vào đây để di chuyển",
     states: "Trạng thái",
@@ -1153,7 +1171,7 @@ export default {
     },
     states: {
       active: "Hoạt động",
-      backlog: "Draft",
+      backlog: "Backlog",
     },
     comments: {
       placeholder: "Thêm bình luận",
@@ -1384,7 +1402,7 @@ export default {
   },
   workspace_creation: {
     heading: "Tạo không gian làm việc của bạn",
-    subheading: "Để bắt đầu với Plane, bạn cần tạo hoặc tham gia một không gian làm việc.",
+    subheading: "Để bắt đầu với Shinhan Workspace, bạn cần tạo hoặc tham gia một không gian làm việc.",
     form: {
       name: {
         label: "Đặt tên cho không gian làm việc của bạn",
@@ -1439,11 +1457,11 @@ export default {
       general: {
         title: "Tổng quan về nhóm/dự án, hoạt động và chỉ số",
         description:
-          "Chào mừng đến với Plane, chúng tôi rất vui khi bạn ở đây. Tạo nhóm/dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy nhóm/dự án giúp nhóm tiến triển.",
+          "Chào mừng đến với Shinhan Workspace, chúng tôi rất vui khi bạn ở đây. Tạo nhóm/dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy nhóm/dự án giúp nhóm tiến triển.",
         primary_button: {
           text: "Xây dựng nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            title: "Trong Shinhan Workspace, mọi thứ đều bắt đầu với nhóm/dự án",
             description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
@@ -1530,7 +1548,7 @@ export default {
     },
     created_vs_resolved: "Đã tạo vs Đã giải quyết",
     customized_insights: "Thông tin chi tiết tùy chỉnh",
-    backlog_work_items: "Draft {entity}",
+    backlog_work_items: "Backlog {entity}",
     active_projects: "Nhóm/Dự án đang hoạt động",
     trend_on_charts: "Xu hướng trên biểu đồ",
     all_projects: "Tất cả nhóm/dự án",
@@ -1582,7 +1600,7 @@ export default {
       issue_delete: "Xóa mục công việc thất bại",
     },
     state: {
-      backlog: "Draft",
+      backlog: "Backlog",
       unstarted: "Chưa bắt đầu",
       started: "Đang tiến hành",
       completed: "Đã hoàn thành",
@@ -1609,7 +1627,7 @@ export default {
         primary_button: {
           text: "Bắt đầu nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            title: "Trong Shinhan Workspace, mọi thứ đều bắt đầu với nhóm/dự án",
             description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
@@ -1621,7 +1639,7 @@ export default {
         primary_button: {
           text: "Bắt đầu nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            title: "Trong Shinhan Workspace, mọi thứ đều bắt đầu với nhóm/dự án",
             description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
@@ -1773,7 +1791,7 @@ export default {
     page_label: "{workspace} - Cài đặt chung",
     key_created: "Đã tạo khóa",
     copy_key:
-      "Sao chép và lưu khóa này trong Plane Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
+      "Sao chép và lưu khóa này trong Shinhan Workspace Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
     token_copied: "Đã sao chép token vào bảng tạm.",
     settings: {
       general: {
@@ -1845,6 +1863,13 @@ export default {
             required: "Chúng tôi cần một địa chỉ email để mời họ.",
             invalid: "Email không hợp lệ",
           },
+        },
+        role_downgrade_modal: {
+          title: "Thay đổi vai trò thành viên?",
+          description: "Thành viên này sẽ bị xóa khỏi tất cả các dự án đã tham gia. Bạn có muốn tiếp tục không?",
+          confirm: "Có, thay đổi vai trò",
+          cancel: "Hủy",
+          error: "Đã xảy ra lỗi khi cập nhật vai trò thành viên. Vui lòng thử lại.",
         },
       },
       billing_and_plans: {
@@ -1948,7 +1973,7 @@ export default {
         delete: {
           title: "Xóa token API",
           description:
-            "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Plane nữa. Hành động này không thể hoàn tác.",
+            "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Shinhan Workspace nữa. Hành động này không thể hoàn tác.",
           success: {
             title: "Thành công!",
             message: "Đã xóa token API thành công",
@@ -1964,7 +1989,7 @@ export default {
       api_tokens: {
         title: "Chưa tạo token API",
         description:
-          "API Plane có thể được sử dụng để tích hợp dữ liệu Plane của bạn với bất kỳ hệ thống bên ngoài nào. Tạo token để bắt đầu.",
+          "API Shinhan Workspace có thể được sử dụng để tích hợp dữ liệu Shinhan Workspace của bạn với bất kỳ hệ thống bên ngoài nào. Tạo token để bắt đầu.",
       },
       webhooks: {
         title: "Chưa thêm webhook",
@@ -2012,7 +2037,7 @@ export default {
       today_work_items: {
         title: "Công việc hôm nay",
         empty: "Không có mục công việc hoạt động nào cho hôm nay.",
-        cross_workspaces: "Xuyên Workspace",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
@@ -2031,7 +2056,7 @@ export default {
       overdue_work_items: {
         title: "Công việc quá hạn",
         empty: "Không có mục công việc quá hạn.",
-        cross_workspaces: "Xuyên Workspace",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
@@ -2059,16 +2084,23 @@ export default {
     },
     tabs: {
       summary: "Tóm tắt",
+      summary_description:
+        "All work items were assigned to you and need to be completed (including cross teams & workspaces)",
       assigned: "Đã giao",
+      assigned_description:
+        "All work items were assigned to you, including both completed and outstanding items (excluding cross teams & workspaces)",
       created: "Đã tạo",
+      created_description: "All work items that you have created (excluding cross teams & workspaces)",
       subscribed: "Đã đăng ký",
+      subscribed_description:
+        "All work items that you are monitoring and have subscribed (excluding cross teams & workspaces)",
       activity: "Hoạt động",
     },
     empty_state: {
       activity: {
         title: "Chưa có hoạt động",
         description:
-          "Bắt đầu bằng cách tạo mục công việc mới! Thêm chi tiết và thuộc tính cho nó. Khám phá thêm trong Plane để xem hoạt động của bạn.",
+          "Bắt đầu bằng cách tạo mục công việc mới! Thêm chi tiết và thuộc tính cho nó. Khám phá thêm trong Shinhan Workspace để xem hoạt động của bạn.",
       },
       assigned: {
         title: "Không có mục công việc nào được giao cho bạn",
@@ -2121,7 +2153,7 @@ export default {
     },
     states: {
       heading: "States",
-      description: "Define and customize workflow states to track the progress of your work items.",
+      description: "Define and customize workflow statuses to track the progress of your work items.",
       describe_this_state_for_your_members: "Mô tả trạng thái này cho thành viên của bạn.",
       empty_state: {
         title: "Không có trạng thái trong nhóm {groupKey}",
@@ -2223,6 +2255,48 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "Quyền chỉnh sửa trường",
+      description: "Kiểm soát các trường mà thành viên dự án được phép chỉnh sửa hoặc xóa.",
+      locked_tooltip: "Bị khóa bởi quản trị viên dự án",
+      sections: {
+        dates: "Trường ngày",
+        dates_description: "Kiểm soát ai có thể chỉnh sửa trường ngày trên công việc hiện có.",
+        destructive: "Hành động phá hủy",
+        destructive_description: "Hành động có tác động lớn và không thể hoàn tác.",
+      },
+      status: {
+        enabled: "Cho phép thành viên",
+        disabled: "Chỉ quản trị viên",
+      },
+      rows: {
+        completed_date: {
+          title: "Ngày hoàn thành",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày hoàn thành của công việc.",
+        },
+        target_date: {
+          title: "Ngày đến hạn",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày đến hạn của công việc.",
+        },
+        start_date: {
+          title: "Ngày bắt đầu",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày bắt đầu của công việc.",
+        },
+        delete_work_item: {
+          title: "Xóa công việc",
+          description: "Cho phép thành viên xóa vĩnh viễn các công việc trong dự án này.",
+        },
+      },
+      toast: {
+        update_success: "Quyền chỉnh sửa trường đã được cập nhật thành công.",
+        update_error: "Không thể cập nhật quyền chỉnh sửa trường. Vui lòng thử lại.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "Quyền chỉnh sửa trường",
+      },
+    },
     worklogs: {
       label: "Nhật ký công việc",
       heading: "Nhật ký công việc",
@@ -2276,12 +2350,12 @@ export default {
       label: "Tự động hóa",
       "auto-archive": {
         title: "Tự động lưu trữ mục công việc đã đóng",
-        description: "Plane sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
+        description: "Shinhan Workspace sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
         duration: "Tự động lưu trữ đã đóng",
       },
       "auto-close": {
         title: "Tự động đóng mục công việc",
-        description: "Plane sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
+        description: "Shinhan Workspace sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
         duration: "Tự động đóng không hoạt động",
         auto_close_status: "Trạng thái tự động đóng",
       },
@@ -2485,9 +2559,9 @@ export default {
         primary_button: {
           text: "Tạo mục công việc đầu tiên của bạn",
           comic: {
-            title: "Mục công việc là khối xây dựng cơ bản trong Plane.",
+            title: "Mục công việc là khối xây dựng cơ bản trong Shinhan Workspace.",
             description:
-              "Thiết kế lại giao diện Plane, định vị lại thương hiệu công ty hoặc ra mắt hệ thống phun nhiên liệu mới đều là ví dụ về mục công việc có thể chứa các mục công việc con.",
+              "Thiết kế lại giao diện Shinhan Workspace, định vị lại thương hiệu công ty hoặc ra mắt hệ thống phun nhiên liệu mới đều là ví dụ về mục công việc có thể chứa các mục công việc con.",
           },
         },
       },
@@ -2591,9 +2665,10 @@ export default {
   project_page: {
     empty_state: {
       general: {
-        title: "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của Plane giúp bạn bắt đầu",
+        title:
+          "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của Shinhan Workspace giúp bạn bắt đầu",
         description:
-          "Trang là không gian ghi lại suy nghĩ trong Plane. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh nhóm/dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của Plane thông qua phím tắt hoặc nhấp nút.",
+          "Trang là không gian ghi lại suy nghĩ trong Shinhan Workspace. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh nhóm/dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của Shinhan Workspace thông qua phím tắt hoặc nhấp nút.",
         primary_button: {
           text: "Tạo trang đầu tiên của bạn",
         },
@@ -2943,7 +3018,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Draft",
+      backlog: "Backlog",
       planned: "Đã lên kế hoạch",
       in_progress: "Đang tiến hành",
       paused: "Đã tạm dừng",
@@ -2997,7 +3072,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
+      "Shinhan Workspace không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Shinhan Workspace không khởi động được.",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure: "Chọn View Logs từ setup.sh và log Docker để chắc chắn.",
   },
   page_navigation_pane: {
@@ -3181,7 +3256,7 @@ export default {
     },
     help_actions: {
       open_keyboard_shortcuts: "Mở phím tắt",
-      open_plane_documentation: "Mở tài liệu Plane",
+      open_plane_documentation: "Mở tài liệu Shinhan Workspace",
       join_discord: "Tham gia Discord",
       report_bug: "Báo lỗi",
       chat_with_us: "Trò chuyện với chúng tôi",
@@ -3255,6 +3330,15 @@ export default {
     total_estimated: "Tổng ước tính",
     variance: "Chênh lệch",
     member: "Thành viên",
+    unknown_member: "Thành viên không xác định",
+    view_total: "Xem",
+    total: "Tổng",
+    back: "Quay lại",
+    work_items: "Công việc",
+    load_more: "Xem thêm",
+    loading: "Đang tải...",
+    load_failed: "Tải thất bại. Hãy thử lại.",
+    retry: "Thử lại",
     report: "Báo cáo thời gian",
     activity_logged: "đã ghi nhận thời gian",
     updated: "Đã cập nhật",
@@ -3290,7 +3374,7 @@ export default {
     activity_reason: "Lý do",
     reminder_title: "Nhắc nhở ghi nhận giờ làm việc",
     reminder_message:
-      "Hey bạn ơi! 👋 Một ngày làm việc sắp kết thúc rồi — đừng quên ghi nhận giờ làm việc cho hôm nay nhé. Việc cập nhật timesheet đều đặn giúp cả team nắm bắt tiến độ tốt hơn đấy. Chỉ mất một phút thôi, bạn tương lai sẽ cảm ơn bạn hiện tại! Ghé vào project và log time trước khi hết ngày nha.",
+      "Chào bạn! Một lời nhắc nhẹ nhàng 😊\nĐừng quên ghi nhận giờ làm việc cho hôm nay nhé.\nViệc cập nhật timesheet đều đặn giúp cả team theo sát tiến độ tốt hơn.\nChỉ mất một phút thôi! Ghé vào project và log giờ làm trước khi kết thúc ngày nha.",
     reminder_toggle: "Nhắc nhở ghi nhận giờ",
     reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
   },
@@ -3531,6 +3615,7 @@ export default {
     sub_label: "Danh mục phụ",
     select_main: "Chọn danh mục chính",
     select_sub: "Chọn danh mục phụ",
+    no_main_categories: "Không có danh mục khả dụng",
     no_sub_categories: "Không có danh mục phụ khả dụng",
     search: "Tìm kiếm...",
   },
@@ -3544,6 +3629,7 @@ export default {
     from: "Từ", // TODO: native review
     to: "Đến", // TODO: native review
     show_archived: "Hiện mục đã lưu trữ", // TODO: native review
+    show_sub_work_items: "Hiện công việc con", // TODO: native review
     no_work_items: "Không tìm thấy công việc nào.", // TODO: native review
     no_matching_rows: "Không có hàng nào khớp.", // TODO: native review
     no_data: "Không có dữ liệu.", // TODO: native review
@@ -3551,6 +3637,10 @@ export default {
     loading: "Đang tải...", // TODO: native review
     category: "Danh mục", // TODO: native review
     search: "Tìm kiếm...", // TODO: native review
+    sort: "Sắp xếp", // TODO: native review
+    filter: "Lọc", // TODO: native review
+    selected_count: "Đã chọn {count}", // TODO: native review
+    clear_filter: "Xóa lọc", // TODO: native review
     clear_sort: "Xóa sắp xếp", // TODO: native review
     clear_filters_sort: "Xóa lọc & sắp xếp", // TODO: native review
     ascending: "Tăng dần", // TODO: native review
@@ -3574,5 +3664,141 @@ export default {
       no_permission_title: "Không thể mở công việc", // TODO: native review
       no_permission_message: "Bạn không có quyền xem công việc này.", // TODO: native review
     },
+    export_queued: "Dữ liệu đã được xuất. Vui lòng kiểm tra và tải xuống trong email của bạn.",
+    export_failed: "Xuất dữ liệu thất bại. Vui lòng thử lại.",
+    exporting: "Đang xuất...",
+  },
+  capacity_export: {
+    menu: "Export",
+    summary: "Capacity summary",
+    summary_desc: "CSV with member × daily totals",
+    detailed: "Detailed work-item report",
+    detailed_desc: "XLSX with per-entry breakdown, one sheet per member",
+    queued_title: "Export queued",
+    queued_message: "We'll email you when ready",
+    failed_title: "Export failed",
+    failed_message: "Please try again",
+    cross_workspace_disabled: "Not available in Cross teams & workspaces mode",
+    already_queued: "An export is already queued. Please wait 30 seconds.",
+    no_data: "No data to export for the selected filters",
+    select_members_title: "Chọn thành viên để xuất",
+    select_members_desc: "Chọn thành viên cụ thể hoặc bao gồm tất cả trong báo cáo.",
+    all_members: "Bao gồm tất cả thành viên",
+    specific_members: "Thành viên",
+    pick_members: "Chọn thành viên",
+    export_button: "Xuất",
+    col: {
+      member: "Member",
+      date: "Date",
+      main_category: "Main Category",
+      sub_category: "Sub Category",
+      work_item: "Work Item",
+      time_spent_hours: "Time Spent (h)",
+      total_hours: "Total Hours",
+      entry_count: "Entry Count",
+      grand_total: "Grand Total",
+    },
+  },
+  ho_exports: {
+    tab: "HO Xuất khẩu",
+    title: "Xuất Bảng Dữ Liệu HO",
+    subtitle: "Theo dõi và tải xuống các bản xuất bảng dữ liệu quản lý tổng thể của bạn.",
+    refresh: "Làm mới",
+    empty: "Chưa có bản xuất nào. Sử dụng nút Xuất trên tab Bảng dữ liệu để tạo một bản.",
+    col_status: "Trạng thái",
+    col_range: "Khoảng ngày",
+    col_rows: "Hàng",
+    col_size: "Kích thước",
+    col_created: "Ngày tạo",
+    col_expires: "Ngày hết hạn",
+  },
+  capacity_exports: {
+    tab: "My Exports",
+    title: "My Exports",
+    subtitle: "Theo dõi và tải các bản xuất chi tiết work-item của bạn.",
+    empty: "Chưa có bản xuất nào",
+    empty_hint: "Tạo từ trang Capacity bằng Xuất → Báo cáo chi tiết work-item.",
+    footer_hint: "Tệp chỉ lưu trong thời gian giới hạn. Vui lòng tải sớm trước khi hết hạn.",
+    refresh: "Refresh",
+    download: "Download",
+    copy_link: "Copy link",
+    all_members: "Tất cả",
+    status: {
+      queued: "Queued",
+      processing: "Processing",
+      ready: "Ready",
+      failed: "Failed",
+      expired: "Expired",
+    },
+    col: {
+      status: "Status",
+      range: "Date range",
+      members: "Members",
+      rows: "Rows",
+      size: "Size",
+      created: "Created",
+      expires: "Expires",
+      actions: "Actions",
+    },
+  },
+  help_center: {
+    menu_label: "Trung tâm trợ giúp",
+    title: "Trung tâm trợ giúp",
+    subtitle: "Hướng dẫn và giải đáp cho Shinhan Workspace",
+    search_placeholder: "Tìm kiếm bài viết trợ giúp",
+    no_results: "Không tìm thấy bài viết phù hợp",
+    all_categories: "Tất cả danh mục",
+    category_count_articles: "{count, plural, other {# bài viết}}",
+    back_to_help: "Quay lại Trung tâm trợ giúp",
+    back_to_app: "Quay lại ứng dụng",
+    breadcrumb_home: "Trung tâm trợ giúp",
+    account_menu_label: "Tài khoản",
+    view_image_full_screen: "Xem ảnh toàn màn hình",
+    shown_in_language_notice: "Đang hiển thị bằng {language}",
+    read_more: "Xem thêm",
+    last_updated: "Cập nhật lần cuối",
+    content_unavailable: "Bài viết này chưa có sẵn",
+    new_article: "Bài viết mới",
+    edit_article: "Chỉnh sửa bài viết",
+    new_category: "Danh mục mới",
+    edit_category: "Chỉnh sửa danh mục",
+    delete: "Xóa",
+    delete_confirm: "Bạn có chắc chắn muốn xóa? Hành động này không thể hoàn tác.",
+    publish: "Xuất bản",
+    unpublish: "Hủy xuất bản",
+    draft: "Bản nháp",
+    published: "Đã xuất bản",
+    status: "Trạng thái",
+    save: "Lưu",
+    saved: "Đã lưu",
+    cancel: "Hủy",
+    title_label: "Tiêu đề",
+    content_label: "Nội dung",
+    category_label: "Danh mục",
+    locale_tab_vi: "Tiếng Việt",
+    locale_tab_en: "Tiếng Anh",
+    locale_tab_ko: "Tiếng Hàn",
+    reorder: "Sắp xếp lại",
+    move_up: "Di chuyển lên",
+    move_down: "Di chuyển xuống",
+    missing_translation: "Thiếu bản dịch",
+    unsaved_changes_warning: "Bạn có thay đổi chưa lưu. Vẫn rời đi?",
+    no_articles_yet: "Chưa có bài viết",
+    no_categories_yet: "Chưa có danh mục",
+    only_admins_can_edit: "Chỉ quản trị viên workspace mới có thể chỉnh sửa nội dung trợ giúp",
+    copy_from: "Sao chép từ {language}",
+    preview: "Xem trước",
+    get_started_here: "Bắt đầu tại đây",
+    more_in_category: "Xem thêm trong danh mục này",
+    was_this_helpful: "Bài viết này có hữu ích không?",
+    manage: "Quản lý",
+    on_this_page: "Trong trang này",
+    search_results_count: "{count, plural, other {# kết quả}}",
+    skip_to_content: "Bỏ qua điều hướng",
+    load_error: "Hiện chưa tải được trợ giúp",
+    retry: "Thử lại",
+    no_results_hint: "Thử từ khoá khác, hoặc duyệt tất cả danh mục.",
+    browse_all_categories: "Duyệt tất cả danh mục",
+    search_locale_fallback: "Không có kết quả bằng {language} — đang hiển thị kết quả bằng {fallback}.",
   },
 } as const;
