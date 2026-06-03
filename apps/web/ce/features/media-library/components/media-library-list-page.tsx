@@ -9,13 +9,14 @@ import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
-import { MediaCard } from "./media-card";
-import { MediaListView } from "./media-list-view";
 import { useMediaLibraryItems } from "../hooks/use-media-library-items";
 import { useMediaLibrary } from "../store/media-library-context";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
 import { groupMediaItemsByTag, resolveMediaItemActionHref } from "../utils/media-items";
 import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../utils/media-library-filters";
+import { MediaCard } from "./media-card";
+import { MediaLibraryEmptyState } from "./media-library-empty-state";
+import { MediaListView } from "./media-list-view";
 
 const MAIN_QUERY_PARAM_KEY = "q_main";
 const MAIN_VIEW_PARAM_KEY = "view_main";
@@ -209,6 +210,8 @@ const MediaLibraryListPage = observer(() => {
     () => buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs),
     [filteredItems, operatorConfigs]
   );
+  const hasActiveFilters = query.length > 0 || mediaFilters.allConditionsForDisplay.length > 0;
+  const hasVisibleItems = filteredItems.length > 0;
 
   useEffect(() => {
     setMediaFilterConfigs(filterConfigs);
@@ -235,8 +238,8 @@ const MediaLibraryListPage = observer(() => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-8 px-6 py-4">
+    <div className="flex min-h-full flex-col">
+      <div className="flex flex-1 flex-col px-6 py-4">
         {showSkeleton ? (
           viewMode === "list" ? (
             <div className="flex flex-col gap-8 animate-pulse">
@@ -270,7 +273,7 @@ const MediaLibraryListPage = observer(() => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col gap-8 px-6 py-4 animate-pulse">
+            <div className="flex flex-col gap-8 animate-pulse">
               {Array.from({ length: 3 }).map((_, sectionIndex) => (
                 <section key={`skeleton-grid-${sectionIndex}`} className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
@@ -300,10 +303,16 @@ const MediaLibraryListPage = observer(() => {
               ))}
             </div>
           )
-        ) : visibleSections.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
-            No media find.
-          </div>
+        ) : !hasVisibleItems ? (
+          hasActiveFilters ? (
+            <div className="flex flex-1 items-center justify-center py-8">
+              <div className="rounded-xl border border-dashed border-custom-border-200 bg-custom-background-100 px-6 py-8 text-center text-sm text-custom-text-300">
+                No media matches your current search or filters.
+              </div>
+            </div>
+          ) : (
+            <MediaLibraryEmptyState />
+          )
         ) : viewMode === "list" ? (
           <MediaListView
             sections={visibleSections}

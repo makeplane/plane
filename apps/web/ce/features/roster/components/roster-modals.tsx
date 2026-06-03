@@ -1,15 +1,15 @@
 "use client";
 
 import type { ChangeEvent, DragEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, FileSpreadsheet, Upload, X } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import type { IRosterPlayerPayload, TRosterPlayerStatus } from "@plane/types";
 import { AlertModalCore, cn, CustomSelect, EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
+import { STATUS_SELECT_OPTIONS } from "../constants/roster.constants";
 import type { TRosterFormState } from "../store/roster-context";
 import { getRosterFormState, useRoster } from "../store/roster-context";
-import { STATUS_SELECT_OPTIONS } from "../constants/roster.constants";
 import { mapImportedRows, toDisplayStatus } from "../utils/roster.utils";
 
 const FieldLabel = ({ children }: { children: ReactNode }) => (
@@ -148,7 +148,8 @@ export const AddPlayerModal = observer(({ isOpen, onClose }: { isOpen?: boolean;
 });
 
 export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) => {
-  const { isImportRosterModalOpen, isSubmitting, closeImportRosterModal, importPlayers } = useRoster();
+  const { isImportRosterModalOpen, isSubmitting, closeImportRosterModal, importPlayers, pendingImportFile, setPendingImportFile } =
+    useRoster();
   const modalOpen = isOpen ?? isImportRosterModalOpen;
   const handleClose = onClose ?? closeImportRosterModal;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -169,7 +170,7 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
     }
   }, [modalOpen]);
 
-  const parseRosterFile = async (file: File) => {
+  const parseRosterFile = useCallback(async (file: File) => {
     setSelectedFileName(file.name);
     setParseError(null);
     setIsParsing(true);
@@ -207,14 +208,22 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
     } finally {
       setIsParsing(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!modalOpen || !pendingImportFile) return;
+
+    parseRosterFile(pendingImportFile);
+    setPendingImportFile(null);
+  }, [modalOpen, parseRosterFile, pendingImportFile, setPendingImportFile]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
     const file = event.target.files?.[0];
     if (!file) return;
 
     await parseRosterFile(file);
-    event.currentTarget.value = "";
+    input.value = "";
   };
 
   const handleFileDrop = async (event: DragEvent<HTMLDivElement>) => {

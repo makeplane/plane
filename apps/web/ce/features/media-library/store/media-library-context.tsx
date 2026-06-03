@@ -11,8 +11,10 @@ import { mediaLibraryFiltersAdapter } from "../utils/media-library-filters";
 
 type TMediaLibraryContext = {
   isUploadOpen: boolean;
+  pendingUploadFiles: File[];
   openUpload: () => void;
   closeUpload: () => void;
+  setPendingUploadFiles: (files: File[]) => void;
   libraryVersion: number;
   refreshLibrary: () => void;
   mediaFilters: FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>;
@@ -25,6 +27,7 @@ const SECTION_PATH_SEGMENT = "/media-library/section/";
 export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [pendingUploadFiles, setPendingUploadFiles] = useState<File[]>([]);
   const [libraryVersion, setLibraryVersion] = useState(0);
   const filterInstancesRef = useRef(
     new Map<string, FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>>()
@@ -32,7 +35,10 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const filterConfigsRef = useRef(new Map<string, TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]>());
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
-  const closeUpload = useCallback(() => setIsUploadOpen(false), []);
+  const closeUpload = useCallback(() => {
+    setPendingUploadFiles([]);
+    setIsUploadOpen(false);
+  }, []);
   const refreshLibrary = useCallback(() => setLibraryVersion((prev) => prev + 1), []);
   const activeScopeKey = useMemo(() => {
     const markerIndex = pathname.indexOf(SECTION_PATH_SEGMENT);
@@ -77,14 +83,26 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const value = useMemo(
     () => ({
       isUploadOpen,
+      pendingUploadFiles,
       openUpload,
       closeUpload,
+      setPendingUploadFiles,
       libraryVersion,
       refreshLibrary,
       mediaFilters,
       setMediaFilterConfigs,
     }),
-    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, mediaFilters, setMediaFilterConfigs]
+    [
+      isUploadOpen,
+      pendingUploadFiles,
+      openUpload,
+      closeUpload,
+      setPendingUploadFiles,
+      libraryVersion,
+      refreshLibrary,
+      mediaFilters,
+      setMediaFilterConfigs,
+    ]
   );
 
   return <MediaLibraryContext.Provider value={value}>{children}</MediaLibraryContext.Provider>;

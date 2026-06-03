@@ -21,9 +21,8 @@ import {
   Shirt,
   Trash2,
 } from "lucide-react";
-import { CustomMenu, cn } from "@plane/ui";
-import { useProject } from "@/hooks/store/use-project";
 import type { IRosterPlayer, TRosterPlayerStatus } from "@plane/types";
+import { CustomMenu, cn } from "@plane/ui";
 import type { IRosterGroup, IRosterGroupedResponse } from "../store/roster-context";
 import { useRoster } from "../store/roster-context";
 import { formatTimestamp, toDisplayStatus } from "../utils/roster.utils";
@@ -420,14 +419,7 @@ const RosterTableCell = ({
   </td>
 );
 
-const getRosterCode = (player: IRosterPlayer, projectIdentifier?: string) => {
-  const jerseyNumber = player.jersey_number?.trim();
-  if (projectIdentifier && jerseyNumber) return `${projectIdentifier}-${jerseyNumber}`;
-  if (jerseyNumber) return `#${jerseyNumber}`;
-  return EMPTY_VALUE;
-};
-
-const RosterPlayerCell = ({ player, projectIdentifier }: { player: IRosterPlayer; projectIdentifier?: string }) => (
+const RosterPlayerCell = ({ player }: { player: IRosterPlayer }) => (
   <RosterTableCell isFirstColumn>
     <div className="flex h-11 min-w-0 items-center gap-2 px-6">
       <span className="truncate text-[0.825rem] font-medium text-custom-text-100">
@@ -492,13 +484,13 @@ const RosterLoadingRows = ({ columns }: { columns: TRosterColumn[] }) => (
   </>
 );
 
-const RosterEmptyRow = ({ columnCount }: { columnCount: number }) => (
+const RosterEmptyRow = ({ columnCount, message }: { columnCount: number; message: string }) => (
   <tr className="bg-custom-background-100">
     <td
       colSpan={columnCount}
       className="h-11 border-b-[0.5px] border-custom-border-100 px-6 text-sm text-custom-text-400"
     >
-      No roster players found.
+      {message}
     </td>
   </tr>
 );
@@ -542,12 +534,10 @@ export const RosterTable = observer(
     groupedRoster?: IRosterGroupedResponse | null;
     isLoading?: boolean;
   }) => {
-    const { displayProperties, projectId } = useRoster();
-    const { getProjectById } = useProject();
+    const { displayProperties, searchValue, selectedClassYear, selectedPosition, selectedStatus } = useRoster();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [sortConfig, setSortConfig] = useState<TRosterSortConfig | null>(null);
 
-    const projectIdentifier = getProjectById(projectId)?.identifier;
     const visibleColumns = useMemo(
       () => ROSTER_COLUMNS.filter((column) => displayProperties[column.key]),
       [displayProperties]
@@ -582,6 +572,12 @@ export const RosterTable = observer(
     }, [handleScroll]);
 
     const columnCount = visibleColumns.length + 2;
+    const hasActiveFilters =
+      searchValue.trim().length > 0 ||
+      Boolean(selectedPosition) ||
+      Boolean(selectedStatus) ||
+      Boolean(selectedClassYear);
+    const emptyMessage = hasActiveFilters ? "No players match your search or filters." : "No roster players found.";
 
     const renderPlayerRow = (player: IRosterPlayer, nested = false) => (
       <tr
@@ -591,7 +587,7 @@ export const RosterTable = observer(
           nested && "bg-custom-background-100/80"
         )}
       >
-        <RosterPlayerCell player={player} projectIdentifier={projectIdentifier} />
+        <RosterPlayerCell player={player} />
         {visibleColumns.map((column) => (
           <RosterTableCell key={column.key} className={column.cellClassName}>
             {column.render(player)}
@@ -671,7 +667,7 @@ export const RosterTable = observer(
               ) : sortedPlayers.length > 0 ? (
                 sortedPlayers.map((player) => renderPlayerRow(player))
               ) : (
-                <RosterEmptyRow columnCount={columnCount} />
+                <RosterEmptyRow columnCount={columnCount} message={emptyMessage} />
               )}
             </tbody>
           </table>

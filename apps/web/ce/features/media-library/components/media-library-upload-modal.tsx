@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -158,7 +158,7 @@ const buildMetaPayload = (
 const projectService = new ProjectService();
 
 export const MediaLibraryUploadModal = () => {
-  const { isUploadOpen, closeUpload, refreshLibrary } = useMediaLibrary();
+  const { isUploadOpen, closeUpload, refreshLibrary, pendingUploadFiles, setPendingUploadFiles } = useMediaLibrary();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { config } = useInstance();
   const { data: currentUser } = useUser();
@@ -279,45 +279,52 @@ export const MediaLibraryUploadModal = () => {
     if (!isChecked) handleClearWorkItem();
   };
 
-  const addFiles = (files: File[]) => {
+  const addFiles = useCallback((files: File[]) => {
     if (files.length === 0) return;
-    const existingIds = new Set(uploads.map((item) => item.id));
-    const duplicateNames: string[] = [];
-    const nextItems: TUploadItem[] = [];
+    setUploads((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+      const duplicateNames: string[] = [];
+      const nextItems: TUploadItem[] = [];
 
-    files.forEach((file) => {
-      const id = buildUploadId(file);
-      if (existingIds.has(id)) {
-        duplicateNames.push(file.name);
-        return;
+      files.forEach((file) => {
+        const id = buildUploadId(file);
+        if (existingIds.has(id)) {
+          duplicateNames.push(file.name);
+          return;
+        }
+
+        existingIds.add(id);
+        const tooLarge = file.size > maxFileSize;
+        const unsupported = !resolveArtifactFormat(file.name);
+        nextItems.push({
+          id,
+          file,
+          status: tooLarge || unsupported ? "failed" : "ready",
+          progress: 0,
+          error: tooLarge ? `File exceeds ${maxSizeLabel} limit` : unsupported ? "Unsupported file type" : undefined,
+        });
+      });
+
+      if (duplicateNames.length > 0) {
+        setSelectionError(
+          duplicateNames.length === 1
+            ? `"${duplicateNames[0]}" is already selected.`
+            : `${duplicateNames.length} files are already selected.`
+        );
+      } else {
+        setSelectionError(null);
       }
 
-      existingIds.add(id);
-      const tooLarge = file.size > maxFileSize;
-      const unsupported = !resolveArtifactFormat(file.name);
-      nextItems.push({
-        id,
-        file,
-        status: tooLarge || unsupported ? "failed" : "ready",
-        progress: 0,
-        error: tooLarge ? `File exceeds ${maxSizeLabel} limit` : unsupported ? "Unsupported file type" : undefined,
-      });
+      return nextItems.length > 0 ? [...prev, ...nextItems] : prev;
     });
+  }, [maxFileSize, maxSizeLabel]);
 
-    if (duplicateNames.length > 0) {
-      setSelectionError(
-        duplicateNames.length === 1
-          ? `"${duplicateNames[0]}" is already selected.`
-          : `${duplicateNames.length} files are already selected.`
-      );
-    } else {
-      setSelectionError(null);
-    }
+  useEffect(() => {
+    if (!isUploadOpen || pendingUploadFiles.length === 0) return;
 
-    if (nextItems.length > 0) {
-      setUploads((prev) => [...prev, ...nextItems]);
-    }
-  };
+    addFiles(pendingUploadFiles);
+    setPendingUploadFiles([]);
+  }, [addFiles, isUploadOpen, pendingUploadFiles, setPendingUploadFiles]);
 
   const handleUpload = async () => {
     const readyItems = uploads.filter((item) => item.status === "ready");

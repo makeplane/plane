@@ -82,6 +82,7 @@ type TRosterContext = {
   orderBy: TRosterOrderByOption;
   isAddPlayerModalOpen: boolean;
   isImportRosterModalOpen: boolean;
+  pendingImportFile: File | null;
   editingPlayer: IRosterPlayer | null;
   deletingPlayer: IRosterPlayer | null;
   setSearchValue: (value: string) => void;
@@ -98,6 +99,7 @@ type TRosterContext = {
   closePlayerModal: () => void;
   openImportRosterModal: () => void;
   closeImportRosterModal: () => void;
+  setPendingImportFile: (file: File | null) => void;
   openDeletePlayerModal: (player: IRosterPlayer) => void;
   closeDeletePlayerModal: () => void;
   submitPlayer: (payload: TRosterFormState) => Promise<void>;
@@ -145,26 +147,6 @@ const CLASS_YEAR_ORDER: Record<string, number> = {
 const sortCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
 
 const normalizeValue = (value: string | null | undefined) => value?.trim() || "";
-
-const parseNumberValue = (value: string | null | undefined) => {
-  if (!value) return null;
-  const parsedValue = Number.parseFloat(value.replace(/,/g, ""));
-  return Number.isNaN(parsedValue) ? null : parsedValue;
-};
-
-const parseHeightValue = (value: string | null | undefined) => {
-  const normalizedValue = normalizeValue(value).toLowerCase();
-  if (!normalizedValue) return null;
-
-  if (!normalizedValue.includes("'") && !normalizedValue.includes("ft")) return parseNumberValue(normalizedValue);
-
-  const feetMatch = normalizedValue.match(/(\d+(?:\.\d+)?)\s*(?:'|ft)/);
-  const inchesMatch = normalizedValue.match(/(?:'|ft)\s*(\d+(?:\.\d+)?)/);
-  const feet = feetMatch ? Number.parseFloat(feetMatch[1]) : 0;
-  const inches = inchesMatch ? Number.parseFloat(inchesMatch[1]) : 0;
-
-  return feet || inches ? feet * 12 + inches : null;
-};
 
 const getPlayerSortValue = (player: IRosterPlayer, orderBy: TRosterOrderByOption) => {
   switch (orderBy) {
@@ -378,6 +360,7 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
   const [orderBy, setOrderBy] = useState<TRosterOrderByOption>("created_at");
   const [isAddPlayerModalOpen, setIsAddPlayerModalOpen] = useState(false);
   const [isImportRosterModalOpen, setIsImportRosterModalOpen] = useState(false);
+  const [pendingImportFile, setPendingImportFile] = useState<File | null>(null);
   const [editingPlayer, setEditingPlayer] = useState<IRosterPlayer | null>(null);
   const [deletingPlayer, setDeletingPlayer] = useState<IRosterPlayer | null>(null);
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -463,7 +446,10 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const openImportRosterModal = () => setIsImportRosterModalOpen(true);
-  const closeImportRosterModal = () => setIsImportRosterModalOpen(false);
+  const closeImportRosterModal = () => {
+    setPendingImportFile(null);
+    setIsImportRosterModalOpen(false);
+  };
   const openDeletePlayerModal = (player: IRosterPlayer) => setDeletingPlayer(player);
   const closeDeletePlayerModal = () => setDeletingPlayer(null);
   const toggleDisplayProperty = (key: TRosterDisplayPropertyKey) =>
@@ -603,6 +589,7 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
         orderBy,
         isAddPlayerModalOpen,
         isImportRosterModalOpen,
+        pendingImportFile,
         editingPlayer,
         deletingPlayer,
         setSearchValue,
@@ -619,6 +606,7 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
         closePlayerModal,
         openImportRosterModal,
         closeImportRosterModal,
+        setPendingImportFile,
         openDeletePlayerModal,
         closeDeletePlayerModal,
         submitPlayer,
