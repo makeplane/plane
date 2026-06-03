@@ -24,6 +24,7 @@ from plane.license.api.views import (
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
     InstanceWorkspaceBulkCreateEndpoint,
+    InstanceWorkspaceOwnerOptionsEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
     InstanceWorkspaceProjectBulkImportEndpoint,
     InstanceWorkspaceModuleBulkImportEndpoint,
@@ -86,6 +87,12 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # Registered before the workspaces/<str:slug>/ catch-all below
+    path(
+        "workspaces/owner-options/",
+        InstanceWorkspaceOwnerOptionsEndpoint.as_view(),
+        name="instance-workspace-owner-options",
+    ),
     path(
         "workspaces/bulk-create/",
         InstanceWorkspaceBulkCreateEndpoint.as_view(),
