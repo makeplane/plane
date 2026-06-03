@@ -94,7 +94,6 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as TWorkspacePaginationInfo)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -111,7 +110,6 @@ export class InstanceWorkspaceService extends APIService {
     return this.get<ISlugCheckResponse>(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data as ISlugCheckResponse)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -127,7 +125,6 @@ export class InstanceWorkspaceService extends APIService {
     return this.post<IWorkspace>("/api/instances/workspaces/", data)
       .then((response) => response?.data as IWorkspace)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -164,7 +161,6 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceBulkCreateResponse)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -178,7 +174,6 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceBulkAssignResponse)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -200,7 +195,6 @@ export class InstanceWorkspaceService extends APIService {
     })
       .then((response) => response?.data as IWorkspaceProjectBulkImportResponse)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -220,7 +214,6 @@ export class InstanceWorkspaceService extends APIService {
     return this.post<IWorkspaceModuleBulkImportResponse>("/api/instances/bulk-import-modules/", { modules })
       .then((response) => response?.data as IWorkspaceModuleBulkImportResponse)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
@@ -230,7 +223,6 @@ export class InstanceWorkspaceService extends APIService {
     return this.delete<void>(`/api/instances/workspaces/${workspaceSlug}/`)
       .then((response) => response?.data as void)
       .catch((error: unknown) => {
-         
         const errorData = (error as Record<string, unknown>)?.response?.data;
         throw errorData;
       });
