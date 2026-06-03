@@ -2,6 +2,33 @@
 
 All notable changes to the Plane project are documented here. This file tracks major features, performance improvements, bug fixes, and breaking changes.
 
+## [Upstream Upgrade] CE v1.2.2 → v1.3.1 — 2026-06-03
+
+Fork synced to Plane Community Edition **v1.3.1** (from v1.2.2) while preserving all SHBVN customizations. Done on `duonglx/chore/upstream-sync-v1.3.1` as staged merges (v1.2.3 → v1.3.0 → v1.3.1) followed by gathering the latest `develop` features.
+
+### Upstream changes adopted
+
+- **Security backports (P1)**: webhook SSRF guard (now blocks private/internal IPs by default), analytics ORM-injection fix (GHSA-93x3), workspace-membership V2 asset auth (GHSA-qw87), upload path-traversal fix (GHSA-v57h), favicon SSRF redirect guard. Django 4.2.30 / cryptography 46.0.7 / lxml 6.1.0.
+- **Tooling migration (P2)**: eslint → **oxlint**, prettier → **oxfmt** (`eslint.config.mjs` removed; `check:lint`/`check:format` now run oxlint/oxfmt).
+- **Design-system revamp (P3)**: v1.3.0 UI token refresh — components auto-adopt the new look.
+- **Intercom removed + Help Center (P4)**: in-app Intercom chat dropped; Help/PowerK menus route to the self-hosted Help Center (`/help`) and product tour.
+
+### Fixes during sync
+
+- **Migration graph**: upstream `0121_alter_estimate_type` (#8664) dangled on a parent renumbered during the merge → broke `migrate` (NodeNotFoundError). Renumbered to `0180_alter_estimate_type`, repointed onto the current chain leaf.
+- **Field-permission activity logging**: `_log_toggle_activity` passed `current_instance` as a dict but `model_activity` json-decodes it → crashed the async activity worker (toggle activities silently lost). Now json-encoded (pre-existing god-mode bug, surfaced by upgrade testing).
+- **SSRF test**: scheme-rejection assertion aligned with the no-hostname guard.
+
+### Validation
+
+- Build 16/16 · lint 0 errors (web/admin) · format clean · web+admin typecheck pass.
+- Backend unit suite **479 passed**, proven **0 regressions** vs `develop` (direct diff). `migrate --plan` valid end-to-end.
+
+### Deploy notes
+
+- ⚠️ Webhooks now block private/internal IPs by default — declare `WEBHOOK_ALLOWED_IPS` / `WEBHOOK_ALLOWED_HOSTS` if SHBVN routes webhooks to internal services.
+- Pre-existing `develop` debt (NOT from this upgrade, identical on `develop`): 35-op `makemigrations` drift on SHBVN models + ~19 test-infra failures (wrong mock paths / fixtures). To be addressed separately by the team.
+
 ## [Unreleased] — 2026-06-03
 
 ### New Features
