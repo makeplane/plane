@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -102,7 +105,12 @@ class ProjectFieldPermissionViewSet(BaseViewSet):
             model_name="project_field_permission",
             model_id=str(obj.id),
             requested_data=changed_fields,
-            current_instance={f: v["old"] for f, v in changed_fields.items()},
+            # model_activity json.loads() this arg, so it must be a JSON string
+            # (matches the convention in project/base.py et al.)
+            current_instance=json.dumps(
+                {f: v["old"] for f, v in changed_fields.items()},
+                cls=DjangoJSONEncoder,
+            ),
             actor_id=request.user.id,
             slug=request.parser_context["kwargs"].get("slug", ""),
             origin=base_host(request=request, is_app=True),
