@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0120_issueview_archived_at'),
+        ('db', '0179_issueworklog_workspace_logged_at_index'),
     ]
 
     operations = [
