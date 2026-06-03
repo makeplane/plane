@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "ساختار",
+        "empty_state": {
+          "title": "عنوانی وجود ندارد",
+          "description": "بیایید چند عنوان به این صفحه اضافه کنیم تا اینجا نمایش داده شوند."
+        }
+      },
+      "info": {
+        "label": "اطلاعات",
+        "document_info": {
+          "words": "کلمات",
+          "characters": "کاراکترها",
+          "paragraphs": "پاراگراف‌ها",
+          "read_time": "زمان خواندن"
+        },
+        "actors_info": {
+          "edited_by": "ویرایش‌شده توسط",
+          "created_by": "ایجادشده توسط"
+        },
+        "version_history": {
+          "label": "تاریخچه نسخه‌ها",
+          "current_version": "نسخه فعلی",
+          "highlight_changes": "برجسته کردن تغییرات"
+        }
+      },
+      "assets": {
+        "label": "دارایی‌ها",
+        "download_button": "دانلود",
+        "empty_state": {
+          "title": "تصویری وجود ندارد",
+          "description": "تصاویر اضافه کنید تا اینجا نمایش داده شوند."
+        }
+      },
+      "comments": {
+        "label": "کامنت‌ها",
+        "empty_state": {
+          "title": "هیچ کامنتی وجود ندارد",
+          "description": "کامنت‌ها اضافه کنید تا اینجا نمایش داده شوند."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "نام یادداشت چسبنده نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد.",
+        "already_exists": "قبلاً یک یادداشت چسبنده بدون توضیحات وجود دارد"
+      },
+      "created": {
+        "title": "یادداشت چسبنده ایجاد شد",
+        "message": "یادداشت چسبنده با موفقیت ایجاد شد"
+      },
+      "not_created": {
+        "title": "یادداشت چسبنده ایجاد نشد",
+        "message": "یادداشت چسبنده ایجاد نشد"
+      },
+      "updated": {
+        "title": "یادداشت چسبنده به‌روزرسانی شد",
+        "message": "یادداشت چسبنده با موفقیت به‌روزرسانی شد"
+      },
+      "not_updated": {
+        "title": "یادداشت چسبنده به‌روزرسانی نشد",
+        "message": "یادداشت چسبنده به‌روزرسانی نشد"
+      },
+      "removed": {
+        "title": "یادداشت چسبنده حذف شد",
+        "message": "یادداشت چسبنده با موفقیت حذف شد"
+      },
+      "not_removed": {
+        "title": "یادداشت چسبنده حذف نشد",
+        "message": "یادداشت چسبنده حذف نشد"
+      }
+    },
+    "open_button": "باز کردن پنل ناوبری",
+    "close_button": "بستن پنل ناوبری",
+    "outline_floating_button": "باز کردن ساختار"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "انتقال",
+        "loading": "در حال انتقال"
+      },
+      "cannot_move_to_teamspace": "صفحات خصوصی و به اشتراک گذاشته‌شده را نمی‌توان به فضای تیم منتقل کرد.",
+      "placeholders": {
+        "workspace_to_all": "جستجوی پروژه‌ها و فضاهای تیم",
+        "workspace_to_project": "جستجوی پروژه‌ها",
+        "project_to_all": "جستجوی پروژه‌ها و فضاهای تیم",
+        "project_to_project": "جستجوی پروژه‌ها",
+        "project_to_all_with_wiki": "جستجوی مجموعه‌های ویکی، پروژه‌ها و فضاهای تیم",
+        "project_to_project_with_wiki": "جستجوی مجموعه‌های ویکی و پروژه‌ها"
+      },
+      "toasts": {
+        "success": {
+          "title": "موفق!",
+          "message": "صفحه با موفقیت منتقل شد."
+        },
+        "error": {
+          "title": "خطا!",
+          "message": "صفحه منتقل نشد. لطفاً بعداً دوباره تلاش کنید."
+        },
+        "collection_error": {
+          "title": "به ویکی منتقل شد",
+          "message": "صفحه به ویکی منتقل شد، اما به مجموعه انتخاب‌شده اضافه نشد. در بخش عمومی باقی می‌ماند."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "حذف از مجموعه",
+      "success_message": "صفحه از مجموعه حذف شد.",
+      "error_message": "صفحه از مجموعه حذف نشد. لطفاً دوباره تلاش کنید."
+    }
+  }
+}
