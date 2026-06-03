@@ -7,6 +7,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  IAdminUserOption,
   IFormattedInstanceConfiguration,
   IInstance,
   IInstanceAdmin,
@@ -85,6 +86,21 @@ export class InstanceService extends APIService {
   }): Promise<IInstanceAdmin> {
     return this.post("/api/instances/admins/", data)
       .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Searches active-staff users (by name, email, or staff ID) who are not yet
+   * instance admins — candidates for the Add-administrator picker.
+   * @param search optional query matched against name / email / staff_id
+   * @returns {Promise<IAdminUserOption[]>} candidate users
+   * @throws {Error} If the API request fails
+   */
+  async adminUserOptions(search?: string): Promise<IAdminUserOption[]> {
+    return this.get("/api/instances/admins/user-options/", { params: search ? { search } : {} })
+      .then((response) => response.data?.candidates ?? [])
       .catch((error) => {
         throw error?.response?.data;
       });

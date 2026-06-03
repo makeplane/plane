@@ -87,6 +87,14 @@ export interface IInstanceAdmin {
   allowed_menus: string[];
 }
 
+/** Candidate user for the Add-administrator picker (active staff not yet an admin). */
+export interface IAdminUserOption {
+  id: string;
+  display_name: string;
+  email: string;
+  staff_id: string;
+}
+
 export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
 
 export type TInstanceConfigurationKeys =

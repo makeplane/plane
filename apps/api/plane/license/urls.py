@@ -15,6 +15,7 @@ from plane.license.api.views import (
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
+    InstanceAdminUserOptionsEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
@@ -40,6 +41,11 @@ urlpatterns = [
     path("", InstanceEndpoint.as_view(), name="instance"),
     path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
+    path(
+        "admins/user-options/",
+        InstanceAdminUserOptionsEndpoint.as_view(),
+        name="instance-admin-user-options",
+    ),
     path(
         "admins/session/",
         InstanceAdminUserSessionEndpoint.as_view(),

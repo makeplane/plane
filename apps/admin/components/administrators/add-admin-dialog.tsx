@@ -9,11 +9,12 @@ import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
-import { Input } from "@plane/propel/input";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IAdminUserOption } from "@plane/types";
 // hooks
 import { useAdminManagement, useUser } from "@/hooks/store";
 // local components
+import { AdminUserMultiselect } from "./admin-user-multiselect";
 import { MenuPermissionMultiselect } from "./menu-permission-multiselect";
 
 type TProps = {
@@ -24,55 +25,62 @@ type TProps = {
 export const AddAdminDialog = observer(({ open, onClose }: TProps) => {
   const { createAdmin } = useAdminManagement();
   const { currentUser } = useUser();
-  const [email, setEmail] = useState("");
+  const [users, setUsers] = useState<IAdminUserOption[]>([]);
   const [menus, setMenus] = useState<string[]>([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const callerIsSuper = currentUser?.is_super_admin ?? false;
+  const submitLabel = users.length === 0 ? "Add admins" : `Add ${users.length} admin${users.length === 1 ? "" : "s"}`;
 
   const handleClose = () => {
-    setEmail("");
+    setUsers([]);
     setMenus([]);
     setIsSuperAdmin(false);
     onClose();
   };
 
   const handleSubmit = async () => {
+    if (users.length === 0) return;
     setIsSubmitting(true);
-    try {
-      await createAdmin({ email: email.trim(), allowed_menus: menus, is_super_admin: isSuperAdmin });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Admin added", message: `${email.trim()} is now an admin.` });
-      handleClose();
-    } catch (error) {
+    // Each picked user gets the same shared grants; one create call per user so
+    // existing escalation/duplicate guards run per row. Partial failures are tallied.
+    const results = await Promise.allSettled(
+      users.map((user) => createAdmin({ email: user.email, allowed_menus: menus, is_super_admin: isSuperAdmin }))
+    );
+    setIsSubmitting(false);
+
+    const added = results.filter((r) => r.status === "fulfilled").length;
+    const skipped = results.length - added;
+
+    if (added === 0) {
+      const firstError = results.find((r): r is PromiseRejectedResult => r.status === "rejected");
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Could not add admin",
-        message: (error as { error?: string })?.error ?? "Please try again.",
+        title: "Could not add admins",
+        message: (firstError?.reason as { error?: string })?.error ?? "Please try again.",
       });
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
+
+    setToast({
+      type: skipped > 0 ? TOAST_TYPE.WARNING : TOAST_TYPE.SUCCESS,
+      title: `${added} admin${added > 1 ? "s" : ""} added`,
+      message: skipped > 0 ? `${skipped} skipped (already an admin or not eligible).` : "Done.",
+    });
+    handleClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={(isOpen: boolean) => !isOpen && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
         <div className="p-6">
-          <Dialog.Title>Add administrator</Dialog.Title>
+          <Dialog.Title>Add administrators</Dialog.Title>
           <div className="mt-4 space-y-4">
             <div className="space-y-1">
-              <label htmlFor="admin-email" className="block text-13 font-medium text-primary">
-                Email of an existing user
-              </label>
-              <Input
-                id="admin-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="user@company.com"
-                className="w-full bg-layer-2"
-              />
+              <p className="text-13 font-medium text-primary">Users</p>
+              <AdminUserMultiselect selected={users} onChange={setUsers} />
+              <p className="text-13 text-tertiary">Pick one or more active staff members to promote.</p>
             </div>
             {callerIsSuper && (
               <label className="flex items-center gap-2 text-13 text-primary cursor-pointer">
@@ -99,10 +107,10 @@ export const AddAdminDialog = observer(({ open, onClose }: TProps) => {
             <Button
               variant="primary"
               onClick={() => void handleSubmit()}
-              disabled={!email.trim() || isSubmitting}
+              disabled={users.length === 0 || isSubmitting}
               loading={isSubmitting}
             >
-              {isSubmitting ? "Adding…" : "Add admin"}
+              {isSubmitting ? "Adding…" : submitLabel}
             </Button>
           </div>
         </div>

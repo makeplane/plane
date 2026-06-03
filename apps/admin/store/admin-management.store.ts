@@ -7,7 +7,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { InstanceService } from "@plane/services";
-import type { IInstanceAdmin } from "@plane/types";
+import type { IAdminUserOption, IInstanceAdmin } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
 
@@ -24,6 +24,7 @@ export interface IAdminManagementStore {
   createAdmin: (data: { email: string } & TAdminGrantPayload) => Promise<IInstanceAdmin>;
   updateAdmin: (adminId: string, data: TAdminGrantPayload) => Promise<IInstanceAdmin>;
   removeAdmin: (adminId: string) => Promise<void>;
+  searchUserCandidates: (search?: string) => Promise<IAdminUserOption[]>;
 }
 
 /** God-mode Administrators page CRUD. Current-admin identity
@@ -91,4 +92,8 @@ export class AdminManagementStore implements IAdminManagementStore {
       delete this.admins[adminId];
     });
   };
+
+  // Transient search results for the Add-admin picker — not stored as
+  // observable state (each keystroke replaces the list locally in the dialog).
+  searchUserCandidates = async (search?: string) => this.instanceService.adminUserOptions(search);
 }
