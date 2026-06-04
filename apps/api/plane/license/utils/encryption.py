@@ -4,6 +4,7 @@
 
 import base64
 import hashlib
+import hmac
 import logging
 from django.conf import settings
 from cryptography.fernet import Fernet
@@ -14,8 +15,11 @@ logger = logging.getLogger("plane")
 
 
 def derive_key(secret_key):
-    # Derive a deployment-specific salt from the secret key to prevent precomputation attacks
-    salt = hashlib.sha256(secret_key.encode()).digest()
+    # Derive a deployment-specific salt via HMAC with a fixed application label.
+    # Using HMAC(key=secret_key, msg=b'plane:kdf:v2') separates the salt from
+    # the stretched password, preventing trivial precomputation even when an
+    # attacker knows the label, and ensures per-deployment uniqueness.
+    salt = hmac.new(secret_key.encode(), b"plane:kdf:v2", hashlib.sha256).digest()
     dk = hashlib.pbkdf2_hmac("sha256", secret_key.encode(), salt, 100000)
     return base64.urlsafe_b64encode(dk)
 

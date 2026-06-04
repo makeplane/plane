@@ -27,9 +27,16 @@ def get_configuration_value(keys):
                         plaintext, used_legacy = decrypt_data_with_status(item.get("value"))
                         if used_legacy and plaintext:
                             try:
-                                InstanceConfiguration.objects.filter(
-                                    key=item.get("key")
-                                ).update(value=encrypt_data(plaintext))
+                                new_encrypted = encrypt_data(plaintext)
+                                if new_encrypted:
+                                    # Filter on the current ciphertext as an
+                                    # optimistic-concurrency guard: if a concurrent
+                                    # request already re-encrypted this row the
+                                    # UPDATE will match 0 rows and we skip safely.
+                                    InstanceConfiguration.objects.filter(
+                                        key=item.get("key"),
+                                        value=item.get("value"),
+                                    ).update(value=new_encrypted)
                             except Exception:
                                 pass
                         environment_list.append(plaintext)
