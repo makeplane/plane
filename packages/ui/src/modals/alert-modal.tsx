@@ -15,7 +15,7 @@ export type TModalVariant = "danger" | "primary";
 type Props = {
   content: React.ReactNode | string;
   handleClose: () => void;
-  handleSubmit: () => void;
+  handleSubmit: (e?: React.MouseEvent) => void;
   hideIcon?: boolean;
   isSubmitting: boolean;
   isOpen: boolean;
@@ -87,10 +87,10 @@ export function AlertModalCore(props: Props) {
         </div>
       </div>
       <div className="flex flex-col-reverse gap-2 border-t-[0.5px] border-subtle px-5 py-4 sm:flex-row sm:justify-end">
-        <Button variant="secondary" onClick={handleClose}>
+        <Button type="button" variant="secondary" onClick={(e: any) => { if (e?.preventDefault) e.preventDefault(); if (e?.stopPropagation) e.stopPropagation(); handleClose(); }}>
           {secondaryButtonText}
         </Button>
-        <Button variant={BUTTON_VARIANTS[variant]} tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
+        <Button type="button" variant={BUTTON_VARIANTS[variant]} tabIndex={1} onClick={(e: any) => { if (e?.preventDefault) e.preventDefault(); if (e?.stopPropagation) e.stopPropagation(); handleSubmit(e); }} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
       </div>

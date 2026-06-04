@@ -106,14 +106,16 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
     return () => window.removeEventListener("click", handleClose);
   }, []);
 
+  const stateIdsLength = stateIds?.length || 0;
+
   useEffect(() => {
     if (workspaceSlug && projectId) {
       fetchTickets(workspaceSlug, projectId);
-      if (stateIds === undefined || stateIds.length === 0) {
+      if (stateIdsLength === 0) {
         fetchProjectStates(workspaceSlug, projectId);
       }
     }
-  }, [workspaceSlug, projectId, fetchTickets, fetchProjectStates, stateIds]);
+  }, [workspaceSlug, projectId, fetchTickets, fetchProjectStates, stateIdsLength]);
 
   // Pre-calculate all ticket fields for robust, clean rendering and filtering
   const resolvedTickets = useMemo(() => {

@@ -20,6 +20,7 @@ from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
 from .support_ticket import urlpatterns as support_ticket_urls
 from .csv_import import urlpatterns as csv_import_urls
+from .timer import urlpatterns as timer_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -44,4 +45,5 @@ urlpatterns = [
     *exporter_urls,
     *support_ticket_urls,
     *csv_import_urls,
+    *timer_urls,
 ]

@@ -125,6 +125,14 @@ def close_old_issues():
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
                     Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+
+                    try:
+                        from plane.db.models.timer import stop_running_timers_for_issue
+                        if close_state.group in ["completed", "cancelled"]:
+                            for issue in issues_to_update:
+                                stop_running_timers_for_issue(issue.id)
+                    except Exception:
+                        pass
                     [
                         issue_activity.delay(
                             type="issue.activity.updated",

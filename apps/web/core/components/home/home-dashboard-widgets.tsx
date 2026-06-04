@@ -19,6 +19,8 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
+import { MyTimeWidget } from "./widgets/my-time";
+import { TeamTimeWidget } from "./widgets/team-time";
 
 export const HOME_WIDGETS_LIST: {
   [key in THomeWidgetKeys]: {
@@ -87,6 +89,10 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
 
       {isAnyWidgetEnabled ? (
         <div className="flex flex-col">
+          <div className="py-4">
+            <MyTimeWidget workspaceSlug={workspaceSlug.toString()} />
+            <TeamTimeWidget workspaceSlug={workspaceSlug.toString()} />
+          </div>
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;

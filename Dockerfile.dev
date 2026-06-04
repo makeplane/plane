@@ -1,0 +1,16 @@
+FROM node:22-slim
+
+# Install iproute2 for network IP detection
+RUN apt-get update && apt-get install -y iproute2 && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /code
+
+# Enable corepack for pnpm
+RUN corepack enable pnpm
+
+# Expose ports for web, admin, space, and live
+EXPOSE 3000 3001 3002 3100
+
+# Start development servers
+CMD ["bash", "-c", "if [ ! -d node_modules ]; then pnpm install; fi && pnpm dev"]

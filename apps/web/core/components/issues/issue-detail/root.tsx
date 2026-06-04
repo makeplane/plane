@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -21,6 +21,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
+import { TimerPromptModal } from "./timer-prompt-modal";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
@@ -77,6 +78,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
   const { getStateById } = useProjectState();
+
+  const [hasDecidedOnTimer, setHasDecidedOnTimer] = useState(false);
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -225,6 +228,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   // checking if issue is in Done (completed) state
   const stateDetails = getStateById(issue?.state_id);
   const isDoneLocked = stateDetails?.group === "completed";
+  const isResolved = stateDetails?.group === "completed" || stateDetails?.group === "cancelled";
   // checking if issue is editable, based on user role
   const isEditable = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -232,6 +236,25 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     workspaceSlug,
     projectId
   );
+
+  if (!isResolved && !hasDecidedOnTimer) {
+    return (
+      <TimerPromptModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        onDecide={() => setHasDecidedOnTimer(true)}
+        onCancel={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues`)}
+        onStart={(userId) => {
+          if (userId && issue && !issue.assignee_ids?.includes(userId)) {
+            issueOperations.update(workspaceSlug, projectId, issueId, {
+              assignee_ids: [...(issue.assignee_ids || []), userId],
+            });
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <>

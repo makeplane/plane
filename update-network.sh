@@ -89,9 +89,10 @@ LIVE_BASE_PATH="/live"
 
 LIVE_SERVER_SECRET_KEY="secret-key"
 
+REDIS_PASSWORD="uA4hJz9mQ8vXw2pL5rKd7sN1tYg0b"
 REDIS_PORT=6379
 REDIS_HOST=localhost
-REDIS_URL="redis://localhost:6379/"
+REDIS_URL="redis://:uA4hJz9mQ8vXw2pL5rKd7sN1tYg0b@localhost:6379/"
 
 CORS_ALLOWED_ORIGINS="http://$WIFI_IP:3000,http://$WIFI_IP:3001,http://$WIFI_IP:3002,http://localhost:3000,http://localhost:3001,http://localhost:3002"
 EOF

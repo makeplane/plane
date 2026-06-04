@@ -37,6 +37,9 @@ import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
+import { TimerBar } from "./timer-bar";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssueOperations } from "./root";
 // services init
 const workItemVersionService = new WorkItemVersionService();
@@ -70,6 +73,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   // derived values
   const projectDetails = getProjectById(projectId);
   const issue = issueId ? getIssueById(issueId) : undefined;
+  const { getStateById } = useProjectState();
+  const stateDetails = getStateById(issue?.state_id);
+  const isClosed = stateDetails?.group === "completed" || stateDetails?.group === "cancelled";
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug,
@@ -140,6 +146,27 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           disabled={isArchived || !isEditable}
           value={issue.name}
           containerClassName="-ml-3"
+        />
+
+        <TimerBar
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          issueTitle={issue.name}
+          isClosed={isClosed}
+          onStart={() => {
+            if (currentUser?.id && !issue.assignee_ids?.includes(currentUser.id)) {
+              issueOperations.update(workspaceSlug.toString(), issue.project_id, issue.id, {
+                assignee_ids: [...(issue.assignee_ids || []), currentUser.id],
+              }).then(() => {
+                setToast({
+                  type: TOAST_TYPE.SUCCESS,
+                  title: "Assigned",
+                  message: "You have been assigned to this issue.",
+                });
+              });
+            }
+          }}
         />
 
         <DescriptionInput

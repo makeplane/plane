@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
@@ -18,12 +18,21 @@ export const StateDropdown = observer(function StateDropdown(props: TWorkItemSta
   const { projectId, stateIds: propsStateIds } = props;
   // router params
   const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // states
   const [stateLoader, setStateLoader] = useState(false);
   // store hooks
   const { fetchProjectStates, getProjectStateIds, getStateById } = useProjectState();
   // derived values
   const stateIds = propsStateIds ?? getProjectStateIds(projectId);
+  const isSupportTicket = pathname?.includes("/support-tickets");
+
+  const filteredStateIds = (stateIds ?? []).filter((stateId) => {
+    if (!isSupportTicket) return true;
+    const state = getStateById(stateId);
+    if (!state) return true;
+    return state.name.toLowerCase() !== "backlog" && state.group !== "backlog";
+  });
 
   // fetch states if not provided
   const onDropdownOpen = async () => {
@@ -39,7 +48,7 @@ export const StateDropdown = observer(function StateDropdown(props: TWorkItemSta
       {...props}
       getStateById={getStateById}
       isInitializing={stateLoader}
-      stateIds={stateIds ?? []}
+      stateIds={filteredStateIds}
       onDropdownOpen={onDropdownOpen}
     />
   );

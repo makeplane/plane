@@ -3,6 +3,11 @@
 		max_size {$FILE_SIZE_LIMIT}
 	}
 
+	@forbidden {
+		path */vite.config.ts */vite.config.js */.git* */CVS* *CVS/Entries*
+	}
+	respond @forbidden "403 Forbidden: Access Denied" 403
+
   redir /spaces /spaces/ permanent
 	reverse_proxy /spaces/* space:3000
 

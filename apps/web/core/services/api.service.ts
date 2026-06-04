@@ -22,7 +22,18 @@ export abstract class APIService {
       (error) => {
         if (error.response && error.response.status === 401) {
           const currentPath = window.location.pathname;
-          window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
+          const isAuthPage =
+            !currentPath ||
+            currentPath === "/" ||
+            currentPath.startsWith("/sign-in") ||
+            currentPath.startsWith("/signin") ||
+            currentPath.startsWith("/login") ||
+            currentPath.startsWith("/register") ||
+            currentPath.startsWith("/sign-up") ||
+            currentPath.startsWith("/accounts/");
+          if (!isAuthPage) {
+            window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
+          }
         }
         return Promise.reject(error);
       }

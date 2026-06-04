@@ -15,6 +15,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
@@ -26,6 +28,7 @@ import { WorkItemVersionService } from "@/services/issue";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
+import { TimerBar } from "../issue-detail/timer-bar";
 import { IssueTitleInput } from "../title-input";
 // services init
 const workItemVersionService = new WorkItemVersionService();
@@ -69,6 +72,9 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
+  const { getStateById } = useProjectState();
+  const stateDetails = getStateById(issue?.state_id);
+  const isClosed = stateDetails?.group === "completed" || stateDetails?.group === "cancelled";
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug,
@@ -123,6 +129,27 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         disabled={disabled || isArchived}
         value={issue.name}
         containerClassName="-ml-3"
+      />
+
+      <TimerBar
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issue.id}
+        issueTitle={issue.name}
+        isClosed={isClosed}
+        onStart={() => {
+          if (currentUser?.id && !issue.assignee_ids?.includes(currentUser.id)) {
+            issueOperations.update(workspaceSlug.toString(), issue.project_id, issue.id, {
+              assignee_ids: [...(issue.assignee_ids || []), currentUser.id],
+            }).then(() => {
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "Assigned",
+                message: "You have been assigned to this issue.",
+              });
+            });
+          }
+        }}
       />
 
       <DescriptionInput

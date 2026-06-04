@@ -8,6 +8,7 @@ import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // local imports
@@ -19,6 +20,7 @@ import type { TPeekModes } from "./header";
 import { IssuePeekOverviewHeader } from "./header";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { IssuePeekOverviewLoader } from "./loader";
+import { TimerPromptModal } from "../issue-detail/timer-prompt-modal";
 import { PeekOverviewProperties } from "./properties";
 
 interface IIssueView {
@@ -54,6 +56,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
   const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
+  const [hasDecidedOnTimer, setHasDecidedOnTimer] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorRefApi>(null);
@@ -64,7 +67,10 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     issue: { getIssueById },
   } = useIssueDetail();
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
+  const { getStateById } = useProjectState();
   const issue = getIssueById(issueId);
+  const stateDetails = getStateById(issue?.state_id);
+  const isResolved = stateDetails?.group === "completed" || stateDetails?.group === "cancelled";
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
@@ -259,6 +265,22 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
             </>
           )}
         </div>
+      )}
+      {!isResolved && !hasDecidedOnTimer && (
+        <TimerPromptModal
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          onDecide={() => setHasDecidedOnTimer(true)}
+          onCancel={() => removeRoutePeekId()}
+          onStart={(userId) => {
+            if (userId && issue && !issue.assignee_ids?.includes(userId)) {
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                assignee_ids: [...(issue.assignee_ids || []), userId],
+              });
+            }
+          }}
+        />
       )}
     </div>
   );

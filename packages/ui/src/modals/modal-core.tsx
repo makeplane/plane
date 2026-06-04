@@ -55,6 +55,7 @@ export function ModalCore(props: Props) {
                   width,
                   className
                 )}
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
               >
                 {children}
               </Dialog.Panel>

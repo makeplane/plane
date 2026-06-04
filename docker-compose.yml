@@ -124,6 +124,7 @@ services:
     container_name: plane-redis
     image: valkey/valkey:7.2.11-alpine
     restart: always
+    command: valkey-server --requirepass "${REDIS_PASSWORD}"
     volumes:
       - redisdata:/data
 

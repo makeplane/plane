@@ -54,7 +54,7 @@
   "activity_empty_state": {
     "no_activity": "No activity yet",
     "no_transitions": "No transitions yet",
-    "no_comments": "No comments yet",
+    "no_comments": "No notes yet",
     "no_worklogs": "No worklogs yet",
     "no_history": "No history yet"
   },
@@ -113,10 +113,10 @@
   "state_change_description": "Notify me when the work items moves to a different state",
   "issue_completed": "Work item completed",
   "issue_completed_description": "Notify me only when a work item is completed",
-  "comments": "Comments",
-  "comments_description": "Notify me when someone leaves a comment on the work item",
+  "comments": "Notes",
+  "comments_description": "Notify me when someone leaves a note on the work item",
   "mentions": "Mentions",
-  "mentions_description": "Notify me only when someone mentions me in the comments or description",
+  "mentions_description": "Notify me only when someone mentions me in the notes or description",
   "old_password": "Old password",
   "general_settings": "General settings",
   "sign_out": "Sign out",
@@ -509,7 +509,7 @@
     },
     "done": "Done",
     "sub_work_items": "Sub-work items",
-    "comment": "Comment",
+    "comment": "Note",
     "workspace_level": "Workspace level",
     "order_by": {
       "label": "Order by",
@@ -528,7 +528,7 @@
       "created_on": "Created on",
       "updated_on": "Updated on"
     },
-    "comments": "Comments",
+    "comments": "Notes",
     "updates": "Updates",
     "additional_updates": "Additional updates",
     "clear_all": "Clear all",

@@ -2,12 +2,13 @@ services:
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
+    command: valkey-server --requirepass "${REDIS_PASSWORD}"
     networks:
       - dev_env
     volumes:
       - redisdata:/data
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -139,6 +140,22 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: plane-frontend
+    restart: unless-stopped
+    network_mode: host
+    user: "1001:1001"
+    environment:
+      - HOME=/tmp
+    volumes:
+      - .:/code
+    working_dir: /code
+    depends_on:
+      - api
 
 volumes:
   redisdata:

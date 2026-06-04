@@ -30,6 +30,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
+import { ActiveTimerBadge } from "./active-timer-badge";
 
 interface IssueBlockProps {
   issueId: string;
@@ -278,6 +279,9 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             >
               <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
+            
+            <ActiveTimerBadge workspaceSlug={workspaceSlug} issueId={issueId} />
+
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC
                 displayProperties={displayProperties}

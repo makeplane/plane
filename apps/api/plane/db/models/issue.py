@@ -245,6 +245,13 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         else:
             self.completed_at = None
 
+        if self.state.group in [StateGroup.COMPLETED.value, StateGroup.CANCELLED.value]:
+            try:
+                from plane.db.models.timer import stop_running_timers_for_issue
+                stop_running_timers_for_issue(self.id)
+            except Exception as e:
+                pass
+
         update_fields = kwargs.get("update_fields")
         if update_fields is not None:
             kwargs["update_fields"] = list(set(update_fields) | {"completed_at"})

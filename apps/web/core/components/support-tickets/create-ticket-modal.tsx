@@ -96,8 +96,10 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
 
   if (!isOpen || typeof window === "undefined") return null;
 
-  // Filter out triage states (triage is not a valid state group in TStateGroups, so we just use projectStates)
-  const availableStates = projectStates || [];
+  // Filter out triage and backlog states
+  const availableStates = (projectStates || []).filter(
+    (state) => state.name.toLowerCase() !== "backlog" && state.group !== "backlog"
+  );
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">

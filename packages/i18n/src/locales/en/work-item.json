@@ -88,29 +88,29 @@
       "backlog": "Backlog"
     },
     "comments": {
-      "placeholder": "Add comment",
+      "placeholder": "Add note",
       "switch": {
-        "private": "Switch to private comment",
-        "public": "Switch to public comment"
+        "private": "Switch to private note",
+        "public": "Switch to public note"
       },
       "create": {
-        "success": "Comment created successfully",
-        "error": "Comment creation failed. Please try again later."
+        "success": "Note created successfully",
+        "error": "Note creation failed. Please try again later."
       },
       "update": {
-        "success": "Comment updated successfully",
-        "error": "Comment update failed. Please try again later."
+        "success": "Note updated successfully",
+        "error": "Note update failed. Please try again later."
       },
       "remove": {
-        "success": "Comment removed successfully",
-        "error": "Comment remove failed. Please try again later."
+        "success": "Note removed successfully",
+        "error": "Note remove failed. Please try again later."
       },
       "upload": {
         "error": "Asset upload failed. Please try again later."
       },
       "copy_link": {
-        "success": "Comment link copied to clipboard",
-        "error": "Error copying comment link. Please try again later."
+        "success": "Note link copied to clipboard",
+        "error": "Error copying note link. Please try again later."
       },
       "replies": {
         "create": {
@@ -303,8 +303,8 @@
   "issue_comment": {
     "empty_state": {
       "general": {
-        "title": "No comments yet",
-        "description": "Comments can be used as a discussion and follow-up space for the work items"
+        "title": "No notes yet",
+        "description": "Notes can be used as a discussion and follow-up space for the work items"
       }
     }
   },

@@ -135,7 +135,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader) {
+  const isWorkspaceInfoLoaded = !!currentWorkspaceInfo;
+  if (isParentLoading || allWorkspaces === undefined || (loader && !isWorkspaceInfoLoaded)) {
     return (
       <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">

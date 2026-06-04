@@ -17,6 +17,7 @@ export * from "./attachment";
 export * from "./archived-at";
 export * from "./inbox";
 export * from "./label-activity-chip";
+export * from "./timer";
 
 // helpers
 export * from "./helpers/activity-block";
