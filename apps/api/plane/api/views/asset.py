@@ -19,6 +19,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 from plane.db.models import FileAsset, User, Workspace
+from plane.app.permissions import WorkspaceUserPermission
 from plane.api.views.base import BaseAPIView
 from plane.api.serializers import (
     UserAssetUploadSerializer,
@@ -403,6 +404,12 @@ class UserServerAssetEndpoint(BaseAPIView):
 
 class GenericAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload generic assets that can be later bound to entities."""
+
+    # The workspace is taken straight from the URL slug, so every method must
+    # verify the caller is an active member of that workspace. Without this the
+    # endpoint is a cross-workspace IDOR (the public-API sibling of the
+    # CVE-2026-46558 dashboard fix).
+    permission_classes = [WorkspaceUserPermission]
 
     use_read_replica = True
 
