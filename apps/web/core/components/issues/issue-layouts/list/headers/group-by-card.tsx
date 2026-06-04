@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleDashed } from "lucide-react";
-import { PlusIcon } from "@plane/propel/icons";
+import { PlusIcon, EstimatePropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
@@ -33,6 +33,8 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
+  estimateSum?: number | null;
+  isPartialCount?: boolean;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   disableIssueCreation?: boolean;
@@ -49,6 +51,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     icon,
     title,
     count,
+    estimateSum,
+    isPartialCount,
     issuePayload,
     canEditProperties,
     disableIssueCreation,
@@ -120,6 +124,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         >
           <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
           <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
+          {estimateSum != null && estimateSum > 0 && (
+            <span className="ml-1.5 inline-flex items-center gap-1 rounded-full border border-subtle px-1.5 text-13 font-medium text-tertiary">
+              <EstimatePropertyIcon className="h-2.5 w-2.5 flex-shrink-0" />
+              {isPartialCount ? "\u2265 " : ""}
+              {estimateSum}
+            </span>
+          )}
           <div className="px-2.5">
             <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
           </div>

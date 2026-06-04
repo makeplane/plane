@@ -46,6 +46,7 @@ export interface IList {
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
+  showEstimates?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
@@ -69,6 +70,7 @@ export const List = observer(function List(props: IList) {
     displayProperties,
     enableIssueQuickAdd,
     showEmptyGroup,
+    showEstimates,
     canEditProperties,
     quickAddCallback,
     disableIssueCreation,
@@ -157,6 +159,7 @@ export const List = observer(function List(props: IList) {
                     displayProperties={displayProperties}
                     enableIssueQuickAdd={enableIssueQuickAdd}
                     showEmptyGroup={showEmptyGroup}
+                    showEstimates={showEstimates}
                     canEditProperties={canEditProperties}
                     quickAddCallback={quickAddCallback}
                     disableIssueCreation={disableIssueCreation}

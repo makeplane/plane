@@ -80,6 +80,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+  const showEstimates = displayFilters?.show_estimates ?? false;
 
   const { workspaceSlug, projectId } = useParams();
   const { updateFilters } = useIssuesActions(storeType);
@@ -165,6 +166,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
           groupedIssueIds={groupedIssueIds ?? {}}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
+          showEstimates={showEstimates}
           quickAddCallback={quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}

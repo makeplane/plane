@@ -22,12 +22,14 @@ import type {
   IIssueDisplayProperties,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
@@ -67,6 +69,7 @@ interface Props {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   showEmptyGroup?: boolean;
+  showEstimates?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
@@ -94,6 +97,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     addIssuesToView,
     isCompletedCycle,
     showEmptyGroup,
+    showEstimates,
     loadMoreIssues,
     selectionHelpers,
     handleCollapsedGroups,
@@ -107,20 +111,50 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const groupRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const projectState = useProjectState();
+  const { areEstimateEnabledByProjectId, currentActiveEstimateIdByProjectId, estimateById } = useProjectEstimates();
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
   } = useIssuesStore();
+
+  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
+  const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
+  const isPaginating = !!getIssueLoader(group.id);
+  const isPartialGroup = groupIssueIds ? groupIssueIds.length < groupIssueCount || !!nextPageResults : false;
+  const estimateSum = (() => {
+    if (!showEstimates) return null;
+    if (!groupIssueIds || groupIssueIds.length === 0) return null;
+
+    const firstIssue = issuesMap[groupIssueIds[0]];
+    const issueProjectId = firstIssue?.project_id;
+    if (!issueProjectId) return null;
+
+    if (!areEstimateEnabledByProjectId(issueProjectId)) return null;
+
+    const activeEstimateId = currentActiveEstimateIdByProjectId(issueProjectId);
+    if (!activeEstimateId) return null;
+    const activeEstimate = estimateById(activeEstimateId);
+    if (!activeEstimate?.type || activeEstimate.type === EEstimateSystem.CATEGORIES) return null;
+
+    let sum = 0;
+    for (const issueId of groupIssueIds) {
+      const issue = issuesMap[issueId];
+      if (!issue?.estimate_point) continue;
+      const point = activeEstimate.estimatePointById(issue.estimate_point);
+      if (!point?.value) continue;
+      const numericValue = Number(point.value);
+      if (!Number.isNaN(numericValue)) {
+        sum += numericValue;
+      }
+    }
+    return sum;
+  })();
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
   const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
     useWorkFlowFDragNDrop(group_by);
   const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
-
-  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
-  const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
-  const isPaginating = !!getIssueLoader(group.id);
 
   useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `100% 0% 100% 0%`);
 
@@ -237,14 +271,13 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       })
     );
   }, [
-    groupRef?.current,
-    group,
-    orderBy,
-    getGroupIndex,
-    setDragColumnOrientation,
-    setIsDraggingOverColumn,
-    isWorkflowDropDisabled,
-  ]);
+	group,
+	orderBy,
+	getGroupIndex,
+	setDragColumnOrientation,
+	setIsDraggingOverColumn,
+	isWorkflowDropDisabled
+]);
 
   const isDragAllowed = group_by ? DRAG_ALLOWED_GROUPS.includes(group_by) : true;
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
@@ -272,6 +305,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           icon={group.icon}
           title={group.name}
           count={groupIssueCount}
+          estimateSum={estimateSum}
+          isPartialCount={isPartialGroup}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}
           disableIssueCreation={
