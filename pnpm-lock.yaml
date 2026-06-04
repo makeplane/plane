@@ -265,7 +265,7 @@ catalogs:
       specifier: ^8.18.1
       version: 8.18.1
     '@vitest/coverage-v8':
-      specifier: ^4.1.0
+      specifier: ^4.1.8
       version: 4.1.8
     ast-types:
       specifier: 0.14.2
@@ -523,7 +523,7 @@ catalogs:
       specifier: ^5.1.4
       version: 5.1.4
     vitest:
-      specifier: ^4.1.0
+      specifier: ^4.1.8
       version: 4.1.8
     winston:
       specifier: ^3.17.0
