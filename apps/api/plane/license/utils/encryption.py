@@ -12,7 +12,9 @@ from plane.utils.exception_logger import log_exception
 
 def derive_key(secret_key):
     # Use a key derivation function to get a suitable encryption key
-    dk = hashlib.pbkdf2_hmac("sha256", secret_key.encode(), b"salt", 100000)
+    # Derive a deployment-specific salt from the secret key to prevent precomputation attacks
+    salt = hashlib.sha256(secret_key.encode()).digest()
+    dk = hashlib.pbkdf2_hmac("sha256", secret_key.encode(), salt, 100000)
     return base64.urlsafe_b64encode(dk)
 
 
