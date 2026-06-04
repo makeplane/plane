@@ -10,7 +10,7 @@ from django.conf import settings
 
 # Module imports
 from plane.license.models import InstanceConfiguration
-from plane.license.utils.encryption import decrypt_data
+from plane.license.utils.encryption import decrypt_data_with_status, encrypt_data
 
 
 # Helper function to return value from the passed key
@@ -24,7 +24,15 @@ def get_configuration_value(keys):
             for item in instance_configuration:
                 if key.get("key") == item.get("key"):
                     if item.get("is_encrypted", False):
-                        environment_list.append(decrypt_data(item.get("value")))
+                        plaintext, used_legacy = decrypt_data_with_status(item.get("value"))
+                        if used_legacy and plaintext:
+                            try:
+                                InstanceConfiguration.objects.filter(
+                                    key=item.get("key")
+                                ).update(value=encrypt_data(plaintext))
+                            except Exception:
+                                pass
+                        environment_list.append(plaintext)
                     else:
                         environment_list.append(item.get("value"))
 
