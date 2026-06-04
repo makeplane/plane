@@ -42,8 +42,7 @@ export const WorkspaceProjectExportDialog = observer(function WorkspaceProjectEx
   const filtered = search.trim()
     ? workspaceList.filter(
         (ws) =>
-          ws.name.toLowerCase().includes(search.toLowerCase()) ||
-          ws.slug.toLowerCase().includes(search.toLowerCase())
+          ws.name.toLowerCase().includes(search.toLowerCase()) || ws.slug.toLowerCase().includes(search.toLowerCase())
       )
     : workspaceList;
 

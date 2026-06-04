@@ -33,10 +33,16 @@ async function parseExcelForDelete(file: File): Promise<IWorkspaceDeleteRow[]> {
   const wb = XLSX.read(buffer, { type: "array" });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
-  return raw.map((r) => ({
-    workspace_slug: String(r.workspace_slug ?? "").trim(),
-    email: String(r.email ?? "").trim().toLowerCase(),
-  }));
+  return raw.map((r) => {
+    const slug = r.workspace_slug;
+    const emailVal = r.email;
+    return {
+      workspace_slug: (typeof slug === "string" || typeof slug === "number" ? String(slug) : "").trim(),
+      email: (typeof emailVal === "string" || typeof emailVal === "number" ? String(emailVal) : "")
+        .trim()
+        .toLowerCase(),
+    };
+  });
 }
 
 export const WorkspaceBulkDeleteForm = observer(function WorkspaceBulkDeleteForm() {

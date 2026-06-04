@@ -136,7 +136,16 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         }
         const XLSX = await import("xlsx");
         const rows = [
-          ["workspace_slug", "name", "identifier", "description", "network", "project_leader", "members", "member_roles"],
+          [
+            "workspace_slug",
+            "name",
+            "identifier",
+            "description",
+            "network",
+            "project_leader",
+            "members",
+            "member_roles",
+          ],
           ...data.projects.map((p) => [
             p.workspace_slug,
             p.name,
