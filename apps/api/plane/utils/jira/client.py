@@ -10,6 +10,7 @@ are isolated in ``_request`` so the client can be exercised with a mocked
 """
 
 # Python imports
+import json
 import time
 
 # Third party imports
@@ -188,8 +189,8 @@ class JiraClient:
         try:
             return self._paginate_values(f"/board/{board_id}/sprint", base=AGILE)
         except JiraError as exc:
-            # Kanban boards have no sprints (400/404) - treat as none
-            if exc.status_code in (400, 404):
+            # Kanban boards have no sprints (400/404/410) - treat as none
+            if exc.status_code in (400, 404, 410):
                 return []
             raise
 
@@ -224,32 +225,39 @@ class JiraClient:
         return None
 
     def search_issues(self, jql, fields=None, expand="renderedFields", page_size=_MAX_RESULTS):
-        """Yield Jira issues for a JQL query, transparently paginated."""
-        start_at = 0
+        """Yield Jira issues for a JQL query, transparently paginated.
+
+        Uses the enhanced ``/search/jql`` endpoint (the legacy ``/search`` was
+        removed by Atlassian in 2025 and now returns 410). It is token-paginated
+        via ``nextPageToken`` and no longer reports a ``total``.
+        """
         fields = fields or list(DEFAULT_ISSUE_FIELDS)
+        next_token = None
         while True:
-            page = self._request(
-                "GET",
-                "/search",
-                params={
-                    "jql": jql,
-                    "startAt": start_at,
-                    "maxResults": page_size,
-                    "fields": ",".join(fields),
-                    "expand": expand,
-                },
-            )
+            params = {
+                "jql": jql,
+                "maxResults": page_size,
+                "fields": ",".join(fields),
+                "expand": expand,
+            }
+            if next_token:
+                params["nextPageToken"] = next_token
+            page = self._request("GET", "/search/jql", params=params)
             issues = page.get("issues", [])
             for issue in issues:
                 yield issue
-            total = page.get("total", 0)
-            start_at += len(issues)
-            if not issues or start_at >= total:
+            next_token = page.get("nextPageToken")
+            if page.get("isLast") or not next_token or not issues:
                 break
 
     def issue_count(self, jql):
-        page = self._request("GET", "/search", params={"jql": jql, "maxResults": 0})
-        return page.get("total", 0)
+        """Approximate issue count via the enhanced search endpoint.
+
+        Replaces the removed ``GET /search?maxResults=0`` (410). The new
+        ``/search/approximate-count`` is POST-only and returns ``{"count": N}``.
+        """
+        page = self._request("POST", "/search/approximate-count", data=json.dumps({"jql": jql}))
+        return page.get("count", 0)
 
     def issue_comments(self, issue_key):
         comments = []

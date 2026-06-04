@@ -69,13 +69,27 @@ class TestJiraClientPagination:
         assert session.request.call_count == 2
 
     def test_search_issues_yields_all_pages(self):
+        # The enhanced /search/jql endpoint is token-paginated (nextPageToken/isLast),
+        # not offset-paginated; the legacy /search was removed by Atlassian (410).
         session = MagicMock()
-        page1 = _response(json_data={"issues": [{"key": "A-1"}], "total": 2, "startAt": 0, "maxResults": 1})
-        page2 = _response(json_data={"issues": [{"key": "A-2"}], "total": 2, "startAt": 1, "maxResults": 1})
+        page1 = _response(json_data={"issues": [{"key": "A-1"}], "nextPageToken": "tok2", "isLast": False})
+        page2 = _response(json_data={"issues": [{"key": "A-2"}], "isLast": True})
         session.request.side_effect = [page1, page2]
         client = JiraClient("acme.atlassian.net", "a@b.com", "tok", session=session)
         keys = [issue["key"] for issue in client.search_issues("project = A", page_size=1)]
         assert keys == ["A-1", "A-2"]
+        # second request must carry the page token from the first response
+        assert session.request.call_args_list[1].kwargs["params"]["nextPageToken"] == "tok2"
+
+    def test_issue_count_uses_approximate_count(self):
+        session = MagicMock()
+        session.request.return_value = _response(json_data={"count": 42})
+        client = JiraClient("acme.atlassian.net", "a@b.com", "tok", session=session)
+        assert client.issue_count("project = A") == 42
+        # must POST to the approximate-count endpoint (GET /search is gone)
+        method, url = session.request.call_args.args[0], session.request.call_args.args[1]
+        assert method == "POST"
+        assert url.endswith("/search/approximate-count")
 
     def test_sprints_returns_empty_for_kanban_board(self):
         session = MagicMock()

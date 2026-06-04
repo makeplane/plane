@@ -264,11 +264,6 @@
         "page_title": "Work with your Plane data in available apps or your own.",
         "page_description": "View all the integrations in use by this workspace or you."
       },
-      "imports": {
-        "title": "Imports",
-        "heading": "Imports",
-        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
-      },
       "worklogs": {
         "title": "Worklogs",
         "heading": "Worklogs",
