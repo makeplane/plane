@@ -638,7 +638,7 @@ export const RosterTable = observer(
               <tr>
                 <RosterSortableHeaderCell
                   columnKey="player_name"
-                  label="Roster"
+                  label="Player"
                   sortConfig={sortConfig}
                   onSort={handleSort}
                   onClearSort={handleClearSort}
