@@ -84,7 +84,7 @@ export const DEFAULT_COVER_IMAGE_URL = STATIC_COVER_IMAGES.IMAGE_1;
  */
 const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGES));
 
-export type TCoverImageType = "local_static" | "uploaded_asset" | "unsplash";
+export type TCoverImageType = "local_static" | "uploaded_asset";
 
 export type TCoverImageResult = {
   needsUpload: boolean;
@@ -114,17 +114,6 @@ export const getCoverImageType = (imageUrl: string): TCoverImageType => {
   // Check against the explicit set of static images
   if (isStaticCoverImage(imageUrl)) return "local_static";
 
-  // Check if it's an Unsplash image by validating the hostname
-  try {
-    const url = new URL(imageUrl);
-    const hostname = url.hostname.toLowerCase();
-    if (hostname === "unsplash.com" || hostname.endsWith(".unsplash.com")) {
-      return "unsplash";
-    }
-  } catch {
-    // If URL parsing fails (e.g., relative path), fall through to other checks
-  }
-
   if (imageUrl.startsWith("http")) return "uploaded_asset";
 
   return "uploaded_asset";
@@ -147,7 +136,7 @@ export function getCoverImageDisplayURL(
 
   const imageType = getCoverImageType(imageUrl);
 
-  if (imageType === "local_static" || imageType === "unsplash") {
+  if (imageType === "local_static") {
     return imageUrl;
   }
 
@@ -160,7 +149,6 @@ export function getCoverImageDisplayURL(
 
 /**
  * Analyzes cover image change and determines what action to take
- * Merged with isUnsplashImage logic - now detects unsplash images as a separate type
  */
 export const analyzeCoverImageChange = (
   currentImage: string | null | undefined,
@@ -176,18 +164,10 @@ export const analyzeCoverImageChange = (
     };
   }
 
-  if (!newImage) {
-    return {
-      needsUpload: false,
-      imageType: "uploaded_asset",
-      shouldUpdate: true,
-    };
-  }
-
-  const imageType = getCoverImageType(newImage);
+  const imageType = getCoverImageType(newImage ?? "");
 
   return {
-    needsUpload: imageType === "local_static" || imageType === "unsplash",
+    needsUpload: imageType === "local_static",
     imageType,
     shouldUpdate: hasChanged,
   };
@@ -221,7 +201,7 @@ export const uploadCoverImage = async (
     throw new Error("Invalid file type. Please select an image.");
   }
 
-  const fileName = imageUrl.split("/").pop()?.split("?")[0] || "image.jpg";
+  const fileName = imageUrl.split("/").pop() || "cover.jpg";
   const file = new File([blob], fileName, { type: blob.type });
 
   // Upload based on context
@@ -253,6 +233,7 @@ export const uploadCoverImage = async (
 
 /**
  * Main utility to handle cover image changes with upload
+ * Returns the payload fields that should be updated
  */
 export const handleCoverImageChange = async (
   currentImage: string | null | undefined,
@@ -263,20 +244,50 @@ export const handleCoverImageChange = async (
     entityType: EFileAssetType;
     isUserAsset?: boolean;
   }
-): Promise<TCoverImagePayload | undefined> => {
+): Promise<TCoverImagePayload | null> => {
   const analysis = analyzeCoverImageChange(currentImage, newImage);
-  if (!analysis.shouldUpdate) return;
 
+  // No change detected
+  if (!analysis.shouldUpdate) {
+    return null;
+  }
+
+  // Image removed
   if (!newImage) {
-    return { cover_image: null, cover_image_url: null, cover_image_asset: null };
+    return {
+      cover_image: null,
+      cover_image_url: null,
+      cover_image_asset: null,
+    };
   }
 
+  // Local static image - needs upload
   if (analysis.needsUpload) {
-    await uploadCoverImage(newImage, uploadConfig);
-    return;
+    const uploadedUrl = await uploadCoverImage(newImage, uploadConfig);
+
+    // For BOTH user assets AND project assets:
+    // The backend auto-links when entity_identifier is set correctly
+    // For project assets: auto-linked server-side, no payload needed
+    // For user assets: return URL for immediate UI feedback
+
+    if (uploadConfig.isUserAsset) {
+      // The asset upload already linked cover_image_asset server-side (and cleared
+      // cover_image). Persisting the relative asset URL into cover_image would fail
+      // URLField validation, so only echo cover_image_url for immediate UI feedback —
+      // it's a read-only property the backend ignores.
+      return {
+        cover_image_url: uploadedUrl,
+      };
+    } else {
+      return null;
+    }
   }
 
-  return { cover_image: newImage };
+  // External/uploaded asset (e.g., Unsplash URL, pre-uploaded asset)
+  // Return the URL to be saved in the backend
+  return {
+    cover_image: newImage,
+  };
 };
 
 /**

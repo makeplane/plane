@@ -49,6 +49,12 @@ type TIssueDefaultPropertiesProps = {
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
   children?: React.ReactNode;
+  /**
+   * Optional interceptor for due-date selection. When provided, the picker
+   * defers committing the new value to this handler (used to gate edits behind
+   * a reason prompt). Falls back to a direct commit when omitted.
+   */
+  onTargetDateChange?: (newDate: string | null, commit: (value: string | null) => void) => void;
 };
 
 export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
@@ -65,6 +71,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     handleFormChange,
     setSelectedParentIssue,
     children,
+    onTargetDateChange,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -202,8 +209,13 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             <DateDropdown
               value={value}
               onChange={(date) => {
-                onChange(date ? renderFormattedPayloadDate(date) : null);
-                handleFormChange();
+                const formatted = (date ? renderFormattedPayloadDate(date) : null) ?? null;
+                const commit = (committed: string | null) => {
+                  onChange(committed);
+                  handleFormChange();
+                };
+                if (onTargetDateChange) onTargetDateChange(formatted, commit);
+                else commit(formatted);
               }}
               buttonVariant="border-with-text"
               minDate={minDate ?? undefined}

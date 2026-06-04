@@ -53,6 +53,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     store.categorySummary,
     store.filters.department,
