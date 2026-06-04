@@ -81,6 +81,8 @@ pnpm dev
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 
+> 💡 Tip: If you have [`just`](https://github.com/casey/just) installed, the repository includes a [`justfile`](./justfile) that wraps the commands above (`just setup`, `just up`, `just fe-dev`, `just migrate`, and more). Run `just` to see all available recipes.
+
 ## Missing a Feature?
 
 If a feature is missing, you can directly _request_ a new one [here](https://github.com/makeplane/plane/issues/new?assignees=&labels=feature&template=feature_request.yml&title=%F0%9F%9A%80+Feature%3A+). You also can do the same by choosing "🚀 Feature" when raising a [New Issue](https://github.com/makeplane/plane/issues/new/choose) on our GitHub Repository.
