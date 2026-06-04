@@ -277,7 +277,7 @@ def generate_segmented_rows(
 
     if segmented == MODULE_ID:
         for index, segm in enumerate(row_zero[2:]):
-            module = next((mod for mod in label_details if str(mod[MODULE_ID]) == str(segm)), None)
+            module = next((mod for mod in module_details if str(mod[MODULE_ID]) == str(segm)), None)
             if module:
                 row_zero[index + 2] = module["issue_module__module__name"]
 
