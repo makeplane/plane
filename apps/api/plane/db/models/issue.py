@@ -59,8 +59,12 @@ def get_default_filters():
 
 
 def get_default_display_filters():
+    # First-time work-items default: Board layout grouped by Status, no sub-grouping.
+    # Applied only at ProjectUserProperty row creation; once the user changes filters
+    # the row is persisted and their settings take precedence.
     return {
-        "group_by": None,
+        "group_by": "state",
+        "sub_group_by": None,
         "order_by": "-created_at",
         "type": None,
         "sub_issue": True,

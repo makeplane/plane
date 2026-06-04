@@ -14,7 +14,9 @@
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "prettier . --cache --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=2350",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "prettier . --cache --write",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -90,6 +92,7 @@
     "@types/react-dom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.8"
   }
 }

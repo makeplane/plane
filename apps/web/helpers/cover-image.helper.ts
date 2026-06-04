@@ -271,8 +271,12 @@ export const handleCoverImageChange = async (
     // For user assets: return URL for immediate UI feedback
 
     if (uploadConfig.isUserAsset) {
+      // The asset upload already linked cover_image_asset server-side (and cleared
+      // cover_image). Persisting the relative asset URL into cover_image would fail
+      // URLField validation, so only echo cover_image_url for immediate UI feedback —
+      // it's a read-only property the backend ignores.
       return {
-        cover_image: uploadedUrl,
+        cover_image_url: uploadedUrl,
       };
     } else {
       return null;
