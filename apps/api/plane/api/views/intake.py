@@ -187,7 +187,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         # create an issue
         issue_data = request.data.get("issue", {})
         description = issue_data.get("description")
-        description_json = issue_data.get("description_json") or {}
+        description_json = issue_data.get("description_json") if "description_json" in issue_data else {}
         if "description_json" not in issue_data and isinstance(description, (dict, list)):
             description_json = description
         description_html = issue_data.get("description_html") or "<p></p>"
