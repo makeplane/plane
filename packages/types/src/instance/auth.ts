@@ -31,7 +31,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GOOGLE_ENABLED"
   | "IS_GITHUB_ENABLED"
   | "IS_GITLAB_ENABLED"
-  | "IS_GITEA_ENABLED";
+  | "IS_GITEA_ENABLED"
+  | "IS_OIDC_FREE_ENABLED";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys =
   | "GOOGLE_CLIENT_ID"
@@ -56,11 +57,23 @@ export type TInstanceGiteaAuthenticationConfigurationKeys =
   | "GITEA_CLIENT_SECRET"
   | "ENABLE_GITEA_SYNC";
 
+export type TInstanceOidcFreeAuthenticationConfigurationKeys =
+  | "OIDC_FREE_CLIENT_ID"
+  | "OIDC_FREE_CLIENT_SECRET"
+  | "OIDC_FREE_HOST"
+  | "OIDC_FREE_SCOPE"
+  | "OIDC_FREE_USERINFO_URL"
+  | "OIDC_FREE_TOKEN_URL"
+  | "OIDC_FREE_CALLBACK_URI"
+  | "OIDC_FREE_AUTH_URI"
+  | "ENABLE_OIDC_FREE_SYNC";
+
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
   | TInstanceGitlabAuthenticationConfigurationKeys
-  | TInstanceGiteaAuthenticationConfigurationKeys;
+  | TInstanceGiteaAuthenticationConfigurationKeys
+  | TInstanceOidcFreeAuthenticationConfigurationKeys;
 
 export type TInstanceAuthenticationKeys = TInstanceAuthenticationMethodKeys | TInstanceAuthenticationConfigurationKeys;
 

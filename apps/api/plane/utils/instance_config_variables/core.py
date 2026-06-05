@@ -144,6 +144,75 @@ gitea_config_variables = [
     },
 ]
 
+oidc_free_config_variables = [
+    {
+        "key": "IS_OIDC_FREE_ENABLED",
+        "value": os.environ.get("IS_OIDC_FREE_ENABLED", "0"),
+        "category": "OIDC_FREE",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_FREE_HOST",
+        "value": os.environ.get("OIDC_FREE_HOST"),
+        "category": "OIDC_FREE",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_FREE_CLIENT_ID",
+        "value": os.environ.get("OIDC_FREE_CLIENT_ID"),
+        "category": "OIDC_FREE",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_FREE_CLIENT_SECRET",
+        "value": os.environ.get("OIDC_FREE_CLIENT_SECRET"),
+        "category": "OIDC_FREE",
+        "is_encrypted": True,
+    },
+    {
+        "key": "OIDC_FREE_CLIENT_ID",
+        "value": os.environ.get("OIDC_FREE_CLIENT_ID"),
+        "category": "OIDC_FREE",
+        "is_encrypted": False,
+    },
+    {
+      "key": "OIDC_FREE_SCOPE",
+      "value": os.environ.get("OIDC_FREE_SCOPE"),
+      "category": "OIDC_FREE",
+      "is_encrypted": False,
+    },
+    {
+      "key": "OIDC_FREE_USERINFO_URL",
+      "value": os.environ.get("OIDC_FREE_USERINFO_URL"),
+      "category": "OIDC_FREE",
+      "is_encrypted": False,
+    },
+    {
+      "key": "OIDC_FREE_TOKEN_URL",
+      "value": os.environ.get("OIDC_FREE_TOKEN_URL"),
+      "category": "OIDC_FREE",
+      "is_encrypted": False,
+    },
+    {
+      "key": "OIDC_FREE_CALLBACK_URI",
+      "value": os.environ.get("OIDC_FREE_CALLBACK_URI"),
+      "category": "OIDC_FREE",
+      "is_encrypted": False,
+    },
+    {
+      "key": "OIDC_FREE_AUTH_URI",
+      "value": os.environ.get("OIDC_FREE_AUTH_URI"),
+      "category": "OIDC_FREE",
+      "is_encrypted": False,
+    },
+    {
+        "key": "ENABLE_OIDC_FREE_SYNC",
+        "value": os.environ.get("ENABLE_OIDC_FREE_SYNC", "0"),
+        "category": "OIDC_FREE",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -239,6 +308,7 @@ core_config_variables = [
     *github_config_variables,
     *gitlab_config_variables,
     *gitea_config_variables,
+    *oidc_free_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
