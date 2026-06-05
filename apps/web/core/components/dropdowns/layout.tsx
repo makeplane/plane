@@ -74,7 +74,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName={cn(getIconButtonStyling("secondary", "lg"), "w-auto px-2")}
+      buttonContainerClassName={cn(getIconButtonStyling("secondary", "lg"), "aspect-auto w-auto! px-2")}
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch
