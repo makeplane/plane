@@ -12,9 +12,12 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+from plane.app.views.nexus_onboarding import NexusOnboardUserEndpoint
+
 handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
+    path("api/internal/nexus/onboard-user/", NexusOnboardUserEndpoint.as_view()),
     path("api/", include("plane.app.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),
