@@ -1,0 +1,62 @@
+# React Doctor — finds security, performance, correctness, accessibility,
+# bundle-size, and architecture issues in React codebases.
+#
+# Docs: https://www.react.doctor/ci
+# Source: https://github.com/millionco/react-doctor
+
+name: React Doctor
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  # Scans `main` on every push so you get a health-score trend on the
+  # default branch — useful for tracking the overall number commit-by-commit
+  # and catching regressions that slipped past PR review. PR-specific steps
+  # (the sticky summary comment) are skipped automatically on `push` events.
+  # Comment this block out if you only want PR-time scans.
+  push:
+    branches: [main]
+
+permissions:
+  # `actions/checkout` needs this to read the repo source.
+  contents: read
+  # Two uses: (1) reads the PR's changed-file list so the scan only checks
+  # what the PR touched (faster, scoped to the diff), and (2) posts/updates
+  # the sticky React Doctor summary comment on the PR. Downgrade `write` to
+  # `read` to keep the changed-file scan but disable comment posting.
+  pull-requests: write
+  # The sticky-comment step uses GitHub's `issues.createComment` /
+  # `issues.updateComment` endpoints — those are the same APIs that back PR
+  # comments (PRs are issues under the hood). Not exercised on `push`
+  # events, so safe to drop if you only run on `main`.
+  issues: write
+  # Lets the action publish a commit status with the score + error/warning
+  # counts (links to the run). This is how a `push` to `main` surfaces its
+  # result, since the PR comment is skipped off pull requests. Drop it to
+  # disable the status (or set `commit-status: false` below).
+  statuses: write
+
+# Cancels any in-flight scan for the same PR (or branch, on push) the moment
+# a new commit arrives, so reviewers only ever see the latest run.
+concurrency:
+  group: react-doctor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: millionco/react-doctor@v2
+        # Common configuration knobs — uncomment any to override the default.
+        # Full reference: https://www.react.doctor/ci
+        # with:
+        #   blocking: warning        # Gate level: "error" (default) | "warning" | "none" (advisory)
+        #   scope: full              # On PRs, scan the whole project instead of just changed files
+        #   comment: false           # Disable the sticky PR summary comment
+        #   review-comments: false   # Disable inline review comments on changed lines
+        #   commit-status: false     # Disable the commit status (score + counts, links to the run)
+        #   version: "0.4.0"         # Pin to a specific react-doctor version instead of "latest"
+        #   directory: apps/web      # Scan a sub-directory (default: ".")
+        #   project: "web,admin"     # In a monorepo, scan specific workspace project(s)

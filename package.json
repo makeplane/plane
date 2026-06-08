@@ -17,13 +17,15 @@
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",
     "check:types": "turbo run check:types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "doctor": "npx react-doctor@latest"
   },
   "devDependencies": {
     "husky": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react-doctor": "^0.4.2",
     "turbo": "catalog:"
   },
   "lint-staged": {
