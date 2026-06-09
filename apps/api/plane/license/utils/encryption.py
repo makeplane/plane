@@ -1,7 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
-# SPDX-License-Identifier: AGPL-3.0-only
-# See the LICENSE file for details.
-
+# Python imports
 import base64
 import hashlib
 import hmac
@@ -35,8 +32,8 @@ def encrypt_data(data):
     try:
         if data:
             cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
-            encrypted_data = cipher_suite.encrypt(data.encode())
-            return encrypted_data.decode()  # Convert bytes to string
+            encrypted_data = cipher_suite.encrypt(data.encode())  # Convert string to bytes
+            return encrypted_data.decode()
         else:
             return ""
     except Exception as e:
