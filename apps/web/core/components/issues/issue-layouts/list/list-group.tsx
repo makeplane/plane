@@ -126,17 +126,23 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     if (!groupIssueIds || groupIssueIds.length === 0) return null;
 
     const firstIssue = issuesMap[groupIssueIds[0]];
-    const issueProjectId = firstIssue?.project_id;
-    if (!issueProjectId) return null;
+    const projectId = firstIssue?.project_id;
+    if (!projectId) return null;
 
-    if (!areEstimateEnabledByProjectId(issueProjectId)) return null;
+    // safeguard: don't sum up across multiple projects  
+    for (const issueId of groupIssueIds) {
+      const issue = issuesMap[issueId];
+      if (issue?.project_id && issue.project_id !== projectId) return null;
+    }
 
-    const activeEstimateId = currentActiveEstimateIdByProjectId(issueProjectId);
+    if (!areEstimateEnabledByProjectId(projectId)) return null;
+    const activeEstimateId = currentActiveEstimateIdByProjectId(projectId);
     if (!activeEstimateId) return null;
     const activeEstimate = estimateById(activeEstimateId);
     if (!activeEstimate?.type || activeEstimate.type === EEstimateSystem.CATEGORIES) return null;
 
     let sum = 0;
+    let hasAnyEstimate = false;
     for (const issueId of groupIssueIds) {
       const issue = issuesMap[issueId];
       if (!issue?.estimate_point) continue;
@@ -145,9 +151,10 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       const numericValue = Number(point.value);
       if (!Number.isNaN(numericValue)) {
         sum += numericValue;
+        hasAnyEstimate = true;
       }
     }
-    return sum;
+    return hasAnyEstimate ? sum : null;
   })();
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
