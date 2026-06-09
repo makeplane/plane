@@ -18,7 +18,9 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
+import { ModalCore } from "@plane/ui";
 // types
+import { ConfirmStateChangeModal } from "../../confirm-state-change-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
@@ -115,13 +117,24 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   // states
   const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [confirmPromise, setConfirmPromise] = useState<{ resolve: (val: string | false) => void } | null>(null);
+
+  const {
+    comment: { createComment },
+  } = useIssueDetail();
 
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
 
-  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
+  const askConfirmation = () => {
+    return new Promise<boolean>((resolve) => {
+      setConfirmPromise({ resolve });
+    });
+  };
+
+  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by, askConfirmation);
 
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
@@ -229,6 +242,13 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
 
   return (
     <>
+      {confirmPromise !== null && (
+        <ConfirmStateChangeModal
+          isOpen={confirmPromise !== null}
+          onConfirm={(note) => { confirmPromise.resolve(note); setConfirmPromise(null); }}
+          onCancel={() => { confirmPromise.resolve(false); setConfirmPromise(null); }}
+        />
+      )}
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}

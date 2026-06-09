@@ -7,14 +7,16 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
-import { ComboDropDown, Spinner } from "@plane/ui";
+import { ComboDropDown, Spinner, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
 import { DropdownButton } from "@/components/dropdowns/buttons";
+import { ConfirmStateChangeModal } from "@/components/issues/confirm-state-change-modal";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
 import type { TDropdownProps } from "@/components/dropdowns/types";
+import { useParams } from "next/navigation";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { StateOption } from "@/plane-web/components/workflow";
 
@@ -28,6 +30,7 @@ export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   iconSize?: string;
   isForWorkItemCreation?: boolean;
   isInitializing?: boolean;
+  issueId?: string; // Optional issueId to post mandatory comments on state change
   onChange: (val: string) => void;
   onClose?: () => void;
   onDropdownOpen?: () => void;
@@ -125,9 +128,39 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
 
   const selectedState = stateValue ? getStateById(stateValue) : undefined;
 
+  const [pendingStateVal, setPendingStateVal] = useState<string | null>(null);
+
+  const { workspaceSlug } = useParams();
+  const {
+    comment: { createComment },
+  } = useIssueDetail();
+
   const dropdownOnChange = (val: string) => {
-    onChange(val);
-    handleClose();
+    // Show confirmation modal only if changing an existing state and it's not during creation
+    if (val !== stateValue && !isForWorkItemCreation) {
+      setPendingStateVal(val);
+      handleClose(); // Close dropdown immediately so it doesn't overlap the modal
+    } else {
+      onChange(val);
+      handleClose();
+    }
+  };
+
+  const confirmStateChange = async (note: string) => {
+    if (pendingStateVal) {
+      onChange(pendingStateVal);
+      if (issueId && workspaceSlug && projectId) {
+        await createComment(workspaceSlug.toString(), projectId, issueId, {
+          comment_html: `<p>${note}</p>`,
+          comment_stripped: note,
+        }).catch((err) => console.error("Failed to post comment for state change", err));
+      }
+    }
+    setPendingStateVal(null);
+  };
+
+  const cancelStateChange = () => {
+    setPendingStateVal(null);
   };
 
   const comboButton = (
@@ -198,60 +231,70 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   );
 
   return (
-    <ComboDropDown
-      as="div"
-      ref={dropdownRef}
-      className={cn("h-full", className)}
-      value={stateValue}
-      onChange={dropdownOnChange}
-      disabled={disabled}
-      onKeyDown={handleKeyDown}
-      button={comboButton}
-      renderByDefault={renderByDefault}
-    >
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
-              <Combobox.Input
-                as="input"
-                ref={inputRef}
-                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("common.search.label")}
-                displayValue={(assigned: any) => assigned?.name}
-                onKeyDown={searchInputKeyDown}
-              />
-            </div>
-            <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-              {filteredOptions ? (
-                filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <StateOption
-                      {...props}
-                      key={option.value}
-                      option={option}
-                      selectedValue={value}
-                      className="flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none"
-                    />
-                  ))
+    <>
+      <ComboDropDown
+        as="div"
+        ref={dropdownRef}
+        className={cn("h-full", className)}
+        value={stateValue}
+        onChange={dropdownOnChange}
+        disabled={disabled}
+        onKeyDown={handleKeyDown}
+        button={comboButton}
+        renderByDefault={renderByDefault}
+      >
+        {isOpen && (
+          <Combobox.Options className="fixed z-10" static>
+            <div
+              className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+                <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+                <Combobox.Input
+                  as="input"
+                  ref={inputRef}
+                  className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("common.search.label")}
+                  displayValue={(assigned: any) => assigned?.name}
+                  onKeyDown={searchInputKeyDown}
+                />
+              </div>
+              <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+                {filteredOptions ? (
+                  filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <StateOption
+                        {...props}
+                        key={option.value}
+                        option={option}
+                        selectedValue={value}
+                        className="flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none"
+                      />
+                    ))
+                  ) : (
+                    <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
+                  )
                 ) : (
-                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
-                )
-              ) : (
-                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
-              )}
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
+                )}
+              </div>
             </div>
-          </div>
-        </Combobox.Options>
+          </Combobox.Options>
+        )}
+      </ComboDropDown>
+
+      {pendingStateVal !== null && (
+        <ConfirmStateChangeModal
+          isOpen={pendingStateVal !== null}
+          onCancel={cancelStateChange}
+          onConfirm={(note) => confirmStateChange(note)}
+        />
       )}
-    </ComboDropDown>
+    </>
   );
 });

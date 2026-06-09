@@ -25,11 +25,13 @@ export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,
   orderBy: TIssueOrderByOptions | undefined,
   groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy?: TIssueGroupByOptions
+  subGroupBy?: TIssueGroupByOptions,
+  askConfirmation?: () => Promise<boolean>
 ) => {
   const { workspaceSlug } = useParams();
 
   const {
+    comment: { createComment },
     issue: { getIssueById },
   } = useIssueDetail();
   const { updateIssue } = useIssuesActions(storeType);
@@ -62,9 +64,24 @@ export const useGroupIssuesDragNDrop = (
     };
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
     const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
+    const stateKey = ISSUE_FILTER_DEFAULT_DATA["state"];
 
     const isModuleChanged = Object.keys(data).includes(moduleKey);
     const isCycleChanged = Object.keys(data).includes(cycleKey);
+    const isStateChanged = Object.keys(data).includes(stateKey);
+
+    if (isStateChanged) {
+      const result = askConfirmation ? await askConfirmation() : window.confirm("Are you sure you want to change the status of this ticket?");
+      if (!result) return;
+      
+      const note = typeof result === "string" ? result : undefined;
+      if (note && workspaceSlug) {
+        await createComment(workspaceSlug.toString(), projectId, issueId, {
+          comment_html: `<p>${note}</p>`,
+          comment_stripped: note,
+        }).catch((err) => console.error("Failed to post comment for state change", err));
+      }
+    }
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {

@@ -213,7 +213,7 @@ def sanitize_html(html_content):
 
 def get_target_state(project_id):
     """
-    Look up the 'Awaiting Vendor' state for the project.
+    Look up the 'Waiting for Support' state for the project.
     Falls back to the project's default state, then any non-triage state.
     """
     from django.db.models import Q
@@ -222,15 +222,15 @@ def get_target_state(project_id):
     state = State.objects.filter(
         ~Q(is_triage=True),
         project_id=project_id,
-        name="Awaiting Vendor",
+        name="Waiting for Support",
     ).first()
 
     if state:
-        logger.info("Using state 'Awaiting Vendor' (id=%s)", state.id)
+        logger.info("Using state 'Waiting for Support' (id=%s)", state.id)
         return state
 
     logger.warning(
-        "State 'Awaiting Vendor' not found in project %s. "
+        "State 'Waiting for Support' not found in project %s. "
         "Falling back to project default state.",
         project_id,
     )

@@ -172,7 +172,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 embedIssue={embedIssue}
               />
               {/* content */}
-              <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">
+              <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-auto">
                 {["side-peek", "modal"].includes(peekMode) ? (
                   <div className="relative flex flex-col gap-3 space-y-3 px-8 py-5">
                     <PeekOverviewIssueDetails

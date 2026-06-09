@@ -1,0 +1,522 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides", "pnpm.onlyBuiltDependencies". See https://pnpm.io/settings for the new home of each setting.
+• turbo 2.9.4
+
+   • Packages in scope: web
+   • Running build in 1 packages
+   • Remote caching disabled
+
+@plane/hooks:build: cache hit, replaying logs 48d7f54e49273a41
+@plane/hooks:build: 
+@plane/hooks:build: 
+@plane/hooks:build: > @plane/hooks@1.3.1 build /home/adminakashb/Plane/packages/hooks
+@plane/hooks:build: > tsdown
+@plane/hooks:build: 
+@plane/hooks:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/hooks:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/hooks/tsdown.config.ts
+@plane/hooks:build: ℹ entry: src/index.ts
+@plane/hooks:build: ℹ tsconfig: tsconfig.json
+@plane/hooks:build: ℹ Build start
+@plane/hooks:build: ℹ Cleaning 4 files
+@plane/hooks:build: ℹ dist/index.js         5.37 kB │ gzip: 1.82 kB
+@plane/hooks:build: ℹ dist/index.js.map    10.46 kB │ gzip: 3.46 kB
+@plane/hooks:build: ℹ dist/index.d.ts.map   0.53 kB │ gzip: 0.33 kB
+@plane/hooks:build: ℹ dist/index.d.ts       1.52 kB │ gzip: 0.68 kB
+@plane/hooks:build: ℹ 4 files, total: 17.88 kB
+@plane/hooks:build: ✔ Build complete in 8493ms
+@plane/types:build: cache hit, replaying logs d69b36398f4e22de
+@plane/types:build: 
+@plane/types:build: 
+@plane/types:build: > @plane/types@1.3.1 build /home/adminakashb/Plane/packages/types
+@plane/types:build: > tsdown
+@plane/types:build: 
+@plane/types:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/types:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/types/tsdown.config.ts
+@plane/types:build: ℹ entry: src/index.ts
+@plane/types:build: ℹ tsconfig: tsconfig.json
+@plane/types:build: ℹ Build start
+@plane/types:build: ℹ Cleaning 4 files
+@plane/types:build: ℹ dist/index.mjs         15.15 kB │ gzip:  3.33 kB
+@plane/types:build: ℹ dist/index.d.mts.map   88.89 kB │ gzip: 28.87 kB
+@plane/types:build: ℹ dist/index.mjs.map     59.15 kB │ gzip: 12.79 kB
+@plane/types:build: ℹ dist/index.d.mts      138.63 kB │ gzip: 28.16 kB
+@plane/types:build: ℹ 4 files, total: 301.82 kB
+@plane/types:build: ✔ Build complete in 9518ms
+@plane/i18n:build: cache hit, replaying logs ee6eb1216907f112
+@plane/i18n:build: 
+@plane/i18n:build: 
+@plane/i18n:build: > @plane/i18n@1.3.1 build /home/adminakashb/Plane/packages/i18n
+@plane/i18n:build: > pnpm run generate:types && tsdown
+@plane/i18n:build: 
+@plane/i18n:build: 
+@plane/i18n:build: > @plane/i18n@1.3.1 generate:types /home/adminakashb/Plane/packages/i18n
+@plane/i18n:build: > tsx scripts/generate-types.ts
+@plane/i18n:build: 
+@plane/i18n:build: Generated 3839 keys from 28 namespace files
+@plane/i18n:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/i18n:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/i18n/tsdown.config.ts
+@plane/i18n:build: ℹ entry: src/index.ts
+@plane/i18n:build: ℹ tsconfig: tsconfig.json
+@plane/i18n:build: ℹ Build start
+@plane/i18n:build: ℹ Cleaning 4 files
+@plane/i18n:build: ℹ dist/index.js          4.72 kB │ gzip:  1.90 kB
+@plane/i18n:build: ℹ dist/index.js.map     10.56 kB │ gzip:  3.75 kB
+@plane/i18n:build: ℹ dist/index.d.ts.map    0.71 kB │ gzip:  0.42 kB
+@plane/i18n:build: ℹ dist/index.d.ts      175.97 kB │ gzip: 23.63 kB
+@plane/i18n:build: ℹ 4 files, total: 191.95 kB
+@plane/i18n:build: ✔ Build complete in 8363ms
+@plane/constants:build: cache hit, replaying logs a0c378796ffe2de4
+@plane/constants:build: 
+@plane/constants:build: 
+@plane/constants:build: > @plane/constants@1.3.1 build /home/adminakashb/Plane/packages/constants
+@plane/constants:build: > tsdown
+@plane/constants:build: 
+@plane/constants:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/constants:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/constants/tsdown.config.ts
+@plane/constants:build: ℹ entry: src/index.ts
+@plane/constants:build: ℹ tsconfig: tsconfig.json
+@plane/constants:build: ℹ Build start
+@plane/constants:build: ℹ Cleaning 4 files
+@plane/constants:build: ℹ dist/index.mjs        112.93 kB │ gzip: 22.91 kB
+@plane/constants:build: ℹ dist/index.mjs.map    172.90 kB │ gzip: 31.07 kB
+@plane/constants:build: ℹ dist/index.d.mts.map   25.63 kB │ gzip:  9.34 kB
+@plane/constants:build: ℹ dist/index.d.mts       58.48 kB │ gzip: 12.50 kB
+@plane/constants:build: ℹ 4 files, total: 369.94 kB
+@plane/constants:build: ✔ Build complete in 4374ms
+@plane/services:build: cache hit, replaying logs ba90d99d5f1a6e2b
+@plane/services:build: 
+@plane/services:build: 
+@plane/services:build: > @plane/services@1.3.1 build /home/adminakashb/Plane/packages/services
+@plane/services:build: > tsdown
+@plane/services:build: 
+@plane/services:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/services:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/services/tsdown.config.ts
+@plane/services:build: ℹ entry: src/index.ts
+@plane/services:build: ℹ tsconfig: tsconfig.json
+@plane/services:build: ℹ Build start
+@plane/services:build: ℹ Cleaning 4 files
+@plane/services:build: ℹ dist/index.js         92.93 kB │ gzip: 11.06 kB
+@plane/services:build: ℹ dist/index.js.map    147.88 kB │ gzip: 17.73 kB
+@plane/utils:build: cache hit, replaying logs 506a5a5c683ebf92
+@plane/services:build: ℹ dist/index.d.ts.map   19.79 kB │ gzip:  5.43 kB
+@plane/services:build: ℹ dist/index.d.ts       70.26 kB │ gzip:  9.05 kB
+@plane/services:build: ℹ 4 files, total: 330.86 kB
+@plane/services:build: ✔ Build complete in 5268ms
+@plane/utils:build: 
+@plane/utils:build: 
+@plane/utils:build: > @plane/utils@1.3.1 build /home/adminakashb/Plane/packages/utils
+@plane/utils:build: > tsdown
+@plane/utils:build: 
+@plane/utils:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/utils:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/utils/tsdown.config.ts
+@plane/utils:build: ℹ entry: src/index.ts
+@plane/utils:build: ℹ tsconfig: tsconfig.json
+@plane/utils:build: ℹ Build start
+@plane/utils:build: ℹ Cleaning 4 files
+@plane/utils:build: ℹ dist/index.js        212.76 kB │ gzip: 54.35 kB
+@plane/utils:build: ℹ dist/index.js.map    385.45 kB │ gzip: 87.77 kB
+@plane/utils:build: ℹ dist/index.d.ts.map   39.15 kB │ gzip: 13.22 kB
+@plane/utils:build: ℹ dist/index.d.ts      114.53 kB │ gzip: 26.96 kB
+@plane/utils:build: ℹ 4 files, total: 751.88 kB
+@plane/utils:build: ✔ Build complete in 9966ms
+@plane/shared-state:build: cache hit, replaying logs bfb6b163bb6f7c6e
+@plane/shared-state:build: 
+@plane/shared-state:build: 
+@plane/shared-state:build: > @plane/shared-state@1.3.1 build /home/adminakashb/Plane/packages/shared-state
+@plane/shared-state:build: > tsdown
+@plane/shared-state:build: 
+@plane/shared-state:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/shared-state:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/shared-state/tsdown.config.ts
+@plane/shared-state:build: ℹ entry: src/index.ts
+@plane/shared-state:build: ℹ tsconfig: tsconfig.json
+@plane/shared-state:build: ℹ Build start
+@plane/shared-state:build: ℹ Cleaning 4 files
+@plane/shared-state:build: ℹ dist/index.js        38.90 kB │ gzip:  8.19 kB
+@plane/shared-state:build: ℹ dist/index.js.map    81.28 kB │ gzip: 17.06 kB
+@plane/shared-state:build: ℹ dist/index.d.ts.map   8.50 kB │ gzip:  3.31 kB
+@plane/shared-state:build: ℹ dist/index.d.ts      21.30 kB │ gzip:  4.29 kB
+@plane/shared-state:build: ℹ 4 files, total: 149.98 kB
+@plane/shared-state:build: ✔ Build complete in 8266ms
+@plane/propel:build: cache hit, replaying logs 65248666b73e6919
+@plane/propel:build: 
+@plane/propel:build: 
+@plane/propel:build: > @plane/propel@1.3.1 build /home/adminakashb/Plane/packages/propel
+@plane/propel:build: > tsdown
+@plane/propel:build: 
+@plane/propel:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/propel:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/propel/tsdown.config.ts
+@plane/propel:build: ℹ entry: src/accordion/index.ts, src/animated-counter/index.ts, src/avatar/index.ts, src/badge/index.ts, src/banner/index.ts, src/button/index.ts, src/calendar/index.ts, src/card/index.ts, src/collapsible/index.ts, src/combobox/index.ts, src/command/index.ts, src/context-menu/index.ts, src/dialog/index.ts, src/emoji-icon-picker/index.ts, src/emoji-reaction/index.ts, src/empty-state/index.ts, src/icon-button/index.ts, src/icons/index.ts, src/input/index.ts, src/menu/index.ts, src/pill/index.ts, src/popover/index.ts, src/portal/index.ts, src/scrollarea/index.ts, src/skeleton/index.ts, src/switch/index.ts, src/tab-navigation/index.ts, src/table/index.ts, src/tabs/index.ts, src/toast/index.ts, src/toolbar/index.ts, src/tooltip/index.ts, src/utils/index.ts, src/charts/area-chart/index.ts, src/charts/bar-chart/index.ts, src/charts/line-chart/index.ts, src/charts/pie-chart/index.ts, src/charts/radar-chart/index.ts, src/charts/tree-map/index.ts, src/charts/scatter-chart/index.ts
+@plane/propel:build: ℹ tsconfig: tsconfig.json
+@plane/propel:build: ℹ Build start
+@plane/propel:build: ℹ Cleaning 234 files
+@plane/propel:build: ℹ dist/empty-state/index.js                 742.48 kB │ gzip: 212.21 kB
+@plane/propel:build: ℹ dist/toast/index.js                        11.01 kB │ gzip:   2.70 kB
+@plane/propel:build: ℹ dist/charts/bar-chart/index.js              9.45 kB │ gzip:   3.08 kB
+@plane/propel:build: ℹ dist/charts/tree-map/index.js               8.94 kB │ gzip:   2.65 kB
+@plane/propel:build: ℹ dist/icons/index.js                         6.32 kB │ gzip:   1.92 kB
+@plane/propel:build: ℹ dist/portal/index.js                        5.96 kB │ gzip:   2.04 kB
+@plane/propel:build: ℹ dist/charts/pie-chart/index.js              5.79 kB │ gzip:   1.91 kB
+@plane/propel:build: ℹ dist/menu/index.js                          5.64 kB │ gzip:   1.85 kB
+@plane/propel:build: ℹ dist/emoji-reaction/index.js                5.36 kB │ gzip:   1.85 kB
+@plane/propel:build: ℹ dist/charts/area-chart/index.js             5.06 kB │ gzip:   1.81 kB
+@plane/propel:build: ℹ dist/combobox/index.js                      4.85 kB │ gzip:   1.71 kB
+@plane/propel:build: ℹ dist/charts/line-chart/index.js             4.35 kB │ gzip:   1.58 kB
+@plane/propel:build: ℹ dist/charts/scatter-chart/index.js          4.09 kB │ gzip:   1.45 kB
+@plane/propel:build: ℹ dist/toolbar/index.js                       3.90 kB │ gzip:   1.32 kB
+@plane/propel:build: ℹ dist/context-menu/index.js                  3.53 kB │ gzip:   1.03 kB
+@plane/propel:build: ℹ dist/banner/index.js                        3.28 kB │ gzip:   1.23 kB
+@plane/propel:build: ℹ dist/dialog/index.js                        3.18 kB │ gzip:   1.01 kB
+@plane/propel:build: ℹ dist/scrollarea/index.js                    2.81 kB │ gzip:   0.96 kB
+@plane/propel:build: ℹ dist/tabs/index.js                          2.72 kB │ gzip:   1.01 kB
+@plane/propel:build: ℹ dist/charts/radar-chart/index.js            2.68 kB │ gzip:   1.08 kB
+@plane/propel:build: ℹ dist/avatar/index.js                        2.60 kB │ gzip:   0.99 kB
+@plane/propel:build: ℹ dist/table/index.js                         2.57 kB │ gzip:   0.73 kB
+@plane/propel:build: ℹ dist/pill/index.js                          2.22 kB │ gzip:   0.92 kB
+@plane/propel:build: ℹ dist/accordion/index.js                     2.17 kB │ gzip:   0.84 kB
+@plane/propel:build: ℹ dist/collapsible/index.js                   2.02 kB │ gzip:   0.80 kB
+@plane/propel:build: ℹ dist/badge/index.js                         1.97 kB │ gzip:   0.86 kB
+@plane/propel:build: ℹ dist/command/index.js                       1.68 kB │ gzip:   0.67 kB
+@plane/propel:build: ℹ dist/tab-navigation/index.js                1.60 kB │ gzip:   0.68 kB
+@plane/propel:build: ℹ dist/switch/index.js                        1.46 kB │ gzip:   0.71 kB
+@plane/propel:build: ℹ dist/input/index.js                         1.27 kB │ gzip:   0.66 kB
+@plane/propel:build: ℹ dist/calendar/index.js                      1.20 kB │ gzip:   0.60 kB
+@plane/propel:build: ℹ dist/skeleton/index.js                      0.92 kB │ gzip:   0.46 kB
+@plane/propel:build: ℹ dist/emoji-icon-picker/index.js             0.82 kB │ gzip:   0.39 kB
+@plane/propel:build: ℹ dist/utils/index.js                         0.25 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/icon-button/index.js                   0.23 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/button/index.js                        0.21 kB │ gzip:   0.16 kB
+@plane/propel:build: ℹ dist/card/index.js                          0.20 kB │ gzip:   0.15 kB
+@plane/propel:build: ℹ dist/animated-counter/index.js              0.20 kB │ gzip:   0.15 kB
+@plane/propel:build: ℹ dist/tooltip/index.js                       0.18 kB │ gzip:   0.14 kB
+@plane/propel:build: ℹ dist/popover/index.js                       0.11 kB │ gzip:   0.10 kB
+@plane/propel:build: ℹ dist/empty-state/index.js.map             852.02 kB │ gzip: 216.84 kB
+@plane/propel:build: ℹ dist/icons-CjHlNa-G.js.map                358.35 kB │ gzip:  97.81 kB
+@plane/propel:build: ℹ dist/icons-CjHlNa-G.js                    299.93 kB │ gzip:  91.90 kB
+@plane/propel:build: ℹ dist/emoji-icon-picker-CLktIPia.js.map     56.66 kB │ gzip:  13.13 kB
+@plane/propel:build: ℹ dist/emoji-icon-picker-CLktIPia.js         31.61 kB │ gzip:   8.41 kB
+@plane/propel:build: ℹ dist/charts/bar-chart/index.js.map         18.20 kB │ gzip:   5.72 kB
+@plane/propel:build: ℹ dist/toast/index.js.map                    17.27 kB │ gzip:   4.60 kB
+@plane/propel:build: ℹ dist/index-BjkZK91F.d.ts.map               16.65 kB │ gzip:   2.86 kB
+@plane/propel:build: ℹ dist/charts/tree-map/index.js.map          16.34 kB │ gzip:   4.83 kB
+@plane/propel:build: ℹ dist/charts/pie-chart/index.js.map         10.45 kB │ gzip:   3.35 kB
+@plane/propel:build: ℹ dist/charts/area-chart/index.js.map         9.63 kB │ gzip:   3.19 kB
+@plane/propel:build: ℹ dist/combobox/index.js.map                  9.59 kB │ gzip:   3.13 kB
+@plane/propel:build: ℹ dist/emoji-reaction/index.js.map            9.39 kB │ gzip:   3.10 kB
+@plane/propel:build: ℹ dist/menu/index.js.map                      9.37 kB │ gzip:   3.08 kB
+@plane/propel:build: ℹ dist/portal/index.js.map                    9.04 kB │ gzip:   3.21 kB
+@plane/propel:build: ℹ dist/charts/line-chart/index.js.map         7.93 kB │ gzip:   2.63 kB
+@plane/propel:build: ℹ dist/charts/scatter-chart/index.js.map      7.36 kB │ gzip:   2.41 kB
+@plane/propel:build: ℹ dist/toolbar/index.js.map                   7.04 kB │ gzip:   2.22 kB
+@plane/propel:build: ℹ dist/context-menu/index.js.map              6.99 kB │ gzip:   1.83 kB
+@plane/propel:build: ℹ dist/empty-state/index.d.ts.map             6.74 kB │ gzip:   1.34 kB
+@plane/propel:build: ℹ dist/banner/index.js.map                    6.63 kB │ gzip:   2.47 kB
+@plane/propel:build: ℹ dist/tabs/index.js.map                      6.05 kB │ gzip:   1.74 kB
+@plane/propel:build: ℹ dist/tooltip-qLaX9F1b.js.map                5.65 kB │ gzip:   2.04 kB
+@plane/propel:build: ℹ dist/dialog/index.js.map                    5.59 kB │ gzip:   1.85 kB
+@plane/propel:build: ℹ dist/button-DBRLkWvy.js.map                 5.10 kB │ gzip:   1.74 kB
+@plane/propel:build: ℹ dist/charts/radar-chart/index.js.map        4.74 kB │ gzip:   1.78 kB
+@plane/propel:build: ℹ dist/avatar/index.js.map                    4.72 kB │ gzip:   1.60 kB
+@plane/propel:build: ℹ dist/scrollarea/index.js.map                4.69 kB │ gzip:   1.52 kB
+@plane/propel:build: ℹ dist/table/index.js.map                     4.66 kB │ gzip:   1.21 kB
+@plane/propel:build: ℹ dist/icon-button-XTsUaDV5.js.map            4.53 kB │ gzip:   1.55 kB
+@plane/propel:build: ℹ dist/popover-D5r0Gi_K.js.map                3.94 kB │ gzip:   1.38 kB
+@plane/propel:build: ℹ dist/animated-counter-Cv1l9of0.js.map       3.79 kB │ gzip:   1.41 kB
+@plane/propel:build: ℹ dist/collapsible/index.js.map               3.78 kB │ gzip:   1.41 kB
+@plane/propel:build: ℹ dist/legend-zJDzBE61.js.map                 3.63 kB │ gzip:   1.54 kB
+@plane/propel:build: ℹ dist/accordion/index.js.map                 3.54 kB │ gzip:   1.21 kB
+@plane/propel:build: ℹ dist/tooltip-BM6Uz17B.js.map                3.50 kB │ gzip:   1.37 kB
+@plane/propel:build: ℹ dist/badge/index.js.map                     3.48 kB │ gzip:   1.38 kB
+@plane/propel:build: ℹ dist/tooltip-qLaX9F1b.js                    3.45 kB │ gzip:   1.18 kB
+@plane/propel:build: ℹ dist/pill/index.js.map                      3.30 kB │ gzip:   1.27 kB
+@plane/propel:build: ℹ dist/button-DBRLkWvy.js                     3.16 kB │ gzip:   1.11 kB
+@plane/propel:build: ℹ dist/card-CB1nRuVk.js.map                   3.09 kB │ gzip:   1.23 kB
+@plane/propel:build: ℹ dist/classname-FQIo0Hqe.js.map              2.99 kB │ gzip:   1.21 kB
+@plane/propel:build: ℹ dist/icon-button-XTsUaDV5.js                2.78 kB │ gzip:   0.97 kB
+@plane/propel:build: ℹ dist/placement-5lr8_EF6.js.map              2.56 kB │ gzip:   0.71 kB
+@plane/propel:build: ℹ dist/switch/index.js.map                    2.55 kB │ gzip:   1.07 kB
+@plane/propel:build: ℹ dist/command/index.js.map                   2.33 kB │ gzip:   0.84 kB
+@plane/propel:build: ℹ dist/tab-navigation/index.js.map            2.32 kB │ gzip:   0.93 kB
+@plane/propel:build: ℹ dist/input/index.js.map                     2.17 kB │ gzip:   1.00 kB
+@plane/propel:build: ℹ dist/popover-D5r0Gi_K.js                    2.15 kB │ gzip:   0.73 kB
+@plane/propel:build: ℹ dist/animated-counter-Cv1l9of0.js           2.12 kB │ gzip:   0.81 kB
+@plane/propel:build: ℹ dist/legend-zJDzBE61.js                     1.93 kB │ gzip:   0.92 kB
+@plane/propel:build: ℹ dist/tooltip-BM6Uz17B.js                    1.90 kB │ gzip:   0.85 kB
+@plane/propel:build: ℹ dist/combobox/index.d.ts.map                1.86 kB │ gzip:   0.66 kB
+@plane/propel:build: ℹ dist/card-CB1nRuVk.js                       1.83 kB │ gzip:   0.79 kB
+@plane/propel:build: ℹ dist/calendar/index.js.map                  1.77 kB │ gzip:   0.81 kB
+@plane/propel:build: ℹ dist/toast/index.d.ts.map                   1.73 kB │ gzip:   0.75 kB
+@plane/propel:build: ℹ dist/portal/index.d.ts.map                  1.69 kB │ gzip:   0.67 kB
+@plane/propel:build: ℹ dist/emoji-reaction/index.d.ts.map          1.54 kB │ gzip:   0.58 kB
+@plane/propel:build: ℹ dist/skeleton/index.js.map                  1.49 kB │ gzip:   0.70 kB
+@plane/propel:build: ℹ dist/table/index.d.ts.map                   1.42 kB │ gzip:   0.43 kB
+@plane/propel:build: ℹ dist/icon-wrapper-DICSmd0D.js.map           1.39 kB │ gzip:   0.70 kB
+@plane/propel:build: ℹ dist/emoji-icon-picker/index.d.ts.map       1.36 kB │ gzip:   0.60 kB
+@plane/propel:build: ℹ dist/classname-FQIo0Hqe.js                  1.33 kB │ gzip:   0.63 kB
+@plane/propel:build: ℹ dist/tabs/index.d.ts.map                    1.27 kB │ gzip:   0.45 kB
+@plane/propel:build: ℹ dist/accordion/index.d.ts.map               1.20 kB │ gzip:   0.48 kB
+@plane/propel:build: ℹ dist/close-icon-CixvqMEY.js.map             1.19 kB │ gzip:   0.59 kB
+@plane/propel:build: ℹ dist/toolbar/index.d.ts.map                 1.18 kB │ gzip:   0.50 kB
+@plane/propel:build: ℹ dist/menu/index.d.ts.map                    1.16 kB │ gzip:   0.47 kB
+@plane/propel:build: ℹ dist/context-menu/index.d.ts.map            1.15 kB │ gzip:   0.47 kB
+@plane/propel:build: ℹ dist/placement-5lr8_EF6.js                  1.13 kB │ gzip:   0.36 kB
+@plane/propel:build: ℹ dist/dialog/index.d.ts.map                  1.03 kB │ gzip:   0.47 kB
+@plane/propel:build: ℹ dist/close-icon-CixvqMEY.js                 1.01 kB │ gzip:   0.51 kB
+@plane/propel:build: ℹ dist/chevron-left-E3hjEvLk.js.map           0.99 kB │ gzip:   0.56 kB
+@plane/propel:build: ℹ dist/pill/index.d.ts.map                    0.98 kB │ gzip:   0.45 kB
+@plane/propel:build: ℹ dist/collapsible/index.d.ts.map             0.90 kB │ gzip:   0.43 kB
+@plane/propel:build: ℹ dist/icon-wrapper-DICSmd0D.js               0.86 kB │ gzip:   0.46 kB
+@plane/propel:build: ℹ dist/chevron-left-E3hjEvLk.js               0.81 kB │ gzip:   0.48 kB
+@plane/propel:build: ℹ dist/command/index.d.ts.map                 0.75 kB │ gzip:   0.35 kB
+@plane/propel:build: ℹ dist/icon-button/index.d.ts.map             0.67 kB │ gzip:   0.37 kB
+@plane/propel:build: ℹ dist/card/index.d.ts.map                    0.66 kB │ gzip:   0.36 kB
+@plane/propel:build: ℹ dist/skeleton/index.d.ts.map                0.65 kB │ gzip:   0.32 kB
+@plane/propel:build: ℹ dist/helper-D5XOeJB2.d.ts.map               0.59 kB │ gzip:   0.34 kB
+@plane/propel:build: ℹ dist/badge/index.d.ts.map                   0.57 kB │ gzip:   0.33 kB
+@plane/propel:build: ℹ dist/banner/index.d.ts.map                  0.56 kB │ gzip:   0.31 kB
+@plane/propel:build: ℹ dist/tab-navigation/index.d.ts.map          0.52 kB │ gzip:   0.28 kB
+@plane/propel:build: ℹ dist/scrollarea/index.d.ts.map              0.52 kB │ gzip:   0.29 kB
+@plane/propel:build: ℹ dist/popover/index.d.ts.map                 0.51 kB │ gzip:   0.30 kB
+@plane/propel:build: ℹ dist/switch/index.d.ts.map                  0.43 kB │ gzip:   0.24 kB
+@plane/propel:build: ℹ dist/tooltip/index.d.ts.map                 0.42 kB │ gzip:   0.25 kB
+@plane/propel:build: ℹ dist/avatar/index.d.ts.map                  0.41 kB │ gzip:   0.26 kB
+@plane/propel:build: ℹ dist/placement-B-NUO8sw.d.ts.map            0.35 kB │ gzip:   0.23 kB
+@plane/propel:build: ℹ dist/animated-counter/index.d.ts.map        0.32 kB │ gzip:   0.20 kB
+@plane/propel:build: ℹ dist/input/index.d.ts.map                   0.31 kB │ gzip:   0.21 kB
+@plane/propel:build: ℹ dist/button/index.d.ts.map                  0.27 kB │ gzip:   0.19 kB
+@plane/propel:build: ℹ dist/calendar/index.d.ts.map                0.20 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/charts/scatter-chart/index.d.ts.map    0.20 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/charts/line-chart/index.d.ts.map       0.20 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/charts/area-chart/index.d.ts.map       0.20 kB │ gzip:   0.17 kB
+@plane/propel:build: ℹ dist/charts/bar-chart/index.d.ts.map        0.20 kB │ gzip:   0.16 kB
+@plane/propel:build: ℹ dist/charts/pie-chart/index.d.ts.map        0.20 kB │ gzip:   0.16 kB
+@plane/propel:build: ℹ dist/charts/radar-chart/index.d.ts.map      0.19 kB │ gzip:   0.16 kB
+@plane/propel:build: ℹ dist/charts/tree-map/index.d.ts.map         0.16 kB │ gzip:   0.14 kB
+@plane/propel:build: ℹ dist/utils/index.d.ts.map                   0.14 kB │ gzip:   0.14 kB
+@plane/propel:build: ℹ dist/utils-D4TPpwH7.js                      0.00 kB │ gzip:   0.02 kB
+@plane/propel:build: ℹ dist/empty-state/index.d.ts                14.95 kB │ gzip:   2.08 kB
+@plane/propel:build: ℹ dist/icons/index.d.ts                       6.31 kB │ gzip:   1.89 kB
+@plane/propel:build: ℹ dist/emoji-icon-picker/index.d.ts           3.92 kB │ gzip:   1.34 kB
+@plane/propel:build: ℹ dist/portal/index.d.ts                      3.88 kB │ gzip:   1.34 kB
+@plane/propel:build: ℹ dist/combobox/index.d.ts                    2.32 kB │ gzip:   0.77 kB
+@plane/propel:build: ℹ dist/emoji-reaction/index.d.ts              2.27 kB │ gzip:   0.70 kB
+@plane/propel:build: ℹ dist/tabs/index.d.ts                        2.02 kB │ gzip:   0.44 kB
+@plane/propel:build: ℹ dist/table/index.d.ts                       1.95 kB │ gzip:   0.37 kB
+@plane/propel:build: ℹ dist/context-menu/index.d.ts                1.95 kB │ gzip:   0.53 kB
+@plane/propel:build: ℹ dist/toast/index.d.ts                       1.87 kB │ gzip:   0.65 kB
+@plane/propel:build: ℹ dist/toolbar/index.d.ts                     1.80 kB │ gzip:   0.54 kB
+@plane/propel:build: ℹ dist/menu/index.d.ts                        1.73 kB │ gzip:   0.64 kB
+@plane/propel:build: ℹ dist/badge/index.d.ts                       1.59 kB │ gzip:   0.54 kB
+@plane/propel:build: ℹ dist/accordion/index.d.ts                   1.58 kB │ gzip:   0.48 kB
+@plane/propel:build: ℹ dist/dialog/index.d.ts                      1.38 kB │ gzip:   0.52 kB
+@plane/propel:build: ℹ dist/tab-navigation/index.d.ts              1.32 kB │ gzip:   0.49 kB
+@plane/propel:build: ℹ dist/icon-button/index.d.ts                 1.25 kB │ gzip:   0.55 kB
+@plane/propel:build: ℹ dist/avatar/index.d.ts                      1.25 kB │ gzip:   0.56 kB
+@plane/propel:build: ℹ dist/command/index.d.ts                     1.07 kB │ gzip:   0.34 kB
+@plane/propel:build: ℹ dist/banner/index.d.ts                      1.07 kB │ gzip:   0.50 kB
+@plane/propel:build: ℹ dist/collapsible/index.d.ts                 1.05 kB │ gzip:   0.42 kB
+@plane/propel:build: ℹ dist/pill/index.d.ts                        1.05 kB │ gzip:   0.51 kB
+@plane/propel:build: ℹ dist/button/index.d.ts                      1.04 kB │ gzip:   0.49 kB
+@plane/propel:build: ℹ dist/scrollarea/index.d.ts                  0.97 kB │ gzip:   0.43 kB
+@plane/propel:build: ℹ dist/card/index.d.ts                        0.96 kB │ gzip:   0.45 kB
+@plane/propel:build: ℹ dist/skeleton/index.d.ts                    0.83 kB │ gzip:   0.36 kB
+@plane/propel:build: ℹ dist/popover/index.d.ts                     0.83 kB │ gzip:   0.44 kB
+@plane/propel:build: ℹ dist/tooltip/index.d.ts                     0.72 kB │ gzip:   0.40 kB
+@plane/propel:build: ℹ dist/switch/index.d.ts                      0.56 kB │ gzip:   0.33 kB
+@plane/propel:build: ℹ dist/calendar/index.d.ts                    0.49 kB │ gzip:   0.30 kB
+@plane/propel:build: ℹ dist/utils/index.d.ts                       0.45 kB │ gzip:   0.28 kB
+@plane/propel:build: ℹ dist/input/index.d.ts                       0.45 kB │ gzip:   0.29 kB
+@plane/propel:build: ℹ dist/animated-counter/index.d.ts            0.44 kB │ gzip:   0.26 kB
+@plane/propel:build: ℹ dist/charts/scatter-chart/index.d.ts        0.42 kB │ gzip:   0.27 kB
+@plane/propel:build: ℹ dist/charts/area-chart/index.d.ts           0.40 kB │ gzip:   0.27 kB
+@plane/propel:build: ℹ dist/charts/line-chart/index.d.ts           0.40 kB │ gzip:   0.27 kB
+@plane/propel:build: ℹ dist/charts/bar-chart/index.d.ts            0.40 kB │ gzip:   0.27 kB
+@plane/propel:build: ℹ dist/charts/pie-chart/index.d.ts            0.40 kB │ gzip:   0.26 kB
+@plane/propel:build: ℹ dist/charts/radar-chart/index.d.ts          0.35 kB │ gzip:   0.24 kB
+@plane/propel:build: ℹ dist/charts/tree-map/index.d.ts             0.27 kB │ gzip:   0.19 kB
+@plane/propel:build: ℹ dist/index-BjkZK91F.d.ts                   37.04 kB │ gzip:   5.22 kB
+@plane/propel:build: ℹ dist/helper-D5XOeJB2.d.ts                   1.01 kB │ gzip:   0.50 kB
+@plane/propel:build: ℹ dist/placement-B-NUO8sw.d.ts                0.59 kB │ gzip:   0.29 kB
+@plane/propel:build: ℹ 187 files, total: 2891.70 kB
+@plane/propel:build: ✔ Build complete in 19390ms
+@plane/ui:build: cache hit, replaying logs 08e713dd3ef0a582
+@plane/ui:build: 
+@plane/ui:build: 
+@plane/ui:build: > @plane/ui@1.3.1 build /home/adminakashb/Plane/packages/ui
+@plane/ui:build: > tsdown
+@plane/ui:build: 
+@plane/ui:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/ui:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/ui/tsdown.config.ts
+@plane/ui:build: ℹ entry: src/index.ts
+@plane/ui:build: ℹ tsconfig: tsconfig.json
+@plane/ui:build: ℹ Build start
+@plane/ui:build: ℹ Cleaning 4 files
+@plane/ui:build: ℹ dist/index.js        148.47 kB │ gzip: 31.48 kB
+@plane/ui:build: ℹ dist/index.js.map    276.06 kB │ gzip: 59.21 kB
+@plane/ui:build: ℹ dist/index.d.ts.map   18.37 kB │ gzip:  5.76 kB
+@plane/ui:build: ℹ dist/index.d.ts       37.77 kB │ gzip:  7.62 kB
+@plane/ui:build: ℹ 4 files, total: 480.67 kB
+@plane/ui:build: ✔ Build complete in 10666ms
+@plane/editor:build: cache hit, replaying logs 0362692432053a88
+@plane/editor:build: 
+@plane/editor:build: 
+@plane/editor:build: > @plane/editor@1.3.1 build /home/adminakashb/Plane/packages/editor
+@plane/editor:build: > tsc && tsdown
+@plane/editor:build: 
+@plane/editor:build: ℹ tsdown v0.16.0 powered by rolldown v1.0.0-beta.46
+@plane/editor:build: ℹ Using tsdown config: /home/adminakashb/Plane/packages/editor/tsdown.config.ts
+@plane/editor:build: ℹ entry: src/index.ts, src/lib.ts
+@plane/editor:build: ℹ tsconfig: tsconfig.json
+@plane/editor:build: ℹ Build start
+@plane/editor:build: ℹ Cleaning 20 files
+@plane/editor:build: ℹ dist/index.js                                       197.48 kB │ gzip: 44.50 kB
+@plane/editor:build: ℹ dist/lib.js                                           2.52 kB │ gzip:  0.73 kB
+@plane/editor:build: ℹ dist/document-collaborative-events-B7231O2w.js.map  429.03 kB │ gzip: 92.02 kB
+@plane/editor:build: ℹ dist/index.js.map                                   414.23 kB │ gzip: 93.79 kB
+@plane/editor:build: ℹ dist/document-collaborative-events-B7231O2w.js      204.52 kB │ gzip: 45.09 kB
+@plane/editor:build: ℹ dist/yjs-utils-hI6IiiR4.d.ts.map                     12.15 kB │ gzip:  4.60 kB
+@plane/editor:build: ℹ dist/lib.js.map                                       4.48 kB │ gzip:  1.21 kB
+@plane/editor:build: ℹ dist/index.d.ts.map                                   1.62 kB │ gzip:  0.75 kB
+@plane/editor:build: ℹ dist/lib.d.ts.map                                     0.16 kB │ gzip:  0.15 kB
+@plane/editor:build: ℹ dist/index.d.ts                                       8.64 kB │ gzip:  2.54 kB
+@plane/editor:build: ℹ dist/lib.d.ts                                         2.43 kB │ gzip:  0.78 kB
+@plane/editor:build: ℹ dist/yjs-utils-hI6IiiR4.d.ts                         30.26 kB │ gzip:  7.77 kB
+@plane/editor:build: ℹ 12 files, total: 1307.51 kB
+@plane/editor:build: ✔ Build complete in 9506ms
+web:build: cache miss, executing bc16d3a75f63b398
+web:build: 
+web:build: > web@1.3.1 build /home/adminakashb/Plane/apps/web
+web:build: > react-router build
+web:build: 
+web:build: (node:2262845) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/adminakashb/Plane/packages/tailwind-config/postcss.config.js is not specified and it doesn't parse as CommonJS.
+web:build: Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+web:build: To eliminate this warning, add "type": "module" to /home/adminakashb/Plane/packages/tailwind-config/package.json.
+web:build: (Use `node --trace-warnings ...` to show where the warning was created)
+web:build: vite v7.3.2 building client environment for production...
+web:build: transforming...
+web:build: app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/header.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+web:build: core/components/support-tickets/ticket-table.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+web:build: core/components/support-tickets/create-ticket-modal.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+web:build: core/components/navigation/app-rail-root.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+web:build: ✓ 8259 modules transformed.
+web:build: ✗ Build failed in 31.49s
+web:build: Could not resolve "../../../confirm-state-change-modal" from "core/components/issues/issue-layouts/kanban/base-kanban-root.tsx"
+web:build: file: /home/adminakashb/Plane/apps/web/core/components/issues/issue-layouts/kanban/base-kanban-root.tsx
+web:build:     at getRollupError (file:///home/adminakashb/Plane/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+web:build:     at error (file:///home/adminakashb/Plane/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/es/shared/parseAst.js:398:42)
+web:build:     at ModuleLoader.handleInvalidResolvedId (file:///home/adminakashb/Plane/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/es/shared/node-entry.js:21710:24)
+web:build:     at file:///home/adminakashb/Plane/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/es/shared/node-entry.js:21670:26 {
+web:build:   code: 'UNRESOLVED_IMPORT',
+web:build:   exporter: '../../../confirm-state-change-modal',
+web:build:   id: '/home/adminakashb/Plane/apps/web/core/components/issues/issue-layouts/kanban/base-kanban-root.tsx',
+web:build:   watchFiles: [
+web:build:     '/home/adminakashb/Plane/apps/web/app/entry.client.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/root.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(home)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/forgot-password/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(home)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/sign-up/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/sign-up/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/reset-password/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/forgot-password/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/reset-password/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/set-password/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/accounts/set-password/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/create-workspace/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/create-workspace/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/onboarding/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/onboarding/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/invitations/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/invitations/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/workspace-invitations/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/workspace-invitations/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/active-cycles/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/active-cycles/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/analytics/[tabId]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/analytics/[tabId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/browse/[workItem]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/drafts/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/drafts/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/browse/[workItem]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/notifications/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/notifications/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/profile/[userId]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/profile/[userId]/activity/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/profile/[userId]/[profileViewId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/profile/[userId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/stickies/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/stickies/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/workspace-views/[globalViewId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/issues/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/issues/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/issues/(detail)/[issueId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/cycles/(detail)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/cycles/(detail)/[cycleId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/cycles/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/cycles/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/modules/(detail)/[moduleId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/modules/(detail)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/modules/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/modules/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/views/(detail)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/views/(detail)/[viewId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/views/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(detail)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/views/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(detail)/[pageId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/issues/(list)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/issues/(list)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/issues/(detail)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/cycles/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/issues/(detail)/[archivedIssueId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/cycles/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/modules/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/archives/modules/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/members/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/billing/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/exports/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/time-reports/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/layout.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/members/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/modules/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/views/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/pages/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/states/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/labels/page.tsx',
+web:build:     '/home/adminakashb/Plane/apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/estimates/page.tsx',
+web:build:     ... 8440 more items
+web:build:   ]
+web:build: }
+web:build:  ELIFECYCLE  Command failed with exit code 1.
+ ERROR  web#build: command (/home/adminakashb/Plane/apps/web) /home/adminakashb/.local/share/pnpm/store/v11/links/@/pnpm/10.32.1/d4f11677fa14fe912ce75371e68bd6d3873373755af4731eb64bdadf42a30ea0/bin/pnpm run build exited (1)
+
+ Tasks:    10 successful, 11 total
+Cached:    10 cached, 11 total
+  Time:    36.081s 
+Failed:    web#build
+
+ ERROR  run failed: command  exited (1)
