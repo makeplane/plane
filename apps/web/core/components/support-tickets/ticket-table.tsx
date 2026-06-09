@@ -324,7 +324,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
       </div>
 
       <div className="h-full w-full overflow-auto">
-        <table className="w-full min-w-[1100px] table-fixed border-collapse">
+        <table className="w-full min-w-[1200px] table-fixed border-collapse">
           <thead>
             <tr className="border-b border-subtle bg-layer-1">
               <th className="text-xs tracking-wider w-[170px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
@@ -405,7 +405,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
               </th>
 
               {/* Status Header with Dropdown */}
-              <th className="text-xs tracking-wider relative w-[125px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+              <th className="text-xs tracking-wider relative w-[200px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
                 <div className="flex items-center justify-between gap-1">
                   <span>Status</span>
                   <button

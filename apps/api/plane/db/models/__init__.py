@@ -90,3 +90,5 @@ from .description import Description, DescriptionVersion
 from .support_ticket import SupportTicket
 
 from .timer import IssueTimer, IssueTimerSegment
+
+from .email_ingest import EmailIngestLog

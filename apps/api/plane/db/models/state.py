@@ -19,11 +19,17 @@ class StateGroup(models.TextChoices):
 # Default states
 DEFAULT_STATES = [
     {
+        "name": "Waiting for Support",
+        "color": "#60646C",
+        "sequence": 10000,
+        "group": StateGroup.BACKLOG.value,
+        "default": True,
+    },
+    {
         "name": "Backlog",
         "color": "#60646C",
         "sequence": 15000,
         "group": StateGroup.BACKLOG.value,
-        "default": True,
     },
     {
         "name": "Todo",

@@ -145,6 +145,8 @@ class ActiveTimerSerializer(serializers.ModelSerializer):
             "user_avatar_url",
             "total_duration_seconds",
             "last_segment_start",
+            "is_running",
+            "is_paused",
         ]
         read_only_fields = fields
 

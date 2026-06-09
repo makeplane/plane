@@ -73,3 +73,5 @@ drf-spectacular==0.28.0
 nh3==0.2.18
 # microsoft auth (OAuth2 IMAP for M365)
 msal==1.36.0
+# http client (Graph API email ingestion)
+requests==2.33.0

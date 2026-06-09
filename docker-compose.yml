@@ -96,6 +96,22 @@ services:
       - plane-db
       - plane-redis
 
+  email-ingester:
+    container_name: email-ingester
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: python manage.py ingest_emails --verbosity=2
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
   live:
     container_name: plane-live
     build:

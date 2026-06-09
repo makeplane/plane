@@ -85,6 +85,25 @@ services:
     ports:
       - "8000:8000"
 
+  email-ingester:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/api:/code
+    command: python manage.py ingest_emails --verbosity=2
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
   worker:
     build:
       context: ./apps/api

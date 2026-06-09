@@ -192,11 +192,32 @@ export const MyTimeWidget = observer(({ workspaceSlug }: Props) => {
   }, [timers]);
 
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
+  const [pendingTimer, setPendingTimer] = useState<TIssueTimerAdmin | null>(null);
+  const [pendingAction, setPendingAction] = useState<"pause" | "stop" | null>(null);
+  const [stopNote, setStopNote] = useState("");
 
-  const handleAction = async (timer: TIssueTimerAdmin, action: "pause" | "resume" | "stop") => {
+  const handleActionClick = (timer: TIssueTimerAdmin, action: "pause" | "resume" | "stop") => {
+    if (action === "pause" || action === "stop") {
+      setPendingTimer(timer);
+      setPendingAction(action);
+      setStopNote("");
+    } else {
+      handleAction(timer, action);
+    }
+  };
+
+  const handleConfirmAction = () => {
+    if (pendingTimer && pendingAction) {
+      handleAction(pendingTimer, pendingAction, stopNote);
+    }
+    setPendingTimer(null);
+    setPendingAction(null);
+  };
+
+  const handleAction = async (timer: TIssueTimerAdmin, action: "pause" | "resume" | "stop", note?: string) => {
     setIsActionLoading(timer.id);
     try {
-      const updatedTimer = await timerService.actionTimer(workspaceSlug, timer.project_id, timer.issue_id, action);
+      const updatedTimer = await timerService.actionTimer(workspaceSlug, timer.project_id, timer.issue_id, action, note);
       
       // Optimistic update to show real-time pause/play without refreshing
       mutate((currentTimers: any) => {
@@ -255,9 +276,10 @@ export const MyTimeWidget = observer(({ workspaceSlug }: Props) => {
                       {formatTime(getLiveDuration(t))}
                     </div>
                     <div className="flex items-center gap-1">
+                      {/* USER REQUEST: Hide Pause button for now, can be unhidden later
                       {t.is_paused ? (
                         <button
-                          onClick={() => handleAction(t, "resume")}
+                          onClick={() => handleActionClick(t, "resume")}
                           disabled={isActionLoading === t.id}
                           className="p-1.5 text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-100 rounded transition-colors disabled:opacity-50"
                           title="Resume"
@@ -266,7 +288,7 @@ export const MyTimeWidget = observer(({ workspaceSlug }: Props) => {
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleAction(t, "pause")}
+                          onClick={() => handleActionClick(t, "pause")}
                           disabled={isActionLoading === t.id}
                           className="p-1.5 text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-100 rounded transition-colors disabled:opacity-50"
                           title="Pause"
@@ -274,8 +296,9 @@ export const MyTimeWidget = observer(({ workspaceSlug }: Props) => {
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                         </button>
                       )}
+                      */}
                       <button
-                        onClick={() => handleAction(t, "stop")}
+                        onClick={() => handleActionClick(t, "stop")}
                         disabled={isActionLoading === t.id}
                         className="p-1.5 text-custom-text-300 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors disabled:opacity-50"
                         title="Stop"
@@ -387,6 +410,44 @@ export const MyTimeWidget = observer(({ workspaceSlug }: Props) => {
         <div className="flex items-center justify-between border-t border-custom-border-200 px-6 py-4 bg-custom-background-100 flex-shrink-0">
           <span className="text-sm font-medium text-custom-text-300">Grand Total</span>
           <span className="text-lg font-bold font-mono text-custom-text-100">{formatTime(grandTotal)}</span>
+        </div>
+      </ModalCore>
+
+      {/* Note Prompt Modal for Pause/Stop */}
+      <ModalCore
+        isOpen={!!pendingTimer}
+        handleClose={() => { setPendingTimer(null); setPendingAction(null); setStopNote(""); }}
+      >
+        <div className="flex flex-col gap-4 p-5">
+          <h3 className="text-lg font-medium text-custom-text-100">
+            {pendingAction === "pause" ? "Pause Timer" : "Stop Timer"}
+          </h3>
+          <p className="text-sm text-custom-text-200">
+            Please add a note before {pendingAction === "pause" ? "pausing" : "stopping"} the timer for <strong>{pendingTimer?.issue_name}</strong>.
+          </p>
+          <input
+            type="text"
+            value={stopNote}
+            onChange={(e) => setStopNote(e.target.value)}
+            className="w-full rounded-md border border-custom-border-200 bg-custom-background-90 px-3 py-2 text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 focus:outline-none"
+            placeholder="What did you work on?"
+            autoFocus
+          />
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              onClick={() => { setPendingTimer(null); setPendingAction(null); setStopNote(""); }}
+              className="px-3 py-1.5 text-sm font-medium text-custom-text-200 bg-custom-background-90 border border-custom-border-200 hover:bg-custom-background-80 rounded transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmAction}
+              disabled={stopNote.trim().length === 0}
+              className="px-3 py-1.5 text-sm font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {pendingAction === "pause" ? "Pause" : "Stop"} & Save
+            </button>
+          </div>
         </div>
       </ModalCore>
     </>

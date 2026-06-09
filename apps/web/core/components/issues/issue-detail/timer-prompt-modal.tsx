@@ -40,6 +40,7 @@ export const TimerPromptModal = ({ workspaceSlug, projectId, issueId, onDecide, 
     const myTimers = activeTimers.filter((t: any) => t.user_id === currentUser.id);
     
     if (myTimers.some((t: any) => t.issue_id === issueId && t.is_running === true && t.is_paused === false)) {
+      setIsOpen(false);
       setHasDecided(true);
       onDecide();
       return;
@@ -57,9 +58,25 @@ export const TimerPromptModal = ({ workspaceSlug, projectId, issueId, onDecide, 
     if (e) { e.preventDefault(); e.stopPropagation(); }
     setIsSubmitting(true);
     try {
-      await timerService.actionTimer(workspaceSlug, projectId, issueId, "start");
-      // Instantly mutate the TimerBar's SWR cache to remove the 10-20s delay
-      mutate(`ACTIVE_TIMERS_${workspaceSlug}`);
+      const updatedTimer = await timerService.actionTimer(workspaceSlug, projectId, issueId, "start");
+      // Instantly mutate the global SWR cache with the running timer to remove the 10-20s delay
+      const activeTimerObj = {
+        issue_id: issueId,
+        user_id: currentUser?.id,
+        user_display_name: currentUser?.display_name || currentUser?.email || "You",
+        is_running: true,
+        is_paused: false,
+      };
+      mutate(
+        `WORKSPACE_ACTIVE_TIMERS_${workspaceSlug}`,
+        (current: any) => {
+          if (Array.isArray(current)) {
+            return [...current.filter((t: any) => !(t.user_id === currentUser?.id && t.issue_id === issueId)), activeTimerObj];
+          }
+          return [activeTimerObj];
+        },
+        { revalidate: true }
+      );
       if (onStart) onStart(currentUser?.id);
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -120,7 +137,7 @@ export const TimerPromptModal = ({ workspaceSlug, projectId, issueId, onDecide, 
             type="button"
             onClick={(e) => handleStartTimer(e)}
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-custom-primary-100 hover:bg-custom-primary-200 transition-colors disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 transition-colors disabled:opacity-50"
           >
             {isSubmitting ? "Starting..." : "Start Timer"}
           </button>

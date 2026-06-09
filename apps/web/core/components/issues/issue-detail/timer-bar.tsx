@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { mutate } from "swr";
 import { observer } from "mobx-react";
 import { Play, Pause, Square, Clock, Plus } from "lucide-react";
 import { useUser } from "@/hooks/store/user";
@@ -67,8 +68,9 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
 
   const initialize = async () => {
     setIsLoading(true);
-    await Promise.all([fetchTimerState(), fetchOtherTimers()]);
+    await fetchTimerState();
     setIsLoading(false);
+    fetchOtherTimers();
   };
 
   // Mount/Unmount logic
@@ -122,7 +124,7 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
   const handleAction = async (action: "start" | "pause" | "resume" | "stop", note?: string) => {
     // Optimistic UI update — immediately reflect state before API returns
     if (action === "start" || action === "resume") {
-      setTimer((prev) => prev ? { ...prev, is_running: true, is_paused: false } : prev);
+      setTimer((prev) => prev ? { ...prev, is_running: true, is_paused: false } : { is_running: true, is_paused: false, computed_duration_seconds: 0, total_duration_seconds: 0 } as any);
     } else if (action === "pause") {
       setTimer((prev) => prev ? { ...prev, is_running: false, is_paused: true } : prev);
     } else if (action === "stop") {
@@ -131,6 +133,26 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
 
     try {
       const updatedTimer = await timerService.actionTimer(workspaceSlug, projectId, issueId, action, note);
+      
+      mutate(
+        `WORKSPACE_ACTIVE_TIMERS_${workspaceSlug}`,
+        (current: any) => {
+          if (!Array.isArray(current)) return current;
+          if (action === "start" || action === "resume") {
+            const activeTimerObj = {
+              issue_id: issueId,
+              user_id: currentUser?.id,
+              user_display_name: currentUser?.display_name || currentUser?.email || "You",
+              is_running: true,
+              is_paused: false,
+            };
+            return [...current.filter((t: any) => !(t.user_id === currentUser?.id && t.issue_id === issueId)), activeTimerObj];
+          } else {
+            return current.filter((t: any) => !(t.user_id === currentUser?.id && t.issue_id === issueId));
+          }
+        },
+        { revalidate: true }
+      );
       
       if (action === "start" && onStart) {
         onStart();
@@ -196,7 +218,14 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-3 py-2.5 px-4 bg-custom-background-90 border border-custom-border-200 rounded-md my-4 animate-pulse">
+        <Clock className="w-4 h-4 text-custom-text-400" />
+        <span className="text-xs text-custom-text-400">Loading timer status...</span>
+      </div>
+    );
+  }
 
   const isRunning = timer?.is_running;
   const isPaused = timer?.is_paused;
@@ -236,13 +265,14 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
                 e.stopPropagation();
                 checkConflictAndExecute("start");
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 rounded transition-colors"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               Start Timer
             </button>
           )}
 
+          {/* USER REQUEST: Hide Pause button for now, can be unhidden later
           {isRunning && (
             <button
               type="button"
@@ -273,6 +303,7 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
               Resume
             </button>
           )}
+          */}
 
           {(isRunning || isPaused) && (
             <button
@@ -288,7 +319,7 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
                   setIsStopNoteOpen(true);
                 }
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-color bg-danger-primary hover:bg-danger-primary-hover rounded transition-colors"
             >
               <Square className="w-3.5 h-3.5 fill-current" />
               Stop
@@ -345,7 +376,7 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
                 setStopNote("");
               }}
               disabled={stopNote.trim().length === 0}
-              className="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-white bg-custom-primary-100 hover:bg-custom-primary-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {pendingTimerAction === "pause" ? "Pause" : "Stop"} & Save
             </button>
@@ -372,7 +403,7 @@ export const TimerBar = observer(({ workspaceSlug, projectId, issueId, issueTitl
           <button
             type="button"
             onClick={async (e) => { e.preventDefault(); e.stopPropagation(); if (pendingAction) await handleAction(pendingAction); setIsConflictModalOpen(false); setPendingAction(null); }}
-            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-custom-primary-100 hover:bg-custom-primary-200 transition-colors"
+            className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 transition-colors"
           >Start Timer</button>
         </div>
       </ModalCore>

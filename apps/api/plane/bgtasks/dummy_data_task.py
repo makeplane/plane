@@ -78,11 +78,17 @@ def create_project_members(workspace, project, members):
 def create_states(workspace, project, user_id):
     states = [
         {
+            "name": "Waiting for Support",
+            "color": "#A3A3A3",
+            "sequence": 10000,
+            "group": "backlog",
+            "default": True,
+        },
+        {
             "name": "Backlog",
             "color": "#A3A3A3",
             "sequence": 15000,
             "group": "backlog",
-            "default": True,
         },
         {"name": "Todo", "color": "#3A3A3A", "sequence": 25000, "group": "unstarted"},
         {

@@ -252,7 +252,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
               type="button"
               onClick={(e) => handleStopTimerAndSave(e)}
               disabled={isStoppingTimer}
-              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-white bg-custom-primary-100 hover:bg-custom-primary-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-on-color bg-accent-primary hover:bg-accent-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isStoppingTimer ? "Saving..." : "Stop Timer & Save Note"}
             </button>
