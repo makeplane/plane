@@ -62,6 +62,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const projectSport = projectDetails?.sport?.trim() || null;
+  const issueSport = issue.sport?.trim() || null;
+  const shouldShowSportField = !!projectSport || !!issueSport;
 
   const minDate = new Date();
   minDate?.setDate(minDate.getDate());
@@ -258,30 +260,31 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           />
         </div>
 
-        {/* Sport */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Volleyball className="h-4 w-4 flex-shrink-0" />
-            <p>Sport</p>
-          </div>
+        {shouldShowSportField ? (
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Volleyball className="h-4 w-4 flex-shrink-0" />
+              <p>Sport</p>
+            </div>
 
-          <SportDropdown
-            value={issue?.sport}
-            onChange={(sport) => {
-              void handlePropertyUpdate({
-                sport: sport,
-              });
-            }}
-            placeholder={t("add_sport")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={isSportLocked}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
+            <SportDropdown
+              value={issue?.sport}
+              onChange={(sport) => {
+                void handlePropertyUpdate({
+                  sport: sport,
+                });
+              }}
+              placeholder={t("add_sport")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isSportLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
+          </div>
+        ) : null}
 
         {/* Opposition */}
         <div className="flex w-full items-center gap-3 h-8">
