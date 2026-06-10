@@ -64,6 +64,8 @@
 
 /* Custom image styles */
 .ProseMirror img {
+  max-width: 100% !important;
+  height: auto !important;
   margin-top: 0 !important;
   margin-bottom: 0;
 

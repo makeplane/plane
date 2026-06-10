@@ -4,10 +4,10 @@
 
   table {
     border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: auto !important;
     margin: 0.5rem 0 0 0;
     @apply relative border border-subtle;
-    width: 100%;
+    width: 100% !important;
 
     td,
     th {
