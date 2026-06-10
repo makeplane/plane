@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter, Search, SlidersHorizontal, Upload } from "lucide-react";
+import { ListFilter, Search, SlidersHorizontal, Trash2, Upload } from "lucide-react";
 import type { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Button, Header, Input } from "@plane/ui";
 import { CountChip } from "@/components/common/count-chip";
@@ -14,7 +14,16 @@ import { useRoster } from "../store/roster-context";
 export const ProjectRosterHeader = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { loader } = useProject();
-  const { players, searchValue, setSearchValue, canManage, openImportRosterModal } = useRoster();
+  const {
+    players,
+    searchValue,
+    setSearchValue,
+    canManage,
+    openImportRosterModal,
+    selectedPlayerIds,
+    clearSelectedPlayers,
+    openBulkDeleteModal,
+  } = useRoster();
 
   return (
     <Header>
@@ -49,10 +58,17 @@ export const ProjectRosterHeader = observer(() => {
             icon={<ListFilter className="size-3.5" />}
             miniIcon={<ListFilter className="size-3.5" />}
           />
-          <RosterDisplayDropdown
-            title="Display"
-            miniIcon={<SlidersHorizontal className="size-3.5" />}
-          />
+          <RosterDisplayDropdown title="Display" miniIcon={<SlidersHorizontal className="size-3.5" />} />
+          {canManage && selectedPlayerIds.length ? (
+            <>
+              <Button variant="neutral-primary" size="sm" onClick={clearSelectedPlayers}>
+                Clear selection
+              </Button>
+              <Button variant="danger" size="sm" prependIcon={<Trash2 />} onClick={openBulkDeleteModal}>
+                Delete selected ({selectedPlayerIds.length})
+              </Button>
+            </>
+          ) : null}
         </div>
         {canManage ? (
           <Button variant="primary" size="sm" prependIcon={<Upload />} onClick={openImportRosterModal}>

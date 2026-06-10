@@ -34,8 +34,12 @@ export const AddPlayerModal = observer(({ isOpen, onClose }: { isOpen?: boolean;
       <div className="border-b border-custom-border-200 px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-custom-text-100">{editingPlayer ? "Edit player" : "Add player"}</h3>
-            <p className="mt-1 text-sm text-custom-text-300">Create and manage player roster details for this program.</p>
+            <h3 className="text-lg font-semibold text-custom-text-100">
+              {editingPlayer ? "Edit player" : "Add player"}
+            </h3>
+            <p className="mt-1 text-sm text-custom-text-300">
+              Create and manage player roster details for this program.
+            </p>
           </div>
           <button
             type="button"
@@ -148,8 +152,14 @@ export const AddPlayerModal = observer(({ isOpen, onClose }: { isOpen?: boolean;
 });
 
 export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) => {
-  const { isImportRosterModalOpen, isSubmitting, closeImportRosterModal, importPlayers, pendingImportFile, setPendingImportFile } =
-    useRoster();
+  const {
+    isImportRosterModalOpen,
+    isSubmitting,
+    closeImportRosterModal,
+    importPlayers,
+    pendingImportFile,
+    setPendingImportFile,
+  } = useRoster();
   const modalOpen = isOpen ?? isImportRosterModalOpen;
   const handleClose = onClose ?? closeImportRosterModal;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -276,7 +286,9 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
               <FileSpreadsheet className="h-5 w-5" />
             </div>
             <div className="text-sm font-medium text-custom-text-100">Drop `.xlsx` or `.csv` file here</div>
-            <div className="mt-1 text-sm text-custom-text-300">Browse a local file to preview and import roster rows.</div>
+            <div className="mt-1 text-sm text-custom-text-300">
+              Browse a local file to preview and import roster rows.
+            </div>
             <a
               href="/templates/roster-template.xlsx"
               download="roster-template.xlsx"
@@ -284,13 +296,7 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
             >
               Download roster template
             </a>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv,.xlsx"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+            <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden" onChange={handleFileChange} />
             <Button
               variant="neutral-primary"
               size="sm"
@@ -318,41 +324,41 @@ export const ImportRosterModal = observer(({ isOpen, onClose }: { isOpen?: boole
           </div>
           <div className="rounded-lg border border-custom-border-200 bg-custom-background-100">
             <div className="max-h-[36vh] overflow-auto">
-            <table className="min-w-full whitespace-nowrap">
-              <thead className="sticky top-0 z-[1] border-b border-custom-border-200 bg-custom-background-90">
-                <tr className="text-left text-xs font-medium uppercase tracking-wide text-custom-text-400">
-                  <th className="px-4 py-3">Player</th>
-                  <th className="px-4 py-3">Jersey #</th>
-                  <th className="px-4 py-3">Position</th>
-                  <th className="px-4 py-3">Height</th>
-                  <th className="px-4 py-3">Weight</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {parsedRows.length ? (
-                  parsedRows.map((row, index) => (
-                    <tr
-                      key={`${row.player_name}-${row.jersey_number ?? index}`}
-                      className="border-b border-custom-border-200 text-sm text-custom-text-200 last:border-b-0"
-                    >
-                      <td className="px-4 py-3">{row.player_name || "—"}</td>
-                      <td className="px-4 py-3">{row.jersey_number ? `#${row.jersey_number}` : "—"}</td>
-                      <td className="px-4 py-3">{row.position || "—"}</td>
-                      <td className="px-4 py-3">{row.height || "—"}</td>
-                      <td className="px-4 py-3">{row.weight || "—"}</td>
-                      <td className="px-4 py-3">{toDisplayStatus(row.status || "active")}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr className="text-sm text-custom-text-300">
-                    <td className="px-4 py-6 text-center" colSpan={6}>
-                      Choose a roster file to preview imported rows.
-                    </td>
+              <table className="min-w-full whitespace-nowrap">
+                <thead className="sticky top-0 z-[1] border-b border-custom-border-200 bg-custom-background-90">
+                  <tr className="text-left text-xs font-medium uppercase tracking-wide text-custom-text-400">
+                    <th className="px-4 py-3">Player</th>
+                    <th className="px-4 py-3">Jersey #</th>
+                    <th className="px-4 py-3">Position</th>
+                    <th className="px-4 py-3">Height</th>
+                    <th className="px-4 py-3">Weight</th>
+                    <th className="px-4 py-3">Status</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {parsedRows.length ? (
+                    parsedRows.map((row, index) => (
+                      <tr
+                        key={`${row.player_name}-${row.jersey_number ?? index}`}
+                        className="border-b border-custom-border-200 text-sm text-custom-text-200 last:border-b-0"
+                      >
+                        <td className="px-4 py-3">{row.player_name || "—"}</td>
+                        <td className="px-4 py-3">{row.jersey_number ? `#${row.jersey_number}` : "—"}</td>
+                        <td className="px-4 py-3">{row.position || "—"}</td>
+                        <td className="px-4 py-3">{row.height || "—"}</td>
+                        <td className="px-4 py-3">{row.weight || "—"}</td>
+                        <td className="px-4 py-3">{toDisplayStatus(row.status || "active")}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className="text-sm text-custom-text-300">
+                      <td className="px-4 py-6 text-center" colSpan={6}>
+                        Choose a roster file to preview imported rows.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -387,6 +393,35 @@ export const DeletePlayerModal = observer(() => {
       title="Delete player"
       content={`Are you sure you want to delete ${deletingPlayer?.player_name ?? "this player"} from the roster?`}
       primaryButtonText={{ loading: "Deleting", default: "Delete player" }}
+    />
+  );
+});
+
+export const BulkDeletePlayersModal = observer(() => {
+  const { isBulkDeleteModalOpen, selectedPlayers, isSubmitting, closeBulkDeleteModal, deleteSelectedPlayers } =
+    useRoster();
+  const selectedPlayerNames = selectedPlayers
+    .slice(0, 3)
+    .map((player) => player.player_name || "Unnamed player")
+    .join(", ");
+  const remainingPlayersCount = Math.max(selectedPlayers.length - 3, 0);
+  const content =
+    selectedPlayers.length > 1
+      ? `Are you sure you want to delete ${selectedPlayers.length} selected players from the roster${
+          selectedPlayerNames ? `, including ${selectedPlayerNames}` : ""
+        }${remainingPlayersCount ? ` and ${remainingPlayersCount} more` : ""}?`
+      : `Are you sure you want to delete ${selectedPlayerNames || "this player"} from the roster?`;
+  const primaryButtonLabel = selectedPlayers.length === 1 ? "Delete selected player" : "Delete selected players";
+
+  return (
+    <AlertModalCore
+      isOpen={isBulkDeleteModalOpen}
+      handleClose={closeBulkDeleteModal}
+      handleSubmit={deleteSelectedPlayers}
+      isSubmitting={isSubmitting}
+      title="Delete selected players"
+      content={content}
+      primaryButtonText={{ loading: "Deleting", default: primaryButtonLabel }}
     />
   );
 });

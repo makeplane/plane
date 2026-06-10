@@ -85,6 +85,9 @@ type TRosterContext = {
   pendingImportFile: File | null;
   editingPlayer: IRosterPlayer | null;
   deletingPlayer: IRosterPlayer | null;
+  selectedPlayerIds: string[];
+  selectedPlayers: IRosterPlayer[];
+  isBulkDeleteModalOpen: boolean;
   setSearchValue: (value: string) => void;
   setSelectedPosition: (value: string) => void;
   setSelectedStatus: (value: string) => void;
@@ -100,10 +103,16 @@ type TRosterContext = {
   openImportRosterModal: () => void;
   closeImportRosterModal: () => void;
   setPendingImportFile: (file: File | null) => void;
+  togglePlayerSelection: (playerId: string) => void;
+  toggleAllPlayerSelections: () => void;
+  clearSelectedPlayers: () => void;
   openDeletePlayerModal: (player: IRosterPlayer) => void;
   closeDeletePlayerModal: () => void;
+  openBulkDeleteModal: () => void;
+  closeBulkDeleteModal: () => void;
   submitPlayer: (payload: TRosterFormState) => Promise<void>;
   deletePlayer: () => Promise<void>;
+  deleteSelectedPlayers: () => Promise<void>;
   importPlayers: (players: IRosterPlayerPayload[]) => Promise<void>;
   refetchRoster: () => Promise<void>;
 };
@@ -363,6 +372,8 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
   const [pendingImportFile, setPendingImportFile] = useState<File | null>(null);
   const [editingPlayer, setEditingPlayer] = useState<IRosterPlayer | null>(null);
   const [deletingPlayer, setDeletingPlayer] = useState<IRosterPlayer | null>(null);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -409,6 +420,16 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
     () => buildGroupedRoster(players, groupBy, subGroupBy, orderBy),
     [groupBy, orderBy, players, subGroupBy]
   );
+  const selectedPlayers = useMemo(
+    () => allPlayers.filter((player) => selectedPlayerIds.includes(player.id)),
+    [allPlayers, selectedPlayerIds]
+  );
+
+  useEffect(() => {
+    setSelectedPlayerIds((currentSelectedPlayerIds) =>
+      currentSelectedPlayerIds.filter((playerId) => allPlayers.some((player) => player.id === playerId))
+    );
+  }, [allPlayers]);
 
   const refetchRoster = useCallback(async () => {
     setIsLoading(true);
@@ -450,8 +471,30 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
     setPendingImportFile(null);
     setIsImportRosterModalOpen(false);
   };
+  const togglePlayerSelection = (playerId: string) =>
+    setSelectedPlayerIds((currentSelectedPlayerIds) =>
+      currentSelectedPlayerIds.includes(playerId)
+        ? currentSelectedPlayerIds.filter((id) => id !== playerId)
+        : [...currentSelectedPlayerIds, playerId]
+    );
+  const toggleAllPlayerSelections = () =>
+    setSelectedPlayerIds((currentSelectedPlayerIds) => {
+      const visiblePlayerIds = players.map((player) => player.id);
+      const hasUnselectedVisiblePlayers = visiblePlayerIds.some(
+        (playerId) => !currentSelectedPlayerIds.includes(playerId)
+      );
+
+      if (hasUnselectedVisiblePlayers) {
+        return Array.from(new Set([...currentSelectedPlayerIds, ...visiblePlayerIds]));
+      }
+
+      return currentSelectedPlayerIds.filter((playerId) => !visiblePlayerIds.includes(playerId));
+    });
+  const clearSelectedPlayers = () => setSelectedPlayerIds([]);
   const openDeletePlayerModal = (player: IRosterPlayer) => setDeletingPlayer(player);
   const closeDeletePlayerModal = () => setDeletingPlayer(null);
+  const openBulkDeleteModal = () => setIsBulkDeleteModalOpen(true);
+  const closeBulkDeleteModal = () => setIsBulkDeleteModalOpen(false);
   const toggleDisplayProperty = (key: TRosterDisplayPropertyKey) =>
     setDisplayProperties((current) => ({ ...current, [key]: !current[key] }));
   const updateGroupBy = (value: TRosterGroupByOption) => {
@@ -523,6 +566,9 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
     try {
       await rosterService.deleteRosterPlayer(workspaceSlug, projectId, deletingPlayer.id);
       setAllPlayers((currentPlayers) => currentPlayers.filter((player) => player.id !== deletingPlayer.id));
+      setSelectedPlayerIds((currentSelectedPlayerIds) =>
+        currentSelectedPlayerIds.filter((playerId) => playerId !== deletingPlayer.id)
+      );
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -535,6 +581,51 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: getErrorMessage(error, "Player could not be deleted. Please try again."),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteSelectedPlayers = async () => {
+    if (!selectedPlayerIds.length) return;
+
+    setIsSubmitting(true);
+    try {
+      const playerIdsToDelete = [...selectedPlayerIds];
+      const deleteResults = await Promise.allSettled(
+        playerIdsToDelete.map((playerId) => rosterService.deleteRosterPlayer(workspaceSlug, projectId, playerId))
+      );
+      const deletedPlayerIds = playerIdsToDelete.filter((_, index) => deleteResults[index].status === "fulfilled");
+      const failedPlayerIds = playerIdsToDelete.filter((_, index) => deleteResults[index].status === "rejected");
+
+      if (deletedPlayerIds.length) {
+        setAllPlayers((currentPlayers) => currentPlayers.filter((player) => !deletedPlayerIds.includes(player.id)));
+      }
+
+      setSelectedPlayerIds(failedPlayerIds);
+      closeBulkDeleteModal();
+
+      if (!failedPlayerIds.length) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: `${deletedPlayerIds.length} player${deletedPlayerIds.length === 1 ? "" : "s"} deleted successfully.`,
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Partial delete",
+          message: `${deletedPlayerIds.length} player${deletedPlayerIds.length === 1 ? "" : "s"} deleted. ${failedPlayerIds.length} failed to delete.`,
+        });
+      }
+
+      await refetchRoster();
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: getErrorMessage(error, "Selected players could not be deleted. Please try again."),
       });
     } finally {
       setIsSubmitting(false);
@@ -592,6 +683,9 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
         pendingImportFile,
         editingPlayer,
         deletingPlayer,
+        selectedPlayerIds,
+        selectedPlayers,
+        isBulkDeleteModalOpen,
         setSearchValue,
         setSelectedPosition,
         setSelectedStatus,
@@ -607,10 +701,16 @@ export const RosterProvider = ({ children }: { children: ReactNode }) => {
         openImportRosterModal,
         closeImportRosterModal,
         setPendingImportFile,
+        togglePlayerSelection,
+        toggleAllPlayerSelections,
+        clearSelectedPlayers,
         openDeletePlayerModal,
         closeDeletePlayerModal,
+        openBulkDeleteModal,
+        closeBulkDeleteModal,
         submitPlayer,
         deletePlayer,
+        deleteSelectedPlayers,
         importPlayers,
         refetchRoster,
       }}

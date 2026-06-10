@@ -22,7 +22,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { IRosterPlayer, TRosterPlayerStatus } from "@plane/types";
-import { CustomMenu, cn } from "@plane/ui";
+import { Checkbox, CustomMenu, cn } from "@plane/ui";
 import type { IRosterGroup, IRosterGroupedResponse } from "../store/roster-context";
 import { useRoster } from "../store/roster-context";
 import { formatTimestamp, toDisplayStatus } from "../utils/roster.utils";
@@ -315,6 +315,7 @@ const RosterSortableHeaderCell = ({
   onSort,
   onClearSort,
   isFirstColumn = false,
+  selectionControl,
 }: {
   columnKey: TRosterSortColumnKey;
   label: string;
@@ -324,6 +325,7 @@ const RosterSortableHeaderCell = ({
   onSort: (column: TRosterSortColumnKey, direction: TRosterSortDirection) => void;
   onClearSort: () => void;
   isFirstColumn?: boolean;
+  selectionControl?: ReactNode;
 }) => (
   <th
     className={cn(
@@ -347,7 +349,12 @@ const RosterSortableHeaderCell = ({
             sortConfig?.column === columnKey && "text-custom-text-100"
           )}
         >
-          <div className="flex min-w-0 items-center gap-1.5">
+          <div className="flex min-w-0 items-center gap-3">
+            {selectionControl ? (
+              <div className="flex flex-shrink-0 items-center" onClick={(event) => event.stopPropagation()}>
+                {selectionControl}
+              </div>
+            ) : null}
             {Icon ? <Icon className="h-4 w-4 flex-shrink-0 text-custom-text-400" /> : null}
             <span className="truncate">{label}</span>
           </div>
@@ -419,9 +426,10 @@ const RosterTableCell = ({
   </td>
 );
 
-const RosterPlayerCell = ({ player }: { player: IRosterPlayer }) => (
+const RosterPlayerCell = ({ player, selectionControl }: { player: IRosterPlayer; selectionControl?: ReactNode }) => (
   <RosterTableCell isFirstColumn>
-    <div className="flex h-11 min-w-0 items-center gap-2 px-6">
+    <div className="flex h-11 min-w-0 items-center gap-3 px-6">
+      {selectionControl ? <div className="flex flex-shrink-0 items-center">{selectionControl}</div> : null}
       <span className="truncate text-[0.825rem] font-medium text-custom-text-100">
         {player.player_name || "Unnamed player"}
       </span>
@@ -534,7 +542,17 @@ export const RosterTable = observer(
     groupedRoster?: IRosterGroupedResponse | null;
     isLoading?: boolean;
   }) => {
-    const { displayProperties, searchValue, selectedClassYear, selectedPosition, selectedStatus } = useRoster();
+    const {
+      canManage,
+      displayProperties,
+      searchValue,
+      selectedClassYear,
+      selectedPosition,
+      selectedStatus,
+      selectedPlayerIds,
+      togglePlayerSelection,
+      toggleAllPlayerSelections,
+    } = useRoster();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [sortConfig, setSortConfig] = useState<TRosterSortConfig | null>(null);
 
@@ -543,6 +561,11 @@ export const RosterTable = observer(
       [displayProperties]
     );
     const sortedPlayers = useMemo(() => sortRosterPlayers(players, sortConfig), [players, sortConfig]);
+    const allVisiblePlayerIds = useMemo(() => sortedPlayers.map((player) => player.id), [sortedPlayers]);
+    const allVisiblePlayersSelected =
+      allVisiblePlayerIds.length > 0 && allVisiblePlayerIds.every((playerId) => selectedPlayerIds.includes(playerId));
+    const someVisiblePlayersSelected =
+      allVisiblePlayerIds.some((playerId) => selectedPlayerIds.includes(playerId)) && !allVisiblePlayersSelected;
     const handleSort = useCallback((column: TRosterSortColumnKey, direction: TRosterSortDirection) => {
       setSortConfig({ column, direction });
     }, []);
@@ -587,7 +610,22 @@ export const RosterTable = observer(
           nested && "bg-custom-background-100/80"
         )}
       >
-        <RosterPlayerCell player={player} />
+        <RosterPlayerCell
+          player={player}
+          selectionControl={
+            canManage ? (
+              <Checkbox
+                checked={selectedPlayerIds.includes(player.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  togglePlayerSelection(player.id);
+                }}
+                readOnly
+                aria-label={`Select ${player.player_name || "player"}`}
+              />
+            ) : undefined
+          }
+        />
         {visibleColumns.map((column) => (
           <RosterTableCell key={column.key} className={column.cellClassName}>
             {column.render(player)}
@@ -643,6 +681,21 @@ export const RosterTable = observer(
                   onSort={handleSort}
                   onClearSort={handleClearSort}
                   isFirstColumn
+                  selectionControl={
+                    canManage ? (
+                      <Checkbox
+                        checked={allVisiblePlayersSelected}
+                        indeterminate={someVisiblePlayersSelected}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          toggleAllPlayerSelections();
+                        }}
+                        disabled={!allVisiblePlayerIds.length || isLoading}
+                        readOnly
+                        aria-label="Select all visible players"
+                      />
+                    ) : undefined
+                  }
                 />
                 {visibleColumns.map((column) => (
                   <RosterSortableHeaderCell
