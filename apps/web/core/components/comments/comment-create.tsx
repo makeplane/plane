@@ -96,6 +96,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
+          !e.nativeEvent.isComposing &&
           !e.shiftKey &&
           !e.ctrlKey &&
           !e.metaKey &&

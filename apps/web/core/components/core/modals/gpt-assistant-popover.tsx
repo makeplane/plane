@@ -153,7 +153,7 @@ export function GptAssistantPopover(props: Props) {
 
   useEffect(() => {
     const handleEnterKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && !event.shiftKey) {
+      if (event.key === "Enter" && !event.isComposing && !event.shiftKey) {
         event.preventDefault();
         handleSubmit(handleAIResponse)();
       }
