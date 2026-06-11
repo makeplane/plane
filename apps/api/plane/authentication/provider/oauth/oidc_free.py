@@ -184,12 +184,12 @@ class OidcFreeOAuthProvider(OauthAdapter):
             {
                 "email": email,
                 "user": {
-                    "provider_id": str(user_info_response.get("id")),
+                    "provider_id": str(user_info_response.get("sub")),
                     "email": email,
                     # have to set empty string, to prevent violating non-null constraint
                     "avatar": user_info_response.get("avatar_url") or "",
-                    "first_name": user_info_response.get("full_name") or user_info_response.get("login"),
-                    "last_name": "",  # Gitea doesn't provide separate first/last name
+                    "first_name": user_info_response.get("given_name") or user_info_response.get("login"),
+                    "last_name": user_info_response.get("family_name"),
                     "is_password_autoset": True,
                 },
             }
