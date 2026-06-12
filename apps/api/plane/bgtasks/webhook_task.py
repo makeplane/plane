@@ -288,6 +288,7 @@ def webhook_send_task(
             "action": action,
             "webhook_id": str(webhook.id),
             "workspace_id": str(webhook.workspace_id),
+            "workspace_slug": slug,
             "data": event_data,
             "activity": activity,
         }
