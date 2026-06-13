@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -14,7 +14,7 @@ import { Row } from "@plane/ui";
 // components
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web imports
+// gizmo web imports
 import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
 
 type Props = {

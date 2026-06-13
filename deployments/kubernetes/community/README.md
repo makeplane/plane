@@ -1,4 +1,4 @@
-# Helm Chart: Plane Community
+# Helm Chart: Gizmo Community
 
 Click on the below link to access the helm chart instructions.
 

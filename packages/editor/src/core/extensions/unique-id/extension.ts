@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -14,7 +14,7 @@ import { CORE_EXTENSIONS, BLOCK_NODE_TYPES } from "@/constants/extension";
 import { ADDITIONAL_BLOCK_NODE_TYPES } from "@/plane-editor/constants/extensions";
 import { createUniqueIDPlugin } from "./plugin";
 import { createIdsForView } from "./utils";
-// plane imports
+// gizmo imports
 
 const COMBINED_BLOCK_NODE_TYPES = [...BLOCK_NODE_TYPES, ...ADDITIONAL_BLOCK_NODE_TYPES];
 export type UniqueIDGenerationContext = {

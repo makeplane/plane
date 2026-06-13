@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -9,9 +9,9 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import type { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
-// plane web services
+// gizmo web services
 import estimateService from "@/services/estimate.service";
-// plane web store
+// gizmo web store
 import type { IEstimate } from "@/plane-web/store/estimates/estimate";
 import { Estimate } from "@/plane-web/store/estimates/estimate";
 // store

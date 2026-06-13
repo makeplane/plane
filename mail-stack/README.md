@@ -1,7 +1,7 @@
-# Mail stack for Plane
+# Mail stack for Gizmo
 
-Postfix + Dovecot + Rspamd + Roundcube, deployed alongside Plane on the
-same host. TLS certificates are issued by Plane's Caddy proxy and shared
+Postfix + Dovecot + Rspamd + Roundcube, deployed alongside Gizmo on the
+same host. TLS certificates are issued by Gizmo's Caddy proxy and shared
 read-only into Postfix/Dovecot via a named Docker volume.
 
 ## Architecture
@@ -10,11 +10,11 @@ read-only into Postfix/Dovecot via a named Docker volume.
 Internet
   ├──> 25/587/465  → Postfix → Rspamd milter → Dovecot LMTP → Maildir
   ├──> 143/993     → Dovecot (IMAP)
-  └──> 80/443      → Plane Caddy
+  └──> 80/443      → Gizmo Caddy
                        ├─ webmail.<MAIL_DOMAIN> → Roundcube
                        └─ mail.<MAIL_DOMAIN>    → stub (cert only)
 
-Plane api/worker/beat-worker ──extra_hosts──> host-gateway:587 → Postfix
+Gizmo api/worker/beat-worker ──extra_hosts──> host-gateway:587 → Postfix
 ```
 
 ## Pre-requisites
@@ -39,7 +39,7 @@ All commands run from the repo root.
 ### 1. Configure MAIL_DOMAIN
 
 ```bash
-# in the Plane root .env:
+# in the Gizmo root .env:
 echo 'MAIL_DOMAIN=example.com' >> .env
 
 # and in the mail-stack .env:
@@ -47,7 +47,7 @@ cp mail-stack/.env.example mail-stack/.env
 # edit mail-stack/.env to set MAIL_DOMAIN=example.com
 ```
 
-### 2. Recreate the Plane proxy so Caddy issues the cert for mail.<MAIL_DOMAIN>
+### 2. Recreate the Gizmo proxy so Caddy issues the cert for mail.<MAIL_DOMAIN>
 
 ```bash
 docker compose up -d --force-recreate proxy api worker beat-worker
@@ -73,7 +73,7 @@ docker compose up -d
 `postfix` and `dovecot` will fail to start if the cert directory above
 doesn't exist yet — that's the signal to fix DNS first.
 
-### 4. Create the noreply mailbox (used by Plane)
+### 4. Create the noreply mailbox (used by Gizmo)
 
 ```bash
 # Generate a SHA512-CRYPT hash (interactive; type the password twice):
@@ -109,9 +109,9 @@ dig +short TXT mail._domainkey.example.com
 docker compose restart rspamd
 ```
 
-### 6. Configure Plane SMTP via god-mode UI
+### 6. Configure Gizmo SMTP via god-mode UI
 
-In Plane, log in as instance owner → `/god-mode` → Email, and enter:
+In Gizmo, log in as instance owner → `/god-mode` → Email, and enter:
 
 | Field            | Value                  |
 |------------------|------------------------|
@@ -147,7 +147,7 @@ docker exec postfix mailq
 # Rspamd stats
 docker exec rspamd rspamc stat
 
-# End-to-end: send a Plane test email to a Gmail address, then in Gmail
+# End-to-end: send a Gizmo test email to a Gmail address, then in Gmail
 # open "Show original" — confirm SPF=PASS, DKIM=PASS (d=example.com),
 # DMARC=PASS.
 ```
@@ -172,13 +172,13 @@ These paths are critical:
 - Rspamd controller UI is on container port 11334, **not** published.
   Reach it via `ssh -L 11334:127.0.0.1:11334 <server>` after temporarily
   publishing the port, or front it with Caddy + basic auth.
-- Plane API uses `extra_hosts: mail.<MAIL_DOMAIN>:host-gateway` so that
-  outbound SMTP from Plane resolves to the host gateway IP and hits the
+- Gizmo API uses `extra_hosts: mail.<MAIL_DOMAIN>:host-gateway` so that
+  outbound SMTP from Gizmo resolves to the host gateway IP and hits the
   published port 587 of Postfix directly, bypassing NAT hairpin. The TLS
   cert CN still matches `mail.<MAIL_DOMAIN>`, so validation succeeds.
 - Roundcube uses SQLite by default — fine for a small team. If you have
   many concurrent users, migrate to a dedicated Postgres DB (not
   `plane-db`).
-- Plane Intake Email (turning incoming mail into work items) is NOT
-  configured here — it requires routing inbound mail into Plane's API
+- Gizmo Intake Email (turning incoming mail into work items) is NOT
+  configured here — it requires routing inbound mail into Gizmo's API
   and is intentionally out of scope for this MVP.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -19,7 +19,7 @@ import {
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// plane imports
+// gizmo imports
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";

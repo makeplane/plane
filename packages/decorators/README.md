@@ -12,7 +12,7 @@ A lightweight TypeScript decorator library for building Express.js controllers w
 
 ## Installation
 
-This package is part of the Plane workspace and can be used by adding it to your project's dependencies:
+This package is part of the Gizmo workspace and can be used by adding it to your project's dependencies:
 
 ```json
 {

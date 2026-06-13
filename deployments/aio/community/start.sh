@@ -3,7 +3,7 @@
 print_header(){
     clear
     echo "------------------------------------------------"
-    echo "Plane Community (All-In-One)"
+    echo "Gizmo Community (All-In-One)"
     echo "------------------------------------------------"
     echo ""
     echo "You are required to pass below environment variables to the script"

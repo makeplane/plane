@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import { WORKSPACE_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs } from "@plane/ui";
@@ -15,7 +15,7 @@ import { SettingsPageHeader } from "@/components/settings/page-header";
 import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
 
 export const MembersWorkspaceSettingsHeader = observer(function MembersWorkspaceSettingsHeader() {
-  // plane hooks
+  // gizmo hooks
   const { t } = useTranslation();
   // derived values
   const settingsDetails = WORKSPACE_SETTINGS.members;

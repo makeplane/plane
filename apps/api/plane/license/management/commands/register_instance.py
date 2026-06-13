@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 raise CommandError("Machine signature is required")
 
             instance = Instance.objects.create(
-                instance_name="Plane Community Edition",
+                instance_name="Gizmo Community Edition",
                 instance_id=secrets.token_hex(12),
                 current_version=current_version,
                 latest_version=latest_version,

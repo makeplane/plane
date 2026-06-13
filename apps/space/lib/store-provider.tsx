@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { createContext } from "react";
-// plane web store
+// gizmo web store
 import { RootStore } from "@/store/root.store";
 
 let rootStore = new RootStore();

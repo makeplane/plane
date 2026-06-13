@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -13,7 +13,7 @@ import { useState } from "react";
 import { CopyIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
-// plane utils
+// gizmo utils
 import { cn } from "@plane/utils";
 // types
 import type { TCodeBlockAttributes } from "./types";

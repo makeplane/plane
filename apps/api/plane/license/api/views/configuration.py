@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -113,8 +113,8 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             use_ssl=EMAIL_USE_SSL == "1",
         )
         # Prepare email details
-        subject = "Email Notification from Plane"
-        message = "This is a sample email notification sent from Plane application."
+        subject = "Email Notification from Gizmo"
+        message = "This is a sample email notification sent from Gizmo application."
         # Send the email
         try:
             msg = EmailMultiAlternatives(

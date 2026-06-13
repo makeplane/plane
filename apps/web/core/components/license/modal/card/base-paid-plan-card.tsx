@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
-// plane imports
+// gizmo imports
 // helpers
 import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
@@ -37,7 +37,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
   // states
   const [selectedPlan, setSelectedPlan] = useState<TBillingFrequency>("month");
   const basePlan = getBaseSubscriptionName(planVariant);
-  // Plane details
+  // Gizmo details
   const planeName = getSubscriptionName(planVariant);
 
   return (
@@ -67,7 +67,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
           {prices.map((price: TSubscriptionPrice) => (
             <Tab.Panel key={price.key}>
               <div className="pt-6 text-center">
-                <div className="text-h4-medium">Plane {planeName}</div>
+                <div className="text-h4-medium">Gizmo {planeName}</div>
                 {renderActionButton(price)}
               </div>
               <div className="px-2 pt-6 pb-2">

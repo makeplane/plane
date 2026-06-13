@@ -42,7 +42,7 @@ function Print-Header {
 |_|   |_|\__,_|_| |_|\___|        ////
                                   ////
 --------------------------------------------
-Local Plane build from this repository
+Local Gizmo build from this repository
 --------------------------------------------
 '@ | Write-Host
 }
@@ -400,8 +400,8 @@ function Build-LocalImages {
     }
 }
 
-function Install-Plane {
-    Write-Host "Building Plane Docker images from the current repository..."
+function Install-Gizmo {
+    Write-Host "Building Gizmo Docker images from the current repository..."
     Write-Host "Repository: $($script:RepoRoot)"
     Write-Host ""
 
@@ -410,7 +410,7 @@ function Install-Plane {
     Build-LocalImages
 
     Write-Host ""
-    Write-Host "Local Plane images were built successfully."
+    Write-Host "Local Gizmo images were built successfully."
     Write-Host "Start the project with: .\setup.ps1 start"
     Write-Host ""
 }
@@ -438,7 +438,7 @@ function Start-Services {
         Write-Host "`r                                                        `r" -NoNewline
         $migratorExitCode = [int](& docker inspect --format="{{.State.ExitCode}}" $migratorContainerId)
         if ($migratorExitCode -ne 0) {
-            Write-Host "Plane Server failed to start"
+            Write-Host "Gizmo Server failed to start"
             Write-Host ""
             Write-Host "Please check the logs for the migrator service and resolve the issue."
             Write-Host "Logs: .\setup.ps1 logs migrator"
@@ -487,7 +487,7 @@ function Start-Services {
         Write-Host "   API Service did not respond to health-check - please verify manually."
     }
 
-    Write-Host "   Plane Server started successfully"
+    Write-Host "   Gizmo Server started successfully"
     Write-Host ""
     Write-Host "   Web:   http://localhost"
     Write-Host "   API:   http://localhost:8000"
@@ -629,7 +629,7 @@ function View-StackLogs {
             View-StackLogs "git" $ServiceName
         }
         "all" {
-            Write-Host "Streaming Plane logs. Open another terminal for mail/git logs if needed."
+            Write-Host "Streaming Gizmo logs. Open another terminal for mail/git logs if needed."
             Initialize-LocalEnvFiles
             Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("logs", "-f"))
         }
@@ -718,7 +718,7 @@ function Show-GitStatus {
 
 function Show-AllStatus {
     Write-Host ""
-    Write-Host "Plane:"
+    Write-Host "Gizmo:"
     Show-Status
     Write-Host ""
     Write-Host "Mail:"
@@ -881,21 +881,21 @@ function Invoke-AskForAction {
         Write-Host ""
         Write-Host "Select a Action you want to perform:"
         Write-Host "   1) Install / Build local images"
-        Write-Host "   2) Start all (Plane + mail + git)"
-        Write-Host "   3) Start Plane only"
+        Write-Host "   2) Start all (Gizmo + mail + git)"
+        Write-Host "   3) Start Gizmo only"
         Write-Host "   4) Start mail server only"
         Write-Host "   5) Start git server only"
         Write-Host "   6) Stop all"
-        Write-Host "   7) Stop Plane only"
+        Write-Host "   7) Stop Gizmo only"
         Write-Host "   8) Stop mail server only"
         Write-Host "   9) Stop git server only"
         Write-Host "   10) Restart all"
-        Write-Host "   11) Restart Plane only"
+        Write-Host "   11) Restart Gizmo only"
         Write-Host "   12) Restart mail server only"
         Write-Host "   13) Restart git server only"
-        Write-Host "   14) Rebuild Plane images without cache"
+        Write-Host "   14) Rebuild Gizmo images without cache"
         Write-Host "   15) View Logs"
-        Write-Host "   16) Backup Plane Data"
+        Write-Host "   16) Backup Gizmo Data"
         Write-Host "   17) Status"
         Write-Host "   18) Exit"
         Write-Host ""
@@ -919,7 +919,7 @@ function Invoke-AskForAction {
     }
 
     if ($action -eq "1" -or $defaultAction -eq "install" -or $defaultAction -eq "build") {
-        Install-Plane
+        Install-Gizmo
     } elseif ($action -eq "2") {
         Start-Target "all"
     } elseif ($action -eq "3" -or $defaultAction -eq "start" -or $defaultAction -eq "up") {

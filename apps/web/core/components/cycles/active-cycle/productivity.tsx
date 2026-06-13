@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,7 +8,7 @@ import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-// plane imports
+// gizmo imports
 import { useTranslation } from "@plane/i18n";
 import type { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -32,7 +32,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
   const { workspaceSlug, projectId, cycle } = props;
   // theme hook
   const { resolvedTheme } = useTheme();
-  // plane hooks
+  // gizmo hooks
   const { t } = useTranslation();
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();

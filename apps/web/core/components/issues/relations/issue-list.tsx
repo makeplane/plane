@@ -1,15 +1,15 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import React from "react";
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-// Plane-web imports
+// Gizmo-web imports
 import type { TIssueRelationTypes } from "@/plane-web/types";
 // local imports
 import { RelationIssueListItem } from "./issue-list-item";

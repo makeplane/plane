@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -21,7 +21,7 @@ export default {
     },
     not_found: {
       title: "Hopa! Se pare că ceva nu este în regulă",
-      description: "Nu putem accesa contul dvs. Plane în prezent. Aceasta ar putea fi o eroare de rețea.",
+      description: "Nu putem accesa contul dvs. Gizmo în prezent. Aceasta ar putea fi o eroare de rețea.",
       cta_primary: "Încercați reîncărcarea",
     },
     server_error: {

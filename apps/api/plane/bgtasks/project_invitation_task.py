@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -30,7 +30,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
         relativelink = f"/project-invitations/?invitation_id={project_member_invite.id}&email={email}&slug={project.workspace.slug}&project_id={str(project_id)}"  # noqa: E501
         abs_url = current_site + relativelink
 
-        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Gizmo"
 
         context = {
             "email": email,

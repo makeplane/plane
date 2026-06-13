@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -11,10 +11,10 @@ import type { IEmailCheckData, IEmailCheckResponse } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**
- * Service class for handling authentication-related operations for Plane space application
+ * Service class for handling authentication-related operations for Gizmo space application
  * Provides methods for user authentication, password management, and session handling
  * @extends {APIService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for gizmo sites
  */
 export class SitesAuthService extends APIService {
   /**

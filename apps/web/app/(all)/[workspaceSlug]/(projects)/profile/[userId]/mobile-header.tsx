@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -7,9 +7,9 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
+// gizmo constants
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-// plane i18n
+// gizmo i18n
 import { useTranslation } from "@plane/i18n";
 // icons
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -30,7 +30,7 @@ import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { useIssues } from "@/hooks/store/use-issues";
 
 export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHeader() {
-  // plane i18n
+  // gizmo i18n
   const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,19 +8,19 @@ import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { SquareUser } from "lucide-react";
-// plane types
+// gizmo types
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
-// plane ui
+// gizmo ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
-// plane web constants
+// gizmo web constants
 
 type Props = {
   projectId: string;

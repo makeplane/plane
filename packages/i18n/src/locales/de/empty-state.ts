@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -21,7 +21,7 @@ export default {
     },
     not_found: {
       title: "Hoppla! Etwas scheint nicht zu stimmen",
-      description: "Wir können Ihr Plane-Konto derzeit nicht abrufen. Dies könnte ein Netzwerkfehler sein.",
+      description: "Wir können Ihr Gizmo-Konto derzeit nicht abrufen. Dies könnte ein Netzwerkfehler sein.",
       cta_primary: "Versuchen Sie neu zu laden",
     },
     server_error: {

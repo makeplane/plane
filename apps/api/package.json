@@ -2,6 +2,6 @@
   "name": "plane-api",
   "version": "1.2.3",
   "private": true,
-  "description": "API server powering Plane's backend",
+  "description": "API server powering Gizmo's backend",
   "license": "AGPL-3.0"
 }

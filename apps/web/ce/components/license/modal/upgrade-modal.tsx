@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import {
   BUSINESS_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
@@ -38,7 +38,7 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
   const isTrialAllowed = false;
 
   const handleRedirection = ({ planVariant, priceId }: TCheckoutParams) => {
-    // Get the product and price using plane community constants
+    // Get the product and price using gizmo community constants
     const product = PLANE_COMMUNITY_PRODUCTS[planVariant];
     const price = product.prices.find((price) => price.id === priceId);
     const frequency = price?.recurring ?? "year";

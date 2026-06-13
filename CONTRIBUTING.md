@@ -1,6 +1,6 @@
-# Contributing to Plane
+# Contributing to Gizmo
 
-Thank you for showing an interest in contributing to Plane! All kinds of contributions are valuable to us. In this guide, we will cover how you can quickly onboard and make your first contribution.
+Thank you for showing an interest in contributing to Gizmo! All kinds of contributions are valuable to us. In this guide, we will cover how you can quickly onboard and make your first contribution.
 
 ## Submitting an issue
 
@@ -95,7 +95,7 @@ To ensure consistency throughout the source code, please keep these rules in min
 
 ## Ways to contribute
 
-- Try Plane Cloud and the self hosting platform and give feedback
+- Try Gizmo Cloud and the self hosting platform and give feedback
 - Add new integrations
 - Add or update translations
 - Help with open [issues](https://github.com/makeplane/plane/issues) or [create your own](https://github.com/makeplane/plane/issues/new/choose)
@@ -103,7 +103,7 @@ To ensure consistency throughout the source code, please keep these rules in min
 - Help create tutorials and blog posts
 - Request a feature by submitting a proposal
 - Report a bug
-- **Improve documentation** - fix incomplete or missing [docs](https://docs.plane.so/), bad wording, examples or explanations.
+- **Improve documentation** - fix incomplete or missing [docs](https://docs.gizmo.so/), bad wording, examples or explanations.
 
 ## Contributing to language support
 
@@ -244,4 +244,4 @@ Happy translating! 🌍✨
 
 ## Need help? Questions and suggestions
 
-Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Forum](https://forum.plane.so).
+Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Forum](https://forum.gizmo.so).

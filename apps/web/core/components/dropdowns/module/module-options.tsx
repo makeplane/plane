@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -9,7 +9,7 @@ import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
-// plane imports
+// gizmo imports
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
@@ -43,7 +43,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // plane hooks
+  // gizmo hooks
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();

@@ -1,16 +1,16 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-// plane types
+// gizmo types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
-// plane ui
+// gizmo ui
 import { Input, ModalCore } from "@plane/ui";
 
 type Props = {

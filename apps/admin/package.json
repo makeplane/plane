@@ -2,7 +2,7 @@
   "name": "admin",
   "version": "1.2.3",
   "private": true,
-  "description": "Admin UI for Plane",
+  "description": "Admin UI for Gizmo",
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -9,7 +9,7 @@ import { useContext } from "react";
 import type { TTimelineType } from "@plane/types";
 // lib
 import { StoreContext } from "@/lib/store-context";
-// Plane-web
+// Gizmo-web
 import { getTimelineStore } from "@/plane-web/hooks/use-timeline-chart";
 import type { IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
 import { useTimeLineType } from "../components/gantt-chart/contexts";

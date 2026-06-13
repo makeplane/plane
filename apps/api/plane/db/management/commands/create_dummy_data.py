@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             creator = input("Your email: ")
 
             if creator == "" or not User.objects.filter(email=creator).exists():
-                raise CommandError("User email is required and should have signed in plane")
+                raise CommandError("User email is required and should have signed in Gizmo")
 
             user = User.objects.get(email=creator)
 

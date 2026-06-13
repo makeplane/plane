@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest a feature to improve Plane
+description: Suggest a feature to improve Gizmo
 title: "[feature]: "
 labels: [✨feature, plane]
 assignees: [vihar, pushya22]
@@ -7,7 +7,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      Thank you for taking the time to request a feature for Plane
+      Thank you for taking the time to request a feature for Gizmo
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?

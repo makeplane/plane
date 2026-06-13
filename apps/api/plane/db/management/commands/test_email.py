@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             timeout=30,
         )
         # Prepare email details
-        subject = "Test email from Plane"
+        subject = "Test email from Gizmo"
 
         html_content = render_to_string("emails/test_email.html")
         text_content = strip_tags(html_content)

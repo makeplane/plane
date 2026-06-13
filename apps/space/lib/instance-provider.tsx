@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { Link } from "react-router";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane imports
+// gizmo imports
 import { SPACE_BASE_PATH } from "@plane/constants";
 import { PlaneLockup } from "@plane/propel/icons";
 // assets
@@ -58,7 +58,7 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
             </div>
           </div>
           <div className="absolute inset-0 z-0">
-            <img src={patternBackground} className="h-full w-screen object-cover" alt="Plane background pattern" />
+            <img src={patternBackground} className="h-full w-screen object-cover" alt="Gizmo background pattern" />
           </div>
           <div className="relative z-10 flex-grow">
             <div className="relative mx-auto flex h-full w-full items-center justify-center overflow-y-auto px-6 py-10">

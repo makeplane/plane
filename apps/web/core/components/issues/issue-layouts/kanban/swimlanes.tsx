@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -22,7 +22,7 @@ import type {
 import { Row } from "@plane/ui";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-// plane web imports
+// gizmo web imports
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";

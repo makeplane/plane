@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -10,7 +10,7 @@ import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
-// plane imports
+// gizmo imports
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
@@ -31,7 +31,7 @@ import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
-// plane web services
+// gizmo web services
 import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();

@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-// plane imports
+// gizmo imports
 import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // constants
@@ -25,7 +25,7 @@ type TPlansComparisonBaseProps = {
 export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
   // Free plan is not required to be shown in the comparison
   if (planKey === "free") return false;
-  // Plane one plan is not longer available
+  // Gizmo one plan is not longer available
   if (planKey === "one") return false;
   return true;
 };

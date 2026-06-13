@@ -1,17 +1,17 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import type { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 // components
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
 import type { TPlanePlans } from "@/constants/plans";
 import { PLANE_PLANS } from "@/constants/plans";
-// plane web imports
+// gizmo web imports
 import { PlanDetail } from "./plan-detail";
 
 type TPlansComparisonProps = {

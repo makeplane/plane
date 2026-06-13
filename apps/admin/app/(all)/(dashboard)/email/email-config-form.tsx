@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -82,7 +82,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       label: "Sender's email address",
       description:
         "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
-      placeholder: "no-reply@projectplane.so",
+      placeholder: "no-reply@projectgizmo.so",
       error: Boolean(errors.EMAIL_FROM),
       required: true,
     },
@@ -93,7 +93,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       key: "EMAIL_HOST_USER",
       type: "text",
       label: "Username",
-      placeholder: "getitdone@projectplane.so",
+      placeholder: "getitdone@projectgizmo.so",
       error: Boolean(errors.EMAIL_HOST_USER),
       required: false,
     },

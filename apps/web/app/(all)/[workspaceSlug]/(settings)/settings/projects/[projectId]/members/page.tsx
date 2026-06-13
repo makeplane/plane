@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -18,7 +18,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
+// gizmo web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
 // local imports
 import type { Route } from "./+types/page";
@@ -27,7 +27,7 @@ import { MembersProjectSettingsHeader } from "./header";
 function MembersSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
-  // plane hooks
+  // gizmo hooks
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -20,7 +20,7 @@ export default {
     },
     not_found: {
       title: "앗! 문제가 발생한 것 같습니다",
-      description: "현재 Plane 계정을 가져올 수 없습니다. 네트워크 오류일 수 있습니다.",
+      description: "현재 Gizmo 계정을 가져올 수 없습니다. 네트워크 오류일 수 있습니다.",
       cta_primary: "다시 로드 시도",
     },
     server_error: {

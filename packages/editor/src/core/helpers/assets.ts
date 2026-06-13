@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-// plane imports
+// gizmo imports
 import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions

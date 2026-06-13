@@ -1,24 +1,24 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-// plane imports
+// gizmo imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon } from "@plane/propel/icons";
-// plane types
+// gizmo types
 import type { IProject } from "@plane/types";
-// plane ui
+// gizmo ui
 import { getTabIndex } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-// plane web imports
+// gizmo web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
 type Props = {

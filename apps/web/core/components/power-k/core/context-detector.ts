@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import type { Params } from "react-router";
-// plane web imports
+// gizmo web imports
 import { detectExtendedContextFromURL } from "@/plane-web/components/command-palette/power-k/context-detector";
 // local imports
 import type { TPowerKContextType } from "./types";

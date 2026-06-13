@@ -1,12 +1,12 @@
-# Plane Community All-In-One (AIO) Docker Image
+# Gizmo Community All-In-One (AIO) Docker Image
 
-The Plane Community All-In-One Docker image packages all Plane services into a single container for easy deployment and testing. This image includes web interface, API server, background workers, live server, and more.
+The Gizmo Community All-In-One Docker image packages all Gizmo services into a single container for easy deployment and testing. This image includes web interface, API server, background workers, live server, and more.
 
 ## What's Included
 
 The AIO image contains the following services:
 
-- **Web App** (Port 3001): Main Plane web interface
+- **Web App** (Port 3001): Main Gizmo web interface
 - **Space** (Port 3002): Public project spaces
 - **Admin** (Port 3003): Administrative interface  
 - **API Server** (Port 3004): Backend API
@@ -75,7 +75,7 @@ docker run --name myaio --rm -it \
     -e AWS_REGION=us-east-1 \
     -e AWS_ACCESS_KEY_ID=5MV45J9NF5TEFZWYCRAX \
     -e AWS_SECRET_ACCESS_KEY=7xMqAiAHsf2UUjMH+EwICXlyJL9TO30m8leEaDsL \
-    -e AWS_S3_BUCKET_NAME=plane-app \
+    -e AWS_S3_BUCKET_NAME=gizmo-app \
     -e AWS_S3_ENDPOINT_URL=http://${MYIP}:19000 \
     -e FILE_SIZE_LIMIT=10485760 \
     artifacts.plane.so/makeplane/plane-aio-community:latest
@@ -130,7 +130,7 @@ IMAGE_NAME=myplane-aio ./build.sh --release=v0.27.1 [--platform=linux/amd64]
 
 Available build options:
 
-- `--release`: Plane version to build (required)
+- `--release`: Gizmo version to build (required)
 - `--image-name`: Custom image name (default: `plane-aio-community`)
 
 ## Troubleshooting
@@ -171,4 +171,4 @@ The container will validate required environment variables on startup and displa
 
 ## Support
 
-For issues and support, please refer to the official Plane documentation.
+For issues and support, please refer to the official Gizmo documentation.

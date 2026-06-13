@@ -1,7 +1,7 @@
 {
-  "name": "Plane",
-  "short_name": "Plane",
-  "description": "Plane helps you plan your issues, cycles, and product modules.",
+  "name": "Gizmo",
+  "short_name": "Gizmo",
+  "description": "Gizmo helps you plan your issues, cycles, and product modules.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",

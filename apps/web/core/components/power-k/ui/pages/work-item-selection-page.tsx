@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useState, useEffect } from "react";
-// plane imports
+// gizmo imports
 // import { useTranslation } from "@plane/i18n";
 import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
 // import { generateWorkItemLink } from "@plane/utils";
@@ -16,7 +16,7 @@ import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from
 // import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // import { usePowerK } from "@/hooks/store/use-power-k";
 // import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// gizmo web imports
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -37,7 +37,7 @@ export function WorkItemSelectionPage(props: Props) {
   const { workspaceSlug, projectId, debouncedSearchTerm, isWorkspaceLevel = false } = props;
   // router
   // const router = useAppRouter();
-  // plane hooks
+  // gizmo hooks
   // const { t } = useTranslation();
   // store hooks
   // const { togglePowerKModal } = usePowerK();

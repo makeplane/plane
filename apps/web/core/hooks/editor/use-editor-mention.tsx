@@ -1,19 +1,19 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useCallback } from "react";
-// plane editor
+// gizmo editor
 import type { TMentionSection, TMentionSuggestion } from "@plane/editor";
-// plane types
+// gizmo types
 import type { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUserSearchResponse } from "@plane/types";
-// plane ui
+// gizmo ui
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
-// plane web hooks
+// gizmo web hooks
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 
 type TArgs = {

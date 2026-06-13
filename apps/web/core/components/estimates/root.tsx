@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// plane imports
+// gizmo imports
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
@@ -16,7 +16,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
+// gizmo web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 // local imports
 import { CreateEstimateModal } from "./create/modal";
@@ -111,7 +111,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                     Estimates have gone through a change, these are the estimates you had in your older versions which
                     were not in use. Read more about them&nbsp;
                     <a
-                      href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
+                      href={"https://docs.gizmo.so/core-concepts/projects/run-project#estimate"}
                       target="_blank"
                       className="text-accent-primary/80 hover:text-accent-primary"
                       rel="noreferrer"

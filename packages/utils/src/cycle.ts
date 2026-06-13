@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { startOfToday, format } from "date-fns";
 import { isEmpty, orderBy, sortBy, uniqBy } from "lodash-es";
-// plane imports
+// gizmo imports
 import type { ICycle, TCycleFilters, TProgressSnapshot } from "@plane/types";
 // local imports
 import { findTotalDaysInRange, generateDateArray, getDate } from "./datetime";

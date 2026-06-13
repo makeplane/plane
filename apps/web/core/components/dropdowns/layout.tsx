@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon } from "@plane/propel/icons";
@@ -25,7 +25,7 @@ type TLayoutDropDown = {
 
 export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDropDown) {
   const { onChange, value = EIssueLayoutTypes.LIST, disabledLayouts = [] } = props;
-  // plane i18n
+  // gizmo i18n
   const { t } = useTranslation();
   // derived values
   const availableLayouts = useMemo(

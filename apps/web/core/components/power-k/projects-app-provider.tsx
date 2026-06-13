@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -12,7 +12,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// gizmo web imports
 import { ProjectLevelModals } from "@/plane-web/components/command-palette/modals/project-level";
 import { WorkItemLevelModals } from "@/plane-web/components/command-palette/modals/work-item-level";
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";

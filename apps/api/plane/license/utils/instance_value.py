@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -53,7 +53,7 @@ def get_email_configuration():
             {"key": "EMAIL_USE_SSL", "default": os.environ.get("EMAIL_USE_SSL", "0")},
             {
                 "key": "EMAIL_FROM",
-                "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
+                "default": os.environ.get("EMAIL_FROM", "Team Gizmo <team@mailer.gizmo.so>"),
             },
         ]
     )

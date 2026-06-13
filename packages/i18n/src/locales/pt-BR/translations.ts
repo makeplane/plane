@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -89,7 +89,7 @@ export default {
       already_have_an_account: "Já tem uma conta?",
       login: "Login",
       create_account: "Criar conta",
-      new_to_plane: "Novo no Plane?",
+      new_to_plane: "Novo no Gizmo?",
       back_to_sign_in: "Voltar ao login",
       resend_in: "Reenviar em {seconds} segundos",
       sign_in_with_unique_code: "Login com código único",
@@ -416,7 +416,7 @@ export default {
   full_changelog: "Changelog completo",
   support: "Suporte",
   forum: "Forum",
-  powered_by_plane_pages: "Desenvolvido por Plane Pages",
+  powered_by_plane_pages: "Desenvolvido por Gizmo Pages",
   please_select_at_least_one_invitation: "Selecione pelo menos um convite.",
   please_select_at_least_one_invitation_description:
     "Selecione pelo menos um convite para entrar no espaço de trabalho.",
@@ -581,7 +581,7 @@ export default {
       not_right_now: "Agora não",
       create_project: {
         title: "Criar um projeto",
-        description: "A maioria das coisas começa com um projeto no Plane.",
+        description: "A maioria das coisas começa com um projeto no Gizmo.",
         cta: "Começar",
       },
       invite_team: {
@@ -595,7 +595,7 @@ export default {
         cta: "Configurar este espaço de trabalho",
       },
       personalize_account: {
-        title: "Personalize o Plane.",
+        title: "Personalize o Gizmo.",
         description: "Escolha sua foto, cores e muito mais.",
         cta: "Personalizar agora",
       },
@@ -630,7 +630,7 @@ export default {
       },
     },
     new_at_plane: {
-      title: "Novidades no Plane",
+      title: "Novidades no Gizmo",
     },
     quick_tutorial: {
       title: "Tutorial rápido",
@@ -1286,7 +1286,7 @@ export default {
   },
   workspace_creation: {
     heading: "Crie seu espaço de trabalho",
-    subheading: "Para começar a usar o Plane, você precisa criar ou entrar em um espaço de trabalho.",
+    subheading: "Para começar a usar o Gizmo, você precisa criar ou entrar em um espaço de trabalho.",
     form: {
       name: {
         label: "Nomeie seu espaço de trabalho",
@@ -1342,11 +1342,11 @@ export default {
       general: {
         title: "Visão geral dos seus projetos, atividades e métricas",
         description:
-          "Bem-vindo ao Plane, estamos animados por tê-lo aqui. Crie seu primeiro projeto e rastreie seus itens de trabalho, e esta página se transformará em um espaço que ajuda você a progredir. Os administradores também verão itens que ajudam sua equipe a progredir.",
+          "Bem-vindo ao Gizmo, estamos animados por tê-lo aqui. Crie seu primeiro projeto e rastreie seus itens de trabalho, e esta página se transformará em um espaço que ajuda você a progredir. Os administradores também verão itens que ajudam sua equipe a progredir.",
         primary_button: {
           text: "Construa seu primeiro projeto",
           comic: {
-            title: "Tudo começa com um projeto no Plane",
+            title: "Tudo começa com um projeto no Gizmo",
             description:
               "Um projeto pode ser o planejamento de um produto, uma campanha de marketing ou o lançamento de um novo carro.",
           },
@@ -1481,7 +1481,7 @@ export default {
         primary_button: {
           text: "Comece seu primeiro projeto",
           comic: {
-            title: "Tudo começa com um projeto no Plane",
+            title: "Tudo começa com um projeto no Gizmo",
             description:
               "Um projeto pode ser o roteiro de um produto, uma campanha de marketing ou o lançamento de um novo carro.",
           },
@@ -1494,7 +1494,7 @@ export default {
         primary_button: {
           text: "Comece seu primeiro projeto",
           comic: {
-            title: "Tudo começa com um projeto no Plane",
+            title: "Tudo começa com um projeto no Gizmo",
             description:
               "Um projeto pode ser o roteiro de um produto, uma campanha de marketing ou o lançamento de um novo carro.",
           },
@@ -1595,7 +1595,7 @@ export default {
     page_label: "{workspace} - Configurações gerais",
     key_created: "Chave criada",
     copy_key:
-      "Copie e salve esta chave secreta no Páginas do Plane. Você não pode ver esta chave depois de clicar em Fechar. Um arquivo CSV contendo a chave foi baixado.",
+      "Copie e salve esta chave secreta no Páginas do Gizmo. Você não pode ver esta chave depois de clicar em Fechar. Um arquivo CSV contendo a chave foi baixado.",
     token_copied: "Token copiado para a área de transferência.",
     settings: {
       general: {
@@ -1747,7 +1747,7 @@ export default {
         delete: {
           title: "Excluir token de API",
           description:
-            "Qualquer aplicativo que use este token não terá mais acesso aos dados do Plane. Esta ação não pode ser desfeita.",
+            "Qualquer aplicativo que use este token não terá mais acesso aos dados do Gizmo. Esta ação não pode ser desfeita.",
           success: {
             title: "Sucesso!",
             message: "O token de API foi excluído com sucesso",
@@ -1763,7 +1763,7 @@ export default {
       api_tokens: {
         title: "Nenhum token de API criado",
         description:
-          "As APIs do Plane podem ser usadas para integrar seus dados no Plane com qualquer sistema externo. Crie um token para começar.",
+          "As APIs do Gizmo podem ser usadas para integrar seus dados no Gizmo com qualquer sistema externo. Crie um token para começar.",
       },
       webhooks: {
         title: "Nenhum webhook adicionado",
@@ -1826,7 +1826,7 @@ export default {
       activity: {
         title: "Nenhuma atividade ainda",
         description:
-          "Comece criando um novo item de trabalho! Adicione detalhes e propriedades a ele. Explore mais no Plane para ver sua atividade.",
+          "Comece criando um novo item de trabalho! Adicione detalhes e propriedades a ele. Explore mais no Gizmo para ver sua atividade.",
       },
       assigned: {
         title: "Nenhum item de trabalho atribuído a você",
@@ -1981,12 +1981,12 @@ export default {
       label: "Automações",
       "auto-archive": {
         title: "Arquivar automaticamente itens de trabalho fechados",
-        description: "O Plane arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
+        description: "O Gizmo arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
         duration: "Arquivar automaticamente itens de trabalho que estão fechados por",
       },
       "auto-close": {
         title: "Fechar automaticamente itens de trabalho",
-        description: "O Plane fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
+        description: "O Gizmo fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
         duration: "Fechar automaticamente itens de trabalho que estão inativos por",
         auto_close_status: "Status de fechamento automático",
       },
@@ -2175,9 +2175,9 @@ export default {
         primary_button: {
           text: "Crie seu primeiro item de trabalho",
           comic: {
-            title: "Os itens de trabalho são blocos de construção no Plane.",
+            title: "Os itens de trabalho são blocos de construção no Gizmo.",
             description:
-              "Redesenhar a interface do usuário do Plane, reformular a marca da empresa ou lançar o novo sistema de injeção de combustível são exemplos de itens de trabalho que provavelmente têm subitens de trabalho.",
+              "Redesenhar a interface do usuário do Gizmo, reformular a marca da empresa ou lançar o novo sistema de injeção de combustível são exemplos de itens de trabalho que provavelmente têm subitens de trabalho.",
           },
         },
       },
@@ -2284,9 +2284,9 @@ export default {
     empty_state: {
       general: {
         title:
-          "Escreva uma nota, um documento ou uma base de conhecimento completa. Peça a Galileo, o assistente de IA do Plane, para ajudá-lo a começar",
+          "Escreva uma nota, um documento ou uma base de conhecimento completa. Peça a Galileo, o assistente de IA do Gizmo, para ajudá-lo a começar",
         description:
-          "As páginas são espaço para registrar pensamentos no Plane. Anote notas de reunião, formate-as facilmente, incorpore itens de trabalho, organize-os usando uma biblioteca de componentes e mantenha-os todos no contexto do seu projeto. Para facilitar qualquer documento, invoque Galileo, a IA do Plane, com um atalho ou o clique de um botão.",
+          "As páginas são espaço para registrar pensamentos no Gizmo. Anote notas de reunião, formate-as facilmente, incorpore itens de trabalho, organize-os usando uma biblioteca de componentes e mantenha-os todos no contexto do seu projeto. Para facilitar qualquer documento, invoque Galileo, a IA do Gizmo, com um atalho ou o clique de um botão.",
         primary_button: {
           text: "Crie sua primeira página",
         },
@@ -2663,7 +2663,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "O Plane não inicializou. Isso pode ser porque um ou mais serviços do Plane falharam ao iniciar.",
+      "O Gizmo não inicializou. Isso pode ser porque um ou mais serviços do Gizmo falharam ao iniciar.",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "Escolha View Logs do setup.sh e logs do Docker para ter certeza.",
   },

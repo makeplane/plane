@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -9,11 +9,11 @@ import { useParams } from "next/navigation";
 import { EEstimateSystem } from "@plane/constants";
 import { ProjectIcon } from "@plane/propel/icons";
 import type { ChartYAxisMetric } from "@plane/types";
-// plane package imports
+// gizmo package imports
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-// plane web constants
+// gizmo web constants
 type Props = {
   value: ChartYAxisMetric;
   onChange: (val: ChartYAxisMetric | null) => void;

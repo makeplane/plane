@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// gizmo imports
 import { EEstimateSystem } from "@plane/constants";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // components
@@ -13,7 +13,7 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
-// plane web imports
+// gizmo web imports
 import { EstimateListItemButtons } from "@/plane-web/components/estimates";
 
 type TEstimateListItem = {

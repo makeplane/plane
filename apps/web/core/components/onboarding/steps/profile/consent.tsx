@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -23,7 +23,7 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
       >
         {isChecked && <CheckIcon className="h-3 w-3 text-on-color" />}
       </button>
-      <span className="text-13 text-tertiary">I agree to Plane marketing communications</span>
+      <span className="text-13 text-tertiary">I agree to Gizmo marketing communications</span>
     </div>
   );
 }

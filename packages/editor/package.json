@@ -2,7 +2,7 @@
   "name": "@plane/editor",
   "version": "1.2.3",
   "private": true,
-  "description": "Core Editor that powers Plane",
+  "description": "Core Editor that powers Gizmo",
   "keywords": [
     "editor",
     "markdown",

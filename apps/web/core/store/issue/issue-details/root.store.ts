@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -16,7 +16,7 @@ import type {
   TIssueServiceType,
   TWorkItemWidgets,
 } from "@plane/types";
-// plane web store
+// gizmo web store
 import { IssueActivityStore } from "@/plane-web/store/issue/issue-details/activity.store";
 import type {
   IIssueActivityStore,

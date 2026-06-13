@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import React from "react";
 import { Transition } from "@headlessui/react";
-// plane imports
+// gizmo imports
 import type { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
 import { EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";

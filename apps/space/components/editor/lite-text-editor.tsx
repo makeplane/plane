@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import React from "react";
-// plane imports
+// gizmo imports
 import { LiteTextEditorWithRef } from "@plane/editor";
 import type { EditorRefApi, ILiteTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
@@ -14,7 +14,7 @@ import { cn, isCommentEmpty } from "@plane/utils";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
-// plane web imports
+// gizmo web imports
 import { useEditorFlagging } from "@/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";

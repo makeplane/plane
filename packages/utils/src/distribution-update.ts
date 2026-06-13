@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { format } from "date-fns";
 import { get, set } from "lodash-es";
-// plane imports
+// gizmo imports
 import { COMPLETED_STATE_GROUPS, STATE_DISTRIBUTION } from "@plane/constants";
 import type { ICycle, IEstimatePoint, IModule, IState, TIssue } from "@plane/types";
 // helper

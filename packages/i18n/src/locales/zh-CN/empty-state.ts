@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -20,7 +20,7 @@ export default {
     },
     not_found: {
       title: "糟糕!似乎出了点问题",
-      description: "我们目前无法获取您的 Plane 账户。这可能是网络错误。",
+      description: "我们目前无法获取您的 Gizmo 账户。这可能是网络错误。",
       cta_primary: "尝试重新加载",
     },
     server_error: {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -40,7 +40,7 @@ export const Default: Story = {
   render() {
     const [activeNavTab, setActiveNavTab] = useState("work_items");
 
-    // Example navigation items (matching actual Plane project navigation)
+    // Example navigation items (matching actual Gizmo project navigation)
     const navItems = [
       { key: "overview", name: "Overview", href: "#overview", icon: OverviewIcon },
       { key: "work_items", name: "Work items", href: "#work_items", icon: WorkItemsIcon },

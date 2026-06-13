@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -41,7 +41,7 @@ export const copyTextToClipboard = async (text: string) => {
  * @description Returns true if email is valid, false otherwise
  * @param {string} email string to check if it is a valid email
  * @example checkEmailIsValid("hello world") => false
- * @example checkEmailIsValid("example@plane.so") => true
+ * @example checkEmailIsValid("example@gizmo.so") => true
  */
 export const checkEmailValidity = (email: string): boolean => {
   if (!email) return false;

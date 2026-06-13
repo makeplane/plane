@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
 import type { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
+// gizmo imports
 // constants
 import type { TPlanFeatureData } from "@/constants/plans";
 

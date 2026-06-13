@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -43,7 +43,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
         # Additional validation for multiple request domains and their subdomains
         request = self.context.get("request")
-        disallowed_domains = ["plane.so"]  # Add your disallowed domains here
+        disallowed_domains = ["gizmo.so"]  # Add your disallowed domains here
         if request:
             request_host = request.get_host().split(":")[0]  # Remove port if present
             disallowed_domains.append(request_host)
@@ -78,7 +78,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
             # Additional validation for multiple request domains and their subdomains
             request = self.context.get("request")
-            disallowed_domains = ["plane.so"]  # Add your disallowed domains here
+            disallowed_domains = ["gizmo.so"]  # Add your disallowed domains here
             if request:
                 request_host = request.get_host().split(":")[0]  # Remove port if present
                 disallowed_domains.append(request_host)

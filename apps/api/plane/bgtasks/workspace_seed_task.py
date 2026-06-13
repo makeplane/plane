@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -521,12 +521,12 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # Create a bot user for creating all the workspace data
         bot_user = User.objects.create(
             username=f"bot_user_{workspace.id}",
-            display_name="Plane",
-            first_name="Plane",
+            display_name="Gizmo",
+            first_name="Gizmo",
             last_name="",
             is_bot=True,
             bot_type=BotTypeEnum.WORKSPACE_SEED,
-            email=f"bot_user_{workspace.id}@plane.so",
+            email=f"bot_user_{workspace.id}@gizmo.so",
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
         )

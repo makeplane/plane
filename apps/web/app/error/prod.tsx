@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useTheme } from "next-themes";
-// plane imports
+// gizmo imports
 import { Button } from "@plane/propel/button";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
@@ -17,12 +17,12 @@ const linkMap = [
   {
     key: "mail_to",
     label: "Contact Support",
-    value: "mailto:support@plane.so",
+    value: "mailto:support@gizmo.so",
   },
   {
     key: "status",
     label: "Status Page",
-    value: "https://status.plane.so/",
+    value: "https://status.gizmo.so/",
   },
   {
     key: "twitter_handle",

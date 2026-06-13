@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -20,7 +20,7 @@ export function LatestFeatureBlock() {
         <Lightbulb className="mx-3 mr-2 h-7 w-7" />
         <p className="text-left text-13 text-primary">
           Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
-          <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
+          <Link href="https://gizmo.so/changelog" target="_blank" rel="noopener noreferrer">
             <span className="text-13 font-medium underline hover:cursor-pointer">Learn more</span>
           </Link>
         </p>
@@ -33,7 +33,7 @@ export function LatestFeatureBlock() {
         <div className="h-[90%]">
           <img
             src={latestFeatures}
-            alt="Plane Work items"
+            alt="Gizmo Work items"
             className={`-mt-2 ml-10 h-full rounded-md ${resolvedTheme === "dark" ? "bg-surface-1" : "bg-layer-2"}`}
           />
         </div>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-// plane helpers
+// gizmo helpers
 // types
 import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";

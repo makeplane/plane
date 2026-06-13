@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
-// plane package imports
+// gizmo package imports
 import type { ReactNode } from "react";
 import React from "react";
 import { Calendar } from "lucide-react";
-// plane package imports
+// gizmo package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";

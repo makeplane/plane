@@ -1,15 +1,15 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { enableStaticRendering } from "mobx-react";
-// plane imports
+// gizmo imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 import type { IWorkItemFilterStore } from "@plane/shared-state";
 import { WorkItemFilterStore } from "@plane/shared-state";
-// plane web store
+// gizmo web store
 import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { AnalyticsStore } from "@/plane-web/store/analytics.store";
 import type { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";

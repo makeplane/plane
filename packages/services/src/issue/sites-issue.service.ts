@@ -1,20 +1,20 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
-// plane imports
+// gizmo imports
 import { API_BASE_URL } from "@plane/constants";
 import type { IPublicIssue, TIssuePublicComment, TPublicIssuesResponse } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
 /**
- * Service class for managing issues within plane sites application
+ * Service class for managing issues within gizmo sites application
  * Extends the APIService class to handle HTTP requests to the issue-related endpoints
  * @extends {APIService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for gizmo sites
  */
 export class SitesIssueService extends APIService {
   constructor(BASE_URL?: string) {

@@ -1,11 +1,11 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
 """
-Core utilities for Plane database routing and request scoping.
+Core utilities for Gizmo database routing and request scoping.
 This package contains essential components for managing read replica routing
-and request-scoped context in the Plane application.
+and request-scoped context in the Gizmo application.
 """
 
 from .dbrouters import ReadReplicaRouter

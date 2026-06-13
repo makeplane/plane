@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -35,7 +35,7 @@ def init_tracer():
     trace.set_tracer_provider(tracer_provider)
 
     # Configure the OTLP exporter
-    otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+    otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.gizmo.so")
     otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
     span_processor = BatchSpanProcessor(otlp_exporter)
     tracer_provider.add_span_processor(span_processor)

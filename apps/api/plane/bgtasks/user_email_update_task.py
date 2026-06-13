@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -83,7 +83,7 @@ def send_email_update_confirmation(email):
         ) = get_email_configuration()
 
         # Send the confirmation email
-        subject = "Plane email address successfully updated"
+        subject = "Gizmo email address successfully updated"
         context = {"email": email}
 
         html_content = render_to_string("emails/user/email_updated.html", context)

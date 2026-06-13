@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -20,7 +20,7 @@ export default {
     },
     not_found: {
       title: "Jejda! Něco se zdá být v nepořádku",
-      description: "Momentálně se nám nedaří načíst váš účet plane. Může se jednat o chybu sítě.",
+      description: "Momentálně se nám nedaří načíst váš účet gizmo. Může se jednat o chybu sítě.",
       cta_primary: "Zkuste znovu načíst",
     },
     server_error: {

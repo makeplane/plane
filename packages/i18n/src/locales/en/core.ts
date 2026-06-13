@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -90,7 +90,7 @@ export default {
       already_have_an_account: "Already have an account?",
       login: "Log in",
       create_account: "Create an account",
-      new_to_plane: "New to Plane?",
+      new_to_plane: "New to Gizmo?",
       back_to_sign_in: "Back to sign in",
       resend_in: "Resend in {seconds} seconds",
       sign_in_with_unique_code: "Sign in with unique code",

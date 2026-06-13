@@ -40,7 +40,7 @@ function print_header() {
 |_|   |_|\__,_|_| |_|\___|        ////      
                                   ////      
 --------------------------------------------
-Local Plane build from this repository
+Local Gizmo build from this repository
 --------------------------------------------
 EOF
 }
@@ -324,7 +324,7 @@ function build_local_images() {
 }
 
 function install_plane() {
-    echo "Building Plane Docker images from the current repository..."
+    echo "Building Gizmo Docker images from the current repository..."
     echo "Repository: ${REPO_ROOT}"
     echo ""
 
@@ -332,7 +332,7 @@ function install_plane() {
     build_local_images false
 
     echo ""
-    echo "Local Plane images were built successfully."
+    echo "Local Gizmo images were built successfully."
     echo "Start the project with: ./setup.sh start"
     echo ""
 }
@@ -364,7 +364,7 @@ function start_services() {
         local migrator_exit_code
         migrator_exit_code=$(docker inspect --format='{{.State.ExitCode}}' "$migrator_container_id")
         if [[ "$migrator_exit_code" != "0" ]]; then
-            echo "Plane Server failed to start"
+            echo "Gizmo Server failed to start"
             echo ""
             echo "Please check the logs for the migrator service and resolve the issue."
             echo "Logs: ./setup.sh logs migrator"
@@ -416,7 +416,7 @@ function start_services() {
         echo "   API Service did not respond to health-check - please verify manually."
     fi
 
-    echo "   Plane Server started successfully"
+    echo "   Gizmo Server started successfully"
     echo ""
     echo "   Web:   http://localhost"
     echo "   API:   http://localhost:8000"
@@ -544,7 +544,7 @@ function view_stack_logs() {
             fi
             ;;
         all)
-            echo "Streaming Plane logs. Open another terminal for mail/git logs if needed."
+            echo "Streaming Gizmo logs. Open another terminal for mail/git logs if needed."
             run_compose $(compose_base_args) logs -f
             ;;
         *)
@@ -631,7 +631,7 @@ function show_git_status() {
 
 function show_all_status() {
     echo ""
-    echo "Plane:"
+    echo "Gizmo:"
     show_status
     echo ""
     echo "Mail:"
@@ -764,21 +764,21 @@ function ask_for_action() {
         echo ""
         echo "Select a Action you want to perform:"
         echo "   1) Install / Build local images"
-        echo "   2) Start all (Plane + mail + git)"
-        echo "   3) Start Plane only"
+        echo "   2) Start all (Gizmo + mail + git)"
+        echo "   3) Start Gizmo only"
         echo "   4) Start mail server only"
         echo "   5) Start git server only"
         echo "   6) Stop all"
-        echo "   7) Stop Plane only"
+        echo "   7) Stop Gizmo only"
         echo "   8) Stop mail server only"
         echo "   9) Stop git server only"
         echo "   10) Restart all"
-        echo "   11) Restart Plane only"
+        echo "   11) Restart Gizmo only"
         echo "   12) Restart mail server only"
         echo "   13) Restart git server only"
-        echo "   14) Rebuild Plane images without cache"
+        echo "   14) Rebuild Gizmo images without cache"
         echo "   15) View Logs"
-        echo "   16) Backup Plane Data"
+        echo "   16) Backup Gizmo Data"
         echo "   17) Status"
         echo "   18) Exit"
         echo ""

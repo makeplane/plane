@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -12,16 +12,16 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     # Basic API Information
     # ========================================================================
-    "TITLE": "The Plane REST API",
+    "TITLE": "The Gizmo REST API",
     "DESCRIPTION": (
-        "The Plane REST API\n\n"
+        "The Gizmo REST API\n\n"
         "Visit our quick start guide and full API documentation at "
-        "[developers.plane.so](https://developers.plane.so/api-reference/introduction)."
+        "[developers.gizmo.so](https://developers.gizmo.so/api-reference/introduction)."
     ),
     "CONTACT": {
-        "name": "Plane",
-        "url": "https://plane.so",
-        "email": "support@plane.so",
+        "name": "Gizmo",
+        "url": "https://gizmo.so",
+        "email": "support@gizmo.so",
     },
     "VERSION": "0.0.1",
     "LICENSE": {
@@ -45,7 +45,7 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "SERVERS": [
         {"url": "http://localhost:8000", "description": "Local"},
-        {"url": "https://api.plane.so", "description": "Production"},
+        {"url": "https://api.gizmo.so", "description": "Production"},
     ],
     # ========================================================================
     # API Tag Definitions

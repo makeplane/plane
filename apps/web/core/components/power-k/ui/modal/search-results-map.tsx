@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
-// plane imports
+// gizmo imports
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
 import type {
   IWorkspaceDefaultSearchResult,
@@ -17,7 +17,7 @@ import type {
 import { generateWorkItemLink } from "@plane/utils";
 // components
 import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
-// plane web imports
+// gizmo web imports
 import { SEARCH_RESULTS_GROUPS_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/search/search-results-map";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 

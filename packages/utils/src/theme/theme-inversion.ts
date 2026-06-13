@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -41,7 +41,7 @@ export function invertPalette(palette: ColorPalette): ColorPalette {
 
 /**
  * Get CSS variable mapping for a theme mode
- * Maps 14-shade palette to Plane's CSS variable system
+ * Maps 14-shade palette to Gizmo's CSS variable system
  *
  * For light mode:
  * - Uses lighter shades for backgrounds (50-100-200)

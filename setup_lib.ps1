@@ -94,7 +94,7 @@ function New-SecretKey {
 }
 
 Write-Host "======================================================================" -ForegroundColor Blue
-Write-Host "                   Plane - Project Management Tool                    " -ForegroundColor Blue
+Write-Host "                   Gizmo - Project Management Tool                    " -ForegroundColor Blue
 Write-Host "======================================================================" -ForegroundColor Blue
 Write-Host "Setting up your development environment..."
 Write-Host ""

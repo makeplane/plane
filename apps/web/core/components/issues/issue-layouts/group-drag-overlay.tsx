@@ -1,18 +1,18 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
-// plane imports
+// gizmo imports
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueOrderByOptions } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
-// plane web imports
+// gizmo web imports
 import { WorkFlowDisabledOverlay } from "@/plane-web/components/workflow";
 
 type Props = {

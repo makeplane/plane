@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -55,7 +55,7 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
         ) = get_email_configuration()
 
         # Set the subject
-        subject = "You have been invited to a Plane project"
+        subject = "You have been invited to a Gizmo project"
 
         # Render the email template
         html_content = render_to_string("emails/notifications/project_addition.html", context)

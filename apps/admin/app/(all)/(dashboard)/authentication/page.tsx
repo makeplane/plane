@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane internal packages
+// gizmo internal packages
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
@@ -169,6 +169,6 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Plane Web" }];
+export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Gizmo Web" }];
 
 export default InstanceAuthenticationPage;

@@ -1,20 +1,20 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
-// plane imports
+// gizmo imports
 import { API_BASE_URL } from "@plane/constants";
 import type { TPublicCycle } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
 /**
- * Service class for managing cycles within plane sites application.
+ * Service class for managing cycles within gizmo sites application.
  * Extends APIService to handle HTTP requests to the cycle-related endpoints.
  * @extends {APIService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for gizmo sites
  */
 export class SitesCycleService extends APIService {
   constructor(BASE_URL?: string) {

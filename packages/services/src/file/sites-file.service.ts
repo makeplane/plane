@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
-// plane imports
+// gizmo imports
 import { API_BASE_URL } from "@plane/constants";
 // local services
 import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
@@ -14,10 +14,10 @@ import { FileService } from "./file.service";
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "./helper";
 
 /**
- * Service class for managing file operations within plane sites application.
+ * Service class for managing file operations within gizmo sites application.
  * Extends FileService to manage file-related operations.
  * @extends {FileService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for gizmo sites
  */
 export class SitesFileService extends FileService {
   private cancelSource: any;

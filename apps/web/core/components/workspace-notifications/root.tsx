@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -7,7 +7,7 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// plane imports
+// gizmo imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
@@ -18,7 +18,7 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-// plane web imports
+// gizmo web imports
 import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
 // local imports
 import { InboxContentRoot } from "../inbox/content";

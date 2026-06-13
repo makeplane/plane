@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -20,7 +20,7 @@ INSTALLED_APPS += ("scout_apm.django",)  # noqa
 # Scout Settings
 SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
 SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
-SCOUT_NAME = "Plane"
+SCOUT_NAME = "Gizmo"
 
 LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 

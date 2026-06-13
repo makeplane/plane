@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -34,7 +34,7 @@ export const SUBSCRIPTION_WITH_BILLING_FREQUENCY = [
 export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
   [EProductSubscriptionEnum.PRO]: {
     id: EProductSubscriptionEnum.PRO,
-    name: "Plane Pro",
+    name: "Gizmo Pro",
     description:
       "More views, more cycles powers, more pages features, new reports, and better dashboards are waiting to be unlocked.",
     type: "PRO",
@@ -61,9 +61,9 @@ export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
   },
   [EProductSubscriptionEnum.BUSINESS]: {
     id: EProductSubscriptionEnum.BUSINESS,
-    name: "Plane Business",
+    name: "Gizmo Business",
     description:
-      "The earliest packaging of Business at $10 a seat a month billed annually, $12 a seat a month billed monthly for Plane Cloud",
+      "The earliest packaging of Business at $10 a seat a month billed annually, $12 a seat a month billed monthly for Gizmo Cloud",
     type: "BUSINESS",
     prices: [
       {
@@ -88,7 +88,7 @@ export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
   },
   [EProductSubscriptionEnum.ENTERPRISE]: {
     id: EProductSubscriptionEnum.ENTERPRISE,
-    name: "Plane Enterprise",
+    name: "Gizmo Enterprise",
     description: "",
     type: "ENTERPRISE",
     prices: [
@@ -117,7 +117,7 @@ export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
 /**
  * URL for the "Talk to Sales" page where users can contact sales team
  */
-export const TALK_TO_SALES_URL = "https://plane.so/talk-to-sales";
+export const TALK_TO_SALES_URL = "https://gizmo.so/talk-to-sales";
 
 /**
  * Mapping of subscription types to their respective upgrade/redirection URLs based on billing frequency
@@ -133,12 +133,12 @@ export const SUBSCRIPTION_REDIRECTION_URLS: Record<EProductSubscriptionEnum, Rec
     year: TALK_TO_SALES_URL,
   },
   [EProductSubscriptionEnum.PRO]: {
-    month: "https://app.plane.so/upgrade/pro/self-hosted?plan=month",
-    year: "https://app.plane.so/upgrade/pro/self-hosted?plan=year",
+    month: "https://app.gizmo.so/upgrade/pro/self-hosted?plan=month",
+    year: "https://app.gizmo.so/upgrade/pro/self-hosted?plan=year",
   },
   [EProductSubscriptionEnum.BUSINESS]: {
-    month: "https://app.plane.so/upgrade/business/self-hosted?plan=month",
-    year: "https://app.plane.so/upgrade/business/self-hosted?plan=year",
+    month: "https://app.gizmo.so/upgrade/business/self-hosted?plan=month",
+    year: "https://app.gizmo.so/upgrade/business/self-hosted?plan=year",
   },
   [EProductSubscriptionEnum.ENTERPRISE]: {
     month: TALK_TO_SALES_URL,
@@ -153,7 +153,7 @@ export const SUBSCRIPTION_REDIRECTION_URLS: Record<EProductSubscriptionEnum, Rec
 export const SUBSCRIPTION_WEBPAGE_URLS: Record<EProductSubscriptionEnum, string> = {
   [EProductSubscriptionEnum.FREE]: TALK_TO_SALES_URL,
   [EProductSubscriptionEnum.ONE]: TALK_TO_SALES_URL,
-  [EProductSubscriptionEnum.PRO]: "https://plane.so/pro",
-  [EProductSubscriptionEnum.BUSINESS]: "https://plane.so/business",
-  [EProductSubscriptionEnum.ENTERPRISE]: "https://plane.so/business",
+  [EProductSubscriptionEnum.PRO]: "https://gizmo.so/pro",
+  [EProductSubscriptionEnum.BUSINESS]: "https://gizmo.so/business",
+  [EProductSubscriptionEnum.ENTERPRISE]: "https://gizmo.so/business",
 };

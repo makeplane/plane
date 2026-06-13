@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -16,8 +16,8 @@ export function ProductUpdatesFallback(props: TProductUpdatesFallbackProps) {
   // derived values
   const changelogUrl =
     variant === "cloud"
-      ? "https://plane.so/changelog?category=cloud"
-      : "https://plane.so/changelog?category=self-hosted";
+      ? "https://gizmo.so/changelog?category=cloud"
+      : "https://gizmo.so/changelog?category=self-hosted";
 
   return (
     <div className="py-8">

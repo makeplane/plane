@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-// plane imports
+// gizmo imports
 import { useTranslation } from "@plane/i18n";
 import type { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // assets
@@ -18,7 +18,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
+// gizmo web components
 import { HomePageHeader } from "@/plane-web/components/home/header";
 // local imports
 import { StickiesWidget } from "../stickies/widget";
@@ -71,7 +71,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled, loading } =
     useHome();
   const { loader } = useProject();
-  // plane hooks
+  // gizmo hooks
   const { t } = useTranslation();
   // derived values
   const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;

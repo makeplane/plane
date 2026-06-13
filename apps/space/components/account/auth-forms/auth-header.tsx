@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -27,7 +27,7 @@ const Titles: TAuthHeaderDetails = {
   },
   [EAuthModes.SIGN_UP]: {
     header: "View, comment, and do more",
-    subHeader: "Sign up or log in to work with Plane work items and Pages.",
+    subHeader: "Sign up or log in to work with Gizmo work items and Pages.",
   },
 };
 
@@ -41,7 +41,7 @@ export function AuthHeader(props: TAuthHeader) {
 
     return {
       header: "Comment or react to work items",
-      subHeader: "Use plane to add your valuable inputs to features.",
+      subHeader: "Use Gizmo to add your valuable inputs to features.",
     };
   };
 

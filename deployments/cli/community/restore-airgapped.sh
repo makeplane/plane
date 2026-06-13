@@ -84,7 +84,7 @@ function restoreData() {
     fi
 
     if [[ $dockerServiceStatus == "running" ]]; then
-        echo "Plane Airgapped is running. Please STOP the Plane Airgapped before restoring data."
+        echo "Gizmo Airgapped is running. Please STOP the Gizmo Airgapped before restoring data."
         exit 1
     fi
 

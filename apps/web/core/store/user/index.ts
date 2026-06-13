@@ -1,15 +1,15 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
-// plane imports
+// gizmo imports
 import { EUserPermissions, API_BASE_URL } from "@plane/constants";
 import type { IUser, TUserPermissions } from "@plane/types";
-// plane web imports
+// gizmo web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IUserPermissionStore } from "@/plane-web/store/user/permission.store";
 import { UserPermissionStore } from "@/plane-web/store/user/permission.store";

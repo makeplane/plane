@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -8,9 +8,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
-// Plane
+// Gizmo
 import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
-// Plane-web
+// Gizmo-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 // mobx
 

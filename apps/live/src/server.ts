@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -12,7 +12,7 @@ import type { Express, Request, Response, Router } from "express";
 import express from "express";
 import expressWs from "express-ws";
 import helmet from "helmet";
-// plane imports
+// gizmo imports
 import { registerController } from "@plane/decorators";
 import { logger, loggerMiddleware } from "@plane/logger";
 // controllers

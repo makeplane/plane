@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-// plane imports
+// gizmo imports
 import type { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "../../utils/classname";
 

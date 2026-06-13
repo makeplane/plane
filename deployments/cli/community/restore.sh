@@ -57,22 +57,22 @@ function restoreData() {
     local BACKUP_FOLDER=${1:-$PWD}
 
     local dockerServiceStatus
-    dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-app --format=json | jq -r .[0].Status)
+    dockerServiceStatus=$($COMPOSE_CMD ls --filter name=gizmo-app --format=json | jq -r .[0].Status)
     local dockerServicePrefix
     dockerServicePrefix="running"
 
     if [[ $dockerServiceStatus == $dockerServicePrefix* ]]; then
-        echo "Plane App is running. Please STOP the Plane App before restoring data."
+        echo "Gizmo App is running. Please STOP the Gizmo App before restoring data."
         exit 1
     fi
 
     local volume_suffix
     volume_suffix="_pgdata|_redisdata|_uploads|_rabbitmq_data"
     local volumes
-    volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "$volume_suffix")
+    volumes=$(docker volume ls -f "name=gizmo-app" --format "{{.Name}}" | grep -E "$volume_suffix")
     # Check if there are any matching volumes
     if [ -z "$volumes" ]; then
-        echo ".....No volumes found starting with 'plane-app'"
+        echo ".....No volumes found starting with 'gizmo-app'"
         exit 1
     fi
     

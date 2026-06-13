@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -33,7 +33,7 @@ def magic_link(email, key, token):
         ) = get_email_configuration()
 
         # Send the mail
-        subject = f"Your unique Plane login code is {token}"
+        subject = f"Your unique Gizmo login code is {token}"
         context = {"code": token, "email": email}
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)

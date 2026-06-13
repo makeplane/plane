@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -9,7 +9,7 @@ import type { LucideIcon } from "lucide-react";
 import { Activity, Bell, CircleUser, KeyRound, LockIcon, Settings2 } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
-// plane imports
+// gizmo imports
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { ISvgIcons } from "@plane/propel/icons";

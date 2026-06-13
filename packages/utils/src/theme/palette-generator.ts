@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -195,7 +195,7 @@ export function generateColorPalette(
 
 /**
  * Generate both brand and neutral palettes for a custom theme
- * Optimized for Plane's 2-color theme system
+ * Optimized for Gizmo's 2-color theme system
  * Uses auto-calculated value stops for better color matching
  *
  * @param brandColor - Brand accent color (hex)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -33,9 +33,9 @@ export const Default: Story = {
     return (
       <Accordion.Root className="w-96">
         <Accordion.Item value="item-1">
-          <Accordion.Trigger>What is Plane?</Accordion.Trigger>
+          <Accordion.Trigger>What is Gizmo?</Accordion.Trigger>
           <Accordion.Content>
-            Plane is an open-source project management tool designed for developers and teams to plan, track, and manage
+            Gizmo is an open-source project management tool designed for developers and teams to plan, track, and manage
             their work efficiently.
           </Accordion.Content>
         </Accordion.Item>
@@ -49,7 +49,7 @@ export const Default: Story = {
         <Accordion.Item value="item-3">
           <Accordion.Trigger>Is it free to use?</Accordion.Trigger>
           <Accordion.Content>
-            Plane offers both free and paid plans. The free plan includes essential features for small teams, while paid
+            Gizmo offers both free and paid plans. The free plan includes essential features for small teams, while paid
             plans unlock advanced functionality.
           </Accordion.Content>
         </Accordion.Item>

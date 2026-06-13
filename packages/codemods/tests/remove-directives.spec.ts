@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -194,7 +194,7 @@ describe("remove-directives", () => {
       'use-client';
       import type { FC } from "react";
       import { useState } from "react";
-      // plane imports
+      // gizmo imports
       import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
       export function MyComponent() {
@@ -207,7 +207,7 @@ describe("remove-directives", () => {
     expect(result).toMatchInlineSnapshot(`
       "import type { FC } from "react";
             import { useState } from "react";
-            // plane imports
+            // gizmo imports
             import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
             export function MyComponent() {
@@ -247,7 +247,7 @@ describe("remove-directives", () => {
 
       import type { FC } from "react";
       import { useState } from "react";
-      // plane imports
+      // gizmo imports
       import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
       // hooks
       import useKeypress from "@/hooks/use-keypress";
@@ -272,7 +272,7 @@ describe("remove-directives", () => {
     expect(result).toMatchInlineSnapshot(`
       "import type { FC } from "react";
             import { useState } from "react";
-            // plane imports
+            // gizmo imports
             import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
             // hooks
             import useKeypress from "@/hooks/use-keypress";

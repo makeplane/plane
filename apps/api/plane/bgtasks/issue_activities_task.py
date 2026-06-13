@@ -1,4 +1,4 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# Copyright (c) 2023-present Gizmo Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
@@ -503,7 +503,7 @@ def track_archive_at(
             )
         else:
             if requested_data.get("automation"):
-                comment = "Plane has archived the issue"
+                comment = "Gizmo has archived the issue"
                 new_value = "archive"
             else:
                 comment = "Actor has archived the issue"
@@ -546,7 +546,7 @@ def track_closed_to(
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="Plane updated the state to ",
+                comment="Gizmo updated the state to ",
                 old_identifier=None,
                 new_identifier=updated_state.id,
                 epoch=epoch,

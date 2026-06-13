@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -129,7 +129,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <Lightbulb className="size-4" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}
-            <a className="font-medium underline" href="https://plane.so/contact">
+            <a className="font-medium underline" href="https://gizmo.so/contact">
               touch with us.
             </a>
           </div>

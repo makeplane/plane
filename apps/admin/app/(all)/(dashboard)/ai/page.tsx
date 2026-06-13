@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
@@ -26,7 +26,7 @@ const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentP
     <PageWrapper
       header={{
         title: "AI features for all your workspaces",
-        description: "Configure your AI API credentials so Plane AI features are turned on for all your workspaces.",
+        description: "Configure your AI API credentials so Gizmo AI features are turned on for all your workspaces.",
       }}
     >
       {formattedConfig ? (
