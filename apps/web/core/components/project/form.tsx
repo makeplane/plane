@@ -16,6 +16,7 @@ import { CustomSelect, Input, TextArea, EmojiIconPickerTypes } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 // helpers
@@ -64,6 +65,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
   const coverImage = watch("cover_image_url");
+  const isSportLocked = !!project?.sport?.trim();
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -157,6 +159,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
+      sport: formData.sport ?? null,
 
       logo_props: formData.logo_props,
       timezone: formData.timezone,
@@ -187,7 +190,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <img
           src={getFileURL(
             coverImage ??
-              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
           )}
           alt="Program cover image"
           className="h-44 w-full rounded-md object-cover"
@@ -383,7 +386,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
                     input
                     disabled={!isAdmin}
-                    // optionsClassName="w-full"
+                  // optionsClassName="w-full"
                   >
                     {NETWORK_CHOICES.map((network) => (
                       <CustomSelect.Option key={network.key} value={network.key}>
@@ -399,6 +402,27 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   </CustomSelect>
                 );
               }}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <h4 className="text-sm">Sport</h4>
+            <Controller
+              name="sport"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <>
+                  <SportDropdown
+                    value={value ?? null}
+                    onChange={onChange}
+                    placeholder={t("add_sport")}
+                    buttonVariant="border-with-text"
+                    className="w-full"
+                    buttonContainerClassName="w-full text-left"
+                    buttonClassName="w-full rounded-md border border-custom-border-200 px-3 text-sm"
+                    disabled={!isAdmin || isSportLocked}
+                  />
+                </>
+              )}
             />
           </div>
           <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">

@@ -18,6 +18,7 @@ from plane.db.models import (
     IssueLink,
     Label,
     ProjectMember,
+    Project,
     State,
     User,
     EstimatePoint,
@@ -71,6 +72,14 @@ class IssueSerializer(BaseSerializer):
         exclude = ["description", "description_stripped"]
 
     def validate(self, data):
+        project_sport = (
+            Project.objects.filter(pk=self.context.get("project_id")).values_list("sport", flat=True).first()
+        )
+        if isinstance(project_sport, str):
+            project_sport = project_sport.strip() or None
+        if project_sport:
+            data["sport"] = project_sport
+
         should_validate_start_datetime = self.instance is None or "start_date" in data or "start_time" in data
         start_date = data.get("start_date", getattr(self.instance, "start_date", None))
         start_time = data.get("start_time", getattr(self.instance, "start_time", None))

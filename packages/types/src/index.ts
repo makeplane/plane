@@ -33,6 +33,7 @@ export * from "./project";
 export * from "./publish";
 export * from "./reaction";
 export * from "./rich-filters";
+export * from "./roster";
 export * from "./search";
 export * from "./state";
 export * from "./stickies";

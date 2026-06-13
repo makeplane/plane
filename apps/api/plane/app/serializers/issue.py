@@ -37,6 +37,7 @@ from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
     ProjectMember,
+    Project,
     EstimatePoint,
 )
 from plane.utils.content_validator import (
@@ -128,6 +129,14 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def validate(self, attrs):
+        project_sport = (
+            Project.objects.filter(pk=self.context.get("project_id")).values_list("sport", flat=True).first()
+        )
+        if isinstance(project_sport, str):
+            project_sport = project_sport.strip() or None
+        if project_sport:
+            attrs["sport"] = project_sport
+
         should_validate_start_datetime = self.instance is None or "start_date" in attrs or "start_time" in attrs
         start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
         start_time = attrs.get("start_time", getattr(self.instance, "start_time", None))

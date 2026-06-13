@@ -148,6 +148,7 @@ export const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
   name: "",
   network: 2,
   project_lead: null,
+  sport: null,
 };
 
 export enum EProjectFeatureKey {

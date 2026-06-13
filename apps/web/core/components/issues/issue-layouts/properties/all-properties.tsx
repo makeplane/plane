@@ -108,6 +108,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const subIssueCount = issue?.sub_issues_count ?? 0;
   const isEventLocked = isDateTimePast(issue.start_date, issue.start_time);
   const isDateTimeLocked = isReadOnly || isEventLocked;
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const issueSport = issue.sport?.trim() || null;
+  const shouldShowSportField = !!projectSport || !!issueSport;
+  const isSportLocked = isReadOnly || !!projectSport;
 
   const issueOperations = useMemo(
     () => ({
@@ -522,22 +526,23 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* sport field */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sport">
-        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <SportDropdown
-            value={issue.sport ?? null}
-            onChange={handleSport}
-            placeholder={t("sport_field")}
-            icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue?.sport ? "border-with-text" : "border-without-text"}
-            clearIconClassName="!text-custom-text-100"
-            disabled={isReadOnly}
-            renderByDefault={isMobile}
-            showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
+      {shouldShowSportField ? (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sport">
+          <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+            <SportDropdown
+              value={issue.sport ?? null}
+              onChange={handleSport}
+              placeholder={t("sport_field")}
+              icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
+              buttonVariant={issue?.sport ? "border-with-text" : "border-without-text"}
+              clearIconClassName="!text-custom-text-100"
+              disabled={isSportLocked}
+              renderByDefault={isMobile}
+              showTooltip
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      ) : null}
 
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="program">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>

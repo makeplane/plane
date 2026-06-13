@@ -3,9 +3,11 @@
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-import { OppositionSearchProvider } from "./(context)/opposition-search-context";
-import { OppositionTeamsProvider } from "./(context)/opposition-teams-context";
-import { WorkspaceOppositionHeader } from "./header";
+import {
+  OppositionSearchProvider,
+  OppositionTeamsProvider,
+  WorkspaceOppositionHeader,
+} from "@/plane-web/features/opposition";
 
 export default function WorkspaceOppositionLayout({ children }: { children: React.ReactNode }) {
   return (

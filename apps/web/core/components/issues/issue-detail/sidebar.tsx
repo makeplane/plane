@@ -89,6 +89,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
   const isDateTimeLocked = !isEditable || isDateTimePast(issue.start_date, issue.start_time);
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const issueSport = issue.sport?.trim() || null;
+  const shouldShowSportField = !!projectSport || !!issueSport;
+  const isSportLocked = !isEditable || !!projectSport;
 
   const handleDateTimeUpdate = (data: Partial<TIssue>) => {
     if (
@@ -311,27 +315,28 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div> */}
 
-            {/* sport field */}
-            <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gapa-1 text-sm text-custom-text-300">
-                <Volleyball className="h-4 w-4 flex-shrink-0" />
-                <span>{t("sport_field")}</span>
+            {shouldShowSportField ? (
+              <div className="flex h-8 items-center gap-2">
+                <div className="flex w-2/5 flex-shrink-0 items-center gapa-1 text-sm text-custom-text-300">
+                  <Volleyball className="h-4 w-4 flex-shrink-0" />
+                  <span>{t("sport_field")}</span>
+                </div>
+                <SportDropdown
+                  value={issue.sport}
+                  onChange={(val: string | null) => {
+                    issueOperations.update(workspaceSlug, projectId, issueId, { sport: val });
+                  }}
+                  disabled={isSportLocked}
+                  placeholder={t("add_sport")}
+                  hideIcon
+                  buttonVariant="transparent-with-text"
+                  className="group w-3/5 flex-grow"
+                  buttonContainerClassName="w-full text-left"
+                  buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
+                  clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                />
               </div>
-              <SportDropdown
-                value={issue.sport}
-                onChange={(val: string | null) => {
-                  issueOperations.update(workspaceSlug, projectId, issueId, { sport: val });
-                }}
-                disabled={!isEditable}
-                placeholder={t("add_sport")}
-                hideIcon
-                buttonVariant="transparent-with-text"
-                className="group w-3/5 flex-grow"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
-                clearIconClassName="h-3 w-3 hidden group-hover:inline"
-              />
-            </div>
+            ) : null}
 
             {/* opposition field */}
             <div className="flex h-8 items-center gap-2">

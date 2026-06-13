@@ -3,10 +3,8 @@ import DOMPurify from "dompurify";
 import { API_BASE_URL } from "@plane/constants";
 
 import { resolveAttachmentDownloadUrl } from "@/components/issues/issue-detail-widgets/media-library-utils";
-import {
-  addInlineDisposition,
-} from "../../../../../app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/media-library/[mediaId]/media-detail-utils";
-import { useDocumentPreview } from "../../../../../app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/media-library/hooks/media-detail-hooks";
+import { useDocumentPreview } from "@/plane-web/features/media-library/hooks/media-detail-hooks";
+import { addInlineDisposition } from "@/plane-web/features/media-library/utils/media-detail-utils";
 
 import type { TWebhookArtifact } from "./webhook-artifacts-types";
 import { inferFormatFromPath, shouldUseCredentialsForSource } from "./webhook-artifacts-utils";

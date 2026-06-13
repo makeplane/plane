@@ -159,6 +159,7 @@ from .module.base import (
 from .module.issue import ModuleIssueViewSet
 
 from .module.archive import ModuleArchiveUnarchiveEndpoint
+from .roster import RosterPlayerViewSet
 
 from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 

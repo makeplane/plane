@@ -85,6 +85,7 @@ from .module import (
     ModuleLinkSerializer,
     ModuleUserPropertiesSerializer,
 )
+from .roster import RosterPlayerSerializer, RosterPlayerImportSerializer
 
 from .api import APITokenSerializer, APITokenReadSerializer
 

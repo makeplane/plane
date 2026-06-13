@@ -23,6 +23,11 @@ declare module "xlsx" {
     Sheets: Record<string, unknown>;
   };
 
+  export type SheetToJsonOptions = {
+    defval?: unknown;
+    raw?: boolean;
+  };
+
   export type ReadOptions = {
     type: "array";
     sheetRows?: number;
@@ -32,6 +37,7 @@ declare module "xlsx" {
 
   export const utils: {
     sheet_to_html(sheet: unknown): string;
+    sheet_to_json<T = Record<string, unknown>>(sheet: unknown, options?: SheetToJsonOptions): T[];
   };
 
   const defaultExport: {

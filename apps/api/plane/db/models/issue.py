@@ -188,6 +188,13 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        if self._state.adding and self.project_id:
+            project_sport = getattr(self.project, "sport", None)
+            if isinstance(project_sport, str):
+                project_sport = project_sport.strip() or None
+            if project_sport:
+                self.sport = project_sport
+
         if self.state is None:
             try:
                 from plane.db.models import State

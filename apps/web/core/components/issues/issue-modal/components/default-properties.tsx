@@ -94,6 +94,10 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   minDate.setHours(0, 0, 0, 0);
 
   const isDateTimeLocked = !!id && !isDraft && isDateTimePast(initialStartDate, initialStartTime);
+  const projectSport = projectDetails?.sport?.trim() || null;
+  const currentSport = props.Sport?.trim() || null;
+  const shouldShowSportField = !!projectSport || !!currentSport;
+  const isSportLockedForCreation = !id && !!projectSport;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -193,24 +197,27 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         )}
       />
 
-      <Controller
-        control={control}
-        name="sport"
-        render={({ field: { value, onChange } }) => (
-          <div className="h-7">
-            <SportDropdown
-              value={value ?? null}
-              onChange={(sport) => {
-                onChange(sport);
-                handleFormChange();
-              }}
-              placeholder={t("sport_field")}
-              buttonVariant="border-with-text"
-              tabIndex={getIndex("sport")}
-            />
-          </div>
-        )}
-      />
+      {shouldShowSportField ? (
+        <Controller
+          control={control}
+          name="sport"
+          render={({ field: { value, onChange } }) => (
+            <div className="h-7">
+              <SportDropdown
+                value={value ?? null}
+                onChange={(sport) => {
+                  onChange(sport);
+                  handleFormChange();
+                }}
+                placeholder={t("sport_field")}
+                buttonVariant="border-with-text"
+                tabIndex={getIndex("sport")}
+                disabled={isSportLockedForCreation}
+              />
+            </div>
+          )}
+        />
+      ) : null}
 
       {/* <Controller
         control={control}
