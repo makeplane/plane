@@ -26,13 +26,13 @@ export const InvalidFilterItem = observer(function InvalidFilterItem<
       conditionValue={condition.value}
       showTransition={showTransition}
       variant="error"
-      tooltipContent="This filter condition is no longer valid. The property may have been deleted or your access to it may have changed."
+      tooltipContent="Это условие фильтра больше недействительно. Свойство могло быть удалено или ваш доступ к нему изменился."
     >
       {/* Property section */}
       <FilterItemProperty
         conditionId={condition.id}
         icon={CircleAlert}
-        label="Invalid filter"
+        label="Недопустимый фильтр"
         filter={filter}
         isDisabled={isDisabled}
       />

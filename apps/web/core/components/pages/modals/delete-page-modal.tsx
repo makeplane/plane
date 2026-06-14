@@ -52,8 +52,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Page deleted successfully.",
+          title: "Успешно!",
+          message: "Страница успешно удалена.",
         });
 
         if (routePageId) {
@@ -63,8 +63,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Page could not be deleted. Please try again.",
+          title: "Ошибка!",
+          message: "Не удалось удалить страницу. Пожалуйста, попробуйте снова.",
         });
       });
 
@@ -79,12 +79,12 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete page"
+      title="Удалить страницу"
       content={
         <>
-          Are you sure you want to delete page-{" "}
-          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
-          deleted permanently. This action cannot be undone.
+          Вы уверены, что хотите удалить страницу{" "}
+          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span>? Страница будет
+          удалена безвозвратно. Это действие нельзя отменить.
         </>
       }
     />

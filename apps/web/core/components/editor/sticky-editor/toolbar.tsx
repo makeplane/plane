@@ -71,7 +71,7 @@ export function StickyEditorToolbar(props: Props) {
         <Tooltip
           tooltipContent={
             <p className="flex flex-col gap-1 text-center text-11">
-              <span className="font-medium">Background color</span>
+              <span className="font-medium">Цвет фона</span>
             </p>
           }
         >
@@ -121,7 +121,7 @@ export function StickyEditorToolbar(props: Props) {
       <Tooltip
         tooltipContent={
           <p className="flex flex-col gap-1 text-center text-11">
-            <span className="font-medium">Delete</span>
+            <span className="font-medium">Удалить</span>
           </p>
         }
       >

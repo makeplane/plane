@@ -66,7 +66,7 @@ export const AdminHeader = observer(function AdminHeader() {
                 component={
                   <BreadcrumbLink
                     href="/general/"
-                    label="Settings"
+                    label="Настройки"
                     icon={<Settings className="h-4 w-4 text-tertiary" />}
                   />
                 }

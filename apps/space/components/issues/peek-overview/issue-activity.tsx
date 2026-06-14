@@ -40,7 +40,7 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
 
   return (
     <div className="pb-10">
-      <h4 className="font-medium">Comments</h4>
+      <h4 className="font-medium">Комментарии</h4>
       <div className="mt-4">
         <div className="space-y-4">
           {comments.map((comment) => (
@@ -60,10 +60,10 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
             <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
               <p className="flex items-center gap-2 overflow-hidden text-13 break-words text-secondary">
                 <Lock className="size-3 shrink-0" />
-                Sign in to add your comment
+                Войдите, чтобы добавить комментарий
               </p>
               <Link to={`/?next_path=${pathname}`}>
-                <Button variant="primary">Sign in</Button>
+                <Button variant="primary">Войти</Button>
               </Link>
             </div>
           ))}

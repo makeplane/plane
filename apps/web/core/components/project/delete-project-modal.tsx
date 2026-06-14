@@ -43,7 +43,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
     watch,
   } = useForm({ defaultValues });
 
-  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "delete my project";
+  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "удалить мой проект";
 
   const handleClose = () => {
     const timer = setTimeout(() => {
@@ -63,14 +63,14 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
       handleClose();
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Project deleted successfully.",
+        title: "Успешно!",
+        message: "Проект удалён.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: "Ошибка!",
+        message: "Что-то пошло не так. Попробуйте позже.",
       });
     }
   };
@@ -83,18 +83,18 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Delete project</h3>
+            <h3 className="text-18 font-medium 2xl:text-20">Удалить проект</h3>
           </span>
         </div>
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Are you sure you want to delete project <span className="font-semibold break-words">{project?.name}</span>?
-            All of the data related to the project will be permanently removed. This action cannot be undone
+            Вы уверены, что хотите удалить проект <span className="font-semibold break-words">{project?.name}</span>?
+            Все связанные с проектом данные будут безвозвратно удалены. Это действие нельзя отменить.
           </p>
         </span>
         <div className="text-secondary">
           <p className="text-13 break-words">
-            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
+            Введите название проекта <span className="font-medium text-primary">{project?.name}</span>, чтобы продолжить:
           </p>
           <Controller
             control={control}
@@ -108,7 +108,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.projectName)}
-                placeholder="Project name"
+                placeholder="Название проекта"
                 className="mt-2 w-full"
                 autoComplete="off"
               />
@@ -117,7 +117,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
         </div>
         <div className="text-secondary">
           <p className="text-13">
-            To confirm, type <span className="font-medium text-primary">delete my project</span> below:
+            Для подтверждения введите <span className="font-medium text-primary">удалить мой проект</span> ниже:
           </p>
           <Controller
             control={control}
@@ -131,7 +131,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.confirmDelete)}
-                placeholder="Enter 'delete my project'"
+                placeholder="Введите «удалить мой проект»"
                 className="mt-2 w-full"
                 autoComplete="off"
               />

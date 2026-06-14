@@ -40,7 +40,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // }, [clearSecretKey, isCreated]);
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Вебхук` : undefined;
 
   useSWR(
     isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
@@ -64,15 +64,15 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       await updateWebhook(workspaceSlug, formData.id, payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Webhook updated successfully.",
+        title: "Успешно!",
+        message: "Вебхук успешно обновлён.",
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.error ?? "Something went wrong. Please try again.",
+        title: "Ошибка!",
+        message: error?.error ?? "Что-то пошло не так. Пожалуйста, попробуйте снова.",
       });
     }
   };
@@ -82,7 +82,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       <>
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-13 text-tertiary">You are not authorized to access this page.</p>
+          <p className="text-13 text-tertiary">У вас нет прав для доступа к этой странице.</p>
         </div>
       </>
     );

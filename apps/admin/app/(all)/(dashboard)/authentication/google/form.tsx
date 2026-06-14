@@ -58,10 +58,10 @@ export function InstanceGoogleConfigForm(props: Props) {
     {
       key: "GOOGLE_CLIENT_ID",
       type: "text",
-      label: "Client ID",
+      label: "ID клиента",
       description: (
         <>
-          Your client ID lives in your Google API Console.{" "}
+          Ваш ID клиента находится в Google API Console.{" "}
           <a
             tabIndex={-1}
             href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
@@ -69,7 +69,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Learn more
+            Подробнее
           </a>
         </>
       ),
@@ -80,10 +80,10 @@ export function InstanceGoogleConfigForm(props: Props) {
     {
       key: "GOOGLE_CLIENT_SECRET",
       type: "password",
-      label: "Client secret",
+      label: "Секрет клиента",
       description: (
         <>
-          Your client secret should also be in your Google API Console.{" "}
+          Ваш секрет клиента также должен находиться в Google API Console.{" "}
           <a
             tabIndex={-1}
             href="https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid"
@@ -91,7 +91,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Learn more
+            Подробнее
           </a>
         </>
       ),
@@ -109,19 +109,19 @@ export function InstanceGoogleConfigForm(props: Props) {
   const GOOGLE_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
-      label: "Origin URL",
+      label: "URL источника",
       url: originURL,
       description: (
         <p>
-          We will auto-generate this. Paste this into your{" "}
-          <CodeBlock darkerShade>Authorized JavaScript origins</CodeBlock> field. For this OAuth client{" "}
+          Мы сгенерируем это автоматически. Вставьте это в поле{" "}
+          <CodeBlock darkerShade>Authorized JavaScript origins</CodeBlock>. Для этого OAuth-клиента{" "}
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            здесь.
           </a>
         </p>
       ),
@@ -131,19 +131,19 @@ export function InstanceGoogleConfigForm(props: Props) {
   const GOOGLE_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: "URI обратного вызова",
       url: `${originURL}/auth/google/callback/`,
       description: (
         <p>
-          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Redirect URI</CodeBlock>{" "}
-          field. For this OAuth client{" "}
+          Мы сгенерируем это автоматически. Вставьте это в поле <CodeBlock darkerShade>Authorized Redirect URI</CodeBlock>
+          {" "}. Для этого OAuth-клиента{" "}
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            здесь.
           </a>
         </p>
       ),
@@ -157,8 +157,8 @@ export function InstanceGoogleConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Done!",
-        message: "Your Google authentication is configured. You should test it now.",
+        title: "Готово!",
+        message: "Ваша аутентификация через Google настроена. Рекомендуем протестировать её.",
       });
       reset({
         GOOGLE_CLIENT_ID: response.find((item) => item.key === "GOOGLE_CLIENT_ID")?.value,
@@ -187,7 +187,7 @@ export function InstanceGoogleConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
           <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">Google-provided details for Gizmo</div>
+            <div className="pt-2.5 text-18 font-medium">Данные от Google для Gizmo</div>
             {GOOGLE_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -211,16 +211,16 @@ export function InstanceGoogleConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving" : "Save changes"}
+                  {isSubmitting ? "Сохранение" : "Сохранить изменения"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
+                  Назад
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 flex flex-col gap-y-6 md:col-span-1">
-            <div className="pt-2 text-18 font-medium">Gizmo-provided details for Google</div>
+            <div className="pt-2 text-18 font-medium">Данные от Gizmo для Google</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
@@ -234,7 +234,7 @@ export function InstanceGoogleConfigForm(props: Props) {
               <div className="flex flex-col overflow-hidden rounded-lg">
                 <div className="flex items-center gap-x-3 bg-layer-3 px-6 py-3 text-11 font-medium text-secondary uppercase">
                   <Monitor className="h-3 w-3" />
-                  Web
+                  Веб
                 </div>
                 <div className="flex flex-col gap-y-4 bg-layer-1 px-6 py-4">
                   {GOOGLE_SERVICE_DETAILS.map((field) => (

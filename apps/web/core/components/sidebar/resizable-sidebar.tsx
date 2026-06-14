@@ -192,7 +192,7 @@ export function ResizableSidebar({
           maxWidth: `${isCollapsed ? 0 : width}px`,
         }}
         role="complementary"
-        aria-label="Main sidebar"
+        aria-label="Основная боковая панель"
         data-prevent-outside-click={isMobile}
       >
         <aside
@@ -215,7 +215,7 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label="Изменить размер боковой панели"
           />
         </aside>
       </div>
@@ -235,7 +235,7 @@ export function ResizableSidebar({
         onMouseEnter={handlePeekEnter}
         onMouseLeave={handlePeekLeave}
         role="complementary"
-        aria-label="Sidebar peek view"
+        aria-label="Просмотр боковой панели"
       >
         <aside
           className={cn(
@@ -257,7 +257,7 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label="Изменить размер боковой панели"
           />
         </aside>
       </div>

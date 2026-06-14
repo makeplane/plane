@@ -97,7 +97,7 @@ export function GptAssistantPopover(props: Props) {
 
     setToast({
       type: TOAST_TYPE.ERROR,
-      title: "Error!",
+      title: "Ошибка!",
       message: errorMessage,
     });
 
@@ -123,8 +123,8 @@ export function GptAssistantPopover(props: Props) {
   const handleInvalidTask = () => {
     setToast({
       type: TOAST_TYPE.ERROR,
-      title: "Error!",
-      message: "Please enter some task to get AI assistance.",
+      title: "Ошибка!",
+      message: "Введите задачу, чтобы получить помощь ИИ.",
     });
   };
 

@@ -53,14 +53,14 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving configuration",
+      loading: "Сохранение конфигурации",
       success: {
-        title: "Success",
-        message: () => "Configuration saved successfully",
+        title: "Готово",
+        message: () => "Конфигурация успешно сохранена",
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: "Ошибка",
+        message: () => "Не удалось сохранить конфигурацию",
       },
     });
 
@@ -77,8 +77,8 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   return (
     <PageWrapper
       header={{
-        title: "Workspaces on this instance",
-        description: "See all workspaces and control who can create them.",
+        title: "Рабочие пространства в этом инстансе",
+        description: "Просматривайте все рабочие пространства и управляйте тем, кто может их создавать.",
       }}
     >
       <div className="space-y-3">
@@ -86,9 +86,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
           <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="pb-1 text-16 font-medium">Prevent anyone else from creating a workspace.</div>
+                <div className="pb-1 text-16 font-medium">Запретить остальным создавать рабочие пространства.</div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
+                  Если включить эту опцию, создавать рабочие пространства сможете только вы. Вам придётся приглашать пользователей в новые рабочие пространства.
                 </div>
               </div>
             </div>
@@ -119,19 +119,19 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             <div className="flex items-center justify-between gap-2 pt-6">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
-                  All workspaces on this instance <span className="text-tertiary">• {workspaceIds.length}</span>
+                  Все рабочие пространства в этом инстансе <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
                     <LoaderIcon className="h-4 w-4 animate-spin" />
                   )}
                 </div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  You can&apos;t yet delete workspaces and you can only go to the workspace if you are an Admin or a
-                  Member.
+                  Удалять рабочие пространства пока нельзя, а перейти в рабочее пространство можно, только если вы
+                  администратор или участник.
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
-                  Create workspace
+                  Создать рабочее пространство
                 </Link>
               </div>
             </div>
@@ -148,7 +148,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   onClick={() => fetchNextWorkspaces()}
                   disabled={workspaceLoader === "pagination"}
                 >
-                  Load more
+                  Показать ещё
                   {workspaceLoader === "pagination" && <LoaderIcon className="h-3 w-3 animate-spin" />}
                 </Button>
               </div>
@@ -167,6 +167,6 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Workspace Management - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Управление рабочими пространствами - God Mode" }];
 
 export default WorkspaceManagementPage;

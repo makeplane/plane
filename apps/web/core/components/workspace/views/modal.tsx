@@ -52,16 +52,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       const res = await createGlobalView(workspaceSlug, payloadData);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "View created successfully.",
+        title: "Успешно!",
+        message: "Представление создано.",
       });
       router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
       handleClose();
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "View could not be created. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось создать представление. Попробуйте ещё раз.",
       });
     }
   };
@@ -81,16 +81,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "View updated successfully.",
+          title: "Успешно!",
+          message: "Представление обновлено.",
         });
         handleClose();
       }
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "View could not be updated. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось обновить представление. Попробуйте ещё раз.",
       });
     }
   };

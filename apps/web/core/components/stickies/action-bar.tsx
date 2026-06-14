@@ -61,7 +61,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
       <div
         className={`flex origin-bottom flex-col gap-2 transition-all duration-300 ease-in-out ${isExpanded ? "mb-2 scale-y-100 opacity-100 " : "h-0 scale-y-0 opacity-0"}`}
       >
-        <Tooltip tooltipContent="All stickies" isMobile={false} position="left">
+        <Tooltip tooltipContent="Все стикеры" isMobile={false} position="left">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
@@ -100,7 +100,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             </button>
           </Tooltip>
         )}
-        <Tooltip tooltipContent="Add sticky" isMobile={false} position="left">
+        <Tooltip tooltipContent="Добавить стикер" isMobile={false} position="left">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => {

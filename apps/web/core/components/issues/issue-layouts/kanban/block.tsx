@@ -262,10 +262,10 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           else {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move work item",
+              title: "Невозможно переместить рабочий элемент",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this work item"
-                : "Drag and drop is disabled for the current grouping",
+                ? "У вас нет прав на перемещение этого рабочего элемента"
+                : "Перетаскивание отключено для текущей группировки",
             });
           }
         }}

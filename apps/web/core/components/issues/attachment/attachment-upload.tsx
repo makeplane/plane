@@ -46,7 +46,7 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
   });
 
   const fileError =
-    fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
+    fileRejections.length > 0 ? `Недопустимый тип или размер файла (макс. ${maxFileSize / 1024 / 1024} МБ)` : null;
 
   return (
     <div
@@ -58,13 +58,13 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
         {isDragActive ? (
-          <p>Drop here...</p>
+          <p>Перетащите сюда...</p>
         ) : fileError ? (
           <p className="text-center text-danger-primary">{fileError}</p>
         ) : isLoading ? (
-          <p className="text-center">Uploading...</p>
+          <p className="text-center">Загрузка...</p>
         ) : (
-          <p className="text-center">Click or drag a file here</p>
+          <p className="text-center">Нажмите или перетащите файл сюда</p>
         )}
       </span>
     </div>

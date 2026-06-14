@@ -56,7 +56,7 @@ const NoLabel = observer(function NoLabel({ isMobile, noLabelBorder, fullWidth, 
     <Tooltip
       position="top"
       tooltipHeading={t("common.labels")}
-      tooltipContent="None"
+      tooltipContent="Нет"
       isMobile={isMobile}
       renderByDefault={false}
     >
@@ -106,7 +106,7 @@ function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLab
       >
         <div className="flex h-full items-center gap-1.5 text-secondary">
           <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
-          {`${value.length} Labels`}
+          {`${value.length} меток`}
         </div>
       </Tooltip>
     </div>

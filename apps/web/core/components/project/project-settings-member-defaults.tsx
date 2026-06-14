@@ -139,7 +139,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
 
   return (
     <div className="my-6 flex flex-col gap-y-6">
-      <DefaultSettingItem title="Project Lead" description="Select the project lead for the project.">
+      <DefaultSettingItem title="Руководитель проекта" description="Select the project lead for the project.">
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -160,7 +160,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           </Loader>
         )}
       </DefaultSettingItem>
-      <DefaultSettingItem title="Default Assignee" description="Select the default assignee for the project.">
+      <DefaultSettingItem title="Исполнитель по умолчанию" description="Select the default assignee for the project.">
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -183,7 +183,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       </DefaultSettingItem>
       {currentProjectDetails && (
         <DefaultSettingItem
-          title="Guest access"
+          title="Гостевой доступ"
           description="This will allow guests to have view access to all the project work items."
         >
           <div className="flex items-center justify-end">

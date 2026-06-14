@@ -180,7 +180,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue.start_date ?? null}
           onChange={handleStartDate}
           maxDate={maxDate}
-          placeholder="Start date"
+          placeholder="Дата начала"
           icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
           optionsClassName="z-10"
@@ -195,7 +195,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue?.target_date ?? null}
           onChange={handleTargetDate}
           minDate={minDate}
-          placeholder="Due date"
+          placeholder="Срок выполнения"
           icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
@@ -218,7 +218,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
           buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
           showTooltip={issue?.assignee_ids?.length === 0}
-          placeholder="Assignees"
+          placeholder="Исполнители"
           optionsClassName="z-10"
           tooltipContent=""
           renderByDefault={isMobile}

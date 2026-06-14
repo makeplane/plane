@@ -34,14 +34,14 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         await disableEmail();
         setIsSMTPEnabled(false);
         setToast({
-          title: "Email feature disabled",
-          message: "Email feature has been disabled",
+          title: "Эл. почта отключена",
+          message: "Функция эл. почты была отключена",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Error disabling email",
-          message: "Failed to disable email feature. Please try again.",
+          title: "Ошибка при отключении эл. почты",
+          message: "Не удалось отключить функцию эл. почты. Попробуйте ещё раз.",
           type: TOAST_TYPE.ERROR,
         });
       } finally {
@@ -60,13 +60,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   return (
     <PageWrapper
       header={{
-        title: "Secure emails from your own instance",
+        title: "Безопасная отправка писем с вашего собственного экземпляра",
         description: (
           <>
-            Gizmo can send useful emails to you and your users from your own instance without talking to the Internet.
+            Gizmo может отправлять полезные письма вам и вашим пользователям с вашего собственного экземпляра без обращения к интернету.
             <div className="text-13 font-regular text-tertiary">
-              Set it up below and please test your settings before you save them.&nbsp;
-              <span className="text-danger-primary">Misconfigs can lead to email bounces and errors.</span>
+              Настройте параметры ниже и обязательно проверьте их перед сохранением.&nbsp;
+              <span className="text-danger-primary">Неверная настройка может привести к недоставке писем и ошибкам.</span>
             </div>
           </>
         ),
@@ -98,6 +98,6 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Email Settings - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Настройки эл. почты - God Mode" }];
 
 export default InstanceEmailPage;

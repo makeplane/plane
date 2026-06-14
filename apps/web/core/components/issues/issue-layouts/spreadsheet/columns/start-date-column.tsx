@@ -41,7 +41,7 @@ export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDate
           );
         }}
         disabled={disabled}
-        placeholder="Start date"
+        placeholder="Дата начала"
         icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"

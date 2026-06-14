@@ -16,12 +16,12 @@ import DefaultLayout from "@/layouts/default-layout";
 const linkMap = [
   {
     key: "mail_to",
-    label: "Contact Support",
+    label: "Связаться с поддержкой",
     value: "mailto:support@gizmo.so",
   },
   {
     key: "status",
-    label: "Status Page",
+    label: "Страница статуса",
     value: "https://status.gizmo.so/",
   },
   {
@@ -57,10 +57,10 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
         </div>
         <div className="relative mt-4 flex w-full flex-col gap-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Looks like something went wrong!</h1>
+            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Похоже, что-то пошло не так!</h1>
             <span className="text-left text-14 font-medium text-secondary">
-              We track these errors automatically and working on getting things back up and running. If the problem
-              persists feel free to contact us. In the meantime, try refreshing.
+              Мы автоматически отслеживаем такие ошибки и работаем над восстановлением работы. Если проблема сохраняется,
+              свяжитесь с нами. А пока попробуйте обновить страницу.
             </span>
           </div>
 
@@ -81,7 +81,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
 
           <div className="flex items-center justify-start gap-6">
             <Button variant="primary" size="lg" onClick={onGoHome}>
-              Go to home
+              На главную
             </Button>
           </div>
         </div>

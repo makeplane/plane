@@ -30,7 +30,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   const [email, setEmail] = useState(defaultEmail);
 
   const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
+    () => (email && !checkEmailValidity(email) ? { email: "Неверный адрес эл. почты" } : undefined),
     [email]
   );
 
@@ -53,7 +53,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
-          Email
+          Эл. почта
         </label>
         <div
           className={cn(
@@ -82,7 +82,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           {email.length > 0 && (
             <button
               type="button"
-              aria-label="Clear email"
+              aria-label="Очистить эл. почту"
               onClick={() => {
                 setEmail("");
                 inputRef.current?.focus();
@@ -101,7 +101,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         )}
       </div>
       <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Продолжить"}
       </Button>
     </form>
   );

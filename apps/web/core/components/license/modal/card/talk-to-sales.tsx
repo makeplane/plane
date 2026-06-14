@@ -47,8 +47,8 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
 
   const renderPriceContent = (price: TSubscriptionPrice) => (
     <>
-      {price.recurring === "month" && "Monthly"}
-      {price.recurring === "year" && "Yearly"}
+      {price.recurring === "month" && "Ежемесячно"}
+      {price.recurring === "year" && "Ежегодно"}
     </>
   );
 
@@ -61,10 +61,10 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               <Loader.Item height="36px" width="4rem" />
             </Loader>
           ) : (
-            <>Quote on request</>
+            <>Цена по запросу</>
           )}
         </div>
-        <div className="text-caption-md-medium text-tertiary">per user per month</div>
+        <div className="text-caption-md-medium text-tertiary">за пользователя в месяц</div>
       </div>
       {isLoading ? (
         <Loader className="flex flex-col items-center justify-center">
@@ -73,7 +73,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
           <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">
-            Talk to Sales
+            Связаться с отделом продаж
           </a>
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-4 h-4">

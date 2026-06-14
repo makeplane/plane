@@ -35,22 +35,22 @@ export const CustomThemeImportConfigButton = observer(function CustomThemeImport
 
       // Validate required fields
       if (!config.primary || !config.background) {
-        throw new Error("Missing required fields: primary and background");
+        throw new Error("Отсутствуют обязательные поля: primary и background");
       }
 
       // Validate hex color format
       const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
       if (!hexPattern.test(config.primary)) {
-        throw new Error("Invalid brand color hex format");
+        throw new Error("Неверный формат HEX основного цвета");
       }
       if (!hexPattern.test(config.background)) {
-        throw new Error("Invalid neutral color hex format");
+        throw new Error("Неверный формат HEX нейтрального цвета");
       }
 
       // Validate theme mode
       const themeMode = config.darkPalette ?? false;
       if (typeof themeMode !== "boolean") {
-        throw new Error("Invalid theme mode. Must be a boolean");
+        throw new Error("Неверный режим темы. Должно быть логическое значение");
       }
 
       // Apply the configuration to form
@@ -73,14 +73,14 @@ export const CustomThemeImportConfigButton = observer(function CustomThemeImport
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Theme configuration imported successfully",
+        message: "Конфигурация темы успешно импортирована",
       });
     } catch (error) {
       console.error("Failed to upload config:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: error instanceof Error ? error.message : "Failed to import theme configuration",
+        message: error instanceof Error ? error.message : "Не удалось импортировать конфигурацию темы",
       });
     } finally {
       // Reset file input
@@ -94,7 +94,7 @@ export const CustomThemeImportConfigButton = observer(function CustomThemeImport
     <>
       <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadConfig} className="hidden" />
       <Button variant="secondary" size="lg" type="button" onClick={() => fileInputRef.current?.click()}>
-        Import config
+        Импортировать конфигурацию
       </Button>
     </>
   );

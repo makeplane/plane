@@ -65,14 +65,14 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success",
-        message: "Profile setup completed!",
+        title: "Успешно",
+        message: "Настройка профиля завершена!",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: "Profile setup failed. Please try again!",
+        title: "Ошибка",
+        message: "Не удалось настроить профиль. Попробуйте ещё раз!",
       });
     }
   };
@@ -92,10 +92,10 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What's your role?" description="Let's set up Gizmo for how you work." />
+      <CommonOnboardingHeader title="Какая у вас роль?" description="Let's set up Gizmo for how you work." />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one</p>
+        <p className="text-body-sm-semibold text-placeholder">Выберите один вариант</p>
         <Controller
           control={control}
           name="role"

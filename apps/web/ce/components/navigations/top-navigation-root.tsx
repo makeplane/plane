@@ -59,7 +59,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       </div>
       {/* Additional Actions */}
       <div className="flex flex-1 shrink-0 items-center justify-end gap-1">
-        <Tooltip tooltipContent="Messenger" position="bottom">
+        <Tooltip tooltipContent="Мессенджер" position="bottom">
           <AppSidebarItem
             variant="link"
             item={{
@@ -73,7 +73,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
             }}
           />
         </Tooltip>
-        <Tooltip tooltipContent="Inbox" position="bottom">
+        <Tooltip tooltipContent="Входящие" position="bottom">
           <AppSidebarItem
             variant="link"
             item={{

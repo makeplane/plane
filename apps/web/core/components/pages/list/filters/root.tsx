@@ -65,7 +65,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
             ref={inputRef}
             type="text"
             className="w-full outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder="Поиск"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
           />
@@ -86,7 +86,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
                 favorites: !filters.filters?.favorites,
               })
             }
-            title="Favorites"
+            title="Избранное"
           />
         </div>
 

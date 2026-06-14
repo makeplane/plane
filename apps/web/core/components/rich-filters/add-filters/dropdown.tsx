@@ -54,7 +54,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
     ? [
         {
           value: "all_filters_applied",
-          content: <div className="text-placeholder italic">All filters applied</div>,
+          content: <div className="text-placeholder italic">Все фильтры применены</div>,
           query: "all filters applied",
           disabled: true,
         },
@@ -68,8 +68,8 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
       props.handleFilterSelect(property, operator, isNegation);
     } else {
       setToast({
-        title: "Filter configuration error",
-        message: "This filter is not properly configured and cannot be applied",
+        title: "Ошибка конфигурации фильтра",
+        message: "Этот фильтр настроен неправильно и не может быть применён",
         type: TOAST_TYPE.ERROR,
       });
     }

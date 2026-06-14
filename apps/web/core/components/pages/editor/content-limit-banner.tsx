@@ -20,7 +20,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
           <TriangleAlert />
         </span>
         <span className="font-medium">
-          Content limit reached and live sync is off. Create a new page or use nested pages to continue syncing.
+          Достигнут лимит содержимого, и синхронизация в реальном времени отключена. Создайте новую страницу или используйте вложенные страницы, чтобы продолжить синхронизацию.
         </span>
       </div>
       {onDismiss && (
@@ -28,7 +28,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
           type="button"
           onClick={onDismiss}
           className="ml-auto text-placeholder hover:text-secondary"
-          aria-label="Dismiss content limit warning"
+          aria-label="Закрыть предупреждение о лимите содержимого"
         >
           ✕
         </button>

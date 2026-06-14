@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const FilterMember = observer(function FilterMember(props: Props) {
-  const { filterKey, label = "Members", memberIds, searchQuery } = props;
+  const { filterKey, label = "Участники", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
@@ -92,7 +92,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                           size="md"
                         />
                       }
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? "Вы" : member?.display_name}
                     />
                   );
                 })}
@@ -102,12 +102,12 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                     className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "Свернуть" : "Показать все"}
                   </button>
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-11 text-placeholder italic">Совпадений не найдено</p>
             )
           ) : (
             <Loader className="space-y-2">

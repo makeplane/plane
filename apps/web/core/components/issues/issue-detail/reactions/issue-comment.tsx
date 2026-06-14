@@ -45,15 +45,15 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
           await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
           setToast({
-            title: "Success!",
+            title: "Успешно!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Reaction created successfully",
+            message: "Реакция добавлена",
           });
         } catch (_error) {
           setToast({
-            title: "Error!",
+            title: "Ошибка!",
             type: TOAST_TYPE.ERROR,
-            message: "Reaction creation failed",
+            message: "Не удалось добавить реакцию",
           });
         }
       },
@@ -62,15 +62,15 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
           if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
           removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
           setToast({
-            title: "Success!",
+            title: "Успешно!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Reaction removed successfully",
+            message: "Реакция удалена",
           });
         } catch (_error) {
           setToast({
-            title: "Error!",
+            title: "Ошибка!",
             type: TOAST_TYPE.ERROR,
-            message: "Reaction remove failed",
+            message: "Не удалось удалить реакцию",
           });
         }
       },

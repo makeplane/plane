@@ -40,7 +40,7 @@ export const CustomThemeColorInputs = observer(function CustomThemeColorInputs(p
               required: "Neutral color is required",
               pattern: {
                 value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                message: "Enter a valid hex code",
+                message: "Введите корректный HEX-код",
               },
             }}
             render={({ field: { value, onChange } }) => (
@@ -73,7 +73,7 @@ export const CustomThemeColorInputs = observer(function CustomThemeColorInputs(p
               required: "Brand color is required",
               pattern: {
                 value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                message: "Enter a valid hex code",
+                message: "Введите корректный HEX-код",
               },
             }}
             render={({ field: { value, onChange } }) => (

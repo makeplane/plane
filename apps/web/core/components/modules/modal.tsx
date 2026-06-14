@@ -62,14 +62,14 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module created successfully.",
+          title: "Готово!",
+          message: "Модуль успешно создан.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "Ошибка!",
           message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
         });
       });
@@ -85,14 +85,14 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: "Успешно!",
+          message: "Модуль обновлён.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "Ошибка!",
           message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
         });
       });

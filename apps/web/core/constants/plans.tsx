@@ -75,7 +75,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
     title: "Project + work tracking",
     features: [
       {
-        title: "Projects",
+        title: "Проекты",
         description: "Add projects to house work items, cycles, and modules.",
         cloud: {
           free: true,
@@ -86,7 +86,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Work items",
+        title: "Рабочие элементы",
         description: "Add work via work items, set properties for tracking, and add to\ncycles or modules.",
         cloud: {
           free: true,
@@ -108,7 +108,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Cycles",
+        title: "Циклы",
         description: "Track work in timeboxes with differing frequency.",
         cloud: {
           free: true,
@@ -119,7 +119,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Modules",
+        title: "Модули",
         description: "Group replicable work in modules with their own\nleads.",
         cloud: {
           free: true,
@@ -130,7 +130,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Intake",
+        title: "Предложения",
         description:
           "See suggestions and feedback from viewers and\nguests before you decide to add them to your\nproject.",
         cloud: {
@@ -485,7 +485,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Views",
+        title: "Представления",
         description: "Save sort, filter, and display options on a layout to a\nview.",
         cloud: {
           free: true,
@@ -806,7 +806,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
     title: "Knowledge management",
     features: [
       {
-        title: "Pages",
+        title: "Страницы",
         description: "Build knowledge bases for your teams which are\naccessible & shareable.",
         cloud: {
           free: true,

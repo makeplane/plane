@@ -11,4 +11,4 @@ export default function CreateWorkspaceLayout() {
   return <Outlet />;
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Create Workspace" }];
+export const meta: Route.MetaFunction = () => [{ title: "Создать рабочее пространство" }];

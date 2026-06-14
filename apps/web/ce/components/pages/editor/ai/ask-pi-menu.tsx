@@ -62,9 +62,9 @@ export function AskPiMenu(props: Props) {
                 className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
                 onClick={() => handleInsertText(false)}
               >
-                Replace selection
+                Заменить выделенное
               </button>
-              <Tooltip tooltipContent="Add to next line">
+              <Tooltip tooltipContent="Добавить на новую строку">
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -73,7 +73,7 @@ export function AskPiMenu(props: Props) {
                   <CornerDownRight className="size-4 text-tertiary" />
                 </button>
               </Tooltip>
-              <Tooltip tooltipContent="Re-generate response">
+              <Tooltip tooltipContent="Сгенерировать ответ заново">
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -94,7 +94,7 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-13 text-secondary">AI is answering...</p>
+          <p className="text-13 text-secondary">ИИ отвечает...</p>
         )}
       </div>
       <div className="px-4 py-3">
@@ -107,7 +107,7 @@ export function AskPiMenu(props: Props) {
             className="w-full border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tell AI what to do..."
+            placeholder="Скажите ИИ, что сделать..."
           />
           <span className="grid size-4 flex-shrink-0 place-items-center">
             <CircleArrowUp className="size-4 text-secondary" />

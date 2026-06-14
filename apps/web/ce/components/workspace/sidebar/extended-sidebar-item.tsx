@@ -199,14 +199,14 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
           </Link>
           <div className="flex items-center gap-2">
             {isPinned ? (
-              <Tooltip tooltipContent="Unpin">
+              <Tooltip tooltipContent="Открепить">
                 <PinOff
                   className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
                   onClick={() => unPinNavigationItem(item.key)}
                 />
               </Tooltip>
             ) : (
-              <Tooltip tooltipContent="Pin">
+              <Tooltip tooltipContent="Закрепить">
                 <Pin
                   className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
                   onClick={() => pinNavigationItem(item.key)}

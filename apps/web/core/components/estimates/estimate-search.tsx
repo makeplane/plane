@@ -10,5 +10,5 @@ export const EstimateSearch = observer(function EstimateSearch() {
   // hooks
   const {} = {};
 
-  return <div>Estimate Search</div>;
+  return <div>Поиск оценок</div>;
 });

@@ -36,13 +36,13 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    installed: "Activate GitHub on individual projects to sync with specific repositories.",
-    notInstalled: "Connect with GitHub with your Gizmo workspace to sync project work items.",
+    installed: "Включите GitHub в отдельных проектах для синхронизации с конкретными репозиториями.",
+    notInstalled: "Подключите GitHub к рабочему пространству Gizmo для синхронизации рабочих элементов проекта.",
   },
   slack: {
     logo: SlackLogo,
-    installed: "Activate Slack on individual projects to sync with specific channels.",
-    notInstalled: "Connect with Slack with your Gizmo workspace to sync project work items.",
+    installed: "Включите Slack в отдельных проектах для синхронизации с конкретными каналами.",
+    notInstalled: "Подключите Slack к рабочему пространству Gizmo для синхронизации рабочих элементов проекта.",
   },
 };
 
@@ -89,8 +89,8 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Deleted successfully!",
-          message: `${integration.title} integration deleted successfully.`,
+          title: "Успешно удалено!",
+          message: `Интеграция ${integration.title} успешно удалена.`,
         });
       })
       .catch(() => {
@@ -98,8 +98,8 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
 
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: `${integration.title} integration could not be deleted. Please try again.`,
+          title: "Ошибка!",
+          message: `Не удалось удалить интеграцию ${integration.title}. Пожалуйста, попробуйте снова.`,
         });
       });
   };
@@ -128,7 +128,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
                 : integrationDetails[integration.provider].notInstalled
-              : "Loading..."}
+              : "Загрузка..."}
           </p>
         </div>
       </div>
@@ -138,7 +138,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <Tooltip
             isMobile={isMobile}
             disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            tooltipContent={!isUserAdmin ? "У вас нет прав для выполнения этого действия" : null}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
@@ -150,14 +150,14 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               disabled={!isUserAdmin}
               loading={deletingIntegration}
             >
-              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
+              {deletingIntegration ? "Удаление..." : "Удалить"}
             </Button>
           </Tooltip>
         ) : (
           <Tooltip
             isMobile={isMobile}
             disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            tooltipContent={!isUserAdmin ? "У вас нет прав для выполнения этого действия" : null}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
@@ -168,7 +168,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               }}
               loading={isInstalling}
             >
-              {isInstalling ? "Installing..." : "Install"}
+              {isInstalling ? "Установка..." : "Установить"}
             </Button>
           </Tooltip>
         )

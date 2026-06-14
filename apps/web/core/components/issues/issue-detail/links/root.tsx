@@ -52,16 +52,16 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await createLink(workspaceSlug, projectId, issueId, data);
           setToast({
-            message: "The link has been successfully created",
+            message: "Ссылка успешно создана",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: "Ссылка создана",
           });
           toggleIssueLinkModal(false);
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: "Ссылка не создана",
           });
           throw error;
         }
@@ -71,16 +71,16 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: "Ссылка успешно обновлена",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: "Ссылка обновлена",
           });
           toggleIssueLinkModal(false);
         } catch (error) {
           setToast({
-            message: "The link could not be updated",
+            message: "Не удалось обновить ссылку",
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: "Ссылка не обновлена",
           });
           throw error;
         }
@@ -90,16 +90,16 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: "Ссылка успешно удалена",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: "Ссылка удалена",
           });
           toggleIssueLinkModal(false);
         } catch {
           setToast({
-            message: "The link could not be removed",
+            message: "Не удалось удалить ссылку",
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: "Ссылка не удалена",
           });
         }
       },
@@ -122,7 +122,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
 
       <div className="py-1 text-11">
         <div className="flex items-center justify-between gap-2">
-          <h4>Links</h4>
+          <h4>Ссылки</h4>
           {!disabled && (
             <button
               type="button"

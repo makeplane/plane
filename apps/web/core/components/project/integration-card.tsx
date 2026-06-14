@@ -68,7 +68,7 @@ export function IntegrationCard({ integration }: Props) {
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
+          title: "Успешно!",
           message: `${login}/${name} repository synced with the project successfully.`,
         });
       })
@@ -76,8 +76,8 @@ export function IntegrationCard({ integration }: Props) {
         console.error(err);
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Repository could not be synced with the project. Please try again.",
+          title: "Ошибка!",
+          message: "Не удалось синхронизировать репозиторий с проектом. Попробуйте ещё раз.",
         });
       });
   };

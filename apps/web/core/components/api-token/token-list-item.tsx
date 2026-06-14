@@ -31,7 +31,7 @@ export function ApiTokenListItem(props: Props) {
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
-        <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
+        <Tooltip tooltipContent="Удалить токен" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
@@ -47,7 +47,7 @@ export function ApiTokenListItem(props: Props) {
               token.is_active ? "bg-success-subtle text-success-primary" : "bg-layer-1 text-placeholder"
             } ml-2 flex h-4 max-h-fit items-center rounded-xs px-2 text-11 font-medium`}
           >
-            {token.is_active ? "Active" : "Expired"}
+            {token.is_active ? "Активен" : "Истёк"}
           </span>
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
@@ -57,9 +57,9 @@ export function ApiTokenListItem(props: Props) {
           <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active
               ? token.expired_at
-                ? `Expires ${renderFormattedDate(token.expired_at)} at ${renderFormattedTime(token.expired_at)}`
-                : "Never expires"
-              : `Expired ${calculateTimeAgo(token.expired_at)}`}
+                ? `Истекает ${renderFormattedDate(token.expired_at)} в ${renderFormattedTime(token.expired_at)}`
+                : "Бессрочный"
+              : `Истёк ${calculateTimeAgo(token.expired_at)}`}
           </p>
         </div>
       </div>

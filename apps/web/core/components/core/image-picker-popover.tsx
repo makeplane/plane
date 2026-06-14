@@ -75,12 +75,12 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
       },
       {
         key: "images",
-        title: "Images",
+        title: "Изображения",
         isEnabled: true,
       },
       {
         key: "upload",
-        title: "Upload",
+        title: "Загрузить",
         isEnabled: true,
       },
     ],
@@ -140,9 +140,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading user cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "The image could not be uploaded",
+            message: error?.error ?? "Не удалось загрузить изображение",
             type: TOAST_TYPE.ERROR,
-            title: "Image not uploaded",
+            title: "Изображение не загружено",
           });
         });
     } else {
@@ -161,9 +161,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading project cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "The image could not be uploaded",
+            message: error?.error ?? "Не удалось загрузить изображение",
             type: TOAST_TYPE.ERROR,
-            title: "Image not uploaded",
+            title: "Изображение не загружено",
           });
         });
     }
@@ -233,13 +233,13 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               value={value}
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
-                              placeholder="Search for images"
+                              placeholder="Поиск изображений"
                               className="w-full text-13"
                             />
                           )}
                         />
                         <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
-                          Search
+                          Поиск
                         </Button>
                       </div>
                       {unsplashImages ? (
@@ -263,7 +263,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             ))}
                           </div>
                         ) : (
-                          <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
+                          <p className="pt-7 text-center text-11 text-secondary">Изображения не найдены.</p>
                         )
                       ) : (
                         <Loader className="grid grid-cols-4 gap-4">
@@ -312,7 +312,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           type="button"
                           className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
-                          Edit
+                          Редактировать
                         </button>
                         {image !== null || (value && value !== "") ? (
                           <>
@@ -325,7 +325,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         ) : (
                           <div>
                             <span className="mt-2 block text-13 font-medium text-secondary">
-                              {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
+                              {isDragActive ? "Отпустите изображение для загрузки" : "Перетащите изображение сюда"}
                             </span>
                           </div>
                         )}
@@ -336,12 +336,12 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     {fileRejections.length > 0 && (
                       <p className="text-13 text-danger-primary">
                         {fileRejections[0].errors[0].code === "file-too-large"
-                          ? "The image size cannot exceed 5 MB."
-                          : "Please upload a file in a valid format."}
+                          ? "Размер изображения не может превышать 5 МБ."
+                          : "Пожалуйста, загрузите файл в допустимом формате."}
                       </p>
                     )}
 
-                    <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                    <p className="text-13 text-secondary">Поддерживаемые форматы файлов: .jpeg, .jpg, .png, .webp</p>
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
@@ -351,7 +351,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           setImage(null);
                         }}
                       >
-                        Cancel
+                        Отмена
                       </Button>
                       <Button
                         variant="primary"
@@ -360,7 +360,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         disabled={!image}
                         loading={isImageUploading}
                       >
-                        {isImageUploading ? "Uploading" : "Upload & Save"}
+                        {isImageUploading ? "Загрузка" : "Загрузить и сохранить"}
                       </Button>
                     </div>
                   </div>

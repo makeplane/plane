@@ -78,18 +78,18 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding project to favorites...",
+      loading: "Добавление проекта в избранное...",
       success: {
-        title: "Success!",
-        message: () => "Project added to favorites.",
+        title: "Успешно!",
+        message: () => "Проект добавлен в избранное.",
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
           return <></>;
         },
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the project to favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось добавить проект в избранное. Попробуйте ещё раз.",
       },
     });
   };
@@ -99,14 +99,14 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing project from favorites...",
+      loading: "Удаление проекта из избранного...",
       success: {
-        title: "Success!",
-        message: () => "Project removed from favorites.",
+        title: "Успешно!",
+        message: () => "Проект убран из избранного.",
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the project from favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось убрать проект из избранного. Попробуйте ещё раз.",
       },
     });
   };
@@ -116,8 +116,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: "Ссылка скопирована!",
+        message: "Ссылка на проект скопирована в буфер обмена.",
       })
     );
   const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
@@ -126,42 +126,42 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
-      title: "Settings",
+      title: "Настройки",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
-      title: "Join",
+      title: "Присоединиться",
       icon: UserPlus,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: "Открыть в новой вкладке",
       icon: NewTabIcon,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: "Копировать ссылку",
       icon: LinkIcon,
       shouldRender: !isArchived,
     },
     {
       key: "restore",
       action: () => setRestoreProject(true),
-      title: "Restore",
+      title: "Восстановить",
       icon: ArchiveRestoreIcon,
       shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
-      title: "Delete",
+      title: "Удалить",
       icon: TrashIcon,
       shouldRender: isArchived && hasAdminRole,
     },
@@ -299,10 +299,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 text-placeholder italic">No Member Yet</span>
+                  <span className="text-13 text-placeholder italic">Пока нет участников</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
+              {isArchived && <div className="text-11 font-medium text-placeholder">Архив</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (

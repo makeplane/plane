@@ -48,7 +48,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <h3 className="text-16 leading-6 font-medium text-primary">Customize time range</h3>
+          <h3 className="text-16 leading-6 font-medium text-primary">Настройка временного диапазона</h3>
           <div className="mt-8 flex items-center gap-2">
             <div className="flex w-full flex-col justify-center gap-1">
               {type === "auto-close" ? (
@@ -57,7 +57,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     control={control}
                     name="close_in"
                     rules={{
-                      required: "Select a month between 1 and 12.",
+                      required: "Выберите число месяцев от 1 до 12.",
                       min: 1,
                       max: 12,
                     }}
@@ -71,18 +71,18 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.close_in)}
-                          placeholder="Enter Months"
+                          placeholder="Введите число месяцев"
                           className="w-full border-subtle"
                           min={1}
                           max={12}
                         />
-                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">мес.</span>
                       </div>
                     )}
                   />
 
                   {errors.close_in && (
-                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Выберите число месяцев от 1 до 12.</span>
                   )}
                 </>
               ) : (
@@ -91,7 +91,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     control={control}
                     name="archive_in"
                     rules={{
-                      required: "Select a month between 1 and 12.",
+                      required: "Выберите число месяцев от 1 до 12.",
                       min: 1,
                       max: 12,
                     }}
@@ -105,17 +105,17 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.archive_in)}
-                          placeholder="Enter Months"
+                          placeholder="Введите число месяцев"
                           className="w-full border-subtle"
                           min={1}
                           max={12}
                         />
-                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">мес.</span>
                       </div>
                     )}
                   />
                   {errors.archive_in && (
-                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Выберите число месяцев от 1 до 12.</span>
                   )}
                 </>
               )}
@@ -124,10 +124,10 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
         </div>
         <div className="mt-5 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? "Отправка..." : "Отправить"}
           </Button>
         </div>
       </form>

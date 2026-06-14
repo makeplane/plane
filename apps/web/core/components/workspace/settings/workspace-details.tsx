@@ -69,9 +69,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
     try {
       await updateWorkspace(currentWorkspace.slug, payload);
       setToast({
-        title: "Success!",
+        title: "Успешно!",
         type: TOAST_TYPE.SUCCESS,
-        message: "Workspace updated successfully",
+        message: "Рабочее пространство обновлено",
       });
     } catch (err: unknown) {
       console.error(err);
@@ -91,14 +91,14 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Workspace picture removed successfully.",
+        title: "Успешно!",
+        message: "Изображение рабочего пространства удалено.",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "There was some error in deleting your profile picture. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось удалить фото профиля. Попробуйте ещё раз.",
       });
     }
   };
@@ -110,7 +110,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Workspace URL copied to the clipboard.",
+          title: "URL рабочего пространства скопирован в буфер обмена.",
         });
         return undefined;
       })
@@ -154,7 +154,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   <img
                     src={getFileURL(workspaceLogo)}
                     className="absolute top-0 left-0 size-full rounded-md object-cover"
-                    alt="Workspace Logo"
+                    alt="Логотип рабочего пространства"
                   />
                 </div>
               ) : (

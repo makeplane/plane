@@ -140,8 +140,8 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       if (!viewDetails) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "We couldn't find the view",
-          message: "The view you're trying to update doesn't exist.",
+          title: "Не удалось найти представление",
+          message: "Представление, которое вы пытаетесь обновить, не существует.",
         });
 
         return;
@@ -153,15 +153,15 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Your view has been updated successfully.",
+            title: "Успешно!",
+            message: "Представление успешно обновлено.",
           });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Your view could not be updated. Please try again.",
+            title: "Ошибка!",
+            message: "Не удалось обновить представление. Попробуйте ещё раз.",
           });
         });
     },

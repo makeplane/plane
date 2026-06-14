@@ -58,7 +58,7 @@ export const useRealtimePageEvents = ({
       if (!userId) return "";
       try {
         const userDetails = getUserDetails(userId);
-        return userDetails?.display_name ? ` by ${userDetails.display_name}` : "";
+        return userDetails?.display_name ? ` пользователем ${userDetails.display_name}` : "";
       } catch {
         return "";
       }
@@ -119,8 +119,8 @@ export const useRealtimePageEvents = ({
               if (page.id === pageId && data?.user_id !== currentUser?.id) {
                 setToast({
                   type: TOAST_TYPE.ERROR,
-                  title: "Page deleted",
-                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
+                  title: "Страница удалена",
+                  message: `Страница удалена${getUserDisplayText(data.user_id)}`,
                 });
                 router.push(handlers.getRedirectionLink());
               } else if (page.id === pageId) {

@@ -39,15 +39,15 @@ export function InstanceNotReady() {
             <div className="flex flex-col items-center gap-11">
               <img src={GradientLogo} className="h-24 w-40 object-contain" alt="Gizmo Logo" />
               <div className="flex max-w-124 flex-col items-center gap-3">
-                <h1 className="text-h2-semibold text-primary">Welcome to Gizmo</h1>
+                <h1 className="text-h2-semibold text-primary">Добро пожаловать в Gizmo</h1>
                 <p className="text-center text-body-md-regular text-secondary">
-                  Set up your instance and create your first workspace to begin managing projects and work.
+                  Настройте экземпляр и создайте своё первое рабочее пространство, чтобы начать управлять проектами и работой.
                 </p>
               </div>
             </div>
             <a href={GOD_MODE_URL} className="w-72">
               <Button variant="primary" className="w-full" size="xl">
-                Get started
+                Начать
               </Button>
             </a>
           </div>

@@ -217,7 +217,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Permission denied",
+        title: "Доступ запрещён",
         message: errorMessage,
       });
     }
@@ -311,14 +311,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 variant="secondary"
                 size="lg"
                 icon={ChevronUpIcon}
-                aria-label="Previous work item"
+                aria-label="Предыдущий рабочий элемент"
                 onClick={() => handleInboxIssueNavigation("prev")}
               />
               <IconButton
                 variant="secondary"
                 size="lg"
                 icon={ChevronDownIcon}
-                aria-label="Next work item"
+                aria-label="Следующий рабочий элемент"
                 onClick={() => handleInboxIssueNavigation("next")}
               />
             </div>
@@ -407,7 +407,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                           handleActionWithPermission(
                             isProjectAdmin,
                             () => setSelectDuplicateIssue(true),
-                            "Only project admins can mark work item as duplicate"
+                            "Отмечать рабочий элемент как дубликат могут только администраторы проекта"
                           )
                         }
                       >

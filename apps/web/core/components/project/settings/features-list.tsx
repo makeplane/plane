@@ -28,7 +28,7 @@ const PROJECT_FEATURES_LIST = {
   cycles: {
     key: "cycles",
     property: "cycle_view",
-    title: "Cycles",
+    title: "Циклы",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
     icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isEnabled: true,
@@ -36,7 +36,7 @@ const PROJECT_FEATURES_LIST = {
   modules: {
     key: "modules",
     property: "module_view",
-    title: "Modules",
+    title: "Модули",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
     icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
     isEnabled: true,
@@ -44,7 +44,7 @@ const PROJECT_FEATURES_LIST = {
   views: {
     key: "views",
     property: "issue_views_view",
-    title: "Views",
+    title: "Представления",
     description: "Save sorts, filters, and display options for later or share them.",
     icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isEnabled: true,
@@ -52,7 +52,7 @@ const PROJECT_FEATURES_LIST = {
   pages: {
     key: "pages",
     property: "page_view",
-    title: "Pages",
+    title: "Страницы",
     description: "Write anything like you write anything.",
     icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isEnabled: true,
@@ -60,7 +60,7 @@ const PROJECT_FEATURES_LIST = {
   inbox: {
     key: "intake",
     property: "inbox_view",
-    title: "Intake",
+    title: "Предложения",
     description: "Consider and discuss work items before you add them to your project.",
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isEnabled: true,
@@ -85,14 +85,14 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
 
     setPromiseToast(updateProjectPromise, {
-      loading: "Updating project feature...",
+      loading: "Обновление функции проекта...",
       success: {
-        title: "Success!",
-        message: () => "Project feature updated successfully.",
+        title: "Успешно!",
+        message: () => "Функция проекта обновлена.",
       },
       error: {
-        title: "Error!",
-        message: () => "Something went wrong while updating project feature. Please try again.",
+        title: "Ошибка!",
+        message: () => "Что-то пошло не так при обновлении функции проекта. Попробуйте ещё раз.",
       },
     });
     void updateProjectPromise.then(() => {

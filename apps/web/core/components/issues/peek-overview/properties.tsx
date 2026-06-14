@@ -200,7 +200,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               className="group w-full grow"
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
-              placeholder="None"
+              placeholder="Нет"
               hideIcon
               dropdownArrow
               dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"

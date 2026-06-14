@@ -73,14 +73,14 @@ export const useQuickActionsFactory = () => {
     // Layout-level actions (for work item list views)
     createOpenInNewTab: (handler: () => void): TContextMenuItem => ({
       key: "open-in-new-tab",
-      title: "Open in new tab",
+      title: "Открыть в новой вкладке",
       icon: ExternalLink,
       action: handler,
     }),
 
     createCopyLayoutLinkMenuItem: (handler: () => void): TContextMenuItem => ({
       key: "copy-link",
-      title: "Copy link",
+      title: "Скопировать ссылку",
       icon: Link,
       action: handler,
     }),

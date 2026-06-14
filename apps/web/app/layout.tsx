@@ -25,7 +25,7 @@ import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import { AppProvider } from "./provider";
 
 export const meta = () => [
-  { title: "Gizmo | Simple, extensible, open-source project management tool." },
+  { title: "Gizmo | Простой, расширяемый инструмент управления проектами с открытым исходным кодом." },
   { name: "description", content: SITE_DESCRIPTION },
   {
     name: "keywords",
@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
 
   return (
-    <html lang="en">
+    <html lang="ru">
       <head>
         <meta name="theme-color" content="#fff" />
         <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />

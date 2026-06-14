@@ -149,7 +149,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             rules={{
               pattern: {
                 value: emailRegex,
-                message: "Invalid Email ID",
+                message: "Неверный адрес эл. почты",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -254,7 +254,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
           <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-11 text-danger-primary">Это не похоже на адрес эл. почты.</span>
         </div>
       )}
     </div>
@@ -300,15 +300,15 @@ export function InviteMembers(props: Props) {
       .then(async () => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: "Успешно!",
+          message: "Приглашения успешно отправлены.",
         });
         await nextStep();
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "Ошибка!",
           message: err?.error,
         });
       });
@@ -338,9 +338,9 @@ export function InviteMembers(props: Props) {
       <div className="h-full w-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="mx-auto mt-6 flex w-full flex-col items-center justify-center p-8 md:w-4/5">
           <div className="mx-auto w-4/5 space-y-1 py-4 text-center">
-            <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
+            <h3 className="text-24 font-bold text-primary">Пригласите коллег</h3>
             <p className="font-medium text-placeholder">
-              Work in Gizmo happens best with your team. Invite them now to use Gizmo to its potential.
+              Работа в Gizmo лучше всего идёт в команде. Пригласите коллег, чтобы раскрыть весь потенциал Gizmo.
             </p>
           </div>
           <form
@@ -352,8 +352,8 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full py-4 text-13">
               <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-                <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
-                <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
+                <div className="col-span-6 px-1 text-13 font-medium text-secondary">Эл. почта</div>
+                <div className="col-span-4 px-1 text-13 font-medium text-secondary">Роль</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -379,7 +379,7 @@ export function InviteMembers(props: Props) {
                 onClick={appendField}
               >
                 <PlusIcon className="h-4 w-4" strokeWidth={2} />
-                Add another
+                Добавить ещё
               </button>
             </div>
             <div className="mx-auto flex w-full max-w-96 flex-col items-center justify-center gap-4 px-8 sm:px-2">
@@ -390,10 +390,10 @@ export function InviteMembers(props: Props) {
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
               >
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Продолжить"}
               </Button>
               <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
-                I’ll do it later
+                Сделаю это позже
               </Button>
             </div>
           </form>

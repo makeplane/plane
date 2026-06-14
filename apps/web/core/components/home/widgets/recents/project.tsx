@@ -63,7 +63,7 @@ export function RecentProject(props: BlockProps) {
                 }
                 buttonClassName={projectDetails?.project_members?.length > 0 ? "hover:bg-transparent px-0" : ""}
                 showTooltip={projectDetails?.project_members?.length === 0}
-                placeholder="Assignees"
+                placeholder="Исполнители"
                 optionsClassName="z-10"
                 tooltipContent=""
               />

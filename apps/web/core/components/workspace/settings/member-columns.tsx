@@ -165,7 +165,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
-                    title: "Error!",
+                    title: "Ошибка!",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });
                 }

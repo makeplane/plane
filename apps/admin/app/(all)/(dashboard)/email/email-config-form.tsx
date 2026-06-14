@@ -31,7 +31,7 @@ type TEmailSecurityKeys = "EMAIL_USE_TLS" | "EMAIL_USE_SSL" | "NONE";
 const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   EMAIL_USE_TLS: "TLS",
   EMAIL_USE_SSL: "SSL",
-  NONE: "No email security",
+  NONE: "Без защиты почты",
 };
 
 export function InstanceEmailForm(props: IInstanceEmailForm) {
@@ -63,7 +63,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_HOST",
       type: "text",
-      label: "Host",
+      label: "Хост",
       placeholder: "email.google.com",
       error: Boolean(errors.EMAIL_HOST),
       required: true,
@@ -71,7 +71,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_PORT",
       type: "text",
-      label: "Port",
+      label: "Порт",
       placeholder: "8080",
       error: Boolean(errors.EMAIL_PORT),
       required: true,
@@ -79,9 +79,9 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_FROM",
       type: "text",
-      label: "Sender's email address",
+      label: "Адрес отправителя",
       description:
-        "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
+        "Это адрес эл. почты, который ваши пользователи будут видеть при получении писем от этого экземпляра. Вам потребуется подтвердить этот адрес.",
       placeholder: "no-reply@projectgizmo.so",
       error: Boolean(errors.EMAIL_FROM),
       required: true,
@@ -92,7 +92,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_HOST_USER",
       type: "text",
-      label: "Username",
+      label: "Имя пользователя",
       placeholder: "getitdone@projectgizmo.so",
       error: Boolean(errors.EMAIL_HOST_USER),
       required: false,
@@ -100,8 +100,8 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_HOST_PASSWORD",
       type: "password",
-      label: "Password",
-      placeholder: "Password",
+      label: "Пароль",
+      placeholder: "Пароль",
       error: Boolean(errors.EMAIL_HOST_PASSWORD),
       required: false,
     },
@@ -114,8 +114,8 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Email Settings updated successfully",
+          title: "Успешно",
+          message: "Настройки почты успешно обновлены",
         })
       )
       .catch((err) => console.error(err));
@@ -163,7 +163,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email security</h4>
+            <h4 className="text-13 text-tertiary">Защита почты</h4>
             <CustomSelect
               value={emailSecurityKey}
               label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
@@ -183,9 +183,9 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-13 font-medium text-primary">Authentication</div>
+                <div className="text-13 font-medium text-primary">Аутентификация</div>
                 <div className="text-11 font-regular text-tertiary">
-                  This is optional, but we recommend setting up a username and a password for your SMTP server.
+                  Это необязательно, но мы рекомендуем настроить имя пользователя и пароль для вашего SMTP-сервера.
                 </div>
               </div>
             </div>
@@ -215,7 +215,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
         >
-          {isSubmitting ? "Saving" : "Save changes"}
+          {isSubmitting ? "Сохранение" : "Сохранить изменения"}
         </Button>
         <Button
           variant="secondary"
@@ -224,7 +224,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           loading={isSubmitting}
           disabled={!isValid}
         >
-          Send test email
+          Отправить тестовое письмо
         </Button>
       </div>
     </div>

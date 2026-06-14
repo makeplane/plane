@@ -51,14 +51,14 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       router.push(`/${workspaceSlug}/projects/${projectId}/views/${res.id}`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "View created successfully.",
+        title: "Успешно!",
+        message: "Представление создано.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to create view. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось создать представление. Попробуйте ещё раз.",
       });
     }
   };
@@ -72,8 +72,8 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to update view. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось обновить представление. Попробуйте ещё раз.",
       });
     }
   };

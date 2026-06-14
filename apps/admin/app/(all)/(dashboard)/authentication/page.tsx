@@ -55,9 +55,9 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           if (!canDisable) {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Cannot disable authentication",
+              title: "Невозможно отключить аутентификацию",
               message:
-                "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
+                "Хотя бы один способ аутентификации должен оставаться включённым. Пожалуйста, включите другой способ, прежде чем отключать этот.",
             });
             return;
           }
@@ -74,14 +74,14 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
       const updateConfigPromise = updateInstanceConfigurations(payload);
 
       setPromiseToast(updateConfigPromise, {
-        loading: "Saving configuration",
+        loading: "Сохранение конфигурации",
         success: {
-          title: "Success",
-          message: () => "Configuration saved successfully",
+          title: "Успешно",
+          message: () => "Конфигурация успешно сохранена",
         },
         error: {
-          title: "Error",
-          message: () => "Failed to save configuration",
+          title: "Ошибка",
+          message: () => "Не удалось сохранить конфигурацию",
         },
       });
 
@@ -111,8 +111,8 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   return (
     <PageWrapper
       header={{
-        title: "Manage authentication modes for your instance",
-        description: "Configure authentication modes for your team and restrict sign-ups to be invite only.",
+        title: "Управление способами аутентификации для вашего экземпляра",
+        description: "Настройте способы аутентификации для вашей команды и ограничьте регистрацию только по приглашениям.",
       }}
     >
       {formattedConfig ? (
@@ -120,9 +120,9 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="pb-1 text-16 font-medium">Allow anyone to sign up even without an invite</div>
+                <div className="pb-1 text-16 font-medium">Разрешить регистрацию любому без приглашения</div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Toggling this off will only let users sign up when they are invited.
+                  При отключении этой опции пользователи смогут зарегистрироваться только по приглашению.
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="text-lg pt-6 font-medium">Available authentication modes</div>
+          <div className="text-lg pt-6 font-medium">Доступные способы аутентификации</div>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}
@@ -169,6 +169,6 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Gizmo Web" }];
+export const meta: Route.MetaFunction = () => [{ title: "Настройки аутентификации - Gizmo Web" }];
 
 export default InstanceAuthenticationPage;

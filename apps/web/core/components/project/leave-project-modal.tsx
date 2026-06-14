@@ -58,7 +58,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
 
     if (data) {
       if (data.projectName === project?.name) {
-        if (data.confirmLeave === "Leave Project") {
+        if (data.confirmLeave === "Покинуть проект") {
           router.push(`/${workspaceSlug}/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
@@ -67,29 +67,29 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             .catch((_err) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Something went wrong please try again later.",
+                title: "Ошибка!",
+                message: "Что-то пошло не так. Попробуйте позже.",
               });
             });
         } else {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Please confirm leaving the project by typing the 'Leave Project'.",
+            title: "Ошибка!",
+            message: "Подтвердите выход из проекта, введя «Покинуть проект».",
           });
         }
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Please enter the project name as shown in the description.",
+          title: "Ошибка!",
+          message: "Введите название проекта, как показано в описании.",
         });
       }
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please fill all fields.",
+        title: "Ошибка!",
+        message: "Заполните все поля.",
       });
     }
   };
@@ -102,27 +102,27 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             <AlertTriangleIcon className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Leave Project</h3>
+            <h3 className="text-18 font-medium 2xl:text-20">Покинуть проект</h3>
           </span>
         </div>
 
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Are you sure you want to leave the project -
-            <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items associated
-            with you will become inaccessible.
+            Вы уверены, что хотите покинуть проект —
+            <span className="font-medium text-primary">{` "${project?.name}" `}</span>? Все связанные с вами рабочие
+            элементы станут недоступны.
           </p>
         </span>
 
         <div className="text-secondary">
           <p className="text-13 break-words">
-            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
+            Введите название проекта <span className="font-medium text-primary">{project?.name}</span>, чтобы продолжить:
           </p>
           <Controller
             control={control}
             name="projectName"
             rules={{
-              required: "Label title is required",
+              required: "Укажите название проекта",
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
@@ -133,7 +133,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.projectName)}
-                placeholder="Enter project name"
+                placeholder="Введите название проекта"
                 className="mt-2 w-full"
               />
             )}
@@ -142,7 +142,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
 
         <div className="text-secondary">
           <p className="text-13">
-            To confirm, type <span className="font-medium text-primary">Leave Project</span> below:
+            Для подтверждения введите <span className="font-medium text-primary">Покинуть проект</span> ниже:
           </p>
           <Controller
             control={control}
@@ -156,7 +156,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.confirmLeave)}
-                placeholder="Enter 'leave project'"
+                placeholder="Введите «Покинуть проект»"
                 className="mt-2 w-full"
               />
             )}
@@ -164,10 +164,10 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Leaving..." : "Leave Project"}
+            {isSubmitting ? "Выход..." : "Покинуть проект"}
           </Button>
         </div>
       </form>

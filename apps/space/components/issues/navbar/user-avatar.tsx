@@ -78,7 +78,7 @@ export const UserAvatar = observer(function UserAvatar() {
                   {currentUser?.display_name ||
                     `${currentUser?.first_name} ${currentUser?.first_name}` ||
                     currentUser?.email ||
-                    "User"}
+                    "Пользователь"}
                 </h6>
               </button>
             </Popover.Button>
@@ -107,7 +107,7 @@ export const UserAvatar = observer(function UserAvatar() {
                         className="flex min-w-36 cursor-pointer items-center gap-2 rounded-sm p-2 text-13 whitespace-nowrap hover:bg-layer-transparent-hover"
                       >
                         <LogOut size={12} className="shrink-0 text-danger-primary" />
-                        <div>Sign out</div>
+                        <div>Выйти</div>
                       </button>
                     </form>
                   )}
@@ -119,7 +119,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link to={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="secondary">Sign in</Button>
+            <Button variant="secondary">Войти</Button>
           </Link>
         </div>
       )}

@@ -35,7 +35,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Views"
+                  label="Представления"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
                   icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
@@ -54,7 +54,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
               size="lg"
               onClick={() => toggleCreateViewModal(true)}
             >
-              Add view
+              Добавить представление
             </Button>
           </div>
         </Header.RightItem>

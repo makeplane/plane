@@ -102,7 +102,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
       customButton={
         <div className="relative">
           <Button variant="secondary" size="lg" className="flex items-center gap-2">
-            <span>Filters</span>
+            <span>Фильтры</span>
             <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (

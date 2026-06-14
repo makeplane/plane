@@ -27,7 +27,7 @@ export function PoweredBy(props: TPoweredBy) {
     >
       <PlaneLogo className="h-3 w-auto text-primary" />
       <div className="text-11">
-        Powered by <span className="font-semibold">Gizmo Publish</span>
+Работает на <span className="font-semibold">Gizmo Publish</span>
       </div>
     </a>
   );

@@ -35,33 +35,33 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
   {
     key: "get_snapshot_of_each_active_cycle",
-    title: "Get a snapshot of each active cycle.",
+    title: "Получайте сводку по каждому активному циклу.",
     description:
       "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
     icon: CircleDashed,
   },
   {
     key: "compare_burndowns",
-    title: "Compare burndowns.",
+    title: "Сравнивайте графики сгорания.",
     description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
     icon: BarChart4,
   },
   {
     key: "quickly_see_make_or_break_issues",
-    title: "Quickly see make-or-break work items. ",
+    title: "Быстро находите критически важные рабочие элементы. ",
     description:
       "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
     icon: AlertOctagon,
   },
   {
     key: "zoom_into_cycles_that_need_attention",
-    title: "Zoom into cycles that need attention. ",
+    title: "Фокусируйтесь на циклах, требующих внимания. ",
     description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
     icon: SearchIcon,
   },
   {
     key: "stay_ahead_of_blockers",
-    title: "Stay ahead of blockers.",
+    title: "Опережайте блокеры.",
     description:
       "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
     icon: Microscope,

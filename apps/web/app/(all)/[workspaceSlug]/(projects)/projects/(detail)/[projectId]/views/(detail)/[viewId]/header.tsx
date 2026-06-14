@@ -128,7 +128,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Views"
+                label="Представления"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
                 icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
@@ -156,7 +156,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
         {viewDetails?.access === EViewAccess.PRIVATE ? (
           <div className="cursor-default text-tertiary">
-            <Tooltip tooltipContent={"Private"}>
+            <Tooltip tooltipContent={"Приватное"}>
               <LockIcon className="h-4 w-4" />
             </Tooltip>
           </div>
@@ -181,7 +181,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           )}
           {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
           {!viewDetails.is_locked && (
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title="Отображение" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
@@ -205,7 +205,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
           >
-            Add work item
+            Добавить рабочий элемент
           </Button>
         )}
         <div className="hidden md:block">

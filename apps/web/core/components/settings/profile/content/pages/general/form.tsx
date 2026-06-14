@@ -76,7 +76,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       display_name: user.display_name || "",
       email: user.email || "",
       role: profile.role || "Product / Project Manager",
-      language: profile.language || "en",
+      language: profile.language || "ru",
       user_timezone: user.user_timezone || "Asia/Kolkata",
     },
   });
@@ -98,8 +98,8 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Profile picture deleted successfully.",
+          title: "Успешно!",
+          message: "Фото профиля удалено.",
         });
         setValue("avatar_url", "");
         return;
@@ -107,8 +107,8 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in deleting your profile picture. Please try again.",
+          title: "Ошибка!",
+          message: "Не удалось удалить фото профиля. Попробуйте ещё раз.",
         });
       })
       .finally(() => {
@@ -157,14 +157,14 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     const updateUserAndProfile = Promise.all(promises);
 
     setPromiseToast(updateUserAndProfile, {
-      loading: "Updating...",
+      loading: "Обновление...",
       success: {
-        title: "Success!",
-        message: () => `Profile updated successfully.`,
+        title: "Успешно!",
+        message: () => `Профиль обновлён.`,
       },
       error: {
-        title: "Error!",
-        message: () => `There was some error in updating your profile. Please try again.`,
+        title: "Ошибка!",
+        message: () => `Не удалось обновить профиль. Попробуйте ещё раз.`,
       },
     });
     updateUserAndProfile
@@ -273,7 +273,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your first name"
+                      placeholder="Введите имя"
                       className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
                       maxLength={50}
                       autoComplete="on"
@@ -299,7 +299,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.last_name)}
-                      placeholder="Enter your last name"
+                      placeholder="Введите фамилию"
                       className="w-full rounded-md"
                       maxLength={50}
                       autoComplete="on"
@@ -329,7 +329,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors?.display_name)}
-                      placeholder="Enter your display name"
+                      placeholder="Введите отображаемое имя"
                       className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
                       maxLength={50}
                     />
@@ -358,7 +358,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       value={value}
                       ref={ref}
                       hasError={Boolean(errors.email)}
-                      placeholder="Enter your email"
+                      placeholder="Введите email"
                       className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
                         errors.email ? "border-danger-strong" : ""
                       }`}

@@ -49,14 +49,14 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration",
+      loading: "Сохранение конфигурации",
       success: {
-        title: "Configuration saved",
-        message: () => `GitHub authentication is now ${value === "1" ? "active" : "disabled"}.`,
+        title: "Конфигурация сохранена",
+        message: () => `Аутентификация через GitHub теперь ${value === "1" ? "активна" : "отключена"}.`,
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: "Ошибка",
+        message: () => "Не удалось сохранить конфигурацию",
       },
     });
 
@@ -77,13 +77,13 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
       customHeader={
         <AuthenticationMethodCard
           name="GitHub"
-          description="Allow members to login or sign up to Gizmo with their GitHub accounts."
+          description="Разрешить участникам входить или регистрироваться в Gizmo с помощью их учётных записей GitHub."
           icon={
             <img
               src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
               height={24}
               width={24}
-              alt="GitHub Logo"
+              alt="Логотип GitHub"
             />
           }
           config={
@@ -116,6 +116,6 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "GitHub Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Аутентификация через GitHub - God Mode" }];
 
 export default InstanceGithubAuthenticationPage;

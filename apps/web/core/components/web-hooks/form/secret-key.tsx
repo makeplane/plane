@@ -73,7 +73,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `${t("success")}`,
-          message: "New key regenerated successfully.",
+          message: "Новый ключ успешно сгенерирован.",
         });
 
         if (currentWebhook && webhookSecretKey) {

@@ -27,17 +27,17 @@ export const NewUserPopup = observer(function NewUserPopup() {
     <div className="shadow-md absolute right-8 bottom-8 w-96 rounded-lg border border-subtle bg-surface-1 p-6">
       <div className="flex gap-4">
         <div className="grow">
-          <div className="text-14 font-semibold">Create workspace</div>
+          <div className="text-14 font-semibold">Создать рабочее пространство</div>
           <div className="py-2 text-13 font-medium text-tertiary">
-            Instance setup done! Welcome to Gizmo instance portal. Start your journey with by creating your first
-            workspace.
+            Настройка экземпляра завершена! Добро пожаловать в портал экземпляра Gizmo. Начните работу, создав своё
+            первое рабочее пространство.
           </div>
           <div className="flex items-center gap-4 pt-2">
             <Link href="/workspace/create" className={getButtonStyling("primary", "lg")}>
-              Create workspace
+              Создать рабочее пространство
             </Link>
             <Button variant="secondary" size="lg" onClick={toggleNewUserPopup}>
-              Close
+              Закрыть
             </Button>
           </div>
         </div>
@@ -46,7 +46,7 @@ export const NewUserPopup = observer(function NewUserPopup() {
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}
-            alt="Gizmo icon"
+            alt="Значок Gizmo"
           />
         </div>
       </div>

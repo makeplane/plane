@@ -34,7 +34,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
   return (
     <>
       <FilterHeader
-        title="Sub-group by"
+        title="Подгруппировать по"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

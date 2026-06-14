@@ -131,8 +131,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось выйти. Попробуйте ещё раз.",
       })
     );
   };
@@ -173,7 +173,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="relative flex-shrink-0">
               <img src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Gizmo logo" />
             </div>
-            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
+            <h3 className="text-center text-16 font-semibold">Рабочее пространство не найдено</h3>
             <p className="text-center text-13 text-secondary">
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
@@ -218,12 +218,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="secondary">Check pending invites</Button>
+                  <Button variant="secondary">Проверить приглашения</Button>
                 </span>
               </Link>
               <Link href="/create-workspace">
                 <span>
-                  <Button variant="primary">Create new workspace</Button>
+                  <Button variant="primary">Создать рабочее пространство</Button>
                 </span>
               </Link>
             </div>

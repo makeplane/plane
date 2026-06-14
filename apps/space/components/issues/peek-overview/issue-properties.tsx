@@ -54,8 +54,8 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
     copyTextToClipboard(urlToCopy).then(() => {
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link copied!",
-        message: "Work item link copied to clipboard",
+        title: "Ссылка скопирована!",
+        message: "Ссылка на рабочий элемент скопирована в буфер обмена",
       });
     });
   };
@@ -78,7 +78,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <StatePropertyIcon className="size-4 flex-shrink-0" />
-            <span>State</span>
+            <span>Состояние</span>
           </div>
           <div className="flex w-3/4 items-center gap-1.5 py-0.5 text-13">
             <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
@@ -89,7 +89,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <PriorityPropertyIcon className="size-4 flex-shrink-0" />
-            <span>Priority</span>
+            <span>Приоритет</span>
           </div>
           <div className="w-3/4">
             <div
@@ -114,7 +114,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <DueDatePropertyIcon className="size-4 flex-shrink-0" />
-            <span>Due date</span>
+            <span>Срок выполнения</span>
           </div>
           <div>
             {issueDetails.target_date ? (
@@ -127,7 +127,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-13 text-secondary">Empty</span>
+              <span className="text-13 text-secondary">Не указано</span>
             )}
           </div>
         </div>

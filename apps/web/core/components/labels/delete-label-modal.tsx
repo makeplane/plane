@@ -46,10 +46,10 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
       })
       .catch((err) => {
         setIsDeleteLoading(false);
-        const error = err?.error || "Label could not be deleted. Please try again.";
+        const error = err?.error || "Не удалось удалить метку. Пожалуйста, попробуйте снова.";
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "Ошибка!",
           message: error,
         });
       });
@@ -61,11 +61,11 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete Label"
+      title="Удалить метку"
       content={
         <>
-          Are you sure you want to delete <span className="font-medium text-primary">{data?.name}</span>? This will
-          remove the label from all the work item and from any views where the label is being filtered upon.
+          Вы уверены, что хотите удалить <span className="font-medium text-primary">{data?.name}</span>? Метка будет
+          убрана со всех рабочих элементов и из всех представлений, где она используется в фильтрах.
         </>
       }
     />

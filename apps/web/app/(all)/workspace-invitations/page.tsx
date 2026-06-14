@@ -81,40 +81,40 @@ function WorkspaceInvitationPage() {
         {invitationDetail && !invitationDetail.responded_at ? (
           error ? (
             <div className="shadow-2xl flex w-full flex-col space-y-4 rounded-sm border border-subtle bg-surface-1 px-4 py-8 text-center md:w-1/3">
-              <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
+              <h2 className="text-18 uppercase">Приглашение не найдено</h2>
             </div>
           ) : (
             <EmptySpace
-              title={`You have been invited to ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Gizmo account."
+              title={`Вас пригласили в ${invitationDetail.workspace.name}`}
+              description="Рабочее пространство — это место, где вы создаёте проекты, совместно работаете над рабочими элементами и организуете различные потоки работы в вашей учётной записи Gizmo."
             >
-              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={CheckIcon} title="Принять" action={handleAccept} />
+              <EmptySpaceItem Icon={CloseIcon} title="Игнорировать" action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
           invitationDetail?.accepted ? (
             <EmptySpace
-              title={`You are already a member of ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Gizmo account."
+              title={`Вы уже являетесь участником ${invitationDetail.workspace.name}`}
+              description="Рабочее пространство — это место, где вы создаёте проекты, совместно работаете над рабочими элементами и организуете различные потоки работы в вашей учётной записи Gizmo."
             >
-              <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
+              <EmptySpaceItem Icon={Boxes} title="Перейти на главную" href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
-              title="This invitation link is not active anymore."
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Gizmo account."
-              link={{ text: "Or start from an empty project", href: "/" }}
+              title="Эта ссылка-приглашение больше не активна."
+              description="Рабочее пространство — это место, где вы создаёте проекты, совместно работаете над рабочими элементами и организуете различные потоки работы в вашей учётной записи Gizmo."
+              link={{ text: "Или начните с пустого проекта", href: "/" }}
             >
               {!currentUser ? (
-                <EmptySpaceItem Icon={User2} title="Sign in to continue" href="/" />
+                <EmptySpaceItem Icon={User2} title="Войдите, чтобы продолжить" href="/" />
               ) : (
-                <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
+                <EmptySpaceItem Icon={Boxes} title="Перейти на главную" href="/" />
               )}
-              <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/makeplane" />
+              <EmptySpaceItem Icon={Star} title="Поставьте нам звезду на GitHub" href="https://github.com/makeplane" />
               <EmptySpaceItem
                 Icon={Share2}
-                title="Join our community of active creators"
+                title="Присоединяйтесь к нашему сообществу активных авторов"
                 href="https://forum.gizmo.so"
               />
             </EmptySpace>

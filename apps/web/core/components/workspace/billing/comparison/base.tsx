@@ -60,7 +60,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
               className="text-caption-md grid gap-3 rounded-xs py-1 text-secondary even:bg-surface-2"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-body-sm-medium">Highlights</div>
+              <div className="col-span-1 p-3 text-body-sm-medium">Основное</div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (

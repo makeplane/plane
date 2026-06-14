@@ -60,14 +60,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
+          title: "Версия страницы восстановлена.",
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Failed to restore page version.",
+          title: "Не удалось восстановить версию страницы.",
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,11 +90,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Something went wrong!</h6>
-              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">Что-то пошло не так!</h6>
+              <p className="text-13 text-tertiary">Не удалось загрузить версию, пожалуйста, попробуйте снова.</p>
             </div>
             <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Try again
+              Попробовать снова
             </Button>
           </div>
         </div>
@@ -105,16 +105,16 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
-                  : "Loading version details"}
+                  : "Загрузка сведений о версии"}
               </h6>
               <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
                 <EyeIcon className="size-3 flex-shrink-0" />
-                View only
+                Только просмотр
               </span>
             </div>
             {restoreEnabled && (
               <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
-                {isRestoring ? "Restoring" : "Restore"}
+                {isRestoring ? "Восстановление..." : "Восстановить"}
               </Button>
             )}
           </div>

@@ -164,8 +164,8 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                   // TODO: Add translation
                   <EmptyStateDetailed
                     assetKey="inbox"
-                    title="No request closed yet"
-                    description="All the work items whether accepted or declined can be found here."
+                    title="Пока нет закрытых запросов"
+                    description="Здесь находятся все рабочие элементы, как принятые, так и отклонённые."
                     assetClassName="size-20"
                     className="px-10"
                   />

@@ -46,19 +46,19 @@ const MENU_ITEMS: {
 const TONES_LIST = [
   {
     key: "default",
-    label: "Default",
+    label: "По умолчанию",
     casual_score: 5,
     formal_score: 5,
   },
   {
     key: "professional",
-    label: "💼 Professional",
+    label: "💼 Деловой",
     casual_score: 0,
     formal_score: 10,
   },
   {
     key: "casual",
-    label: "😃 Casual",
+    label: "😃 Неформальный",
     casual_score: 10,
     formal_score: 0,
   },
@@ -232,9 +232,9 @@ export function EditorAIMenu(props: Props) {
                         className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
                         onClick={() => handleInsertText(false)}
                       >
-                        Replace selection
+                        Заменить выделенное
                       </button>
-                      <Tooltip tooltipContent="Add to next line">
+                      <Tooltip tooltipContent="Добавить на новую строку">
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -243,7 +243,7 @@ export function EditorAIMenu(props: Props) {
                           <CornerDownRight className="size-4 text-tertiary" />
                         </button>
                       </Tooltip>
-                      <Tooltip tooltipContent="Re-generate response">
+                      <Tooltip tooltipContent="Сгенерировать ответ заново">
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -265,7 +265,7 @@ export function EditorAIMenu(props: Props) {
                   </div>
                 ) : (
                   <p className="text-13 text-secondary">
-                    {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
+                    {activeTask ? LOADING_TEXTS[activeTask] : "Pi пишет"}...
                   </p>
                 )}
               </div>
@@ -300,7 +300,7 @@ export function EditorAIMenu(props: Props) {
             <TriangleAlert className="size-3" />
           </span>
           <p className="flex-shrink-0 text-11 font-medium">
-            By using this feature, you consent to sharing the message with a 3rd party service.
+            Используя эту функцию, вы соглашаетесь на передачу сообщения стороннему сервису.
           </p>
         </div>
       )}

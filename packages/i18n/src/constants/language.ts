@@ -6,7 +6,18 @@
 
 import type { TLanguage, ILanguageOption } from "../types";
 
+/**
+ * The language a missing translation key falls back to.
+ * English is kept here as a safety net so any key not yet translated
+ * still renders readable text instead of the raw key.
+ */
 export const FALLBACK_LANGUAGE: TLanguage = "en";
+
+/**
+ * The default language shown to a user who has no saved preference
+ * (new users, signed-out state, server-side render).
+ */
+export const DEFAULT_LANGUAGE: TLanguage = "ru";
 
 export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "English", value: "en" },

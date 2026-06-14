@@ -23,12 +23,13 @@ export function ApiTokenEmptyState(props: Props) {
     >
       <div className="flex w-full flex-col items-center text-center">
         <img src={emptyApiTokens} className="w-52 object-contain sm:w-60" alt="empty" />
-        <h6 className="mt-6 mb-3 text-18 font-semibold sm:mt-8">No API tokens</h6>
+        <h6 className="mt-6 mb-3 text-18 font-semibold sm:mt-8">Нет токенов API</h6>
         <p className="mb-7 text-tertiary sm:mb-8">
-          Create API tokens for safe and easy data sharing with external apps, maintaining control and security.
+          Создавайте токены API для безопасного и удобного обмена данными с внешними приложениями, сохраняя контроль и
+          безопасность.
         </p>
         <Button className="flex items-center gap-1.5" onClick={onClick}>
-          Add token
+          Добавить токен
         </Button>
       </div>
     </div>

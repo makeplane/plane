@@ -63,15 +63,15 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Cycle created successfully.",
+          title: "Успешно!",
+          message: "Цикл успешно создан.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.detail ?? "Error in creating cycle. Please try again.",
+          title: "Ошибка!",
+          message: err?.detail ?? "Не удалось создать цикл. Попробуйте ещё раз.",
         });
       });
   };
@@ -84,15 +84,15 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
       .then((_res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Cycle updated successfully.",
+          title: "Успешно!",
+          message: "Цикл успешно обновлён.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.detail ?? "Error in updating cycle. Please try again.",
+          title: "Ошибка!",
+          message: err?.detail ?? "Не удалось обновить цикл. Попробуйте ещё раз.",
         });
       });
   };
@@ -152,8 +152,8 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
     } else
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
+        title: "Ошибка!",
+        message: "У вас уже есть цикл на указанные даты. Если вы хотите создать черновик цикла, удалите даты.",
       });
   };
 

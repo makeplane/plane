@@ -58,7 +58,7 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Assignee${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Исполнитель${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -84,7 +84,7 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
                           size="md"
                         />
                       }
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? "Вы" : member?.display_name}
                     />
                   );
                 })}
@@ -94,12 +94,12 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
                     className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "Свернуть" : "Показать все"}
                   </button>
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-11 text-placeholder italic">Совпадений не найдено</p>
             )
           ) : (
             <Loader className="space-y-2">

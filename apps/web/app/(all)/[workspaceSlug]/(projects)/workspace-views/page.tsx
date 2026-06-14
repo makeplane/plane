@@ -24,7 +24,7 @@ function WorkspaceViewsPage() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Все представления` : undefined;
 
   return (
     <>
@@ -36,7 +36,7 @@ function WorkspaceViewsPage() {
             className="w-full bg-transparent !p-0 text-11 leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
+            placeholder="Поиск"
             mode="true-transparent"
           />
         </div>

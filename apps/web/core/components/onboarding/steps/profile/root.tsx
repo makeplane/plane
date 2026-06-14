@@ -99,8 +99,8 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: "User details update failed. Please try again!",
+        title: "Ошибка",
+        message: "Не удалось обновить данные пользователя. Попробуйте ещё раз!",
       });
     }
   };
@@ -147,7 +147,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="Create your profile." description="This is how you will appear in Gizmo." />
+      <CommonOnboardingHeader title="Создайте профиль." description="This is how you will appear in Gizmo." />
 
       {/* Profile Picture Section */}
       <Controller
@@ -211,7 +211,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
               validate: validatePersonName,
               maxLength: {
                 value: 50,
-                message: "Name must be within 50 characters.",
+                message: "Имя должно быть не длиннее 50 символов.",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -230,7 +230,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                     "border-danger-strong": errors.first_name,
                   }
                 )}
-                placeholder="Enter your full name"
+                placeholder="Введите полное имя"
                 autoComplete="on"
               />
             )}

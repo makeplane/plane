@@ -41,16 +41,16 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       .then(async () => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Work items have been transferred successfully",
+          title: "Успешно!",
+          message: "Рабочие элементы успешно перенесены",
         });
         await getCycleDetails(payload.new_cycle_id);
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Unable to transfer work items. Please try again.",
+          title: "Ошибка!",
+          message: "Не удалось перенести рабочие элементы. Попробуйте ещё раз.",
         });
       });
   };
@@ -64,8 +64,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
     await Promise.all(cyclesFetch).catch((error) => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: error.error || "Unable to fetch cycle details",
+        title: "Ошибка",
+        message: error.error || "Не удалось загрузить сведения о цикле",
       });
     });
   };
@@ -82,7 +82,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
         <div className="flex items-center justify-between px-5">
           <div className="flex items-center gap-1">
             <TransferIcon className="w-5 fill-primary" />
-            <h4 className="text-18 font-medium text-primary">Transfer work items</h4>
+            <h4 className="text-18 font-medium text-primary">Перенести рабочие элементы</h4>
           </div>
           <button onClick={handleClose}>
             <CloseIcon className="h-4 w-4" />
@@ -92,7 +92,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
           <SearchIcon className="h-4 w-4 text-secondary" />
           <input
             className="text-13 outline-none"
-            placeholder="Search for a cycle..."
+            placeholder="Поиск цикла..."
             onChange={(e) => setQuery(e.target.value)}
             value={query}
           />
@@ -132,12 +132,12 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
               <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
                 <AlertCircle className="h-3.5 w-3.5 text-secondary" />
                 <span className="text-center text-secondary">
-                  You don’t have any current cycle. Please create one to transfer the work items.
+                  У вас нет текущего цикла. Создайте цикл, чтобы перенести рабочие элементы.
                 </span>
               </div>
             )
           ) : (
-            <p className="text-center text-secondary">Loading...</p>
+            <p className="text-center text-secondary">Загрузка...</p>
           )}
         </div>
       </div>

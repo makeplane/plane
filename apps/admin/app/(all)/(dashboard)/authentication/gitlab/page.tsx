@@ -43,14 +43,14 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration",
+      loading: "Сохранение конфигурации",
       success: {
-        title: "Configuration saved",
-        message: () => `GitLab authentication is now ${value === "1" ? "active" : "disabled"}.`,
+        title: "Конфигурация сохранена",
+        message: () => `Аутентификация через GitLab теперь ${value === "1" ? "активна" : "отключена"}.`,
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: "Ошибка",
+        message: () => "Не удалось сохранить конфигурацию",
       },
     });
 
@@ -68,8 +68,8 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
       customHeader={
         <AuthenticationMethodCard
           name="GitLab"
-          description="Allow members to login or sign up to Gizmo with their GitLab accounts."
-          icon={<img src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
+          description="Разрешить участникам входить или регистрироваться в Gizmo с помощью своих аккаунтов GitLab."
+          icon={<img src={GitlabLogo} height={24} width={24} alt="Логотип GitLab" />}
           config={
             <ToggleSwitch
               value={Boolean(parseInt(enableGitlabConfig))}
@@ -104,6 +104,6 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "GitLab Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Аутентификация через GitLab - God Mode" }];
 
 export default InstanceGitlabAuthenticationPage;

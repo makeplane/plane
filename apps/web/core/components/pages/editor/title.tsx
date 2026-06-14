@@ -52,7 +52,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
         <div className="relative">
           <TextArea
             className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
-            placeholder="Untitled"
+            placeholder="Без названия"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();

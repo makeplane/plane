@@ -145,7 +145,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             rules={{
               pattern: {
                 value: emailRegex,
-                message: "Invalid Email ID",
+                message: "Некорректный адрес эл. почты",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -300,15 +300,15 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       .then(async () => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: "Успешно!",
+          message: "Приглашения отправлены.",
         });
         await nextStep();
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "Ошибка!",
           message: err?.error,
         });
       });
@@ -342,13 +342,13 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       }}
     >
       <CommonOnboardingHeader
-        title="Invite your teammates"
+        title="Пригласите коллег"
         description="Work in Gizmo happens best with your team. Invite them now to use Gizmo to its potential."
       />
       <div className="w-full py-4 text-13">
         <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-          <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
-          <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
+          <div className="col-span-6 px-1 text-13 font-medium text-secondary">Эл. почта</div>
+          <div className="col-span-4 px-1 text-13 font-medium text-secondary">Роль</div>
         </div>
         <div className="mb-3 space-y-3 sm:space-y-4">
           {fields.map((field, index) => (

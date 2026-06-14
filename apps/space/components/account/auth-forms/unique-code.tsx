@@ -87,7 +87,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
-          Email
+          Эл. почта
         </label>
         <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
@@ -112,7 +112,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
 
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="code">
-          Unique code
+          Уникальный код
         </label>
         <Input
           name="code"
@@ -126,7 +126,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
-            Paste the code sent to your email
+            Вставьте код, отправленный на вашу эл. почту
           </p>
           <button
             type="button"
@@ -139,17 +139,17 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             disabled={isRequestNewCodeDisabled}
           >
             {resendTimerCode > 0
-              ? `Resend in ${resendTimerCode}s`
+              ? `Повторить через ${resendTimerCode} с`
               : isRequestingNewCode
-                ? "Requesting new code"
-                : "Resend"}
+                ? "Запрос нового кода"
+                : "Отправить повторно"}
           </button>
         </div>
       </div>
 
       <div className="space-y-2.5">
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+          {isRequestingNewCode ? "Отправка кода" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Продолжить"}
         </Button>
       </div>
     </form>

@@ -36,7 +36,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
         {/* Title */}
         <div className="flex items-center gap-2 text-secondary">
           <RecentStickyIcon className="size-5 flex-shrink-0 rotate-90" />
-          <p className="text-18 font-medium">Your stickies</p>
+          <p className="text-18 font-medium">Ваши стикеры</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">
@@ -49,7 +49,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
             className="my-auto flex gap-1 text-13 font-medium text-accent-primary"
             disabled={creatingSticky}
           >
-            <PlusIcon className="my-auto size-4" /> <span>Add sticky</span>
+            <PlusIcon className="my-auto size-4" /> <span>Добавить стикер</span>
             {creatingSticky && (
               <div className="ml-2 flex items-center justify-center">
                 <div

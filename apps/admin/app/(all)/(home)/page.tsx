@@ -45,6 +45,6 @@ function HomePage() {
 export default observer(HomePage);
 
 export const meta: Route.MetaFunction = () => [
-  { title: "Admin – Instance Setup & Sign-In" },
-  { name: "description", content: "Configure your Gizmo instance or sign in to the admin portal." },
+  { title: "Администратор – настройка экземпляра и вход" },
+  { name: "description", content: "Настройте экземпляр Gizmo или войдите в портал администратора." },
 ];

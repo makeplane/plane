@@ -44,8 +44,8 @@ export function ArchiveModuleModal(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Archive success",
-          message: "Your archives can be found in project archives.",
+          title: "Архивировано",
+          message: "Архивы можно найти в архивах проекта.",
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/${projectId}/modules`);
@@ -54,8 +54,8 @@ export function ArchiveModuleModal(props: Props) {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Module could not be archived. Please try again.",
+          title: "Ошибка!",
+          message: "Не удалось архивировать модуль. Попробуйте ещё раз.",
         })
       )
       .finally(() => setIsArchiving(false));
@@ -64,16 +64,16 @@ export function ArchiveModuleModal(props: Props) {
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
-        <h3 className="text-18 font-medium 2xl:text-20">Archive module {moduleName}</h3>
+        <h3 className="text-18 font-medium 2xl:text-20">Архивировать модуль {moduleName}</h3>
         <p className="mt-3 text-13 text-secondary">
-          Are you sure you want to archive the module? All your archives can be restored later.
+          Вы уверены, что хотите архивировать модуль? Все архивы можно будет восстановить позже.
         </p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
-            {isArchiving ? "Archiving" : "Archive"}
+            {isArchiving ? "Архивирование" : "Архивировать"}
           </Button>
         </div>
       </div>

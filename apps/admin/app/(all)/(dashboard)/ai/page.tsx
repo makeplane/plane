@@ -25,8 +25,9 @@ const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentP
   return (
     <PageWrapper
       header={{
-        title: "AI features for all your workspaces",
-        description: "Configure your AI API credentials so Gizmo AI features are turned on for all your workspaces.",
+        title: "Возможности ИИ для всех ваших рабочих пространств",
+        description:
+          "Настройте учётные данные API для ИИ, чтобы возможности ИИ Gizmo были включены во всех ваших рабочих пространствах.",
       }}
     >
       {formattedConfig ? (
@@ -45,6 +46,6 @@ const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentP
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Artificial Intelligence Settings - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Настройки искусственного интеллекта - God Mode" }];
 
 export default InstanceAIPage;

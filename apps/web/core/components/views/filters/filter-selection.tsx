@@ -65,7 +65,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder="Поиск"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -87,7 +87,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
                 favorites: !filters.filters?.favorites,
               })
             }
-            title="Favorites"
+            title="Избранное"
           />
         </div>
 

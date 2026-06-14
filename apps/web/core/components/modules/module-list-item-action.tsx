@@ -70,14 +70,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding module to favorites...",
+      loading: "Добавление модуля в избранное...",
       success: {
-        title: "Success!",
-        message: () => "Module added to favorites.",
+        title: "Готово!",
+        message: () => "Модуль добавлен в избранное.",
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the module to favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось добавить модуль в избранное. Попробуйте ещё раз.",
       },
     });
   };
@@ -94,14 +94,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing module from favorites...",
+      loading: "Удаление модуля из избранного...",
       success: {
-        title: "Success!",
-        message: () => "Module removed from favorites.",
+        title: "Готово!",
+        message: () => "Модуль удалён из избранного.",
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the module from favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось удалить модуль из избранного. Попробуйте ещё раз.",
       },
     });
   };
@@ -113,15 +113,15 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: "Готово!",
+          message: "Модуль успешно обновлён.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.detail ?? "Module could not be updated. Please try again.",
+          title: "Ошибка!",
+          message: err?.detail ?? "Не удалось обновить модуль. Попробуйте ещё раз.",
         });
       });
   };
@@ -166,7 +166,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
       ) : (
-        <Tooltip tooltipContent="No lead">
+        <Tooltip tooltipContent="Нет ответственного">
           <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}

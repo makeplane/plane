@@ -10,9 +10,9 @@ import { PageHead } from "@/components/core/page-title";
 function MessengerPage() {
   return (
     <>
-      <PageHead title="Messenger" />
+      <PageHead title="Мессенджер" />
       <div className="relative h-full w-full overflow-hidden">
-        <iframe src="/messenger/" className="h-full w-full border-0" title="Messenger" />
+        <iframe src="/messenger/" className="h-full w-full border-0" title="Мессенджер" />
       </div>
     </>
   );

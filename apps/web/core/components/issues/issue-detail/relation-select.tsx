@@ -55,8 +55,8 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
     if (data.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one work item.",
+        title: "Ошибка!",
+        message: "Выберите хотя бы один рабочий элемент.",
       });
       return;
     }
@@ -137,7 +137,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                       </Link>
                     </Tooltip>
                     {!disabled && (
-                      <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent="Убрать" position="bottom" isMobile={isMobile}>
                         <span
                           onClick={(e) => {
                             e.preventDefault();

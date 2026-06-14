@@ -80,7 +80,7 @@ export const useCollaborativePageActions = (props: Props) => {
         if (actionDetails?.errorMessage) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
+            title: "Ошибка!",
             message: actionDetails.errorMessage,
           });
         }

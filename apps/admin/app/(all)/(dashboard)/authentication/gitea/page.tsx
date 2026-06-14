@@ -41,14 +41,14 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration",
+      loading: "Сохранение конфигурации",
       success: {
-        title: "Configuration saved",
-        message: () => `Gitea authentication is now ${value === "1" ? "active" : "disabled"}.`,
+        title: "Конфигурация сохранена",
+        message: () => `Аутентификация через Gitea теперь ${value === "1" ? "активна" : "отключена"}.`,
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: "Ошибка",
+        message: () => "Не удалось сохранить конфигурацию",
       },
     });
 
@@ -69,8 +69,8 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
       customHeader={
         <AuthenticationMethodCard
           name="Gitea"
-          description="Allow members to login or sign up to Gizmo with their Gitea accounts."
-          icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
+          description="Разрешить участникам входить или регистрироваться в Gizmo с помощью их учётных записей Gitea."
+          icon={<img src={giteaLogo} height={24} width={24} alt="Логотип Gitea" />}
           config={
             <ToggleSwitch
               value={isGiteaEnabled}
@@ -100,6 +100,6 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
     </PageWrapper>
   );
 });
-export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Аутентификация через Gitea - God Mode" }];
 
 export default InstanceGiteaAuthenticationPage;

@@ -45,21 +45,21 @@ export const CustomThemeDownloadConfigButton = observer(function CustomThemeDown
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Theme configuration downloaded successfully.",
+        message: "Конфигурация темы успешно загружена.",
       });
     } catch (error) {
       console.error("Failed to download config:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: "Failed to download theme configuration.",
+        message: "Не удалось загрузить конфигурацию темы.",
       });
     }
   };
 
   return (
     <Button variant="secondary" size="lg" type="button" onClick={handleDownloadConfig}>
-      Download config
+      Скачать конфигурацию
     </Button>
   );
 });

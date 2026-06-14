@@ -51,7 +51,7 @@ export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyL
             <div className="flex h-full items-center gap-1 rounded-sm py-1 text-body-xs-bold">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               <span>{value.length}</span>
-              <span>Labels</span>
+              <span>Метки</span>
             </div>
           </Tooltip>
         </>

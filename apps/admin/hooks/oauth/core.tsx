@@ -35,17 +35,17 @@ export const getCoreAuthenticationModesMap: (
 }) => ({
   "unique-codes": {
     key: "unique-codes",
-    name: "Unique codes",
+    name: "Уникальные коды",
     description:
-      "Log in or sign up for Gizmo using codes sent via email. You need to have set up SMTP to use this method.",
+      "Вход или регистрация в Gizmo с помощью кодов, отправленных по эл. почте. Для использования этого метода необходимо настроить SMTP.",
     icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_MAGIC_LINK_LOGIN",
   },
   "passwords-login": {
     key: "passwords-login",
-    name: "Passwords",
-    description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
+    name: "Пароли",
+    description: "Разрешить участникам создавать учётные записи с паролями и использовать их вместе с эл. почтой для входа.",
     icon: <KeyRound className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_EMAIL_PASSWORD",
@@ -53,7 +53,7 @@ export const getCoreAuthenticationModesMap: (
   google: {
     key: "google",
     name: "Google",
-    description: "Allow members to log in or sign up for Gizmo with their Google accounts.",
+    description: "Разрешить участникам входить или регистрироваться в Gizmo с помощью учётных записей Google.",
     icon: <img src={googleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GOOGLE_ENABLED",
@@ -61,7 +61,7 @@ export const getCoreAuthenticationModesMap: (
   github: {
     key: "github",
     name: "GitHub",
-    description: "Allow members to log in or sign up for Gizmo with their GitHub accounts.",
+    description: "Разрешить участникам входить или регистрироваться в Gizmo с помощью учётных записей GitHub.",
     icon: (
       <img
         src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
@@ -76,7 +76,7 @@ export const getCoreAuthenticationModesMap: (
   gitlab: {
     key: "gitlab",
     name: "GitLab",
-    description: "Allow members to log in or sign up to Gizmo with their GitLab accounts.",
+    description: "Разрешить участникам входить или регистрироваться в Gizmo с помощью учётных записей GitLab.",
     icon: <img src={gitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITLAB_ENABLED",
@@ -84,7 +84,7 @@ export const getCoreAuthenticationModesMap: (
   gitea: {
     key: "gitea",
     name: "Gitea",
-    description: "Allow members to log in or sign up to Gizmo with their Gitea accounts.",
+    description: "Разрешить участникам входить или регистрироваться в Gizmo с помощью учётных записей Gitea.",
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",

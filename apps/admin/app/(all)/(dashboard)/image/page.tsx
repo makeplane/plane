@@ -25,8 +25,8 @@ const InstanceImagePage = observer(function InstanceImagePage(_props: Route.Comp
   return (
     <PageWrapper
       header={{
-        title: "Third-party image libraries",
-        description: "Let your users search and choose images from third-party libraries",
+        title: "Сторонние библиотеки изображений",
+        description: "Позвольте пользователям искать и выбирать изображения из сторонних библиотек",
       }}
     >
       {formattedConfig ? (
@@ -41,6 +41,6 @@ const InstanceImagePage = observer(function InstanceImagePage(_props: Route.Comp
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Images Settings - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Настройки изображений - God Mode" }];
 
 export default InstanceImagePage;

@@ -32,14 +32,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateCurrentUser({ user_timezone: value });
         setToast({
-          title: "Success!",
-          message: "Timezone updated successfully",
+          title: "Успешно!",
+          message: "Часовой пояс обновлён",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update timezone",
+          title: "Ошибка!",
+          message: "Не удалось обновить часовой пояс",
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -49,14 +49,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateUserProfile({ language: value });
         setToast({
-          title: "Success!",
-          message: "Language updated successfully",
+          title: "Успешно!",
+          message: "Язык обновлён",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update language",
+          title: "Ошибка!",
+          message: "Не удалось обновить язык",
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -81,7 +81,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
           control={
             <CustomSelect
               value={profile?.language}
-              label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
+              label={profile?.language ? getLanguageLabel(profile?.language) : "Выберите язык"}
               onChange={handleLanguageChange}
               buttonClassName="border border-subtle-1"
               className="rounded-md"
@@ -98,7 +98,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         />
         <StartOfWeekPreference
           option={{
-            title: "First day of the week",
+            title: "Первый день недели",
             description: "This will change how all calendars in your app look.",
           }}
         />

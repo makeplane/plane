@@ -11,4 +11,4 @@ export default function InvitationsLayout() {
   return <Outlet />;
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Invitations" }];
+export const meta: Route.MetaFunction = () => [{ title: "Приглашения" }];

@@ -87,7 +87,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             pageOperations.toggleLock();
           },
-          title: is_locked ? "Unlock" : "Lock",
+          title: is_locked ? "Разблокировать" : "Заблокировать",
           icon: is_locked ? LockKeyholeOpen : LockKeyhole,
           shouldRender: canCurrentUserLockPage,
         },
@@ -96,21 +96,21 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             pageOperations.toggleAccess();
           },
-          title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+          title: access === EPageAccess.PUBLIC ? "Сделать приватной" : "Сделать публичной",
           icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
           shouldRender: canCurrentUserChangeAccess && !archived_at,
         },
         {
           key: "open-in-new-tab",
           action: pageOperations.openInNewTab,
-          title: "Open in new tab",
+          title: "Открыть в новой вкладке",
           icon: NewTabIcon,
           shouldRender: true,
         },
         {
           key: "copy-link",
           action: pageOperations.copyLink,
-          title: "Copy link",
+          title: "Копировать ссылку",
           icon: LinkIcon,
           shouldRender: true,
         },
@@ -119,7 +119,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             pageOperations.duplicate();
           },
-          title: "Make a copy",
+          title: "Создать копию",
           icon: CopyIcon,
           shouldRender: canCurrentUserDuplicatePage,
         },
@@ -128,7 +128,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             pageOperations.toggleArchive();
           },
-          title: archived_at ? "Restore" : "Archive",
+          title: archived_at ? "Восстановить" : "Архивировать",
           icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
           shouldRender: canCurrentUserArchivePage,
         },
@@ -137,14 +137,14 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             setDeletePageModal(true);
           },
-          title: "Delete",
+          title: "Удалить",
           icon: TrashIcon,
           shouldRender: canCurrentUserDeletePage && !!archived_at,
         },
         {
           key: "move",
           action: () => setMovePageModal(true),
-          title: "Move",
+          title: "Переместить",
           icon: FileOutput,
           shouldRender: canCurrentUserMovePage && isMovePageEnabled,
         },

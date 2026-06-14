@@ -87,7 +87,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
       >
         <div className="flex items-center gap-1 text-tertiary">
           <LockIcon className="size-3" />
-          <span className="font-medium">Set a password</span>
+          <span className="font-medium">Задайте пароль</span>
           <span>{`(Optional)`}</span>
         </div>
         <div className="flex items-center gap-2 text-placeholder">
@@ -102,7 +102,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
             id="password"
             value={passwordState.password}
             onChange={(value) => handlePasswordChange("password", value)}
-            placeholder="Set a password"
+            placeholder="Задайте пароль"
             className="transition-all duration-200"
           />
           {passwordState.password.length > 0 && <PasswordStrengthIndicator password={passwordState.password} />}
@@ -120,10 +120,10 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
               id="confirm-password"
               value={passwordState.confirmPassword}
               onChange={(value) => handlePasswordChange("confirmPassword", value)}
-              placeholder="Confirm password"
+              placeholder="Подтвердите пароль"
               className="transition-all duration-200"
             />
-            {hasPasswordMismatch && <p className="mt-1 text-11 text-danger-primary">Passwords do not match</p>}
+            {hasPasswordMismatch && <p className="mt-1 text-11 text-danger-primary">Пароли не совпадают</p>}
             {isPasswordValid && <p className="mt-1 text-11 text-success-primary">✓ Passwords match</p>}
           </div>
         </div>

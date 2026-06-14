@@ -47,7 +47,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
           );
         }}
         disabled={disabled}
-        placeholder="Due date"
+        placeholder="Срок выполнения"
         icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"

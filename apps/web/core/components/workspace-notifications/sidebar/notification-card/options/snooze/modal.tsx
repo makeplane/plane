@@ -116,7 +116,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)} className="p-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-h5-medium leading-6 text-primary">Customize Snooze Time</h3>
+          <h3 className="text-h5-medium leading-6 text-primary">Настроить время откладывания</h3>
 
           <div>
             <button type="button" onClick={handleClose}>
@@ -127,7 +127,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
         <div className="mt-5 flex flex-col gap-3 md:!flex-row md:items-center">
           <div className="flex-1 pb-3 md:pb-0">
-            <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a date</h6>
+            <h6 className="mb-2 block text-body-xs-medium text-placeholder">Выберите дату</h6>
             <Controller
               name="date"
               control={control}
@@ -135,7 +135,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
               render={({ field: { value, onChange } }) => (
                 <DateDropdown
                   value={value || null}
-                  placeholder="Select date"
+                  placeholder="Выберите дату"
                   onChange={(val) => {
                     setValue("time", undefined);
                     onChange(val);
@@ -150,7 +150,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
             />
           </div>
           <div className="flex-1">
-            <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a time</h6>
+            <h6 className="mb-2 block text-body-xs-medium text-placeholder">Выберите время</h6>
             <Controller
               control={control}
               name="time"
@@ -166,7 +166,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                           {value} {watch("period").toLowerCase()}
                         </span>
                       ) : (
-                        <span className="text-body-xs-medium text-placeholder">Select a time</span>
+                        <span className="text-body-xs-medium text-placeholder">Выберите время</span>
                       )}
                     </div>
                   }

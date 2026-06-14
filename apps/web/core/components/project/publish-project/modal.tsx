@@ -100,8 +100,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     await updatePublishSettings(workspaceSlug.toString(), projectId, payload.id, payload).then((res) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Publish settings updated successfully!",
+        title: "Успешно!",
+        message: "Настройки публикации обновлены!",
       });
 
       handleClose();
@@ -118,8 +118,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong while unpublishing the project.",
+          title: "Ошибка!",
+          message: "Что-то пошло не так при отмене публикации проекта.",
         })
       )
       .finally(() => setIsUnPublishing(false));
@@ -136,8 +136,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     if (!selectedLayouts || selectedLayouts.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one view layout to publish the project.",
+        title: "Ошибка!",
+        message: "Выберите хотя бы один макет представления для публикации проекта.",
       });
       return;
     }
@@ -172,7 +172,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "",
-        message: "Published page link copied successfully.",
+        message: "Ссылка на опубликованную страницу скопирована.",
       })
     );
 
@@ -180,7 +180,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-18 font-medium text-secondary">Publish project</h5>
+          <h5 className="text-18 font-medium text-secondary">Опубликовать проект</h5>
           {isProjectPublished && (
             <Button
               variant="error-fill"
@@ -243,7 +243,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Views</div>
+                <div className="text-13">Представления</div>
                 <Controller
                   control={control}
                   name="view_props"
@@ -278,7 +278,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow comments</div>
+                <div className="text-13">Разрешить комментарии</div>
                 <Controller
                   control={control}
                   name="is_comments_enabled"
@@ -288,7 +288,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow reactions</div>
+                <div className="text-13">Разрешить реакции</div>
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
@@ -298,7 +298,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow voting</div>
+                <div className="text-13">Разрешить голосование</div>
                 <Controller
                   control={control}
                   name="is_votes_enabled"
@@ -315,7 +315,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         <div className="relative mt-4 flex items-center justify-between border-t border-subtle px-5 py-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
             <GlobeIcon className="size-3.5" />
-            <div className="text-13">Anyone with the link can access</div>
+            <div className="text-13">Доступ по ссылке для всех</div>
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">

@@ -11,7 +11,7 @@ import { StickiesInfinite } from "@/components/stickies/layout/stickies-infinite
 export default function WorkspaceStickiesPage() {
   return (
     <>
-      <PageHead title="Your stickies" />
+      <PageHead title="Ваши стикеры" />
       <div className="relative h-full w-full overflow-hidden overflow-y-auto">
         <StickiesInfinite />
       </div>

@@ -25,21 +25,21 @@ function ProjectSettingsPage() {
   const resolvedPath = resolvedTheme === "dark" ? ProjectDarkEmptyState : ProjectLightEmptyState;
   return (
     <div className="mx-auto flex h-full max-w-[480px] flex-col items-center justify-center gap-4">
-      <img src={resolvedPath} alt="No projects yet" />
-      <div className="text-16 font-semibold text-tertiary">No projects yet</div>
+      <img src={resolvedPath} alt="Пока нет проектов" />
+      <div className="text-16 font-semibold text-tertiary">Пока нет проектов</div>
       <div className="text-center text-13 text-tertiary">
-        Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you
-        need to get things done.
+        Проекты служат основой для работы, ориентированной на цели. Они позволяют управлять командами, задачами и всем,
+        что нужно для достижения результата.
       </div>
       <div className="flex gap-2">
         <Link href="https://gizmo.so/" target="_blank" className={cn(getButtonStyling("secondary", "base"))}>
-          Learn more about projects
+          Узнать больше о проектах
         </Link>
         <Button
           onClick={() => toggleCreateProjectModal(true)}
           data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
         >
-          Start your first project
+          Создать первый проект
         </Button>
       </div>
     </div>

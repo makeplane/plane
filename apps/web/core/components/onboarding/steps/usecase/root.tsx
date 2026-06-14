@@ -56,14 +56,14 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success",
-        message: "Profile setup completed!",
+        title: "Успешно",
+        message: "Настройка профиля завершена!",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: "Profile setup failed. Please try again!",
+        title: "Ошибка",
+        message: "Не удалось настроить профиль. Попробуйте ещё раз!",
       });
     }
   };
@@ -86,18 +86,18 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What brings you to Gizmo?" description="Tell us your goals and team size." />
+      <CommonOnboardingHeader title="Что привело вас в Gizmo?" description="Расскажите о ваших целях и размере команды." />
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one or more</p>
+        <p className="text-body-sm-semibold text-placeholder">Выберите один или несколько</p>
 
         <Controller
           control={control}
           name="use_case"
           rules={{
-            required: "Please select at least one option",
-            validate: (value) => (value && value.length > 0) || "Please select at least one option",
+            required: "Выберите хотя бы один вариант",
+            validate: (value) => (value && value.length > 0) || "Выберите хотя бы один вариант",
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
@@ -151,10 +151,10 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-          Continue
+          Продолжить
         </Button>
         <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
-          Skip
+          Пропустить
         </Button>
       </div>
     </form>

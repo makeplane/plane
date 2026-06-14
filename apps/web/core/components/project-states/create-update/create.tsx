@@ -38,8 +38,8 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "State created successfully.",
+        title: "Готово!",
+        message: "Состояние успешно создано.",
       });
       handleClose();
       return { status: "success" };
@@ -48,15 +48,15 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "State with that name already exists. Please try again with another name.",
+          title: "Ошибка!",
+          message: "Состояние с таким названием уже существует. Пожалуйста, попробуйте другое название.",
         });
         return { status: "already_exists" };
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: errorStatus.data.error ?? "State could not be created. Please try again.",
+          title: "Ошибка!",
+          message: errorStatus.data.error ?? "Не удалось создать состояние. Пожалуйста, попробуйте снова.",
         });
         return { status: "error" };
       }
@@ -69,7 +69,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
       onSubmit={onSubmit}
       onCancel={onCancel}
       buttonDisabled={loader}
-      buttonTitle={loader ? `Creating` : `Create`}
+      buttonTitle={loader ? `Создание` : `Создать`}
     />
   );
 });

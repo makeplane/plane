@@ -34,7 +34,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder="Поиск"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus

@@ -58,9 +58,9 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_HOST",
       type: "text",
-      label: "Gitea Host",
+      label: "Хост Gitea",
       description: (
-        <>Use the URL of your Gitea instance. For the official Gitea instance, use &quot;https://gitea.com&quot;.</>
+        <>Укажите URL вашего экземпляра Gitea. Для официального экземпляра Gitea используйте &quot;https://gitea.com&quot;.</>
       ),
       placeholder: "https://gitea.com",
       error: Boolean(errors.GITEA_HOST),
@@ -69,10 +69,10 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_CLIENT_ID",
       type: "text",
-      label: "Client ID",
+      label: "ID клиента",
       description: (
         <>
-          You will get this from your{" "}
+          Вы получите это в{" "}
           <a
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
@@ -80,7 +80,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Gitea OAuth application settings.
+            настройках OAuth-приложения Gitea.
           </a>
         </>
       ),
@@ -91,10 +91,10 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_CLIENT_SECRET",
       type: "password",
-      label: "Client secret",
+      label: "Секрет клиента",
       description: (
         <>
-          Your client secret is also found in your{" "}
+          Секрет клиента также находится в{" "}
           <a
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
@@ -102,7 +102,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Gitea OAuth application settings.
+            настройках OAuth-приложения Gitea.
           </a>
         </>
       ),
@@ -124,8 +124,8 @@ export function InstanceGiteaConfigForm(props: Props) {
       url: `${originURL}/auth/gitea/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
-          field{" "}
+          Мы сгенерируем это автоматически. Вставьте это в поле{" "}
+          <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
           <a
             tabIndex={-1}
             href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
@@ -133,7 +133,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            здесь.
           </a>
         </>
       ),
@@ -147,8 +147,8 @@ export function InstanceGiteaConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Done!",
-        message: "Your Gitea authentication is configured. You should test it now.",
+        title: "Готово!",
+        message: "Аутентификация через Gitea настроена. Теперь стоит её проверить.",
       });
       reset({
         GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
@@ -178,7 +178,7 @@ export function InstanceGiteaConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
           <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">Gitea-provided details for Gizmo</div>
+            <div className="pt-2.5 text-18 font-medium">Данные от Gitea для Gizmo</div>
             {GITEA_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -202,17 +202,17 @@ export function InstanceGiteaConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving" : "Save changes"}
+                  {isSubmitting ? "Сохранение" : "Сохранить изменения"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
+                  Назад
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col gap-y-4 rounded-lg bg-layer-1 px-6 pt-1.5 pb-4">
-              <div className="pt-2 text-18 font-medium">Gizmo-provided details for Gitea</div>
+              <div className="pt-2 text-18 font-medium">Данные от Gizmo для Gitea</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}

@@ -95,7 +95,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => window.open("https://forum.gizmo.so", "_blank", "noopener,noreferrer")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <span className="text-11">Forum</span>
+            <span className="text-11">Форум</span>
           </div>
         </CustomMenu.MenuItem>
         <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">

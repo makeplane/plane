@@ -13,42 +13,42 @@ export const STICKY_COLORS_LIST: {
 }[] = [
   {
     key: "gray",
-    label: "Gray",
+    label: "Серый",
     backgroundColor: "var(--editor-colors-gray-background)",
   },
   {
     key: "peach",
-    label: "Peach",
+    label: "Персиковый",
     backgroundColor: "var(--editor-colors-peach-background)",
   },
   {
     key: "pink",
-    label: "Pink",
+    label: "Розовый",
     backgroundColor: "var(--editor-colors-pink-background)",
   },
   {
     key: "orange",
-    label: "Orange",
+    label: "Оранжевый",
     backgroundColor: "var(--editor-colors-orange-background)",
   },
   {
     key: "green",
-    label: "Green",
+    label: "Зелёный",
     backgroundColor: "var(--editor-colors-green-background)",
   },
   {
     key: "light-blue",
-    label: "Light blue",
+    label: "Голубой",
     backgroundColor: "var(--editor-colors-light-blue-background)",
   },
   {
     key: "dark-blue",
-    label: "Dark blue",
+    label: "Синий",
     backgroundColor: "var(--editor-colors-dark-blue-background)",
   },
   {
     key: "purple",
-    label: "Purple",
+    label: "Фиолетовый",
     backgroundColor: "var(--editor-colors-purple-background)",
   },
 ];
@@ -61,7 +61,7 @@ export function ColorPalette(props: TProps) {
   const { handleUpdate } = props;
   return (
     <div className="shadow absolute bottom-5 left-0 z-10 mb-2 w-56 rounded-md bg-surface-1 p-2">
-      <div className="mb-2 text-13 font-semibold text-placeholder">Background colors</div>
+      <div className="mb-2 text-13 font-semibold text-placeholder">Цвета фона</div>
       <div className="flex flex-wrap gap-2">
         {STICKY_COLORS_LIST.map((color) => (
           <button

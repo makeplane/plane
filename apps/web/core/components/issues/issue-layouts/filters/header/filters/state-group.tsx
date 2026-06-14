@@ -38,7 +38,7 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
   return (
     <>
       <FilterHeader
-        title={`State group${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Группа состояний${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -61,12 +61,12 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
                   className="ml-8 text-11 font-medium text-accent-primary"
                   onClick={handleViewToggle}
                 >
-                  {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                  {itemsToRender === filteredOptions.length ? "Свернуть" : "Показать все"}
                 </button>
               )}
             </>
           ) : (
-            <p className="text-11 text-placeholder italic">No matches found</p>
+            <p className="text-11 text-placeholder italic">Ничего не найдено</p>
           )}
         </div>
       )}

@@ -62,8 +62,8 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "File could not be attached. Try uploading again.",
+              title: "Ошибка!",
+              message: "Не удалось прикрепить файл. Попробуйте загрузить снова.",
             });
           })
           .finally(() => {
@@ -76,11 +76,11 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
+        title: "Ошибка!",
         message:
           totalAttachedFiles > 1
-            ? "Only one file can be uploaded at a time."
-            : `File must be of ${maxFileSize / 1024 / 1024}MB or less in size.`,
+            ? "За один раз можно загрузить только один файл."
+            : `Размер файла должен быть не более ${maxFileSize / 1024 / 1024} МБ.`,
       });
       return;
     },

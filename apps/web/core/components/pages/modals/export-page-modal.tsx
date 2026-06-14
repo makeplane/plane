@@ -87,11 +87,11 @@ const CONTENT_VARIETY: {
 }[] = [
   {
     key: "everything",
-    label: "Everything",
+    label: "Всё",
   },
   {
     key: "no-assets",
-    label: "No images",
+    label: "Без изображений",
   },
 ];
 
@@ -186,16 +186,16 @@ export function ExportPageModal(props: Props) {
       }
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Page exported successfully.",
+        title: "Успешно!",
+        message: "Страница успешно экспортирована.",
       });
       handleClose();
     } catch (error) {
       console.error("Error in exporting page:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be exported. Please try again later.",
+        title: "Ошибка!",
+        message: "Не удалось экспортировать страницу. Пожалуйста, попробуйте позже.",
       });
     } finally {
       setIsExporting(false);
@@ -206,10 +206,10 @@ export function ExportPageModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.SM}>
       <div>
         <div className="space-y-5 p-5">
-          <h3 className="text-18 font-medium text-secondary">Export page</h3>
+          <h3 className="text-18 font-medium text-secondary">Экспорт страницы</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <h6 className="flex-shrink-0 text-13 text-secondary">Export format</h6>
+              <h6 className="flex-shrink-0 text-13 text-secondary">Формат экспорта</h6>
               <Controller
                 control={control}
                 name="export_format"
@@ -232,7 +232,7 @@ export function ExportPageModal(props: Props) {
               />
             </div>
             <div className="flex items-center justify-between gap-2">
-              <h6 className="flex-shrink-0 text-13 text-secondary">Include content</h6>
+              <h6 className="flex-shrink-0 text-13 text-secondary">Включить содержимое</h6>
               <Controller
                 control={control}
                 name="content_variety"
@@ -256,7 +256,7 @@ export function ExportPageModal(props: Props) {
             </div>
             {isPDFSelected && (
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Page format</h6>
+                <h6 className="flex-shrink-0 text-13 text-secondary">Формат страницы</h6>
                 <Controller
                   control={control}
                   name="page_format"
@@ -283,10 +283,10 @@ export function ExportPageModal(props: Props) {
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="primary" size="lg" loading={isExporting} onClick={handleExport}>
-            {isExporting ? "Exporting" : "Export"}
+            {isExporting ? "Экспорт..." : "Экспортировать"}
           </Button>
         </div>
       </div>

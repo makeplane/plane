@@ -78,14 +78,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding module to favorites...",
+      loading: "Добавление модуля в избранное...",
       success: {
-        title: "Success!",
-        message: () => "Module added to favorites.",
+        title: "Готово!",
+        message: () => "Модуль добавлен в избранное.",
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the module to favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось добавить модуль в избранное. Попробуйте ещё раз.",
       },
     });
   };
@@ -102,14 +102,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     );
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing module from favorites...",
+      loading: "Удаление модуля из избранного...",
       success: {
-        title: "Success!",
-        message: () => "Module removed from favorites.",
+        title: "Готово!",
+        message: () => "Модуль удалён из избранного.",
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the module from favorites. Please try again.",
+        title: "Ошибка!",
+        message: () => "Не удалось удалить модуль из избранного. Попробуйте ещё раз.",
       },
     });
   };
@@ -126,15 +126,15 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: "Готово!",
+          message: "Модуль успешно обновлён.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.detail ?? "Module could not be updated. Please try again.",
+          title: "Ошибка!",
+          message: err?.detail ?? "Не удалось обновить модуль. Попробуйте ещё раз.",
         });
       });
   };
@@ -168,11 +168,11 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
 
   const issueCount = moduleDetails
     ? !moduleTotalIssues || moduleTotalIssues === 0
-      ? `0 work items`
+      ? `0 рабочих элементов`
       : moduleTotalIssues === moduleCompletedIssues
-        ? `${moduleTotalIssues} Work item${moduleTotalIssues > 1 ? `s` : ``}`
-        : `${moduleCompletedIssues}/${moduleTotalIssues} Work items`
-    : `0 work items`;
+        ? `${moduleTotalIssues} рабочих элементов`
+        : `${moduleCompletedIssues}/${moduleTotalIssues} рабочих элементов`
+    : `0 рабочих элементов`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
@@ -210,14 +210,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-secondary">
                 <WorkItemsIcon className="h-4 w-4 text-tertiary" />
-                <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
+                <span className="text-11 text-tertiary">{issueCount ?? "0 рабочих элементов"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">
                   <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
                 </span>
               ) : (
-                <Tooltip tooltipContent="No lead">
+                <Tooltip tooltipContent="Нет ответственного">
                   <SquareUser className="mx-1 h-4 w-4 text-tertiary" />
                 </Tooltip>
               )}
@@ -239,8 +239,8 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   });
                 }}
                 placeholder={{
-                  from: "Start date",
-                  to: "End date",
+                  from: "Дата начала",
+                  to: "Дата окончания",
                 }}
                 disabled={isDisabled}
                 hideIcon={{ from: renderIcon ?? true, to: renderIcon }}

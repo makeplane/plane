@@ -28,7 +28,7 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
     // TODO: Add translation
     <EmptyStateDetailed
       assetKey="work-item"
-      title="View work items will appear here"
+      title="Здесь появятся рабочие элементы представления"
       description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
       actions={[
         {

@@ -116,14 +116,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             variant="secondary"
             size="lg"
             icon={ChevronUpIcon}
-            aria-label="Previous work item"
+            aria-label="Предыдущий рабочий элемент"
             onClick={() => handleInboxIssueNavigation("prev")}
           />
           <IconButton
             variant="secondary"
             size="lg"
             icon={ChevronDownIcon}
-            aria-label="Next work item"
+            aria-label="Следующий рабочий элемент"
             onClick={() => handleInboxIssueNavigation("next")}
           />
         </div>
@@ -143,7 +143,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
                   <LinkIcon width={14} height={14} strokeWidth={2} />
-                  Copy work item link
+                  Копировать ссылку на рабочий элемент
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -151,7 +151,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <NewTabIcon width={14} height={14} strokeWidth={2} />
-                  Open work item
+                  Открыть рабочий элемент
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -161,13 +161,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     handleIssueSnoozeAction,
-                    "Only project admins can snooze/Un-snooze work items"
+                    "Откладывать и возвращать рабочие элементы могут только администраторы проекта"
                   )
                 }
               >
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
-                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
+                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Вернуть" : "Отложить"}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -177,13 +177,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setSelectDuplicateIssue(true),
-                    "Only project admins can mark work items as duplicate"
+                    "Отмечать рабочие элементы как дубликаты могут только администраторы проекта"
                   )
                 }
               >
                 <div className="flex items-center gap-2">
                   <FileStack size={14} strokeWidth={2} />
-                  Mark as duplicate
+                  Отметить как дубликат
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -193,13 +193,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setAcceptIssueModal(true),
-                    "Only project admins can accept work items"
+                    "Принимать рабочие элементы могут только администраторы проекта"
                   )
                 }
               >
                 <div className="flex items-center gap-2 text-success-secondary">
                   <CheckCircleFilledIcon width={14} height={14} />
-                  Accept
+                  Принять
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -209,13 +209,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setDeclineIssueModal(true),
-                    "Only project admins can deny work items"
+                    "Отклонять рабочие элементы могут только администраторы проекта"
                   )
                 }
               >
                 <div className="flex items-center gap-2 text-danger-secondary">
                   <CloseCircleFilledIcon width={14} height={14} />
-                  Decline
+                  Отклонить
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -223,7 +223,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
                   <TrashIcon height={14} width={14} strokeWidth={2} />
-                  Delete
+                  Удалить
                 </div>
               </CustomMenu.MenuItem>
             )}

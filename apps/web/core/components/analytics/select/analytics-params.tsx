@@ -72,7 +72,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
                 <div className="flex items-center gap-2">
                   <CalendarLayoutIcon className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
-                    {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
+                    {xAxisOptions.find((v) => v.value === value)?.label || "Добавить свойство"}
                   </span>
                 </div>
               }
@@ -93,12 +93,12 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
-                    {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
+                    {groupByOptions.find((v) => v.value === value)?.label || "Добавить свойство"}
                   </span>
                 </div>
               }
               options={groupByOptions}
-              placeholder="Group By"
+              placeholder="Группировать по"
               allowNoValue
             />
           )}

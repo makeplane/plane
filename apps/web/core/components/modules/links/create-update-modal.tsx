@@ -54,23 +54,23 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         await createLink(payload);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link created successfully.",
+          title: "Готово!",
+          message: "Ссылка модуля успешно создана.",
         });
       } else {
         await updateLink(payload, data.id);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link updated successfully.",
+          title: "Готово!",
+          message: "Ссылка модуля успешно обновлена.",
         });
       }
       onClose();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.data?.error ?? "Some error occurred. Please try again.",
+        title: "Ошибка!",
+        message: error?.data?.error ?? "Произошла ошибка. Пожалуйста, попробуйте снова.",
       });
     }
   };
@@ -86,7 +86,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-18 font-medium text-secondary">{data ? "Update" : "Add"} link</h3>
+          <h3 className="text-18 font-medium text-secondary">{data ? "Обновить" : "Добавить"} ссылку</h3>
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-secondary">
@@ -96,7 +96,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                 control={control}
                 name="url"
                 rules={{
-                  required: "URL is required",
+                  required: "URL обязателен",
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -106,7 +106,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    placeholder="Type or paste a URL"
+                    placeholder="Введите или вставьте URL"
                     className="w-full"
                   />
                 )}
@@ -114,8 +114,8 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">
-                Display title
-                <span className="block text-10">Optional</span>
+                Отображаемое название
+                <span className="block text-10">Необязательно</span>
               </label>
               <Controller
                 control={control}
@@ -128,7 +128,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.title)}
-                    placeholder="What you'd like to see this link as"
+                    placeholder="Как вы хотите видеть эту ссылку"
                     className="w-full"
                   />
                 )}
@@ -138,10 +138,16 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
+            {data
+              ? isSubmitting
+                ? "Обновление ссылки"
+                : "Обновить ссылку"
+              : isSubmitting
+                ? "Добавление ссылки"
+                : "Добавить ссылку"}
           </Button>
         </div>
       </form>

@@ -56,10 +56,10 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
       {!cycle && !loader ? (
         <EmptyState
           image={emptyCycle}
-          title="Cycle does not exist"
-          description="The cycle you are looking for does not exist or has been deleted."
+          title="Цикл не существует"
+          description="Цикл, который вы ищете, не существует или был удалён."
           primaryButton={{
-            text: "View other cycles",
+            text: "Посмотреть другие циклы",
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/cycles`),
           }}
         />

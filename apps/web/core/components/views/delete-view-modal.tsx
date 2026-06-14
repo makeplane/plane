@@ -46,14 +46,14 @@ export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(p
       router.push(`/${workspaceSlug}/projects/${projectId}/views`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "View deleted successfully.",
+        title: "Успешно!",
+        message: "Представление удалено.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "View could not be deleted. Please try again.",
+        title: "Ошибка!",
+        message: "Не удалось удалить представление. Попробуйте ещё раз.",
       });
     }
     setIsDeleteLoading(false);

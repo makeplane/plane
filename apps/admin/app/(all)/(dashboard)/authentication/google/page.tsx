@@ -43,14 +43,14 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration",
+      loading: "Сохранение конфигурации",
       success: {
-        title: "Configuration saved",
-        message: () => `Google authentication is now ${value === "1" ? "active" : "disabled"}.`,
+        title: "Конфигурация сохранена",
+        message: () => `Аутентификация через Google теперь ${value === "1" ? "активна" : "отключена"}.`,
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: "Ошибка",
+        message: () => "Не удалось сохранить конфигурацию",
       },
     });
 
@@ -68,9 +68,8 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
       customHeader={
         <AuthenticationMethodCard
           name="Google"
-          description="Allow members to login or sign up to Gizmo with their Google
-            accounts."
-          icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
+          description="Разрешить участникам входить или регистрироваться в Gizmo с помощью своих аккаунтов Google."
+          icon={<img src={GoogleLogo} height={24} width={24} alt="Логотип Google" />}
           config={
             <ToggleSwitch
               value={Boolean(parseInt(enableGoogleConfig))}
@@ -105,6 +104,6 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Google Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Аутентификация через Google - God Mode" }];
 
 export default InstanceGoogleAuthenticationPage;

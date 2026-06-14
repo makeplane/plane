@@ -37,42 +37,42 @@ const TOUR_STEPS: {
 }[] = [
   {
     key: "work-items",
-    title: "Plan with work items",
+    title: "Планируйте с помощью рабочих элементов",
     description:
-      "The work item is the building block of the Gizmo. Most concepts in Gizmo are either associated with work items and their properties.",
+      "Рабочий элемент - это основной строительный блок Gizmo. Большинство сущностей в Gizmo так или иначе связаны с рабочими элементами и их свойствами.",
     image: IssuesTour,
     nextStep: "cycles",
   },
   {
     key: "cycles",
-    title: "Move with cycles",
+    title: "Двигайтесь вперёд с помощью циклов",
     description:
-      "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
+      "Циклы помогают вам и вашей команде продвигаться быстрее, подобно спринтам, которые часто используются в гибкой разработке.",
     image: CyclesTour,
     prevStep: "work-items",
     nextStep: "modules",
   },
   {
     key: "modules",
-    title: "Break into modules",
-    description: "Modules break your big thing into Projects or Features, to help you organize better.",
+    title: "Разбивайте на модули",
+    description: "Модули делят большую задачу на проекты или функции, чтобы помочь вам лучше организовать работу.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
   },
   {
     key: "views",
-    title: "Views",
+    title: "Представления",
     description:
-      "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
+      "Создавайте собственные фильтры, чтобы отображать только важные для вас рабочие элементы. Сохраняйте фильтры и делитесь ими всего за несколько кликов.",
     image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
   },
   {
     key: "pages",
-    title: "Document with pages",
-    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
+    title: "Документируйте с помощью страниц",
+    description: "Используйте страницы, чтобы быстро записывать рабочие элементы во время встречи или в начале дня.",
     image: PagesTour,
     prevStep: "views",
   },
@@ -99,11 +99,11 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
             </div>
             <div className="flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-18">
-                Welcome to Gizmo, {currentUser?.first_name} {currentUser?.last_name}
+                Добро пожаловать в Gizmo, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
               <p className="mt-3 text-13 text-secondary">
-                We{"'"}re glad that you decided to try out Gizmo. You can now manage your projects with ease. Get
-                started by creating a project.
+                Мы рады, что вы решили попробовать Gizmo. Теперь вы можете с лёгкостью управлять своими проектами.
+                Начните с создания проекта.
               </p>
               <div className="flex h-full items-end">
                 <div className="mt-12 flex items-center gap-6">
@@ -113,7 +113,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       setStep("work-items");
                     }}
                   >
-                    Take a Product Tour
+                    Пройти обзор продукта
                   </Button>
                   <button
                     type="button"
@@ -122,7 +122,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       onComplete();
                     }}
                   >
-                    No thanks, I will explore it myself
+                    Нет, спасибо, я изучу всё сам
                   </button>
                 </div>
               </div>
@@ -154,12 +154,12 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
                     <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                      Back
+                      Назад
                     </Button>
                   )}
                   {currentStep?.nextStep && (
                     <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
-                      Next
+                      Далее
                     </Button>
                   )}
                 </div>
@@ -171,7 +171,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       toggleCreateProjectModal(true);
                     }}
                   >
-                    Create your first project
+                    Создайте свой первый проект
                   </Button>
                 )}
               </div>

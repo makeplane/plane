@@ -33,17 +33,17 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   };
 } = {
   issues: {
-    label: "Work items",
+    label: "Рабочие элементы",
     href: "/issues",
     icon: WorkItemsIcon,
   },
   cycles: {
-    label: "Cycles",
+    label: "Циклы",
     href: "/cycles",
     icon: CycleIcon,
   },
   modules: {
-    label: "Modules",
+    label: "Модули",
     href: "/modules",
     icon: ModuleIcon,
   },
@@ -77,7 +77,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                  label="Archives"
+                  label="Архив"
                   icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
@@ -96,7 +96,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
+              tooltipContent={`В архиве проекта ${issueCount} ${issueCount > 1 ? "рабочих элементов" : "рабочий элемент"}`}
               position="bottom"
             >
               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">

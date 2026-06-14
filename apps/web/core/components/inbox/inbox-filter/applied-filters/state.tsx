@@ -28,7 +28,7 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-11 text-secondary">State</div>
+      <div className="text-11 text-secondary">Состояние</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;

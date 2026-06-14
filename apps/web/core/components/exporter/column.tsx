@@ -20,7 +20,7 @@ export const useExportColumns = () => {
   const columns = [
     {
       key: "Exported By",
-      content: "Exported By",
+      content: "Кем экспортировано",
       tdRender: (rowData: RowData) => {
         const { avatar_url, display_name, email } = rowData.initiated_by_detail;
         return (
@@ -47,18 +47,18 @@ export const useExportColumns = () => {
     },
     {
       key: "Exported On",
-      content: "Exported On",
+      content: "Дата экспорта",
       tdRender: (rowData: RowData) => <span>{renderFormattedDate(rowData.created_at)}</span>,
     },
 
     {
       key: "Exported projects",
-      content: "Exported projects",
-      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} project(s)</div>,
+      content: "Экспортированные проекты",
+      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} проект(ов)</div>,
     },
     {
       key: "Format",
-      content: "Format",
+      content: "Формат",
       tdRender: (rowData: RowData) => (
         <span className="text-13">
           {rowData.provider === "csv"
@@ -73,7 +73,7 @@ export const useExportColumns = () => {
     },
     {
       key: "Status",
-      content: "Status",
+      content: "Статус",
       tdRender: (rowData: RowData) => (
         <span
           className={`rounded-sm px-2 py-1 text-11 capitalize ${
@@ -94,7 +94,7 @@ export const useExportColumns = () => {
     },
     {
       key: "Download",
-      content: "Download",
+      content: "Скачать",
       tdRender: (rowData: RowData) =>
         checkExpiry(rowData.created_at) ? (
           <>
@@ -102,7 +102,7 @@ export const useExportColumns = () => {
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
                 <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
                   <Download className="h-4 w-4" />
-                  <div>Download</div>
+                  <div>Скачать</div>
                 </button>
               </a>
             ) : (
@@ -110,7 +110,7 @@ export const useExportColumns = () => {
             )}
           </>
         ) : (
-          <div className="text-11 text-danger-primary">Expired</div>
+          <div className="text-11 text-danger-primary">Срок истёк</div>
         ),
     },
   ];

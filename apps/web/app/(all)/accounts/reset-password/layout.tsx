@@ -11,4 +11,4 @@ export default function ResetPasswordLayout() {
   return <Outlet />;
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Reset Password - Gizmo" }];
+export const meta: Route.MetaFunction = () => [{ title: "Сброс пароля - Gizmo" }];

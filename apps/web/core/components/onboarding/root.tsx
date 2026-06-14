@@ -41,8 +41,8 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Failed",
-        message: "Failed to finish onboarding, Please try again later.",
+        title: "Не удалось",
+        message: "Не удалось завершить онбординг. Попробуйте позже.",
       });
     }
   }, [user, finishUserOnboarding]);

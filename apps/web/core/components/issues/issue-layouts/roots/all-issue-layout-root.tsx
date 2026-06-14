@@ -115,12 +115,12 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
     return (
       <EmptyStateDetailed
-        title="View does not exist"
-        description="The view you are looking for does not exist or you don't have permission to view it."
+        title="Представление не существует"
+        description="Запрашиваемое представление не существует или у вас нет прав на его просмотр."
         assetKey="view"
         actions={[
           {
-            label: "Go to All work items",
+            label: "Перейти ко всем рабочим элементам",
             onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
             variant: "primary",
           },
@@ -135,7 +135,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
       <WorkspaceLevelWorkItemFiltersHOC
         enableSaveView
         saveViewOptions={{
-          label: "Save as",
+          label: "Сохранить как",
         }}
         enableUpdateView
         entityId={globalViewId}
