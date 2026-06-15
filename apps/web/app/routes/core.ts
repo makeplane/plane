@@ -48,6 +48,18 @@ export const coreRoutes: RouteConfigEntry[] = [
   // ========================================================================
   layout("./(all)/layout.tsx", [
     // ======================================================================
+    // MAIL SECTION - INSTANCE LEVEL ROUTES
+    // ======================================================================
+    layout("./(all)/(mail)/layout.tsx", [
+      route("mail", "./(all)/(mail)/page.tsx"),
+      route("mail/login", "./(all)/(mail)/login/page.tsx"),
+      route("mail/search", "./(all)/(mail)/search/page.tsx"),
+      route("mail/settings", "./(all)/(mail)/settings/page.tsx"),
+      route("mail/:folderKey", "./(all)/(mail)/[folderKey]/page.tsx"),
+      route("mail/:folderKey/:uid", "./(all)/(mail)/[folderKey]/[uid]/page.tsx"),
+    ]),
+
+    // ======================================================================
     // WORKSPACE-SCOPED ROUTES
     // ======================================================================
     layout("./(all)/[workspaceSlug]/layout.tsx", [

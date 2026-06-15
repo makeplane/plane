@@ -1,0 +1,311 @@
+/**
+ * Copyright (c) 2023-present Gizmo Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+import type {
+  TMailComposePayload,
+  TMailFilterRule,
+  TMailFolder,
+  TMailForwarding,
+  TMailLabel,
+  TMailMeConfig,
+  TMailMessageDetail,
+  TMailMessageSummary,
+  TMailPreference,
+  TMailSavedSearch,
+  TMailSignature,
+  TMailTemplate,
+  TMailUploadedAttachment,
+} from "@plane/types";
+import { MailService } from "@/services/mail.service";
+
+export interface IMailStore {
+  loader: boolean;
+  messageLoader: boolean;
+  actionLoader: boolean;
+  me: TMailMeConfig | null;
+  folders: TMailFolder[];
+  messagesByFolder: Record<string, TMailMessageSummary[]>;
+  selectedMessage: TMailMessageDetail | null;
+  searchResults: TMailMessageSummary[];
+  composeOpen: boolean;
+  composeDraft: TMailComposePayload;
+  signatures: TMailSignature[];
+  templates: TMailTemplate[];
+  filters: TMailFilterRule[];
+  labels: TMailLabel[];
+  savedSearches: TMailSavedSearch[];
+  forwarding: TMailForwarding | null;
+  preferences: TMailPreference | null;
+  hasMailbox: boolean;
+  mailboxEmail: string;
+  getFolderByKey: (folderKey: string) => TMailFolder | undefined;
+  fetchMe: () => Promise<TMailMeConfig>;
+  fetchFolders: () => Promise<TMailFolder[]>;
+  fetchMessages: (folderKey: string, params?: Record<string, unknown>) => Promise<TMailMessageSummary[]>;
+  fetchMessage: (folderKey: string, uid: string) => Promise<TMailMessageDetail>;
+  clearSelectedMessage: () => void;
+  setFlags: (folderKey: string, uid: string, data: { read?: boolean; starred?: boolean }) => Promise<void>;
+  moveMessages: (srcFolder: string, dstFolder: string, uids: string[]) => Promise<void>;
+  deleteMessages: (srcFolder: string, uids: string[], permanent?: boolean) => Promise<void>;
+  search: (params: Record<string, unknown>) => Promise<TMailMessageSummary[]>;
+  openCompose: (draft?: Partial<TMailComposePayload>) => void;
+  closeCompose: () => void;
+  updateComposeDraft: (draft: Partial<TMailComposePayload>) => void;
+  sendCompose: () => Promise<void>;
+  saveDraft: () => Promise<void>;
+  uploadAttachment: (file: File) => Promise<TMailUploadedAttachment>;
+  fetchSettings: () => Promise<void>;
+  patchPreferences: (data: Partial<TMailPreference>) => Promise<TMailPreference>;
+}
+
+const EMPTY_COMPOSE: TMailComposePayload = {
+  to: [],
+  cc: [],
+  bcc: [],
+  subject: "",
+  body_html: "",
+  body_text: "",
+  uploaded_attachments: [],
+};
+
+export class MailStore implements IMailStore {
+  loader = false;
+  messageLoader = false;
+  actionLoader = false;
+  me: TMailMeConfig | null = null;
+  folders: TMailFolder[] = [];
+  messagesByFolder: Record<string, TMailMessageSummary[]> = {};
+  selectedMessage: TMailMessageDetail | null = null;
+  searchResults: TMailMessageSummary[] = [];
+  composeOpen = false;
+  composeDraft: TMailComposePayload = { ...EMPTY_COMPOSE };
+  signatures: TMailSignature[] = [];
+  templates: TMailTemplate[] = [];
+  filters: TMailFilterRule[] = [];
+  labels: TMailLabel[] = [];
+  savedSearches: TMailSavedSearch[] = [];
+  forwarding: TMailForwarding | null = null;
+  preferences: TMailPreference | null = null;
+  service: MailService;
+
+  constructor() {
+    makeObservable(this, {
+      loader: observable,
+      messageLoader: observable,
+      actionLoader: observable,
+      me: observable,
+      folders: observable,
+      messagesByFolder: observable,
+      selectedMessage: observable,
+      searchResults: observable,
+      composeOpen: observable,
+      composeDraft: observable,
+      signatures: observable,
+      templates: observable,
+      filters: observable,
+      labels: observable,
+      savedSearches: observable,
+      forwarding: observable,
+      preferences: observable,
+      hasMailbox: computed,
+      mailboxEmail: computed,
+      fetchMe: action,
+      fetchFolders: action,
+      fetchMessages: action,
+      fetchMessage: action,
+      clearSelectedMessage: action,
+      setFlags: action,
+      moveMessages: action,
+      deleteMessages: action,
+      search: action,
+      openCompose: action,
+      closeCompose: action,
+      updateComposeDraft: action,
+      sendCompose: action,
+      saveDraft: action,
+      fetchSettings: action,
+      patchPreferences: action,
+    });
+    this.service = new MailService();
+  }
+
+  get hasMailbox() {
+    return Boolean(this.me?.has_mailbox);
+  }
+
+  get mailboxEmail() {
+    return this.me?.mailbox?.email ?? "";
+  }
+
+  getFolderByKey = computedFn((folderKey: string) => this.folders.find((folder) => folder.key === folderKey));
+
+  fetchMe = async () => {
+    this.loader = true;
+    const response = await this.service.me();
+    runInAction(() => {
+      this.me = response;
+      this.loader = false;
+    });
+    return response;
+  };
+
+  fetchFolders = async () => {
+    const response = await this.service.folders();
+    runInAction(() => {
+      this.folders = response;
+    });
+    return response;
+  };
+
+  fetchMessages = async (folderKey: string, params: Record<string, unknown> = {}) => {
+    this.loader = true;
+    const response = await this.service.messages(folderKey, params);
+    runInAction(() => {
+      this.messagesByFolder[folderKey] = response.results;
+      this.loader = false;
+    });
+    return response.results;
+  };
+
+  fetchMessage = async (folderKey: string, uid: string) => {
+    this.messageLoader = true;
+    const response = await this.service.message(folderKey, uid);
+    runInAction(() => {
+      this.selectedMessage = response;
+      this.messageLoader = false;
+    });
+    return response;
+  };
+
+  clearSelectedMessage = () => {
+    this.selectedMessage = null;
+  };
+
+  setFlags = async (folderKey: string, uid: string, data: { read?: boolean; starred?: boolean }) => {
+    const current = this.messagesByFolder[folderKey]?.find((message) => message.uid === uid);
+    runInAction(() => {
+      if (current) {
+        if (data.read !== undefined) current.is_read = data.read;
+        if (data.starred !== undefined) current.is_starred = data.starred;
+      }
+      if (this.selectedMessage?.uid === uid) {
+        if (data.read !== undefined) this.selectedMessage.is_read = data.read;
+        if (data.starred !== undefined) this.selectedMessage.is_starred = data.starred;
+      }
+    });
+    await this.service.setFlags(folderKey, uid, data);
+    await this.fetchFolders();
+  };
+
+  moveMessages = async (srcFolder: string, dstFolder: string, uids: string[]) => {
+    this.actionLoader = true;
+    await this.service.move(srcFolder, dstFolder, uids);
+    runInAction(() => {
+      this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
+        (message) => !uids.includes(message.uid)
+      );
+      if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
+      this.actionLoader = false;
+    });
+    await this.fetchFolders();
+  };
+
+  deleteMessages = async (srcFolder: string, uids: string[], permanent = false) => {
+    this.actionLoader = true;
+    await this.service.deleteMessages(srcFolder, uids, permanent);
+    runInAction(() => {
+      this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
+        (message) => !uids.includes(message.uid)
+      );
+      if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
+      this.actionLoader = false;
+    });
+    await this.fetchFolders();
+  };
+
+  search = async (params: Record<string, unknown>) => {
+    this.loader = true;
+    const response = await this.service.search(params);
+    runInAction(() => {
+      this.searchResults = response.results;
+      this.loader = false;
+    });
+    return response.results;
+  };
+
+  openCompose = (draft: Partial<TMailComposePayload> = {}) => {
+    this.composeDraft = { ...EMPTY_COMPOSE, ...draft };
+    this.composeOpen = true;
+  };
+
+  closeCompose = () => {
+    this.composeOpen = false;
+  };
+
+  updateComposeDraft = (draft: Partial<TMailComposePayload>) => {
+    this.composeDraft = { ...this.composeDraft, ...draft };
+  };
+
+  sendCompose = async () => {
+    this.actionLoader = true;
+    await this.service.send(this.composeDraft);
+    runInAction(() => {
+      this.composeOpen = false;
+      this.composeDraft = { ...EMPTY_COMPOSE };
+      this.actionLoader = false;
+    });
+    await this.fetchFolders();
+  };
+
+  saveDraft = async () => {
+    this.actionLoader = true;
+    await this.service.saveDraft(this.composeDraft);
+    runInAction(() => {
+      this.composeOpen = false;
+      this.actionLoader = false;
+    });
+    await this.fetchFolders();
+  };
+
+  uploadAttachment = async (file: File) => {
+    const attachment = await this.service.uploadAttachment(file);
+    runInAction(() => {
+      this.composeDraft.uploaded_attachments = [...(this.composeDraft.uploaded_attachments ?? []), attachment];
+    });
+    return attachment;
+  };
+
+  fetchSettings = async () => {
+    const [signatures, templates, filters, labels, savedSearches, forwarding, preferences] = await Promise.all([
+      this.service.signatures(),
+      this.service.templates(),
+      this.service.filters(),
+      this.service.labels(),
+      this.service.savedSearches(),
+      this.service.forwarding(),
+      this.service.preferences(),
+    ]);
+    runInAction(() => {
+      this.signatures = signatures;
+      this.templates = templates;
+      this.filters = filters;
+      this.labels = labels;
+      this.savedSearches = savedSearches;
+      this.forwarding = forwarding;
+      this.preferences = preferences;
+    });
+  };
+
+  patchPreferences = async (data: Partial<TMailPreference>) => {
+    const response = await this.service.patchPreferences(data);
+    runInAction(() => {
+      this.preferences = response;
+    });
+    return response;
+  };
+}

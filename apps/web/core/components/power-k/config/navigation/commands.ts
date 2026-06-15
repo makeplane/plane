@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, PenSquare, Settings } from "lucide-react";
+import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, Mail, PenSquare, Settings } from "lucide-react";
 // gizmo imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, UserActivityIcon, LayersIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
@@ -21,6 +21,7 @@ export type TPowerKNavigationCommandKeys =
   | "open_workspace"
   | "nav_home"
   | "nav_inbox"
+  | "nav_mail"
   | "nav_your_work"
   | "nav_account_settings"
   | "open_project"
@@ -115,6 +116,18 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "notifications"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      closeOnSelect: true,
+    },
+    nav_mail: {
+      id: "nav_mail",
+      type: "action",
+      group: "navigation",
+      i18n_title: "power_k.navigation_actions.nav_mail",
+      icon: Mail,
+      keySequence: "ge",
+      action: (ctx) => handlePowerKNavigate(ctx, ["mail"]),
+      isEnabled: () => true,
+      isVisible: () => true,
       closeOnSelect: true,
     },
     nav_your_work: {

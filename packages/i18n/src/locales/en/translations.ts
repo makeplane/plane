@@ -2635,6 +2635,7 @@ export default {
       open_workspace: "Open a workspace",
       nav_home: "Go to home",
       nav_inbox: "Go to inbox",
+      nav_mail: "Go to mail",
       nav_your_work: "Go to your work",
       nav_account_settings: "Go to account settings",
       open_project: "Open a project",
@@ -2739,6 +2740,114 @@ export default {
       miscellaneous: "Miscellaneous",
       preferences: "Preferences",
       help: "Help",
+    },
+  },
+  mail: {
+    topbar: {
+      title: "Mail",
+      refresh: "Refresh",
+      back: "Back",
+    },
+    sidebar: {
+      new_label: "New label",
+      storage: "Storage",
+    },
+    list: {
+      empty: "No messages in this folder",
+      unknown_sender: "Unknown sender",
+      star: "Star",
+      unstar: "Remove star",
+    },
+    message: {
+      empty: "Select a message to read it",
+      to: "To",
+      attachments: "Attachments",
+      spam_banner: "This message is in Spam. Be careful with links and attachments.",
+      trash_banner: "This message is in Trash.",
+    },
+    actions: {
+      archive: "Archive",
+      spam: "Mark as spam",
+      delete: "Delete",
+      reply: "Reply",
+      forward: "Forward",
+    },
+    compose: {
+      new: "Compose",
+      to: "To",
+      cc: "Cc",
+      subject: "Subject",
+      attach: "Attach files",
+      save_draft: "Save draft",
+      send: "Send",
+      templates: "Templates",
+      no_templates: "No templates yet",
+    },
+    search: {
+      title: "Search",
+      placeholder: "Search mail",
+      filters: "Filters",
+      any_folder: "Any folder",
+      unread: "Unread",
+      with_attachments: "With attachments",
+      empty: "No matching messages",
+    },
+    settings: {
+      title: "Mail settings",
+      tabs: {
+        account: "Account",
+        signature: "Signature",
+        folders: "Folders",
+        filters: "Filters",
+        templates: "Templates",
+        forwarding: "Forwarding",
+        security: "Security",
+        appearance: "Appearance",
+      },
+      account: {
+        email: "Mailbox",
+      },
+      signature: {
+        empty: "No signatures yet",
+      },
+      filters: {
+        empty: "No filters yet",
+      },
+      templates: {
+        empty: "No templates yet",
+      },
+      forwarding: {
+        enabled: "Forward incoming mail",
+      },
+      security: {
+        description: "Mailbox access is resolved from your Gizmo account and Dovecot master-user credentials.",
+      },
+      appearance: {
+        density: "Density",
+        comfortable: "Comfortable",
+        compact: "Compact",
+      },
+    },
+    login: {
+      title: "Connect your Gizmo mailbox",
+      description:
+        "Your account does not have an active instance-level mailbox yet. Create one in god-mode or assign an existing mailbox to this user.",
+      retry: "Check again",
+      back: "Back to app",
+      features: {
+        imap: {
+          title: "Live IMAP",
+          description: "Messages are read from Dovecot without a local mirror.",
+        },
+        smtp: {
+          title: "SMTP sending",
+          description: "Outgoing mail is sent through the local Postfix stack.",
+        },
+        settings: {
+          title: "Mailbox preferences",
+          description: "Signatures, templates, labels and filters stay scoped to your mailbox.",
+        },
+      },
     },
   },
   // Navigation customization

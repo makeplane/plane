@@ -3,3 +3,10 @@
 # See the LICENSE file for details.
 
 from .mailbox import MailDomain, Mailbox, MailAlias
+from .signature import MailSignature
+from .template import MailTemplate
+from .filter_rule import MailFilterRule
+from .label import MailLabel
+from .saved_search import MailSavedSearch
+from .forwarding import MailForwarding
+from .preferences import MailPreference

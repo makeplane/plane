@@ -9,6 +9,13 @@ ssl_key = <__SSL_KEY_PATH__
 
 disable_plaintext_auth = yes
 auth_mechanisms = plain login
+auth_master_user_separator = *
+
+passdb {
+  driver = passwd-file
+  master = yes
+  args = /etc/dovecot/dovecot-master.passwd
+}
 
 passdb {
   driver = sql
@@ -61,6 +68,11 @@ namespace inbox {
 
   mailbox Sent {
     special_use = \Sent
+    auto = subscribe
+  }
+
+  mailbox Archive {
+    special_use = \Archive
     auto = subscribe
   }
 

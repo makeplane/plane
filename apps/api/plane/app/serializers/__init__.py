@@ -149,3 +149,13 @@ from .messenger import (
     InviteLinkMessengerSerializer,
     InviteLinkUseMessengerSerializer,
 )
+
+from .mail import (
+    MailFilterRuleSerializer,
+    MailForwardingSerializer,
+    MailLabelSerializer,
+    MailPreferenceSerializer,
+    MailSavedSearchSerializer,
+    MailSignatureSerializer,
+    MailTemplateSerializer,
+)

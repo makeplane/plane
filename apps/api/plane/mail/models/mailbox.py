@@ -4,6 +4,7 @@
 
 # Django imports
 from django.db import models
+from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
@@ -33,6 +34,13 @@ class Mailbox(BaseModel):
     local_part = models.CharField(max_length=255)
     domain = models.ForeignKey(
         MailDomain, on_delete=models.CASCADE, related_name="mailboxes"
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="mailboxes",
+        null=True,
+        blank=True,
     )
     # SHA512-CRYPT ($6$) hash verified directly by Dovecot.
     password_hash = models.TextField()

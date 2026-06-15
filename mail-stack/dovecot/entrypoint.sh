@@ -7,6 +7,7 @@ if [ -z "$MAIL_DOMAIN" ]; then
 fi
 
 : "${POSTGRES_HOST:=plane-db}"
+: "${MAIL_MASTER_USER:=master}"
 export POSTGRES_HOST
 
 # Resolve the TLS certificate. In production Caddy issues a Let's Encrypt cert
@@ -43,6 +44,19 @@ sed -i "s|__SSL_CERT_PATH__|${SSL_CERT_PATH}|g; s|__SSL_KEY_PATH__|${SSL_KEY_PAT
 envsubst '${POSTGRES_HOST} ${POSTGRES_DB} ${POSTGRES_USER} ${POSTGRES_PASSWORD}' \
     < /etc/dovecot/dovecot-sql.conf.ext.tmpl > /etc/dovecot/dovecot-sql.conf.ext
 chmod 600 /etc/dovecot/dovecot-sql.conf.ext
+
+# Render optional Dovecot master-user credentials. The API logs in as
+# "<mailbox>*<MAIL_MASTER_USER>" and never accepts arbitrary mailbox names from
+# the client. If MAIL_MASTER_PASSWORD is empty, keep an empty passwd-file so the
+# normal mailbox SQL passdb continues to work.
+if [ -n "$MAIL_MASTER_PASSWORD" ]; then
+    MASTER_HASH="$(doveadm pw -s SHA512-CRYPT -p "$MAIL_MASTER_PASSWORD")"
+    printf '%s:%s\n' "$MAIL_MASTER_USER" "$MASTER_HASH" > /etc/dovecot/dovecot-master.passwd
+else
+    : > /etc/dovecot/dovecot-master.passwd
+    echo "dovecot: MAIL_MASTER_PASSWORD is not set; master-user login is disabled"
+fi
+chmod 600 /etc/dovecot/dovecot-master.passwd
 
 # Make sure the vmail vhost root exists with the right ownership.
 mkdir -p /var/mail/vhosts

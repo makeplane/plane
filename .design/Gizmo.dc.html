@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#E4E1D9;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#D6D1C4;border-radius:6px;border:2px solid transparent;background-clip:content-box;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#E4E1D9;font-family:'Hanken Grotesk',sans-serif;color:#2A2622;-webkit-font-smoothing:antialiased;">
+  <div style="position:sticky;top:0;z-index:50;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#201E1A;color:#EDEAE3;">
+    <div style="display:flex;align-items:center;gap:11px;">
+      <div style="width:24px;height:24px;border-radius:7px;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;">g</div>
+      <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:16px;">Gizmo</span>
+      <span style="font-size:11px;color:#8C857A;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;">UI макет · десктоп</span>
+    </div>
+    {{ tabBar }}
+  </div>
+  <div style="padding:30px;display:flex;justify-content:center;">
+    <div style="width:1440px;height:912px;flex:0 0 auto;background:#FBFAF7;border-radius:14px;box-shadow:0 30px 64px -22px rgba(40,33,26,.45);border:1px solid #DBD6C9;overflow:hidden;position:relative;display:flex;flex-direction:column;">
+
+      <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;height:100%;">
+        <dc-import name="GizmoSidebar" active="inbox" onnav="{{ navTo }}" hint-size="264px,100%"></dc-import>
+        <div style="width:398px;flex:0 0 398px;border-right:1px solid #E7E3D9;display:flex;flex-direction:column;background:#FBFAF7;min-width:0;">
+          <div style="padding:16px 16px 13px;border-bottom:1px solid #E7E3D9;">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px;">
+              <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:19px;font-weight:700;color:#2A2622;margin:0;">Входящие</h2>
+              <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;align-self:flex-end;margin-bottom:3px;">2 новых</span>
+              <span style="flex:1;"></span>
+              <span style="color:#8C8475;display:flex;cursor:pointer;">{{ g.refresh }}</span>
+              <span style="color:#8C8475;display:flex;cursor:pointer;">{{ g.sliders }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:8px 12px;">
+              <span style="color:#9C9486;display:flex;">{{ gs.search }}</span>
+              <span style="flex:1;color:#9C9486;font-size:13.5px;">Поиск писем</span>
+              <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;border:1px solid #E2DDD0;border-radius:5px;padding:1px 5px;">⌘K</span>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:12px;">
+              <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:16px;background:#2A2622;color:#fff;cursor:pointer;">Все</span>
+              <span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Непрочитанные</span>
+              <span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Цепочки</span>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;">
+            <sc-for list="{{ emails }}" as="e" hint-placeholder-count="8">
+              <div style="{{ e.rowStyle }}">
+                <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex:0 0 auto;background:{{ e.avColor }};">{{ e.initials }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:7px;">
+                    <sc-if value="{{ e.unread }}" hint-placeholder-val="{{ true }}"><span style="width:7px;height:7px;border-radius:50%;background:#C24E2C;flex:0 0 auto;"></span></sc-if>
+                    <span style="{{ e.nameStyle }}">{{ e.name }}</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;flex:0 0 auto;">{{ e.time }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-top:3px;">
+                    <span style="{{ e.subjStyle }}">{{ e.subject }}</span>
+                    <sc-if value="{{ e.thread }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;font-weight:600;color:#6E675B;background:#ECE9E0;border-radius:8px;padding:1px 6px;flex:0 0 auto;font-family:'JetBrains Mono',monospace;">{{ e.thread }}</span></sc-if>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:3px;">
+                    <span style="flex:1;min-width:0;font-size:13px;color:#9C9486;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ e.snippet }}</span>
+                    <sc-if value="{{ e.attach }}" hint-placeholder-val="{{ true }}"><span style="color:#A89F8F;display:flex;flex:0 0 auto;">{{ gs.paperclip }}</span></sc-if>
+                    <sc-if value="{{ e.hasLabel }}" hint-placeholder-val="{{ true }}"><span style="{{ e.labelStyle }}">{{ e.labelText }}</span></sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FBFAF7;">
+          <div style="display:flex;align-items:center;gap:3px;padding:11px 22px;border-bottom:1px solid #E7E3D9;">
+            <span title="Архивировать" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.archive }}</span>
+            <span title="В корзину" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.trash }}</span>
+            <span title="Спам" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.spam }}</span>
+            <span title="Ярлык" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.tag }}</span>
+            <span title="Отложить" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.clock }}</span>
+            <span style="width:1px;height:20px;background:#E7E3D9;margin:0 7px;"></span>
+            <span title="Ответить" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.reply }}</span>
+            <span title="Переслать" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.forward }}</span>
+            <span style="flex:1;"></span>
+            <span style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.printer }}</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.more }}</span>
+          </div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+            <div style="padding:22px 34px 0;">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:23px;font-weight:700;color:#2A2622;margin:0;flex:1;line-height:1.25;">Запуск новой функции: AI-сводки писем</h1>
+                <span style="color:#D29A2E;display:flex;margin-top:3px;cursor:pointer;">{{ g.starFill }}</span>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:11px;">
+                <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:7px;background:#EEE7F8;color:#6A45A0;">Продукт</span>
+                <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:7px;background:#E7EDF8;color:#33579E;">Работа</span>
+              </div>
+            </div>
+            <div style="margin:16px 34px 0;border:1px solid #EAD6CB;background:linear-gradient(180deg,#FCF1EB 0%,#FBF6F2 100%);border-radius:14px;padding:15px 18px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
+                <span style="color:#C24E2C;display:flex;">{{ g.sparkles }}</span>
+                <span style="font-weight:600;font-size:14px;color:#8C3A1E;">Сводка от Gizmo&nbsp;AI</span>
+                <span style="font-size:11px;color:#B58D7C;font-family:'JetBrains Mono',monospace;">4 письма · 6 сек</span>
+                <span style="flex:1;"></span>
+                <span style="font-size:12.5px;color:#A8674F;cursor:pointer;">Скрыть</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <sc-for list="{{ aiPoints }}" as="p" hint-placeholder-count="3">
+                  <div style="display:flex;gap:11px;align-items:flex-start;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#C24E2C;margin-top:7px;flex:0 0 auto;"></span>
+                    <span style="font-size:14px;color:#4A4035;line-height:1.5;">{{ p }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="margin:18px 34px 0;padding:11px 16px;border:1px solid #EDEAE1;border-radius:11px;display:flex;align-items:center;gap:12px;background:#fff;cursor:pointer;">
+              <div style="width:30px;height:30px;border-radius:50%;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex:0 0 auto;">G</div>
+              <span style="font-weight:600;font-size:13.5px;color:#2A2622;flex:0 0 auto;">Команда Gizmo</span>
+              <span style="font-size:13px;color:#9C9486;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Привет! На следующей неделе раскатываем бету сводок на 10% пользователей…</span>
+              <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;flex:0 0 auto;">8 июн</span>
+            </div>
+            <div style="margin:14px 34px 0;border:1px solid #E7E3D9;border-radius:14px;background:#fff;overflow:hidden;">
+              <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #F0EDE4;">
+                <div style="width:40px;height:40px;border-radius:50%;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex:0 0 auto;">G</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-weight:600;font-size:14.5px;color:#2A2622;">Команда Gizmo</span><span style="font-size:12.5px;color:#9C9486;">&lt;team@gizmo.app&gt;</span><span style="flex:1;"></span><span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">сегодня, 08:15</span></div>
+                  <div style="font-size:12.5px;color:#9C9486;margin-top:2px;">кому: вам, продукт-команде</div>
+                </div>
+                <span style="display:flex;color:#9C9486;cursor:pointer;">{{ g.reply }}</span>
+              </div>
+              <div style="padding:20px 22px;">{{ threadBody }}</div>
+            </div>
+            <div style="height:26px;"></div>
+          </div>
+          <div style="border-top:1px solid #E7E3D9;padding:13px 24px;background:#F8F6F0;">
+            <div style="display:flex;gap:8px;margin-bottom:11px;">
+              <sc-for list="{{ replyChips }}" as="c" hint-placeholder-count="3">
+                <span style="font-size:13px;color:#6A4030;background:#F6E6DE;border:1px solid #EAD6CB;border-radius:16px;padding:6px 13px;cursor:pointer;">{{ c }}</span>
+              </sc-for>
+              <span style="font-size:13px;color:#8C3A1E;border:1px dashed #D9B6A6;border-radius:16px;padding:6px 13px;cursor:pointer;display:flex;align-items:center;gap:6px;">{{ gs.sparkles }} Написать с AI</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #DBD6C9;border-radius:12px;padding:11px 14px;">
+              <span style="color:#9C9486;display:flex;">{{ g.reply }}</span>
+              <span style="flex:1;color:#9C9486;font-size:14px;">Ответить команде Gizmo…</span>
+              <button style="display:flex;align-items:center;gap:7px;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:9px;padding:8px 16px;font-family:inherit;font-size:13.5px;font-weight:600;">Отправить {{ gsw.send }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isFolder }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;height:100%;">
+        <dc-import name="GizmoSidebar" active="{{ screen }}" onnav="{{ navTo }}" hint-size="264px,100%"></dc-import>
+        <div style="width:398px;flex:0 0 398px;border-right:1px solid #E7E3D9;display:flex;flex-direction:column;background:#FBFAF7;min-width:0;">
+          <div style="padding:16px 16px 13px;border-bottom:1px solid #E7E3D9;">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px;">
+              <span style="color:#C24E2C;display:flex;">{{ fv.icon }}</span>
+              <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:19px;font-weight:700;color:#2A2622;margin:0;">{{ fv.title }}</h2>
+              <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;align-self:flex-end;margin-bottom:3px;">{{ fv.metaTxt }}</span>
+              <span style="flex:1;"></span>
+              <sc-if value="{{ fv.headerAction }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:#A23A22;cursor:pointer;">{{ fv.headerActionIcon }}{{ fv.headerAction }}</span></sc-if>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:8px 12px;">
+              <span style="color:#9C9486;display:flex;">{{ gs.search }}</span>
+              <span style="flex:1;color:#9C9486;font-size:13.5px;">{{ fv.searchPh }}</span>
+              <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;border:1px solid #E2DDD0;border-radius:5px;padding:1px 5px;">⌘K</span>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:12px;">
+              <sc-for list="{{ fv.chips }}" as="c" hint-placeholder-count="2"><span style="{{ c.style }}">{{ c.label }}</span></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ fv.listNotice }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#F8F6F0;border-bottom:1px solid #F0EDE4;font-size:11.5px;color:#8C8475;font-family:'JetBrains Mono',monospace;">{{ fv.listNoticeIcon }}<span>{{ fv.listNotice }}</span></div>
+          </sc-if>
+          <div style="flex:1;overflow:hidden;">
+            <sc-for list="{{ fv.emails }}" as="e" hint-placeholder-count="6">
+              <div style="{{ e.rowStyle }}" onClick="{{ e.onClick }}">
+                <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex:0 0 auto;background:{{ e.avColor }};">{{ e.initials }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:7px;">
+                    <sc-if value="{{ e.unread }}" hint-placeholder-val="{{ true }}"><span style="width:7px;height:7px;border-radius:50%;background:#C24E2C;flex:0 0 auto;"></span></sc-if>
+                    <span style="{{ e.nameStyle }}">{{ e.name }}</span>
+                    <span style="flex:1;"></span>
+                    <sc-if value="{{ e.star }}" hint-placeholder-val="{{ true }}"><span style="color:#D29A2E;display:flex;flex:0 0 auto;">{{ gs.starFill }}</span></sc-if>
+                    <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;flex:0 0 auto;">{{ e.time }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-top:3px;">
+                    <span style="{{ e.subjStyle }}">{{ e.subject }}</span>
+                    <sc-if value="{{ e.draft }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;font-weight:600;color:#A23A22;background:#FBEAE6;border-radius:8px;padding:1px 7px;flex:0 0 auto;font-family:'JetBrains Mono',monospace;">Черновик</span></sc-if>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:3px;">
+                    <span style="flex:1;min-width:0;font-size:13px;color:#9C9486;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ e.snippet }}</span>
+                    <sc-if value="{{ e.attach }}" hint-placeholder-val="{{ true }}"><span style="color:#A89F8F;display:flex;flex:0 0 auto;">{{ gs.paperclip }}</span></sc-if>
+                    <sc-if value="{{ e.hasLabel }}" hint-placeholder-val="{{ true }}"><span style="{{ e.labelStyle }}">{{ e.labelText }}</span></sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FBFAF7;">
+          <div style="display:flex;align-items:center;gap:3px;padding:11px 22px;border-bottom:1px solid #E7E3D9;">
+            <span title="Архивировать" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.archive }}</span>
+            <span title="В корзину" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.trash }}</span>
+            <span title="Спам" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.spam }}</span>
+            <span title="Ярлык" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.tag }}</span>
+            <span title="Отложить" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.clock }}</span>
+            <span style="width:1px;height:20px;background:#E7E3D9;margin:0 7px;"></span>
+            <span title="Ответить" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.reply }}</span>
+            <span title="Переслать" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.forward }}</span>
+            <span style="flex:1;"></span>
+            <span style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.printer }}</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.more }}</span>
+          </div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+            <sc-if value="{{ fv.bannerText }}" hint-placeholder-val="{{ true }}">
+              <div style="{{ fv.bannerStyle }}"><span style="display:flex;flex:0 0 auto;margin-top:1px;">{{ fv.bannerIcon }}</span><span style="font-size:13px;font-weight:500;line-height:1.45;">{{ fv.bannerText }}</span></div>
+            </sc-if>
+            <div style="padding:22px 34px 0;">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:23px;font-weight:700;color:#2A2622;margin:0;flex:1;line-height:1.25;">{{ sel.subject }}</h1>
+                <span style="color:{{ sel.starColor }};display:flex;margin-top:3px;cursor:pointer;">{{ sel.starIcon }}</span>
+              </div>
+              <sc-if value="{{ sel.hasLabels }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;gap:8px;margin-top:11px;">
+                  <sc-for list="{{ sel.labels }}" as="l" hint-placeholder-count="1"><span style="{{ l.style }}">{{ l.text }}</span></sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <div style="margin:16px 34px 0;border:1px solid #E7E3D9;border-radius:14px;background:#fff;overflow:hidden;">
+              <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #F0EDE4;">
+                <div style="width:40px;height:40px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex:0 0 auto;background:{{ sel.avColor }};">{{ sel.initials }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-weight:600;font-size:14.5px;color:#2A2622;">{{ sel.name }}</span><span style="font-size:12.5px;color:#9C9486;">&lt;{{ sel.email }}&gt;</span><span style="flex:1;"></span><span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">{{ sel.time }}</span></div>
+                  <div style="font-size:12.5px;color:#9C9486;margin-top:2px;">{{ sel.toLine }}</div>
+                </div>
+              </div>
+              <div style="padding:20px 22px;"><sc-for list="{{ sel.body }}" as="p" hint-placeholder-count="2"><p style="margin:0 0 13px;font-size:14.5px;color:#33302A;line-height:1.62;">{{ p }}</p></sc-for></div>
+            </div>
+            <div style="height:26px;"></div>
+          </div>
+          <div style="border-top:1px solid #E7E3D9;padding:14px 24px;background:#F8F6F0;display:flex;align-items:center;gap:10px;">
+            <sc-for list="{{ fv.footer }}" as="b" hint-placeholder-count="2"><button style="{{ b.style }}" onClick="{{ b.onClick }}">{{ b.label }}</button></sc-for>
+            <span style="flex:1;"></span>
+            <sc-if value="{{ fv.statusText }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#3C9568;font-family:'JetBrains Mono',monospace;">{{ fv.statusIcon }}{{ fv.statusText }}</span></sc-if>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">{{ loginScreen }}</sc-if>
+      <sc-if value="{{ isCompose }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;height:100%;position:relative;">
+        <dc-import name="GizmoSidebar" active="inbox" onnav="{{ navTo }}" hint-size="264px,100%"></dc-import>
+        <div style="flex:1;position:relative;min-width:0;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:#EFEDE6;"></div>
+          <div style="position:absolute;inset:0;background:rgba(40,33,26,.30);"></div>
+          <div style="position:absolute;top:30px;bottom:30px;left:50%;transform:translateX(-50%);width:992px;max-width:calc(100% - 56px);display:flex;background:#fff;border-radius:16px;box-shadow:0 34px 80px -24px rgba(30,24,18,.55);overflow:hidden;border:1px solid #DBD6C9;">
+            <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+              <div style="display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid #F0EDE4;">
+                <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:16px;color:#2A2622;">Новое письмо</span>
+                <span style="flex:1;"></span>
+                <span style="color:#9C9486;display:flex;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;">{{ gs.chevronDown }}</span>
+                <span style="color:#9C9486;display:flex;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;">{{ gs.x }}</span>
+              </div>
+              <div style="padding:2px 20px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F2EFE7;">
+                  <span style="font-size:13px;color:#9C9486;width:46px;flex:0 0 auto;">От</span>
+                  <span style="font-size:14px;color:#2A2622;">Иван Петров &lt;ivan@gizmo.app&gt;</span>
+                  <span style="color:#9C9486;display:flex;">{{ gs.chevronDown }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #F2EFE7;">
+                  <span style="font-size:13px;color:#9C9486;width:46px;flex:0 0 auto;">Кому</span>
+                  <span style="display:flex;align-items:center;gap:6px;background:#F1EDE4;border-radius:14px;padding:3px 7px 3px 11px;font-size:13px;color:#3B362E;">anna@nordic.co <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+                  <span style="display:flex;align-items:center;gap:6px;background:#F1EDE4;border-radius:14px;padding:3px 7px 3px 11px;font-size:13px;color:#3B362E;">Дарья Соколова <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+                  <span style="flex:1;"></span>
+                  <span style="font-size:13px;color:#9C9486;cursor:pointer;">Копия</span>
+                  <span style="font-size:13px;color:#9C9486;cursor:pointer;">Скрытая</span>
+                </div>
+                <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #F2EFE7;">
+                  <span style="font-size:13px;color:#9C9486;width:46px;flex:0 0 auto;">Тема</span>
+                  <span style="font-size:14.5px;color:#2A2622;font-weight:600;">Предложение по сотрудничеству — Q3</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;padding:10px 18px;border-bottom:1px solid #F0EDE4;flex-wrap:wrap;">
+                <span style="display:flex;align-items:center;gap:7px;background:#F6E6DE;border:1px solid #EAD6CB;color:#8C3A1E;border-radius:9px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;">{{ gs.sparkles }} Помочь написать</span>
+                <span style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #DBD6C9;color:#4A4439;border-radius:9px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;">{{ gs.doc }} Шаблоны {{ gs.chevronDown }}</span>
+                <span style="width:1px;height:22px;background:#E7E3D9;margin:0 4px;"></span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;font-weight:800;font-size:15px;cursor:pointer;">B</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;font-style:italic;font-size:15px;font-family:Georgia,serif;cursor:pointer;">I</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;font-size:15px;text-decoration:underline;cursor:pointer;">U</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;cursor:pointer;">{{ gs.link }}</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;cursor:pointer;">{{ gs.list }}</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;cursor:pointer;">{{ gs.code }}</span>
+                <span style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;color:#57503F;cursor:pointer;">{{ gs.image }}</span>
+                <span style="flex:1;"></span>
+                <div style="display:flex;background:#F1EDE4;border-radius:9px;padding:3px;">
+                  <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">Текст</span>
+                  <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;background:#fff;color:#2A2622;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.09);">Markdown</span>
+                  <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">HTML</span>
+                </div>
+              </div>
+              <div style="flex:1;overflow:hidden;padding:20px 24px;">
+                <p style="margin:0 0 13px;font-size:14.5px;color:#33302A;line-height:1.6;">Здравствуйте, Анна!</p>
+                <p style="margin:0 0 13px;font-size:14.5px;color:#33302A;line-height:1.6;">Спасибо за встречу на прошлой неделе. Как и договаривались, отправляю краткое предложение по сотрудничеству на третий квартал:</p>
+                <ul style="margin:0 0 13px;padding-left:20px;font-size:14.5px;color:#33302A;line-height:1.75;">
+                  <li>запуск пилота на двух командах в июле;</li>
+                  <li>еженедельные отчёты и общий дашборд;</li>
+                  <li>фиксированная стоимость на квартал.</li>
+                </ul>
+                <p style="margin:0 0 13px;font-size:14.5px;color:#33302A;line-height:1.6;">Подробности — во вложении. Буду рад обсудить детали на коротком звонке.</p>
+                <p style="margin:0;font-size:14.5px;color:#6E675B;line-height:1.6;">С уважением,<br>Иван Петров · Gizmo</p>
+              </div>
+              <div style="padding:0 24px 14px;display:flex;gap:10px;">
+                <span style="display:flex;align-items:center;gap:9px;background:#F4F2EC;border:1px solid #E4E0D5;border-radius:10px;padding:8px 12px;">
+                  <span style="color:#C24E2C;display:flex;">{{ gs.paperclip }}</span>
+                  <span style="font-size:13px;color:#3B362E;font-weight:500;">Предложение_Q3.pdf</span>
+                  <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">2,4 МБ</span>
+                  <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span>
+                </span>
+                <span style="display:flex;align-items:center;gap:9px;background:#F4F2EC;border:1px solid #E4E0D5;border-radius:10px;padding:8px 12px;">
+                  <span style="color:#C24E2C;display:flex;">{{ gs.paperclip }}</span>
+                  <span style="font-size:13px;color:#3B362E;font-weight:500;">презентация.key</span>
+                  <span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">8,1 МБ</span>
+                  <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span>
+                </span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;padding:13px 20px;border-top:1px solid #F0EDE4;background:#FBFAF7;">
+                <button style="display:flex;align-items:center;gap:8px;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:10px;padding:10px 18px;font-family:inherit;font-size:14px;font-weight:600;box-shadow:0 3px 9px -3px rgba(194,78,44,.55);">Отправить {{ gsw.chevronDown }}</button>
+                <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.paperclip }}</span>
+                <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.image }}</span>
+                <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.smile }}</span>
+                <span style="flex:1;"></span>
+                <span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">Черновик сохранён · 12:46</span>
+                <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#6E675B;cursor:pointer;">{{ g.trash }}</span>
+              </div>
+            </div>
+            <div style="width:290px;flex:0 0 290px;border-left:1px solid #EDEAE1;background:#FAF8F3;display:flex;flex-direction:column;">
+              <div style="padding:16px 16px 13px;border-bottom:1px solid #EDEAE1;display:flex;align-items:center;gap:8px;">
+                <span style="color:#C24E2C;display:flex;">{{ g.sparkles }}</span>
+                <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#2A2622;">Gizmo AI</span>
+                <span style="font-size:10px;font-weight:600;color:#8C3A1E;background:#F6E6DE;border-radius:6px;padding:1px 6px;font-family:'JetBrains Mono',monospace;">БЕТА</span>
+              </div>
+              <div style="padding:14px 16px;">
+                <div style="background:#fff;border:1px solid #DBD6C9;border-radius:11px;padding:11px 12px;font-size:13px;color:#6E675B;line-height:1.55;min-height:72px;">Деловое предложение о пилоте на Q3 с тремя пунктами и просьбой о звонке…</div>
+                <button style="margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px;font-weight:600;">{{ gsw.sparkles }} Сгенерировать</button>
+              </div>
+              <div style="padding:0 16px 16px;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:9px;">Тон</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <span style="font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:14px;background:#F6E6DE;border:1px solid #EAD6CB;color:#8C3A1E;cursor:pointer;">Дружелюбно</span>
+                  <span style="font-size:12.5px;font-weight:500;padding:5px 11px;border-radius:14px;background:#fff;border:1px solid #DBD6C9;color:#6E675B;cursor:pointer;">Формально</span>
+                  <span style="font-size:12.5px;font-weight:500;padding:5px 11px;border-radius:14px;background:#fff;border:1px solid #DBD6C9;color:#6E675B;cursor:pointer;">Кратко</span>
+                  <span style="font-size:12.5px;font-weight:500;padding:5px 11px;border-radius:14px;background:#fff;border:1px solid #DBD6C9;color:#6E675B;cursor:pointer;">Подробно</span>
+                </div>
+              </div>
+              <div style="padding:0 16px;flex:1;overflow:hidden;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:6px;">Шаблоны</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;"><span style="color:#8C8475;display:flex;">{{ gs.doc }}</span><span style="flex:1;font-size:13.5px;color:#3B362E;">Коммерческое предложение</span><span style="color:#B7AF9F;display:flex;">{{ gs.chevronRight }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;"><span style="color:#8C8475;display:flex;">{{ gs.doc }}</span><span style="flex:1;font-size:13.5px;color:#3B362E;">Ответ на запрос</span><span style="color:#B7AF9F;display:flex;">{{ gs.chevronRight }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;"><span style="color:#8C8475;display:flex;">{{ gs.doc }}</span><span style="flex:1;font-size:13.5px;color:#3B362E;">Напоминание об оплате</span><span style="color:#B7AF9F;display:flex;">{{ gs.chevronRight }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;"><span style="color:#8C8475;display:flex;">{{ gs.doc }}</span><span style="flex:1;font-size:13.5px;color:#3B362E;">Приглашение на встречу</span><span style="color:#B7AF9F;display:flex;">{{ gs.chevronRight }}</span></div>
+              </div>
+              <div style="padding:12px 16px;border-top:1px solid #EDEAE1;display:flex;flex-direction:column;gap:4px;">
+                <div style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;color:#57503F;font-size:13px;">{{ gs.pen }} Улучшить текст</div>
+                <div style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;color:#57503F;font-size:13px;">{{ gs.check }} Исправить ошибки</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;height:100%;">
+        <dc-import name="GizmoSidebar" active="search" onnav="{{ navTo }}" hint-size="264px,100%"></dc-import>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+          <div style="padding:18px 26px 14px;border-bottom:1px solid #E7E3D9;">
+            <div style="display:flex;align-items:center;gap:11px;background:#fff;border:1.5px solid #C24E2C;border-radius:12px;padding:11px 15px;box-shadow:0 0 0 4px rgba(194,78,44,.08);">
+              <span style="color:#C24E2C;display:flex;">{{ g.search }}</span>
+              <span style="flex:1;font-size:15px;color:#2A2622;">счёт от поставщика</span>
+              <span style="color:#9C9486;display:flex;cursor:pointer;">{{ g.x }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:13px;flex-wrap:wrap;">
+              <span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">Фильтры:</span>
+              <span style="display:flex;align-items:center;gap:7px;background:#F1EDE4;border:1px solid #E4E0D5;border-radius:16px;padding:5px 9px 5px 12px;font-size:12.5px;color:#3B362E;font-weight:500;">От: Михаил <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+              <span style="display:flex;align-items:center;gap:7px;background:#F1EDE4;border:1px solid #E4E0D5;border-radius:16px;padding:5px 9px 5px 12px;font-size:12.5px;color:#3B362E;font-weight:500;">Есть вложение <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+              <span style="display:flex;align-items:center;gap:7px;background:#F1EDE4;border:1px solid #E4E0D5;border-radius:16px;padding:5px 9px 5px 12px;font-size:12.5px;color:#3B362E;font-weight:500;">Ярлык: Финансы <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+              <span style="display:flex;align-items:center;gap:7px;background:#F1EDE4;border:1px solid #E4E0D5;border-radius:16px;padding:5px 9px 5px 12px;font-size:12.5px;color:#3B362E;font-weight:500;">За месяц <span style="color:#A89F8F;display:flex;cursor:pointer;">{{ gs.x }}</span></span>
+              <span style="flex:1;"></span>
+              <span style="font-size:13px;color:#C24E2C;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">{{ gs.plus }} Сохранить поиск</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:230px;flex:0 0 230px;border-right:1px solid #E7E3D9;padding:18px;overflow:hidden;background:#FBFAF7;">
+              <div style="margin-bottom:22px;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Папка</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">{{ gc }}</span><span>Все письма</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span>Входящие</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span>Архив</span></div>
+              </div>
+              <div style="margin-bottom:22px;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Дата</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span>За всё время</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span>За неделю</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#2A2622;font-weight:600;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C24E2C;flex:0 0 auto;display:flex;align-items:center;justify-content:center;"><span style="width:8px;height:8px;border-radius:50%;background:#C24E2C;"></span></span><span>За месяц</span></div>
+              </div>
+              <div style="margin-bottom:22px;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Вложения</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">{{ gc }}</span><span>С вложением</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span>Только документы</span></div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Ярлык</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">{{ gc }}</span><span style="display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:3px;background:#B5832C;"></span>Финансы</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C9C3B5;flex:0 0 auto;"></span><span style="display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:3px;background:#3F6CC4;"></span>Работа</span></div>
+              </div>
+            </div>
+            <div style="flex:1;overflow:hidden;min-width:0;">
+              <div style="padding:15px 26px 6px;font-size:13px;color:#9C9486;font-family:'JetBrains Mono',monospace;">≈ 38 результатов · 0,12 сек</div>
+              <div style="padding:6px 0 0;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin:0 0 0;">
+                <div style="padding:8px 26px 4px;">Сегодня</div>
+              </div>
+              <sc-for list="{{ searchToday }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;gap:13px;padding:13px 26px;border-bottom:1px solid #F0EDE4;cursor:pointer;align-items:flex-start;">
+                  <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex:0 0 auto;background:{{ r.avColor }};">{{ r.initials }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:14px;font-weight:600;color:#2A2622;">{{ r.name }}</span><span style="flex:1;"></span><span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">{{ r.time }}</span></div>
+                    <div style="font-size:14px;font-weight:600;color:#2A2622;margin-top:2px;">{{ r.subjEl }}</div>
+                    <div style="font-size:13px;color:#9C9486;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.snipEl }}</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:7px;">
+                      <sc-if value="{{ r.hasLabel }}" hint-placeholder-val="{{ true }}"><span style="{{ r.labelStyle }}">{{ r.labelText }}</span></sc-if>
+                      <sc-if value="{{ r.attach }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">{{ gs.paperclip }} вложение</span></sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="padding:14px 26px 4px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;">Ранее</div>
+              <sc-for list="{{ searchEarlier }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;gap:13px;padding:13px 26px;border-bottom:1px solid #F0EDE4;cursor:pointer;align-items:flex-start;">
+                  <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex:0 0 auto;background:{{ r.avColor }};">{{ r.initials }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:14px;font-weight:600;color:#2A2622;">{{ r.name }}</span><span style="flex:1;"></span><span style="font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">{{ r.time }}</span></div>
+                    <div style="font-size:14px;font-weight:600;color:#2A2622;margin-top:2px;">{{ r.subjEl }}</div>
+                    <div style="font-size:13px;color:#9C9486;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.snipEl }}</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:7px;">
+                      <sc-if value="{{ r.hasLabel }}" hint-placeholder-val="{{ true }}"><span style="{{ r.labelStyle }}">{{ r.labelText }}</span></sc-if>
+                      <sc-if value="{{ r.attach }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9C9486;font-family:'JetBrains Mono',monospace;">{{ gs.paperclip }} вложение</span></sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;height:100%;">
+        <dc-import name="GizmoSidebar" active="none" onnav="{{ navTo }}" hint-size="264px,100%"></dc-import>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+          <div style="padding:20px 30px 16px;border-bottom:1px solid #E7E3D9;">
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:22px;font-weight:700;margin:0;color:#2A2622;">Настройки</h1>
+            <p style="margin:4px 0 0;font-size:13.5px;color:#8C8475;">Аккаунт, подпись и предпочтения почты</p>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:222px;flex:0 0 222px;border-right:1px solid #E7E3D9;padding:16px 14px;overflow:hidden;display:flex;flex-direction:column;gap:2px;">
+              <sc-for list="{{ setNav }}" as="n" hint-placeholder-count="8">
+                <div style="{{ n.style }}" onClick="{{ n.onClick }}"><span style="{{ n.iconStyle }}">{{ n.icon }}</span><span>{{ n.label }}</span></div>
+              </sc-for>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:24px 32px;">
+
+              <sc-if value="{{ tabAccount }}" hint-placeholder-val="{{ true }}">
+              <div style="max-width:660px;">
+                <div style="display:flex;align-items:center;gap:16px;background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:18px 20px;">
+                  <div style="width:58px;height:58px;border-radius:50%;background:#2A2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;flex:0 0 auto;">ИП</div>
+                  <div style="flex:1;"><div style="font-size:17px;font-weight:700;color:#2A2622;">Иван Петров</div><div style="font-size:13.5px;color:#8C8475;margin-top:2px;">ivan@gizmo.app · Тариф Pro</div></div>
+                  <button style="border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:9px;padding:8px 16px;font-family:inherit;font-size:13.5px;font-weight:600;color:#3B362E;">Изменить</button>
+                </div>
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:16px;font-weight:700;color:#2A2622;margin:26px 0 12px;">Общие</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Подсказки Gizmo AI</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Сводки, умные ответы и автодополнение</div></div><div style="width:42px;height:24px;border-radius:12px;background:#C24E2C;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Группировать письма в цепочки</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Объединять связанные письма в одну ветку</div></div><div style="width:42px;height:24px;border-radius:12px;background:#C24E2C;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Markdown по умолчанию</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Включать Markdown-режим в новых письмах</div></div><div style="width:42px;height:24px;border-radius:12px;background:#D8D3C7;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Отменить отправку</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Время на отмену после «Отправить»</div></div><div style="display:flex;align-items:center;gap:8px;border:1px solid #DBD6C9;border-radius:9px;padding:7px 12px;font-size:13.5px;font-weight:600;color:#3B362E;cursor:pointer;flex:0 0 auto;">10 секунд {{ gs.chevronDown }}</div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Язык интерфейса</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Язык меню и системных писем</div></div><div style="display:flex;align-items:center;gap:8px;border:1px solid #DBD6C9;border-radius:9px;padding:7px 12px;font-size:13.5px;font-weight:600;color:#3B362E;cursor:pointer;flex:0 0 auto;">Русский {{ gs.chevronDown }}</div></div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabSignature }}">
+              <div style="max-width:660px;">
+                <div style="display:flex;align-items:center;margin-bottom:14px;"><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;">Подпись</div><div style="font-size:13px;color:#8C8475;margin-top:3px;">Добавляется в конец письма</div></div><span style="flex:1;"></span><button style="display:flex;align-items:center;gap:7px;border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:9px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:600;color:#3B362E;">{{ gs.plus }} Новая подпись</button></div>
+                <div style="display:flex;gap:8px;margin-bottom:16px;"><span style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:6px 13px;border-radius:16px;background:#F6E6DE;border:1px solid #EAD6CB;color:#8C3A1E;cursor:pointer;">Основная <span style="font-size:10px;background:#C24E2C;color:#fff;border-radius:5px;padding:1px 5px;">по умолч.</span></span><span style="font-size:13px;font-weight:500;padding:6px 13px;border-radius:16px;background:#fff;border:1px solid #DBD6C9;color:#6E675B;cursor:pointer;">Краткая</span></div>
+                <div style="border:1px solid #E7E3D9;border-radius:12px;overflow:hidden;background:#fff;">
+                  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #F0EDE4;background:#FBFAF7;">
+                    <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;font-weight:800;font-size:14px;cursor:pointer;">B</span>
+                    <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;font-style:italic;font-family:Georgia,serif;cursor:pointer;">I</span>
+                    <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;cursor:pointer;">{{ gs.link }}</span>
+                    <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;cursor:pointer;">{{ gs.image }}</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">HTML / Markdown</span>
+                  </div>
+                  <div style="padding:18px;"><div style="display:flex;align-items:center;gap:12px;"><div style="width:3px;align-self:stretch;background:#C24E2C;border-radius:2px;"></div><div><div style="font-weight:700;color:#2A2622;font-size:14.5px;">Иван Петров</div><div style="font-size:13px;color:#6E675B;margin-top:1px;">Менеджер по развитию · Gizmo</div><div style="font-size:13px;color:#C24E2C;margin-top:1px;">ivan@gizmo.app · +7 900 000-00-00</div></div></div></div>
+                </div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;margin-top:16px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;font-size:14px;font-weight:500;color:#2A2622;">Добавлять к новым письмам</div><div style="width:42px;height:24px;border-radius:12px;background:#C24E2C;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:14px 0;"><div style="flex:1;font-size:14px;font-weight:500;color:#2A2622;">Добавлять к ответам и пересылке</div><div style="width:42px;height:24px;border-radius:12px;background:#D8D3C7;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:18px;"><button style="border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:10px;padding:10px 18px;font-family:inherit;font-size:14px;font-weight:600;">Сохранить</button><button style="border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:10px;padding:10px 18px;font-family:inherit;font-size:14px;font-weight:600;color:#6E675B;">Отмена</button></div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabFolders }}">
+              <div style="max-width:660px;">
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin-bottom:12px;">Папки</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 18px;">
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.inbox }}</span><span style="flex:1;font-size:14px;color:#2A2622;">Входящие</span><span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">12</span><span style="color:#C9C3B5;display:flex;">{{ gs.lock }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.send }}</span><span style="flex:1;font-size:14px;color:#2A2622;">Отправленные</span><span style="color:#C9C3B5;display:flex;">{{ gs.lock }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.doc }}</span><span style="flex:1;font-size:14px;color:#2A2622;">Черновики</span><span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">3</span><span style="color:#C9C3B5;display:flex;">{{ gs.lock }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;"><span style="color:#8C8475;display:flex;">{{ gs.spam }}</span><span style="flex:1;font-size:14px;color:#2A2622;">Спам</span><span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">2</span><span style="color:#C9C3B5;display:flex;">{{ gs.lock }}</span></div>
+                </div>
+                <div style="display:flex;align-items:center;margin:26px 0 12px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;">Ярлыки</div><span style="flex:1;"></span><button style="display:flex;align-items:center;gap:7px;border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:9px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:600;color:#3B362E;">{{ gs.plus }} Создать ярлык</button></div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 18px;">
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="width:12px;height:12px;border-radius:4px;background:#3F6CC4;"></span><span style="flex:1;font-size:14px;color:#2A2622;">Работа</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="width:12px;height:12px;border-radius:4px;background:#3C9568;"></span><span style="flex:1;font-size:14px;color:#2A2622;">Личное</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="width:12px;height:12px;border-radius:4px;background:#B5832C;"></span><span style="flex:1;font-size:14px;color:#2A2622;">Финансы</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;"><span style="width:12px;height:12px;border-radius:4px;background:#845AC0;"></span><span style="flex:1;font-size:14px;color:#2A2622;">Поездки</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabFilters }}">
+              <div style="max-width:680px;">
+                <div style="display:flex;align-items:center;margin-bottom:14px;"><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;">Фильтры</div><div style="font-size:13px;color:#8C8475;margin-top:3px;">Правила автоматической обработки писем</div></div><span style="flex:1;"></span><button style="display:flex;align-items:center;gap:7px;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:9px;padding:9px 15px;font-family:inherit;font-size:13.5px;font-weight:600;">{{ gsw.plus }} Создать фильтр</button></div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="background:#fff;border:1px solid #E7E3D9;border-radius:13px;padding:15px 18px;">
+                    <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ЕСЛИ</span><span style="font-size:13.5px;color:#2A2622;">отправитель содержит <b>@finx.ru</b></span><span style="flex:1;"></span><div style="width:38px;height:22px;border-radius:11px;background:#C24E2C;position:relative;cursor:pointer;"><div style="position:absolute;top:3px;left:19px;width:16px;height:16px;border-radius:50%;background:#fff;"></div></div></div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:11px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ТО</span><span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:#F4EDDC;color:#8A6420;border-radius:7px;padding:3px 9px;"><span style="width:8px;height:8px;border-radius:2px;background:#B5832C;"></span>Ярлык «Финансы»</span><span style="font-size:12px;font-weight:600;background:#F1EDE4;color:#57503F;border-radius:7px;padding:3px 9px;">Пропустить входящие</span><span style="flex:1;"></span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  </div>
+                  <div style="background:#fff;border:1px solid #E7E3D9;border-radius:13px;padding:15px 18px;">
+                    <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ЕСЛИ</span><span style="font-size:13.5px;color:#2A2622;">тема содержит <b>счёт</b></span><span style="flex:1;"></span><div style="width:38px;height:22px;border-radius:11px;background:#C24E2C;position:relative;cursor:pointer;"><div style="position:absolute;top:3px;left:19px;width:16px;height:16px;border-radius:50%;background:#fff;"></div></div></div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:11px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ТО</span><span style="font-size:12px;font-weight:600;background:#F4EDDC;color:#8A6420;border-radius:7px;padding:3px 9px;">Ярлык «Финансы»</span><span style="font-size:12px;font-weight:600;background:#F7E7DF;color:#8C3A1E;border-radius:7px;padding:3px 9px;">Отметить важным</span><span style="flex:1;"></span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  </div>
+                  <div style="background:#fff;border:1px solid #E7E3D9;border-radius:13px;padding:15px 18px;opacity:.62;">
+                    <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ЕСЛИ</span><span style="font-size:13.5px;color:#2A2622;">отправитель содержит <b>noreply@</b></span><span style="flex:1;"></span><div style="width:38px;height:22px;border-radius:11px;background:#D8D3C7;position:relative;cursor:pointer;"><div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;"></div></div></div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:11px;"><span style="font-size:12px;font-weight:600;color:#9C9486;font-family:'JetBrains Mono',monospace;">ТО</span><span style="font-size:12px;font-weight:600;background:#F1EDE4;color:#57503F;border-radius:7px;padding:3px 9px;">Пропустить входящие</span><span style="font-size:12px;font-weight:600;background:#F1EDE4;color:#57503F;border-radius:7px;padding:3px 9px;">Прочитано</span><span style="flex:1;"></span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.pen }}</span><span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.trash }}</span></div>
+                  </div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabTemplates }}">
+                <sc-if value="{{ tplShowList }}">
+                <div style="max-width:700px;">
+                  <div style="display:flex;align-items:flex-start;margin-bottom:16px;"><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;">Шаблоны</div><div style="font-size:13px;color:#8C8475;margin-top:3px;">Готовые письма для команды — вставляются в один клик</div></div><span style="flex:1;"></span><button onClick="{{ openTpl }}" style="display:flex;align-items:center;gap:7px;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:14px;font-weight:600;box-shadow:0 3px 9px -3px rgba(194,78,44,.55);">{{ gsw.plus }} Создать шаблон</button></div>
+                  <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:8px 12px;margin-bottom:14px;"><span style="color:#9C9486;display:flex;">{{ gs.search }}</span><span style="flex:1;color:#9C9486;font-size:13.5px;">Поиск по шаблонам</span></div>
+                  <div style="display:flex;gap:6px;margin-bottom:16px;"><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:16px;background:#2A2622;color:#fff;cursor:pointer;">Все</span><span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Продажи</span><span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Поддержка</span><span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Финансы</span><span style="font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:16px;background:#ECE9E0;color:#6E675B;cursor:pointer;">Общее</span></div>
+                  <div style="display:flex;flex-direction:column;gap:10px;">
+                    <sc-for list="{{ tplRows }}" as="t" hint-placeholder-count="5">
+                      <div onClick="{{ openTpl }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #E7E3D9;border-radius:12px;padding:14px 16px;cursor:pointer;">
+                        <div style="width:38px;height:38px;border-radius:10px;background:#F4F2EC;color:#8C8475;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">{{ t.icon }}</div>
+                        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:9px;"><span style="font-size:14.5px;font-weight:600;color:#2A2622;">{{ t.name }}</span><span style="{{ t.catStyle }}">{{ t.cat }}</span></div><div style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-top:3px;">{{ t.upd }}</div></div>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#8C3A1E;background:#F6E6DE;border-radius:8px;padding:6px 11px;">Вставить</span>
+                        <span style="color:#9C9486;display:flex;cursor:pointer;">{{ gs.more }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="height:24px;"></div>
+                </div>
+                </sc-if>
+                <sc-if value="{{ tplEdit }}">
+                <div>
+                  <div onClick="{{ closeTpl }}" style="display:flex;align-items:center;gap:7px;font-size:13px;color:#8C3A1E;font-weight:600;cursor:pointer;margin-bottom:14px;">{{ gs.chevronLeft }} Все шаблоны</div>
+                  <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;color:#2A2622;margin-bottom:18px;">Новый шаблон</div>
+                  <div style="display:flex;gap:24px;">
+                    <div style="flex:1;min-width:0;">
+                      <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#57503F;margin-bottom:7px;">Название</div><div style="background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:11px 13px;font-size:14px;color:#2A2622;">Коммерческое предложение</div></div>
+                      <div style="display:flex;gap:12px;margin-bottom:14px;"><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#57503F;margin-bottom:7px;">Категория</div><div style="display:flex;align-items:center;background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:11px 13px;font-size:14px;color:#2A2622;"><span style="flex:1;">Продажи</span>{{ gs.chevronDown }}</div></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#57503F;margin-bottom:7px;">Доступ</div><div style="display:flex;align-items:center;background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:11px 13px;font-size:14px;color:#2A2622;"><span style="flex:1;">Вся команда</span>{{ gs.chevronDown }}</div></div></div>
+                      <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#57503F;margin-bottom:7px;">Тема письма</div><div style="background:#fff;border:1px solid #DBD6C9;border-radius:10px;padding:11px 13px;font-size:14px;color:#2A2622;">Предложение по сотрудничеству — {{ tplSubjVar }}</div></div>
+                      <div style="font-size:13px;font-weight:600;color:#57503F;margin-bottom:7px;">Тело письма</div>
+                      <div style="border:1px solid #DBD6C9;border-radius:12px;overflow:hidden;background:#fff;">
+                        <div style="display:flex;align-items:center;gap:3px;padding:7px 10px;border-bottom:1px solid #F0EDE4;background:#FBFAF7;">
+                          <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;font-weight:800;font-size:14px;cursor:pointer;">B</span>
+                          <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;font-style:italic;font-family:Georgia,serif;cursor:pointer;">I</span>
+                          <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;cursor:pointer;">{{ gs.list }}</span>
+                          <span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#57503F;cursor:pointer;">{{ gs.link }}</span>
+                          <span style="flex:1;"></span>
+                          <span style="font-size:12px;color:#9C9486;font-family:'JetBrains Mono',monospace;">Markdown</span>
+                        </div>
+                        <div style="padding:16px 16px;font-size:14px;line-height:1.6;color:#33302A;">Здравствуйте, {{ tplHi }}!<br><br>Спасибо за интерес к {{ tplCo }}. Направляю краткое предложение по сотрудничеству. Готовы начать пилот с {{ tplDate }}.<br><br>С уважением,<br>{{ tplMe }}</div>
+                      </div>
+                      <div style="margin-top:14px;"><div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:9px;">Вставить переменную</div><div style="display:flex;flex-wrap:wrap;gap:7px;"><sc-for list="{{ tplVars }}" as="v" hint-placeholder-count="6"><span style="font-size:12.5px;font-family:'JetBrains Mono',monospace;color:#8C3A1E;background:#F6E6DE;border:1px solid #EAD6CB;border-radius:8px;padding:5px 10px;cursor:pointer;">{{ v }}</span></sc-for></div></div>
+                      <div style="display:flex;gap:10px;margin-top:20px;"><button style="border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:10px;padding:11px 20px;font-family:inherit;font-size:14px;font-weight:600;box-shadow:0 3px 9px -3px rgba(194,78,44,.55);">Сохранить шаблон</button><button onClick="{{ closeTpl }}" style="border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:10px;padding:11px 20px;font-family:inherit;font-size:14px;font-weight:600;color:#6E675B;">Отмена</button></div>
+                    </div>
+                    <div style="width:300px;flex:0 0 300px;">
+                      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;margin-bottom:9px;">Предпросмотр</div>
+                      <div style="background:#fff;border:1px solid #E7E3D9;border-radius:13px;padding:16px 16px;box-shadow:0 12px 28px -16px rgba(40,33,26,.35);">
+                        <div style="font-size:13px;color:#9C9486;margin-bottom:3px;">Тема</div>
+                        <div style="font-size:14px;font-weight:600;color:#2A2622;margin-bottom:14px;">Предложение по сотрудничеству — Nordic</div>
+                        <div style="font-size:13.5px;line-height:1.6;color:#33302A;">Здравствуйте, Анна!<br><br>Спасибо за интерес к Nordic. Направляю краткое предложение по сотрудничеству. Готовы начать пилот с 1 июля.<br><br>С уважением,<br>Иван Петров</div>
+                      </div>
+                      <div style="font-size:12px;color:#9C9486;margin-top:10px;line-height:1.5;">Переменные подставляются автоматически из карточки получателя.</div>
+                    </div>
+                  </div>
+                  <div style="height:24px;"></div>
+                </div>
+                </sc-if>
+              </sc-if>
+
+              <sc-if value="{{ tabForwarding }}">
+              <div style="max-width:660px;">
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin-bottom:12px;">Пересылка</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Пересылать входящие</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Копия каждого письма уходит на другой адрес</div></div><div style="width:42px;height:24px;border-radius:12px;background:#C24E2C;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:15px 0;"><span style="font-size:13px;color:#9C9486;width:70px;flex:0 0 auto;">Адрес</span><div style="flex:1;background:#FBFAF7;border:1px solid #DBD6C9;border-radius:9px;padding:9px 12px;font-size:14px;color:#2A2622;">backup@gizmo.app</div></div>
+                </div>
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin:26px 0 12px;">Автоответ «Нет на месте»</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;font-size:14.5px;font-weight:600;color:#2A2622;">Включить автоответ</div><div style="width:42px;height:24px;border-radius:12px;background:#C24E2C;position:relative;flex:0 0 auto;cursor:pointer;"><div style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F2EFE7;"><span style="font-size:13px;color:#9C9486;width:70px;flex:0 0 auto;">Период</span><div style="display:flex;align-items:center;gap:8px;border:1px solid #DBD6C9;border-radius:9px;padding:8px 12px;font-size:13.5px;color:#2A2622;">{{ gs.calendar }} 16 июн — 23 июн</div></div>
+                  <div style="display:flex;gap:12px;padding:13px 0;"><span style="font-size:13px;color:#9C9486;width:70px;flex:0 0 auto;padding-top:9px;">Текст</span><div style="flex:1;background:#FBFAF7;border:1px solid #DBD6C9;border-radius:9px;padding:11px 13px;font-size:13.5px;color:#33302A;line-height:1.55;">Здравствуйте! Я в отпуске до 23 июня и отвечу по возвращении. По срочным вопросам — d.sokolova@nordic.co.</div></div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabSecurity }}">
+              <div style="max-width:660px;">
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin-bottom:12px;">Защита аккаунта</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.lock }}</span><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Пароль</div><div style="font-size:13px;color:#8C8475;margin-top:2px;">Изменён 2 месяца назад</div></div><button style="border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:9px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:600;color:#3B362E;">Изменить</button></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;"><span style="color:#3C9568;display:flex;">{{ gs.shield }}</span><div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#2A2622;">Двухфакторная аутентификация</div><div style="font-size:13px;color:#3C9568;margin-top:2px;">Включена · приложение-аутентификатор</div></div><button style="border:1px solid #DBD6C9;background:#fff;cursor:pointer;border-radius:9px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:600;color:#3B362E;">Настроить</button></div>
+                </div>
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin:26px 0 12px;">Активные сессии</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.globe }}</span><div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#2A2622;">Chrome · macOS <span style="font-size:11px;font-weight:600;color:#2C7A52;background:#E3F0EA;border-radius:6px;padding:1px 7px;margin-left:5px;">этот</span></div><div style="font-size:12.5px;color:#8C8475;margin-top:2px;">Москва · сейчас</div></div></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #F2EFE7;"><span style="color:#8C8475;display:flex;">{{ gs.globe }}</span><div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#2A2622;">Safari · iPhone</div><div style="font-size:12.5px;color:#8C8475;margin-top:2px;">Москва · 2 часа назад</div></div><span style="font-size:13px;color:#C24E2C;font-weight:600;cursor:pointer;">Завершить</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 0;"><span style="color:#8C8475;display:flex;">{{ gs.globe }}</span><div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#2A2622;">Windows · Edge</div><div style="font-size:12.5px;color:#8C8475;margin-top:2px;">Санкт-Петербург · вчера</div></div><span style="font-size:13px;color:#C24E2C;font-weight:600;cursor:pointer;">Завершить</span></div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ tabAppearance }}">
+              <div style="max-width:660px;">
+                <div style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;color:#2A2622;margin-bottom:12px;">Внешний вид</div>
+                <div style="background:#fff;border:1px solid #E7E3D9;border-radius:14px;padding:4px 20px;">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;font-size:14.5px;font-weight:600;color:#2A2622;">Тема</div><div style="display:flex;background:#F1EDE4;border-radius:9px;padding:3px;flex:0 0 auto;"><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;background:#fff;color:#2A2622;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.09);">Светлая</span><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">Тёмная</span><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">Авто</span></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;font-size:14.5px;font-weight:600;color:#2A2622;">Плотность</div><div style="display:flex;gap:18px;flex:0 0 auto;"><span style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C9C3B5;"></span>Просторно</span><span style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#2A2622;font-weight:600;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C24E2C;display:flex;align-items:center;justify-content:center;"><span style="width:8px;height:8px;border-radius:50%;background:#C24E2C;"></span></span>Средне</span><span style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#4A4439;cursor:pointer;"><span style="width:16px;height:16px;border-radius:50%;border:1.5px solid #C9C3B5;"></span>Компактно</span></div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #F2EFE7;"><div style="flex:1;font-size:14.5px;font-weight:600;color:#2A2622;">Область чтения</div><div style="display:flex;gap:10px;flex:0 0 auto;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><div style="width:50px;height:34px;border:2px solid #C24E2C;border-radius:6px;display:flex;overflow:hidden;"><div style="width:19px;border-right:1px solid #E0DBCE;background:#F1EDE4;"></div><div style="flex:1;background:#fff;"></div></div><span style="font-size:11.5px;color:#2A2622;font-weight:600;">Справа</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><div style="width:50px;height:34px;border:1.5px solid #DBD6C9;border-radius:6px;display:flex;flex-direction:column;overflow:hidden;"><div style="height:16px;border-bottom:1px solid #E0DBCE;background:#F1EDE4;"></div><div style="flex:1;background:#fff;"></div></div><span style="font-size:11.5px;color:#8C8475;">Снизу</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><div style="width:50px;height:34px;border:1.5px solid #DBD6C9;border-radius:6px;background:#F1EDE4;"></div><span style="font-size:11.5px;color:#8C8475;">Скрыта</span></div>
+                  </div></div>
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 0;"><div style="flex:1;font-size:14.5px;font-weight:600;color:#2A2622;">Размер текста</div><div style="display:flex;background:#F1EDE4;border-radius:9px;padding:3px;flex:0 0 auto;"><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">Меньше</span><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;background:#fff;color:#2A2622;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.09);">Обычный</span><span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:7px;color:#6E675B;cursor:pointer;">Крупнее</span></div></div>
+                </div>
+                <div style="height:24px;"></div>
+              </div>
+              </sc-if>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen: 'inbox', setTab: 'account', tplEdit: false, sel: {} };
+
+  folderDefs() {
+    const L = {
+      work: ['Работа', '#33579E', '#E7EDF8'],
+      prod: ['Продукт', '#6A45A0', '#EEE7F8'],
+      fin: ['Финансы', '#8A6420', '#F4EDDC'],
+      pers: ['Личное', '#2C7A52', '#E3F0EA'],
+      trip: ['Поездки', '#5A4AC0', '#EAE7F8'],
+    };
+    return {
+      starred: {
+        title: 'Помеченные', icon: 'starFill', meta: '5 писем', search: 'Поиск в помеченных',
+        chips: ['Все', 'Непрочитанные'],
+        list: [
+          { name: 'Анна Ковалёва', email: 'anna@nordic.co', i: 'АК', c: '#3F6CC4', subject: 'Договор на Q3 — финальная версия', snip: 'Прикладываю финальную версию договора, осталось подписать.', time: '09:42', unread: true, attach: true, star: true, label: L.work, to: 'кому: вам', body: ['Привет!', 'Прикладываю финальную версию договора на третий квартал — все правки внесены. Останется подписать со стороны вашей команды.', 'Если по пунктам 4 и 7 будут вопросы — пишите, обсудим на коротком звонке.'] },
+          { name: 'Лена', email: 'lena.summer@gmail.com', i: 'Л', c: '#3C9568', subject: 'Поездка на выходные', snip: 'Я нашла классный домик в горах, смотри фотки и скажи как тебе.', time: 'Вчера', unread: false, attach: false, star: true, label: L.trip, to: 'кому: вам', body: ['Смотри, какой домик я нашла в горах — три спальни, камин и вид на долину.', 'Свободны выходные через две недели. Если нравится — бронирую сегодня вечером.'] },
+          { name: 'Михаил Орлов', email: 'm.orlov@finx.ru', i: 'МО', c: '#B5832C', subject: 'Счёт №2041 за июнь', snip: 'Направляю счёт на оплату за июнь, срок до 25 числа.', time: '12 июн', unread: false, attach: true, star: true, label: L.fin, to: 'кому: вам, бухгалтерия', body: ['Добрый день. Направляю счёт на оплату за июнь, срок — до 25 числа.', 'Акт и счёт-фактуру пришлю отдельным письмом после оплаты.'] },
+          { name: 'Дарья Соколова', email: 'd.sokolova@nordic.co', i: 'ДС', c: '#845AC0', subject: 'Идеи для лендинга', snip: 'Накидала референсы и структуру — глянь, пока не ушли в разработку.', time: '8 июн', unread: false, attach: false, star: true, label: L.work, to: 'кому: вам', body: ['Накидала референсы и черновую структуру лендинга — хочу свериться, пока не ушли в разработку.', 'Особенно интересно твоё мнение по первому экрану и блоку с тарифами.'] },
+        ],
+      },
+      sent: {
+        title: 'Отправленные', icon: 'send', meta: '128 писем', search: 'Поиск в отправленных',
+        chips: ['Все', 'Запланированные'],
+        sentStyle: true,
+        list: [
+          { name: 'Анна Ковалёва', email: 'anna@nordic.co', i: 'АК', c: '#3F6CC4', subject: 'Предложение по сотрудничеству — Q3', snip: 'Здравствуйте, Анна! Спасибо за встречу. Отправляю предложение…', time: '09:12', unread: false, attach: true, star: false, to: 'кому: Анна Ковалёва', body: ['Здравствуйте, Анна!', 'Спасибо за встречу на прошлой неделе. Как и договаривались, отправляю краткое предложение по сотрудничеству на третий квартал — детали во вложении.', 'Буду рад обсудить детали на коротком звонке.'] },
+          { name: 'Команда продукта', email: 'product@gizmo.app', i: 'GP', c: '#C24E2C', subject: 'Re: Релиз AI-сводок', snip: 'Со своей стороны тексты вычитал, правки оставил в Notion.', time: 'Вчера', unread: false, attach: false, star: false, to: 'кому: команда продукта', body: ['Со своей стороны тексты онбординга вычитал, правки оставил в Notion.', 'Если успеваем до пятницы — поддерживаю запуск 18 июня.'] },
+          { name: 'Сергей Белов', email: 's.belov@finx.ru', i: 'СБ', c: '#3C9568', subject: 'Подтверждаю встречу в четверг', snip: 'Здравствуйте! Подтверждаю четверг в 15:00 у вас в офисе.', time: '12 июн', unread: false, attach: false, star: false, to: 'кому: Сергей Белов', body: ['Здравствуйте, Сергей!', 'Подтверждаю встречу в четверг в 15:00 у вас в офисе. Возьму с собой презентацию и договор.'] },
+        ],
+      },
+      drafts: {
+        title: 'Черновики', icon: 'doc', meta: '3 черновика', search: 'Поиск в черновиках',
+        chips: ['Все', 'Недавние'],
+        list: [
+          { name: '(без получателя)', email: 'черновик', i: '✎', c: '#9C9486', subject: 'Предложение по сотрудничеству — Q3', snip: 'Здравствуйте, Анна! Спасибо за встречу на прошлой неделе…', time: '12:46', unread: false, attach: true, star: false, draft: true, to: 'кому: anna@nordic.co', body: ['Здравствуйте, Анна!', 'Спасибо за встречу на прошлой неделе. Как и договаривались, отправляю краткое предложение по сотрудничеству на Q3:', 'Подробности — во вложении. Буду рад обсудить детали на коротком звонке.'] },
+          { name: 'Команда Gizmo', email: 'team@gizmo.app', i: '✎', c: '#9C9486', subject: 'Итоги спринта', snip: 'Привет, команда! Подвожу короткие итоги недели…', time: 'Вчера', unread: false, attach: false, star: false, draft: true, to: 'кому: team@gizmo.app', body: ['Привет, команда!', 'Подвожу короткие итоги недели: закрыли бету сводок, осталось…'] },
+          { name: '(без получателя)', email: 'черновик', i: '✎', c: '#9C9486', subject: '(без темы)', snip: 'Напоминание по оплате счёта №2041…', time: '9 июн', unread: false, attach: false, star: false, draft: true, to: 'получатель не указан', body: ['Напоминание по оплате счёта №2041…'] },
+        ],
+      },
+      archive: {
+        title: 'Архив', icon: 'archive', meta: '342 письма', search: 'Поиск в архиве',
+        chips: ['Все', 'По ярлыкам'],
+        list: [
+          { name: 'GitHub', email: 'noreply@github.com', i: 'GH', c: '#57503F', subject: '[gizmo/web] PR #211 смержен', snip: 'Ваш пул-реквест feature/ai-summary был смержен в main.', time: '5 июн', unread: false, attach: false, star: false, to: 'кому: вам', body: ['Пул-реквест feature/ai-summary был смержен в ветку main.', 'Сборка прошла успешно, релиз уедет в ночной деплой.'] },
+          { name: 'Habr Дайджест', email: 'digest@habr.com', i: 'H', c: '#4A8FC0', subject: 'Дайджест недели: 12 статей', snip: 'Самое интересное за неделю: ИИ, фронтенд и не только.', time: '3 июн', unread: false, attach: false, star: false, to: 'кому: вам', body: ['Самое интересное за неделю в вашей ленте: ИИ, фронтенд и не только.', 'Открыть подборку можно по ссылке в письме.'] },
+          { name: 'Дарья Соколова', email: 'd.sokolova@nordic.co', i: 'ДС', c: '#845AC0', subject: 'Re: Бюджет на маркетинг', snip: 'Согласна с правками. Останется уточнить пару цифр по Q4.', time: '28 мая', unread: false, attach: false, star: false, label: L.work, to: 'кому: вам', body: ['Согласна с правками. Останется уточнить только пару цифр по Q4.', 'Сведём финальную таблицу на встрече в понедельник.'] },
+        ],
+      },
+      spam: {
+        title: 'Спам', icon: 'spam', meta: '2 письма', search: 'Поиск в спаме',
+        chips: ['Все'],
+        listNotice: 'Письма в спаме автоматически удаляются через 30 дней.',
+        headerAction: 'Очистить спам', headerActionIcon: 'trash',
+        banner: { text: 'Это письмо помечено как спам. Ссылки и изображения отключены для вашей безопасности.', icon: 'spam', bg: '#FBEAE6', border: '#F0CFC6', color: '#A23A22' },
+        footer: 'spam',
+        list: [
+          { name: 'Lucky Draw Intl.', email: 'win@luck-draw-prize.biz', i: '!', c: '#C0392B', subject: 'Вы выиграли 1 000 000 ₽ — заберите приз!', snip: 'Поздравляем! Ваш адрес выбран победителем. Перейдите по ссылке…', time: '07:03', unread: true, attach: false, star: false, to: 'кому: вам', body: ['Поздравляем! Ваш адрес был выбран победителем розыгрыша.', 'Чтобы получить приз, перейдите по ссылке и введите данные карты. [ссылка отключена]'] },
+          { name: 'Служба безопасности', email: 'security@verify-acc0unt.net', i: '⚠', c: '#C0392B', subject: 'Срочно: ваш аккаунт будет заблокирован', snip: 'Обнаружена подозрительная активность. Подтвердите данные…', time: 'Вчера', unread: true, attach: false, star: false, to: 'кому: вам', body: ['Обнаружена подозрительная активность в вашем аккаунте.', 'Подтвердите логин и пароль в течение 24 часов, иначе доступ будет заблокирован. [ссылка отключена]'] },
+        ],
+      },
+      trash: {
+        title: 'Корзина', icon: 'trash', meta: '6 писем', search: 'Поиск в корзине',
+        chips: ['Все'],
+        listNotice: 'Письма в корзине хранятся 30 дней, затем удаляются навсегда.',
+        headerAction: 'Очистить корзину', headerActionIcon: 'trash',
+        banner: { text: 'Это письмо в корзине и будет удалено навсегда через 23 дня.', icon: 'trash', bg: '#FBF3E3', border: '#EEDFBE', color: '#8A6420' },
+        footer: 'trash',
+        list: [
+          { name: 'Рассылка «СкидкиИгрушки»', email: 'sale@toys-mega.shop', i: 'СИ', c: '#57503F', subject: 'Только сегодня — скидки до 70%', snip: 'Последний день распродажи! Успейте купить со скидкой.', time: '6 июн', unread: false, attach: false, star: false, to: 'кому: вам', body: ['Последний день распродажи! Скидки до 70% на весь ассортимент.', 'Промокод действует до полуночи.'] },
+          { name: 'Иван Петров', email: 'ivan@gizmo.app', i: 'ИП', c: '#C24E2C', subject: 'Заметки к созвону (черновик)', snip: 'Тезисы к завтрашнему созвону — потом удалю.', time: '4 июн', unread: false, attach: false, star: false, to: 'кому: себе', body: ['Тезисы к завтрашнему созвону — потом удалю.', '1. Статус релиза. 2. Бюджет Q3. 3. Найм.'] },
+          { name: 'Booking', email: 'noreply@booking.com', i: 'B', c: '#3F6CC4', subject: 'Ваше бронирование отменено', snip: 'Бронирование №8841 было отменено по вашему запросу.', time: '1 июн', unread: false, attach: false, star: false, to: 'кому: вам', body: ['Бронирование №8841 было отменено по вашему запросу.', 'Средства вернутся на карту в течение 5–7 дней.'] },
+        ],
+      },
+    };
+  }
+
+  ic(nodes, size, sw) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: sw || 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block', flex: '0 0 auto' } }, nodes.map((n, k) => React.createElement(n[0], { key: k, ...n[1] })));
+  }
+
+  hl(text, term) {
+    const out = []; const lo = text.toLowerCase(); const t = term.toLowerCase(); let start = 0, p, key = 0;
+    while ((p = lo.indexOf(t, start)) !== -1) {
+      if (p > start) out.push(text.slice(start, p));
+      out.push(React.createElement('mark', { key: key++, style: { background: '#F6DDD0', color: '#8C3A1E', borderRadius: '3px', padding: '0 2px' } }, text.slice(p, p + t.length)));
+      start = p + t.length;
+    }
+    if (start < text.length) out.push(text.slice(start));
+    return React.createElement('span', null, out);
+  }
+
+  reg() {
+    const P = d => ['path', { d }];
+    const C = (cx, cy, r, f) => ['circle', f ? { cx, cy, r, fill: 'currentColor', stroke: 'none' } : { cx, cy, r }];
+    const R = (x, y, w, h, rx) => ['rect', { x, y, width: w, height: h, rx }];
+    return {
+      search: [C(11, 11, 7.5), P('M21 21l-5.2-5.2')],
+      paperclip: [P('M16 8v8a4 4 0 0 1-8 0V6.5a2.5 2.5 0 0 1 5 0V16a1 1 0 0 1-2 0V8')],
+      star: [P('M12 2.6l2.7 5.85 6.3.55-4.78 4.16 1.45 6.24L12 16.9l-5.67 2.5 1.45-6.24L3 9l6.3-.55z')],
+      starFill: [['path', { d: 'M12 2.6l2.7 5.85 6.3.55-4.78 4.16 1.45 6.24L12 16.9l-5.67 2.5 1.45-6.24L3 9l6.3-.55z', fill: 'currentColor', stroke: 'none' }]],
+      reply: [P('M9 17 4 12l5-5'), P('M4 12h11a5 5 0 0 1 5 5v2')],
+      forward: [P('M15 17l5-5-5-5'), P('M20 12H9a5 5 0 0 0-5 5v2')],
+      more: [C(5, 12, 1.5, 1), C(12, 12, 1.5, 1), C(19, 12, 1.5, 1)],
+      archive: [R(3, 4, 18, 4, 1), P('M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8'), P('M10 12h4')],
+      trash: [P('M3 6h18'), P('M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6'), P('M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'), P('M10 11v6'), P('M14 11v6')],
+      spam: [C(12, 12, 9), P('M5.6 5.6 18.4 18.4')],
+      tag: [P('M3 3h7l11 11-7 7L3 10z'), C(7, 7, 1.3, 1)],
+      clock: [C(12, 12, 9), P('M12 8v4l3 1.6')],
+      sparkles: [['path', { d: 'M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7z', fill: 'currentColor', stroke: 'none' }], ['path', { d: 'M18.6 13.6l.8 2.1 2.2.8-2.2.8-.8 2.1-.8-2.1-2.2-.8 2.2-.8z', fill: 'currentColor', stroke: 'none' }]],
+      send: [P('M22 2 11 13'), P('M22 2 15 22 11 13 2 9z')],
+      x: [P('M18 6 6 18'), P('M6 6l12 12')],
+      plus: [P('M12 5v14'), P('M5 12h14')],
+      chevronDown: [P('M6 9l6 6 6-6')],
+      chevronRight: [P('M9 6l6 6-6 6')],
+      chevronLeft: [P('M15 6l-6 6 6 6')],
+      image: [R(3, 3, 18, 18, 2.5), C(8.5, 8.5, 1.6, 1), P('M21 16l-5-5L5 21')],
+      link: [P('M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.4'), P('M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.4')],
+      list: [P('M8 6h13'), P('M8 12h13'), P('M8 18h13'), C(3.5, 6, 1, 1), C(3.5, 12, 1, 1), C(3.5, 18, 1, 1)],
+      code: [P('M16 18l6-6-6-6'), P('M8 6l-6 6 6 6')],
+      lock: [R(4, 11, 16, 10, 2), P('M8 11V7a4 4 0 0 1 8 0v4')],
+      user: [C(12, 8, 4), P('M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1')],
+      mail: [R(2, 4, 20, 16, 2.5), P('M3 7l9 6 9-6')],
+      filter: [P('M22 4H2l8 9v6l4 2v-8z')],
+      calendar: [R(3, 4.5, 18, 17, 2.5), P('M16 2.5v4'), P('M8 2.5v4'), P('M3 10h18')],
+      sliders: [P('M4 6h9'), P('M19 6h1'), C(16, 6, 2.4), P('M4 12h3'), P('M11 12h9'), C(9, 12, 2.4), P('M4 18h9'), P('M19 18h1'), C(16, 18, 2.4)],
+      check: [P('M4.5 12.5l4.5 4.5L19.5 6.5')],
+      refresh: [P('M21 12a9 9 0 1 1-2.64-6.36'), P('M21 4.5v4h-4')],
+      smile: [C(12, 12, 9), P('M8.5 14.2s1.3 1.8 3.5 1.8 3.5-1.8 3.5-1.8'), C(9, 10, 1, 1), C(15, 10, 1, 1)],
+      pen: [P('M12 20h9'), P('M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z')],
+      inbox: [P('M22 12h-6l-2 3h-4l-2-3H2'), P('M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z')],
+      folder: [P('M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z')],
+      shield: [P('M12 22s8-3.5 8-9V5l-8-3-8 3v8c0 5.5 8 9 8 9z'), P('M9 11.5l2 2 4-4')],
+      bell: [P('M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9'), P('M13.7 21a2 2 0 0 1-3.4 0')],
+      eye: [C(12, 12, 3), P('M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z')],
+      printer: [P('M6 9V3h12v6'), P('M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2'), R(6, 14, 12, 7, 1)],
+      doc: [P('M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'), P('M14 2v6h6'), P('M9 13h6'), P('M9 17h4')],
+      key: [C(7.5, 15.5, 4), P('M10.5 12.5 20 3'), P('M16 5l3 3'), P('M19 6l2 2')],
+      globe: [C(12, 12, 9), P('M3 12h18'), P('M12 3c2.5 2.6 2.5 15.4 0 18'), P('M12 3c-2.5 2.6-2.5 15.4 0 18')],
+    };
+  }
+
+  map(REG, names, size, sw) { const o = {}; names.forEach(n => { o[n] = this.ic(REG[n], size, sw); }); return o; }
+
+  renderVals() {
+    const s = this.state.screen;
+    const REG = this.reg();
+    const all = Object.keys(REG);
+    const g = this.map(REG, all, 18);
+    const gs = this.map(REG, all, 15);
+    const gsw = this.map(REG, all, 16, 2);
+
+    const tabs = [['login', 'Вход'], ['inbox', 'Входящие'], ['compose', 'Написать'], ['search', 'Поиск'], ['settings', 'Настройки']];
+    const tabBar = React.createElement('div', { style: { display: 'flex', gap: '2px', background: '#2C2925', borderRadius: '10px', padding: '3px' } },
+      tabs.map(([k, l]) => {
+        const on = k === s;
+        return React.createElement('button', { key: k, onClick: () => this.setState({ screen: k }), style: { border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px', fontWeight: 600, padding: '6px 15px', borderRadius: '8px', color: on ? '#2A2622' : '#C9C3B8', background: on ? '#F1EDE4' : 'transparent', transition: 'all .15s' } }, l);
+      }));
+
+    const rawEmails = [
+      { n: 'Анна Ковалёва', e: 'anna@nordic.co', i: 'АК', c: '#3F6CC4', s: 'Договор на Q3 — финальная версия', p: 'Привет! Прикладываю финальную версию договора, осталось подписать.', t: '09:42', u: true, at: true, th: 0, lt: 'Работа', lc: '#33579E', lb: '#E7EDF8' },
+      { n: 'Команда Gizmo', e: 'team@gizmo.app', i: 'G', c: '#C24E2C', s: 'Запуск новой функции: AI-сводки писем', p: 'Мы рады представить умные сводки прямо в почте — встречайте.', t: '08:15', u: true, at: false, th: 4, lt: 'Продукт', lc: '#6A45A0', lb: '#EEE7F8', sel: true },
+      { n: 'Михаил Орлов', e: 'm.orlov@finx.ru', i: 'МО', c: '#B5832C', s: 'Счёт №2041 за июнь', p: 'Добрый день. Направляю счёт на оплату за июнь, срок до 25 числа.', t: 'Вчера', u: false, at: true, th: 0, lt: 'Финансы', lc: '#8A6420', lb: '#F4EDDC' },
+      { n: 'Лена', e: 'lena.summer@gmail.com', i: 'Л', c: '#3C9568', s: 'Поездка на выходные', p: 'Я нашла классный домик в горах, смотри фотки и скажи как тебе.', t: 'Вчера', u: false, at: false, th: 7, lt: 'Личное', lc: '#2C7A52', lb: '#E3F0EA' },
+      { n: 'GitHub', e: 'noreply@github.com', i: 'GH', c: '#57503F', s: '[gizmo/web] PR #218 ожидает ревью', p: '@ivan запросил ваше ревью изменений в ветке feature/ai-summary.', t: 'Вчера', u: false, at: false, th: 2, lt: '', lc: '', lb: '' },
+      { n: 'Дарья Соколова', e: 'd.sokolova@nordic.co', i: 'ДС', c: '#845AC0', s: 'Re: Бюджет на маркетинг', p: 'Согласна с правками. Останется уточнить только пару цифр по Q4.', t: 'Пн', u: false, at: false, th: 3, lt: 'Работа', lc: '#33579E', lb: '#E7EDF8' },
+      { n: 'Habr Дайджест', e: 'digest@habr.com', i: 'H', c: '#4A8FC0', s: 'Дайджест недели: 12 статей для вас', p: 'Самое интересное за неделю в вашей ленте: ИИ, фронтенд и не только.', t: 'Пн', u: false, at: false, th: 0, lt: '', lc: '', lb: '' },
+      { n: 'Сергей Белов', e: 's.belov@finx.ru', i: 'СБ', c: '#C24E2C', s: 'Подтверждение встречи в четверг', p: 'Здравствуйте! Подтверждаю встречу на четверг в 15:00 у вас в офисе.', t: '12 июн', u: false, at: false, th: 0, lt: 'Финансы', lc: '#8A6420', lb: '#F4EDDC' },
+    ];
+    const emails = rawEmails.map(r => ({
+      name: r.n, email: r.e, initials: r.i, avColor: r.c, subject: r.s, snippet: r.p, time: r.t, unread: r.u, attach: r.at, thread: r.th, hasLabel: !!r.lt, labelText: r.lt,
+      rowStyle: { display: 'flex', gap: '12px', padding: '12px 16px', borderLeft: '3px solid ' + (r.sel ? '#C24E2C' : 'transparent'), borderBottom: '1px solid #F0EDE4', background: r.sel ? '#FBF1EC' : (r.u ? '#FFFFFF' : 'transparent'), cursor: 'pointer' },
+      nameStyle: { fontSize: '14px', color: r.u ? '#2A2622' : '#4A4439', fontWeight: r.u ? 700 : 500, flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+      subjStyle: { flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13.5px', color: r.u ? '#2A2622' : '#57503F', fontWeight: r.u ? 600 : 500 },
+      labelStyle: { fontSize: '10.5px', fontWeight: 600, padding: '1px 7px', borderRadius: '6px', flex: '0 0 auto', whiteSpace: 'nowrap', background: r.lb, color: r.lc }
+    }));
+
+    const para = { margin: '0 0 13px', fontSize: '14.5px', lineHeight: 1.62, color: '#33302A' };
+    const threadBody = React.createElement('div', null,
+      React.createElement('p', { style: para }, 'Команда, рады сообщить: умные сводки выходят из беты и 18 июня станут доступны всем пользователям Gizmo.'),
+      React.createElement('p', { style: para }, 'Что важно знать перед запуском:'),
+      React.createElement('ul', { style: { margin: '0 0 13px', paddingLeft: '20px', color: '#33302A', fontSize: '14.5px', lineHeight: 1.75 } },
+        React.createElement('li', null, 'Сводка собирается из последних писем цепочки за 2–3 секунды.'),
+        React.createElement('li', null, 'Работает на русском и английском, читает вложения PDF.'),
+        React.createElement('li', null, 'Пользователь может скрыть или обновить сводку одним кликом.')),
+      React.createElement('p', { style: para }, 'Просьба до пятницы вычитать тексты онбординга в Notion и оставить правки. Если всё ок — ставим в релиз.'),
+      React.createElement('p', { style: { ...para, marginBottom: 0, color: '#6E675B' } }, 'Спасибо! — Команда Gizmo'));
+
+    const aiPoints = [
+      'AI-сводки станут доступны всем пользователям 18 июня.',
+      'Сводка собирается из последних писем цепочки за 2–3 секунды.',
+      'Нужно вычитать тексты онбординга в Notion до пятницы.',
+    ];
+    const replyChips = ['Звучит отлично', 'Когда включат у нас?', 'Нужны правки'];
+
+    const term = 'счёт';
+    const sr = (n, i, c, subj, snip, time, at, lt, lc, lb) => ({ name: n, initials: i, avColor: c, subjEl: this.hl(subj, term), snipEl: this.hl(snip, term), time, attach: at, hasLabel: !!lt, labelText: lt, labelStyle: { fontSize: '10.5px', fontWeight: 600, padding: '1px 7px', borderRadius: '6px', background: lb, color: lc, whiteSpace: 'nowrap' } });
+    const searchToday = [
+      sr('Михаил Орлов', 'МО', '#B5832C', 'Счёт №2041 за июнь', 'Добрый день. Направляю счёт на оплату за июнь, срок до 25 числа.', '14:20', true, 'Финансы', '#8A6420', '#F4EDDC'),
+      sr('ООО «Поставки»', 'ПО', '#57503F', 'Счёт-фактура и акт за май', 'Во вложении счёт-фактура и акт выполненных работ за май.', '11:05', true, '', '', ''),
+    ];
+    const searchEarlier = [
+      sr('Анна Ковалёва', 'АК', '#3F6CC4', 'Re: Оплата по счёту', 'Счёт уже оплачен, спасибо за напоминание!', '12 июн', false, 'Работа', '#33579E', '#E7EDF8'),
+      sr('Бухгалтерия', 'Б', '#845AC0', 'Реестр счетов за Q2', 'Сводный реестр счетов за второй квартал во вложении.', '9 июн', true, 'Финансы', '#8A6420', '#F4EDDC'),
+    ];
+    const setTab = this.state.setTab || 'account';
+    const navDefs = [['account', 'Аккаунт', 'user'], ['signature', 'Подпись', 'pen'], ['folders', 'Папки и ярлыки', 'folder'], ['filters', 'Фильтры', 'filter'], ['templates', 'Шаблоны', 'doc'], ['forwarding', 'Пересылка', 'forward'], ['security', 'Безопасность', 'shield'], ['appearance', 'Внешний вид', 'image']];
+    const setNav = navDefs.map(([key, label, icn]) => {
+      const on = key === setTab;
+      return {
+        key, label, icon: this.ic(REG[icn], 17), onClick: () => this.setState({ setTab: key, tplEdit: false }),
+        style: { display: 'flex', alignItems: 'center', gap: '11px', padding: '8px 11px', borderRadius: '9px', fontSize: '14px', cursor: 'pointer', ...(on ? { background: '#F6E6DE', color: '#8C3A1E', fontWeight: 600 } : { color: '#4A4439', fontWeight: 500 }) },
+        iconStyle: { display: 'flex', color: on ? '#C24E2C' : '#8C8475' }
+      };
+    });
+    const tplDefs = [
+      ['Коммерческое предложение', 'Продажи', '#33579E', '#E7EDF8', 'изменён 3 дня назад'],
+      ['Ответ на запрос в поддержку', 'Поддержка', '#2C7A52', '#E3F0EA', 'изменён неделю назад'],
+      ['Напоминание об оплате', 'Финансы', '#8A6420', '#F4EDDC', 'изменён вчера'],
+      ['Приглашение на встречу', 'Общее', '#6A45A0', '#EEE7F8', 'изменён 2 недели назад'],
+      ['Онбординг нового клиента', 'Продажи', '#33579E', '#E7EDF8', 'изменён месяц назад'],
+    ];
+    const tplRows = tplDefs.map(([name, cat, c, b, upd]) => ({ name, cat, upd, icon: this.ic(REG.doc, 18), catStyle: { fontSize: '11px', fontWeight: 600, padding: '2px 9px', borderRadius: '7px', background: b, color: c, whiteSpace: 'nowrap' } }));
+    const tplVars = ['{{имя}}', '{{фамилия}}', '{{компания}}', '{{должность}}', '{{дата}}', '{{сумма}}'];
+    const tplEdit = !!this.state.tplEdit;
+
+    const FD = this.folderDefs();
+    const isFolder = !!FD[s];
+    let fv = null, sel = null;
+    if (isFolder) {
+      const cfg = FD[s];
+      const selIdx = Math.min((this.state.sel && this.state.sel[s]) || 0, cfg.list.length - 1);
+      const emails = cfg.list.map((r, idx) => {
+        const on = idx === selIdx;
+        return {
+          name: r.name, initials: r.i, avColor: r.c, subject: r.subject, snippet: r.snip, time: r.time,
+          unread: r.unread, attach: r.attach, star: r.star, draft: r.draft,
+          hasLabel: !!r.label, labelText: r.label ? r.label[0] : '',
+          onClick: () => this.setState(st => ({ sel: { ...st.sel, [s]: idx } })),
+          rowStyle: { display: 'flex', gap: '12px', padding: '12px 16px', borderLeft: '3px solid ' + (on ? '#C24E2C' : 'transparent'), borderBottom: '1px solid #F0EDE4', background: on ? '#FBF1EC' : (r.unread ? '#FFFFFF' : 'transparent'), cursor: 'pointer' },
+          nameStyle: { fontSize: '14px', color: r.unread ? '#2A2622' : '#4A4439', fontWeight: r.unread ? 700 : 500, flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+          subjStyle: { flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13.5px', color: r.unread ? '#2A2622' : '#57503F', fontWeight: r.unread ? 600 : 500 },
+          labelStyle: r.label ? { fontSize: '10.5px', fontWeight: 600, padding: '1px 7px', borderRadius: '6px', flex: '0 0 auto', whiteSpace: 'nowrap', background: r.label[2], color: r.label[1] } : {}
+        };
+      });
+      const chipStyle = on => ({ fontSize: '12.5px', fontWeight: on ? 600 : 500, padding: '5px 12px', borderRadius: '16px', cursor: 'pointer', ...(on ? { background: '#2A2622', color: '#fff' } : { background: '#ECE9E0', color: '#6E675B' }) });
+      const chips = cfg.chips.map((label, i) => ({ label, style: chipStyle(i === 0) }));
+      const footerBtn = (label, primary, onClick) => ({ label, onClick, style: { border: primary ? 'none' : '1px solid #DBD6C9', cursor: 'pointer', fontFamily: 'inherit', fontSize: '13.5px', fontWeight: 600, padding: '9px 16px', borderRadius: '10px', ...(primary ? { background: '#C24E2C', color: '#fff', boxShadow: '0 3px 9px -3px rgba(194,78,44,.55)' } : { background: '#fff', color: '#4A4439' }) } });
+      const goCompose = () => this.setState({ screen: 'compose' });
+      const goInbox = () => this.setState({ screen: 'inbox' });
+      const goTrash = () => this.setState({ screen: 'trash' });
+      let footer, statusText = null, statusIcon = null;
+      if (s === 'drafts') footer = [footerBtn('Продолжить редактирование', true, goCompose), footerBtn('Удалить черновик', false, goTrash)];
+      else if (s === 'spam') footer = [footerBtn('Не спам', true, goInbox), footerBtn('Удалить', false, goTrash)];
+      else if (s === 'trash') footer = [footerBtn('Восстановить', true, goInbox), footerBtn('Удалить навсегда', false, () => {})];
+      else if (s === 'archive') footer = [footerBtn('Вернуть во входящие', true, goInbox), footerBtn('Ответить', false, goCompose)];
+      else { footer = [footerBtn('Ответить', true, goCompose), footerBtn('Переслать', false, goCompose)]; if (s === 'sent') { statusText = 'Доставлено · сегодня'; statusIcon = this.ic(REG.check, 13, 2.4); } }
+      const b = cfg.banner;
+      fv = {
+        title: cfg.title, icon: this.ic(REG[cfg.icon], 18), metaTxt: cfg.meta, searchPh: cfg.search,
+        chips, emails, footer, statusText, statusIcon,
+        listNotice: cfg.listNotice || null, listNoticeIcon: cfg.listNotice ? this.ic(REG.clock, 13) : null,
+        headerAction: cfg.headerAction || null, headerActionIcon: cfg.headerAction ? this.ic(REG[cfg.headerActionIcon], 14) : null,
+        bannerText: b ? b.text : null, bannerIcon: b ? this.ic(REG[b.icon], 16) : null,
+        bannerStyle: b ? { display: 'flex', alignItems: 'flex-start', gap: '10px', margin: '16px 34px 0', padding: '12px 16px', borderRadius: '12px', background: b.bg, border: '1px solid ' + b.border, color: b.color } : null,
+      };
+      const r = cfg.list[selIdx];
+      sel = {
+        name: r.name, email: r.email, initials: r.i, avColor: r.c, subject: r.subject, time: r.time, toLine: r.to,
+        body: r.body, hasLabels: !!r.label, labels: r.label ? [{ text: r.label[0], style: { fontSize: '11px', fontWeight: 600, padding: '2px 9px', borderRadius: '7px', background: r.label[2], color: r.label[1] } }] : [],
+        starColor: r.star ? '#D29A2E' : '#C7BFB0', starIcon: this.ic(r.star ? REG.starFill : REG.star, 20),
+      };
+    }
+
+    return {
+      screen: s,
+      isFolder, fv, sel, navTo: (k) => this.setState({ screen: k }),
+      isLogin: s === 'login', isInbox: s === 'inbox', isCompose: s === 'compose', isSearch: s === 'search', isSettings: s === 'settings',
+      tabBar, g, gs, gsw, gc: this.ic(REG.check, 12, 2.6),
+      setTab, setNav,
+      tabAccount: setTab === 'account', tabSignature: setTab === 'signature', tabFolders: setTab === 'folders', tabFilters: setTab === 'filters', tabTemplates: setTab === 'templates', tabForwarding: setTab === 'forwarding', tabSecurity: setTab === 'security', tabAppearance: setTab === 'appearance',
+      tplRows, tplVars, tplEdit, tplShowList: !tplEdit,
+      tplSubjVar: '{{компания}}', tplHi: '{{имя}}', tplCo: '{{компания}}', tplDate: '{{дата}}', tplMe: '{{подпись}}',
+      openTpl: () => this.setState({ tplEdit: true }), closeTpl: () => this.setState({ tplEdit: false }),
+      emails, threadBody, aiPoints, replyChips,
+      searchToday, searchEarlier,
+      loginScreen: this.loginScreen(g, gs, gsw),
+    };
+  }
+
+  ph(t) {
+    return React.createElement('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B7AF9F', fontFamily: "'JetBrains Mono',monospace", fontSize: '13px' } }, 'Экран «' + t + '» — в работе…');
+  }
+
+  loginScreen(g, gs, gsw) {
+    const e = React.createElement;
+    const feat = (icon, title, text) => e('div', { style: { display: 'flex', gap: '14px', alignItems: 'flex-start' } },
+      e('div', { style: { width: '38px', height: '38px', borderRadius: '11px', background: 'rgba(194,78,44,.22)', color: '#E8A78C', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto' } }, icon),
+      e('div', null,
+        e('div', { style: { fontWeight: 600, fontSize: '15px', color: '#F3EFE8', marginBottom: '2px' } }, title),
+        e('div', { style: { fontSize: '13.5px', color: '#A39B8E', lineHeight: 1.5 } }, text)));
+    const field = (label, icon, val, ph, extra) => e('div', { style: { marginBottom: '16px' } },
+      e('div', { style: { fontSize: '13px', fontWeight: 600, color: '#57503F', marginBottom: '7px' } }, label),
+      e('div', { style: { display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', border: '1px solid #DBD6C9', borderRadius: '11px', padding: '12px 14px' } },
+        e('span', { style: { color: '#9C9486', display: 'flex' } }, icon),
+        e('span', { style: { flex: 1, fontSize: '14.5px', color: val ? '#2A2622' : '#9C9486' } }, val || ph),
+        extra || null));
+    return e('div', { style: { display: 'flex', height: '100%' } },
+      e('div', { style: { width: '46%', flex: '0 0 46%', background: '#221F1B', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '46px 48px' } },
+        e('div', { style: { position: 'absolute', width: '320px', height: '320px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(194,78,44,.34),transparent 70%)', top: '-90px', right: '-70px' } }),
+        e('div', { style: { position: 'absolute', width: '34px', height: '34px', borderRadius: '9px', background: 'rgba(194,78,44,.4)', transform: 'rotate(45deg)', bottom: '160px', left: '64px' } }),
+        e('div', { style: { position: 'absolute', width: '14px', height: '14px', borderRadius: '50%', background: 'rgba(232,167,140,.5)', bottom: '230px', right: '120px' } }),
+        e('div', { style: { display: 'flex', alignItems: 'center', gap: '11px', position: 'relative' } },
+          e('div', { style: { width: '34px', height: '34px', borderRadius: '10px', background: '#C24E2C', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Schibsted Grotesk',sans-serif", fontWeight: 700, fontSize: '20px' } }, 'g'),
+          e('span', { style: { fontFamily: "'Schibsted Grotesk',sans-serif", fontWeight: 700, fontSize: '24px', color: '#F3EFE8' } }, 'Gizmo')),
+        e('div', { style: { position: 'relative' } },
+          e('h1', { style: { fontFamily: "'Schibsted Grotesk',sans-serif", fontWeight: 700, fontSize: '38px', lineHeight: 1.15, color: '#F8F5EF', margin: '0 0 16px', letterSpacing: '-.02em' } }, 'Почта, которая думает вместе с вами.'),
+          e('p', { style: { fontSize: '15.5px', color: '#A39B8E', lineHeight: 1.6, margin: '0 0 34px', maxWidth: '380px' } }, 'AI-сводки, шаблоны и умные цепочки — чтобы разбирать входящие в разы быстрее.'),
+          e('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } },
+            feat(g.sparkles, 'AI-сводки цепочек', 'Понимайте суть переписки за пару секунд.'),
+            feat(g.doc, 'Шаблоны и AI-письма', 'Готовьте деловые письма в один клик.'),
+            feat(g.shield, 'Безопасность по умолчанию', 'Шифрование и защита от спама из коробки.'))),
+        e('div', { style: { position: 'relative', fontSize: '12.5px', color: '#6F685C', fontFamily: "'JetBrains Mono',monospace" } }, '© 2026 Gizmo Mail')),
+      e('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FBFAF7' } },
+        e('div', { style: { width: '380px' } },
+          e('h2', { style: { fontFamily: "'Schibsted Grotesk',sans-serif", fontWeight: 700, fontSize: '27px', color: '#2A2622', margin: '0 0 6px' } }, 'С возвращением'),
+          e('p', { style: { fontSize: '14.5px', color: '#8C8475', margin: '0 0 30px' } }, 'Войдите в свой аккаунт Gizmo'),
+          field('Эл. почта', g.mail, 'ivan@gizmo.app', ''),
+          field('Пароль', g.lock, '••••••••••', '', e('span', { style: { color: '#9C9486', display: 'flex', cursor: 'pointer' } }, g.eye)),
+          e('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '4px 0 22px' } },
+            e('div', { style: { display: 'flex', alignItems: 'center', gap: '9px' } },
+              e('div', { style: { width: '18px', height: '18px', borderRadius: '5px', background: '#C24E2C', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, this.ic(this.reg().check, 13, 2.4)),
+              e('span', { style: { fontSize: '13.5px', color: '#57503F' } }, 'Запомнить меня')),
+            e('span', { style: { fontSize: '13.5px', color: '#C24E2C', fontWeight: 600, cursor: 'pointer' } }, 'Забыли пароль?')),
+          e('button', { style: { width: '100%', border: 'none', cursor: 'pointer', background: '#C24E2C', color: '#fff', borderRadius: '11px', padding: '13px', fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, boxShadow: '0 4px 12px -3px rgba(194,78,44,.55)' } }, 'Войти'),
+          e('div', { style: { display: 'flex', alignItems: 'center', gap: '14px', margin: '22px 0' } },
+            e('div', { style: { flex: 1, height: '1px', background: '#E7E3D9' } }),
+            e('span', { style: { fontSize: '12px', color: '#9C9486', fontFamily: "'JetBrains Mono',monospace" } }, 'или'),
+            e('div', { style: { flex: 1, height: '1px', background: '#E7E3D9' } })),
+          e('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+            e('button', { style: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#fff', border: '1px solid #DBD6C9', cursor: 'pointer', borderRadius: '11px', padding: '12px', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600, color: '#3B362E' } }, e('span', { style: { color: '#6E675B', display: 'flex' } }, g.shield), 'Войти через рабочий аккаунт (SSO)'),
+            e('button', { style: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#fff', border: '1px solid #DBD6C9', cursor: 'pointer', borderRadius: '11px', padding: '12px', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600, color: '#3B362E' } }, e('span', { style: { color: '#6E675B', display: 'flex' } }, g.key), 'Войти по ключу доступа')),
+          e('p', { style: { textAlign: 'center', fontSize: '13.5px', color: '#8C8475', margin: '26px 0 0' } }, 'Нет аккаунта? ', e('span', { style: { color: '#C24E2C', fontWeight: 600, cursor: 'pointer' } }, 'Зарегистрироваться')))));
+  }
+}
+</script>
+</body>
+</html>

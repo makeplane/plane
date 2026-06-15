@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="width:264px;height:100%;flex:0 0 264px;display:flex;flex-direction:column;background:#F4F2EC;border-right:1px solid #E4E0D5;padding:18px 14px;box-sizing:border-box;font-family:'Hanken Grotesk',sans-serif;">
+  <div style="display:flex;align-items:center;gap:10px;padding:4px 6px 16px;">
+    <div style="width:30px;height:30px;border-radius:9px;background:#C24E2C;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;line-height:1;">g</div>
+    <div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:21px;color:#2A2622;letter-spacing:-.01em;">Gizmo</div>
+  </div>
+  <button onClick="{{ compose }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;cursor:pointer;background:#C24E2C;color:#fff;border-radius:11px;padding:11px 14px;font-family:inherit;font-size:15px;font-weight:600;box-shadow:0 3px 9px -3px rgba(194,78,44,.6);">{{ penIcon }}<span>Написать</span></button>
+  <div style="margin-top:18px;display:flex;flex-direction:column;gap:2px;">
+    <sc-for list="{{ folders }}" as="f" hint-placeholder-count="7">
+      <div style="{{ f.row }}" onClick="{{ f.onClick }}">
+        <span style="{{ f.iconStyle }}">{{ f.icon }}</span>
+        <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.label }}</span>
+        <sc-if value="{{ f.count }}" hint-placeholder-val="{{ true }}"><span style="{{ f.badge }}">{{ f.count }}</span></sc-if>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 8px 7px;">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#9C9486;font-family:'JetBrains Mono',monospace;">Ярлыки</span>
+    <span style="color:#9C9486;display:flex;cursor:pointer;">{{ plusIcon }}</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;">
+    <sc-for list="{{ labels }}" as="l" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:11px;padding:6px 11px;border-radius:9px;font-size:14px;color:#4A4439;cursor:pointer;">
+        <span style="width:10px;height:10px;border-radius:3px;background:{{ l.color }};flex:0 0 auto;"></span>
+        <span>{{ l.label }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="flex:1;"></div>
+  <div style="padding:12px 10px 14px;">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#8C8475;font-family:'JetBrains Mono',monospace;margin-bottom:7px;"><span>Хранилище</span><span>6,4 / 15 ГБ</span></div>
+    <div style="height:6px;border-radius:4px;background:#E2DDD0;overflow:hidden;"><div style="width:43%;height:100%;background:#C24E2C;border-radius:4px;"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:11px;cursor:pointer;border-top:1px solid #E4E0D5;">
+    <div style="width:34px;height:34px;border-radius:50%;background:#2A2622;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex:0 0 auto;">ИП</div>
+    <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;color:#2A2622;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Иван Петров</div><div style="font-size:12px;color:#8C8475;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ivan@gizmo.app</div></div>
+    <span style="color:#9C9486;display:flex;">{{ chevronIcon }}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:264,&quot;height&quot;:720},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;inbox&quot;,&quot;starred&quot;,&quot;sent&quot;,&quot;drafts&quot;,&quot;archive&quot;,&quot;spam&quot;,&quot;trash&quot;,&quot;search&quot;,&quot;none&quot;],&quot;default&quot;:&quot;inbox&quot;},&quot;onnav&quot;:{&quot;editor&quot;:null}}">
+class Component extends DCLogic {
+  ic(nodes, size) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block', flex: '0 0 auto' } }, nodes.map((n, k) => React.createElement(n[0], { key: k, ...n[1] })));
+  }
+  renderVals() {
+    const P = d => ['path', { d }];
+    const C = (cx, cy, r, f) => ['circle', f ? { cx, cy, r, fill: 'currentColor', stroke: 'none' } : { cx, cy, r }];
+    const R = (x, y, w, h, rx) => ['rect', { x, y, width: w, height: h, rx }];
+    const active = this.props.active || 'inbox';
+    const defs = [
+      ['inbox', 'Входящие', 12, [P('M22 12h-6l-2 3h-4l-2-3H2'), P('M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z')]],
+      ['starred', 'Помеченные', 0, [P('M12 2.6l2.7 5.85 6.3.55-4.78 4.16 1.45 6.24L12 16.9l-5.67 2.5 1.45-6.24L3 9l6.3-.55z')]],
+      ['sent', 'Отправленные', 0, [P('M22 2 11 13'), P('M22 2 15 22 11 13 2 9z')]],
+      ['drafts', 'Черновики', 3, [P('M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z'), P('M14 2v5h5'), P('M9 13h6'), P('M9 17h4')]],
+      ['archive', 'Архив', 0, [R(3, 4, 18, 4, 1), P('M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8'), P('M10 12h4')]],
+      ['spam', 'Спам', 2, [C(12, 12, 9), P('M5.6 5.6 18.4 18.4')]],
+      ['trash', 'Корзина', 0, [P('M3 6h18'), P('M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6'), P('M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'), P('M10 11v6'), P('M14 11v6')]],
+    ];
+    const folders = defs.map(([key, label, count, nodes]) => {
+      const on = key === active;
+      return {
+        label, count, icon: this.ic(nodes, 19),
+        onClick: () => { if (this.props.onnav) this.props.onnav(key); },
+        row: { display: 'flex', alignItems: 'center', gap: '11px', padding: '7px 11px', borderRadius: '9px', fontSize: '14px', cursor: 'pointer', ...(on ? { background: '#F6E6DE', color: '#8C3A1E', fontWeight: 600 } : { color: '#4A4439', fontWeight: 500 }) },
+        iconStyle: { display: 'flex', color: on ? '#C24E2C' : '#8C8475' },
+        badge: { minWidth: '21px', height: '20px', padding: '0 6px', borderRadius: '10px', background: on ? '#C24E2C' : '#E2DDD0', color: on ? '#fff' : '#6E675B', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono',monospace" }
+      };
+    });
+    const labels = [
+      { label: 'Работа', color: '#3F6CC4' },
+      { label: 'Личное', color: '#3C9568' },
+      { label: 'Финансы', color: '#B5832C' },
+      { label: 'Поездки', color: '#845AC0' },
+    ];
+    return {
+      folders, labels,
+      compose: () => { if (this.props.onnav) this.props.onnav('compose'); },
+      penIcon: this.ic([P('M12 20h9'), P('M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z')], 17),
+      plusIcon: this.ic([P('M12 5v14'), P('M5 12h14')], 15),
+      chevronIcon: this.ic([P('M6 9l6 6 6-6')], 16),
+    };
+  }
+}
+</script>
+</body>
+</html>

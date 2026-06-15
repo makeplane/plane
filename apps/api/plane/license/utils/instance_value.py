@@ -57,3 +57,27 @@ def get_email_configuration():
             },
         ]
     )
+
+
+def get_mail_configuration():
+    return get_configuration_value(
+        [
+            {"key": "MAIL_IMAP_HOST", "default": os.environ.get("MAIL_IMAP_HOST", "dovecot")},
+            {"key": "MAIL_IMAP_PORT", "default": os.environ.get("MAIL_IMAP_PORT", 993)},
+            {"key": "MAIL_IMAP_USE_SSL", "default": os.environ.get("MAIL_IMAP_USE_SSL", "1")},
+            {"key": "MAIL_IMAP_STARTTLS", "default": os.environ.get("MAIL_IMAP_STARTTLS", "0")},
+            {"key": "MAIL_IMAP_VERIFY_SSL", "default": os.environ.get("MAIL_IMAP_VERIFY_SSL", "0")},
+            {"key": "MAIL_IMAP_TIMEOUT", "default": os.environ.get("MAIL_IMAP_TIMEOUT", 15)},
+            {"key": "MAIL_SMTP_HOST", "default": os.environ.get("MAIL_SMTP_HOST", "postfix")},
+            {"key": "MAIL_SMTP_PORT", "default": os.environ.get("MAIL_SMTP_PORT", 587)},
+            {"key": "MAIL_SMTP_USE_TLS", "default": os.environ.get("MAIL_SMTP_USE_TLS", "1")},
+            {"key": "MAIL_SMTP_USE_SSL", "default": os.environ.get("MAIL_SMTP_USE_SSL", "0")},
+            {"key": "MAIL_MASTER_USER", "default": os.environ.get("MAIL_MASTER_USER", "master")},
+            {"key": "MAIL_MASTER_PASSWORD", "default": os.environ.get("MAIL_MASTER_PASSWORD", "")},
+            {"key": "MAIL_MASTER_SEPARATOR", "default": os.environ.get("MAIL_MASTER_SEPARATOR", "*")},
+            {
+                "key": "MAIL_MAX_ATTACHMENT_BYTES",
+                "default": os.environ.get("MAIL_MAX_ATTACHMENT_BYTES", 25 * 1024 * 1024),
+            },
+        ]
+    )

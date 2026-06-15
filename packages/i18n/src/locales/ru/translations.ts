@@ -2807,6 +2807,7 @@ export default {
       open_workspace: "Открыть рабочее пространство",
       nav_home: "Перейти на главную",
       nav_inbox: "Перейти во входящие",
+      nav_mail: "Перейти в почту",
       nav_your_work: "Перейти к вашей работе",
       nav_account_settings: "Перейти к настройкам аккаунта",
       open_project: "Открыть проект",
@@ -2911,6 +2912,114 @@ export default {
       miscellaneous: "Прочее",
       preferences: "Предпочтения",
       help: "Помощь",
+    },
+  },
+  mail: {
+    topbar: {
+      title: "Почта",
+      refresh: "Обновить",
+      back: "Назад",
+    },
+    sidebar: {
+      new_label: "Новый ярлык",
+      storage: "Хранилище",
+    },
+    list: {
+      empty: "В этой папке нет писем",
+      unknown_sender: "Неизвестный отправитель",
+      star: "Пометить",
+      unstar: "Снять пометку",
+    },
+    message: {
+      empty: "Выберите письмо для чтения",
+      to: "Кому",
+      attachments: "Вложения",
+      spam_banner: "Это письмо находится в Спаме. Будьте осторожны со ссылками и вложениями.",
+      trash_banner: "Это письмо находится в Корзине.",
+    },
+    actions: {
+      archive: "В архив",
+      spam: "В спам",
+      delete: "Удалить",
+      reply: "Ответить",
+      forward: "Переслать",
+    },
+    compose: {
+      new: "Написать",
+      to: "Кому",
+      cc: "Копия",
+      subject: "Тема",
+      attach: "Прикрепить файлы",
+      save_draft: "В черновики",
+      send: "Отправить",
+      templates: "Шаблоны",
+      no_templates: "Шаблонов пока нет",
+    },
+    search: {
+      title: "Поиск",
+      placeholder: "Поиск по почте",
+      filters: "Фильтры",
+      any_folder: "Любая папка",
+      unread: "Непрочитанные",
+      with_attachments: "С вложениями",
+      empty: "Подходящих писем нет",
+    },
+    settings: {
+      title: "Настройки почты",
+      tabs: {
+        account: "Аккаунт",
+        signature: "Подпись",
+        folders: "Папки",
+        filters: "Фильтры",
+        templates: "Шаблоны",
+        forwarding: "Пересылка",
+        security: "Безопасность",
+        appearance: "Внешний вид",
+      },
+      account: {
+        email: "Почтовый ящик",
+      },
+      signature: {
+        empty: "Подписей пока нет",
+      },
+      filters: {
+        empty: "Фильтров пока нет",
+      },
+      templates: {
+        empty: "Шаблонов пока нет",
+      },
+      forwarding: {
+        enabled: "Пересылать входящие письма",
+      },
+      security: {
+        description: "Доступ к ящику определяется аккаунтом Gizmo и master-user учетными данными Dovecot.",
+      },
+      appearance: {
+        density: "Плотность",
+        comfortable: "Обычная",
+        compact: "Компактная",
+      },
+    },
+    login: {
+      title: "Подключите почтовый ящик Gizmo",
+      description:
+        "Для вашего аккаунта пока нет активного ящика уровня инстанса. Создайте ящик в god-mode или назначьте существующий ящик этому пользователю.",
+      retry: "Проверить снова",
+      back: "Назад в приложение",
+      features: {
+        imap: {
+          title: "Live IMAP",
+          description: "Письма читаются из Dovecot без локального зеркала.",
+        },
+        smtp: {
+          title: "Отправка SMTP",
+          description: "Исходящие письма отправляются через локальный Postfix.",
+        },
+        settings: {
+          title: "Настройки ящика",
+          description: "Подписи, шаблоны, ярлыки и фильтры скоупятся на ваш ящик.",
+        },
+      },
     },
   },
   customize_navigation: "Настроить навигацию",
