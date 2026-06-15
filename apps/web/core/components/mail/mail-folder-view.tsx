@@ -38,6 +38,9 @@ export const MailFolderView = observer(function MailFolderView() {
         messages={messages}
         selectedUid={selectedUid}
         loading={mail.loader}
+        hasMore={mail.hasMoreMessages(folderKey)}
+        loadingMore={mail.loadingMore}
+        onLoadMore={() => mail.loadMoreMessages(folderKey)}
         onSearch={(query) => navigate(`/mail/search?q=${encodeURIComponent(query)}`)}
         onToggleStar={(message) => mail.setFlags(folderKey, message.uid, { starred: !message.is_starred })}
       />

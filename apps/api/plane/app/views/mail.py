@@ -27,6 +27,7 @@ from plane.app.serializers.mail import (
     MailTemplateSerializer,
 )
 from plane.bgtasks.mail_send_task import send_mail_task
+from plane.bgtasks.mail_sieve_task import sync_sieve_task
 from plane.mail.client import MailClient
 from plane.mail.conf import get_mail_config
 from plane.mail.exceptions import MailAttachmentError, MailError
@@ -191,6 +192,7 @@ class MailMessagesEndpoint(MailAPIView):
             "to": request.GET.get("to"),
             "unread": request.GET.get("unread"),
             "starred": request.GET.get("starred"),
+            "label": request.GET.get("label"),
         }
         try:
             return Response(
@@ -286,6 +288,7 @@ class MailSearchEndpoint(MailAPIView):
             "to": request.GET.get("to"),
             "unread": request.GET.get("unread"),
             "starred": request.GET.get("starred"),
+            "label": request.GET.get("label"),
         }
         try:
             return Response(
@@ -388,6 +391,32 @@ class ScopedMailViewSet(ResolveMailboxMixin, BaseViewSet):
         serializer.save(mailbox=self.get_mailbox())
 
 
+class SieveSyncMixin:
+    """Re-compile and upload the mailbox Sieve script after any change.
+
+    Applied to filter and label viewsets: filters drive the generated rules and
+    labels drive the keyword each ``apply label`` action sets, so both must
+    trigger a resync.
+    """
+
+    def _trigger_sieve_sync(self):
+        mailbox = self.get_mailbox()
+        if mailbox is not None:
+            transaction.on_commit(lambda: sync_sieve_task.delay(str(mailbox.id)))
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        self._trigger_sieve_sync()
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        self._trigger_sieve_sync()
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+        self._trigger_sieve_sync()
+
+
 class MailSignatureViewSet(ScopedMailViewSet):
     model = MailSignature
     serializer_class = MailSignatureSerializer
@@ -398,12 +427,12 @@ class MailTemplateViewSet(ScopedMailViewSet):
     serializer_class = MailTemplateSerializer
 
 
-class MailFilterRuleViewSet(ScopedMailViewSet):
+class MailFilterRuleViewSet(SieveSyncMixin, ScopedMailViewSet):
     model = MailFilterRule
     serializer_class = MailFilterRuleSerializer
 
 
-class MailLabelViewSet(ScopedMailViewSet):
+class MailLabelViewSet(SieveSyncMixin, ScopedMailViewSet):
     model = MailLabel
     serializer_class = MailLabelSerializer
 
@@ -448,6 +477,14 @@ class MailSingletonEndpoint(MailAPIView):
 class MailForwardingEndpoint(MailSingletonEndpoint):
     model = MailForwarding
     serializer_class = MailForwardingSerializer
+
+    def patch(self, request):
+        response = super().patch(request)
+        if response.status_code == status.HTTP_200_OK:
+            mailbox = self.get_mailbox()
+            if mailbox is not None:
+                transaction.on_commit(lambda: sync_sieve_task.delay(str(mailbox.id)))
+        return response
 
 
 class MailPreferenceEndpoint(MailSingletonEndpoint):

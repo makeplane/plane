@@ -1,4 +1,4 @@
-protocols = imap lmtp
+protocols = imap lmtp sieve
 listen = *
 
 mail_location = maildir:/var/mail/vhosts/%d/%n/Maildir
@@ -51,6 +51,25 @@ protocol lmtp {
 
 protocol imap {
   mail_plugins = $mail_plugins
+}
+
+# ManageSieve: the Gizmo Mail API uploads per-mailbox Sieve scripts (filters +
+# out-of-office auto-reply) over this protocol, authenticating as the Dovecot
+# master user exactly like the IMAP path. STARTTLS is required because
+# disable_plaintext_auth is on; the API connects with STARTTLS + SASL PLAIN.
+service managesieve-login {
+  inet_listener sieve {
+    port = 4190
+  }
+}
+
+protocol sieve {
+  managesieve_max_line_length = 65536
+}
+
+plugin {
+  sieve = file:~/sieve;active=~/.dovecot.sieve
+  sieve_extensions = +vacation +imap4flags +editheader +fileinto +copy +body +date +relational
 }
 
 namespace inbox {

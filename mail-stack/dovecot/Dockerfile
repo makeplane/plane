@@ -16,6 +16,6 @@ RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /var/mail/vhosts
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
-EXPOSE 143 993
+EXPOSE 143 993 4190
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

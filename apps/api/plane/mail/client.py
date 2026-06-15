@@ -13,6 +13,7 @@ from plane.mail.folders import (
     validate_move_destination,
 )
 from plane.mail.imap import MailIMAPSession
+from plane.mail.labels import resolve_label_keyword
 from plane.mail.mime import extract_attachment, parse_message_bytes
 from plane.mail.smtp import save_draft_message, send_message
 
@@ -141,6 +142,10 @@ class MailClient:
         recipient = filters.get("to")
         if recipient:
             criteria.extend(["TO", str(recipient)])
+
+        label_keyword = resolve_label_keyword(self.mailbox, filters.get("label"))
+        if label_keyword:
+            criteria.extend(["KEYWORD", label_keyword])
 
         return criteria
 

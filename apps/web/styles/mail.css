@@ -109,3 +109,19 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+.mail-compose-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--mail-muted);
+  pointer-events: none;
+}
+
+.mail-compose-editor ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.mail-compose-editor ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}

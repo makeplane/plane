@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { NavLink } from "react-router";
+import { useEffect } from "react";
+import { NavLink, useNavigate } from "react-router";
 import { observer } from "mobx-react";
 import { Archive, FileText, Inbox, PenLine, Plus, Send, Settings, ShieldAlert, Star, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -34,7 +35,14 @@ const ICONS = {
 export const MailSidebar = observer(function MailSidebar() {
   const { t } = useTranslation();
   const mail = useMail();
+  const navigate = useNavigate();
   const folders = mail.folders.length ? mail.folders : FALLBACK_FOLDERS;
+
+  useEffect(() => {
+    if (!mail.labels.length) mail.fetchSettings().catch(() => undefined);
+  }, [mail]);
+
+  const initials = (mail.mailboxEmail.split("@")[0]?.slice(0, 2) || "@@").toUpperCase();
 
   return (
     <aside className="mail-sidebar flex h-full w-[280px] flex-shrink-0 flex-col border-r border-[var(--mail-border)] bg-[var(--mail-sidebar)] px-4 py-5">
@@ -89,24 +97,48 @@ export const MailSidebar = observer(function MailSidebar() {
         })}
       </nav>
 
-      <div className="mt-5 border-t border-[var(--mail-border)] pt-4">
-        <button
-          type="button"
-          className="flex h-9 w-full items-center gap-2 rounded-md px-2.5 text-sm text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
-        >
-          <Plus className="size-4" />
-          {t("mail.sidebar.new_label")}
-        </button>
-        <div className="mt-4">
-          <div className="mb-2 flex items-center justify-between text-xs text-[var(--mail-muted)]">
-            <span>{t("mail.sidebar.storage")}</span>
-            <span>0%</span>
-          </div>
-          <div className="h-1.5 rounded-full bg-[var(--mail-border)]">
-            <div className="h-1.5 w-[8%] rounded-full bg-[var(--mail-accent)]" />
-          </div>
+      <div className="mt-4 border-t border-[var(--mail-border)] pt-4">
+        <div className="mb-1 flex items-center justify-between px-2.5">
+          <span className="text-xs font-semibold uppercase tracking-wide text-[var(--mail-muted)]">
+            {t("mail.sidebar.labels")}
+          </span>
+          <button
+            type="button"
+            className="grid size-6 place-items-center rounded text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
+            title={t("mail.sidebar.new_label")}
+            onClick={() => navigate("/mail/settings?tab=folders")}
+          >
+            <Plus className="size-3.5" />
+          </button>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {mail.labels.length ? (
+            mail.labels.map((label) => (
+              <button
+                key={label.id}
+                type="button"
+                className="flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
+                onClick={() => navigate(`/mail/search?label=${encodeURIComponent(label.id)}`)}
+              >
+                <span className="size-2.5 flex-shrink-0 rounded" style={{ backgroundColor: label.color }} />
+                <span className="truncate">{label.name}</span>
+              </button>
+            ))
+          ) : (
+            <div className="px-2.5 py-1 text-xs text-[var(--mail-muted)]">{t("mail.sidebar.no_labels")}</div>
+          )}
         </div>
       </div>
+
+      <NavLink
+        to="/mail/settings?tab=account"
+        className="mt-4 flex items-center gap-3 rounded-lg border-t border-[var(--mail-border)] px-2 pt-4 hover:opacity-80"
+      >
+        <span className="grid size-8 flex-shrink-0 place-items-center rounded-full bg-[var(--mail-ink)] text-xs font-semibold text-white">
+          {initials}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-xs text-[var(--mail-muted)]">{mail.mailboxEmail}</span>
+      </NavLink>
     </aside>
   );
 });

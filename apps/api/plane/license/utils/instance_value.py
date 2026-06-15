@@ -79,5 +79,8 @@ def get_mail_configuration():
                 "key": "MAIL_MAX_ATTACHMENT_BYTES",
                 "default": os.environ.get("MAIL_MAX_ATTACHMENT_BYTES", 25 * 1024 * 1024),
             },
+            {"key": "MAIL_SIEVE_HOST", "default": os.environ.get("MAIL_SIEVE_HOST", "dovecot")},
+            {"key": "MAIL_SIEVE_PORT", "default": os.environ.get("MAIL_SIEVE_PORT", 4190)},
+            {"key": "MAIL_SIEVE_STARTTLS", "default": os.environ.get("MAIL_SIEVE_STARTTLS", "1")},
         ]
     )

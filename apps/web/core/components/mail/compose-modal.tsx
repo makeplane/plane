@@ -10,6 +10,7 @@ import { Paperclip, Save, Send, X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { useMail } from "@/hooks/store/use-mail";
 import { splitRecipients } from "./helpers";
+import { MailRichText } from "./mail-rich-text";
 
 export const ComposeModal = observer(function ComposeModal() {
   const { t } = useTranslation();
@@ -62,15 +63,10 @@ export const ComposeModal = observer(function ComposeModal() {
             </label>
           </div>
 
-          <textarea
-            className="min-h-0 flex-1 resize-none px-4 py-4 text-sm leading-7 outline-none"
-            value={draft.body_text ?? ""}
-            onChange={(event) =>
-              mail.updateComposeDraft({
-                body_text: event.target.value,
-                body_html: event.target.value.replace(/\n/g, "<br />"),
-              })
-            }
+          <MailRichText
+            html={draft.body_html ?? ""}
+            placeholder={t("mail.compose.body_placeholder")}
+            onChange={({ html, text }) => mail.updateComposeDraft({ body_html: html, body_text: text })}
           />
 
           {!!draft.uploaded_attachments?.length && (

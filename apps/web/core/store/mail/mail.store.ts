@@ -29,9 +29,11 @@ export interface IMailStore {
   loader: boolean;
   messageLoader: boolean;
   actionLoader: boolean;
+  loadingMore: boolean;
   me: TMailMeConfig | null;
   folders: TMailFolder[];
   messagesByFolder: Record<string, TMailMessageSummary[]>;
+  messagesMeta: Record<string, { page: number; perPage: number; total: number }>;
   selectedMessage: TMailMessageDetail | null;
   searchResults: TMailMessageSummary[];
   composeOpen: boolean;
@@ -48,6 +50,8 @@ export interface IMailStore {
   mailboxEmail: string;
   mailDomain: string;
   getFolderByKey: (folderKey: string) => TMailFolder | undefined;
+  hasMoreMessages: (folderKey: string) => boolean;
+  loadMoreMessages: (folderKey: string) => Promise<void>;
   fetchMe: () => Promise<TMailMeConfig>;
   createAccount: (payload: TMailAccountCreatePayload) => Promise<TMailMeConfig>;
   loginAccount: (payload: TMailAccountLoginPayload) => Promise<TMailMeConfig>;
@@ -67,6 +71,19 @@ export interface IMailStore {
   uploadAttachment: (file: File) => Promise<TMailUploadedAttachment>;
   fetchSettings: () => Promise<void>;
   patchPreferences: (data: Partial<TMailPreference>) => Promise<TMailPreference>;
+  createSignature: (data: Partial<TMailSignature>) => Promise<TMailSignature>;
+  updateSignature: (id: string, data: Partial<TMailSignature>) => Promise<TMailSignature>;
+  deleteSignature: (id: string) => Promise<void>;
+  createTemplate: (data: Partial<TMailTemplate>) => Promise<TMailTemplate>;
+  updateTemplate: (id: string, data: Partial<TMailTemplate>) => Promise<TMailTemplate>;
+  deleteTemplate: (id: string) => Promise<void>;
+  createFilter: (data: Partial<TMailFilterRule>) => Promise<TMailFilterRule>;
+  updateFilter: (id: string, data: Partial<TMailFilterRule>) => Promise<TMailFilterRule>;
+  deleteFilter: (id: string) => Promise<void>;
+  createLabel: (data: Partial<TMailLabel>) => Promise<TMailLabel>;
+  updateLabel: (id: string, data: Partial<TMailLabel>) => Promise<TMailLabel>;
+  deleteLabel: (id: string) => Promise<void>;
+  updateForwarding: (data: Partial<TMailForwarding>) => Promise<TMailForwarding>;
 }
 
 const EMPTY_COMPOSE: TMailComposePayload = {
@@ -97,9 +114,11 @@ export class MailStore implements IMailStore {
   loader = false;
   messageLoader = false;
   actionLoader = false;
+  loadingMore = false;
   me: TMailMeConfig | null = null;
   folders: TMailFolder[] = [];
   messagesByFolder: Record<string, TMailMessageSummary[]> = {};
+  messagesMeta: Record<string, { page: number; perPage: number; total: number }> = {};
   selectedMessage: TMailMessageDetail | null = null;
   searchResults: TMailMessageSummary[] = [];
   composeOpen = false;
@@ -119,9 +138,11 @@ export class MailStore implements IMailStore {
       loader: observable,
       messageLoader: observable,
       actionLoader: observable,
+      loadingMore: observable,
       me: observable,
       folders: observable,
       messagesByFolder: observable,
+      messagesMeta: observable,
       selectedMessage: observable,
       searchResults: observable,
       composeOpen: observable,
@@ -142,6 +163,7 @@ export class MailStore implements IMailStore {
       loginAccount: action,
       fetchFolders: action,
       fetchMessages: action,
+      loadMoreMessages: action,
       fetchMessage: action,
       clearSelectedMessage: action,
       setFlags: action,
@@ -155,6 +177,19 @@ export class MailStore implements IMailStore {
       saveDraft: action,
       fetchSettings: action,
       patchPreferences: action,
+      createSignature: action,
+      updateSignature: action,
+      deleteSignature: action,
+      createTemplate: action,
+      updateTemplate: action,
+      deleteTemplate: action,
+      createFilter: action,
+      updateFilter: action,
+      deleteFilter: action,
+      createLabel: action,
+      updateLabel: action,
+      deleteLabel: action,
+      updateForwarding: action,
     });
     this.service = new MailService();
   }
@@ -172,6 +207,12 @@ export class MailStore implements IMailStore {
   }
 
   getFolderByKey = computedFn((folderKey: string) => this.folders.find((folder) => folder.key === folderKey));
+
+  hasMoreMessages = computedFn((folderKey: string) => {
+    const meta = this.messagesMeta[folderKey];
+    const loaded = this.messagesByFolder[folderKey]?.length ?? 0;
+    return !!meta && loaded < meta.total;
+  });
 
   fetchMe = async () => {
     this.loader = true;
@@ -237,9 +278,44 @@ export class MailStore implements IMailStore {
     const response = await this.service.messages(folderKey, params);
     runInAction(() => {
       this.messagesByFolder[folderKey] = response.results;
+      this.messagesMeta[folderKey] = {
+        page: response.page,
+        perPage: response.per_page,
+        total: response.total,
+      };
       this.loader = false;
     });
     return response.results;
+  };
+
+  loadMoreMessages = async (folderKey: string) => {
+    const meta = this.messagesMeta[folderKey];
+    if (!meta || this.loadingMore) return;
+    this.loadingMore = true;
+    try {
+      const response = await this.service.messages(folderKey, {
+        page: meta.page + 1,
+        per_page: meta.perPage,
+      });
+      runInAction(() => {
+        const existing = this.messagesByFolder[folderKey] ?? [];
+        const seen = new Set(existing.map((message) => message.uid));
+        this.messagesByFolder[folderKey] = [
+          ...existing,
+          ...response.results.filter((message) => !seen.has(message.uid)),
+        ];
+        this.messagesMeta[folderKey] = {
+          page: response.page,
+          perPage: response.per_page,
+          total: response.total,
+        };
+        this.loadingMore = false;
+      });
+    } catch {
+      runInAction(() => {
+        this.loadingMore = false;
+      });
+    }
   };
 
   fetchMessage = async (folderKey: string, uid: string) => {
@@ -375,6 +451,106 @@ export class MailStore implements IMailStore {
     const response = await this.service.patchPreferences(data);
     runInAction(() => {
       this.preferences = response;
+    });
+    return response;
+  };
+
+  createSignature = async (data: Partial<TMailSignature>) => {
+    const response = await this.service.createSignature(data);
+    runInAction(() => {
+      this.signatures = [...this.signatures, response];
+    });
+    return response;
+  };
+
+  updateSignature = async (id: string, data: Partial<TMailSignature>) => {
+    const response = await this.service.updateSignature(id, data);
+    runInAction(() => {
+      this.signatures = this.signatures.map((item) => (item.id === id ? response : item));
+    });
+    return response;
+  };
+
+  deleteSignature = async (id: string) => {
+    await this.service.deleteSignature(id);
+    runInAction(() => {
+      this.signatures = this.signatures.filter((item) => item.id !== id);
+    });
+  };
+
+  createTemplate = async (data: Partial<TMailTemplate>) => {
+    const response = await this.service.createTemplate(data);
+    runInAction(() => {
+      this.templates = [...this.templates, response];
+    });
+    return response;
+  };
+
+  updateTemplate = async (id: string, data: Partial<TMailTemplate>) => {
+    const response = await this.service.updateTemplate(id, data);
+    runInAction(() => {
+      this.templates = this.templates.map((item) => (item.id === id ? response : item));
+    });
+    return response;
+  };
+
+  deleteTemplate = async (id: string) => {
+    await this.service.deleteTemplate(id);
+    runInAction(() => {
+      this.templates = this.templates.filter((item) => item.id !== id);
+    });
+  };
+
+  createFilter = async (data: Partial<TMailFilterRule>) => {
+    const response = await this.service.createFilter(data);
+    runInAction(() => {
+      this.filters = [...this.filters, response];
+    });
+    return response;
+  };
+
+  updateFilter = async (id: string, data: Partial<TMailFilterRule>) => {
+    const response = await this.service.updateFilter(id, data);
+    runInAction(() => {
+      this.filters = this.filters.map((item) => (item.id === id ? response : item));
+    });
+    return response;
+  };
+
+  deleteFilter = async (id: string) => {
+    await this.service.deleteFilter(id);
+    runInAction(() => {
+      this.filters = this.filters.filter((item) => item.id !== id);
+    });
+  };
+
+  createLabel = async (data: Partial<TMailLabel>) => {
+    const response = await this.service.createLabel(data);
+    runInAction(() => {
+      this.labels = [...this.labels, response];
+    });
+    return response;
+  };
+
+  updateLabel = async (id: string, data: Partial<TMailLabel>) => {
+    const response = await this.service.updateLabel(id, data);
+    runInAction(() => {
+      this.labels = this.labels.map((item) => (item.id === id ? response : item));
+    });
+    return response;
+  };
+
+  deleteLabel = async (id: string) => {
+    await this.service.deleteLabel(id);
+    runInAction(() => {
+      this.labels = this.labels.filter((item) => item.id !== id);
+    });
+  };
+
+  updateForwarding = async (data: Partial<TMailForwarding>) => {
+    const response = await this.service.patchForwarding(data);
+    runInAction(() => {
+      this.forwarding = response;
     });
     return response;
   };

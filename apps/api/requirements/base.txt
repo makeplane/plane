@@ -73,3 +73,5 @@ drf-spectacular==0.28.0
 nh3==0.2.18
 # imap client
 IMAPClient==3.0.1
+# managesieve client (server-side filters / auto-reply)
+sievelib==1.4.0

@@ -38,6 +38,9 @@ class MailConfiguration:
     master_password: str
     master_separator: str
     max_attachment_bytes: int
+    sieve_host: str
+    sieve_port: int
+    sieve_starttls: bool
 
 
 def get_mail_config() -> MailConfiguration:
@@ -56,6 +59,9 @@ def get_mail_config() -> MailConfiguration:
         master_password,
         master_separator,
         max_attachment_bytes,
+        sieve_host,
+        sieve_port,
+        sieve_starttls,
     ) = get_mail_configuration()
 
     return MailConfiguration(
@@ -73,4 +79,7 @@ def get_mail_config() -> MailConfiguration:
         master_password=master_password or "",
         master_separator=master_separator or "*",
         max_attachment_bytes=_to_int(max_attachment_bytes, 25 * 1024 * 1024),
+        sieve_host=sieve_host or imap_host or "dovecot",
+        sieve_port=_to_int(sieve_port, 4190),
+        sieve_starttls=_to_bool(sieve_starttls, True),
     )

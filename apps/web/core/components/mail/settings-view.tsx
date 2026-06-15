@@ -9,6 +9,14 @@ import { useSearchParams } from "react-router";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { useMail } from "@/hooks/store/use-mail";
+import { MailAccountSettings } from "./settings/account-tab";
+import { MailAppearanceSettings } from "./settings/appearance-tab";
+import { MailFiltersSettings } from "./settings/filters-tab";
+import { MailFoldersSettings } from "./settings/folders-tab";
+import { MailForwardingSettings } from "./settings/forwarding-tab";
+import { MailSecuritySettings } from "./settings/security-tab";
+import { MailSignatureSettings } from "./settings/signature-tab";
+import { MailTemplatesSettings } from "./settings/templates-tab";
 
 const TABS = ["account", "signature", "folders", "filters", "templates", "forwarding", "security", "appearance"];
 
@@ -16,17 +24,21 @@ export const MailSettingsView = observer(function MailSettingsView() {
   const { t } = useTranslation();
   const mail = useMail();
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "account";
+  const activeTab = TABS.includes(searchParams.get("tab") ?? "") ? (searchParams.get("tab") as string) : "account";
 
   useEffect(() => {
     mail.fetchSettings().catch(() => undefined);
+    if (!mail.folders.length) mail.fetchFolders().catch(() => undefined);
   }, [mail]);
 
   return (
     <div className="flex size-full overflow-hidden bg-[var(--mail-bg)]">
-      <aside className="w-[260px] flex-shrink-0 border-r border-[var(--mail-border)] bg-[var(--mail-panel)] p-5">
-        <div className="mb-4 text-lg font-semibold">{t("mail.settings.title")}</div>
-        <nav className="space-y-1">
+      <aside className="flex w-[240px] flex-shrink-0 flex-col border-r border-[var(--mail-border)] bg-[var(--mail-panel)] p-4">
+        <div className="px-2 pb-3">
+          <div className="text-lg font-semibold text-[var(--mail-ink)]">{t("mail.settings.title")}</div>
+          <div className="mt-0.5 text-xs text-[var(--mail-muted)]">{t("mail.settings.subtitle")}</div>
+        </div>
+        <nav className="space-y-0.5">
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -39,99 +51,15 @@ export const MailSettingsView = observer(function MailSettingsView() {
           ))}
         </nav>
       </aside>
-      <section className="min-w-0 flex-1 overflow-y-auto p-6">
-        <div className="max-w-3xl">
-          <h1 className="text-xl font-semibold text-[var(--mail-ink)]">{t(`mail.settings.tabs.${activeTab}`)}</h1>
-          <div className="mt-5 rounded-md border border-[var(--mail-border)] bg-white p-5">
-            {activeTab === "account" && (
-              <div className="space-y-3 text-sm">
-                <div className="text-[var(--mail-muted)]">{t("mail.settings.account.email")}</div>
-                <div className="font-medium text-[var(--mail-ink)]">{mail.mailboxEmail}</div>
-              </div>
-            )}
-            {activeTab === "signature" && (
-              <div className="space-y-3">
-                {mail.signatures.length ? (
-                  mail.signatures.map((signature) => (
-                    <div key={signature.id} className="rounded-md border border-[var(--mail-border)] p-3">
-                      <div className="font-medium">{signature.name}</div>
-                      <div className="mt-2 text-sm text-[var(--mail-muted)]">{signature.content_text}</div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-sm text-[var(--mail-muted)]">{t("mail.settings.signature.empty")}</div>
-                )}
-              </div>
-            )}
-            {activeTab === "folders" && (
-              <div className="space-y-2">
-                {mail.folders.map((folder) => (
-                  <div key={folder.key} className="flex items-center justify-between rounded-md border border-[var(--mail-border)] px-3 py-2 text-sm">
-                    <span>{folder.label}</span>
-                    <span className="text-[var(--mail-muted)]">{folder.total}</span>
-                  </div>
-                ))}
-                {mail.labels.map((label) => (
-                  <div key={label.id} className="flex items-center gap-2 rounded-md border border-[var(--mail-border)] px-3 py-2 text-sm">
-                    <span className="size-2 rounded-full" style={{ backgroundColor: label.color }} />
-                    <span>{label.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {activeTab === "filters" && (
-              <div className="space-y-2">
-                {mail.filters.length ? (
-                  mail.filters.map((filter) => (
-                    <div key={filter.id} className="rounded-md border border-[var(--mail-border)] px-3 py-2 text-sm">
-                      {filter.name}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-sm text-[var(--mail-muted)]">{t("mail.settings.filters.empty")}</div>
-                )}
-              </div>
-            )}
-            {activeTab === "templates" && (
-              <div className="space-y-2">
-                {mail.templates.length ? (
-                  mail.templates.map((template) => (
-                    <div key={template.id} className="rounded-md border border-[var(--mail-border)] px-3 py-2 text-sm">
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-[var(--mail-muted)]">{template.subject}</div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-sm text-[var(--mail-muted)]">{t("mail.settings.templates.empty")}</div>
-                )}
-              </div>
-            )}
-            {activeTab === "forwarding" && (
-              <label className="flex items-center justify-between text-sm">
-                <span>{t("mail.settings.forwarding.enabled")}</span>
-                <input checked={!!mail.forwarding?.forward_enabled} readOnly type="checkbox" />
-              </label>
-            )}
-            {activeTab === "security" && (
-              <div className="text-sm text-[var(--mail-muted)]">{t("mail.settings.security.description")}</div>
-            )}
-            {activeTab === "appearance" && (
-              <div className="grid gap-4 text-sm">
-                <label>
-                  <span className="mb-1 block text-[var(--mail-muted)]">{t("mail.settings.appearance.density")}</span>
-                  <select
-                    className="h-10 rounded-md border border-[var(--mail-border)] px-3"
-                    value={mail.preferences?.density ?? "comfortable"}
-                    onChange={(event) => mail.patchPreferences({ density: event.target.value })}
-                  >
-                    <option value="comfortable">{t("mail.settings.appearance.comfortable")}</option>
-                    <option value="compact">{t("mail.settings.appearance.compact")}</option>
-                  </select>
-                </label>
-              </div>
-            )}
-          </div>
-        </div>
+      <section className="min-w-0 flex-1 overflow-y-auto px-8 py-6">
+        {activeTab === "account" && <MailAccountSettings />}
+        {activeTab === "signature" && <MailSignatureSettings />}
+        {activeTab === "folders" && <MailFoldersSettings />}
+        {activeTab === "filters" && <MailFiltersSettings />}
+        {activeTab === "templates" && <MailTemplatesSettings />}
+        {activeTab === "forwarding" && <MailForwardingSettings />}
+        {activeTab === "security" && <MailSecuritySettings />}
+        {activeTab === "appearance" && <MailAppearanceSettings />}
       </section>
     </div>
   );

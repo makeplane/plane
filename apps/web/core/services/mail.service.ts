@@ -141,24 +141,144 @@ export class MailService extends APIService {
     return this.get("/api/mail/signatures/").then((res) => res?.data);
   }
 
+  async createSignature(data: Partial<TMailSignature>): Promise<TMailSignature> {
+    return this.post("/api/mail/signatures/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateSignature(id: string, data: Partial<TMailSignature>): Promise<TMailSignature> {
+    return this.patch(`/api/mail/signatures/${id}/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async deleteSignature(id: string): Promise<void> {
+    return this.delete(`/api/mail/signatures/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async templates(): Promise<TMailTemplate[]> {
     return this.get("/api/mail/templates/").then((res) => res?.data);
+  }
+
+  async createTemplate(data: Partial<TMailTemplate>): Promise<TMailTemplate> {
+    return this.post("/api/mail/templates/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateTemplate(id: string, data: Partial<TMailTemplate>): Promise<TMailTemplate> {
+    return this.patch(`/api/mail/templates/${id}/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async deleteTemplate(id: string): Promise<void> {
+    return this.delete(`/api/mail/templates/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   async filters(): Promise<TMailFilterRule[]> {
     return this.get("/api/mail/filters/").then((res) => res?.data);
   }
 
+  async createFilter(data: Partial<TMailFilterRule>): Promise<TMailFilterRule> {
+    return this.post("/api/mail/filters/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateFilter(id: string, data: Partial<TMailFilterRule>): Promise<TMailFilterRule> {
+    return this.patch(`/api/mail/filters/${id}/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async deleteFilter(id: string): Promise<void> {
+    return this.delete(`/api/mail/filters/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async labels(): Promise<TMailLabel[]> {
     return this.get("/api/mail/labels/").then((res) => res?.data);
+  }
+
+  async createLabel(data: Partial<TMailLabel>): Promise<TMailLabel> {
+    return this.post("/api/mail/labels/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateLabel(id: string, data: Partial<TMailLabel>): Promise<TMailLabel> {
+    return this.patch(`/api/mail/labels/${id}/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async deleteLabel(id: string): Promise<void> {
+    return this.delete(`/api/mail/labels/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   async savedSearches(): Promise<TMailSavedSearch[]> {
     return this.get("/api/mail/saved-searches/").then((res) => res?.data);
   }
 
+  async createSavedSearch(data: Partial<TMailSavedSearch>): Promise<TMailSavedSearch> {
+    return this.post("/api/mail/saved-searches/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async deleteSavedSearch(id: string): Promise<void> {
+    return this.delete(`/api/mail/saved-searches/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async forwarding(): Promise<TMailForwarding> {
     return this.get("/api/mail/forwarding/").then((res) => res?.data);
+  }
+
+  async patchForwarding(data: Partial<TMailForwarding>): Promise<TMailForwarding> {
+    return this.patch("/api/mail/forwarding/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   async preferences(): Promise<TMailPreference> {

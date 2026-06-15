@@ -17,6 +17,9 @@ type Props = {
   messages: TMailMessageSummary[];
   selectedUid?: string;
   loading?: boolean;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
   onSearch?: (query: string) => void;
   onToggleStar: (message: TMailMessageSummary) => void;
 };
@@ -24,7 +27,7 @@ type Props = {
 const SKELETON_ROWS = ["one", "two", "three", "four", "five", "six", "seven"];
 
 export const MessageList = observer(function MessageList(props: Props) {
-  const { folderKey, messages, selectedUid, loading, onSearch, onToggleStar } = props;
+  const { folderKey, messages, selectedUid, loading, hasMore, loadingMore, onLoadMore, onSearch, onToggleStar } = props;
   const { t } = useTranslation();
 
   return (
@@ -89,6 +92,19 @@ export const MessageList = observer(function MessageList(props: Props) {
         ) : (
           <div className="flex h-full items-center justify-center px-8 text-center text-sm text-[var(--mail-muted)]">
             {t("mail.list.empty")}
+          </div>
+        )}
+
+        {!loading && hasMore && (
+          <div className="p-3">
+            <button
+              type="button"
+              onClick={onLoadMore}
+              disabled={loadingMore}
+              className="w-full rounded-md border border-[var(--mail-border)] bg-white py-2 text-sm font-medium text-[var(--mail-muted)] hover:border-[var(--mail-accent)] hover:text-[var(--mail-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loadingMore ? t("mail.list.loading_more") : t("mail.list.load_more")}
+            </button>
           </div>
         )}
       </div>
