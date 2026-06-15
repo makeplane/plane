@@ -20,19 +20,20 @@ userdb {
   args = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
 }
 
+# The auth/LMTP sockets live in the shared dovecot-auth volume and are consumed
+# by the Postfix process in the *other* container. The dovecot image has no
+# "postfix" user, and matching UIDs across two images is fragile, so we grant
+# access by socket mode (0666) instead of by owner. The volume is only shared
+# between the trusted postfix/dovecot containers.
 service auth {
   unix_listener /var/spool/postfix/private/auth {
-    mode = 0660
-    user = postfix
-    group = postfix
+    mode = 0666
   }
 }
 
 service lmtp {
   unix_listener /var/spool/postfix/private/dovecot-lmtp {
-    mode = 0600
-    user = postfix
-    group = postfix
+    mode = 0666
   }
 }
 
