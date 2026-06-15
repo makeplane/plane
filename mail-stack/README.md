@@ -4,6 +4,36 @@ Postfix + Dovecot + Rspamd + Roundcube, deployed alongside Gizmo on the
 same host. TLS certificates are issued by Gizmo's Caddy proxy and shared
 read-only into Postfix/Dovecot via a named Docker volume.
 
+Mailboxes, domains and aliases live in **plane-db** (tables `mailboxes`,
+`mail_domains`, `mail_aliases`) and are managed from the god-mode panel
+(**Почтовый сервер**). Postfix reads them via `pgsql:` maps and Dovecot
+authenticates against the `mailboxes.password_hash` (SHA512-CRYPT). Changes
+take effect immediately — no file edits or container restarts.
+
+## Local mode (no public domain)
+
+To set everything up before a public domain is provisioned (e.g. to create all
+mailboxes and point a desktop client at the server), just start the stack
+without `MAIL_DOMAIN`:
+
+```bash
+./setup.sh start all     # or menu option 4: "Start mail server only"
+```
+
+setup.sh defaults `MAIL_DOMAIN=mail.local`, sets `MAIL_LOCAL=true`, and the
+Postfix/Dovecot entrypoints generate a self-signed certificate so the stack
+starts without Caddy/Let's Encrypt. Then:
+
+- Manage mailboxes/aliases in god-mode → **Почтовый сервер**
+  (`http://localhost/god-mode` → Почтовый сервер).
+- Connect a mail client: IMAP `localhost:993`, SMTP `localhost:587` (STARTTLS),
+  accept the self-signed certificate.
+- Webmail (Roundcube): `http://localhost:8025`, also embedded in the god-mode
+  page.
+
+Sending mail to the public internet still requires a real domain, DNS, rDNS and
+an open outbound port 25 — see the production steps below.
+
 ## Architecture
 
 ```
@@ -75,21 +105,12 @@ doesn't exist yet — that's the signal to fix DNS first.
 
 ### 4. Create the noreply mailbox (used by Gizmo)
 
-```bash
-# Generate a SHA512-CRYPT hash (interactive; type the password twice):
-docker exec -it dovecot doveadm pw -s SHA512-CRYPT
+Mailboxes are managed from god-mode → **Почтовый сервер** (no file edits). Log in
+as instance owner, open the page, and create `noreply@example.com` with a
+password. The domain row is created automatically from the address. Repeat for
+`admin@example.com` and any other mailboxes/aliases you need.
 
-# Append the line to dovecot/users (replace HASH with the actual output):
-echo 'noreply@example.com:{SHA512-CRYPT}HASH' >> dovecot/users
-
-# Add the mailbox to Postfix virtual-mailbox-users.tmpl
-# (noreply@<domain> is already in the default template — verify it's there).
-
-# Restart so dovecot/postfix re-read the files:
-docker compose restart postfix dovecot
-```
-
-Repeat for `admin@example.com` and any other mailboxes you need.
+Changes are written to plane-db and picked up by Postfix/Dovecot immediately.
 
 ### 5. Generate DKIM key
 
@@ -159,8 +180,9 @@ These paths are critical:
 - `mail-stack/data/mail/` — all mailboxes (Maildir).
 - `mail-stack/data/rspamd/dkim.*.key` — DKIM private keys. Loss requires
   generating a new key and updating the DNS TXT record.
-- `mail-stack/dovecot/users` — password hashes.
-- `mail-stack/postfix/virtual-*.tmpl` — mailbox/alias definitions.
+- **plane-db** — mailbox/domain/alias definitions and password hashes now live
+  in the `mailboxes`, `mail_domains`, `mail_aliases` tables (backed up together
+  with the rest of Gizmo's Postgres data via `./setup.sh` backup).
 
 ## Notes / known landmines
 

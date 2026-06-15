@@ -175,6 +175,44 @@ function initialize_local_env_files() {
         echo "LIVE_SERVER_SECRET_KEY=$(new_secret_key)" >> "$API_ENV_PATH"
         echo "Added LIVE_SERVER_SECRET_KEY to apps/api/.env"
     fi
+
+    apply_mail_env_defaults
+}
+
+# Resolve the effective mail domain / local-mode flags. When MAIL_DOMAIN is
+# unset in the root .env we run in local mode: domain "mail.local", self-signed
+# TLS, webmail on localhost. IMPORTANT: we deliberately do NOT write MAIL_DOMAIN
+# into the root .env in local mode — the Caddy proxy enables its mail site (and
+# would attempt a doomed Let's Encrypt cert for mail.mail.local) whenever
+# MAIL_DOMAIN is set there. Echoes "<domain>|<true|false>" for callers.
+function resolve_mail_domain() {
+    local mail_domain
+    mail_domain=$(get_env_value "MAIL_DOMAIN" "$ROOT_ENV_PATH")
+    if [[ -z "$mail_domain" ]]; then
+        echo "mail.local|true"
+    else
+        echo "${mail_domain}|false"
+    fi
+}
+
+# Expose the resolved mail settings to the API container (read live via
+# os.environ by god-mode). Written before the API container is (re)created.
+function apply_mail_env_defaults() {
+    local resolved mail_domain mail_local
+    resolved=$(resolve_mail_domain)
+    mail_domain="${resolved%%|*}"
+    mail_local="${resolved##*|}"
+
+    local webmail_url
+    if [[ "$mail_local" == "true" ]]; then
+        webmail_url="http://localhost:8025"
+    else
+        webmail_url="https://webmail.${mail_domain}"
+    fi
+
+    update_env_file "MAIL_DOMAIN" "$mail_domain" "$API_ENV_PATH"
+    update_env_file "MAIL_LOCAL" "$mail_local" "$API_ENV_PATH"
+    update_env_file "WEBMAIL_URL" "$webmail_url" "$API_ENV_PATH"
 }
 
 function compose_base_args() {
@@ -219,20 +257,17 @@ function initialize_mail_env_files() {
         fi
     fi
 
-    local mail_domain
-    mail_domain=$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")
-    if [[ -z "$mail_domain" ]]; then
-        mail_domain=$(get_env_value "MAIL_DOMAIN" "$ROOT_ENV_PATH")
-        if [[ -n "$mail_domain" ]]; then
-            update_env_file "MAIL_DOMAIN" "$mail_domain" "$MAIL_ENV_PATH"
-        fi
-    fi
+    # Resolve the effective mail domain (defaulting to mail.local for local mode)
+    # and write it into the mail-stack .env so the mail compose project uses it.
+    # The root .env is intentionally left untouched so the Caddy proxy does not
+    # try to issue a Let's Encrypt cert for a non-public local domain.
+    local resolved mail_domain mail_local
+    resolved=$(resolve_mail_domain)
+    mail_domain="${resolved%%|*}"
+    mail_local="${resolved##*|}"
 
-    mail_domain=$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")
-    if [[ -z "$mail_domain" ]]; then
-        echo "ERROR: MAIL_DOMAIN is not set. Set it in .env and mail-stack/.env before starting the mail stack."
-        exit 1
-    fi
+    update_env_file "MAIL_DOMAIN" "$mail_domain" "$MAIL_ENV_PATH"
+    update_env_file "MAIL_LOCAL" "$mail_local" "$MAIL_ENV_PATH"
 }
 
 function initialize_forgejo_env_files() {
@@ -433,10 +468,23 @@ function start_mail_services() {
         exit $LAST_COMPOSE_EXIT_CODE
     fi
 
+    local mail_domain
+    mail_domain=$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")
+    local mail_local
+    mail_local=$(get_env_value "MAIL_LOCAL" "$MAIL_ENV_PATH")
+
     echo "   Mail stack started"
-    echo "   SMTP:    mail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH"):587"
-    echo "   IMAPS:   mail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH"):993"
-    echo "   Webmail: https://webmail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")"
+    if [[ "$mail_local" == "true" ]]; then
+        echo "   Local mode (no domain): self-signed TLS, mail.${mail_domain}"
+        echo "   SMTP:    localhost:587 (STARTTLS)"
+        echo "   IMAPS:   localhost:993"
+        echo "   Webmail: http://localhost:8025"
+        echo "   Manage mailboxes in god-mode -> Mail (http://localhost/god-mode)"
+    else
+        echo "   SMTP:    mail.${mail_domain}:587"
+        echo "   IMAPS:   mail.${mail_domain}:993"
+        echo "   Webmail: https://webmail.${mail_domain}"
+    fi
     echo ""
 }
 

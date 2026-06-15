@@ -4,13 +4,20 @@
  * See the LICENSE file for details.
  */
 
-import { Image, BrainCog, Cog, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, Server } from "lucide-react";
 // gizmo imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
-export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "image";
+export type TCoreSidebarMenuKey =
+  | "general"
+  | "email"
+  | "mail"
+  | "workspace"
+  | "authentication"
+  | "ai"
+  | "image";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -24,6 +31,12 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Email",
     description: "Configure your SMTP controls.",
     href: `/email/`,
+  },
+  mail: {
+    Icon: Server,
+    name: "Почтовый сервер",
+    description: "Ящики, алиасы и веб-почта.",
+    href: `/mail/`,
   },
   workspace: {
     Icon: WorkspaceIcon,

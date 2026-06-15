@@ -3,9 +3,11 @@ FROM debian:12-slim
 RUN apt-get update && apt-get install -y \
     postfix \
     postfix-pcre \
+    postfix-pgsql \
     ca-certificates \
     libsasl2-modules \
     gettext-base \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

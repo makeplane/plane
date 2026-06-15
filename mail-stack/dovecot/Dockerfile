@@ -4,9 +4,11 @@ RUN apt-get update && apt-get install -y \
     dovecot-core \
     dovecot-imapd \
     dovecot-lmtpd \
+    dovecot-pgsql \
     dovecot-sieve \
     dovecot-managesieved \
     gettext-base \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /var/mail/vhosts -m

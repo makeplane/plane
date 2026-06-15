@@ -1,0 +1,6 @@
+driver = pgsql
+connect = host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}
+
+default_pass_scheme = SHA512-CRYPT
+
+password_query = SELECT email AS user, password_hash AS password FROM mailboxes WHERE email = '%u' AND is_active = true

@@ -7,16 +7,17 @@ inet_protocols = ipv4
 mynetworks = 127.0.0.0/8 [::1]/128
 
 mydestination = localhost
-virtual_mailbox_domains = hash:/etc/postfix/virtual-mailbox-domains
-virtual_mailbox_maps = hash:/etc/postfix/virtual-mailbox-users
-virtual_alias_maps = hash:/etc/postfix/virtual-aliases
+virtual_mailbox_domains = pgsql:/etc/postfix/pgsql-virtual-mailbox-domains.cf
+virtual_mailbox_maps = pgsql:/etc/postfix/pgsql-virtual-mailbox-maps.cf
+virtual_alias_maps = pgsql:/etc/postfix/pgsql-virtual-alias-maps.cf
 
 virtual_transport = lmtp:unix:private/dovecot-lmtp
 
-# TLS — certs are issued by the Gizmo Caddy proxy for mail.${MAIL_DOMAIN}
-# and mounted read-only from the shared caddy-data volume.
-smtpd_tls_cert_file = /etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.crt
-smtpd_tls_key_file  = /etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.key
+# TLS — in production the cert is issued by the Gizmo Caddy proxy for
+# mail.${MAIL_DOMAIN} (mounted read-only from caddy-data). In local mode the
+# entrypoint generates a self-signed cert and rewrites the two paths below.
+smtpd_tls_cert_file = __SSL_CERT_PATH__
+smtpd_tls_key_file  = __SSL_KEY_PATH__
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtp_tls_security_level = may

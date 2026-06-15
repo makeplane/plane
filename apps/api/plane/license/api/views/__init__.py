@@ -26,3 +26,10 @@ from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
 )
+
+
+from .mailbox import (
+    MailboxEndpoint,
+    MailAliasEndpoint,
+    MailConfigEndpoint,
+)

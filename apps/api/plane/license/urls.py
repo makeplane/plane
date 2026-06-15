@@ -18,6 +18,9 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    MailboxEndpoint,
+    MailAliasEndpoint,
+    MailConfigEndpoint,
 )
 
 urlpatterns = [
@@ -71,4 +74,10 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # Mail stack administration (god-mode -> Mail)
+    path("mail/config/", MailConfigEndpoint.as_view(), name="instance-mail-config"),
+    path("mailboxes/", MailboxEndpoint.as_view(), name="instance-mailboxes"),
+    path("mailboxes/<uuid:pk>/", MailboxEndpoint.as_view(), name="instance-mailbox-detail"),
+    path("mail-aliases/", MailAliasEndpoint.as_view(), name="instance-mail-aliases"),
+    path("mail-aliases/<uuid:pk>/", MailAliasEndpoint.as_view(), name="instance-mail-alias-detail"),
 ]

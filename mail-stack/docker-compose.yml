@@ -7,6 +7,10 @@ services:
     restart: unless-stopped
     environment:
       MAIL_DOMAIN: ${MAIL_DOMAIN}
+      POSTGRES_HOST: ${POSTGRES_HOST:-plane-db}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "25:25"
       - "587:587"
@@ -14,9 +18,9 @@ services:
     volumes:
       - ./postfix/main.cf.tmpl:/etc/postfix/main.cf.tmpl:ro
       - ./postfix/master.cf.tmpl:/etc/postfix/master.cf.tmpl:ro
-      - ./postfix/virtual-mailbox-domains.tmpl:/etc/postfix/virtual-mailbox-domains.tmpl:ro
-      - ./postfix/virtual-mailbox-users.tmpl:/etc/postfix/virtual-mailbox-users.tmpl:ro
-      - ./postfix/virtual-aliases.tmpl:/etc/postfix/virtual-aliases.tmpl:ro
+      - ./postfix/pgsql-virtual-mailbox-domains.cf.tmpl:/etc/postfix/pgsql-virtual-mailbox-domains.cf.tmpl:ro
+      - ./postfix/pgsql-virtual-mailbox-maps.cf.tmpl:/etc/postfix/pgsql-virtual-mailbox-maps.cf.tmpl:ro
+      - ./postfix/pgsql-virtual-alias-maps.cf.tmpl:/etc/postfix/pgsql-virtual-alias-maps.cf.tmpl:ro
       - ./data/postfix:/var/lib/postfix
       - caddy-data:/etc/letsencrypt-caddy:ro
       - dovecot-auth:/var/spool/postfix/private
@@ -25,6 +29,7 @@ services:
       - rspamd
     networks:
       - mail-internal
+      - plane_default
 
   dovecot:
     build:
@@ -34,17 +39,22 @@ services:
     restart: unless-stopped
     environment:
       MAIL_DOMAIN: ${MAIL_DOMAIN}
+      POSTGRES_HOST: ${POSTGRES_HOST:-plane-db}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "143:143"
       - "993:993"
     volumes:
       - ./dovecot/dovecot.conf.tmpl:/etc/dovecot/dovecot.conf.tmpl:ro
-      - ./dovecot/users:/etc/dovecot/users:ro
+      - ./dovecot/dovecot-sql.conf.ext.tmpl:/etc/dovecot/dovecot-sql.conf.ext.tmpl:ro
       - ./data/mail:/var/mail/vhosts
       - caddy-data:/etc/letsencrypt-caddy:ro
       - dovecot-auth:/var/spool/postfix/private
     networks:
       - mail-internal
+      - plane_default
 
   rspamd:
     image: rspamd/rspamd:latest
@@ -80,8 +90,13 @@ services:
       ROUNDCUBEMAIL_SMTP_SERVER: tls://postfix
       ROUNDCUBEMAIL_SMTP_PORT: "587"
       ROUNDCUBEMAIL_DB_TYPE: sqlite
+    ports:
+      # Published on localhost for local mode (no domain). In production the
+      # webmail is reached via Caddy at https://webmail.<MAIL_DOMAIN>.
+      - "127.0.0.1:8025:80"
     volumes:
       - ./data/roundcube:/var/roundcube/db
+      - ./roundcube/custom.php:/var/roundcube/config/custom.php:ro
     depends_on:
       - postfix
       - dovecot

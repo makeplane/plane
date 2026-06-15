@@ -1,0 +1,5 @@
+hosts = ${POSTGRES_HOST}
+user = ${POSTGRES_USER}
+password = ${POSTGRES_PASSWORD}
+dbname = ${POSTGRES_DB}
+query = SELECT 1 FROM mail_domains WHERE domain='%s' AND is_active = true
