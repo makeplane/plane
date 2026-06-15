@@ -200,12 +200,14 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
-        # Cover image must be an image attachment belonging to this issue
+        # Cover image must be an image attachment belonging to this issue. A new
+        # issue has no attachments yet, so a cover can only be set on update.
         if attrs.get("cover_image_attachment"):
             cover = attrs["cover_image_attachment"]
             if (
-                cover.entity_type != FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
-                or (self.instance is not None and str(cover.issue_id) != str(self.instance.id))
+                self.instance is None
+                or cover.entity_type != FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
+                or str(cover.issue_id) != str(self.instance.id)
                 or str(cover.project_id) != str(self.context.get("project_id"))
                 or not str(cover.attributes.get("type", "")).startswith("image/")
             ):

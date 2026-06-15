@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useIssueCoverImage } from "@/hooks/use-issue-cover-image";
@@ -21,6 +21,10 @@ export const KanbanIssueCoverImage = observer(function KanbanIssueCoverImage(pro
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const coverImageUrl = useIssueCoverImage(workspaceSlug?.toString(), projectId, issueId, coverImageAttachmentId);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [coverImageUrl]);
 
   if (!coverImageUrl || imageLoadError) {
     return null;

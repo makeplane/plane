@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { cn } from "@plane/utils";
@@ -26,6 +26,10 @@ export const IssueDetailCoverImage = observer(function IssueDetailCoverImage(pro
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const coverImageUrl = useIssueCoverImage(workspaceSlug?.toString(), projectId, issueId, coverImageAttachmentId);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [coverImageUrl]);
 
   if (!coverImageUrl || imageLoadError) {
     return null;
