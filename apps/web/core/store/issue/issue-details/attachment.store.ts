@@ -185,6 +185,8 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) => {
+    const wasCoverImage = this.rootIssueStore.issues.getIssueById(issueId)?.cover_image_attachment_id === attachmentId;
+
     const response = await this.issueAttachmentService.deleteIssueAttachment(
       workspaceSlug,
       projectId,
@@ -202,6 +204,14 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         attachment_count: this.getAttachmentsCountByIssueId(issueId),
       });
     });
+
+    // Deleting the attachment that backed the cover would leave a dangling
+    // cover_image_attachment_id, so clear it on the work item too.
+    if (wasCoverImage) {
+      await this.rootIssueDetailStore.issue.updateIssue(workspaceSlug, projectId, issueId, {
+        cover_image_attachment_id: null,
+      });
+    }
 
     return response;
   };
