@@ -97,7 +97,9 @@ class MailboxEndpoint(BaseAPIView):
 
     def delete(self, request, pk):
         mailbox = Mailbox.objects.get(pk=pk)
-        mailbox.delete()
+        # Hard delete so Postfix/Dovecot stop serving the address immediately;
+        # a soft delete would leave is_active=true and keep auth working.
+        mailbox.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -141,7 +143,8 @@ class MailAliasEndpoint(BaseAPIView):
 
     def delete(self, request, pk):
         alias = MailAlias.objects.get(pk=pk)
-        alias.delete()
+        # Hard delete so Postfix stops resolving the alias immediately.
+        alias.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -156,9 +159,21 @@ class MailConfigEndpoint(BaseAPIView):
             os.environ.get("MAIL_LOCAL", "").strip().lower() == "true"
             or not mail_domain
         )
-        webmail_url = os.environ.get("WEBMAIL_URL") or (
-            "http://localhost:8025" if mail_local else f"https://webmail.{mail_domain}"
-        )
+
+        webmail_url = os.environ.get("WEBMAIL_URL")
+        if not webmail_url:
+            if mail_local:
+                # Local mode: Roundcube is published on port 8025 (plain HTTP).
+                # Derive the host from the current request so the link points at
+                # the same domain god-mode was opened on (not "localhost").
+                try:
+                    host = request.get_host().split(":")[0]
+                except Exception:
+                    host = "localhost"
+                webmail_url = f"http://{host}:8025"
+            else:
+                webmail_url = f"https://webmail.{mail_domain}"
+
         return Response(
             {
                 "mail_domain": mail_domain,

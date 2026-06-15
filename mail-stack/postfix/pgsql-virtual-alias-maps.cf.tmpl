@@ -2,4 +2,4 @@ hosts = ${POSTGRES_HOST}
 user = ${POSTGRES_USER}
 password = ${POSTGRES_PASSWORD}
 dbname = ${POSTGRES_DB}
-query = SELECT destination FROM mail_aliases WHERE source='%s' AND is_active = true
+query = SELECT destination FROM mail_aliases WHERE source='%s' AND is_active = true AND deleted_at IS NULL

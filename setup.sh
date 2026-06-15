@@ -203,16 +203,18 @@ function apply_mail_env_defaults() {
     mail_domain="${resolved%%|*}"
     mail_local="${resolved##*|}"
 
-    local webmail_url
-    if [[ "$mail_local" == "true" ]]; then
-        webmail_url="http://localhost:8025"
-    else
-        webmail_url="https://webmail.${mail_domain}"
-    fi
-
     update_env_file "MAIL_DOMAIN" "$mail_domain" "$API_ENV_PATH"
     update_env_file "MAIL_LOCAL" "$mail_local" "$API_ENV_PATH"
-    update_env_file "WEBMAIL_URL" "$webmail_url" "$API_ENV_PATH"
+
+    # In local mode leave WEBMAIL_URL empty so the API derives it from the
+    # request host (http://<host>:8025) — this way the webmail link points at
+    # whatever domain god-mode was opened on, not "localhost". In production we
+    # serve Roundcube via Caddy at a stable webmail subdomain.
+    if [[ "$mail_local" == "true" ]]; then
+        update_env_file "WEBMAIL_URL" "" "$API_ENV_PATH"
+    else
+        update_env_file "WEBMAIL_URL" "https://webmail.${mail_domain}" "$API_ENV_PATH"
+    fi
 }
 
 function compose_base_args() {

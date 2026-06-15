@@ -257,32 +257,56 @@ function MailPage(_props: Route.ComponentProps) {
 
       {activeTab === "webmail" && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <p className="text-13 text-secondary">
               Веб-почта (Roundcube). Войдите, используя адрес ящика и его пароль.
             </p>
             {config?.webmail_url && (
-              <a
-                href={config.webmail_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-13 text-primary underline"
-              >
-                Открыть в новой вкладке
+              <a href={config.webmail_url} target="_blank" rel="noreferrer">
+                <Button variant="secondary" size="sm">
+                  Открыть в новой вкладке
+                </Button>
               </a>
             )}
           </div>
-          {config?.webmail_url ? (
-            <iframe
-              title="Webmail"
-              src={config.webmail_url}
-              className="h-[70vh] w-full rounded-md border border-subtle bg-surface-1"
-            />
-          ) : (
-            <Loader>
-              <Loader.Item height="70vh" />
-            </Loader>
-          )}
+          {(() => {
+            if (!config?.webmail_url) {
+              return (
+                <Loader>
+                  <Loader.Item height="70vh" />
+                </Loader>
+              );
+            }
+            // A plain-HTTP webmail cannot be embedded inside the HTTPS god-mode
+            // page (mixed content is blocked by the browser). Offer a direct
+            // link instead of a blank iframe.
+            const isMixedContent =
+              typeof window !== "undefined" &&
+              window.location.protocol === "https:" &&
+              config.webmail_url.startsWith("http://");
+            if (isMixedContent) {
+              return (
+                <div className="flex flex-col items-center gap-3 rounded-md border border-subtle px-4 py-10 text-center">
+                  <p className="max-w-lg text-13 text-tertiary">
+                    Веб-почта работает по HTTP ({config.webmail_url}), а эта панель открыта по HTTPS, поэтому браузер не
+                    разрешает встроить её сюда. Откройте веб-почту в отдельной вкладке.
+                  </p>
+                  <a href={config.webmail_url} target="_blank" rel="noreferrer">
+                    <Button variant="primary" size="sm">
+                      Открыть веб-почту
+                    </Button>
+                  </a>
+                </div>
+              );
+            }
+            return (
+              <iframe
+                title="Webmail"
+                src={config.webmail_url}
+                className="h-[70vh] w-full rounded-md border border-subtle bg-surface-1"
+              />
+            );
+          })()}
         </div>
       )}
     </PageWrapper>
