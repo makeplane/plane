@@ -762,7 +762,19 @@
     "only_one_file_allowed": "Je možné nahrať iba jeden súbor naraz.",
     "file_size_limit": "Súbor musí byť menší ako {size}MB.",
     "drag_and_drop": "Pretiahnite súbor kamkoľvek pre nahratie",
-    "delete": "Zmazať prílohu"
+    "delete": "Zmazať prílohu",
+    "make_cover_image": "Make cover image",
+    "remove_cover_image": "Remove cover image",
+    "set_cover_loading": "Setting cover image...",
+    "set_cover_success_title": "Cover image set",
+    "set_cover_success_message": "This image is now the cover image",
+    "set_cover_error_title": "Couldn't set cover image",
+    "set_cover_error_message": "Could not set this image as the cover",
+    "remove_cover_loading": "Removing cover image...",
+    "remove_cover_success_title": "Cover image removed",
+    "remove_cover_success_message": "This work item no longer has a cover image",
+    "remove_cover_error_title": "Couldn't remove cover image",
+    "remove_cover_error_message": "Could not remove the cover image"
   },
   "label": {
     "select": "Vybrať štítok",

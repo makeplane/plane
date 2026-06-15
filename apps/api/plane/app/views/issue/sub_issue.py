@@ -165,6 +165,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "state_group",
+                "cover_image_attachment_id",
             )
         )
 

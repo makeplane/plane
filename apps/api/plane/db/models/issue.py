@@ -168,6 +168,13 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         null=True,
         blank=True,
     )
+    cover_image_attachment = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        related_name="cover_image_issues",
+        null=True,
+        blank=True,
+    )
 
     issue_objects = IssueManager()
 

@@ -97,6 +97,12 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    cover_image_attachment_id = serializers.PrimaryKeyRelatedField(
+        source="cover_image_attachment",
+        queryset=FileAsset.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
@@ -193,6 +199,19 @@ class IssueCreateSerializer(BaseSerializer):
             ).exists()
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
+
+        # Cover image must be an image attachment belonging to this issue
+        if attrs.get("cover_image_attachment"):
+            cover = attrs["cover_image_attachment"]
+            if (
+                cover.entity_type != FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
+                or (self.instance is not None and str(cover.issue_id) != str(self.instance.id))
+                or str(cover.project_id) != str(self.context.get("project_id"))
+                or not str(cover.attributes.get("type", "")).startswith("image/")
+            ):
+                raise serializers.ValidationError(
+                    "Cover image must be an image attachment belonging to this work item"
+                )
 
         return attrs
 
@@ -800,6 +819,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "cover_image_attachment_id",
         ]
         read_only_fields = fields
 

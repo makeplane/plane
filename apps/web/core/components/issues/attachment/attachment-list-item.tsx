@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Image, ImageOff } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { TrashIcon } from "@plane/propel/icons";
@@ -28,12 +29,20 @@ type TIssueAttachmentsListItem = {
   attachmentId: string;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
+  onToggleCoverImage?: (attachmentId: string) => Promise<void>;
+  isCoverImage?: boolean;
 };
 
 export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
-  const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const {
+    attachmentId,
+    disabled,
+    issueServiceType = EIssueServiceType.ISSUES,
+    onToggleCoverImage,
+    isCoverImage = false,
+  } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
@@ -46,6 +55,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
   const fileExtension = getFileExtension(attachment?.attributes.name ?? "");
   const fileIcon = getFileIcon(fileExtension, 18);
   const fileURL = getFileURL(attachment?.asset_url ?? "");
+  const isImage = attachment?.attributes.name ? /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.attributes.name) : false;
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -87,6 +97,22 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
             )}
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
+              {isImage && onToggleCoverImage && (
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    onToggleCoverImage(attachmentId);
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    {isCoverImage ? (
+                      <ImageOff className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : (
+                      <Image className="h-3.5 w-3.5" strokeWidth={2} />
+                    )}
+                    <span>{isCoverImage ? t("attachment.remove_cover_image") : t("attachment.make_cover_image")}</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
               <CustomMenu.MenuItem
                 onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
