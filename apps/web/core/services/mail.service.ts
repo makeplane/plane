@@ -6,6 +6,8 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  TMailAccountCreatePayload,
+  TMailAccountLoginPayload,
   TMailComposePayload,
   TMailFilterRule,
   TMailFolder,
@@ -29,6 +31,22 @@ export class MailService extends APIService {
 
   async me(): Promise<TMailMeConfig> {
     return this.get("/api/mail/config/me/")
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async createAccount(payload: TMailAccountCreatePayload): Promise<TMailMeConfig> {
+    return this.post("/api/mail/accounts/", payload)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async loginAccount(payload: TMailAccountLoginPayload): Promise<TMailMeConfig> {
+    return this.post("/api/mail/session/", payload)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

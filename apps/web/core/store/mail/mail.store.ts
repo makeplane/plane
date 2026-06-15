@@ -7,6 +7,8 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type {
+  TMailAccountCreatePayload,
+  TMailAccountLoginPayload,
   TMailComposePayload,
   TMailFilterRule,
   TMailFolder,
@@ -41,10 +43,14 @@ export interface IMailStore {
   savedSearches: TMailSavedSearch[];
   forwarding: TMailForwarding | null;
   preferences: TMailPreference | null;
+  accountError: string | null;
   hasMailbox: boolean;
   mailboxEmail: string;
+  mailDomain: string;
   getFolderByKey: (folderKey: string) => TMailFolder | undefined;
   fetchMe: () => Promise<TMailMeConfig>;
+  createAccount: (payload: TMailAccountCreatePayload) => Promise<TMailMeConfig>;
+  loginAccount: (payload: TMailAccountLoginPayload) => Promise<TMailMeConfig>;
   fetchFolders: () => Promise<TMailFolder[]>;
   fetchMessages: (folderKey: string, params?: Record<string, unknown>) => Promise<TMailMessageSummary[]>;
   fetchMessage: (folderKey: string, uid: string) => Promise<TMailMessageDetail>;
@@ -73,6 +79,20 @@ const EMPTY_COMPOSE: TMailComposePayload = {
   uploaded_attachments: [],
 };
 
+const getMailErrorMessage = (error: unknown) => {
+  if (typeof error === "string") return error;
+  if (!error || typeof error !== "object") return "Unable to update mailbox.";
+
+  const payload = error as Record<string, unknown>;
+  const firstFieldError = Object.values(payload).find((value) => Array.isArray(value) && value.length > 0);
+
+  if (typeof payload.error === "string") return payload.error;
+  if (typeof payload.detail === "string") return payload.detail;
+  if (Array.isArray(firstFieldError) && typeof firstFieldError[0] === "string") return firstFieldError[0];
+
+  return "Unable to update mailbox.";
+};
+
 export class MailStore implements IMailStore {
   loader = false;
   messageLoader = false;
@@ -91,6 +111,7 @@ export class MailStore implements IMailStore {
   savedSearches: TMailSavedSearch[] = [];
   forwarding: TMailForwarding | null = null;
   preferences: TMailPreference | null = null;
+  accountError: string | null = null;
   service: MailService;
 
   constructor() {
@@ -112,9 +133,13 @@ export class MailStore implements IMailStore {
       savedSearches: observable,
       forwarding: observable,
       preferences: observable,
+      accountError: observable,
       hasMailbox: computed,
       mailboxEmail: computed,
+      mailDomain: computed,
       fetchMe: action,
+      createAccount: action,
+      loginAccount: action,
       fetchFolders: action,
       fetchMessages: action,
       fetchMessage: action,
@@ -142,6 +167,10 @@ export class MailStore implements IMailStore {
     return this.me?.mailbox?.email ?? "";
   }
 
+  get mailDomain() {
+    return this.me?.mail_domain ?? this.me?.mailbox?.domain ?? "mail.local";
+  }
+
   getFolderByKey = computedFn((folderKey: string) => this.folders.find((folder) => folder.key === folderKey));
 
   fetchMe = async () => {
@@ -150,8 +179,49 @@ export class MailStore implements IMailStore {
     runInAction(() => {
       this.me = response;
       this.loader = false;
+      this.accountError = null;
     });
     return response;
+  };
+
+  createAccount = async (payload: TMailAccountCreatePayload) => {
+    this.actionLoader = true;
+    this.accountError = null;
+    try {
+      const response = await this.service.createAccount(payload);
+      runInAction(() => {
+        this.me = response;
+        this.actionLoader = false;
+      });
+      return response;
+    } catch (error) {
+      const message = getMailErrorMessage(error);
+      runInAction(() => {
+        this.accountError = message;
+        this.actionLoader = false;
+      });
+      throw error;
+    }
+  };
+
+  loginAccount = async (payload: TMailAccountLoginPayload) => {
+    this.actionLoader = true;
+    this.accountError = null;
+    try {
+      const response = await this.service.loginAccount(payload);
+      runInAction(() => {
+        this.me = response;
+        this.actionLoader = false;
+      });
+      return response;
+    } catch (error) {
+      const message = getMailErrorMessage(error);
+      runInAction(() => {
+        this.accountError = message;
+        this.actionLoader = false;
+      });
+      throw error;
+    }
   };
 
   fetchFolders = async () => {

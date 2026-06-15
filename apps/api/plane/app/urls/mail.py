@@ -5,6 +5,7 @@
 from django.urls import path
 
 from plane.app.views.mail import (
+    MailAccountEndpoint,
     MailAttachmentEndpoint,
     MailAttachmentUploadEndpoint,
     MailConfigMeEndpoint,
@@ -22,6 +23,7 @@ from plane.app.views.mail import (
     MailSavedSearchViewSet,
     MailSearchEndpoint,
     MailSendEndpoint,
+    MailSessionEndpoint,
     MailSignatureViewSet,
     MailTemplateViewSet,
 )
@@ -30,6 +32,8 @@ DETAIL_ACTIONS = {"get": "retrieve", "put": "update", "patch": "partial_update",
 
 urlpatterns = [
     path("mail/config/me/", MailConfigMeEndpoint.as_view(), name="mail-config-me"),
+    path("mail/accounts/", MailAccountEndpoint.as_view(), name="mail-account"),
+    path("mail/session/", MailSessionEndpoint.as_view(), name="mail-session"),
     path("mail/folders/", MailFoldersEndpoint.as_view(), name="mail-folders"),
     path("mail/folders/<str:folder_key>/messages/", MailMessagesEndpoint.as_view(), name="mail-messages"),
     path(

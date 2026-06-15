@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import os
 import uuid
 from io import BytesIO
 from pathlib import PurePosixPath
 
+from django.db import transaction
 from django.core.files.storage import default_storage
 from django.http import FileResponse
 from rest_framework import status
@@ -13,9 +15,12 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from plane.app.serializers.mail import (
+    MailAccountCreateSerializer,
+    MailAccountLoginSerializer,
     MailFilterRuleSerializer,
     MailForwardingSerializer,
     MailLabelSerializer,
+    MailboxSerializer,
     MailPreferenceSerializer,
     MailSavedSearchSerializer,
     MailSignatureSerializer,
@@ -29,14 +34,37 @@ from plane.mail.models import (
     MailFilterRule,
     MailForwarding,
     MailLabel,
+    MailDomain,
+    Mailbox,
     MailPreference,
     MailSavedSearch,
     MailSignature,
     MailTemplate,
 )
 from plane.mail.resolver import ResolveMailboxMixin
+from plane.mail.utils import hash_mail_password, verify_mail_password
 
 from .base import BaseAPIView, BaseViewSet
+
+
+def get_default_mail_domain_name():
+    configured_domain = (os.environ.get("MAIL_DOMAIN") or "").strip().lower().rstrip(".")
+    if configured_domain:
+        return configured_domain
+
+    domain = MailDomain.objects.filter(is_active=True).order_by("domain").first()
+    if domain:
+        return domain.domain
+
+    return "mail.local"
+
+
+def mailbox_payload(mailbox):
+    return {
+        "has_mailbox": True,
+        "mailbox": MailboxSerializer(mailbox).data,
+        "mail_domain": mailbox.domain.domain if mailbox.domain_id else get_default_mail_domain_name(),
+    }
 
 
 class MailAPIView(ResolveMailboxMixin, BaseAPIView):
@@ -63,22 +91,81 @@ class MailConfigMeEndpoint(MailAPIView):
     def get(self, request):
         mailbox = self.get_mailbox()
         if mailbox is None:
-            return Response({"has_mailbox": False}, status=status.HTTP_200_OK)
+            return Response(
+                {"has_mailbox": False, "mail_domain": get_default_mail_domain_name()},
+                status=status.HTTP_200_OK,
+            )
 
-        return Response(
-            {
-                "has_mailbox": True,
-                "mailbox": {
-                    "id": str(mailbox.id),
-                    "email": mailbox.email,
-                    "local_part": mailbox.local_part,
-                    "domain": mailbox.domain.domain if mailbox.domain_id else "",
-                    "quota_mb": mailbox.quota_mb,
-                    "owner_id": str(mailbox.owner_id) if mailbox.owner_id else None,
-                },
-            },
-            status=status.HTTP_200_OK,
+        return Response(mailbox_payload(mailbox), status=status.HTTP_200_OK)
+
+
+class MailAccountEndpoint(MailAPIView):
+    def post(self, request):
+        existing_mailbox = self.get_mailbox()
+        if existing_mailbox is not None:
+            return Response(mailbox_payload(existing_mailbox), status=status.HTTP_200_OK)
+
+        serializer = MailAccountCreateSerializer(
+            data=request.data,
+            context={"default_domain": get_default_mail_domain_name()},
         )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        if Mailbox.objects.filter(email=data["email"]).exists():
+            return Response(
+                {"error": "A mailbox with this address already exists."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        with transaction.atomic():
+            domain, _ = MailDomain.objects.get_or_create(domain=data["domain"], defaults={"is_active": True})
+            if not domain.is_active:
+                domain.is_active = True
+                domain.save()
+            mailbox = Mailbox.objects.create(
+                email=data["email"],
+                local_part=data["local_part"],
+                domain=domain,
+                owner=request.user,
+                password_hash=hash_mail_password(data["password"]),
+                is_active=True,
+                quota_mb=0,
+            )
+
+        return Response(mailbox_payload(mailbox), status=status.HTTP_201_CREATED)
+
+
+class MailSessionEndpoint(MailAPIView):
+    def post(self, request):
+        serializer = MailAccountLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        mailbox = Mailbox.objects.select_related("domain", "owner").filter(
+            email=data["email"],
+            is_active=True,
+        ).first()
+
+        if mailbox is None or not verify_mail_password(data["password"], mailbox.password_hash):
+            return Response(
+                {"error": "Mailbox email or password is incorrect."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if mailbox.owner_id and mailbox.owner_id != request.user.id:
+            return Response(
+                {"error": "This mailbox is already connected to another user."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if mailbox.owner_id is None:
+            mailbox.owner = request.user
+            mailbox.save()
+
+        return Response(mailbox_payload(mailbox), status=status.HTTP_200_OK)
 
 
 class MailFoldersEndpoint(MailAPIView):

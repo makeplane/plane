@@ -2831,7 +2831,19 @@ export default {
     login: {
       title: "Connect your Gizmo mailbox",
       description:
-        "Your account does not have an active instance-level mailbox yet. Create one in god-mode or assign an existing mailbox to this user.",
+        "Create a new address on the instance mail domain or sign in to an existing mailbox to connect it to your account.",
+      tabs: {
+        create: "Create mail",
+        login: "Sign in",
+      },
+      create: {
+        address: "Address",
+        address_placeholder: "name",
+        submit: "Create and enter",
+      },
+      email: "Mailbox email",
+      password: "Password",
+      login_submit: "Sign in",
       retry: "Check again",
       back: "Back to app",
       features: {

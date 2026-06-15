@@ -22,7 +22,20 @@ export type TMailMailbox = {
 
 export type TMailMeConfig = {
   has_mailbox: boolean;
+  mail_domain: string;
   mailbox?: TMailMailbox;
+};
+
+export type TMailAccountCreatePayload = {
+  local_part?: string;
+  email?: string;
+  domain?: string;
+  password: string;
+};
+
+export type TMailAccountLoginPayload = {
+  email: string;
+  password: string;
 };
 
 export type TMailFolder = {
