@@ -83,3 +83,21 @@ export const getUpdatedAtFilterConfig =
       allowMultipleFilters: true,
       supportedOperatorConfigsMap: getSupportedDateOperators(params),
     });
+
+/**
+ * Get the completed at filter config
+ * @template K - The filter key
+ * @param key - The filter key to use
+ * @returns A function that takes parameters and returns the completed at filter config
+ */
+export const getCompletedAtFilterConfig =
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
+  (params: TCreateDateFilterParams) =>
+    createFilterConfig<P>({
+      id: key,
+      label: "Completed at",
+      ...params,
+      icon: params.filterIcon,
+      allowMultipleFilters: true,
+      supportedOperatorConfigsMap: getSupportedDateOperators(params),
+    });

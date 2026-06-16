@@ -192,13 +192,13 @@ export const getIssueIds = (issues: TIssue[]) => issues.map((issue) => issue?.id
 /**
  * Checks if an issue meets the date filter criteria
  * @param issue The issue to check
- * @param filterKey The date field to check ('start_date' or 'target_date')
+ * @param filterKey The date field to check ('start_date', 'target_date', or 'completed_at')
  * @param dateFilters Array of date filter strings
  * @returns boolean indicating if the issue meets the date criteria
  */
 export const checkIssueDateFilter = (
   issue: TIssue,
-  filterKey: "start_date" | "target_date",
+  filterKey: "start_date" | "target_date" | "completed_at",
   dateFilters: string[]
 ): boolean => {
   if (!dateFilters || dateFilters.length === 0) return true;
@@ -254,7 +254,7 @@ export const getFilteredWorkItems = (workItems: TIssue[], filters: IIssueFilterO
     // Check all filter conditions (AND operation between different filters)
     activeFilters.every(([filterKey, filterValues]) => {
       // Handle date filters separately
-      if (filterKey === "start_date" || filterKey === "target_date") {
+      if (filterKey === "start_date" || filterKey === "target_date" || filterKey === "completed_at") {
         return checkIssueDateFilter(workItem, filterKey, filterValues as string[]);
       }
       // Handle regular filters
