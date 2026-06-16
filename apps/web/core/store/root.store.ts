@@ -59,6 +59,8 @@ import type { IStickyStore } from "./sticky/sticky.store";
 import { StickyStore } from "./sticky/sticky.store";
 import type { ISupportTicketStore } from "./support-ticket.store";
 import { SupportTicketStore } from "./support-ticket.store";
+import type { IChangeManagementStore } from "./change-management.store";
+import { ChangeManagementStore } from "./change-management.store";
 import type { IThemeStore } from "./theme.store";
 import { ThemeStore } from "./theme.store";
 import type { IUserStore } from "./user";
@@ -98,6 +100,7 @@ export class CoreRootStore {
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
   supportTicket: ISupportTicketStore;
+  changeManagement: IChangeManagementStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -130,6 +133,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.supportTicket = new SupportTicketStore();
+    this.changeManagement = new ChangeManagementStore();
   }
 
   resetOnSignOut() {
@@ -164,5 +168,6 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.supportTicket = new SupportTicketStore();
+    this.changeManagement = new ChangeManagementStore();
   }
 }

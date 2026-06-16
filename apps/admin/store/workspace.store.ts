@@ -21,6 +21,7 @@ export interface IWorkspaceStore {
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  deleteWorkspace: (workspaceId: string, slug: string) => Promise<void>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -47,6 +48,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       fetchNextWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      deleteWorkspace: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -142,6 +144,27 @@ export class WorkspaceStore implements IWorkspaceStore {
       return workspace;
     } catch (error) {
       console.error("Error creating workspace", error);
+      throw error;
+    } finally {
+      this.loader = "loaded";
+    }
+  };
+
+  /**
+   * @description Deletes a workspace by slug and removes it from local state
+   * @param workspaceId - The workspace ID
+   * @param slug - The workspace slug
+   * @returns Promise<void>
+   */
+  deleteWorkspace = async (workspaceId: string, slug: string): Promise<void> => {
+    try {
+      this.loader = "mutation";
+      await this.instanceWorkspaceService.deleteBySlug(slug);
+      runInAction(() => {
+        delete this.workspaces[workspaceId];
+      });
+    } catch (error) {
+      console.error("Error deleting workspace", error);
       throw error;
     } finally {
       this.loader = "loaded";

@@ -91,43 +91,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Telemetry</div>
-        <div className="flex items-center gap-14">
-          <div className="flex grow items-center gap-4">
-            <div className="shrink-0">
-              <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
-                <Telescope className="size-5 text-tertiary" />
-              </div>
-            </div>
-            <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
-              <div className="text-11 leading-5 font-regular text-tertiary">
-                No PII is collected.This anonymized data is used to understand how you use Plane and build new features
-                in line with{" "}
-                <a
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  className="text-accent-primary hover:underline"
-                  rel="noreferrer"
-                >
-                  our Telemetry Policy.
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
-            <Controller
-              control={control}
-              name="is_telemetry_enabled"
-              render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={value ?? false} onChange={onChange} size="sm" disabled={isSubmitting} />
-              )}
-            />
-          </div>
-        </div>
-      </div>
-
       <div>
         <Button
           variant="primary"

@@ -1,6 +1,6 @@
-# Plane Local Development Setup Guide (Windows)
+# WinSecOps Local Development Setup Guide (Windows)
 
-This guide provides step-by-step instructions for setting up the Plane local development environment from scratch on a new Windows laptop. Since the default `setup.sh` script is designed for Linux/macOS bash environments, these instructions are tailored to work natively on Windows via PowerShell.
+This guide provides step-by-step instructions for setting up the WinSecOps local development environment from scratch on a new Windows laptop. Since the default `setup.sh` script is designed for Linux/macOS bash environments, these instructions are tailored to work natively on Windows via PowerShell.
 
 ## 📋 Prerequisites
 
@@ -20,15 +20,15 @@ Before starting, ensure you have the following installed on your laptop:
 Open PowerShell and run:
 
 ```powershell
-git clone https://github.com/makeplane/plane.git
+git clone https://github.com/makePlane/plane.git
 cd plane
 ```
 
 ### 2. Setup Environment Variables
 
-Plane requires `.env` files in multiple directories. We need to copy the `.env.example` files to `.env` and generate a unique Django Secret Key.
+WinSecOps requires `.env` files in multiple directories. We need to copy the `.env.example` files to `.env` and generate a unique Django Secret Key.
 
-Run this exact block of code in your PowerShell (while inside the `plane` directory):
+Run this exact block of code in your PowerShell (while inside the `WinSecOps` directory):
 
 ```powershell
 # Copy all .env.example files to .env
@@ -46,14 +46,14 @@ Write-Host "Environment variables configured successfully!" -ForegroundColor Gre
 
 ### 3. Install Package Manager (pnpm)
 
-Plane uses `pnpm` to manage its monorepo packages. Install it globally via npm:
+WinSecOps uses `pnpm` to manage its monorepo packages. Install it globally via npm:
 
 ```powershell
 npm install -g pnpm
 ```
 
 ### 4. Install Dependencies
-
+  
 Install all required Node modules for the frontend and shared packages:
 
 ```powershell
@@ -73,7 +73,7 @@ docker compose -f docker-compose-local.yml up -d
 
 ### 6. Start Frontend Servers
 
-Open a **new** PowerShell window (keep it inside the `plane` folder) and run the dev servers:
+Open a **new** PowerShell window (keep it inside the `WinSecOps` folder) and run the dev servers:
 
 ```powershell
 pnpm dev

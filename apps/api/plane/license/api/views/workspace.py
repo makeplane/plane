@@ -104,3 +104,28 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_409_CONFLICT,
                 )
+
+
+class InstanceWorkSpaceDetailEndpoint(BaseAPIView):
+    """Detail endpoint for workspace operations by slug (e.g. DELETE)."""
+    permission_classes = [InstanceAdminPermission]
+
+    def delete(self, request, slug):
+        # Safety check: prevent deleting the last workspace
+        total_workspaces = Workspace.objects.count()
+        if total_workspaces <= 1:
+            return Response(
+                {"error": "Cannot delete the only workspace in this instance."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": f"Workspace '{slug}' not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        workspace.delete()  # CASCADE handles all related data
+        return Response(status=status.HTTP_204_NO_CONTENT)

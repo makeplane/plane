@@ -4,7 +4,7 @@ import type { IState } from "@plane/types";
 export const sortStates = (states: IState[]) => {
   if (!states || states.length === 0) return;
 
-  return [...states].toSorted((stateA: IState, stateB: IState) => {
+  return [...states].sort((stateA: IState, stateB: IState) => {
     if (stateA.group === stateB.group) {
       return stateA.sequence - stateB.sequence;
     }

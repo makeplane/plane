@@ -10,5 +10,7 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks.workspace,
     coreSidebarMenuLinks.ai,
     coreSidebarMenuLinks.image,
+    coreSidebarMenuLinks.assignmentGroups,
+    coreSidebarMenuLinks.cabGroups,
   ];
 }

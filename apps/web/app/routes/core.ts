@@ -99,6 +99,16 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
         ]),
 
+        // Change Management
+        layout("./(all)/[workspaceSlug]/(projects)/change/layout.tsx", [
+          route(":workspaceSlug/change/create-new", "./(all)/[workspaceSlug]/(projects)/change/create-new/page.tsx"),
+          route(":workspaceSlug/change/open", "./(all)/[workspaceSlug]/(projects)/change/open/page.tsx"),
+          route(":workspaceSlug/change/closed", "./(all)/[workspaceSlug]/(projects)/change/closed/page.tsx"),
+          route(":workspaceSlug/change/all", "./(all)/[workspaceSlug]/(projects)/change/all/page.tsx"),
+          route(":workspaceSlug/change/overview", "./(all)/[workspaceSlug]/(projects)/change/overview/page.tsx"),
+          route(":workspaceSlug/change/:number", "./(all)/[workspaceSlug]/(projects)/change/[number]/page.tsx"),
+        ]),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),

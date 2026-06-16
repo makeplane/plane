@@ -1,10 +1,10 @@
-import { Image, BrainCog, Cog, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, Users, Shield } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
-export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "image";
+export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "image" | "assignmentGroups" | "cabGroups";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -39,8 +39,20 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
   },
   image: {
     Icon: Image,
-    name: "Images in Plane",
+    name: "Images in WinSecOps",
     description: "Allow third-party image libraries.",
     href: `/image/`,
+  },
+  assignmentGroups: {
+    Icon: Users,
+    name: "Assignment Groups",
+    description: "Manage assignment groups for change management.",
+    href: `/assignment-groups/`,
+  },
+  cabGroups: {
+    Icon: Shield,
+    name: "CAB Groups",
+    description: "Manage Change Advisory Board groups.",
+    href: `/cab-groups/`,
   },
 };

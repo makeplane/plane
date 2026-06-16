@@ -14,6 +14,20 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceWorkSpaceDetailEndpoint,
+)
+
+from plane.app.views import (
+    GodModeAssignmentGroupEndpoint,
+    GodModeAssignmentGroupDetailEndpoint,
+    GodModeAssignmentGroupMemberEndpoint,
+    GodModeAssignmentGroupMemberDetailEndpoint,
+    GodModeCabGroupEndpoint,
+    GodModeCabGroupDetailEndpoint,
+    GodModeCabGroupMemberEndpoint,
+    GodModeCabGroupMemberDetailEndpoint,
+    GodModeDesignateCabGroupEndpoint,
+    GodModeWorkspaceMembersEndpoint,
 )
 
 urlpatterns = [
@@ -67,4 +81,71 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    path(
+        "workspaces/<str:slug>/",
+        InstanceWorkSpaceDetailEndpoint.as_view(),
+        name="instance-workspace-detail",
+    ),
+
+    # ------------------------------------------------------------------
+    # God Mode — Assignment Groups
+    # ------------------------------------------------------------------
+    path(
+        "workspaces/<str:slug>/assignment-groups/",
+        GodModeAssignmentGroupEndpoint.as_view(),
+        name="godmode-assignment-groups",
+    ),
+    path(
+        "workspaces/<str:slug>/assignment-groups/<uuid:pk>/",
+        GodModeAssignmentGroupDetailEndpoint.as_view(),
+        name="godmode-assignment-group-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/assignment-groups/<uuid:group_id>/members/",
+        GodModeAssignmentGroupMemberEndpoint.as_view(),
+        name="godmode-assignment-group-members",
+    ),
+    path(
+        "workspaces/<str:slug>/assignment-groups/<uuid:group_id>/members/<uuid:pk>/",
+        GodModeAssignmentGroupMemberDetailEndpoint.as_view(),
+        name="godmode-assignment-group-member-detail",
+    ),
+
+    # ------------------------------------------------------------------
+    # God Mode — CAB Groups
+    # ------------------------------------------------------------------
+    path(
+        "workspaces/<str:slug>/cab-groups/",
+        GodModeCabGroupEndpoint.as_view(),
+        name="godmode-cab-groups",
+    ),
+    path(
+        "workspaces/<str:slug>/cab-groups/<uuid:pk>/",
+        GodModeCabGroupDetailEndpoint.as_view(),
+        name="godmode-cab-group-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/cab-groups/<uuid:pk>/designate/",
+        GodModeDesignateCabGroupEndpoint.as_view(),
+        name="godmode-cab-group-designate",
+    ),
+    path(
+        "workspaces/<str:slug>/cab-groups/<uuid:group_id>/members/",
+        GodModeCabGroupMemberEndpoint.as_view(),
+        name="godmode-cab-group-members",
+    ),
+    path(
+        "workspaces/<str:slug>/cab-groups/<uuid:group_id>/members/<uuid:pk>/",
+        GodModeCabGroupMemberDetailEndpoint.as_view(),
+        name="godmode-cab-group-member-detail",
+    ),
+
+    # ------------------------------------------------------------------
+    # God Mode — Workspace Members (read-only for member selectors)
+    # ------------------------------------------------------------------
+    path(
+        "workspaces/<str:slug>/members/",
+        GodModeWorkspaceMembersEndpoint.as_view(),
+        name="godmode-workspace-members",
+    ),
 ]

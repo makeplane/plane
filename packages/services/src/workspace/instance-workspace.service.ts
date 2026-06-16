@@ -62,4 +62,18 @@ export class InstanceWorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Deletes a workspace by slug
+   * @param {string} slug - The workspace slug to delete
+   * @returns {Promise<void>} Promise resolving on successful deletion
+   * @throws {Error} If the API request fails
+   */
+  async deleteBySlug(slug: string): Promise<void> {
+    return this.delete(`/api/instances/workspaces/${encodeURIComponent(slug)}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

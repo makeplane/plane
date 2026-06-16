@@ -237,3 +237,20 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 from .timezone.base import TimezoneEndpoint
 
 from .support_ticket import SupportTicketViewSet
+
+from .change_management import (
+    ChangeRequestViewSet,
+    AssignmentGroupViewSet,
+    AssignmentGroupMemberViewSet,
+    CabGroupViewSet,
+    GodModeAssignmentGroupEndpoint,
+    GodModeAssignmentGroupDetailEndpoint,
+    GodModeAssignmentGroupMemberEndpoint,
+    GodModeAssignmentGroupMemberDetailEndpoint,
+    GodModeCabGroupEndpoint,
+    GodModeCabGroupDetailEndpoint,
+    GodModeCabGroupMemberEndpoint,
+    GodModeCabGroupMemberDetailEndpoint,
+    GodModeDesignateCabGroupEndpoint,
+    GodModeWorkspaceMembersEndpoint,
+)

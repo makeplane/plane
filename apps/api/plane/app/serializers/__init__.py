@@ -132,3 +132,15 @@ from .draft import (
 
 from .support_ticket import SupportTicketSerializer, SupportTicketCreateSerializer
 from .timer import IssueTimerSerializer, IssueTimerAdminSerializer, ActiveTimerSerializer, IssueTimerSegmentSerializer
+
+from .change_management import (
+    ChangeRequestSerializer,
+    ChangeRequestCreateSerializer,
+    ChangeApprovalSerializer,
+    ChangeTaskSerializer,
+    ChangeActivitySerializer,
+    AssignmentGroupSerializer,
+    AssignmentGroupMemberSerializer,
+    CabGroupSerializer,
+    CabGroupMemberSerializer,
+)

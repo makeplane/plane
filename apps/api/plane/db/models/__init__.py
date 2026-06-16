@@ -92,3 +92,16 @@ from .support_ticket import SupportTicket
 from .timer import IssueTimer, IssueTimerSegment
 
 from .email_ingest import EmailIngestLog
+
+from .change_management import (
+    ChangeRequest,
+    ChangeApproval,
+    ChangeTask,
+    ChangeActivity,
+    AssignmentGroup,
+    AssignmentGroupMember,
+    CabGroup,
+    CabGroupMember,
+)
+
+from .workspace_secops_config import WorkspaceSecOpsConfig
