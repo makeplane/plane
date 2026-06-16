@@ -14,7 +14,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
-import { validateSlug, validateWorkspaceName } from "@plane/utils";
+import { normalizeSlug, validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
@@ -107,7 +107,7 @@ export function WorkspaceCreateForm() {
                   onChange={(e) => {
                     onChange(e.target.value);
                     setValue("name", e.target.value);
-                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                    setValue("slug", normalizeSlug(e.target.value), {
                       shouldValidate: true,
                     });
                   }}
@@ -135,11 +135,12 @@ export function WorkspaceCreateForm() {
                 <Input
                   id="workspaceUrl"
                   type="text"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+                  value={normalizeSlug(value)}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const normalizedSlug = normalizeSlug(e.target.value);
+                    if (validateSlug(normalizedSlug) === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
+                    onChange(normalizedSlug);
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
