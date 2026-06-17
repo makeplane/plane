@@ -144,6 +144,69 @@ gitea_config_variables = [
     },
 ]
 
+oidc_config_variables = [
+    {
+        "key": "OIDC_ISSUER",
+        "value": os.environ.get("OIDC_ISSUER"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_CLIENT_ID",
+        "value": os.environ.get("OIDC_CLIENT_ID"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_CLIENT_SECRET",
+        "value": os.environ.get("OIDC_CLIENT_SECRET"),
+        "category": "OIDC",
+        "is_encrypted": True,
+    },
+    {
+        "key": "OIDC_AUTHORIZATION_ENDPOINT",
+        "value": os.environ.get("OIDC_AUTHORIZATION_ENDPOINT"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_TOKEN_ENDPOINT",
+        "value": os.environ.get("OIDC_TOKEN_ENDPOINT"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_USERINFO_ENDPOINT",
+        "value": os.environ.get("OIDC_USERINFO_ENDPOINT"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_JWKS_URI",
+        "value": os.environ.get("OIDC_JWKS_URI"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_SCOPE",
+        "value": os.environ.get("OIDC_SCOPE", "openid email profile"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "OIDC_DISPLAY_NAME",
+        "value": os.environ.get("OIDC_DISPLAY_NAME", "SSO"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+    {
+        "key": "ENABLE_OIDC_SYNC",
+        "value": os.environ.get("ENABLE_OIDC_SYNC", "0"),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -239,6 +302,7 @@ core_config_variables = [
     *github_config_variables,
     *gitlab_config_variables,
     *gitea_config_variables,
+    *oidc_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
