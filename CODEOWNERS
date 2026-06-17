@@ -1,1 +1,8 @@
-eslint.config.mjs   @lifeiscontent
+.oxlintrc.json   @sriramveeraghanta @lifeiscontent
+.oxfmtrc.json   @sriramveeraghanta @lifeiscontent
+apps/api/           @dheeru0198 @pablohashescobar
+apps/web/           @sriramveeraghanta
+apps/space/         @sriramveeraghanta
+apps/admin/         @sriramveeraghanta
+apps/live/          @Palanikannan1437
+deployments/        @mguptahub
