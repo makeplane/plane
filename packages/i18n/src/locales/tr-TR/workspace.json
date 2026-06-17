@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "Çözülen vs bekleyen iş öğeleri",
     "projects_by_status": "Durumuna göre projeler",
     "active_users": "Aktif kullanıcılar",
-    "intake_trends": "Alım Eğilimleri"
+    "intake_trends": "Alım Eğilimleri",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proje} other {Projeler}}",
