@@ -59,6 +59,8 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
+  // per-project override of allowed timer state groups; null/undefined = inherit workspace
+  worklog_timer_state_groups?: string[] | null;
 }
 
 export type TProjectAnalyticsCountParams = {

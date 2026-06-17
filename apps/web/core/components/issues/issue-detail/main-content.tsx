@@ -27,6 +27,8 @@ import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/i
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
+// plane web components
+import { ActiveTimerBanner } from "@/plane-web/components/issues/worklog/active-timer-banner";
 // local imports
 import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
@@ -102,6 +104,8 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             issueOperations={issueOperations}
           />
         )}
+
+        <ActiveTimerBanner workspaceSlug={workspaceSlug} projectId={issue.project_id} issueId={issue.id} />
 
         <div className="mb-2.5 flex items-center justify-between gap-4">
           <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />

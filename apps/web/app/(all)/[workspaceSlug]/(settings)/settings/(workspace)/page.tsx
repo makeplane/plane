@@ -13,6 +13,8 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
+import { WorkspaceTimerSettings } from "@/plane-web/components/issues/worklog/settings/workspace-timer-settings";
 // local imports
 import { GeneralWorkspaceSettingsHeader } from "./header";
 
@@ -29,6 +31,7 @@ function GeneralWorkspaceSettingsPage() {
     <SettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <WorkspaceDetails />
+      <WorkspaceTimerSettings />
     </SettingsContentWrapper>
   );
 }

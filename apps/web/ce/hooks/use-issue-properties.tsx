@@ -4,13 +4,21 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect } from "react";
 import type { TIssueServiceType } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 export const useWorkItemProperties = (
   projectId: string | null | undefined,
   workspaceSlug: string | null | undefined,
   workItemId: string | null | undefined,
-  _issueServiceType: TIssueServiceType
+  issueServiceType: TIssueServiceType
 ) => {
-  if (!projectId || !workspaceSlug || !workItemId) return;
+  const { fetchWorklogs, fetchActiveTimer } = useIssueDetail(issueServiceType);
+
+  useEffect(() => {
+    if (!projectId || !workspaceSlug || !workItemId) return;
+    fetchWorklogs(workspaceSlug, projectId, workItemId);
+    fetchActiveTimer(workspaceSlug, projectId, workItemId);
+  }, [workspaceSlug, projectId, workItemId, fetchWorklogs, fetchActiveTimer]);
 };

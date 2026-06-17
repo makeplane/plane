@@ -820,3 +820,35 @@ class IssueDescriptionVersion(ProjectBaseModel):
         except Exception as e:
             log_exception(e)
             return False
+
+
+class IssueWorkLog(ProjectBaseModel):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="worklogs")
+    logged_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_worklogs",
+    )
+    # Duration in seconds; NULL means the timer is still running
+    duration = models.PositiveIntegerField(null=True, blank=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    logged_at = models.DateTimeField(default=timezone.now)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Issue Work Log"
+        verbose_name_plural = "Issue Work Logs"
+        db_table = "issue_work_logs"
+        ordering = ("-logged_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["logged_by"],
+                # only one *live* (non-deleted) running timer per user; soft-deleted rows keep
+                # duration NULL and must not occupy the unique slot
+                condition=Q(duration__isnull=True, deleted_at__isnull=True),
+                name="unique_active_timer_per_user",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.issue.name} - {self.logged_by.email}"

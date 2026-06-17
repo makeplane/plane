@@ -34,6 +34,8 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  // state groups on which a work item timer may be started (default ["started"])
+  worklog_timer_state_groups?: string[];
 }
 
 export interface IWorkspaceLite {

@@ -5,14 +5,11 @@
  */
 
 import { useMemo } from "react";
-import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
 import type { TActivityFilters } from "@plane/constants";
-import { E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType, EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-// i18n
-import { useTranslation } from "@plane/i18n";
 //types
 import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
@@ -22,11 +19,26 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
+import { IssueWorklogList } from "@/plane-web/components/issues/worklog/activity/worklog-list";
+import type { TActivityTab } from "./activity-tab-bar";
+import { ActivityTabBar } from "./activity-tab-bar";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
 import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
+
+// each tab maps to the set of activity types it shows in the feed
+const TAB_FILTER_MAP: Record<Exclude<TActivityTab, "worklogs">, TActivityFilters[]> = {
+  all: [
+    EActivityFilterType.ACTIVITY,
+    EActivityFilterType.COMMENT,
+    EActivityFilterType.STATE,
+    EActivityFilterType.ASSIGNEE,
+    EActivityFilterType.WORKLOG,
+  ],
+  activity: [EActivityFilterType.ACTIVITY, EActivityFilterType.STATE, EActivityFilterType.ASSIGNEE],
+  comments: [EActivityFilterType.COMMENT],
+};
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -45,13 +57,9 @@ export type TActivityOperations = {
 
 export const IssueActivity = observer(function IssueActivity(props: TIssueActivity) {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
-  // i18n
-  const { t } = useTranslation();
   // hooks
-  const { setValue: setFilterValue, storedValue: selectedFilters } = useLocalStorage(
-    "issue_activity_filters",
-    defaultActivityFilters
-  );
+  const { setValue: setActiveTab, storedValue: storedTab } = useLocalStorage<TActivityTab>("issue_activity_tab", "all");
+  const activeTab: TActivityTab = storedTab ?? "all";
   const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
   // store hooks
   const {
@@ -68,19 +76,14 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
-  // toggle filter
-  const toggleFilter = (filter: TActivityFilters) => {
-    if (!selectedFilters) return;
-    let _filters = [];
-    if (selectedFilters.includes(filter)) {
-      if (selectedFilters.length === 1) return selectedFilters; // Ensure at least one filter is applied
-      _filters = selectedFilters.filter((f) => f !== filter);
-    } else {
-      _filters = [...selectedFilters, filter];
-    }
-
-    setFilterValue(uniq(_filters));
-  };
+  // intake issues don't support worklogs, so drop that tab there
+  const tabs: TActivityTab[] = isIntakeIssue
+    ? ["all", "activity", "comments"]
+    : ["all", "activity", "comments", "worklogs"];
+  const selectedFilters: TActivityFilters[] =
+    activeTab === "worklogs" ? [EActivityFilterType.WORKLOG] : TAB_FILTER_MAP[activeTab];
+  // comment composer only makes sense on the All and Comments tabs
+  const showCommentBox = !disabled && (activeTab === "all" || activeTab === "comments");
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
@@ -106,10 +109,10 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
 
   return (
     <div className="space-y-4">
-      {/* header */}
-      <div className="flex items-center justify-between">
-        <div className="text-h5-medium text-primary">{t("common.activity")}</div>
-        <div className="flex items-center gap-2">
+      {/* header: tab bar + actions */}
+      <div className="flex items-end justify-between gap-2">
+        <ActivityTabBar activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
+        <div className="flex items-center gap-2 pb-1">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton
               workspaceSlug={workspaceSlug}
@@ -118,34 +121,34 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
               disabled={disabled}
             />
           )}
-          <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
-          <ActivityFilterRoot
-            selectedFilters={selectedFilters || defaultActivityFilters}
-            toggleFilter={toggleFilter}
-            isIntakeIssue={isIntakeIssue}
-            projectId={projectId}
-          />
+          {activeTab !== "worklogs" && (
+            <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
+          )}
         </div>
       </div>
 
       {/* rendering activity */}
       <div className="space-y-3">
         <div className="min-h-[200px]">
-          <div className="space-y-3">
-            {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
-            <IssueActivityCommentRoot
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              isIntakeIssue={isIntakeIssue}
-              issueId={issueId}
-              selectedFilters={selectedFilters || defaultActivityFilters}
-              activityOperations={activityOperations}
-              showAccessSpecifier={!!project.anchor}
-              disabled={disabled}
-              sortOrder={sortOrder || E_SORT_ORDER.ASC}
-            />
-            {!disabled && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
-          </div>
+          {activeTab === "worklogs" ? (
+            <IssueWorklogList workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+          ) : (
+            <div className="space-y-3">
+              {showCommentBox && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
+              <IssueActivityCommentRoot
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                isIntakeIssue={isIntakeIssue}
+                issueId={issueId}
+                selectedFilters={selectedFilters}
+                activityOperations={activityOperations}
+                showAccessSpecifier={!!project.anchor}
+                disabled={disabled}
+                sortOrder={sortOrder || E_SORT_ORDER.ASC}
+              />
+              {showCommentBox && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
+            </div>
+          )}
         </div>
       </div>
     </div>
