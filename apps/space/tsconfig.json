@@ -4,7 +4,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "types": ["vite/client"],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./cmc-local/*", "./*"]
     },
     "strictNullChecks": true,
     "noImplicitOverride": false,
