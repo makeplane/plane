@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -8,14 +7,12 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { Button } from "@plane/propel/button";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { CreateSupportTicketModal } from "@/components/support-tickets/create-ticket-modal";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const SupportTicketsHeader = observer(function SupportTicketsHeader() {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
@@ -24,14 +21,6 @@ export const SupportTicketsHeader = observer(function SupportTicketsHeader() {
 
   return (
     <>
-      {workspaceSlug && projectId && (
-        <CreateSupportTicketModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-        />
-      )}
       <Header>
         <Header.LeftItem>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
@@ -49,7 +38,11 @@ export const SupportTicketsHeader = observer(function SupportTicketsHeader() {
           </Breadcrumbs>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button variant="primary" size="lg" onClick={() => setIsCreateModalOpen(true)}>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/support-tickets/create`)}
+          >
             <span className="block sm:hidden">Add</span>
             <span className="hidden sm:block">New Ticket</span>
           </Button>

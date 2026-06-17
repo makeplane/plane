@@ -55,6 +55,8 @@ class SupportTicketSerializer(BaseSerializer):
             "issue_state_color",
             "issue_start_date",
             "issue_target_date",
+            "start_date",
+            "due_date",
             "assignee_ids",
             "source",
             "source_email",
@@ -97,6 +99,15 @@ class SupportTicketCreateSerializer(BaseSerializer):
         default=list,
         write_only=True,
     )
+    start_date = serializers.DateField(required=False, allow_null=True)
+    due_date = serializers.DateField(required=False, allow_null=True)
+
+    def validate(self, data):
+        start_date = data.get("start_date")
+        due_date = data.get("due_date")
+        if start_date and due_date and due_date < start_date:
+            raise serializers.ValidationError({"non_field_errors": ["Due Date cannot be before Start Date."]})
+        return data
 
     class Meta:
         model = SupportTicket
@@ -106,6 +117,8 @@ class SupportTicketCreateSerializer(BaseSerializer):
             "priority",
             "state_id",
             "assignee_ids",
+            "start_date",
+            "due_date",
             "source",
             "source_email",
             "email_subject",

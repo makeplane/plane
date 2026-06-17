@@ -51,6 +51,8 @@ class SupportTicket(ProjectBaseModel):
         verbose_name="Email Date",
         help_text="Parsed Date header from the email for fallback deduplication.",
     )
+    start_date = models.DateField(blank=True, null=True)
+    due_date = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Support Ticket"

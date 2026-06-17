@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus, Trash2, UserPlus, ChevronDown, ChevronUp, Users } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { CustomSelect, Input } from "@plane/ui";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import type { Route } from "./+types/page";
 
@@ -175,70 +177,81 @@ const AssignmentGroupsPage = observer(function AssignmentGroupsPage(_props: Rout
       <div className="space-y-6">
         {/* Workspace selector */}
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-custom-text-200">Workspace:</label>
-          <select
-            className="rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 min-w-[240px]"
-            value={selectedSlug}
-            onChange={(e) => setSelectedSlug(e.target.value)}
-          >
-            <option value="">-- Select Workspace --</option>
-            {workspaces.map((w) => (
-              <option key={w.id} value={w.slug}>{w.name} ({w.slug})</option>
-            ))}
-          </select>
+          <label className="text-13 font-medium text-tertiary">Workspace:</label>
+          <div className="min-w-[240px]">
+            <CustomSelect
+              value={selectedSlug}
+              onChange={(val: string) => setSelectedSlug(val)}
+              label={
+                selectedSlug ? (
+                  workspaces.find((w) => w.slug === selectedSlug)?.name || selectedSlug
+                ) : (
+                  <span className="text-placeholder">-- Select Workspace --</span>
+                )
+              }
+              input
+            >
+              <CustomSelect.Option value="">-- Select Workspace --</CustomSelect.Option>
+              {workspaces.map((w) => (
+                <CustomSelect.Option key={w.id} value={w.slug}>
+                  {w.name} ({w.slug})
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          </div>
         </div>
 
         {/* Messages */}
         {error && (
-          <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>
+          <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3 text-13 text-red-500">{error}</div>
         )}
         {successMsg && (
-          <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700">{successMsg}</div>
+          <div className="rounded-md bg-green-500/10 border border-green-500/20 p-3 text-13 text-green-500">{successMsg}</div>
         )}
 
         {selectedSlug && !loading && (
           <>
             {/* Create button */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-custom-text-200">
+              <span className="text-14 font-medium text-secondary">
                 {groups.length} group{groups.length !== 1 ? "s" : ""}
               </span>
-              <button
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={() => setShowCreateForm(!showCreateForm)}
-                className="flex items-center gap-1.5 rounded-md bg-custom-primary-100 px-3 py-1.5 text-sm font-medium text-white hover:bg-custom-primary-200 transition-colors"
+                prependIcon={<Plus className="h-4 w-4" />}
               >
-                <Plus className="h-4 w-4" /> Create Group
-              </button>
+                Create Group
+              </Button>
             </div>
 
             {/* Create form */}
             {showCreateForm && (
-              <div className="rounded-md border border-custom-border-200 bg-custom-background-90 p-4 space-y-3">
-                <input
-                  className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+              <div className="rounded-md border border-border-200 bg-background-90 p-4 space-y-3">
+                <Input
+                  id="newGroupName"
+                  type="text"
                   placeholder="Group name"
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
+                  className="w-full"
                 />
-                <input
-                  className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+                <Input
+                  id="newGroupDesc"
+                  type="text"
                   placeholder="Description (optional)"
                   value={newGroupDesc}
                   onChange={(e) => setNewGroupDesc(e.target.value)}
+                  className="w-full"
                 />
                 <div className="flex gap-2">
-                  <button
-                    onClick={handleCreateGroup}
-                    className="rounded-md bg-custom-primary-100 px-4 py-1.5 text-sm font-medium text-white hover:bg-custom-primary-200"
-                  >
+                  <Button variant="primary" size="sm" onClick={handleCreateGroup}>
                     Save
-                  </button>
-                  <button
-                    onClick={() => setShowCreateForm(false)}
-                    className="rounded-md border border-custom-border-200 px-4 py-1.5 text-sm"
-                  >
+                  </Button>
+                  <Button variant="outline-primary" size="sm" onClick={() => setShowCreateForm(false)}>
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -251,51 +264,51 @@ const AssignmentGroupsPage = observer(function AssignmentGroupsPage(_props: Rout
                 const availableMembers = members.filter((m) => !groupMemberIds.has(m.id));
 
                 return (
-                  <div key={group.id} className="rounded-md border border-custom-border-200 bg-custom-background-100">
+                  <div key={group.id} className="rounded-md border border-border-200 bg-background-100">
                     {/* Group header */}
                     <div
                       className="flex items-center justify-between px-4 py-3 cursor-pointer"
                       onClick={() => setExpandedGroupId(isExpanded ? null : group.id)}
                     >
                       <div className="flex items-center gap-3">
-                        <Users className="h-5 w-5 text-custom-text-300" />
+                        <Users className="h-5 w-5 text-tertiary" />
                         <div>
-                          <span className="font-medium text-sm">{group.name}</span>
+                          <span className="font-medium text-14 text-primary">{group.name}</span>
                           {group.description && (
-                            <p className="text-xs text-custom-text-300">{group.description}</p>
+                            <p className="text-12 text-tertiary">{group.description}</p>
                           )}
                         </div>
-                        <span className="rounded-full bg-custom-background-80 px-2 py-0.5 text-xs text-custom-text-300">
+                        <span className="rounded-full bg-background-80 px-2 py-0.5 text-12 text-tertiary">
                           {group.members.length} member{group.members.length !== 1 ? "s" : ""}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteGroup(group.id); }}
-                          className="p-1 text-red-500 hover:bg-red-50 rounded"
+                          className="p-1 text-red-500 hover:bg-red-500/10 rounded"
                           title="Delete group"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
-                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        {isExpanded ? <ChevronUp className="h-4 w-4 text-tertiary" /> : <ChevronDown className="h-4 w-4 text-tertiary" />}
                       </div>
                     </div>
 
                     {/* Expanded: members */}
                     {isExpanded && (
-                      <div className="border-t border-custom-border-200 px-4 py-3 space-y-3">
+                      <div className="border-t border-border-200 px-4 py-3 space-y-3">
                         {/* Current members */}
                         {group.members.length > 0 ? (
                           <div className="space-y-1">
                             {group.members.map((m) => (
-                              <div key={m.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-custom-background-80">
-                                <div className="text-sm">
-                                  <span className="font-medium">{m.member_name}</span>
-                                  <span className="text-custom-text-300 ml-2">({m.member_email})</span>
+                              <div key={m.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-background-80">
+                                <div className="text-14">
+                                  <span className="font-medium text-primary">{m.member_name}</span>
+                                  <span className="text-tertiary ml-2">({m.member_email})</span>
                                 </div>
                                 <button
                                   onClick={() => handleRemoveMember(group.id, m.id)}
-                                  className="text-xs text-red-500 hover:underline"
+                                  className="text-12 text-red-500 hover:underline"
                                 >
                                   Remove
                                 </button>
@@ -303,30 +316,30 @@ const AssignmentGroupsPage = observer(function AssignmentGroupsPage(_props: Rout
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-custom-text-300 italic">No members yet.</p>
+                          <p className="text-14 text-tertiary italic">No members yet.</p>
                         )}
 
                         {/* Add member */}
                         {availableMembers.length > 0 && (
-                          <div className="flex items-center gap-2 pt-2 border-t border-custom-border-100">
-                            <UserPlus className="h-4 w-4 text-custom-text-300" />
-                            <select
-                              className="rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-1.5 text-sm flex-1"
-                              defaultValue=""
-                              onChange={(e) => {
-                                if (e.target.value) {
-                                  handleAddMember(group.id, e.target.value);
-                                  e.target.value = "";
-                                }
-                              }}
-                            >
-                              <option value="">Add a member...</option>
-                              {availableMembers.map((m) => (
-                                <option key={m.id} value={m.id}>
-                                  {m.display_name || m.email} ({m.email})
-                                </option>
-                              ))}
-                            </select>
+                          <div className="flex items-center gap-2 pt-2 border-t border-border-100">
+                            <UserPlus className="h-4 w-4 text-tertiary" />
+                            <div className="flex-1">
+                              <CustomSelect
+                                value=""
+                                onChange={(val: string) => {
+                                  if (val) handleAddMember(group.id, val);
+                                }}
+                                label={<span className="text-placeholder">Add a member...</span>}
+                                input
+                              >
+                                <CustomSelect.Option value="">Add a member...</CustomSelect.Option>
+                                {availableMembers.map((m) => (
+                                  <CustomSelect.Option key={m.id} value={m.id}>
+                                    {m.display_name || m.email} ({m.email})
+                                  </CustomSelect.Option>
+                                ))}
+                              </CustomSelect>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -335,7 +348,7 @@ const AssignmentGroupsPage = observer(function AssignmentGroupsPage(_props: Rout
                 );
               })}
               {groups.length === 0 && (
-                <p className="text-sm text-custom-text-300 text-center py-8">
+                <p className="text-14 text-tertiary text-center py-8">
                   No assignment groups found for this workspace. Create one above.
                 </p>
               )}
@@ -343,8 +356,8 @@ const AssignmentGroupsPage = observer(function AssignmentGroupsPage(_props: Rout
           </>
         )}
 
-        {loading && <p className="text-sm text-custom-text-300">Loading...</p>}
-        {!selectedSlug && <p className="text-sm text-custom-text-300">Select a workspace to manage assignment groups.</p>}
+        {loading && <p className="text-14 text-tertiary">Loading...</p>}
+        {!selectedSlug && <p className="text-14 text-tertiary">Select a workspace to manage assignment groups.</p>}
       </div>
     </PageWrapper>
   );

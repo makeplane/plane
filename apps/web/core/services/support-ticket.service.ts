@@ -17,6 +17,8 @@ export interface ISupportTicket {
   assignee_ids: string[];
   issue_start_date: string | null;
   issue_target_date: string | null;
+  start_date: string | null;
+  due_date: string | null;
   source: string;
   source_email: string | null;
   email_subject: string | null;
@@ -34,6 +36,8 @@ export interface ISupportTicketCreate {
   priority?: string;
   state_id?: string;
   assignee_ids?: string[];
+  start_date?: string;
+  due_date?: string;
   source?: string;
 }
 

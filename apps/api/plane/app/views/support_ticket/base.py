@@ -113,6 +113,8 @@ class SupportTicketViewSet(BaseViewSet):
                 email_body_html=data.get("email_body_html"),
                 project_id=project_id,
                 workspace_id=project.workspace_id,
+                start_date=data.get("start_date"),
+                due_date=data.get("due_date"),
             )
             ticket.save()
 
