@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import logging
 import os
 from datetime import datetime
 from urllib.parse import urlencode
@@ -11,6 +12,11 @@ from urllib.parse import urlencode
 import jwt
 import pytz
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+logger = logging.getLogger(__name__)
 
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
@@ -141,11 +147,45 @@ class OIDCOAuthProvider(OauthAdapter):
 
     def _discover(self, issuer):
         try:
-            response = requests.get(f"{issuer}/.well-known/openid-configuration", timeout=5)
+            response = requests.get(
+                f"{issuer}/.well-known/openid-configuration",
+                timeout=5,
+                verify=False,
+            )
             response.raise_for_status()
             return response.json()
         except (requests.RequestException, ValueError):
-            self.logger.warning("Error fetching OIDC discovery document")
+            logger.warning("Error fetching OIDC discovery document")
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_OAUTH_PROVIDER_ERROR"],
+                error_message="OIDC_OAUTH_PROVIDER_ERROR",
+            )
+
+    def get_user_token(self, data, headers=None):
+        try:
+            headers = headers or {}
+            response = requests.post(
+                self.get_token_url(), data=data, headers=headers, verify=False
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException:
+            logger.warning("Error getting user token")
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_OAUTH_PROVIDER_ERROR"],
+                error_message="OIDC_OAUTH_PROVIDER_ERROR",
+            )
+
+    def get_user_response(self):
+        try:
+            headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
+            response = requests.get(
+                self.get_user_info_url(), headers=headers, verify=False
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException:
+            logger.warning("Error getting user response")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["OIDC_OAUTH_PROVIDER_ERROR"],
                 error_message="OIDC_OAUTH_PROVIDER_ERROR",
@@ -189,7 +229,11 @@ class OIDCOAuthProvider(OauthAdapter):
 
     def _verify_id_token(self, id_token):
         try:
-            jwk_client = jwt.PyJWKClient(self.jwks_uri)
+            import ssl
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            jwk_client = jwt.PyJWKClient(self.jwks_uri, ssl_context=ctx)
             signing_key = jwk_client.get_signing_key_from_jwt(id_token)
             jwt.decode(
                 id_token,
@@ -200,7 +244,7 @@ class OIDCOAuthProvider(OauthAdapter):
                 options={"verify_iss": bool(self.issuer)},
             )
         except jwt.PyJWTError:
-            self.logger.warning("OIDC id_token failed signature verification")
+            logger.warning("OIDC id_token failed signature verification")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["OIDC_OAUTH_PROVIDER_ERROR"],
                 error_message="OIDC_OAUTH_PROVIDER_ERROR",
