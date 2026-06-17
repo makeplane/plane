@@ -111,6 +111,11 @@ def get_issue_props():
     return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
 
 
+def get_default_worklog_timer_state_groups():
+    # by default a timer can only be started on "In Progress" (started group) work items
+    return ["started"]
+
+
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
@@ -137,6 +142,8 @@ class Workspace(BaseModel):
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
+    # state groups on which a work item timer may be started (default: In Progress / "started")
+    worklog_timer_state_groups = models.JSONField(default=get_default_worklog_timer_state_groups)
 
     def __str__(self):
         """Return name of the Workspace"""

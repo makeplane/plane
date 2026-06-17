@@ -56,6 +56,9 @@ export function ModalCore(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
+                // marks the modal as an overlay so an underlying peek view's outside-click
+                // detector doesn't close the peek when the modal is interacted with
+                data-prevent-outside-click
                 className={cn(
                   "relative w-full transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all",
                   width,

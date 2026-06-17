@@ -44,6 +44,7 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
+import { WorkItemTimerButton } from "@/plane-web/components/issues/worklog/list-timer-button";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
@@ -209,6 +210,20 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           />
         </div>
       </WithDisplayPropertiesHOC>
+
+      {/* quick start/stop timer — next to state for fast time logging */}
+      {!isEpic && workspaceSlug && issue.project_id && (
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <WorkItemTimerButton
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            assigneeIds={issue.assignee_ids}
+            stateId={issue.state_id}
+            disabled={isReadOnly}
+          />
+        </div>
+      )}
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">

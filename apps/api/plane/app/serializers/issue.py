@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    IssueWorkLog,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -1028,3 +1029,37 @@ class IssueDescriptionVersionDetailSerializer(BaseSerializer):
             "updated_by",
         ]
         read_only_fields = ["workspace", "project", "issue"]
+
+
+class IssueWorkLogSerializer(BaseSerializer):
+    logged_by_detail = UserLiteSerializer(source="logged_by", read_only=True)
+
+    class Meta:
+        model = IssueWorkLog
+        fields = [
+            "id",
+            "issue",
+            "project",
+            "workspace",
+            "logged_by",
+            "logged_by_detail",
+            "duration",
+            "started_at",
+            "logged_at",
+            "description",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "issue",
+            "workspace",
+            "project",
+            "logged_by",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]

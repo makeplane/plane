@@ -662,6 +662,22 @@ class IssueViewSet(BaseViewSet):
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Block moving a work item to a completed state while a timer is still running on it
+        new_state_id = request.data.get("state_id")
+        if new_state_id and str(new_state_id) != str(issue.state_id):
+            from plane.db.models import State, IssueWorkLog
+
+            new_state = State.objects.filter(pk=new_state_id, project_id=project_id).first()
+            if (
+                new_state
+                and new_state.group == "completed"
+                and IssueWorkLog.objects.filter(issue_id=pk, duration__isnull=True).exists()
+            ):
+                return Response(
+                    {"error": "Stop the running timer before marking this work item as done."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)

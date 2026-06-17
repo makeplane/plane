@@ -125,6 +125,21 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
+    // merge completed worklogs (duration !== null) into the feed
+    const worklogStore = (currentStore as unknown as { worklog?: { getWorklogsByIssueId(id: string): string[] | undefined; getWorklogById(id: string): { id: string; duration: number | null; logged_at: string } | undefined } }).worklog;
+    if (worklogStore) {
+      const worklogIds = worklogStore.getWorklogsByIssueId(issueId) ?? [];
+      worklogIds.forEach((worklogId) => {
+        const wl = worklogStore.getWorklogById(worklogId);
+        if (!wl || wl.duration === null) return;
+        activityComments.push({
+          id: wl.id,
+          activity_type: EActivityFilterType.WORKLOG,
+          created_at: wl.logged_at,
+        });
+      });
+    }
+
     return activityComments;
   }
 

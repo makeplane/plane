@@ -31,6 +31,11 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    IssueWorkLogViewSet,
+    IssueTimerEndpoint,
+    IssueWorkLogSummaryEndpoint,
+    IssueActiveTimersEndpoint,
+    UserActiveTimerEndpoint,
 )
 
 urlpatterns = [
@@ -283,4 +288,41 @@ urlpatterns = [
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
     ),
+    ## Work Logs
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/",
+        IssueWorkLogViewSet.as_view({"get": "list", "post": "create"}),
+        name="issue-worklogs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/<uuid:pk>/",
+        IssueWorkLogViewSet.as_view(
+            {
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="issue-worklog-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/timer/",
+        IssueTimerEndpoint.as_view(),
+        name="issue-timer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/active-timers/",
+        IssueActiveTimersEndpoint.as_view(),
+        name="issue-active-timers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklog-summary/",
+        IssueWorkLogSummaryEndpoint.as_view(),
+        name="issue-worklog-summary",
+    ),
+    path(
+        "workspaces/<str:slug>/me/active-timer/",
+        UserActiveTimerEndpoint.as_view(),
+        name="user-active-timer",
+    ),
+    ## End Work Logs
 ]
