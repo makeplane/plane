@@ -11,13 +11,14 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
-export type TActivityTab = "all" | "activity" | "comments" | "worklogs";
+export type TActivityTab = "all" | "activity" | "comments" | "worklogs" | "custom_fields";
 
 const TAB_LABEL_KEYS: Record<TActivityTab, string> = {
   all: "common.all",
   activity: "common.activity",
   comments: "common.comments",
   worklogs: "common.worklogs",
+  custom_fields: "common.custom_fields",
 };
 
 type TActivityTabBar = {
@@ -38,7 +39,7 @@ export const ActivityTabBar = observer(function ActivityTabBar(props: TActivityT
           type="button"
           onClick={() => setActiveTab(tab)}
           className={cn(
-            "relative px-3 py-2 text-body-sm-medium outline-none transition-colors",
+            "relative px-3 py-2 text-body-sm-medium transition-colors outline-none",
             activeTab === tab ? "text-primary" : "text-tertiary hover:text-secondary"
           )}
         >

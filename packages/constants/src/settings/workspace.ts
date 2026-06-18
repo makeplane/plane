@@ -11,18 +11,21 @@ import { EUserWorkspaceRoles } from "@plane/types";
 export enum WORKSPACE_SETTINGS_CATEGORY {
   ADMINISTRATION = "administration",
   FEATURES = "features",
+  CUSTOM_FIELDS = "custom_fields",
   DEVELOPER = "developer",
 }
 
 export const WORKSPACE_SETTINGS_CATEGORIES: WORKSPACE_SETTINGS_CATEGORY[] = [
   WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION,
   WORKSPACE_SETTINGS_CATEGORY.FEATURES,
+  WORKSPACE_SETTINGS_CATEGORY.CUSTOM_FIELDS,
   WORKSPACE_SETTINGS_CATEGORY.DEVELOPER,
 ];
 
 export const WORKSPACE_SETTINGS_CATEGORY_LABELS: Record<WORKSPACE_SETTINGS_CATEGORY, string> = {
   [WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION]: "common.administration",
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: "common.features",
+  [WORKSPACE_SETTINGS_CATEGORY.CUSTOM_FIELDS]: "common.custom_fields",
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: "common.developer",
 };
 
@@ -62,11 +65,29 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
   },
+  "custom-fields-projects": {
+    key: "custom-fields-projects",
+    i18n_label: "workspace_settings.settings.custom_fields.projects.title",
+    href: `/settings/custom-fields/projects`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/custom-fields/projects/`,
+  },
+  "custom-fields-work-items": {
+    key: "custom-fields-work-items",
+    i18n_label: "workspace_settings.settings.custom_fields.work_items.title",
+    href: `/settings/custom-fields/work-items`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/custom-fields/work-items/`,
+  },
 };
 
-export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
-  Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
-);
+export const WORKSPACE_SETTINGS_ACCESS: Record<string, EUserWorkspaceRoles[]> = {
+  ...Object.fromEntries(Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])),
+  // Custom fields use a nested route (/settings/custom-fields/<entity>). The settings
+  // layout derives the access key from only the first two path segments, so register
+  // the category prefix too — every custom-fields sub-page is workspace-admin only.
+  "/settings/custom-fields": WORKSPACE_SETTINGS["custom-fields-projects"].access,
+};
 
 export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWorkspaceSettingsItem[]> = {
   [WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION]: [
@@ -76,5 +97,9 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["export"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [],
+  [WORKSPACE_SETTINGS_CATEGORY.CUSTOM_FIELDS]: [
+    WORKSPACE_SETTINGS["custom-fields-projects"],
+    WORKSPACE_SETTINGS["custom-fields-work-items"],
+  ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
 };

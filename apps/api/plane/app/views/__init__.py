@@ -240,6 +240,13 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
+from .custom_field.base import (
+    CustomFieldEndpoint,
+    ProjectCustomFieldValueEndpoint,
+    IssueCustomFieldValueEndpoint,
+    WorkspaceActiveCustomFieldsEndpoint,
+)
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet

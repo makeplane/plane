@@ -97,6 +97,112 @@
           }
         }
       },
+      "custom_fields": {
+        "add_field": "Add field",
+        "projects": {
+          "title": "Projects",
+          "description": "Define extra fields that appear when creating or editing projects in this workspace.",
+          "section_title": "Custom fields",
+          "section_description": "Additional information defined for projects in this workspace.",
+          "save_values": "Save custom fields",
+          "section_title_short": "Custom fields"
+        },
+        "work_items": {
+          "title": "Work Items",
+          "description": "Define extra fields that appear on work items across this workspace.",
+          "section_title": "Custom fields",
+          "tab_empty": "No custom fields are defined for work items yet."
+        },
+        "types": {
+          "text": "Text",
+          "paragraph": "Paragraph",
+          "number": "Number",
+          "single_select": "Select",
+          "multi_select": "Multi select",
+          "boolean": "Checkbox",
+          "radio": "Radio",
+          "date": "Date",
+          "datetime": "Date & time",
+          "color": "Color",
+          "url": "Hyperlink",
+          "email": "Email"
+        },
+        "form": {
+          "create_title": "Create custom field",
+          "edit_title": "Edit custom field",
+          "field_type": "Field type",
+          "type_locked": "Field type can't be changed after creation.",
+          "name": "Name",
+          "name_placeholder": "e.g. Department",
+          "name_required": "Name is required",
+          "description": "Description",
+          "description_placeholder": "Help text shown below the field (optional)",
+          "options": "Options",
+          "option_label": "Option label",
+          "add_option": "Add option",
+          "options_required": "Add at least one option.",
+          "placeholder": "Placeholder",
+          "min_length": "Min length",
+          "max_length": "Max length",
+          "min": "Min",
+          "max": "Max",
+          "step": "Step",
+          "min_date": "Earliest date",
+          "max_date": "Latest date",
+          "checkbox_label": "Checkbox label",
+          "default_value": "Default value",
+          "width": "Width (columns)",
+          "width_hint": "1–12 of a 12-column grid",
+          "required": "Required",
+          "required_help": "Users must fill this field.",
+          "admin_only": "Admin only",
+          "admin_only_help": "Only workspace admins can see and edit this field.",
+          "active": "Active",
+          "active_help": "Inactive fields are hidden from project forms.",
+          "save": "Save changes",
+          "create": "Create field",
+          "required_fields_missing": "Please fill all required custom fields."
+        },
+        "list": {
+          "required": "Required",
+          "admin_only": "Admin only",
+          "inactive": "Inactive",
+          "width": "Width {width}/12"
+        },
+        "empty": {
+          "title": "No custom fields yet",
+          "description": "Create custom fields to capture extra information on every project in this workspace."
+        },
+        "delete": {
+          "title": "Delete custom field",
+          "description": "Are you sure you want to delete \"{name}\"? Stored values for this field will be removed. This action cannot be undone."
+        },
+        "toasts": {
+          "created": {
+            "title": "Field created",
+            "message": "The custom field has been created."
+          },
+          "updated": {
+            "title": "Field updated",
+            "message": "The custom field has been updated."
+          },
+          "removed": {
+            "title": "Field removed",
+            "message": "The custom field has been removed."
+          },
+          "not_removed": {
+            "message": "The custom field could not be removed. Please try again."
+          },
+          "values_saved": {
+            "title": "Saved",
+            "message": "Custom field values have been saved."
+          },
+          "error": {
+            "title": "Something went wrong",
+            "message": "Please try again."
+          }
+        }
+      },
       "webhooks": {
         "heading": "Webhooks",
         "description": "Automate notifications to external services when project events occur.",

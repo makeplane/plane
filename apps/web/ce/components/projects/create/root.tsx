@@ -12,12 +12,15 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 // components
+import { CustomFieldsSection } from "@/components/custom-fields";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
 import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
+import { useCustomField } from "@/hooks/store/use-custom-field";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectCustomFieldValues } from "@/hooks/use-project-custom-field-values";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import type { TProject } from "@plane/types";
@@ -39,6 +42,9 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   // store
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
+  const { updateProjectValues } = useCustomField();
+  // custom fields (project entity)
+  const customFields = useProjectCustomFieldValues({ workspaceSlug: workspaceSlug?.toString() ?? "" });
   // states
   const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // form info
@@ -61,6 +67,15 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   };
 
   const onSubmit = async (formData: Partial<TProject>) => {
+    // validate required custom fields before creating the project
+    if (customFields.hasFields && !customFields.validate()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("workspace_settings.settings.custom_fields.form.required_fields_missing"),
+      });
+      return;
+    }
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
@@ -109,6 +124,14 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
         if (setToFavorite) {
           handleAddToFavorites(res.id);
+        }
+        // persist custom field values for the new project
+        if (customFields.hasFields) {
+          try {
+            await updateProjectValues(workspaceSlug.toString(), res.id, customFields.getPayload());
+          } catch (error) {
+            console.error("Error saving project custom fields:", error);
+          }
         }
         return handleNextStep(res.id);
       })
@@ -185,6 +208,19 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
             setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
           />
           <ProjectAttributes isMobile={isMobile} />
+          {customFields.hasFields && (
+            <div className="space-y-3 border-t border-subtle pt-5">
+              <h6 className="text-body-sm-semibold text-secondary">
+                {t("workspace_settings.settings.custom_fields.projects.section_title")}
+              </h6>
+              <CustomFieldsSection
+                fields={customFields.fields}
+                values={customFields.values}
+                onChange={customFields.setValue}
+                errors={customFields.errors}
+              />
+            </div>
+          )}
         </div>
         <ProjectCreateButtons handleClose={handleClose} />
       </form>

@@ -741,7 +741,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "custom_fields": "Custom Fields"
   },
   "chart": {
     "x_axis": "X-axis",

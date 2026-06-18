@@ -282,6 +282,14 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/custom-fields/projects",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/custom-fields/projects/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/custom-fields/work-items",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/custom-fields/work-items/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------

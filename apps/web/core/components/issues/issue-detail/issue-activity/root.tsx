@@ -14,6 +14,7 @@ import { useLocalStorage } from "@plane/hooks";
 import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
+import { IssueCustomFieldsTab } from "@/components/custom-fields";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -28,7 +29,7 @@ import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
 
 // each tab maps to the set of activity types it shows in the feed
-const TAB_FILTER_MAP: Record<Exclude<TActivityTab, "worklogs">, TActivityFilters[]> = {
+const TAB_FILTER_MAP: Record<Exclude<TActivityTab, "worklogs" | "custom_fields">, TActivityFilters[]> = {
   all: [
     EActivityFilterType.ACTIVITY,
     EActivityFilterType.COMMENT,
@@ -78,10 +79,10 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
   // intake issues don't support worklogs, so drop that tab there
   const tabs: TActivityTab[] = isIntakeIssue
-    ? ["all", "activity", "comments"]
-    : ["all", "activity", "comments", "worklogs"];
+    ? ["all", "activity", "comments", "custom_fields"]
+    : ["all", "activity", "comments", "worklogs", "custom_fields"];
   const selectedFilters: TActivityFilters[] =
-    activeTab === "worklogs" ? [EActivityFilterType.WORKLOG] : TAB_FILTER_MAP[activeTab];
+    activeTab === "worklogs" || activeTab === "custom_fields" ? [] : TAB_FILTER_MAP[activeTab];
   // comment composer only makes sense on the All and Comments tabs
   const showCommentBox = !disabled && (activeTab === "all" || activeTab === "comments");
 
@@ -121,7 +122,7 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
               disabled={disabled}
             />
           )}
-          {activeTab !== "worklogs" && (
+          {activeTab !== "worklogs" && activeTab !== "custom_fields" && (
             <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
           )}
         </div>
@@ -132,6 +133,13 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
         <div className="min-h-[200px]">
           {activeTab === "worklogs" ? (
             <IssueWorklogList workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+          ) : activeTab === "custom_fields" ? (
+            <IssueCustomFieldsTab
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              disabled={disabled}
+            />
           ) : (
             <div className="space-y-3">
               {showCommentBox && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}

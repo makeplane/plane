@@ -6,8 +6,6 @@ services:
       - dev_env
     volumes:
       - redisdata:/data
-    ports:
-      - "6379:6379"
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -31,7 +29,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       mkdir -p /export/${AWS_S3_BUCKET_NAME} &&
-      minio server /export --console-address ':9090' &
+      minio server /export --console-address ':9199' &
       sleep 5 &&
       mc alias set myminio http://localhost:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
       mc mb myminio/${AWS_S3_BUCKET_NAME} -p || true
@@ -46,7 +44,7 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     ports:
       - "9000:9000"
-      - "9090:9090"
+      - "9199:9199"
 
   plane-db:
     image: postgres:15.7-alpine

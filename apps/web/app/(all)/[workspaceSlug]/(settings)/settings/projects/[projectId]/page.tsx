@@ -19,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
 import { GeneralProjectSettingsHeader } from "./header";
 import { GeneralProjectSettingsControlSection } from "@/components/project/settings/control-section";
+import { ProjectCustomFieldsSettings } from "@/components/project/settings/custom-fields";
 import { ProjectTimerSettings } from "@/plane-web/components/issues/worklog/settings/project-timer-settings";
 
 function ProjectSettingsPage({ params }: Route.ComponentProps) {
@@ -48,6 +49,7 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
         )}
         {isAdmin && <GeneralProjectSettingsControlSection projectId={projectId} />}
         {isAdmin && <ProjectTimerSettings workspaceSlug={workspaceSlug} projectId={projectId} />}
+        <ProjectCustomFieldsSettings workspaceSlug={workspaceSlug} projectId={projectId} disabled={!isAdmin} />
       </div>
     </SettingsContentWrapper>
   );

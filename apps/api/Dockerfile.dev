@@ -19,7 +19,7 @@ RUN apk --no-cache add \
     "cargo" \
     "git" \
     "make" \
-    "postgresql-dev" \
+    "postgresql16-dev" \
     "libc-dev" \
     "linux-headers"
 

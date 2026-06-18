@@ -31,15 +31,18 @@ export const pathnameToAccessKey = (pathname: string) => {
   const pathArray = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
   const workspaceSlug = pathArray[0];
   const accessKey = pathArray.slice(1, 3).join("/");
-  return { workspaceSlug, accessKey: `/${accessKey}` || "" };
+  return { workspaceSlug, accessKey: `/${accessKey}` };
 };
 
 export const getWorkspaceActivePath = (pathname: string) => {
   const parts = pathname.split("/").filter(Boolean);
   const settingsIndex = parts.indexOf("settings");
   if (settingsIndex === -1) return null;
+  // try the nested (3-segment) href first, e.g. /settings/custom-fields/projects,
+  // then fall back to the 2-segment href used by most settings pages.
+  const nestedPath = "/" + parts.slice(settingsIndex, settingsIndex + 3).join("/");
   const subPath = "/" + parts.slice(settingsIndex, settingsIndex + 2).join("/");
-  return workspaceHrefToLabelMap[subPath];
+  return workspaceHrefToLabelMap[nestedPath] ?? workspaceHrefToLabelMap[subPath];
 };
 
 export const getProjectActivePath = (pathname: string) => {

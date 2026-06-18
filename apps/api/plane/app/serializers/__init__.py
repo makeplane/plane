@@ -127,6 +127,8 @@ from .exporter import ExporterHistorySerializer
 
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
+from .custom_field import CustomFieldSerializer, CustomFieldValueSerializer
+
 from .favorite import UserFavoriteSerializer
 
 from .draft import (

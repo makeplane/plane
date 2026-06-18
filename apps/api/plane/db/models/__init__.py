@@ -66,6 +66,12 @@ from .state import State, StateGroup, DEFAULT_STATES
 from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
+from .custom_field import (
+    CustomField,
+    CustomFieldValue,
+    CustomFieldType,
+    CustomFieldEntityType,
+)
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,
