@@ -1,0 +1,48 @@
+services:
+  web:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-web:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile.web
+
+  admin:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-admin:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile.admin
+
+  space:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-space:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: apps/space/Dockerfile.space
+
+  live:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-live:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: apps/live/Dockerfile.live
+
+  api:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-api:${APP_RELEASE:-latest}
+    build: &backend-build
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+
+  worker:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-worker:${APP_RELEASE:-latest}
+    build: *backend-build
+
+  beat-worker:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-beat-worker:${APP_RELEASE:-latest}
+    build: *backend-build
+
+  migrator:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-migrator:${APP_RELEASE:-latest}
+    build: *backend-build
+
+  proxy:
+    image: ${IMAGE_PREFIX:-xplane}/xplane-proxy:${APP_RELEASE:-latest}
+    build:
+      context: ./apps/proxy
+      dockerfile: Dockerfile.ce

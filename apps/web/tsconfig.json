@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "@/*": ["./core/*"],
+      "@/*": ["./cmc-local/*", "./core/*"],
       "@/app/*": ["./app/*"],
       "@/helpers/*": ["./helpers/*"],
       "@/styles/*": ["./styles/*"],
