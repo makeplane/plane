@@ -40,6 +40,7 @@ import {
   WorkspaceDraftIssues,
   WorkspaceDraftIssuesFilter,
 } from "./workspace-draft";
+import { IssueRealtimeBridge, type IRealtimeTransport, type TIssueRealtimeBridgeOptions } from "./realtime-bridge";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -107,6 +108,13 @@ export interface IIssueRootStore {
 
   projectEpicsFilter: IProjectEpicsFilter;
   projectEpics: IProjectEpics;
+
+  issueRealtimeBridge: IssueRealtimeBridge | undefined;
+  initializeIssueRealtimeBridge: (
+    transport: IRealtimeTransport,
+    options?: TIssueRealtimeBridgeOptions
+  ) => IssueRealtimeBridge;
+  disposeIssueRealtimeBridge: () => void;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -175,6 +183,8 @@ export class IssueRootStore implements IIssueRootStore {
 
   projectEpicsFilter: IProjectEpicsFilter;
   projectEpics: IProjectEpics;
+
+  issueRealtimeBridge: IssueRealtimeBridge | undefined = undefined;
 
   constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
@@ -267,4 +277,19 @@ export class IssueRootStore implements IIssueRootStore {
     this.projectEpicsFilter = new ProjectEpicsFilter(this);
     this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);
   }
+
+  initializeIssueRealtimeBridge = (transport: IRealtimeTransport, options?: TIssueRealtimeBridgeOptions) => {
+    this.issueRealtimeBridge?.dispose();
+    this.issueRealtimeBridge = new IssueRealtimeBridge(transport, {
+      clientId: this.currentUserId,
+      ...options,
+    });
+
+    return this.issueRealtimeBridge;
+  };
+
+  disposeIssueRealtimeBridge = () => {
+    this.issueRealtimeBridge?.dispose();
+    this.issueRealtimeBridge = undefined;
+  };
 }

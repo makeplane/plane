@@ -45,6 +45,7 @@ import { IssueArchiveService, IssueDraftService, IssueService } from "@/services
 import { ModuleService } from "@/services/module.service";
 //
 import { IIssueRootStore } from "../root.store";
+import type { TIssueRealtimePublisher } from "../realtime-bridge";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -200,6 +201,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // root store
   rootIssueStore;
   issueFilterStore;
+  issueRealtimePublisher: TIssueRealtimePublisher | undefined = undefined;
   // API Abort controller
   controller: AbortController;
 
@@ -590,6 +592,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // Update the Respective Stores
       this.rootIssueStore.issues.updateIssue(issueId, data);
       this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+
+      if (shouldSync) {
+        void this.issueRealtimePublisher?.({
+          workspaceSlug,
+          projectId,
+          issueId,
+          data,
+        });
+      }
 
       // Check if should Sync
       if (!shouldSync) return;
