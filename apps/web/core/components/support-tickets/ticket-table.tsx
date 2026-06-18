@@ -170,6 +170,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
           createdAt: ticket.created_at,
           overdue,
           assigneeNames,
+          reporterDisplay: ticket.reporter_display,
         };
       })
       .filter(Boolean);
@@ -560,6 +561,11 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                 )}
               </th>
 
+              {/* Reporter Header */}
+              <th className="text-xs tracking-wider w-[165px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+                Reporter
+              </th>
+
               <th className="text-xs tracking-wider w-[130px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
                 Due Date
               </th>
@@ -600,6 +606,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                   createdAt,
                   overdue,
                   assigneeNames,
+                  reporterDisplay,
                 }) => {
                   return (
                     <tr
@@ -698,6 +705,31 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                           </div>
                         ) : (
                           <span className="text-sm text-placeholder">Unassigned</span>
+                        )}
+                      </td>
+
+                      {/* Reporter */}
+                      <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
+                        {reporterDisplay ? (
+                          reporterDisplay.type === "user" ? (
+                            <div className="flex items-center gap-1">
+                              <div
+                                className="border-surface-1 bg-primary/10 flex h-6 w-6 items-center justify-center rounded-full border-2 text-[10px] font-semibold text-primary uppercase"
+                                title={reporterDisplay.display_name}
+                              >
+                                {reporterDisplay.display_name[0]}
+                              </div>
+                              <span className="text-sm ml-1 text-secondary">
+                                {reporterDisplay.display_name}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-secondary" title={reporterDisplay.value}>
+                              {reporterDisplay.value}
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-sm text-placeholder">—</span>
                         )}
                       </td>
 

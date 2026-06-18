@@ -11,10 +11,12 @@ Features:
 
 # Python imports
 import hashlib
+import html as html_module
 import imaplib
 import email
 import logging
 import os
+import re
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
 
@@ -31,7 +33,9 @@ from plane.db.models import (
     SupportTicket,
     Project,
     State,
+    WorkspaceMember,
 )
+from plane.db.models.user import User
 from plane.utils.html_processor import strip_tags
 from plane.utils.ai_summary import generate_ticket_description_from_email
 from plane.utils.email_auth import imap_oauth2_login
@@ -288,6 +292,48 @@ def poll_email_for_tickets():
                 pass
 
 
+def _resolve_reporter(from_value, workspace):
+    """Resolve reporter from From: header.
+
+    Uses strict parsing:
+    - Only @winjit.com senders populate reporter
+    - Stores local part only (e.g. 'akash.barnwal')
+    - If sender is a workspace member, returns (user, local_part)
+    - If not a member but @winjit.com, returns (None, local_part)
+    - If not @winjit.com, returns (None, None)
+    """
+    from email.utils import parseaddr
+
+    name, addr = parseaddr(from_value or "")
+    addr = addr.strip().lower()
+
+    if not addr or "@" not in addr:
+        return None, None
+
+    # Only accept @winjit.com senders
+    if not addr.endswith("@winjit.com"):
+        return None, None
+
+    # Extract and sanitize local part
+    localpart = addr.split("@", 1)[0]
+    cleaned = html_module.escape(strip_tags(localpart))[:512]
+
+    # Try to match workspace member by full email
+    try:
+        user = User.objects.get(email__iexact=addr)
+        is_member = WorkspaceMember.objects.filter(
+            workspace=workspace,
+            member=user,
+            is_active=True,
+        ).exists()
+        if is_member:
+            return user, cleaned  # Keep reporter_email too for fallback
+    except User.DoesNotExist:
+        pass
+
+    return None, cleaned
+
+
 def _process_emails(mail, email_ids, project, workspace, target_state):
     """Process a list of IMAP email IDs, creating tickets for each."""
     for email_id in email_ids:
@@ -340,6 +386,9 @@ def _process_emails(mail, email_ids, project, workspace, target_state):
                 mail.store(email_id, "+FLAGS", "\\Seen")
                 continue
 
+            # ---- Resolve reporter from From: header ----
+            reporter_user, reporter_email = _resolve_reporter(sender, workspace)
+
             # ---- AI summary ----
             description_html, used_ai = generate_ticket_description_from_email(
                 plain_text
@@ -368,6 +417,8 @@ def _process_emails(mail, email_ids, project, workspace, target_state):
                     state=target_state,
                     project=project,
                     workspace=workspace,
+                    reporter=reporter_user,
+                    reporter_email=reporter_email,
                 )
                 issue.save(disable_auto_set_user=True)
 
@@ -381,12 +432,15 @@ def _process_emails(mail, email_ids, project, workspace, target_state):
                     email_date=email_date,
                     project=project,
                     workspace=workspace,
+                    reporter_user=reporter_user,
+                    reporter_email=reporter_email,
                 )
                 ticket.save(disable_auto_set_user=True)
 
             logger.info(
-                "Created ticket %s (issue_id=%s) from email: %s",
+                "Created ticket %s (issue_id=%s) from email: %s (reporter: %s)",
                 ticket.ticket_display, issue.id, subject[:80],
+                reporter_user.display_name if reporter_user else (reporter_email or "unknown"),
             )
 
             # Mark as read

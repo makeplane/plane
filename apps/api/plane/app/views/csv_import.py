@@ -1,4 +1,5 @@
 import csv
+import html as html_module
 import io
 import re
 from dateutil.parser import parse as parse_date
@@ -217,7 +218,8 @@ class CSVImportValidateAPIEndpoint(BaseAPIView):
             priority_val = (row_lower.get("priority") or "none").lower()
             state_val = row_lower.get("state") or row_lower.get("status") or ""
             assignee_val = row_lower.get("assignee") or row_lower.get("assignees") or row_lower.get("owner") or row_lower.get("tech") or ""
-            
+            reporter_val = row_lower.get("reporter") or ""
+
             start_date_val = row_lower.get("start date") or row_lower.get("created") or row_lower.get("created at") or ""
             target_date_val = row_lower.get("due date") or row_lower.get("target date") or row_lower.get("deadline") or ""
             ticket_number_val = row_lower.get("issue key") or row_lower.get("ticket number") or row_lower.get("ticket") or ""
@@ -285,6 +287,33 @@ class CSVImportValidateAPIEndpoint(BaseAPIView):
                 else:
                     warnings.append(f"Row {idx}: Issue Key '{ticket_number_val}' does not contain a valid number.")
 
+            # Resolve Reporter
+            reporter_user_id = None
+            reporter_user_name = None
+            reporter_email_val = None
+            if reporter_val:
+                from plane.utils.reporter_utils import normalize_reporter_email
+                local_part, err = normalize_reporter_email(reporter_val)
+                
+                if err:
+                    errors.append(f"Row {idx}: {err}")
+                else:
+                    reporter_email_val = local_part
+                    
+                    # Try to match member by the derived local_part or full value
+                    # (since member_map keys might be full emails, try appending domain if it's a local part)
+                    reporter_lower = reporter_val.lower().strip()
+                    matched_reporter = member_map.get(reporter_lower)
+                    if not matched_reporter and local_part:
+                        matched_reporter = member_map.get(f"{local_part}@winjit.com")
+                    
+                    if matched_reporter:
+                        reporter_user_id = str(matched_reporter.id)
+                        reporter_user_name = matched_reporter.display_name or matched_reporter.username
+                        warnings.append(f"Row {idx}: Reporter matched member '{reporter_user_name}'.")
+                    else:
+                        warnings.append(f"Row {idx}: Reporter '{reporter_val}' not found as member. Stored as email local part '{local_part}'.")
+
             # Create clean HTML description
             desc_html = f"<p>{description}</p>" if description and not (description.startswith("<p>") or description.startswith("<div>")) else description
 
@@ -297,6 +326,9 @@ class CSVImportValidateAPIEndpoint(BaseAPIView):
                     "state_name": mapped_state.name if mapped_state else None,
                     "assignee_ids": mapped_assignee_ids,
                     "assignee_names": mapped_assignee_names,
+                    "reporter_user_id": reporter_user_id,
+                    "reporter_user_name": reporter_user_name,
+                    "reporter_email": reporter_email_val,
                     "start_date": start_date_parsed,
                     "target_date": target_date_parsed,
                     "ticket_number": ticket_number_parsed,
@@ -357,6 +389,10 @@ class CSVImportConfirmAPIEndpoint(BaseAPIView):
                 target_date = row.get("target_date")
                 ticket_number = row.get("ticket_number")
 
+                # Extract reporter fields
+                reporter_user_id = row.get("reporter_user_id")
+                reporter_email = row.get("reporter_email")
+
                 # Create the Issue
                 issue = Issue(
                     name=title,
@@ -368,6 +404,8 @@ class CSVImportConfirmAPIEndpoint(BaseAPIView):
                     target_date=target_date,
                     project_id=project_id,
                     workspace_id=project.workspace_id,
+                    reporter_id=reporter_user_id,
+                    reporter_email=reporter_email,
                 )
                 issue.save()
                 issues_created += 1
@@ -389,6 +427,8 @@ class CSVImportConfirmAPIEndpoint(BaseAPIView):
                         source="CSV_IMPORT",
                         project_id=project_id,
                         workspace_id=project.workspace_id,
+                        reporter_user_id=reporter_user_id,
+                        reporter_email=reporter_email,
                     )
                     if ticket_number:
                         ticket.ticket_number = ticket_number

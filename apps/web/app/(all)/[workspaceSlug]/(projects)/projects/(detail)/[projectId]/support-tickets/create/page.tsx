@@ -11,35 +11,41 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageHead } from "@/components/core/page-title";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ReporterDropdown } from "@/components/dropdowns/reporter/dropdown";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useSupportTicket } from "@/hooks/store/use-support-ticket";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useMember } from "@/hooks/store/use-member";
+import { useUser } from "@/hooks/store/user";
 
 export default observer(function CreateSupportTicketPage() {
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { currentProjectDetails, loader } = useProject();
+  const { createTicket } = useSupportTicket();
+  const { projectStates } = useProjectState();
+  const { data: currentUser } = useUser();
+  const {
+    project: { projectMemberIds },
+    getUserDetails,
+  } = useMember();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     priority: "none",
     state_id: "",
     assignee_ids: [] as string[],
+    reporter_id: currentUser?.id || "",
+    reporter_email: "",
     start_date: "",
     due_date: "",
   });
-
-  const { currentProjectDetails, loader } = useProject();
-  const { createTicket } = useSupportTicket();
-  const { projectStates } = useProjectState();
-  const {
-    project: { projectMemberIds },
-    getUserDetails,
-  } = useMember();
 
   const wSlug = workspaceSlug?.toString() || "";
   const pId = projectId?.toString() || "";
@@ -84,6 +90,8 @@ export default observer(function CreateSupportTicketPage() {
         assignee_ids: formData.assignee_ids,
         start_date: formData.start_date || undefined,
         due_date: formData.due_date || undefined,
+        reporter_user_id: formData.reporter_id || undefined,
+        reporter_email: formData.reporter_email || undefined,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -234,6 +242,32 @@ export default observer(function CreateSupportTicketPage() {
                       );
                     })}
                   </select>
+                </div>
+
+                {/* Reporter */}
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-secondary">Reporter</label>
+                  <div className="h-10 w-full rounded-lg border border-subtle bg-surface-1 text-primary transition-colors focus-within:border-primary">
+                    <ReporterDropdown
+                      value={formData.reporter_email || formData.reporter_id || null}
+                      onChange={(val) => {
+                        if (val && val.includes("@")) {
+                          setFormData((prev) => ({ ...prev, reporter_email: val, reporter_id: "" }));
+                        } else {
+                          setFormData((prev) => ({ ...prev, reporter_id: val || "", reporter_email: "" }));
+                        }
+                      }}
+                      projectId={pId}
+                      placeholder="Add reporter"
+                      buttonVariant="transparent-with-text"
+                      className="group w-full h-full flex items-center px-3"
+                      buttonContainerClassName="w-full text-left h-full"
+                      buttonClassName={`text-body-sm justify-between w-full h-full ${(formData.reporter_id || formData.reporter_email) ? "" : "text-placeholder"}`}
+                      hideIcon={!formData.reporter_id && !formData.reporter_email}
+                      dropdownArrow
+                      dropdownArrowClassName="h-4 w-4"
+                    />
+                  </div>
                 </div>
 
                 {/* Start Date */}

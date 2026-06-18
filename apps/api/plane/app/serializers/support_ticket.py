@@ -1,4 +1,5 @@
 # Third party imports
+import html
 from rest_framework import serializers
 
 # Module imports
@@ -38,6 +39,27 @@ class SupportTicketSerializer(BaseSerializer):
         child=serializers.UUIDField(), read_only=True
     )
 
+    # Reporter
+    reporter_display = serializers.SerializerMethodField(read_only=True)
+
+    def get_reporter_display(self, obj):
+        """Return reporter info, preferring reporter_user over reporter_email."""
+        if obj.reporter_user:
+            return {
+                "type": "user",
+                "id": str(obj.reporter_user.id),
+                "display_name": obj.reporter_user.display_name,
+                "avatar_url": getattr(obj.reporter_user, "avatar_url", None) or "",
+                "fallback_email_local": obj.reporter_email or "",
+            }
+        elif obj.reporter_email:
+            # Escape for XSS safety — always render as plain text
+            return {
+                "type": "email",
+                "value": html.escape(str(obj.reporter_email)),
+            }
+        return None
+
     class Meta:
         model = SupportTicket
         fields = [
@@ -58,6 +80,9 @@ class SupportTicketSerializer(BaseSerializer):
             "start_date",
             "due_date",
             "assignee_ids",
+            "reporter_user",
+            "reporter_email",
+            "reporter_display",
             "source",
             "source_email",
             "email_subject",
@@ -102,6 +127,10 @@ class SupportTicketCreateSerializer(BaseSerializer):
     start_date = serializers.DateField(required=False, allow_null=True)
     due_date = serializers.DateField(required=False, allow_null=True)
 
+    # Reporter fields for creation
+    reporter_user_id = serializers.UUIDField(required=False, allow_null=True)
+    reporter_email = serializers.CharField(required=False, allow_null=True, max_length=512)
+
     def validate(self, data):
         start_date = data.get("start_date")
         due_date = data.get("due_date")
@@ -123,4 +152,6 @@ class SupportTicketCreateSerializer(BaseSerializer):
             "source_email",
             "email_subject",
             "email_body_html",
+            "reporter_user_id",
+            "reporter_email",
         ]

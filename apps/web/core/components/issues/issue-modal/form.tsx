@@ -489,6 +489,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
               <div className="pb-3">
                 <IssueDefaultProperties
                   control={control}
+                  getValues={getValues}
+                  setValue={setValue}
                   id={data?.id}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug?.toString()}

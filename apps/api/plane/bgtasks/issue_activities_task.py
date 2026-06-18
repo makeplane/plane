@@ -426,6 +426,53 @@ def track_assignees(
         )
 
 
+# Track changes in issue reporter
+def track_reporter(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("reporter_id") != requested_data.get("reporter_id"):
+        old_reporter = None
+        new_reporter = None
+
+        if current_instance.get("reporter_id"):
+            try:
+                old_user = User.objects.get(pk=current_instance.get("reporter_id"))
+                old_reporter = old_user.display_name
+            except User.DoesNotExist:
+                old_reporter = str(current_instance.get("reporter_id"))
+
+        if requested_data.get("reporter_id"):
+            try:
+                new_user = User.objects.get(pk=requested_data.get("reporter_id"))
+                new_reporter = new_user.display_name
+            except User.DoesNotExist:
+                new_reporter = str(requested_data.get("reporter_id"))
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_reporter or "",
+                new_value=new_reporter or "",
+                field="reporter",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the reporter to",
+                old_identifier=current_instance.get("reporter_id"),
+                new_identifier=requested_data.get("reporter_id"),
+                epoch=epoch,
+            )
+        )
+
+
 def track_estimate_points(
     requested_data,
     current_instance,
@@ -607,6 +654,7 @@ def update_issue_activity(
         "start_date": track_start_date,
         "label_ids": track_labels,
         "assignee_ids": track_assignees,
+        "reporter_id": track_reporter,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,

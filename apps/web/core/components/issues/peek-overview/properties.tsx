@@ -21,6 +21,7 @@ import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ReporterDropdown } from "@/components/dropdowns/reporter/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
@@ -105,6 +106,33 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={issue.assignee_ids?.length === 0}
+            dropdownArrow
+            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+          />
+        </SidebarPropertyListItem>
+
+        <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Reporter">
+          <ReporterDropdown
+            value={issue?.reporter_email || issue?.reporter_id || null}
+            onChange={(val) => {
+              const updatePayload: any = {};
+              if (val && val.includes("@")) {
+                updatePayload.reporter_email = val;
+                updatePayload.reporter_id = null;
+              } else {
+                updatePayload.reporter_id = val || null;
+                updatePayload.reporter_email = null;
+              }
+              issueOperations.update(workspaceSlug, projectId, issueId, updatePayload);
+            }}
+            disabled={disabled}
+            projectId={projectId}
+            placeholder="Add reporter"
+            buttonVariant="transparent-with-text"
+            className="group w-full grow"
+            buttonContainerClassName="w-full text-left h-7.5"
+            buttonClassName={`text-body-xs-medium justify-between ${(issue?.reporter_id || issue?.reporter_email) ? "" : "text-placeholder"}`}
+            hideIcon={!issue.reporter_id && !issue.reporter_email}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />

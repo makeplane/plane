@@ -323,6 +323,30 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         </div>
       </WithDisplayPropertiesHOC>
 
+      {/* reporter avatar — read-only, only when set */}
+      {issue.reporter_id && (issue as any).reporter_detail && (
+        <Tooltip
+          tooltipHeading="Reporter"
+          tooltipContent={(issue as any).reporter_detail.display_name}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
+          <div
+            className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ring-2 ring-orange-400/60 text-[9px] font-bold uppercase"
+            style={{
+              backgroundImage: (issue as any).reporter_detail.avatar_url
+                ? `url(${(issue as any).reporter_detail.avatar_url})`
+                : undefined,
+              backgroundSize: "cover",
+              backgroundColor: (issue as any).reporter_detail.avatar_url ? undefined : "rgba(251,146,60,0.15)",
+              color: (issue as any).reporter_detail.avatar_url ? "transparent" : "rgb(234,88,12)",
+            }}
+          >
+            {!(issue as any).reporter_detail.avatar_url && (issue as any).reporter_detail.display_name?.[0]}
+          </div>
+        </Tooltip>
+      )}
+
       <>
         {!isEpic && (
           <>

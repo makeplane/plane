@@ -46,6 +46,8 @@ export type TBaseIssue = {
   priority: TIssuePriorities | null;
   label_ids: string[];
   assignee_ids: string[];
+  reporter_id: string | null;
+  reporter_email: string | null;
   estimate_point: string | null;
 
   sub_issues_count: number;
@@ -90,6 +92,14 @@ export type TIssue = TBaseIssue & {
   issue_link?: TIssueLink[];
   issue_relation?: IssueRelation[];
   issue_related?: IssueRelation[];
+  reporter_detail?: {
+    type?: "user" | "email";
+    id?: string;
+    display_name?: string;
+    avatar_url?: string;
+    fallback_email_local?: string;
+    value?: string;
+  } | null;
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.

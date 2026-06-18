@@ -265,6 +265,12 @@ function ImportSettingsPage({ params }: Route.ComponentProps) {
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="font-mono bg-custom-background-80 rounded px-1 py-0.5 text-secondary">
+                      reporter
+                    </span>
+                    <span className="text-tertiary">— Email or display name of the reporter (Optional)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="font-mono bg-custom-background-80 rounded px-1 py-0.5 text-secondary">
                       start date, created
                     </span>
                     <span className="text-tertiary">— Date the issue was started or created (Optional)</span>
@@ -357,6 +363,7 @@ function ImportSettingsPage({ params }: Route.ComponentProps) {
                       <th className="px-5 py-3">Priority</th>
                       <th className="px-5 py-3">State</th>
                       <th className="px-5 py-3">Assignees</th>
+                      <th className="px-5 py-3">Reporter</th>
                       <th className="px-5 py-3">Start Date</th>
                       <th className="px-5 py-3">Due Date</th>
                       <th className="px-5 py-3">Ticket #</th>
@@ -386,6 +393,9 @@ function ImportSettingsPage({ params }: Route.ComponentProps) {
                         <td className="px-5 py-3.5 font-semibold text-secondary">{row.state_name || "—"}</td>
                         <td className="px-5 py-3.5 text-tertiary">
                           {row.assignee_names && row.assignee_names.length > 0 ? row.assignee_names.join(", ") : "—"}
+                        </td>
+                        <td className="px-5 py-3.5 text-tertiary">
+                          {row.reporter_user_name || row.reporter_email || "—"}
                         </td>
                         <td className="px-5 py-3.5 text-secondary">{row.start_date || "—"}</td>
                         <td className="px-5 py-3.5 text-secondary">{row.target_date || "—"}</td>

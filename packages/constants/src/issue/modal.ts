@@ -11,6 +11,8 @@ export const DEFAULT_WORK_ITEM_FORM_VALUES: Partial<TIssue> = {
   parent_id: null,
   priority: "none",
   assignee_ids: [],
+  reporter_id: null,
+  reporter_email: null,
   label_ids: [],
   cycle_id: null,
   module_ids: null,

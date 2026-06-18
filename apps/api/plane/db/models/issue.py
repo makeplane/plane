@@ -149,6 +149,19 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         through="IssueAssignee",
         through_fields=("issue", "assignee"),
     )
+    reporter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reported_issues",
+    )
+    reporter_email = models.CharField(
+        max_length=512,
+        null=True,
+        blank=True,
+        help_text="Local part of reporter email (e.g. 'akash.barnwal'), only @winjit.com accepted.",
+    )
     sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     labels = models.ManyToManyField("db.Label", blank=True, related_name="labels", through="IssueLabel")
     sort_order = models.FloatField(default=65535)

@@ -17,6 +17,7 @@ from plane.db.models import (
     SupportTicket,
     Issue,
     IssueAssignee,
+    IssueActivity,
     State,
     Project,
 )
@@ -34,7 +35,10 @@ class SupportTicketViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
-            .select_related("issue", "issue__state", "project", "workspace")
+            .select_related(
+                "issue", "issue__state", "project", "workspace",
+                "reporter_user",
+            )
             .annotate(
                 assignee_ids=Coalesce(
                     ArrayAgg(
@@ -81,8 +85,25 @@ class SupportTicketViewSet(BaseViewSet):
                 ).first()
             state_id = default_state.id if default_state else None
 
+        # Resolve reporter_user and reporter_email
+        reporter_user_id = data.get("reporter_user_id")
+        reporter_email = data.get("reporter_email")
+        
+        if reporter_email:
+            from plane.utils.reporter_utils import normalize_reporter_email
+            local_part, err = normalize_reporter_email(reporter_email)
+            if err:
+                return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+            reporter_email = local_part
+            reporter_user_id = None
+        elif reporter_user_id:
+            reporter_email = None
+        elif reporter_user_id is None and "reporter_user_id" not in request.data and "reporter_email" not in request.data:
+            # default to request.user if not provided
+            reporter_user_id = request.user.id
+
         with transaction.atomic():
-            # Create the Issue
+            # Create the Issue (with reporter auto-set)
             issue = Issue(
                 name=data["title"],
                 description_html=data.get("description_html", "<p></p>"),
@@ -91,6 +112,8 @@ class SupportTicketViewSet(BaseViewSet):
                 state_id=state_id,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
+                reporter_id=reporter_user_id,
+                reporter_email=reporter_email,
             )
             issue.save()
 
@@ -115,6 +138,8 @@ class SupportTicketViewSet(BaseViewSet):
                 workspace_id=project.workspace_id,
                 start_date=data.get("start_date"),
                 due_date=data.get("due_date"),
+                reporter_user_id=reporter_user_id,
+                reporter_email=reporter_email,
             )
             ticket.save()
 
@@ -131,7 +156,7 @@ class SupportTicketViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
-        ticket = SupportTicket.objects.select_related("issue").get(
+        ticket = SupportTicket.objects.select_related("issue", "reporter_user").get(
             pk=pk,
             workspace__slug=slug,
             project_id=project_id,
@@ -154,6 +179,43 @@ class SupportTicketViewSet(BaseViewSet):
             issue.state_id = request.data["state_id"]
             updated = True
 
+        # Update reporter on issue and ticket if provided
+        reporter_updated = False
+        
+        # Check if reporter_email is provided in payload
+        if "reporter_email" in request.data:
+            from plane.utils.reporter_utils import normalize_reporter_email
+            local_part, err = normalize_reporter_email(request.data["reporter_email"])
+            if err:
+                return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+                
+            old_reporter = issue.reporter
+            issue.reporter_id = None
+            issue.reporter_email = local_part
+            ticket.reporter_user_id = None
+            ticket.reporter_email = local_part
+            reporter_updated = True
+            
+        elif "reporter_user_id" in request.data:
+            old_reporter = issue.reporter
+            new_id = request.data["reporter_user_id"]
+            issue.reporter_id = new_id
+            issue.reporter_email = None
+            ticket.reporter_user_id = new_id
+            ticket.reporter_email = None
+            reporter_updated = True
+
+        if reporter_updated:
+            # Log reporter activity
+            _log_reporter_activity(
+                issue=issue,
+                old_reporter=old_reporter,
+                new_reporter_id=issue.reporter_id,
+                actor=request.user,
+                project_id=project_id,
+            )
+            updated = True
+
         if updated:
             issue.save()
 
@@ -172,6 +234,9 @@ class SupportTicketViewSet(BaseViewSet):
                     workspace_id=project.workspace_id,
                 )
 
+        if reporter_updated:
+            ticket.save()
+
         # Re-fetch with annotations
         ticket = self.get_queryset().get(pk=pk)
         serializer = SupportTicketSerializer(ticket)
@@ -188,3 +253,39 @@ class SupportTicketViewSet(BaseViewSet):
         ticket.delete()
         issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def _get_reporter_display(ticket):
+    """Helper to get reporter display name from a ticket."""
+    if ticket.reporter_user:
+        return ticket.reporter_user.display_name
+    elif ticket.reporter_email:
+        return ticket.reporter_email
+    return None
+
+
+def _log_reporter_activity(issue, old_reporter, new_reporter_id, actor, project_id):
+    """Log an IssueActivity entry when the reporter changes."""
+    from plane.db.models import User
+
+    old_name = old_reporter.display_name if old_reporter else None
+    new_name = None
+    if new_reporter_id:
+        try:
+            new_user = User.objects.get(pk=new_reporter_id)
+            new_name = new_user.display_name
+        except User.DoesNotExist:
+            new_name = str(new_reporter_id)
+
+    IssueActivity.objects.create(
+        issue=issue,
+        project_id=project_id,
+        workspace_id=issue.workspace_id,
+        actor=actor,
+        field="reporter",
+        verb="updated",
+        old_value=old_name,
+        new_value=new_name,
+        old_identifier=old_reporter.id if old_reporter else None,
+        new_identifier=new_reporter_id,
+    )

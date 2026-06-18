@@ -28,6 +28,17 @@ export interface ISupportTicket {
   updated_at: string;
   created_by: string | null;
   updated_by: string | null;
+  reporter_user: string | null;
+  reporter_email: string | null;
+  reporter_display: {
+    type: "user";
+    id: string;
+    display_name: string;
+    avatar_url: string;
+  } | {
+    type: "email";
+    value: string;
+  } | null;
 }
 
 export interface ISupportTicketCreate {
@@ -39,6 +50,8 @@ export interface ISupportTicketCreate {
   start_date?: string;
   due_date?: string;
   source?: string;
+  reporter_user_id?: string;
+  reporter_email?: string;
 }
 
 export class SupportTicketService extends APIService {

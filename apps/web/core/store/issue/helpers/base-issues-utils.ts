@@ -330,7 +330,7 @@ export const getGroupedWorkItemIds = (
     if (Array.isArray(value)) {
       if (value.length === 0) return "None";
       // Sort & join to build deterministic set-like key
-      return value.slice().toSorted().join(",");
+      return value.slice().sort().join(",");
     }
     return value ?? "None";
   });

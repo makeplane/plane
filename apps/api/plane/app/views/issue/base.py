@@ -100,7 +100,7 @@ class IssueListEndpoint(BaseAPIView):
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
-            issue_queryset = issue_queryset.select_related("workspace", "project", "state", "parent").prefetch_related(
+            issue_queryset = issue_queryset.select_related("workspace", "project", "state", "parent", "reporter").prefetch_related(
                 "assignees", "labels", "issue_module__module"
             )
 
@@ -174,6 +174,7 @@ class IssueListEndpoint(BaseAPIView):
                 "module_ids",
                 "label_ids",
                 "assignee_ids",
+                "reporter_id",
                 "sub_issues_count",
                 "created_at",
                 "updated_at",
@@ -400,6 +401,19 @@ class IssueViewSet(BaseViewSet):
         )
 
         if serializer.is_valid():
+            # Handle reporter: either reporter_id (member) or reporter_email (manual @winjit.com)
+            if request.data.get("reporter_email"):
+                from plane.utils.reporter_utils import normalize_reporter_email
+                local_part, err = normalize_reporter_email(request.data["reporter_email"])
+                if err:
+                    return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+                serializer.validated_data["reporter_email"] = local_part
+                serializer.validated_data.pop("reporter", None)  # clear FK
+            elif request.data.get("reporter_id"):
+                serializer.validated_data["reporter_email"] = None  # clear email
+            elif not request.data.get("reporter_id") and not request.data.get("reporter_email"):
+                # Auto-set reporter to request.user if nothing provided
+                serializer.validated_data["reporter_id"] = request.user.id
             serializer.save()
 
             # Track the issue
@@ -439,6 +453,7 @@ class IssueViewSet(BaseViewSet):
                     "module_ids",
                     "label_ids",
                     "assignee_ids",
+                    "reporter_id",
                     "sub_issues_count",
                     "created_at",
                     "updated_at",
@@ -484,7 +499,7 @@ class IssueViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 pk=pk,
             )
-            .select_related("state")
+            .select_related("state", "reporter")
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .annotate(
                 link_count=Subquery(
@@ -669,6 +684,16 @@ class IssueViewSet(BaseViewSet):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
+            if "reporter_email" in request.data:
+                from plane.utils.reporter_utils import normalize_reporter_email
+                local_part, err = normalize_reporter_email(request.data["reporter_email"])
+                if err:
+                    return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+                serializer.validated_data["reporter_email"] = local_part
+                serializer.validated_data["reporter"] = None  # clear FK
+            elif "reporter_id" in request.data:
+                serializer.validated_data["reporter_email"] = None  # clear email
+
             serializer.save()
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
@@ -811,7 +836,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
 
         return (
-            issue_queryset.select_related("state")
+            issue_queryset.select_related("state", "reporter")
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .annotate(
                 link_count=Subquery(
@@ -882,6 +907,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "module_ids",
             "label_ids",
             "assignee_ids",
+            "reporter_id",
             "link_count",
             "attachment_count",
             "sub_issues_count",

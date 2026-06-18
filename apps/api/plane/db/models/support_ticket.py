@@ -51,6 +51,18 @@ class SupportTicket(ProjectBaseModel):
         verbose_name="Email Date",
         help_text="Parsed Date header from the email for fallback deduplication.",
     )
+    reporter_user = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reported_tickets",
+    )
+    reporter_email = models.CharField(
+        max_length=512,
+        null=True,
+        blank=True,
+    )
     start_date = models.DateField(blank=True, null=True)
     due_date = models.DateField(blank=True, null=True)
 

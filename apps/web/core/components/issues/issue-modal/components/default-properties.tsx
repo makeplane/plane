@@ -15,6 +15,7 @@ import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ReporterDropdown } from "@/components/dropdowns/reporter/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
@@ -31,6 +32,8 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
+  setValue?: (name: keyof TIssue, value: any) => void;
+  getValues?: () => Partial<TIssue>;
   id: string | undefined;
   projectId: string | null;
   workspaceSlug: string;
@@ -43,9 +46,11 @@ type TIssueDefaultPropertiesProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
-export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
+export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
   const {
     control,
+    setValue,
+    getValues,
     id,
     projectId,
     workspaceSlug,
@@ -134,6 +139,32 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
               placeholder={t("assignees")}
               multiple
               tabIndex={getIndex("assignee_ids")}
+            />
+          </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name="reporter_id"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <ReporterDropdown
+              projectId={projectId ?? undefined}
+              value={getValues?.()?.reporter_email || value || null}
+              onChange={(reporterVal) => {
+                if (reporterVal && reporterVal.includes("@")) {
+                  setValue?.("reporter_email", reporterVal);
+                  onChange(null);
+                } else {
+                  setValue?.("reporter_email", null);
+                  onChange(reporterVal || null);
+                }
+                handleFormChange();
+              }}
+              buttonVariant={(value || getValues?.()?.reporter_email) ? "transparent-without-text" : "border-with-text"}
+              buttonClassName={(value || getValues?.()?.reporter_email) ? "hover:bg-transparent" : ""}
+              placeholder="Reporter"
+              tabIndex={getIndex("reporter_id")}
             />
           </div>
         )}

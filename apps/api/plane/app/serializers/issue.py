@@ -762,10 +762,28 @@ class IssueSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     assignee_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
+    # Reporter
+    reporter_detail = serializers.SerializerMethodField(read_only=True)
+
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
+
+    def get_reporter_detail(self, obj):
+        if obj.reporter:
+            return {
+                "id": str(obj.reporter.id),
+                "display_name": obj.reporter.display_name,
+                "avatar_url": getattr(obj.reporter, "avatar_url", None) or "",
+                "fallback_email_local": obj.reporter_email or "",
+            }
+        elif obj.reporter_email:
+            return {
+                "type": "email",
+                "value": obj.reporter_email,
+            }
+        return None
 
     class Meta:
         model = Issue
@@ -786,6 +804,9 @@ class IssueSerializer(DynamicBaseSerializer):
             "module_ids",
             "label_ids",
             "assignee_ids",
+            "reporter_id",
+            "reporter_email",
+            "reporter_detail",
             "sub_issues_count",
             "created_at",
             "updated_at",
@@ -850,6 +871,8 @@ class IssueListDetailSerializer(serializers.Serializer):
             "module_ids": self.get_module_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "assignee_ids": self.get_assignee_ids(instance),
+            "reporter_id": instance.reporter_id,
+            "reporter_email": instance.reporter_email,
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
