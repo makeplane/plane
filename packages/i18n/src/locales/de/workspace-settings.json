@@ -97,6 +97,112 @@
           }
         }
       },
+      "custom_fields": {
+        "add_field": "Feld hinzufügen",
+        "projects": {
+          "title": "Projekte",
+          "description": "Definieren Sie zusätzliche Felder, die beim Erstellen oder Bearbeiten von Projekten in diesem Arbeitsbereich angezeigt werden.",
+          "section_title": "Benutzerdefinierte Felder",
+          "section_description": "Zusätzliche Informationen, die für Projekte in diesem Arbeitsbereich definiert sind.",
+          "save_values": "Benutzerdefinierte Felder speichern",
+          "section_title_short": "Benutzerdefinierte Felder"
+        },
+        "work_items": {
+          "title": "Arbeitselemente",
+          "description": "Definieren Sie zusätzliche Felder, die für Arbeitselemente in diesem Arbeitsbereich angezeigt werden.",
+          "section_title": "Benutzerdefinierte Felder",
+          "tab_empty": "Für Arbeitselemente wurden noch keine benutzerdefinierten Felder definiert."
+        },
+        "types": {
+          "text": "Text",
+          "paragraph": "Absatz",
+          "number": "Zahl",
+          "single_select": "Auswahl",
+          "multi_select": "Mehrfachauswahl",
+          "boolean": "Kontrollkästchen",
+          "radio": "Radio",
+          "date": "Datum",
+          "datetime": "Datum & Uhrzeit",
+          "color": "Farbe",
+          "url": "Hyperlink",
+          "email": "E-Mail"
+        },
+        "form": {
+          "create_title": "Benutzerdefiniertes Feld erstellen",
+          "edit_title": "Benutzerdefiniertes Feld bearbeiten",
+          "field_type": "Feldtyp",
+          "type_locked": "Der Feldtyp kann nach der Erstellung nicht mehr geändert werden.",
+          "name": "Name",
+          "name_placeholder": "z. B. Abteilung",
+          "name_required": "Name ist erforderlich",
+          "description": "Beschreibung",
+          "description_placeholder": "Hilfstext unterhalb des Felds (optional)",
+          "options": "Optionen",
+          "option_label": "Option-Bezeichnung",
+          "add_option": "Option hinzufügen",
+          "options_required": "Fügen Sie mindestens eine Option hinzu.",
+          "placeholder": "Platzhalter",
+          "min_length": "Mindestlänge",
+          "max_length": "Maximallänge",
+          "min": "Min",
+          "max": "Max",
+          "step": "Schritt",
+          "min_date": "Frühestes Datum",
+          "max_date": "Spätestes Datum",
+          "checkbox_label": "Kontrollkästchen-Bezeichnung",
+          "default_value": "Standardwert",
+          "width": "Breite (Spalten)",
+          "width_hint": "1–12 eines 12-Spalten-Rasters",
+          "required": "Erforderlich",
+          "required_help": "Benutzer müssen dieses Feld ausfüllen.",
+          "admin_only": "Nur für Admins",
+          "admin_only_help": "Nur Arbeitsbereichs-Admins können dieses Feld sehen und bearbeiten.",
+          "active": "Aktiv",
+          "active_help": "Inaktive Felder werden in Projektformularen ausgeblendet.",
+          "save": "Änderungen speichern",
+          "create": "Feld erstellen",
+          "required_fields_missing": "Bitte füllen Sie alle erforderlichen benutzerdefinierten Felder aus."
+        },
+        "list": {
+          "required": "Erforderlich",
+          "admin_only": "Nur für Admins",
+          "inactive": "Inaktiv",
+          "width": "Breite {width}/12"
+        },
+        "empty": {
+          "title": "Noch keine benutzerdefinierten Felder",
+          "description": "Erstellen Sie benutzerdefinierte Felder, um zusätzliche Informationen für jedes Projekt in diesem Arbeitsbereich zu erfassen."
+        },
+        "delete": {
+          "title": "Benutzerdefiniertes Feld löschen",
+          "description": "Möchten Sie \"{name}\" wirklich löschen? Die gespeicherten Werte für dieses Feld werden entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+        },
+        "toasts": {
+          "created": {
+            "title": "Feld erstellt",
+            "message": "Das benutzerdefinierte Feld wurde erstellt."
+          },
+          "updated": {
+            "title": "Feld aktualisiert",
+            "message": "Das benutzerdefinierte Feld wurde aktualisiert."
+          },
+          "removed": {
+            "title": "Feld entfernt",
+            "message": "Das benutzerdefinierte Feld wurde entfernt."
+          },
+          "not_removed": {
+            "message": "Das benutzerdefinierte Feld konnte nicht entfernt werden. Bitte versuchen Sie es erneut."
+          },
+          "values_saved": {
+            "title": "Gespeichert",
+            "message": "Benutzerdefinierte Feldwerte wurden gespeichert."
+          },
+          "error": {
+            "title": "Etwas ist schiefgelaufen",
+            "message": "Bitte versuchen Sie es erneut."
+          }
+        }
+      },
       "webhooks": {
         "heading": "Webhooks",
         "description": "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",
