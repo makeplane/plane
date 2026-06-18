@@ -42,6 +42,12 @@ export const DISPLAY_NAME_REGEX = /^[\p{L}\p{N}_.-]+$/u;
 export const COMPANY_NAME_REGEX = /^[\p{L}\p{N}\s_-]+$/u;
 
 /**
+ * Requires at least one Unicode letter or digit in a string.
+ * Used to reject symbol-only inputs like "-_________-" in workspace/company names.
+ */
+export const HAS_ALPHANUMERIC_REGEX = /[\p{L}\p{N}]/u;
+
+/**
  * URL Slug Pattern (for workspace slugs, URL-safe identifiers)
  * Allows: Unicode letters (\p{L}), numbers (\p{N}), underscores, hyphens
  * Use case: International URL-safe identifiers like "josé-workspace", "李明-project"
@@ -140,6 +146,10 @@ export const validateCompanyName = (companyName: string, required: boolean = fal
     return "Company name can only contain letters, numbers, spaces, hyphens, and underscores";
   }
 
+  if (!HAS_ALPHANUMERIC_REGEX.test(companyName)) {
+    return "Company name must contain at least one letter or number";
+  }
+
   return true;
 };
 
@@ -168,6 +178,10 @@ export const validateWorkspaceName = (workspaceName: string, required: boolean =
 
   if (!COMPANY_NAME_REGEX.test(workspaceName)) {
     return "Workspace name can only contain letters, numbers, spaces, hyphens, and underscores";
+  }
+
+  if (!HAS_ALPHANUMERIC_REGEX.test(workspaceName)) {
+    return "Workspace name must contain at least one letter or number";
   }
 
   return true;
