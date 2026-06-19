@@ -46,6 +46,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return non-triage states for the project, scoped to active members."""
         member_check = ProjectMember.objects.filter(
             project_id=OuterRef("project_id"),
             member=self.request.user,
@@ -170,6 +171,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return non-triage states for the project, scoped to active members."""
         member_check = ProjectMember.objects.filter(
             project_id=OuterRef("project_id"),
             member=self.request.user,

@@ -98,6 +98,11 @@ def _module_issue_count_subquery(state_group=None):
 
 
 def _build_module_queryset(slug, project_id, order_by="-created_at"):
+    """Build the base Module queryset with issue-count annotations.
+
+    Uses correlated subqueries for each state-group count to avoid the row
+    inflation caused by COUNT(DISTINCT ...) across a multi-table join path.
+    """
     return (
         Module.objects.filter(project_id=project_id)
         .filter(workspace__slug=slug)
@@ -129,6 +134,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return active (non-archived) modules for the project."""
         return _build_module_queryset(
             slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
@@ -251,6 +257,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return the module queryset for detail, update, and delete operations."""
         return _build_module_queryset(
             slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
@@ -777,6 +784,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return only archived modules for the project."""
         return _build_module_queryset(
             slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
