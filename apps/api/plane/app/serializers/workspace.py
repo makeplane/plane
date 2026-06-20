@@ -31,6 +31,7 @@ from plane.utils.url import contains_url
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
+    has_alphanumeric,
 )
 
 # Django imports
@@ -48,6 +49,13 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         # Check if the name contains a URL
         if contains_url(value):
             raise serializers.ValidationError("Name must not contain URLs")
+        # Reject symbol-only names like "-_________-" that have no letter or
+        # digit. Mirrors the frontend HAS_ALPHANUMERIC_REGEX check so the rule
+        # cannot be bypassed via a direct API call.
+        if not has_alphanumeric(value):
+            raise serializers.ValidationError(
+                "Name must contain at least one letter or number"
+            )
         return value
 
     def validate_slug(self, value):
