@@ -11,6 +11,7 @@ from .user import UserLiteSerializer
 from plane.db.models import Workspace
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.content_validator import has_alphanumeric
+from plane.utils.url import contains_url
 
 
 class WorkspaceSerializer(BaseSerializer):
@@ -20,6 +21,10 @@ class WorkspaceSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
 
     def validate_name(self, value):
+        # Check if the name contains a URL (kept consistent with the app-level
+        # WorkSpaceSerializer so both workspace-create paths validate alike).
+        if contains_url(value):
+            raise serializers.ValidationError("Name must not contain URLs")
         # Reject symbol-only names like "-_________-" that have no letter or
         # digit. Mirrors the frontend HAS_ALPHANUMERIC_REGEX check so the rule
         # cannot be bypassed via a direct API call.
