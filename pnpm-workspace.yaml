@@ -12,7 +12,7 @@ catalog:
   "@blueprintjs/core": "^4.16.3"
   "@blueprintjs/popover2": "^1.13.3"
   "@bprogress/core": "^1.3.4"
-  "@chromatic-com/storybook": "^1.4.0"
+  "@chromatic-com/storybook": "5.2.1"
   "@effect/platform": "^0.94.0"
   "@effect/platform-node": "^0.104.0"
   "@floating-ui/dom": "^1.7.1"
@@ -36,19 +36,15 @@ catalog:
   "@react-router/dev": "7.15.0"
   "@react-router/node": "7.15.0"
   "@react-router/serve": "7.15.0"
-  "@storybook/addon-designs": "10.0.2"
-  "@storybook/addon-docs": "9.1.10"
-  "@storybook/addon-essentials": "^8.1.1"
-  "@storybook/addon-interactions": "^8.1.1"
-  "@storybook/addon-links": "^8.1.1"
-  "@storybook/addon-onboarding": "^8.1.1"
-  "@storybook/addon-styling-webpack": "^1.0.0"
-  "@storybook/addon-webpack5-compiler-swc": "^1.0.2"
-  "@storybook/blocks": "^8.1.1"
-  "@storybook/react": "^8.1.1"
-  "@storybook/react-vite": "9.1.10"
-  "@storybook/react-webpack5": "^8.1.1"
-  "@storybook/test": "^8.1.1"
+  "@storybook/addon-designs": "11.1.3"
+  "@storybook/addon-docs": "10.4.6"
+  "@storybook/addon-links": "10.4.6"
+  "@storybook/addon-onboarding": "10.4.6"
+  "@storybook/addon-styling-webpack": "3.0.2"
+  "@storybook/addon-webpack5-compiler-swc": "4.0.3"
+  "@storybook/react": "10.4.6"
+  "@storybook/react-vite": "10.4.6"
+  "@storybook/react-webpack5": "10.4.6"
   "@tailwindcss/postcss": "4.1.17"
   "@tailwindcss/typography": "0.5.19"
   "@tanstack/react-table": "^8.21.3"
@@ -142,7 +138,7 @@ catalog:
   "oxfmt": "0.35.0"
   "oxlint": "1.51.0"
   "pdf-parse": "^2.4.5"
-  "postcss": "8.5.10"
+  "postcss": "8.5.15"
   "postcss-cli": "^11.0.0"
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
@@ -170,7 +166,7 @@ catalog:
   "serve": "14.2.5"
   "sharp": "^0.34.3"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
-  "storybook": "9.1.19"
+  "storybook": "10.4.6"
   "swr": "2.2.4"
   "tailwind-merge": "3.4.0"
   "tailwindcss": "4.1.17"
@@ -183,7 +179,7 @@ catalog:
   "unified": "^11.0.5"
   "use-font-face-observer": "^1.3.0"
   "uuid": "14.0.0"
-  "vite": "7.3.5"
+  "vite": "8.0.16"
   "vite-tsconfig-paths": "^5.1.4"
   "vitest": "^4.1.8"
   "winston": "^3.17.0"
@@ -202,8 +198,9 @@ overrides:
   brace-expansion: 5.0.6
   nanoid: 3.3.8
   esbuild: 0.28.1
-  "@babel/helpers": 7.26.10
-  "@babel/runtime": 7.26.10
+  "@babel/core": 7.29.7
+  "@babel/helpers": 7.29.7
+  "@babel/runtime": 7.29.7
   chokidar: 3.6.0
   prosemirror-view: 1.40.0
   "@types/express": 4.17.23
@@ -214,27 +211,32 @@ overrides:
   webpack: 5.104.1
   lodash-es: "catalog:"
   lodash: 4.18.1
-  markdown-it: 14.1.1
+  markdown-it: 14.2.0
   rollup: 4.59.0
   "minimatch@3": 3.1.4
   "minimatch@10": 10.2.3
   serialize-javascript: 7.0.5
   "ajv@6": 6.14.0
   "ajv@8": 8.18.0
-  "undici@7": 7.24.0
+  "undici@7": 7.28.0
   flatted: 3.4.2
   picomatch: 2.3.2
   "yaml@1": 1.10.3
   "yaml@2": 2.8.3
   path-to-regexp: 0.1.13
   defu: 6.1.5
-  postcss: 8.5.10
+  postcss: 8.5.15
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
   "fast-uri@<3.1.2": ">=3.1.2"
-  tmp: 0.2.6
-  "ws@8": 8.20.1
+  tmp: 0.2.7
+  form-data: 4.0.6
+  "ws@8": 8.21.0
+  "ws@7": 7.5.11
+  "@opentelemetry/core": 2.8.0
+  "@opentelemetry/resources": 2.8.0
+  "@opentelemetry/sdk-trace-base": 2.8.0
 
 allowBuilds:
   "@parcel/watcher": true
@@ -243,3 +245,12 @@ allowBuilds:
   msgpackr-extract: true
   turbo: true
   sharp: false
+
+minimumReleaseAgeExclude:
+  - '@storybook/addon-docs@10.4.6'
+  - '@storybook/builder-vite@10.4.6'
+  - '@storybook/csf-plugin@10.4.6'
+  - '@storybook/react-dom-shim@10.4.6'
+  - '@storybook/react-vite@10.4.6'
+  - '@storybook/react@10.4.6'
+  - storybook@10.4.6
