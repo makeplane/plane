@@ -217,7 +217,7 @@ class IssueRelationViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
-        # Scope to workspace to prevent cross-tenant IDOR (GHSA-8cvv-8jh5-g6mj)
+        # Scope to workspace to prevent cross-tenant IDOR
         # Relations can cross projects so only workspace scope is enforced
         issues = list(
             Issue.issue_objects.filter(

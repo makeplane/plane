@@ -240,7 +240,7 @@ class CycleIssueViewSet(BaseViewSet):
         existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
 
-        # Scope to workspace+project to prevent cross-tenant IDOR (GHSA-22g9-9xfv-q3fr)
+        # Scope to workspace+project to prevent cross-tenant IDOR
         new_issues = list(
             str(i)
             for i in Issue.issue_objects.filter(

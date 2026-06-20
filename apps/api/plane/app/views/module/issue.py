@@ -213,7 +213,7 @@ class ModuleIssueViewSet(BaseViewSet):
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
         project = Project.objects.get(pk=project_id)
-        # Scope to workspace+project to prevent cross-tenant IDOR (GHSA-x5c5-hmvm-94v9)
+        # Scope to workspace+project to prevent cross-tenant IDOR
         issues = list(
             Issue.issue_objects.filter(
                 workspace__slug=slug,

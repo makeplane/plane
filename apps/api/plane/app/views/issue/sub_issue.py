@@ -211,7 +211,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Scope to workspace to prevent cross-tenant IDOR (GHSA-38vj-gf85-7q5x)
+        # Scope to workspace to prevent cross-tenant IDOR
         sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids, workspace__slug=slug)
 
         for sub_issue in sub_issues:
