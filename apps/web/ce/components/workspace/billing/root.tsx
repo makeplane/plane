@@ -12,7 +12,6 @@ import { useTranslation } from "@plane/i18n";
 import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
 // components
-import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
 // local imports
 import { PlansComparison } from "./comparison/root";
@@ -50,12 +49,6 @@ export const BillingRoot = observer(function BillingRoot() {
           title={t("workspace_settings.settings.billing_and_plans.heading")}
           description={t("workspace_settings.settings.billing_and_plans.description")}
         />
-        <div className="mt-6">
-          <SettingsBoxedControlItem
-            title="Community"
-            description="Unlimited projects, issues, cycles, modules, pages, and storage"
-          />
-        </div>
       </div>
       <div className="mt-10 flex flex-col gap-y-3">
         <h4 className="text-h6-semibold">All plans</h4>

@@ -13,6 +13,7 @@ import type { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
+import { storage } from "@/lib/local-storage";
 // plane web constants
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -26,6 +27,15 @@ import { ProjectPage } from "./project-page";
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
+
+type TPageDisplayFilters = Pick<TPageFilters, "sortKey" | "sortBy">;
+
+const PAGE_DISPLAY_FILTERS_KEY = "page_display_filters";
+
+const DEFAULT_PAGE_DISPLAY_FILTERS: TPageDisplayFilters = {
+  sortKey: "updated_at",
+  sortBy: "desc",
+};
 
 export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
   EUserPermissions.ADMIN,
@@ -72,10 +82,10 @@ export class ProjectPageStore implements IProjectPageStore {
   loader: TLoader = "init-loader";
   data: Record<string, TProjectPage> = {}; // pageId => Page
   error: TError | undefined = undefined;
+  displayFilters: Record<string, TPageDisplayFilters> = {};
   filters: TPageFilters = {
     searchQuery: "",
-    sortKey: "updated_at",
-    sortBy: "desc",
+    ...DEFAULT_PAGE_DISPLAY_FILTERS,
   };
   // service
   service: ProjectPageService;
@@ -87,6 +97,7 @@ export class ProjectPageStore implements IProjectPageStore {
       loader: observable.ref,
       data: observable,
       error: observable,
+      displayFilters: observable,
       filters: observable,
       // computed
       isAnyPageAvailable: computed,
@@ -109,10 +120,63 @@ export class ProjectPageStore implements IProjectPageStore {
       () => this.store.router.projectId,
       (projectId) => {
         if (!projectId) return;
+        this.initProjectPageFilters(projectId);
         this.filters.searchQuery = "";
       }
     );
+
+    this.loadDisplayFiltersFromLocalStorage();
+
+    const projectId = this.store.router.projectId;
+    if (projectId) this.initProjectPageFilters(projectId);
   }
+
+  loadDisplayFiltersFromLocalStorage = () => {
+    try {
+      const displayFiltersData = storage.get(PAGE_DISPLAY_FILTERS_KEY);
+
+      runInAction(() => {
+        if (!displayFiltersData) return;
+
+        const parsed = JSON.parse(displayFiltersData);
+        if (typeof parsed === "object" && parsed !== null) {
+          this.displayFilters = parsed;
+        }
+      });
+    } catch (error) {
+      console.error("Failed to load page display filters from localStorage:", error);
+      runInAction(() => {
+        this.displayFilters = {};
+      });
+    }
+  };
+
+  saveDisplayFiltersToLocalStorage = () => {
+    storage.set(PAGE_DISPLAY_FILTERS_KEY, this.displayFilters);
+  };
+
+  initProjectPageFilters = (projectId: string) => {
+    const savedDisplayFilters = this.displayFilters[projectId];
+
+    runInAction(() => {
+      this.displayFilters[projectId] = {
+        sortKey: savedDisplayFilters?.sortKey ?? DEFAULT_PAGE_DISPLAY_FILTERS.sortKey,
+        sortBy: savedDisplayFilters?.sortBy ?? DEFAULT_PAGE_DISPLAY_FILTERS.sortBy,
+      };
+      this.filters.sortKey = this.displayFilters[projectId].sortKey;
+      this.filters.sortBy = this.displayFilters[projectId].sortBy;
+    });
+  };
+
+  persistDisplayFilters = (projectId: string) => {
+    runInAction(() => {
+      this.displayFilters[projectId] = {
+        sortKey: this.filters.sortKey,
+        sortBy: this.filters.sortBy,
+      };
+    });
+    this.saveDisplayFiltersToLocalStorage();
+  };
 
   /**
    * @description check if any page is available
@@ -193,6 +257,13 @@ export class ProjectPageStore implements IProjectPageStore {
     runInAction(() => {
       set(this.filters, [filterKey], filterValue);
     });
+
+    const { projectId } = this.store.router;
+    if (!projectId) return;
+
+    if (filterKey === "sortKey" || filterKey === "sortBy") {
+      this.persistDisplayFilters(projectId);
+    }
   };
 
   /**

@@ -15,6 +15,7 @@ import { useIssues } from "./store/use-issues";
 import { useIssuesActions } from "./use-issues-actions";
 
 type DNDStoreType =
+  | EIssuesStoreType.GLOBAL
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
@@ -94,7 +95,9 @@ export const useGroupIssuesDragNDrop = (
       delete data[moduleKey];
     }
 
-    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    if (updateIssue) {
+      updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    }
   };
 
   const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {

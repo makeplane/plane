@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { getComputedDisplayProperties } from "@plane/utils";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
@@ -38,7 +39,7 @@ type Props = {
 };
 
 export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRoot(props: Props) {
-  const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
+  const { isLoading = false, workspaceSlug, globalViewId, routeFilters, fetchNextPages, issuesLoading } = props;
 
   // Custom hooks
   useWorkspaceIssueProperties(workspaceSlug);
@@ -53,6 +54,13 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
 
   // Derived values
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
+  const displayProperties = routeFilters.global_sprint_id
+    ? {
+        ...getComputedDisplayProperties(issueFilters?.displayProperties),
+        project: issueFilters?.displayProperties?.project ?? true,
+        sprint: false,
+      }
+    : (issueFilters?.displayProperties ?? {});
 
   // Permission checker
   const canEditProperties = useCallback(
@@ -115,7 +123,7 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
       <SpreadsheetView
-        displayProperties={issueFilters?.displayProperties ?? {}}
+        displayProperties={displayProperties}
         displayFilters={issueFilters?.displayFilters ?? {}}
         handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
         issueIds={Array.isArray(issueIds) ? issueIds : []}
@@ -125,6 +133,7 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextPages}
         isWorkspaceLevel
+        showProjectInWorkItemColumn={!!routeFilters.global_sprint_id}
       />
     </IssueLayoutHOC>
   );

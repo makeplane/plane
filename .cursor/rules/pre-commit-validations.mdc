@@ -1,0 +1,22 @@
+---
+description: Validacoes obrigatorias antes de commit e PR
+alwaysApply: true
+---
+
+# Pre-Commit e Validacoes
+
+Quando o usuario pedir para commitar, validar commit, preparar PR ou corrigir erro de hook, siga este fluxo.
+
+1. Use o hook real do repo: `.husky/pre-commit` roda `pnpm lint-staged`. Nao use `pre-commit run`, pois este repo nao usa `.pre-commit-config.yaml`.
+2. Antes de rodar o hook, confira `git status --short --branch` e preserve alteracoes existentes do usuario. Nao reverta arquivos sem pedido explicito.
+3. O `lint-staged` valida apenas arquivos staged. Se corrigir arquivos que fazem parte do commit, stageie essas correcoes antes de reexecutar `pnpm lint-staged`.
+4. Trate warnings do `pnpm exec oxlint --fix --deny-warnings` como bloqueantes. Corrija a causa raiz em vez de ignorar o hook.
+5. Para falhas comuns:
+   - `consistent-function-scoping`: mova funcoes que nao capturam escopo para fora do componente/funcao.
+   - `promise(always-return)`: retorne o valor dentro de `.then()` ou lance erro.
+   - `no-shadow`: renomeie variaveis locais/desestruturadas que colidem com nomes do escopo externo.
+   - `no-unneeded-ternary`: substitua `cond ? true : false` por `cond`.
+   - `no-map-spread`: use `Object.assign({}, item, updates)` quando precisar manter copy-on-write.
+6. Depois que o hook passar, confira `git status --short --branch` e `git diff --cached --stat` para avisar quais arquivos ficaram staged.
+
+Se `oxfmt` ou `oxlint --fix` modificar arquivos, inclua essas modificacoes no stage antes de tentar o commit novamente.

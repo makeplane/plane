@@ -92,6 +92,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    "process-workspace-sprint-automations": {
+        "task": "plane.bgtasks.workspace_sprint_task.process_workspace_sprint_automations",
+        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
+    },
 }
 
 

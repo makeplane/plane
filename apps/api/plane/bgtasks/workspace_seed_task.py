@@ -141,6 +141,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
                         "sub_issue": True,
                         "sub_group_by": None,
                         "show_empty_groups": True,
+                        "assigned_to_me": False,
                     },
                     display_properties={
                         "key": True,

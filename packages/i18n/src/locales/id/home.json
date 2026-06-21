@@ -52,9 +52,6 @@
         "issues": "Item kerja"
       }
     },
-    "new_at_plane": {
-      "title": "Baru di Plane"
-    },
     "quick_tutorial": {
       "title": "Tutorial cepat"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Kelola widget",
     "title": "Beranda",
-    "star_us_on_github": "Bintang kami di GitHub",
     "business_trial_banner": {
       "title": "Uji coba 14 hari paket Business Anda telah aktif!",
       "description": "Jelajahi semua fitur Business. Saat Anda siap, pilih untuk berlangganan. Anda tidak akan ditagih secara otomatis.",

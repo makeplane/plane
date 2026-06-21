@@ -52,9 +52,6 @@
         "issues": "Éléments de travail"
       }
     },
-    "new_at_plane": {
-      "title": "Nouveau sur Plane"
-    },
     "quick_tutorial": {
       "title": "Tutoriel rapide"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Gérer les widgets",
     "title": "Accueil",
-    "star_us_on_github": "Donnez-nous une étoile sur GitHub",
     "business_trial_banner": {
       "title": "Votre essai de 14 jours du plan Business est actif !",
       "description": "Explorez toutes les fonctionnalités Business. Quand vous êtes prêt, choisissez de vous abonner. Vous ne serez pas facturé automatiquement.",

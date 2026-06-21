@@ -141,7 +141,6 @@
     "help_actions": {
       "open_keyboard_shortcuts": "Ouvrir les raccourcis clavier",
       "open_plane_documentation": "Ouvrir la documentation Plane",
-      "join_forum": "Rejoindre notre forum",
       "report_bug": "Signaler un bug",
       "chat_with_us": "Discuter avec nous"
     },

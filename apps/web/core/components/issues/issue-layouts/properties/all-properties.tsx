@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
+
 import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
@@ -33,12 +35,14 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { WorkspaceSprintDropdown } from "@/components/dropdowns/workspace-sprint";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -58,6 +62,11 @@ export interface IIssueProperties {
   isEpic?: boolean;
 }
 
+const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+  e.stopPropagation();
+  e.preventDefault();
+};
+
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
   // i18n
@@ -72,6 +81,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
   } = useIssues(storeType);
+  const { addIssueToSprint, removeIssueFromSprint } = useWorkspaceSprint();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
@@ -103,8 +113,24 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
         await removeCycleFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id);
       },
+      addIssueToSprint: async (sprintId: string) => {
+        if (!workspaceSlug || !issue.id) return;
+        await addIssueToSprint(workspaceSlug.toString(), sprintId, issue.id);
+      },
+      removeIssueFromSprint: async () => {
+        if (!workspaceSlug || !issue.id || !issue.global_sprint_id) return;
+        await removeIssueFromSprint(workspaceSlug.toString(), issue.global_sprint_id, issue.id);
+      },
     }),
-    [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
+    [
+      workspaceSlug,
+      issue,
+      changeModulesInIssue,
+      addCycleToIssue,
+      removeCycleFromIssue,
+      addIssueToSprint,
+      removeIssueFromSprint,
+    ]
   );
 
   const handleState = async (stateId: string) => {
@@ -148,6 +174,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     [issue, issueOperations]
   );
 
+  const handleSprint = useCallback(
+    (sprintId: string | null) => {
+      if (!issue || issue.global_sprint_id === sprintId) return;
+      if (sprintId) issueOperations.addIssueToSprint?.(sprintId);
+      else issueOperations.removeIssueFromSprint?.();
+    },
+    [issue, issueOperations]
+  );
+
   const handleStartDate = async (date: Date | null) => {
     if (updateIssue)
       await updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null });
@@ -185,11 +220,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
 
   const minDate = getDate(issue.start_date);
   const maxDate = getDate(issue.target_date);
-
-  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
 
   return (
     <div className={className}>
@@ -369,6 +399,19 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 </div>
               </WithDisplayPropertiesHOC>
             )}
+
+            {/* sprint */}
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sprint">
+              <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                <WorkspaceSprintDropdown
+                  value={issue.global_sprint_id}
+                  onChange={handleSprint}
+                  disabled={isReadOnly}
+                  className="max-w-40"
+                  fallbackName={issue.global_sprint_name}
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
           </>
         )}
       </>

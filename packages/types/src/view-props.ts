@@ -105,6 +105,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "label_id",
   "state_id",
   "cycle_id",
+  "global_sprint_id",
   "module_id",
   "project_id",
   "created_at",
@@ -135,6 +136,7 @@ export interface IIssueFilterOptions {
   labels?: string[] | null;
   priority?: string[] | null;
   cycle?: string[] | null;
+  global_sprint_id?: string[] | null;
   module?: string[] | null;
   project?: string[] | null;
   team_project?: string[] | null;
@@ -157,8 +159,11 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  assigned_to_me?: boolean;
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
 }
 export interface IIssueDisplayProperties {
+  project?: boolean;
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;
@@ -174,6 +179,7 @@ export interface IIssueDisplayProperties {
   updated_on?: boolean;
   modules?: boolean;
   cycle?: boolean;
+  sprint?: boolean;
   issue_type?: boolean;
 }
 
@@ -214,6 +220,8 @@ export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
 export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
   navigation_project_limit?: number;
   navigation_control_preference?: "ACCORDION" | "TABBED";
+  navigation_sprint_preference?: "ACCORDION" | "TABBED";
+  navigation_squad_limit?: number;
   // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 

@@ -10,9 +10,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, ProjectIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -52,6 +53,7 @@ interface Props {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
+  showProjectInWorkItemColumn?: boolean;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
 }
@@ -71,6 +73,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
+    showProjectInWorkItemColumn = false,
     shouldRenderByDefault,
     isEpic = false,
   } = props;
@@ -124,6 +127,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
           setExpanded={setExpanded}
           spreadsheetColumnsList={spreadsheetColumnsList}
           selectionHelpers={selectionHelpers}
+          showProjectInWorkItemColumn={showProjectInWorkItemColumn}
           isEpic={isEpic}
         />
       </RenderIfVisible>
@@ -146,6 +150,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             containerRef={containerRef}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            showProjectInWorkItemColumn={showProjectInWorkItemColumn}
             shouldRenderByDefault={isExpanded}
           />
         ))}
@@ -168,6 +173,7 @@ interface IssueRowDetailsProps {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
+  showProjectInWorkItemColumn?: boolean;
   isEpic?: boolean;
 }
 
@@ -187,17 +193,18 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
+    showProjectInWorkItemColumn = false,
     isEpic = false,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
   const cellRef = useRef(null);
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const menuActionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
   // hooks
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectById, getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
@@ -215,15 +222,17 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
   const customActionButton = (
-    <div
+    <button
+      type="button"
       ref={menuActionRef}
       className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
+      aria-label="Open work item actions"
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
       <MoreHorizontal className="h-3.5 w-3.5" />
-    </div>
+    </button>
   );
   if (!issueDetail) return null;
 
@@ -245,6 +254,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
   const projectIdentifier = getProjectIdentifierById(issueDetail.project_id);
+  const projectDetails = getProjectById(issueDetail.project_id);
+  const shouldShowProject = showProjectInWorkItemColumn && displayProperties?.project && !!projectDetails;
 
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
@@ -362,15 +373,26 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   <div className="w-full overflow-hidden">
                     <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                       <div
-                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
+                        className="flex h-full w-full cursor-pointer items-center gap-2 truncate pr-4 text-left text-13 text-primary focus:outline-none"
                         tabIndex={-1}
                       >
-                        {issueDetail.name}
+                        {shouldShowProject && projectDetails && (
+                          <div className="flex max-w-36 min-w-0 flex-shrink-0 items-center gap-1.5 rounded-sm border border-subtle bg-layer-2 px-1.5 py-0.5 text-11 text-secondary">
+                            {projectDetails.logo_props ? (
+                              <Logo logo={projectDetails.logo_props} size={14} />
+                            ) : (
+                              <ProjectIcon className="size-3.5 flex-shrink-0 text-tertiary" />
+                            )}
+                            <span className="truncate">{projectDetails.name}</span>
+                          </div>
+                        )}
+                        <span className="min-w-0 truncate">{issueDetail.name}</span>
                       </div>
                     </Tooltip>
                   </div>
                 </div>
                 <div
+                  role="presentation"
                   className={`opacity-0 transition-opacity group-hover:opacity-100 ${isMenuActive ? "!opacity-100" : ""}`}
                   onClick={(e) => e.stopPropagation()}
                 >

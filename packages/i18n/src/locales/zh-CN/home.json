@@ -52,9 +52,6 @@
         "issues": "工作项"
       }
     },
-    "new_at_plane": {
-      "title": "Plane新功能"
-    },
     "quick_tutorial": {
       "title": "快速教程"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "管理小部件",
     "title": "首页",
-    "star_us_on_github": "在GitHub上为我们加星",
     "business_trial_banner": {
       "title": "您的14天Business计划试用已开始！",
       "description": "探索所有Business功能。准备好后，选择订阅。不会自动收费。",

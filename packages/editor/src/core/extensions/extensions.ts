@@ -7,8 +7,8 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
+import { TaskItem as TipTapTaskItem } from "@tiptap/extension-task-item";
+import { TaskList as TipTapTaskList } from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Underline } from "@tiptap/extension-underline";
 import { Markdown } from "tiptap-markdown";
@@ -79,6 +79,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     provider,
   } = args;
 
+  const linkExtendedProps = extendedEditorProps ?? {};
+
   const extensions = [
     CustomStarterKitExtension({
       enableHistory,
@@ -88,16 +90,19 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomHorizontalRule,
     CustomKeymap,
     ListKeymap({ tabIndex }),
-    CustomLinkExtension,
+    CustomLinkExtension.configure({
+      onLinkClick: linkExtendedProps.onLinkClick,
+      isInternalPageLink: linkExtendedProps.isInternalPageLink,
+    }),
     CustomTypographyExtension,
     Underline,
     TextStyle,
-    TaskList.configure({
+    TipTapTaskList.configure({
       HTMLAttributes: {
         class: "not-prose pl-2 space-y-2",
       },
     }),
-    TaskItem.configure({
+    TipTapTaskItem.configure({
       HTMLAttributes: {
         class: "relative",
       },

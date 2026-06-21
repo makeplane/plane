@@ -12,7 +12,6 @@ import type {
   IWorkspaceMemberInvitation,
   ILastActiveWorkspaceDetails,
   IWorkspaceSearchResults,
-  IProductUpdateResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
   IUserProjectsRole,
@@ -217,13 +216,6 @@ export class WorkspaceService extends APIService {
       params,
     })
       .then((res) => res?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-  async getProductUpdates(): Promise<IProductUpdateResponse[]> {
-    return this.get("/api/release-notes/")
-      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

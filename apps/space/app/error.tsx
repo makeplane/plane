@@ -7,11 +7,11 @@
 // ui
 import { Button } from "@plane/propel/button";
 
-function ErrorPage() {
-  const handleRetry = () => {
-    window.location.reload();
-  };
+const handleRetry = () => {
+  window.location.reload();
+};
 
+function ErrorPage() {
   return (
     <div className="grid h-screen place-items-center bg-surface-1 p-4">
       <div className="space-y-8 text-center">
@@ -22,10 +22,6 @@ function ErrorPage() {
             details, please write to{" "}
             <a href="mailto:support@plane.so" className="text-accent-primary">
               support@plane.so
-            </a>{" "}
-            or on our{" "}
-            <a href="https://forum.plane.so" target="_blank" className="text-accent-primary" rel="noopener noreferrer">
-              Forum
             </a>
             .
           </p>

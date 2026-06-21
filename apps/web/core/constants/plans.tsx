@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Mail, MessageCircle, MessageSquare } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { cn } from "@plane/utils";
@@ -49,10 +49,6 @@ type PlanePlans = {
   planHighlights: Record<TPlanePlans, string[]>;
   planComparison: TPlansComparisonDetails[];
 };
-
-function ForumIcon({ className }: { className?: string }) {
-  return <MessageSquare className={cn(className, "size-5 text-secondary")} />;
-}
 
 export function ComingSoonBadge({ className }: { className?: string }) {
   return (
@@ -1209,21 +1205,11 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         title: "Channels",
         description: "Get access to one or more Support channels\nby your plan.",
         cloud: {
-          free: (
-            <>
-              <ForumIcon className="size-4" />
-            </>
-          ),
-          one: (
-            <div className="flex items-center gap-1">
-              <Mail className="size-4 flex-shrink-0" />
-              <ForumIcon className="size-4 flex-shrink-0" />
-            </div>
-          ),
+          free: false,
+          one: <Mail className="size-4 flex-shrink-0" />,
           pro: (
             <div className="flex items-center gap-1">
               <Mail className="size-4 flex-shrink-0" />
-              <ForumIcon className="size-4 flex-shrink-0" />
               <MessageCircle className="size-4 flex-shrink-0" />
             </div>
           ),

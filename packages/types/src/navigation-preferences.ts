@@ -18,6 +18,7 @@ export interface TPersonalNavigationItemState {
 }
 
 export type TProjectNavigationMode = "ACCORDION" | "TABBED";
+export type TSprintNavigationMode = "ACCORDION" | "TABBED";
 
 export interface TProjectDisplaySettings {
   navigationMode: TProjectNavigationMode;
@@ -35,6 +36,12 @@ export interface TProjectNavigationPreferences {
   limitedProjectsCount: number;
 }
 
+export interface TSprintNavigationPreferences {
+  navigationMode: TSprintNavigationMode;
+  showLimitedSquads: boolean;
+  limitedSquadsCount: number;
+}
+
 export interface TWorkspaceNavigationItemState {
   is_pinned: boolean;
   sort_order: number;
@@ -48,6 +55,7 @@ export interface TNavigationPreferences {
   personal: TPersonalNavigationPreferences;
   workspace: TWorkspaceNavigationPreferences;
   projects: TProjectNavigationPreferences;
+  sprints: TSprintNavigationPreferences;
 }
 
 export const DEFAULT_PERSONAL_PREFERENCES: TPersonalNavigationPreferences = {
@@ -64,8 +72,16 @@ export const DEFAULT_PROJECT_PREFERENCES: TProjectNavigationPreferences = {
   limitedProjectsCount: 10,
 };
 
+export const DEFAULT_SPRINT_PREFERENCES: TSprintNavigationPreferences = {
+  navigationMode: "ACCORDION",
+  showLimitedSquads: false,
+  limitedSquadsCount: 10,
+};
+
 export const DEFAULT_WORKSPACE_PREFERENCES: TWorkspaceNavigationPreferences = {
-  items: {},
+  items: {
+    squads: { is_pinned: true, sort_order: 3 },
+  },
 };
 
 export type TAppRailDisplayMode = "icon_only" | "icon_with_label";

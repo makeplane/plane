@@ -14,9 +14,11 @@ import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/f
 import { SidebarProjectsList } from "@/components/workspace/sidebar/projects-list";
 import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-actions";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
+import { SidebarSprintsList } from "@/components/workspace/sidebar/sprints-list";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web components
 import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
 
@@ -24,6 +26,7 @@ export const AppSidebar = observer(function AppSidebar() {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { groupedFavorites } = useFavorite();
+  const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();
 
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -42,6 +45,8 @@ export const AppSidebar = observer(function AppSidebar() {
       <SidebarTeamsList />
       {/* Projects List */}
       <SidebarProjectsList />
+      {/* Squads List */}
+      {isWorkspaceItemPinned("squads") && <SidebarSprintsList />}
     </SidebarWrapper>
   );
 });

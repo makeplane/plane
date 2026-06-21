@@ -30,7 +30,8 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
     workspaceSlug: string,
     viewId: string,
     loadType: TLoader,
-    options: IssuePaginationOptions
+    options: IssuePaginationOptions,
+    routeFilters?: Partial<Record<string, string>>
   ) => Promise<TIssuesResponse | undefined>;
   fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
@@ -56,6 +57,7 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
 }
 
 export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues {
+  routeFilters: Partial<Record<string, string>> = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
@@ -86,6 +88,28 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
   /** */
   updateParentStats = () => {};
 
+  getParamsWithRouteFilters = (params: Partial<Record<string, string | boolean>> = {}) => {
+    const { global_sprint_id: globalSprintId, ...remainingRouteFilters } = this.routeFilters;
+    const mergedParams = { ...params, ...remainingRouteFilters };
+
+    if (!globalSprintId) return mergedParams;
+
+    const currentFilters =
+      typeof params.filters === "string" && params.filters.trim() !== "" ? JSON.parse(params.filters) : {};
+    const sprintFilter = { global_sprint_id: globalSprintId };
+    const filters =
+      Object.keys(currentFilters).length > 0
+        ? {
+            and: [currentFilters, sprintFilter],
+          }
+        : sprintFilter;
+
+    return {
+      ...mergedParams,
+      filters: JSON.stringify(filters),
+    };
+  };
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -99,6 +123,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
+    routeFilters?: Partial<Record<string, string>>,
     isExistingPaginationOptions: boolean = false
   ) => {
     try {
@@ -107,9 +132,13 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
         this.setLoader(loadType);
       });
       this.clear(!isExistingPaginationOptions);
+      if (routeFilters) this.routeFilters = routeFilters;
+      this.issueFilterStore.setRouteFilters(this.routeFilters);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
+      const params = this.getParamsWithRouteFilters(
+        this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined)
+      );
       // call the fetch issues API with the params
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
         signal: this.controller.signal,
@@ -142,14 +171,17 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     try {
       // set Loader
       this.setLoader("pagination", groupId, subGroupId);
+      this.issueFilterStore.setRouteFilters(this.routeFilters);
 
       // get params from stored pagination options
-      const params = this.issueFilterStore?.getFilterParams(
-        this.paginationOptions,
-        viewId,
-        this.getNextCursor(groupId, subGroupId),
-        groupId,
-        subGroupId
+      const params = this.getParamsWithRouteFilters(
+        this.issueFilterStore?.getFilterParams(
+          this.paginationOptions,
+          viewId,
+          this.getNextCursor(groupId, subGroupId),
+          groupId,
+          subGroupId
+        )
       );
       // call the fetch issues API with the params for next page in issues
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
@@ -174,7 +206,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
    */
   fetchIssuesWithExistingPagination = async (workspaceSlug: string, viewId: string, loadType: TLoader) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
+    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, undefined, true);
   };
 
   // Using aliased names as they cannot be overridden in other stores

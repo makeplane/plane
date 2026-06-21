@@ -29,6 +29,10 @@ import { orderArrayBy } from "../array";
 import { getDate } from "../datetime";
 import { isEditorEmpty } from "../editor";
 
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
   oldGroupTitle: string,
@@ -154,6 +158,8 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
     sub_issues_count: 0,
     attachment_count: 0,
     link_count: 0,
+    global_sprint_id: null,
+    global_sprint_name: null,
     // tempId is used for optimistic updates. It is not a part of the API response.
     tempId: uuidv4(),
     // to be overridden by the form data
@@ -271,8 +277,8 @@ export const getComputedDisplayFilters = (
   displayFilters: IIssueDisplayFilterOptions = {},
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
-  const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
-  return {
+  const filters = (!isEmpty(displayFilters) ? displayFilters : defaultValues) as TSpreadsheetDisplayFilters | undefined;
+  const computedDisplayFilters: TSpreadsheetDisplayFilters = {
     calendar: {
       show_weekends: filters?.calendar?.show_weekends || false,
       layout: filters?.calendar?.layout || "month",
@@ -283,7 +289,10 @@ export const getComputedDisplayFilters = (
     sub_group_by: filters?.sub_group_by || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
+    assigned_to_me: filters?.assigned_to_me ?? false,
+    spreadsheet_columns: filters?.spreadsheet_columns,
   };
+  return computedDisplayFilters;
 };
 
 /**
@@ -299,6 +308,7 @@ export const getComputedDisplayProperties = (
   due_date: displayProperties?.due_date ?? true,
   labels: displayProperties?.labels ?? true,
   priority: displayProperties?.priority ?? true,
+  project: displayProperties?.project ?? true,
   state: displayProperties?.state ?? true,
   sub_issue_count: displayProperties?.sub_issue_count ?? true,
   attachment_count: displayProperties?.attachment_count ?? true,
@@ -309,6 +319,7 @@ export const getComputedDisplayProperties = (
   updated_on: displayProperties?.updated_on ?? true,
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
+  sprint: displayProperties?.sprint ?? true,
   issue_type: displayProperties?.issue_type ?? true,
 });
 

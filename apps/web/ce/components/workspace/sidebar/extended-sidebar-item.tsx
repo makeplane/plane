@@ -56,12 +56,12 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleExtendedSidebar } = useAppTheme();
-  const { data } = useUser();
+  const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
-  const { preferences: workspacePreferences, toggleWorkspaceItem } = useWorkspaceNavigationPreferences();
+  const { isWorkspaceItemPinned, toggleWorkspaceItem } = useWorkspaceNavigationPreferences();
 
   // derived values
-  const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? false;
+  const isPinned = isWorkspaceItemPinned(item.key);
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
 
@@ -88,13 +88,13 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== item.key && source?.data?.dragInstanceId === "NAVIGATION",
-        getData: ({ input, element }) => {
-          const data = { id: item.key };
+        getData: ({ input, element: targetElement }) => {
+          const dropData = { id: item.key };
 
           // attach instruction for last in list
-          return attachInstruction(data, {
+          return attachInstruction(dropData, {
             input,
-            element,
+            element: targetElement,
             currentLevel: 0,
             indentPerLevel: 0,
             mode: isLastChild ? "last-in-group" : "standard",
@@ -136,7 +136,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
 
   const itemHref =
     item.key === "your_work"
-      ? `/${workspaceSlug.toString()}${item.href}${data?.id}`
+      ? `/${workspaceSlug.toString()}${item.href}${currentUser?.id}`
       : `/${workspaceSlug.toString()}${item.href}`;
   const isActive = itemHref === pathname;
 
@@ -149,6 +149,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   };
 
   const icon = getSidebarNavigationItemIcon(item.key);
+  const label = item.key === "squads" ? "Squads" : t(item.labelTranslationKey);
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
@@ -195,7 +196,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
           <Link href={itemHref} onClick={() => handleLinkClick()} className="group flex-grow">
             <div className="flex items-center gap-1.5 py-[1px]">
               {icon}
-              <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+              <p className="text-13 leading-5 font-medium">{label}</p>
             </div>
           </Link>
           <div className="flex items-center gap-2">

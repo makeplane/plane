@@ -28,9 +28,15 @@ import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
 
 interface ICalendarHeader {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IWorkspaceIssuesFilter
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
@@ -85,14 +91,14 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
+    const currentShowWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
     if (!updateFilters) return;
 
     updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        show_weekends: !showWeekends,
+        show_weekends: !currentShowWeekends,
       },
     });
   };

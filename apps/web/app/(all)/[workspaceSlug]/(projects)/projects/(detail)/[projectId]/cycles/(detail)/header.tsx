@@ -38,6 +38,7 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
+import { WorkItemsMeModeToggle } from "@/components/issues/me-mode-toggle";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -75,7 +76,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
-  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
+  const isSidebarCollapsed = storedValue === true;
   const toggleSidebar = () => {
     setValue(!isSidebarCollapsed);
   };
@@ -212,6 +213,10 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               />
             </div>
             <WorkItemFiltersToggle entityType={EIssuesStoreType.CYCLE} entityId={cycleId} />
+            <WorkItemsMeModeToggle
+              displayFilters={issueFilters?.displayFilters}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+            />
             <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"

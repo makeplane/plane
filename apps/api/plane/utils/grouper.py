@@ -117,6 +117,8 @@ def issue_on_results(
         "project_id",
         "parent_id",
         "cycle_id",
+        "global_sprint_id",
+        "global_sprint_name",
         "sub_issues_count",
         "created_at",
         "updated_at",

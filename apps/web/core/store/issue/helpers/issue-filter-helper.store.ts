@@ -23,9 +23,10 @@ import type {
   TIssueKanbanFilters,
   TIssueParams,
   TStaticViewTypes,
+  TWorkItemFilterConditionData,
   TWorkItemFilterExpression,
 } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes, LOGICAL_OPERATOR } from "@plane/types";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // lib
@@ -40,6 +41,10 @@ interface ILocalStoreIssueFilters {
   filters: IIssueFilters;
 }
 
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
 export interface IBaseIssueFilterStore {
   // observables
   filters: Record<string, IIssueFilters>;
@@ -53,7 +58,8 @@ export interface IIssueFilterHelperStore {
   computedFilteredParams(
     richFilters: TWorkItemFilterExpression,
     displayFilters: IIssueDisplayFilterOptions | undefined,
-    acceptableParamsByLayout: TIssueParams[]
+    acceptableParamsByLayout: TIssueParams[],
+    currentUserId?: string
   ): Partial<Record<TIssueParams, string | boolean>>;
   computedFilters(filters: IIssueFilterOptions): IIssueFilterOptions;
   getFilterConditionBasedOnViews: (
@@ -68,7 +74,28 @@ export interface IIssueFilterHelperStore {
 }
 
 export class IssueFilterHelperStore implements IIssueFilterHelperStore {
-  constructor() {}
+  private isAssigneeCondition = (condition: TWorkItemFilterConditionData) =>
+    Object.keys(condition).some((key) => key.startsWith("assignee_id__"));
+
+  private omitAssigneeConditions = (richFilters: TWorkItemFilterExpression): TWorkItemFilterExpression => {
+    if (!richFilters || isEmpty(richFilters)) return {};
+
+    if (LOGICAL_OPERATOR.AND in richFilters) {
+      const filteredConditions = richFilters[LOGICAL_OPERATOR.AND].filter(
+        (condition) => !this.isAssigneeCondition(condition)
+      );
+
+      return filteredConditions.length > 0
+        ? {
+            [LOGICAL_OPERATOR.AND]: filteredConditions,
+          }
+        : {};
+    }
+
+    const filteredEntries = Object.entries(richFilters).filter(([key]) => !key.startsWith("assignee_id__"));
+
+    return Object.fromEntries(filteredEntries) as TWorkItemFilterExpression;
+  };
 
   /**
    * @description This method is used to apply the display filters on the issues
@@ -92,7 +119,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   computedFilteredParams = (
     richFilters: TWorkItemFilterExpression,
     displayFilters: IIssueDisplayFilterOptions | undefined,
-    acceptableParamsByLayout: TIssueParams[]
+    acceptableParamsByLayout: TIssueParams[],
+    currentUserId?: string
   ): Partial<Record<TIssueParams, string | boolean>> => {
     const computedDisplayFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
       group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
@@ -114,8 +142,14 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
           : nonEmptyArrayValue;
     });
 
+    const isAssignedToMeEnabled = displayFilters?.assigned_to_me === true && !!currentUserId;
+    const effectiveRichFilters = isAssignedToMeEnabled ? this.omitAssigneeConditions(richFilters) : richFilters;
+
     // work item filters
-    if (richFilters) issueFiltersParams.filters = JSON.stringify(richFilters);
+    if (effectiveRichFilters && !isEmpty(effectiveRichFilters))
+      issueFiltersParams.filters = JSON.stringify(effectiveRichFilters);
+
+    if (isAssignedToMeEnabled) issueFiltersParams.assignees = currentUserId;
 
     if (displayFilters?.layout) issueFiltersParams.layout = displayFilters?.layout;
 
@@ -184,8 +218,16 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     displayFilters: IIssueDisplayFilterOptions,
     defaultValues?: IIssueDisplayFilterOptions
   ): IIssueDisplayFilterOptions => {
+    const spreadsheetColumns =
+      (displayFilters as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns ??
+      (defaultValues as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns;
     const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
-    return getEnabledDisplayFilters(computedFilters);
+    const enabledDisplayFilters = getEnabledDisplayFilters(computedFilters);
+
+    return {
+      ...enabledDisplayFilters,
+      spreadsheet_columns: spreadsheetColumns,
+    } as TSpreadsheetDisplayFilters;
   };
 
   /**
@@ -216,7 +258,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
           filter.viewId === viewId &&
           filter.userId === userId
       );
-      if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
+      if (currentFilterIndex < 0) return undefined;
 
       return storageFilters[currentFilterIndex]?.filters || {};
     },
@@ -265,7 +307,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns
    */
   getShouldReFetchIssues = (displayFilters: IIssueDisplayFilterOptions) => {
-    const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type"];
+    const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type", "assigned_to_me"];
     const displayFilterKeys = Object.keys(displayFilters);
 
     return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>

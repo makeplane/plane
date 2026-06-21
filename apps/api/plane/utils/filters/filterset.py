@@ -130,6 +130,9 @@ class IssueFilterSet(BaseFilterSet):
     cycle_id = filters.UUIDFilter(method="filter_cycle_id")
     cycle_id__in = UUIDInFilter(method="filter_cycle_id_in", lookup_expr="in")
 
+    global_sprint_id = filters.UUIDFilter(method="filter_global_sprint_id")
+    global_sprint_id__in = UUIDInFilter(method="filter_global_sprint_id_in", lookup_expr="in")
+
     module_id = filters.UUIDFilter(method="filter_module_id")
     module_id__in = UUIDInFilter(method="filter_module_id_in", lookup_expr="in")
 
@@ -207,6 +210,20 @@ class IssueFilterSet(BaseFilterSet):
         return Q(
             issue_cycle__cycle_id__in=value,
             issue_cycle__deleted_at__isnull=True,
+        )
+
+    def filter_global_sprint_id(self, queryset, name, value):
+        """Filter by workspace sprint ID, excluding soft deleted sprint links"""
+        return Q(
+            issue_workspace_sprint__sprint_id=value,
+            issue_workspace_sprint__deleted_at__isnull=True,
+        )
+
+    def filter_global_sprint_id_in(self, queryset, name, value):
+        """Filter by workspace sprint IDs (in), excluding soft deleted sprint links"""
+        return Q(
+            issue_workspace_sprint__sprint_id__in=value,
+            issue_workspace_sprint__deleted_at__isnull=True,
         )
 
     def filter_module_id(self, queryset, name, value):

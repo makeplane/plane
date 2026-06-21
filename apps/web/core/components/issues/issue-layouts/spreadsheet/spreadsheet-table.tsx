@@ -37,6 +37,7 @@ type Props = {
   loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
+  showProjectInWorkItemColumn?: boolean;
   isEpic?: boolean;
 };
 
@@ -56,6 +57,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
     loadMoreIssues,
     spreadsheetColumnsList,
     selectionHelpers,
+    showProjectInWorkItemColumn = false,
     isEpic = false,
   } = props;
 
@@ -108,6 +110,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
 
   const ignoreFieldsForCounting: (keyof IIssueDisplayProperties)[] = ["key"];
   if (!isEstimateEnabled) ignoreFieldsForCounting.push("estimate");
+  if (showProjectInWorkItemColumn) ignoreFieldsForCounting.push("project");
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
@@ -138,14 +141,15 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
             isScrolled={isScrolled}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            showProjectInWorkItemColumn={showProjectInWorkItemColumn}
             isEpic={isEpic}
           />
         ))}
       </tbody>
       {canLoadMoreIssues && (
         <tfoot ref={setIntersectionElement}>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} />
+          {["loader-1", "loader-2", "loader-3"].map((loaderKey) => (
+            <SpreadsheetIssueRowLoader key={loaderKey} columnCount={displayPropertiesCount} />
           ))}
         </tfoot>
       )}

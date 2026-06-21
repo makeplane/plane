@@ -98,14 +98,13 @@ export class AnalyticsService extends APIService {
     let processedUrl = `/api/workspaces/${workspaceSlug}`;
     if (isPeekView && (tab === "work-items" || tab === "custom-work-items")) {
       const projectIds = params?.project_ids;
-      if (typeof projectIds !== "string" || !projectIds.trim()) {
-        throw new Error("project_ids parameter is required for peek view of work items");
+      if (typeof projectIds === "string" && projectIds.trim()) {
+        const projectId = projectIds.split(",")[0];
+        if (!projectId) {
+          throw new Error("Invalid project_ids format - no project ID found");
+        }
+        processedUrl += `/projects/${projectId}`;
       }
-      const projectId = projectIds.split(",")[0];
-      if (!projectId) {
-        throw new Error("Invalid project_ids format - no project ID found");
-      }
-      processedUrl += `/projects/${projectId}`;
     }
     return `${processedUrl}/${endpoint}`;
   }

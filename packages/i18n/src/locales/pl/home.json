@@ -52,9 +52,6 @@
         "issues": "Elementy pracy"
       }
     },
-    "new_at_plane": {
-      "title": "Co nowego w Plane"
-    },
     "quick_tutorial": {
       "title": "Szybki samouczek"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Zarządzaj widżetami",
     "title": "Strona główna",
-    "star_us_on_github": "Oceń nas na GitHubie",
     "business_trial_banner": {
       "title": "Twój 14-dniowy okres próbny planu Business jest aktywny!",
       "description": "Poznaj wszystkie funkcje Business. Gdy będziesz gotowy, wybierz subskrypcję. Nie zostaniesz automatycznie obciążony.",

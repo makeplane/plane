@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
-import type { ICycle, IModule, IProject } from "@plane/types";
+import type { ICycle, IModule, IProject, IWorkspaceSprint } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -23,12 +23,19 @@ type Props = {
   projectDetails: IProject | undefined;
   cycleDetails: ICycle | undefined;
   moduleDetails: IModule | undefined;
+  workspaceSprintDetails: IWorkspaceSprint | undefined;
   isEpic?: boolean;
 };
 
 export const WorkItemsModalMainContent = observer(function WorkItemsModalMainContent(props: Props) {
-  const { projectDetails, cycleDetails, moduleDetails, fullScreen, isEpic } = props;
-  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalytics();
+  const { projectDetails, cycleDetails, moduleDetails, workspaceSprintDetails, fullScreen, isEpic } = props;
+  const {
+    updateSelectedProjects,
+    updateSelectedCycle,
+    updateSelectedModule,
+    updateSelectedWorkspaceSprint,
+    updateIsPeekView,
+  } = useAnalytics();
   const [isModalConfigured, setIsModalConfigured] = useState(false);
 
   useEffect(() => {
@@ -48,6 +55,10 @@ export const WorkItemsModalMainContent = observer(function WorkItemsModalMainCon
     if (moduleDetails?.id) {
       updateSelectedModule(moduleDetails.id);
     }
+
+    if (workspaceSprintDetails?.id) {
+      updateSelectedWorkspaceSprint(workspaceSprintDetails.id);
+    }
     setIsModalConfigured(true);
 
     // Cleanup fields
@@ -55,15 +66,18 @@ export const WorkItemsModalMainContent = observer(function WorkItemsModalMainCon
       updateSelectedProjects([]);
       updateSelectedCycle("");
       updateSelectedModule("");
+      updateSelectedWorkspaceSprint("");
       updateIsPeekView(false);
     };
   }, [
     projectDetails?.id,
     cycleDetails?.id,
     moduleDetails?.id,
+    workspaceSprintDetails?.id,
     updateSelectedProjects,
     updateSelectedCycle,
     updateSelectedModule,
+    updateSelectedWorkspaceSprint,
     updateIsPeekView,
   ]);
 

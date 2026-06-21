@@ -65,8 +65,10 @@ export const DisplayFiltersSelection = observer(function DisplayFiltersSelection
         <div className="py-2">
           <FilterDisplayProperties
             displayProperties={displayProperties}
+            displayFilters={displayFilters}
             displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
             handleUpdate={handleDisplayPropertiesUpdate}
+            handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             cycleViewDisabled={cycleViewDisabled}
             moduleViewDisabled={moduleViewDisabled}
             isEpic={isEpic}

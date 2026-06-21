@@ -143,16 +143,16 @@ describe("function-declaration", () => {
     const result = await applyTransform(
       transformer,
       `
-      export const StarUsOnGitHubLink = () => {
-        return <a href="https://github.com">Star us</a>;
+      export const ExternalDocsLink = () => {
+        return <a href="https://example.com">Open docs</a>;
       };
       `,
       { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
-      "export function StarUsOnGitHubLink() {
-              return <a href="https://github.com">Star us</a>;
+      "export function ExternalDocsLink() {
+              return <a href="https://example.com">Open docs</a>;
             }"
     `);
   });

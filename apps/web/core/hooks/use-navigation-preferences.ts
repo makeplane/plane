@@ -11,6 +11,8 @@ import type {
   TPersonalNavigationPreferences,
   TProjectNavigationPreferences,
   TProjectNavigationMode,
+  TSprintNavigationPreferences,
+  TSprintNavigationMode,
   TWorkspaceNavigationPreferences,
   TWorkspaceNavigationItemState,
   TAppRailPreferences,
@@ -19,6 +21,7 @@ import type {
 import {
   DEFAULT_PERSONAL_PREFERENCES,
   DEFAULT_PROJECT_PREFERENCES,
+  DEFAULT_SPRINT_PREFERENCES,
   DEFAULT_WORKSPACE_PREFERENCES,
   DEFAULT_APP_RAIL_PREFERENCES,
 } from "@plane/types";
@@ -183,6 +186,69 @@ export const useProjectNavigationPreferences = () => {
   };
 };
 
+export const useSprintNavigationPreferences = () => {
+  const { workspaceSlug } = useParams();
+  const { getProjectNavigationPreferences, updateProjectNavigationPreferences } = useWorkspace();
+
+  const storePreferences = getProjectNavigationPreferences(workspaceSlug?.toString() || "");
+
+  const preferences: TSprintNavigationPreferences = useMemo(() => {
+    if (storePreferences?.navigation_sprint_preference || storePreferences?.navigation_squad_limit !== undefined) {
+      const limit = storePreferences.navigation_squad_limit ?? DEFAULT_SPRINT_PREFERENCES.limitedSquadsCount;
+
+      return {
+        navigationMode: storePreferences.navigation_sprint_preference || DEFAULT_SPRINT_PREFERENCES.navigationMode,
+        limitedSquadsCount: limit > 0 ? limit : DEFAULT_SPRINT_PREFERENCES.limitedSquadsCount,
+        showLimitedSquads: limit > 0,
+      };
+    }
+
+    return DEFAULT_SPRINT_PREFERENCES;
+  }, [storePreferences]);
+
+  const updateNavigationMode = useCallback(
+    async (mode: TSprintNavigationMode) => {
+      if (!workspaceSlug) return;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_sprint_preference: mode,
+      });
+    },
+    [workspaceSlug, updateProjectNavigationPreferences]
+  );
+
+  const updateShowLimitedSquads = useCallback(
+    async (show: boolean) => {
+      if (!workspaceSlug) return;
+
+      const newLimit = show ? preferences.limitedSquadsCount || DEFAULT_SPRINT_PREFERENCES.limitedSquadsCount : 0;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_squad_limit: newLimit,
+      });
+    },
+    [workspaceSlug, updateProjectNavigationPreferences, preferences.limitedSquadsCount]
+  );
+
+  const updateLimitedSquadsCount = useCallback(
+    async (count: number) => {
+      if (!workspaceSlug) return;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_squad_limit: count,
+      });
+    },
+    [workspaceSlug, updateProjectNavigationPreferences]
+  );
+
+  return {
+    preferences,
+    updateNavigationMode,
+    updateShowLimitedSquads,
+    updateLimitedSquadsCount,
+  };
+};
+
 export const useWorkspaceNavigationPreferences = () => {
   const { workspaceSlug } = useParams();
   const { getNavigationPreferences, updateBulkSidebarPreferences } = useWorkspace();
@@ -197,7 +263,10 @@ export const useWorkspaceNavigationPreferences = () => {
     }
 
     return {
-      items: storePreferences,
+      items: {
+        ...DEFAULT_WORKSPACE_PREFERENCES.items,
+        ...storePreferences,
+      },
     };
   }, [storePreferences]);
 
@@ -237,7 +306,8 @@ export const useWorkspaceNavigationPreferences = () => {
   );
 
   const getWorkspaceItemState = useCallback(
-    (key: string): TWorkspaceNavigationItemState => preferences.items[key] || { is_pinned: false, sort_order: 0 },
+    (key: string): TWorkspaceNavigationItemState =>
+      preferences.items[key] || DEFAULT_WORKSPACE_PREFERENCES.items[key] || { is_pinned: false, sort_order: 0 },
     [preferences]
   );
 

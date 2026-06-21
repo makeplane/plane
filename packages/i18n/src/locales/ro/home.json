@@ -52,9 +52,6 @@
         "issues": "Activități"
       }
     },
-    "new_at_plane": {
-      "title": "Noutăți în Plane"
-    },
     "quick_tutorial": {
       "title": "Tutorial rapid"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Gestionează mini-aplicațiile",
     "title": "Acasă",
-    "star_us_on_github": "Dă-ne o stea pe GitHub",
     "business_trial_banner": {
       "title": "Perioada de probă de 14 zile pentru planul Business este activă!",
       "description": "Explorați toate funcțiile Business. Când sunteți pregătit, alegeți să vă abonați. Nu veți fi facturat automat.",

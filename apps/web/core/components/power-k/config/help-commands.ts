@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
+import { FileText, GithubIcon, Rocket } from "lucide-react";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -38,19 +38,6 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       icon: FileText,
       action: () => {
         window.open("https://docs.plane.so/", "_blank", "noopener,noreferrer");
-      },
-      isEnabled: () => true,
-      isVisible: () => true,
-      closeOnSelect: true,
-    },
-    {
-      id: "join_forum",
-      type: "action",
-      group: "help",
-      i18n_title: "power_k.help_actions.join_forum",
-      icon: MessageSquare,
-      action: () => {
-        window.open("https://forum.plane.so", "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
       isVisible: () => true,

@@ -5,7 +5,15 @@
  */
 
 //ui
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  CheckIcon,
+  ChevronDownIcon,
+  Eraser,
+  FastForward,
+  MoveRight,
+} from "lucide-react";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
@@ -55,7 +63,11 @@ export function HeaderColumn(props: Props) {
       customButton={
         <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <div className="flex items-center gap-1.5">
-            {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
+            {property === "sprint" ? (
+              <FastForward className="h-4 w-4 stroke-[1.5] text-placeholder" />
+            ) : (
+              <SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />
+            )}
             {property === "sub_issue_count" && isEpic ? t("issue.label", { count: 2 }) : t(propertyDetails.i18n_title)}
           </div>
           <div className="ml-3 flex">

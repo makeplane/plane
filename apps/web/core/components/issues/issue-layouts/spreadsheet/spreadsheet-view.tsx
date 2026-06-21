@@ -39,7 +39,25 @@ type Props = {
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
+  showProjectInWorkItemColumn?: boolean;
   isEpic?: boolean;
+};
+
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
+const getOrderedSpreadsheetColumns = (
+  columns: (keyof IIssueDisplayProperties)[],
+  savedOrder: (keyof IIssueDisplayProperties)[] | undefined
+) => {
+  if (!savedOrder || savedOrder.length === 0) return columns;
+
+  const availableColumns = new Set(columns);
+  const orderedColumns = savedOrder.filter((property) => availableColumns.has(property));
+  const unorderedColumns = columns.filter((property) => !savedOrder.includes(property));
+
+  return [...orderedColumns, ...unorderedColumns];
 };
 
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
@@ -57,6 +75,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     canLoadMoreIssues,
     loadMoreIssues,
     isWorkspaceLevel = false,
+    showProjectInWorkItemColumn = false,
     isEpic = false,
   } = props;
   // refs
@@ -69,13 +88,20 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
-  const spreadsheetColumnsList = isWorkspaceLevel
+  const spreadsheetColumnsListBase = isWorkspaceLevel
     ? SPREADSHEET_PROPERTY_LIST
     : SPREADSHEET_PROPERTY_LIST.filter((property) => {
         if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
         if (property === "modules" && !currentProjectDetails?.module_view) return false;
         return true;
       });
+  const availableSpreadsheetColumnsList = showProjectInWorkItemColumn
+    ? spreadsheetColumnsListBase.filter((property) => property !== "project")
+    : spreadsheetColumnsListBase;
+  const spreadsheetColumnsList = getOrderedSpreadsheetColumns(
+    availableSpreadsheetColumnsList,
+    (displayFilters as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns
+  );
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
@@ -106,6 +132,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
+                showProjectInWorkItemColumn={showProjectInWorkItemColumn}
                 isEpic={isEpic}
               />
             </div>

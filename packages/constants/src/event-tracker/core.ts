@@ -12,8 +12,6 @@ import type { EProductSubscriptionEnum } from "@plane/types";
  * ===========================================================================
  */
 export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
-export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
-export const HEADER_GITHUB_ICON = "header_github_icon";
 
 /**
  * ===========================================================================
@@ -372,11 +370,6 @@ export const NOTIFICATION_TRACKER_ELEMENTS = {
 export const USER_TRACKER_EVENTS = {
   add_details: "user_details_added",
   onboarding_complete: "user_onboarding_completed",
-};
-
-export const USER_TRACKER_ELEMENTS = {
-  PRODUCT_CHANGELOG_MODAL: "product_changelog_modal",
-  CHANGELOG_REDIRECTED: "changelog_redirected",
 };
 
 /**

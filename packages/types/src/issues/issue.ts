@@ -61,6 +61,8 @@ export type TBaseIssue = {
   project_id: string | null;
   parent_id: string | null;
   cycle_id: string | null;
+  global_sprint_id: string | null;
+  global_sprint_name: string | null;
   module_ids: string[] | null;
   type_id: string | null;
 

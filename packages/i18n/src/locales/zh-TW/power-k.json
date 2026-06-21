@@ -141,7 +141,6 @@
     "help_actions": {
       "open_keyboard_shortcuts": "開啟鍵盤快速鍵",
       "open_plane_documentation": "開啟 Plane 文件",
-      "join_forum": "加入我們的 Forum",
       "report_bug": "回報錯誤",
       "chat_with_us": "與我們聊天"
     },

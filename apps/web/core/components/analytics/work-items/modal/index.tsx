@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { ModalPortal, EPortalWidth, EPortalPosition } from "@plane/propel/portal";
-import type { ICycle, IModule, IProject } from "@plane/types";
+import type { ICycle, IModule, IProject, IWorkspaceSprint } from "@plane/types";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components
 import { WorkItemsModalMainContent } from "./content";
@@ -20,11 +20,12 @@ type Props = {
   projectDetails?: IProject | undefined;
   cycleDetails?: ICycle | undefined;
   moduleDetails?: IModule | undefined;
+  workspaceSprintDetails?: IWorkspaceSprint | undefined;
   isEpic?: boolean;
 };
 
 export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
-  const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, isEpic } = props;
+  const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, workspaceSprintDetails, isEpic } = props;
   const { updateIsEpic, isPeekView } = useAnalytics();
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -54,7 +55,7 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
           fullScreen={fullScreen}
           handleClose={handleClose}
           setFullScreen={setFullScreen}
-          title={projectDetails?.name ?? ""}
+          title={projectDetails?.name ?? workspaceSprintDetails?.name ?? ""}
           cycle={cycleDetails}
           module={moduleDetails}
         />
@@ -63,6 +64,7 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
           projectDetails={projectDetails}
           cycleDetails={cycleDetails}
           moduleDetails={moduleDetails}
+          workspaceSprintDetails={workspaceSprintDetails}
           isEpic={isEpic}
         />
       </div>

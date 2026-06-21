@@ -49,6 +49,7 @@ export type TAnalyticsFilterParams = {
   project_ids?: string;
   cycle_id?: string;
   module_id?: string;
+  workspace_sprint_id?: string;
 };
 
 // service types

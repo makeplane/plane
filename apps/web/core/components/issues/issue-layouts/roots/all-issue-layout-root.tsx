@@ -4,15 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import {
+  EIssueGroupByToServerOptions,
+  GLOBAL_VIEW_TRACKER_ELEMENTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { EIssueLayoutTypes } from "@plane/types";
-import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IssuePaginationOptions } from "@plane/types";
+import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // assets
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -27,25 +31,50 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 type Props = {
+  globalViewIdOverride?: string;
   isDefaultView: boolean;
   isLoading?: boolean;
+  routeFiltersOverride?: { [key: string]: string };
   toggleLoading: (value: boolean) => void;
 };
 
+const getInitialIssueFetchOptions = (
+  layout: EIssueLayoutTypes | undefined,
+  displayFilters: IIssueDisplayFilterOptions | undefined
+): IssuePaginationOptions => {
+  switch (layout) {
+    case EIssueLayoutTypes.LIST:
+      return { canGroup: true, perPageCount: displayFilters?.group_by ? 50 : 100 };
+    case EIssueLayoutTypes.KANBAN:
+      return { canGroup: true, perPageCount: displayFilters?.sub_group_by ? 10 : 30 };
+    case EIssueLayoutTypes.CALENDAR:
+      return {
+        canGroup: true,
+        perPageCount: 30,
+        groupedBy: EIssueGroupByToServerOptions.target_date,
+      };
+    case EIssueLayoutTypes.GANTT:
+    case EIssueLayoutTypes.SPREADSHEET:
+    default:
+      return { canGroup: false, perPageCount: 100 };
+  }
+};
+
 export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
-  const { isDefaultView, isLoading = false, toggleLoading } = props;
+  const { globalViewIdOverride, isDefaultView, isLoading = false, routeFiltersOverride, toggleLoading } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
+  const globalViewId = globalViewIdOverride ?? (routerGlobalViewId ? routerGlobalViewId.toString() : undefined);
   // search params
   const searchParams = useSearchParams();
   // store hooks
   const {
-    issuesFilter: { filters, fetchFilters, updateFilterExpression },
+    issuesFilter,
     issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
+  const { filters, fetchFilters, updateFilterExpression } = issuesFilter;
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
   // Derived values
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
@@ -76,6 +105,16 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   searchParams.forEach((value: string, key: string) => {
     routeFilters[key] = value;
   });
+  if (routeFiltersOverride) {
+    Object.assign(routeFilters, routeFiltersOverride);
+  }
+  const routeFilterKey = JSON.stringify(routeFilters);
+
+  useEffect(() => {
+    issuesFilter.setRouteFilters(routeFilters);
+    // routeFilterKey captures all route filter values without keeping the object reference unstable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issuesFilter, routeFilterKey]);
 
   // Fetch next pages callback
   const fetchNextPages = useCallback(() => {
@@ -95,16 +134,27 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
 
   // Fetch issues
   const { isLoading: issuesLoading } = useSWR(
-    workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
+    workspaceSlug && globalViewId
+      ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}_${routeFilterKey}`
+      : null,
     async () => {
       if (workspaceSlug && globalViewId) {
-        clear();
         toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
-        await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
-          canGroup: false,
-          perPageCount: 100,
-        });
+        const fetchedWorkItemFilters = issuesFilter.getIssueFilters(globalViewId);
+        const fetchOptions = getInitialIssueFetchOptions(
+          fetchedWorkItemFilters?.displayFilters?.layout ?? EIssueLayoutTypes.SPREADSHEET,
+          fetchedWorkItemFilters?.displayFilters
+        );
+
+        clear();
+        await fetchIssues(
+          workspaceSlug,
+          globalViewId,
+          groupedIssueIds ? "mutation" : "init-loader",
+          fetchOptions,
+          routeFilters
+        );
         toggleLoading(false);
       }
     },

@@ -30,6 +30,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     PageSerializer,
@@ -54,6 +55,7 @@ from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
+from plane.authentication.session import BaseSessionAuthentication
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -76,6 +78,7 @@ class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
     permission_classes = [ProjectPagePermission]
+    authentication_classes = [BaseSessionAuthentication, APIKeyAuthentication]
     search_fields = ["name"]
 
     def get_queryset(self):

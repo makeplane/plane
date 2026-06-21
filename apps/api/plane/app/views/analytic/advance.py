@@ -37,6 +37,7 @@ class AdvanceAnalyticsBaseView(BaseAPIView):
             user=self.request.user,
             date_filter=self.request.GET.get("date_filter", None),
             project_ids=self.request.GET.get("project_ids", None),
+            workspace_sprint_id=self.request.GET.get("workspace_sprint_id", None),
         )
 
 

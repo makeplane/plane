@@ -4,5 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./modal";
-export * from "./footer";
+export * from "./sprint.service";

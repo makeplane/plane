@@ -8,7 +8,7 @@ import type { TLogoProps } from "./common";
 import type { TIssuePriorities } from "./issues";
 
 export type TRecentActivityFilterKeys = "all item" | "issue" | "page" | "project" | "workspace_page";
-export type THomeWidgetKeys = "quick_links" | "recents" | "my_stickies" | "quick_tutorial" | "new_at_plane";
+export type THomeWidgetKeys = "quick_links" | "recents" | "my_stickies" | "quick_tutorial";
 
 export type THomeWidgetProps = {
   workspaceSlug: string;

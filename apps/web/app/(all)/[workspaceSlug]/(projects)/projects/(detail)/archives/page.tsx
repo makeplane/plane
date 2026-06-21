@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { ProjectPageRoot } from "@/plane-web/components/projects/page";
+import { WorkspaceArchivesRoot } from "@/components/archives";
 
 function ProjectsPage() {
-  return <ProjectPageRoot />;
+  return <WorkspaceArchivesRoot />;
 }
 
 export default ProjectsPage;

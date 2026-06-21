@@ -17,6 +17,7 @@ export interface IBaseAnalyticsStore {
   selectedDuration: DurationType;
   selectedCycle: string;
   selectedModule: string;
+  selectedWorkspaceSprint: string;
   isPeekView?: boolean;
   isEpic?: boolean;
   //computed
@@ -27,6 +28,7 @@ export interface IBaseAnalyticsStore {
   updateSelectedDuration: (duration: DurationType) => void;
   updateSelectedCycle: (cycle: string) => void;
   updateSelectedModule: (module: string) => void;
+  updateSelectedWorkspaceSprint: (sprint: string) => void;
   updateIsPeekView: (isPeekView: boolean) => void;
   updateIsEpic: (isEpic: boolean) => void;
 }
@@ -38,6 +40,7 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
   selectedDuration: DurationType = "last_30_days";
   selectedCycle: string = "";
   selectedModule: string = "";
+  selectedWorkspaceSprint: string = "";
   isPeekView: boolean = false;
   isEpic: boolean = false;
   constructor() {
@@ -48,6 +51,7 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
       selectedProjects: observable,
       selectedCycle: observable.ref,
       selectedModule: observable.ref,
+      selectedWorkspaceSprint: observable.ref,
       isPeekView: observable.ref,
       isEpic: observable.ref,
       // computed
@@ -57,6 +61,7 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
       updateSelectedDuration: action,
       updateSelectedCycle: action,
       updateSelectedModule: action,
+      updateSelectedWorkspaceSprint: action,
       updateIsPeekView: action,
       updateIsEpic: action,
     });
@@ -97,6 +102,12 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
   updateSelectedModule = (module: string) => {
     runInAction(() => {
       this.selectedModule = module;
+    });
+  };
+
+  updateSelectedWorkspaceSprint = (sprint: string) => {
+    runInAction(() => {
+      this.selectedWorkspaceSprint = sprint;
     });
   };
 

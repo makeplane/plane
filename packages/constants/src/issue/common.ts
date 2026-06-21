@@ -33,6 +33,7 @@ export enum EIssueGroupByToServerOptions {
   "cycle" = "cycle_id",
   "module" = "issue_module__module_id",
   "target_date" = "target_date",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
@@ -140,6 +141,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
+  "project",
   "assignee",
   "start_date",
   "due_date",
@@ -155,6 +157,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "updated_on",
   "modules",
   "cycle",
+  "sprint",
   "issue_type",
 ];
 
@@ -174,6 +177,10 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   {
     key: "key",
     titleTranslationKey: "issue.display.properties.id",
+  },
+  {
+    key: "project",
+    titleTranslationKey: "common.project",
   },
   {
     key: "assignee",
@@ -206,17 +213,28 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     key: "estimate",
     titleTranslationKey: "common.estimate",
   },
+  {
+    key: "created_on",
+    titleTranslationKey: "common.sort.created_on",
+  },
+  {
+    key: "updated_on",
+    titleTranslationKey: "common.sort.updated_on",
+  },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  { key: "sprint", titleTranslationKey: "Sprint" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
+  "project",
   "state",
   "priority",
   "assignee",
   "labels",
   "modules",
   "cycle",
+  "sprint",
   "start_date",
   "due_date",
   "estimate",
@@ -237,6 +255,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: string;
   };
 } = {
+  project: {
+    i18n_title: "common.project",
+    ascendingOrderKey: "project__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-project__name",
+    descendingOrderTitle: "Z",
+    icon: "ProjectIcon",
+  },
   assignee: {
     i18n_title: "common.assignees",
     ascendingOrderKey: "assignees__first_name",
@@ -290,6 +316,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderKey: "issue_cycle__cycle__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_cycle__cycle__name",
+    descendingOrderTitle: "Z",
+    icon: "ContrastIcon",
+  },
+  sprint: {
+    i18n_title: "Sprint",
+    ascendingOrderKey: "sort_order",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "sort_order",
     descendingOrderTitle: "Z",
     icon: "ContrastIcon",
   },

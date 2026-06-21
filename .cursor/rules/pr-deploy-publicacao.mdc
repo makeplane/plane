@@ -1,0 +1,23 @@
+---
+description: Fluxo padrao para revisar, testar, mergear PRs e publicar em main
+alwaysApply: true
+---
+
+# PR, Deploy e Publicacao
+
+Quando o usuario pedir para aceitar PRs, fazer deploy, publicar na `main` ou gerar/promover imagem Docker, siga este fluxo.
+
+1. Identifique o escopo antes de agir: liste PRs abertos com `gh pr list`, confirme repositorio, branch base (`development`, `main` ou a branch padrao do repo) e se ha worktree suja. Nao inclua `.env`, dumps, credenciais, venvs ou arquivos nao relacionados.
+2. Analise o conteudo do PR inteiro, nao apenas o ultimo commit: use `gh pr view`, `gh pr diff`, `git log base..head` e `git diff base...head`.
+3. Se houver dois ou mais PRs para o mesmo destino, teste o estado combinado sobre a branch base atualizada antes de mergear. Crie uma branch local temporaria, aplique os heads e resolva conflitos com cuidado.
+4. Rode validacoes locais antes do merge conforme o escopo:
+   - Monorepo/web/packages: `pnpm install --frozen-lockfile`, testes especificos adicionados/afetados, `pnpm build` ou build filtrado, e `pnpm check:lint` como informativo.
+   - API: testes relevantes via Docker conforme `apps/api/tests/RUNNING_TESTS.md`; use `docker compose -f docker-compose-test.yml run --rm api-tests pytest ...` para subsets e rode checagens/migrations relevantes quando houver alteracoes de modelo.
+5. Considere lint nao bloqueante apenas quando a falha vier de debitos antigos fora dos arquivos alterados. Reporte isso no resumo e confira diagnósticos dos arquivos tocados.
+6. Quando o PR base for `development`, mergeie primeiro em `development`, aguarde o workflow de build/push da imagem Docker e so depois crie PR `development -> main`.
+7. Para publicar na `main`, abra PR com resumo do que sera publicado e plano de testes. Mergeie apenas se `mergeStateStatus` estiver `CLEAN` e os checks relevantes estiverem verdes.
+8. Apos merge na `main`, acompanhe o workflow disparado em `main` ate concluir. Se houver promocao de imagem ja buildada em `development`, confirme que o workflow promoveu a imagem correta e disparou os webhooks esperados.
+9. Se CI falhar, leia `gh run view <id> --log-failed`, corrija a causa raiz em novo PR, mergeie e acompanhe novamente. Para falhas Docker/pnpm, verifique `pnpm-workspace.yaml`, `pnpm fetch/install --offline`, versao do pnpm, versao do Node da imagem e compatibilidade com lockfile.
+10. Ao finalizar, responda com links dos PRs, runs, checks executados e qualquer risco residual.
+
+Nao use push direto para `main` ou `development` quando um PR for apropriado. Nao force push nem use comandos destrutivos sem pedido explicito.

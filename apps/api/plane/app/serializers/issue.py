@@ -761,6 +761,8 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
 class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    global_sprint_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    global_sprint_name = serializers.CharField(read_only=True)
     module_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     # Many to many
@@ -788,6 +790,8 @@ class IssueSerializer(DynamicBaseSerializer):
             "project_id",
             "parent_id",
             "cycle_id",
+            "global_sprint_id",
+            "global_sprint_name",
             "module_ids",
             "label_ids",
             "assignee_ids",
@@ -852,6 +856,8 @@ class IssueListDetailSerializer(serializers.Serializer):
             "archived_at": instance.archived_at,
             # Computed fields
             "cycle_id": instance.cycle_id,
+            "global_sprint_id": getattr(instance, "global_sprint_id", None),
+            "global_sprint_name": getattr(instance, "global_sprint_name", None),
             "module_ids": self.get_module_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "assignee_ids": self.get_assignee_ids(instance),

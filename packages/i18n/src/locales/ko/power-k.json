@@ -141,7 +141,6 @@
     "help_actions": {
       "open_keyboard_shortcuts": "키보드 단축키 열기",
       "open_plane_documentation": "Plane 문서 열기",
-      "join_forum": "포럼 참여",
       "report_bug": "버그 신고",
       "chat_with_us": "문의하기"
     },

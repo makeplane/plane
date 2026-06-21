@@ -1,0 +1,175 @@
+name: Build Production Docker Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_release:
+        description: "Image tag to publish and use as APP_RELEASE"
+        required: false
+        type: string
+  push:
+    branches:
+      - development
+      - main
+      - master
+      - preview
+      - canary
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  PRODUCTION_APP_BASE_URL: ${{ vars.PRODUCTION_APP_BASE_URL || 'https://plane.agncflamingo.com.br' }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    name: Build ${{ matrix.image }}
+    if: github.ref_name != 'main'
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: plane-frontend
+            context: .
+            dockerfile: ./apps/web/Dockerfile.web
+          - image: plane-space
+            context: .
+            dockerfile: ./apps/space/Dockerfile.space
+          - image: plane-admin
+            context: .
+            dockerfile: ./apps/admin/Dockerfile.admin
+          - image: plane-live
+            context: .
+            dockerfile: ./apps/live/Dockerfile.live
+          - image: plane-backend
+            context: ./apps/api
+            dockerfile: ./apps/api/Dockerfile.api
+          - image: plane-proxy
+            context: ./apps/proxy
+            dockerfile: ./apps/proxy/Dockerfile.ce
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Prepare image variables
+        id: vars
+        shell: bash
+        run: |
+          image_namespace="${GITHUB_REPOSITORY,,}"
+          app_release="${{ github.event.inputs.app_release }}"
+
+          if [ -z "$app_release" ]; then
+            app_release="$(echo "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed 's#[^a-z0-9._-]#-#g')"
+          fi
+
+          echo "image_namespace=$image_namespace" >> "$GITHUB_OUTPUT"
+          echo "app_release=$app_release" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ steps.vars.outputs.image_namespace }}/${{ matrix.image }}
+          tags: |
+            type=raw,value=${{ steps.vars.outputs.app_release }}
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_API_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_ADMIN_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_SPACE_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_LIVE_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_WEB_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+
+  promote-main:
+    name: Promote ${{ matrix.image }} to main
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - plane-frontend
+          - plane-space
+          - plane-admin
+          - plane-live
+          - plane-backend
+          - plane-proxy
+
+    steps:
+      - name: Prepare image variables
+        id: vars
+        shell: bash
+        run: |
+          image_namespace="${GITHUB_REPOSITORY,,}"
+          image="ghcr.io/${image_namespace}/${{ matrix.image }}"
+
+          echo "source_image=${image}:development" >> "$GITHUB_OUTPUT"
+          echo "main_image=${image}:main" >> "$GITHUB_OUTPUT"
+          echo "latest_image=${image}:latest" >> "$GITHUB_OUTPUT"
+          echo "sha_image=${image}:sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote development image
+        shell: bash
+        run: |
+          docker buildx imagetools inspect "${{ steps.vars.outputs.source_image }}"
+          docker buildx imagetools create \
+            -t "${{ steps.vars.outputs.main_image }}" \
+            -t "${{ steps.vars.outputs.latest_image }}" \
+            -t "${{ steps.vars.outputs.sha_image }}" \
+            "${{ steps.vars.outputs.source_image }}"
+
+  deploy-dokploy:
+    name: Deploy Dokploy compose
+    if: github.ref_name == 'main'
+    needs: promote-main
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Trigger Dokploy deployment
+        env:
+          DOKPLOY_URL: ${{ secrets.DOKPLOY_URL }}
+          DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+          DOKPLOY_COMPOSE_ID: ${{ secrets.DOKPLOY_COMPOSE_ID }}
+        shell: bash
+        run: |
+          curl --fail-with-body --request POST "${DOKPLOY_URL}/api/compose.deploy" \
+            --header "Content-Type: application/json" \
+            --header "x-api-key: ${DOKPLOY_API_KEY}" \
+            --data "{\"composeId\":\"${DOKPLOY_COMPOSE_ID}\"}"

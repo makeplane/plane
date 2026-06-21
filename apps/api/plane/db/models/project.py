@@ -57,6 +57,7 @@ def get_default_props():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
+            "assigned_to_me": False,
         },
     }
 

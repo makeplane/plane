@@ -52,9 +52,6 @@
         "issues": "Work items"
       }
     },
-    "new_at_plane": {
-      "title": "New at Plane"
-    },
     "quick_tutorial": {
       "title": "Quick tutorial"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Manage widgets",
     "title": "Home",
-    "star_us_on_github": "Star us on GitHub",
     "business_trial_banner": {
       "title": "Your 14-day Business plan trial is live!",
       "description": "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",

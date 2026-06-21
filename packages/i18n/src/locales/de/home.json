@@ -52,9 +52,6 @@
         "issues": "Arbeitselemente"
       }
     },
-    "new_at_plane": {
-      "title": "Neu in Plane"
-    },
     "quick_tutorial": {
       "title": "Schnelles Tutorial"
     },
@@ -64,7 +61,6 @@
     },
     "manage_widgets": "Widgets verwalten",
     "title": "Startseite",
-    "star_us_on_github": "Geben Sie uns einen Stern auf GitHub",
     "business_trial_banner": {
       "title": "Ihre 14-tägige Business-Testversion ist aktiv!",
       "description": "Entdecken Sie alle Business-Funktionen. Wenn Sie bereit sind, können Sie ein Abonnement abschließen. Es erfolgt keine automatische Abrechnung.",

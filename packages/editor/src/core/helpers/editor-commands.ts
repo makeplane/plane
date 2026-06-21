@@ -98,8 +98,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
     const selection = window.getSelection();
     if (selection) {
       if (selection.rangeCount !== 0) {
-        const range = selection.getRangeAt(0);
-        if (findTableAncestor(range.startContainer)) {
+        const domRange = selection.getRangeAt(0);
+        if (findTableAncestor(domRange.startContainer)) {
           return;
         }
       }
@@ -134,7 +134,12 @@ export const unsetLinkEditor = (editor: Editor) => {
   editor.chain().focus().unsetLink().run();
 };
 
-export const setLinkEditor = (editor: Editor, url: string, text?: string) => {
+export const setLinkEditor = (
+  editor: Editor,
+  url: string,
+  text?: string,
+  options?: { isInternal?: boolean; dataLinkId?: string }
+) => {
   const { selection } = editor.state;
   const previousSelection = { from: selection.from, to: selection.to };
   if (text) {
@@ -144,12 +149,25 @@ export const setLinkEditor = (editor: Editor, url: string, text?: string) => {
       .deleteRange({ from: selection.from, to: selection.to })
       .insertContentAt(previousSelection.from, text)
       .run();
-    // Extracting the new selection start point.
     const previousFrom = previousSelection.from;
 
     editor.commands.setTextSelection({ from: previousFrom, to: previousFrom + text.length });
   }
-  editor.chain().focus().setLink({ href: url }).run();
+
+  const linkAttributes: {
+    href: string;
+    target?: string | null;
+    rel?: string | null;
+    dataLinkId?: string;
+  } = { href: url };
+
+  if (options?.isInternal) {
+    linkAttributes.target = null;
+    linkAttributes.rel = null;
+    linkAttributes.dataLinkId = options.dataLinkId ?? crypto.randomUUID();
+  }
+
+  editor.chain().focus().setLink(linkAttributes).run();
 };
 
 export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {

@@ -141,7 +141,6 @@
     "help_actions": {
       "open_keyboard_shortcuts": "キーボードショートカットを開く",
       "open_plane_documentation": "Planeのドキュメントを開く",
-      "join_forum": "フォーラムに参加",
       "report_bug": "バグを報告",
       "chat_with_us": "チャットでお問い合わせ"
     },

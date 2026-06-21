@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 // plane imports
 import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -23,14 +23,18 @@ import type { Route } from "./+types/layout";
 function ProjectLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
+  const { pathname } = useLocation();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  // derived values
+  const projectIssuesPath = `/${workspaceSlug}/projects/${projectId}/issues`;
+  const isProjectIssuesListPath = pathname.replace(/\/$/, "") === projectIssuesPath;
 
   return (
     <>
-      {projectPreferences.navigationMode === "TABBED" && (
+      {projectPreferences.navigationMode === "TABBED" && !isProjectIssuesListPath && (
         <div className="z-20">
           <Row className="flex h-header w-full items-center gap-2 border-b border-subtle bg-surface-1">
             <div className="flex h-full w-full items-center gap-2 divide-x divide-subtle">

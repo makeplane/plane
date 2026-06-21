@@ -28,10 +28,11 @@ export type TRichTextEditorAdditionalExtensionsRegistry = {
 const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: ({ disabledExtensions, flaggedExtensions }) =>
+    getExtension: ({ disabledExtensions, flaggedExtensions, extendedEditorProps }) =>
       SlashCommands({
         disabledExtensions,
         flaggedExtensions,
+        extendedEditorProps,
       }),
   },
 ];

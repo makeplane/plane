@@ -20,6 +20,7 @@ import type { TProject } from "@plane/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
 import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";
+import { WorkItemsMeModeToggle } from "./me-mode-toggle";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -109,6 +110,10 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </div>
       <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
+      <WorkItemsMeModeToggle
+        displayFilters={issueFilters?.displayFilters}
+        handleDisplayFiltersUpdate={handleDisplayFilters}
+      />
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}
         title={t("common.display")}

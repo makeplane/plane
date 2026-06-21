@@ -6,7 +6,7 @@
 
 import type { Editor } from "@tiptap/core";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
@@ -15,22 +15,32 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
+import type { IEditorPropsExtended } from "@/types";
 import { FloatingMenuRoot } from "../floating-menu/root";
 import { useFloatingMenu } from "../floating-menu/use-floating-menu";
+import { PageLinkSearchPanel } from "../page-link-search-panel";
 
 type Props = {
   editor: Editor;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
 };
 
+type LinkTab = "url" | "page";
+
 export function BubbleMenuLinkSelector(props: Props) {
-  const { editor } = props;
-  // states
+  const { editor, extendedEditorProps = {} } = props;
+  const { searchPages, buildPageLink } = extendedEditorProps;
+  const hasPageLinkSupport = Boolean(searchPages && buildPageLink);
   const [error, setError] = useState(false);
-  // floating ui
+  const [activeTab, setActiveTab] = useState<LinkTab>("url");
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
   const { context } = options;
-  // refs
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!context.open || activeTab !== "url") return;
+    inputRef.current?.focus();
+  }, [activeTab, context.open]);
 
   const handleLinkSubmit = useCallback(() => {
     const input = inputRef.current;
@@ -45,7 +55,19 @@ export function BubbleMenuLinkSelector(props: Props) {
     } else {
       setError(true);
     }
-  }, [editor, inputRef, context]);
+  }, [editor, context]);
+
+  const handlePageSelect = useCallback(
+    (page: { id: string; name: string; project_id?: string }) => {
+      if (!buildPageLink) return;
+
+      const href = buildPageLink(page.id, page.project_id);
+      setLinkEditor(editor, href, page.name, { isInternal: true });
+      context.onOpenChange(false);
+      setError(false);
+    },
+    [buildPageLink, context, editor]
+  );
 
   return (
     <FloatingMenuRoot
@@ -69,58 +91,88 @@ export function BubbleMenuLinkSelector(props: Props) {
       }
       options={options}
     >
-      <div className="mt-1 w-60 rounded-md bg-surface-1 shadow-raised-200">
-        <div
-          className={cn("flex rounded-sm border-[0.5px] border-strong transition-colors", {
-            "border-danger-strong": error,
-          })}
-        >
-          <input
-            ref={inputRef}
-            type="url"
-            placeholder="Enter or paste a link"
-            onClick={(e) => e.stopPropagation()}
-            className="flex-1 rounded-sm border-r-[0.5px] border-strong bg-surface-1 px-1.5 py-2 text-11 outline-none placeholder:text-placeholder"
-            defaultValue={editor.getAttributes("link").href || ""}
-            onKeyDown={(e) => {
-              setError(false);
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleLinkSubmit();
-              }
-            }}
-            onFocus={() => setError(false)}
-            autoFocus
-          />
-          {editor.getAttributes("link").href ? (
+      <div className="mt-1 w-72 rounded-md bg-surface-1 shadow-raised-200">
+        {hasPageLinkSupport && (
+          <div className="flex border-b border-subtle px-2 pt-2">
             <button
               type="button"
-              className="grid place-items-center rounded-xs p-1 text-danger-primary transition-all hover:bg-danger-subtle-hover"
-              onClick={(e) => {
-                unsetLinkEditor(editor);
-                e.stopPropagation();
-                context.onOpenChange(false);
-              }}
+              className={cn("rounded-sm px-2 py-1 text-11 transition-colors", {
+                "bg-layer-1 text-primary": activeTab === "url",
+                "text-tertiary hover:text-primary": activeTab !== "url",
+              })}
+              onClick={() => setActiveTab("url")}
             >
-              <TrashIcon className="size-4" />
+              URL
             </button>
-          ) : (
             <button
               type="button"
-              className="grid aspect-square h-full place-items-center rounded-xs p-1 text-tertiary transition-all hover:bg-layer-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLinkSubmit();
-              }}
+              className={cn("rounded-sm px-2 py-1 text-11 transition-colors", {
+                "bg-layer-1 text-primary": activeTab === "page",
+                "text-tertiary hover:text-primary": activeTab !== "page",
+              })}
+              onClick={() => setActiveTab("page")}
             >
-              <CheckIcon className="size-4" />
+              Page
             </button>
-          )}
-        </div>
-        {error && (
-          <p className="animate-in fade-in slide-in-from-top-0 pointer-events-none my-1 px-2 text-11 text-danger-primary">
-            Please enter a valid URL
-          </p>
+          </div>
+        )}
+
+        {activeTab === "url" || !hasPageLinkSupport ? (
+          <div className="p-2">
+            <div
+              className={cn("flex rounded-sm border-[0.5px] border-strong transition-colors", {
+                "border-danger-strong": error,
+              })}
+            >
+              <input
+                ref={inputRef}
+                type="url"
+                placeholder="Enter or paste a link"
+                onClick={(e) => e.stopPropagation()}
+                className="flex-1 rounded-sm border-r-[0.5px] border-strong bg-surface-1 px-1.5 py-2 text-11 outline-none placeholder:text-placeholder"
+                defaultValue={editor.getAttributes("link").href || ""}
+                onKeyDown={(e) => {
+                  setError(false);
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleLinkSubmit();
+                  }
+                }}
+                onFocus={() => setError(false)}
+              />
+              {editor.getAttributes("link").href ? (
+                <button
+                  type="button"
+                  className="grid place-items-center rounded-xs p-1 text-danger-primary transition-all hover:bg-danger-subtle-hover"
+                  onClick={(e) => {
+                    unsetLinkEditor(editor);
+                    e.stopPropagation();
+                    context.onOpenChange(false);
+                  }}
+                >
+                  <TrashIcon className="size-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="grid aspect-square h-full place-items-center rounded-xs p-1 text-tertiary transition-all hover:bg-layer-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLinkSubmit();
+                  }}
+                >
+                  <CheckIcon className="size-4" />
+                </button>
+              )}
+            </div>
+            {error && (
+              <p className="animate-in fade-in slide-in-from-top-0 pointer-events-none my-1 px-2 text-11 text-danger-primary">
+                Please enter a valid URL
+              </p>
+            )}
+          </div>
+        ) : (
+          searchPages && <PageLinkSearchPanel searchPages={searchPages} onPageSelect={handlePageSelect} focusOnMount />
         )}
       </div>
     </FloatingMenuRoot>

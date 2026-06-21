@@ -54,6 +54,8 @@ type LinkOptions = {
    * @returns - True if the url is valid, false otherwise.
    */
   validate?: (url: string) => boolean;
+  onLinkClick?: (href: string, event: MouseEvent) => boolean | void;
+  isInternalPageLink?: (href: string) => boolean;
 };
 
 declare module "@tiptap/core" {
@@ -67,6 +69,7 @@ declare module "@tiptap/core" {
         target?: string | null;
         rel?: string | null;
         class?: string | null;
+        dataLinkId?: string | null;
       }) => ReturnType;
       /**
        * Toggle a link mark
@@ -76,6 +79,7 @@ declare module "@tiptap/core" {
         target?: string | null;
         rel?: string | null;
         class?: string | null;
+        dataLinkId?: string | null;
       }) => ReturnType;
       /**
        * Unset a link mark
@@ -149,6 +153,18 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
       },
       class: {
         default: this.options.HTMLAttributes.class,
+      },
+      dataLinkId: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-link-id"),
+        renderHTML: (attributes) => {
+          if (!attributes.dataLinkId) {
+            return {};
+          }
+          return {
+            "data-link-id": attributes.dataLinkId,
+          };
+        },
       },
     };
   },
@@ -249,6 +265,8 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
       plugins.push(
         clickHandler({
           type: this.type,
+          onLinkClick: this.options.onLinkClick,
+          isInternalPageLink: this.options.isInternalPageLink,
         })
       );
     }

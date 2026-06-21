@@ -67,6 +67,7 @@ def get_default_display_filters():
         "show_empty_groups": True,
         "layout": "list",
         "calendar_date_range": "",
+        "assigned_to_me": False,
     }
 
 

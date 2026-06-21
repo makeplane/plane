@@ -13,6 +13,7 @@ import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plan
 // types
 import type { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
+import { getComputedDisplayProperties } from "@plane/utils";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -28,6 +29,7 @@ import { List } from "./default";
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
 
 type ListStoreType =
+  | EIssuesStoreType.GLOBAL
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
@@ -75,13 +77,19 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const { issueMap } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
-  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+  const { workspaceSlug, projectId: routeProjectId, workspaceSprintId } = useParams();
+  const displayProperties = workspaceSprintId
+    ? {
+        ...getComputedDisplayProperties(issuesFilter?.issueFilters?.displayProperties),
+        project: issuesFilter?.issueFilters?.displayProperties?.project ?? true,
+        sprint: false,
+      }
+    : issuesFilter?.issueFilters?.displayProperties;
   const orderBy = displayFilters?.order_by || undefined;
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
-  const { workspaceSlug, projectId } = useParams();
   const { updateFilters } = useIssuesActions(storeType);
   const collapsedGroups =
     issuesFilter?.issueFilters?.kanbanFilters || ({ group_by: [], sub_group_by: [] } as TIssueKanbanFilters);
@@ -99,9 +107,11 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
+    (targetProjectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+        canEditPropertiesBasedOnProject && targetProjectId
+          ? canEditPropertiesBasedOnProject(targetProjectId)
+          : isEditingAllowed;
 
       return !!enableInlineEditing && isEditingAllowedBasedOnProject;
     },
@@ -138,18 +148,18 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const handleCollapsedGroups = useCallback(
     (value: string) => {
       if (workspaceSlug) {
-        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.group_by || [];
-        if (collapsedGroups.includes(value)) {
-          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        let nextCollapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.group_by || [];
+        if (nextCollapsedGroups.includes(value)) {
+          nextCollapsedGroups = nextCollapsedGroups.filter((_value) => _value != value);
         } else {
-          collapsedGroups.push(value);
+          nextCollapsedGroups.push(value);
         }
-        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-          group_by: collapsedGroups,
+        updateFilters(routeProjectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          group_by: nextCollapsedGroups,
         } as TIssueKanbanFilters);
       }
     },
-    [workspaceSlug, issuesFilter, projectId, updateFilters]
+    [workspaceSlug, issuesFilter, routeProjectId, updateFilters]
   );
 
   return (

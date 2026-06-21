@@ -36,6 +36,8 @@ class ViewIssueListSerializer(serializers.Serializer):
             "project_id": instance.project_id,
             "parent_id": instance.parent_id,
             "cycle_id": instance.cycle_id,
+            "global_sprint_id": getattr(instance, "global_sprint_id", None),
+            "global_sprint_name": getattr(instance, "global_sprint_name", None),
             "sub_issues_count": instance.sub_issues_count,
             "created_at": instance.created_at,
             "updated_at": instance.updated_at,

@@ -5,6 +5,7 @@
  */
 
 import { useCallback, useMemo, useState } from "react";
+import type { KeyboardEvent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
@@ -18,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import {
   usePersonalNavigationPreferences,
   useProjectNavigationPreferences,
+  useSprintNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
 // helpers
@@ -43,6 +45,12 @@ const PERSONAL_ITEMS: Array<{ key: TPersonalNavigationItemKey; labelTranslationK
   { key: "drafts", labelTranslationKey: "drafts" },
 ];
 
+const handleNumberInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  if (["e", "E", "+", "-", "."].includes(e.key)) {
+    e.preventDefault();
+  }
+};
+
 export const CustomizeNavigationDialog = observer(function CustomizeNavigationDialog(
   props: TCustomizeNavigationDialogProps
 ) {
@@ -66,6 +74,12 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     updateLimitedProjectsCount,
   } = useProjectNavigationPreferences();
   const {
+    preferences: sprintPreferences,
+    updateNavigationMode: updateSprintNavigationMode,
+    updateShowLimitedSquads,
+    updateLimitedSquadsCount,
+  } = useSprintNavigationPreferences();
+  const {
     preferences: workspacePreferences,
     toggleWorkspaceItem,
     updateWorkspaceItemOrder,
@@ -73,9 +87,14 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
   // local state for limited projects count input
   const [projectCountInput, setProjectCountInput] = useState(projectPreferences.limitedProjectsCount.toString());
+  const [squadCountInput, setSquadCountInput] = useState(sprintPreferences.limitedSquadsCount.toString());
 
   // Filter personal items by feature flags
   const filteredPersonalItems = PERSONAL_ITEMS;
+  const getNavigationLabel = useCallback(
+    (key: string, labelTranslationKey: string) => (key === "squads" ? "Squads" : t(labelTranslationKey)),
+    [t]
+  );
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const workspaceItems = useMemo(() => {
@@ -101,7 +120,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
       };
     });
 
-    return items.sort((a, b) => a.sortOrder - b.sortOrder);
+    return items.toSorted((a, b) => a.sortOrder - b.sortOrder);
   }, [workspaceSlug, allowPermissions, workspacePreferences]);
 
   // Handle checkbox toggle
@@ -150,16 +169,8 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
       };
     });
 
-    return items.sort((a, b) => a.sortOrder - b.sortOrder);
+    return items.toSorted((a, b) => a.sortOrder - b.sortOrder);
   }, [personalPreferences, filteredPersonalItems]);
-
-  // Prevent typing invalid characters in number input
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Block: e, E, +, -, .
-    if (["e", "E", "+", "-", "."].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   // Handle project count input change
   const handleProjectCountChange = (value: string) => {
@@ -174,6 +185,18 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     if (!isNaN(numValue)) {
       const validValue = Math.max(1, numValue);
       updateLimitedProjectsCount(validValue);
+    }
+  };
+
+  const handleSquadCountChange = (value: string) => {
+    const cleanedValue = value.replace(/\D/g, "");
+    setSquadCountInput(cleanedValue);
+
+    const numValue = parseInt(cleanedValue, 10);
+
+    if (!isNaN(numValue)) {
+      const validValue = Math.max(1, numValue);
+      updateLimitedSquadsCount(validValue);
     }
   };
 
@@ -219,7 +242,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <div className="flex flex-1 items-center gap-2">
                       {getSidebarNavigationItemIcon(item.key)}
                       <label className="flex-1 cursor-pointer text-13 text-primary">
-                        {t(item.labelTranslationKey)}
+                        {getNavigationLabel(item.key, item.labelTranslationKey)}
                       </label>
                     </div>
                   </div>
@@ -249,7 +272,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       />
                       <div className="flex flex-1 items-center gap-2">
                         {icon}
-                        <span className="text-13 text-primary">{t(item.labelTranslationKey)}</span>
+                        <span className="text-13 text-primary">
+                          {getNavigationLabel(item.key, item.labelTranslationKey)}
+                        </span>
                       </div>
                     </div>
                   );
@@ -266,7 +291,10 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
               <div className="space-y-3">
                 {/* Navigation Mode Radio Buttons */}
                 <div className="space-y-2">
-                  <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
+                  <label
+                    aria-label="Accordion navigation"
+                    className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2"
+                  >
                     <input
                       type="radio"
                       name="navigation-mode"
@@ -283,7 +311,10 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     </div>
                   </label>
 
-                  <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
+                  <label
+                    aria-label="Horizontal navigation"
+                    className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2"
+                  >
                     <input
                       type="radio"
                       name="navigation-mode"
@@ -303,25 +334,28 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
                 {/* Limited Projects Checkbox */}
                 <div className="space-y-1">
-                  <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
+                  <div className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
                     <Checkbox
                       checked={projectPreferences.showLimitedProjects}
                       onChange={(e) => updateShowLimitedProjects(e.target.checked)}
                     />
                     <span className="text-13 text-primary">{t("show_limited_projects_on_sidebar")}</span>
-                  </label>
+                  </div>
 
                   {projectPreferences.showLimitedProjects && (
                     <div className="pl-8">
                       <div className="flex w-full flex-col gap-1">
                         <div className="flex w-full flex-col gap-2 pb-1.5">
-                          <label className="w-full text-11 text-secondary">{t("enter_number_of_projects")}</label>
+                          <label htmlFor="limited-projects-count" className="w-full text-11 text-secondary">
+                            {t("enter_number_of_projects")}
+                          </label>
                           <input
+                            id="limited-projects-count"
                             type="number"
                             min="1"
                             step="1"
                             value={projectCountInput}
-                            onKeyDown={handleKeyDown}
+                            onKeyDown={handleNumberInputKeyDown}
                             onChange={(e) => handleProjectCountChange(e.target.value)}
                             className={cn(
                               "w-full rounded-md px-2 py-1 text-13",
@@ -334,6 +368,95 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                           />
                         </div>
                         {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
+                          <span className="pl-0.5 text-11 text-danger-primary">Minimum value is 1</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Squads Section */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-13 font-semibold text-placeholder">Squads</h3>
+
+            <div className="rounded-md border border-subtle bg-surface-2 px-2 py-2">
+              <div className="space-y-3">
+                <label
+                  aria-label="Accordion squad navigation"
+                  className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2"
+                >
+                  <input
+                    type="radio"
+                    name="sprint-navigation-mode"
+                    value="ACCORDION"
+                    checked={sprintPreferences.navigationMode === "ACCORDION"}
+                    onChange={() => updateSprintNavigationMode("ACCORDION")}
+                    className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
+                  />
+                  <div className="flex-1">
+                    <div className="text-13 text-primary">{t("accordion_navigation_control")}</div>
+                    <div className="text-11 text-secondary">
+                      Sprints will appear as nested items under squads and act as accordion.
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  aria-label="Horizontal squad navigation"
+                  className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2"
+                >
+                  <input
+                    type="radio"
+                    name="sprint-navigation-mode"
+                    value="TABBED"
+                    checked={sprintPreferences.navigationMode === "TABBED"}
+                    onChange={() => updateSprintNavigationMode("TABBED")}
+                    className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
+                  />
+                  <div className="flex-1">
+                    <div className="text-13 text-primary">{t("horizontal_navigation_bar")}</div>
+                    <div className="text-11 text-secondary">Sprints will appear as horizontal tabs inside a squad.</div>
+                  </div>
+                </label>
+
+                <div className="space-y-1">
+                  <div className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
+                    <Checkbox
+                      checked={sprintPreferences.showLimitedSquads}
+                      onChange={(e) => updateShowLimitedSquads(e.target.checked)}
+                    />
+                    <span className="text-13 text-primary">Show limited squads on sidebar</span>
+                  </div>
+
+                  {sprintPreferences.showLimitedSquads && (
+                    <div className="pl-8">
+                      <div className="flex w-full flex-col gap-1">
+                        <div className="flex w-full flex-col gap-2 pb-1.5">
+                          <label htmlFor="limited-squads-count" className="w-full text-11 text-secondary">
+                            Enter number of squads
+                          </label>
+                          <input
+                            id="limited-squads-count"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={squadCountInput}
+                            onKeyDown={handleNumberInputKeyDown}
+                            onChange={(e) => handleSquadCountChange(e.target.value)}
+                            className={cn(
+                              "w-full rounded-md px-2 py-1 text-13",
+                              "border bg-surface-2",
+                              "text-secondary",
+                              parseInt(squadCountInput) >= 1
+                                ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
+                                : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
+                            )}
+                          />
+                        </div>
+                        {parseInt(squadCountInput) < 1 && squadCountInput !== "" && (
                           <span className="pl-0.5 text-11 text-danger-primary">Minimum value is 1</span>
                         )}
                       </div>

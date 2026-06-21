@@ -13,7 +13,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { Popover } from "@plane/propel/popover";
 import type { TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
-import { cn, generateWorkItemLink } from "@plane/utils";
+import { cn, generateWorkItemLink, getComputedDisplayProperties } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -43,9 +43,9 @@ export const CalendarIssueBlock = observer(
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
     const blockRef = useRef(null);
-    const menuActionRef = useRef<HTMLDivElement | null>(null);
+    const menuActionRef = useRef<HTMLButtonElement | null>(null);
     // hooks
-    const { workspaceSlug } = useParams();
+    const { workspaceSlug, workspaceSprintId } = useParams();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked } = useIssueDetail();
     const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
@@ -56,22 +56,37 @@ export const CalendarIssueBlock = observer(
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+    const displayProperties = workspaceSprintId
+      ? {
+          ...getComputedDisplayProperties(issuesFilter?.issueFilters?.displayProperties),
+          project: issuesFilter?.issueFilters?.displayProperties?.project ?? true,
+          sprint: false,
+        }
+      : issuesFilter?.issueFilters?.displayProperties;
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (selectedIssue: TIssue) =>
+      handleRedirection(workspaceSlug.toString(), selectedIssue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
     const customActionButton = (
-      <div
+      <button
+        type="button"
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
           isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setIsMenuActive(!isMenuActive);
+          }
+        }}
       >
         <MoreHorizontal className="h-3.5 w-3.5" />
-      </div>
+      </button>
     );
 
     const isMenuActionRefAboveScreenBottom =
@@ -131,12 +146,13 @@ export const CalendarIssueBlock = observer(
                         projectId={issue.project_id}
                         size="xs"
                         variant="tertiary"
-                        displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                        displayProperties={displayProperties}
                       />
                     )}
                     <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>
                   <div
+                    role="presentation"
                     className={cn("size-5 flex-shrink-0", {
                       "hidden group-hover/calendar-block:block": !isMobile,
                       block: isMenuActive,

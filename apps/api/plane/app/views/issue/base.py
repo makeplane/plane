@@ -60,6 +60,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     UserRecentVisit,
+    WorkspaceSprintIssue,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
@@ -112,6 +113,20 @@ class IssueListEndpoint(BaseAPIView):
             issue_queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                global_sprint_id=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint_id"
+                    )[:1]
+                )
+            )
+            .annotate(
+                global_sprint_name=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint__name"
+                    )[:1]
                 )
             )
             .annotate(
@@ -174,6 +189,8 @@ class IssueListEndpoint(BaseAPIView):
                 "project_id",
                 "parent_id",
                 "cycle_id",
+                "global_sprint_id",
+                "global_sprint_name",
                 "module_ids",
                 "label_ids",
                 "assignee_ids",
@@ -216,6 +233,20 @@ class IssueViewSet(BaseViewSet):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                global_sprint_id=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint_id"
+                    )[:1]
+                )
+            )
+            .annotate(
+                global_sprint_name=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint__name"
+                    )[:1]
                 )
             )
             .annotate(

@@ -5,6 +5,11 @@
  */
 
 import { EIssueLayoutTypes } from "@plane/types";
+import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
+import { BaseCalendarRoot } from "@/components/issues/issue-layouts/calendar/base-calendar-root";
+import { BaseGanttRoot } from "@/components/issues/issue-layouts/gantt/base-gantt-root";
+import { BaseKanBanRoot } from "@/components/issues/issue-layouts/kanban/base-kanban-root";
+import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
 import { WorkspaceSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/roots/workspace-root";
 import { WorkspaceAdditionalLayouts } from "@/plane-web/components/views/helper";
 
@@ -37,6 +42,14 @@ export function WorkspaceActiveLayout(props: TWorkspaceLayoutProps) {
     issuesLoading,
   } = props;
   switch (activeLayout) {
+    case EIssueLayoutTypes.LIST:
+      return <BaseListRoot QuickActions={AllIssueQuickActions} viewId={globalViewId} />;
+    case EIssueLayoutTypes.KANBAN:
+      return <BaseKanBanRoot QuickActions={AllIssueQuickActions} viewId={globalViewId} />;
+    case EIssueLayoutTypes.CALENDAR:
+      return <BaseCalendarRoot QuickActions={AllIssueQuickActions} viewId={globalViewId} />;
+    case EIssueLayoutTypes.GANTT:
+      return <BaseGanttRoot viewId={globalViewId} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return (
         <WorkspaceSpreadsheetRoot

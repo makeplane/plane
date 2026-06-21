@@ -10,9 +10,13 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 type ClickHandlerOptions = {
   type: MarkType;
+  onLinkClick?: (href: string, event: MouseEvent) => boolean | void;
+  isInternalPageLink?: (href: string) => boolean;
 };
 
 export function clickHandler(options: ClickHandlerOptions): Plugin {
+  const { onLinkClick, isInternalPageLink } = options;
+
   return new Plugin({
     key: new PluginKey("handleClickLink"),
     props: {
@@ -36,16 +40,23 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         const attrs = getAttributes(view.state, options.type.name);
         const link = event.target as HTMLLinkElement;
 
-        const href = link?.href ?? attrs.href;
+        const href = link?.getAttribute("href") ?? attrs.href;
         const target = link?.target ?? attrs.target;
 
-        if (link && href) {
-          window.open(href, target);
-
-          return true;
+        if (!link || !href) {
+          return false;
         }
 
-        return false;
+        if (onLinkClick && isInternalPageLink?.(href)) {
+          const handled = onLinkClick(href, event);
+          if (handled) {
+            return true;
+          }
+        }
+
+        window.open(href, target ?? undefined);
+
+        return true;
       },
     },
   });

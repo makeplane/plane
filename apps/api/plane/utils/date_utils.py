@@ -128,6 +128,7 @@ def get_analytics_filters(
     type: str,
     date_filter: Optional[str] = None,
     project_ids: Optional[Union[str, List[str]]] = None,
+    workspace_sprint_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Get combined project and date filters for analytics endpoints
@@ -138,6 +139,7 @@ def get_analytics_filters(
         type: The type of filter ("analytics" or "chart")
         date_filter: Optional date filter string
         project_ids: Optional list of project IDs or comma-separated string of project IDs
+        workspace_sprint_id: Optional workspace sprint ID
 
     Returns:
         dict: A dictionary containing:
@@ -172,6 +174,10 @@ def get_analytics_filters(
     if project_ids:
         base_filters["project_id__in"] = project_ids
         project_filters["id__in"] = project_ids
+
+    if workspace_sprint_id:
+        base_filters["issue_workspace_sprint__sprint_id"] = workspace_sprint_id
+        base_filters["issue_workspace_sprint__deleted_at__isnull"] = True
 
     # Initialize date range variables
     analytics_date_range = None

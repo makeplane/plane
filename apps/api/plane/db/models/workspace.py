@@ -40,6 +40,7 @@ def get_default_props():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
+            "assigned_to_me": False,
         },
         "display_properties": {
             "assignee": True,
@@ -83,6 +84,7 @@ def get_default_display_filters():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
+            "assigned_to_me": False,
         }
     }
 
@@ -332,6 +334,12 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
+    navigation_sprint_preference = models.CharField(
+        max_length=25,
+        choices=NavigationControlPreference.choices,
+        default=NavigationControlPreference.ACCORDION,
+    )
+    navigation_squad_limit = models.IntegerField(default=10)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
