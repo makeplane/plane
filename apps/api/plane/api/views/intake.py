@@ -8,6 +8,7 @@ import json
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.utils.html import escape
 from django.db.models import Q, Value, UUIDField
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -185,12 +186,18 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
 
         # create an issue
         issue_data = request.data.get("issue", {})
-        # Accept both "description" and "description_json" keys for the description_json field
-        description_json = issue_data.get("description") or issue_data.get("description_json") or {}
+        description = issue_data.get("description")
+        description_json = issue_data.get("description_json") if "description_json" in issue_data else {}
+        if "description_json" not in issue_data and isinstance(description, (dict, list)):
+            description_json = description
+        description_html = issue_data.get("description_html") or "<p></p>"
+        if "description_html" not in issue_data and isinstance(description, str) and description:
+            description_html = f"<p>{escape(description)}</p>"
+
         issue = Issue.objects.create(
             name=issue_data.get("name"),
             description_json=description_json,
-            description_html=issue_data.get("description_html", "<p></p>"),
+            description_html=description_html,
             priority=issue_data.get("priority", "none"),
             project_id=project_id,
             state_id=triage_state.id,
