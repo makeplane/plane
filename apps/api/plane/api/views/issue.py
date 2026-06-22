@@ -80,6 +80,7 @@ from plane.db.models import (
 )
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
+from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
@@ -1692,7 +1693,9 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
             )
             .filter(project__archived_at__isnull=True)
             .select_related("actor", "workspace", "issue", "project")
-        ).order_by(request.GET.get("order_by", "created_at"))
+        ).order_by(
+            sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+        )
 
         return self.paginate(
             request=request,
@@ -1749,7 +1752,9 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
                 .filter(project__archived_at__isnull=True)
                 .select_related("actor", "workspace", "issue", "project")
             )
-            .order_by(request.GET.get("order_by", "created_at"))
+            .order_by(
+                sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+            )
             .first()
         )
 

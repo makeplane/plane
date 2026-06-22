@@ -41,6 +41,7 @@ from plane.db.models import (
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
+from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 
 class ProjectViewSet(BaseViewSet):
@@ -128,7 +129,11 @@ class ProjectViewSet(BaseViewSet):
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
-                order_by=request.GET.get("order_by", "-created_at"),
+                order_by=sanitize_order_by(
+                    request.GET.get("order_by", "-created_at"),
+                    PROJECT_ORDER_BY_ALLOWLIST,
+                    "-created_at",
+                ),
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectListSerializer(projects, many=True).data,

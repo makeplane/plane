@@ -46,6 +46,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
+from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
@@ -854,7 +855,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         Returns paginated results with work item details, assignees, and labels.
         """
         # List
-        order_by = request.GET.get("order_by", "created_at")
+        order_by = sanitize_order_by(request.GET.get("order_by", "created_at"), ISSUE_ORDER_BY_ALLOWLIST, "created_at")
         issues = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True)
             .annotate(
