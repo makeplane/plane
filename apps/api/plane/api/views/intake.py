@@ -29,6 +29,7 @@ from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup
 from plane.utils.host import base_host
+from plane.utils.content_validator import validate_html_content
 from .base import BaseAPIView
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
@@ -187,10 +188,14 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         issue_data = request.data.get("issue", {})
         # Accept both "description" and "description_json" keys for the description_json field
         description_json = issue_data.get("description") or issue_data.get("description_json") or {}
+        # Sanitize description_html before saving to prevent stored XSS (GHSA-hh2r-3hwp-mvq3)
+        raw_description_html = issue_data.get("description_html", "<p></p>")
+        _, _, sanitized_description_html = validate_html_content(raw_description_html)
+        safe_description_html = sanitized_description_html if sanitized_description_html is not None else "<p></p>"
         issue = Issue.objects.create(
             name=issue_data.get("name"),
             description_json=description_json,
-            description_html=issue_data.get("description_html", "<p></p>"),
+            description_html=safe_description_html,
             priority=issue_data.get("priority", "none"),
             project_id=project_id,
             state_id=triage_state.id,

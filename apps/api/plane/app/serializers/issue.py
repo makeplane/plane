@@ -715,6 +715,15 @@ class IssueCommentSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate(self, attrs):
+        if "comment_html" in attrs and attrs["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(attrs["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                attrs["comment_html"] = sanitized_html
+        return attrs
+
 
 class IssueStateFlatSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
