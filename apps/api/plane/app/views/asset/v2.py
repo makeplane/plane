@@ -327,6 +327,17 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # WORKSPACE_LOGO may only be uploaded by workspace admins
+        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, is_active=True
+            ).first()
+            if not workspace_member or workspace_member.role != ROLE.ADMIN.value:
+                return Response(
+                    {"error": "Only workspace admins can upload a workspace logo."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         # Check if the file type is allowed
         allowed_types = [
             "image/jpeg",
@@ -646,8 +657,8 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         if not asset_ids:
             return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # get the asset id
-        assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug)
+        # get the asset id — scope to the project to prevent cross-project IDOR
+        assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug, project_id=project_id)
 
         # Get the first asset
         asset = assets.first()
@@ -757,15 +768,11 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         storage = S3Storage(request=request)
-        # Scope the source asset lookup to workspaces the caller is a member of
-        user_workspace_ids = WorkspaceMember.objects.filter(
-            member=request.user,
-            is_active=True,
-        ).values_list("workspace_id", flat=True)
+        # Restrict the source asset to the same destination workspace to prevent cross-workspace asset copying
         original_asset = FileAsset.objects.filter(
             id=asset_id,
             is_uploaded=True,
-            workspace_id__in=user_workspace_ids,
+            workspace=workspace,
         ).first()
 
         if not original_asset:

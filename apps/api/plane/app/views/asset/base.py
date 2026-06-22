@@ -9,7 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
-from plane.db.models import FileAsset, Workspace
+from plane.db.models import FileAsset, Workspace, WorkspaceMember
 from plane.app.serializers import FileAssetSerializer
 
 
@@ -21,6 +21,12 @@ class FileAssetEndpoint(BaseAPIView):
     """
 
     def get(self, request, workspace_id, asset_key):
+        # Verify the requesting user is a member of this workspace
+        if not WorkspaceMember.objects.filter(workspace_id=workspace_id, member=request.user, is_active=True).exists():
+            return Response(
+                {"error": "Requested resource could not be found.", "status": False},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         asset_key = str(workspace_id) + "/" + asset_key
         files = FileAsset.objects.filter(asset=asset_key)
         if files.exists():
@@ -33,15 +39,25 @@ class FileAssetEndpoint(BaseAPIView):
             )
 
     def post(self, request, slug):
+        # Verify the requesting user is a member of this workspace
+        workspace = Workspace.objects.filter(slug=slug).first()
+        if not workspace:
+            return Response({"error": "Workspace not found.", "status": False}, status=status.HTTP_404_NOT_FOUND)
+        if not WorkspaceMember.objects.filter(workspace=workspace, member=request.user, is_active=True).exists():
+            return Response(
+                {"error": "Requested resource could not be found.", "status": False},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
-            # Get the workspace
-            workspace = Workspace.objects.get(slug=slug)
             serializer.save(workspace_id=workspace.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, workspace_id, asset_key):
+        # Verify the requesting user is a member of this workspace
+        if not WorkspaceMember.objects.filter(workspace_id=workspace_id, member=request.user, is_active=True).exists():
+            return Response({"error": "Requested resource could not be found."}, status=status.HTTP_404_NOT_FOUND)
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
         file_asset.is_deleted = True
@@ -51,6 +67,9 @@ class FileAssetEndpoint(BaseAPIView):
 
 class FileAssetViewSet(BaseViewSet):
     def restore(self, request, workspace_id, asset_key):
+        # Verify the requesting user is a member of this workspace
+        if not WorkspaceMember.objects.filter(workspace_id=workspace_id, member=request.user, is_active=True).exists():
+            return Response({"error": "Requested resource could not be found."}, status=status.HTTP_404_NOT_FOUND)
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
         file_asset.is_deleted = False
