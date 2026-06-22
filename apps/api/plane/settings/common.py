@@ -8,6 +8,7 @@
 import ipaddress
 import logging
 import os
+import sys
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
@@ -25,8 +26,28 @@ from plane.utils.url import is_valid_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Secret Key
-SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+# Secret Key — use `or` so an explicitly empty env var is treated the same as unset,
+# falling back to a random key rather than passing "" to Django (GHSA-cmwv-pjmw-8483).
+SECRET_KEY = os.environ.get("SECRET_KEY") or get_random_secret_key()
+# Refuse to run silently with a publicly-known or placeholder SECRET_KEY
+# (GHSA-cmwv-pjmw-8483). Print a loud error so operators notice immediately.
+# The `or get_random_secret_key()` above means the only way to reach this branch
+# is if the environment explicitly passes one of the flagged values.
+_INSECURE_SECRET_KEYS = {
+    "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5",  # old publicly-known default
+    "change-this-key-on-deployment",  # placeholder shipped in community templates
+}
+if SECRET_KEY in _INSECURE_SECRET_KEYS:
+    print(
+        "\n"
+        "CRITICAL SECURITY WARNING: SECRET_KEY is set to a known insecure or placeholder value.\n"
+        "This makes your installation vulnerable to session forgery, CSRF bypass, and\n"
+        "password-reset token forging. Set a unique SECRET_KEY before deploying to production.\n"
+        "Generate one with: "
+        "python3 -c \"from django.utils.crypto import get_random_secret_key; print(get_random_secret_key())\"\n",
+        file=sys.stderr,
+        flush=True,
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
