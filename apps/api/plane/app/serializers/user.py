@@ -26,7 +26,10 @@ class UserSerializer(BaseSerializer):
     class Meta:
         model = User
         # Exclude password field from the serializer
-        fields = [field.name for field in User._meta.fields if field.name != "password"]
+        fields = [field.name for field in User._meta.fields if field.name != "password"] + [
+            "avatar_url",
+            "cover_image_url",
+        ]
         # Make all system fields and email read only
         read_only_fields = [
             "id",
@@ -53,6 +56,8 @@ class UserSerializer(BaseSerializer):
             "is_email_verified",
             "is_active",
             "token_updated_at",
+            "avatar_url",
+            "cover_image_url",
         ]
 
         # If the user has already filled first name or last name then he is onboarded
