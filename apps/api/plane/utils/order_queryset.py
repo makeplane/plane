@@ -78,14 +78,27 @@ NOTIFICATION_ORDER_BY_ALLOWLIST = frozenset({
 
 
 def sanitize_order_by(value, allowed_fields, default="-created_at"):
-    """Return *value* if its bare field name (stripped of a leading '-') is in
-    *allowed_fields*; otherwise return *default*.
+    """Return a safe ordering string derived from *value*.
+
+    Strips at most one leading '-' (descending indicator), checks the bare
+    field name against *allowed_fields*, and reconstructs the value.  Inputs
+    with multiple leading dashes (e.g. ``--created_at``) are rejected and
+    *default* is returned instead, preventing both allowlist bypass and
+    malformed tokens from reaching ``.order_by()``.
 
     Call this before passing any user-supplied ordering string to .order_by() or
     a paginator to prevent ORM order_by injection.
     """
-    bare = value.lstrip("-") if value else ""
-    return value if bare in allowed_fields else default
+    if not value:
+        return default
+    is_desc = value.startswith("-")
+    bare = value[1:] if is_desc else value
+    # Reject malformed prefixes like "--created_at".
+    if bare.startswith("-"):
+        return default
+    if bare not in allowed_fields:
+        return default
+    return f"-{bare}" if is_desc else bare
 
 
 def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
