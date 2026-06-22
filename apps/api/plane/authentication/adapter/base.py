@@ -19,14 +19,11 @@ from django.utils import timezone
 # Third party imports
 from zxcvbn import zxcvbn
 
-from plane.bgtasks.user_activation_email_task import user_activation_email
-
 # Module imports
 from plane.db.models import FileAsset, Profile, User, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
-from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 
 from .error import AUTHENTICATION_ERROR_CODES, AuthenticationException
@@ -239,11 +236,6 @@ class Adapter:
         user.last_login_ip = get_client_ip(request=self.request)
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
-        # If user is not active, send the activation email and set the user as active
-        if not user.is_active:
-            user_activation_email.delay(base_host(request=self.request), user.id)
-        # Set user as active
-        user.is_active = True
         user.save()
         return user
 
@@ -309,6 +301,16 @@ class Adapter:
 
         # Check if the user is present
         user = User.objects.filter(email=email).first()
+
+        # Reject deactivated accounts before any session or save logic.
+        # Without this check, save_user_data() would reactivate the account (GHSA-rmmf-rj2q-3rrg).
+        if user and not user.is_active:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
+                error_message="USER_ACCOUNT_DEACTIVATED",
+                payload={"email": email},
+            )
+
         # Check if sign up case or login
         is_signup = bool(user)
         # If user is not present, create a new user
