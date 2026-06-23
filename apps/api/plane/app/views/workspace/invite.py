@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import (
     WorkSpaceMemberInviteSerializer,
+    WorkSpaceMemberInvitePublicSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
@@ -172,6 +173,21 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # Require an authenticated session — the accepting user must be the
+        # person who was invited.  Without this check an attacker who registers
+        # with the invited address (email-squat) and obtains the token via the
+        # GET endpoint can steal the workspace membership (GHSA-4vj8-p63v-8p24).
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Authentication required to accept workspace invitation"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        if request.user.email.lower() != workspace_invite.email.lower():
+            return Response(
+                {"error": "You do not have permission to accept this invitation"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # If already responded then return error
         if workspace_invite.responded_at is None:
             workspace_invite.accepted = request.data.get("accepted", False)
@@ -237,7 +253,10 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
     def get(self, request, slug, pk):
         workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
-        serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
+        # Use the public serializer that omits the token and invite_link fields so
+        # that an unauthenticated caller cannot retrieve the acceptance token
+        # (GHSA-86mg-259g-pwgg / GHSA-gf48-p6jp-cwc4).
+        serializer = WorkSpaceMemberInvitePublicSerializer(workspace_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

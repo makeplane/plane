@@ -137,6 +137,33 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
         ]
 
 
+class WorkSpaceMemberInvitePublicSerializer(BaseSerializer):
+    """Safe read-only serializer for the public workspace invite GET endpoint.
+
+    Intentionally excludes ``token`` and ``invite_link`` so that an
+    unauthenticated caller cannot retrieve the acceptance token and use it to
+    hijack an invitation (GHSA-86mg-259g-pwgg / GHSA-gf48-p6jp-cwc4).
+    """
+
+    workspace = WorkspaceLiteSerializer(read_only=True)
+
+    class Meta:
+        model = WorkspaceMemberInvite
+        fields = [
+            "id",
+            "email",
+            "workspace",
+            "role",
+            "message",
+            "accepted",
+            "responded_at",
+            "created_at",
+            "updated_at",
+            "created_by",
+        ]
+        read_only_fields = fields
+
+
 class WorkspaceThemeSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceTheme
