@@ -303,6 +303,16 @@ class GlobalSearchEndpoint(BaseAPIView):
 
 class SearchEndpoint(BaseAPIView):
     def get(self, request, slug):
+        # Verify the requesting user is an active member of the target workspace.
+        # Without this guard any authenticated user can enumerate members of
+        # workspaces they do not belong to (GHSA-32q3-mqpc-3mhv).
+        if not WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+        ).exists():
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
         query = request.query_params.get("query", False)
         query_types = request.query_params.get("query_type", "user_mention").split(",")
         query_types = [qt.strip() for qt in query_types]
