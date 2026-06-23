@@ -32,3 +32,11 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
 ];
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";
+
+// Languages that render right-to-left. Used to set the document `dir` attribute
+// so the entire UI layout (not just text) mirrors for these locales.
+export const RTL_LANGUAGES: TLanguage[] = ["fa"];
+
+export const isRTLLanguage = (lng: TLanguage): boolean => RTL_LANGUAGES.includes(lng);
+
+export const getLanguageDirection = (lng: TLanguage): "rtl" | "ltr" => (isRTLLanguage(lng) ? "rtl" : "ltr");

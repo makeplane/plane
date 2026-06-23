@@ -20,4 +20,11 @@ export type { TNamespace } from "./constants/namespaces";
 export { setLanguage } from "./core/set-language";
 
 // Constants
-export { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "./constants/language";
+export {
+  FALLBACK_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_STORAGE_KEY,
+  RTL_LANGUAGES,
+  isRTLLanguage,
+  getLanguageDirection,
+} from "./constants/language";
