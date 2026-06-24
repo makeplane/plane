@@ -33,14 +33,14 @@ class IssueActivityEndpoint(BaseAPIView):
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
         member_check = ProjectMember.objects.filter(
-            project_id=project_id,
-            member=self.request.user,
+            project_id=OuterRef("project_id"),
+            member=request.user,
             is_active=True,
             deleted_at__isnull=True,
         )
 
         issue_activities = (
-            IssueActivity.objects.filter(issue_id=issue_id)
+            IssueActivity.objects.filter(issue_id=issue_id, project_id=project_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__archived_at__isnull=True,
@@ -51,7 +51,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
         issue_comments = (
-            IssueComment.objects.filter(issue_id=issue_id)
+            IssueComment.objects.filter(issue_id=issue_id, project_id=project_id)
             .filter(
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
