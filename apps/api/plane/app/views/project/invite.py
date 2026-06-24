@@ -51,6 +51,14 @@ class ProjectInvitationsViewset(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN])
+    def list(self, request, slug, project_id):
+        return super().list(request, slug=slug, project_id=project_id)
+
+    @allow_permission([ROLE.ADMIN])
+    def retrieve(self, request, slug, project_id, pk):
+        return super().retrieve(request, slug=slug, project_id=project_id, pk=pk)
+
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         emails = request.data.get("emails", [])
 
@@ -111,6 +119,10 @@ class ProjectInvitationsViewset(BaseViewSet):
             )
 
         return Response({"message": "Email sent successfully"}, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, slug, project_id, pk):
+        return super().destroy(request, slug=slug, project_id=project_id, pk=pk)
 
 
 class UserProjectInvitationsViewset(BaseViewSet):
