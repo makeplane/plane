@@ -239,13 +239,18 @@ class Adapter:
         user.last_login_ip = get_client_ip(request=self.request)
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
-        # Activate provisioned accounts that have never logged in before.
+        # Activate provisioned accounts that have never been deactivated.
         # Explicitly-deactivated accounts are rejected earlier in
         # complete_login_or_signup() before this method is ever reached.
-        if not user.is_active:
-            user_activation_email.delay(base_host(request=self.request), user.id)
+        # Save first so activation is persisted before the email side-effect fires.
+        was_inactive = not user.is_active
         user.is_active = True
         user.save()
+        if was_inactive:
+            try:
+                user_activation_email.delay(base_host(request=self.request), user.id)
+            except Exception as e:
+                log_exception(e)
         return user
 
     def delete_old_avatar(self, user):
@@ -312,11 +317,13 @@ class Adapter:
         user = User.objects.filter(email=email).first()
 
         # Reject explicitly-deactivated accounts (GHSA-rmmf-rj2q-3rrg).
-        # Guard with last_login_time so provisioned accounts that have never
-        # completed a login are not blocked on their first sign-in — only
-        # accounts that were active, logged in at least once, and were then
-        # deactivated by an admin are rejected here.
-        if user and not user.is_active and user.last_login_time is not None:
+        # The deactivation endpoint always sets last_logout_time, so using it
+        # as the discriminator is more reliable than last_login_time: a
+        # provisioned account that was never deactivated has last_logout_time=None
+        # and is allowed through for its first login; an account deactivated via
+        # the API has last_logout_time set and is blocked regardless of whether
+        # it had previously logged in.
+        if user and not user.is_active and user.last_logout_time is not None:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
                 error_message="USER_ACCOUNT_DEACTIVATED",
