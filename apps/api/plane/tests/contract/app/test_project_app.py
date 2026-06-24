@@ -522,3 +522,33 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         assert Project.objects.filter(id=project.id).exists()
+
+
+@pytest.mark.contract
+class TestProjectMemberAPI(TestProjectBase):
+    @pytest.mark.django_db
+    def test_guest_cannot_deactivate_another_project_member(self, session_client, workspace):
+        project = Project.objects.create(name="Member Protected", identifier="MP", workspace=workspace)
+
+        guest_user = User.objects.create_user(email="project-guest@example.com", username="project-guest")
+        victim_user = User.objects.create_user(email="project-member@example.com", username="project-member")
+
+        WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5, is_active=True)
+        WorkspaceMember.objects.create(workspace=workspace, member=victim_user, role=15, is_active=True)
+
+        ProjectMember.objects.create(project=project, member=guest_user, role=5, is_active=True)
+        victim_project_member = ProjectMember.objects.create(
+            project=project,
+            member=victim_user,
+            role=15,
+            is_active=True,
+        )
+
+        session_client.force_authenticate(user=guest_user)
+
+        url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/{victim_project_member.id}/"
+        response = session_client.patch(url, {"is_active": False}, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        victim_project_member.refresh_from_db()
+        assert victim_project_member.is_active is True
