@@ -36,9 +36,9 @@ class FileAssetEndpoint(BaseAPIView):
             )
 
     def post(self, request, slug):
-        workspace = Workspace.objects.filter(slug=slug).first()
-        if not workspace:
-            return Response({"error": "Workspace not found.", "status": False}, status=status.HTTP_404_NOT_FOUND)
+        # WorkspaceMemberPermission already rejects unknown slugs before this runs.
+        # Use .get() so any TOCTOU race still surfaces as a 404 via ObjectDoesNotExist.
+        workspace = Workspace.objects.get(slug=slug)
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(workspace_id=workspace.id)
