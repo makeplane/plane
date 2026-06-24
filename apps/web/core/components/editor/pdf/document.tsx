@@ -17,6 +17,11 @@ import interSemibold from "@/app/assets/fonts/inter/semibold.ttf?url";
 import interThin from "@/app/assets/fonts/inter/thin.ttf?url";
 import interUltraBold from "@/app/assets/fonts/inter/ultrabold.ttf?url";
 import interUltraLight from "@/app/assets/fonts/inter/ultralight.ttf?url";
+// Vazirmatn — Persian/Arabic font for RTL content.
+// Place font files at apps/web/app/assets/fonts/vazirmatn/ before building.
+// Download from: https://github.com/rastikerdar/vazirmatn/releases
+import vazirmatnBold from "@/app/assets/fonts/vazirmatn/bold.ttf?url";
+import vazirmatnRegular from "@/app/assets/fonts/vazirmatn/regular.ttf?url";
 // constants
 import { EDITOR_PDF_DOCUMENT_STYLESHEET } from "@/constants/editor";
 
@@ -41,6 +46,14 @@ Font.register({
     { src: interUltraBold, fontWeight: "ultrabold", fontStyle: "italic" },
     { src: interHeavy, fontWeight: "heavy" },
     { src: interHeavy, fontWeight: "heavy", fontStyle: "italic" },
+  ],
+});
+
+Font.register({
+  family: "Vazirmatn",
+  fonts: [
+    { src: vazirmatnRegular, fontWeight: "normal" },
+    { src: vazirmatnBold, fontWeight: "bold" },
   ],
 });
 

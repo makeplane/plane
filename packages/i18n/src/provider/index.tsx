@@ -7,6 +7,8 @@
 import React, { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
 import { i18nInstance, initPromise } from "../core";
+import { getLanguageDirection } from "../constants/language";
+import type { TLanguage } from "../types";
 
 interface TranslationProviderProps {
   children: React.ReactNode;
@@ -17,7 +19,16 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
 
   useEffect(() => {
     initPromise
-      .then(() => setIsReady(true))
+      .then(() => {
+        // Apply the document direction for the initial language so RTL locales
+        // (e.g. Persian) render mirrored on first load, not only after a switch.
+        if (typeof window !== "undefined") {
+          const lng = (i18nInstance.language || "en") as TLanguage;
+          document.documentElement.lang = lng;
+          document.documentElement.dir = getLanguageDirection(lng);
+        }
+        setIsReady(true);
+      })
       .catch((err) => {
         console.error("Failed to initialize i18n:", err);
         setIsReady(true);

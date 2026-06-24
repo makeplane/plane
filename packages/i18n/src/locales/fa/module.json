@@ -1,0 +1,7 @@
+{
+  "module": {
+    "label": "{count, plural, one {ماژول} other {ماژول‌ها}}",
+    "no_module": "بدون ماژول",
+    "select": "افزودن ماژول‌ها"
+  }
+}
