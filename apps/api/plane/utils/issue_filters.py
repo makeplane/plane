@@ -231,14 +231,14 @@ def filter_updated_at(params, issue_filter, method, prefix=""):
         if len(updated_ats) and "" not in updated_ats:
             date_filter(
                 issue_filter=issue_filter,
-                date_term=f"{prefix}created_at__date",
+                date_term=f"{prefix}updated_at__date",
                 queries=updated_ats,
             )
     else:
         if params.get("updated_at", None) and len(params.get("updated_at")):
             date_filter(
                 issue_filter=issue_filter,
-                date_term=f"{prefix}created_at__date",
+                date_term=f"{prefix}updated_at__date",
                 queries=params.get("updated_at", []),
             )
     return issue_filter
