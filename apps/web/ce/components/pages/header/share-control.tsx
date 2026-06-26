@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

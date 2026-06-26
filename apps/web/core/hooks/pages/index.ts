@@ -4,5 +4,5 @@
  * See the LICENSE file for details.
  */
 
-export * from "./use-pages-pane-extensions";
 export * from "./use-extended-editor-extensions";
+export * from "./use-pages-pane-extensions";

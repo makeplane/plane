@@ -36,9 +36,9 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
-import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import type { TExtendedEditorExtensionsConfig } from "@/hooks/pages";
+import type { EPageStoreType } from "@/hooks/store";
+import { useEditorFlagging } from "@/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports

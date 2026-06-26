@@ -6,7 +6,7 @@
 
 // editor
 import type { TExtensions } from "@plane/editor";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 
 export type TEditorFlaggingHookReturnType = {
   document: {

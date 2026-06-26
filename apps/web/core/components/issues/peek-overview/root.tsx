@@ -19,7 +19,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
+import { useWorkItemProperties } from "@/hooks/use-issue-properties";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";

@@ -24,7 +24,7 @@ import useSize from "@/hooks/use-window-size";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local imports
@@ -80,10 +80,12 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   );
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => setIsSubmitting("saved"), 2000);
+      timer = setTimeout(() => setIsSubmitting("saved"), 2000);
     } else if (isSubmitting === "submitting") setShowAlert(true);
+    return () => clearTimeout(timer);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   if (!issue || !issue.project_id) return <></>;

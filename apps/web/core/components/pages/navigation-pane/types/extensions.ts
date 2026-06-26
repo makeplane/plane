@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 export interface INavigationPaneExtensionProps<T = Record<string, unknown>> {
