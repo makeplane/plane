@@ -6,6 +6,7 @@
 
 import { createRequire } from "module";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
 import { createKeyGenerator, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
@@ -46,6 +47,26 @@ Font.register({
       src: path.join(interFontDir, "files/inter-latin-700-italic.woff"),
       fontWeight: 700,
       fontStyle: "italic",
+    },
+  ],
+});
+
+// Resolve Vazirmatn font files relative to this module's location, not the
+// launch directory, so the path stays correct regardless of where the server
+// is started from. Place woff files at apps/live/fonts/vazirmatn/.
+// Download from: https://github.com/rastikerdar/vazirmatn/releases
+const vazirmatnFontDir = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../fonts/vazirmatn");
+
+Font.register({
+  family: "Vazirmatn",
+  fonts: [
+    {
+      src: path.join(vazirmatnFontDir, "vazirmatn-regular.woff"),
+      fontWeight: 400,
+    },
+    {
+      src: path.join(vazirmatnFontDir, "vazirmatn-bold.woff"),
+      fontWeight: 700,
     },
   ],
 });
