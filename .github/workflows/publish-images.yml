@@ -1,0 +1,161 @@
+name: Publish Kanavio Plane Images
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-kanavio-plane-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
+  NEXT_PUBLIC_ADMIN_BASE_URL: ${{ vars.NEXT_PUBLIC_ADMIN_BASE_URL }}
+  NEXT_PUBLIC_ADMIN_BASE_PATH: ${{ vars.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+  NEXT_PUBLIC_LIVE_BASE_URL: ${{ vars.NEXT_PUBLIC_LIVE_BASE_URL }}
+  NEXT_PUBLIC_LIVE_BASE_PATH: ${{ vars.NEXT_PUBLIC_LIVE_BASE_PATH }}
+  NEXT_PUBLIC_SPACE_BASE_URL: ${{ vars.NEXT_PUBLIC_SPACE_BASE_URL }}
+  NEXT_PUBLIC_SPACE_BASE_PATH: ${{ vars.NEXT_PUBLIC_SPACE_BASE_PATH }}
+  NEXT_PUBLIC_WEB_BASE_URL: ${{ vars.NEXT_PUBLIC_WEB_BASE_URL }}
+  NEXT_PUBLIC_CP_SERVER_URL: ${{ vars.NEXT_PUBLIC_CP_SERVER_URL }}
+
+jobs:
+  publish-frontend-images:
+    name: Publish ${{ matrix.service }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: web
+            image_name: drakesoftware/plane-web-amd64
+            dockerfile: ./apps/web/Dockerfile.web
+          - service: admin
+            image_name: drakesoftware/plane-admin-amd64
+            dockerfile: ./apps/admin/Dockerfile.admin
+          - service: space
+            image_name: drakesoftware/plane-space-amd64
+            dockerfile: ./apps/space/Dockerfile.space
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate frontend build variables
+        run: |
+          missing=0
+          for name in \
+            NEXT_PUBLIC_API_BASE_URL \
+            NEXT_PUBLIC_ADMIN_BASE_URL \
+            NEXT_PUBLIC_ADMIN_BASE_PATH \
+            NEXT_PUBLIC_LIVE_BASE_URL \
+            NEXT_PUBLIC_LIVE_BASE_PATH \
+            NEXT_PUBLIC_SPACE_BASE_URL \
+            NEXT_PUBLIC_SPACE_BASE_PATH \
+            NEXT_PUBLIC_WEB_BASE_URL \
+            NEXT_PUBLIC_CP_SERVER_URL
+          do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name repository variable is required for Plane frontend image builds"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Resolve image tags
+        id: image-tags
+        run: |
+          channel="${GITHUB_REF_NAME//\//-}"
+          {
+            echo "tags<<EOF"
+            echo "${{ matrix.image_name }}:sha-${GITHUB_SHA}"
+            echo "${{ matrix.image_name }}:${channel}-latest"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.image-tags.outputs.tags }}
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_LIVE_BASE_URL=${{ env.NEXT_PUBLIC_LIVE_BASE_URL }}
+            NEXT_PUBLIC_LIVE_BASE_PATH=${{ env.NEXT_PUBLIC_LIVE_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_CP_SERVER_URL=${{ env.NEXT_PUBLIC_CP_SERVER_URL }}
+
+  publish-service-images:
+    name: Publish ${{ matrix.service }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: api
+            image_name: drakesoftware/plane-api-amd64
+            context: ./apps/api
+            dockerfile: ./apps/api/Dockerfile.api
+          - service: live
+            image_name: drakesoftware/plane-live-amd64
+            context: .
+            dockerfile: ./apps/live/Dockerfile.live
+          - service: proxy
+            image_name: drakesoftware/plane-proxy-amd64
+            context: ./apps/proxy
+            dockerfile: ./apps/proxy/Dockerfile.ce
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Resolve image tags
+        id: image-tags
+        run: |
+          channel="${GITHUB_REF_NAME//\//-}"
+          {
+            echo "tags<<EOF"
+            echo "${{ matrix.image_name }}:sha-${GITHUB_SHA}"
+            echo "${{ matrix.image_name }}:${channel}-latest"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.image-tags.outputs.tags }}

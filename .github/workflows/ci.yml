@@ -1,0 +1,77 @@
+name: Kanavio CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kanavio-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-quality:
+    name: Web lint and format
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      TURBO_SCM_HEAD: ${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check workflow formatting
+        run: pnpm exec prettier --check ".github/workflows/ci.yml" ".github/workflows/publish-images.yml"
+
+      - name: Check affected workspace formatting
+        run: pnpm turbo run check:format --affected
+
+      - name: Lint affected workspaces
+        run: pnpm turbo run check:lint --affected
+
+  api-quality:
+    name: API lint and format
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: python -m pip install ruff
+
+      - name: Check API formatting
+        run: ruff format --check apps/api
+
+      - name: Lint API
+        run: ruff check apps/api
