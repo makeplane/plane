@@ -168,10 +168,14 @@ class MailSessionEndpoint(MailAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
-        mailbox = Mailbox.objects.select_related("domain", "owner").filter(
-            email=data["email"],
-            is_active=True,
-        ).first()
+        mailbox = (
+            Mailbox.objects.select_related("domain", "owner")
+            .filter(
+                email=data["email"],
+                is_active=True,
+            )
+            .first()
+        )
 
         if mailbox is None or not verify_mail_password(data["password"], mailbox.password_hash):
             return Response(
@@ -332,8 +336,12 @@ class MailSendEndpoint(MailAPIView):
         mailbox, response = self.mailbox_or_response()
         if response:
             return response
-        send_mail_task.delay(str(mailbox.id), request.data, str(request.user.id))
-        return Response({"queued": True}, status=status.HTTP_202_ACCEPTED)
+        client = MailClient(mailbox)
+        outbound = client.queue_send(request.data, actor=request.user)
+        send_mail_task.delay(str(outbound.id), actor_id=str(request.user.id))
+        return Response(
+            {"queued": True, "outbound": client.outbound_summary(outbound)}, status=status.HTTP_202_ACCEPTED
+        )
 
 
 class MailDraftEndpoint(MailAPIView):
@@ -477,7 +485,8 @@ class MailSingletonEndpoint(MailAPIView):
 
     def get(self, request):
         try:
-            serializer = self.serializer_class(self.get_object())
+            obj = self.get_object()
+            serializer = self.serializer_class(obj, context={"mailbox": obj.mailbox})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except MailError as error:
             return self.mail_error_response(error)
@@ -485,7 +494,7 @@ class MailSingletonEndpoint(MailAPIView):
     def patch(self, request):
         try:
             obj = self.get_object()
-            serializer = self.serializer_class(obj, data=request.data, partial=True)
+            serializer = self.serializer_class(obj, data=request.data, partial=True, context={"mailbox": obj.mailbox})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

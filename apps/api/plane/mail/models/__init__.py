@@ -10,3 +10,4 @@ from .label import MailLabel
 from .saved_search import MailSavedSearch
 from .forwarding import MailForwarding
 from .preferences import MailPreference
+from .outbound_message import MailOutboundMessage

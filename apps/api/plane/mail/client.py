@@ -6,6 +6,7 @@ from email import message_from_bytes
 from email.policy import default
 
 from django.core.cache import cache
+from django.utils import timezone
 from bs4 import BeautifulSoup
 
 from plane.mail.folders import (
@@ -15,6 +16,7 @@ from plane.mail.folders import (
 from plane.mail.imap import MailIMAPSession
 from plane.mail.labels import resolve_label_keyword
 from plane.mail.mime import extract_attachment, parse_message_bytes
+from plane.mail.models import MailOutboundMessage
 from plane.mail.smtp import save_draft_message, send_message
 
 
@@ -89,6 +91,53 @@ def _summary_from_header(folder_key, uid, data):
         "is_starred": "\\flagged" in flags,
         "has_attachments": "attachment" in bodystructure.lower() or "filename" in bodystructure.lower(),
         "size": _fetch_value(data, "RFC822.SIZE") or 0,
+        "send_status": "sent" if folder_key == "sent" else None,
+    }
+
+
+def _recipients_for_payload(value):
+    recipients = []
+    for item in value or []:
+        if isinstance(item, dict):
+            email = str(item.get("email") or "").strip()
+            name = str(item.get("name") or "").strip()
+        else:
+            email = str(item).strip()
+            name = ""
+        if email:
+            recipients.append({"name": name, "email": email})
+    return recipients
+
+
+def _outbound_snippet(payload):
+    body_text = payload.get("body_text") or payload.get("text") or ""
+    if body_text:
+        return " ".join(str(body_text).split())[:180]
+
+    body_html = payload.get("body_html") or payload.get("html") or ""
+    return " ".join(BeautifulSoup(body_html, "html.parser").get_text(" ").split())[:180]
+
+
+def _summary_from_outbound(outbound):
+    payload = outbound.payload or {}
+    date = outbound.sent_at or outbound.updated_at or outbound.created_at or timezone.now()
+    body_text = payload.get("body_text") or payload.get("text") or outbound.body_text
+    body_html = payload.get("body_html") or payload.get("html") or outbound.body_html
+
+    return {
+        "uid": f"outbound:{outbound.id}",
+        "folder_key": "sent",
+        "subject": outbound.subject or payload.get("subject") or "(без темы)",
+        "from": [{"name": "", "email": outbound.mailbox.email}],
+        "to": _recipients_for_payload(outbound.to or payload.get("to")),
+        "date": date.isoformat(),
+        "snippet": _outbound_snippet({"body_text": body_text, "body_html": body_html}),
+        "is_read": True,
+        "is_starred": False,
+        "has_attachments": bool(payload.get("uploaded_attachments")),
+        "size": len(str(body_text or "")) + len(str(body_html or "")),
+        "send_status": outbound.status,
+        "send_error": outbound.error,
     }
 
 
@@ -128,6 +177,16 @@ class MailClient:
                 except Exception:
                     total = 0
                     unread = 0
+
+                if key == "sent":
+                    total += MailOutboundMessage.objects.filter(
+                        mailbox=self.mailbox,
+                        status__in=[
+                            MailOutboundMessage.STATUS_QUEUED,
+                            MailOutboundMessage.STATUS_SENDING,
+                            MailOutboundMessage.STATUS_FAILED,
+                        ],
+                    ).count()
 
                 folders.append(
                     {
@@ -184,21 +243,36 @@ class MailClient:
             total = len(uids)
             start = (page - 1) * per_page
             page_uids = uids[start : start + per_page]
-            if not page_uids:
-                return {"results": [], "page": page, "per_page": per_page, "total": total}
+            if page_uids:
+                fetched = session.client.fetch(
+                    page_uids,
+                    [
+                        "FLAGS",
+                        "INTERNALDATE",
+                        "RFC822.SIZE",
+                        "BODY.PEEK[HEADER]",
+                        "BODY.PEEK[]<0.8192>",
+                        "BODYSTRUCTURE",
+                    ],
+                )
+                results = [_summary_from_header(folder_key, uid, fetched.get(uid, {})) for uid in page_uids]
+            else:
+                results = []
 
-            fetched = session.client.fetch(
-                page_uids,
-                [
-                    "FLAGS",
-                    "INTERNALDATE",
-                    "RFC822.SIZE",
-                    "BODY.PEEK[HEADER]",
-                    "BODY.PEEK[]<0.8192>",
-                    "BODYSTRUCTURE",
+        if folder_key == "sent":
+            outbound_queryset = MailOutboundMessage.objects.filter(
+                mailbox=self.mailbox,
+                status__in=[
+                    MailOutboundMessage.STATUS_QUEUED,
+                    MailOutboundMessage.STATUS_SENDING,
+                    MailOutboundMessage.STATUS_FAILED,
                 ],
-            )
-            results = [_summary_from_header(folder_key, uid, fetched.get(uid, {})) for uid in page_uids]
+            ).order_by("-created_at")
+            outbound_count = outbound_queryset.count()
+            total += outbound_count
+            if page == 1 and outbound_count:
+                outbound_results = [_summary_from_outbound(outbound) for outbound in outbound_queryset[:per_page]]
+                results = [*outbound_results, *results[: max(per_page - len(outbound_results), 0)]]
 
         return {"results": results, "page": page, "per_page": per_page, "total": total}
 
@@ -292,6 +366,25 @@ class MailClient:
         result = send_message(self.mailbox, payload)
         self.invalidate_cache()
         return result
+
+    def queue_send(self, payload, actor=None):
+        outbound = MailOutboundMessage.objects.create(
+            mailbox=self.mailbox,
+            payload=payload,
+            subject=payload.get("subject") or "",
+            to=payload.get("to") or [],
+            cc=payload.get("cc") or [],
+            bcc=payload.get("bcc") or [],
+            body_text=payload.get("body_text") or payload.get("text") or "",
+            body_html=payload.get("body_html") or payload.get("html") or "",
+            created_by=actor,
+            updated_by=actor,
+        )
+        self.invalidate_cache()
+        return outbound
+
+    def outbound_summary(self, outbound):
+        return _summary_from_outbound(outbound)
 
     def save_draft(self, payload):
         result = save_draft_message(self.mailbox, payload)

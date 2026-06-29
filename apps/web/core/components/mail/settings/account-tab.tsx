@@ -8,6 +8,7 @@ import { Link } from "react-router";
 import { observer } from "mobx-react";
 import { ExternalLink, Globe2 } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
 import { useMail } from "@/hooks/store/use-mail";
 import { Card, CardRow, MailToggle, SectionTitle, SelectField, SettingsHeader } from "./primitives";
@@ -18,13 +19,14 @@ const initialsOf = (email: string) => {
 };
 
 export const MailAccountSettings = observer(function MailAccountSettings() {
-  const { t } = useTranslation();
+  const { t, changeLanguage } = useTranslation();
   const mail = useMail();
   const prefs = mail.preferences;
 
   const patch = async (data: Record<string, unknown>) => {
     try {
       await mail.patchPreferences(data);
+      if (typeof data.language === "string") changeLanguage(data.language as TLanguage);
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: t("mail.settings.toasts.error") });
     }

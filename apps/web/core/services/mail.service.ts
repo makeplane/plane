@@ -18,6 +18,7 @@ import type {
   TMailMessagesResponse,
   TMailPreference,
   TMailSavedSearch,
+  TMailSendResponse,
   TMailSignature,
   TMailTemplate,
   TMailUploadedAttachment,
@@ -109,7 +110,7 @@ export class MailService extends APIService {
       });
   }
 
-  async send(payload: TMailComposePayload): Promise<{ queued: boolean }> {
+  async send(payload: TMailComposePayload): Promise<TMailSendResponse> {
     return this.post("/api/mail/send/", payload)
       .then((res) => res?.data)
       .catch((err) => {
@@ -286,6 +287,10 @@ export class MailService extends APIService {
   }
 
   async patchPreferences(data: Partial<TMailPreference>): Promise<TMailPreference> {
-    return this.patch("/api/mail/preferences/", data).then((res) => res?.data);
+    return this.patch("/api/mail/preferences/", data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 }

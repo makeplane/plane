@@ -65,6 +65,8 @@ export type TMailUploadedAttachment = {
   size: number;
 };
 
+export type TMailSendStatus = "queued" | "sending" | "sent" | "failed";
+
 export type TMailMessageSummary = {
   uid: string;
   folder_key: string;
@@ -77,6 +79,8 @@ export type TMailMessageSummary = {
   is_starred: boolean;
   has_attachments: boolean;
   size: number;
+  send_status?: TMailSendStatus | null;
+  send_error?: string;
 };
 
 export type TMailMessageDetail = TMailMessageSummary & {
@@ -107,6 +111,11 @@ export type TMailComposePayload = {
   body_html?: string;
   body_text?: string;
   uploaded_attachments?: TMailUploadedAttachment[];
+};
+
+export type TMailSendResponse = {
+  queued: boolean;
+  outbound?: TMailMessageSummary;
 };
 
 export type TMailSignature = {

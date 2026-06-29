@@ -4,22 +4,37 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { ArrowLeft, Globe2, RefreshCw, Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { useMail } from "@/hooks/store/use-mail";
+import { useUserProfile } from "@/hooks/store/user";
 import { ComposeModal } from "./compose-modal";
 import { MailSidebar } from "./mail-sidebar";
+
+const resolvePlaneThemeForMail = (theme: string | undefined, customThemeUsesDarkPalette?: boolean) => {
+  if (theme === "dark" || theme === "dark-contrast") return "dark";
+  if (theme === "custom" && customThemeUsesDarkPalette) return "dark";
+  return "light";
+};
 
 export const MailShell = observer(function MailShell() {
   const { t } = useTranslation();
   const mail = useMail();
+  const { data: userProfile } = useUserProfile();
+  const { resolvedTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const isLogin = location.pathname === "/mail/login";
+  const mailTheme = useMemo(() => {
+    if (mail.preferences.theme === "light" || mail.preferences.theme === "dark") return mail.preferences.theme;
+    return resolvePlaneThemeForMail(resolvedTheme, userProfile?.theme?.darkPalette);
+  }, [mail.preferences.theme, resolvedTheme, userProfile?.theme?.darkPalette]);
+  const mailDensity = mail.preferences.density === "compact" ? "compact" : "comfortable";
 
   useEffect(() => {
     void (async () => {
@@ -35,7 +50,12 @@ export const MailShell = observer(function MailShell() {
 
   return (
     <AuthenticationWrapper>
-      <div data-mail className="mail-root flex size-full overflow-hidden bg-[var(--mail-bg)] text-[var(--mail-ink)]">
+      <div
+        data-mail
+        data-mail-theme={mailTheme}
+        data-mail-density={mailDensity}
+        className="mail-root flex size-full overflow-hidden bg-[var(--mail-bg)] text-[var(--mail-ink)]"
+      >
         {isLogin ? (
           <Outlet />
         ) : (

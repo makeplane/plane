@@ -11,7 +11,48 @@
   --mail-accent: #c24e2c;
   --mail-accent-strong: #a63f22;
   --mail-accent-soft: #f4ded6;
-  font-family: "Hanken Grotesk", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: light;
+  font-family:
+    "Hanken Grotesk",
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+[data-mail][data-mail-theme="dark"] {
+  --mail-bg: #101114;
+  --mail-panel: #17191d;
+  --mail-sidebar: #14161a;
+  --mail-border: #2a2d33;
+  --mail-hover: #20242b;
+  --mail-unread: #1d242b;
+  --mail-warning: #302719;
+  --mail-ink: #f3f0e8;
+  --mail-muted: #a9a39a;
+  --mail-accent: #f07a55;
+  --mail-accent-strong: #ff8b66;
+  --mail-accent-soft: #3b251f;
+  color-scheme: dark;
+}
+
+[data-mail][data-mail-theme="dark"] .bg-white {
+  background-color: var(--mail-panel);
+}
+
+[data-mail][data-mail-theme="dark"] input,
+[data-mail][data-mail-theme="dark"] textarea,
+[data-mail][data-mail-theme="dark"] select,
+[data-mail][data-mail-theme="dark"] [contenteditable="true"] {
+  background-color: var(--mail-panel);
+  color: var(--mail-ink);
+}
+
+[data-mail][data-mail-theme="dark"] input::placeholder,
+[data-mail][data-mail-theme="dark"] textarea::placeholder {
+  color: var(--mail-muted);
 }
 
 .mail-root {
@@ -64,7 +105,7 @@
 
 .mail-secondary-button {
   border: 1px solid var(--mail-border);
-  background: #fff;
+  background: var(--mail-panel);
   color: var(--mail-ink);
 }
 

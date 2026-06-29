@@ -44,7 +44,7 @@ export interface IMailStore {
   labels: TMailLabel[];
   savedSearches: TMailSavedSearch[];
   forwarding: TMailForwarding | null;
-  preferences: TMailPreference | null;
+  preferences: TMailPreference;
   accountError: string | null;
   hasMailbox: boolean;
   mailboxEmail: string;
@@ -97,6 +97,106 @@ const EMPTY_COMPOSE: TMailComposePayload = {
   uploaded_attachments: [],
 };
 
+const MAIL_PREFERENCES_STORAGE_KEY = "plane_mail_preferences";
+const MAIL_PREFERENCE_DENSITIES = ["comfortable", "compact"] as const;
+const MAIL_PREFERENCE_THEMES = ["system", "light", "dark"] as const;
+const MAIL_PREFERENCE_READING_PANES = ["right", "bottom", "none"] as const;
+const MAIL_PREFERENCE_LANGUAGES = ["ru", "en"] as const;
+const MAIL_PREFERENCE_PAGE_SIZES = [10, 25, 50, 100] as const;
+
+const DEFAULT_MAIL_PREFERENCE: TMailPreference = {
+  id: "",
+  density: "comfortable",
+  theme: "system",
+  reading_pane: "right",
+  messages_per_page: 25,
+  mark_read_delay_ms: 1500,
+  show_snippets: true,
+  default_signature: null,
+  language: "ru",
+  conversation_view: true,
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const storageKeyForMailbox = (mailboxId?: string) =>
+  mailboxId ? `${MAIL_PREFERENCES_STORAGE_KEY}:${mailboxId}` : MAIL_PREFERENCES_STORAGE_KEY;
+
+const readPreferenceFromStorage = (mailboxId?: string): Record<string, unknown> | null => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const rawValue = window.localStorage.getItem(storageKeyForMailbox(mailboxId));
+    if (!rawValue) return null;
+
+    const parsedValue = JSON.parse(rawValue);
+    return isRecord(parsedValue) ? parsedValue : null;
+  } catch {
+    return null;
+  }
+};
+
+const persistPreferenceToStorage = (preference: TMailPreference, mailboxId?: string) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const serializedPreference = JSON.stringify(preference);
+    window.localStorage.setItem(MAIL_PREFERENCES_STORAGE_KEY, serializedPreference);
+    if (mailboxId) window.localStorage.setItem(storageKeyForMailbox(mailboxId), serializedPreference);
+  } catch {
+    // localStorage can be unavailable in restricted browser contexts.
+  }
+};
+
+const positiveNumber = (value: unknown, fallback: number, min: number, max: number) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  return Math.min(Math.max(Math.round(value), min), max);
+};
+
+const normalizeMailPreference = (
+  preference: Partial<TMailPreference> | Record<string, unknown> | null | undefined,
+  base: TMailPreference = DEFAULT_MAIL_PREFERENCE
+): TMailPreference => {
+  const source = isRecord(preference) ? preference : {};
+  const nextPreference: TMailPreference = { ...DEFAULT_MAIL_PREFERENCE, ...base };
+
+  if (typeof source.id === "string") nextPreference.id = source.id;
+  if (MAIL_PREFERENCE_DENSITIES.includes(source.density as (typeof MAIL_PREFERENCE_DENSITIES)[number]))
+    nextPreference.density = source.density as TMailPreference["density"];
+  if (MAIL_PREFERENCE_THEMES.includes(source.theme as (typeof MAIL_PREFERENCE_THEMES)[number]))
+    nextPreference.theme = source.theme as TMailPreference["theme"];
+  if (MAIL_PREFERENCE_READING_PANES.includes(source.reading_pane as (typeof MAIL_PREFERENCE_READING_PANES)[number]))
+    nextPreference.reading_pane = source.reading_pane as TMailPreference["reading_pane"];
+  if (MAIL_PREFERENCE_PAGE_SIZES.includes(source.messages_per_page as (typeof MAIL_PREFERENCE_PAGE_SIZES)[number]))
+    nextPreference.messages_per_page = source.messages_per_page as TMailPreference["messages_per_page"];
+  nextPreference.mark_read_delay_ms = positiveNumber(
+    source.mark_read_delay_ms,
+    nextPreference.mark_read_delay_ms,
+    0,
+    10000
+  );
+  if (typeof source.show_snippets === "boolean") nextPreference.show_snippets = source.show_snippets;
+  if (typeof source.default_signature === "string" || source.default_signature === null)
+    nextPreference.default_signature = source.default_signature;
+  if (MAIL_PREFERENCE_LANGUAGES.includes(source.language as (typeof MAIL_PREFERENCE_LANGUAGES)[number]))
+    nextPreference.language = source.language as TMailPreference["language"];
+  if (typeof source.conversation_view === "boolean") nextPreference.conversation_view = source.conversation_view;
+
+  return nextPreference;
+};
+
+const getStoredMailPreference = (mailboxId?: string, fallback: TMailPreference = DEFAULT_MAIL_PREFERENCE) =>
+  normalizeMailPreference(readPreferenceFromStorage(mailboxId) ?? readPreferenceFromStorage() ?? fallback, fallback);
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const getMailErrorMessage = (error: unknown) => {
   if (typeof error === "string") return error;
   if (!error || typeof error !== "object") return "Unable to update mailbox.";
@@ -130,7 +230,7 @@ export class MailStore implements IMailStore {
   labels: TMailLabel[] = [];
   savedSearches: TMailSavedSearch[] = [];
   forwarding: TMailForwarding | null = null;
-  preferences: TMailPreference | null = null;
+  preferences: TMailPreference = getStoredMailPreference();
   accountError: string | null = null;
   service: MailService;
 
@@ -226,6 +326,7 @@ export class MailStore implements IMailStore {
       const response = await this.service.me();
       runInAction(() => {
         this.me = response;
+        this.preferences = getStoredMailPreference(response.mailbox?.id, this.preferences);
         this.loader = false;
         this.accountError = null;
       });
@@ -246,6 +347,7 @@ export class MailStore implements IMailStore {
       const response = await this.service.createAccount(payload);
       runInAction(() => {
         this.me = response;
+        this.preferences = getStoredMailPreference(response.mailbox?.id, this.preferences);
         this.actionLoader = false;
       });
       return response;
@@ -266,6 +368,7 @@ export class MailStore implements IMailStore {
       const response = await this.service.loginAccount(payload);
       runInAction(() => {
         this.me = response;
+        this.preferences = getStoredMailPreference(response.mailbox?.id, this.preferences);
         this.actionLoader = false;
       });
       return response;
@@ -290,7 +393,10 @@ export class MailStore implements IMailStore {
   fetchMessages = async (folderKey: string, params: Record<string, unknown> = {}) => {
     this.loader = true;
     try {
-      const response = await this.service.messages(folderKey, params);
+      const response = await this.service.messages(folderKey, {
+        per_page: this.preferences.messages_per_page,
+        ...params,
+      });
       runInAction(() => {
         this.messagesByFolder[folderKey] = response.results;
         this.messagesMeta[folderKey] = {
@@ -453,7 +559,19 @@ export class MailStore implements IMailStore {
   };
 
   openCompose = (draft: Partial<TMailComposePayload> = {}) => {
-    this.composeDraft = { ...EMPTY_COMPOSE, ...draft };
+    const defaultSignature =
+      this.signatures.find((signature) => signature.id === this.preferences.default_signature && signature.is_active) ??
+      this.signatures.find((signature) => signature.is_default && signature.is_active);
+    const signatureText = defaultSignature?.content_text.trim();
+    const signatureHtml =
+      defaultSignature?.content_html.trim() ||
+      (signatureText ? escapeHtml(signatureText).replace(/\n/g, "<br />") : "");
+    const bodyText = [draft.body_text ?? "", signatureText ? `-- \n${signatureText}` : ""].filter(Boolean).join("\n\n");
+    const bodyHtml = [draft.body_html ?? "", signatureHtml ? `<p>-- <br />${signatureHtml}</p>` : ""]
+      .filter(Boolean)
+      .join("<br />");
+
+    this.composeDraft = { ...EMPTY_COMPOSE, ...draft, body_html: bodyHtml, body_text: bodyText };
     this.composeOpen = true;
   };
 
@@ -468,8 +586,17 @@ export class MailStore implements IMailStore {
   sendCompose = async () => {
     this.actionLoader = true;
     try {
-      await this.service.send(this.composeDraft);
+      const response = await this.service.send(this.composeDraft);
       runInAction(() => {
+        if (response.outbound) {
+          const sentMessages = this.messagesByFolder.sent ?? [];
+          this.messagesByFolder.sent = [
+            response.outbound,
+            ...sentMessages.filter((message) => message.uid !== response.outbound?.uid),
+          ];
+          const sentMeta = this.messagesMeta.sent;
+          if (sentMeta) this.messagesMeta.sent = { ...sentMeta, total: sentMeta.total + 1 };
+        }
         this.composeOpen = false;
         this.composeDraft = { ...EMPTY_COMPOSE };
         this.actionLoader = false;
@@ -525,16 +652,34 @@ export class MailStore implements IMailStore {
       this.labels = labels;
       this.savedSearches = savedSearches;
       this.forwarding = forwarding;
-      this.preferences = preferences;
+      this.preferences = normalizeMailPreference(preferences, this.preferences);
+      persistPreferenceToStorage(this.preferences, this.me?.mailbox?.id);
     });
   };
 
   patchPreferences = async (data: Partial<TMailPreference>) => {
-    const response = await this.service.patchPreferences(data);
+    const previousPreference = this.preferences;
+    const optimisticPreference = normalizeMailPreference(data, this.preferences);
     runInAction(() => {
-      this.preferences = response;
+      this.preferences = optimisticPreference;
     });
-    return response;
+    persistPreferenceToStorage(optimisticPreference, this.me?.mailbox?.id);
+
+    try {
+      const response = await this.service.patchPreferences(data);
+      const nextPreference = normalizeMailPreference(response, this.preferences);
+      runInAction(() => {
+        this.preferences = nextPreference;
+      });
+      persistPreferenceToStorage(nextPreference, this.me?.mailbox?.id);
+      return nextPreference;
+    } catch (error) {
+      runInAction(() => {
+        this.preferences = previousPreference;
+      });
+      persistPreferenceToStorage(previousPreference, this.me?.mailbox?.id);
+      throw error;
+    }
   };
 
   createSignature = async (data: Partial<TMailSignature>) => {

@@ -5,20 +5,74 @@
  */
 
 import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Paperclip, Save, Send, X } from "lucide-react";
+import { Maximize2, Minimize2, Paperclip, Save, Send, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
+import type { TMailTemplate } from "@plane/types";
 import { useMail } from "@/hooks/store/use-mail";
 import { splitRecipients } from "./helpers";
 import { MailRichText } from "./mail-rich-text";
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const textToHtml = (value: string) =>
+  value
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br />")}</p>`)
+    .join("");
+
+const htmlToText = (html: string) => {
+  const node = document.createElement("div");
+  node.innerHTML = html;
+  return node.innerText.trim();
+};
 
 export const ComposeModal = observer(function ComposeModal() {
   const { t } = useTranslation();
   const mail = useMail();
   const draft = mail.composeDraft;
+  const [expanded, setExpanded] = useState(false);
+  const [pendingTemplate, setPendingTemplate] = useState<TMailTemplate | null>(null);
 
   if (!mail.composeOpen) return null;
+
+  const hasWrittenContent = () =>
+    !!draft.subject.trim() || !!draft.body_text?.trim() || !!htmlToText(draft.body_html ?? "");
+
+  const applyTemplate = (template: TMailTemplate) => {
+    const bodyHtml = template.body_html || textToHtml(template.body_text);
+    mail.updateComposeDraft({
+      subject: template.subject || draft.subject,
+      body_html: bodyHtml,
+      body_text: template.body_text || htmlToText(bodyHtml),
+    });
+    setPendingTemplate(null);
+  };
+
+  const selectTemplate = (template: TMailTemplate) => {
+    if (hasWrittenContent()) {
+      setPendingTemplate(template);
+      return;
+    }
+    applyTemplate(template);
+  };
+
+  const closeCompose = () => {
+    setPendingTemplate(null);
+    setExpanded(false);
+    mail.closeCompose();
+  };
 
   const uploadFiles = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
@@ -33,6 +87,8 @@ export const ComposeModal = observer(function ComposeModal() {
   const sendMessage = async () => {
     try {
       await mail.sendCompose();
+      setPendingTemplate(null);
+      setExpanded(false);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.sent") });
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.send_error") });
@@ -42,6 +98,8 @@ export const ComposeModal = observer(function ComposeModal() {
   const saveDraft = async () => {
     try {
       await mail.saveDraft();
+      setPendingTemplate(null);
+      setExpanded(false);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.draft_saved") });
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.draft_error") });
@@ -49,18 +107,33 @@ export const ComposeModal = observer(function ComposeModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/20 p-6">
-      <section className="shadow-2xl flex h-[680px] max-h-[calc(100vh-48px)] w-[920px] max-w-[calc(100vw-48px)] overflow-hidden rounded-lg bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-6">
+      <section
+        className={cn(
+          "shadow-2xl flex max-h-[calc(100vh-48px)] max-w-[calc(100vw-48px)] overflow-hidden rounded-lg bg-white",
+          expanded ? "h-[calc(100vh-48px)] w-[calc(100vw-48px)]" : "h-[680px] w-[920px]"
+        )}
+      >
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex h-12 items-center justify-between border-b border-[var(--mail-border)] bg-[var(--mail-ink)] px-4 text-white">
             <div className="text-sm font-medium">{t("mail.compose.new")}</div>
-            <button
-              className="grid size-8 place-items-center rounded hover:bg-white/10"
-              type="button"
-              onClick={mail.closeCompose}
-            >
-              <X className="size-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                className="grid size-8 place-items-center rounded hover:bg-white/10"
+                type="button"
+                title={expanded ? t("mail.compose.restore") : t("mail.compose.fullscreen")}
+                onClick={() => setExpanded((value) => !value)}
+              >
+                {expanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+              </button>
+              <button
+                className="grid size-8 place-items-center rounded hover:bg-white/10"
+                type="button"
+                onClick={closeCompose}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
           </div>
 
           <div className="text-sm grid border-b border-[var(--mail-border)]">
@@ -141,13 +214,7 @@ export const ComposeModal = observer(function ComposeModal() {
                   key={template.id}
                   type="button"
                   className="text-sm w-full rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-left hover:border-[var(--mail-accent)]"
-                  onClick={() =>
-                    mail.updateComposeDraft({
-                      subject: template.subject || draft.subject,
-                      body_html: template.body_html,
-                      body_text: template.body_text,
-                    })
-                  }
+                  onClick={() => selectTemplate(template)}
                 >
                   <div className="font-medium text-[var(--mail-ink)]">{template.name}</div>
                   <div className="text-xs mt-1 line-clamp-2 text-[var(--mail-muted)]">{template.subject}</div>
@@ -159,6 +226,26 @@ export const ComposeModal = observer(function ComposeModal() {
           </div>
         </aside>
       </section>
+      {pendingTemplate && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 px-4">
+          <div className="shadow-xl w-full max-w-[420px] rounded-lg border border-[var(--mail-border)] bg-[var(--mail-panel)] p-5">
+            <h2 className="text-base font-semibold text-[var(--mail-ink)]">
+              {t("mail.compose.template_replace_title")}
+            </h2>
+            <p className="text-sm mt-2 leading-6 text-[var(--mail-muted)]">
+              {t("mail.compose.template_replace_description")}
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button className="mail-secondary-button" type="button" onClick={() => setPendingTemplate(null)}>
+                {t("mail.settings.cancel")}
+              </button>
+              <button className="mail-primary-button" type="button" onClick={() => applyTemplate(pendingTemplate)}>
+                {t("mail.compose.template_replace_confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 });
