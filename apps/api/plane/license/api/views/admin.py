@@ -15,6 +15,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
+from django.db import transaction
 
 # Third party imports
 from rest_framework.response import Response
@@ -91,7 +92,7 @@ class InstanceAdminSignUpEndpoint(View):
 
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
-        # Check instance first
+        # Check instance first (outside the transaction — no need to lock yet)
         instance = Instance.objects.first()
         if instance is None:
             exc = AuthenticationException(
@@ -104,8 +105,9 @@ class InstanceAdminSignUpEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        # check if the instance has already an admin registered
-        if InstanceAdmin.objects.first():
+        # Fast pre-check outside the lock (avoids contention when setup is
+        # already done — the common path after first boot).
+        if instance.is_setup_done or InstanceAdmin.objects.filter(instance=instance).exists():
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["ADMIN_ALREADY_EXIST"],
                 error_message="ADMIN_ALREADY_EXIST",
@@ -207,33 +209,55 @@ class InstanceAdminSignUpEndpoint(View):
                 )
                 return HttpResponseRedirect(url)
 
-            user = User.objects.create(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                username=uuid.uuid4().hex,
-                password=make_password(password),
-                is_password_autoset=False,
-            )
-            _ = Profile.objects.create(user=user, company_name=company_name)
-            # settings last active for the user
-            user.is_active = True
-            user.last_active = timezone.now()
-            user.last_login_time = timezone.now()
-            user.last_login_ip = get_client_ip(request=request)
-            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-            user.token_updated_at = timezone.now()
-            user.save()
+            # Atomic check-and-create to eliminate the TOCTOU race
+            # (GHSA-p548-28jp-wr4p).  Lock the Instance singleton row so that
+            # two concurrent signup requests cannot both pass the "no admin yet"
+            # check and then both create an InstanceAdmin.
+            with transaction.atomic():
+                # Re-acquire instance under a row-level lock.
+                instance = Instance.objects.select_for_update().get(pk=instance.pk)
 
-            # Register the user as an instance admin
-            _ = InstanceAdmin.objects.create(user=user, instance=instance)
-            # Make the setup flag True
-            instance.is_setup_done = True
-            instance.instance_name = company_name
-            instance.is_telemetry_enabled = is_telemetry_enabled
-            instance.save()
+                # Re-check inside the lock — the pre-check above is racy; this
+                # is the authoritative guard.
+                if instance.is_setup_done or InstanceAdmin.objects.filter(instance=instance).exists():
+                    exc = AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES["ADMIN_ALREADY_EXIST"],
+                        error_message="ADMIN_ALREADY_EXIST",
+                    )
+                    url = urljoin(
+                        base_host(request=request, is_admin=True),
+                        "?" + urlencode(exc.get_error_dict()),
+                    )
+                    return HttpResponseRedirect(url)
 
-            # get tokens for user
+                user = User.objects.create(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    username=uuid.uuid4().hex,
+                    password=make_password(password),
+                    is_password_autoset=False,
+                )
+                _ = Profile.objects.create(user=user, company_name=company_name)
+                # settings last active for the user
+                user.is_active = True
+                user.last_active = timezone.now()
+                user.last_login_time = timezone.now()
+                user.last_login_ip = get_client_ip(request=request)
+                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                user.token_updated_at = timezone.now()
+                user.save()
+
+                # Register the user as an instance admin
+                _ = InstanceAdmin.objects.create(user=user, instance=instance)
+                # Make the setup flag True
+                instance.is_setup_done = True
+                instance.instance_name = company_name
+                instance.is_telemetry_enabled = is_telemetry_enabled
+                instance.save()
+
+            # get tokens for user (outside the transaction — session writes must
+            # not be held under the DB lock)
             user_login(request=request, user=user, is_admin=True)
             url = urljoin(base_host(request=request, is_admin=True), "general/")
             return HttpResponseRedirect(url)
