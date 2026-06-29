@@ -107,7 +107,9 @@ class InstanceAdminSignUpEndpoint(View):
 
         # Fast pre-check outside the lock (avoids contention when setup is
         # already done — the common path after first boot).
-        if instance.is_setup_done or InstanceAdmin.objects.filter(instance=instance).exists():
+        # Use a global exists() check (not scoped to this instance row) so that
+        # a stray second Instance row cannot bypass the guard (coderabbit).
+        if instance.is_setup_done or InstanceAdmin.objects.exists():
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["ADMIN_ALREADY_EXIST"],
                 error_message="ADMIN_ALREADY_EXIST",
@@ -218,8 +220,9 @@ class InstanceAdminSignUpEndpoint(View):
                 instance = Instance.objects.select_for_update().get(pk=instance.pk)
 
                 # Re-check inside the lock — the pre-check above is racy; this
-                # is the authoritative guard.
-                if instance.is_setup_done or InstanceAdmin.objects.filter(instance=instance).exists():
+                # is the authoritative guard. Global exists() (not scoped to
+                # this instance row) matches the pre-check (coderabbit).
+                if instance.is_setup_done or InstanceAdmin.objects.exists():
                     exc = AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["ADMIN_ALREADY_EXIST"],
                         error_message="ADMIN_ALREADY_EXIST",
