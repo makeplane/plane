@@ -103,55 +103,55 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAT-01 | TBD | Pending |
-| CAT-02 | TBD | Pending |
-| CAT-03 | TBD | Pending |
-| CAT-04 | TBD | Pending |
-| CAT-05 | TBD | Pending |
-| CAT-06 | TBD | Pending |
-| CUST-01 | TBD | Pending |
-| CUST-02 | TBD | Pending |
-| CUST-03 | TBD | Pending |
-| CUST-04 | TBD | Pending |
-| CUST-05 | TBD | Pending |
-| CUST-06 | TBD | Pending |
-| CUST-07 | TBD | Pending |
-| CUST-08 | TBD | Pending |
-| CUST-09 | TBD | Pending |
-| CREATE-01 | TBD | Pending |
-| CREATE-02 | TBD | Pending |
-| CREATE-03 | TBD | Pending |
-| CREATE-04 | TBD | Pending |
-| CREATE-05 | TBD | Pending |
-| CREATE-06 | TBD | Pending |
-| GEN-01 | TBD | Pending |
-| GEN-02 | TBD | Pending |
-| GEN-03 | TBD | Pending |
-| GEN-04 | TBD | Pending |
-| GEN-05 | TBD | Pending |
-| GEN-06 | TBD | Pending |
-| GEN-07 | TBD | Pending |
-| PERM-01 | TBD | Pending |
-| PERM-02 | TBD | Pending |
-| PERM-03 | TBD | Pending |
-| PERM-04 | TBD | Pending |
-| PERM-05 | TBD | Pending |
-| UI-01 | TBD | Pending |
-| UI-02 | TBD | Pending |
-| UI-03 | TBD | Pending |
-| UI-04 | TBD | Pending |
-| UI-05 | TBD | Pending |
-| VER-01 | TBD | Pending |
-| VER-02 | TBD | Pending |
-| VER-03 | TBD | Pending |
-| VER-04 | TBD | Pending |
-| VER-05 | TBD | Pending |
+| CAT-01 | Phase 3 | Pending |
+| CAT-02 | Phase 2 | Pending |
+| CAT-03 | Phase 1 | Pending |
+| CAT-04 | Phase 1 | Pending |
+| CAT-05 | Phase 1 | Pending |
+| CAT-06 | Phase 3 | Pending |
+| CUST-01 | Phase 1 | Pending |
+| CUST-02 | Phase 1 | Pending |
+| CUST-03 | Phase 1 | Pending |
+| CUST-04 | Phase 1 | Pending |
+| CUST-05 | Phase 1 | Pending |
+| CUST-06 | Phase 1 | Pending |
+| CUST-07 | Phase 1 | Pending |
+| CUST-08 | Phase 1 | Pending |
+| CUST-09 | Phase 1 | Pending |
+| CREATE-01 | Phase 2 | Pending |
+| CREATE-02 | Phase 2 | Pending |
+| CREATE-03 | Phase 2 | Pending |
+| CREATE-04 | Phase 2 | Pending |
+| CREATE-05 | Phase 2 | Pending |
+| CREATE-06 | Phase 2 | Pending |
+| GEN-01 | Phase 2 | Pending |
+| GEN-02 | Phase 2 | Pending |
+| GEN-03 | Phase 2 | Pending |
+| GEN-04 | Phase 2 | Pending |
+| GEN-05 | Phase 2 | Pending |
+| GEN-06 | Phase 2 | Pending |
+| GEN-07 | Phase 2 | Pending |
+| PERM-01 | Phase 1 | Pending |
+| PERM-02 | Phase 3 | Pending |
+| PERM-03 | Phase 1 | Pending |
+| PERM-04 | Phase 1 | Pending |
+| PERM-05 | Phase 1 | Pending |
+| UI-01 | Phase 3 | Pending |
+| UI-02 | Phase 3 | Pending |
+| UI-03 | Phase 3 | Pending |
+| UI-04 | Phase 3 | Pending |
+| UI-05 | Phase 4 | Pending |
+| VER-01 | Phase 2 | Pending |
+| VER-02 | Phase 2 | Pending |
+| VER-03 | Phase 2 | Pending |
+| VER-04 | Phase 2 | Pending |
+| VER-05 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 43 total
-- Mapped to phases: 0
-- Unmapped: 43
+- Mapped to phases: 43
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after initial definition*
+*Last updated: 2026-06-29 after roadmap creation*
