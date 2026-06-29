@@ -18,9 +18,10 @@ import { useMember } from "@/hooks/store/use-member";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../types/media-library.types";
+import { formatFileSize, formatMetaLabel, formatMetaValue } from "../utils/media-detail-utils";
+import { getEventMediaDateLabel, getEventMediaDetails, getEventMediaMetrics, isEventMediaItem } from "../utils/media-event";
 import { DetailIssueOverview } from "./detail-peek-overview";
 import { PeekOverviewIssueDetails } from "./detail-peek-overview/issue-detail";
-import { formatFileSize, formatMetaLabel, formatMetaValue } from "../utils/media-detail-utils";
 
 type TMediaDetailSidebarProps = {
   workspaceSlug: string;
@@ -69,6 +70,10 @@ export const MediaDetailSidebar = ({
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   const [isSavingMeta, setIsSavingMeta] = useState(false);
   const artifactMeta = useMemo(() => (item?.meta ?? {}) as Record<string, unknown>, [item?.meta]);
+  const isEventItem = useMemo(() => isEventMediaItem(item), [item]);
+  const eventDetails = useMemo(() => getEventMediaDetails(item), [item]);
+  const eventDateLabel = useMemo(() => getEventMediaDateLabel(item), [item]);
+  const eventMetrics = useMemo(() => getEventMediaMetrics(item), [item]);
   const getMetaString = useCallback(
     (key: string) => {
       const value = artifactMeta[key];
@@ -160,6 +165,42 @@ export const MediaDetailSidebar = ({
     ],
     [item.createdAt, item.format]
   );
+  const eventSummaryFields = useMemo(
+    () =>
+      !eventDetails
+        ? []
+        : [
+            { label: "Status", value: formatMetaValue(eventDetails.status) },
+            { label: "Event date", value: formatMetaValue(eventDateLabel) },
+            { label: "Sport", value: formatMetaValue(eventDetails.sport) },
+            { label: "Program", value: formatMetaValue(eventDetails.program) },
+            { label: "Level", value: formatMetaValue(eventDetails.level) },
+            { label: "Season", value: formatMetaValue(eventDetails.year) },
+            { label: "Stream", value: formatMetaValue(eventDetails.primaryStreamName || eventDetails.primaryStreamId) },
+            { label: "Location", value: formatMetaValue(eventDetails.locationLabel) },
+            { label: "Metrics", value: formatMetaValue(eventMetrics.join(" · ")) },
+          ].filter((field) => field.value && field.value !== "--"),
+    [eventDateLabel, eventDetails, eventMetrics]
+  );
+  const eventSummarySection =
+    isEventItem && eventSummaryFields.length > 0 ? (
+      <div className="space-y-3">
+        <h6 className="text-sm font-medium text-custom-text-100">Event Summary</h6>
+        <div className="space-y-2">
+          {eventSummaryFields.map((field) => (
+            <div key={field.label} className="flex items-start justify-between gap-3 text-sm">
+              <span className="text-custom-text-300">{field.label}</span>
+              <span
+                className="ml-auto block max-w-[65%] truncate text-right text-custom-text-100"
+                title={field.value}
+              >
+                {field.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null;
 
   useEffect(() => {
     if (!workItemId) {
@@ -168,6 +209,19 @@ export const MediaDetailSidebar = ({
     }
     setPeekIssue({ workspaceSlug, projectId, issueId: workItemId });
   }, [projectId, setPeekIssue, workItemId, workspaceSlug]);
+
+  if (workItemId && isEventItem) {
+    return (
+      <div className={sidebarClassName}>
+        <div className="vertical-scrollbar scrollbar-md h-full overflow-y-auto px-6">
+          <div className="space-y-6">
+            <DetailIssueOverview embedIssue mediaItem={item} onMediaItemUpdated={onMediaItemUpdated} />
+            {eventSummarySection}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!workItemId) {
     return (
@@ -208,6 +262,8 @@ export const MediaDetailSidebar = ({
                   ))}
               </div>
             </div>
+
+            {eventSummarySection}
 
             <div>
               <h6 className="text-sm font-medium">Event Details</h6>

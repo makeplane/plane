@@ -3,8 +3,9 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { FileText, Image as ImageIcon, Video, X } from "lucide-react";
-import type { TMediaItem } from "../types/media-library.types";
 import { useMember } from "@/hooks/store/use-member";
+import type { TMediaItem } from "../types/media-library.types";
+import { getStructuredEventTags, isEventMediaItem } from "../utils/media-event";
 
 type TagsSectionProps = {
   item: TMediaItem;
@@ -88,7 +89,10 @@ export const TagsSection = ({ item, onPlay, editable = false, isSaving = false, 
   const oppositionName = normalizeTagValue(meta.opposition);
   const { getUserDetails } = useMember();
   const [tagDraft, setTagDraft] = useState("");
-  const tagsList = Array.isArray(meta.tags) ? meta.tags : [];
+  const rawTags = Array.isArray(meta.tags) ? meta.tags : [];
+  const isEventItem = isEventMediaItem(item);
+  const structuredEventTags = getStructuredEventTags(item);
+  const tagsList = rawTags.filter((tag): tag is string => typeof tag === "string" && tag.trim().length > 0);
   const tagMap = new Map<string, string>();
 
   const addTag = (label: string, value: unknown) => {
@@ -123,8 +127,19 @@ export const TagsSection = ({ item, onPlay, editable = false, isSaving = false, 
     return (
       <div className="w-full self-start lg:max-w-[720px]">
         <div className="text-[11px] text-custom-text-300">
-          <div className="mb-1">Tags</div>
-          <div className="flex min-h-[34px] w-full flex-wrap items-center gap-2 rounded-md   px-2 py-1.5">
+          <div className="mb-1">{isEventItem && structuredEventTags.length > 0 ? "Event tags" : "Tags"}</div>
+          <div className="flex min-h-[34px] w-full flex-wrap items-center gap-2 rounded-md px-2 py-1.5">
+            {structuredEventTags.length > 0
+              ? structuredEventTags.map((tag, index) => (
+                  <span
+                    key={`${tag.label}-${index}`}
+                    className="inline-flex items-center gap-1 rounded-full border border-custom-primary-100/30 bg-custom-primary-100/15 px-2 py-0.5 text-[11px] font-medium text-custom-primary-100"
+                    title={tag.label}
+                  >
+                    {tag.label}
+                  </span>
+                ))
+              : null}
             {tagsList.map((tag) => (
               <span
                 key={tag}
@@ -142,22 +157,28 @@ export const TagsSection = ({ item, onPlay, editable = false, isSaving = false, 
                 </button>
               </span>
             ))}
-            <input
-              type="text"
-              value={tagDraft}
-              onChange={(event) => setTagDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === ",") {
-                  event.preventDefault();
-                  handleAddTag(tagDraft);
-                }
-              }}
-              placeholder={tagsList.length === 0 ? "Add tags" : ""}
-              className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-[11px] text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
-              disabled={isSaving}
-            />
+            {!structuredEventTags.length ? (
+              <input
+                type="text"
+                value={tagDraft}
+                onChange={(event) => setTagDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === ",") {
+                    event.preventDefault();
+                    handleAddTag(tagDraft);
+                  }
+                }}
+                placeholder={tagsList.length === 0 ? "Add tags" : ""}
+                className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-[11px] text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+                disabled={isSaving}
+              />
+            ) : null}
           </div>
-          <div className="mt-1 text-[10px] text-custom-text-300">Press comma or Enter to add.</div>
+          <div className="mt-1 text-[10px] text-custom-text-300">
+            {structuredEventTags.length > 0
+              ? "These tags were captured during the live event."
+              : "Press comma or Enter to add."}
+          </div>
         </div>
       </div>
     );

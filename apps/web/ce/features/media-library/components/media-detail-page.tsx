@@ -6,17 +6,17 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import videojs from "video.js";
 import { ArrowLeft } from "lucide-react";
-import "video.js/dist/video-js.css";
+// import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { SgEventDetailPage } from "@/components/issues/issue-detail/sg-event-detail-page";
 import { useMember } from "@/hooks/store/use-member";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { MediaLibraryService } from "@/services/media-library.service";
-import { TagsSection } from "./tags-section";
+import { PLAYER_STYLE } from "../constants/player-styles";
 import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { useMediaLibraryItem } from "../hooks/use-media-library-item";
 import type { TMediaItem } from "../types/media-library.types";
-import { MediaDetailPreview } from "./media-detail-preview";
-import { MediaDetailSidebar } from "./media-detail-sidebar";
 import {
   getCaptionTracks,
   getMetaString,
@@ -24,8 +24,10 @@ import {
   getVideoMimeType,
   getVideoRepresentations,
 } from "../utils/media-detail-utils";
-import { PLAYER_STYLE } from "../constants/player-styles";
-
+import { isEventMediaItem } from "../utils/media-event";
+import { MediaDetailPreview } from "./media-detail-preview";
+import { MediaDetailSidebar } from "./media-detail-sidebar";
+import { TagsSection } from "./tags-section";
 
 type TPipCaptionMode = "disabled" | "hidden" | "showing";
 
@@ -35,6 +37,7 @@ const MediaDetailPage = () => {
     workspaceSlug: string;
     projectId: string;
   };
+  const router = useAppRouter();
   const { getUserDetails } = useMember();
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from") ?? "";
@@ -52,6 +55,7 @@ const MediaDetailPage = () => {
     () => (rawItem ? { ...rawItem, ...(mediaItemOverrides ?? {}) } : rawItem),
     [mediaItemOverrides, rawItem]
   );
+  const isSgEventAsset = useMemo(() => (item ? isEventMediaItem(item) : false), [item]);
   const handleMediaItemUpdated = useCallback((updates?: Partial<TMediaItem>) => {
     if (!updates || Object.keys(updates).length === 0) return;
     setMediaItemOverrides((prev) => ({ ...(prev ?? {}), ...updates }));
@@ -758,6 +762,18 @@ const MediaDetailPage = () => {
   }
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
   const createdByLabel = (createdBy ? getUserDetails(createdBy)?.display_name ?? createdBy : "") || item.author;
+
+  if (isSgEventAsset) {
+    return (
+      <SgEventDetailPage
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        mediaItem={item}
+        fallbackBackHref={backHref}
+        onBack={() => router.push(backHref)}
+      />
+    );
+  }
 
   return (
     <div className="relative h-full w-full overflow-x-hidden overflow-y-auto lg:overflow-y-hidden">

@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@plane/constants";
 
 import type { TMediaArtifact } from "@/services/media-library.service";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
+import { getEventMediaContextLabel, getEventMediaDateLabel, getEventMediaDetails } from "./media-event";
 
 type TArtifactContext = {
   workspaceSlug: string;
@@ -329,14 +330,21 @@ export const mapArtifactsToMediaItems = (
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
     const meta = resolveArtifactMeta(artifact, context?.metadata);
+    const eventDetails = getEventMediaDetails(meta);
     const workItemId = getArtifactWorkItemId(artifact, meta);
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
-    const displayTitle =
-      format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
+    const linkedTitle = format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
+    const displayTitle = eventDetails?.title || linkedTitle;
     const baseDescription = (artifact.description ?? getMetaString(meta, ["description", "summary"], "")).trim();
-    const description = format === "thumbnail" ? "" : htmlToPlainText(baseDescription);
+    const eventContextLabel = getEventMediaContextLabel(meta);
+    const eventDateLabel = getEventMediaDateLabel(meta);
+    const descriptionSource =
+      eventDetails && !baseDescription
+        ? [eventContextLabel, eventDateLabel].filter((entry): entry is string => Boolean(entry)).join(" · ")
+        : baseDescription;
+    const description = format === "thumbnail" ? "" : htmlToPlainText(descriptionSource);
     const descriptionHtml =
-      format === "thumbnail" || !containsHtmlTags(baseDescription) ? undefined : baseDescription;
+      format === "thumbnail" || !containsHtmlTags(descriptionSource) ? undefined : descriptionSource;
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
@@ -373,7 +381,9 @@ export const mapArtifactsToMediaItems = (
     const linkedMediaType = linkTarget
       ? mediaTypeByName.get(linkTarget) ?? (linkFormat ? getMediaType(linkFormat) : inferredLinkedMediaType)
       : undefined;
-    const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
+    const secondaryTag =
+      getMetaString(meta, ["season", "level", "status", "coach"], "") ||
+      (eventDetails?.status ?? "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
     const docs = getMetaStringArray(meta, "docs");

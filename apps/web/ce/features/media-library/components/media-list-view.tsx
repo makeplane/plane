@@ -5,8 +5,8 @@ import type { MouseEvent } from "react";
 import Link from "next/link";
 import { File, Image, ImageOff, Video } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
-import { useVideoDuration } from "../hooks/use-video-duration";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
+import { getEventMediaDateLabel, isEventMediaItem } from "../utils/media-event";
 
 const MediaListRow = ({
   item,
@@ -19,8 +19,8 @@ const MediaListRow = ({
   onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
-  const durationLabel = useVideoDuration(item);
   const [isThumbnailUnavailable, setIsThumbnailUnavailable] = useState(!item.thumbnail);
+  const isEventItem = isEventMediaItem(item);
 
   useEffect(() => {
     setIsThumbnailUnavailable(!item.thumbnail);
@@ -28,7 +28,12 @@ const MediaListRow = ({
 
   // console.log("Rendering MediaListRow for item:", item);
 
-  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : (item.linkedMediaType ?? item.mediaType);
+  const typeLabel = getItemTypeLabel
+    ? getItemTypeLabel(item)
+    : isEventItem
+      ? "event"
+      : (item.linkedMediaType ?? item.mediaType);
+  const dateLabel = isEventItem ? getEventMediaDateLabel(item) || item.createdAt : item.createdAt;
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
   const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
   const linkedTypeLabel = showLinkedTypeIndicator
@@ -93,7 +98,7 @@ const MediaListRow = ({
       </TableCell>
       <TableCell className="min-w-[160px] border-r border-custom-border-200 text-xs text-custom-text-300">
         <Link href={itemHref} onClick={handleItemClick} className="block">
-          {item.createdAt}
+          {dateLabel}
         </Link>
       </TableCell>
       <TableCell className="min-w-[120px] text-xs text-custom-text-300">
