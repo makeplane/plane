@@ -115,7 +115,7 @@ export const ComposeModal = observer(function ComposeModal() {
         )}
       >
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex h-12 items-center justify-between border-b border-[var(--mail-border)] bg-[var(--mail-ink)] px-4 text-white">
+          <div className="flex h-12 items-center justify-between border-b border-[var(--mail-border)] bg-[var(--mail-compose-header)] px-4 text-[var(--mail-compose-header-ink)]">
             <div className="text-sm font-medium">{t("mail.compose.new")}</div>
             <div className="flex items-center gap-1">
               <button

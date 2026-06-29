@@ -11,6 +11,8 @@
   --mail-accent: #c24e2c;
   --mail-accent-strong: #a63f22;
   --mail-accent-soft: #f4ded6;
+  --mail-compose-header: #201e1a;
+  --mail-compose-header-ink: #ffffff;
   color-scheme: light;
   font-family:
     "Hanken Grotesk",
@@ -35,6 +37,8 @@
   --mail-accent: #f07a55;
   --mail-accent-strong: #ff8b66;
   --mail-accent-soft: #3b251f;
+  --mail-compose-header: #0f1115;
+  --mail-compose-header-ink: #f3f0e8;
   color-scheme: dark;
 }
 
