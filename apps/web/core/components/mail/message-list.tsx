@@ -19,6 +19,7 @@ type Props = {
   loading?: boolean;
   hasMore?: boolean;
   loadingMore?: boolean;
+  showSnippets?: boolean;
   onLoadMore?: () => void;
   onSearch?: (query: string) => void;
   onToggleStar: (message: TMailMessageSummary) => void;
@@ -27,16 +28,27 @@ type Props = {
 const SKELETON_ROWS = ["one", "two", "three", "four", "five", "six", "seven"];
 
 export const MessageList = observer(function MessageList(props: Props) {
-  const { folderKey, messages, selectedUid, loading, hasMore, loadingMore, onLoadMore, onSearch, onToggleStar } = props;
+  const {
+    folderKey,
+    messages,
+    selectedUid,
+    loading,
+    hasMore,
+    loadingMore,
+    showSnippets = true,
+    onLoadMore,
+    onSearch,
+    onToggleStar,
+  } = props;
   const { t } = useTranslation();
 
   return (
     <section className="flex h-full w-[380px] flex-shrink-0 flex-col border-r border-[var(--mail-border)] bg-[var(--mail-panel)]">
       <div className="border-b border-[var(--mail-border)] p-4">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--mail-muted)]" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[var(--mail-muted)]" />
           <input
-            className="h-10 w-full rounded-md border border-[var(--mail-border)] bg-white pl-9 pr-3 text-sm text-[var(--mail-ink)] outline-none focus:border-[var(--mail-accent)]"
+            className="text-sm h-10 w-full rounded-md border border-[var(--mail-border)] bg-white pr-3 pl-9 text-[var(--mail-ink)] outline-none focus:border-[var(--mail-accent)]"
             placeholder={t("mail.search.placeholder")}
             onKeyDown={(event) => {
               if (event.key === "Enter") onSearch?.(event.currentTarget.value);
@@ -73,24 +85,36 @@ export const MessageList = observer(function MessageList(props: Props) {
                   }}
                   title={message.is_starred ? t("mail.list.unstar") : t("mail.list.star")}
                 >
-                  <Star className={cn("size-4", message.is_starred && "fill-[var(--mail-accent)] text-[var(--mail-accent)]")} />
+                  <Star
+                    className={cn(
+                      "size-4",
+                      message.is_starred && "fill-[var(--mail-accent)] text-[var(--mail-accent)]"
+                    )}
+                  />
                 </button>
-                <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--mail-ink)]">
+                <div className="text-sm min-w-0 flex-1 truncate font-medium text-[var(--mail-ink)]">
                   {formatMailAddress(message.from) || t("mail.list.unknown_sender")}
                 </div>
-                <div className="flex-shrink-0 text-xs text-[var(--mail-muted)]">{formatMailDate(message.date)}</div>
+                <div className="text-xs flex-shrink-0 text-[var(--mail-muted)]">{formatMailDate(message.date)}</div>
               </div>
               <div className="mb-1 flex items-center gap-2">
-                <div className={cn("truncate text-sm", !message.is_read ? "font-semibold text-[var(--mail-ink)]" : "text-[var(--mail-ink)]")}>
+                <div
+                  className={cn(
+                    "text-sm truncate",
+                    !message.is_read ? "font-semibold text-[var(--mail-ink)]" : "text-[var(--mail-ink)]"
+                  )}
+                >
                   {message.subject}
                 </div>
                 {message.has_attachments && <Paperclip className="size-3.5 flex-shrink-0 text-[var(--mail-muted)]" />}
               </div>
-              <div className="line-clamp-2 text-xs leading-5 text-[var(--mail-muted)]">{message.snippet}</div>
+              {showSnippets && (
+                <div className="text-xs line-clamp-2 leading-5 text-[var(--mail-muted)]">{message.snippet}</div>
+              )}
             </Link>
           ))
         ) : (
-          <div className="flex h-full items-center justify-center px-8 text-center text-sm text-[var(--mail-muted)]">
+          <div className="text-sm flex h-full items-center justify-center px-8 text-center text-[var(--mail-muted)]">
             {t("mail.list.empty")}
           </div>
         )}
@@ -101,7 +125,7 @@ export const MessageList = observer(function MessageList(props: Props) {
               type="button"
               onClick={onLoadMore}
               disabled={loadingMore}
-              className="w-full rounded-md border border-[var(--mail-border)] bg-white py-2 text-sm font-medium text-[var(--mail-muted)] hover:border-[var(--mail-accent)] hover:text-[var(--mail-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="text-sm w-full rounded-md border border-[var(--mail-border)] bg-white py-2 font-medium text-[var(--mail-muted)] hover:border-[var(--mail-accent)] hover:text-[var(--mail-accent)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loadingMore ? t("mail.list.loading_more") : t("mail.list.load_more")}
             </button>

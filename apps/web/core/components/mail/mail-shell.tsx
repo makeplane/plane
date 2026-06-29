@@ -7,7 +7,7 @@
 import { useEffect } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { observer } from "mobx-react";
-import { ArrowLeft, RefreshCw, Search } from "lucide-react";
+import { ArrowLeft, Globe2, RefreshCw, Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { useMail } from "@/hooks/store/use-mail";
@@ -23,9 +23,9 @@ export const MailShell = observer(function MailShell() {
 
   useEffect(() => {
     void (async () => {
-      const response = await mail.fetchMe();
-      if (response.has_mailbox) {
-        mail.fetchFolders();
+      const response = await mail.fetchMe().catch(() => null);
+      if (response?.has_mailbox) {
+        mail.fetchFolders().catch(() => undefined);
         mail.fetchSettings().catch(() => undefined);
       }
     })();
@@ -58,14 +58,21 @@ export const MailShell = observer(function MailShell() {
                     type="button"
                     className="mail-secondary-button"
                     onClick={() => {
-                      mail.fetchFolders();
+                      mail.fetchFolders().catch(() => undefined);
                       const folderKey = location.pathname.split("/")[2] || "inbox";
-                      if (folderKey && folderKey !== "settings" && folderKey !== "search") mail.fetchMessages(folderKey);
+                      if (folderKey && !["settings", "search", "webmail"].includes(folderKey))
+                        mail.fetchMessages(folderKey).catch(() => undefined);
                     }}
                   >
                     <RefreshCw className="size-4" />
                     {t("mail.topbar.refresh")}
                   </button>
+                  {mail.webmailUrl && (
+                    <button className="mail-secondary-button" type="button" onClick={() => navigate("/mail/webmail")}>
+                      <Globe2 className="size-4" />
+                      {t("mail.topbar.webmail")}
+                    </button>
+                  )}
                   <button className="mail-secondary-button" type="button" onClick={() => navigate("/mail/search")}>
                     <Search className="size-4" />
                     {t("mail.search.title")}

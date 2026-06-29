@@ -7,7 +7,19 @@
 import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { observer } from "mobx-react";
-import { Archive, FileText, Inbox, PenLine, Plus, Send, Settings, ShieldAlert, Star, Trash2 } from "lucide-react";
+import {
+  Archive,
+  FileText,
+  Globe2,
+  Inbox,
+  PenLine,
+  Plus,
+  Send,
+  Settings,
+  ShieldAlert,
+  Star,
+  Trash2,
+} from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { useMail } from "@/hooks/store/use-mail";
@@ -49,7 +61,7 @@ export const MailSidebar = observer(function MailSidebar() {
       <div className="mb-5 flex items-center justify-between">
         <div>
           <div className="text-lg font-semibold text-[var(--mail-ink)]">Gizmo Mail</div>
-          <div className="max-w-[190px] truncate text-xs text-[var(--mail-muted)]">{mail.mailboxEmail}</div>
+          <div className="text-xs max-w-[190px] truncate text-[var(--mail-muted)]">{mail.mailboxEmail}</div>
         </div>
         <NavLink
           to="/mail/settings"
@@ -62,12 +74,27 @@ export const MailSidebar = observer(function MailSidebar() {
 
       <button
         type="button"
-        className="mb-5 flex h-10 items-center justify-center gap-2 rounded-md bg-[var(--mail-accent)] px-3 text-sm font-medium text-white hover:bg-[var(--mail-accent-strong)]"
+        className="text-sm mb-5 flex h-10 items-center justify-center gap-2 rounded-md bg-[var(--mail-accent)] px-3 font-medium text-white hover:bg-[var(--mail-accent-strong)]"
         onClick={() => mail.openCompose()}
       >
         <PenLine className="size-4" />
         {t("mail.compose.new")}
       </button>
+
+      {mail.webmailUrl && (
+        <NavLink
+          to="/mail/webmail"
+          className={({ isActive }) =>
+            cn(
+              "text-sm mb-3 flex h-9 items-center gap-2 rounded-md px-2.5 text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]",
+              isActive && "shadow-sm bg-white text-[var(--mail-ink)]"
+            )
+          }
+        >
+          <Globe2 className="size-4 flex-shrink-0" />
+          <span className="truncate">{t("mail.sidebar.webmail")}</span>
+        </NavLink>
+      )}
 
       <nav className="flex flex-1 flex-col gap-1">
         {folders.map((folder) => {
@@ -78,8 +105,8 @@ export const MailSidebar = observer(function MailSidebar() {
               to={`/mail/${folder.key}`}
               className={({ isActive }) =>
                 cn(
-                  "flex h-9 items-center justify-between rounded-md px-2.5 text-sm text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]",
-                  isActive && "bg-white text-[var(--mail-ink)] shadow-sm"
+                  "text-sm flex h-9 items-center justify-between rounded-md px-2.5 text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]",
+                  isActive && "shadow-sm bg-white text-[var(--mail-ink)]"
                 )
               }
             >
@@ -88,7 +115,7 @@ export const MailSidebar = observer(function MailSidebar() {
                 <span className="truncate">{folder.label}</span>
               </span>
               {!!folder.unread && (
-                <span className="rounded-full bg-[var(--mail-accent-soft)] px-2 py-0.5 text-xs text-[var(--mail-accent)]">
+                <span className="text-xs rounded-full bg-[var(--mail-accent-soft)] px-2 py-0.5 text-[var(--mail-accent)]">
                   {folder.unread}
                 </span>
               )}
@@ -99,7 +126,7 @@ export const MailSidebar = observer(function MailSidebar() {
 
       <div className="mt-4 border-t border-[var(--mail-border)] pt-4">
         <div className="mb-1 flex items-center justify-between px-2.5">
-          <span className="text-xs font-semibold uppercase tracking-wide text-[var(--mail-muted)]">
+          <span className="text-xs font-semibold tracking-wide text-[var(--mail-muted)] uppercase">
             {t("mail.sidebar.labels")}
           </span>
           <button
@@ -117,7 +144,7 @@ export const MailSidebar = observer(function MailSidebar() {
               <button
                 key={label.id}
                 type="button"
-                className="flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
+                className="text-sm flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
                 onClick={() => navigate(`/mail/search?label=${encodeURIComponent(label.id)}`)}
               >
                 <span className="size-2.5 flex-shrink-0 rounded" style={{ backgroundColor: label.color }} />
@@ -125,7 +152,7 @@ export const MailSidebar = observer(function MailSidebar() {
               </button>
             ))
           ) : (
-            <div className="px-2.5 py-1 text-xs text-[var(--mail-muted)]">{t("mail.sidebar.no_labels")}</div>
+            <div className="text-xs px-2.5 py-1 text-[var(--mail-muted)]">{t("mail.sidebar.no_labels")}</div>
           )}
         </div>
       </div>
@@ -134,10 +161,10 @@ export const MailSidebar = observer(function MailSidebar() {
         to="/mail/settings?tab=account"
         className="mt-4 flex items-center gap-3 rounded-lg border-t border-[var(--mail-border)] px-2 pt-4 hover:opacity-80"
       >
-        <span className="grid size-8 flex-shrink-0 place-items-center rounded-full bg-[var(--mail-ink)] text-xs font-semibold text-white">
+        <span className="text-xs grid size-8 flex-shrink-0 place-items-center rounded-full bg-[var(--mail-ink)] font-semibold text-white">
           {initials}
         </span>
-        <span className="min-w-0 flex-1 truncate text-xs text-[var(--mail-muted)]">{mail.mailboxEmail}</span>
+        <span className="text-xs min-w-0 flex-1 truncate text-[var(--mail-muted)]">{mail.mailboxEmail}</span>
       </NavLink>
     </aside>
   );

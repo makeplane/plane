@@ -6,7 +6,7 @@ from email import message_from_bytes
 from email.policy import default
 
 from django.core.cache import cache
-from django.utils import timezone
+from bs4 import BeautifulSoup
 
 from plane.mail.folders import (
     MAIL_FOLDER_LABELS,
@@ -47,6 +47,24 @@ def _addresses(message, name):
     return parsed.get(name.lower(), [])
 
 
+def _snippet_from_preview(raw_message):
+    if not raw_message:
+        return ""
+    if isinstance(raw_message, str):
+        raw_message = raw_message.encode("utf-8", errors="replace")
+
+    try:
+        parsed = parse_message_bytes(raw_message)
+        if parsed.get("snippet"):
+            return parsed["snippet"]
+    except Exception:
+        pass
+
+    text = raw_message.decode("utf-8", errors="replace")
+    text = BeautifulSoup(text, "html.parser").get_text(" ")
+    return " ".join(text.split())[:180]
+
+
 def _summary_from_header(folder_key, uid, data):
     header_bytes = _fetch_value(data, "BODY[HEADER]", "BODY[]", "RFC822.HEADER") or b""
     if isinstance(header_bytes, str):
@@ -56,7 +74,8 @@ def _summary_from_header(folder_key, uid, data):
     flags = _flag_names(_fetch_value(data, "FLAGS") or [])
     internal_date = _fetch_value(data, "INTERNALDATE")
     bodystructure = str(_fetch_value(data, "BODYSTRUCTURE") or "")
-    snippet = ""
+    preview_bytes = _fetch_value(data, "BODY[]<0", "BODY.PEEK[]<0", "BODY[TEXT]<0", "BODY.PEEK[TEXT]<0")
+    snippet = _snippet_from_preview(preview_bytes)
 
     return {
         "uid": str(uid),
@@ -170,7 +189,14 @@ class MailClient:
 
             fetched = session.client.fetch(
                 page_uids,
-                ["FLAGS", "INTERNALDATE", "RFC822.SIZE", "BODY.PEEK[HEADER]", "BODYSTRUCTURE"],
+                [
+                    "FLAGS",
+                    "INTERNALDATE",
+                    "RFC822.SIZE",
+                    "BODY.PEEK[HEADER]",
+                    "BODY.PEEK[]<0.8192>",
+                    "BODYSTRUCTURE",
+                ],
             )
             results = [_summary_from_header(folder_key, uid, fetched.get(uid, {})) for uid in page_uids]
 

@@ -23,8 +23,10 @@ import {
   TextField,
 } from "./primitives";
 
-type Condition = { field: string; op: string; value: string };
-type Action = { type: string; value: string };
+type StoredCondition = { field?: string; op?: string; value?: string };
+type StoredAction = { type?: string; value?: string };
+type Condition = { id: string; field: string; op: string; value: string };
+type Action = { id: string; type: string; value: string };
 type Draft = {
   name: string;
   is_active: boolean;
@@ -36,26 +38,38 @@ type Draft = {
 const FIELD_OPTIONS = ["from", "to", "subject", "body"];
 const ACTION_OPTIONS = ["label", "mark_read", "skip_inbox", "star", "mark_important", "move_spam"];
 
-const emptyCondition = (): Condition => ({ field: "from", op: "contains", value: "" });
-const emptyAction = (): Action => ({ type: "label", value: "" });
+let draftItemCounter = 0;
 
-const DEFAULT_DRAFT: Draft = {
+const draftItemId = () => `mail-filter-draft-${draftItemCounter++}`;
+const emptyCondition = (): Condition => ({ id: draftItemId(), field: "from", op: "contains", value: "" });
+const emptyAction = (): Action => ({ id: draftItemId(), type: "label", value: "" });
+
+const createDefaultDraft = (): Draft => ({
   name: "",
   is_active: true,
   match_type: "all",
   conditions: [emptyCondition()],
   actions: [emptyAction()],
-};
+});
 
 const toDraft = (rule: TMailFilterRule): Draft => ({
   name: rule.name,
   is_active: rule.is_active,
   match_type: rule.match_type ?? "all",
-  conditions: (rule.conditions as Condition[] | undefined)?.length
-    ? (rule.conditions as Condition[]).map((c) => ({ field: c.field ?? "from", op: c.op ?? "contains", value: c.value ?? "" }))
+  conditions: (rule.conditions as StoredCondition[] | undefined)?.length
+    ? (rule.conditions as StoredCondition[]).map((c) => ({
+        id: draftItemId(),
+        field: c.field ?? "from",
+        op: c.op ?? "contains",
+        value: c.value ?? "",
+      }))
     : [emptyCondition()],
-  actions: (rule.actions as Action[] | undefined)?.length
-    ? (rule.actions as Action[]).map((a) => ({ type: a.type ?? "label", value: a.value ?? "" }))
+  actions: (rule.actions as StoredAction[] | undefined)?.length
+    ? (rule.actions as StoredAction[]).map((a) => ({
+        id: draftItemId(),
+        type: a.type ?? "label",
+        value: a.value ?? "",
+      }))
     : [emptyAction()],
 });
 
@@ -64,7 +78,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
   const mail = useMail();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [draft, setDraft] = useState<Draft>(DEFAULT_DRAFT);
+  const [draft, setDraft] = useState<Draft>(createDefaultDraft);
   const [saving, setSaving] = useState(false);
 
   const isEditing = creating || editingId !== null;
@@ -72,7 +86,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
   const startCreate = () => {
     setCreating(true);
     setEditingId(null);
-    setDraft(DEFAULT_DRAFT);
+    setDraft(createDefaultDraft());
   };
   const startEdit = (rule: TMailFilterRule) => {
     setCreating(false);
@@ -82,7 +96,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
   const cancel = () => {
     setCreating(false);
     setEditingId(null);
-    setDraft(DEFAULT_DRAFT);
+    setDraft(createDefaultDraft());
   };
 
   const save = async () => {
@@ -92,8 +106,8 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
       name: draft.name,
       is_active: draft.is_active,
       match_type: draft.match_type,
-      conditions: draft.conditions.filter((c) => c.value.trim()),
-      actions: draft.actions.filter((a) => a.type),
+      conditions: draft.conditions.filter((c) => c.value.trim()).map(({ field, op, value }) => ({ field, op, value })),
+      actions: draft.actions.filter((a) => a.type).map(({ type, value }) => ({ type, value })),
     } as Partial<TMailFilterRule>;
     try {
       if (editingId) await mail.updateFilter(editingId, payload);
@@ -154,15 +168,13 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
             onChange={(event) => setDraft((prev) => ({ ...prev, name: event.target.value }))}
           />
 
-          <div className="mt-5 flex items-center gap-2 text-sm">
-            <span className="font-mono text-xs font-semibold uppercase text-[var(--mail-muted)]">
+          <div className="text-sm mt-5 flex items-center gap-2">
+            <span className="font-mono text-xs font-semibold text-[var(--mail-muted)] uppercase">
               {t("mail.settings.filters.if")}
             </span>
             <SelectField
               value={draft.match_type}
-              onChange={(event) =>
-                setDraft((prev) => ({ ...prev, match_type: event.target.value as "all" | "any" }))
-              }
+              onChange={(event) => setDraft((prev) => ({ ...prev, match_type: event.target.value as "all" | "any" }))}
             >
               <option value="all">{t("mail.settings.filters.match_all")}</option>
               <option value="any">{t("mail.settings.filters.match_any")}</option>
@@ -171,7 +183,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
 
           <div className="mt-3 space-y-2">
             {draft.conditions.map((condition, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={condition.id} className="flex items-center gap-2">
                 <SelectField
                   value={condition.field}
                   onChange={(event) =>
@@ -217,7 +229,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
             ))}
             <button
               type="button"
-              className="flex items-center gap-1.5 text-sm font-medium text-[var(--mail-accent)]"
+              className="text-sm flex items-center gap-1.5 font-medium text-[var(--mail-accent)]"
               onClick={() => setDraft((prev) => ({ ...prev, conditions: [...prev.conditions, emptyCondition()] }))}
             >
               <Plus className="size-3.5" /> {t("mail.settings.filters.add_condition")}
@@ -225,13 +237,13 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
           </div>
 
           <div className="mt-5 flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold uppercase text-[var(--mail-muted)]">
-              {t("mail.settings.filters.then")}
+            <span className="font-mono text-xs font-semibold text-[var(--mail-muted)] uppercase">
+              {t("mail.settings.filters.then_label")}
             </span>
           </div>
           <div className="mt-3 space-y-2">
             {draft.actions.map((action, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={action.id} className="flex items-center gap-2">
                 <SelectField
                   value={action.type}
                   onChange={(event) =>
@@ -254,9 +266,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
                     onChange={(event) =>
                       setDraft((prev) => ({
                         ...prev,
-                        actions: prev.actions.map((a, i) =>
-                          i === index ? { ...a, value: event.target.value } : a
-                        ),
+                        actions: prev.actions.map((a, i) => (i === index ? { ...a, value: event.target.value } : a)),
                       }))
                     }
                   >
@@ -283,7 +293,7 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
             ))}
             <button
               type="button"
-              className="flex items-center gap-1.5 text-sm font-medium text-[var(--mail-accent)]"
+              className="text-sm flex items-center gap-1.5 font-medium text-[var(--mail-accent)]"
               onClick={() => setDraft((prev) => ({ ...prev, actions: [...prev.actions, emptyAction()] }))}
             >
               <Plus className="size-3.5" /> {t("mail.settings.filters.add_action")}
@@ -292,7 +302,10 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
 
           <label className="mt-5 flex items-center justify-between">
             <span className="text-sm font-medium text-[var(--mail-ink)]">{t("mail.settings.filters.active")}</span>
-            <MailToggle value={draft.is_active} onChange={(value) => setDraft((prev) => ({ ...prev, is_active: value }))} />
+            <MailToggle
+              value={draft.is_active}
+              onChange={(value) => setDraft((prev) => ({ ...prev, is_active: value }))}
+            />
           </label>
 
           <div className="mt-5 flex gap-3">
@@ -309,10 +322,10 @@ export const MailFiltersSettings = observer(function MailFiltersSettings() {
               <div className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="font-medium text-[var(--mail-ink)]">{rule.name}</div>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--mail-muted)]">
+                  <div className="text-xs mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[var(--mail-muted)]">
                     <span className="font-mono font-semibold">{t("mail.settings.filters.if")}</span>
                     <span className="text-[var(--mail-ink)]">{summarize(rule.conditions as Condition[], "cond")}</span>
-                    <span className="font-mono font-semibold">{t("mail.settings.filters.then")}</span>
+                    <span className="font-mono font-semibold">{t("mail.settings.filters.then_label")}</span>
                     <span className="text-[var(--mail-ink)]">{summarize(rule.actions as Action[], "act")}</span>
                   </div>
                 </div>

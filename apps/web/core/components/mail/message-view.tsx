@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Archive, Download, Forward, Reply, ShieldAlert, Star, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TMailMessageDetail } from "@plane/types";
 import { formatMailAddress, formatMailDate } from "./helpers";
@@ -38,7 +39,7 @@ export const MessageView = observer(function MessageView(props: Props) {
 
   if (!message) {
     return (
-      <section className="flex min-w-0 flex-1 items-center justify-center bg-[var(--mail-bg)] px-8 text-center text-sm text-[var(--mail-muted)]">
+      <section className="text-sm flex min-w-0 flex-1 items-center justify-center bg-[var(--mail-bg)] px-8 text-center text-[var(--mail-muted)]">
         {t("mail.message.empty")}
       </section>
     );
@@ -62,7 +63,9 @@ export const MessageView = observer(function MessageView(props: Props) {
         </div>
         <div className="flex items-center gap-1">
           <button className="mail-icon-button" type="button" onClick={onToggleStar} title={t("mail.list.star")}>
-            <Star className={message.is_starred ? "size-4 fill-[var(--mail-accent)] text-[var(--mail-accent)]" : "size-4"} />
+            <Star
+              className={message.is_starred ? "size-4 fill-[var(--mail-accent)] text-[var(--mail-accent)]" : "size-4"}
+            />
           </button>
           <button className="mail-icon-button" type="button" onClick={onReply} title={t("mail.actions.reply")}>
             <Reply className="size-4" />
@@ -75,42 +78,42 @@ export const MessageView = observer(function MessageView(props: Props) {
 
       <article className="min-h-0 flex-1 overflow-y-auto px-8 py-7">
         {isJunkOrTrash && (
-          <div className="mb-5 rounded-md border border-[var(--mail-border)] bg-[var(--mail-warning)] px-4 py-3 text-sm text-[var(--mail-ink)]">
+          <div className="text-sm mb-5 rounded-md border border-[var(--mail-border)] bg-[var(--mail-warning)] px-4 py-3 text-[var(--mail-ink)]">
             {folderKey === "spam" ? t("mail.message.spam_banner") : t("mail.message.trash_banner")}
           </div>
         )}
 
-        <h1 className="text-2xl font-semibold leading-tight text-[var(--mail-ink)]">{message.subject}</h1>
+        <h1 className="text-2xl leading-tight font-semibold text-[var(--mail-ink)]">{message.subject}</h1>
         <div className="mt-4 flex items-start justify-between gap-4 border-b border-[var(--mail-border)] pb-5">
           <div className="min-w-0">
             <div className="font-medium text-[var(--mail-ink)]">{formatMailAddress(message.from)}</div>
-            <div className="mt-1 text-xs text-[var(--mail-muted)]">
+            <div className="text-xs mt-1 text-[var(--mail-muted)]">
               {t("mail.message.to")} {formatMailAddress(message.to)}
             </div>
           </div>
-          <div className="flex-shrink-0 text-xs text-[var(--mail-muted)]">{formatMailDate(message.date)}</div>
+          <div className="text-xs flex-shrink-0 text-[var(--mail-muted)]">{formatMailDate(message.date)}</div>
         </div>
 
         {message.html ? (
           <div
-            className="mail-message-body mt-6 max-w-4xl text-sm leading-7 text-[var(--mail-ink)]"
+            className="mail-message-body text-sm mt-6 max-w-4xl leading-7 text-[var(--mail-ink)]"
             dangerouslySetInnerHTML={{ __html: message.html }}
           />
         ) : (
-          <pre className="mail-message-body mt-6 max-w-4xl whitespace-pre-wrap break-words text-sm leading-7 text-[var(--mail-ink)]">
+          <pre className="mail-message-body text-sm mt-6 max-w-4xl leading-7 break-words whitespace-pre-wrap text-[var(--mail-ink)]">
             {message.text}
           </pre>
         )}
 
         {!!message.attachments?.length && (
           <div className="mt-8 border-t border-[var(--mail-border)] pt-5">
-            <div className="mb-3 text-sm font-medium text-[var(--mail-ink)]">{t("mail.message.attachments")}</div>
+            <div className="text-sm mb-3 font-medium text-[var(--mail-ink)]">{t("mail.message.attachments")}</div>
             <div className="grid gap-2 sm:grid-cols-2">
               {message.attachments.map((attachment) => (
                 <a
                   key={attachment.part_id}
-                  href={`/api/mail/folders/${folderKey}/messages/${message.uid}/attachments/${attachment.part_id}/`}
-                  className="flex items-center gap-3 rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-sm text-[var(--mail-ink)] hover:border-[var(--mail-accent)]"
+                  href={`${API_BASE_URL}/api/mail/folders/${folderKey}/messages/${message.uid}/attachments/${attachment.part_id}/`}
+                  className="text-sm flex items-center gap-3 rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-[var(--mail-ink)] hover:border-[var(--mail-accent)]"
                 >
                   <Download className="size-4 text-[var(--mail-muted)]" />
                   <span className="min-w-0 flex-1 truncate">{attachment.filename}</span>

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import IntlMessageFormat from "intl-messageformat";
+import { IntlMessageFormat } from "intl-messageformat";
 import { get, merge } from "lodash-es";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
@@ -168,7 +168,7 @@ export class TranslationStore {
       const merged = modules.reduce((acc: any, module: any) => merge(acc, module.default), {});
       return { default: merged };
     } catch (error) {
-      throw new Error(`Failed to import and merge files for ${language}: ${error}`);
+      throw new Error(`Failed to import and merge files for ${language}: ${error}`, { cause: error });
     }
   }
 

@@ -7,6 +7,7 @@
 import type { ChangeEvent } from "react";
 import { observer } from "mobx-react";
 import { Paperclip, Save, Send, X } from "lucide-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTranslation } from "@plane/i18n";
 import { useMail } from "@/hooks/store/use-mail";
 import { splitRecipients } from "./helpers";
@@ -21,22 +22,48 @@ export const ComposeModal = observer(function ComposeModal() {
 
   const uploadFiles = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
-    await Promise.all(files.map((file) => mail.uploadAttachment(file)));
-    event.target.value = "";
+    try {
+      await Promise.all(files.map((file) => mail.uploadAttachment(file)));
+      event.target.value = "";
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.upload_error") });
+    }
+  };
+
+  const sendMessage = async () => {
+    try {
+      await mail.sendCompose();
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.sent") });
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.send_error") });
+    }
+  };
+
+  const saveDraft = async () => {
+    try {
+      await mail.saveDraft();
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.draft_saved") });
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.draft_error") });
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/20 p-6">
-      <section className="flex h-[680px] max-h-[calc(100vh-48px)] w-[920px] max-w-[calc(100vw-48px)] overflow-hidden rounded-lg bg-white shadow-2xl">
+      <section className="shadow-2xl flex h-[680px] max-h-[calc(100vh-48px)] w-[920px] max-w-[calc(100vw-48px)] overflow-hidden rounded-lg bg-white">
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex h-12 items-center justify-between border-b border-[var(--mail-border)] bg-[var(--mail-ink)] px-4 text-white">
             <div className="text-sm font-medium">{t("mail.compose.new")}</div>
-            <button className="grid size-8 place-items-center rounded hover:bg-white/10" type="button" onClick={mail.closeCompose}>
+            <button
+              className="grid size-8 place-items-center rounded hover:bg-white/10"
+              type="button"
+              onClick={mail.closeCompose}
+            >
               <X className="size-4" />
             </button>
           </div>
 
-          <div className="grid border-b border-[var(--mail-border)] text-sm">
+          <div className="text-sm grid border-b border-[var(--mail-border)]">
             <label className="flex min-h-11 items-center gap-3 px-4">
               <span className="w-12 text-[var(--mail-muted)]">{t("mail.compose.to")}</span>
               <input
@@ -72,7 +99,10 @@ export const ComposeModal = observer(function ComposeModal() {
           {!!draft.uploaded_attachments?.length && (
             <div className="flex flex-wrap gap-2 border-t border-[var(--mail-border)] px-4 py-3">
               {draft.uploaded_attachments.map((attachment) => (
-                <span key={attachment.key} className="rounded-md bg-[var(--mail-hover)] px-2 py-1 text-xs text-[var(--mail-ink)]">
+                <span
+                  key={attachment.key}
+                  className="text-xs rounded-md bg-[var(--mail-hover)] px-2 py-1 text-[var(--mail-ink)]"
+                >
                   {attachment.filename}
                 </span>
               ))}
@@ -85,11 +115,16 @@ export const ComposeModal = observer(function ComposeModal() {
               <input className="hidden" type="file" multiple onChange={uploadFiles} />
             </label>
             <div className="flex items-center gap-2">
-              <button className="mail-secondary-button" type="button" onClick={mail.saveDraft}>
+              <button className="mail-secondary-button" type="button" onClick={saveDraft} disabled={mail.actionLoader}>
                 <Save className="size-4" />
                 {t("mail.compose.save_draft")}
               </button>
-              <button className="mail-primary-button" type="button" onClick={mail.sendCompose} disabled={mail.actionLoader || !draft.to.length}>
+              <button
+                className="mail-primary-button"
+                type="button"
+                onClick={sendMessage}
+                disabled={mail.actionLoader || !draft.to.length}
+              >
                 <Send className="size-4" />
                 {t("mail.compose.send")}
               </button>
@@ -98,14 +133,14 @@ export const ComposeModal = observer(function ComposeModal() {
         </div>
 
         <aside className="hidden w-[260px] flex-shrink-0 border-l border-[var(--mail-border)] bg-[var(--mail-bg)] p-4 lg:block">
-          <div className="mb-3 text-sm font-semibold text-[var(--mail-ink)]">{t("mail.compose.templates")}</div>
+          <div className="text-sm mb-3 font-semibold text-[var(--mail-ink)]">{t("mail.compose.templates")}</div>
           <div className="space-y-2">
             {mail.templates.length ? (
               mail.templates.map((template) => (
                 <button
                   key={template.id}
                   type="button"
-                  className="w-full rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-left text-sm hover:border-[var(--mail-accent)]"
+                  className="text-sm w-full rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-left hover:border-[var(--mail-accent)]"
                   onClick={() =>
                     mail.updateComposeDraft({
                       subject: template.subject || draft.subject,
@@ -115,7 +150,7 @@ export const ComposeModal = observer(function ComposeModal() {
                   }
                 >
                   <div className="font-medium text-[var(--mail-ink)]">{template.name}</div>
-                  <div className="mt-1 line-clamp-2 text-xs text-[var(--mail-muted)]">{template.subject}</div>
+                  <div className="text-xs mt-1 line-clamp-2 text-[var(--mail-muted)]">{template.subject}</div>
                 </button>
               ))
             ) : (

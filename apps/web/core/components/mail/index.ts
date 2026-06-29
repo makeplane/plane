@@ -7,5 +7,6 @@
 export * from "./mail-folder-view";
 export * from "./mail-login";
 export * from "./mail-shell";
+export * from "./mail-webmail-view";
 export * from "./search-view";
 export * from "./settings-view";

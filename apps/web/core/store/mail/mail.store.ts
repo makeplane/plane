@@ -49,6 +49,7 @@ export interface IMailStore {
   hasMailbox: boolean;
   mailboxEmail: string;
   mailDomain: string;
+  webmailUrl: string;
   getFolderByKey: (folderKey: string) => TMailFolder | undefined;
   hasMoreMessages: (folderKey: string) => boolean;
   loadMoreMessages: (folderKey: string) => Promise<void>;
@@ -158,6 +159,7 @@ export class MailStore implements IMailStore {
       hasMailbox: computed,
       mailboxEmail: computed,
       mailDomain: computed,
+      webmailUrl: computed,
       fetchMe: action,
       createAccount: action,
       loginAccount: action,
@@ -206,6 +208,10 @@ export class MailStore implements IMailStore {
     return this.me?.mail_domain ?? this.me?.mailbox?.domain ?? "mail.local";
   }
 
+  get webmailUrl() {
+    return this.me?.webmail_url ?? "";
+  }
+
   getFolderByKey = computedFn((folderKey: string) => this.folders.find((folder) => folder.key === folderKey));
 
   hasMoreMessages = computedFn((folderKey: string) => {
@@ -216,13 +222,21 @@ export class MailStore implements IMailStore {
 
   fetchMe = async () => {
     this.loader = true;
-    const response = await this.service.me();
-    runInAction(() => {
-      this.me = response;
-      this.loader = false;
-      this.accountError = null;
-    });
-    return response;
+    try {
+      const response = await this.service.me();
+      runInAction(() => {
+        this.me = response;
+        this.loader = false;
+        this.accountError = null;
+      });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.accountError = getMailErrorMessage(error);
+      });
+      throw error;
+    }
   };
 
   createAccount = async (payload: TMailAccountCreatePayload) => {
@@ -275,17 +289,24 @@ export class MailStore implements IMailStore {
 
   fetchMessages = async (folderKey: string, params: Record<string, unknown> = {}) => {
     this.loader = true;
-    const response = await this.service.messages(folderKey, params);
-    runInAction(() => {
-      this.messagesByFolder[folderKey] = response.results;
-      this.messagesMeta[folderKey] = {
-        page: response.page,
-        perPage: response.per_page,
-        total: response.total,
-      };
-      this.loader = false;
-    });
-    return response.results;
+    try {
+      const response = await this.service.messages(folderKey, params);
+      runInAction(() => {
+        this.messagesByFolder[folderKey] = response.results;
+        this.messagesMeta[folderKey] = {
+          page: response.page,
+          perPage: response.per_page,
+          total: response.total,
+        };
+        this.loader = false;
+      });
+      return response.results;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+      });
+      throw error;
+    }
   };
 
   loadMoreMessages = async (folderKey: string) => {
@@ -320,12 +341,19 @@ export class MailStore implements IMailStore {
 
   fetchMessage = async (folderKey: string, uid: string) => {
     this.messageLoader = true;
-    const response = await this.service.message(folderKey, uid);
-    runInAction(() => {
-      this.selectedMessage = response;
-      this.messageLoader = false;
-    });
-    return response;
+    try {
+      const response = await this.service.message(folderKey, uid);
+      runInAction(() => {
+        this.selectedMessage = response;
+        this.messageLoader = false;
+      });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.messageLoader = false;
+      });
+      throw error;
+    }
   };
 
   clearSelectedMessage = () => {
@@ -334,6 +362,11 @@ export class MailStore implements IMailStore {
 
   setFlags = async (folderKey: string, uid: string, data: { read?: boolean; starred?: boolean }) => {
     const current = this.messagesByFolder[folderKey]?.find((message) => message.uid === uid);
+    const previousCurrent = current ? { is_read: current.is_read, is_starred: current.is_starred } : null;
+    const previousSelected =
+      this.selectedMessage?.uid === uid
+        ? { is_read: this.selectedMessage.is_read, is_starred: this.selectedMessage.is_starred }
+        : null;
     runInAction(() => {
       if (current) {
         if (data.read !== undefined) current.is_read = data.read;
@@ -344,44 +377,79 @@ export class MailStore implements IMailStore {
         if (data.starred !== undefined) this.selectedMessage.is_starred = data.starred;
       }
     });
-    await this.service.setFlags(folderKey, uid, data);
-    await this.fetchFolders();
+    try {
+      await this.service.setFlags(folderKey, uid, data);
+      await this.fetchFolders().catch(() => undefined);
+    } catch (error) {
+      runInAction(() => {
+        if (current && previousCurrent) {
+          current.is_read = previousCurrent.is_read;
+          current.is_starred = previousCurrent.is_starred;
+        }
+        if (this.selectedMessage?.uid === uid && previousSelected) {
+          this.selectedMessage.is_read = previousSelected.is_read;
+          this.selectedMessage.is_starred = previousSelected.is_starred;
+        }
+      });
+      throw error;
+    }
   };
 
   moveMessages = async (srcFolder: string, dstFolder: string, uids: string[]) => {
     this.actionLoader = true;
-    await this.service.move(srcFolder, dstFolder, uids);
-    runInAction(() => {
-      this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
-        (message) => !uids.includes(message.uid)
-      );
-      if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
-      this.actionLoader = false;
-    });
-    await this.fetchFolders();
+    try {
+      await this.service.move(srcFolder, dstFolder, uids);
+      runInAction(() => {
+        this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
+          (message) => !uids.includes(message.uid)
+        );
+        if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
+        this.actionLoader = false;
+      });
+      await this.fetchFolders().catch(() => undefined);
+    } catch (error) {
+      runInAction(() => {
+        this.actionLoader = false;
+      });
+      throw error;
+    }
   };
 
   deleteMessages = async (srcFolder: string, uids: string[], permanent = false) => {
     this.actionLoader = true;
-    await this.service.deleteMessages(srcFolder, uids, permanent);
-    runInAction(() => {
-      this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
-        (message) => !uids.includes(message.uid)
-      );
-      if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
-      this.actionLoader = false;
-    });
-    await this.fetchFolders();
+    try {
+      await this.service.deleteMessages(srcFolder, uids, permanent);
+      runInAction(() => {
+        this.messagesByFolder[srcFolder] = (this.messagesByFolder[srcFolder] ?? []).filter(
+          (message) => !uids.includes(message.uid)
+        );
+        if (this.selectedMessage && uids.includes(this.selectedMessage.uid)) this.selectedMessage = null;
+        this.actionLoader = false;
+      });
+      await this.fetchFolders().catch(() => undefined);
+    } catch (error) {
+      runInAction(() => {
+        this.actionLoader = false;
+      });
+      throw error;
+    }
   };
 
   search = async (params: Record<string, unknown>) => {
     this.loader = true;
-    const response = await this.service.search(params);
-    runInAction(() => {
-      this.searchResults = response.results;
-      this.loader = false;
-    });
-    return response.results;
+    try {
+      const response = await this.service.search(params);
+      runInAction(() => {
+        this.searchResults = response.results;
+        this.loader = false;
+      });
+      return response.results;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+      });
+      throw error;
+    }
   };
 
   openCompose = (draft: Partial<TMailComposePayload> = {}) => {
@@ -399,23 +467,37 @@ export class MailStore implements IMailStore {
 
   sendCompose = async () => {
     this.actionLoader = true;
-    await this.service.send(this.composeDraft);
-    runInAction(() => {
-      this.composeOpen = false;
-      this.composeDraft = { ...EMPTY_COMPOSE };
-      this.actionLoader = false;
-    });
-    await this.fetchFolders();
+    try {
+      await this.service.send(this.composeDraft);
+      runInAction(() => {
+        this.composeOpen = false;
+        this.composeDraft = { ...EMPTY_COMPOSE };
+        this.actionLoader = false;
+      });
+      await this.fetchFolders().catch(() => undefined);
+    } catch (error) {
+      runInAction(() => {
+        this.actionLoader = false;
+      });
+      throw error;
+    }
   };
 
   saveDraft = async () => {
     this.actionLoader = true;
-    await this.service.saveDraft(this.composeDraft);
-    runInAction(() => {
-      this.composeOpen = false;
-      this.actionLoader = false;
-    });
-    await this.fetchFolders();
+    try {
+      await this.service.saveDraft(this.composeDraft);
+      runInAction(() => {
+        this.composeOpen = false;
+        this.actionLoader = false;
+      });
+      await this.fetchFolders().catch(() => undefined);
+    } catch (error) {
+      runInAction(() => {
+        this.actionLoader = false;
+      });
+      throw error;
+    }
   };
 
   uploadAttachment = async (file: File) => {

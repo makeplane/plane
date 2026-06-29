@@ -23,6 +23,7 @@ export type TMailMailbox = {
 export type TMailMeConfig = {
   has_mailbox: boolean;
   mail_domain: string;
+  webmail_url?: string | null;
   mailbox?: TMailMailbox;
 };
 

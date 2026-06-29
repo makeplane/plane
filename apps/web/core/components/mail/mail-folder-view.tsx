@@ -24,8 +24,30 @@ export const MailFolderView = observer(function MailFolderView() {
   }, [mail, folderKey]);
 
   useEffect(() => {
-    if (uid) mail.fetchMessage(folderKey, uid).catch(() => undefined);
-    else mail.clearSelectedMessage();
+    let disposed = false;
+    let markReadTimer: number | undefined;
+
+    if (uid) {
+      void (async () => {
+        try {
+          const message = await mail.fetchMessage(folderKey, uid);
+          if (disposed || message.is_read) return;
+
+          markReadTimer = window.setTimeout(() => {
+            mail.setFlags(folderKey, message.uid, { read: true }).catch(() => undefined);
+          }, mail.preferences?.mark_read_delay_ms ?? 1000);
+        } catch {
+          // Keep the empty state; the store resets loaders on failure.
+        }
+      })();
+    } else {
+      mail.clearSelectedMessage();
+    }
+
+    return () => {
+      disposed = true;
+      if (markReadTimer) window.clearTimeout(markReadTimer);
+    };
   }, [mail, folderKey, uid]);
 
   const selected = uid ? mail.selectedMessage : null;
@@ -40,6 +62,7 @@ export const MailFolderView = observer(function MailFolderView() {
         loading={mail.loader}
         hasMore={mail.hasMoreMessages(folderKey)}
         loadingMore={mail.loadingMore}
+        showSnippets={mail.preferences?.show_snippets ?? true}
         onLoadMore={() => mail.loadMoreMessages(folderKey)}
         onSearch={(query) => navigate(`/mail/search?q=${encodeURIComponent(query)}`)}
         onToggleStar={(message) => mail.setFlags(folderKey, message.uid, { starred: !message.is_starred })}
