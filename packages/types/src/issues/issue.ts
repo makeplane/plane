@@ -45,6 +45,7 @@ export type TBaseIssue = {
   sequence_id: number;
   name: string;
   sort_order: number;
+  sg_event_id: string | number | null;
   opposition_team: TOppositionTeam | string | null;
 
   state_id: string | null;

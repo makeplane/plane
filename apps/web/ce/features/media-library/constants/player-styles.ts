@@ -32,7 +32,7 @@ export const PLAYER_STYLE = `
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    height: 100%;
+                    height: 69%;
                     padding: 0;
                     line-height: 1;
                   }

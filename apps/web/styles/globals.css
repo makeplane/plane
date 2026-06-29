@@ -4,6 +4,7 @@
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/scrollbar";
+@import "video.js/dist/video-js.css";
 
 @tailwind base;
 @tailwind components;

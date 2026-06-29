@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import videojs from "video.js";
-import "video.js/dist/video-js.css";
+// import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 
