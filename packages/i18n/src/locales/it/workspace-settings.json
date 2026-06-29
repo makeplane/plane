@@ -3,7 +3,7 @@
     "label": "Impostazioni dello spazio di lavoro",
     "page_label": "{workspace} - Impostazioni generali",
     "key_created": "Chiave creata",
-    "copy_key": "Copia e salva questa chiave segreta in Plane Pages. Non potrai vederla dopo aver cliccato Chiudi. È stato scaricato un file CSV contenente la chiave.",
+    "copy_key": "Copia e salva questa chiave segreta in Hangar Pages. Non potrai vederla dopo aver cliccato Chiudi. È stato scaricato un file CSV contenente la chiave.",
     "token_copied": "Token copiato negli appunti.",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "Generazione in corso",
         "delete": {
           "title": "Elimina token API",
-          "description": "Qualsiasi applicazione che utilizza questo token non avrà più accesso ai dati di Plane. Questa azione non può essere annullata.",
+          "description": "Qualsiasi applicazione che utilizza questo token non avrà più accesso ai dati di Hangar. Questa azione non può essere annullata.",
           "success": {
             "title": "Successo!",
             "message": "Il token API è stato eliminato con successo"
@@ -176,7 +176,7 @@
         "title": "Integrazioni",
         "heading": "Integrazioni",
         "description": "Connettiti a strumenti e servizi popolari per sincronizzare il tuo lavoro nell'intero ecosistema del tuo flusso di lavoro.",
-        "page_title": "Lavora con i tuoi dati Plane nelle app disponibili o nelle tue.",
+        "page_title": "Lavora con i tuoi dati Hangar nelle app disponibili o nelle tue.",
         "page_description": "Visualizza tutte le integrazioni utilizzate da questo workspace o da te."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Stati del progetto",
         "heading": "Visualizza una panoramica dei progressi per tutti i progetti.",
-        "description": "Gli stati dei progetti sono una funzionalità esclusiva di Plane per tracciare i progressi di tutti i tuoi progetti in base a qualsiasi proprietà del progetto.",
+        "description": "Gli stati dei progetti sono una funzionalità esclusiva di Hangar per tracciare i progressi di tutti i tuoi progetti in base a qualsiasi proprietà del progetto.",
         "go_to_settings": "Vai alle impostazioni"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Installa",
         "installed": "Installato",
         "configure": "Configura",
-        "app_available": "Hai reso questa app disponibile per l'uso con un workspace Plane",
+        "app_available": "Hai reso questa app disponibile per l'uso con un workspace Hangar",
         "app_credentials_regenrated": {
           "title": "Le credenziali dell'app sono state rigenerate con successo",
           "description": "Sostituisci il client secret ovunque venga utilizzato. Il secret precedente non è più valido."
         },
         "app_created": {
           "title": "App creata con successo",
-          "description": "Usa le credenziali per installare l'app in uno spazio di lavoro Plane"
+          "description": "Usa le credenziali per installare l'app in uno spazio di lavoro Hangar"
         },
         "installed_apps": "App installate",
         "all_apps": "Tutte le app",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "URI di reindirizzamento (separate da spazi)",
-          "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Plane.",
+          "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Hangar.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Connetti un workspace Plane per iniziare a usarla",
+        "app_available_description": "Connetti un workspace Hangar per iniziare a usarla",
         "client_id_and_secret": "ID e Secret Cliente",
         "client_id_and_secret_description": "Copia e salva questa chiave segreta. Non potrai più vedere questa chiave dopo aver cliccato su Chiudi.",
         "client_id_and_secret_download": "Puoi scaricare un CSV con la chiave da qui.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "Permessi del workspace",
         "workspace_permissions_description": "I permessi del workspace sono utilizzati per concedere l'accesso al workspace.",
         "with_the_permissions": "con i permessi",
-        "app_consent_title": "{app} richiede l'accesso al tuo workspace e profilo Plane.",
+        "app_consent_title": "{app} richiede l'accesso al tuo workspace e profilo Hangar.",
         "choose_workspace_to_connect_app_with": "Scegli un workspace a cui connettere l'app",
         "app_consent_workspace_permissions_title": "{app} vorrebbe",
         "app_consent_user_permissions_title": "{app} può anche richiedere il permesso di un utente per le seguenti risorse. Questi permessi saranno richiesti e autorizzati solo da un utente.",
         "app_consent_accept_title": "Accettando",
-        "app_consent_accept_1": "Concedi all'app l'accesso ai tuoi dati Plane ovunque tu possa utilizzare l'app dentro o fuori Plane",
+        "app_consent_accept_1": "Concedi all'app l'accesso ai tuoi dati Hangar ovunque tu possa utilizzare l'app dentro o fuori Hangar",
         "app_consent_accept_2": "Accetti la Privacy Policy e i Termini d'Uso di {app}",
         "accepting": "Accettazione in corso...",
         "accept": "Accetta",
@@ -450,7 +450,7 @@
         "upload_and_save": "Carica e salva",
         "app_consent_no_access_title": "Richiesta di installazione",
         "app_consent_no_access_description": "Questa app può essere installata solo dopo che un amministratore del workspace l'ha installata. Contatta l'amministratore del tuo workspace per procedere.",
-        "app_consent_unapproved_title": "Questa app non è stata ancora esaminata o approvata da Plane.",
+        "app_consent_unapproved_title": "Questa app non è stata ancora esaminata o approvata da Hangar.",
         "app_consent_unapproved_description": "Assicurati di fidarti di questa app prima di connetterla al tuo spazio di lavoro.",
         "go_to_app": "Vai all'app",
         "enable_app_mentions": "Abilita menzioni dell'app",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Vedi il tuo lavoro diventare più intelligente e più veloce con l'IA che è connessa in modo nativo al tuo lavoro e alla tua base di conoscenza."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Script",
         "new_script": "Nuovo script",
         "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Nessun token API creato",
-        "description": "Le API di Plane possono essere utilizzate per integrare i tuoi dati in Plane con qualsiasi sistema esterno. Crea un token per iniziare."
+        "description": "Le API di Hangar possono essere utilizzate per integrare i tuoi dati in Hangar con qualsiasi sistema esterno. Crea un token per iniziare."
       },
       "webhooks": {
         "title": "Nessun webhook aggiunto",

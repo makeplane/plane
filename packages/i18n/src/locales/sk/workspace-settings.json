@@ -3,7 +3,7 @@
     "label": "Nastavenia pracovného priestoru",
     "page_label": "{workspace} - Všeobecné nastavenia",
     "key_created": "Kľúč vytvorený",
-    "copy_key": "Skopírujte a uložte tento kľúč do Plane Pages. Po zatvorení ho neuvidíte. CSV súbor s kľúčom bol stiahnutý.",
+    "copy_key": "Skopírujte a uložte tento kľúč do Hangar Pages. Po zatvorení ho neuvidíte. CSV súbor s kľúčom bol stiahnutý.",
     "token_copied": "Token skopírovaný do schránky.",
     "settings": {
       "general": {
@@ -176,7 +176,7 @@
         "title": "Integrácie",
         "heading": "Integrácie",
         "description": "Prepojte sa s populárnymi nástrojmi a službami a synchronizujte svoju prácu v rámci celého ekosystému pracovného postupu.",
-        "page_title": "Pracujte so svojimi údajmi Plane v dostupných aplikáciách alebo vo vlastných.",
+        "page_title": "Pracujte so svojimi údajmi Hangar v dostupných aplikáciách alebo vo vlastných.",
         "page_description": "Zobraziť všetky integrácie používané týmto pracovným priestorom alebo vami."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Stavy projektu",
         "heading": "Zobrazte prehľad priebehu všetkých projektov.",
-        "description": "Stavy projektov sú funkcia exkluzívna pre Plane na sledovanie priebehu všetkých vašich projektov podľa ľubovoľnej vlastnosti projektu.",
+        "description": "Stavy projektov sú funkcia exkluzívna pre Hangar na sledovanie priebehu všetkých vašich projektov podľa ľubovoľnej vlastnosti projektu.",
         "go_to_settings": "Prejsť na nastavenia"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Nainštalovať",
         "installed": "Nainštalované",
         "configure": "Konfigurovať",
-        "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Plane",
+        "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Hangar",
         "app_credentials_regenrated": {
           "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
           "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
         },
         "app_created": {
           "title": "Aplikácia bola úspešne vytvorená",
-          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
+          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Hangar"
         },
         "installed_apps": "Nainštalované aplikácie",
         "all_apps": "Všetky aplikácie",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "Presmerovacie URI (oddelené medzerou)",
-          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
+          "description": "Používatelia budú po autentifikácii pomocou Hangar presmerovaní na túto cestu.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Pripojte pracovný priestor Plane pre začatie používania",
+        "app_available_description": "Pripojte pracovný priestor Hangar pre začatie používania",
         "client_id_and_secret": "ID a Tajomstvo Klienta",
         "client_id_and_secret_description": "Skopírujte a uložte tento tajný kľúč. Po kliknutí na Zavrieť tento kľúč už neuvidíte.",
         "client_id_and_secret_download": "Môžete si stiahnuť CSV s kľúčom odtiaľto.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "Oprávnenia pracovného priestoru",
         "workspace_permissions_description": "Oprávnenia pracovného priestoru sa používajú na udelenie prístupu k pracovnému priestoru.",
         "with_the_permissions": "s oprávneniami",
-        "app_consent_title": "{app} žiada o prístup k vášmu pracovnému priestoru a profilu Plane.",
+        "app_consent_title": "{app} žiada o prístup k vášmu pracovnému priestoru a profilu Hangar.",
         "choose_workspace_to_connect_app_with": "Vyberte pracovný priestor, s ktorým chcete pripojiť aplikáciu",
         "app_consent_workspace_permissions_title": "{app} by chcel",
         "app_consent_user_permissions_title": "{app} môže tiež požiadať o povolenie používateľa pre nasledujúce zdroje. Tieto oprávnenia budú vyžiadané a autorizované iba používateľom.",
         "app_consent_accept_title": "Prijatím",
-        "app_consent_accept_1": "Udeľujete aplikácii prístup k vašim údajom Plane kdekoľvek, kde môžete používať aplikáciu v rámci alebo mimo Plane",
+        "app_consent_accept_1": "Udeľujete aplikácii prístup k vašim údajom Hangar kdekoľvek, kde môžete používať aplikáciu v rámci alebo mimo Hangar",
         "app_consent_accept_2": "Súhlasíte s Pravidlami ochrany súkromia a Podmienkami používania {app}",
         "accepting": "Prijímanie...",
         "accept": "Prijať",
@@ -450,7 +450,7 @@
         "upload_and_save": "Nahrať a uložiť",
         "app_consent_no_access_title": "Požiadavka na inštaláciu",
         "app_consent_no_access_description": "Táto aplikácia môže byť nainštalovaná až po jej inštalácii administrátorom pracovného priestoru. Kontaktujte svojho administrátora pracovného priestoru, aby ste mohli pokračovať.",
-        "app_consent_unapproved_title": "Túto aplikáciu Plane ešte neskontrolovalo ani neschválilo.",
+        "app_consent_unapproved_title": "Túto aplikáciu Hangar ešte neskontrolovalo ani neschválilo.",
         "app_consent_unapproved_description": "Pred prepojením s pracovným priestorom sa uistite, že tejto aplikácii dôverujete.",
         "go_to_app": "Prejsť na aplikáciu",
         "enable_app_mentions": "Povoliť zmienky o aplikácii",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Skripty",
         "new_script": "Nový skript",
         "description": "Automatizujte svoje pracovné postupy pomocou vlastných skriptov a automatizačných pravidiel."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Žiadne API tokeny",
-        "description": "Používajte API na integráciu Plane s externými systémami."
+        "description": "Používajte API na integráciu Hangar s externými systémami."
       },
       "webhooks": {
         "title": "Žiadne webhooky",

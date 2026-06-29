@@ -14,7 +14,7 @@
       "sidebar_header": "觸發器設定",
       "input_label": "此自動化的觸發器是什麼？",
       "input_placeholder": "選擇一個選項",
-      "section_plane_events": "Plane 事件",
+      "section_plane_events": "Hangar 事件",
       "section_time_based": "基於時間",
       "fixed_schedule": "固定排程",
       "schedule": {

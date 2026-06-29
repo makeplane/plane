@@ -14,7 +14,7 @@
       "sidebar_header": "Trigger configuration",
       "input_label": "What’s the trigger for this automation?",
       "input_placeholder": "Select an option",
-      "section_plane_events": "Plane events",
+      "section_plane_events": "Hangar events",
       "section_time_based": "Time based",
       "fixed_schedule": "Fixed schedule",
       "schedule": {

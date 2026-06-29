@@ -182,18 +182,18 @@
       "description": "자동화된 액션을 구성하여 프로젝트 관리 워크플로우를 간소화하고 수동 작업을 줄이세요.",
       "auto-archive": {
         "title": "완료된 작업 항목 자동 보관",
-        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        "description": "Hangar은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
         "duration": "다음 기간 동안 닫힌 작업 항목 자동 보관"
       },
       "auto-close": {
         "title": "작업 항목 자동 닫기",
-        "description": "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
+        "description": "Hangar은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
         "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
       },
       "auto-remind": {
         "title": "자동 알림",
-        "description": "Plane은 이메일과 앱 알림을 통해 팀이 마감일에 따라 추진하도록 자동으로 알림을 보냅니다.",
+        "description": "Hangar은 이메일과 앱 알림을 통해 팀이 마감일에 따라 추진하도록 자동으로 알림을 보냅니다.",
         "duration": "알림 전"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "이메일",
-          "description": "Plane 이메일 주소로 이메일을 보내는 누구로부터든 새로운 작업 항목을 수집합니다.",
+          "description": "Hangar 이메일 주소로 이메일을 보내는 누구로부터든 새로운 작업 항목을 수집합니다.",
           "fieldName": "이메일 ID"
         },
         "form": {

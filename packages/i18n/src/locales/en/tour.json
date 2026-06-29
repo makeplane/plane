@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Document with AI-powered Pages",
-        "description": "Pages in Plane let you capture, organize, and collaborate on project info—no external tools needed."
+        "description": "Pages in Hangar let you capture, organize, and collaborate on project info—no external tools needed."
       },
       "step_one": {
         "title": "Make page Public or Private",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Streamline requests with intake",
-        "description": "A Plane-only feature that lets Guests create work items for bugs, requests, or tickets."
+        "description": "A Hangar-only feature that lets Guests create work items for bugs, requests, or tickets."
       },
       "step_one": {
         "title": "Open/closed intake requests",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Stop tab-switching. Connect your world.",
-        "description": "Link GitHub, Slack to track PRs and summarize chats directly in Plane AI."
+        "description": "Link GitHub, Slack to track PRs and summarize chats directly in Hangar AI."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Hey {name}, welcome aboard!",
-    "description": "Here’s everything you need to kickstart your journey with Plane.",
+    "description": "Here’s everything you need to kickstart your journey with Hangar.",
     "checklist_section": {
       "title": "Get started",
       "description": "Begin your setup and see your ideas come to life faster.",
@@ -172,7 +172,7 @@
           "title": "Create a page"
         },
         "item_5": {
-          "title": "Try Plane AI chat"
+          "title": "Try Hangar AI chat"
         },
         "item_6": {
           "title": "Link Integrations"
@@ -188,8 +188,8 @@
       "more_integrations": "Browse more integrations"
     },
     "switch_to_plane_section": {
-      "title": "Discover why teams switch to Plane",
-      "description": "Compare Plane with the tools you use today and see the difference."
+      "title": "Discover why teams switch to Hangar",
+      "description": "Compare Hangar with the tools you use today and see the difference."
     }
   }
 }

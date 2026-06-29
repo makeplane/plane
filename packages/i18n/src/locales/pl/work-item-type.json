@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Po włączeniu Typów Elementów Pracy nie można ich wyłączyć.",
-          "description": "Element pracy Plane stanie się domyślnym typem elementu pracy dla tego projektu i pojawi się ze swoją ikoną i tłem w tym projekcie.",
+          "description": "Element pracy Hangar stanie się domyślnym typem elementu pracy dla tego projektu i pojawi się ze swoją ikoną i tłem w tym projekcie.",
           "button": {
             "default": "Włącz",
             "loading": "Konfigurowanie"

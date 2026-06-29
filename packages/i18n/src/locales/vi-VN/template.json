@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Tên công ty",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Tên công ty là bắt buộc",
               "maxLength": "Tên công ty không nên vượt quá 255 ký tự"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Mẫu",
-        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Plane, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
+        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Hangar, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
         "sub_description": "Nhận lại 80% thời gian quản lý của bạn khi bạn sử dụng Mẫu."
       },
       "no_templates": {

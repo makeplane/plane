@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Vytvorte si pracovný priestor",
-    "subheading": "Na používanie Plane musíte vytvoriť alebo sa pripojiť k pracovnému priestoru.",
+    "subheading": "Na používanie Hangar musíte vytvoriť alebo sa pripojiť k pracovnému priestoru.",
     "form": {
       "name": {
         "label": "Pomenujte svoj pracovný priestor",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Prehľad projektov, aktivít a metrík",
-        "description": "Vitajte v Plane, teší nás, že ste tu. Vytvorte prvý projekt, sledujte pracovné položky a táto stránka sa zmení na priestor pre váš pokrok. Správcovia tu uvidia aj položky pomáhajúce tímu.",
+        "description": "Vitajte v Hangar, teší nás, že ste tu. Vytvorte prvý projekt, sledujte pracovné položky a táto stránka sa zmení na priestor pre váš pokrok. Správcovia tu uvidia aj položky pomáhajúce tímu.",
         "primary_button": {
           "text": "Vytvorte prvý projekt",
           "comic": {
-            "title": "Všetko začína projektom v Plane",
+            "title": "Všetko začína projektom v Hangar",
             "description": "Projektom môže byť roadmapa produktu, marketingová kampaň alebo uvedenie nového auta."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Začnite prvý projekt",
           "comic": {
-            "title": "Všetko začína projektom v Plane",
+            "title": "Všetko začína projektom v Hangar",
             "description": "Projektom môže byť roadmapa produktu, marketingová kampaň alebo uvedenie nového auta."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Začnite prvý projekt",
           "comic": {
-            "title": "Všetko začína projektom v Plane",
+            "title": "Všetko začína projektom v Hangar",
             "description": "Projektom môže byť roadmapa produktu, marketingová kampaň alebo uvedenie nového auta."
           }
         }

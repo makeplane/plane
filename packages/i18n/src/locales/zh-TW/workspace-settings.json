@@ -3,7 +3,7 @@
     "label": "工作區設定",
     "page_label": "{workspace} - 一般設定",
     "key_created": "金鑰已建立",
-    "copy_key": "複製並儲存此金鑰到 Plane Pages。關閉後您將無法看到此金鑰。已下載包含金鑰的 CSV 檔案。",
+    "copy_key": "複製並儲存此金鑰到 Hangar Pages。關閉後您將無法看到此金鑰。已下載包含金鑰的 CSV 檔案。",
     "token_copied": "權杖已複製到剪貼簿。",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "產生中",
         "delete": {
           "title": "刪除 API 權杖",
-          "description": "使用此權杖的任何應用程式將無法再存取 Plane 資料。此操作無法復原。",
+          "description": "使用此權杖的任何應用程式將無法再存取 Hangar 資料。此操作無法復原。",
           "success": {
             "title": "成功！",
             "message": "API 權杖已成功刪除"
@@ -176,7 +176,7 @@
         "title": "整合",
         "heading": "整合",
         "description": "與常用工具和服務連結，以便在整個工作流程生態系中同步您的工作。",
-        "page_title": "在可用的應用程式或您自己的應用程式中使用您的 Plane 資料。",
+        "page_title": "在可用的應用程式或您自己的應用程式中使用您的 Hangar 資料。",
         "page_description": "查看此工作區或您正在使用的所有整合。"
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "專案狀態",
         "heading": "查看所有專案的進度概覽。",
-        "description": "專案狀態是 Plane 獨有的功能，可依任何專案屬性追蹤所有專案的進度。",
+        "description": "專案狀態是 Hangar 獨有的功能，可依任何專案屬性追蹤所有專案的進度。",
         "go_to_settings": "前往設定"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "安裝",
         "installed": "已安裝",
         "configure": "配置",
-        "app_available": "您已使此應用可用於Plane工作空間",
+        "app_available": "您已使此應用可用於Hangar工作空間",
         "app_credentials_regenrated": {
           "title": "應用程式憑證已成功重新生成",
           "description": "請在所有使用的地方替換客戶端密鑰。之前的密鑰已不再有效。"
         },
         "app_created": {
           "title": "應用程式已成功建立",
-          "description": "使用憑證將應用程式安裝到 Plane 工作區中"
+          "description": "使用憑證將應用程式安裝到 Hangar 工作區中"
         },
         "installed_apps": "已安裝的應用程式",
         "all_apps": "所有應用程式",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "重定向 URI（以空格分隔）",
-          "description": "使用者在透過 Plane 認證後將被重新導向到此路徑。",
+          "description": "使用者在透過 Hangar 認證後將被重新導向到此路徑。",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "連接Plane工作空間以開始使用",
+        "app_available_description": "連接Hangar工作空間以開始使用",
         "client_id_and_secret": "客戶端ID和密鑰",
         "client_id_and_secret_description": "複製並保存此密鑰。關閉後您將無法再次查看此密鑰。",
         "client_id_and_secret_download": "您可以從這裡下載包含密鑰的CSV檔案。",
@@ -403,12 +403,12 @@
         "workspace_permissions": "工作空間權限",
         "workspace_permissions_description": "工作空間權限用於授予對工作空間的存取權限。",
         "with_the_permissions": "具有權限",
-        "app_consent_title": "{app}正在請求存取您的Plane工作空間和設定檔。",
+        "app_consent_title": "{app}正在請求存取您的Hangar工作空間和設定檔。",
         "choose_workspace_to_connect_app_with": "選擇要連接應用的工作空間",
         "app_consent_workspace_permissions_title": "{app}想要",
         "app_consent_user_permissions_title": "{app}還可以請求用戶對以下資源的權限。這些權限將僅由用戶請求和授權。",
         "app_consent_accept_title": "通過接受",
-        "app_consent_accept_1": "您授予應用在Plane內部或外部可以使用應用的任何地方存取您的Plane資料的權限",
+        "app_consent_accept_1": "您授予應用在Hangar內部或外部可以使用應用的任何地方存取您的Hangar資料的權限",
         "app_consent_accept_2": "您同意{app}的隱私政策和使用條款",
         "accepting": "接受中...",
         "accept": "接受",
@@ -450,7 +450,7 @@
         "upload_and_save": "上傳並保存",
         "app_consent_no_access_title": "請求安裝",
         "app_consent_no_access_description": "此應用程式只能在工作區管理員安裝後才能安裝。請聯絡您的工作區管理員以繼續。",
-        "app_consent_unapproved_title": "此應用程式尚未經 Plane 審核或核准。",
+        "app_consent_unapproved_title": "此應用程式尚未經 Hangar 審核或核准。",
         "app_consent_unapproved_description": "將此應用程式連接到您的工作區之前，請確認您信任它。",
         "go_to_app": "前往應用程式",
         "enable_app_mentions": "啟用應用程式提及",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "使用與您的工作和知識庫原生連接的 AI，讓您的任務變得更智能、更快速。"
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "指令碼",
         "new_script": "新指令碼",
         "description": "使用自訂指令碼和自動化規則，自動化您的工作流程。"
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "尚未建立 API 權杖",
-        "description": "Plane API 可用於將您在 Plane 中的資料與任何外部系統整合。建立權杖以開始使用。"
+        "description": "Hangar API 可用於將您在 Hangar 中的資料與任何外部系統整合。建立權杖以開始使用。"
       },
       "webhooks": {
         "title": "尚未新增 Webhook",

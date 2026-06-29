@@ -182,18 +182,18 @@
       "description": "Proje yönetimi iş akışınızı kolaylaştırmak ve manuel görevleri azaltmak için otomatik eylemleri yapılandırın.",
       "auto-archive": {
         "title": "Tamamlanan iş öğelerini otomatik arşivle",
-        "description": "Plane, tamamlanan veya iptal edilen iş öğelerini otomatik arşivleyecek.",
+        "description": "Hangar, tamamlanan veya iptal edilen iş öğelerini otomatik arşivleyecek.",
         "duration": "Şu süre kapalı kalan iş öğelerini otomatik arşivle"
       },
       "auto-close": {
         "title": "İş öğelerini otomatik kapat",
-        "description": "Plane, tamamlanmamış veya iptal edilmemiş iş öğelerini otomatik kapatacak.",
+        "description": "Hangar, tamamlanmamış veya iptal edilmemiş iş öğelerini otomatik kapatacak.",
         "duration": "Şu süre etkin olmayan iş öğelerini otomatik kapat",
         "auto_close_status": "Otomatik kapatma durumu"
       },
       "auto-remind": {
         "title": "Otomatik hatırlatmalar",
-        "description": "Plane, e-posta ve uygulama bildirimleri aracılığıyla otomatik olarak takımınızı zamanlama yolunda tutacaktır.",
+        "description": "Hangar, e-posta ve uygulama bildirimleri aracılığıyla otomatik olarak takımınızı zamanlama yolunda tutacaktır.",
         "duration": "Hatırlatma gönderimi öncesi"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-posta",
-          "description": "Plane e-posta adresine e-posta gönderen herkesten yeni iş öğeleri toplayın.",
+          "description": "Hangar e-posta adresine e-posta gönderen herkesten yeni iş öğeleri toplayın.",
           "fieldName": "E-posta ID"
         },
         "form": {

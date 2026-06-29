@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Tạo không gian làm việc của bạn",
-    "subheading": "Để bắt đầu với Plane, bạn cần tạo hoặc tham gia một không gian làm việc.",
+    "subheading": "Để bắt đầu với Hangar, bạn cần tạo hoặc tham gia một không gian làm việc.",
     "form": {
       "name": {
         "label": "Đặt tên cho không gian làm việc của bạn",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Tổng quan về dự án, hoạt động và chỉ số",
-        "description": "Chào mừng đến với Plane, chúng tôi rất vui khi bạn ở đây. Tạo dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy dự án giúp nhóm tiến triển.",
+        "description": "Chào mừng đến với Hangar, chúng tôi rất vui khi bạn ở đây. Tạo dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy dự án giúp nhóm tiến triển.",
         "primary_button": {
           "text": "Xây dựng dự án đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
+            "title": "Trong Hangar, mọi thứ đều bắt đầu với dự án",
             "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Bắt đầu dự án đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
+            "title": "Trong Hangar, mọi thứ đều bắt đầu với dự án",
             "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Bắt đầu dự án đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
+            "title": "Trong Hangar, mọi thứ đều bắt đầu với dự án",
             "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Viết ghi chú, tài liệu, hoặc cơ sở kiến thức đầy đủ. Nhờ Galileo, trợ lý AI của Plane, giúp bạn bắt đầu",
-        "description": "Trang là không gian lưu trữ ý tưởng trong Plane. Ghi lại ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng mục công việc, bố trí chúng bằng thư viện các thành phần, và giữ tất cả trong ngữ cảnh dự án của bạn. Để làm ngắn gọn bất kỳ tài liệu nào, gọi Galileo, AI của Plane, bằng phím tắt hoặc nhấp vào nút.",
+        "title": "Viết ghi chú, tài liệu, hoặc cơ sở kiến thức đầy đủ. Nhờ Galileo, trợ lý AI của Hangar, giúp bạn bắt đầu",
+        "description": "Trang là không gian lưu trữ ý tưởng trong Hangar. Ghi lại ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng mục công việc, bố trí chúng bằng thư viện các thành phần, và giữ tất cả trong ngữ cảnh dự án của bạn. Để làm ngắn gọn bất kỳ tài liệu nào, gọi Galileo, AI của Hangar, bằng phím tắt hoặc nhấp vào nút.",
         "primary_button": {
           "text": "Tạo trang đầu tiên của bạn"
         }

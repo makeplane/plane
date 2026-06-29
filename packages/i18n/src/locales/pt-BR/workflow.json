@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Controle o caos de mudanças e revisões com Fluxos de Trabalho.",
-        "description": "Defina regras para onde seu trabalho se move, por quem e quando com Fluxos de Trabalho no Plane."
+        "description": "Defina regras para onde seu trabalho se move, por quem e quando com Fluxos de Trabalho no Hangar."
       }
     },
     "quick_actions": {

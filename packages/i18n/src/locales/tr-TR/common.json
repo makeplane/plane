@@ -244,7 +244,7 @@
   "full_changelog": "Tam Değişiklik Kaydı",
   "support": "Destek",
   "forum": "Forum",
-  "powered_by_plane_pages": "Plane Pages tarafından desteklenmektedir",
+  "powered_by_plane_pages": "Hangar Pages tarafından desteklenmektedir",
   "please_select_at_least_one_invitation": "Lütfen en az bir davet seçin.",
   "please_select_at_least_one_invitation_description": "Çalışma alanına katılmak için lütfen en az bir davet seçin.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Birinin sizi bir çalışma alanına davet ettiğini görüyoruz",
@@ -820,7 +820,7 @@
     "edited_by": "Tarafından düzenlendi"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar başlatılamadı. Bu, bir veya daha fazla Hangar servisinin başlatılamaması nedeniyle olabilir.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
   },
   "customize_navigation": "Gezinmeyi özelleştir",
@@ -832,7 +832,7 @@
   "pin": "Sabitle",
   "unpin": "Sabitlemeyi kaldır",
   "workspace_dashboards": "Dashbordlar",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "Uygulama İçi",
   "forms": "Formlar",
   "milestones": "Kilometre taşları",

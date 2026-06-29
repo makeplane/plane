@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Setelah diaktifkan, Tipe Item Kerja tidak dapat dinonaktifkan.",
-          "description": "Item Kerja Plane akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
+          "description": "Item Kerja Hangar akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
           "button": {
             "default": "Aktifkan",
             "loading": "Menyiapkan"

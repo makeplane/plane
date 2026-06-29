@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Názov spoločnosti",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Názov spoločnosti je povinný",
               "maxLength": "Názov spoločnosti by nemal presiahnuť 255 znakov"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Šablóny",
-        "description": "S projektmi, pracovnými položkami a stránkami v Plane, nemusíte vytvárať projekty od začiatku alebo nastavovať vlastnosti pracovných položiek ručne.",
+        "description": "S projektmi, pracovnými položkami a stránkami v Hangar, nemusíte vytvárať projekty od začiatku alebo nastavovať vlastnosti pracovných položiek ručne.",
         "sub_description": "Ušetríte 80% času, keď použijete šablóny."
       },
       "no_templates": {

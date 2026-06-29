@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Napište poznámku, dokument nebo celou znalostní bázi.",
-      "description": "Stránky jsou prostorem pro zachycení myšlenek v Plane. Pořizujte poznámky ze schůzek, snadno je formátujte, vkládejte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte vše v kontextu vašeho projektu.",
+      "description": "Stránky jsou prostorem pro zachycení myšlenek v Hangar. Pořizujte poznámky ze schůzek, snadno je formátujte, vkládejte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte vše v kontextu vašeho projektu.",
       "cta_primary": "Vytvořte svou stránku"
     },
     "project_overview_state_sidebar": {

@@ -10,7 +10,7 @@ type TPageHeader = {
 };
 
 export function PageHeader(props: TPageHeader) {
-  const { title = "God Mode - Plane", description = "Plane god mode" } = props;
+  const { title = "God Mode - Hangar", description = "Hangar god mode" } = props;
 
   return (
     <>

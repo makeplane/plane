@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Dokumentuj za pomocą Stron opartych na AI",
-        "description": "Strony w Plane pozwalają Ci przechwytywać, organizować i współpracować nad informacjami o projekcie—bez zewnętrznych narzędzi."
+        "description": "Strony w Hangar pozwalają Ci przechwytywać, organizować i współpracować nad informacjami o projekcie—bez zewnętrznych narzędzi."
       },
       "step_one": {
         "title": "Ustaw stronę jako Publiczną lub Prywatną",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Usprawnij zgłoszenia dzięki przyjmowaniu",
-        "description": "Funkcja dostępna tylko w Plane, która pozwala Gościom tworzyć elementy pracy dla błędów, zgłoszeń lub biletów."
+        "description": "Funkcja dostępna tylko w Hangar, która pozwala Gościom tworzyć elementy pracy dla błędów, zgłoszeń lub biletów."
       },
       "step_one": {
         "title": "Otwarte/zamknięte zgłoszenia przyjmowania",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Przestań przełączać karty. Połącz swój świat.",
-        "description": "Połącz GitHub, Slack, aby śledzić PR-y i podsumowywać czaty bezpośrednio w Plane AI."
+        "description": "Połącz GitHub, Slack, aby śledzić PR-y i podsumowywać czaty bezpośrednio w Hangar AI."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Cześć {name}, witaj na pokładzie!",
-    "description": "Oto wszystko, czego potrzebujesz, aby rozpocząć swoją podróż z Plane.",
+    "description": "Oto wszystko, czego potrzebujesz, aby rozpocząć swoją podróż z Hangar.",
     "checklist_section": {
       "title": "Zacznij",
       "description": "Rozpocznij konfigurację i zobacz, jak Twoje pomysły ożywają szybciej.",
@@ -172,7 +172,7 @@
           "title": "Utwórz stronę"
         },
         "item_5": {
-          "title": "Wypróbuj czat Plane AI"
+          "title": "Wypróbuj czat Hangar AI"
         },
         "item_6": {
           "title": "Połącz integracje"
@@ -188,8 +188,8 @@
       "more_integrations": "Przeglądaj więcej integracji"
     },
     "switch_to_plane_section": {
-      "title": "Odkryj, dlaczego zespoły przechodzą na Plane",
-      "description": "Porównaj Plane z narzędziami, których używasz dzisiaj i zobacz różnicę."
+      "title": "Odkryj, dlaczego zespoły przechodzą na Hangar",
+      "description": "Porównaj Hangar z narzędziami, których używasz dzisiaj i zobacz różnicę."
     }
   }
 }

@@ -5,7 +5,7 @@
       "not_right_now": "Jetzt nicht",
       "create_project": {
         "title": "Projekt erstellen",
-        "description": "Die meisten Dinge beginnen mit einem Projekt in Plane.",
+        "description": "Die meisten Dinge beginnen mit einem Projekt in Hangar.",
         "cta": "Los geht's"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Diesen Bereich konfigurieren"
       },
       "personalize_account": {
-        "title": "Personalisieren Sie Plane.",
+        "title": "Personalisieren Sie Hangar.",
         "description": "Wählen Sie ein Profilbild, Farben und mehr.",
         "cta": "Jetzt personalisieren"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Neu in Plane"
+      "title": "Neu in Hangar"
     },
     "quick_tutorial": {
       "title": "Schnelles Tutorial"

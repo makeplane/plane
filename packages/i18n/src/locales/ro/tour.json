@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Documentează cu Pagini alimentate de AI",
-        "description": "Paginile în Plane îți permit să capturezi, să organizezi și să colaborezi la informații despre proiect—fără instrumente externe."
+        "description": "Paginile în Hangar îți permit să capturezi, să organizezi și să colaborezi la informații despre proiect—fără instrumente externe."
       },
       "step_one": {
         "title": "Fă pagina Publică sau Privată",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Simplifică cererile cu admitere",
-        "description": "O funcție exclusivă Plane care permite Oaspeților să creeze elemente de lucru pentru erori, cereri sau tichete."
+        "description": "O funcție exclusivă Hangar care permite Oaspeților să creeze elemente de lucru pentru erori, cereri sau tichete."
       },
       "step_one": {
         "title": "Cereri de admitere deschise/închise",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Oprește schimbarea filelor. Conectează-ți lumea.",
-        "description": "Conectează GitHub, Slack pentru a urmări PR-urile și a rezuma conversațiile direct în Plane AI."
+        "description": "Conectează GitHub, Slack pentru a urmări PR-urile și a rezuma conversațiile direct în Hangar AI."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Salut {name}, bun venit la bord!",
-    "description": "Iată tot ce ai nevoie pentru a-ți începe călătoria cu Plane.",
+    "description": "Iată tot ce ai nevoie pentru a-ți începe călătoria cu Hangar.",
     "checklist_section": {
       "title": "Începe",
       "description": "Începe configurarea și vezi-ți ideile prind viață mai repede.",
@@ -172,7 +172,7 @@
           "title": "Creează o pagină"
         },
         "item_5": {
-          "title": "Încearcă chatul Plane AI"
+          "title": "Încearcă chatul Hangar AI"
         },
         "item_6": {
           "title": "Conectează integrări"
@@ -188,8 +188,8 @@
       "more_integrations": "Explorează mai multe integrări"
     },
     "switch_to_plane_section": {
-      "title": "Descoperă de ce echipele trec la Plane",
-      "description": "Compară Plane cu instrumentele pe care le folosești astăzi și vezi diferența."
+      "title": "Descoperă de ce echipele trec la Hangar",
+      "description": "Compară Hangar cu instrumentele pe care le folosești astăzi și vezi diferența."
     }
   }
 }

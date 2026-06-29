@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Değişikliklerin ve incelemelerin kargaşasını İş Akışları ile kontrol edin.",
-        "description": "Plane'deki İş Akışları ile işinizin nereye, kim tarafından ve ne zaman taşınacağına dair kurallar belirleyin."
+        "description": "Hangar'deki İş Akışları ile işinizin nereye, kim tarafından ve ne zaman taşınacağına dair kurallar belirleyin."
       }
     },
     "quick_actions": {

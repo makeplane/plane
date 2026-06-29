@@ -182,18 +182,18 @@
       "description": "Configura acciones automatizadas para optimizar tu flujo de trabajo de gestión de proyectos y reducir tareas manuales.",
       "auto-archive": {
         "title": "Archivar automáticamente elementos de trabajo cerrados",
-        "description": "Plane archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
+        "description": "Hangar archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
         "duration": "Archivar automáticamente elementos de trabajo cerrados durante"
       },
       "auto-close": {
         "title": "Cerrar automáticamente elementos de trabajo",
-        "description": "Plane cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
+        "description": "Hangar cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
         "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
         "auto_close_status": "Estado de cierre automático"
       },
       "auto-remind": {
         "title": "Recordatorios automáticos",
-        "description": "Plane enviará recordatorios automáticos via correo electrónico y notificaciones en la aplicación para mantener a tu equipo en el camino de los plazos.",
+        "description": "Hangar enviará recordatorios automáticos via correo electrónico y notificaciones en la aplicación para mantener a tu equipo en el camino de los plazos.",
         "duration": "Enviar recordatorio antes"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "Correo electrónico",
-          "description": "Recopila nuevos elementos de trabajo de cualquiera que envíe un correo a una dirección de Plane.",
+          "description": "Recopila nuevos elementos de trabajo de cualquiera que envíe un correo a una dirección de Hangar.",
           "fieldName": "ID de correo electrónico"
         },
         "form": {

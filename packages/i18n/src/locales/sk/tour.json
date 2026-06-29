@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Dokumentujte s AI stránkami",
-        "description": "Stránky v Plane vám umožňujú zachytiť, organizovať a spolupracovať na projektových informáciách—bez externých nástrojov."
+        "description": "Stránky v Hangar vám umožňujú zachytiť, organizovať a spolupracovať na projektových informáciách—bez externých nástrojov."
       },
       "step_one": {
         "title": "Urobte stránku Verejnou alebo Súkromnou",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Zjednodušte žiadosti s príjmom",
-        "description": "Funkcia exkluzívne pre Plane, ktorá umožňuje Hostiam vytvárať pracovné položky pre chyby, žiadosti alebo tikety."
+        "description": "Funkcia exkluzívne pre Hangar, ktorá umožňuje Hostiam vytvárať pracovné položky pre chyby, žiadosti alebo tikety."
       },
       "step_one": {
         "title": "Otvorené/zatvorené žiadosti o príjem",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Prestaňte prepínať medzi kartami. Prepojte svoj svet.",
-        "description": "Prepojte GitHub a Slack, aby ste mohli sledovať PR a sumarizovať chaty priamo v Plane AI."
+        "description": "Prepojte GitHub a Slack, aby ste mohli sledovať PR a sumarizovať chaty priamo v Hangar AI."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Ahoj {name}, vitaj na palube!",
-    "description": "Tu je všetko, čo potrebujete na spustenie vašej cesty s Plane.",
+    "description": "Tu je všetko, čo potrebujete na spustenie vašej cesty s Hangar.",
     "checklist_section": {
       "title": "Začať",
       "description": "Začnite s nastavením a uvidíte svoje nápady ožívať rýchlejšie.",
@@ -172,7 +172,7 @@
           "title": "Vytvoriť stránku"
         },
         "item_5": {
-          "title": "Vyskúšať Plane AI chat"
+          "title": "Vyskúšať Hangar AI chat"
         },
         "item_6": {
           "title": "Prepojiť integrácie"
@@ -188,8 +188,8 @@
       "more_integrations": "Prezerať viac integrácií"
     },
     "switch_to_plane_section": {
-      "title": "Objavte, prečo tímy prechádzajú na Plane",
-      "description": "Porovnajte Plane s nástrojmi, ktoré dnes používate a uvidíte rozdiel."
+      "title": "Objavte, prečo tímy prechádzajú na Hangar",
+      "description": "Porovnajte Hangar s nástrojmi, ktoré dnes používate a uvidíte rozdiel."
     }
   }
 }

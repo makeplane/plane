@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Şirket adı",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Şirket adı gereklidir",
               "maxLength": "Şirket adı 255 karakterden az olmalıdır"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Şablonlar",
-        "description": "Plane'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
+        "description": "Hangar'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
         "sub_description": "Şablonları kullandığınızda admin zamanınızın %80'ini geri kazanın."
       },
       "no_templates": {

@@ -244,7 +244,7 @@
   "full_changelog": "Journal des modifications complet",
   "support": "Support",
   "forum": "Forum",
-  "powered_by_plane_pages": "Propulsé par Plane Pages",
+  "powered_by_plane_pages": "Propulsé par Hangar Pages",
   "please_select_at_least_one_invitation": "Veuillez sélectionner au moins une invitation.",
   "please_select_at_least_one_invitation_description": "Veuillez sélectionner au moins une invitation pour rejoindre l’espace de travail.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Nous voyons que quelqu’un vous a invité à rejoindre un espace de travail",
@@ -820,7 +820,7 @@
     "edited_by": "Modifié par"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n’a pas démarré. Cela pourrait être dû au fait qu’un ou plusieurs services Plane ont échoué à démarrer.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar n’a pas démarré. Cela pourrait être dû au fait qu’un ou plusieurs services Hangar ont échoué à démarrer.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
   },
   "customize_navigation": "Personnaliser la navigation",
@@ -832,7 +832,7 @@
   "pin": "Épingler",
   "unpin": "Désépingler",
   "workspace_dashboards": "Tableaux de bord",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "Dans l'application",
   "forms": "Formulaires",
   "milestones": "Jalons",

@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "AI搭載ページでドキュメント化",
-        "description": "PlaneのページはプロジェクトRaw情報をキャプチャ、整理、共同作業できます—外部ツールは不要です。"
+        "description": "HangarのページはプロジェクトRaw情報をキャプチャ、整理、共同作業できます—外部ツールは不要です。"
       },
       "step_one": {
         "title": "ページを公開または非公開にする",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "インテークでリクエストを効率化",
-        "description": "ゲストがバグ、リクエスト、またはチケットの作業項目を作成できるPlane専用の機能です。"
+        "description": "ゲストがバグ、リクエスト、またはチケットの作業項目を作成できるHangar専用の機能です。"
       },
       "step_one": {
         "title": "開いている/閉じているインテークリクエスト",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "タブ切り替えをやめて、あなたの世界をつなげましょう。",
-        "description": "GitHubやSlackをリンクして、Plane AIで直接PRを追跡したりチャットを要約したりできます。"
+        "description": "GitHubやSlackをリンクして、Hangar AIで直接PRを追跡したりチャットを要約したりできます。"
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "こんにちは{name}さん、ようこそ！",
-    "description": "Planeでの旅を始めるために必要なすべてがここにあります。",
+    "description": "Hangarでの旅を始めるために必要なすべてがここにあります。",
     "checklist_section": {
       "title": "始める",
       "description": "セットアップを開始し、アイデアがより早く実現するのを見てください。",
@@ -172,7 +172,7 @@
           "title": "ページを作成"
         },
         "item_5": {
-          "title": "Plane AIチャットを試す"
+          "title": "Hangar AIチャットを試す"
         },
         "item_6": {
           "title": "統合をリンク"
@@ -188,8 +188,8 @@
       "more_integrations": "その他の統合を参照"
     },
     "switch_to_plane_section": {
-      "title": "チームがPlaneに切り替える理由を発見",
-      "description": "今日使用しているツールとPlaneを比較して、違いを確認してください。"
+      "title": "チームがHangarに切り替える理由を発見",
+      "description": "今日使用しているツールとHangarを比較して、違いを確認してください。"
     }
   }
 }

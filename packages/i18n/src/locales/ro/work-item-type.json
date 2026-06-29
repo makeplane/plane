@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Odată activate, Tipurile de Elemente de Lucru nu pot fi dezactivate.",
-          "description": "Elementul de Lucru al Plane va deveni tipul implicit de element de lucru pentru acest proiect și va apărea cu pictograma și fundalul său în acest proiect.",
+          "description": "Elementul de Lucru al Hangar va deveni tipul implicit de element de lucru pentru acest proiect și va apărea cu pictograma și fundalul său în acest proiect.",
           "button": {
             "default": "Activează",
             "loading": "Se configurează"

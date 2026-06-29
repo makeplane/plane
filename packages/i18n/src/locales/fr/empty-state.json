@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Écrivez une note, un document ou une base de connaissances complète.",
-      "description": "Les pages sont un espace de repérage de pensées dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet.",
+      "description": "Les pages sont un espace de repérage de pensées dans Hangar. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet.",
       "cta_primary": "Créer votre page"
     },
     "project_overview_state_sidebar": {

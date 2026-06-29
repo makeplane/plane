@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Una vez habilitados, los tipos de elementos de trabajo no se pueden deshabilitar.",
-          "description": "El elemento de trabajo de Plane se convertirá en el tipo de elemento de trabajo predeterminado para este proyecto y aparecerá con su icono y fondo en este proyecto.",
+          "description": "El elemento de trabajo de Hangar se convertirá en el tipo de elemento de trabajo predeterminado para este proyecto y aparecerá con su icono y fondo en este proyecto.",
           "button": {
             "default": "Habilitar",
             "loading": "Configurando"

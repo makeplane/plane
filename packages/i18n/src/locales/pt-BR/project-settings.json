@@ -182,18 +182,18 @@
       "description": "Configure ações automatizadas para otimizar seu fluxo de trabalho de gerenciamento de projetos e reduzir tarefas manuais.",
       "auto-archive": {
         "title": "Arquivar automaticamente itens de trabalho fechados",
-        "description": "O Plane arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
+        "description": "O Hangar arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
         "duration": "Arquivar automaticamente itens de trabalho que estão fechados por"
       },
       "auto-close": {
         "title": "Fechar automaticamente itens de trabalho",
-        "description": "O Plane fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
+        "description": "O Hangar fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
         "duration": "Fechar automaticamente itens de trabalho que estão inativos por",
         "auto_close_status": "Status de fechamento automático"
       },
       "auto-remind": {
         "title": "Avisos automáticos",
-        "description": "O Plane enviará avisos automáticos via e-mail e notificações no aplicativo para manter sua equipe no caminho dos prazos.",
+        "description": "O Hangar enviará avisos automáticos via e-mail e notificações no aplicativo para manter sua equipe no caminho dos prazos.",
         "duration": "Enviar aviso antes"
       }
     },
@@ -328,7 +328,7 @@
         "short_title": "Ciclos",
         "description": "Agende o trabalho em períodos flexíveis que se adaptam ao ritmo e ao tempo únicos deste projeto.",
         "toggle_title": "Ativar ciclos",
-        "toggle_description": "Planeje o trabalho em períodos de tempo focados."
+        "toggle_description": "Hangarje o trabalho em períodos de tempo focados."
       },
       "modules": {
         "title": "Módulos",
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-mail",
-          "description": "Colete novos itens de trabalho de qualquer pessoa que envie um e-mail para um endereço Plane.",
+          "description": "Colete novos itens de trabalho de qualquer pessoa que envie um e-mail para um endereço Hangar.",
           "fieldName": "ID do e-mail"
         },
         "form": {

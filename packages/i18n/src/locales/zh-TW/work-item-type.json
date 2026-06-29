@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "一旦啟用，工作項目類型不能被禁用。",
-          "description": "Plane的工作項目將成為此專案的默認工作項目類型，並將在此專案中顯示其圖標和背景。",
+          "description": "Hangar的工作項目將成為此專案的默認工作項目類型，並將在此專案中顯示其圖標和背景。",
           "button": {
             "default": "啟用",
             "loading": "設置中"

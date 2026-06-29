@@ -244,7 +244,7 @@
   "full_changelog": "Nhật ký thay đổi đầy đủ",
   "support": "Hỗ trợ",
   "forum": "Forum",
-  "powered_by_plane_pages": "Được hỗ trợ bởi Plane Pages",
+  "powered_by_plane_pages": "Được hỗ trợ bởi Hangar Pages",
   "please_select_at_least_one_invitation": "Vui lòng chọn ít nhất một lời mời.",
   "please_select_at_least_one_invitation_description": "Vui lòng chọn ít nhất một lời mời để tham gia không gian làm việc.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Chúng tôi thấy có người đã mời bạn tham gia không gian làm việc",
@@ -820,7 +820,7 @@
     "edited_by": "Được chỉnh sửa bởi"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Hangar không khởi động được.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Chọn View Logs từ setup.sh và log Docker để chắc chắn."
   },
   "customize_navigation": "Tùy chỉnh điều hướng",
@@ -832,7 +832,7 @@
   "pin": "Ghim",
   "unpin": "Bỏ ghim",
   "workspace_dashboards": "Bảng điều khiển",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "Trong ứng dụng",
   "forms": "Biểu mẫu",
   "milestones": "Cột mốc",

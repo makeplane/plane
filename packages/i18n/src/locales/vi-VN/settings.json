@@ -115,7 +115,7 @@
     "empty_state": {
       "activity": {
         "title": "Chưa có hoạt động",
-        "description": "Bắt đầu bằng cách tạo mục công việc mới! Thêm chi tiết và thuộc tính cho nó. Khám phá thêm trong Plane để xem hoạt động của bạn."
+        "description": "Bắt đầu bằng cách tạo mục công việc mới! Thêm chi tiết và thuộc tính cho nó. Khám phá thêm trong Hangar để xem hoạt động của bạn."
       },
       "assigned": {
         "title": "Không có mục công việc nào được giao cho bạn",

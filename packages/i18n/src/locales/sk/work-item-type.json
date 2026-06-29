@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Po povolení nemožno Typy pracovných položiek zakázať.",
-          "description": "Pracovná položka Plane sa stane predvoleným typom pracovnej položky pre tento projekt a zobrazí sa so svojou ikonou a pozadím v tomto projekte.",
+          "description": "Pracovná položka Hangar sa stane predvoleným typom pracovnej položky pre tento projekt a zobrazí sa so svojou ikonou a pozadím v tomto projekte.",
           "button": {
             "default": "Povoliť",
             "loading": "Nastavuje sa"

@@ -14,7 +14,7 @@
       "sidebar_header": "Konfigurasi pemicu",
       "input_label": "Apa pemicu untuk otomatisasi ini?",
       "input_placeholder": "Pilih opsi",
-      "section_plane_events": "Peristiwa Plane",
+      "section_plane_events": "Peristiwa Hangar",
       "section_time_based": "Berbasis waktu",
       "fixed_schedule": "Jadwal tetap",
       "schedule": {

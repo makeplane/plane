@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Rất tiếc! Có vẻ như có gì đó không ổn",
-      "description": "Chúng tôi không thể tải tài khoản Plane của bạn hiện tại. Đây có thể là lỗi mạng.",
+      "description": "Chúng tôi không thể tải tài khoản Hangar của bạn hiện tại. Đây có thể là lỗi mạng.",
       "cta_primary": "Thử tải lại"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Viết một ghi chú, một tài liệu hoặc một cơ sở kiến thức đầy đủ.",
-      "description": "Các trang là không gian ghi lại suy nghĩ trong Plane. Ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng các mục công việc, bố trí chúng bằng thư viện các thành phần và giữ chúng tất cả trong bối cảnh dự án của bạn.",
+      "description": "Các trang là không gian ghi lại suy nghĩ trong Hangar. Ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng các mục công việc, bố trí chúng bằng thư viện các thành phần và giữ chúng tất cả trong bối cảnh dự án của bạn.",
       "cta_primary": "Tạo trang của bạn"
     },
     "project_overview_state_sidebar": {

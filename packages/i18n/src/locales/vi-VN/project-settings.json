@@ -182,18 +182,18 @@
       "description": "Cấu hình các hành động tự động để tinh giản quy trình quản lý dự án và giảm công việc thủ công.",
       "auto-archive": {
         "title": "Tự động lưu trữ mục công việc đã đóng",
-        "description": "Plane sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
+        "description": "Hangar sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
         "duration": "Tự động lưu trữ đã đóng"
       },
       "auto-close": {
         "title": "Tự động đóng mục công việc",
-        "description": "Plane sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
+        "description": "Hangar sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
         "duration": "Tự động đóng không hoạt động",
         "auto_close_status": "Trạng thái tự động đóng"
       },
       "auto-remind": {
         "title": "Nhắc nhở tự động",
-        "description": "Plane sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",
+        "description": "Hangar sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",
         "duration": "Gửi nhắc nhở trước"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "Email",
-          "description": "Thu thập mục công việc mới từ bất kỳ ai gửi email đến địa chỉ email Plane.",
+          "description": "Thu thập mục công việc mới từ bất kỳ ai gửi email đến địa chỉ email Hangar.",
           "fieldName": "ID email"
         },
         "form": {

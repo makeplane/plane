@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nome dell'azienda",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Il nome dell'azienda è obbligatorio",
               "maxLength": "Il nome dell'azienda deve contenere meno di 255 caratteri"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Modelli",
-        "description": "Con i modelli di progetto, elemento di lavoro e pagina in Plane, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
+        "description": "Con i modelli di progetto, elemento di lavoro e pagina in Hangar, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
         "sub_description": "Recupera l'80% del tuo tempo di amministrazione quando utilizzi i Modelli."
       },
       "no_templates": {

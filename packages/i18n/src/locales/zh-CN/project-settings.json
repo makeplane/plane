@@ -182,18 +182,18 @@
       "description": "配置自动化操作以简化项目管理工作流并减少手动任务。",
       "auto-archive": {
         "title": "自动归档已关闭的工作项",
-        "description": "Plane 将自动归档已完成或已取消的工作项。",
+        "description": "Hangar 将自动归档已完成或已取消的工作项。",
         "duration": "自动归档已关闭"
       },
       "auto-close": {
         "title": "自动关闭工作项",
-        "description": "Plane 将自动关闭尚未完成或取消的工作项。",
+        "description": "Hangar 将自动关闭尚未完成或取消的工作项。",
         "duration": "自动关闭不活跃",
         "auto_close_status": "自动关闭状态"
       },
       "auto-remind": {
         "title": "自动提醒",
-        "description": "Plane 将自动通过电子邮件和应用程序通知来提醒您的团队保持进度。",
+        "description": "Hangar 将自动通过电子邮件和应用程序通知来提醒您的团队保持进度。",
         "duration": "提前提醒"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "电子邮件",
-          "description": "从任何向 Plane 邮箱地址发送邮件的人收集新的工作项。",
+          "description": "从任何向 Hangar 邮箱地址发送邮件的人收集新的工作项。",
           "fieldName": "电子邮件 ID"
         },
         "form": {

@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Kontroluj chaos zmian i recenzji dzięki Workflowom.",
-        "description": "Ustaw reguły dotyczące tego, gdzie przenosi się Twoja praca, przez kogo i kiedy, dzięki Workflowom w Plane."
+        "description": "Ustaw reguły dotyczące tego, gdzie przenosi się Twoja praca, przez kogo i kiedy, dzięki Workflowom w Hangar."
       }
     },
     "quick_actions": {

@@ -3,7 +3,7 @@
     "label": "Setări spațiu de lucru",
     "page_label": "{workspace} - Setări generale",
     "key_created": "Cheie creată",
-    "copy_key": "Copiază și salvează această cheie secretă în Plane Documentație. Nu vei mai putea vedea această cheie după ce închizi. Un fișier CSV care conține cheia a fost descărcat.",
+    "copy_key": "Copiază și salvează această cheie secretă în Hangar Documentație. Nu vei mai putea vedea această cheie după ce închizi. Un fișier CSV care conține cheia a fost descărcat.",
     "token_copied": "Token-ul a fost copiat în memoria temporară.",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "Se generează",
         "delete": {
           "title": "Șterge cheia secretă API",
-          "description": "Orice aplicație care folosește această cheie secretă nu va mai avea acces la datele Plane. Această acțiune este ireversibilă.",
+          "description": "Orice aplicație care folosește această cheie secretă nu va mai avea acces la datele Hangar. Această acțiune este ireversibilă.",
           "success": {
             "title": "Succes!",
             "message": "Cheia secretă API a fost ștearsă cu succes"
@@ -176,7 +176,7 @@
         "title": "Integrări",
         "heading": "Integrări",
         "description": "Conectează-te cu instrumente și servicii populare pentru a sincroniza munca ta în întregul ecosistem al fluxului de lucru.",
-        "page_title": "Lucrează cu datele tale Plane în aplicațiile disponibile sau în ale tale proprii.",
+        "page_title": "Lucrează cu datele tale Hangar în aplicațiile disponibile sau în ale tale proprii.",
         "page_description": "Vizualizează toate integrările utilizate de acest spațiu de lucru sau de tine."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Stări de proiect",
         "heading": "Vezi prezentarea progresului pentru toate proiectele.",
-        "description": "Stările proiectelor sunt o funcție exclusivă Plane pentru urmărirea progresului tuturor proiectelor tale după orice proprietate a proiectului.",
+        "description": "Stările proiectelor sunt o funcție exclusivă Hangar pentru urmărirea progresului tuturor proiectelor tale după orice proprietate a proiectului.",
         "go_to_settings": "Mergi la setări"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Instalează",
         "installed": "Instalat",
         "configure": "Configurează",
-        "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Plane",
+        "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Hangar",
         "app_credentials_regenrated": {
           "title": "Acreditările aplicației au fost regenerate cu succes",
           "description": "Înlocuiți secretul clientului peste tot unde este folosit. Secretul anterior nu mai este valid."
         },
         "app_created": {
           "title": "Aplicația a fost creată cu succes",
-          "description": "Folosiți acreditările pentru a instala aplicația într-un spațiu de lucru Plane"
+          "description": "Folosiți acreditările pentru a instala aplicația într-un spațiu de lucru Hangar"
         },
         "installed_apps": "Aplicații instalate",
         "all_apps": "Toate aplicațiile",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "URI de redirecționare (separate prin spațiu)",
-          "description": "Utilizatorii vor fi redirecționați către acest traseu după ce s-au autentificat cu Plane.",
+          "description": "Utilizatorii vor fi redirecționați către acest traseu după ce s-au autentificat cu Hangar.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
+        "app_available_description": "Conectează un workspace al Hangar pentru a începe să folosesti",
         "client_id_and_secret": "ID-ul clientului și Secretul",
         "client_id_and_secret_description": "Copiază și salvează această cheie secretă în Pagini. Nu poți vedea această cheie din nou după ce închizi.",
         "client_id_and_secret_download": "Poți descărca un fișier CSV cu cheia de aici.",
@@ -408,7 +408,7 @@
         "app_consent_workspace_permissions_title": "{app} ar dori să",
         "app_consent_user_permissions_title": "{app} poate solicita și permisiuni pentru utilizator pentru următoarele resurse. Aceste permisiuni vor fi solicitate și autorizate doar de un utilizator.",
         "app_consent_accept_title": "Prin acceptare, tu",
-        "app_consent_accept_1": "Permite aplicației acces la datele Plane în orice loc unde poți folosi aplicația în interior sau în afara Plane",
+        "app_consent_accept_1": "Permite aplicației acces la datele Hangar în orice loc unde poți folosi aplicația în interior sau în afara Hangar",
         "app_consent_accept_2": "Apreciază politica de confidențialitate și termenii de utilizare a {app}",
         "accepting": "Acceptând...",
         "accept": "Acceptă",
@@ -450,7 +450,7 @@
         "upload_and_save": "Încarcă și salvează",
         "app_consent_no_access_title": "Cerere de instalare",
         "app_consent_no_access_description": "Această aplicație poate fi instalată doar după ce un administrator al workspace-ului o instalează. Contactați administratorul workspace-ului pentru a continua.",
-        "app_consent_unapproved_title": "Această aplicație nu a fost încă revizuită sau aprobată de Plane.",
+        "app_consent_unapproved_title": "Această aplicație nu a fost încă revizuită sau aprobată de Hangar.",
         "app_consent_unapproved_description": "Asigură-te că ai încredere în această aplicație înainte de a o conecta la spațiul tău de lucru.",
         "go_to_app": "Mergi la aplicație",
         "enable_app_mentions": "Activează mențiunile aplicației",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Script-uri",
         "new_script": "Script nou",
         "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Nicio cheie secretă API creată",
-        "description": "API-ul Plane poate fi folosit pentru a integra datele tale din Plane cu orice sistem extern. Creează o cheie secretă pentru a începe."
+        "description": "API-ul Hangar poate fi folosit pentru a integra datele tale din Hangar cu orice sistem extern. Creează o cheie secretă pentru a începe."
       },
       "webhooks": {
         "title": "Niciun punctul de notificare (webhook) adăugat",

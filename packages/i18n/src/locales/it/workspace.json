@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Crea il tuo spazio di lavoro",
-    "subheading": "Per iniziare a usare Plane, devi creare o unirti a uno spazio di lavoro.",
+    "subheading": "Per iniziare a usare Hangar, devi creare o unirti a uno spazio di lavoro.",
     "form": {
       "name": {
         "label": "Dai un nome al tuo spazio di lavoro",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Panoramica dei tuoi progetti, attività e metriche",
-        "description": "Benvenuto in Plane, siamo entusiasti di averti qui. Crea il tuo primo progetto e traccia i tuoi elementi di lavoro, e questa pagina si trasformerà in uno spazio che ti aiuta a progredire. Gli amministratori vedranno anche elementi che aiutano il team a progredire.",
+        "description": "Benvenuto in Hangar, siamo entusiasti di averti qui. Crea il tuo primo progetto e traccia i tuoi elementi di lavoro, e questa pagina si trasformerà in uno spazio che ti aiuta a progredire. Gli amministratori vedranno anche elementi che aiutano il team a progredire.",
         "primary_button": {
           "text": "Crea il tuo primo progetto",
           "comic": {
-            "title": "Tutto inizia con un progetto in Plane",
+            "title": "Tutto inizia con un progetto in Hangar",
             "description": "Un progetto può essere la roadmap di un prodotto, una campagna di marketing o il lancio di una nuova auto."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Inizia il tuo primo progetto",
           "comic": {
-            "title": "Tutto inizia con un progetto in Plane",
+            "title": "Tutto inizia con un progetto in Hangar",
             "description": "Un progetto può essere la roadmap di un prodotto, una campagna di marketing o il lancio di una nuova auto."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Inizia il tuo primo progetto",
           "comic": {
-            "title": "Tutto inizia con un progetto in Plane",
+            "title": "Tutto inizia con un progetto in Hangar",
             "description": "Un progetto può essere la roadmap di un prodotto, una campagna di marketing o il lancio di una nuova auto."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Scrivi una nota, un documento o una base di conoscenza completa. Fai partire Galileo, l'assistente AI di Plane, per aiutarti a iniziare",
-        "description": "Le pagine sono spazi di pensiero in Plane. Prendi appunti durante le riunioni, formattali facilmente, incorpora elementi di lavoro, disponili utilizzando una libreria di componenti e mantienili tutti nel contesto del tuo progetto. Per semplificare qualsiasi documento, invoca Galileo, l'AI di Plane, con una scorciatoia o con un clic di un pulsante.",
+        "title": "Scrivi una nota, un documento o una base di conoscenza completa. Fai partire Galileo, l'assistente AI di Hangar, per aiutarti a iniziare",
+        "description": "Le pagine sono spazi di pensiero in Hangar. Prendi appunti durante le riunioni, formattali facilmente, incorpora elementi di lavoro, disponili utilizzando una libreria di componenti e mantienili tutti nel contesto del tuo progetto. Per semplificare qualsiasi documento, invoca Galileo, l'AI di Hangar, con una scorciatoia o con un clic di un pulsante.",
         "primary_button": {
           "text": "Crea la tua prima pagina"
         }

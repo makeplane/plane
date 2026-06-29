@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Vytvořte si pracovní prostor",
-    "subheading": "Pro používání Plane musíte vytvořit nebo se připojit k pracovnímu prostoru.",
+    "subheading": "Pro používání Hangar musíte vytvořit nebo se připojit k pracovnímu prostoru.",
     "form": {
       "name": {
         "label": "Pojmenujte svůj pracovní prostor",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Přehled projektů, aktivit a metrik",
-        "description": "Vítejte v Plane, jsme rádi, že jste zde. Vytvořte první projekt, sledujte pracovní položky a tato stránka se promění v prostor pro váš pokrok. Správci zde uvidí i položky pomáhající týmu.",
+        "description": "Vítejte v Hangar, jsme rádi, že jste zde. Vytvořte první projekt, sledujte pracovní položky a tato stránka se promění v prostor pro váš pokrok. Správci zde uvidí i položky pomáhající týmu.",
         "primary_button": {
           "text": "Vytvořte první projekt",
           "comic": {
-            "title": "Vše začíná projektem v Plane",
+            "title": "Vše začíná projektem v Hangar",
             "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Začněte první projekt",
           "comic": {
-            "title": "Vše začíná projektem v Plane",
+            "title": "Vše začíná projektem v Hangar",
             "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Začněte první projekt",
           "comic": {
-            "title": "Vše začíná projektem v Plane",
+            "title": "Vše začíná projektem v Hangar",
             "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Napište poznámku, dokument nebo celou znalostní bázi. Získejte pomoc od Galilea, AI asistenta Plane, abyste začali",
-        "description": "Stránky jsou prostor pro myšlenky v Plane. Zaznamenejte si poznámky z jednání, snadno je naformátujte, vložte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte je všechny v kontextu vašeho projektu. Abychom usnadnili práci s jakýmkoli dokumentem, vyvolejte Galilea, AI Plane, pomocí zkratky nebo kliknutím na tlačítko.",
+        "title": "Napište poznámku, dokument nebo celou znalostní bázi. Získejte pomoc od Galilea, AI asistenta Hangar, abyste začali",
+        "description": "Stránky jsou prostor pro myšlenky v Hangar. Zaznamenejte si poznámky z jednání, snadno je naformátujte, vložte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte je všechny v kontextu vašeho projektu. Abychom usnadnili práci s jakýmkoli dokumentem, vyvolejte Galilea, AI Hangar, pomocí zkratky nebo kliknutím na tlačítko.",
         "primary_button": {
           "text": "Vytvořit svou první stránku"
         }

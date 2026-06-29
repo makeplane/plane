@@ -14,7 +14,7 @@
       "sidebar_header": "Konfigurácia spúšťača",
       "input_label": "Aký je spúšťač pre túto automatizáciu?",
       "input_placeholder": "Vyberte možnosť",
-      "section_plane_events": "Udalosti Plane",
+      "section_plane_events": "Udalosti Hangar",
       "section_time_based": "Časovo založené",
       "fixed_schedule": "Pevný rozvrh",
       "schedule": {

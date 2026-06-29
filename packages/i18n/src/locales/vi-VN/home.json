@@ -5,7 +5,7 @@
       "not_right_now": "Không phải bây giờ",
       "create_project": {
         "title": "Tạo dự án",
-        "description": "Trong Plane, hầu hết mọi thứ đều bắt đầu từ dự án.",
+        "description": "Trong Hangar, hầu hết mọi thứ đều bắt đầu từ dự án.",
         "cta": "Bắt đầu"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Cấu hình không gian làm việc này"
       },
       "personalize_account": {
-        "title": "Cá nhân hóa Plane cho bạn",
+        "title": "Cá nhân hóa Hangar cho bạn",
         "description": "Chọn ảnh đại diện, màu sắc và nhiều hơn nữa.",
         "cta": "Cá nhân hóa ngay"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Tính năng mới của Plane"
+      "title": "Tính năng mới của Hangar"
     },
     "quick_tutorial": {
       "title": "Hướng dẫn nhanh"

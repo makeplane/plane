@@ -5,7 +5,7 @@
       "not_right_now": "Зараз не треба",
       "create_project": {
         "title": "Створити проєкт",
-        "description": "Більшість речей починається з проєкту в Plane.",
+        "description": "Більшість речей починається з проєкту в Hangar.",
         "cta": "Почати"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Налаштувати цей простір"
       },
       "personalize_account": {
-        "title": "Налаштуйте Plane під себе.",
+        "title": "Налаштуйте Hangar під себе.",
         "description": "Оберіть картинку, кольори та інше.",
         "cta": "Налаштувати зараз"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Новинки в Plane"
+      "title": "Новинки в Hangar"
     },
     "quick_tutorial": {
       "title": "Швидкий посібник"

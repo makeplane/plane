@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Utwórz przestrzeń roboczą",
-    "subheading": "Aby korzystać z Plane, musisz utworzyć lub dołączyć do przestrzeni roboczej.",
+    "subheading": "Aby korzystać z Hangar, musisz utworzyć lub dołączyć do przestrzeni roboczej.",
     "form": {
       "name": {
         "label": "Nazwij swoją przestrzeń roboczą",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Podgląd projektów, aktywności i metryk",
-        "description": "Witaj w Plane, cieszymy się, że jesteś. Utwórz pierwszy projekt, śledź elementy pracy, a ta strona stanie się centrum Twojego postępu. Administratorzy zobaczą tu również elementy pomocne zespołowi.",
+        "description": "Witaj w Hangar, cieszymy się, że jesteś. Utwórz pierwszy projekt, śledź elementy pracy, a ta strona stanie się centrum Twojego postępu. Administratorzy zobaczą tu również elementy pomocne zespołowi.",
         "primary_button": {
           "text": "Utwórz pierwszy projekt",
           "comic": {
-            "title": "Wszystko zaczyna się od projektu w Plane",
+            "title": "Wszystko zaczyna się od projektu w Hangar",
             "description": "Projektem może być harmonogram produktu, kampania marketingowa czy wprowadzenie nowego samochodu."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Rozpocznij pierwszy projekt",
           "comic": {
-            "title": "Wszystko zaczyna się od projektu w Plane",
+            "title": "Wszystko zaczyna się od projektu w Hangar",
             "description": "Projekt może dotyczyć planu produktu, kampanii marketingowej lub uruchomienia nowego samochodu."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Rozpocznij pierwszy projekt",
           "comic": {
-            "title": "Wszystko zaczyna się od projektu w Plane",
+            "title": "Wszystko zaczyna się od projektu w Hangar",
             "description": "Projekt może dotyczyć planu produktu, kampanii marketingowej lub uruchomienia nowego samochodu."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Napisz notatkę, dokument lub pełną bazę wiedzy. Niech Galileo, asystent AI Plane, pomoże Ci zacząć",
-        "description": "Strony to przestrzeń do przechowywania myśli w Plane. Sporządzaj notatki ze spotkań, formatuj je łatwo, osadzaj elementy pracy, układaj je za pomocą biblioteki komponentów i trzymaj je wszystkie w kontekście projektu. Aby szybko wykonać dowolny dokument, wywołaj Galileo, AI Plane, za pomocą skrótu lub kliknięcia przycisku.",
+        "title": "Napisz notatkę, dokument lub pełną bazę wiedzy. Niech Galileo, asystent AI Hangar, pomoże Ci zacząć",
+        "description": "Strony to przestrzeń do przechowywania myśli w Hangar. Sporządzaj notatki ze spotkań, formatuj je łatwo, osadzaj elementy pracy, układaj je za pomocą biblioteki komponentów i trzymaj je wszystkie w kontekście projektu. Aby szybko wykonać dowolny dokument, wywołaj Galileo, AI Hangar, za pomocą skrótu lub kliknięcia przycisku.",
         "primary_button": {
           "text": "Utwórz swoją pierwszą stronę"
         }

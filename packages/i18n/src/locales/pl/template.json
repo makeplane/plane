@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nazwa firmy",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Nazwa firmy jest wymagana",
               "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Szablony",
-        "description": "Dzięki szablonom projektów, elementów pracy i stron w Plane nie musisz tworzyć projektu od podstaw ani ręcznie ustawiać właściwości elementów pracy.",
+        "description": "Dzięki szablonom projektów, elementów pracy i stron w Hangar nie musisz tworzyć projektu od podstaw ani ręcznie ustawiać właściwości elementów pracy.",
         "sub_description": "Odzyskaj 80% czasu administracyjnego, korzystając z Szablonów."
       },
       "no_templates": {

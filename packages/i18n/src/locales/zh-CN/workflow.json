@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "使用工作流控制更改和审查的混乱。",
-        "description": "使用 Plane 中的工作流定义您工作的移动规则，包括谁、何时。"
+        "description": "使用 Hangar 中的工作流定义您工作的移动规则，包括谁、何时。"
       }
     },
     "quick_actions": {

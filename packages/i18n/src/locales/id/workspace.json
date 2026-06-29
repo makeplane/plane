@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Buat ruang kerja Anda",
-    "subheading": "Untuk mulai menggunakan Plane, Anda perlu membuat atau bergabung dengan ruang kerja.",
+    "subheading": "Untuk mulai menggunakan Hangar, Anda perlu membuat atau bergabung dengan ruang kerja.",
     "form": {
       "name": {
         "label": "Nama ruang kerja Anda",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Ikhtisar proyek, aktivitas, dan metrik Anda",
-        "description": "Selamat datang di Plane, kami sangat senang memiliki Anda di sini. Buat proyek pertama Anda dan lacak item kerja Anda, dan halaman ini akan berubah menjadi ruang yang membantu Anda berkembang. Admin juga akan melihat item yang membantu tim mereka berkembang.",
+        "description": "Selamat datang di Hangar, kami sangat senang memiliki Anda di sini. Buat proyek pertama Anda dan lacak item kerja Anda, dan halaman ini akan berubah menjadi ruang yang membantu Anda berkembang. Admin juga akan melihat item yang membantu tim mereka berkembang.",
         "primary_button": {
           "text": "Bangun proyek pertama Anda",
           "comic": {
-            "title": "Segalanya dimulai dengan proyek di Plane",
+            "title": "Segalanya dimulai dengan proyek di Hangar",
             "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Mulai proyek pertama Anda",
           "comic": {
-            "title": "Segalanya dimulai dengan proyek di Plane",
+            "title": "Segalanya dimulai dengan proyek di Hangar",
             "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Mulai proyek pertama Anda",
           "comic": {
-            "title": "Segalanya dimulai dengan proyek di Plane",
+            "title": "Segalanya dimulai dengan proyek di Hangar",
             "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
-        "description": "Halaman adalah ruang pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda. Untuk mempersingkat pekerjaan dokumen apa pun, panggil Galileo, AI Plane, dengan pintasan atau klik tombol.",
+        "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap. Dapatkan Galileo, asisten AI Hangar, untuk membantu Anda memulai",
+        "description": "Halaman adalah ruang pemikiran di Hangar. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda. Untuk mempersingkat pekerjaan dokumen apa pun, panggil Galileo, AI Hangar, dengan pintasan atau klik tombol.",
         "primary_button": {
           "text": "Buat halaman pertama Anda"
         }

@@ -5,7 +5,7 @@
       "not_right_now": "Nu acum",
       "create_project": {
         "title": "Creează un proiect",
-        "description": "Majoritatea lucrurilor încep cu un proiect în Plane.",
+        "description": "Majoritatea lucrurilor încep cu un proiect în Hangar.",
         "cta": "Începe acum"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Configurează acest spațiu de lucru"
       },
       "personalize_account": {
-        "title": "Personalizează Plane.",
+        "title": "Personalizează Hangar.",
         "description": "Alege-ți poza de profil, culorile și multe altele.",
         "cta": "Personalizează acum"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Noutăți în Plane"
+      "title": "Noutăți în Hangar"
     },
     "quick_tutorial": {
       "title": "Tutorial rapid"

@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Company name",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Company name is required",
               "maxLength": "Company name should be less than 255 characters"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Templates",
-        "description": "With project, work-item, and page templates in Plane, you don't have to create a project from scratch or set work item props manually.",
+        "description": "With project, work-item, and page templates in Hangar, you don't have to create a project from scratch or set work item props manually.",
         "sub_description": "Get 80% of your admin time back when you use Templates."
       },
       "no_templates": {

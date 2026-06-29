@@ -244,7 +244,7 @@
   "full_changelog": "完整更新日誌",
   "support": "支援",
   "forum": "Forum",
-  "powered_by_plane_pages": "由 Plane Pages 提供",
+  "powered_by_plane_pages": "由 Hangar Pages 提供",
   "please_select_at_least_one_invitation": "請至少選擇一個邀請。",
   "please_select_at_least_one_invitation_description": "請至少選擇一個邀請加入工作區。",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "我們發現有人邀請您加入工作區",
@@ -820,7 +820,7 @@
     "edited_by": "編輯者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar 未能啟動。這可能是因為一個或多個 Hangar 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
   },
   "customize_navigation": "自訂導覽",

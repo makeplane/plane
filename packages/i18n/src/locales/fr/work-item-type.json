@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Une fois activés, les types d'éléments de travail ne peuvent pas être désactivés.",
-          "description": "L'élément de travail de Plane deviendra le type d'élément de travail par défaut pour ce projet et apparaîtra avec son icône et son arrière-plan dans ce projet.",
+          "description": "L'élément de travail de Hangar deviendra le type d'élément de travail par défaut pour ce projet et apparaîtra avec son icône et son arrière-plan dans ce projet.",
           "button": {
             "default": "Activer",
             "loading": "Configuration en cours"

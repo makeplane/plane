@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Dokumentieren mit KI-gestützten Seiten",
-        "description": "Seiten in Plane ermöglichen es Ihnen, Projektinformationen zu erfassen, zu organisieren und daran zusammenzuarbeiten—ohne externe Tools."
+        "description": "Seiten in Hangar ermöglichen es Ihnen, Projektinformationen zu erfassen, zu organisieren und daran zusammenzuarbeiten—ohne externe Tools."
       },
       "step_one": {
         "title": "Seite als Öffentlich oder Privat festlegen",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Anfragen mit Intake optimieren",
-        "description": "Eine Plane-exklusive Funktion, mit der Gäste Arbeitselemente für Fehler, Anfragen oder Tickets erstellen können."
+        "description": "Eine Hangar-exklusive Funktion, mit der Gäste Arbeitselemente für Fehler, Anfragen oder Tickets erstellen können."
       },
       "step_one": {
         "title": "Offene/geschlossene Intake-Anfragen",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Schluss mit dem Wechseln zwischen Tabs. Verbinden Sie Ihre Welt.",
-        "description": "Verknüpfen Sie GitHub und Slack, um PRs zu verfolgen und Chats direkt in Plane AI zusammenzufassen."
+        "description": "Verknüpfen Sie GitHub und Slack, um PRs zu verfolgen und Chats direkt in Hangar AI zusammenzufassen."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Hallo {name}, willkommen an Bord!",
-    "description": "Hier ist alles, was Sie brauchen, um Ihre Reise mit Plane zu starten.",
+    "description": "Hier ist alles, was Sie brauchen, um Ihre Reise mit Hangar zu starten.",
     "checklist_section": {
       "title": "Loslegen",
       "description": "Beginnen Sie mit der Einrichtung und sehen Sie, wie Ihre Ideen schneller zum Leben erwachen.",
@@ -172,7 +172,7 @@
           "title": "Seite erstellen"
         },
         "item_5": {
-          "title": "Plane AI-Chat ausprobieren"
+          "title": "Hangar AI-Chat ausprobieren"
         },
         "item_6": {
           "title": "Integrationen verknüpfen"
@@ -188,8 +188,8 @@
       "more_integrations": "Weitere Integrationen durchsuchen"
     },
     "switch_to_plane_section": {
-      "title": "Entdecken Sie, warum Teams zu Plane wechseln",
-      "description": "Vergleichen Sie Plane mit den Tools, die Sie heute verwenden, und sehen Sie den Unterschied."
+      "title": "Entdecken Sie, warum Teams zu Hangar wechseln",
+      "description": "Vergleichen Sie Hangar mit den Tools, die Sie heute verwenden, und sehen Sie den Unterschied."
     }
   }
 }

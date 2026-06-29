@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Khi đã kích hoạt, Loại mục công việc không thể bị vô hiệu hóa.",
-          "description": "Mục công việc của Plane sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
+          "description": "Mục công việc của Hangar sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
           "button": {
             "default": "Kích hoạt",
             "loading": "Đang thiết lập"

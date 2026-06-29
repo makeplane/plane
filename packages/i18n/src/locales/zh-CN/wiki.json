@@ -88,7 +88,7 @@
   "wiki": {
     "upgrade_flow": {
       "title": "升级以解锁 Wiki",
-      "description": "升级到 Plane Pro 以解锁公共页面、版本历史、共享页面、实时协作，以及用于 Wiki、公司内部文档和知识库的工作区页面。",
+      "description": "升级到 Hangar Pro 以解锁公共页面、版本历史、共享页面、实时协作，以及用于 Wiki、公司内部文档和知识库的工作区页面。",
       "upgrade_button": {
         "text": "升级"
       },

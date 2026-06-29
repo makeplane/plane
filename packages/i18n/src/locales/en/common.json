@@ -244,7 +244,7 @@
   "full_changelog": "Full changelog",
   "support": "Support",
   "forum": "Forum",
-  "powered_by_plane_pages": "Powered by Plane Pages",
+  "powered_by_plane_pages": "Powered by Hangar Pages",
   "please_select_at_least_one_invitation": "Please select at least one invitation.",
   "please_select_at_least_one_invitation_description": "Please select at least one invitation to join the workspace.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "We see that someone has invited you to join a workspace",
@@ -820,7 +820,7 @@
     "edited_by": "Edited by"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar didn't start up. This could be because one or more Hangar services failed to start.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   },
   "customize_navigation": "Customize navigation",
@@ -832,7 +832,7 @@
   "pin": "Pin",
   "unpin": "Unpin",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "In-app",
   "forms": "Forms",
   "milestones": "Milestones",

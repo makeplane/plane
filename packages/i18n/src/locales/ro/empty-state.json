@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Hopa! Se pare că ceva nu este în regulă",
-      "description": "Nu putem accesa contul dvs. Plane în prezent. Aceasta ar putea fi o eroare de rețea.",
+      "description": "Nu putem accesa contul dvs. Hangar în prezent. Aceasta ar putea fi o eroare de rețea.",
       "cta_primary": "Încercați reîncărcarea"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Scrieți o notă, un document sau o bază de cunoștințe completă.",
-      "description": "Paginile sunt spațiu de captare a gândurilor în Plane. Notați note de întâlnire, formatați-le cu ușurință, încorporați elemente de lucru, aranjați-le folosind o bibliotecă de componente și păstrați-le toate în contextul proiectului dvs.",
+      "description": "Paginile sunt spațiu de captare a gândurilor în Hangar. Notați note de întâlnire, formatați-le cu ușurință, încorporați elemente de lucru, aranjați-le folosind o bibliotecă de componente și păstrați-le toate în contextul proiectului dvs.",
       "cta_primary": "Creați pagina dvs."
     },
     "project_overview_state_sidebar": {

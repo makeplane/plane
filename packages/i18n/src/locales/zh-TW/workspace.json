@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "建立您的工作區",
-    "subheading": "若要開始使用 Plane，您需要建立或加入工作區。",
+    "subheading": "若要開始使用 Hangar，您需要建立或加入工作區。",
     "form": {
       "name": {
         "label": "為您的工作區命名",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "您的專案、活動和指標概覽",
-        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
+        "description": "歡迎使用 Hangar，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
         "primary_button": {
           "text": "建立您的第一個專案",
           "comic": {
-            "title": "在 Plane 中，一切都始於專案",
+            "title": "在 Hangar 中，一切都始於專案",
             "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "開始您的第一個專案",
           "comic": {
-            "title": "在 Plane 中，一切都始於專案",
+            "title": "在 Hangar 中，一切都始於專案",
             "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "開始您的第一個專案",
           "comic": {
-            "title": "在 Plane 中，一切都始於專案",
+            "title": "在 Hangar 中，一切都始於專案",
             "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
-        "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
+        "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Hangar 的 AI 助手，幫助您開始",
+        "description": "頁面是 Hangar 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Hangar 的 AI。",
         "primary_button": {
           "text": "創建您的第一個頁面"
         }

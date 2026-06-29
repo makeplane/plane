@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Ovládejte chaos změn a recenzí pomocí pracovních toků.",
-        "description": "Nastavte pravidla pro to, kam se vaše práce přesouvá, kým a kdy pomocí pracovních toků v Plane."
+        "description": "Nastavte pravidla pro to, kam se vaše práce přesouvá, kým a kdy pomocí pracovních toků v Hangar."
       }
     },
     "quick_actions": {

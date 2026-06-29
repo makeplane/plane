@@ -14,7 +14,7 @@
       "sidebar_header": "Configuration du déclencheur",
       "input_label": "Quel est le déclencheur pour cette automatisation ?",
       "input_placeholder": "Sélectionnez une option",
-      "section_plane_events": "Événements Plane",
+      "section_plane_events": "Événements Hangar",
       "section_time_based": "Basé sur le temps",
       "fixed_schedule": "Horaire fixe",
       "schedule": {

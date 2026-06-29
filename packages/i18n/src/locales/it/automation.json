@@ -14,7 +14,7 @@
       "sidebar_header": "Configurazione trigger",
       "input_label": "Qual è il trigger per questa automazione?",
       "input_placeholder": "Seleziona un'opzione",
-      "section_plane_events": "Eventi Plane",
+      "section_plane_events": "Eventi Hangar",
       "section_time_based": "Basato sul tempo",
       "fixed_schedule": "Pianificazione fissa",
       "schedule": {

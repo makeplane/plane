@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Una volta abilitato, i Tipi di Elementi di Lavoro non possono essere disattivati.",
-          "description": "Plane's Elemento di Lavoro diventerà il tipo di elemento di lavoro predefinito per questo progetto e apparirà con la sua icona e sfondo in questo progetto.",
+          "description": "Hangar's Elemento di Lavoro diventerà il tipo di elemento di lavoro predefinito per questo progetto e apparirà con la sua icona e sfondo in questo progetto.",
           "button": {
             "default": "Abilita",
             "loading": "Configurazione"

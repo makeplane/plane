@@ -115,7 +115,7 @@
     "empty_state": {
       "activity": {
         "title": "Nenhuma atividade ainda",
-        "description": "Comece criando um novo item de trabalho! Adicione detalhes e propriedades a ele. Explore mais no Plane para ver sua atividade."
+        "description": "Comece criando um novo item de trabalho! Adicione detalhes e propriedades a ele. Explore mais no Hangar para ver sua atividade."
       },
       "assigned": {
         "title": "Nenhum item de trabalho atribuído a você",

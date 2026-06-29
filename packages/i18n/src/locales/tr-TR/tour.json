@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "AI destekli Sayfalarla belgeleyin",
-        "description": "Plane deki Sayfalar, proje bilgilerini yakalamanıza, düzenlemenize ve işbirliği yapmanıza olanak tanır—harici araçlara gerek yoktur."
+        "description": "Hangar deki Sayfalar, proje bilgilerini yakalamanıza, düzenlemenize ve işbirliği yapmanıza olanak tanır—harici araçlara gerek yoktur."
       },
       "step_one": {
         "title": "Sayfayı Genel veya Özel yapın",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Alımla istekleri kolaylaştırın",
-        "description": "Konukların hatalar, istekler veya biletler için çalışma öğeleri oluşturmasına olanak tanıyan Plane a özel bir özellik."
+        "description": "Konukların hatalar, istekler veya biletler için çalışma öğeleri oluşturmasına olanak tanıyan Hangar a özel bir özellik."
       },
       "step_one": {
         "title": "Açık/kapalı alım istekleri",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Sekmeler arası geçişi bırakın. Dünyanızı bağlayın.",
-        "description": "PR'ları takip etmek ve sohbetleri doğrudan Plane AI'da özetlemek için GitHub ve Slack'i bağlayın."
+        "description": "PR'ları takip etmek ve sohbetleri doğrudan Hangar AI'da özetlemek için GitHub ve Slack'i bağlayın."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Merhaba {name}, hoş geldiniz!",
-    "description": "İşte Plane ile yolculuğunuza başlamak için ihtiyacınız olan her şey.",
+    "description": "İşte Hangar ile yolculuğunuza başlamak için ihtiyacınız olan her şey.",
     "checklist_section": {
       "title": "Başlayın",
       "description": "Kurulumunuza başlayın ve fikirlerinizin daha hızlı hayata geçtiğini görün.",
@@ -172,7 +172,7 @@
           "title": "Bir sayfa oluşturun"
         },
         "item_5": {
-          "title": "Plane AI sohbetini deneyin"
+          "title": "Hangar AI sohbetini deneyin"
         },
         "item_6": {
           "title": "Entegrasyonları bağlayın"
@@ -188,8 +188,8 @@
       "more_integrations": "Daha fazla entegrasyona göz atın"
     },
     "switch_to_plane_section": {
-      "title": "Ekiplerin neden Plane e geçtiğini keşfedin",
-      "description": "Bugün kullandığınız araçlarla Plane i karşılaştırın ve farkı görün."
+      "title": "Ekiplerin neden Hangar e geçtiğini keşfedin",
+      "description": "Bugün kullandığınız araçlarla Hangar i karşılaştırın ve farkı görün."
     }
   }
 }

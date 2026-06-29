@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名稱",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "公司名稱為必填項",
               "maxLength": "公司名稱應少於255個字符"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "模板",
-        "description": "使用Plane中的專案、工作項目和頁面模板，您無需從頭創建專案或手動設置工作項目屬性。",
+        "description": "使用Hangar中的專案、工作項目和頁面模板，您無需從頭創建專案或手動設置工作項目屬性。",
         "sub_description": "使用模板可節省80%的管理時間。"
       },
       "no_templates": {

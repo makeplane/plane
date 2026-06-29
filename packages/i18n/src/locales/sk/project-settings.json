@@ -182,18 +182,18 @@
       "description": "Nakonfigurujte automatizované akcie na zefektívnenie riadenia projektu a zníženie manuálnej práce.",
       "auto-archive": {
         "title": "Automaticky archivovať uzavreté položky",
-        "description": "Plane bude archivovať dokončené alebo zrušené položky.",
+        "description": "Hangar bude archivovať dokončené alebo zrušené položky.",
         "duration": "Archivovať položky uzavreté dlhšie ako"
       },
       "auto-close": {
         "title": "Automaticky uzatvárať položky",
-        "description": "Plane uzavrie neaktívne položky.",
+        "description": "Hangar uzavrie neaktívne položky.",
         "duration": "Uzatvoriť položky neaktívne dlhšie ako",
         "auto_close_status": "Stav pre automatické uzatvorenie"
       },
       "auto-remind": {
         "title": "Automatické upozornenia",
-        "description": "Plane automaticky bude poslať upozornenia cez email a notifikácie v aplikácii, aby vaša ekipa zostala na ceste s termínmi.",
+        "description": "Hangar automaticky bude poslať upozornenia cez email a notifikácie v aplikácii, aby vaša ekipa zostala na ceste s termínmi.",
         "duration": "Poslať upozornenie pred"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-mail",
-          "description": "Zhromažďujte nové pracovné položky od každého, kto pošle e-mail na Plane e-mailovú adresu.",
+          "description": "Zhromažďujte nové pracovné položky od každého, kto pošle e-mail na Hangar e-mailovú adresu.",
           "fieldName": "ID e-mailu"
         },
         "form": {

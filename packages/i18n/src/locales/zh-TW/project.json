@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "建立您的第一個工作事項",
           "comic": {
-            "title": "工作事項是 Plane 中的基本單位。",
-            "description": "重新設計 Plane 使用者介面、重塑公司品牌或推出新的燃料噴射系統都是可能有子工作事項的工作事項範例。"
+            "title": "工作事項是 Hangar 中的基本單位。",
+            "description": "重新設計 Hangar 使用者介面、重塑公司品牌或推出新的燃料噴射系統都是可能有子工作事項的工作事項範例。"
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "撰寫筆記、文件或完整的知識庫。讓 Galileo（Plane 的 AI 助手）協助您開始",
-        "description": "頁面是 Plane 中的思考筆記空間。記下會議筆記，輕鬆格式化，嵌入工作事項，使用元件庫排版，並將它們全部保留在專案的上下文中。若要快速完成任何文件，可以使用快速鍵或按鈕來呼叫 Plane 的 AI Galileo。",
+        "title": "撰寫筆記、文件或完整的知識庫。讓 Galileo（Hangar 的 AI 助手）協助您開始",
+        "description": "頁面是 Hangar 中的思考筆記空間。記下會議筆記，輕鬆格式化，嵌入工作事項，使用元件庫排版，並將它們全部保留在專案的上下文中。若要快速完成任何文件，可以使用快速鍵或按鈕來呼叫 Hangar 的 AI Galileo。",
         "primary_button": {
           "text": "建立您的第一個頁面"
         }

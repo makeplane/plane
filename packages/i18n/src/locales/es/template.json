@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nombre de la empresa",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "El nombre de la empresa es obligatorio",
               "maxLength": "El nombre de la empresa debe tener menos de 255 caracteres"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Plantillas",
-        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
+        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Hangar, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
         "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
       },
       "no_templates": {

@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Ups! Ada yang salah",
-      "description": "Kami tidak dapat mengambil akun Plane Anda saat ini. Ini mungkin kesalahan jaringan.",
+      "description": "Kami tidak dapat mengambil akun Hangar Anda saat ini. Ini mungkin kesalahan jaringan.",
       "cta_primary": "Coba muat ulang"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap.",
-      "description": "Halaman adalah ruang penangkapan pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda.",
+      "description": "Halaman adalah ruang penangkapan pemikiran di Hangar. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda.",
       "cta_primary": "Buat halaman Anda"
     },
     "project_overview_state_sidebar": {

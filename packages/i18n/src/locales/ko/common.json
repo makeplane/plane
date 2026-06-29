@@ -244,7 +244,7 @@
   "full_changelog": "전체 변경 로그",
   "support": "지원",
   "forum": "Forum",
-  "powered_by_plane_pages": "Plane Pages 제공",
+  "powered_by_plane_pages": "Hangar Pages 제공",
   "please_select_at_least_one_invitation": "최소 하나의 초대를 선택하세요.",
   "please_select_at_least_one_invitation_description": "작업 공간에 참여하려면 최소 하나의 초대를 선택하세요.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "누군가가 작업 공간에 참여하도록 초대했습니다",
@@ -820,7 +820,7 @@
     "edited_by": "편집자"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar이 시작되지 않았습니다. 이는 하나 이상의 Hangar 서비스가 시작에 실패했기 때문일 수 있습니다.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요."
   },
   "customize_navigation": "내비게이션 사용자 지정",

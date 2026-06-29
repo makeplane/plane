@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Contrôlez le chaos des changements et des révisions avec les Workflows.",
-        "description": "Définissez des règles pour où votre travail se déplace, par qui, et quand avec les Workflows dans Plane."
+        "description": "Définissez des règles pour où votre travail se déplace, par qui, et quand avec les Workflows dans Hangar."
       }
     },
     "quick_actions": {

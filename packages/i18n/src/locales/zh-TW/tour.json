@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "使用AI驅動的頁面進行文檔化",
-        "description": "Plane中的頁面讓您可以捕獲、組織和協作處理項目信息—無需外部工具。"
+        "description": "Hangar中的頁面讓您可以捕獲、組織和協作處理項目信息—無需外部工具。"
       },
       "step_one": {
         "title": "將頁面設為公開或私密",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "使用接收簡化請求",
-        "description": "Plane專有功能，允許訪客為錯誤、請求或工單創建工作項。"
+        "description": "Hangar專有功能，允許訪客為錯誤、請求或工單創建工作項。"
       },
       "step_one": {
         "title": "打開/關閉接收請求",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "停止切換分頁。連接您的世界。",
-        "description": "連結 GitHub、Slack 以直接在 Plane AI 中追蹤 PR 並摘要聊天內容。"
+        "description": "連結 GitHub、Slack 以直接在 Hangar AI 中追蹤 PR 並摘要聊天內容。"
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "你好 {name}，歡迎！",
-    "description": "這是您開始Plane之旅所需的一切。",
+    "description": "這是您開始Hangar之旅所需的一切。",
     "checklist_section": {
       "title": "開始",
       "description": "開始設置，看到您的想法更快地變為現實。",
@@ -172,7 +172,7 @@
           "title": "創建頁面"
         },
         "item_5": {
-          "title": "試用Plane AI聊天"
+          "title": "試用Hangar AI聊天"
         },
         "item_6": {
           "title": "鏈接集成"
@@ -188,8 +188,8 @@
       "more_integrations": "瀏覽更多集成"
     },
     "switch_to_plane_section": {
-      "title": "了解團隊為何切換到Plane",
-      "description": "將Plane與您今天使用的工具進行比較，看看差異。"
+      "title": "了解團隊為何切換到Hangar",
+      "description": "將Hangar與您今天使用的工具進行比較，看看差異。"
     }
   }
 }

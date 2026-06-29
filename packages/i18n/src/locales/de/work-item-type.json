@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Einmal aktiviert, können Arbeitsaufgabentypen nicht deaktiviert werden.",
-          "description": "Planes Arbeitsaufgabe wird zum Standard-Arbeitsaufgabentyp für dieses Projekt und wird mit seinem Icon und Hintergrund in diesem Projekt angezeigt.",
+          "description": "Hangars Arbeitsaufgabe wird zum Standard-Arbeitsaufgabentyp für dieses Projekt und wird mit seinem Icon und Hintergrund in diesem Projekt angezeigt.",
           "button": {
             "default": "Aktivieren",
             "loading": "Einrichten"

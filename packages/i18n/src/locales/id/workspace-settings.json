@@ -3,7 +3,7 @@
     "label": "Pengaturan ruang kerja",
     "page_label": "{workspace} - Pengaturan Umum",
     "key_created": "Kunci dibuat",
-    "copy_key": "Salin dan simpan kunci rahasia ini di Halaman Plane. Anda tidak dapat melihat kunci ini setelah Anda menekan Tutup. File CSV yang berisi kunci telah diunduh.",
+    "copy_key": "Salin dan simpan kunci rahasia ini di Halaman Hangar. Anda tidak dapat melihat kunci ini setelah Anda menekan Tutup. File CSV yang berisi kunci telah diunduh.",
     "token_copied": "Token disalin ke clipboard.",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "Menghasilkan",
         "delete": {
           "title": "Hapus token API",
-          "description": "Setiap aplikasi yang menggunakan token ini tidak akan memiliki akses ke data Plane. Tindakan ini tidak dapat dibatalkan.",
+          "description": "Setiap aplikasi yang menggunakan token ini tidak akan memiliki akses ke data Hangar. Tindakan ini tidak dapat dibatalkan.",
           "success": {
             "title": "Sukses!",
             "message": "Token API telah berhasil dihapus"
@@ -176,7 +176,7 @@
         "title": "Integrasi",
         "heading": "Integrasi",
         "description": "Hubungkan dengan alat dan layanan populer untuk menyinkronkan pekerjaan Anda di seluruh ekosistem alur kerja Anda.",
-        "page_title": "Gunakan data Plane Anda di aplikasi yang tersedia atau aplikasi Anda sendiri.",
+        "page_title": "Gunakan data Hangar Anda di aplikasi yang tersedia atau aplikasi Anda sendiri.",
         "page_description": "Lihat semua integrasi yang digunakan oleh workspace ini atau oleh Anda."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Status proyek",
         "heading": "Lihat ikhtisar kemajuan untuk semua proyek.",
-        "description": "Status Proyek adalah fitur khusus Plane untuk melacak kemajuan semua proyek Anda berdasarkan properti proyek apa pun.",
+        "description": "Status Proyek adalah fitur khusus Hangar untuk melacak kemajuan semua proyek Anda berdasarkan properti proyek apa pun.",
         "go_to_settings": "Pergi ke pengaturan"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Pasang",
         "installed": "Terpasang",
         "configure": "Konfigurasi",
-        "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
+        "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Hangar",
         "app_credentials_regenrated": {
           "title": "Kredensial aplikasi berhasil digenerasi ulang",
           "description": "Ganti client secret di semua tempat yang digunakan. Secret sebelumnya sudah tidak berlaku."
         },
         "app_created": {
           "title": "Aplikasi berhasil dibuat",
-          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Plane"
+          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Hangar"
         },
         "installed_apps": "Aplikasi terpasang",
         "all_apps": "Semua aplikasi",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "URI pengalihan (dipisahkan spasi)",
-          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Plane.",
+          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Hangar.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
+        "app_available_description": "Hubungkan workspace Hangar untuk mulai menggunakannya",
         "client_id_and_secret": "ID klien dan Rahasia",
         "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
         "client_id_and_secret_download": "Anda dapat mengunduh CSV dengan kunci dari sini.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "Izin workspace",
         "workspace_permissions_description": "Izin workspace digunakan untuk memberikan akses ke workspace.",
         "with_the_permissions": "dengan izin",
-        "app_consent_title": "{app} meminta akses ke workspace Anda dan profil Plane.",
+        "app_consent_title": "{app} meminta akses ke workspace Anda dan profil Hangar.",
         "choose_workspace_to_connect_app_with": "Pilih workspace untuk menghubungkan aplikasi",
         "app_consent_workspace_permissions_title": "{app} ingin",
         "app_consent_user_permissions_title": "{app} juga dapat meminta izin pengguna untuk sumber daya berikut. Izin ini akan diminta dan diotorisasi hanya oleh pengguna.",
         "app_consent_accept_title": "Dengan menerima, Anda",
-        "app_consent_accept_1": "Berikan akses ke data Plane Anda di mana pun Anda dapat menggunakan aplikasi di dalam atau di luar Plane",
+        "app_consent_accept_1": "Berikan akses ke data Hangar Anda di mana pun Anda dapat menggunakan aplikasi di dalam atau di luar Hangar",
         "app_consent_accept_2": "Setuju dengan {app}'s Privacy Policy dan Terms Of Use",
         "accepting": "Menerima...",
         "accept": "Menerima",
@@ -450,7 +450,7 @@
         "upload_and_save": "Unggah dan Simpan",
         "app_consent_no_access_title": "Permintaan untuk menginstal",
         "app_consent_no_access_description": "Aplikasi ini hanya dapat diinstal setelah admin workspace menginstalnya. Hubungi admin workspace Anda untuk melanjutkan.",
-        "app_consent_unapproved_title": "Aplikasi ini belum ditinjau atau disetujui oleh Plane.",
+        "app_consent_unapproved_title": "Aplikasi ini belum ditinjau atau disetujui oleh Hangar.",
         "app_consent_unapproved_description": "Pastikan Anda memercayai aplikasi ini sebelum menghubungkannya ke ruang kerja Anda.",
         "go_to_app": "Buka aplikasi",
         "enable_app_mentions": "Aktifkan penyebutan aplikasi",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Skrip",
         "new_script": "Skrip Baru",
         "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Belum ada token API yang dibuat",
-        "description": "API Plane dapat digunakan untuk mengintegrasikan data Anda di Plane dengan sistem eksternal mana pun. Buat token untuk memulai."
+        "description": "API Hangar dapat digunakan untuk mengintegrasikan data Anda di Hangar dengan sistem eksternal mana pun. Buat token untuk memulai."
       },
       "webhooks": {
         "title": "Belum ada webhook yang ditambahkan",

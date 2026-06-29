@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Numele companiei",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Numele companiei este obligatoriu",
               "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Șabloane",
-        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
+        "description": "Cu șabloane de proiect, element de lucru și pagină în Hangar, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
         "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
       },
       "no_templates": {

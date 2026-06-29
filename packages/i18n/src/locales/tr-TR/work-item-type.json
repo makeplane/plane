@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Bir kez etkinleştirildikten sonra, İş Öğesi Tipleri devre dışı bırakılamaz.",
-          "description": "Plane'in İş Öğesi, bu proje için varsayılan iş öğesi tipi haline gelecek ve bu projede simgesi ve arka planıyla görünecektir.",
+          "description": "Hangar'in İş Öğesi, bu proje için varsayılan iş öğesi tipi haline gelecek ve bu projede simgesi ve arka planıyla görünecektir.",
           "button": {
             "default": "Etkinleştir",
             "loading": "Ayarlanıyor"

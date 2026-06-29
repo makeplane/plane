@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "一旦启用，工作项类型将无法禁用。",
-          "description": "Plane的工作项将成为此项目的默认工作项类型，并将在此项目中显示其图标和背景。",
+          "description": "Hangar的工作项将成为此项目的默认工作项类型，并将在此项目中显示其图标和背景。",
           "button": {
             "default": "启用",
             "loading": "正在设置"

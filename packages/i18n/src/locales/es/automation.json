@@ -14,7 +14,7 @@
       "sidebar_header": "Configuración del disparador",
       "input_label": "¿Cuál es el disparador para esta automatización?",
       "input_placeholder": "Selecciona una opción",
-      "section_plane_events": "Eventos de Plane",
+      "section_plane_events": "Eventos de Hangar",
       "section_time_based": "Basado en tiempo",
       "fixed_schedule": "Horario fijo",
       "schedule": {

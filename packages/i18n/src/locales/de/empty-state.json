@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Hoppla! Etwas scheint nicht zu stimmen",
-      "description": "Wir können Ihr Plane-Konto derzeit nicht abrufen. Dies könnte ein Netzwerkfehler sein.",
+      "description": "Wir können Ihr Hangar-Konto derzeit nicht abrufen. Dies könnte ein Netzwerkfehler sein.",
       "cta_primary": "Versuchen Sie neu zu laden"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Schreiben Sie eine Notiz, ein Dokument oder eine vollständige Wissensdatenbank.",
-      "description": "Seiten sind Gedankenraum in Plane. Notieren Sie Besprechungsnotizen, formatieren Sie sie einfach, betten Sie Arbeitselemente ein, ordnen Sie sie mit einer Bibliothek von Komponenten an und behalten Sie alles im Kontext Ihres Projekts.",
+      "description": "Seiten sind Gedankenraum in Hangar. Notieren Sie Besprechungsnotizen, formatieren Sie sie einfach, betten Sie Arbeitselemente ein, ordnen Sie sie mit einer Bibliothek von Komponenten an und behalten Sie alles im Kontext Ihres Projekts.",
       "cta_primary": "Erstellen Sie Ihre Seite"
     },
     "project_overview_state_sidebar": {

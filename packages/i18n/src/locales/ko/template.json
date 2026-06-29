@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "회사 이름",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "회사 이름이 필요합니다",
               "maxLength": "회사 이름은 255자 미만이어야 합니다"

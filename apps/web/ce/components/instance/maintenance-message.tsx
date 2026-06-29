@@ -17,7 +17,7 @@ export function MaintenanceMessage() {
     <>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-left text-18 font-semibold text-primary">
-          &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
+          &#x1F6A7; Looks like Hangar didn&apos;t start up correctly!
         </h1>
         <span className="text-left text-14 font-medium text-secondary">
           Some services might have failed to start. Please check your container logs to identify and resolve the issue.

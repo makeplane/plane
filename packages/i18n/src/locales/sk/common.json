@@ -244,7 +244,7 @@
   "full_changelog": "Úplný zmenový protokol",
   "support": "Podpora",
   "forum": "Forum",
-  "powered_by_plane_pages": "Poháňa Plane Pages",
+  "powered_by_plane_pages": "Poháňa Hangar Pages",
   "please_select_at_least_one_invitation": "Vyberte aspoň jednu pozvánku.",
   "please_select_at_least_one_invitation_description": "Vyberte aspoň jednu pozvánku na pripojenie do pracovného priestoru.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Vidíme, že vás niekto pozval do pracovného priestoru",
@@ -820,7 +820,7 @@
     "edited_by": "Upravené používateľom"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb Plane nepodarilo spustiť.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb Hangar nepodarilo spustiť.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logov, aby ste si boli istí."
   },
   "customize_navigation": "Prispôsobiť navigáciu",

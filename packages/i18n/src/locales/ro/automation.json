@@ -14,7 +14,7 @@
       "sidebar_header": "Configurarea declanșatorului",
       "input_label": "Care este declanșatorul pentru această automatizare?",
       "input_placeholder": "Selectează o opțiune",
-      "section_plane_events": "Evenimente Plane",
+      "section_plane_events": "Evenimente Hangar",
       "section_time_based": "Bazat pe timp",
       "fixed_schedule": "Program fix",
       "schedule": {

@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Ops! Algo parece errado",
-      "description": "Não conseguimos buscar sua conta Plane no momento. Pode ser um erro de rede.",
+      "description": "Não conseguimos buscar sua conta Hangar no momento. Pode ser um erro de rede.",
       "cta_primary": "Tentar recarregar"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Escreva uma nota, um documento ou uma base de conhecimento completa.",
-      "description": "As páginas são espaço para capturar pensamentos no Plane. Anote notas de reuniões, formate-as facilmente, incorpore itens de trabalho, organize-as usando uma biblioteca de componentes e mantenha todas no contexto do seu projeto.",
+      "description": "As páginas são espaço para capturar pensamentos no Hangar. Anote notas de reuniões, formate-as facilmente, incorpore itens de trabalho, organize-as usando uma biblioteca de componentes e mantenha todas no contexto do seu projeto.",
       "cta_primary": "Criar sua página"
     },
     "project_overview_state_sidebar": {

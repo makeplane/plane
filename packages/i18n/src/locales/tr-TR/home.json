@@ -5,7 +5,7 @@
       "not_right_now": "Şimdi değil",
       "create_project": {
         "title": "Proje oluştur",
-        "description": "Çoğu şey Plane'de bir projeyle başlar.",
+        "description": "Çoğu şey Hangar'de bir projeyle başlar.",
         "cta": "Başla"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Yapılandır"
       },
       "personalize_account": {
-        "title": "Plane'yi kendinize özelleştirin.",
+        "title": "Hangar'yi kendinize özelleştirin.",
         "description": "Resminizi, renklerinizi ve daha fazlasını seçin.",
         "cta": "Kişiselleştir"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Plane'de Yenilikler"
+      "title": "Hangar'de Yenilikler"
     },
     "quick_tutorial": {
       "title": "Hızlı eğitim"

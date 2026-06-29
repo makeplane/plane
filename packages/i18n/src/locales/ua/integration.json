@@ -38,7 +38,7 @@
     "select_issue_sync_direction": "Виберіть напрямок синхронізації проблем",
     "allow_bidirectional_sync": "Bidirectional - Синхронізуйте проблеми і коментарі в обох напрямках між GitHub і Плейн",
     "allow_unidirectional_sync": "Unidirectional - Синхронізуйте проблеми і коментарі з GitHub до Плейн тільки",
-    "allow_unidirectional_sync_warning": "Дані з GitHub Issue замінять дані у пов'язаному робочому елементі Plane (тільки GitHub → Plane)",
+    "allow_unidirectional_sync_warning": "Дані з GitHub Issue замінять дані у пов'язаному робочому елементі Hangar (тільки GitHub → Hangar)",
     "remove_project_issue_sync": "Видалити цю Синхронізацію Проблем Проджекту",
     "remove_project_issue_sync_confirmation": "Ви впевнені, що хочете видалити цю синхронізацію проблем проджекту?",
     "add_pr_state_mapping": "Додати Маппінг Стану Пул Ріквесту для Проджекту Плейн",
@@ -90,13 +90,13 @@
     "choose_project": "Виберіть Проджект",
     "link_plane_project": "Прив'язати проджект Плейн",
     "project_issue_sync": "Синхронізація задач проджекту",
-    "project_issue_sync_description": "Синхронізуйте задачі з Gitlab до вашого проджекту Plane",
+    "project_issue_sync_description": "Синхронізуйте задачі з Gitlab до вашого проджекту Hangar",
     "project_issue_sync_empty_state": "Мапінг синхронізації задач проджекту з'явиться тут",
     "configure_project_issue_sync_state": "Налаштувати стан синхронізації задач",
     "select_issue_sync_direction": "Виберіть напрямок синхронізації задач",
-    "allow_bidirectional_sync": "Двосторонній - Синхронізувати задачі та коментарі в обох напрямках між Gitlab і Plane",
-    "allow_unidirectional_sync": "Односторонній - Синхронізувати задачі та коментарі лише з Gitlab до Plane",
-    "allow_unidirectional_sync_warning": "Дані з Gitlab Issue замінять дані в пов'язаному робочому елементі Plane (лише Gitlab → Plane)",
+    "allow_bidirectional_sync": "Двосторонній - Синхронізувати задачі та коментарі в обох напрямках між Gitlab і Hangar",
+    "allow_unidirectional_sync": "Односторонній - Синхронізувати задачі та коментарі лише з Gitlab до Hangar",
+    "allow_unidirectional_sync_warning": "Дані з Gitlab Issue замінять дані в пов'язаному робочому елементі Hangar (лише Gitlab → Hangar)",
     "remove_project_issue_sync": "Видалити цю синхронізацію задач проджекту",
     "remove_project_issue_sync_confirmation": "Ви впевнені, що хочете видалити цю синхронізацію задач проджекту?",
     "ISSUE_OPEN": "Задача відкрита",
@@ -107,9 +107,9 @@
   },
   "gitlab_enterprise_integration": {
     "name": "Gitlab Enterprise",
-    "description": "Підключіть та синхронізуйте ваш екземпляр Gitlab Enterprise з Plane.",
+    "description": "Підключіть та синхронізуйте ваш екземпляр Gitlab Enterprise з Hangar.",
     "app_form_title": "Конфігурація Gitlab Enterprise",
-    "app_form_description": "Налаштуйте Gitlab Enterprise для підключення до Plane.",
+    "app_form_description": "Налаштуйте Gitlab Enterprise для підключення до Hangar.",
     "base_url_title": "Базова URL",
     "base_url_description": "Базова URL вашого екземпляра Gitlab Enterprise.",
     "base_url_placeholder": "напр. \"https://glab.plane.town\"",
@@ -154,7 +154,7 @@
         "failed_to_load_channels": "Не вдалося завантажити канали зі Slack",
         "project_dropdown": {
           "placeholder": "Виберіть проєкт",
-          "label": "Проєкт Plane",
+          "label": "Проєкт Hangar",
           "no_projects": "Немає доступних проєктів"
         },
         "channel_dropdown": {
@@ -176,7 +176,7 @@
   },
   "sentry_integration": {
     "name": "Sentry",
-    "description": "Підключіть ваш робочий простір Sentry до Plane.",
+    "description": "Підключіть ваш робочий простір Sentry до Hangar.",
     "connected_sentry_workspaces": "Підключені робочі простори Sentry",
     "connected_on": "Підключено {date}",
     "disconnect_workspace": "Відключити робочий простір {name}",
@@ -196,12 +196,12 @@
   },
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
-    "description": "Підключайте та синхронізуйте ваші репозиторії Bitbucket Data Center з Plane."
+    "description": "Підключайте та синхронізуйте ваші репозиторії Bitbucket Data Center з Hangar."
   },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Перевірка токенів зовнішніх IdP для доступу до API.",
-    "header_description": "Перевіряйте зовнішні OIDC/JWT-токени від вашого IdP (Azure AD, Okta тощо) для доступу до API Plane.",
+    "header_description": "Перевіряйте зовнішні OIDC/JWT-токени від вашого IdP (Azure AD, Okta тощо) для доступу до API Hangar.",
     "connected": "Підключено",
     "connect": "Підключити",
     "uninstall": "Видалити",

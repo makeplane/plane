@@ -5,7 +5,7 @@
       "not_right_now": "Не сейчас",
       "create_project": {
         "title": "Создать проект",
-        "description": "Большинство вещей начинаются с проекта в Plane.",
+        "description": "Большинство вещей начинаются с проекта в Hangar.",
         "cta": "Начать"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Настроить"
       },
       "personalize_account": {
-        "title": "Персонализируйте Plane",
+        "title": "Персонализируйте Hangar",
         "description": "Выберите изображение, цвета и другие параметры.",
         "cta": "Настроить сейчас"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Новое в Plane"
+      "title": "Новое в Hangar"
     },
     "quick_tutorial": {
       "title": "Быстрое обучение"

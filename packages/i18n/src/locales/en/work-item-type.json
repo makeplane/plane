@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Once enabled, Work item Types can't be disabled.",
-          "description": "Plane's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
+          "description": "Hangar's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
           "button": {
             "default": "Enable",
             "loading": "Setting up"

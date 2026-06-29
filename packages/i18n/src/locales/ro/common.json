@@ -244,7 +244,7 @@
   "full_changelog": "Jurnal complet al modificărilor",
   "support": "Suport",
   "forum": "Forum",
-  "powered_by_plane_pages": "Oferit de Plane Documentație",
+  "powered_by_plane_pages": "Oferit de Hangar Documentație",
   "please_select_at_least_one_invitation": "Te rugăm să selectezi cel puțin o invitație.",
   "please_select_at_least_one_invitation_description": "Te rugăm să selectezi cel puțin o invitație pentru a te alătura spațiului de lucru.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Se pare că cineva te-a invitat să te alături unui spațiu de lucru",
@@ -820,7 +820,7 @@
     "edited_by": "Editat de"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Plane au eșuat să pornească.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Hangar au eșuat să pornească.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Alegeți View Logs din setup.sh și logurile Docker pentru a fi siguri."
   },
   "customize_navigation": "Personalizează navigarea",
@@ -832,7 +832,7 @@
   "pin": "Fixează",
   "unpin": "Anulează fixarea",
   "workspace_dashboards": "Dashboarduri",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "În-app",
   "forms": "Formulare",
   "milestones": "Jaloane",

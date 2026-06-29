@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Hata! Bir şeyler ters gitti",
-      "description": "Şu anda Plane hesabınızı alamıyoruz. Bu bir ağ hatası olabilir.",
+      "description": "Şu anda Hangar hesabınızı alamıyoruz. Bu bir ağ hatası olabilir.",
       "cta_primary": "Yeniden yüklemeyi dene"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Bir not, bir belge veya tam bir bilgi tabanı yazın.",
-      "description": "Sayfalar Plane'de düşünce yakalama alanıdır. Toplantı notları alın, kolayca biçimlendirin, iş öğelerini yerleştirin, bir bileşenler kütüphanesi kullanarak düzenleyin ve hepsini projenizin bağlamında tutun.",
+      "description": "Sayfalar Hangar'de düşünce yakalama alanıdır. Toplantı notları alın, kolayca biçimlendirin, iş öğelerini yerleştirin, bir bileşenler kütüphanesi kullanarak düzenleyin ve hepsini projenizin bağlamında tutun.",
       "cta_primary": "Sayfanızı oluşturun"
     },
     "project_overview_state_sidebar": {

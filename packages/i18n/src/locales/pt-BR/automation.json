@@ -14,7 +14,7 @@
       "sidebar_header": "Configuração do gatilho",
       "input_label": "Qual é o gatilho para esta automação?",
       "input_placeholder": "Selecione uma opção",
-      "section_plane_events": "Eventos do Plane",
+      "section_plane_events": "Eventos do Hangar",
       "section_time_based": "Baseado em tempo",
       "fixed_schedule": "Agendamento fixo",
       "schedule": {

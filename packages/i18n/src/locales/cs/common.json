@@ -244,7 +244,7 @@
   "full_changelog": "Úplný změnový protokol",
   "support": "Podpora",
   "forum": "Forum",
-  "powered_by_plane_pages": "Poháněno Plane Pages",
+  "powered_by_plane_pages": "Poháněno Hangar Pages",
   "please_select_at_least_one_invitation": "Vyberte alespoň jednu pozvánku.",
   "please_select_at_least_one_invitation_description": "Vyberte alespoň jednu pozvánku pro připojení k pracovnímu prostoru.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Vidíme, že vás někdo pozval do pracovního prostoru",
@@ -820,7 +820,7 @@
     "edited_by": "Upraveno uživatelem"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane se nespustil. To může být způsobeno tím, že se jeden nebo více služeb Plane nepodařilo spustit.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar se nespustil. To může být způsobeno tím, že se jeden nebo více služeb Hangar nepodařilo spustit.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logů, abyste si byli jisti."
   },
   "customize_navigation": "Přizpůsobit navigaci",
@@ -832,7 +832,7 @@
   "pin": "Připnout",
   "unpin": "Odepnout",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Hangar AI",
   "in_app": "V aplikaci",
   "forms": "Formuláře",
   "milestones": "Milníky",

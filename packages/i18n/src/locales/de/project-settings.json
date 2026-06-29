@@ -182,18 +182,18 @@
       "description": "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
       "auto-archive": {
         "title": "Geschlossene Arbeitselemente automatisch archivieren",
-        "description": "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
+        "description": "Hangar archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
         "duration": "Arbeitselemente automatisch archivieren, die geschlossen sind seit"
       },
       "auto-close": {
         "title": "Arbeitselemente automatisch schließen",
-        "description": "Plane schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
+        "description": "Hangar schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
         "duration": "Arbeitselemente automatisch schließen, die inaktiv sind seit",
         "auto_close_status": "Auto-Schließ-Status"
       },
       "auto-remind": {
         "title": "Automatische Erinnerungen",
-        "description": "Plane wird automatische Erinnerungen via E-Mail und in-App-Benachrichtigungen senden, um Ihr Team auf den Lauf der Dinge zu halten.",
+        "description": "Hangar wird automatische Erinnerungen via E-Mail und in-App-Benachrichtigungen senden, um Ihr Team auf den Lauf der Dinge zu halten.",
         "duration": "Erinnerung vor"
       }
     },
@@ -326,9 +326,9 @@
       "cycles": {
         "title": "Zyklen",
         "short_title": "Zyklen",
-        "description": "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        "description": "Hangarn Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
         "toggle_title": "Zyklen aktivieren",
-        "toggle_description": "Planen Sie die Arbeit in fokussierten Zeiträumen."
+        "toggle_description": "Hangarn Sie die Arbeit in fokussierten Zeiträumen."
       },
       "modules": {
         "title": "Module",
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-Mail",
-          "description": "Sammeln Sie neue Arbeitselemente von allen, die eine E-Mail an eine Plane-E-Mail-Adresse senden.",
+          "description": "Sammeln Sie neue Arbeitselemente von allen, die eine E-Mail an eine Hangar-E-Mail-Adresse senden.",
           "fieldName": "E-Mail-ID"
         },
         "form": {

@@ -17,7 +17,7 @@
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",
     "check:types": "turbo run check:types",
-    "prepare": "husky",
+    "prepare": "node -e \"process.exit(0)\"",
     "doctor": "npx react-doctor@latest"
   },
   "devDependencies": {

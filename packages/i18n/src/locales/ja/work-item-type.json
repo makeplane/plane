@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "一度有効化すると、作業項目タイプは無効化できません。",
-          "description": "PlaneのWork itemがこのプロジェクトのデフォルトの作業項目タイプとなり、そのアイコンと背景がこのプロジェクトに表示されます。",
+          "description": "HangarのWork itemがこのプロジェクトのデフォルトの作業項目タイプとなり、そのアイコンと背景がこのプロジェクトに表示されます。",
           "button": {
             "default": "有効化",
             "loading": "設定中"

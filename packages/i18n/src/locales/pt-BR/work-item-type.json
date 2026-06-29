@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Uma vez ativados, os Tipos de Item de Trabalho não podem ser desativados.",
-          "description": "O Item de Trabalho do Plane se tornará o tipo de item de trabalho padrão para este projeto e aparecerá com seu ícone e plano de fundo neste projeto.",
+          "description": "O Item de Trabalho do Hangar se tornará o tipo de item de trabalho padrão para este projeto e aparecerá com seu ícone e plano de fundo neste projeto.",
           "button": {
             "default": "Ativar",
             "loading": "Configurando"

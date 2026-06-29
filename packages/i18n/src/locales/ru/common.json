@@ -244,7 +244,7 @@
   "full_changelog": "Полный журнал изменений",
   "support": "Поддержка",
   "forum": "Forum",
-  "powered_by_plane_pages": "Работает на Plane Pages",
+  "powered_by_plane_pages": "Работает на Hangar Pages",
   "please_select_at_least_one_invitation": "Пожалуйста, выберите хотя бы одно приглашение.",
   "please_select_at_least_one_invitation_description": "Для присоединения к рабочему пространству выберите хотя бы одно приглашение.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Вы получили приглашение присоединиться к рабочему пространству",
@@ -820,7 +820,7 @@
     "edited_by": "Отредактировано"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустился. Это может быть из-за того, что один или несколько сервисов Plane не смогли запуститься.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar не запустился. Это может быть из-за того, что один или несколько сервисов Hangar не смогли запуститься.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Выберите View Logs из setup.sh и логов Docker, чтобы убедиться."
   },
   "customize_navigation": "Настроить навигацию",

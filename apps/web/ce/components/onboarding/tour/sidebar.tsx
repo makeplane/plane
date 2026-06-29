@@ -53,7 +53,7 @@ export function TourSidebar({ step, setStep }: Props) {
       <h3 className="text-16 font-medium">
         Let{"'"}s get started!
         <br />
-        Get more out of Plane.
+        Get more out of Hangar.
       </h3>
       <div className="mt-8 space-y-5">
         {sidebarOptions.map((option) => (

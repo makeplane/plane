@@ -244,7 +244,7 @@
   "full_changelog": "完全な変更履歴",
   "support": "サポート",
   "forum": "Forum",
-  "powered_by_plane_pages": "Powered by Plane Pages",
+  "powered_by_plane_pages": "Powered by Hangar Pages",
   "please_select_at_least_one_invitation": "少なくとも1つの招待を選択してください。",
   "please_select_at_least_one_invitation_description": "ワークスペースに参加するには少なくとも1つの招待を選択してください。",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "誰かがあなたをワークスペースに招待しています",
@@ -820,7 +820,7 @@
     "edited_by": "編集者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangarが起動しませんでした。これは1つまたは複数のHangarサービスの起動に失敗したことが原因である可能性があります。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   },
   "customize_navigation": "ナビゲーションをカスタマイズ",

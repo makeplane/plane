@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "¡Ups! Algo parece estar mal",
-      "description": "No podemos obtener tu cuenta de Plane actualmente. Esto podría ser un error de red.",
+      "description": "No podemos obtener tu cuenta de Hangar actualmente. Esto podría ser un error de red.",
       "cta_primary": "Intentar recargar"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Escribe una nota, un documento o una base de conocimientos completa.",
-      "description": "Las páginas son un espacio para capturar ideas en Plane. Toma notas de reuniones, dales formato fácilmente, incrusta elementos de trabajo, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto.",
+      "description": "Las páginas son un espacio para capturar ideas en Hangar. Toma notas de reuniones, dales formato fácilmente, incrusta elementos de trabajo, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto.",
       "cta_primary": "Crea tu página"
     },
     "project_overview_state_sidebar": {

@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Unternehmensname",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Unternehmensname ist erforderlich",
               "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Vorlagen",
-        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in Plane müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
+        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in Hangar müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
         "sub_description": "Sparen Sie 80% Ihrer Administrationszeit, wenn Sie Vorlagen verwenden."
       },
       "no_templates": {

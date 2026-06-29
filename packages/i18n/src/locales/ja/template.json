@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "会社名",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "会社名は必須です",
               "maxLength": "会社名は255文字未満にしてください"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "テンプレート",
-        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
+        "description": "Hangarのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
         "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
       },
       "no_templates": {

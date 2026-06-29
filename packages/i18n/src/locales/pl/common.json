@@ -244,7 +244,7 @@
   "full_changelog": "Pełny dziennik zmian",
   "support": "Wsparcie",
   "forum": "Forum",
-  "powered_by_plane_pages": "Oparte na Plane Pages",
+  "powered_by_plane_pages": "Oparte na Hangar Pages",
   "please_select_at_least_one_invitation": "Wybierz co najmniej jedno zaproszenie.",
   "please_select_at_least_one_invitation_description": "Wybierz co najmniej jedno zaproszenie, aby dołączyć do przestrzeni roboczej.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Ktoś zaprosił Cię do przestrzeni roboczej",
@@ -820,7 +820,7 @@
     "edited_by": "Edytowane przez"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Plane nie mogła się uruchomić.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Hangar nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Hangar nie mogła się uruchomić.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wybierz View Logs z setup.sh i logów Docker, aby mieć pewność."
   },
   "customize_navigation": "Dostosuj nawigację",

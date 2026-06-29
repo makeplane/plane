@@ -115,7 +115,7 @@
     "empty_state": {
       "activity": {
         "title": "尚无活动",
-        "description": "通过创建新工作项开始！为其添加详细信息和属性。在 Plane 中探索更多内容以查看您的活动。"
+        "description": "通过创建新工作项开始！为其添加详细信息和属性。在 Hangar 中探索更多内容以查看您的活动。"
       },
       "assigned": {
         "title": "没有分配给您的工作项",

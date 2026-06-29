@@ -14,7 +14,7 @@
       "sidebar_header": "트리거 설정",
       "input_label": "이 자동화의 트리거는 무엇입니까?",
       "input_placeholder": "옵션 선택",
-      "section_plane_events": "Plane 이벤트",
+      "section_plane_events": "Hangar 이벤트",
       "section_time_based": "시간 기반",
       "fixed_schedule": "고정 일정",
       "schedule": {

@@ -182,18 +182,18 @@
       "description": "Configurează acțiuni automate pentru a-ți eficientiza fluxul de lucru al proiectului și a reduce sarcinile manuale.",
       "auto-archive": {
         "title": "Auto-arhivează activitățile finalizate",
-        "description": "Plane va arhiva automat activitățile care au fost finalizate sau anulate.",
+        "description": "Hangar va arhiva automat activitățile care au fost finalizate sau anulate.",
         "duration": "Auto-arhivează activitățile finalizate de"
       },
       "auto-close": {
         "title": "Închide automat activitățile",
-        "description": "Plane va închide automat activitățile care nu au fost finalizate sau anulate.",
+        "description": "Hangar va închide automat activitățile care nu au fost finalizate sau anulate.",
         "duration": "Închide automat activitățile inactive de",
         "auto_close_status": "Stare închidere automată"
       },
       "auto-remind": {
         "title": "Avertismente automate",
-        "description": "Plane va trimite avertizări automate prin e-mail și notificări în aplicație pentru a menține echipa pe calea termenelor.",
+        "description": "Hangar va trimite avertizări automate prin e-mail și notificări în aplicație pentru a menține echipa pe calea termenelor.",
         "duration": "Trimite avertizare înainte"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-mail",
-          "description": "Colectați elemente de lucru noi de la oricine trimite un e-mail la o adresă Plane.",
+          "description": "Colectați elemente de lucru noi de la oricine trimite un e-mail la o adresă Hangar.",
           "fieldName": "ID e-mail"
         },
         "form": {

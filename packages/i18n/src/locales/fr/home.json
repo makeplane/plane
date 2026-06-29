@@ -5,7 +5,7 @@
       "not_right_now": "Pas maintenant",
       "create_project": {
         "title": "Créer un projet",
-        "description": "La plupart des choses commencent par un projet dans Plane.",
+        "description": "La plupart des choses commencent par un projet dans Hangar.",
         "cta": "Commencer"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Configurer cet espace de travail"
       },
       "personalize_account": {
-        "title": "Faites de Plane le vôtre.",
+        "title": "Faites de Hangar le vôtre.",
         "description": "Choisissez votre photo, vos couleurs et plus encore.",
         "cta": "Personnaliser maintenant"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Nouveau sur Plane"
+      "title": "Nouveau sur Hangar"
     },
     "quick_tutorial": {
       "title": "Tutoriel rapide"

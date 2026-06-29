@@ -14,7 +14,7 @@
       "sidebar_header": "Auslöser-Konfiguration",
       "input_label": "Was ist der Auslöser für diese Automatisierung?",
       "input_placeholder": "Option auswählen",
-      "section_plane_events": "Plane-Ereignisse",
+      "section_plane_events": "Hangar-Ereignisse",
       "section_time_based": "Zeitbasiert",
       "fixed_schedule": "Fester Zeitplan",
       "schedule": {

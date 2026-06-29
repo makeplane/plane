@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "糟糕!似乎出了点问题",
-      "description": "我们目前无法获取您的 Plane 账户。这可能是网络错误。",
+      "description": "我们目前无法获取您的 Hangar 账户。这可能是网络错误。",
       "cta_primary": "尝试重新加载"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "编写笔记、文档或完整的知识库。",
-      "description": "页面是 Plane 中的思想捕捉空间。记录会议笔记,轻松格式化,嵌入工作项,使用组件库进行布局,并将它们全部保留在项目上下文中。",
+      "description": "页面是 Hangar 中的思想捕捉空间。记录会议笔记,轻松格式化,嵌入工作项,使用组件库进行布局,并将它们全部保留在项目上下文中。",
       "cta_primary": "创建您的页面"
     },
     "project_overview_state_sidebar": {

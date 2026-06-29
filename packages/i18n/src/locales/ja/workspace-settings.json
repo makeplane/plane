@@ -3,7 +3,7 @@
     "label": "ワークスペース設定",
     "page_label": "{workspace} - 一般設定",
     "key_created": "キーが作成されました",
-    "copy_key": "このシークレットキーをコピーしてPlaneページに保存してください。閉じた後はこのキーを見ることができません。キーを含むCSVファイルがダウンロードされました。",
+    "copy_key": "このシークレットキーをコピーしてHangarページに保存してください。閉じた後はこのキーを見ることができません。キーを含むCSVファイルがダウンロードされました。",
     "token_copied": "トークンがクリップボードにコピーされました。",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "生成中",
         "delete": {
           "title": "APIトークンを削除",
-          "description": "このトークンを使用しているアプリケーションはPlaneのデータにアクセスできなくなります。この操作は取り消せません。",
+          "description": "このトークンを使用しているアプリケーションはHangarのデータにアクセスできなくなります。この操作は取り消せません。",
           "success": {
             "title": "成功！",
             "message": "APIトークンが正常に削除されました"
@@ -176,7 +176,7 @@
         "title": "インテグレーション",
         "heading": "インテグレーション",
         "description": "人気のツールやサービスと接続して、ワークフローエコシステム全体で作業を同期します。",
-        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
+        "page_title": "Hangar のデータを利用可能なアプリや自分のアプリで利用できます。",
         "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "プロジェクトの状態",
         "heading": "すべてのプロジェクトの進捗概要を確認します。",
-        "description": "プロジェクトステータスは、任意のプロジェクトプロパティでプロジェクトの進捗を追跡するためのPlane専用の機能です。",
+        "description": "プロジェクトステータスは、任意のプロジェクトプロパティでプロジェクトの進捗を追跡するためのHangar専用の機能です。",
         "go_to_settings": "設定へ移動"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "インストール",
         "installed": "インストール済み",
         "configure": "設定",
-        "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
+        "app_available": "このアプリをHangarワークスペースで使用できるようにしました",
         "app_credentials_regenrated": {
           "title": "アプリの認証情報が正常に再生成されました",
           "description": "クライアントシークレットを使用しているすべての場所で置き換えてください。以前のシークレットは無効になっています。"
         },
         "app_created": {
           "title": "アプリが正常に作成されました",
-          "description": "認証情報を使用して、Plane ワークスペースにアプリをインストールしてください"
+          "description": "認証情報を使用して、Hangar ワークスペースにアプリをインストールしてください"
         },
         "installed_apps": "インストール済みアプリ",
         "all_apps": "すべてのアプリ",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "リダイレクトURI（スペース区切り）",
-          "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
+          "description": "ユーザーは Hangar で認証した後、このパスにリダイレクトされます。",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
+        "app_available_description": "使用を開始するにはHangarワークスペースに接続してください",
         "client_id_and_secret": "クライアントIDとシークレット",
         "client_id_and_secret_description": "このシークレットキーをコピーして保存してください。閉じた後はこのキーを見ることができません。",
         "client_id_and_secret_download": "ここからキーをCSVでダウンロードできます。",
@@ -403,12 +403,12 @@
         "workspace_permissions": "ワークスペース権限",
         "workspace_permissions_description": "ワークスペース権限は、ワークスペースへのアクセスを許可するために使用されます。",
         "with_the_permissions": "権限付きで",
-        "app_consent_title": "{app}があなたのPlaneワークスペースとプロフィールへのアクセスを要求しています。",
+        "app_consent_title": "{app}があなたのHangarワークスペースとプロフィールへのアクセスを要求しています。",
         "choose_workspace_to_connect_app_with": "アプリを接続するワークスペースを選択してください",
         "app_consent_workspace_permissions_title": "{app}は以下を要求しています",
         "app_consent_user_permissions_title": "{app}は以下のリソースに対するユーザーの許可も要求できます。これらの権限はユーザーによってのみ要求され、承認されます。",
         "app_consent_accept_title": "承認することで",
-        "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
+        "app_consent_accept_1": "アプリにHangar内外でアプリを使用できる場所であなたのHangarデータへのアクセスを許可します",
         "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
         "accepting": "承認中...",
         "accept": "承認",
@@ -450,7 +450,7 @@
         "upload_and_save": "アップロードして保存",
         "app_consent_no_access_title": "インストールリクエスト",
         "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
-        "app_consent_unapproved_title": "このアプリはまだPlaneによってレビューまたは承認されていません。",
+        "app_consent_unapproved_title": "このアプリはまだHangarによってレビューまたは承認されていません。",
         "app_consent_unapproved_description": "ワークスペースに接続する前に、このアプリを信頼できることを確認してください。",
         "go_to_app": "アプリへ移動",
         "enable_app_mentions": "アプリのメンションを有効にする",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "スクリプト",
         "new_script": "新しいスクリプト",
         "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンがまだ作成されていません",
-        "description": "PlaneのAPIを使用して、Planeのデータを外部システムと統合できます。トークンを作成して始めましょう。"
+        "description": "HangarのAPIを使用して、Hangarのデータを外部システムと統合できます。トークンを作成して始めましょう。"
       },
       "webhooks": {
         "title": "Webhookが追加されていません",

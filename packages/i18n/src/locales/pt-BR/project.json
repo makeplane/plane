@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "Crie seu primeiro item de trabalho",
           "comic": {
-            "title": "Os itens de trabalho são blocos de construção no Plane.",
-            "description": "Redesenhar a interface do usuário do Plane, reformular a marca da empresa ou lançar o novo sistema de injeção de combustível são exemplos de itens de trabalho que provavelmente têm subitens de trabalho."
+            "title": "Os itens de trabalho são blocos de construção no Hangar.",
+            "description": "Redesenhar a interface do usuário do Hangar, reformular a marca da empresa ou lançar o novo sistema de injeção de combustível são exemplos de itens de trabalho que provavelmente têm subitens de trabalho."
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Escreva uma nota, um documento ou uma base de conhecimento completa. Peça a Galileo, o assistente de IA do Plane, para ajudá-lo a começar",
-        "description": "As páginas são espaço para registrar pensamentos no Plane. Anote notas de reunião, formate-as facilmente, incorpore itens de trabalho, organize-os usando uma biblioteca de componentes e mantenha-os todos no contexto do seu projeto. Para facilitar qualquer documento, invoque Galileo, a IA do Plane, com um atalho ou o clique de um botão.",
+        "title": "Escreva uma nota, um documento ou uma base de conhecimento completa. Peça a Galileo, o assistente de IA do Hangar, para ajudá-lo a começar",
+        "description": "As páginas são espaço para registrar pensamentos no Hangar. Anote notas de reunião, formate-as facilmente, incorpore itens de trabalho, organize-os usando uma biblioteca de componentes e mantenha-os todos no contexto do seu projeto. Para facilitar qualquer documento, invoque Galileo, a IA do Hangar, com um atalho ou o clique de um botão.",
         "primary_button": {
           "text": "Crie sua primeira página"
         }
@@ -339,7 +339,7 @@
   "project_modules": {
     "status": {
       "backlog": "Backlog",
-      "planned": "Planejado",
+      "planned": "Hangarjado",
       "in_progress": "Em Andamento",
       "paused": "Pausado",
       "completed": "Concluído",

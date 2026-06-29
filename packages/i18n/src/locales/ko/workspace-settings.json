@@ -3,7 +3,7 @@
     "label": "작업 공간 설정",
     "page_label": "{workspace} - 일반 설정",
     "key_created": "키 생성됨",
-    "copy_key": "이 비밀 키를 Plane Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
+    "copy_key": "이 비밀 키를 Hangar Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
     "token_copied": "토큰이 클립보드에 복사되었습니다.",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "생성 중",
         "delete": {
           "title": "API 토큰 삭제",
-          "description": "이 토큰을 사용하는 애플리케이션은 더 이상 Plane 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+          "description": "이 토큰을 사용하는 애플리케이션은 더 이상 Hangar 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
           "success": {
             "title": "성공!",
             "message": "API 토큰이 성공적으로 삭제되었습니다"
@@ -176,7 +176,7 @@
         "title": "인테그레이션",
         "heading": "인테그레이션",
         "description": "인기 있는 도구 및 서비스와 연결하여 전체 워크플로우 에코시스템에서 작업을 동기화하세요.",
-        "page_title": "Plane 데이터를 사용 가능한 앱이나 본인 소유 앱에서 활용하세요.",
+        "page_title": "Hangar 데이터를 사용 가능한 앱이나 본인 소유 앱에서 활용하세요.",
         "page_description": "이 워크스페이스 또는 사용자가 사용하는 모든 통합을 확인하세요."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "프로젝트 스테이트",
         "heading": "모든 프로젝트의 진행 상황 개요를 확인하세요.",
-        "description": "프로젝트 스테이트는 어떤 프로젝트 속성으로든 모든 프로젝트의 진행 상황을 추적하는 Plane 전용 기능입니다.",
+        "description": "프로젝트 스테이트는 어떤 프로젝트 속성으로든 모든 프로젝트의 진행 상황을 추적하는 Hangar 전용 기능입니다.",
         "go_to_settings": "설정으로 이동"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "설치",
         "installed": "설치됨",
         "configure": "설정",
-        "app_available": "이 앱을 Plane 워크스페이스에서 사용할 수 있게 되었습니다",
+        "app_available": "이 앱을 Hangar 워크스페이스에서 사용할 수 있게 되었습니다",
         "app_credentials_regenrated": {
           "title": "앱 자격 증명이 성공적으로 재생성되었습니다",
           "description": "클라이언트 시크릿이 사용되는 모든 곳에서 교체하세요. 이전 시크릿은 더 이상 유효하지 않습니다."
         },
         "app_created": {
           "title": "앱이 성공적으로 생성되었습니다",
-          "description": "자격 증명을 사용하여 Plane 작업 공간에 앱을 설치하세요"
+          "description": "자격 증명을 사용하여 Hangar 작업 공간에 앱을 설치하세요"
         },
         "installed_apps": "설치된 앱",
         "all_apps": "모든 앱",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "리디렉션 URI(공백으로 구분)",
-          "description": "사용자가 Plane에서 인증을 완료하면 이 경로로 리디렉션됩니다.",
+          "description": "사용자가 Hangar에서 인증을 완료하면 이 경로로 리디렉션됩니다.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "사용을 시작하려면 Plane 워크스페이스에 연결하세요",
+        "app_available_description": "사용을 시작하려면 Hangar 워크스페이스에 연결하세요",
         "client_id_and_secret": "클라이언트 ID와 시크릿",
         "client_id_and_secret_description": "이 시크릿 키를 복사하여 저장하세요. 닫기를 누른 후에는 이 키를 볼 수 없습니다.",
         "client_id_and_secret_download": "여기에서 키가 포함된 CSV를 다운로드할 수 있습니다.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "워크스페이스 권한",
         "workspace_permissions_description": "워크스페이스 권한은 워크스페이스에 대한 접근을 허용하는 데 사용됩니다.",
         "with_the_permissions": "권한과 함께",
-        "app_consent_title": "{app}이(가) 귀하의 Plane 워크스페이스와 프로필에 대한 접근을 요청하고 있습니다.",
+        "app_consent_title": "{app}이(가) 귀하의 Hangar 워크스페이스와 프로필에 대한 접근을 요청하고 있습니다.",
         "choose_workspace_to_connect_app_with": "앱을 연결할 워크스페이스를 선택하세요",
         "app_consent_workspace_permissions_title": "{app}이(가) 원하는 것",
         "app_consent_user_permissions_title": "{app}은(는) 다음 리소스에 대한 사용자 권한도 요청할 수 있습니다. 이러한 권한은 사용자에 의해서만 요청되고 승인됩니다.",
         "app_consent_accept_title": "수락함으로써",
-        "app_consent_accept_1": "앱이 Plane 내부 또는 외부에서 사용할 수 있는 곳에서 귀하의 Plane 데이터에 접근할 수 있도록 허용합니다",
+        "app_consent_accept_1": "앱이 Hangar 내부 또는 외부에서 사용할 수 있는 곳에서 귀하의 Hangar 데이터에 접근할 수 있도록 허용합니다",
         "app_consent_accept_2": "{app}의 개인정보 보호정책 및 이용 약관에 동의합니다",
         "accepting": "수락 중...",
         "accept": "수락",
@@ -450,7 +450,7 @@
         "upload_and_save": "업로드 및 저장",
         "app_consent_no_access_title": "설치 요청",
         "app_consent_no_access_description": "이 앱은 워크스페이스 관리자가 설치한 후에만 설치할 수 있습니다. 계속 진행하려면 워크스페이스 관리자에게 문의하세요.",
-        "app_consent_unapproved_title": "이 앱은 아직 Plane의 검토나 승인을 받지 않았습니다.",
+        "app_consent_unapproved_title": "이 앱은 아직 Hangar의 검토나 승인을 받지 않았습니다.",
         "app_consent_unapproved_description": "워크스페이스에 연결하기 전에 이 앱을 신뢰할 수 있는지 확인하세요.",
         "go_to_app": "앱으로 이동",
         "enable_app_mentions": "앱 멘션 활성화",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "스크립트",
         "new_script": "새 스크립트",
         "description": "커스텀 스크립트와 자동화 규칙으로 워크플로우를 자동화하세요."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "생성된 API 토큰 없음",
-        "description": "Plane API를 사용하여 Plane의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요."
+        "description": "Hangar API를 사용하여 Hangar의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요."
       },
       "webhooks": {
         "title": "추가된 웹훅 없음",

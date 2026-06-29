@@ -115,7 +115,7 @@
     "empty_state": {
       "activity": {
         "title": "No activities yet",
-        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in Plane to see your activity."
+        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in Hangar to see your activity."
       },
       "assigned": {
         "title": "No work items are assigned to you",

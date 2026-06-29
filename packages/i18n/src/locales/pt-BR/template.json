@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nazwa firmy",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Nazwa firmy jest wymagana",
               "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Modelos",
-        "description": "Com modelos de projeto, item de trabalho e página no Plane, você não precisa criar um projeto do zero ou definir propriedades de item de trabalho manualmente.",
+        "description": "Com modelos de projeto, item de trabalho e página no Hangar, você não precisa criar um projeto do zero ou definir propriedades de item de trabalho manualmente.",
         "sub_description": "Recupere 80% do seu tempo administrativo quando você usa Modelos."
       },
       "no_templates": {

@@ -14,7 +14,7 @@
       "sidebar_header": "Конфігурація тригера",
       "input_label": "Який тригер для цієї автоматизації?",
       "input_placeholder": "Виберіть опцію",
-      "section_plane_events": "Події Plane",
+      "section_plane_events": "Події Hangar",
       "section_time_based": "За часом",
       "fixed_schedule": "Фіксований розклад",
       "schedule": {

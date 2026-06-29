@@ -5,7 +5,7 @@
       "not_right_now": "今はしない",
       "create_project": {
         "title": "プロジェクトを作成",
-        "description": "Planeのほとんどはプロジェクトから始まります。",
+        "description": "Hangarのほとんどはプロジェクトから始まります。",
         "cta": "始める"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "このワークスペースを設定"
       },
       "personalize_account": {
-        "title": "Planeをあなた好みにカスタマイズ。",
+        "title": "Hangarをあなた好みにカスタマイズ。",
         "description": "プロフィール画像、カラー、その他の設定を選択してください。",
         "cta": "今すぐパーソナライズ"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Planeの新機能"
+      "title": "Hangarの新機能"
     },
     "quick_tutorial": {
       "title": "クイックチュートリアル"

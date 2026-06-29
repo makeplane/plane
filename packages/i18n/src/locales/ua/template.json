@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Назва компанії",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Назва компанії обов'язкова",
               "maxLength": "Назва компанії має бути менше 255 символів"

@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nama perusahaan",
-            "placeholder": "Plane",
+            "placeholder": "Hangar",
             "validation": {
               "required": "Nama perusahaan diperlukan",
               "maxLength": "Nama perusahaan harus kurang dari 255 karakter"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Template",
-        "description": "Dengan template proyek, item kerja, dan halaman di Plane, Anda tidak perlu membuat proyek dari awal atau mengatur properti item kerja secara manual.",
+        "description": "Dengan template proyek, item kerja, dan halaman di Hangar, Anda tidak perlu membuat proyek dari awal atau mengatur properti item kerja secara manual.",
         "sub_description": "Dapatkan kembali 80% waktu administrasi Anda saat menggunakan Template."
       },
       "no_templates": {

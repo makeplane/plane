@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "使用工作流程控制變更和審核的混亂。",
-        "description": "在Plane中使用工作流程設置工作移動、由誰移動以及何時移動的規則。"
+        "description": "在Hangar中使用工作流程設置工作移動、由誰移動以及何時移動的規則。"
       }
     },
     "quick_actions": {

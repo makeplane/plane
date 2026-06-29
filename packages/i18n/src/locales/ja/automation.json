@@ -14,7 +14,7 @@
       "sidebar_header": "トリガー設定",
       "input_label": "この自動化のトリガーは何ですか？",
       "input_placeholder": "オプションを選択",
-      "section_plane_events": "Planeイベント",
+      "section_plane_events": "Hangarイベント",
       "section_time_based": "時間ベース",
       "fixed_schedule": "固定スケジュール",
       "schedule": {

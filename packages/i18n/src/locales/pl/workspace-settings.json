@@ -3,7 +3,7 @@
     "label": "Ustawienia przestrzeni roboczej",
     "page_label": "{workspace} - Ustawienia ogólne",
     "key_created": "Klucz utworzony",
-    "copy_key": "Skopiuj i zapisz ten klucz w Plane Pages. Po zamknięciu nie będzie widoczny ponownie. Plik CSV z kluczem został pobrany.",
+    "copy_key": "Skopiuj i zapisz ten klucz w Hangar Pages. Po zamknięciu nie będzie widoczny ponownie. Plik CSV z kluczem został pobrany.",
     "token_copied": "Token skopiowano do schowka.",
     "settings": {
       "general": {
@@ -176,7 +176,7 @@
         "title": "Integracje",
         "heading": "Integracje",
         "description": "Łącz się z popularnymi narzędziami i usługami, aby synchronizować pracę w całym ekosystemie przepływu pracy.",
-        "page_title": "Pracuj ze swoimi danymi Plane w dostępnych aplikacjach lub we własnych.",
+        "page_title": "Pracuj ze swoimi danymi Hangar w dostępnych aplikacjach lub we własnych.",
         "page_description": "Zobacz wszystkie integracje używane przez tę przestrzeń roboczą lub przez Ciebie."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Stany projektu",
         "heading": "Zobacz przegląd postępu dla wszystkich projektów.",
-        "description": "Stany projektów to funkcja Plane służąca do śledzenia postępu wszystkich projektów według dowolnej właściwości projektu.",
+        "description": "Stany projektów to funkcja Hangar służąca do śledzenia postępu wszystkich projektów według dowolnej właściwości projektu.",
         "go_to_settings": "Przejdź do ustawień"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Zainstaluj",
         "installed": "Zainstalowano",
         "configure": "Konfiguruj",
-        "app_available": "Udostępniłeś tę aplikację do użytku z przestrzenią roboczą Plane",
+        "app_available": "Udostępniłeś tę aplikację do użytku z przestrzenią roboczą Hangar",
         "app_credentials_regenrated": {
           "title": "Dane uwierzytelniające aplikacji zostały pomyślnie wygenerowane ponownie",
           "description": "Zastąp sekret klienta wszędzie tam, gdzie jest używany. Poprzedni sekret nie jest już ważny."
         },
         "app_created": {
           "title": "Aplikacja została pomyślnie utworzona",
-          "description": "Użyj danych uwierzytelniających, aby zainstalować aplikację w przestrzeni roboczej Plane"
+          "description": "Użyj danych uwierzytelniających, aby zainstalować aplikację w przestrzeni roboczej Hangar"
         },
         "installed_apps": "Zainstalowane aplikacje",
         "all_apps": "Wszystkie aplikacje",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "URI przekierowań (oddzielone spacją)",
-          "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Plane.",
+          "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Hangar.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Połącz przestrzeń roboczą Plane, aby rozpocząć korzystanie",
+        "app_available_description": "Połącz przestrzeń roboczą Hangar, aby rozpocząć korzystanie",
         "client_id_and_secret": "ID i Sekret Klienta",
         "client_id_and_secret_description": "Skopiuj i zapisz ten klucz sekretny. Nie będziesz mógł zobaczyć tego klucza po kliknięciu Zamknij.",
         "client_id_and_secret_download": "Możesz pobrać CSV z kluczem stąd.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "Uprawnienia przestrzeni roboczej",
         "workspace_permissions_description": "Uprawnienia przestrzeni roboczej są używane do przyznawania dostępu do przestrzeni roboczej.",
         "with_the_permissions": "z uprawnieniami",
-        "app_consent_title": "{app} prosi o dostęp do Twojej przestrzeni roboczej i profilu Plane.",
+        "app_consent_title": "{app} prosi o dostęp do Twojej przestrzeni roboczej i profilu Hangar.",
         "choose_workspace_to_connect_app_with": "Wybierz przestrzeń roboczą, z którą chcesz połączyć aplikację",
         "app_consent_workspace_permissions_title": "{app} chciałby",
         "app_consent_user_permissions_title": "{app} może również poprosić o uprawnienia użytkownika do następujących zasobów. Te uprawnienia będą wymagane i autoryzowane tylko przez użytkownika.",
         "app_consent_accept_title": "Akceptując",
-        "app_consent_accept_1": "Udzielasz aplikacji dostępu do Twoich danych Plane wszędzie tam, gdzie możesz używać aplikacji w lub poza Plane",
+        "app_consent_accept_1": "Udzielasz aplikacji dostępu do Twoich danych Hangar wszędzie tam, gdzie możesz używać aplikacji w lub poza Hangar",
         "app_consent_accept_2": "Zgadzasz się na Politykę Prywatności i Warunki Użytkowania {app}",
         "accepting": "Akceptowanie...",
         "accept": "Akceptuj",
@@ -450,7 +450,7 @@
         "upload_and_save": "Prześlij i zapisz",
         "app_consent_no_access_title": "Prośba o instalację",
         "app_consent_no_access_description": "Aplikacja może być zainstalowana dopiero po tym, jak administrator workspace ją zainstaluje. Skontaktuj się z administratorem workspace, aby kontynuować.",
-        "app_consent_unapproved_title": "Ta aplikacja nie została jeszcze sprawdzona ani zatwierdzona przez Plane.",
+        "app_consent_unapproved_title": "Ta aplikacja nie została jeszcze sprawdzona ani zatwierdzona przez Hangar.",
         "app_consent_unapproved_description": "Upewnij się, że ufasz tej aplikacji, zanim połączysz ją ze swoją przestrzenią roboczą.",
         "go_to_app": "Przejdź do aplikacji",
         "enable_app_mentions": "Włącz wzmianki o aplikacji",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Skrypty",
         "new_script": "Nowy skrypt",
         "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Brak tokenów API",
-        "description": "Używaj API, aby zintegrować Plane z zewnętrznymi systemami."
+        "description": "Używaj API, aby zintegrować Hangar z zewnętrznymi systemami."
       },
       "webhooks": {
         "title": "Brak webhooków",

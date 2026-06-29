@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Plane | Accelerate software development with peace.",
-  "short_name": "Plane",
-  "description": "Plane accelerated the software development by order of magnitude for agencies and product companies.",
+  "name": "Hangar | Where your projects take off.",
+  "short_name": "Hangar",
+  "description": "Hangar helps teams plan, ship, and manage work items, cycles, and product roadmaps.",
   "icons": [
     {
       "src": "/icon-192x192.png",

@@ -14,7 +14,7 @@
       "sidebar_header": "Konfiguracja wyzwalacza",
       "input_label": "Jaki jest wyzwalacz dla tej automatyzacji?",
       "input_placeholder": "Wybierz opcję",
-      "section_plane_events": "Zdarzenia Plane",
+      "section_plane_events": "Zdarzenia Hangar",
       "section_time_based": "Oparte na czasie",
       "fixed_schedule": "Stały harmonogram",
       "schedule": {

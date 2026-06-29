@@ -115,7 +115,7 @@
     "empty_state": {
       "activity": {
         "title": "Henüz aktivite yok",
-        "description": "Yeni bir iş öğesi oluşturarak başlayın! Detaylar ve özellikler ekleyin. Aktivitenizi görmek için Plane'de daha fazlasını keşfedin."
+        "description": "Yeni bir iş öğesi oluşturarak başlayın! Detaylar ve özellikler ekleyin. Aktivitenizi görmek için Hangar'de daha fazlasını keşfedin."
       },
       "assigned": {
         "title": "Size atanan iş öğesi yok",

@@ -88,7 +88,7 @@
   "wiki": {
     "upgrade_flow": {
       "title": "Wiki'yi açmak için yükseltin",
-      "description": "Plane Pro ile genel sayfaları, sürüm geçmişini, paylaşılan sayfaları, gerçek zamanlı işbirliğini ve wiki'ler, şirket içi belgeler ve bilgi tabanları için çalışma alanı sayfalarını açın.",
+      "description": "Hangar Pro ile genel sayfaları, sürüm geçmişini, paylaşılan sayfaları, gerçek zamanlı işbirliğini ve wiki'ler, şirket içi belgeler ve bilgi tabanları için çalışma alanı sayfalarını açın.",
       "upgrade_button": {
         "text": "Yükselt"
       },

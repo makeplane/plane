@@ -14,7 +14,7 @@
       "sidebar_header": "Cấu hình kích hoạt",
       "input_label": "Kích hoạt nào cho tự động hóa này?",
       "input_placeholder": "Chọn một tùy chọn",
-      "section_plane_events": "Sự kiện Plane",
+      "section_plane_events": "Sự kiện Hangar",
       "section_time_based": "Dựa trên thời gian",
       "fixed_schedule": "Lịch trình cố định",
       "schedule": {

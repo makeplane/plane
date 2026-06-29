@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Creează spațiul tău de lucru",
-    "subheading": "Pentru a începe să folosești Plane, trebuie să creezi sau să te alături unui spațiu de lucru.",
+    "subheading": "Pentru a începe să folosești Hangar, trebuie să creezi sau să te alături unui spațiu de lucru.",
     "form": {
       "name": {
         "label": "Denumește-ți spațiul de lucru",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Prezentare generală a proiectelor, activităților și statisticilor tale",
-        "description": "Bine ai venit în Plane, suntem încântați să te avem aici. Creează primul tău proiect și urmărește activitățile, iar această pagină se va transforma într-un spațiu care te ajută să progresezi. Administratorii vor vedea și elementele care ajută echipa lor să progreseze.",
+        "description": "Bine ai venit în Hangar, suntem încântați să te avem aici. Creează primul tău proiect și urmărește activitățile, iar această pagină se va transforma într-un spațiu care te ajută să progresezi. Administratorii vor vedea și elementele care ajută echipa lor să progreseze.",
         "primary_button": {
           "text": "Creează primul tău proiect",
           "comic": {
-            "title": "Totul începe cu un proiect în Plane",
+            "title": "Totul începe cu un proiect în Hangar",
             "description": "Un proiect poate fi planul de dezvoltare a unui produs, o campanie de marketing sau lansarea unei noi mașini."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Începe primul tău proiect",
           "comic": {
-            "title": "Totul începe cu un proiect în Plane",
+            "title": "Totul începe cu un proiect în Hangar",
             "description": "Un proiect poate fi o foaie de parcurs pentru un produs, o campanie de marketing sau lansarea unei noi mașini."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Începe primul tău proiect",
           "comic": {
-            "title": "Totul începe cu un proiect în Plane",
+            "title": "Totul începe cu un proiect în Hangar",
             "description": "Un proiect poate fi o foaie de parcurs pentru un produs, o campanie de marketing sau lansarea unei noi mașini."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Scrie o notă, un document sau o bază de cunoștințe completă. Obține ajutorul lui Galileo, asistentul AI al Plane, pentru a începe",
-        "description": "Paginile sunt spații de gândire în Plane. Notează notițe de întâlnire, formatează-le ușor, încorporează elemente de lucru, aranjează-le folosind o bibliotecă de componente și păstrează-le toate în contextul proiectului tău. Pentru a face o muncă scurtă din orice document, invocă Galileo, AI-ul Plane, cu o scurtătură sau click pe un buton.",
+        "title": "Scrie o notă, un document sau o bază de cunoștințe completă. Obține ajutorul lui Galileo, asistentul AI al Hangar, pentru a începe",
+        "description": "Paginile sunt spații de gândire în Hangar. Notează notițe de întâlnire, formatează-le ușor, încorporează elemente de lucru, aranjează-le folosind o bibliotecă de componente și păstrează-le toate în contextul proiectului tău. Pentru a face o muncă scurtă din orice document, invocă Galileo, AI-ul Hangar, cu o scurtătură sau click pe un buton.",
         "primary_button": {
           "text": "Creează prima ta pagină"
         }

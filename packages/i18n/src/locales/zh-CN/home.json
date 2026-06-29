@@ -5,7 +5,7 @@
       "not_right_now": "暂时不要",
       "create_project": {
         "title": "创建项目",
-        "description": "在Plane中，大多数事情都从项目开始。",
+        "description": "在Hangar中，大多数事情都从项目开始。",
         "cta": "开始使用"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "配置此工作区"
       },
       "personalize_account": {
-        "title": "让Plane更适合您",
+        "title": "让Hangar更适合您",
         "description": "选择您的头像、颜色等。",
         "cta": "立即个性化"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Plane新功能"
+      "title": "Hangar新功能"
     },
     "quick_tutorial": {
       "title": "快速教程"

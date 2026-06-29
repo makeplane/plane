@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "Creează prima ta activitate",
           "comic": {
-            "title": "Activitățile sunt elemente de bază în Plane.",
-            "description": "Reproiectarea interfeței Plane, modernizarea imaginii companiei sau lansarea noului sistem de injecție sunt exemple de activități care au, cel mai probabil, sub-activități."
+            "title": "Activitățile sunt elemente de bază în Hangar.",
+            "description": "Reproiectarea interfeței Hangar, modernizarea imaginii companiei sau lansarea noului sistem de injecție sunt exemple de activități care au, cel mai probabil, sub-activități."
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Scrie o notiță, un document sau o bază completă de cunoștințe. Folosește-l pe Galileo, Inteligența Artificială a Plane, ca să te ajute să începi",
-        "description": "Documentația e spațiul în care îți notezi gândurile în Plane. Ia notițe de la ședințe, formatează-le ușor, inserează activități, așază-le folosind o bibliotecă de componente și păstrează-le pe toate în contextul proiectului tău. Pentru a redacta rapid orice document, apelează la Galileo, Inteligența Artificială a Plane, cu un shortcut sau un click.",
+        "title": "Scrie o notiță, un document sau o bază completă de cunoștințe. Folosește-l pe Galileo, Inteligența Artificială a Hangar, ca să te ajute să începi",
+        "description": "Documentația e spațiul în care îți notezi gândurile în Hangar. Ia notițe de la ședințe, formatează-le ușor, inserează activități, așază-le folosind o bibliotecă de componente și păstrează-le pe toate în contextul proiectului tău. Pentru a redacta rapid orice document, apelează la Galileo, Inteligența Artificială a Hangar, cu un shortcut sau un click.",
         "primary_button": {
           "text": "Creează primul tău document"
         }

@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "糟糕!似乎出了點問題",
-      "description": "我們目前無法取得您的 Plane 帳戶。這可能是網路錯誤。",
+      "description": "我們目前無法取得您的 Hangar 帳戶。這可能是網路錯誤。",
       "cta_primary": "嘗試重新載入"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "撰寫筆記、文件或完整的知識庫。",
-      "description": "頁面是 Plane 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項,使用元件庫進行配置,並將它們全部保留在專案上下文中。",
+      "description": "頁面是 Hangar 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項,使用元件庫進行配置,並將它們全部保留在專案上下文中。",
       "cta_primary": "建立您的頁面"
     },
     "project_overview_state_sidebar": {

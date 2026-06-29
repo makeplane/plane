@@ -182,18 +182,18 @@
       "description": "設定自動化動作以簡化您的專案管理流程並減少手動任務。",
       "auto-archive": {
         "title": "自動封存已關閉的工作項目",
-        "description": "Plane將自動封存已完成或已取消的工作項目。",
+        "description": "Hangar將自動封存已完成或已取消的工作項目。",
         "duration": "自動封存已關閉的工作項目"
       },
       "auto-close": {
         "title": "自動關閉工作項目",
-        "description": "Plane將自動關閉未完成或未取消的工作項目。",
+        "description": "Hangar將自動關閉未完成或未取消的工作項目。",
         "duration": "自動關閉非活動工作項目",
         "auto_close_status": "自動關閉狀態"
       },
       "auto-remind": {
         "title": "自動提醒",
-        "description": "Plane 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
+        "description": "Hangar 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
         "duration": "提前提醒"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "電子郵件",
-          "description": "從任何寄信到 Plane 電子郵件地址的人收集新的工作項目。",
+          "description": "從任何寄信到 Hangar 電子郵件地址的人收集新的工作項目。",
           "fieldName": "電子郵件 ID"
         },
         "form": {

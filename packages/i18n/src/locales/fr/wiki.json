@@ -88,7 +88,7 @@
   "wiki": {
     "upgrade_flow": {
       "title": "Mettez à niveau pour débloquer le Wiki",
-      "description": "Débloquez les pages publiques, l’historique des versions, les pages partagées, la collaboration en temps réel et les pages d’espace de travail pour les wikis, la documentation d’entreprise et les bases de connaissances avec Plane Pro.",
+      "description": "Débloquez les pages publiques, l’historique des versions, les pages partagées, la collaboration en temps réel et les pages d’espace de travail pour les wikis, la documentation d’entreprise et les bases de connaissances avec Hangar Pro.",
       "upgrade_button": {
         "text": "Mettre à niveau"
       },

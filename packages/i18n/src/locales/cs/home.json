@@ -5,7 +5,7 @@
       "not_right_now": "Teď ne",
       "create_project": {
         "title": "Vytvořit projekt",
-        "description": "Většina věcí začíná projektem v Plane.",
+        "description": "Většina věcí začíná projektem v Hangar.",
         "cta": "Začít"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Konfigurovat tento prostor"
       },
       "personalize_account": {
-        "title": "Přizpůsobte si Plane.",
+        "title": "Přizpůsobte si Hangar.",
         "description": "Vyberte si obrázek, barvy a další.",
         "cta": "Personalizovat nyní"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Novinky v Plane"
+      "title": "Novinky v Hangar"
     },
     "quick_tutorial": {
       "title": "Rychlý tutoriál"

@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "Crea il tuo primo elemento di lavoro",
           "comic": {
-            "title": "Gli elementi di lavoro sono i mattoni fondamentali in Plane.",
-            "description": "Ridisegna l'interfaccia di Plane, rebranding dell'azienda o lancia il nuovo sistema di iniezione del carburante sono esempi di elementi di lavoro che probabilmente hanno sotto-elementi."
+            "title": "Gli elementi di lavoro sono i mattoni fondamentali in Hangar.",
+            "description": "Ridisegna l'interfaccia di Hangar, rebranding dell'azienda o lancia il nuovo sistema di iniezione del carburante sono esempi di elementi di lavoro che probabilmente hanno sotto-elementi."
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Scrivi una nota, un documento o una vera e propria base di conoscenza. Fai partire Galileo, l'assistente AI di Plane, per aiutarti a iniziare",
-        "description": "Le pagine sono spazi per appunti in Plane. Prendi note durante le riunioni, formattale facilmente, inserisci elementi di lavoro, disponili usando una libreria di componenti e tienili tutti nel contesto del tuo progetto. Per velocizzare qualsiasi documento, invoca Galileo, l'IA di Plane, con una scorciatoia o con il clic di un pulsante.",
+        "title": "Scrivi una nota, un documento o una vera e propria base di conoscenza. Fai partire Galileo, l'assistente AI di Hangar, per aiutarti a iniziare",
+        "description": "Le pagine sono spazi per appunti in Hangar. Prendi note durante le riunioni, formattale facilmente, inserisci elementi di lavoro, disponili usando una libreria di componenti e tienili tutti nel contesto del tuo progetto. Per velocizzare qualsiasi documento, invoca Galileo, l'IA di Hangar, con una scorciatoia o con il clic di un pulsante.",
         "primary_button": {
           "text": "Crea la tua prima pagina"
         }

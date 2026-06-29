@@ -3,7 +3,7 @@
     "label": "Cài đặt không gian làm việc",
     "page_label": "{workspace} - Cài đặt chung",
     "key_created": "Đã tạo khóa",
-    "copy_key": "Sao chép và lưu khóa này trong Plane Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
+    "copy_key": "Sao chép và lưu khóa này trong Hangar Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
     "token_copied": "Đã sao chép token vào bảng tạm.",
     "settings": {
       "general": {
@@ -161,7 +161,7 @@
         "generating": "Đang tạo",
         "delete": {
           "title": "Xóa token API",
-          "description": "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Plane nữa. Hành động này không thể hoàn tác.",
+          "description": "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Hangar nữa. Hành động này không thể hoàn tác.",
           "success": {
             "title": "Thành công!",
             "message": "Đã xóa token API thành công"
@@ -176,7 +176,7 @@
         "title": "Tích hợp",
         "heading": "Tích hợp",
         "description": "Kết nối với các công cụ và dịch vụ phổ biến để đồng bộ hóa công việc của bạn trong toàn bộ hệ sinh thái quy trình làm việc.",
-        "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
+        "page_title": "Làm việc với dữ liệu Hangar của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
         "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
       },
       "imports": {
@@ -258,7 +258,7 @@
       "project_states": {
         "title": "Trạng thái dự án",
         "heading": "Xem tổng quan tiến độ cho tất cả dự án.",
-        "description": "Trạng thái Dự án là tính năng chỉ có trong Plane để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
+        "description": "Trạng thái Dự án là tính năng chỉ có trong Hangar để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
         "go_to_settings": "Đi đến cài đặt"
       },
       "projects": {
@@ -303,14 +303,14 @@
         "install": "Cài đặt",
         "installed": "Đã cài đặt",
         "configure": "Cấu hình",
-        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Hangar",
         "app_credentials_regenrated": {
           "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
           "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
         },
         "app_created": {
           "title": "Ứng dụng đã được tạo thành công",
-          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
+          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Hangar"
         },
         "installed_apps": "Ứng dụng đã cài đặt",
         "all_apps": "Tất cả ứng dụng",
@@ -351,10 +351,10 @@
         },
         "redirect_uris": {
           "label": "URI chuyển hướng (cách nhau bằng dấu cách)",
-          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
+          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Hangar.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
+        "app_available_description": "Kết nối một workspace Hangar để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",
         "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
         "client_id_and_secret_download": "Bạn có thể tải xuống một CSV với khóa từ đây.",
@@ -403,12 +403,12 @@
         "workspace_permissions": "Quyền workspace",
         "workspace_permissions_description": "Quyền workspace được sử dụng để cấp quyền truy cập vào workspace.",
         "with_the_permissions": "với quyền",
-        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Plane của bạn và hồ sơ.",
+        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Hangar của bạn và hồ sơ.",
         "choose_workspace_to_connect_app_with": "Chọn một workspace để kết nối ứng dụng",
         "app_consent_workspace_permissions_title": "{app} muốn",
         "app_consent_user_permissions_title": "{app} cũng có thể yêu cầu quyền của người dùng cho các tài nguyên sau. Các quyền này sẽ được yêu cầu và được cấp phép chỉ bởi một người dùng.",
         "app_consent_accept_title": "Bằng cách chấp nhận, bạn",
-        "app_consent_accept_1": "Cấp quyền truy cập vào dữ liệu Plane của bạn ở bất kỳ đâu bạn có thể sử dụng ứng dụng bên trong hoặc ngoài Plane",
+        "app_consent_accept_1": "Cấp quyền truy cập vào dữ liệu Hangar của bạn ở bất kỳ đâu bạn có thể sử dụng ứng dụng bên trong hoặc ngoài Hangar",
         "app_consent_accept_2": "Đồng ý với Chính sách bảo mật và Điều khoản sử dụng của {app}",
         "accepting": "Đang chấp nhận...",
         "accept": "Chấp nhận",
@@ -450,7 +450,7 @@
         "upload_and_save": "Tải lên và lưu",
         "app_consent_no_access_title": "Yêu cầu cài đặt",
         "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên workspace cài đặt nó. Liên hệ với quản trị viên workspace của bạn để tiếp tục.",
-        "app_consent_unapproved_title": "Ứng dụng này chưa được Plane xem xét hoặc phê duyệt.",
+        "app_consent_unapproved_title": "Ứng dụng này chưa được Hangar xem xét hoặc phê duyệt.",
         "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với không gian làm việc của bạn.",
         "go_to_app": "Đi đến ứng dụng",
         "enable_app_mentions": "Bật đề cập ứng dụng",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "Hangar AI",
+        "heading": "Hangar AI",
         "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "Hangar Runner",
         "heading": "Script",
         "new_script": "Script mới",
         "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
@@ -489,7 +489,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "Chưa tạo token API",
-        "description": "API Plane có thể được sử dụng để tích hợp dữ liệu Plane của bạn với bất kỳ hệ thống bên ngoài nào. Tạo token để bắt đầu."
+        "description": "API Hangar có thể được sử dụng để tích hợp dữ liệu Hangar của bạn với bất kỳ hệ thống bên ngoài nào. Tạo token để bắt đầu."
       },
       "webhooks": {
         "title": "Chưa thêm webhook",

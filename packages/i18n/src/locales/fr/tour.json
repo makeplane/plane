@@ -69,7 +69,7 @@
     "page": {
       "step_zero": {
         "title": "Documentez avec des Pages alimentées par l IA",
-        "description": "Les Pages dans Plane vous permettent de capturer, organiser et collaborer sur les informations du projet—sans outils externes."
+        "description": "Les Pages dans Hangar vous permettent de capturer, organiser et collaborer sur les informations du projet—sans outils externes."
       },
       "step_one": {
         "title": "Rendre la page Publique ou Privée",
@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "Rationalisez les demandes avec la réception",
-        "description": "Une fonctionnalité exclusive de Plane qui permet aux Invités de créer des éléments de travail pour les bugs, demandes ou tickets."
+        "description": "Une fonctionnalité exclusive de Hangar qui permet aux Invités de créer des éléments de travail pour les bugs, demandes ou tickets."
       },
       "step_one": {
         "title": "Demandes de réception ouvertes/fermées",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "Arrêtez de changer d’onglet. Connectez votre monde.",
-        "description": "Liez GitHub et Slack pour suivre les PR et résumer les discussions directement dans Plane AI."
+        "description": "Liez GitHub et Slack pour suivre les PR et résumer les discussions directement dans Hangar AI."
       }
     },
     "navigation": {
@@ -154,7 +154,7 @@
   },
   "get_started": {
     "title": "Bonjour {name}, bienvenue à bord!",
-    "description": "Voici tout ce dont vous avez besoin pour lancer votre aventure avec Plane.",
+    "description": "Voici tout ce dont vous avez besoin pour lancer votre aventure avec Hangar.",
     "checklist_section": {
       "title": "Commencer",
       "description": "Commencez votre configuration et voyez vos idées prendre vie plus rapidement.",
@@ -172,7 +172,7 @@
           "title": "Créer une page"
         },
         "item_5": {
-          "title": "Essayer le chat Plane AI"
+          "title": "Essayer le chat Hangar AI"
         },
         "item_6": {
           "title": "Lier les intégrations"
@@ -188,8 +188,8 @@
       "more_integrations": "Parcourir plus d intégrations"
     },
     "switch_to_plane_section": {
-      "title": "Découvrez pourquoi les équipes passent à Plane",
-      "description": "Comparez Plane avec les outils que vous utilisez aujourd hui et voyez la différence."
+      "title": "Découvrez pourquoi les équipes passent à Hangar",
+      "description": "Comparez Hangar avec les outils que vous utilisez aujourd hui et voyez la différence."
     }
   }
 }
