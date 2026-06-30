@@ -265,7 +265,7 @@ class TestApplyProjectTemplateSoftwareProject:
         assert starter.state.name == "Backlog"
         # D-17: starter issue has no assignees or subscribers.
         assert starter.assignees.count() == 0
-        assert starter.subscribers.count() == 0
+        assert starter.issue_subscribers.count() == 0
         # D-16: starter issue is owned by the requesting user.
         assert starter.created_by_id == create_user.id
 
@@ -323,7 +323,7 @@ class TestApplyProjectTemplateMarketingCampaign:
 
         # D-17: starter issue has no assignees or subscribers.
         assert starter.assignees.count() == 0
-        assert starter.subscribers.count() == 0
+        assert starter.issue_subscribers.count() == 0
 
     @pytest.mark.django_db
     def test_apply_creates_cycle_with_seven_day_target_offset(

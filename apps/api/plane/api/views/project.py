@@ -231,9 +231,12 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 # boundary (D-06) and registers the activity dispatch via
                 # ``transaction.on_commit(..., robust=True)`` (D-08), so
                 # the v1 path no longer needs to manage either of them
-                # inline. The existing rollback and broker-failure
-                # contract tests in this module continue to exercise the
-                # same behavior — only the implementation location moved.
+                # inline. Phase 02-02 forwards the optional
+                # ``template_id`` so the template apply branch can run
+                # for built-ins or active custom templates. The existing
+                # rollback and broker-failure contract tests in this
+                # module continue to exercise the same behavior — only
+                # the implementation location moved.
                 project = create_project_with_optional_template(
                     serializer=serializer,
                     workspace=workspace,
@@ -242,6 +245,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                     slug=slug,
                     request=request,
                     is_app_origin=False,
+                    template_id=serializer.validated_data.get("template_id"),
                 )
 
                 project = self.get_queryset().filter(pk=project.id).first()
