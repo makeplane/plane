@@ -11,22 +11,22 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CAT-01**: Workspace project creation shows available Project Templates inside the existing create Project modal/form.
 - [ ] **CAT-02**: User can create a Project without selecting a template and receives the existing default Project behavior.
-- [ ] **CAT-03**: User can select the built-in `Software Project` template when creating a Project.
-- [ ] **CAT-04**: User can select the built-in `Marketing Campaign` template when creating a Project.
-- [ ] **CAT-05**: User can select the built-in `Operations Project` template when creating a Project.
+- [x] **CAT-03**: User can select the built-in `Software Project` template when creating a Project.
+- [x] **CAT-04**: User can select the built-in `Marketing Campaign` template when creating a Project.
+- [x] **CAT-05**: User can select the built-in `Operations Project` template when creating a Project.
 - [ ] **CAT-06**: User can see a useful summary of a template before selecting it, including counts or descriptions for states, labels, modules, cycles, and starter issues.
 
 ### Custom Templates
 
-- [ ] **CUST-01**: Workspace admin can create a custom Project Template scoped to that workspace.
-- [ ] **CUST-02**: Workspace admin can edit a custom Project Template scoped to that workspace.
-- [ ] **CUST-03**: Workspace admin can delete, archive, or deactivate a custom Project Template so it no longer appears for new Project creation.
-- [ ] **CUST-04**: Workspace admin can define template states with name, color, group, sequence/order, and default-state marker.
-- [ ] **CUST-05**: Workspace admin can define template labels with name, description, color, and order.
-- [ ] **CUST-06**: Workspace admin can define template modules with name, description, status, and optional date fields.
-- [ ] **CUST-07**: Workspace admin can define template cycles with name, description, and optional relative date/duration metadata.
-- [ ] **CUST-08**: Workspace admin can define starter issues with title/name, description, state reference, labels, module reference, cycle reference, and priority where supported by existing issue fields.
-- [ ] **CUST-09**: Workspace admin cannot edit built-in system templates directly.
+- [x] **CUST-01**: Workspace admin can create a custom Project Template scoped to that workspace.
+- [x] **CUST-02**: Workspace admin can edit a custom Project Template scoped to that workspace.
+- [x] **CUST-03**: Workspace admin can delete, archive, or deactivate a custom Project Template so it no longer appears for new Project creation.
+- [x] **CUST-04**: Workspace admin can define template states with name, color, group, sequence/order, and default-state marker.
+- [x] **CUST-05**: Workspace admin can define template labels with name, description, color, and order.
+- [x] **CUST-06**: Workspace admin can define template modules with name, description, status, and optional date fields.
+- [x] **CUST-07**: Workspace admin can define template cycles with name, description, and optional relative date/duration metadata.
+- [x] **CUST-08**: Workspace admin can define starter issues with title/name, description, state reference, labels, module reference, cycle reference, and priority where supported by existing issue fields.
+- [x] **CUST-09**: Workspace admin cannot edit built-in system templates directly.
 
 ### Project Creation
 
@@ -49,11 +49,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Permissions
 
-- [ ] **PERM-01**: Workspace admins can list built-in and workspace custom templates.
+- [x] **PERM-01**: Workspace admins can list built-in and workspace custom templates.
 - [ ] **PERM-02**: Workspace members who can create Projects can list and select available templates when creating a Project.
-- [ ] **PERM-03**: Workspace guests cannot create, edit, delete, archive, or deactivate custom templates.
-- [ ] **PERM-04**: Workspace members who are not admins cannot create, edit, delete, archive, or deactivate custom templates.
-- [ ] **PERM-05**: API write operations for custom templates reject unauthorized users with an appropriate permission error.
+- [x] **PERM-03**: Workspace guests cannot create, edit, delete, archive, or deactivate custom templates.
+- [x] **PERM-04**: Workspace members who are not admins cannot create, edit, delete, archive, or deactivate custom templates.
+- [x] **PERM-05**: API write operations for custom templates reject unauthorized users with an appropriate permission error.
 
 ### Frontend Experience
 
@@ -88,70 +88,72 @@ Deferred to future release. Tracked but not in current roadmap.
 
 Explicitly excluded. Documented to prevent scope creep.
 
-| Feature | Reason |
-|---------|--------|
-| Template marketplace | Requires distribution, trust, versioning, and moderation; not needed for local value |
-| Cross-instance template sharing | Import/export and marketplace workflows are deferred |
-| Public Space templates | Initial requirement is Workspace Project creation |
-| Visual workflow-builder-grade template editor | Too large for v1; structured form/editor is sufficient |
-| Client-side multi-call template application | Risks partial Projects; backend transaction is required |
-| Direct editing of built-in system templates | Built-ins should stay stable; admins can create custom copies instead |
+| Feature                                       | Reason                                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Template marketplace                          | Requires distribution, trust, versioning, and moderation; not needed for local value |
+| Cross-instance template sharing               | Import/export and marketplace workflows are deferred                                 |
+| Public Space templates                        | Initial requirement is Workspace Project creation                                    |
+| Visual workflow-builder-grade template editor | Too large for v1; structured form/editor is sufficient                               |
+| Client-side multi-call template application   | Risks partial Projects; backend transaction is required                              |
+| Direct editing of built-in system templates   | Built-ins should stay stable; admins can create custom copies instead                |
 
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| CAT-01 | Phase 3 | Pending |
-| CAT-02 | Phase 2 | Pending |
-| CAT-03 | Phase 1 | Pending |
-| CAT-04 | Phase 1 | Pending |
-| CAT-05 | Phase 1 | Pending |
-| CAT-06 | Phase 3 | Pending |
-| CUST-01 | Phase 1 | Pending |
-| CUST-02 | Phase 1 | Pending |
-| CUST-03 | Phase 1 | Pending |
-| CUST-04 | Phase 1 | Pending |
-| CUST-05 | Phase 1 | Pending |
-| CUST-06 | Phase 1 | Pending |
-| CUST-07 | Phase 1 | Pending |
-| CUST-08 | Phase 1 | Pending |
-| CUST-09 | Phase 1 | Pending |
-| CREATE-01 | Phase 2 | Pending |
-| CREATE-02 | Phase 2 | Pending |
-| CREATE-03 | Phase 2 | Pending |
-| CREATE-04 | Phase 2 | Pending |
-| CREATE-05 | Phase 2 | Pending |
-| CREATE-06 | Phase 2 | Pending |
-| GEN-01 | Phase 2 | Pending |
-| GEN-02 | Phase 2 | Pending |
-| GEN-03 | Phase 2 | Pending |
-| GEN-04 | Phase 2 | Pending |
-| GEN-05 | Phase 2 | Pending |
-| GEN-06 | Phase 2 | Pending |
-| GEN-07 | Phase 2 | Pending |
-| PERM-01 | Phase 1 | Pending |
-| PERM-02 | Phase 3 | Pending |
-| PERM-03 | Phase 1 | Pending |
-| PERM-04 | Phase 1 | Pending |
-| PERM-05 | Phase 1 | Pending |
-| UI-01 | Phase 3 | Pending |
-| UI-02 | Phase 3 | Pending |
-| UI-03 | Phase 3 | Pending |
-| UI-04 | Phase 3 | Pending |
-| UI-05 | Phase 4 | Pending |
-| VER-01 | Phase 2 | Pending |
-| VER-02 | Phase 2 | Pending |
-| VER-03 | Phase 2 | Pending |
-| VER-04 | Phase 2 | Pending |
-| VER-05 | Phase 3 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| CAT-01      | Phase 3 | Pending  |
+| CAT-02      | Phase 2 | Pending  |
+| CAT-03      | Phase 1 | Complete |
+| CAT-04      | Phase 1 | Complete |
+| CAT-05      | Phase 1 | Complete |
+| CAT-06      | Phase 3 | Pending  |
+| CUST-01     | Phase 1 | Complete |
+| CUST-02     | Phase 1 | Complete |
+| CUST-03     | Phase 1 | Complete |
+| CUST-04     | Phase 1 | Complete |
+| CUST-05     | Phase 1 | Complete |
+| CUST-06     | Phase 1 | Complete |
+| CUST-07     | Phase 1 | Complete |
+| CUST-08     | Phase 1 | Complete |
+| CUST-09     | Phase 1 | Complete |
+| CREATE-01   | Phase 2 | Pending  |
+| CREATE-02   | Phase 2 | Pending  |
+| CREATE-03   | Phase 2 | Pending  |
+| CREATE-04   | Phase 2 | Pending  |
+| CREATE-05   | Phase 2 | Pending  |
+| CREATE-06   | Phase 2 | Pending  |
+| GEN-01      | Phase 2 | Pending  |
+| GEN-02      | Phase 2 | Pending  |
+| GEN-03      | Phase 2 | Pending  |
+| GEN-04      | Phase 2 | Pending  |
+| GEN-05      | Phase 2 | Pending  |
+| GEN-06      | Phase 2 | Pending  |
+| GEN-07      | Phase 2 | Pending  |
+| PERM-01     | Phase 1 | Complete |
+| PERM-02     | Phase 3 | Pending  |
+| PERM-03     | Phase 1 | Complete |
+| PERM-04     | Phase 1 | Complete |
+| PERM-05     | Phase 1 | Complete |
+| UI-01       | Phase 3 | Pending  |
+| UI-02       | Phase 3 | Pending  |
+| UI-03       | Phase 3 | Pending  |
+| UI-04       | Phase 3 | Pending  |
+| UI-05       | Phase 4 | Pending  |
+| VER-01      | Phase 2 | Pending  |
+| VER-02      | Phase 2 | Pending  |
+| VER-03      | Phase 2 | Pending  |
+| VER-04      | Phase 2 | Pending  |
+| VER-05      | Phase 3 | Pending  |
 
 **Coverage:**
+
 - v1 requirements: 43 total
 - Mapped to phases: 43
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after roadmap creation*
+
+_Requirements defined: 2026-06-29_
+_Last updated: 2026-06-29 after roadmap creation_
