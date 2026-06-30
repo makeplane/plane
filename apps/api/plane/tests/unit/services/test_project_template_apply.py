@@ -17,6 +17,7 @@ pinned at the data layer, not just the service return value.
 """
 
 from datetime import date
+import uuid
 
 import pytest
 from django.db import IntegrityError
@@ -40,6 +41,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectTemplate,
     State,
+    WorkspaceMember,
 )
 
 
@@ -508,3 +510,121 @@ class TestResolveRelativeTemplateDates:
         )
         assert result["start_date"] is None
         assert result["end_date"] is None
+
+
+@pytest.mark.unit
+class TestResolveAvailableProjectTemplate:
+    """D-01 / D-02 / VER-03: the availability resolver returns ``None``
+    for missing, inactive, and foreign-workspace templates so callers
+    can surface a generic 404 without leaking existence (T-02-08).
+    """
+
+    def test_resolve_returns_none_when_template_id_is_none(self):
+        """No ``template_id`` is a pass-through (``None`` → ``None``)."""
+        apply_module = _import_apply()
+
+        result = apply_module.resolve_available_project_template(
+            template_id=None, workspace=_StubWorkspace(id=1)
+        )
+        assert result is None
+
+    @pytest.mark.django_db
+    def test_resolve_returns_none_for_missing_template(
+        self, db, workspace, create_user
+    ):
+        """A random UUID for a missing template is treated as unavailable."""
+        apply_module = _import_apply()
+
+        result = apply_module.resolve_available_project_template(
+            template_id=uuid.uuid4(), workspace=workspace
+        )
+        assert result is None
+
+    @pytest.mark.django_db
+    def test_resolve_returns_none_for_inactive_custom_template(
+        self, db, workspace, create_user
+    ):
+        """An inactive custom template in the current workspace resolves to ``None``."""
+        apply_module = _import_apply()
+        template = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Inactive Custom",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=False,
+            payload={},
+            created_by=create_user,
+        )
+
+        result = apply_module.resolve_available_project_template(
+            template_id=template.id, workspace=workspace
+        )
+        assert result is None
+
+    @pytest.mark.django_db
+    def test_resolve_returns_none_for_foreign_workspace_custom_template(
+        self, db, workspace, create_user
+    ):
+        """A custom template owned by another workspace is treated as unavailable."""
+        apply_module = _import_apply()
+        foreign = type(workspace).objects.create(
+            name="Other Workspace",
+            slug="other-workspace",
+            owner=create_user,
+        )
+        WorkspaceMember.objects.create(
+            workspace=foreign, member=create_user, role=20
+        )
+        foreign_template = ProjectTemplate.objects.create(
+            workspace=foreign,
+            name="Foreign Custom",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=True,
+            payload={},
+            created_by=create_user,
+        )
+
+        result = apply_module.resolve_available_project_template(
+            template_id=foreign_template.id, workspace=workspace
+        )
+        assert result is None
+
+    @pytest.mark.django_db
+    def test_resolve_returns_active_custom_template(self, db, workspace, create_user):
+        """An active custom template in the current workspace resolves."""
+        apply_module = _import_apply()
+        active = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Active Custom",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=True,
+            payload={"schema_version": PROJECT_TEMPLATE_SCHEMA_VERSION},
+            created_by=create_user,
+        )
+
+        result = apply_module.resolve_available_project_template(
+            template_id=active.id, workspace=workspace
+        )
+        assert result is not None
+        assert result.id == active.id
+
+    @pytest.mark.django_db
+    def test_resolve_returns_active_builtin_template(self, db, workspace, create_user):
+        """An active built-in template (workspace NULL) resolves for any workspace."""
+        apply_module = _import_apply()
+        builtin = _seeded_template("software-project")
+
+        result = apply_module.resolve_available_project_template(
+            template_id=builtin.id, workspace=workspace
+        )
+        assert result is not None
+        assert result.id == builtin.id
+
+
+class _StubWorkspace:
+    """Minimal workspace stand-in for resolver unit tests that don't need the DB."""
+
+    def __init__(self, *, id):
+        self.id = id
