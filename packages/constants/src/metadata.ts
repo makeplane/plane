@@ -20,4 +20,4 @@ export const SPACE_SITE_DESCRIPTION = "Hangar Publish is a customer feedback man
 export const SPACE_SITE_KEYWORDS =
   "software development, customer feedback, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration";
 export const SPACE_SITE_URL = "https://app.plane.so/";
-export const SPACE_TWITTER_USER_NAME = "planepowers";
+export const SPACE_TWITTER_USER_NAME = "Hangar";
