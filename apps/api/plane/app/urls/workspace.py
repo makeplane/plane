@@ -36,6 +36,7 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceProjectTemplateViewSet,
 )
 
 
@@ -256,5 +257,11 @@ urlpatterns = [
         "workspaces/<str:slug>/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
+    ),
+    # Project templates (Phase 1 catalog foundation)
+    path(
+        "workspaces/<str:slug>/project-templates/",
+        WorkspaceProjectTemplateViewSet.as_view({"get": "list"}),
+        name="workspace-project-templates",
     ),
 ]
