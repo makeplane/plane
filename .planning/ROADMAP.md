@@ -8,12 +8,12 @@
 
 Add full Project Templates to Plane's Workspace project-creation flow. The roadmap keeps the existing no-template project creation path intact while introducing built-in templates, transaction-safe backend application, create-modal selection, and workspace-admin custom template management.
 
-| Phase | Name                            | Goal                                                                             | Requirements                                                                                                                                                     | UI hint |
-| ----- | ------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| 1     | Template Catalog Foundation     | 2/3                                                                              | In Progress                                                                                                                                                      |         |
-| 2     | Transactional Project Creation  | Create Projects from templates without partial state or default-flow regressions | CAT-02, CREATE-01, CREATE-02, CREATE-03, CREATE-04, CREATE-05, CREATE-06, GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, VER-01, VER-02, VER-03, VER-04 | no      |
-| 3     | Create Modal Template Selection | Let users choose templates in the existing create Project modal                  | CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05                                                                                                      | yes     |
-| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates                            | UI-05                                                                                                                                                            | yes     |
+| Phase | Name                            | Goal                                                                             | Requirements                                                                                                                                                     | UI hint    |
+| ----- | ------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 1     | Template Catalog Foundation     | 3/3                                                                              | Complete                                                                                                                                                         | 2026-06-30 |
+| 2     | Transactional Project Creation  | Create Projects from templates without partial state or default-flow regressions | CAT-02, CREATE-01, CREATE-02, CREATE-03, CREATE-04, CREATE-05, CREATE-06, GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, VER-01, VER-02, VER-03, VER-04 | no         |
+| 3     | Create Modal Template Selection | Let users choose templates in the existing create Project modal                  | CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05                                                                                                      | yes        |
+| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates                            | UI-05                                                                                                                                                            | yes        |
 
 **Coverage:**
 
@@ -30,7 +30,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 
 **Requirements:** CAT-03, CAT-04, CAT-05, CUST-01, CUST-02, CUST-03, CUST-04, CUST-05, CUST-06, CUST-07, CUST-08, CUST-09, PERM-01, PERM-03, PERM-04, PERM-05
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -43,7 +43,7 @@ Plans:
 
 **Wave 3** _(blocked on Wave 2 completion)_
 
-- [ ] 01-03-PLAN.md - Harden validation, immutability, permissions, and backend verification.
+- [x] 01-03-PLAN.md - Harden validation, immutability, permissions, and backend verification.
 
 **Success Criteria:**
 
