@@ -11,7 +11,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | Phase | Name                            | Goal                                                            | Requirements                                                | UI hint    |
 | ----- | ------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
 | 1     | Template Catalog Foundation     | 3/3                                                             | Complete                                                    | 2026-06-30 |
-| 2     | Transactional Project Creation  | 2/3                                                             | In Progress                                                 |            |
+| 2     | Transactional Project Creation  | 3/3                                                             | Complete                                                    | 2026-06-30 |
 | 3     | Create Modal Template Selection | Let users choose templates in the existing create Project modal | CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05 | yes        |
 | 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates           | UI-05                                                       | yes        |
 
@@ -69,7 +69,7 @@ Plans:
 
 **Requirements:** CAT-02, CREATE-01, CREATE-02, CREATE-03, CREATE-04, CREATE-05, CREATE-06, GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, VER-01, VER-02, VER-03, VER-04
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -82,7 +82,7 @@ Plans:
 
 **Wave 3** _(blocked on Wave 2 completion)_
 
-- [ ] 02-03-PLAN.md - Harden template availability, custom-template use, stale-payload validation, rollback behavior, and final backend verification.
+- [x] 02-03-PLAN.md - Harden template availability, custom-template use, stale-payload validation, rollback behavior, and final backend verification.
 
 **Success Criteria:**
 
