@@ -28,6 +28,11 @@ export default defineConfig(() => ({
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
+      // Resolve i18n from source. Its locale JSONs are loaded via a runtime
+      // dynamic import relative to the module ("../locales/..."), which only
+      // resolves from src/ — the bundled dist points it at a non-existent
+      // packages/i18n/locales path, so every key falls back to its raw string.
+      "@plane/i18n": path.resolve(__dirname, "../../packages/i18n/src/index.ts"),
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
   },
