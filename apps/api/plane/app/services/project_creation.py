@@ -29,12 +29,17 @@ from django.db import transaction
 
 # Module imports
 from plane.app.permissions import ROLE
+from plane.app.services.project_template_apply import (
+    apply_project_template,
+    resolve_available_project_template,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
     DEFAULT_STATES,
     Project,
     ProjectIdentifier,
     ProjectMember,
+    ProjectTemplate,
     State,
 )
 from plane.utils.host import base_host
@@ -122,21 +127,29 @@ def create_project_with_optional_template(
     slug,
     request,
     is_app_origin,
+    template_id=None,
 ):
     """Run the core create transaction for a new ``Project``.
 
     ``serializer`` must already be validated (``serializer.is_valid()``
-    has returned ``True``) and its ``validated_data`` must NOT contain
-    ``template_id`` — the optional input is popped by each serializer's
-    ``create()`` override before invoking this service. The function
+    has returned ``True``). The optional ``template_id`` is read off the
+    request payload (or popped from ``validated_data`` by each
+    serializer's ``create()`` override) and is passed in explicitly so
+    this service has a single source of truth for the value. When
+    ``template_id`` resolves to an available ``ProjectTemplate``, the
+    apply branch runs :func:`apply_project_template` instead of
+    :func:`create_default_project_states` so the generated content is
+    created inside the same transaction (D-05/D-07). The function
     returns the persisted ``Project``.
 
     The whole create flow — ``Project``, ``ProjectIdentifier`` (app path
-    only), admin ``ProjectMember`` rows, and ``DEFAULT_STATES`` — runs
-    inside a single ``transaction.atomic()`` block so any failure rolls
-    the entire project back together with no orphan rows (``D-06``).
-    The activity log task is registered on the commit hook so the 201
-    response is unaffected by broker dispatch errors (``D-08``).
+    only), admin ``ProjectMember`` rows, and either ``DEFAULT_STATES``
+    (no-template branch) or the template-generated states/labels/modules/
+    cycles/starter-issues (template branch) — runs inside a single
+    ``transaction.atomic()`` block so any failure rolls the entire
+    project back together with no orphan rows (``D-06``). The activity
+    log task is registered on the commit hook so the 201 response is
+    unaffected by broker dispatch errors (``D-08``).
     """
     with transaction.atomic():
         serializer.save()
@@ -176,7 +189,29 @@ def create_project_with_optional_template(
                 role=ROLE.ADMIN.value,
             )
 
-        create_default_project_states(project=project, actor=actor)
+        template = None
+        if template_id is not None:
+            template = resolve_available_project_template(
+                template_id=template_id, workspace=workspace
+            )
+
+        if template is not None:
+            # D-05/D-07: template branch creates payload-driven states,
+            # labels, modules, cycles, starter issues, and join rows
+            # inside this same atomic block. ``DEFAULT_STATES`` are
+            # deliberately skipped so template-created Projects do not
+            # contain duplicated default-state rows.
+            apply_project_template(
+                project=project,
+                workspace=workspace,
+                template=template,
+                actor=actor,
+                creation_date=project.created_at.date()
+                if project.created_at
+                else None,
+            )
+        else:
+            create_default_project_states(project=project, actor=actor)
 
         enqueue_project_activity_on_commit(
             project=project,

@@ -264,9 +264,12 @@ class ProjectViewSet(BaseViewSet):
             # Phase 02-01: delegate core writes to the shared service so
             # the app and v1 create routes share one ``transaction.atomic``
             # boundary (D-06) and one ``transaction.on_commit(robust=True)``
-            # activity hook (D-08). The response is still rendered through
-            # the existing ``ProjectListSerializer`` to preserve the app
-            # route's response shape.
+            # activity hook (D-08). Phase 02-02 adds the optional
+            # ``template_id`` argument so the service can route to the
+            # template apply branch when a built-in or active custom
+            # template resolves for the current workspace. The
+            # ``validated_data`` pop in the serializer prevents
+            # ``template_id`` from leaking onto the ``Project`` row.
             project = create_project_with_optional_template(
                 serializer=serializer,
                 workspace=workspace,
@@ -275,6 +278,7 @@ class ProjectViewSet(BaseViewSet):
                 slug=slug,
                 request=request,
                 is_app_origin=True,
+                template_id=serializer.validated_data.get("template_id"),
             )
 
             project = self.get_queryset().filter(pk=project.id).first()
