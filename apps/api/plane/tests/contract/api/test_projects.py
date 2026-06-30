@@ -164,10 +164,10 @@ class TestProjectListCreateAPIEndpoint:
 
         with (
             mock.patch(
-                "plane.api.views.project.State.objects.bulk_create",
+                "plane.app.services.project_creation.create_default_project_states",
                 side_effect=forced_error,
             ),
-            mock.patch("plane.api.views.project.model_activity") as mocked_activity,
+            mock.patch("plane.app.services.project_creation.model_activity") as mocked_activity,
         ):
             response = api_key_client.post(url, payload, format="json")
 
@@ -201,7 +201,7 @@ class TestProjectListCreateAPIEndpoint:
             "project_lead": str(create_user.id),
         }
 
-        with mock.patch("plane.api.views.project.model_activity") as mocked_activity:
+        with mock.patch("plane.app.services.project_creation.model_activity") as mocked_activity:
             mocked_activity.delay.side_effect = RuntimeError("broker unavailable")
             response = api_key_client.post(url, payload, format="json")
 

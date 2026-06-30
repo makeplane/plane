@@ -6,7 +6,7 @@
 import json
 
 # Django imports
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery, Count
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -46,6 +46,7 @@ from plane.api.serializers import (
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
+from plane.app.services.project_creation import create_project_with_optional_template
 from plane.app.permissions import ProjectBasePermission, WorkSpaceAdminPermission
 from plane.utils.openapi import (
     project_docs,
@@ -224,72 +225,26 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
 
             if serializer.is_valid():
-                with transaction.atomic():
-                    serializer.save()
+                # Phase 02-01: route the core create flow through the
+                # shared ``create_project_with_optional_template``
+                # service. The service owns the ``transaction.atomic``
+                # boundary (D-06) and registers the activity dispatch via
+                # ``transaction.on_commit(..., robust=True)`` (D-08), so
+                # the v1 path no longer needs to manage either of them
+                # inline. The existing rollback and broker-failure
+                # contract tests in this module continue to exercise the
+                # same behavior — only the implementation location moved.
+                project = create_project_with_optional_template(
+                    serializer=serializer,
+                    workspace=workspace,
+                    actor=request.user,
+                    request_data=request.data,
+                    slug=slug,
+                    request=request,
+                    is_app_origin=False,
+                )
 
-                    # Add the creator as Administrator of the project.
-                    _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
-
-                    # If a different project_lead was provided, add them as
-                    # Administrator too. Use project_lead_id (the FK column)
-                    # rather than project_lead (the related descriptor, which
-                    # would resolve to a User instance and break UUID coercion
-                    # downstream in ProjectMember.objects.create).
-                    if (
-                        serializer.instance.project_lead_id is not None
-                        and serializer.instance.project_lead_id != request.user.id
-                    ):
-                        ProjectMember.objects.create(
-                            project_id=serializer.instance.id,
-                            member_id=serializer.instance.project_lead_id,
-                            role=20,
-                        )
-
-                    State.objects.bulk_create(
-                        [
-                            State(
-                                name=state["name"],
-                                color=state["color"],
-                                project=serializer.instance,
-                                sequence=state["sequence"],
-                                workspace=serializer.instance.workspace,
-                                group=state["group"],
-                                default=state.get("default", False),
-                                created_by=request.user,
-                            )
-                            for state in DEFAULT_STATES
-                        ]
-                    )
-
-                    project = self.get_queryset().filter(pk=serializer.instance.id).first()
-
-                    # Defer the activity-log task until the surrounding
-                    # transaction commits, so it never fires on a rolled-back
-                    # creation.
-                    # robust=True so broker / dispatch failures are logged
-                    # internally by Django and don't surface as 500 after a
-                    # successful commit (the inverse of the rollback path
-                    # covered by test_model_activity_not_called_on_rollback).
-                    # A nested function (rather than functools.partial) is
-                    # used here because Django's robust on_commit logging
-                    # path reads ``func.__qualname__`` to format the error
-                    # message; ``partial`` objects don't have that dunder
-                    # by default and the workaround is brittle when the
-                    # wrapped callable is a mock. The closure captures
-                    # the locals at construction time and they are never
-                    # rebound, so late-binding is not a hazard here.
-                    def _dispatch_model_activity():
-                        model_activity.delay(
-                            model_name="project",
-                            model_id=str(project.id),
-                            requested_data=request.data,
-                            current_instance=None,
-                            actor_id=request.user.id,
-                            slug=slug,
-                            origin=base_host(request=request, is_app=True),
-                        )
-
-                    transaction.on_commit(_dispatch_model_activity, robust=True)
+                project = self.get_queryset().filter(pk=project.id).first()
 
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
