@@ -264,6 +264,8 @@ export const getDocumentThumbnailPath = (format?: string) => {
   return DOCUMENT_THUMBNAILS[key] ?? "attachment/default-icon.png";
 };
 
+const getPlaneCoachThumbnailPath = () => "attachment/video-icon.png";
+
 export const resolveMediaItemActionHref = (item: TMediaItem) => {
   const action = (item.action ?? "").toLowerCase();
 
@@ -396,9 +398,15 @@ export const mapArtifactsToMediaItems = (
       mediaType === "video" ? downloadablePath || directDownloadPath : directDownloadPath || downloadablePath;
 
     const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
+    const planeCoachFallbackThumbnail =
+      metaSource === "plane-coach" && !metaThumbnail && !thumbnailByLink.get(artifact.name) ? getPlaneCoachThumbnailPath() : "";
     const fallbackThumbnail =
-      mediaType === "image" ? resolvedPath : mediaType === "document" ? getDocumentThumbnailPath(format) : "";
-    const thumbnail = resolveArtifactPath(metaThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail);
+      mediaType === "image"
+        ? resolvedPath
+        : planeCoachFallbackThumbnail || (mediaType === "document" ? getDocumentThumbnailPath(format) : "");
+    const thumbnail = resolveArtifactPath(
+      metaThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail
+    );
 
     return {
       id: artifact.name,

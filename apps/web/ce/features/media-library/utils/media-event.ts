@@ -50,6 +50,14 @@ const toMetaRecord = (source: TMediaEventSource): Record<string, unknown> => {
   return source as Record<string, unknown>;
 };
 
+const toSourceRecord = (source: TMediaEventSource): Record<string, unknown> => {
+  if (!source || typeof source !== "object") {
+    return {};
+  }
+
+  return source as Record<string, unknown>;
+};
+
 const toOptionalText = (value: unknown) => {
   if (typeof value !== "string") {
     return null;
@@ -57,6 +65,21 @@ const toOptionalText = (value: unknown) => {
 
   const normalizedValue = value.trim();
   return normalizedValue || null;
+};
+
+const isCoachCompletedEventArtifactSource = (source: TMediaEventSource) => {
+  const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
+  const sourceType = toOptionalText(meta.source);
+  const format = toOptionalText(sourceRecord.format);
+  const id = toOptionalText(sourceRecord.id);
+  const title = toOptionalText(sourceRecord.title);
+
+  return (
+    sourceType === "plane-coach" &&
+    format === "json" &&
+    (Boolean(id?.startsWith("coach-event-")) || Boolean(title?.toLowerCase().includes("final event json")))
+  );
 };
 
 const formatStatusLabel = (value: string | null) => {
@@ -142,12 +165,18 @@ export const getStructuredEventTags = (source: TMediaEventSource): TStructuredEv
 
 export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDetails | null => {
   const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
   const artifactType = toOptionalText(meta.artifact_type);
   const sourceType = toOptionalText(meta.source);
   const hasEventIdentifiers =
     Boolean(toOptionalText(meta.event_id)) || Boolean(toOptionalText(meta.plane_event_id));
+  const isCoachCompletedEventArtifact = isCoachCompletedEventArtifactSource(source);
 
-  if (artifactType !== "completed-event-json" && !(sourceType === "plane-coach" && hasEventIdentifiers)) {
+  if (
+    artifactType !== "completed-event-json" &&
+    !(sourceType === "plane-coach" && hasEventIdentifiers) &&
+    !isCoachCompletedEventArtifact
+  ) {
     return null;
   }
 
@@ -169,7 +198,7 @@ export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDeta
     status: formatStatusLabel(getMetaString(meta, ["status"], "") || null),
     structuredTags,
     tagCount,
-    title: getMetaString(meta, ["title"], "") || null,
+    title: getMetaString(meta, ["title"], "") || toOptionalText(sourceRecord.title),
     workspaceSlug: getMetaString(meta, ["workspace_slug", "workspaceSlug"], "") || null,
     year: getMetaString(meta, ["year", "season"], "") || null,
   };

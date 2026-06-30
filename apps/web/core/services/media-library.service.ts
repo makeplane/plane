@@ -82,6 +82,64 @@ type TMediaLibraryPackagePayload = {
   title: string;
 };
 
+type TCreatePlaylistPayload = {
+  original_stream_name: string;
+  timestamp: string;
+};
+
+const sanitizePlaylistFileName = (value: string) => {
+  const normalizedValue = value.trim();
+  return /^[A-Za-z0-9_-]+\.m3u8$/i.test(normalizedValue) ? normalizedValue : "";
+};
+
+const readPlaylistFileName = (value: unknown): string | null => {
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const fileName = readPlaylistFileName(entry);
+      if (fileName) {
+        return fileName;
+      }
+    }
+    return null;
+  }
+
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const directFileName = record["file-name"];
+  if (typeof directFileName === "string") {
+    const normalized = sanitizePlaylistFileName(directFileName);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  if (record.field === "file-name" && typeof record.value === "string") {
+    const normalized = sanitizePlaylistFileName(record.value);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  if ("Gateway Response" in record) {
+    const gatewayFileName = readPlaylistFileName(record["Gateway Response"]);
+    if (gatewayFileName) {
+      return gatewayFileName;
+    }
+  }
+
+  if ("result" in record) {
+    const resultFileName = readPlaylistFileName(record.result);
+    if (resultFileName) {
+      return resultFileName;
+    }
+  }
+
+  return readPlaylistFileName(Object.values(record));
+};
+
 export class MediaLibraryService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -199,6 +257,19 @@ export class MediaLibraryService extends APIService {
       payload
     )
       .then((response) => response?.data ?? null)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async createPlaylist(payload: TCreatePlaylistPayload[]): Promise<string | null> {
+    const cpServerBaseUrl = process.env.NEXT_PUBLIC_CP_SERVER_URL?.replace(/\/$/, "") ?? "";
+    if (!cpServerBaseUrl) {
+      throw new Error("NEXT_PUBLIC_CP_SERVER_URL is not configured.");
+    }
+
+    return this.post(`${cpServerBaseUrl}/query-engine/create-playlist`, payload, { withCredentials: false })
+      .then((response) => readPlaylistFileName(response?.data))
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });
