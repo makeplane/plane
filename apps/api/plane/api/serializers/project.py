@@ -68,6 +68,17 @@ class ProjectCreateSerializer(BaseSerializer):
         "cycle",
     ]
 
+    # Phase 02-01: optional template selection lives only on the request
+    # payload. Mirrors the app-side ``ProjectSerializer.template_id``
+    # declaration so app and v1 share the same D-03 contract: omitted or
+    # null selects no-template, blank string is rejected, valid UUID is
+    # passed to the service layer for resolution.
+    template_id = serializers.UUIDField(
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+
     class Meta:
         model = Project
         fields = [
@@ -92,6 +103,7 @@ class ProjectCreateSerializer(BaseSerializer):
             "external_id",
             "is_issue_type_enabled",
             "is_time_tracking_enabled",
+            "template_id",
         ]
 
         read_only_fields = [
@@ -103,6 +115,13 @@ class ProjectCreateSerializer(BaseSerializer):
             "updated_by",
             "logo_props",
         ]
+
+    def validate_template_id(self, value):
+        # Pass-through hook (see the same method on the app-side
+        # ``ProjectSerializer`` for the rationale). Keeps the door open
+        # for follow-up phases to constrain the value further without
+        # touching the create view.
+        return value
 
     def validate(self, data):
         project_name = data.get("name", None)
@@ -157,6 +176,13 @@ class ProjectCreateSerializer(BaseSerializer):
                     "color": random.choice(self.PROJECT_ICON_DEFAULT_COLORS),
                 },
             }
+
+        # Phase 02-01: drop the optional template_id input so it never
+        # reaches ``Project.objects.create``. The service layer pulls the
+        # value out of ``self.initial_data`` (preserved by DRF) once the
+        # serializer has validated it; if no template is selected, this
+        # no-op is the entire v1 contract change.
+        validated_data.pop("template_id", None)
 
         project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project

@@ -2,13 +2,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-import pytest
-from rest_framework import status
 import uuid
+from unittest import mock
+
+import pytest
 from django.utils import timezone
+from rest_framework import status
 
 from plane.db.models import (
     Project,
+    ProjectIdentifier,
     ProjectMember,
     ProjectUserProperty,
     State,
@@ -227,6 +230,131 @@ class TestProjectAPIPost(TestProjectBase):
         response_data = response.json()
         assert response_data["description"] == project_data["description"]
         assert response_data["network"] == project_data["network"]
+
+    # ---------------------------------------------------------------------
+    # Phase 02-01 contract coverage: optional template_id input and
+    # transactional no-template behavior on the app create route.
+    #
+    # These tests exercise D-03 (omitted/null = no-template, blank = 400),
+    # D-06 (atomic rollback of core writes), and D-08 (post-commit activity
+    # dispatch is robust against broker failures). The patch targets live
+    # under plane.app.services.project_creation so the tests fail in the
+    # RED phase (module not yet present) and validate the shared service in
+    # the GREEN phase (Task 2 wires app and v1 through it).
+    # ---------------------------------------------------------------------
+
+    @pytest.mark.django_db
+    def test_create_project_template_id_none_matches_no_template(
+        self, session_client, workspace, create_user
+    ):
+        """D-03: explicit ``template_id=null`` produces the same no-template
+        structure as the omitted case."""
+        url = self.get_project_url(workspace.slug)
+        project_data = {
+            "name": "Template Null Project",
+            "identifier": "TNP",
+            "template_id": None,
+        }
+
+        response = session_client.post(url, project_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        project = Project.objects.get(name=project_data["name"])
+        # ProjectIdentifier must be created exactly once.
+        assert ProjectIdentifier.objects.filter(project=project).count() == 1
+        # Creator becomes the sole admin membership.
+        assert ProjectMember.objects.filter(project=project, member=create_user, role=20).count() == 1
+        # ProjectUserProperty row is created for the creator.
+        assert ProjectUserProperty.objects.filter(project=project, user=create_user).exists()
+        # Default states must be created exactly once and match the contract names.
+        states = State.objects.filter(project=project)
+        assert states.count() == 5
+        assert set(states.values_list("name", flat=True)) == {
+            "Backlog",
+            "Todo",
+            "In Progress",
+            "Done",
+            "Cancelled",
+        }
+
+    @pytest.mark.django_db
+    def test_create_project_template_id_blank_returns_400_no_project(
+        self, session_client, workspace, create_user
+    ):
+        """D-03: blank-string ``template_id`` is a validation error and
+        must not create any project rows."""
+        url = self.get_project_url(workspace.slug)
+        project_data = {
+            "name": "Template Blank Project",
+            "identifier": "TBP",
+            "template_id": "",
+        }
+
+        response = session_client.post(url, project_data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        # No partial Project / ProjectIdentifier / ProjectMember / State rows
+        # may remain when blank template_id is rejected.
+        assert Project.objects.count() == 0
+        assert ProjectIdentifier.objects.count() == 0
+        assert ProjectMember.objects.count() == 0
+        assert State.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_project_rolls_back_core_writes_when_default_state_creation_fails(
+        self, session_client, workspace, create_user
+    ):
+        """D-06: when default-state creation inside the shared service
+        raises, the entire create transaction must roll back so no Project,
+        ProjectIdentifier, ProjectMember, or State rows persist."""
+        url = self.get_project_url(workspace.slug)
+        project_data = {
+            "name": "Rollback Probe",
+            "identifier": "RB",
+        }
+
+        forced_error = RuntimeError("forced failure for default state creation")
+
+        with mock.patch(
+            "plane.app.services.project_creation.create_default_project_states",
+            side_effect=forced_error,
+        ):
+            response = session_client.post(url, project_data, format="json")
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert Project.objects.count() == 0
+        assert ProjectIdentifier.objects.count() == 0
+        assert ProjectMember.objects.count() == 0
+        assert State.objects.count() == 0
+
+    @pytest.mark.django_db(transaction=True)
+    def test_create_project_response_stays_201_when_broker_dispatch_fails(
+        self, session_client, workspace, create_user
+    ):
+        """D-08: model_activity.delay failure after the create transaction
+        commits must not roll back the persisted core rows or change the
+        successful 201 response. Patches the activity task from the shared
+        service module so it covers both app and v1 routes uniformly."""
+        url = self.get_project_url(workspace.slug)
+        project_data = {
+            "name": "Broker Down",
+            "identifier": "BD",
+        }
+
+        with mock.patch("plane.app.services.project_creation.model_activity") as mocked_activity:
+            mocked_activity.delay.side_effect = RuntimeError("broker unavailable")
+            response = session_client.post(url, project_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        project = Project.objects.get(id=response.data["id"])
+        # ProjectIdentifier, admin ProjectMember, and DEFAULT_STATES must all
+        # be persisted because the transaction committed before the on_commit
+        # callback fired.
+        assert ProjectIdentifier.objects.filter(project=project).count() == 1
+        assert ProjectMember.objects.filter(project=project, role=20).count() == 1
+        assert State.objects.filter(project=project).count() == 5
+        mocked_activity.delay.assert_called_once()
 
 
 @pytest.mark.contract

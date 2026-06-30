@@ -31,10 +31,33 @@ class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
+    # Phase 02-01: optional template selection lives only on the request.
+    # ``write_only=True`` keeps it out of response payloads (it is not a
+    # Project model field), ``required=False`` permits the existing
+    # no-template path, and ``allow_null=True`` lets clients send
+    # ``template_id=null`` to be explicit about the no-template branch
+    # (D-03). Blank strings are rejected by ``UUIDField``'s default
+    # ``allow_blank=False`` validation.
+    template_id = serializers.UUIDField(
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+
     class Meta:
         model = Project
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
+
+    def validate_template_id(self, value):
+        # ``UUIDField`` already enforces "must be a valid UUID or null".
+        # The method exists so D-03 has an explicit hook for downstream
+        # phases that want to constrain ``template_id`` further (for
+        # example, resolving the template here so a missing template
+        # surfaces as a clean 404 rather than a 500 later in the
+        # service). Keeping the method as a pass-through preserves that
+        # seam without changing Phase 02-01's contract.
+        return value
 
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
@@ -90,9 +113,20 @@ class ProjectSerializer(BaseSerializer):
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
 
+        # Phase 02-01: pop the optional template_id before the model
+        # create so a request that supplies it never leaks into the
+        # ``Project`` row. The service layer consumes ``template_id``
+        # out-of-band once serializer.save() returns, so this serializer
+        # does not need to know how the value is applied.
+        validated_data.pop("template_id", None)
+
         project = Project.objects.create(**validated_data, workspace_id=workspace_id)
 
-        ProjectIdentifier.objects.create(name=project.identifier, project=project, workspace_id=workspace_id)
+        # ProjectIdentifier creation has moved into the shared
+        # ``create_project_with_optional_template`` service so that the
+        # whole create transaction (Project, ProjectIdentifier,
+        # ProjectMember, DEFAULT_STATES) rolls back atomically on
+        # failure (D-06).
 
         return project
 

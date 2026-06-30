@@ -164,10 +164,10 @@ class TestProjectListCreateAPIEndpoint:
 
         with (
             mock.patch(
-                "plane.api.views.project.State.objects.bulk_create",
+                "plane.app.services.project_creation.create_default_project_states",
                 side_effect=forced_error,
             ),
-            mock.patch("plane.api.views.project.model_activity") as mocked_activity,
+            mock.patch("plane.app.services.project_creation.model_activity") as mocked_activity,
         ):
             response = api_key_client.post(url, payload, format="json")
 
@@ -201,7 +201,7 @@ class TestProjectListCreateAPIEndpoint:
             "project_lead": str(create_user.id),
         }
 
-        with mock.patch("plane.api.views.project.model_activity") as mocked_activity:
+        with mock.patch("plane.app.services.project_creation.model_activity") as mocked_activity:
             mocked_activity.delay.side_effect = RuntimeError("broker unavailable")
             response = api_key_client.post(url, payload, format="json")
 
@@ -214,3 +214,48 @@ class TestProjectListCreateAPIEndpoint:
         # The dispatch was attempted but its failure was swallowed by
         # transaction.on_commit(robust=True).
         mocked_activity.delay.assert_called_once()
+
+    # ---------------------------------------------------------------------
+    # Phase 02-01 contract coverage: optional template_id input on the v1
+    # create route. Mirrors the app-side cases from D-03 so omitted /
+    # null template_id flows through the no-template path and blank
+    # template_id is a serializer-level 400.
+    # ---------------------------------------------------------------------
+
+    @pytest.mark.django_db
+    def test_create_project_template_id_none_matches_no_template(
+        self, api_key_client, workspace, create_user
+    ):
+        """D-03: explicit ``template_id=null`` must succeed and produce the
+        same no-template structure as the omitted case."""
+        url = self.get_url(workspace.slug)
+        payload = {
+            "name": "V1 Template Null Project",
+            "identifier": "VTN",
+            "template_id": None,
+        }
+
+        response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+        project = Project.objects.get(id=response.data["id"])
+        assert ProjectMember.objects.filter(project=project, member=create_user, role=20).count() == 1
+        assert State.objects.filter(project=project).count() == 5
+
+    @pytest.mark.django_db
+    def test_create_project_template_id_blank_returns_400_no_project(
+        self, api_key_client, workspace, create_user
+    ):
+        """D-03: blank-string ``template_id`` is a serializer validation
+        error and must not persist any Project rows on the v1 route."""
+        url = self.get_url(workspace.slug)
+        payload = {
+            "name": "V1 Template Blank Project",
+            "identifier": "VTB",
+            "template_id": "",
+        }
+
+        response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, f"Got {response.status_code}: {response.data!r}"
+        assert Project.objects.count() == 0
