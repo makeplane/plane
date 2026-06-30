@@ -36,13 +36,17 @@ jobs:
           INPUT_BASE_TAG_NAME: ${{ github.event.inputs.base_tag_name }}
           GH_TARGET_BRANCH: ${{ env.TARGET_BRANCH }}
         run: |
+          # Strip CR/LF from user-supplied input to prevent $GITHUB_OUTPUT
+          # injection: a newline in the value would forge extra output keys.
+          SAFE_BASE_TAG=$(printf '%s' "$INPUT_BASE_TAG_NAME" | tr -d '\r\n')
+
           echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
           echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
           echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
           echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
 
-          if [ "$INPUT_BASE_TAG_NAME" != "" ]; then
-            echo "AIO_BASE_TAG=$INPUT_BASE_TAG_NAME" >> $GITHUB_OUTPUT
+          if [ "$SAFE_BASE_TAG" != "" ]; then
+            echo "AIO_BASE_TAG=$SAFE_BASE_TAG" >> $GITHUB_OUTPUT
           else
             echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
           fi
