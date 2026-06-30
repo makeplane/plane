@@ -4,11 +4,11 @@ milestone: v1.0
 milestone_name: milestone
 status: unknown
 stopped_at: Phase 1 context gathered
-last_updated: "2026-06-29T12:58:31.627Z"
+last_updated: "2026-06-30T02:52:54.343Z"
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -23,7 +23,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 **Core value:** Creating a new Project should produce a useful, ready-to-work structure immediately instead of an empty shell that admins must configure by hand every time.
-**Current focus:** Phase 1 - Template Catalog Foundation
+**Current focus:** Phase 01 — template-catalog-foundation
 
 ## Current Status
 
@@ -36,12 +36,12 @@ See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 ## Phase Progress
 
-| Phase | Name | Status | Progress |
-|-------|------|--------|----------|
-| 1 | Template Catalog Foundation | Pending | 0% |
-| 2 | Transactional Project Creation | Pending | 0% |
-| 3 | Create Modal Template Selection | Pending | 0% |
-| 4 | Workspace Template Management | Pending | 0% |
+| Phase | Name                            | Status  | Progress |
+| ----- | ------------------------------- | ------- | -------- |
+| 1     | Template Catalog Foundation     | Pending | 0%       |
+| 2     | Transactional Project Creation  | Pending | 0%       |
+| 3     | Create Modal Template Selection | Pending | 0%       |
+| 4     | Workspace Template Management   | Pending | 0%       |
 
 ## Active Requirements
 
