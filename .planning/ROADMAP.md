@@ -29,6 +29,13 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 
 **Requirements:** CAT-03, CAT-04, CAT-05, CUST-01, CUST-02, CUST-03, CUST-04, CUST-05, CUST-06, CUST-07, CUST-08, CUST-09, PERM-01, PERM-03, PERM-04, PERM-05
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md - Persist and expose the read-only built-in template catalog.
+- [ ] 01-02-PLAN.md - Add admin-only custom template lifecycle APIs.
+- [ ] 01-03-PLAN.md - Harden validation, immutability, permissions, and backend verification.
+
 **Success Criteria:**
 1. API can list `Software Project`, `Marketing Campaign`, and `Operations Project` as built-in templates available to a workspace.
 2. Workspace admins can create, edit, and deactivate custom workspace templates through API endpoints.
@@ -117,4 +124,3 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 - Phase 1 and Phase 2 should keep backend tests close to the implementation because the highest risk is partial or inconsistent project creation.
 - Phase 3 has a direct existing UI insertion point: `apps/web/ce/components/projects/create/template-select.tsx`.
 - Phase 4 is intentionally last so the first usable workflow, selecting a built-in template during project creation, lands before the broader custom-template editor.
-
