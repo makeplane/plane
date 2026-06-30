@@ -2,28 +2,28 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Phase 1 context gathered
-last_updated: "2026-06-30T02:52:54.343Z"
+status: Ready to plan
+stopped_at: Phase 2 context gathered
+last_updated: "2026-06-30T08:02:27.015Z"
 progress:
-  total_phases: 4
-  completed_phases: 0
+  total_phases: 5
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 3
+  percent: 20
 ---
 
 # State: Plane Project Templates
 
 **Initialized:** 2026-06-29
-**Last updated:** 2026-06-29 after roadmap creation
+**Last updated:** 2026-06-30 after Phase 1 verification
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 **Core value:** Creating a new Project should produce a useful, ready-to-work structure immediately instead of an empty shell that admins must configure by hand every time.
-**Current focus:** Phase 01 — template-catalog-foundation
+**Current focus:** Phase 02 — transactional-project-creation
 
 ## Current Status
 
@@ -32,16 +32,16 @@ See: `.planning/PROJECT.md` (updated 2026-06-29)
 - Research complete: yes
 - Requirements defined: yes
 - Roadmap created: yes
-- Active phase: 1
+- Active phase: 2
 
 ## Phase Progress
 
-| Phase | Name                            | Status  | Progress |
-| ----- | ------------------------------- | ------- | -------- |
-| 1     | Template Catalog Foundation     | Pending | 0%       |
-| 2     | Transactional Project Creation  | Pending | 0%       |
-| 3     | Create Modal Template Selection | Pending | 0%       |
-| 4     | Workspace Template Management   | Pending | 0%       |
+| Phase | Name                            | Status        | Progress |
+| ----- | ------------------------------- | ------------- | -------- |
+| 1     | Template Catalog Foundation     | Complete      | 100%     |
+| 2     | Transactional Project Creation  | Ready to plan | 0%       |
+| 3     | Create Modal Template Selection | Pending       | 0%       |
+| 4     | Workspace Template Management   | Pending       | 0%       |
 
 ## Active Requirements
 
@@ -51,13 +51,15 @@ See `.planning/REQUIREMENTS.md` for the complete list and phase traceability.
 
 Codebase map lives in `.planning/codebase/`.
 
-High-signal paths for Phase 1:
+High-signal paths for Phase 2:
 
-- `apps/api/plane/db/models/`
-- `apps/api/plane/app/serializers/`
-- `apps/api/plane/app/views/`
-- `apps/api/plane/app/urls/`
-- `apps/api/plane/app/permissions/`
+- `apps/api/plane/app/views/project/base.py`
+- `apps/api/plane/app/serializers/project.py`
+- `apps/api/plane/db/models/state.py`
+- `apps/api/plane/db/models/label.py`
+- `apps/api/plane/db/models/module.py`
+- `apps/api/plane/db/models/cycle.py`
+- `apps/api/plane/db/models/issue.py`
 - `apps/api/plane/tests/`
 
 ## Decisions
@@ -70,6 +72,12 @@ High-signal paths for Phase 1:
 
 ## Session
 
-**Last session:** 2026-06-29T12:58:31.612Z
-**Stopped at:** Phase 1 context gathered
-**Resume file:** .planning/phases/01-template-catalog-foundation/01-CONTEXT.md
+**Last session:** 2026-06-30T08:02:27.002Z
+**Stopped at:** Phase 2 context gathered
+**Resume file:** .planning/phases/02-transactional-project-creation/02-CONTEXT.md
+
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 5 added: 2
