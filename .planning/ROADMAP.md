@@ -69,6 +69,21 @@ Plans:
 
 **Requirements:** CAT-02, CREATE-01, CREATE-02, CREATE-03, CREATE-04, CREATE-05, CREATE-06, GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, VER-01, VER-02, VER-03, VER-04
 
+**Plans:** 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md - Preserve no-template Project creation while introducing shared transactional create service and optional template_id input.
+
+**Wave 2** _(blocked on Wave 1 completion)_
+
+- [ ] 02-02-PLAN.md - Apply built-in Project Templates end to end with generated states, labels, modules, cycles, starter issues, and links.
+
+**Wave 3** _(blocked on Wave 2 completion)_
+
+- [ ] 02-03-PLAN.md - Harden template availability, custom-template use, stale-payload validation, rollback behavior, and final backend verification.
+
 **Success Criteria:**
 
 1. Creating a Project without `template_id` still creates the same default project structure as before.
