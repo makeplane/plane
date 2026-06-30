@@ -478,6 +478,110 @@ class TestProjectTemplateWriteAPI:
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    @pytest.mark.django_db
+    def test_cross_workspace_delete_returns_404(
+        self, session_client, workspace, create_user, seeded_builtin_templates
+    ):
+        """DELETE against a custom template from another workspace returns 404."""
+        other_workspace = workspace.__class__.objects.create(
+            name="Another Workspace",
+            owner=create_user,
+            slug="another-workspace",
+        )
+        WorkspaceMember.objects.create(workspace=other_workspace, member=create_user, role=20)
+        foreign_template = ProjectTemplate.objects.create(
+            workspace=other_workspace,
+            name="Foreign Delete Target",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=True,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        response = session_client.delete(
+            get_project_template_detail_url(workspace.slug, foreign_template.id)
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        foreign_template.refresh_from_db()
+        # The foreign row must remain untouched.
+        assert foreign_template.is_active is True
+
+    @pytest.mark.django_db
+    def test_inactive_custom_excluded_from_list_after_delete(
+        self, session_client, workspace, create_user, seeded_builtin_templates
+    ):
+        """Inactive custom templates disappear from the catalog list (CUST-04/09)."""
+        template = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Soon Inactive",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=True,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        # Confirm present before delete.
+        before = session_client.get(get_project_templates_url(workspace.slug))
+        before_names = {row["name"] for row in before.json()}
+        assert "Soon Inactive" in before_names
+        # Deactivate.
+        delete_response = session_client.delete(
+            get_project_template_detail_url(workspace.slug, template.id)
+        )
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        # Confirm gone after delete.
+        after = session_client.get(get_project_templates_url(workspace.slug))
+        after_names = {row["name"] for row in after.json()}
+        assert "Soon Inactive" not in after_names
+
+    @pytest.mark.django_db
+    def test_builtin_rows_unaffected_by_failed_write_attempts(
+        self, session_client, workspace, seeded_builtin_templates
+    ):
+        """Failed PATCH/DELETE attempts against built-ins leave them untouched (CUST-09)."""
+        builtin = ProjectTemplate.objects.filter(is_system=True).first()
+        original_payload = builtin.payload
+        original_name = builtin.name
+        original_active = builtin.is_active
+        # PATCH attempt
+        patch_response = session_client.patch(
+            get_project_template_detail_url(workspace.slug, builtin.id),
+            {"name": "Hacked", "payload": {"schema_version": 999}},
+            format="json",
+        )
+        assert patch_response.status_code == status.HTTP_400_BAD_REQUEST
+        # DELETE attempt
+        delete_response = session_client.delete(
+            get_project_template_detail_url(workspace.slug, builtin.id)
+        )
+        assert delete_response.status_code == status.HTTP_400_BAD_REQUEST
+        # Built-in remains unchanged
+        builtin.refresh_from_db()
+        assert builtin.name == original_name
+        assert builtin.payload == original_payload
+        assert builtin.is_active == original_active
+        assert builtin.is_system is True
+
+    @pytest.mark.django_db
+    def test_builtin_duplicate_does_not_mutate_source(
+        self, session_client, workspace, seeded_builtin_templates
+    ):
+        """Duplicating a built-in creates a new custom copy without mutating the source."""
+        builtin = ProjectTemplate.objects.filter(is_system=True).first()
+        original_payload = builtin.payload
+        original_name = builtin.name
+        response = session_client.post(
+            get_project_template_duplicate_url(workspace.slug, builtin.id),
+            {"name": "Software Project Copy"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, response.content
+        builtin.refresh_from_db()
+        assert builtin.name == original_name
+        assert builtin.payload == original_payload
+        assert builtin.is_active is True
+        assert builtin.is_system is True
+
 
 @pytest.mark.contract
 class TestProjectTemplateDuplicateAPI:

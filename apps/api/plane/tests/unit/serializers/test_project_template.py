@@ -194,6 +194,236 @@ class TestProjectTemplateSerializer:
         with pytest.raises(Exception):
             validate_project_template_payload(payload)
 
+    # ---------------------------------------------------------------
+    # CUST-04 hardening: state validation edge cases
+    # ---------------------------------------------------------------
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_state_names(self):
+        """State validation rejects duplicate state names (CUST-04)."""
+        payload = _valid_payload()
+        payload["states"][1]["name"] = payload["states"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_missing_default_state(self):
+        """State validation rejects payloads with zero default states (CUST-04)."""
+        payload = _valid_payload()
+        payload["states"][0]["default"] = False
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_missing_state_name(self):
+        """State validation rejects entries without a name (CUST-04)."""
+        payload = _valid_payload()
+        del payload["states"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_state_sequences(self):
+        """State validation rejects duplicate sequence/order values (CUST-04)."""
+        payload = _valid_payload()
+        payload["states"][1]["sequence"] = payload["states"][0]["sequence"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    # ---------------------------------------------------------------
+    # CUST-05 hardening: label validation edge cases
+    # ---------------------------------------------------------------
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_label_keys(self):
+        """Label validation rejects duplicate label_key values (CUST-05)."""
+        payload = _valid_payload()
+        payload["labels"].append(dict(payload["labels"][0]))
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_label_names(self):
+        """Label validation rejects duplicate label names (CUST-05)."""
+        payload = _valid_payload()
+        payload["labels"].append(
+            {
+                "label_key": "feature",
+                "name": payload["labels"][0]["name"],
+                "color": "#3F76FF",
+                "order": 200,
+            }
+        )
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_invalid_label_color(self):
+        """Label validation rejects non-hex color values (CUST-05)."""
+        payload = _valid_payload()
+        payload["labels"][0]["color"] = "red"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_label_orders(self):
+        """Label validation rejects duplicate order values (CUST-05)."""
+        payload = _valid_payload()
+        payload["labels"].append(
+            {
+                "label_key": "feature",
+                "name": "Feature",
+                "color": "#3F76FF",
+                "order": payload["labels"][0]["order"],
+            }
+        )
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_missing_label_name(self):
+        """Label validation rejects entries without a name (CUST-05)."""
+        payload = _valid_payload()
+        del payload["labels"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    # ---------------------------------------------------------------
+    # CUST-06 hardening: module validation edge cases
+    # ---------------------------------------------------------------
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_module_keys(self):
+        """Module validation rejects duplicate module_key values (CUST-06)."""
+        payload = _valid_payload()
+        payload["modules"].append(dict(payload["modules"][0]))
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_invalid_module_status(self):
+        """Module validation rejects status values outside the allowed enum (CUST-06)."""
+        payload = _valid_payload()
+        payload["modules"][0]["status"] = "not-a-status"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_missing_module_name(self):
+        """Module validation rejects entries without a name (CUST-06)."""
+        payload = _valid_payload()
+        del payload["modules"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_module_non_integer_date_metadata(self):
+        """Module validation rejects string/float date metadata (CUST-06)."""
+        payload = _valid_payload()
+        payload["modules"][0]["start_offset_days"] = 1.5
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_module_boolean_date_metadata(self):
+        """Module validation rejects bool values for date metadata (CUST-06)."""
+        payload = _valid_payload()
+        payload["modules"][0]["duration_days"] = True
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_module_inverted_date_metadata(self):
+        """Module validation rejects start_offset_days > target_offset_days (CUST-06)."""
+        payload = _valid_payload()
+        payload["modules"][0]["start_offset_days"] = 30
+        payload["modules"][0]["target_offset_days"] = 7
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    # ---------------------------------------------------------------
+    # CUST-07 hardening: cycle validation edge cases
+    # ---------------------------------------------------------------
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_duplicate_cycle_keys(self):
+        """Cycle validation rejects duplicate cycle_key values (CUST-07)."""
+        payload = _valid_payload()
+        payload["cycles"].append(dict(payload["cycles"][0]))
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_missing_cycle_name(self):
+        """Cycle validation rejects entries without a name (CUST-07)."""
+        payload = _valid_payload()
+        del payload["cycles"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_cycle_non_integer_date_metadata(self):
+        """Cycle validation rejects string/float date metadata (CUST-07)."""
+        payload = _valid_payload()
+        payload["cycles"][0]["start_offset_days"] = "soon"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_cycle_boolean_date_metadata(self):
+        """Cycle validation rejects bool values for date metadata (CUST-07)."""
+        payload = _valid_payload()
+        payload["cycles"][0]["duration_days"] = False
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    # ---------------------------------------------------------------
+    # CUST-08 hardening: starter issue validation edge cases
+    # ---------------------------------------------------------------
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_missing_title(self):
+        """Starter issue validation rejects entries without a name/title (CUST-08)."""
+        payload = _valid_payload()
+        del payload["starter_issues"][0]["name"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_invalid_priority(self):
+        """Starter issue validation rejects priorities outside the allowed enum (CUST-08)."""
+        payload = _valid_payload()
+        payload["starter_issues"][0]["priority"] = "p0-critical"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_dangling_state(self):
+        """Starter issue validation rejects unknown state_key references (CUST-08)."""
+        payload = _valid_payload()
+        payload["starter_issues"][0]["state_key"] = "missing-state"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_dangling_label(self):
+        """Starter issue validation rejects unknown label_keys (CUST-08)."""
+        payload = _valid_payload()
+        payload["starter_issues"][0]["label_keys"] = ["nonexistent-label"]
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_dangling_module(self):
+        """Starter issue validation rejects unknown module_key references (CUST-08)."""
+        payload = _valid_payload()
+        payload["starter_issues"][0]["module_key"] = "missing-module"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_starter_issue_dangling_cycle(self):
+        """Starter issue validation rejects unknown cycle_key references (CUST-08)."""
+        payload = _valid_payload()
+        payload["starter_issues"][0]["cycle_key"] = "missing-cycle"
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
     @pytest.mark.django_db
     def test_write_serializer_creates_template_with_valid_payload(self, db, create_user, workspace):
         """The write serializer persists a custom template for the given workspace."""
