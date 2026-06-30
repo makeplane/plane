@@ -16,6 +16,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | 4 | Workspace Template Management | Give workspace admins a UI to manage custom templates | UI-05 | yes |
 
 **Coverage:**
+
 - v1 requirements: 43 total
 - Mapped to phases: 43
 - Unmapped: 0
@@ -32,11 +33,20 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 **Plans:** 3 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md - Persist and expose the read-only built-in template catalog.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-02-PLAN.md - Add admin-only custom template lifecycle APIs.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 01-03-PLAN.md - Harden validation, immutability, permissions, and backend verification.
 
 **Success Criteria:**
+
 1. API can list `Software Project`, `Marketing Campaign`, and `Operations Project` as built-in templates available to a workspace.
 2. Workspace admins can create, edit, and deactivate custom workspace templates through API endpoints.
 3. Template payload validation covers states, labels, modules, cycles, and starter issues before any template is used for project creation.
@@ -44,6 +54,7 @@ Plans:
 5. Built-in templates cannot be edited directly through custom template APIs.
 
 **Primary Code Areas:**
+
 - `apps/api/plane/db/models/`
 - `apps/api/plane/app/serializers/`
 - `apps/api/plane/app/views/`
@@ -59,6 +70,7 @@ Plans:
 **Requirements:** CAT-02, CREATE-01, CREATE-02, CREATE-03, CREATE-04, CREATE-05, CREATE-06, GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, VER-01, VER-02, VER-03, VER-04
 
 **Success Criteria:**
+
 1. Creating a Project without `template_id` still creates the same default project structure as before.
 2. Creating a Project with `template_id` validates template availability and applies all template sections inside one backend transaction.
 3. Generated states, labels, modules, cycles, and starter issues are present and correctly linked after template creation succeeds.
@@ -66,6 +78,7 @@ Plans:
 5. Backend tests cover no-template creation, built-in template creation, custom template permissions, and rollback behavior.
 
 **Primary Code Areas:**
+
 - `apps/api/plane/app/views/project/base.py`
 - `apps/api/plane/app/serializers/project.py`
 - `apps/api/plane/db/models/state.py`
@@ -83,6 +96,7 @@ Plans:
 **Requirements:** CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05
 
 **Success Criteria:**
+
 1. The existing `ProjectTemplateSelect` stub renders a usable selector in the create Project header area.
 2. Users who can create Projects can list and select available built-in or workspace custom templates.
 3. The selected template is visible before submit and the form sends `template_id` to the existing create Project request.
@@ -90,6 +104,7 @@ Plans:
 5. Type checks pass for the updated template types, services, store/form payloads, and create modal components.
 
 **Primary Code Areas:**
+
 - `apps/web/ce/components/projects/create/template-select.tsx`
 - `apps/web/ce/components/projects/create/root.tsx`
 - `apps/web/core/components/project/create/header.tsx`
@@ -106,12 +121,14 @@ Plans:
 **Requirements:** UI-05
 
 **Success Criteria:**
+
 1. Workspace admins can reach a Project Templates settings area from existing workspace settings navigation.
 2. The management UI supports creating, editing, and deactivating custom templates using the backend APIs from Phase 1.
 3. The UI clearly distinguishes built-in system templates from custom workspace templates.
 4. The custom template editor covers states, labels, modules, cycles, and starter issues at a structured-form level without becoming a visual workflow builder.
 
 **Primary Code Areas:**
+
 - `apps/web/app/routes/core.ts`
 - `apps/web/core/components/settings/`
 - `apps/web/core/components/workspace/`
