@@ -182,7 +182,52 @@
       "imports": {
         "title": "Імпорти",
         "heading": "Імпорти",
-        "description": "Підключайтеся та імпортуйте дані з ваших наявних інструментів керування проєктами, щоб оптимізувати інтеграцію робочого процесу."
+        "description": "Підключайтеся та імпортуйте дані з ваших наявних інструментів керування проєктами, щоб оптимізувати інтеграцію робочого процесу.",
+        "previous_imports": "Попередні імпорти",
+        "table": {
+          "service": "Сервіс",
+          "project": "Проєкт",
+          "status": "Статус",
+          "created_at": "Створено"
+        },
+        "eva": {
+          "url": "URL екземпляра EVA",
+          "url_description": "Базовий URL вашого екземпляра EvaTeam.",
+          "token": "API-токен",
+          "token_description": "Bearer-токен із розділу безпеки профілю EvaTeam.",
+          "eva_project": "Проєкт EVA",
+          "eva_project_description": "Виберіть проєкт EvaTeam для імпорту.",
+          "plane_project": "Проєкт Plane",
+          "plane_project_description": "Виберіть проєкт Plane, у який будуть імпортовані робочі елементи.",
+          "select_eva_project": "Виберіть проєкт EVA",
+          "select_plane_project": "Виберіть проєкт Plane",
+          "preview": "Попередній перегляд імпорту",
+          "start_import": "Почати імпорт",
+          "preview_title": "Попередній перегляд імпорту",
+          "preview_success": "Попередній перегляд EVA завантажено",
+          "preview_error": "Не вдалося завантажити попередній перегляд EVA",
+          "import_started": "Імпорт EVA розпочато",
+          "import_error": "Не вдалося розпочати імпорт EVA",
+          "tasks": "Завдання",
+          "comments": "Коментарі",
+          "attachments": "Вкладення",
+          "documents": "Документи",
+          "testcases": "Тест-кейси",
+          "labels": "Мітки",
+          "users": "Користувачі",
+          "cycles": "Цикли"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Ворклоги",

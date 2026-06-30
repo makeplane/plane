@@ -6,10 +6,12 @@
 
 export * from "./github-importer";
 export * from "./jira-importer";
+export * from "./eva-importer";
 
 import type { IProjectLite } from "../project";
 // types
 import type { IUserLite } from "../users";
+import type { IImporterImportedData } from "./eva-importer";
 
 export interface IImporterService {
   created_at: string;
@@ -32,11 +34,12 @@ export interface IImporterService {
   project: string;
   project_detail: IProjectLite;
   service: string;
-  status: "processing" | "completed" | "failed";
+  status: "processing" | "completed" | "failed" | "queued";
   updated_at: string;
   updated_by: string;
   token: string;
   workspace: string;
+  imported_data?: IImporterImportedData | null;
 }
 
 export interface IExportData {

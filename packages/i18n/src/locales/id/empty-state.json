@@ -265,6 +265,10 @@
         "title": "Tambah status",
         "description": "Pilih status yang dilalui item kerja."
       }
+    },
+    "imports": {
+      "title": "Belum ada impor",
+      "description": "Temukan semua impor Anda sebelumnya di sini dan unduh."
     }
   }
 }

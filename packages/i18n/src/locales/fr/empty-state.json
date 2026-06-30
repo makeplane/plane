@@ -265,6 +265,10 @@
         "title": "Ajouter des états",
         "description": "Sélectionnez les états par lesquels passe l’élément de travail."
       }
+    },
+    "imports": {
+      "title": "Aucune importation pour le moment",
+      "description": "Trouvez toutes vos importations précédentes ici et téléchargez-les."
     }
   }
 }

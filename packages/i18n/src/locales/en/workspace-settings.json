@@ -182,7 +182,52 @@
       "imports": {
         "title": "Imports",
         "heading": "Imports",
-        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
+        "description": "Connect and import data from your existing project management tools to streamline your workflow integration.",
+        "previous_imports": "Previous imports",
+        "table": {
+          "service": "Service",
+          "project": "Project",
+          "status": "Status",
+          "created_at": "Created at"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "eva": {
+          "url": "EVA instance URL",
+          "url_description": "Base URL of your EvaTeam instance.",
+          "token": "API token",
+          "token_description": "Bearer token from your EvaTeam profile security settings.",
+          "eva_project": "EVA project",
+          "eva_project_description": "Select the EvaTeam project to import.",
+          "plane_project": "Plane project",
+          "plane_project_description": "Select the Plane project that should receive imported work items.",
+          "select_eva_project": "Select EVA project",
+          "select_plane_project": "Select Plane project",
+          "preview": "Preview import",
+          "start_import": "Start import",
+          "preview_title": "Import preview",
+          "preview_success": "EVA preview loaded",
+          "preview_error": "Could not load EVA preview",
+          "import_started": "EVA import started",
+          "import_error": "Could not start EVA import",
+          "tasks": "Tasks",
+          "comments": "Comments",
+          "attachments": "Attachments",
+          "documents": "Documents",
+          "testcases": "Test cases",
+          "labels": "Labels",
+          "users": "Users",
+          "cycles": "Cycles"
+        }
       },
       "worklogs": {
         "title": "Worklogs",

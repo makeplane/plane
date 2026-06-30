@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importy",
         "heading": "Importy",
-        "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy."
+        "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy.",
+        "previous_imports": "Poprzednie importy",
+        "table": {
+          "service": "Usługa",
+          "project": "Projekt",
+          "status": "Status",
+          "created_at": "Utworzono"
+        },
+        "eva": {
+          "url": "URL instancji EVA",
+          "url_description": "Podstawowy URL Twojej instancji EvaTeam.",
+          "token": "Token API",
+          "token_description": "Token Bearer z ustawień zabezpieczeń profilu EvaTeam.",
+          "eva_project": "Projekt EVA",
+          "eva_project_description": "Wybierz projekt EvaTeam do importu.",
+          "plane_project": "Projekt Plane",
+          "plane_project_description": "Wybierz projekt Plane, który otrzyma zaimportowane elementy pracy.",
+          "select_eva_project": "Wybierz projekt EVA",
+          "select_plane_project": "Wybierz projekt Plane",
+          "preview": "Podgląd importu",
+          "start_import": "Rozpocznij import",
+          "preview_title": "Podgląd importu",
+          "preview_success": "Załadowano podgląd EVA",
+          "preview_error": "Nie udało się załadować podglądu EVA",
+          "import_started": "Rozpoczęto import EVA",
+          "import_error": "Nie udało się rozpocząć importu EVA",
+          "tasks": "Zadania",
+          "comments": "Komentarze",
+          "attachments": "Załączniki",
+          "documents": "Dokumenty",
+          "testcases": "Przypadki testowe",
+          "labels": "Etykiety",
+          "users": "Użytkownicy",
+          "cycles": "Cykle"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Logi pracy",

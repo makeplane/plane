@@ -182,7 +182,52 @@
       "imports": {
         "title": "Импорт",
         "heading": "Импорт",
-        "description": "Подключайтесь и импортируйте данные из существующих инструментов управления проектами для оптимизации интеграции рабочих процессов."
+        "description": "Подключайтесь и импортируйте данные из существующих инструментов управления проектами для оптимизации интеграции рабочих процессов.",
+        "previous_imports": "Предыдущие импорты",
+        "table": {
+          "service": "Сервис",
+          "project": "Проект",
+          "status": "Статус",
+          "created_at": "Создано"
+        },
+        "eva": {
+          "url": "URL экземпляра EVA",
+          "url_description": "Базовый URL вашего экземпляра EvaTeam.",
+          "token": "API-токен",
+          "token_description": "Bearer-токен из раздела безопасности профиля EvaTeam.",
+          "eva_project": "Проект EVA",
+          "eva_project_description": "Выберите проект EvaTeam для импорта.",
+          "plane_project": "Проект Plane",
+          "plane_project_description": "Выберите проект Plane, в который будут импортированы рабочие элементы.",
+          "select_eva_project": "Выберите проект EVA",
+          "select_plane_project": "Выберите проект Plane",
+          "preview": "Предпросмотр импорта",
+          "start_import": "Начать импорт",
+          "preview_title": "Предпросмотр импорта",
+          "preview_success": "Предпросмотр EVA загружен",
+          "preview_error": "Не удалось загрузить предпросмотр EVA",
+          "import_started": "Импорт EVA запущен",
+          "import_error": "Не удалось запустить импорт EVA",
+          "tasks": "Задачи",
+          "comments": "Комментарии",
+          "attachments": "Вложения",
+          "documents": "Документы",
+          "testcases": "Тест-кейсы",
+          "labels": "Метки",
+          "users": "Пользователи",
+          "cycles": "Циклы"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Рабочие журналы",

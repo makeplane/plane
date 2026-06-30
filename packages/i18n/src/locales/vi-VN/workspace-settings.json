@@ -182,7 +182,52 @@
       "imports": {
         "title": "Nhập dữ liệu",
         "heading": "Nhập",
-        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc.",
+        "previous_imports": "Lần nhập trước",
+        "table": {
+          "service": "Dịch vụ",
+          "project": "Dự án",
+          "status": "Trạng thái",
+          "created_at": "Tạo lúc"
+        },
+        "eva": {
+          "url": "URL phiên bản EVA",
+          "url_description": "URL cơ sở của phiên bản EvaTeam của bạn.",
+          "token": "Token API",
+          "token_description": "Token Bearer từ cài đặt bảo mật hồ sơ EvaTeam.",
+          "eva_project": "Dự án EVA",
+          "eva_project_description": "Chọn dự án EvaTeam để nhập.",
+          "plane_project": "Dự án Plane",
+          "plane_project_description": "Chọn dự án Plane sẽ nhận các mục công việc được nhập.",
+          "select_eva_project": "Chọn dự án EVA",
+          "select_plane_project": "Chọn dự án Plane",
+          "preview": "Xem trước nhập",
+          "start_import": "Bắt đầu nhập",
+          "preview_title": "Xem trước nhập",
+          "preview_success": "Đã tải xem trước EVA",
+          "preview_error": "Không thể tải xem trước EVA",
+          "import_started": "Đã bắt đầu nhập EVA",
+          "import_error": "Không thể bắt đầu nhập EVA",
+          "tasks": "Tác vụ",
+          "comments": "Bình luận",
+          "attachments": "Tệp đính kèm",
+          "documents": "Tài liệu",
+          "testcases": "Trường hợp kiểm thử",
+          "labels": "Nhãn",
+          "users": "Người dùng",
+          "cycles": "Chu kỳ"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Nhật ký công việc",

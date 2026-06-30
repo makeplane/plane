@@ -182,7 +182,52 @@
       "imports": {
         "title": "İmportlar",
         "heading": "İmportlar",
-        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın."
+        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın.",
+        "previous_imports": "Önceki içe aktarmalar",
+        "table": {
+          "service": "Hizmet",
+          "project": "Proje",
+          "status": "Durum",
+          "created_at": "Oluşturulma"
+        },
+        "eva": {
+          "url": "EVA örneği URL'si",
+          "url_description": "EvaTeam örneğinizin temel URL'si.",
+          "token": "API belirteci",
+          "token_description": "EvaTeam profil güvenlik ayarlarından Bearer belirteci.",
+          "eva_project": "EVA projesi",
+          "eva_project_description": "İçe aktarılacak EvaTeam projesini seçin.",
+          "plane_project": "Plane projesi",
+          "plane_project_description": "İçe aktarılan iş öğelerini alacak Plane projesini seçin.",
+          "select_eva_project": "EVA projesi seç",
+          "select_plane_project": "Plane projesi seç",
+          "preview": "İçe aktarmayı önizle",
+          "start_import": "İçe aktarmayı başlat",
+          "preview_title": "İçe aktarma önizlemesi",
+          "preview_success": "EVA önizlemesi yüklendi",
+          "preview_error": "EVA önizlemesi yüklenemedi",
+          "import_started": "EVA içe aktarma başlatıldı",
+          "import_error": "EVA içe aktarma başlatılamadı",
+          "tasks": "Görevler",
+          "comments": "Yorumlar",
+          "attachments": "Ekler",
+          "documents": "Belgeler",
+          "testcases": "Test senaryoları",
+          "labels": "Etiketler",
+          "users": "Kullanıcılar",
+          "cycles": "Döngüler"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Workloglar",

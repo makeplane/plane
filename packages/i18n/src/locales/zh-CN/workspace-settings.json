@@ -182,7 +182,52 @@
       "imports": {
         "title": "导入",
         "heading": "导入",
-        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。"
+        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。",
+        "previous_imports": "以前的导入",
+        "table": {
+          "service": "服务",
+          "project": "项目",
+          "status": "状态",
+          "created_at": "创建时间"
+        },
+        "eva": {
+          "url": "EVA 实例 URL",
+          "url_description": "您的 EvaTeam 实例的基础 URL。",
+          "token": "API 令牌",
+          "token_description": "来自 EvaTeam 个人资料安全设置的 Bearer 令牌。",
+          "eva_project": "EVA 项目",
+          "eva_project_description": "选择要导入的 EvaTeam 项目。",
+          "plane_project": "Plane 项目",
+          "plane_project_description": "选择将接收导入工作项的 Plane 项目。",
+          "select_eva_project": "选择 EVA 项目",
+          "select_plane_project": "选择 Plane 项目",
+          "preview": "预览导入",
+          "start_import": "开始导入",
+          "preview_title": "导入预览",
+          "preview_success": "已加载 EVA 预览",
+          "preview_error": "无法加载 EVA 预览",
+          "import_started": "已开始 EVA 导入",
+          "import_error": "无法开始 EVA 导入",
+          "tasks": "任务",
+          "comments": "评论",
+          "attachments": "附件",
+          "documents": "文档",
+          "testcases": "测试用例",
+          "labels": "标签",
+          "users": "用户",
+          "cycles": "周期"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "工作日志",

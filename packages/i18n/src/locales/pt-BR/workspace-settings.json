@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importações",
         "heading": "Importações",
-        "description": "Conecte e importe dados das suas ferramentas de gerenciamento de projetos existentes para otimizar a integração do seu fluxo de trabalho."
+        "description": "Conecte e importe dados das suas ferramentas de gerenciamento de projetos existentes para otimizar a integração do seu fluxo de trabalho.",
+        "previous_imports": "Importações anteriores",
+        "table": {
+          "service": "Serviço",
+          "project": "Projeto",
+          "status": "Status",
+          "created_at": "Criado em"
+        },
+        "eva": {
+          "url": "URL da instância EVA",
+          "url_description": "URL base da sua instância EvaTeam.",
+          "token": "Token de API",
+          "token_description": "Token Bearer das configurações de segurança do seu perfil EvaTeam.",
+          "eva_project": "Projeto EVA",
+          "eva_project_description": "Selecione o projeto EvaTeam para importar.",
+          "plane_project": "Projeto Plane",
+          "plane_project_description": "Selecione o projeto Plane que receberá os itens de trabalho importados.",
+          "select_eva_project": "Selecionar projeto EVA",
+          "select_plane_project": "Selecionar projeto Plane",
+          "preview": "Visualizar importação",
+          "start_import": "Iniciar importação",
+          "preview_title": "Visualização da importação",
+          "preview_success": "Visualização EVA carregada",
+          "preview_error": "Não foi possível carregar a visualização EVA",
+          "import_started": "Importação EVA iniciada",
+          "import_error": "Não foi possível iniciar a importação EVA",
+          "tasks": "Tarefas",
+          "comments": "Comentários",
+          "attachments": "Anexos",
+          "documents": "Documentos",
+          "testcases": "Casos de teste",
+          "labels": "Rótulos",
+          "users": "Usuários",
+          "cycles": "Ciclos"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Registros de trabalho",

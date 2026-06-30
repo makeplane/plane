@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importations",
         "heading": "Importations",
-        "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail."
+        "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail.",
+        "previous_imports": "Importations précédentes",
+        "table": {
+          "service": "Service",
+          "project": "Projet",
+          "status": "Statut",
+          "created_at": "Créé le"
+        },
+        "eva": {
+          "url": "URL de l'instance EVA",
+          "url_description": "URL de base de votre instance EvaTeam.",
+          "token": "Jeton API",
+          "token_description": "Jeton Bearer depuis les paramètres de sécurité de votre profil EvaTeam.",
+          "eva_project": "Projet EVA",
+          "eva_project_description": "Sélectionnez le projet EvaTeam à importer.",
+          "plane_project": "Projet Plane",
+          "plane_project_description": "Sélectionnez le projet Plane qui recevra les éléments de travail importés.",
+          "select_eva_project": "Sélectionner un projet EVA",
+          "select_plane_project": "Sélectionner un projet Plane",
+          "preview": "Aperçu de l'importation",
+          "start_import": "Démarrer l'importation",
+          "preview_title": "Aperçu de l'importation",
+          "preview_success": "Aperçu EVA chargé",
+          "preview_error": "Impossible de charger l'aperçu EVA",
+          "import_started": "Importation EVA démarrée",
+          "import_error": "Impossible de démarrer l'importation EVA",
+          "tasks": "Tâches",
+          "comments": "Commentaires",
+          "attachments": "Pièces jointes",
+          "documents": "Documents",
+          "testcases": "Cas de test",
+          "labels": "Libellés",
+          "users": "Utilisateurs",
+          "cycles": "Cycles"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Journaux de travail",

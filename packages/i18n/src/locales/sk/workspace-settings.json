@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importy",
         "heading": "Importy",
-        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu."
+        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu.",
+        "previous_imports": "Predchádzajúce importy",
+        "table": {
+          "service": "Služba",
+          "project": "Projekt",
+          "status": "Stav",
+          "created_at": "Vytvorené"
+        },
+        "eva": {
+          "url": "URL inštancie EVA",
+          "url_description": "Základná URL vašej inštancie EvaTeam.",
+          "token": "API token",
+          "token_description": "Bearer token z nastavení zabezpečenia profilu EvaTeam.",
+          "eva_project": "Projekt EVA",
+          "eva_project_description": "Vyberte projekt EvaTeam na import.",
+          "plane_project": "Projekt Plane",
+          "plane_project_description": "Vyberte projekt Plane, do ktorého sa importujú pracovné položky.",
+          "select_eva_project": "Vyberte projekt EVA",
+          "select_plane_project": "Vyberte projekt Plane",
+          "preview": "Náhľad importu",
+          "start_import": "Spustiť import",
+          "preview_title": "Náhľad importu",
+          "preview_success": "Náhľad EVA načítaný",
+          "preview_error": "Nepodarilo sa načítať náhľad EVA",
+          "import_started": "Import EVA spustený",
+          "import_error": "Nepodarilo sa spustiť import EVA",
+          "tasks": "Úlohy",
+          "comments": "Komentáre",
+          "attachments": "Prílohy",
+          "documents": "Dokumenty",
+          "testcases": "Testovacie prípady",
+          "labels": "Štítky",
+          "users": "Používatelia",
+          "cycles": "Cykly"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Pracovné záznamy",

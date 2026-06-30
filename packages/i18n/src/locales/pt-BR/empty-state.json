@@ -265,6 +265,10 @@
         "title": "Adicionar estados",
         "description": "Selecione os estados pelos quais o item de trabalho progride."
       }
+    },
+    "imports": {
+      "title": "Nenhuma importação ainda",
+      "description": "Encontre todas as suas importações anteriores aqui e baixe-as."
     }
   }
 }

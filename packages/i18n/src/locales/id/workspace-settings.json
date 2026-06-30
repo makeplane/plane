@@ -182,7 +182,52 @@
       "imports": {
         "title": "Impor",
         "heading": "Impor",
-        "description": "Hubungkan dan impor data dari alat manajemen proyek Anda yang sudah ada untuk menyederhanakan integrasi alur kerja."
+        "description": "Hubungkan dan impor data dari alat manajemen proyek Anda yang sudah ada untuk menyederhanakan integrasi alur kerja.",
+        "previous_imports": "Impor sebelumnya",
+        "table": {
+          "service": "Layanan",
+          "project": "Proyek",
+          "status": "Status",
+          "created_at": "Dibuat pada"
+        },
+        "eva": {
+          "url": "URL instance EVA",
+          "url_description": "URL dasar instance EvaTeam Anda.",
+          "token": "Token API",
+          "token_description": "Token Bearer dari pengaturan keamanan profil EvaTeam Anda.",
+          "eva_project": "Proyek EVA",
+          "eva_project_description": "Pilih proyek EvaTeam yang akan diimpor.",
+          "plane_project": "Proyek Plane",
+          "plane_project_description": "Pilih proyek Plane yang akan menerima item kerja yang diimpor.",
+          "select_eva_project": "Pilih proyek EVA",
+          "select_plane_project": "Pilih proyek Plane",
+          "preview": "Pratinjau impor",
+          "start_import": "Mulai impor",
+          "preview_title": "Pratinjau impor",
+          "preview_success": "Pratinjau EVA dimuat",
+          "preview_error": "Tidak dapat memuat pratinjau EVA",
+          "import_started": "Impor EVA dimulai",
+          "import_error": "Tidak dapat memulai impor EVA",
+          "tasks": "Tugas",
+          "comments": "Komentar",
+          "attachments": "Lampiran",
+          "documents": "Dokumen",
+          "testcases": "Kasus uji",
+          "labels": "Label",
+          "users": "Pengguna",
+          "cycles": "Siklus"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Log kerja",

@@ -11,7 +11,14 @@ from .project import ProjectBaseModel
 
 
 class Importer(ProjectBaseModel):
-    service = models.CharField(max_length=50, choices=(("github", "GitHub"), ("jira", "Jira")))
+    service = models.CharField(
+        max_length=50,
+        choices=(
+            ("github", "GitHub"),
+            ("jira", "Jira"),
+            ("eva", "EvaTeam"),
+        ),
+    )
     status = models.CharField(
         max_length=50,
         choices=(

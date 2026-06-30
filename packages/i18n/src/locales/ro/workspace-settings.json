@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importuri",
         "heading": "Importuri",
-        "description": "Conectează-te și importă date din instrumentele tale existente de gestionare a proiectelor pentru a-ți simplifica integrarea fluxului de lucru."
+        "description": "Conectează-te și importă date din instrumentele tale existente de gestionare a proiectelor pentru a-ți simplifica integrarea fluxului de lucru.",
+        "previous_imports": "Importuri anterioare",
+        "table": {
+          "service": "Serviciu",
+          "project": "Proiect",
+          "status": "Stare",
+          "created_at": "Creat la"
+        },
+        "eva": {
+          "url": "URL instanță EVA",
+          "url_description": "URL de bază al instanței EvaTeam.",
+          "token": "Token API",
+          "token_description": "Token Bearer din setările de securitate ale profilului EvaTeam.",
+          "eva_project": "Proiect EVA",
+          "eva_project_description": "Selectați proiectul EvaTeam de importat.",
+          "plane_project": "Proiect Plane",
+          "plane_project_description": "Selectați proiectul Plane care va primi elementele de lucru importate.",
+          "select_eva_project": "Selectați proiect EVA",
+          "select_plane_project": "Selectați proiect Plane",
+          "preview": "Previzualizare import",
+          "start_import": "Pornește importul",
+          "preview_title": "Previzualizare import",
+          "preview_success": "Previzualizare EVA încărcată",
+          "preview_error": "Nu s-a putut încărca previzualizarea EVA",
+          "import_started": "Import EVA pornit",
+          "import_error": "Nu s-a putut porni importul EVA",
+          "tasks": "Sarcini",
+          "comments": "Comentarii",
+          "attachments": "Atașamente",
+          "documents": "Documente",
+          "testcases": "Cazuri de test",
+          "labels": "Etichete",
+          "users": "Utilizatori",
+          "cycles": "Cicluri"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Jurnale de lucru",

@@ -182,7 +182,52 @@
       "imports": {
         "title": "Importe",
         "heading": "Importe",
-        "description": "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren."
+        "description": "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren.",
+        "previous_imports": "Frühere Importe",
+        "table": {
+          "service": "Dienst",
+          "project": "Projekt",
+          "status": "Status",
+          "created_at": "Erstellt am"
+        },
+        "eva": {
+          "url": "EVA-Instanz-URL",
+          "url_description": "Basis-URL Ihrer EvaTeam-Instanz.",
+          "token": "API-Token",
+          "token_description": "Bearer-Token aus den Sicherheitseinstellungen Ihres EvaTeam-Profils.",
+          "eva_project": "EVA-Projekt",
+          "eva_project_description": "Wählen Sie das EvaTeam-Projekt für den Import.",
+          "plane_project": "Plane-Projekt",
+          "plane_project_description": "Wählen Sie das Plane-Projekt, das die importierten Arbeitselemente erhalten soll.",
+          "select_eva_project": "EVA-Projekt auswählen",
+          "select_plane_project": "Plane-Projekt auswählen",
+          "preview": "Importvorschau",
+          "start_import": "Import starten",
+          "preview_title": "Importvorschau",
+          "preview_success": "EVA-Vorschau geladen",
+          "preview_error": "EVA-Vorschau konnte nicht geladen werden",
+          "import_started": "EVA-Import gestartet",
+          "import_error": "EVA-Import konnte nicht gestartet werden",
+          "tasks": "Aufgaben",
+          "comments": "Kommentare",
+          "attachments": "Anhänge",
+          "documents": "Dokumente",
+          "testcases": "Testfälle",
+          "labels": "Labels",
+          "users": "Benutzer",
+          "cycles": "Zyklen"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data from EVA",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        }
       },
       "worklogs": {
         "title": "Arbeitsberichte",
