@@ -10,7 +10,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Template Catalog
 
 - [ ] **CAT-01**: Workspace project creation shows available Project Templates inside the existing create Project modal/form.
-- [ ] **CAT-02**: User can create a Project without selecting a template and receives the existing default Project behavior.
+- [x] **CAT-02**: User can create a Project without selecting a template and receives the existing default Project behavior.
 - [x] **CAT-03**: User can select the built-in `Software Project` template when creating a Project.
 - [x] **CAT-04**: User can select the built-in `Marketing Campaign` template when creating a Project.
 - [x] **CAT-05**: User can select the built-in `Operations Project` template when creating a Project.
@@ -30,22 +30,22 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Project Creation
 
-- [ ] **CREATE-01**: Project creation API accepts an optional `template_id` along with existing Project fields.
-- [ ] **CREATE-02**: Project creation without `template_id` preserves current behavior, including existing default state creation.
-- [ ] **CREATE-03**: Project creation with `template_id` validates that the selected template is available to the workspace.
-- [ ] **CREATE-04**: Project creation with `template_id` applies template contents on the backend in a single transaction.
-- [ ] **CREATE-05**: If template application fails validation, no partial Project, states, labels, modules, cycles, or starter issues remain.
-- [ ] **CREATE-06**: Existing create Project success behavior remains intact, including adding the creator as Project admin, adding project lead when provided, optional favorite behavior, cover image behavior, and transition to the existing feature-selection step.
+- [x] **CREATE-01**: Project creation API accepts an optional `template_id` along with existing Project fields.
+- [x] **CREATE-02**: Project creation without `template_id` preserves current behavior, including existing default state creation.
+- [x] **CREATE-03**: Project creation with `template_id` validates that the selected template is available to the workspace.
+- [x] **CREATE-04**: Project creation with `template_id` applies template contents on the backend in a single transaction.
+- [x] **CREATE-05**: If template application fails validation, no partial Project, states, labels, modules, cycles, or starter issues remain.
+- [x] **CREATE-06**: Existing create Project success behavior remains intact, including adding the creator as Project admin, adding project lead when provided, optional favorite behavior, cover image behavior, and transition to the existing feature-selection step.
 
 ### Generated Contents
 
-- [ ] **GEN-01**: A Project created from a template contains the template's configured workflow states instead of duplicate default states.
-- [ ] **GEN-02**: A Project created from a template contains the template's configured labels.
-- [ ] **GEN-03**: A Project created from a template contains the template's configured modules.
-- [ ] **GEN-04**: A Project created from a template contains the template's configured cycles.
-- [ ] **GEN-05**: A Project created from a template contains the template's configured starter issues.
-- [ ] **GEN-06**: Starter issues are assigned to the correct generated states.
-- [ ] **GEN-07**: Starter issues are linked to the correct generated labels, modules, and cycles when those references are present in the template.
+- [x] **GEN-01**: A Project created from a template contains the template's configured workflow states instead of duplicate default states.
+- [x] **GEN-02**: A Project created from a template contains the template's configured labels.
+- [x] **GEN-03**: A Project created from a template contains the template's configured modules.
+- [x] **GEN-04**: A Project created from a template contains the template's configured cycles.
+- [x] **GEN-05**: A Project created from a template contains the template's configured starter issues.
+- [x] **GEN-06**: Starter issues are assigned to the correct generated states.
+- [x] **GEN-07**: Starter issues are linked to the correct generated labels, modules, and cycles when those references are present in the template.
 
 ### Permissions
 
@@ -65,10 +65,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Verification
 
-- [ ] **VER-01**: Backend tests cover Project creation without a template.
-- [ ] **VER-02**: Backend tests cover Project creation from each built-in template type at least at the apply-service level.
-- [ ] **VER-03**: Backend tests cover custom template CRUD permissions.
-- [ ] **VER-04**: Backend tests cover rollback behavior when template application fails.
+- [x] **VER-01**: Backend tests cover Project creation without a template.
+- [x] **VER-02**: Backend tests cover Project creation from each built-in template type at least at the apply-service level.
+- [x] **VER-03**: Backend tests cover custom template CRUD permissions.
+- [x] **VER-04**: Backend tests cover rollback behavior when template application fails.
 - [ ] **VER-05**: Frontend checks cover type safety for template types, services, and create Project form payload changes.
 
 ## v2 Requirements
@@ -104,7 +104,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase   | Status   |
 | ----------- | ------- | -------- |
 | CAT-01      | Phase 3 | Pending  |
-| CAT-02      | Phase 2 | Pending  |
+| CAT-02      | Phase 2 | Complete |
 | CAT-03      | Phase 1 | Complete |
 | CAT-04      | Phase 1 | Complete |
 | CAT-05      | Phase 1 | Complete |
@@ -118,19 +118,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CUST-07     | Phase 1 | Complete |
 | CUST-08     | Phase 1 | Complete |
 | CUST-09     | Phase 1 | Complete |
-| CREATE-01   | Phase 2 | Pending  |
-| CREATE-02   | Phase 2 | Pending  |
-| CREATE-03   | Phase 2 | Pending  |
-| CREATE-04   | Phase 2 | Pending  |
-| CREATE-05   | Phase 2 | Pending  |
-| CREATE-06   | Phase 2 | Pending  |
-| GEN-01      | Phase 2 | Pending  |
-| GEN-02      | Phase 2 | Pending  |
-| GEN-03      | Phase 2 | Pending  |
-| GEN-04      | Phase 2 | Pending  |
-| GEN-05      | Phase 2 | Pending  |
-| GEN-06      | Phase 2 | Pending  |
-| GEN-07      | Phase 2 | Pending  |
+| CREATE-01   | Phase 2 | Complete |
+| CREATE-02   | Phase 2 | Complete |
+| CREATE-03   | Phase 2 | Complete |
+| CREATE-04   | Phase 2 | Complete |
+| CREATE-05   | Phase 2 | Complete |
+| CREATE-06   | Phase 2 | Complete |
+| GEN-01      | Phase 2 | Complete |
+| GEN-02      | Phase 2 | Complete |
+| GEN-03      | Phase 2 | Complete |
+| GEN-04      | Phase 2 | Complete |
+| GEN-05      | Phase 2 | Complete |
+| GEN-06      | Phase 2 | Complete |
+| GEN-07      | Phase 2 | Complete |
 | PERM-01     | Phase 1 | Complete |
 | PERM-02     | Phase 3 | Pending  |
 | PERM-03     | Phase 1 | Complete |
@@ -141,10 +141,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03       | Phase 3 | Pending  |
 | UI-04       | Phase 3 | Pending  |
 | UI-05       | Phase 4 | Pending  |
-| VER-01      | Phase 2 | Pending  |
-| VER-02      | Phase 2 | Pending  |
-| VER-03      | Phase 2 | Pending  |
-| VER-04      | Phase 2 | Pending  |
+| VER-01      | Phase 2 | Complete |
+| VER-02      | Phase 2 | Complete |
+| VER-03      | Phase 2 | Complete |
+| VER-04      | Phase 2 | Complete |
 | VER-05      | Phase 3 | Pending  |
 
 **Coverage:**
