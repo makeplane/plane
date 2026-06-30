@@ -12,6 +12,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IApiToken } from "@plane/types";
 // ui
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
+// components
+import { ConnectAgentCommand } from "@/components/api-token/modal/connect-agent-command";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -52,6 +54,7 @@ export function GeneratedTokenDetails(props: Props) {
           <CopyIcon className="h-4 w-4 flex-shrink-0 text-placeholder" />
         </Tooltip>
       </button>
+      <ConnectAgentCommand token={tokenDetails.token ?? ""} />
       <div className="mt-6 flex items-center justify-between">
         <p className="text-11 text-placeholder">
           {tokenDetails.expired_at
