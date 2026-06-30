@@ -388,24 +388,22 @@ state_by_key = {payload_item["state_key"]: state for payload_item, state in zip(
 
 ## Assumptions Log
 
-| #   | Claim                                                                                                                    | Section        | Risk if Wrong                                                                                   |
-| --- | ------------------------------------------------------------------------------------------------------------------------ | -------------- | ----------------------------------------------------------------------------------------------- |
-| A1  | Whether product scope requires API-key clients to send `template_id` in Phase 02 is unclear. [ASSUMED]                   | Open Questions | Planner may over-scope or under-scope endpoint wiring and tests.                                |
-| A2  | The exact numeric spacing convention for generated module/cycle `sort_order` in the new service is not locked. [ASSUMED] | Open Questions | UI ordering may differ from maintainers' preferred convention if not made explicit in the plan. |
+| #   | Claim                                                                                                                     | Section        | Risk if Wrong                                                                   |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------- |
+| A1  | Phase 02 supports both the app endpoint and the v1/API-key endpoint for Project create behavior. [RESOLVED]               | Open Questions | Planner should wire and test both endpoint surfaces through the shared service. |
+| A2  | Generated label/module/cycle fallback `sort_order` uses `10000 + index * 10000` when no explicit value exists. [RESOLVED] | Open Questions | UI ordering is deterministic and consistent across generated content sections.  |
 
-Planner should resolve or explicitly scope these assumptions before execution tasks are locked.
+Planner resolved these assumptions during revision iteration 1; execution tasks should treat them as locked research guidance.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should Phase 02 support the v1 API-key create endpoint or only the app endpoint?**
    - What we know: The phase primary code areas name `apps/api/plane/app/views/project/base.py` and `apps/api/plane/app/serializers/project.py`, but existing rollback tests are under the v1 API path too. [VERIFIED: user prompt; VERIFIED: apps/api/plane/tests/contract/api/test_projects.py]
-   - What's unclear: Whether product scope requires API-key clients to send `template_id` in Phase 02. [ASSUMED]
-   - Recommendation: Plan a shared service and wire both endpoints unless the planner explicitly scopes v1 out with a requirement note. [VERIFIED: apps/api/plane/app/views/project/base.py; VERIFIED: apps/api/plane/api/views/project.py]
+   - RESOLVED: Phase 02 supports both app endpoint `apps/api/plane/app/views/project/base.py` and v1/API-key endpoint `apps/api/plane/api/views/project.py` for Project create behavior. Plan a shared service and wire both endpoint surfaces. [VERIFIED: apps/api/plane/app/views/project/base.py; VERIFIED: apps/api/plane/api/views/project.py]
 
 2. **Should generated modules/cycles use payload array order or existing hook order when no `order` is present?**
    - What we know: D-10 requires stable initial ordering from payload array order when no explicit sort field exists. [VERIFIED: 02-CONTEXT.md]
-   - What's unclear: The exact numeric spacing convention for module/cycle `sort_order` in this new service. [ASSUMED]
-   - Recommendation: Use deterministic spacing such as `10000 + index * 10000` for labels and negative or descending spacing only if matching existing module/cycle UI order tests requires it. [VERIFIED: apps/api/plane/db/models/module.py; VERIFIED: apps/api/plane/db/models/cycle.py]
+   - RESOLVED: Deterministic fallback convention is `sort_order = 10000 + index * 10000` for generated labels, modules, and cycles when payload order is used and no explicit order/sort value exists, using zero-based `index`. Labels use explicit payload `order` when present; otherwise labels use the same fallback. [VERIFIED: apps/api/plane/db/models/label.py; VERIFIED: apps/api/plane/db/models/module.py; VERIFIED: apps/api/plane/db/models/cycle.py]
 
 ## Environment Availability
 
