@@ -48,17 +48,6 @@ export function ProductUpdatesFooter() {
         >
           {t("support")}
         </a>
-        <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-          <circle cx={1} cy={1} r={1} />
-        </svg>
-        <a
-          href="https://forum.plane.so"
-          target="_blank"
-          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
-          rel="noreferrer"
-        >
-          Forum
-        </a>
       </div>
       <a
         href="https://plane.so/pages"
