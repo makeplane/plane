@@ -261,7 +261,23 @@ urlpatterns = [
     # Project templates (Phase 1 catalog foundation)
     path(
         "workspaces/<str:slug>/project-templates/",
-        WorkspaceProjectTemplateViewSet.as_view({"get": "list"}),
+        WorkspaceProjectTemplateViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-project-templates",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:pk>/",
+        WorkspaceProjectTemplateViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-project-templates",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:pk>/duplicate/",
+        WorkspaceProjectTemplateViewSet.as_view({"post": "duplicate"}),
         name="workspace-project-templates",
     ),
 ]

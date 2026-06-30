@@ -647,11 +647,11 @@ class ProjectTemplateWriteSerializer(BaseSerializer):
 class ProjectTemplateDuplicateSerializer(BaseSerializer):
     """Serializer used when an admin duplicates a built-in into a custom template.
 
-    Defined here as a placeholder for Plan 02 to wire up against
-    WorkspaceProjectTemplateViewSet.duplicate.
+    Accepts an optional ``name`` override; the caller-provided name falls back to
+    the source template's name when omitted (D-07).
     """
 
-    name = serializers.CharField(required=False, allow_blank=False)
+    name = serializers.CharField(required=False, allow_blank=False, max_length=255)
 
     class Meta:
         model = ProjectTemplate
