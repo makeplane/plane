@@ -332,8 +332,12 @@ class TestProjectTemplateCreationAppGeneric404(TestProjectTemplateCreationBase):
 
         response = session_client.post(url, project_data, format="json")
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == {"error": "Template not found"}
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"expected 404, got {response.status_code}: {response.json()}"
+        )
+        assert response.json() == {"error": "Template not found"}, (
+            f"unexpected 404 body: {response.json()}"
+        )
         assert Project.objects.count() == 0
 
     @pytest.mark.django_db
@@ -345,7 +349,7 @@ class TestProjectTemplateCreationAppGeneric404(TestProjectTemplateCreationBase):
         but the resolver must still treat it as unavailable).
         """
         template = ProjectTemplate.objects.create(
-            name="Inactive Built-in",
+            name="Inactive Built In",
             system_key="ghost-built-in",
             template_type=ProjectTemplate.TemplateType.BUILT_IN,
             is_system=True,
@@ -357,15 +361,19 @@ class TestProjectTemplateCreationAppGeneric404(TestProjectTemplateCreationBase):
 
         url = self.get_project_url(workspace.slug)
         project_data = {
-            "name": "Inactive Built-in Project",
+            "name": "Inactive Built In Project",
             "identifier": "IBP",
             "template_id": str(template.id),
         }
 
         response = session_client.post(url, project_data, format="json")
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == {"error": "Template not found"}
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"expected 404, got {response.status_code}: {response.json()}"
+        )
+        assert response.json() == {"error": "Template not found"}, (
+            f"unexpected 404 body: {response.json()}"
+        )
         assert Project.objects.count() == 0
 
     @pytest.mark.django_db
@@ -400,8 +408,12 @@ class TestProjectTemplateCreationAppGeneric404(TestProjectTemplateCreationBase):
 
         response = session_client.post(url, project_data, format="json")
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == {"error": "Template not found"}
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"expected 404, got {response.status_code}: {response.json()}"
+        )
+        assert response.json() == {"error": "Template not found"}, (
+            f"unexpected 404 body: {response.json()}"
+        )
         assert Project.objects.count() == 0
 
 

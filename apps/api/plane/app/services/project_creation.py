@@ -30,6 +30,7 @@ from django.db import transaction
 # Module imports
 from plane.app.permissions import ROLE
 from plane.app.services.project_template_apply import (
+    TemplateNotFoundError,
     apply_project_template,
     resolve_available_project_template,
 )
@@ -194,6 +195,21 @@ def create_project_with_optional_template(
             template = resolve_available_project_template(
                 template_id=template_id, workspace=workspace
             )
+            # D-02 / T-02-08: a non-null ``template_id`` that resolves to
+            # no available ``ProjectTemplate`` for the current workspace
+            # must surface as a generic 404 from the create views.
+            # Raising inside the ``transaction.atomic`` block ensures
+            # any rows already created in this branch (``Project``,
+            # ``ProjectIdentifier`` on the app path, admin
+            # ``ProjectMember`` rows) roll back together with the
+            # failed template lookup. The exception deliberately does
+            # NOT subclass ``serializers.ValidationError`` because a 404
+            # response (resource not found) is a different contract
+            # surface from a 400 (bad request body).
+            if template is None:
+                raise TemplateNotFoundError(
+                    f"Template {template_id!s} is not available for this workspace"
+                )
 
         if template is not None:
             # D-05/D-07: template branch creates payload-driven states,

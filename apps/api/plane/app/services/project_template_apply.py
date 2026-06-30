@@ -76,6 +76,29 @@ class ProjectTemplateApplicationError(serializers.ValidationError):
     """
 
 
+class TemplateNotFoundError(Exception):
+    """Raised when a non-null ``template_id`` cannot resolve to an
+    available ``ProjectTemplate`` for the current workspace.
+
+    D-02 / T-02-08: missing, inactive, and foreign-workspace templates
+    all collapse to this single exception type. Both the app and v1
+    create views catch it and map it to a generic 404 response body
+    (``{"error": "Template not found"}``) so clients cannot distinguish
+    between the unavailability modes or learn that a template exists in
+    another workspace.
+
+    The exception is **not** a ``serializers.ValidationError`` subclass —
+    the contract surface for an unavailable template is a 404 (resource
+    not found at this URL), not a 400 (bad request body). The exception
+    is raised inside the create transaction so any rows the service has
+    already produced (for example, ``ProjectIdentifier`` and the creator
+    admin ``ProjectMember`` row on the app path) roll back together with
+    the failed template lookup. The shared service never catches this
+    error and continues — propagation is the only path so D-05/D-06
+    atomicity is preserved.
+    """
+
+
 # ---------------------------------------------------------------------------
 # Template availability resolver
 # ---------------------------------------------------------------------------
