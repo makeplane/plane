@@ -350,17 +350,15 @@ def seed_project_templates(apps, schema_editor):
 |---|-------|---------|---------------|
 | A1 | The built-in template payload content itself can be represented with static in-repo Python dictionaries in a migration/helper module. [ASSUMED] | Architecture Patterns | Planner may need to split seed data into JSON fixtures or a dedicated constants module if maintainers prefer non-migration payload definitions. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Exact endpoint names**
    - What we know: Workspace routes use explicit names like `workspace-draft-issues` and `workspace-quick-links`. [VERIFIED: codebase grep]
-   - What's unclear: Whether maintainers prefer `project-templates`, `workspace-project-templates`, or `templates` for route naming. [ASSUMED]
-   - Recommendation: Use `workspaces/<str:slug>/project-templates/` and `workspace-project-templates` unless a maintainer requests a shorter name. [ASSUMED]
+   - RESOLVED: Use `/api/workspaces/{slug}/project-templates/`, `/api/workspaces/{slug}/project-templates/{pk}/`, and `/api/workspaces/{slug}/project-templates/{pk}/duplicate/` via `WorkspaceProjectTemplateViewSet` in `apps/api/plane/app/views/workspace/project_template.py`, registered in `apps/api/plane/app/urls/workspace.py` with route name `workspace-project-templates`. [RESOLVED]
 
 2. **Exact payload date metadata**
    - What we know: Requirements allow optional date fields for modules and optional relative date/duration metadata for cycles. [VERIFIED: REQUIREMENTS.md]
-   - What's unclear: The exact relative-date schema for Phase 2 application. [VERIFIED: REQUIREMENTS.md]
-   - Recommendation: Keep Phase 1 validation minimal but strict: allow documented optional relative fields without resolving calendar dates until Phase 2. [ASSUMED]
+   - RESOLVED: Keep Phase 1 payload minimal and structural only, with optional module/cycle date metadata fields as integers relative to project creation: `start_offset_days`, `target_offset_days`, and `duration_days`. Phase 1 validates only integer type and ordering, including `start_offset_days <= target_offset_days` when both offsets are present. Phase 2 will interpret these values during template application. [RESOLVED]
 
 ## Environment Availability
 
@@ -411,7 +409,7 @@ def seed_project_templates(apps, schema_editor):
 - DRF docs: serializers, fields, permissions. [CITED: https://www.django-rest-framework.org/api-guide/serializers/; CITED: https://www.django-rest-framework.org/api-guide/fields/#jsonfield; CITED: https://www.django-rest-framework.org/api-guide/permissions/]
 
 ### Tertiary (LOW confidence)
-- A1 endpoint naming and payload constants organization remain assumed because no existing project-template domain exists. [ASSUMED]
+- A1 payload constants organization remains assumed because no existing project-template domain exists. [ASSUMED] The resolved endpoint routes and date metadata schema are recorded above.
 
 ## Metadata
 
