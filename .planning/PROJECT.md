@@ -23,12 +23,15 @@ Creating a new Project should produce a useful, ready-to-work structure immediat
 ### Active
 
 - [ ] Add a Project Template selection step directly inside the existing create Project modal/form in a Workspace
-- [ ] Provide built-in system templates for `Software Project`, `Marketing Campaign`, and `Operations Project`
-- [ ] Let workspace owners/admins create and edit custom Project Templates
-- [ ] Store custom templates with states, labels, modules, cycles, and starter issues
-- [ ] Create a new Project from a selected template, including the selected template's configured states, labels, modules, cycles, and starter issues
-- [ ] Preserve the existing project creation path for users who do not select a template
-- [ ] Add backend and frontend tests for template creation, permission behavior, and project creation from templates
+
+### Validated in Phase 02
+
+- ✓ Provide built-in system templates for `Software Project`, `Marketing Campaign`, and `Operations Project` — Phase 01
+- ✓ Let workspace owners/admins create and edit custom Project Templates — Phase 01
+- ✓ Store custom templates with states, labels, modules, cycles, and starter issues — Phase 01
+- ✓ Create a new Project from a selected template, including the selected template's configured states, labels, modules, cycles, and starter issues — Phase 02
+- ✓ Preserve the existing project creation path for users who do not select a template — Phase 02
+- ✓ Add backend and frontend tests for template creation, permission behavior, and project creation from templates — Phase 02 (backend complete; frontend scheduled for Phase 03)
 
 ### Out of Scope
 
@@ -62,19 +65,20 @@ The project creation UX should stay inside the existing Workspace create Project
 
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Template choice appears in the existing create Project modal/form | Keeps template selection at the moment users already create Projects | — Pending |
-| v1 includes built-in system templates | Gives immediate value without requiring admins to configure templates first | — Pending |
-| v1 also supports custom workspace templates | Admins need local flexibility when built-in templates do not match their process | — Pending |
+| Decision                                                                   | Rationale                                                                         | Outcome   |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------- |
+| Template choice appears in the existing create Project modal/form          | Keeps template selection at the moment users already create Projects              | — Pending |
+| v1 includes built-in system templates                                      | Gives immediate value without requiring admins to configure templates first       | — Pending |
+| v1 also supports custom workspace templates                                | Admins need local flexibility when built-in templates do not match their process  | — Pending |
 | Custom templates store states, labels, modules, cycles, and starter issues | User chose full project templates rather than only settings or starter work items | — Pending |
-| Custom template management is limited to workspace owners/admins | Template changes affect workspace-wide project setup and should be permissioned | — Pending |
+| Custom template management is limited to workspace owners/admins           | Template changes affect workspace-wide project setup and should be permissioned   | — Pending |
 
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
 
 **After each phase transition** (via `$gsd-transition`):
+
 1. Requirements invalidated? -> Move to Out of Scope with reason
 2. Requirements validated? -> Move to Validated with phase reference
 3. New requirements emerged? -> Add to Active
@@ -82,10 +86,12 @@ This document evolves at phase transitions and milestone boundaries.
 5. "What This Is" still accurate? -> Update if drifted
 
 **After each milestone** (via `$gsd-complete-milestone`):
+
 1. Full review of all sections
 2. Core Value check — still the right priority?
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-29 after initialization*
+
+_Last updated: 2026-06-30 after Phase 02 (transactional project creation) completion_
