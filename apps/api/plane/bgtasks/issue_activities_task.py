@@ -503,7 +503,7 @@ def track_archive_at(
             )
         else:
             if requested_data.get("automation"):
-                comment = "Plane has archived the issue"
+                comment = "Hangar has archived the issue"
                 new_value = "archive"
             else:
                 comment = "Actor has archived the issue"
@@ -546,7 +546,7 @@ def track_closed_to(
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="Plane updated the state to ",
+                comment="Hangar updated the state to ",
                 old_identifier=None,
                 new_identifier=updated_state.id,
                 epoch=epoch,
