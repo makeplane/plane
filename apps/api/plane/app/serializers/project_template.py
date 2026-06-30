@@ -408,6 +408,8 @@ def validate_project_template_payload(payload):
     starter_issues = payload.get("starter_issues", []) or []
 
     state_keys = set()
+    state_names = set()
+    state_sequences = set()
     default_count = 0
     for index, state in enumerate(states):
         if not isinstance(state, dict):
@@ -420,6 +422,20 @@ def validate_project_template_payload(payload):
             errors.append({"states": f"Duplicate state_key '{key}'"})
         else:
             state_keys.add(key)
+        name = state.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"states": f"Entry {index} is missing name"})
+        else:
+            if name in state_names:
+                errors.append({"states": f"Duplicate state name '{name}'"})
+            state_names.add(name)
+        sequence = state.get("sequence")
+        if sequence is not None:
+            if sequence in state_sequences:
+                errors.append(
+                    {"states": f"Duplicate state sequence {sequence!r}"}
+                )
+            state_sequences.add(sequence)
         _validate_color(state.get("color"), errors, f"states[{index}].color")
         group = state.get("group")
         if group not in PROJECT_TEMPLATE_STATE_GROUPS:
@@ -434,6 +450,8 @@ def validate_project_template_payload(payload):
         )
 
     label_keys = set()
+    label_names = set()
+    label_orders = set()
     for index, label in enumerate(labels):
         if not isinstance(label, dict):
             errors.append({"labels": f"Entry {index} must be an object"})
@@ -445,6 +463,18 @@ def validate_project_template_payload(payload):
             errors.append({"labels": f"Duplicate label_key '{key}'"})
         else:
             label_keys.add(key)
+        name = label.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"labels": f"Entry {index} is missing name"})
+        else:
+            if name in label_names:
+                errors.append({"labels": f"Duplicate label name '{name}'"})
+            label_names.add(name)
+        order = label.get("order")
+        if order is not None:
+            if order in label_orders:
+                errors.append({"labels": f"Duplicate label order {order!r}"})
+            label_orders.add(order)
         _validate_color(label.get("color"), errors, f"labels[{index}].color")
 
     module_keys = set()
@@ -459,6 +489,9 @@ def validate_project_template_payload(payload):
             errors.append({"modules": f"Duplicate module_key '{key}'"})
         else:
             module_keys.add(key)
+        name = module.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"modules": f"Entry {index} is missing name"})
         status = module.get("status")
         if status is not None and status not in PROJECT_TEMPLATE_MODULE_STATUSES:
             errors.append(
@@ -478,12 +511,20 @@ def validate_project_template_payload(payload):
             errors.append({"cycles": f"Duplicate cycle_key '{key}'"})
         else:
             cycle_keys.add(key)
+        name = cycle.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"cycles": f"Entry {index} is missing name"})
         _validate_date_metadata(cycle, errors, "cycles", index)
 
     for index, issue in enumerate(starter_issues):
         if not isinstance(issue, dict):
             errors.append({"starter_issues": f"Entry {index} must be an object"})
             continue
+        issue_name = issue.get("name")
+        if not issue_name or not isinstance(issue_name, str):
+            errors.append(
+                {"starter_issues": f"Entry {index} is missing name"}
+            )
         issue_state = issue.get("state_key")
         if not issue_state or issue_state not in state_keys:
             errors.append(
