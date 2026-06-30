@@ -134,3 +134,12 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .project_template import (
+    PROJECT_TEMPLATE_SCHEMA_VERSION,
+    BUILT_IN_PROJECT_TEMPLATES,
+    ProjectTemplateSerializer,
+    ProjectTemplateWriteSerializer,
+    ProjectTemplateDuplicateSerializer,
+    validate_project_template_payload,
+)
