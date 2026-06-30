@@ -47,6 +47,7 @@ from plane.api.serializers import (
     ProjectUpdateSerializer,
 )
 from plane.app.services.project_creation import create_project_with_optional_template
+from plane.app.services.project_template_apply import TemplateNotFoundError
 from plane.app.permissions import ProjectBasePermission, WorkSpaceAdminPermission
 from plane.utils.openapi import (
     project_docs,
@@ -233,10 +234,10 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 # the v1 path no longer needs to manage either of them
                 # inline. Phase 02-02 forwards the optional
                 # ``template_id`` so the template apply branch can run
-                # for built-ins or active custom templates. The existing
-                # rollback and broker-failure contract tests in this
-                # module continue to exercise the same behavior — only
-                # the implementation location moved.
+                # for built-ins or active custom templates. Phase 02-03
+                # adds ``TemplateNotFoundError`` translation so missing,
+                # inactive, and foreign-workspace templates all return
+                # the same generic 404 response body (D-02 / T-02-08).
                 project = create_project_with_optional_template(
                     serializer=serializer,
                     workspace=workspace,
@@ -253,6 +254,17 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except TemplateNotFoundError:
+            # D-02 / T-02-08: a non-null ``template_id`` that does not
+            # resolve to an available template (missing, inactive, or
+            # foreign-workspace) must surface as the same generic 404
+            # response body as the app route. The exception was raised
+            # inside ``transaction.atomic`` so any pre-existing rows
+            # roll back together with the failed lookup.
+            return Response(
+                {"error": "Template not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(

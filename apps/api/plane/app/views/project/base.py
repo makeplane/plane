@@ -23,6 +23,7 @@ from plane.app.serializers import (
     ProjectSerializer,
 )
 from plane.app.services.project_creation import create_project_with_optional_template
+from plane.app.services.project_template_apply import TemplateNotFoundError
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
@@ -267,19 +268,34 @@ class ProjectViewSet(BaseViewSet):
             # activity hook (D-08). Phase 02-02 adds the optional
             # ``template_id`` argument so the service can route to the
             # template apply branch when a built-in or active custom
-            # template resolves for the current workspace. The
+            # template resolves for the current workspace. Phase 02-03
+            # adds ``TemplateNotFoundError`` translation so missing,
+            # inactive, and foreign-workspace templates all return the
+            # same generic 404 response body (D-02 / T-02-08). The
             # ``validated_data`` pop in the serializer prevents
             # ``template_id`` from leaking onto the ``Project`` row.
-            project = create_project_with_optional_template(
-                serializer=serializer,
-                workspace=workspace,
-                actor=request.user,
-                request_data=request.data,
-                slug=slug,
-                request=request,
-                is_app_origin=True,
-                template_id=serializer.validated_data.get("template_id"),
-            )
+            try:
+                project = create_project_with_optional_template(
+                    serializer=serializer,
+                    workspace=workspace,
+                    actor=request.user,
+                    request_data=request.data,
+                    slug=slug,
+                    request=request,
+                    is_app_origin=True,
+                    template_id=serializer.validated_data.get("template_id"),
+                )
+            except TemplateNotFoundError:
+                # D-02 / T-02-08: return a generic 404 with one error
+                # body shape (``{"error": "Template not found"}``) so
+                # clients cannot tell which availability branch failed.
+                # The exception was raised inside ``transaction.atomic``
+                # so any pre-existing rows (Project, ProjectIdentifier,
+                # ProjectMember) have already rolled back.
+                return Response(
+                    {"error": "Template not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             project = self.get_queryset().filter(pk=project.id).first()
 
