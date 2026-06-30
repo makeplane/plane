@@ -5,6 +5,7 @@
 import pytest
 
 from plane.app.serializers import (
+    ProjectTemplateDuplicateSerializer,
     ProjectTemplateSerializer,
     ProjectTemplateWriteSerializer,
 )
@@ -244,3 +245,68 @@ class TestProjectTemplateSerializer:
             "updated_at",
         ):
             assert key in data
+
+    @pytest.mark.django_db
+    def test_write_serializer_create_rejects_builtin_attempt(
+        self, db, create_user, workspace
+    ):
+        """The write serializer rejects attempts to create a built-in row."""
+        serializer = ProjectTemplateWriteSerializer(
+            data={
+                "name": "Fake Built-in",
+                "template_type": ProjectTemplate.TemplateType.BUILT_IN,
+                "payload": _valid_payload(),
+            },
+            context={"workspace_id": workspace.id, "request_user": create_user},
+        )
+        assert not serializer.is_valid()
+        # Either is_system or template_type must surface in the errors.
+        assert any(
+            key in serializer.errors for key in ("is_system", "template_type")
+        )
+
+    @pytest.mark.django_db
+    def test_write_serializer_create_with_blank_name_rejected(
+        self, db, create_user, workspace
+    ):
+        """A custom template POST without a name fails serializer validation."""
+        serializer = ProjectTemplateWriteSerializer(
+            data={
+                "template_type": ProjectTemplate.TemplateType.CUSTOM,
+                "payload": _valid_payload(),
+            },
+            context={"workspace_id": workspace.id, "request_user": create_user},
+        )
+        assert not serializer.is_valid()
+        assert "name" in serializer.errors
+
+
+@pytest.mark.unit
+class TestProjectTemplateDuplicateSerializer:
+    """Tests for the ProjectTemplateDuplicateSerializer used by the duplicate endpoint."""
+
+    @pytest.mark.django_db
+    def test_duplicate_serializer_accepts_optional_name(
+        self, db, create_user, workspace
+    ):
+        """The duplicate serializer accepts a request with no name (use source name)."""
+        serializer = ProjectTemplateDuplicateSerializer(data={})
+        assert serializer.is_valid(), serializer.errors
+
+    @pytest.mark.django_db
+    def test_duplicate_serializer_accepts_provided_name(
+        self, db, create_user, workspace
+    ):
+        """The duplicate serializer accepts a custom name."""
+        serializer = ProjectTemplateDuplicateSerializer(
+            data={"name": "My Software Copy"}
+        )
+        assert serializer.is_valid(), serializer.errors
+        assert serializer.validated_data["name"] == "My Software Copy"
+
+    @pytest.mark.django_db
+    def test_duplicate_serializer_rejects_blank_name(self, db):
+        """The duplicate serializer rejects blank-name input."""
+        serializer = ProjectTemplateDuplicateSerializer(data={"name": ""})
+        assert not serializer.is_valid()
+        assert "name" in serializer.errors
