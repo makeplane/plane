@@ -8,3 +8,4 @@ export { ProjectTemplateRow } from "./list/template-row";
 export { ProjectTemplatesListRoot } from "./list/root";
 export { ProjectTemplatesListLoader } from "./list/loader";
 export { ProjectTemplateEditorRoot, StatesSection, LabelsSection } from "./editor";
+export { ProjectTemplateDeactivateModal } from "./deactivate-modal";

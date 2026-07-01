@@ -177,6 +177,35 @@
           "load": "Couldn't load templates. Check your connection and try again.",
           "retry": "Try again"
         },
+        "show_deactivated": "Show deactivated",
+        "no_deactivated_templates": "No deactivated templates.",
+        "row": {
+          "edit": "Edit",
+          "duplicate": "Duplicate",
+          "view": "View",
+          "deactivate": "Deactivate",
+          "reactivate": "Reactivate"
+        },
+        "deactivate": {
+          "title": "Deactivate template?",
+          "body_prefix": "This template",
+          "body_suffix": " won't be available when creating new projects. You can reactivate it later from Show deactivated.",
+          "confirm": "Deactivate",
+          "confirm_loading": "Deactivating",
+          "cancel": "Cancel"
+        },
+        "toast": {
+          "duplicated_title": "Success!",
+          "duplicated_message": "Template duplicated",
+          "duplicate_error": "Template could not be duplicated. Please try again.",
+          "deactivated_title": "Success!",
+          "deactivated_message": "Template deactivated",
+          "deactivate_error": "Template could not be deactivated. Please try again.",
+          "reactivated_title": "Success!",
+          "reactivated_message": "Template reactivated",
+          "reactivate_error": "Template could not be reactivated. Please try again.",
+          "error_title": "Error!"
+        },
         "editor": {
           "new_title": "New project template",
           "edit_title": "Edit template",
