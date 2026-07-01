@@ -543,19 +543,22 @@ export function uniqueKey(base: string, taken: Set<string>): string {
 | A4  | The `is_active` filtering behavior is intended/stable (not an oversight the team already patched elsewhere).                                    | Pitfall 1           | Medium — this is the phase's biggest risk; confirmed by reading current source, but backend may be revised. Planner must decide backend-change vs descope. |
 | A5  | Adding a `project_templates` i18n namespace (per UI-SPEC) is correct even though a legacy `templates` node exists in `workspace-settings.json`. | Environment/Sources | Low — the existing `templates` node is an unrelated EE feature; using a new `project_templates` key avoids collision.                                      |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Reactivate/Show-deactivated vs backend `is_active=True` filter (Pitfall 1).**
    - What we know: List and writable-lookup both require `is_active=True` (verified). Serializer allows writing `is_active`.
    - What's unclear: Whether the phase is permitted to touch the backend (framing says frontend-only).
    - Recommendation: Escalate before planning locks D-06/D-07. Cleanest fix is a tiny backend change (`?include_inactive` list param + relax `_get_writable_template` for reactivation). Otherwise descope D-06/D-07 to "deactivate is terminal in-UI" for this phase.
+   - **RESOLVED:** Backend change approved and scoped — D-14 (opt-in `?include_inactive` list param) and D-15 (dedicated admin-only `reactivate` action) lock this in, implemented in Plan 04-01 (`get_queryset` include_inactive branch + `reactivate` viewset action + contract tests). `_get_writable_template` stays active-only; reactivate deliberately accepts inactive rows.
 
 2. **Do we need a distinct write-payload type?**
    - What we know: `TProjectTemplate` is the read shape; the write serializer accepts `name, description, template_type, is_active, payload, offset fields`.
    - Recommendation: Add `TProjectTemplateWritePayload` (subset of `TProjectTemplate`: `name, description, template_type: "custom", payload, start/target/duration offsets, is_active?`) to `packages/types/src/project/project_templates.ts`. Keep it minimal.
+   - **RESOLVED:** Yes — `TProjectTemplateWritePayload` is added in Plan 04-03 Task 1 (the minimal write subset described here), consumed by `assemblePayload` and the editor service calls.
 
 3. **Read-only "View" for built-ins.**
    - Recommendation: Reuse the editor route in a `readOnly` mode (disable all inputs, hide Save) — least code, matches D-08. A lighter preview panel is also acceptable (Claude's Discretion).
+   - **RESOLVED:** Reuse the editor route in read-only mode — the edit page renders read-only/disabled when the loaded template `is_system` (Plan 04-03 Task 2), and the built-in row's "View" action navigates to that read-only editor route (Plan 04-05 Task 1).
 
 ## Environment Availability
 
