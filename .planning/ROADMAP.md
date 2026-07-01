@@ -110,6 +110,17 @@ Plans:
 
 **Requirements:** CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05
 
+**Plans:** 2 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md - Deliver the create-modal template selection and submit happy path.
+
+**Wave 2** _(blocked on Wave 1 completion)_
+
+- [ ] 03-02-PLAN.md - Harden selector fallback states, UI contract, and frontend verification.
+
 **Success Criteria:**
 
 1. The existing `ProjectTemplateSelect` stub renders a usable selector in the create Project header area.
