@@ -100,13 +100,18 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
 
   const label = selectedTemplate?.name ?? "Template";
   const selectedValue = selectedTemplate?.id ?? NO_TEMPLATE_VALUE;
+  const buttonLabel = selectedTemplate
+    ? `Selected project template: ${selectedTemplate.name}`
+    : "Select project template";
 
   const button = (
     <button
       ref={setReferenceElement}
       type="button"
+      aria-label={buttonLabel}
+      aria-expanded={isOpen}
       className={cn(
-        "border-on-color/20 bg-on-color/20 text-xs shadow-sm inline-flex h-8 max-w-[min(16rem,calc(100vw-2rem))] items-center gap-1 rounded-md border px-2 font-medium text-on-color backdrop-blur outline-none",
+        "shadow-sm border-on-color/20 bg-on-color/20 focus-visible:ring-on-color/40 inline-flex h-8 max-w-[140px] items-center gap-1 rounded-md border px-2 text-13 font-medium text-on-color backdrop-blur outline-none focus-visible:ring-2 sm:max-w-[160px]",
         {
           "cursor-not-allowed opacity-60": disabled,
           "hover:bg-on-color/30 cursor-pointer": !disabled,
@@ -116,7 +121,7 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
       disabled={disabled}
     >
       <ProjectIcon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-      <span className="max-w-40 min-w-0 truncate">{label}</span>
+      <span className="max-w-[92px] min-w-0 truncate sm:max-w-[112px]">{label}</span>
       <ChevronDownIcon className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
     </button>
   );
@@ -140,13 +145,13 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="text-xs my-1 w-72 max-w-[calc(100vw-2rem)] rounded-md border border-strong bg-surface-1 p-2 shadow-raised-200 focus:outline-none"
+            className="my-1 max-h-[min(384px,calc(100vh-96px))] w-[min(320px,calc(100vw-24px))] overflow-hidden rounded-md border border-subtle-1 bg-surface-1 p-2 shadow-raised-200 focus:outline-none sm:w-[280px]"
           >
-            <div className="flex h-8 items-center gap-2 rounded-md border border-subtle bg-surface-2 px-2">
+            <div className="flex h-8 items-center gap-2 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchIcon className="h-4 w-4 flex-shrink-0 text-placeholder" strokeWidth={1.5} aria-hidden="true" />
               <Combobox.Input
                 ref={inputRef}
-                className="text-xs h-full w-full bg-transparent text-secondary placeholder:text-placeholder focus:outline-none"
+                className="h-full w-full bg-transparent text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={searchInputKeyDown}
@@ -154,11 +159,11 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
               />
             </div>
 
-            <div className="mt-2 max-h-64 space-y-1 overflow-y-auto">
+            <div className="mt-2 max-h-[min(320px,calc(100vh-160px))] space-y-1 overflow-y-auto">
               <Combobox.Option
                 value={NO_TEMPLATE_VALUE}
                 className={({ active }) =>
-                  cn("cursor-pointer rounded-md px-2 py-2 text-secondary select-none", {
+                  cn("cursor-pointer rounded-md px-2 py-2 text-13 font-medium text-secondary select-none", {
                     "bg-layer-transparent-hover": active,
                   })
                 }
@@ -166,12 +171,16 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
                 <span className="block truncate font-medium">No template</span>
               </Combobox.Option>
 
-              {isLoading && <p className="px-2 py-2 text-placeholder">Loading...</p>}
+              {isLoading && (
+                <p className="px-2 py-2 text-11 text-placeholder" role="status">
+                  Loading...
+                </p>
+              )}
 
               {!isLoading && error && (
-                <div className="px-2 py-2 text-secondary">
+                <div className="px-2 py-2 text-11 text-secondary" role="status">
                   <p>Could not load templates</p>
-                  <button type="button" className="text-custom-primary-100 mt-2" onClick={() => mutate()}>
+                  <button type="button" className="mt-2 text-accent-primary" onClick={() => void mutate()}>
                     Retry
                   </button>
                 </div>
@@ -189,9 +198,9 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
                       })
                     }
                   >
-                    <span className="block truncate font-medium text-primary">{template.name}</span>
+                    <span className="block truncate text-13 font-medium text-primary">{template.name}</span>
                     {template.description && (
-                      <span className="text-xs mt-1 line-clamp-2 block leading-5 text-tertiary">
+                      <span className="mt-1 line-clamp-2 block text-11 leading-4 text-secondary">
                         {template.description}
                       </span>
                     )}
@@ -199,7 +208,9 @@ export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
                 ))}
 
               {!isLoading && !error && filteredTemplates.length === 0 && (
-                <p className="px-2 py-2 text-placeholder">No templates available</p>
+                <p className="px-2 py-2 text-11 text-placeholder" role="status">
+                  No templates available
+                </p>
               )}
             </div>
           </div>
