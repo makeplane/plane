@@ -32,11 +32,16 @@ from plane.db.models import (
     Cycle,
     CycleIssue,
     DEFAULT_STATES,
+    Intake,
     Issue,
+    IssueView,
     IssueLabel,
     Label,
     Module,
     ModuleIssue,
+    Page,
+    PageLabel,
+    ProjectPage,
     Project,
     ProjectMember,
     ProjectTemplate,
@@ -259,12 +264,15 @@ class TestApplyProjectTemplateSoftwareProject:
             creation_date=date(2026, 6, 30),
         )
 
-        issues = Issue.objects.filter(project=project)
-        assert issues.count() == 1
-        starter = issues.first()
+        issues = Issue.objects.filter(project=project).order_by("sequence_id")
+        assert issues.count() == 3
+        starter = issues.get(name="Set up the project backlog")
         # Explicit state resolution (D-11).
         assert starter.state is not None
         assert starter.state.name == "Backlog"
+        assert "Collect initial feature ideas" in starter.description_html
+        assert starter.start_date == date(2026, 6, 30)
+        assert starter.target_date == date(2026, 7, 2)
         # D-17: starter issue has no assignees or subscribers.
         assert starter.assignees.count() == 0
         assert starter.issue_subscribers.count() == 0
@@ -274,8 +282,50 @@ class TestApplyProjectTemplateSoftwareProject:
         # Module/Cycle links resolve through generated maps (D-12).
         assert ModuleIssue.objects.filter(issue=starter).count() == 1
         assert CycleIssue.objects.filter(issue=starter).count() == 1
-        # Label keys for this template are empty for the only starter issue.
-        assert IssueLabel.objects.filter(issue=starter).count() == 0
+        assert IssueLabel.objects.filter(issue=starter).count() == 1
+
+    @pytest.mark.django_db
+    def test_apply_creates_rich_project_sections_for_software_project(
+        self, db, workspace, create_user
+    ):
+        """Template application creates intake, views, pages, and enables feature tabs."""
+        apply_module = _import_apply()
+        template = _seeded_template("software-project")
+        project = _make_project(workspace, create_user, "SW Project", "SWP")
+
+        apply_module.apply_project_template(
+            project=project,
+            workspace=workspace,
+            template=template,
+            actor=create_user,
+            creation_date=date(2026, 6, 30),
+        )
+
+        project.refresh_from_db()
+        assert project.cycle_view is True
+        assert project.module_view is True
+        assert project.issue_views_view is True
+        assert project.page_view is True
+        assert project.intake_view is True
+
+        intake = Intake.objects.get(project=project, name="Engineering Requests")
+        assert intake.is_default is True
+        assert "feature requests" in intake.description
+
+        views = IssueView.objects.filter(project=project).order_by("sort_order")
+        assert list(views.values_list("name", flat=True)) == [
+            "Open Bugs",
+            "Sprint Board",
+        ]
+        bug_label = Label.objects.get(project=project, name="Bug")
+        open_bugs = views.get(name="Open Bugs")
+        assert open_bugs.filters["labels"] == [str(bug_label.id)]
+
+        page = Page.objects.get(workspace=workspace, name="Engineering Handbook")
+        assert ProjectPage.objects.filter(project=project, page=page).exists()
+        assert "coding standards" in page.description_html
+        feature_label = Label.objects.get(project=project, name="Feature")
+        assert PageLabel.objects.filter(page=page, label=feature_label).exists()
 
 
 @pytest.mark.unit
@@ -303,8 +353,9 @@ class TestApplyProjectTemplateMarketingCampaign:
         # marketing-campaign payload has 4 states.
         assert states.count() == 4
         # The starter issue references "social" label and the launch-week cycle.
-        starter = Issue.objects.get(project=project)
+        starter = Issue.objects.get(project=project, name="Draft launch announcement")
         assert starter.state.name == "Backlog"
+        assert Issue.objects.filter(project=project).count() == 3
 
         # Label link is created from the resolved label map.
         assert IssueLabel.objects.filter(issue=starter).count() == 1
@@ -372,8 +423,9 @@ class TestApplyProjectTemplateOperationsProject:
         )
 
         # The starter issue for operations references "ops" module, "month-1" cycle, "process" label.
-        starter = Issue.objects.get(project=project)
+        starter = Issue.objects.get(project=project, name="Document current process")
         assert starter.state.name == "Backlog"
+        assert Issue.objects.filter(project=project).count() == 3
 
         process_label = Label.objects.get(project=project, name="Process")
         assert IssueLabel.objects.filter(issue=starter, label=process_label).exists()

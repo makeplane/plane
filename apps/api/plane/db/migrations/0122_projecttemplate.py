@@ -21,15 +21,14 @@ def seed_builtin_project_templates(apps, _schema_editor):
     from plane.app.serializers.project_template import BUILT_IN_PROJECT_TEMPLATES
 
     for entry in BUILT_IN_PROJECT_TEMPLATES:
-        payload = entry["payload"]
         defaults = {
-            "name": payload["name"],
-            "description": payload.get("description", ""),
-            "template_type": payload["template_type"],
+            "name": entry["name"],
+            "description": entry.get("description", ""),
+            "template_type": entry["template_type"],
             "is_system": True,
             "is_active": True,
             "workspace": None,
-            "payload": payload["payload"],
+            "payload": entry["payload"],
         }
         ProjectTemplate.objects.update_or_create(
             system_key=entry["system_key"],

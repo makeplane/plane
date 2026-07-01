@@ -55,7 +55,27 @@ HEX_COLOR_RE = "#" + "[0-9a-fA-F]" * 6
 # seeded by migration 0122 and remain read-only at the API layer.
 # Stable system_key values are part of the migration contract (D-12).
 # ---------------------------------------------------------------------------
-def _builtin_payload(name, description, states, labels, modules, cycles, starter_issues):
+def _issue_description_html(text):
+    return f"<p>{text}</p>"
+
+
+def _page_description_html(items):
+    lines = "".join(f"<li>{item}</li>" for item in items)
+    return f"<ul>{lines}</ul>"
+
+
+def _builtin_payload(
+    name,
+    description,
+    states,
+    labels,
+    modules,
+    cycles,
+    starter_issues,
+    intakes=None,
+    views=None,
+    pages=None,
+):
     return {
         "name": name,
         "description": description,
@@ -69,6 +89,9 @@ def _builtin_payload(name, description, states, labels, modules, cycles, starter
             "modules": modules,
             "cycles": cycles,
             "starter_issues": starter_issues,
+            "intakes": intakes or [],
+            "views": views or [],
+            "pages": pages or [],
         },
     }
 
@@ -150,11 +173,81 @@ BUILT_IN_PROJECT_TEMPLATES = [
             starter_issues=[
                 {
                     "name": "Set up the project backlog",
+                    "description_html": _issue_description_html(
+                        "Collect initial feature ideas, bugs, and chores before sprint planning."
+                    ),
                     "state_key": "backlog",
-                    "label_keys": [],
+                    "label_keys": ["feature"],
                     "module_key": "core",
                     "cycle_key": "sprint-1",
                     "priority": "medium",
+                    "start_offset_days": 0,
+                    "target_offset_days": 2,
+                },
+                {
+                    "name": "Define MVP acceptance criteria",
+                    "description_html": _issue_description_html(
+                        "Write the release criteria and link each criterion to planned work items."
+                    ),
+                    "state_key": "todo",
+                    "label_keys": ["feature"],
+                    "module_key": "core",
+                    "cycle_key": "sprint-1",
+                    "priority": "high",
+                    "start_offset_days": 1,
+                    "target_offset_days": 5,
+                },
+                {
+                    "name": "Triage launch blockers",
+                    "description_html": _issue_description_html(
+                        "Review open blocker reports and move confirmed defects into the sprint."
+                    ),
+                    "state_key": "in_progress",
+                    "label_keys": ["bug"],
+                    "module_key": "core",
+                    "cycle_key": "sprint-1",
+                    "priority": "urgent",
+                    "start_offset_days": 3,
+                    "target_offset_days": 10,
+                }
+            ],
+            intakes=[
+                {
+                    "intake_key": "engineering-requests",
+                    "name": "Engineering Requests",
+                    "description": "Incoming feature requests, bugs, and technical follow-ups.",
+                    "is_default": True,
+                }
+            ],
+            views=[
+                {
+                    "view_key": "open-bugs",
+                    "name": "Open Bugs",
+                    "description": "Bug-labeled work items that still need engineering attention.",
+                    "filters": {"label_keys": ["bug"], "state_group": ["backlog", "unstarted", "started"]},
+                    "display_filters": {"layout": "list", "group_by": "state", "order_by": "priority"},
+                },
+                {
+                    "view_key": "sprint-board",
+                    "name": "Sprint Board",
+                    "description": "Current sprint work grouped by workflow state.",
+                    "filters": {},
+                    "display_filters": {"layout": "kanban", "group_by": "state", "order_by": "sort_order"},
+                },
+            ],
+            pages=[
+                {
+                    "page_key": "engineering-handbook",
+                    "name": "Engineering Handbook",
+                    "description_html": _page_description_html(
+                        [
+                            "Document coding standards and review expectations.",
+                            "Keep release checklist links in one place.",
+                            "Record support escalation paths for launch.",
+                        ]
+                    ),
+                    "label_keys": ["feature"],
+                    "color": "#3F76FF",
                 }
             ],
         ),
@@ -222,11 +315,81 @@ BUILT_IN_PROJECT_TEMPLATES = [
             starter_issues=[
                 {
                     "name": "Draft launch announcement",
+                    "description_html": _issue_description_html(
+                        "Prepare the first public launch announcement draft and review owner."
+                    ),
                     "state_key": "backlog",
                     "label_keys": ["social"],
                     "module_key": None,
                     "cycle_key": "launch-week",
                     "priority": "high",
+                    "start_offset_days": 0,
+                    "target_offset_days": 2,
+                },
+                {
+                    "name": "Schedule launch email",
+                    "description_html": _issue_description_html(
+                        "Create email copy, segment the audience, and schedule the campaign send."
+                    ),
+                    "state_key": "scheduled",
+                    "label_keys": ["email"],
+                    "module_key": None,
+                    "cycle_key": "launch-week",
+                    "priority": "medium",
+                    "start_offset_days": 1,
+                    "target_offset_days": 5,
+                },
+                {
+                    "name": "Monitor launch responses",
+                    "description_html": _issue_description_html(
+                        "Track campaign engagement and route follow-up work to the right owner."
+                    ),
+                    "state_key": "live",
+                    "label_keys": ["social", "email"],
+                    "module_key": None,
+                    "cycle_key": "launch-week",
+                    "priority": "medium",
+                    "start_offset_days": 5,
+                    "target_offset_days": 7,
+                }
+            ],
+            intakes=[
+                {
+                    "intake_key": "campaign-requests",
+                    "name": "Campaign Requests",
+                    "description": "Incoming creative, copy, and channel requests for the campaign.",
+                    "is_default": True,
+                }
+            ],
+            views=[
+                {
+                    "view_key": "launch-week",
+                    "name": "Launch Week",
+                    "description": "Campaign work that must be completed during launch week.",
+                    "filters": {},
+                    "display_filters": {"layout": "calendar", "group_by": None, "order_by": "target_date"},
+                },
+                {
+                    "view_key": "channel-work",
+                    "name": "Channel Work",
+                    "description": "Campaign work grouped by channel label.",
+                    "filters": {},
+                    "display_filters": {"layout": "list", "group_by": "labels", "order_by": "priority"},
+                },
+            ],
+            pages=[
+                {
+                    "page_key": "campaign-brief",
+                    "name": "Campaign Brief",
+                    "description_html": _page_description_html(
+                        [
+                            "Summarize the target audience and positioning.",
+                            "List channel owners and launch dates.",
+                            "Track approved messaging and creative references.",
+                        ]
+                    ),
+                    "label_keys": ["social", "email"],
+                    "color": "#F59E0B",
                 }
             ],
         ),
@@ -294,11 +457,81 @@ BUILT_IN_PROJECT_TEMPLATES = [
             starter_issues=[
                 {
                     "name": "Document current process",
+                    "description_html": _issue_description_html(
+                        "Capture the current operating process, owners, and known failure points."
+                    ),
                     "state_key": "backlog",
                     "label_keys": ["process"],
                     "module_key": "ops",
                     "cycle_key": "month-1",
                     "priority": "medium",
+                    "start_offset_days": 0,
+                    "target_offset_days": 7,
+                },
+                {
+                    "name": "Review handoff checklist",
+                    "description_html": _issue_description_html(
+                        "Validate the handoff checklist with each team that touches the process."
+                    ),
+                    "state_key": "todo",
+                    "label_keys": ["process"],
+                    "module_key": "ops",
+                    "cycle_key": "month-1",
+                    "priority": "high",
+                    "start_offset_days": 5,
+                    "target_offset_days": 14,
+                },
+                {
+                    "name": "Publish operating cadence",
+                    "description_html": _issue_description_html(
+                        "Publish the recurring review cadence and assign the first follow-up owner."
+                    ),
+                    "state_key": "doing",
+                    "label_keys": ["process"],
+                    "module_key": "ops",
+                    "cycle_key": "month-1",
+                    "priority": "medium",
+                    "start_offset_days": 14,
+                    "target_offset_days": 30,
+                }
+            ],
+            intakes=[
+                {
+                    "intake_key": "ops-requests",
+                    "name": "Operations Requests",
+                    "description": "Incoming process changes, support needs, and operational follow-ups.",
+                    "is_default": True,
+                }
+            ],
+            views=[
+                {
+                    "view_key": "process-improvements",
+                    "name": "Process Improvements",
+                    "description": "Operational work grouped by current workflow state.",
+                    "filters": {"label_keys": ["process"]},
+                    "display_filters": {"layout": "kanban", "group_by": "state", "order_by": "sort_order"},
+                },
+                {
+                    "view_key": "month-one",
+                    "name": "Month 1 Plan",
+                    "description": "Work planned for the first operating month.",
+                    "filters": {},
+                    "display_filters": {"layout": "list", "group_by": "state", "order_by": "target_date"},
+                },
+            ],
+            pages=[
+                {
+                    "page_key": "operations-runbook",
+                    "name": "Operations Runbook",
+                    "description_html": _page_description_html(
+                        [
+                            "Document standard operating procedures.",
+                            "List escalation paths and responsible owners.",
+                            "Track monthly review outcomes and process changes.",
+                        ]
+                    ),
+                    "label_keys": ["process"],
+                    "color": "#46A758",
                 }
             ],
         ),
@@ -406,6 +639,9 @@ def validate_project_template_payload(payload):
     modules = payload.get("modules", []) or []
     cycles = payload.get("cycles", []) or []
     starter_issues = payload.get("starter_issues", []) or []
+    intakes = payload.get("intakes", []) or []
+    views = payload.get("views", []) or []
+    pages = payload.get("pages", []) or []
 
     state_keys = set()
     state_names = set()
@@ -570,6 +806,119 @@ def validate_project_template_payload(payload):
                     )
                 }
             )
+        _validate_date_metadata(issue, errors, "starter_issues", index)
+        description_html = issue.get("description_html")
+        if description_html is not None and not isinstance(description_html, str):
+            errors.append(
+                {"starter_issues": f"Entry {index} description_html must be a string"}
+            )
+        description_json = issue.get("description_json")
+        if description_json is not None and not isinstance(description_json, dict):
+            errors.append(
+                {"starter_issues": f"Entry {index} description_json must be an object"}
+            )
+
+    intake_keys = set()
+    default_intake_count = 0
+    for index, intake in enumerate(intakes):
+        if not isinstance(intake, dict):
+            errors.append({"intakes": f"Entry {index} must be an object"})
+            continue
+        key = intake.get("intake_key")
+        if not key or not isinstance(key, str):
+            errors.append({"intakes": f"Entry {index} is missing intake_key"})
+        elif key in intake_keys:
+            errors.append({"intakes": f"Duplicate intake_key '{key}'"})
+        else:
+            intake_keys.add(key)
+        name = intake.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"intakes": f"Entry {index} is missing name"})
+        description = intake.get("description")
+        if description is not None and not isinstance(description, str):
+            errors.append({"intakes": f"Entry {index} description must be a string"})
+        if intake.get("is_default") is True:
+            default_intake_count += 1
+        for json_field in ("view_props", "logo_props"):
+            value = intake.get(json_field)
+            if value is not None and not isinstance(value, dict):
+                errors.append({"intakes": f"Entry {index} {json_field} must be an object"})
+    if default_intake_count > 1:
+        errors.append({"intakes": "At most one intake can have is_default=True"})
+
+    view_keys = set()
+    for index, view in enumerate(views):
+        if not isinstance(view, dict):
+            errors.append({"views": f"Entry {index} must be an object"})
+            continue
+        key = view.get("view_key")
+        if not key or not isinstance(key, str):
+            errors.append({"views": f"Entry {index} is missing view_key"})
+        elif key in view_keys:
+            errors.append({"views": f"Duplicate view_key '{key}'"})
+        else:
+            view_keys.add(key)
+        name = view.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"views": f"Entry {index} is missing name"})
+        description = view.get("description")
+        if description is not None and not isinstance(description, str):
+            errors.append({"views": f"Entry {index} description must be a string"})
+        filters = view.get("filters", {}) or {}
+        if not isinstance(filters, dict):
+            errors.append({"views": f"Entry {index} filters must be an object"})
+            filters = {}
+        for label_key in filters.get("label_keys", []) or []:
+            if label_key not in label_keys:
+                errors.append(
+                    {"views": f"Entry {index} references unknown label_key {label_key!r}"}
+                )
+        for state_key in filters.get("state_keys", []) or []:
+            if state_key not in state_keys:
+                errors.append(
+                    {"views": f"Entry {index} references unknown state_key {state_key!r}"}
+                )
+        for json_field in ("display_filters", "display_properties", "logo_props"):
+            value = view.get(json_field)
+            if value is not None and not isinstance(value, dict):
+                errors.append({"views": f"Entry {index} {json_field} must be an object"})
+        access = view.get("access")
+        if access is not None and access not in (0, 1):
+            errors.append({"views": f"Entry {index} access must be 0 or 1"})
+
+    page_keys = set()
+    for index, page in enumerate(pages):
+        if not isinstance(page, dict):
+            errors.append({"pages": f"Entry {index} must be an object"})
+            continue
+        key = page.get("page_key")
+        if not key or not isinstance(key, str):
+            errors.append({"pages": f"Entry {index} is missing page_key"})
+        elif key in page_keys:
+            errors.append({"pages": f"Duplicate page_key '{key}'"})
+        else:
+            page_keys.add(key)
+        name = page.get("name")
+        if not name or not isinstance(name, str):
+            errors.append({"pages": f"Entry {index} is missing name"})
+        for label_key in page.get("label_keys", []) or []:
+            if label_key not in label_keys:
+                errors.append(
+                    {"pages": f"Entry {index} references unknown label_key {label_key!r}"}
+                )
+        description_html = page.get("description_html")
+        if description_html is not None and not isinstance(description_html, str):
+            errors.append({"pages": f"Entry {index} description_html must be a string"})
+        description_json = page.get("description_json")
+        if description_json is not None and not isinstance(description_json, dict):
+            errors.append({"pages": f"Entry {index} description_json must be an object"})
+        for json_field in ("view_props", "logo_props"):
+            value = page.get(json_field)
+            if value is not None and not isinstance(value, dict):
+                errors.append({"pages": f"Entry {index} {json_field} must be an object"})
+        access = page.get("access")
+        if access is not None and access not in (0, 1):
+            errors.append({"pages": f"Entry {index} access must be 0 or 1"})
 
     if errors:
         # Wrap to a list for consistency with DRF error payloads.

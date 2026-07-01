@@ -41,14 +41,19 @@ from plane.app.serializers.project_template import (
 from plane.db.models import (
     Cycle,
     CycleIssue,
+    Intake,
     Issue,
+    IssueView,
     IssueLabel,
     Label,
     Module,
     ModuleIssue,
+    Page,
+    PageLabel,
     Project,
     ProjectIdentifier,
     ProjectMember,
+    ProjectPage,
     ProjectTemplate,
     State,
     User,
@@ -181,17 +186,30 @@ class TestProjectTemplateCreationApp(TestProjectTemplateCreationBase):
         assert cycles.count() == 1
         assert cycles.first().name == "Sprint 1"
 
-        # GEN-05/GEN-06/GEN-07: 1 starter issue with explicit state.
+        # GEN-05/GEN-06/GEN-07: starter issues with explicit state and links.
         issues = Issue.objects.filter(project=project)
-        assert issues.count() == 1
-        starter = issues.first()
+        assert issues.count() == 3
+        starter = issues.get(name="Set up the project backlog")
         assert starter.state.name == "Backlog"
+        assert "Collect initial feature ideas" in starter.description_html
 
         # Module and Cycle join rows from generated objects (D-12).
         assert ModuleIssue.objects.filter(issue=starter).count() == 1
         assert CycleIssue.objects.filter(issue=starter).count() == 1
-        # The starter issue's ``label_keys`` is empty, so no IssueLabel rows.
-        assert IssueLabel.objects.filter(issue=starter).count() == 0
+        assert IssueLabel.objects.filter(issue=starter).count() == 1
+
+        project.refresh_from_db()
+        assert project.cycle_view is True
+        assert project.module_view is True
+        assert project.issue_views_view is True
+        assert project.page_view is True
+        assert project.intake_view is True
+        assert Intake.objects.filter(project=project, name="Engineering Requests").exists()
+        assert IssueView.objects.filter(project=project, name="Open Bugs").exists()
+        page = Page.objects.get(workspace=workspace, name="Engineering Handbook")
+        assert ProjectPage.objects.filter(project=project, page=page).exists()
+        feature_label = Label.objects.get(project=project, name="Feature")
+        assert PageLabel.objects.filter(page=page, label=feature_label).exists()
 
     @pytest.mark.django_db
     def test_create_project_with_marketing_template_creates_seven_day_cycle(
@@ -224,8 +242,9 @@ class TestProjectTemplateCreationApp(TestProjectTemplateCreationBase):
         assert cycles.count() == 1
         launch_week = cycles.first()
         assert launch_week.name == "Launch Week"
-        # 1 starter issue with label and cycle links (no module link).
-        starter = Issue.objects.get(project=project)
+        # Starter issues with label and cycle links (no module link).
+        assert Issue.objects.filter(project=project).count() == 3
+        starter = Issue.objects.get(project=project, name="Draft launch announcement")
         assert IssueLabel.objects.filter(issue=starter).count() == 1
         assert CycleIssue.objects.filter(issue=starter).count() == 1
         assert ModuleIssue.objects.filter(issue=starter).count() == 0
@@ -257,7 +276,8 @@ class TestProjectTemplateCreationApp(TestProjectTemplateCreationBase):
         # 1 cycle "Month 1".
         month_one = Cycle.objects.get(project=project, name="Month 1")
         # Starter issue links all three.
-        starter = Issue.objects.get(project=project)
+        assert Issue.objects.filter(project=project).count() == 3
+        starter = Issue.objects.get(project=project, name="Document current process")
         assert IssueLabel.objects.filter(
             issue=starter, label=process_label
         ).exists()

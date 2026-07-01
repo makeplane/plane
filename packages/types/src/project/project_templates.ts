@@ -44,11 +44,54 @@ export type TProjectTemplateCycle = {
 
 export type TProjectTemplateStarterIssue = {
   name: string;
+  description_html?: string | null;
+  description_json?: Record<string, unknown> | null;
   state_key?: string | null;
   label_keys?: string[];
   module_key?: string | null;
   cycle_key?: string | null;
   priority?: TProjectTemplateIssuePriority | null;
+  start_offset_days?: number | null;
+  target_offset_days?: number | null;
+  duration_days?: number | null;
+};
+
+export type TProjectTemplateIntake = {
+  intake_key: string;
+  name: string;
+  description?: string;
+  is_default?: boolean;
+  view_props?: Record<string, unknown>;
+  logo_props?: Record<string, unknown>;
+};
+
+export type TProjectTemplateView = {
+  view_key: string;
+  name: string;
+  description?: string;
+  filters?: {
+    label_keys?: string[];
+    state_keys?: string[];
+    state_group?: string[];
+    priority?: string[];
+    [key: string]: unknown;
+  };
+  display_filters?: Record<string, unknown>;
+  display_properties?: Record<string, unknown>;
+  access?: 0 | 1;
+  logo_props?: Record<string, unknown>;
+};
+
+export type TProjectTemplatePage = {
+  page_key: string;
+  name: string;
+  description_html?: string | null;
+  description_json?: Record<string, unknown> | null;
+  color?: string;
+  label_keys?: string[];
+  access?: 0 | 1;
+  view_props?: Record<string, unknown>;
+  logo_props?: Record<string, unknown>;
 };
 
 export type TProjectTemplatePayload = {
@@ -58,6 +101,9 @@ export type TProjectTemplatePayload = {
   modules: TProjectTemplateModule[];
   cycles: TProjectTemplateCycle[];
   starter_issues: TProjectTemplateStarterIssue[];
+  intakes?: TProjectTemplateIntake[];
+  views?: TProjectTemplateView[];
+  pages?: TProjectTemplatePage[];
 };
 
 /**

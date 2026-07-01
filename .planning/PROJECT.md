@@ -2,9 +2,27 @@
 
 ## What This Is
 
-This is a brownfield enhancement to the existing Plane self-hosted project management codebase. The goal is to add full Project Templates to the Workspace project-creation flow so users can create a new Project with predefined states, labels, modules, cycles, and starter issues.
+This is a brownfield enhancement to the existing Plane self-hosted project management codebase. v1.0 shipped full Project Templates for the Workspace project-creation flow: users can create a new Project from built-in or custom templates with predefined states, labels, modules, cycles, starter issues, intakes, saved views, and pages.
 
-Workspace owners/admins should be able to choose from built-in system templates and create or edit custom workspace templates when the defaults are not enough.
+Workspace owners/admins can manage custom workspace templates when the defaults are not enough.
+
+## Current State
+
+**Shipped:** v1.0 Project Templates MVP on 2026-07-01
+
+Delivered:
+
+- Built-in templates for Software Project, Marketing Campaign, and Operations Project.
+- Workspace-scoped custom template APIs and admin settings UI.
+- Transaction-safe project creation from templates with rollback protection.
+- Create Project modal template selection with no-template fallback preserved.
+- Rich generated content for states, labels, modules, cycles, starter work items, intakes, saved views, and pages.
+
+Archive:
+
+- Roadmap: `.planning/milestones/v1.0-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.0-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.0-MILESTONE-AUDIT.md`
 
 ## Core Value
 
@@ -22,16 +40,16 @@ Creating a new Project should produce a useful, ready-to-work structure immediat
 
 ### Active
 
-- [ ] Add a Project Template selection step directly inside the existing create Project modal/form in a Workspace
+- [ ] Define the next milestone.
 
-### Validated in Phase 02
+### Validated in v1.0
 
 - ✓ Provide built-in system templates for `Software Project`, `Marketing Campaign`, and `Operations Project` — Phase 01
 - ✓ Let workspace owners/admins create and edit custom Project Templates — Phase 01
 - ✓ Store custom templates with states, labels, modules, cycles, and starter issues — Phase 01
-- ✓ Create a new Project from a selected template, including the selected template's configured states, labels, modules, cycles, and starter issues — Phase 02
+- ✓ Create a new Project from a selected template, including the selected template's configured states, labels, modules, cycles, starter issues, intakes, views, and pages — v1.0
 - ✓ Preserve the existing project creation path for users who do not select a template — Phase 02
-- ✓ Add backend and frontend tests for template creation, permission behavior, and project creation from templates — Phase 02 (backend complete; frontend scheduled for Phase 03)
+- ✓ Add backend and frontend checks for template creation, permission behavior, project creation from templates, and template-selection payload typing — v1.0
 
 ### Out of Scope
 
@@ -65,13 +83,13 @@ The project creation UX should stay inside the existing Workspace create Project
 
 ## Key Decisions
 
-| Decision                                                                   | Rationale                                                                         | Outcome   |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------- |
-| Template choice appears in the existing create Project modal/form          | Keeps template selection at the moment users already create Projects              | — Pending |
-| v1 includes built-in system templates                                      | Gives immediate value without requiring admins to configure templates first       | — Pending |
-| v1 also supports custom workspace templates                                | Admins need local flexibility when built-in templates do not match their process  | — Pending |
-| Custom templates store states, labels, modules, cycles, and starter issues | User chose full project templates rather than only settings or starter work items | — Pending |
-| Custom template management is limited to workspace owners/admins           | Template changes affect workspace-wide project setup and should be permissioned   | — Pending |
+| Decision                                                                   | Rationale                                                                         | Outcome         |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------- |
+| Template choice appears in the existing create Project modal/form          | Keeps template selection at the moment users already create Projects              | Shipped in v1.0 |
+| v1 includes built-in system templates                                      | Gives immediate value without requiring admins to configure templates first       | Shipped in v1.0 |
+| v1 also supports custom workspace templates                                | Admins need local flexibility when built-in templates do not match their process  | Shipped in v1.0 |
+| Custom templates store states, labels, modules, cycles, and starter issues | User chose full project templates rather than only settings or starter work items | Shipped in v1.0 |
+| Custom template management is limited to workspace owners/admins           | Template changes affect workspace-wide project setup and should be permissioned   | Shipped in v1.0 |
 
 ## Evolution
 
@@ -94,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-_Last updated: 2026-06-30 after Phase 02 (transactional project creation) completion_
+_Last updated: 2026-07-01 after v1.0 milestone completion_

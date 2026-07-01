@@ -2,12 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: In Progress
+current_phase: 0
+status: Awaiting next milestone
 stopped_at: Completed 04-05-PLAN.md
-last_updated: "2026-07-01T13:30:00.000Z"
+last_updated: "2026-07-01T13:15:53.546Z"
+last_activity: 2026-07-01
+last_activity_desc: Milestone v1.0 completed and archived
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 14
   completed_plans: 14
   percent: 100
@@ -16,14 +19,14 @@ progress:
 # State: Plane Project Templates
 
 **Initialized:** 2026-06-29
-**Last updated:** 2026-07-01 after Phase 04-05 completion
+**Last updated:** 2026-07-01 after v1.0 milestone completion
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 **Core value:** Creating a new Project should produce a useful, ready-to-work structure immediately instead of an empty shell that admins must configure by hand every time.
-**Current focus:** Phase 04 — workspace-template-management
+**Current focus:** Awaiting next milestone
 
 ## Current Status
 
@@ -32,7 +35,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-29)
 - Research complete: yes
 - Requirements defined: yes
 - Roadmap created: yes
-- Active phase: 4
+- Active phase: none
 
 ## Phase Progress
 
@@ -45,7 +48,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 ## Active Requirements
 
-See `.planning/REQUIREMENTS.md` for the complete list and phase traceability.
+v1.0 requirements were archived to `.planning/milestones/v1.0-REQUIREMENTS.md`. The next milestone should define a fresh `.planning/REQUIREMENTS.md`.
 
 ## Codebase Context
 
@@ -90,8 +93,8 @@ High-signal paths for Phase 3:
 ## Session
 
 **Last session:** 2026-07-01T13:30:00.000Z
-**Stopped at:** Completed 04-05-PLAN.md
-**Resume file:** .planning/phases/04-workspace-template-management/04-05-PLAN.md (executed; phase complete pending end-of-phase human verification)
+**Stopped at:** Completed and archived v1.0 milestone
+**Resume file:** `.planning/milestones/v1.0-MILESTONE-AUDIT.md`
 
 ## Accumulated Context
 
@@ -111,3 +114,14 @@ High-signal paths for Phase 3:
 | Phase 04 P03 | 53min | 2 tasks  | 16 files |
 | Phase 04 P04 | 30min | 2 tasks  | 7 files  |
 | Phase 04 P05 | 22min | 2 tasks  | 5 files  |
+
+## Current Position
+
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-01 — Milestone v1.0 completed and archived
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

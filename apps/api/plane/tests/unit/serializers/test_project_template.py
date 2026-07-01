@@ -84,6 +84,53 @@ class TestProjectTemplateSerializer:
         assert result == payload
 
     @pytest.mark.django_db
+    def test_payload_helper_accepts_optional_rich_sections(self):
+        """Optional intake/view/page sections are valid when references resolve."""
+        payload = _valid_payload()
+        payload["intakes"] = [
+            {
+                "intake_key": "requests",
+                "name": "Requests",
+                "description": "Incoming work",
+                "is_default": True,
+            }
+        ]
+        payload["views"] = [
+            {
+                "view_key": "bugs",
+                "name": "Bugs",
+                "filters": {"label_keys": ["bug"], "state_keys": ["backlog"]},
+            }
+        ]
+        payload["pages"] = [
+            {
+                "page_key": "brief",
+                "name": "Brief",
+                "description_html": "<p>Project brief</p>",
+                "label_keys": ["bug"],
+            }
+        ]
+
+        result = validate_project_template_payload(payload)
+
+        assert result == payload
+
+    @pytest.mark.django_db
+    def test_payload_helper_rejects_rich_section_unknown_label_reference(self):
+        """Views and pages must reference known template label keys."""
+        payload = _valid_payload()
+        payload["views"] = [
+            {
+                "view_key": "missing-label",
+                "name": "Missing Label",
+                "filters": {"label_keys": ["not-a-label"]},
+            }
+        ]
+
+        with pytest.raises(Exception):
+            validate_project_template_payload(payload)
+
+    @pytest.mark.django_db
     def test_payload_helper_rejects_missing_schema_version(self):
         """The validator rejects payloads without the required schema_version field."""
         payload = _valid_payload()

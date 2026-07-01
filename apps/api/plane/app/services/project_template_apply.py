@@ -52,11 +52,16 @@ from plane.app.serializers.project_template import validate_project_template_pay
 from plane.db.models import (
     Cycle,
     CycleIssue,
+    Intake,
     Issue,
+    IssueView,
     IssueLabel,
     Label,
     Module,
     ModuleIssue,
+    Page,
+    PageLabel,
+    ProjectPage,
     Project,
     ProjectTemplate,
     State,
@@ -264,6 +269,11 @@ def apply_project_template(
         actor=actor,
         creation_date=creation_date,
     )
+    _create_template_intakes(
+        project=project,
+        payload=payload,
+        actor=actor,
+    )
 
     _create_template_starter_issues(
         project=project,
@@ -274,7 +284,24 @@ def apply_project_template(
         label_by_key=label_by_key,
         module_by_key=module_by_key,
         cycle_by_key=cycle_by_key,
+        creation_date=creation_date,
     )
+    _create_template_views(
+        project=project,
+        workspace=workspace,
+        payload=payload,
+        actor=actor,
+        state_by_key=state_by_key,
+        label_by_key=label_by_key,
+    )
+    _create_template_pages(
+        project=project,
+        workspace=workspace,
+        payload=payload,
+        actor=actor,
+        label_by_key=label_by_key,
+    )
+    _enable_project_template_features(project=project, payload=payload)
 
 
 # ---------------------------------------------------------------------------
@@ -441,6 +468,112 @@ def _create_template_cycles(
     return cycle_by_key
 
 
+def _create_template_intakes(*, project, payload, actor):
+    """Create project intakes from payload and avoid duplicating existing defaults."""
+    intake_payloads = payload.get("intakes", []) or []
+    for entry in intake_payloads:
+        is_default = bool(entry.get("is_default", False))
+        if is_default:
+            Intake.objects.filter(project=project, is_default=True).update(
+                is_default=False
+            )
+        intake = Intake(
+            name=entry["name"],
+            description=entry.get("description", ""),
+            is_default=is_default,
+            view_props=entry.get("view_props") or {},
+            logo_props=entry.get("logo_props") or {},
+            project=project,
+            workspace_id=project.workspace_id,
+            created_by=actor,
+            updated_by=actor,
+        )
+        intake.save(disable_auto_set_user=True)
+
+
+def _resolve_view_filters(filters, *, state_by_key, label_by_key):
+    """Resolve template-local filter keys into persisted Plane filter ids."""
+    resolved = dict(filters or {})
+    label_keys = resolved.pop("label_keys", None) or []
+    state_keys = resolved.pop("state_keys", None) or []
+    if label_keys:
+        resolved["labels"] = [str(label_by_key[key].id) for key in label_keys]
+    if state_keys:
+        resolved["state"] = [str(state_by_key[key].id) for key in state_keys]
+    return resolved
+
+
+def _create_template_views(
+    *, project, workspace, payload, actor, state_by_key, label_by_key
+):
+    """Create project IssueView rows from template payload."""
+    view_payloads = payload.get("views", []) or []
+    for index, entry in enumerate(view_payloads):
+        filters = _resolve_view_filters(
+            entry.get("filters", {}),
+            state_by_key=state_by_key,
+            label_by_key=label_by_key,
+        )
+        view = IssueView(
+            name=entry["name"],
+            description=entry.get("description", ""),
+            filters=filters,
+            display_filters=entry.get("display_filters") or {},
+            display_properties=entry.get("display_properties") or {},
+            access=entry.get("access", 1),
+            logo_props=entry.get("logo_props") or {},
+            sort_order=float(10000 + index * 10000),
+            owned_by=actor,
+            project=project,
+            workspace=workspace,
+            created_by=actor,
+            updated_by=actor,
+        )
+        view.save(disable_auto_set_user=True)
+
+
+def _create_template_pages(*, project, workspace, payload, actor, label_by_key):
+    """Create project-linked pages and optional page-label rows."""
+    page_payloads = payload.get("pages", []) or []
+    for index, entry in enumerate(page_payloads):
+        page = Page(
+            name=entry["name"],
+            description_html=entry.get("description_html") or "<p></p>",
+            description_json=entry.get("description_json") or {},
+            color=entry.get("color", ""),
+            access=entry.get("access", Page.PUBLIC_ACCESS),
+            view_props=entry.get("view_props") or {"full_width": False},
+            logo_props=entry.get("logo_props") or {},
+            sort_order=float(10000 + index * 10000),
+            owned_by=actor,
+            workspace=workspace,
+            created_by=actor,
+            updated_by=actor,
+        )
+        page.save(disable_auto_set_user=True)
+        project_page = ProjectPage(
+            project=project,
+            page=page,
+            workspace=workspace,
+            created_by=actor,
+            updated_by=actor,
+        )
+        project_page.save(disable_auto_set_user=True)
+        label_rows = []
+        for label_key in entry.get("label_keys", []) or []:
+            label_rows.append(
+                PageLabel(
+                    page=page,
+                    label=label_by_key[label_key],
+                    workspace=workspace,
+                    created_by=actor,
+                    updated_by=actor,
+                )
+            )
+        if label_rows:
+            PageLabel.objects.bulk_create(label_rows)
+
+
 def _create_template_starter_issues(
     *,
     project,
@@ -451,6 +584,7 @@ def _create_template_starter_issues(
     label_by_key,
     module_by_key,
     cycle_by_key,
+    creation_date,
 ):
     """Create starter ``Issue`` rows with explicit state and bulk-create
     join rows.
@@ -492,11 +626,16 @@ def _create_template_starter_issues(
         # propagate through Issue.save() -> ProjectBaseModel.save() ->
         # BaseModel.save() because the latter is the canonical consumer
         # of ``disable_auto_set_user``.
+        dates = resolve_relative_template_dates(entry, creation_date)
         issue = Issue(
             project=project,
             workspace_id=workspace.id,
             state=state,
             name=entry["name"],
+            description_html=entry.get("description_html") or "<p></p>",
+            description_json=entry.get("description_json") or {},
+            start_date=dates["start_date"],
+            target_date=dates["end_date"],
             priority=entry.get("priority") or "none",
             created_by=actor,
             updated_by=actor,
@@ -580,3 +719,22 @@ def _create_template_starter_issues(
         CycleIssue.objects.bulk_create(cycle_issue_rows)
 
     return issues
+
+
+def _enable_project_template_features(*, project, payload):
+    """Enable project feature tabs when the applied template generated content."""
+    fields = []
+    feature_sections = {
+        "module_view": "modules",
+        "cycle_view": "cycles",
+        "issue_views_view": "views",
+        "page_view": "pages",
+        "intake_view": "intakes",
+    }
+    for field_name, section_name in feature_sections.items():
+        if payload.get(section_name):
+            setattr(project, field_name, True)
+            fields.append(field_name)
+    if fields:
+        fields.append("updated_at")
+        project.save(update_fields=fields, disable_auto_set_user=True)
