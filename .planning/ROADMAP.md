@@ -13,7 +13,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | 1     | Template Catalog Foundation     | 3/3                                                   | Complete     | 2026-06-30 |
 | 2     | Transactional Project Creation  | 3/3                                                   | Complete     | 2026-06-30 |
 | 3     | Create Modal Template Selection | 3/3                                                   | Complete     | 2026-07-01 |
-| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates | UI-05        | yes        |
+| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates | UI-05        | 5 plans    |
 
 **Coverage:**
 
@@ -149,6 +149,23 @@ Plans:
 **Mode:** mvp
 
 **Requirements:** UI-05
+
+**Plans:** 5 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — Backend slice: include_inactive listing + admin-only reactivate action + contract tests (D-14/D-15).
+- [ ] 04-02-PLAN.md — Discoverable admin-gated Project Templates settings page listing System + Custom templates end-to-end.
+
+**Wave 2** _(blocked on Wave 1 completion)_
+
+- [ ] 04-03-PLAN.md — Full-page editor (new/edit) with service methods, States + Labels sections, atomic save.
+
+**Wave 3** _(blocked on Wave 2 completion)_
+
+- [ ] 04-04-PLAN.md — Modules, Cycles, and Starter-issues editor sections with name-based reference resolution.
+- [ ] 04-05-PLAN.md — Lifecycle actions (deactivate/duplicate/reactivate) + Show-deactivated filter + phase verification.
 
 **Success Criteria:**
 
