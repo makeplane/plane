@@ -61,6 +61,9 @@ export const WORKSPACE_PARTIAL_PROJECTS = (workspaceSlug: string) =>
 export const WORKSPACE_PROJECT_TEMPLATES = (workspaceSlug: string) =>
   `WORKSPACE_PROJECT_TEMPLATES_${workspaceSlug.toUpperCase()}`;
 
+export const WORKSPACE_PROJECT_TEMPLATE_DETAIL = (workspaceSlug: string, templateId: string) =>
+  `WORKSPACE_PROJECT_TEMPLATE_DETAIL_${workspaceSlug.toUpperCase()}_${templateId.toUpperCase()}`;
+
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_MODULES = (workspaceSlug: string) => `WORKSPACE_MODULES_${workspaceSlug.toUpperCase()}`;

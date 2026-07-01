@@ -15,6 +15,7 @@ import type {
   TProjectCreatePayload,
   TProjectIssuesSearchParams,
   TProjectTemplate,
+  TProjectTemplateWritePayload,
   TPartialProject,
 } from "@plane/types";
 // services
@@ -33,8 +34,57 @@ export class ProjectService extends APIService {
       });
   }
 
-  async getProjectTemplates(workspaceSlug: string): Promise<TProjectTemplate[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/project-templates/`)
+  async getProjectTemplates(workspaceSlug: string, includeInactive?: boolean): Promise<TProjectTemplate[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-templates/`, {
+      params: includeInactive ? { include_inactive: true } : undefined,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createProjectTemplate(workspaceSlug: string, data: TProjectTemplateWritePayload): Promise<TProjectTemplate> {
+    return this.post(`/api/workspaces/${workspaceSlug}/project-templates/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateProjectTemplate(
+    workspaceSlug: string,
+    templateId: string,
+    data: Partial<TProjectTemplateWritePayload>
+  ): Promise<TProjectTemplate> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/project-templates/${templateId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deactivateProjectTemplate(workspaceSlug: string, templateId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/project-templates/${templateId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async reactivateProjectTemplate(workspaceSlug: string, templateId: string): Promise<TProjectTemplate> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/project-templates/${templateId}/`, { is_active: true })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async duplicateProjectTemplate(workspaceSlug: string, templateId: string, name?: string): Promise<TProjectTemplate> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/project-templates/${templateId}/duplicate/`,
+      name ? { name } : {}
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

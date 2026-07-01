@@ -60,6 +60,27 @@ export type TProjectTemplatePayload = {
   starter_issues: TProjectTemplateStarterIssue[];
 };
 
+/**
+ * Minimal write subset accepted by `ProjectTemplateWriteSerializer`.
+ *
+ * Backend writable fields (verified at `apps/api/plane/app/serializers/project_template.py:613-634`):
+ * `name, description, template_type, system_key, is_active, payload, *_offset_days, duration_days`.
+ * `id`, `is_system`, `created_at`, `updated_at`, `workspace` are read-only.
+ *
+ * `template_type` is locked to `"custom"` in the editor — system templates are seeded by the
+ * backend and cannot be created through this payload.
+ */
+export type TProjectTemplateWritePayload = {
+  name: string;
+  description?: string | null;
+  template_type: "custom";
+  payload: TProjectTemplatePayload;
+  start_offset_days?: number | null;
+  target_offset_days?: number | null;
+  duration_days?: number | null;
+  is_active?: boolean;
+};
+
 export type TProjectTemplate = {
   id: string;
   name: string;
