@@ -156,7 +156,27 @@ export const MediaDetailPreview = ({
     const scaledHeight = Math.round(viewport.height * 0.38);
     return Math.min(420, Math.max(220, scaledHeight));
   }, [viewport.height, viewport.width]);
+  const videoPreviewHeight = useMemo(() => {
+    if (!viewport.height) return 620;
+
+    const isDesktopViewport = viewport.width >= 1025;
+    const isTabletViewport = viewport.width >= 768;
+
+    if (isDesktopViewport) {
+      const scaledHeight = Math.round(viewport.height * 0.78);
+      return Math.min(920, Math.max(620, scaledHeight));
+    }
+
+    if (isTabletViewport) {
+      const scaledHeight = Math.round(viewport.height * 0.64);
+      return Math.min(740, Math.max(500, scaledHeight));
+    }
+
+    const scaledHeight = Math.round(viewport.height * 0.44);
+    return Math.min(480, Math.max(260, scaledHeight));
+  }, [viewport.height, viewport.width]);
   const previewHeightStyle: CSSProperties = { height: `${previewHeight}px` };
+  const videoPreviewHeightStyle: CSSProperties = { height: `${videoPreviewHeight}px` };
   const overlayVisibilityClass = [isSettingsOpen ? "is-settings-open" : "", !isPlaying ? "is-paused" : ""]
     .filter(Boolean)
     .join(" ");
@@ -205,8 +225,7 @@ export const MediaDetailPreview = ({
   const isAbsoluteDocumentDownloadSrc = /^https?:\/\//i.test(documentDownloadCandidate);
   const isApiDocumentDownloadSrc =
     Boolean(documentDownloadCandidate) &&
-    (!isAbsoluteDocumentDownloadSrc ||
-      (Boolean(API_BASE_URL) && documentDownloadCandidate.startsWith(API_BASE_URL)));
+    (!isAbsoluteDocumentDownloadSrc || (Boolean(API_BASE_URL) && documentDownloadCandidate.startsWith(API_BASE_URL)));
   const documentDownloadSrc = documentDownloadCandidate
     ? isApiDocumentDownloadSrc
       ? buildDownloadUrl(documentDownloadCandidate)
@@ -236,7 +255,7 @@ export const MediaDetailPreview = ({
           <>
             <div
               className={`media-player mx-auto w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
-              style={previewHeightStyle}
+              style={videoPreviewHeightStyle}
             >
               <video
                 ref={videoRef}

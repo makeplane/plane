@@ -50,6 +50,14 @@ const toMetaRecord = (source: TMediaEventSource): Record<string, unknown> => {
   return source as Record<string, unknown>;
 };
 
+const toSourceRecord = (source: TMediaEventSource): Record<string, unknown> => {
+  if (!source || typeof source !== "object") {
+    return {};
+  }
+
+  return source as Record<string, unknown>;
+};
+
 const toOptionalText = (value: unknown) => {
   if (typeof value !== "string") {
     return null;
@@ -57,6 +65,57 @@ const toOptionalText = (value: unknown) => {
 
   const normalizedValue = value.trim();
   return normalizedValue || null;
+};
+
+const isCoachCompletedEventArtifactSource = (source: TMediaEventSource) => {
+  const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
+  const sourceType = toOptionalText(meta.source);
+  const format = toOptionalText(sourceRecord.format);
+  const id = toOptionalText(sourceRecord.id);
+  const title = toOptionalText(sourceRecord.title);
+
+  return (
+    sourceType === "plane-coach" &&
+    format === "json" &&
+    (Boolean(id?.startsWith("coach-event-")) || Boolean(title?.toLowerCase().includes("final event json")))
+  );
+};
+
+const hasEventTagRows = (value: unknown) => Array.isArray(value) && value.length > 0;
+
+const hasEventMediaShape = (source: TMediaEventSource) => {
+  const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
+  const nestedEvent =
+    meta.event && typeof meta.event === "object" && !Array.isArray(meta.event)
+      ? (meta.event as Record<string, unknown>)
+      : {};
+  const nestedRawEvent =
+    meta.rawEvent && typeof meta.rawEvent === "object" && !Array.isArray(meta.rawEvent)
+      ? (meta.rawEvent as Record<string, unknown>)
+      : {};
+  const sources = [meta, nestedEvent, nestedRawEvent, sourceRecord];
+  const hasIdentifier = sources.some((entry) =>
+    ["sg_event_id", "event_id", "eventId", "plane_event_id", "planeEventId", "preview_event_id", "previewEventId"].some(
+      (key) => Boolean(toOptionalText(entry[key]))
+    )
+  );
+  const hasEventPayload =
+    hasEventTagRows(meta.tags) ||
+    hasEventTagRows(meta.event_tags) ||
+    hasEventTagRows(meta.eventTags) ||
+    hasEventTagRows(nestedEvent.tags) ||
+    hasEventTagRows(nestedRawEvent.tags) ||
+    hasEventTagRows(meta.devices) ||
+    hasEventTagRows(meta.mediaReferences);
+  const hasEventCopy = sources.some((entry) =>
+    ["event_date", "event_date_time", "event_time", "dt_event", "sport", "program", "level", "location_label"].some(
+      (key) => Boolean(toOptionalText(entry[key]))
+    )
+  );
+
+  return hasIdentifier && (hasEventPayload || hasEventCopy);
 };
 
 const formatStatusLabel = (value: string | null) => {
@@ -125,7 +184,9 @@ export const getStructuredEventTags = (source: TMediaEventSource): TStructuredEv
       const label =
         [team, result, dataLabel || action, quarter, timeRange || timestamp]
           .filter((part): part is string => Boolean(part))
-          .join(" · ") || action || "Event tag";
+          .join(" · ") ||
+        action ||
+        "Event tag";
 
       return {
         action,
@@ -142,12 +203,19 @@ export const getStructuredEventTags = (source: TMediaEventSource): TStructuredEv
 
 export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDetails | null => {
   const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
   const artifactType = toOptionalText(meta.artifact_type);
   const sourceType = toOptionalText(meta.source);
-  const hasEventIdentifiers =
-    Boolean(toOptionalText(meta.event_id)) || Boolean(toOptionalText(meta.plane_event_id));
+  const hasEventIdentifiers = Boolean(toOptionalText(meta.event_id)) || Boolean(toOptionalText(meta.plane_event_id));
+  const isCoachCompletedEventArtifact = isCoachCompletedEventArtifactSource(source);
+  const hasRecognizedEventShape = hasEventMediaShape(source);
 
-  if (artifactType !== "completed-event-json" && !(sourceType === "plane-coach" && hasEventIdentifiers)) {
+  if (
+    artifactType !== "completed-event-json" &&
+    !(sourceType === "plane-coach" && hasEventIdentifiers) &&
+    !isCoachCompletedEventArtifact &&
+    !hasRecognizedEventShape
+  ) {
     return null;
   }
 
@@ -169,7 +237,7 @@ export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDeta
     status: formatStatusLabel(getMetaString(meta, ["status"], "") || null),
     structuredTags,
     tagCount,
-    title: getMetaString(meta, ["title"], "") || null,
+    title: getMetaString(meta, ["title"], "") || toOptionalText(sourceRecord.title),
     workspaceSlug: getMetaString(meta, ["workspace_slug", "workspaceSlug"], "") || null,
     year: getMetaString(meta, ["year", "season"], "") || null,
   };
@@ -196,9 +264,7 @@ export const getEventMediaContextLabel = (source: TMediaEventSource) => {
 
   if (!details) return null;
 
-  const parts = [details.sport, details.program, details.level].filter(
-    (entry): entry is string => Boolean(entry),
-  );
+  const parts = [details.sport, details.program, details.level].filter((entry): entry is string => Boolean(entry));
 
   return parts.length > 0 ? parts.join(" · ") : null;
 };
