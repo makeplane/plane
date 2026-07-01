@@ -103,6 +103,8 @@ Copy rules: do not add `No description` fallback text; when a template has no `d
 
 Use the existing `ProjectTemplateSelect` stub rendered by `ProjectCreateHeader` at the top-left of the cover image. Do not move the selector into the form body or create a mobile-only alternate location.
 
+Primary visual anchor: the compact template selector chip in the cover header is a secondary control that sits below the modal's create action in hierarchy. It must be discoverable without competing with the Project name/identifier fields or submit button.
+
 Button contract:
 
 | Property       | Value                                                                |
@@ -128,7 +130,7 @@ Dropdown sizing:
 | Desktop  | 280px target, min 240px, max 360px | 320px list area                  |
 | Mobile   | `min(320px, calc(100vw - 24px))`   | `min(384px, calc(100vh - 96px))` |
 
-Panel styling must match Plane dropdowns: `rounded-md`, `border-[0.5px] border-subtle-1`, `bg-surface-1`, `py-2.5`, vertical scrollbar when needed, z-index consistent with existing dropdown portals.
+Panel styling must match Plane dropdowns while staying on the 4px spacing grid: `rounded-md`, `border-[0.5px] border-subtle-1`, `bg-surface-1`, `py-2`, vertical scrollbar when needed, z-index consistent with existing dropdown portals.
 
 Search input:
 
@@ -154,7 +156,7 @@ Template options show:
 | Group headers              | Do not render                                                                         |
 | Badges                     | Do not render                                                                         |
 
-Option row spacing: `px-2 py-1.5`, minimum 32px height when name-only, 48px target when description is present. Hover/keyboard active row uses `bg-layer-transparent-hover`. The selected row must not render a persistent checkmark or selected-color treatment because the selected state is represented only by the cover button label.
+Option row spacing: `px-2 py-2`, minimum 32px height when name-only, 48px target when description is present. Hover/keyboard active row uses `bg-layer-transparent-hover`. The selected row must not render a persistent checkmark or selected-color treatment because the selected state is represented only by the cover button label.
 
 ### State Matrix
 
