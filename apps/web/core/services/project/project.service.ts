@@ -52,6 +52,14 @@ export class ProjectService extends APIService {
       });
   }
 
+  async getProjectTemplate(workspaceSlug: string, templateId: string): Promise<TProjectTemplate> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-templates/${templateId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateProjectTemplate(
     workspaceSlug: string,
     templateId: string,

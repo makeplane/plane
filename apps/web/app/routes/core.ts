@@ -286,6 +286,14 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/templates",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/templates/new",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/new/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/templates/:templateId/edit",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/[templateId]/edit/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------
