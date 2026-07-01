@@ -110,16 +110,20 @@ Plans:
 
 **Requirements:** CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05
 
-**Plans:** 2 plans
+**Plans:** 3 plans
 
 Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md - Deliver the create-modal template selection and submit happy path.
+- [ ] 03-01-PLAN.md - Add frontend template contracts, service methods, store typing, and typed create payload plumbing.
 
 **Wave 2** _(blocked on Wave 1 completion)_
 
-- [ ] 03-02-PLAN.md - Harden selector fallback states, UI contract, and frontend verification.
+- [ ] 03-02-PLAN.md - Deliver selector UI plus create-form/header/modal happy-path wiring.
+
+**Wave 3** _(blocked on Wave 2 completion)_
+
+- [ ] 03-03-PLAN.md - Harden selector fallback states, accessibility, UI contract, and final frontend verification.
 
 **Success Criteria:**
 
