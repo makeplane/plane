@@ -8,12 +8,12 @@
 
 Add full Project Templates to Plane's Workspace project-creation flow. The roadmap keeps the existing no-template project creation path intact while introducing built-in templates, transaction-safe backend application, create-modal selection, and workspace-admin custom template management.
 
-| Phase | Name                            | Goal                                                            | Requirements                                                | UI hint    |
-| ----- | ------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
-| 1     | Template Catalog Foundation     | 3/3                                                             | Complete                                                    | 2026-06-30 |
-| 2     | Transactional Project Creation  | 3/3                                                             | Complete                                                    | 2026-06-30 |
-| 3     | Create Modal Template Selection | Let users choose templates in the existing create Project modal | CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05 | yes        |
-| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates           | UI-05                                                       | yes        |
+| Phase | Name                            | Goal                                                  | Requirements | UI hint    |
+| ----- | ------------------------------- | ----------------------------------------------------- | ------------ | ---------- |
+| 1     | Template Catalog Foundation     | 3/3                                                   | Complete     | 2026-06-30 |
+| 2     | Transactional Project Creation  | 3/3                                                   | Complete     | 2026-06-30 |
+| 3     | Create Modal Template Selection | 1/3                                                   | In Progress  |            |
+| 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates | UI-05        | yes        |
 
 **Coverage:**
 
@@ -110,12 +110,12 @@ Plans:
 
 **Requirements:** CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md - Add frontend template contracts, service methods, store typing, and typed create payload plumbing.
+- [x] 03-01-PLAN.md - Add frontend template contracts, service methods, store typing, and typed create payload plumbing.
 
 **Wave 2** _(blocked on Wave 1 completion)_
 
