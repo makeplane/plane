@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 04-04-PLAN.md
-last_updated: "2026-07-01T12:04:00.000Z"
+stopped_at: Completed 04-05-PLAN.md
+last_updated: "2026-07-01T13:30:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 14
-  completed_plans: 13
-  percent: 92
+  completed_plans: 14
+  percent: 100
 ---
 
 # State: Plane Project Templates
 
 **Initialized:** 2026-06-29
-**Last updated:** 2026-07-01 after Phase 04-04 completion
+**Last updated:** 2026-07-01 after Phase 04-05 completion
 
 ## Project Reference
 
@@ -41,7 +41,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-29)
 | 1     | Template Catalog Foundation     | Complete | 100%     |
 | 2     | Transactional Project Creation  | Complete | 100%     |
 | 3     | Create Modal Template Selection | Complete | 100%     |
-| 4     | Workspace Template Management   | Pending  | 0%       |
+| 4     | Workspace Template Management   | Complete | 100%     |
 
 ## Active Requirements
 
@@ -84,12 +84,14 @@ High-signal paths for Phase 3:
 - Module status constrained to the six-value enum via CustomSelect; backend parity preserved (no description field — backend `TProjectTemplateModule`/`TProjectTemplateCycle` types don't carry it).
 - `assemblePayload` signature changed to `(form, context = {})`; existing callers unaffected (no other callers exist in this repo). Resolution context is consumed only by the starter-issue branch.
 - Multi-label starter-issue selection renders as a row of toggle chips rather than a search-style multi-select primitive; consistent with the "compose only existing primitives" UI-SPEC constraint.
+- Show-deactivated toggle fires a SECOND SWR fetch under a distinct `WORKSPACE_PROJECT_TEMPLATES_<slug>_INCLUDE_INACTIVE` key so the active-only cache used by the Phase 3 create-modal selector is never overwritten (D-14).
+- Reactivate is a non-destructive inline primary action on the row (no modal); Deactivate is the only modal-confirmed action per UI-SPEC Copywriting.
 
 ## Session
 
-**Last session:** 2026-07-01T12:04:00.000Z
-**Stopped at:** Completed 04-04-PLAN.md
-**Resume file:** .planning/phases/04-workspace-template-management/04-05-PLAN.md
+**Last session:** 2026-07-01T13:30:00.000Z
+**Stopped at:** Completed 04-05-PLAN.md
+**Resume file:** .planning/phases/04-workspace-template-management/04-05-PLAN.md (executed; phase complete pending end-of-phase human verification)
 
 ## Accumulated Context
 
@@ -108,3 +110,4 @@ High-signal paths for Phase 3:
 | Phase 04 P02 | 22min | 2 tasks  | 6 files  |
 | Phase 04 P03 | 53min | 2 tasks  | 16 files |
 | Phase 04 P04 | 30min | 2 tasks  | 7 files  |
+| Phase 04 P05 | 22min | 2 tasks  | 5 files  |
