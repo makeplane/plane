@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
+import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
+import { getQualitySelection, getVideoRepresentations } from "ce/features/media-library/utils/media-detail-utils";
 import videojs from "video.js";
 import { cn } from "@plane/utils";
 import { buildSourceCandidates } from "@/components/issues/peek-overview/webhook-utils/webhook-artifacts-utils";
-import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
-import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./constants";
 
 type SgEventVideoPlayerProps = {
@@ -15,11 +15,24 @@ type SgEventVideoPlayerProps = {
   seekToSeconds?: number | null;
 };
 
-export const SgEventVideoPlayer = ({
-  item,
-  compactEmpty = false,
-  seekToSeconds = null,
-}: SgEventVideoPlayerProps) => {
+type TQualityRepresentation = {
+  bandwidth?: number;
+  bitrate?: number;
+  enabled?: (enabled?: boolean) => boolean;
+  height?: number;
+  id?: string;
+};
+
+type TQualityOption = {
+  disabled?: boolean;
+  isAuto: boolean;
+  key: string;
+  label: string;
+  rep: TQualityRepresentation | null;
+  selected: boolean;
+};
+
+export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds = null }: SgEventVideoPlayerProps) => {
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = (item?.format ?? "").toLowerCase();
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
@@ -31,15 +44,9 @@ export const SgEventVideoPlayer = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const {
-    effectiveVideoSrc,
-    isVideo,
-    resolvedVideoFormat,
-    useCredentials,
-    crossOrigin,
-    videoDownloadSrc,
-  } = useResolvedMediaSources({
+  const [playerTick, setPlayerTick] = useState(0);
+  const [qualitySelection, setQualitySelection] = useState<string | null>(null);
+  const { effectiveVideoSrc, isVideo, resolvedVideoFormat, useCredentials, crossOrigin } = useResolvedMediaSources({
     documentFormat,
     item,
     meta,
@@ -58,7 +65,29 @@ export const SgEventVideoPlayer = ({
     if (!playerRef.current) {
       const skipBackButtonName = "SgSkipBackButton";
       const skipForwardButtonName = "SgSkipForwardButton";
+      const previousButtonName = "SgPreviousButton";
+      const nextButtonName = "SgPlayButton";
+      const loopButtonName = "SgLoopButton";
       const settingsButtonName = "SgSettingsButton";
+
+      if (!videojs.getComponent(previousButtonName)) {
+        const Button = videojs.getComponent("Button");
+        // video.js exposes component classes through an untyped registry API.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const PreviousButton = class extends (Button as any) {
+          constructor(playerInstance: unknown, options: unknown) {
+            super(playerInstance, options);
+            this.controlText("Jump to start");
+            this.addClass("vjs-previous-button");
+          }
+
+          handleClick() {
+            this.player()?.currentTime?.(0);
+          }
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        videojs.registerComponent(previousButtonName, PreviousButton as any);
+      }
 
       if (!videojs.getComponent(skipBackButtonName)) {
         const Button = videojs.getComponent("Button");
@@ -102,6 +131,52 @@ export const SgEventVideoPlayer = ({
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         videojs.registerComponent(skipForwardButtonName, SkipForwardButton as any);
+      }
+
+      if (!videojs.getComponent(nextButtonName)) {
+        const Button = videojs.getComponent("Button");
+        // video.js exposes component classes through an untyped registry API.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const NextButton = class extends (Button as any) {
+          constructor(playerInstance: unknown, options: unknown) {
+            super(playerInstance, options);
+            this.controlText("Play");
+            this.addClass("vjs-next-button");
+          }
+
+          handleClick() {
+            const player = this.player();
+            const duration = Number(player?.duration?.() ?? 0);
+            if (Number.isFinite(duration) && duration > 0) {
+              player?.currentTime?.(Math.max(0, duration - 0.01));
+            }
+          }
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        videojs.registerComponent(nextButtonName, NextButton as any);
+      }
+
+      if (!videojs.getComponent(loopButtonName)) {
+        const Button = videojs.getComponent("Button");
+        // video.js exposes component classes through an untyped registry API.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const LoopButton = class extends (Button as any) {
+          constructor(playerInstance: unknown, options: unknown) {
+            super(playerInstance, options);
+            this.controlText("Toggle loop");
+            this.addClass("vjs-loop-button");
+            this.addClass("vjs-control-active");
+          }
+
+          handleClick() {
+            const player = this.player();
+            const nextLoopState = !Boolean(player?.loop?.());
+            player?.loop?.(nextLoopState);
+            this.toggleClass("vjs-control-active", nextLoopState);
+          }
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        videojs.registerComponent(loopButtonName, LoopButton as any);
       }
 
       if (!videojs.getComponent(settingsButtonName)) {
@@ -148,10 +223,15 @@ export const SgEventVideoPlayer = ({
             "currentTimeDisplay",
             "progressControl",
             "durationDisplay",
+            "volumePanel",
+            previousButtonName,
             skipBackButtonName,
             "playToggle",
             skipForwardButtonName,
-            "volumePanel",
+            nextButtonName,
+            loopButtonName,
+            "subsCapsButton",
+            "pictureInPictureToggle",
             "fullscreenToggle",
             settingsButtonName,
           ],
@@ -160,9 +240,11 @@ export const SgEventVideoPlayer = ({
       playerRef.current.loop(true);
       videoRef.current.removeAttribute("loop");
 
-      playerRef.current.on("ratechange", () => {
-        setPlaybackRate(Number(playerRef.current?.playbackRate?.() ?? 1));
-      });
+      const handleQualityStateChange = () => setPlayerTick((currentValue) => currentValue + 1);
+      playerRef.current.on("loadedmetadata", handleQualityStateChange);
+      playerRef.current.on("loadeddata", handleQualityStateChange);
+      playerRef.current.on("canplay", handleQualityStateChange);
+      playerRef.current.on("qualitychange", handleQualityStateChange);
       playerRef.current.on("sgsettingstoggle", () => {
         setIsSettingsOpen((currentValue) => !currentValue);
       });
@@ -249,10 +331,7 @@ export const SgEventVideoPlayer = ({
         const buffered = Number(player.buffered?.().length ?? 0);
         const duration = Number(player.duration?.() ?? 0);
         const hasStarted =
-          readyState >= 1 ||
-          seekable > 0 ||
-          buffered > 0 ||
-          (Number.isFinite(duration) && duration > 0);
+          readyState >= 1 || seekable > 0 || buffered > 0 || (Number.isFinite(duration) && duration > 0);
 
         if (!hasStarted) {
           handlePlayerError();
@@ -281,7 +360,15 @@ export const SgEventVideoPlayer = ({
       player.off("error", handlePlayerError);
       player.off("loadeddata", handleLoadedData);
     };
-  }, [crossOrigin, effectiveVideoSrc, item?.fileSrc, item?.thumbnail, item?.videoSrc, resolvedVideoFormat, useCredentials]);
+  }, [
+    crossOrigin,
+    effectiveVideoSrc,
+    item?.fileSrc,
+    item?.thumbnail,
+    item?.videoSrc,
+    resolvedVideoFormat,
+    useCredentials,
+  ]);
 
   useEffect(() => {
     const player = playerRef.current;
@@ -336,6 +423,77 @@ export const SgEventVideoPlayer = ({
     };
   }, [seekToSeconds]);
 
+  const qualityOptions = useMemo(() => {
+    const qualityRefreshKey = playerTick;
+    void qualityRefreshKey;
+    const player = playerRef.current;
+    if (!player) {
+      return [{ key: "auto", label: "Auto", isAuto: true, selected: true, rep: null, disabled: true }];
+    }
+
+    const reps = getVideoRepresentations(player) as TQualityRepresentation[];
+    if (!reps.length) {
+      return [{ key: "auto", label: "Auto", isAuto: true, selected: true, rep: null, disabled: true }];
+    }
+
+    const { isAuto, activeRep } = getQualitySelection(reps);
+    const sorted = reps
+      .map((rep, index) => ({
+        rep,
+        height: rep?.height ?? 0,
+        bandwidth: rep?.bandwidth ?? rep?.bitrate ?? 0,
+        index,
+      }))
+      .sort((left, right) => {
+        if (left.height !== right.height) return right.height - left.height;
+        if (left.bandwidth !== right.bandwidth) return right.bandwidth - left.bandwidth;
+        return left.index - right.index;
+      });
+    const fallbackSelected = qualitySelection === null ? (isAuto ? "auto" : null) : qualitySelection;
+    const options: TQualityOption[] = [
+      {
+        key: "auto",
+        label: "Auto",
+        isAuto: true,
+        selected: fallbackSelected === "auto" || (qualitySelection === null && isAuto),
+        rep: null,
+      },
+    ];
+
+    sorted.forEach(({ rep, height, bandwidth }) => {
+      const label = height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)} kbps` : "Source";
+      const key = `${label}-${bandwidth}-${height}-${rep?.id ?? ""}`;
+      options.push({
+        key,
+        label,
+        isAuto: false,
+        selected: qualitySelection === key || (qualitySelection === null && !isAuto && activeRep === rep),
+        rep,
+      });
+    });
+
+    return options;
+  }, [playerTick, qualitySelection]);
+
+  const handleQualitySelect = useCallback((option: TQualityOption) => {
+    if (option.disabled) return;
+    const player = playerRef.current;
+    if (!player) return;
+    const reps = getVideoRepresentations(player) as TQualityRepresentation[];
+    if (!reps.length) return;
+
+    if (option.isAuto) {
+      reps.forEach((rep) => rep?.enabled?.(true));
+      setQualitySelection("auto");
+    } else {
+      reps.forEach((rep) => rep?.enabled?.(rep === option.rep));
+      if (option.key) setQualitySelection(option.key);
+    }
+
+    player.trigger("qualitychange");
+    setPlayerTick((currentValue) => currentValue + 1);
+  }, []);
+
   if (!item || !isVideo) {
     return (
       <div
@@ -362,41 +520,32 @@ export const SgEventVideoPlayer = ({
       )}
     >
       <div className={cn("sg-event-player relative", PLAYER_STAGE_CLASS)}>
-        <style jsx global>{SG_PLAYER_STYLE}</style>
+        <style jsx global>
+          {SG_PLAYER_STYLE}
+        </style>
         <video ref={videoRef} className="video-js vjs-big-play-centered" playsInline loop />
         {isSettingsOpen && (
           <div className="absolute bottom-14 right-3 z-10 w-44 rounded-xl border border-custom-border-200 bg-custom-sidebar-background-100 p-3 shadow-2xl">
-            <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-custom-text-400">Playback</div>
-            <div className="grid grid-cols-3 gap-2">
-              {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
+            <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-custom-text-400">Quality</div>
+            <div className="grid grid-cols-2 gap-2">
+              {qualityOptions.map((option) => (
                 <button
-                  key={rate}
+                  key={option.key}
                   type="button"
-                  onClick={() => {
-                    playerRef.current?.playbackRate?.(rate);
-                    setPlaybackRate(rate);
-                  }}
+                  disabled={option.disabled}
+                  onClick={() => handleQualitySelect(option)}
                   className={cn(
                     "rounded-md border px-2 py-1 text-xs transition-colors",
-                    playbackRate === rate
+                    option.selected
                       ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
-                      : "border-custom-border-200 bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100"
+                      : "border-custom-border-200 bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100",
+                    option.disabled && "cursor-not-allowed opacity-60 hover:text-custom-text-300"
                   )}
                 >
-                  {rate}x
+                  {option.label}
                 </button>
               ))}
             </div>
-            {videoDownloadSrc && (
-              <Link
-                href={videoDownloadSrc}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 block rounded-md border border-custom-border-200 bg-custom-background-80 px-3 py-2 text-center text-xs text-custom-text-100 transition-colors hover:bg-custom-background-90"
-              >
-                Open source
-              </Link>
-            )}
           </div>
         )}
       </div>

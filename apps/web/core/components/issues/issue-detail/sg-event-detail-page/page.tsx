@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import { Aperture, Mic } from "lucide-react";
 import type { TIssue } from "@plane/types";
-import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { MediaLibraryService } from "@/services/media-library.service";
@@ -12,7 +10,7 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
-import { SgEventHeader } from "./header";
+import { SgEventHeader, SgEventTitleBar } from "./header";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-panel";
 import type { RowFilterMode, SgEventDetailPageProps, SgIssue, SgTagRow } from "./types";
@@ -152,13 +150,15 @@ export const SgEventDetailPage = ({
       return;
     }
 
-    const preferredDevice = viewDevices.find((device) => device.streamName === primaryStreamName.trim()) ?? viewDevices[0];
+    const preferredDevice =
+      viewDevices.find((device) => device.streamName === primaryStreamName.trim()) ?? viewDevices[0];
     setSelectedViewId(String(preferredDevice.id));
   }, [primaryStreamName, selectedViewId, viewDevices]);
 
   const activeVideo =
     sgMediaPayload?.videoItems.find((item) => item.id === activeVideoId) ?? sgMediaPayload?.videoItems?.[0] ?? null;
-  const selectedViewDevice = viewDevices.find((device) => String(device.id) === selectedViewId) ?? viewDevices[0] ?? null;
+  const selectedViewDevice =
+    viewDevices.find((device) => String(device.id) === selectedViewId) ?? viewDevices[0] ?? null;
   const selectedViewLabel = selectedViewDevice
     ? `View ${Math.max(viewDevices.findIndex((device) => device.id === selectedViewDevice.id) + 1, 1)}`
     : "View 1";
@@ -445,24 +445,23 @@ export const SgEventDetailPage = ({
             viewDevices={viewDevices}
           />
 
-          <div className={cn("grid gap-4 xl:grid-cols-[44px_minmax(0,1fr)]", !hasPlayableVideo && "xl:grid-cols-[minmax(0,1fr)]")}>
-            <div className={cn("hidden flex-col gap-2 xl:flex", !hasPlayableVideo && "xl:hidden")}>
-              {[Aperture, Mic].map((Icon, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-custom-border-200 bg-custom-sidebar-background-100 text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100"
-                >
-                  <Icon className="h-4 w-4" />
-                </button>
-              ))}
-            </div>
-
+          <div className="grid gap-4">
             <div className="min-w-0">
-              <SgEventVideoPlayer item={playbackItem} compactEmpty={!hasPlayableVideo} seekToSeconds={pendingSeekSeconds} />
+              <SgEventVideoPlayer
+                item={playbackItem}
+                compactEmpty={!hasPlayableVideo}
+                seekToSeconds={pendingSeekSeconds}
+              />
             </div>
-            <div className={cn("min-w-0", hasPlayableVideo && "xl:col-span-2")}>
+            <div className="min-w-0">
               <div className="flex flex-col gap-4">
+                <SgEventTitleBar
+                  eventStatus={eventStatus}
+                  eventTitle={eventTitle}
+                  handleSwitchToFullStream={handleSwitchToFullStream}
+                  isTagClipActive={isTagClipActive}
+                />
+
                 <SgEventDetailsCard
                   eventDateTimeLabel={eventDateTimeLabel}
                   levelLabel={levelLabel}
@@ -471,7 +470,13 @@ export const SgEventDetailPage = ({
                 />
 
                 <SgEventTagsPanel
-                  activeFilterLabel={rowFilterMode === "all" ? "All rows" : rowFilterMode === "favorites" ? "Favorites only" : "Selected rows"}
+                  activeFilterLabel={
+                    rowFilterMode === "all"
+                      ? "All rows"
+                      : rowFilterMode === "favorites"
+                        ? "Favorites only"
+                        : "Selected rows"
+                  }
                   activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
                   allVisibleSelected={allVisibleSelected}
                   availableGroups={availableGroups}

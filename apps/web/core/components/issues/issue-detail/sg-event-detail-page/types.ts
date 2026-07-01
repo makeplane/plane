@@ -1,19 +1,15 @@
-import type { TIssue } from "@plane/types";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import type { TEventMediaDetails } from "ce/features/media-library/utils/media-event";
+import type { TIssue } from "@plane/types";
 
-export type SportTableKind =
-  | "american-football"
-  | "baseball"
-  | "soccer"
-  | "basketball"
-  | "cricket"
-  | "default";
+export type SportTableKind = "american-football" | "baseball" | "soccer" | "basketball" | "cricket" | "default";
 
 export type SportTableConfig = {
   actionLabel: string;
   defaultGroupValue: string;
   groupByLabel: string;
+  isCompactFootballTable?: boolean;
+  playerLabel?: string;
   primaryDetailLabel: string;
   secondaryDetailLabel: string;
   sport: SportTableKind;
