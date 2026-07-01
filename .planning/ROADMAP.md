@@ -13,7 +13,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | 1     | Template Catalog Foundation     | 3/3  | Complete     | 2026-06-30 |
 | 2     | Transactional Project Creation  | 3/3  | Complete     | 2026-06-30 |
 | 3     | Create Modal Template Selection | 3/3  | Complete     | 2026-07-01 |
-| 4     | Workspace Template Management   | 2/5  | In Progress  | 2026-07-01 |
+| 4     | Workspace Template Management   | 3/5  | In Progress  | 2026-07-01 |
 
 **Coverage:**
 
@@ -150,7 +150,7 @@ Plans:
 
 **Requirements:** UI-05
 
-**Plans:** 3/5 plans executed
+**Plans:** 4/5 plans executed
 
 Plans:
 **Wave 1**
@@ -164,7 +164,7 @@ Plans:
 
 **Wave 3** _(blocked on Wave 2 completion)_
 
-- [ ] 04-04-PLAN.md — Modules, Cycles, and Starter-issues editor sections with name-based reference resolution.
+- [x] 04-04-PLAN.md — Modules, Cycles, and Starter-issues editor sections with name-based reference resolution.
 - [ ] 04-05-PLAN.md — Lifecycle actions (deactivate/duplicate/reactivate) + Show-deactivated filter + phase verification.
 
 **Success Criteria:**

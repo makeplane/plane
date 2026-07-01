@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-07-01T11:55:00.000Z"
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-07-01T12:04:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 14
-  completed_plans: 12
-  percent: 85
+  completed_plans: 13
+  percent: 92
 ---
 
 # State: Plane Project Templates
 
 **Initialized:** 2026-06-29
-**Last updated:** 2026-07-01 after Phase 04-03 completion
+**Last updated:** 2026-07-01 after Phase 04-04 completion
 
 ## Project Reference
 
@@ -79,12 +79,17 @@ High-signal paths for Phase 3:
 - Exactly-one-default enforcement clears the marker for every OTHER state when one is toggled to true (single-radio over the array — RESEARCH Pitfall 3).
 - Editor color fields default to a real hex via `getRandomLabelColor()` — never the `var(--text-color-secondary)` CSS-var default (RESEARCH Pitfall 5).
 - Backend 400 (list-of-dicts) errors surface inline per-section AND as a fallback toast via `mapProjectTemplateErrors` (RESEARCH Pitfall 7).
+- Starter-issue references are stored as the SOURCE ROW's RHF field-array id (not the name); `assemblePayload` resolves each id to the source row's stable `*_key` on submit using parent-supplied id-maps. Renames never dangle references (D-12/D-13, Pitfall 2, T-04-12).
+- Cycles offset guard runs in two places: per-row inline (single bad row visually flagged) and page-level `clientErrors.cycles` (drives `isInvalid` to block Save when ANY row violates).
+- Module status constrained to the six-value enum via CustomSelect; backend parity preserved (no description field — backend `TProjectTemplateModule`/`TProjectTemplateCycle` types don't carry it).
+- `assemblePayload` signature changed to `(form, context = {})`; existing callers unaffected (no other callers exist in this repo). Resolution context is consumed only by the starter-issue branch.
+- Multi-label starter-issue selection renders as a row of toggle chips rather than a search-style multi-select primitive; consistent with the "compose only existing primitives" UI-SPEC constraint.
 
 ## Session
 
-**Last session:** 2026-07-01T11:55:00.000Z
-**Stopped at:** Completed 04-03-PLAN.md
-**Resume file:** .planning/phases/04-workspace-template-management/04-04-PLAN.md
+**Last session:** 2026-07-01T12:04:00.000Z
+**Stopped at:** Completed 04-04-PLAN.md
+**Resume file:** .planning/phases/04-workspace-template-management/04-05-PLAN.md
 
 ## Accumulated Context
 
@@ -102,3 +107,4 @@ High-signal paths for Phase 3:
 | Phase 04 P01 | 15min | 2 tasks  | 3 files  |
 | Phase 04 P02 | 22min | 2 tasks  | 6 files  |
 | Phase 04 P03 | 53min | 2 tasks  | 16 files |
+| Phase 04 P04 | 30min | 2 tasks  | 7 files  |
