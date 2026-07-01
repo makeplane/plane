@@ -176,3 +176,7 @@ export interface ISearchIssueResponse {
 export type TPartialProject = IPartialProject;
 
 export type TProject = TPartialProject & IProject;
+
+export type TProjectCreatePayload = Partial<TProject> & {
+  template_id?: string;
+};
