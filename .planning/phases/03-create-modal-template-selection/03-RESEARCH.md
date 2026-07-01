@@ -208,7 +208,7 @@ packages/types/src/project/
 └── index.ts              # Export new template type file if created
 
 packages/constants/src/
-└── fetch-keys.ts         # Optional WORKSPACE_PROJECT_TEMPLATES key for SWR consistency
+└── fetch-keys.ts         # Add WORKSPACE_PROJECT_TEMPLATES key for SWR consistency
 ```
 
 ### Pattern 1: Local Submit-Time Payload Extension
@@ -336,7 +336,7 @@ const {
   isLoading,
   mutate,
 } = useSWR(
-  workspaceSlug ? `WORKSPACE_PROJECT_TEMPLATES_${workspaceSlug.toUpperCase()}` : null,
+  workspaceSlug ? WORKSPACE_PROJECT_TEMPLATES(workspaceSlug) : null,
   workspaceSlug ? () => projectService.getProjectTemplates(workspaceSlug) : null,
   { revalidateIfStale: false, revalidateOnFocus: false }
 );
@@ -396,17 +396,15 @@ export type TProjectTemplate = {
 | A1  | Exact frontend type names such as `TProjectTemplate` and `TProjectCreatePayload` are recommendations, not locked existing names. [ASSUMED] | Code Examples / Standard Stack       | Planner may choose different names, but must preserve field shape and payload typing.                             |
 | A2  | A local Combobox implementation may be simpler than extending `CustomSearchSelect` for the full state matrix. [ASSUMED]                    | Alternatives / Architecture Patterns | Planner should inspect implementation effort before locking; either approach is acceptable if UI contract is met. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should new i18n keys be added for selector copy?**
    - What we know: Existing create modal uses `useTranslation`, while UI spec locks exact English copy. [VERIFIED: codebase grep; VERIFIED: `.planning/phases/03-create-modal-template-selection/03-UI-SPEC.md`]
-   - What's unclear: Whether Plane wants new locale keys for `Template`, `Search templates`, `No template`, and error/empty text in this MVP. [ASSUMED]
-   - Recommendation: Prefer `t(...)` if matching keys already exist; otherwise planner should include a small i18n-key task or document literal-copy acceptance. [ASSUMED]
+   - Resolution: Use UI-SPEC copy through existing i18n conventions where practical. If an exact existing key is available, use `t(...)`; if no exact key exists, the Phase 03 plans may keep the UI-SPEC literal copy local to `ProjectTemplateSelect` because local component copy is already present in frontend code paths such as Plane dropdown loading states. Do not add broad locale churn for this narrow selector unless the executor finds an established nearby key namespace that can be updated surgically. [VERIFIED: `packages/ui/src/dropdowns/custom-search-select.tsx`; VERIFIED: codebase grep]
 
 2. **Should `WORKSPACE_PROJECT_TEMPLATES` be added to `packages/constants/src/fetch-keys.ts`?**
    - What we know: Existing SWR keys are centralized for many workspace/project resources. [VERIFIED: `packages/constants/src/fetch-keys.ts`]
-   - What's unclear: Some components still use inline keys, so a constant is a convention, not a hard requirement. [VERIFIED: `apps/web/ce/components/projects/page.tsx`]
-   - Recommendation: Add a constant if touching `packages/constants` is acceptable; otherwise use a clear inline key in the selector. [ASSUMED]
+   - Resolution: Add and use `WORKSPACE_PROJECT_TEMPLATES(workspaceSlug)` for the selector SWR key. This keeps the new catalog fetch aligned with the planned service-layer integration and with existing workspace/project fetch-key conventions. [VERIFIED: `packages/constants/src/fetch-keys.ts`]
 
 ## Environment Availability
 
