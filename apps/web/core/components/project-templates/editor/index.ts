@@ -7,3 +7,6 @@
 export { ProjectTemplateEditorRoot } from "./root";
 export { StatesSection } from "./states-section";
 export { LabelsSection } from "./labels-section";
+export { ModulesSection } from "./modules-section";
+export { CyclesSection } from "./cycles-section";
+export { StarterIssuesSection } from "./starter-issues-section";

@@ -22,7 +22,7 @@ import { ProjectService } from "@/services/project";
 // local imports
 import type { TProjectTemplateForm } from "../utils";
 import { assemblePayload, emptyTemplatePayload, mapProjectTemplateErrors } from "../utils";
-import { LabelsSection, StatesSection } from "./";
+import { CyclesSection, LabelsSection, ModulesSection, StarterIssuesSection, StatesSection } from "./";
 
 type TProjectTemplateEditorRoot = {
   workspaceSlug: string;
@@ -143,14 +143,59 @@ export const ProjectTemplateEditorRoot = observer(function ProjectTemplateEditor
 
   const states = useFieldArray({ control, name: "payload.states" });
   const labels = useFieldArray({ control, name: "payload.labels" });
+  const modules = useFieldArray({ control, name: "payload.modules" });
+  const cycles = useFieldArray({ control, name: "payload.cycles" });
+  const starterIssues = useFieldArray({ control, name: "payload.starter_issues" });
 
   const name = watch("name");
   const watchedStates = watch("payload.states");
   const watchedLabels = watch("payload.labels");
+  const watchedModules = watch("payload.modules");
+  const watchedCycles = watch("payload.cycles");
+  const watchedStarterIssues = watch("payload.starter_issues");
+
+  // Build id -> stable_key lookup tables from the field-array `fields`. These
+  // are passed into `assemblePayload` so starter-issue references resolve to
+  // the current stable key without ever reading the name (Pitfall 2).
+  const stateKeyById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const s of states.fields) {
+      if (s.state_key) map[s.id] = s.state_key;
+    }
+    return map;
+  }, [states.fields]);
+  const labelKeyById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const l of labels.fields) {
+      if (l.label_key) map[l.id] = l.label_key;
+    }
+    return map;
+  }, [labels.fields]);
+  const moduleKeyById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const m of modules.fields) {
+      if (m.module_key) map[m.id] = m.module_key;
+    }
+    return map;
+  }, [modules.fields]);
+  const cycleKeyById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const c of cycles.fields) {
+      if (c.cycle_key) map[c.id] = c.cycle_key;
+    }
+    return map;
+  }, [cycles.fields]);
 
   // Client guards (UI-SPEC Interaction Contracts). Backend remains authoritative.
   const clientErrors = useMemo(() => {
-    const errs: { states?: string; labels?: string; submit?: string } = {};
+    const errs: {
+      states?: string;
+      labels?: string;
+      modules?: string;
+      cycles?: string;
+      starter_issues?: string;
+      submit?: string;
+    } = {};
     const stateNames = (watchedStates ?? []).map((s) => (s.name ?? "").trim()).filter(Boolean);
     if (stateNames.length === 0)
       errs.states = t("workspace_settings.settings.project_templates.editor.name_required_inline");
@@ -165,11 +210,38 @@ export const ProjectTemplateEditorRoot = observer(function ProjectTemplateEditor
     if (labelNames.length > 0 && new Set(labelNames).size !== labelNames.length) {
       errs.labels = t("workspace_settings.settings.project_templates.editor.duplicate_label_name");
     }
+    const moduleNames = (watchedModules ?? []).map((m) => (m.name ?? "").trim()).filter(Boolean);
+    if (moduleNames.length > 0 && new Set(moduleNames).size !== moduleNames.length) {
+      errs.modules = t("workspace_settings.settings.project_templates.editor.duplicate_module_name");
+    }
+    // Cycles offset guard (RESEARCH Pitfall 4): start_offset_days must be <= target_offset_days.
+    const cycleOffsetViolation = (watchedCycles ?? []).some((c) => {
+      const start = c.start_offset_days;
+      const target = c.target_offset_days;
+      return typeof start === "number" && typeof target === "number" && start > target;
+    });
+    if (cycleOffsetViolation) {
+      errs.cycles = t("workspace_settings.settings.project_templates.editor.cycle_offsets_invalid");
+    }
+    // Starter-issue guard: every starter issue must reference a state
+    // (backend enforces it — serializers/project_template.py:528-536).
+    const starterIssueMissingState = (watchedStarterIssues ?? []).some(
+      (i) => (i.name ?? "").trim() !== "" && !i.state_ref_id
+    );
+    if (starterIssueMissingState) {
+      errs.starter_issues = t("workspace_settings.settings.project_templates.editor.starter_issue_state_required");
+    }
     return errs;
-  }, [watchedStates, watchedLabels, t]);
+  }, [watchedStates, watchedLabels, watchedModules, watchedCycles, watchedStarterIssues, t]);
 
   const isInvalid =
-    (name ?? "").trim().length === 0 || (name ?? "").length > 255 || !!clientErrors.states || !!clientErrors.labels;
+    (name ?? "").trim().length === 0 ||
+    (name ?? "").length > 255 ||
+    !!clientErrors.states ||
+    !!clientErrors.labels ||
+    !!clientErrors.modules ||
+    !!clientErrors.cycles ||
+    !!clientErrors.starter_issues;
 
   const handleCancel = () => {
     router.push(`/${workspaceSlug}/settings/templates`);
@@ -180,7 +252,12 @@ export const ProjectTemplateEditorRoot = observer(function ProjectTemplateEditor
     clearErrors();
 
     try {
-      const payload = assemblePayload(formData);
+      const payload = assemblePayload(formData, {
+        stateKeyById,
+        labelKeyById,
+        moduleKeyById,
+        cycleKeyById,
+      });
       const fullPayload = {
         name: (formData.name ?? "").trim(),
         description: (formData.description ?? "").toString(),
@@ -283,7 +360,7 @@ export const ProjectTemplateEditorRoot = observer(function ProjectTemplateEditor
         />
       </div>
 
-      {/* Sections — Phase 1: States + Labels (Plan 04 adds the other three) */}
+      {/* Sections — States + Labels (Plan 04-03) + Modules + Cycles (Plan 04-04) + Starter issues (Plan 04-04) */}
       <StatesSection
         control={control}
         array={states}
@@ -298,6 +375,34 @@ export const ProjectTemplateEditorRoot = observer(function ProjectTemplateEditor
         disabled={readOnly}
         clientError={clientErrors.labels}
         backendError={backendMessages.labels}
+      />
+
+      <ModulesSection
+        control={control}
+        array={modules}
+        disabled={readOnly}
+        clientError={clientErrors.modules}
+        backendError={backendMessages.modules}
+      />
+
+      <CyclesSection
+        control={control}
+        array={cycles}
+        disabled={readOnly}
+        clientError={clientErrors.cycles}
+        backendError={backendMessages.cycles}
+      />
+
+      <StarterIssuesSection
+        control={control}
+        array={starterIssues}
+        disabled={readOnly}
+        clientError={clientErrors.starter_issues}
+        backendError={backendMessages.starter_issues}
+        stateOptions={states.fields.map((f) => ({ id: f.id, name: f.name, color: f.color }))}
+        labelOptions={labels.fields.map((f) => ({ id: f.id, name: f.name, color: f.color }))}
+        moduleOptions={modules.fields.map((f) => ({ id: f.id, name: f.name }))}
+        cycleOptions={cycles.fields.map((f) => ({ id: f.id, name: f.name }))}
       />
 
       {/* Footer action bar */}
