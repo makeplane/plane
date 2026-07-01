@@ -8,9 +8,11 @@
 
 This phase delivers a discoverable workspace-settings UI where workspace admins manage custom Project Templates. It adds a "Project Templates" page under workspace settings that lists built-in (read-only) and custom (editable) templates, and provides a structured editor to create, edit, deactivate/reactivate, and duplicate custom templates covering states, labels, modules, cycles, and starter issues.
 
-The backend CRUD API (list / create / PATCH update / DELETE soft-deactivate / duplicate) and the TypeScript template types already exist from Phases 1 and 3. This phase is net-new frontend: settings navigation wiring, list/management screens, the structured template editor, and the frontend service methods that call the existing endpoints.
+The backend CRUD API (list / create / PATCH update / DELETE soft-deactivate / duplicate) and the TypeScript template types already exist from Phases 1 and 3. This phase is primarily net-new frontend: settings navigation wiring, list/management screens, the structured template editor, and the frontend service methods that call the existing endpoints.
 
-This phase does NOT change backend template semantics, does NOT change the create-Project-modal selector (Phase 3), does NOT add template import/export, duplication of existing Projects into templates, version history, or a visual workflow builder — those are out of scope / v2.
+**One small backend slice is in scope (added during planning research):** the existing list endpoint hard-filters `is_active=True` and the writable-lookup 404s inactive templates, so decisions D-06 ("Show deactivated") and D-07 ("Reactivate") cannot be built frontend-only. This phase therefore adds a minimal backend change to `apps/api` to enable listing and reactivating deactivated **custom workspace** templates (see D-14/D-15), plus backend tests. See [[the-backend-support-for-deactivated-templates]] rationale in D-14/D-15.
+
+This phase does NOT otherwise change backend template semantics, does NOT change the create-Project-modal selector (Phase 3) — its default list behavior must stay active-only — does NOT add template import/export, duplication of existing Projects into templates, version history, or a visual workflow builder — those are out of scope / v2.
 
 </domain>
 
@@ -41,6 +43,11 @@ This phase does NOT change backend template semantics, does NOT change the creat
 - **D-11:** Each of the 5 sections (states / labels / modules / cycles / starter issues) is an **inline reorderable list** of add/edit/remove rows, with drag-to-reorder where order matters (states, labels), modeled on the existing project-states editor.
 - **D-12:** Payload reference keys (`state_key`, `label_key`, `module_key`, `cycle_key`) are **auto-generated and hidden** — slugified from the item name with uniqueness enforced. Admins never see or edit raw keys; they work with names.
 - **D-13:** Starter-issue references (state / labels / module / cycle) are **dropdowns populated from the items defined in the sections above**, picked by name and resolved to keys on save — preventing dangling references the backend would reject.
+
+### Backend Support for Deactivated Templates
+
+- **D-14:** Add an opt-in `include_inactive` query parameter to the workspace project-templates **list** endpoint. It defaults to false so the Phase 3 create-modal selector (which calls the same endpoint) keeps returning active templates only. When `true` (used only by the management UI), the response also includes deactivated **custom workspace** templates. Built-in/system templates remain active-only and read-only regardless.
+- **D-15:** Add an admin-only, workspace-scoped way to **reactivate** a deactivated custom template (set `is_active=true`). It must reject built-in/system templates and foreign-workspace templates (consistent with the existing writable-lookup 400/404 behavior). A dedicated reactivate action is preferred over loosening the general writable-lookup so the existing edit/deactivate guarantees stay intact. Backend tests must cover include_inactive listing, reactivation, permission enforcement, and that built-ins/foreign templates are rejected.
 
 ### Claude's Discretion
 
@@ -95,11 +102,12 @@ This phase does NOT change backend template semantics, does NOT change the creat
 - `apps/web/ce/components/projects/create/template-select.tsx` — Existing list-fetch example (SWR key `WORKSPACE_PROJECT_TEMPLATES`); mirror service/fetch-key conventions in the management UI.
 - `packages/constants/src/fetch-keys.ts` — Fetch-key definitions; add management-list/detail keys as needed.
 
-### Backend API Contract (already implemented — do not change)
+### Backend API Contract (mostly implemented — small additions per D-14/D-15)
 
-- `apps/api/plane/app/urls/workspace.py` — Endpoints: `GET/POST /api/workspaces/<slug>/project-templates/`, `GET/PATCH/DELETE /api/workspaces/<slug>/project-templates/<pk>/`, `POST /api/workspaces/<slug>/project-templates/<pk>/duplicate/`.
-- `apps/api/plane/app/views/workspace/project_template.py` — Verb→role→behavior matrix: list (ADMIN+MEMBER, union of active custom + active built-ins), create/update/destroy/duplicate (ADMIN only); DELETE is soft-deactivate (`is_active=False`, 204); built-ins reject mutation with 400/404.
+- `apps/api/plane/app/urls/workspace.py` — Endpoints: `GET/POST /api/workspaces/<slug>/project-templates/`, `GET/PATCH/DELETE /api/workspaces/<slug>/project-templates/<pk>/`, `POST /api/workspaces/<slug>/project-templates/<pk>/duplicate/`. **This phase adds** a reactivate route (D-15) and honors `?include_inactive` on the list route (D-14).
+- `apps/api/plane/app/views/workspace/project_template.py` — Verb→role→behavior matrix: list (ADMIN+MEMBER, union of active custom + active built-ins), create/update/destroy/duplicate (ADMIN only); DELETE is soft-deactivate (`is_active=False`, 204); built-ins reject mutation with 400/404. **This phase modifies** `get_queryset`/`list` to honor `include_inactive` (default false, D-14) and adds an admin-only reactivate path (D-15), preserving existing active-only defaults and built-in/foreign rejection.
 - `apps/api/plane/app/serializers/project_template.py` — `ProjectTemplateSerializer` (read), `ProjectTemplateWriteSerializer` (create/update: `name, description, payload, offset fields`; blocks `is_system`/`system_key`), `ProjectTemplateDuplicateSerializer` (optional `name`), and `validate_project_template_payload` rules the editor must satisfy.
+- `apps/api/plane/tests/` — Backend pytest area (Docker `docker-compose-test.yml` flow). Add tests for `include_inactive` listing, reactivation, and permission/rejection behavior (D-15).
 
 </canonical_refs>
 
