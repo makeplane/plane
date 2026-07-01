@@ -25,6 +25,10 @@ def get_project_template_duplicate_url(workspace_slug: str, pk) -> str:
     return f"/api/workspaces/{workspace_slug}/project-templates/{pk}/duplicate/"
 
 
+def get_project_template_reactivate_url(workspace_slug: str, pk) -> str:
+    return f"/api/workspaces/{workspace_slug}/project-templates/{pk}/reactivate/"
+
+
 @pytest.fixture
 def seeded_builtin_templates(db):
     """Idempotently create the three built-in project templates for tests.
@@ -673,3 +677,200 @@ class TestProjectTemplateDuplicateAPI:
             format="json",
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.contract
+class TestProjectTemplateIncludeInactiveListAPI:
+    """Contract tests for the opt-in ``include_inactive`` list parameter (D-14).
+
+    Default list behavior stays active-only so the Phase 3 create-modal selector
+    (same endpoint) is unaffected; ``include_inactive=true`` additionally surfaces
+    deactivated CUSTOM workspace templates, but never inactive built-ins.
+    """
+
+    @pytest.mark.django_db
+    def test_list_includes_inactive_custom_when_flag_set(
+        self, session_client, workspace, create_user, seeded_builtin_templates
+    ):
+        """Admin GET with include_inactive=true returns deactivated custom rows; default omits them."""
+        template = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Deactivated Custom",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=False,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        # Default list (no param) must omit the inactive custom row (Phase 3 default, D-14).
+        default_response = session_client.get(get_project_templates_url(workspace.slug))
+        assert default_response.status_code == status.HTTP_200_OK
+        default_names = {row["name"] for row in default_response.json()}
+        assert "Deactivated Custom" not in default_names
+        # With include_inactive=true the deactivated custom row is present.
+        included_response = session_client.get(
+            get_project_templates_url(workspace.slug),
+            {"include_inactive": "true"},
+        )
+        assert included_response.status_code == status.HTTP_200_OK
+        included = included_response.json()
+        included_ids = {row["id"] for row in included}
+        included_names = {row["name"] for row in included}
+        assert str(template.id) in included_ids
+        assert "Deactivated Custom" in included_names
+
+    @pytest.mark.django_db
+    def test_list_include_inactive_excludes_inactive_builtins(
+        self, session_client, workspace, seeded_builtin_templates
+    ):
+        """An inactive built-in is never returned, even with include_inactive=true (D-14)."""
+        builtin = ProjectTemplate.objects.filter(is_system=True).first()
+        builtin.is_active = False
+        builtin.save(update_fields=["is_active"])
+        response = session_client.get(
+            get_project_templates_url(workspace.slug),
+            {"include_inactive": "true"},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        returned_ids = {row["id"] for row in response.json()}
+        assert str(builtin.id) not in returned_ids
+
+
+@pytest.mark.contract
+class TestProjectTemplateReactivateAPI:
+    """Contract tests for the admin-only reactivate action (D-15).
+
+    Reactivate flips a deactivated CUSTOM workspace template back to
+    ``is_active=True``. It rejects built-in/system templates (400) and
+    foreign/unknown templates (404), and is admin-only (member/guest 403).
+    """
+
+    @pytest.mark.django_db
+    def test_reactivate_sets_is_active_true(
+        self, session_client, workspace, create_user, seeded_builtin_templates
+    ):
+        """Admin reactivate on a deactivated custom row returns 200, flips is_active, and re-lists it."""
+        template = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Reactivate Me",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=False,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        response = session_client.post(
+            get_project_template_reactivate_url(workspace.slug, template.id),
+            {},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, response.content
+        data = response.json()
+        assert data["is_active"] is True
+        assert data["id"] == str(template.id)
+        template.refresh_from_db()
+        assert template.is_active is True
+        # After reactivation the default list (active-only) includes it again.
+        list_response = session_client.get(get_project_templates_url(workspace.slug))
+        list_names = {row["name"] for row in list_response.json()}
+        assert "Reactivate Me" in list_names
+
+    @pytest.mark.django_db
+    def test_reactivate_rejects_builtin(
+        self, session_client, workspace, seeded_builtin_templates
+    ):
+        """Reactivate against a built-in template is rejected with 400 and does not mutate it."""
+        builtin = ProjectTemplate.objects.filter(is_system=True).first()
+        original_active = builtin.is_active
+        response = session_client.post(
+            get_project_template_reactivate_url(workspace.slug, builtin.id),
+            {},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        builtin.refresh_from_db()
+        assert builtin.is_active == original_active
+        assert builtin.is_system is True
+
+    @pytest.mark.django_db
+    def test_reactivate_foreign_or_unknown_returns_404(
+        self, session_client, workspace, create_user, seeded_builtin_templates
+    ):
+        """Reactivate against a foreign-workspace row or a random uuid both return 404."""
+        import uuid
+
+        other_workspace = workspace.__class__.objects.create(
+            name="Reactivate Other Workspace",
+            owner=create_user,
+            slug="reactivate-other-workspace",
+        )
+        WorkspaceMember.objects.create(
+            workspace=other_workspace, member=create_user, role=20
+        )
+        foreign_template = ProjectTemplate.objects.create(
+            workspace=other_workspace,
+            name="Foreign Reactivate Target",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=False,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        foreign_response = session_client.post(
+            get_project_template_reactivate_url(workspace.slug, foreign_template.id),
+            {},
+            format="json",
+        )
+        assert foreign_response.status_code == status.HTTP_404_NOT_FOUND
+        foreign_template.refresh_from_db()
+        assert foreign_template.is_active is False
+
+        unknown_response = session_client.post(
+            get_project_template_reactivate_url(workspace.slug, uuid.uuid4()),
+            {},
+            format="json",
+        )
+        assert unknown_response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    def test_reactivate_forbidden_for_member_and_guest(
+        self, workspace, create_user, seeded_builtin_templates
+    ):
+        """Members (role=15) and guests (role=5) cannot reactivate custom templates (403)."""
+        template = ProjectTemplate.objects.create(
+            workspace=workspace,
+            name="Non Admin Reactivate Target",
+            template_type=ProjectTemplate.TemplateType.CUSTOM,
+            is_system=False,
+            is_active=False,
+            payload=_minimal_valid_payload(),
+            created_by=create_user,
+        )
+        member = User.objects.create_user(email="m6@example.com", username="m6")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=member, role=15, is_active=True
+        )
+        member_client = APIClient()
+        member_client.force_authenticate(user=member)
+        member_response = member_client.post(
+            get_project_template_reactivate_url(workspace.slug, template.id),
+            {},
+            format="json",
+        )
+        assert member_response.status_code == status.HTTP_403_FORBIDDEN
+
+        guest = User.objects.create_user(email="g6@example.com", username="g6")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=guest, role=5, is_active=True
+        )
+        guest_client = APIClient()
+        guest_client.force_authenticate(user=guest)
+        guest_response = guest_client.post(
+            get_project_template_reactivate_url(workspace.slug, template.id),
+            {},
+            format="json",
+        )
+        assert guest_response.status_code == status.HTTP_403_FORBIDDEN
+
+        template.refresh_from_db()
+        assert template.is_active is False
