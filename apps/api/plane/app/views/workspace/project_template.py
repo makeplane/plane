@@ -31,12 +31,24 @@ class WorkspaceProjectTemplateViewSet(BaseViewSet):
     model = ProjectTemplate
 
     def get_queryset(self):
-        # Combine active global built-ins with active custom templates for the
-        # current workspace. The list endpoint serves a single union so the
-        # frontend can render built-ins and customs in one pass.
+        # Combine active global built-ins with custom templates for the current
+        # workspace. The list endpoint serves a single union so the frontend can
+        # render built-ins and customs in one pass.
+        #
+        # ``include_inactive`` (D-14) is opt-in and defaults false so the Phase 3
+        # create-modal selector (same endpoint) keeps returning active-only rows.
+        # When true it additionally surfaces deactivated CUSTOM workspace rows;
+        # built-ins always stay active-only regardless of the flag.
+        include_inactive = self.request.query_params.get("include_inactive") in (
+            "true",
+            "1",
+            "True",
+        )
+        custom_q = Q(workspace__slug=self.kwargs.get("slug"), is_system=False)
+        if not include_inactive:
+            custom_q &= Q(is_active=True)
         return ProjectTemplate.objects.filter(
-            Q(workspace__slug=self.kwargs.get("slug"), is_active=True, is_system=False)
-            | Q(is_system=True, is_active=True, workspace__isnull=True)
+            custom_q | Q(is_system=True, is_active=True, workspace__isnull=True)
         ).distinct()
 
     def _get_writable_template(self, slug, pk):
@@ -154,3 +166,37 @@ class WorkspaceProjectTemplateViewSet(BaseViewSet):
         )
         read_serializer = ProjectTemplateSerializer(copy)
         return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def reactivate(self, request, slug, pk):
+        """Reactivate a deactivated custom workspace template (D-15).
+
+        Deliberately accepts an INACTIVE candidate (unlike
+        ``_get_writable_template``, which 404s inactive rows) — reactivation is
+        the whole point. Built-in/system rows are rejected with 400 and
+        cross-workspace or unknown rows return 404, mirroring the writable-lookup
+        rejection contract so callers cannot probe or mutate foreign templates.
+        ``_get_writable_template`` is left untouched so edit/deactivate keep their
+        active-only guarantee.
+        """
+        candidate = ProjectTemplate.objects.filter(pk=pk).first()
+        if not candidate:
+            return Response(
+                {"error": "Template not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if candidate.is_system:
+            return Response(
+                {"error": "Built-in templates cannot be modified through custom routes"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if candidate.workspace_id is None or candidate.workspace.slug != slug:
+            return Response(
+                {"error": "Template not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        candidate.is_active = True
+        candidate.save(update_fields=["is_active", "updated_at"])
+        return Response(
+            ProjectTemplateSerializer(candidate).data, status=status.HTTP_200_OK
+        )

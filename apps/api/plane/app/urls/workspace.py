@@ -280,4 +280,9 @@ urlpatterns = [
         WorkspaceProjectTemplateViewSet.as_view({"post": "duplicate"}),
         name="workspace-project-templates",
     ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:pk>/reactivate/",
+        WorkspaceProjectTemplateViewSet.as_view({"post": "reactivate"}),
+        name="workspace-project-templates",
+    ),
 ]
