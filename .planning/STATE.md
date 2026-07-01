@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-07-01T09:16:15.967Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-07-01T11:09:33.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 14
-  completed_plans: 10
-  percent: 71
+  completed_plans: 11
+  percent: 78
 ---
 
 # State: Plane Project Templates
@@ -23,7 +23,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-29)
 
 **Core value:** Creating a new Project should produce a useful, ready-to-work structure immediately instead of an empty shell that admins must configure by hand every time.
-**Current focus:** Phase 04 — Workspace Template Management
+**Current focus:** Phase 04 — workspace-template-management
 
 ## Current Status
 
@@ -71,12 +71,15 @@ High-signal paths for Phase 3:
 - Limit custom template management to workspace admins.
 - include_inactive list param defaults false so the Phase 3 create-modal selector stays active-only (D-14).
 - Reactivation is a dedicated admin-only action; \_get_writable_template stays active-only (D-15).
+- Defer /new and /:templateId/edit route registrations to Plan 03/05 so each plan's typegen gate is self-consistent.
+- Built-in rows render muted text-tertiary metadata (no edit controls) — provenance conveyed by section heading, not row tint (per UI-SPEC Color).
+- Custom-empty branch uses EmptyStateCompact; system section falls back to a dashed-border helper (system templates are always expected to be populated).
 
 ## Session
 
-**Last session:** 2026-07-01T09:16:15.957Z
-**Stopped at:** Completed 04-01-PLAN.md
-**Resume file:** .planning/phases/04-workspace-template-management/04-02-PLAN.md
+**Last session:** 2026-07-01T11:09:33.000Z
+**Stopped at:** Completed 04-02-PLAN.md
+**Resume file:** .planning/phases/04-workspace-template-management/04-03-PLAN.md
 
 ## Accumulated Context
 
@@ -92,3 +95,4 @@ High-signal paths for Phase 3:
 | Phase 03 P02 | 36min | 2 tasks  | 4 files |
 | Phase 03 P03 | 17min | 3 tasks  | 1 file  |
 | Phase 04 P01 | 15min | 2 tasks  | 3 files |
+| Phase 04 P02 | 22min | 2 tasks  | 6 files |
