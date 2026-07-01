@@ -13,7 +13,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | 1     | Template Catalog Foundation     | 3/3  | Complete     | 2026-06-30 |
 | 2     | Transactional Project Creation  | 3/3  | Complete     | 2026-06-30 |
 | 3     | Create Modal Template Selection | 3/3  | Complete     | 2026-07-01 |
-| 4     | Workspace Template Management   | 2/5  | In Progress  |            |
+| 4     | Workspace Template Management   | 2/5  | In Progress  | 2026-07-01 |
 
 **Coverage:**
 
@@ -150,7 +150,7 @@ Plans:
 
 **Requirements:** UI-05
 
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 **Wave 1**
@@ -160,7 +160,7 @@ Plans:
 
 **Wave 2** _(blocked on Wave 1 completion)_
 
-- [ ] 04-03-PLAN.md — Full-page editor (new/edit) with service methods, States + Labels sections, atomic save.
+- [x] 04-03-PLAN.md — Full-page editor (new/edit) with service methods, States + Labels sections, atomic save.
 
 **Wave 3** _(blocked on Wave 2 completion)_
 

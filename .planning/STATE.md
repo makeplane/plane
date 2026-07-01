@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-07-01T11:09:33.000Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-07-01T11:55:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 14
-  completed_plans: 11
-  percent: 78
+  completed_plans: 12
+  percent: 85
 ---
 
 # State: Plane Project Templates
 
 **Initialized:** 2026-06-29
-**Last updated:** 2026-07-01 after Phase 03 completion
+**Last updated:** 2026-07-01 after Phase 04-03 completion
 
 ## Project Reference
 
@@ -74,12 +74,17 @@ High-signal paths for Phase 3:
 - Defer /new and /:templateId/edit route registrations to Plan 03/05 so each plan's typegen gate is self-consistent.
 - Built-in rows render muted text-tertiary metadata (no edit controls) — provenance conveyed by section heading, not row tint (per UI-SPEC Color).
 - Custom-empty branch uses EmptyStateCompact; system section falls back to a dashed-border helper (system templates are always expected to be populated).
+- Editor form shape already declares `modules`/`cycles`/`starter_issues` empty arrays so Plan 04 only wires UI (no type renumbering).
+- Reference keys are generated ONCE at add-time and stored on the form item; never recomputed at submit (D-12 / RESEARCH Pitfall 2).
+- Exactly-one-default enforcement clears the marker for every OTHER state when one is toggled to true (single-radio over the array — RESEARCH Pitfall 3).
+- Editor color fields default to a real hex via `getRandomLabelColor()` — never the `var(--text-color-secondary)` CSS-var default (RESEARCH Pitfall 5).
+- Backend 400 (list-of-dicts) errors surface inline per-section AND as a fallback toast via `mapProjectTemplateErrors` (RESEARCH Pitfall 7).
 
 ## Session
 
-**Last session:** 2026-07-01T11:09:33.000Z
-**Stopped at:** Completed 04-02-PLAN.md
-**Resume file:** .planning/phases/04-workspace-template-management/04-03-PLAN.md
+**Last session:** 2026-07-01T11:55:00.000Z
+**Stopped at:** Completed 04-03-PLAN.md
+**Resume file:** .planning/phases/04-workspace-template-management/04-04-PLAN.md
 
 ## Accumulated Context
 
@@ -89,10 +94,11 @@ High-signal paths for Phase 3:
 
 ## Performance Metrics
 
-| Phase        | Plan  | Duration | Notes   |
-| ------------ | ----- | -------- | ------- |
-| Phase 03 P01 | 35min | 2 tasks  | 6 files |
-| Phase 03 P02 | 36min | 2 tasks  | 4 files |
-| Phase 03 P03 | 17min | 3 tasks  | 1 file  |
-| Phase 04 P01 | 15min | 2 tasks  | 3 files |
-| Phase 04 P02 | 22min | 2 tasks  | 6 files |
+| Phase        | Plan  | Duration | Notes    |
+| ------------ | ----- | -------- | -------- |
+| Phase 03 P01 | 35min | 2 tasks  | 6 files  |
+| Phase 03 P02 | 36min | 2 tasks  | 4 files  |
+| Phase 03 P03 | 17min | 3 tasks  | 1 file   |
+| Phase 04 P01 | 15min | 2 tasks  | 3 files  |
+| Phase 04 P02 | 22min | 2 tasks  | 6 files  |
+| Phase 04 P03 | 53min | 2 tasks  | 16 files |
