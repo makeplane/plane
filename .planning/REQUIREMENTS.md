@@ -61,7 +61,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **UI-02**: Selecting a template updates the create Project form state and sends the selected `template_id` with the create request.
 - [x] **UI-03**: The selected template is visually clear before submit.
 - [x] **UI-04**: Template loading, empty, and error states are handled without blocking no-template Project creation.
-- [ ] **UI-05**: Workspace admins have a discoverable workspace settings area for managing custom Project Templates.
+- [x] **UI-05**: Workspace admins have a discoverable workspace settings area for managing custom Project Templates.
 
 ### Verification
 
@@ -140,7 +140,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-02       | Phase 3 | Complete |
 | UI-03       | Phase 3 | Complete |
 | UI-04       | Phase 3 | Complete |
-| UI-05       | Phase 4 | Pending  |
+| UI-05       | Phase 4 | Complete |
 | VER-01      | Phase 2 | Complete |
 | VER-02      | Phase 2 | Complete |
 | VER-03      | Phase 2 | Complete |
