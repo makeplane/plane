@@ -11,11 +11,12 @@ import type {
   ISearchIssueResponse,
   TProjectAnalyticsCount,
   TProjectAnalyticsCountParams,
+  TProject,
+  TProjectCreatePayload,
   TProjectIssuesSearchParams,
+  TProjectTemplate,
+  TPartialProject,
 } from "@plane/types";
-// helpers
-// plane web types
-import type { TProject, TPartialProject } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -24,11 +25,19 @@ export class ProjectService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createProject(workspaceSlug: string, data: Partial<TProject>): Promise<TProject> {
+  async createProject(workspaceSlug: string, data: TProjectCreatePayload): Promise<TProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
+      });
+  }
+
+  async getProjectTemplates(workspaceSlug: string): Promise<TProjectTemplate[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-templates/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 
