@@ -22,6 +22,9 @@ export interface IEvaImporterConfig {
   lists_as_cycles?: boolean;
   fix_versions_as_modules?: boolean;
   state_mappings?: Record<string, string>;
+  testcase_project_id?: string;
+  import_tasks?: boolean;
+  import_testcases?: boolean;
 }
 
 export interface IEvaImporterData {
@@ -47,6 +50,7 @@ export interface IEvaPreviewResponse {
   users: IEvaImporterUser[];
   total_tasks?: number;
   total_comments?: number;
+  total_testcase_comments?: number;
   total_attachments?: number;
   total_documents?: number;
   total_testcases?: number;

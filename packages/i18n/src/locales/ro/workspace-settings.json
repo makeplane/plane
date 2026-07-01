@@ -215,7 +215,22 @@
           "testcases": "Cazuri de test",
           "labels": "Etichete",
           "users": "Utilizatori",
-          "cycles": "Cicluri"
+          "cycles": "Cicluri",
+          "tasks_project": "Proiect de sarcini",
+          "tasks_project_description": "Selectați proiectul Plane care va primi sarcinile EVA importate.",
+          "testcase_project": "Proiect de cazuri de test",
+          "testcase_project_description": "Selectați proiectul Plane care va primi cazurile de test EVA importate.",
+          "select_tasks_project": "Selectați proiectul de sarcini",
+          "select_testcase_project": "Selectați proiectul de cazuri de test",
+          "projects_must_differ": "Sarcinile și cazurile de test trebuie importate în proiecte Plane diferite.",
+          "import_scope": "Domeniu de import",
+          "import_scope_description": "Alegeti ce date EVA sa importati in Plane.",
+          "import_scope_required": "Selectati cel putin un domeniu de import.",
+          "import_tasks_option": "Sarcini",
+          "import_tasks_option_description": "Importati sarcini, comentarii la sarcini, atasamente si documentatie.",
+          "import_testcases_option": "Cazuri de test",
+          "import_testcases_option_description": "Importati cazuri de test si comentariile acestora.",
+          "testcase_comments": "Comentarii la cazuri de test"
         },
         "progress": {
           "queued": "Queued",

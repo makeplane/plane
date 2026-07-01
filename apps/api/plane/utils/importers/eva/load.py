@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from typing import Any
 from uuid import UUID
 
@@ -37,8 +38,6 @@ from plane.db.models import (
 from plane.utils.importers.eva.constants import EVA_EXTERNAL_SOURCE
 from plane.utils.importers.eva.client import EvaApiClient
 from plane.utils.importers.eva.media import (
-    has_broken_relative_plane_asset_links,
-    has_unmigrated_eva_video_links,
     import_inline_media,
     looks_like_broken_eva_image_html,
     looks_like_broken_eva_video_html,
@@ -57,6 +56,7 @@ class EvaLoader:
         importer: Importer,
         workspace: Workspace,
         project: Project,
+        testcase_project: Project,
         actor: User,
         config: dict[str, Any],
         data: dict[str, Any],
@@ -64,6 +64,7 @@ class EvaLoader:
         self.importer = importer
         self.workspace = workspace
         self.project = project
+        self.testcase_project = testcase_project
         self.actor = actor
         self.config = config
         self.data = data
@@ -72,34 +73,54 @@ class EvaLoader:
         self.transformer = EvaTransformer(base_url=metadata.get("url"))
         self.stats: dict[str, Any] = defaultdict(int)
         self.id_map: dict[str, str] = {}
+        self.id_project_map: dict[str, str] = {}
         self.warnings: list[str] = []
+        self.state_map: dict[str, UUID] = {}
+        self.testcase_state_map: dict[str, UUID] = {}
         self._progress_total = 1
         self._progress_completed = 0
         self._progress_phase = "setup"
         self._progress_save_every = 50
 
+    @property
+    def import_tasks(self) -> bool:
+        return bool(self.config.get("import_tasks", True))
+
+    @property
+    def import_testcases(self) -> bool:
+        return bool(self.config.get("import_testcases", True))
+
     def run(self, extracted: dict[str, Any]) -> dict[str, Any]:
         self._init_progress(extracted)
         self._update_progress("setup", force=True)
-        self._ensure_states()
+        if self.import_tasks:
+            self.state_map = self._ensure_states(self.project)
+            self._ensure_labels(extracted)
+        if self.import_testcases:
+            self.testcase_state_map = self._ensure_states(self.testcase_project)
+            self._ensure_testcase_labels(extracted)
         user_map = self._resolve_users()
-        label_map = self._ensure_labels(extracted)
-        cycle_map = self._ensure_cycles(extracted)
-        module_map = self._ensure_modules(extracted)
+        cycle_map = self._ensure_cycles(extracted) if self.import_tasks else {}
+        module_map = self._ensure_modules(extracted) if self.import_tasks else {}
         self._update_progress("setup", increment=1, force=True)
 
-        tasks = extracted.get("tasks", [])
-        ordered_tasks = self._order_tasks(tasks)
-        self._import_tasks(ordered_tasks, user_map, label_map, cycle_map, module_map)
-        self._import_testcases(extracted.get("testcases", []), user_map, label_map)
-        self._import_comments(extracted.get("comments", []), user_map)
-        self._import_attachments(extracted.get("attachments", []))
-        self._import_relations(tasks)
-        self._import_documents(extracted.get("documents", []), user_map)
+        tasks = extracted.get("tasks", []) if self.import_tasks else []
+        if self.import_tasks:
+            ordered_tasks = self._order_tasks(tasks)
+            self._import_tasks(ordered_tasks, user_map, cycle_map, module_map)
+            self._import_comments(extracted.get("comments", []), user_map)
+            self._import_attachments(extracted.get("attachments", []))
+            self._import_relations(tasks)
+            self._import_documents(extracted.get("documents", []), user_map)
+        if self.import_testcases:
+            self._import_testcases(extracted.get("testcases", []), user_map)
+            self._import_comments(extracted.get("testcase_comments", []), user_map)
+
+        final_phase = "documents" if self.import_tasks else "testcases"
 
         return {
             "progress": {
-                "phase": "documents",
+                "phase": final_phase,
                 "completed": self._progress_total,
                 "total": self._progress_total,
                 "percent": 100,
@@ -110,15 +131,22 @@ class EvaLoader:
         }
 
     def _init_progress(self, extracted: dict[str, Any]) -> None:
-        tasks = extracted.get("tasks", [])
+        tasks = extracted.get("tasks", []) if self.import_tasks else []
+        testcases = extracted.get("testcases", []) if self.import_testcases else []
+        comments = extracted.get("comments", []) if self.import_tasks else []
+        testcase_comments = extracted.get("testcase_comments", []) if self.import_testcases else []
+        attachments = extracted.get("attachments", []) if self.import_tasks else []
+        documents = extracted.get("documents", []) if self.import_tasks else []
+
         self._progress_total = (
             1
             + len(tasks)
-            + len(extracted.get("testcases", []))
-            + len(extracted.get("comments", []))
-            + len(extracted.get("attachments", []))
+            + len(testcases)
+            + len(comments)
+            + len(testcase_comments)
+            + len(attachments)
             + len(tasks)
-            + len(extracted.get("documents", []))
+            + len(documents)
         )
         self._progress_total = max(self._progress_total, 1)
         self._progress_completed = 0
@@ -149,8 +177,8 @@ class EvaLoader:
             updated_at=timezone.now(),
         )
 
-    def _ensure_states(self) -> dict[str, UUID]:
-        states = State.objects.filter(project=self.project, deleted_at__isnull=True)
+    def _ensure_states(self, project: Project) -> dict[str, UUID]:
+        states = State.objects.filter(project=project, deleted_at__isnull=True)
         grouped: dict[str, State] = {}
         for state in states:
             grouped.setdefault(state.group, state)
@@ -175,12 +203,16 @@ class EvaLoader:
             if fallback:
                 state_map["OPEN"] = fallback.id
 
-        self.state_map = state_map
         return state_map
 
     def _resolve_users(self) -> dict[str, UUID | None]:
         user_map: dict[str, UUID | None] = {}
         configured_users = self.data.get("users") or []
+        import_projects: set = set()
+        if self.import_tasks:
+            import_projects.add(self.project.id)
+        if self.import_testcases:
+            import_projects.add(self.testcase_project.id)
         for item in configured_users:
             email = (item.get("email") or "").lower()
             if not email:
@@ -195,7 +227,7 @@ class EvaLoader:
                 continue
             user = User.objects.filter(email__iexact=email).first()
             if user and ProjectMember.objects.filter(
-                project=self.project, member=user, is_active=True
+                project_id__in=import_projects, member=user, is_active=True
             ).exists():
                 user_map[email] = user.id
             else:
@@ -209,16 +241,23 @@ class EvaLoader:
         mapped = user_map.get(email.lower())
         return mapped or self.actor.id
 
-    def _ensure_labels(self, extracted: dict[str, Any]) -> dict[str, UUID]:
+    def _ensure_labels(self, extracted: dict[str, Any]) -> None:
         label_names: set[str] = set()
         for task in extracted.get("tasks", []):
             label_names.update(self.transformer.collect_labels(task))
-        label_names.add("eva-test-case")
+        self._ensure_labels_for_project(self.project, label_names)
 
+    def _ensure_testcase_labels(self, extracted: dict[str, Any]) -> None:
+        label_names: set[str] = {"eva-test-case"}
+        for testcase in extracted.get("testcases", []):
+            label_names.update(self.transformer.collect_labels(testcase))
+        self._ensure_labels_for_project(self.testcase_project, label_names)
+
+    def _ensure_labels_for_project(self, project: Project, label_names: set[str]) -> dict[str, UUID]:
         label_map: dict[str, UUID] = {}
         for name in sorted(label_names):
             existing = Label.objects.filter(
-                project=self.project,
+                project=project,
                 name=name,
                 external_source=EVA_EXTERNAL_SOURCE,
                 deleted_at__isnull=True,
@@ -228,7 +267,7 @@ class EvaLoader:
                 continue
             label = Label.objects.create(
                 name=name,
-                project=self.project,
+                project=project,
                 workspace=self.workspace,
                 created_by=self.actor,
                 external_source=EVA_EXTERNAL_SOURCE,
@@ -320,17 +359,25 @@ class EvaLoader:
             walk(root_id)
         return ordered
 
-    def _resolve_state_id(self, task: dict[str, Any]) -> UUID | None:
+    def _resolve_state_id(
+        self,
+        task: dict[str, Any],
+        *,
+        project: Project,
+        state_map: dict[str, UUID],
+    ) -> UUID | None:
         status = task.get("cache_status_type")
-        if status and status in self.state_map:
-            return self.state_map[status]
+        if status and status in state_map:
+            return state_map[status]
         group = self.transformer.map_status_group(status)
-        state = State.objects.filter(project=self.project, group=group, deleted_at__isnull=True).first()
+        state = State.objects.filter(project=project, group=group, deleted_at__isnull=True).first()
         return state.id if state else None
 
     def _get_or_create_issue(
         self,
         *,
+        project: Project,
+        state_map: dict[str, UUID],
         external_id: str,
         name: str,
         description_html: str,
@@ -338,34 +385,25 @@ class EvaLoader:
         user_map: dict[str, UUID | None],
         parent_issue_id: UUID | None = None,
         extra_labels: list[str] | None = None,
+        refresh_description_html: Callable[[dict[str, Any]], str] | None = None,
     ) -> Issue:
+        refresh_description_html = refresh_description_html or self.transformer.issue_description_html
         existing = Issue.objects.filter(
-            project=self.project,
+            project=project,
             external_source=EVA_EXTERNAL_SOURCE,
             external_id=external_id,
             deleted_at__isnull=True,
         ).first()
         if existing:
             self.id_map[external_id] = str(existing.id)
+            self.id_project_map[external_id] = str(project.id)
             self.stats["issues_skipped"] += 1
-            if looks_like_broken_eva_video_html(existing.description_html):
-                fresh_html = self.transformer.issue_description_html(task)
-                fresh_html = self._import_description_media(
-                    fresh_html,
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
-                    issue_id=str(existing.id),
-                )
-                existing.description_html = fresh_html
-                existing.save(update_fields=["description_html"])
-            else:
-                repaired_html = self._repair_description_media(
-                    existing.description_html,
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
-                    issue_id=str(existing.id),
-                )
-                if repaired_html != existing.description_html:
-                    existing.description_html = repaired_html
-                    existing.save(update_fields=["description_html"])
+            self._repair_issue_description(
+                existing,
+                project=project,
+                source=task,
+                refresh_description_html=refresh_description_html,
+            )
             return existing
 
         responsible = task.get("responsible") or {}
@@ -375,12 +413,12 @@ class EvaLoader:
 
         gantt = task.get("op_gantt_task") or {}
         issue = Issue(
-            project=self.project,
+            project=project,
             workspace=self.workspace,
             name=name[:255],
             description_html=description_html,
             priority=self.transformer.map_priority(task.get("priority")),
-            state_id=self._resolve_state_id(task),
+            state_id=self._resolve_state_id(task, project=project, state_map=state_map),
             parent_id=parent_issue_id,
             start_date=self.transformer.parse_date(gantt.get("sched_start_date")),
             target_date=self.transformer.parse_date(gantt.get("sched_finish_date") or task.get("deadline")),
@@ -397,6 +435,7 @@ class EvaLoader:
 
         description_with_assets = self._import_description_media(
             issue.description_html,
+            project=project,
             entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
             issue_id=str(issue.id),
         )
@@ -408,7 +447,7 @@ class EvaLoader:
             IssueAssignee.objects.get_or_create(
                 issue=issue,
                 assignee_id=assignee_id,
-                project=self.project,
+                project=project,
                 workspace=self.workspace,
                 defaults={"created_by": self.actor},
             )
@@ -416,33 +455,38 @@ class EvaLoader:
         labels = self.transformer.collect_labels(task)
         if extra_labels:
             labels.extend(extra_labels)
-        self._attach_labels(issue, labels)
+        self._attach_labels(issue, labels, project=project)
         self.id_map[external_id] = str(issue.id)
+        self.id_project_map[external_id] = str(project.id)
         self.stats["issues"] += 1
         return issue
 
-    def _attach_labels(self, issue: Issue, labels: list[str]) -> None:
+    def _attach_labels(self, issue: Issue, labels: list[str], *, project: Project) -> None:
         for label_name in labels:
-            label = Label.objects.filter(project=self.project, name=label_name, deleted_at__isnull=True).first()
+            label = Label.objects.filter(project=project, name=label_name, deleted_at__isnull=True).first()
             if not label:
                 continue
             IssueLabel.objects.get_or_create(
                 issue=issue,
                 label=label,
-                project=self.project,
+                project=project,
                 workspace=self.workspace,
                 defaults={"created_by": self.actor},
             )
+
+    def _project_for_external_id(self, external_id: str) -> Project:
+        project_id = self.id_project_map.get(external_id)
+        if project_id and str(project_id) == str(self.testcase_project.id):
+            return self.testcase_project
+        return self.project
 
     def _import_tasks(
         self,
         tasks: list[dict[str, Any]],
         user_map: dict[str, UUID | None],
-        label_map: dict[str, UUID],
         cycle_map: dict[str, UUID],
         module_map: dict[str, UUID],
     ) -> None:
-        del label_map
         self._update_progress("tasks", force=True)
         for task in tasks:
             external_id = task.get("id")
@@ -453,6 +497,8 @@ class EvaLoader:
             parent_external_id = parent.get("id") if isinstance(parent, dict) else None
             parent_issue_id = UUID(self.id_map[parent_external_id]) if parent_external_id in self.id_map else None
             issue = self._get_or_create_issue(
+                project=self.project,
+                state_map=self.state_map,
                 external_id=external_id,
                 name=task.get("name") or task.get("code") or "Untitled",
                 description_html=self.transformer.issue_description_html(task),
@@ -486,25 +532,23 @@ class EvaLoader:
         self,
         testcases: list[dict[str, Any]],
         user_map: dict[str, UUID | None],
-        label_map: dict[str, UUID],
     ) -> None:
-        del label_map
         self._update_progress("testcases", force=True)
         for testcase in testcases:
             external_id = testcase.get("id")
             if not external_id:
                 continue
-            parent = testcase.get("parent_task") or {}
-            parent_external_id = parent.get("id") if isinstance(parent, dict) else testcase.get("parent_id")
-            parent_issue_id = UUID(self.id_map[parent_external_id]) if parent_external_id in self.id_map else None
             self._get_or_create_issue(
+                project=self.testcase_project,
+                state_map=self.testcase_state_map,
                 external_id=external_id,
                 name=testcase.get("name") or testcase.get("code") or "Test case",
                 description_html=self.transformer.testcase_description_html(testcase),
                 task=testcase,
                 user_map=user_map,
-                parent_issue_id=parent_issue_id,
+                parent_issue_id=None,
                 extra_labels=["eva-test-case"],
+                refresh_description_html=self.transformer.testcase_description_html,
             )
             self.stats["testcases"] += 1
             self._update_progress("testcases", increment=1)
@@ -522,38 +566,26 @@ class EvaLoader:
                 self.stats["comments_skipped"] += 1
                 self._update_progress("comments", increment=1)
                 continue
+            comment_project = self._project_for_external_id(parent_id)
             if IssueComment.objects.filter(
-                project=self.project,
+                project=comment_project,
                 external_source=EVA_EXTERNAL_SOURCE,
                 external_id=external_id,
                 deleted_at__isnull=True,
             ).exists():
                 self.stats["comments_skipped"] += 1
                 existing_comment = IssueComment.objects.filter(
-                    project=self.project,
+                    project=comment_project,
                     external_source=EVA_EXTERNAL_SOURCE,
                     external_id=external_id,
                     deleted_at__isnull=True,
                 ).first()
                 if existing_comment:
-                    if looks_like_broken_eva_video_html(existing_comment.comment_html):
-                        fresh_html = self.transformer.comment_html(comment)
-                        fresh_html = self._import_description_media(
-                            fresh_html,
-                            entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-                            comment_id=str(existing_comment.id),
-                        )
-                        existing_comment.comment_html = fresh_html
-                        existing_comment.save(update_fields=["comment_html"])
-                    else:
-                        repaired_html = self._repair_description_media(
-                            existing_comment.comment_html,
-                            entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-                            comment_id=str(existing_comment.id),
-                        )
-                        if repaired_html != existing_comment.comment_html:
-                            existing_comment.comment_html = repaired_html
-                            existing_comment.save(update_fields=["comment_html"])
+                    self._repair_comment_html(
+                        existing_comment,
+                        project=comment_project,
+                        comment_source=comment,
+                    )
                 self._update_progress("comments", increment=1)
                 continue
 
@@ -561,7 +593,7 @@ class EvaLoader:
             actor_id = self._lookup_user(author.get("login"), user_map)
             issue_comment = IssueComment(
                 issue_id=issue_id,
-                project=self.project,
+                project=comment_project,
                 workspace=self.workspace,
                 comment_html=self.transformer.comment_html(comment),
                 actor_id=actor_id,
@@ -577,7 +609,9 @@ class EvaLoader:
 
             comment_html_with_assets = self._import_description_media(
                 issue_comment.comment_html,
+                project=comment_project,
                 entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                issue_id=str(issue_id),
                 comment_id=str(issue_comment.id),
             )
             if comment_html_with_assets != issue_comment.comment_html:
@@ -601,6 +635,7 @@ class EvaLoader:
                 self.stats["attachments_skipped"] += 1
                 self._update_progress("attachments", increment=1)
                 continue
+            attachment_project = self._project_for_external_id(parent_id)
             title = attachment.get("name") or attachment.get("code") or "EVA attachment"
             if IssueLink.objects.filter(issue_id=issue_id, url=url, deleted_at__isnull=True).exists():
                 self.stats["attachments_skipped"] += 1
@@ -608,7 +643,7 @@ class EvaLoader:
                 continue
             IssueLink.objects.create(
                 issue_id=issue_id,
-                project=self.project,
+                project=attachment_project,
                 workspace=self.workspace,
                 title=title,
                 url=url,
@@ -707,6 +742,7 @@ class EvaLoader:
             )
             description_with_assets = self._import_description_media(
                 page.description_html,
+                project=self.project,
                 entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
                 page_id=str(page.id),
             )
@@ -723,12 +759,14 @@ class EvaLoader:
         ):
             repaired_html = self._import_description_media(
                 self.transformer.document_description_html(document),
+                project=self.project,
                 entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
                 page_id=str(page.id),
             )
         else:
             repaired_html = self._repair_description_media(
                 description_html,
+                project=self.project,
                 entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
                 page_id=str(page.id),
             )
@@ -739,10 +777,76 @@ class EvaLoader:
             return True
         return False
 
+    def _repair_issue_description(
+        self,
+        issue: Issue,
+        *,
+        project: Project,
+        source: dict[str, Any],
+        refresh_description_html: Callable[[dict[str, Any]], str],
+    ) -> bool:
+        description_html = issue.description_html or ""
+        if looks_like_broken_eva_video_html(description_html) or looks_like_broken_eva_image_html(
+            description_html, self.eva_client.base_url
+        ):
+            repaired_html = self._import_description_media(
+                refresh_description_html(source),
+                project=project,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                issue_id=str(issue.id),
+            )
+        else:
+            repaired_html = self._repair_description_media(
+                description_html,
+                project=project,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                issue_id=str(issue.id),
+            )
+
+        if repaired_html != description_html:
+            issue.description_html = repaired_html
+            issue.save(update_fields=["description_html"])
+            return True
+        return False
+
+    def _repair_comment_html(
+        self,
+        comment: IssueComment,
+        *,
+        project: Project,
+        comment_source: dict[str, Any],
+    ) -> bool:
+        comment_html = comment.comment_html or ""
+        if looks_like_broken_eva_video_html(comment_html) or looks_like_broken_eva_image_html(
+            comment_html, self.eva_client.base_url
+        ):
+            repaired_html = self._import_description_media(
+                self.transformer.comment_html(comment_source),
+                project=project,
+                entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                issue_id=str(comment.issue_id),
+                comment_id=str(comment.id),
+            )
+        else:
+            repaired_html = self._repair_description_media(
+                comment_html,
+                project=project,
+                entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                issue_id=str(comment.issue_id),
+                comment_id=str(comment.id),
+            )
+
+        if repaired_html != comment_html:
+            comment.comment_html = repaired_html
+            comment.save(update_fields=["comment_html"])
+            return True
+        return False
+
     def _import_description_media(
         self,
         html: str,
         *,
+        project: Project,
         entity_type: str,
         issue_id: str | None = None,
         comment_id: str | None = None,
@@ -754,7 +858,7 @@ class EvaLoader:
             html,
             client=self.eva_client,
             workspace=self.workspace,
-            project=self.project,
+            project=project,
             actor=self.actor,
             entity_type=entity_type,
             issue_id=issue_id,
@@ -766,6 +870,7 @@ class EvaLoader:
         self,
         html: str,
         *,
+        project: Project,
         entity_type: str,
         issue_id: str | None = None,
         comment_id: str | None = None,
@@ -774,14 +879,12 @@ class EvaLoader:
         if not html:
             return html
         html = rewrite_relative_plane_asset_links(html)
-        needs_repair = (
-            "<img" in html.lower()
-            and ('src="/files/' in html or "src='files/" in html or 'src="files/' in html)
-        ) or has_unmigrated_eva_video_links(html, self.eva_client.base_url)
+        needs_repair = looks_like_broken_eva_image_html(html, self.eva_client.base_url)
         if not needs_repair:
             return html
         repaired = self._import_description_media(
             html,
+            project=project,
             entity_type=entity_type,
             issue_id=issue_id,
             comment_id=comment_id,

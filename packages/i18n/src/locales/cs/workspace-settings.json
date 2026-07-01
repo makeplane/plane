@@ -215,7 +215,22 @@
           "testcases": "Testovací případy",
           "labels": "Štítky",
           "users": "Uživatelé",
-          "cycles": "Cykly"
+          "cycles": "Cykly",
+          "tasks_project": "Projekt úkolů",
+          "tasks_project_description": "Vyberte projekt Plane, do kterého se importují úkoly EVA.",
+          "testcase_project": "Projekt testovacích případů",
+          "testcase_project_description": "Vyberte projekt Plane, do kterého se importují testovací případy EVA.",
+          "select_tasks_project": "Vyberte projekt úkolů",
+          "select_testcase_project": "Vyberte projekt testovacích případů",
+          "projects_must_differ": "Úkoly a testovací případy musí být importovány do různých projektů Plane.",
+          "import_scope": "Rozsah importu",
+          "import_scope_description": "Vyberte, ktera data EVA importovat do Plane.",
+          "import_scope_required": "Vyberte alespon jeden rozsah importu.",
+          "import_tasks_option": "Ukoly",
+          "import_tasks_option_description": "Importovat ukoly, komentare k ukolum, prilohy a dokumentaci.",
+          "import_testcases_option": "Testovaci pripady",
+          "import_testcases_option_description": "Importovat testovaci pripady a jejich komentare.",
+          "testcase_comments": "Komentare testovacich pripadu"
         },
         "progress": {
           "queued": "Queued",

@@ -94,6 +94,8 @@ TESTCASE_FIELDS = [
     "code",
     "name",
     "text",
+    "precondition",
+    "expected_result",
     "parent_id",
     "parent_task",
     "cache_status_type",
@@ -101,6 +103,10 @@ TESTCASE_FIELDS = [
     "responsible.login",
     "cmf_author.login",
     "cmf_created_at",
+    "steps.code",
+    "steps.name",
+    "steps.text",
+    "steps.expected_result",
 ]
 
 CHUNK_SIZE = 100

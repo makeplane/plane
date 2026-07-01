@@ -215,7 +215,22 @@
           "testcases": "測試案例",
           "labels": "標籤",
           "users": "使用者",
-          "cycles": "週期"
+          "cycles": "週期",
+          "tasks_project": "任務專案",
+          "tasks_project_description": "選擇將接收匯入 EVA 任務的 Plane 專案。",
+          "testcase_project": "測試案例專案",
+          "testcase_project_description": "選擇將接收匯入 EVA 測試案例的 Plane 專案。",
+          "select_tasks_project": "選擇任務專案",
+          "select_testcase_project": "選擇測試案例專案",
+          "projects_must_differ": "任務與測試案例必須匯入到不同的 Plane 專案。",
+          "import_scope": "匯入範圍",
+          "import_scope_description": "選擇要匯入到 Plane 的 EVA 資料。",
+          "import_scope_required": "請至少選擇一個匯入範圍。",
+          "import_tasks_option": "任務",
+          "import_tasks_option_description": "匯入任務、任務留言、附件與文件。",
+          "import_testcases_option": "測試案例",
+          "import_testcases_option_description": "匯入測試案例及其留言。",
+          "testcase_comments": "測試案例留言"
         },
         "progress": {
           "queued": "Queued",

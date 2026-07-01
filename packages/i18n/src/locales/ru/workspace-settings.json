@@ -215,7 +215,22 @@
           "testcases": "Тест-кейсы",
           "labels": "Метки",
           "users": "Пользователи",
-          "cycles": "Циклы"
+          "cycles": "Циклы",
+          "tasks_project": "Проект задач",
+          "tasks_project_description": "Выберите проект Plane, в который будут импортированы задачи EVA.",
+          "testcase_project": "Проект тест-кейсов",
+          "testcase_project_description": "Выберите проект Plane, в который будут импортированы тест-кейсы EVA.",
+          "select_tasks_project": "Выберите проект задач",
+          "select_testcase_project": "Выберите проект тест-кейсов",
+          "projects_must_differ": "Задачи и тест-кейсы должны импортироваться в разные проекты Plane.",
+          "import_scope": "Объём импорта",
+          "import_scope_description": "Выберите, какие данные EVA импортировать в Plane.",
+          "import_scope_required": "Выберите хотя бы один объём импорта.",
+          "import_tasks_option": "Задачи",
+          "import_tasks_option_description": "Импортировать задачи, комментарии к задачам, вложения и документацию.",
+          "import_testcases_option": "Тест-кейсы",
+          "import_testcases_option_description": "Импортировать тест-кейсы и их комментарии.",
+          "testcase_comments": "Комментарии к тест-кейсам"
         },
         "progress": {
           "queued": "Queued",

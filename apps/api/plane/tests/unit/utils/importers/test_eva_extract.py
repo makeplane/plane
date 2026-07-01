@@ -10,6 +10,30 @@ from plane.utils.importers.eva.extract import EvaExtractor
 
 
 @pytest.mark.unit
+def test_eva_extractor_extract_project_respects_import_scope():
+    client = MagicMock()
+    client.call.side_effect = [
+        [{"id": "CmfTask:1"}],
+        [{"id": "CmfComment:1"}],
+        [{"id": "CmfAttachment:1"}],
+        [{"id": "CmfDocument:1"}],
+        [{"id": "CmfTestcase:1"}],
+        [{"id": "CmfComment:2"}],
+    ]
+    extractor = EvaExtractor(client)
+
+    extracted = extractor.extract_project("CmfProject:1", import_tasks=False, import_testcases=True)
+
+    assert extracted["tasks"] == []
+    assert extracted["comments"] == []
+    assert extracted["attachments"] == []
+    assert extracted["documents"] == []
+    assert len(extracted["testcases"]) == 1
+    assert len(extracted["testcase_comments"]) == 1
+    assert client.call.call_count == 2
+
+
+@pytest.mark.unit
 def test_eva_extractor_preview_counts():
     client = MagicMock()
     client.call.side_effect = [
@@ -26,6 +50,7 @@ def test_eva_extractor_preview_counts():
         ],
         [{"id": "CmfComment:1", "cmf_author": {"login": "commenter@example.com"}}],
         [{"id": "CmfAttachment:1"}],
+        [],
         [],
         [],
     ]

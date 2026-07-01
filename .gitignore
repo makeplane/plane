@@ -119,3 +119,4 @@ packages/i18n/src/types/keys.generated.ts
 /security/
 
 *.code-workspace
+.cursor/plans

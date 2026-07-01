@@ -72,18 +72,27 @@ class EvaExtractor:
         except Exception:
             return []
 
-    def extract_project(self, project_id: str) -> dict[str, Any]:
-        tasks = self.list_tasks(project_id)
+    def extract_project(
+        self,
+        project_id: str,
+        *,
+        import_tasks: bool = True,
+        import_testcases: bool = True,
+    ) -> dict[str, Any]:
+        tasks = self.list_tasks(project_id) if import_tasks else []
         task_ids = [task["id"] for task in tasks if task.get("id")]
-        comments = self.list_comments(task_ids)
-        attachments = self.list_attachments(task_ids)
-        documents = self.list_documents(project_id)
-        testcases = self.list_testcases(project_id)
+        comments = self.list_comments(task_ids) if import_tasks else []
+        attachments = self.list_attachments(task_ids) if import_tasks else []
+        documents = self.list_documents(project_id) if import_tasks else []
+        testcases = self.list_testcases(project_id) if import_testcases else []
+        testcase_ids = [testcase["id"] for testcase in testcases if testcase.get("id")]
+        testcase_comments = self.list_comments(testcase_ids) if import_testcases else []
 
         return {
             "project_id": project_id,
             "tasks": tasks,
             "comments": comments,
+            "testcase_comments": testcase_comments,
             "attachments": attachments,
             "documents": documents,
             "testcases": testcases,
@@ -103,10 +112,15 @@ class EvaExtractor:
             author = comment.get("cmf_author") or {}
             if author.get("login"):
                 users.add(author["login"])
+        for comment in extracted.get("testcase_comments", []):
+            author = comment.get("cmf_author") or {}
+            if author.get("login"):
+                users.add(author["login"])
 
         return {
             "total_tasks": len(tasks),
             "total_comments": len(extracted["comments"]),
+            "total_testcase_comments": len(extracted.get("testcase_comments", [])),
             "total_attachments": len(extracted["attachments"]),
             "total_documents": len(extracted["documents"]),
             "total_testcases": len(extracted["testcases"]),

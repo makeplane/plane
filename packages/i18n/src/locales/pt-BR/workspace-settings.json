@@ -215,7 +215,22 @@
           "testcases": "Casos de teste",
           "labels": "Rótulos",
           "users": "Usuários",
-          "cycles": "Ciclos"
+          "cycles": "Ciclos",
+          "tasks_project": "Projeto de tarefas",
+          "tasks_project_description": "Selecione o projeto Plane que receberá as tarefas EVA importadas.",
+          "testcase_project": "Projeto de casos de teste",
+          "testcase_project_description": "Selecione o projeto Plane que receberá os casos de teste EVA importados.",
+          "select_tasks_project": "Selecionar projeto de tarefas",
+          "select_testcase_project": "Selecionar projeto de casos de teste",
+          "projects_must_differ": "Tarefas e casos de teste devem ser importados em projetos Plane diferentes.",
+          "import_scope": "Escopo da importacao",
+          "import_scope_description": "Escolha quais dados do EVA importar para o Plane.",
+          "import_scope_required": "Selecione pelo menos um escopo de importacao.",
+          "import_tasks_option": "Tarefas",
+          "import_tasks_option_description": "Importar tarefas, comentarios de tarefas, anexos e documentacao.",
+          "import_testcases_option": "Casos de teste",
+          "import_testcases_option_description": "Importar casos de teste e seus comentarios.",
+          "testcase_comments": "Comentarios de casos de teste"
         },
         "progress": {
           "queued": "Queued",

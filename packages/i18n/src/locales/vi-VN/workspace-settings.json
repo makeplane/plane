@@ -215,7 +215,22 @@
           "testcases": "Trường hợp kiểm thử",
           "labels": "Nhãn",
           "users": "Người dùng",
-          "cycles": "Chu kỳ"
+          "cycles": "Chu kỳ",
+          "tasks_project": "Dự án tác vụ",
+          "tasks_project_description": "Chọn dự án Plane sẽ nhận các tác vụ EVA được nhập.",
+          "testcase_project": "Dự án test case",
+          "testcase_project_description": "Chọn dự án Plane sẽ nhận các test case EVA được nhập.",
+          "select_tasks_project": "Chọn dự án tác vụ",
+          "select_testcase_project": "Chọn dự án test case",
+          "projects_must_differ": "Tác vụ và test case phải được nhập vào các dự án Plane khác nhau.",
+          "import_scope": "Pham vi nhap",
+          "import_scope_description": "Chon du lieu EVA nao se nhap vao Plane.",
+          "import_scope_required": "Chon it nhat mot pham vi nhap.",
+          "import_tasks_option": "Tac vu",
+          "import_tasks_option_description": "Nhap tac vu, binh luan tac vu, tep dinh kem va tai lieu.",
+          "import_testcases_option": "Test case",
+          "import_testcases_option_description": "Nhap test case va binh luan cua chung.",
+          "testcase_comments": "Binh luan test case"
         },
         "progress": {
           "queued": "Queued",

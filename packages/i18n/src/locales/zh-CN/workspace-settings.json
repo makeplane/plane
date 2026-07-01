@@ -215,7 +215,22 @@
           "testcases": "测试用例",
           "labels": "标签",
           "users": "用户",
-          "cycles": "周期"
+          "cycles": "周期",
+          "tasks_project": "任务项目",
+          "tasks_project_description": "选择将接收导入 EVA 任务的 Plane 项目。",
+          "testcase_project": "测试用例项目",
+          "testcase_project_description": "选择将接收导入 EVA 测试用例的 Plane 项目。",
+          "select_tasks_project": "选择任务项目",
+          "select_testcase_project": "选择测试用例项目",
+          "projects_must_differ": "任务和测试用例必须导入到不同的 Plane 项目。",
+          "import_scope": "导入范围",
+          "import_scope_description": "选择要导入到 Plane 的 EVA 数据。",
+          "import_scope_required": "请至少选择一个导入范围。",
+          "import_tasks_option": "任务",
+          "import_tasks_option_description": "导入任务、任务评论、附件和文档。",
+          "import_testcases_option": "测试用例",
+          "import_testcases_option_description": "导入测试用例及其评论。",
+          "testcase_comments": "测试用例评论"
         },
         "progress": {
           "queued": "Queued",

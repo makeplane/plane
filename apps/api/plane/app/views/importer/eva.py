@@ -9,7 +9,7 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import ImporterSerializer
 from plane.app.views import BaseAPIView
 from plane.bgtasks.eva_import_task import create_importer_service_token, eva_import_task
-from plane.db.models import APIToken, Importer, Project, Workspace
+from plane.db.models import APIToken, Importer, Project, ProjectMember, Workspace, WorkspaceMember
 from plane.utils.importers.eva.client import EvaApiClient, EvaApiError
 from plane.utils.importers.eva.extract import EvaExtractor
 from plane.utils.importers.eva.transform import EvaTransformer
@@ -31,6 +31,90 @@ def _redacted_metadata(metadata: dict) -> dict:
     if "token" in redacted:
         redacted["token"] = "***"
     return redacted
+
+
+def _user_can_import_to_project(*, user, workspace: Workspace, project: Project) -> bool:
+    allowed_roles = [ROLE.ADMIN.value, ROLE.MEMBER.value]
+    if ProjectMember.objects.filter(
+        member=user,
+        workspace=workspace,
+        project=project,
+        role__in=allowed_roles,
+        is_active=True,
+    ).exists():
+        return True
+    return ProjectMember.objects.filter(
+        member=user,
+        workspace=workspace,
+        project=project,
+        is_active=True,
+    ).exists() and WorkspaceMember.objects.filter(
+        member=user,
+        workspace=workspace,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    ).exists()
+
+
+def _import_scope(config: dict) -> tuple[bool, bool]:
+    import_tasks = bool(config.get("import_tasks", True))
+    import_testcases = bool(config.get("import_testcases", True))
+    return import_tasks, import_testcases
+
+
+def _validate_import_config(
+    *,
+    config: dict,
+    workspace: Workspace,
+    project: Project,
+    user,
+) -> Response | None:
+    import_tasks, import_testcases = _import_scope(config)
+
+    if not import_tasks and not import_testcases:
+        return Response(
+            {"error": "At least one of config.import_tasks or config.import_testcases must be enabled"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if import_testcases and import_tasks:
+        testcase_project_id = config.get("testcase_project_id")
+        if not testcase_project_id:
+            return Response(
+                {"error": "config.testcase_project_id is required when importing tasks and test cases"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if str(testcase_project_id) == str(project.id):
+            return Response(
+                {"error": "config.testcase_project_id must differ from the tasks project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            testcase_project = Project.objects.get(pk=testcase_project_id, workspace=workspace)
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "config.testcase_project_id is invalid"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not _user_can_import_to_project(user=user, workspace=workspace, project=testcase_project):
+            return Response(
+                {"error": "You don't have permission to import into the selected test case project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+    elif import_testcases and not import_tasks:
+        if not _user_can_import_to_project(user=user, workspace=workspace, project=project):
+            return Response(
+                {"error": "You don't have permission to import into the selected test case project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+    elif import_tasks and not import_testcases:
+        if not _user_can_import_to_project(user=user, workspace=workspace, project=project):
+            return Response(
+                {"error": "You don't have permission to import into the selected tasks project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+    return None
 
 
 class EvaImporterPreviewEndpoint(BaseAPIView):
@@ -121,6 +205,15 @@ class EvaImporterCreateEndpoint(BaseAPIView):
             EvaApiClient(metadata["url"], metadata["token"]).test_connection()
         except EvaApiError as error:
             return Response({"error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
+        validation_error = _validate_import_config(
+            config=config,
+            workspace=workspace,
+            project=project,
+            user=request.user,
+        )
+        if validation_error:
+            return validation_error
 
         token = create_importer_service_token(workspace=workspace, user=request.user)
         importer = Importer.objects.create(

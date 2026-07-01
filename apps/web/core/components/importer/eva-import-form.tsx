@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IEvaImporterForm, IEvaPreviewResponse, IEvaProjectOption } from "@plane/types";
-import { CustomSearchSelect, Input, Spinner } from "@plane/ui";
+import { CustomSearchSelect, Input, Spinner, Checkbox } from "@plane/ui";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import useDebounce from "@/hooks/use-debounce";
@@ -31,7 +31,10 @@ type FormData = {
   url: string;
   token: string;
   eva_project_id: string;
-  plane_project_id: string;
+  import_tasks: boolean;
+  import_testcases: boolean;
+  plane_tasks_project_id: string;
+  plane_testcase_project_id: string;
 };
 
 const getCredentialsKey = (url: string, token: string) => `${url}\0${token}`;
@@ -65,13 +68,16 @@ export const EvaImportForm = observer(function EvaImportForm(props: Props) {
       url: "",
       token: "",
       eva_project_id: "",
-      plane_project_id: "",
+      import_tasks: true,
+      import_testcases: true,
+      plane_tasks_project_id: "",
+      plane_testcase_project_id: "",
     },
   });
 
-  const [watchedUrl = "", watchedToken = ""] = useWatch({
+  const [watchedUrl = "", watchedToken = "", importTasks = true, importTestcases = true] = useWatch({
     control,
-    name: ["url", "token"],
+    name: ["url", "token", "import_tasks", "import_testcases"],
   });
   const debouncedUrl = useDebounce(watchedUrl, 500);
   const debouncedToken = useDebounce(watchedToken, 500);
@@ -191,17 +197,41 @@ export const EvaImportForm = observer(function EvaImportForm(props: Props) {
 
   const handleImport = async (formData: FormData) => {
     if (!preview) return;
+    if (!formData.import_tasks && !formData.import_testcases) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_settings.settings.imports.eva.import_error"),
+        message: t("workspace_settings.settings.imports.eva.import_scope_required"),
+      });
+      return;
+    }
+    if (
+      formData.import_tasks &&
+      formData.import_testcases &&
+      formData.plane_tasks_project_id === formData.plane_testcase_project_id
+    ) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_settings.settings.imports.eva.import_error"),
+        message: t("workspace_settings.settings.imports.eva.projects_must_differ"),
+      });
+      return;
+    }
     setIsImporting(true);
     const payload: IEvaImporterForm = {
-      project_id: formData.plane_project_id,
+      project_id: formData.import_tasks ? formData.plane_tasks_project_id : formData.plane_testcase_project_id,
       metadata: {
         url: formData.url,
         token: formData.token,
         eva_project_id: formData.eva_project_id,
       },
       config: {
+        import_tasks: formData.import_tasks,
+        import_testcases: formData.import_testcases,
         lists_as_cycles: true,
         fix_versions_as_modules: true,
+        testcase_project_id:
+          formData.import_tasks && formData.import_testcases ? formData.plane_testcase_project_id : undefined,
       },
       data: {
         users: preview.users,
@@ -280,30 +310,108 @@ export const EvaImportForm = observer(function EvaImportForm(props: Props) {
         }
       />
       <SettingsBoxedControlItem
-        title={t("workspace_settings.settings.imports.eva.plane_project")}
-        description={t("workspace_settings.settings.imports.eva.plane_project_description")}
+        title={t("workspace_settings.settings.imports.eva.import_scope")}
+        description={t("workspace_settings.settings.imports.eva.import_scope_description")}
         control={
-          <Controller
-            control={control}
-            name="plane_project_id"
-            rules={{ required: true }}
-            render={({ field: { value, onChange } }) => (
-              <CustomSearchSelect
-                value={value}
-                onChange={onChange}
-                options={projectOptions}
-                input
-                label={
-                  projectOptions.find((option) => option.value === value)?.content ??
-                  t("workspace_settings.settings.imports.eva.select_plane_project")
-                }
-                className="w-72"
-                optionsClassName="w-72"
-              />
-            )}
-          />
+          <div className="flex flex-col gap-3">
+            <Controller
+              control={control}
+              name="import_tasks"
+              render={({ field: { value, onChange } }) => (
+                <div className="flex items-start gap-2 text-13 text-secondary">
+                  <Checkbox id="eva-import-tasks" checked={value} onChange={() => onChange(!value)} />
+                  <label htmlFor="eva-import-tasks">
+                    <span className="block text-body-xs-medium text-primary">
+                      {t("workspace_settings.settings.imports.eva.import_tasks_option")}
+                    </span>
+                    <span className="block text-13 text-secondary">
+                      {t("workspace_settings.settings.imports.eva.import_tasks_option_description")}
+                    </span>
+                  </label>
+                </div>
+              )}
+            />
+            <Controller
+              control={control}
+              name="import_testcases"
+              render={({ field: { value, onChange } }) => (
+                <div className="flex items-start gap-2 text-13 text-secondary">
+                  <Checkbox id="eva-import-testcases" checked={value} onChange={() => onChange(!value)} />
+                  <label htmlFor="eva-import-testcases">
+                    <span className="block text-body-xs-medium text-primary">
+                      {t("workspace_settings.settings.imports.eva.import_testcases_option")}
+                    </span>
+                    <span className="block text-13 text-secondary">
+                      {t("workspace_settings.settings.imports.eva.import_testcases_option_description")}
+                    </span>
+                  </label>
+                </div>
+              )}
+            />
+          </div>
         }
       />
+      {importTasks && (
+        <SettingsBoxedControlItem
+          title={t("workspace_settings.settings.imports.eva.tasks_project")}
+          description={t("workspace_settings.settings.imports.eva.tasks_project_description")}
+          control={
+            <Controller
+              control={control}
+              name="plane_tasks_project_id"
+              rules={{ required: importTasks }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  onChange={onChange}
+                  options={projectOptions}
+                  input
+                  label={
+                    projectOptions.find((option) => option.value === value)?.content ??
+                    t("workspace_settings.settings.imports.eva.select_tasks_project")
+                  }
+                  className="w-72"
+                  optionsClassName="w-72"
+                />
+              )}
+            />
+          }
+        />
+      )}
+      {importTestcases && (
+        <SettingsBoxedControlItem
+          title={t("workspace_settings.settings.imports.eva.testcase_project")}
+          description={t("workspace_settings.settings.imports.eva.testcase_project_description")}
+          control={
+            <Controller
+              control={control}
+              name="plane_testcase_project_id"
+              rules={{
+                required: importTestcases,
+                validate: (value) =>
+                  !importTasks ||
+                  !importTestcases ||
+                  value !== getValues("plane_tasks_project_id") ||
+                  t("workspace_settings.settings.imports.eva.projects_must_differ"),
+              }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  onChange={onChange}
+                  options={projectOptions}
+                  input
+                  label={
+                    projectOptions.find((option) => option.value === value)?.content ??
+                    t("workspace_settings.settings.imports.eva.select_testcase_project")
+                  }
+                  className="w-72"
+                  optionsClassName="w-72"
+                />
+              )}
+            />
+          }
+        />
+      )}
 
       <div className="flex items-center gap-3">
         <Button
@@ -337,6 +445,9 @@ export const EvaImportForm = observer(function EvaImportForm(props: Props) {
             </div>
             <div>
               {t("workspace_settings.settings.imports.eva.comments")}: {preview.total_comments ?? 0}
+            </div>
+            <div>
+              {t("workspace_settings.settings.imports.eva.testcase_comments")}: {preview.total_testcase_comments ?? 0}
             </div>
             <div>
               {t("workspace_settings.settings.imports.eva.attachments")}: {preview.total_attachments ?? 0}

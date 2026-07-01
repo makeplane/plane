@@ -215,7 +215,22 @@
           "testcases": "Test senaryoları",
           "labels": "Etiketler",
           "users": "Kullanıcılar",
-          "cycles": "Döngüler"
+          "cycles": "Döngüler",
+          "tasks_project": "Görev projesi",
+          "tasks_project_description": "İçe aktarılan EVA görevlerini alacak Plane projesini seçin.",
+          "testcase_project": "Test senaryoları projesi",
+          "testcase_project_description": "İçe aktarılan EVA test senaryolarını alacak Plane projesini seçin.",
+          "select_tasks_project": "Görev projesi seç",
+          "select_testcase_project": "Test senaryoları projesi seç",
+          "projects_must_differ": "Görevler ve test senaryoları farklı Plane projelerine aktarılmalıdır.",
+          "import_scope": "Ice aktarma kapsami",
+          "import_scope_description": "EVA verilerinden hangilerinin Plane e aktarilacagini secin.",
+          "import_scope_required": "En az bir ice aktarma kapsami secin.",
+          "import_tasks_option": "Gorevler",
+          "import_tasks_option_description": "Gorevleri, gorev yorumlarini, ekleri ve dokumantasyonu ice aktar.",
+          "import_testcases_option": "Test senaryolari",
+          "import_testcases_option_description": "Test senaryolarini ve yorumlarini ice aktar.",
+          "testcase_comments": "Test senaryosu yorumlari"
         },
         "progress": {
           "queued": "Queued",

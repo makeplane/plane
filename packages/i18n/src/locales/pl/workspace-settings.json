@@ -215,7 +215,22 @@
           "testcases": "Przypadki testowe",
           "labels": "Etykiety",
           "users": "Użytkownicy",
-          "cycles": "Cykle"
+          "cycles": "Cykle",
+          "tasks_project": "Projekt zadań",
+          "tasks_project_description": "Wybierz projekt Plane, który otrzyma zaimportowane zadania EVA.",
+          "testcase_project": "Projekt przypadków testowych",
+          "testcase_project_description": "Wybierz projekt Plane, który otrzyma zaimportowane przypadki testowe EVA.",
+          "select_tasks_project": "Wybierz projekt zadań",
+          "select_testcase_project": "Wybierz projekt przypadków testowych",
+          "projects_must_differ": "Zadania i przypadki testowe muszą być importowane do różnych projektów Plane.",
+          "import_scope": "Zakres importu",
+          "import_scope_description": "Wybierz, ktore dane EVA zaimportowac do Plane.",
+          "import_scope_required": "Wybierz co najmniej jeden zakres importu.",
+          "import_tasks_option": "Zadania",
+          "import_tasks_option_description": "Importuj zadania, komentarze do zadan, zalaczniki i dokumentacje.",
+          "import_testcases_option": "Przypadki testowe",
+          "import_testcases_option_description": "Importuj przypadki testowe i ich komentarze.",
+          "testcase_comments": "Komentarze przypadkow testowych"
         },
         "progress": {
           "queued": "Queued",

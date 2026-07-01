@@ -215,7 +215,22 @@
           "testcases": "Testfälle",
           "labels": "Labels",
           "users": "Benutzer",
-          "cycles": "Zyklen"
+          "cycles": "Zyklen",
+          "tasks_project": "Aufgabenprojekt",
+          "tasks_project_description": "Wählen Sie das Plane-Projekt, das importierte EVA-Aufgaben erhalten soll.",
+          "testcase_project": "Testfallprojekt",
+          "testcase_project_description": "Wählen Sie das Plane-Projekt, das importierte EVA-Testfälle erhalten soll.",
+          "select_tasks_project": "Aufgabenprojekt auswählen",
+          "select_testcase_project": "Testfallprojekt auswählen",
+          "projects_must_differ": "Aufgaben und Testfälle müssen in unterschiedliche Plane-Projekte importiert werden.",
+          "import_scope": "Importumfang",
+          "import_scope_description": "Waehlen Sie, welche EVA-Daten nach Plane importiert werden.",
+          "import_scope_required": "Waehlen Sie mindestens einen Importumfang.",
+          "import_tasks_option": "Aufgaben",
+          "import_tasks_option_description": "Aufgaben, Aufgabenkommentare, Anhaenge und Dokumentation importieren.",
+          "import_testcases_option": "Testfaelle",
+          "import_testcases_option_description": "Testfaelle und deren Kommentare importieren.",
+          "testcase_comments": "Testfallkommentare"
         },
         "progress": {
           "queued": "Queued",

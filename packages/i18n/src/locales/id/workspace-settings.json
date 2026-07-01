@@ -215,7 +215,22 @@
           "testcases": "Kasus uji",
           "labels": "Label",
           "users": "Pengguna",
-          "cycles": "Siklus"
+          "cycles": "Siklus",
+          "tasks_project": "Proyek tugas",
+          "tasks_project_description": "Pilih proyek Plane yang akan menerima tugas EVA yang diimpor.",
+          "testcase_project": "Proyek kasus uji",
+          "testcase_project_description": "Pilih proyek Plane yang akan menerima kasus uji EVA yang diimpor.",
+          "select_tasks_project": "Pilih proyek tugas",
+          "select_testcase_project": "Pilih proyek kasus uji",
+          "projects_must_differ": "Tugas dan kasus uji harus diimpor ke proyek Plane yang berbeda.",
+          "import_scope": "Ruang lingkup impor",
+          "import_scope_description": "Pilih data EVA mana yang akan diimpor ke Plane.",
+          "import_scope_required": "Pilih setidaknya satu ruang lingkup impor.",
+          "import_tasks_option": "Tugas",
+          "import_tasks_option_description": "Impor tugas, komentar tugas, lampiran, dan dokumentasi.",
+          "import_testcases_option": "Kasus uji",
+          "import_testcases_option_description": "Impor kasus uji dan komentarnya.",
+          "testcase_comments": "Komentar kasus uji"
         },
         "progress": {
           "queued": "Queued",

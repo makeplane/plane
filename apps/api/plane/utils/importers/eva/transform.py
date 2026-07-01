@@ -81,10 +81,62 @@ class EvaTransformer:
 
         return str(soup)
 
+    def _is_eva_media_path(self, src: str | None) -> bool:
+        if not src:
+            return False
+        lowered = src.strip().lower()
+        if not lowered or lowered.startswith("static/") or "/static/" in lowered:
+            return False
+        return lowered.startswith("/files/") or lowered.startswith("files/") or "/files/" in lowered
+
+    def _attachment_card_image_src(self, card, link) -> str | None:
+        download = link.get("download") if link else None
+        if download and self._is_eva_media_path(download):
+            return download
+
+        thumbnail = card.find(
+            "img",
+            class_=lambda value: value and "app-tinymce-img-preview" in value and "default-img-preview" not in value,
+        )
+        if thumbnail and thumbnail.get("src") and self._is_eva_media_path(thumbnail.get("src")):
+            return thumbnail["src"]
+
+        return None
+
+    def convert_eva_attachment_cards(self, html: str | None) -> str:
+        if not html or "app-tinymce-card-preview" not in html:
+            return html or ""
+
+        soup = BeautifulSoup(html, "html.parser")
+        cards = soup.select("div.app-tinymce-card-preview")
+        if not cards:
+            return html
+
+        for card in cards:
+            link = card.find("a", class_=lambda value: value and "app-tinymce-href-preview" in value)
+            src = self._attachment_card_image_src(card, link)
+            if not src:
+                card.decompose()
+                continue
+
+            attach_id = card.get("data-attach-id")
+            title = link.get("title") if link else None
+            paragraph = soup.new_tag("p")
+            image = soup.new_tag("img", src=src)
+            if attach_id:
+                image["data-attach-id"] = attach_id
+            if title:
+                image["alt"] = title
+            paragraph.append(image)
+            card.replace_with(paragraph)
+
+        return str(soup)
+
     def sanitize_html(self, html: str | None) -> str:
         if not html:
             return "<p></p>"
-        normalized = self.convert_eva_video_blocks(html)
+        normalized = self.convert_eva_attachment_cards(html)
+        normalized = self.convert_eva_video_blocks(normalized)
         rewritten = self.rewrite_media_urls(normalized)
         _, _, sanitized = validate_html_content(rewritten)
         return sanitized if sanitized else "<p></p>"
@@ -163,12 +215,48 @@ class EvaTransformer:
             description = f"<p><em>EVA document: {code}</em></p>{description}"
         return self.sanitize_html(description)
 
+    def _testcase_steps_html(self, steps: list[dict[str, Any]]) -> str:
+        if not steps:
+            return ""
+
+        parts = ["<h3>Steps</h3>"]
+        for index, step in enumerate(steps, start=1):
+            step_parts = [f"<h4>Step {index}</h4>"]
+            step_name = step.get("name")
+            if step_name:
+                step_parts.append(f"<p><strong>{step_name}</strong></p>")
+            step_text = step.get("text")
+            if step_text:
+                step_parts.append(step_text)
+            expected_result = step.get("expected_result")
+            if expected_result:
+                step_parts.append(f"<p><em>Expected</em></p>{expected_result}")
+            parts.append("".join(step_parts))
+        return "".join(parts)
+
     def testcase_description_html(self, testcase: dict[str, Any]) -> str:
-        description = testcase.get("text") or ""
+        parts: list[str] = []
         code = testcase.get("code")
         if code:
-            description = f"<p><em>EVA test case: {code}</em></p>{description}"
-        return self.sanitize_html(description)
+            parts.append(f"<p><em>EVA test case: {code}</em></p>")
+
+        text = testcase.get("text") or ""
+        if text:
+            parts.append(text)
+
+        precondition = testcase.get("precondition")
+        if precondition:
+            parts.append(f"<h3>Precondition</h3>{precondition}")
+
+        steps = testcase.get("steps") or []
+        if isinstance(steps, list):
+            parts.append(self._testcase_steps_html(steps))
+
+        expected_result = testcase.get("expected_result")
+        if expected_result:
+            parts.append(f"<h3>Expected result</h3>{expected_result}")
+
+        return self.sanitize_html("".join(parts))
 
     def preview_users(self, extracted: dict[str, Any], eva_users: list[dict[str, Any]]) -> list[dict[str, Any]]:
         discovered: dict[str, dict[str, Any]] = {}

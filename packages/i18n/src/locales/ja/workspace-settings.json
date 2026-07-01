@@ -215,7 +215,22 @@
           "testcases": "テストケース",
           "labels": "ラベル",
           "users": "ユーザー",
-          "cycles": "サイクル"
+          "cycles": "サイクル",
+          "tasks_project": "タスク プロジェクト",
+          "tasks_project_description": "インポートした EVA タスクを受け取る Plane プロジェクトを選択します。",
+          "testcase_project": "テストケース プロジェクト",
+          "testcase_project_description": "インポートした EVA テストケースを受け取る Plane プロジェクトを選択します。",
+          "select_tasks_project": "タスク プロジェクトを選択",
+          "select_testcase_project": "テストケース プロジェクトを選択",
+          "projects_must_differ": "タスクとテストケースは異なる Plane プロジェクトにインポートする必要があります。",
+          "import_scope": "インポート範囲",
+          "import_scope_description": "Plane にインポートする EVA データを選択します。",
+          "import_scope_required": "インポート範囲を少なくとも 1 つ選択してください。",
+          "import_tasks_option": "タスク",
+          "import_tasks_option_description": "タスク、タスクのコメント、添付ファイル、ドキュメントをインポートします。",
+          "import_testcases_option": "テストケース",
+          "import_testcases_option_description": "テストケースとそのコメントをインポートします。",
+          "testcase_comments": "テストケースのコメント"
         },
         "progress": {
           "queued": "Queued",

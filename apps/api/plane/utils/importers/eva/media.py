@@ -7,8 +7,9 @@ from __future__ import annotations
 import logging
 import re
 import uuid
+from dataclasses import dataclass
 from io import BytesIO
-from typing import Any
+from typing import Any, Literal
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -31,7 +32,26 @@ ALLOWED_IMAGE_TYPES = {
     "image/png",
     "image/webp",
     "image/gif",
+    "image/heic",
+    "image/heif",
+    "image/bmp",
+    "image/svg+xml",
+    "image/tiff",
 }
+
+INLINE_IMAGE_TYPES = {
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+}
+
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg", ".heic", ".heif", ".tif", ".tiff"}
+
+INLINE_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
+
+ATTACHMENT_IMAGE_EXTENSIONS = IMAGE_EXTENSIONS - INLINE_IMAGE_EXTENSIONS
 
 ALLOWED_VIDEO_TYPES = {
     "video/mp4",
@@ -44,6 +64,45 @@ ALLOWED_VIDEO_TYPES = {
 }
 
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".ogg", ".mov", ".mpeg", ".avi", ".wmv"}
+
+_PLANE_ASSET_UUID_RE = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
+
+ImageMigrationMode = Literal["inline", "attachment", "failed"]
+
+
+@dataclass(frozen=True)
+class ImageMigrationResult:
+    mode: ImageMigrationMode
+    inline_src: str | None = None
+    attachment_href: str | None = None
+    filename: str | None = None
+
+
+def _file_extension(filename: str) -> str:
+    if "." not in filename:
+        return ""
+    return f".{filename.rsplit('.', 1)[-1].lower()}"
+
+
+def is_inline_displayable_image(content_type: str, extension: str) -> bool:
+    if extension in ATTACHMENT_IMAGE_EXTENSIONS:
+        return False
+    if content_type in INLINE_IMAGE_TYPES:
+        return True
+    return extension in INLINE_IMAGE_EXTENSIONS
+
+
+def should_store_image_as_attachment(content_type: str, extension: str) -> bool:
+    if extension in ATTACHMENT_IMAGE_EXTENSIONS:
+        return True
+    if extension in INLINE_IMAGE_EXTENSIONS:
+        return False
+    if content_type.startswith("image/"):
+        return True
+    return extension in IMAGE_EXTENSIONS
 
 
 def plane_asset_href(asset: FileAsset) -> str:
@@ -113,6 +172,8 @@ def looks_like_broken_eva_image_html(html: str | None, base_url: str | None = No
     if not html:
         return False
     lowered = html.lower()
+    if "app-tinymce-card-preview" in lowered:
+        return True
     if "<img" in lowered and (
         'src="/files/' in lowered or "src='/files/" in lowered or 'src="files/' in lowered
     ):
@@ -172,6 +233,30 @@ def import_inline_media(
     )
 
 
+def is_unmigrated_eva_image_src(src: str | None, base_url: str | None = None) -> bool:
+    if not src:
+        return False
+    normalized = src.strip()
+    if not normalized:
+        return False
+    if normalized.startswith("/api/assets/"):
+        return False
+    if _PLANE_ASSET_UUID_RE.match(normalized):
+        return False
+
+    lowered = normalized.lower()
+    if lowered.startswith("static/") or "/static/" in lowered:
+        return False
+    if lowered.startswith("http://") or lowered.startswith("https://"):
+        normalized_base = (base_url or "").rstrip("/").lower()
+        if normalized_base and lowered.startswith(normalized_base):
+            return True
+        return "/files/" in lowered
+    if lowered.startswith("/files/") or lowered.startswith("files/"):
+        return True
+    return "/files/" in lowered
+
+
 def import_inline_images(
     html: str,
     *,
@@ -184,13 +269,14 @@ def import_inline_images(
     comment_id: str | None = None,
     page_id: str | None = None,
 ) -> str:
-    if not html or "<img" not in html.lower():
+    if not html:
         return html
 
     transformer = EvaTransformer(base_url=client.base_url)
     soup = BeautifulSoup(html, "html.parser")
     images = soup.find_all("img")
-    if not images:
+    components = soup.find_all("image-component")
+    if not images and not components:
         return html
 
     storage = S3Storage()
@@ -198,32 +284,243 @@ def import_inline_images(
 
     for image in images:
         src = image.get("src")
-        if not src:
+        if not src or not is_unmigrated_eva_image_src(src, client.base_url):
             continue
 
         absolute_url = transformer.resolve_media_url(src)
-        replacement = _build_image_component(
+        migration = _migrate_eva_image(
+            absolute_url=absolute_url,
+            external_id=image.get("data-attach-id"),
+            client=client,
+            storage=storage,
+            workspace=workspace,
+            project=project,
+            actor=actor,
+            entity_type=entity_type,
+            issue_id=issue_id,
+            comment_id=comment_id,
+            page_id=page_id,
+        )
+        replacement = _build_image_migration_replacement(
             soup=soup,
             image=image,
-            src=_upload_media_src(
-                absolute_url=absolute_url,
-                external_id=image.get("data-attach-id"),
-                client=client,
-                storage=storage,
-                workspace=workspace,
-                project=project,
-                actor=actor,
-                entity_type=entity_type,
-                issue_id=issue_id,
-                comment_id=comment_id,
-                page_id=page_id,
-                allowed_types=ALLOWED_IMAGE_TYPES,
-            ),
+            migration=migration,
         )
+        if replacement is None:
+            continue
         image.replace_with(replacement)
         changed = True
 
+    for component in components:
+        src = component.get("src")
+        if not is_unmigrated_eva_image_src(src, client.base_url):
+            continue
+
+        absolute_url = transformer.resolve_media_url(src)
+        migration = _migrate_eva_image(
+            absolute_url=absolute_url,
+            external_id=component.get("data-attach-id"),
+            client=client,
+            storage=storage,
+            workspace=workspace,
+            project=project,
+            actor=actor,
+            entity_type=entity_type,
+            issue_id=issue_id,
+            comment_id=comment_id,
+            page_id=page_id,
+        )
+        replacement = _build_image_migration_replacement(
+            soup=soup,
+            image=component,
+            migration=migration,
+        )
+        if replacement is None:
+            continue
+        component.replace_with(replacement)
+        changed = True
+
     return str(soup) if changed else html
+
+
+def _migrate_eva_image(
+    *,
+    absolute_url: str,
+    external_id: str | None,
+    client: EvaApiClient,
+    storage: S3Storage,
+    workspace: Any,
+    project: Any,
+    actor: Any,
+    entity_type: str,
+    issue_id: str | None,
+    comment_id: str | None,
+    page_id: str | None,
+) -> ImageMigrationResult:
+    if external_id and issue_id:
+        existing = FileAsset.objects.filter(
+            workspace=workspace,
+            project=project,
+            issue_id=issue_id,
+            external_source=EVA_EXTERNAL_SOURCE,
+            external_id=external_id,
+            is_uploaded=True,
+        ).first()
+        if existing:
+            if existing.entity_type == FileAsset.EntityTypeContext.ISSUE_ATTACHMENT:
+                return ImageMigrationResult(
+                    mode="attachment",
+                    attachment_href=plane_asset_href(existing),
+                    filename=(existing.attributes or {}).get("name"),
+                )
+            return ImageMigrationResult(mode="inline", inline_src=str(existing.id))
+
+    try:
+        content, content_type, filename = client.download(absolute_url)
+    except EvaApiError as error:
+        logger.warning("Failed to download EVA media %s: %s", absolute_url, error)
+        return ImageMigrationResult(mode="failed")
+
+    extension = _file_extension(filename)
+    if not is_inline_displayable_image(content_type, extension):
+        if not issue_id or not should_store_image_as_attachment(content_type, extension):
+            logger.warning("Skipping unsupported EVA image %s (%s) without issue attachment target", absolute_url, content_type)
+            return ImageMigrationResult(mode="failed")
+
+        attachment_href = _store_downloaded_media(
+            content=content,
+            content_type=content_type,
+            filename=filename,
+            storage=storage,
+            workspace=workspace,
+            project=project,
+            actor=actor,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            issue_id=issue_id,
+            comment_id=None,
+            page_id=None,
+            external_id=external_id,
+            absolute_url=absolute_url,
+        )
+        if not attachment_href:
+            return ImageMigrationResult(mode="failed")
+        return ImageMigrationResult(mode="attachment", attachment_href=attachment_href, filename=filename)
+
+    inline_src = _store_downloaded_media(
+        content=content,
+        content_type=content_type,
+        filename=filename,
+        storage=storage,
+        workspace=workspace,
+        project=project,
+        actor=actor,
+        entity_type=entity_type,
+        issue_id=issue_id,
+        comment_id=comment_id,
+        page_id=page_id,
+        external_id=external_id,
+        absolute_url=absolute_url,
+        return_asset_id=True,
+    )
+    if not inline_src:
+        return ImageMigrationResult(mode="failed")
+    return ImageMigrationResult(mode="inline", inline_src=inline_src, filename=filename)
+
+
+def _store_downloaded_media(
+    *,
+    content: bytes,
+    content_type: str,
+    filename: str,
+    storage: S3Storage,
+    workspace: Any,
+    project: Any,
+    actor: Any,
+    entity_type: str,
+    issue_id: str | None,
+    comment_id: str | None,
+    page_id: str | None,
+    external_id: str | None,
+    absolute_url: str,
+    return_asset_id: bool = False,
+) -> str | None:
+    size_limit = settings.FILE_SIZE_LIMIT
+    if len(content) > size_limit:
+        logger.warning(
+            "Skipping oversized EVA media %s (%s bytes, limit %s bytes)",
+            absolute_url,
+            len(content),
+            size_limit,
+        )
+        return None
+
+    asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{filename}"
+    try:
+        upload_ok = storage.upload_file(BytesIO(content), asset_key, content_type=content_type)
+        if not upload_ok:
+            return None
+
+        storage_metadata = storage.get_object_metadata(object_name=asset_key)
+        asset = FileAsset.objects.create(
+            attributes={"name": filename, "type": content_type, "size": len(content)},
+            asset=asset_key,
+            size=len(content),
+            workspace=workspace,
+            project=project,
+            created_by=actor,
+            user=actor,
+            entity_type=entity_type,
+            issue_id=issue_id,
+            comment_id=comment_id,
+            page_id=page_id,
+            is_uploaded=True,
+            storage_metadata=storage_metadata,
+            external_source=EVA_EXTERNAL_SOURCE,
+            external_id=external_id,
+        )
+    except Exception as error:
+        logger.warning("Failed to store EVA media %s in Plane storage: %s", absolute_url, error)
+        return None
+
+    if return_asset_id:
+        return str(asset.id)
+    return plane_asset_href(asset)
+
+
+def _build_image_migration_replacement(
+    soup: BeautifulSoup,
+    *,
+    image,
+    migration: ImageMigrationResult,
+):
+    if migration.mode == "inline" and migration.inline_src:
+        return _build_image_component(soup=soup, image=image, src=migration.inline_src)
+    if migration.mode == "attachment" and migration.attachment_href:
+        return _build_attachment_link_paragraph(
+            soup,
+            href=migration.attachment_href,
+            filename=migration.filename or "attachment",
+            external_id=image.get("data-attach-id"),
+        )
+    return None
+
+
+def _build_attachment_link_paragraph(
+    soup: BeautifulSoup,
+    *,
+    href: str,
+    filename: str,
+    external_id: str | None,
+):
+    paragraph = soup.new_tag("p")
+    if external_id:
+        paragraph["data-eva-attachment"] = external_id
+    link = soup.new_tag("a", href=href)
+    link["target"] = "_blank"
+    link["rel"] = "noopener noreferrer"
+    link.string = f"Attachment: {filename}"
+    paragraph.append(link)
+    return paragraph
 
 
 def import_inline_videos(
@@ -313,6 +610,7 @@ def _upload_media_src(
     page_id: str | None,
     allowed_types: set[str],
     allow_video_extensions: bool = False,
+    allow_image_extensions: bool = False,
     max_size: int | None = None,
     download_timeout: int | None = None,
 ) -> str:
@@ -326,8 +624,9 @@ def _upload_media_src(
 
     extension = f".{filename.rsplit('.', 1)[-1].lower()}" if "." in filename else ""
     if content_type not in allowed_types and not (allow_video_extensions and extension in VIDEO_EXTENSIONS):
-        logger.warning("Skipping unsupported EVA media type %s for %s", content_type, absolute_url)
-        return absolute_url
+        if not (allow_image_extensions and extension in IMAGE_EXTENSIONS):
+            logger.warning("Skipping unsupported EVA media type %s for %s", content_type, absolute_url)
+            return absolute_url
 
     if len(content) > size_limit:
         logger.warning(

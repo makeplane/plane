@@ -215,7 +215,22 @@
           "testcases": "테스트 케이스",
           "labels": "라벨",
           "users": "사용자",
-          "cycles": "사이클"
+          "cycles": "사이클",
+          "tasks_project": "작업 프로젝트",
+          "tasks_project_description": "가져온 EVA 작업을 받을 Plane 프로젝트를 선택하세요.",
+          "testcase_project": "테스트 케이스 프로젝트",
+          "testcase_project_description": "가져온 EVA 테스트 케이스를 받을 Plane 프로젝트를 선택하세요.",
+          "select_tasks_project": "작업 프로젝트 선택",
+          "select_testcase_project": "테스트 케이스 프로젝트 선택",
+          "projects_must_differ": "작업과 테스트 케이스는 서로 다른 Plane 프로젝트로 가져와야 합니다.",
+          "import_scope": "가져오기 범위",
+          "import_scope_description": "Plane으로 가져올 EVA 데이터를 선택하세요.",
+          "import_scope_required": "가져오기 범위를 하나 이상 선택하세요.",
+          "import_tasks_option": "작업",
+          "import_tasks_option_description": "작업, 작업 댓글, 첨부 파일, 문서를 가져옵니다.",
+          "import_testcases_option": "테스트 케이스",
+          "import_testcases_option_description": "테스트 케이스와 해당 댓글을 가져옵니다.",
+          "testcase_comments": "테스트 케이스 댓글"
         },
         "progress": {
           "queued": "Queued",

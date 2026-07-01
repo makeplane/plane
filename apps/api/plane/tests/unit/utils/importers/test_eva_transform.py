@@ -91,3 +91,73 @@ def test_eva_transformer_maps_relations():
 
     assert transformer.map_relation_type("system.link") == "relates_to"
     assert transformer.map_relation_type("blocks") == "blocked_by"
+
+
+@pytest.mark.unit
+def test_eva_transformer_converts_attachment_cards_to_images():
+    transformer = EvaTransformer(base_url="https://eva.example.com")
+    html = (
+        '<div class="app-tinymce-card-preview" data-attach-id="CmfAttachment:1">'
+        '<a class="app-tinymce-href-preview" title="photo.HEIC" download="/files/obj/CmfTestcase/x/photo.HEIC">'
+        '<img class="app-tinymce-img-preview" src="files/obj/CmfTestcase/x/photo.HEIC.meta/thumbnail.jpg">'
+        '<img class="app-tinymce-default-img-preview" src="static/attach-file.png">'
+        "</a></div>"
+    )
+
+    converted = transformer.convert_eva_attachment_cards(html)
+
+    assert "app-tinymce-card-preview" not in converted
+    assert 'data-attach-id="CmfAttachment:1"' in converted
+    assert "files/obj/CmfTestcase/x/photo.HEIC" in converted
+    assert "thumbnail.jpg" not in converted
+    assert "static/attach-file.png" not in converted
+
+
+@pytest.mark.unit
+def test_eva_transformer_converts_ndoc_tc_279_heic_attachment_card():
+    transformer = EvaTransformer(base_url="https://eva.devstream.by")
+    testcase = {
+        "id": "CmfTestcase:e6d02ad8-6888-11f1-a97d-3e7b608e5c91",
+        "code": "NDOC-TC-279",
+        "name": "Есть возможность загрузить фото в формате HEIC",
+        "text": (
+            '<div class="app-tinymce-card-preview" data-attach-id="CmfAttachment:1373dcca-6889-11f1-85f9-3e7b608e5c91">'
+            '<a class="app-tinymce-href-preview" title="IMG_0598.HEIC" '
+            'download="/files/obj/CmfTestcase/CmfTestcase%3Ae6d/CmfTestcase%3Ae6d02ad8-6888-11f1-a97d-3e7b608e5c91/IMG_0598.HEIC">'
+            '<img class="app-tinymce-img-preview" '
+            'src="files/obj/CmfTestcase/CmfTestcase%3Ae6d/CmfTestcase%3Ae6d02ad8-6888-11f1-a97d-3e7b608e5c91/IMG_0598.HEIC.meta/thumbnail.jpg">'
+            "</a></div>"
+        ),
+        "steps": [],
+    }
+
+    html = transformer.testcase_description_html(testcase)
+
+    assert "EVA test case: NDOC-TC-279" in html
+    assert "app-tinymce-card-preview" not in html
+    assert "IMG_0598.HEIC" in html
+    assert "thumbnail.jpg" not in html
+    assert 'data-attach-id="CmfAttachment:1373dcca-6889-11f1-85f9-3e7b608e5c91"' in html
+    transformer = EvaTransformer(base_url="https://eva.example.com")
+    testcase = {
+        "code": "NDOC-TC-14",
+        "text": "<p>Overview</p>",
+        "precondition": "<p>User is logged in</p>",
+        "steps": [
+            {
+                "code": "TCS-1",
+                "name": "Open profile",
+                "text": "<p>Click profile</p>",
+                "expected_result": "<p>Profile opens</p>",
+            }
+        ],
+        "expected_result": "<p>All checks pass</p>",
+    }
+
+    html = transformer.testcase_description_html(testcase)
+
+    assert "EVA test case: NDOC-TC-14" in html
+    assert "Precondition" in html
+    assert "Open profile" in html
+    assert "Expected result" in html
+    assert "Click profile" in html

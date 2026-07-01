@@ -53,13 +53,34 @@ def eva_import_task(importer_id: str) -> None:
         if not eva_project_id:
             raise EvaApiError("Missing EVA project id in importer metadata")
 
-        extracted = extractor.extract_project(eva_project_id)
+        config = importer.config or {}
+        import_tasks = bool(config.get("import_tasks", True))
+        import_testcases = bool(config.get("import_testcases", True))
+        if not import_tasks and not import_testcases:
+            raise EvaApiError("At least one import scope must be enabled")
+
+        extracted = extractor.extract_project(
+            eva_project_id,
+            import_tasks=import_tasks,
+            import_testcases=import_testcases,
+        )
+        tasks_project = importer.project
+        testcase_project = importer.project
+        if import_testcases and import_tasks:
+            testcase_project = Project.objects.get(
+                pk=config.get("testcase_project_id"),
+                workspace=importer.workspace,
+            )
+        elif import_testcases:
+            testcase_project = importer.project
+
         loader = EvaLoader(
             importer=importer,
             workspace=importer.workspace,
-            project=importer.project,
+            project=tasks_project,
+            testcase_project=testcase_project,
             actor=importer.initiated_by,
-            config=importer.config or {},
+            config=config,
             data=importer.data or {},
         )
         imported_data = loader.run(extracted)
