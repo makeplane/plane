@@ -20,7 +20,7 @@ import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helpe
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
-import type { TProject } from "@plane/types";
+import type { TProject, TProjectCreatePayload, TProjectTemplate } from "@plane/types";
 import { ProjectAttributes } from "./attributes";
 import { getProjectFormValues } from "./utils";
 
@@ -40,6 +40,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   // states
+  const [selectedTemplate, setSelectedTemplate] = useState<TProjectTemplate | null>(null);
   const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // form info
   const methods = useForm<TProject>({
@@ -92,7 +93,12 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
       }
     }
 
-    return createProject(workspaceSlug.toString(), formData)
+    const projectCreateData: TProjectCreatePayload = {
+      ...formData,
+      ...(selectedTemplate ? { template_id: selectedTemplate.id } : {}),
+    };
+
+    return createProject(workspaceSlug.toString(), projectCreateData)
       .then(async (res) => {
         if (uploadedAssetUrl) {
           await updateCoverImageStatus(res.id, uploadedAssetUrl);
@@ -166,6 +172,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   const handleClose = () => {
     onClose();
+    setSelectedTemplate(null);
     setShouldAutoSyncIdentifier(true);
     setTimeout(() => {
       reset();
@@ -174,7 +181,13 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   return (
     <FormProvider {...methods}>
-      <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
+      <ProjectCreateHeader
+        handleClose={handleClose}
+        isMobile={isMobile}
+        workspaceSlug={workspaceSlug}
+        selectedTemplate={selectedTemplate}
+        onTemplateChange={setSelectedTemplate}
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="px-3">
         <div className="mt-9 space-y-6 pb-5">

@@ -35,15 +35,17 @@ enum EProjectCreationSteps {
 }
 
 export function CreateProjectModal(props: Props) {
-  const { isOpen, onClose, setToFavorite = false, workspaceSlug, data, templateId } = props;
+  const { isOpen, onClose, setToFavorite = false, workspaceSlug, data } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
+  const [formSession, setFormSession] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(EProjectCreationSteps.CREATE_PROJECT);
       setCreatedProjectId(null);
+      setFormSession((prevSession) => prevSession + 1);
     }
   }, [isOpen]);
 
@@ -69,13 +71,13 @@ export function CreateProjectModal(props: Props) {
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXXL}>
       {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
         <CreateProjectForm
+          key={formSession}
           setToFavorite={setToFavorite}
           workspaceSlug={workspaceSlug}
           onClose={onClose}
           updateCoverImageStatus={handleCoverImageStatusUpdate}
           handleNextStep={handleNextStep}
           data={data}
-          templateId={templateId}
         />
       )}
       {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (

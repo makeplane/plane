@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon } from "@plane/propel/icons";
 // plane types
-import type { IProject } from "@plane/types";
+import type { IProject, TProjectTemplate } from "@plane/types";
 // plane ui
 import { getTabIndex } from "@plane/utils";
 // components
@@ -26,8 +26,10 @@ type Props = {
   isMobile?: boolean;
   handleFormOnChange?: () => void;
   isClosable?: boolean;
-  handleTemplateSelect?: () => void;
+  onTemplateChange?: (template: TProjectTemplate | null) => void;
+  selectedTemplate?: TProjectTemplate | null;
   showActionButtons?: boolean;
+  workspaceSlug: string;
 };
 
 function ProjectCreateHeader(props: Props) {
@@ -36,8 +38,10 @@ function ProjectCreateHeader(props: Props) {
     isMobile = false,
     handleFormOnChange,
     isClosable = true,
-    handleTemplateSelect,
+    onTemplateChange,
+    selectedTemplate = null,
     showActionButtons = true,
+    workspaceSlug,
   } = props;
   const { watch, control, setValue } = useFormContext<IProject>();
   const { t } = useTranslation();
@@ -56,7 +60,11 @@ function ProjectCreateHeader(props: Props) {
       />
       {showActionButtons && (
         <div className="absolute top-2.5 left-2.5">
-          <ProjectTemplateSelect onClick={handleTemplateSelect} />
+          <ProjectTemplateSelect
+            workspaceSlug={workspaceSlug}
+            selectedTemplate={selectedTemplate}
+            onChange={(template) => onTemplateChange?.(template)}
+          />
         </div>
       )}
       {isClosable && (
