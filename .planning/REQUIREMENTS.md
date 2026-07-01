@@ -9,12 +9,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Template Catalog
 
-- [ ] **CAT-01**: Workspace project creation shows available Project Templates inside the existing create Project modal/form.
+- [x] **CAT-01**: Workspace project creation shows available Project Templates inside the existing create Project modal/form.
 - [x] **CAT-02**: User can create a Project without selecting a template and receives the existing default Project behavior.
 - [x] **CAT-03**: User can select the built-in `Software Project` template when creating a Project.
 - [x] **CAT-04**: User can select the built-in `Marketing Campaign` template when creating a Project.
 - [x] **CAT-05**: User can select the built-in `Operations Project` template when creating a Project.
-- [ ] **CAT-06**: User can see a useful summary of a template before selecting it, including counts or descriptions for states, labels, modules, cycles, and starter issues.
+- [x] **CAT-06**: User can see a useful summary of a template before selecting it, including counts or descriptions for states, labels, modules, cycles, and starter issues.
 
 ### Custom Templates
 
@@ -50,17 +50,17 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Permissions
 
 - [x] **PERM-01**: Workspace admins can list built-in and workspace custom templates.
-- [ ] **PERM-02**: Workspace members who can create Projects can list and select available templates when creating a Project.
+- [x] **PERM-02**: Workspace members who can create Projects can list and select available templates when creating a Project.
 - [x] **PERM-03**: Workspace guests cannot create, edit, delete, archive, or deactivate custom templates.
 - [x] **PERM-04**: Workspace members who are not admins cannot create, edit, delete, archive, or deactivate custom templates.
 - [x] **PERM-05**: API write operations for custom templates reject unauthorized users with an appropriate permission error.
 
 ### Frontend Experience
 
-- [ ] **UI-01**: The existing `ProjectTemplateSelect` UI is implemented in the create Project header area.
-- [ ] **UI-02**: Selecting a template updates the create Project form state and sends the selected `template_id` with the create request.
-- [ ] **UI-03**: The selected template is visually clear before submit.
-- [ ] **UI-04**: Template loading, empty, and error states are handled without blocking no-template Project creation.
+- [x] **UI-01**: The existing `ProjectTemplateSelect` UI is implemented in the create Project header area.
+- [x] **UI-02**: Selecting a template updates the create Project form state and sends the selected `template_id` with the create request.
+- [x] **UI-03**: The selected template is visually clear before submit.
+- [x] **UI-04**: Template loading, empty, and error states are handled without blocking no-template Project creation.
 - [ ] **UI-05**: Workspace admins have a discoverable workspace settings area for managing custom Project Templates.
 
 ### Verification
@@ -69,7 +69,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **VER-02**: Backend tests cover Project creation from each built-in template type at least at the apply-service level.
 - [x] **VER-03**: Backend tests cover custom template CRUD permissions.
 - [x] **VER-04**: Backend tests cover rollback behavior when template application fails.
-- [ ] **VER-05**: Frontend checks cover type safety for template types, services, and create Project form payload changes.
+- [x] **VER-05**: Frontend checks cover type safety for template types, services, and create Project form payload changes.
 
 ## v2 Requirements
 
@@ -103,12 +103,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase   | Status   |
 | ----------- | ------- | -------- |
-| CAT-01      | Phase 3 | Pending  |
+| CAT-01      | Phase 3 | Complete |
 | CAT-02      | Phase 2 | Complete |
 | CAT-03      | Phase 1 | Complete |
 | CAT-04      | Phase 1 | Complete |
 | CAT-05      | Phase 1 | Complete |
-| CAT-06      | Phase 3 | Pending  |
+| CAT-06      | Phase 3 | Complete |
 | CUST-01     | Phase 1 | Complete |
 | CUST-02     | Phase 1 | Complete |
 | CUST-03     | Phase 1 | Complete |
@@ -132,20 +132,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GEN-06      | Phase 2 | Complete |
 | GEN-07      | Phase 2 | Complete |
 | PERM-01     | Phase 1 | Complete |
-| PERM-02     | Phase 3 | Pending  |
+| PERM-02     | Phase 3 | Complete |
 | PERM-03     | Phase 1 | Complete |
 | PERM-04     | Phase 1 | Complete |
 | PERM-05     | Phase 1 | Complete |
-| UI-01       | Phase 3 | Pending  |
-| UI-02       | Phase 3 | Pending  |
-| UI-03       | Phase 3 | Pending  |
-| UI-04       | Phase 3 | Pending  |
+| UI-01       | Phase 3 | Complete |
+| UI-02       | Phase 3 | Complete |
+| UI-03       | Phase 3 | Complete |
+| UI-04       | Phase 3 | Complete |
 | UI-05       | Phase 4 | Pending  |
 | VER-01      | Phase 2 | Complete |
 | VER-02      | Phase 2 | Complete |
 | VER-03      | Phase 2 | Complete |
 | VER-04      | Phase 2 | Complete |
-| VER-05      | Phase 3 | Pending  |
+| VER-05      | Phase 3 | Complete |
 
 **Coverage:**
 
@@ -156,4 +156,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 ---
 
 _Requirements defined: 2026-06-29_
-_Last updated: 2026-06-29 after roadmap creation_
+_Last updated: 2026-07-01 after Phase 03 completion_

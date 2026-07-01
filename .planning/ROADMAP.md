@@ -12,7 +12,7 @@ Add full Project Templates to Plane's Workspace project-creation flow. The roadm
 | ----- | ------------------------------- | ----------------------------------------------------- | ------------ | ---------- |
 | 1     | Template Catalog Foundation     | 3/3                                                   | Complete     | 2026-06-30 |
 | 2     | Transactional Project Creation  | 3/3                                                   | Complete     | 2026-06-30 |
-| 3     | Create Modal Template Selection | 2/3                                                   | In Progress  |            |
+| 3     | Create Modal Template Selection | 3/3                                                   | Complete     | 2026-07-01 |
 | 4     | Workspace Template Management   | Give workspace admins a UI to manage custom templates | UI-05        | yes        |
 
 **Coverage:**
@@ -110,7 +110,7 @@ Plans:
 
 **Requirements:** CAT-01, CAT-06, PERM-02, UI-01, UI-02, UI-03, UI-04, VER-05
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -123,7 +123,7 @@ Plans:
 
 **Wave 3** _(blocked on Wave 2 completion)_
 
-- [ ] 03-03-PLAN.md - Harden selector fallback states, accessibility, UI contract, and final frontend verification.
+- [x] 03-03-PLAN.md - Harden selector fallback states, accessibility, UI contract, and final frontend verification.
 
 **Success Criteria:**
 
