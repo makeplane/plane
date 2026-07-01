@@ -112,10 +112,27 @@ export type TProjectTemplateFormCycle = {
 
 export type TProjectTemplateFormStarterIssue = {
   name: string;
-  state_key?: string | null;
-  label_keys?: string[];
-  module_key?: string | null;
-  cycle_key?: string | null;
+  /**
+   * RHF field-array id of the referenced state row. The `state_key` is
+   * resolved from the in-editor states array by id in `assemblePayload`
+   * (D-13 / RESEARCH Pitfall 2) — never recomputed from a name.
+   */
+  state_ref_id?: string | null;
+  /**
+   * RHF field-array ids of the referenced label rows. `label_keys` is
+   * resolved from the in-editor labels array by id in `assemblePayload`.
+   */
+  label_ref_ids?: string[];
+  /**
+   * RHF field-array id of the referenced module row. `module_key` is resolved
+   * from the in-editor modules array by id in `assemblePayload`.
+   */
+  module_ref_id?: string | null;
+  /**
+   * RHF field-array id of the referenced cycle row. `cycle_key` is resolved
+   * from the in-editor cycles array by id in `assemblePayload`.
+   */
+  cycle_ref_id?: string | null;
   priority?: TProjectTemplateStarterIssue["priority"];
 };
 
@@ -156,7 +173,25 @@ export function emptyTemplatePayload(): TProjectTemplateFormPayload {
  * - Trims `name` to drop accidental whitespace; coerces null/undefined
  *   `description` to `null`.
  */
-export function assemblePayload(form: TProjectTemplateForm): TProjectTemplatePayload {
+/**
+ * Source-row field-array metadata. RHF field-array `id` is the stable
+ * reference token (not the name) — renames preserve it, so cross-section
+ * references never dangle (D-13 / RESEARCH Pitfall 2).
+ *
+ * For each section we keep a parallel `id -> key` map so `assemblePayload`
+ * can resolve a starter-issue's ref id to the current stable key.
+ */
+export type TAssemblePayloadContext = {
+  stateKeyById?: Record<string, string>;
+  labelKeyById?: Record<string, string>;
+  moduleKeyById?: Record<string, string>;
+  cycleKeyById?: Record<string, string>;
+};
+
+export function assemblePayload(
+  form: TProjectTemplateForm,
+  context: TAssemblePayloadContext = {}
+): TProjectTemplatePayload {
   const states: TProjectTemplateState[] = form.payload.states.map((s) => ({
     state_key: s.state_key,
     name: (s.name ?? "").trim(),
@@ -185,17 +220,30 @@ export function assemblePayload(form: TProjectTemplateForm): TProjectTemplatePay
     duration_days: c.duration_days ?? null,
   }));
 
-  // The `_key` carry-through is enough for Plan 03; Plan 04 wires fields into
-  // starter-issue references (D-13). Kept passthrough so Plan 04 doesn't have
-  // to renumber this util.
-  const starter_issues = form.payload.starter_issues.map((i) => ({
-    name: (i.name ?? "").trim(),
-    state_key: i.state_key ?? null,
-    label_keys: i.label_keys ?? [],
-    module_key: i.module_key ?? null,
-    cycle_key: i.cycle_key ?? null,
-    priority: i.priority ?? null,
-  }));
+  // Resolve each starter-issue ref id to its current stable key. If the
+  // source row was removed (id no longer in the lookup) the reference is
+  // dropped here so the payload never emits a dangling *_key (Pitfall 2 /
+  // T-04-12). If the context map for a section is missing, all references
+  // for that section are dropped (defensive — caller should always pass).
+  const stateKeyById = context.stateKeyById ?? {};
+  const labelKeyById = context.labelKeyById ?? {};
+  const moduleKeyById = context.moduleKeyById ?? {};
+  const cycleKeyById = context.cycleKeyById ?? {};
+
+  const starter_issues = form.payload.starter_issues.map((i) => {
+    const state_key = i.state_ref_id ? (stateKeyById[i.state_ref_id] ?? null) : null;
+    const label_keys = (i.label_ref_ids ?? []).map((id) => labelKeyById[id]).filter((k): k is string => Boolean(k));
+    const module_key = i.module_ref_id ? (moduleKeyById[i.module_ref_id] ?? null) : null;
+    const cycle_key = i.cycle_ref_id ? (cycleKeyById[i.cycle_ref_id] ?? null) : null;
+    return {
+      name: (i.name ?? "").trim(),
+      state_key,
+      label_keys,
+      module_key,
+      cycle_key,
+      priority: i.priority ?? null,
+    };
+  });
 
   return {
     schema_version: PROJECT_TEMPLATE_SCHEMA_VERSION,
