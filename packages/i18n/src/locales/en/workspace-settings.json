@@ -150,6 +150,34 @@
           }
         }
       },
+      "project_templates": {
+        "title": "Project Templates",
+        "description": "Create and manage reusable project templates for this workspace.",
+        "new_template": "New template",
+        "system_section": {
+          "title": "System templates",
+          "description": "Built-in templates available to everyone in this workspace. These can't be edited — duplicate one to customize it."
+        },
+        "custom_section": {
+          "title": "Custom templates",
+          "description": "Templates created for this workspace."
+        },
+        "counts": {
+          "states": "{count} states",
+          "labels": "{count} labels",
+          "modules": "{count} modules",
+          "cycles": "{count} cycles",
+          "starter_issues": "{count} starter issues"
+        },
+        "empty": {
+          "title": "No custom templates yet",
+          "description": "Create a template to give new projects a ready-to-work structure. Start from scratch, or duplicate a system template."
+        },
+        "error": {
+          "load": "Couldn't load templates. Check your connection and try again.",
+          "retry": "Try again"
+        }
+      },
       "api_tokens": {
         "heading": "Access Tokens",
         "description": "Generate secure API tokens to integrate your data with external systems and applications.",
