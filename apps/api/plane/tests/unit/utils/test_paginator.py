@@ -10,9 +10,10 @@ from plane.utils.paginator import BasePaginator, Cursor, CursorResult
 
 class OffsetEchoPaginator:
     def get_result(self, limit=1000, cursor=None):
+        has_next = cursor.offset < 1
         return CursorResult(
             results=[{"page_offset": cursor.offset}],
-            next=Cursor(limit, cursor.offset + 1, False, False),
+            next=Cursor(limit, cursor.offset + 1, False, has_next),
             prev=Cursor(limit, cursor.offset - 1, True, cursor.offset > 0),
             hits=2,
             max_hits=2,

@@ -686,10 +686,10 @@ class BasePaginator:
             try:
                 page_number = int(page_value)
             except ValueError:
-                raise ParseError(detail="Invalid page parameter.")
+                raise ParseError(detail="Page parameter must be a valid integer.")
 
             if page_number < 1:
-                raise ParseError(detail="Invalid page parameter.")
+                raise ParseError(detail="Page parameter must be greater than or equal to 1.")
 
             input_cursor = cursor_cls(per_page, page_number - 1, False)
         else:
