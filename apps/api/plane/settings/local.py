@@ -16,6 +16,11 @@ MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
+# Prometheus metrics settings
+INSTALLED_APPS += ("django_prometheus",)
+MIDDLEWARE.insert(0, "django_prometheus.middleware.PrometheusBeforeMiddleware")
+MIDDLEWARE.append("django_prometheus.middleware.PrometheusAfterMiddleware")
+
 # Only show emails in console don't send it to smtp
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
