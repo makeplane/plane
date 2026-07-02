@@ -132,6 +132,7 @@ ATTRIBUTES = {
         "src",
         "alt",
         "title",
+        "data-attach-id",
     },
     "mention-component": {"id", "entity_identifier", "entity_name"},
     "th": {

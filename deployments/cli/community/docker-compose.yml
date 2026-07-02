@@ -214,7 +214,7 @@ services:
     environment:
       <<: *minio-env
     volumes:
-      - uploads:/export
+      - ${MINIO_DATA_DIR:-uploads}:/export
 
   # Comment this if you already have a reverse proxy running
   proxy:

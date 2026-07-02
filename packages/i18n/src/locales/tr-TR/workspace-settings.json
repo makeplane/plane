@@ -182,7 +182,85 @@
       "imports": {
         "title": "İmportlar",
         "heading": "İmportlar",
-        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın."
+        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın.",
+        "previous_imports": "Önceki içe aktarmalar",
+        "table": {
+          "service": "Hizmet",
+          "project": "Proje",
+          "status": "Durum",
+          "created_at": "Oluşturulma"
+        },
+        "eva": {
+          "url": "EVA örneği URL'si",
+          "url_description": "EvaTeam örneğinizin temel URL'si.",
+          "token": "API belirteci",
+          "token_description": "EvaTeam profil güvenlik ayarlarından Bearer belirteci.",
+          "eva_project": "EVA projesi",
+          "eva_project_description": "İçe aktarılacak EvaTeam projesini seçin.",
+          "plane_project": "Plane projesi",
+          "plane_project_description": "İçe aktarılan iş öğelerini alacak Plane projesini seçin.",
+          "select_eva_project": "EVA projesi seç",
+          "select_plane_project": "Plane projesi seç",
+          "preview": "İçe aktarmayı önizle",
+          "start_import": "İçe aktarmayı başlat",
+          "preview_title": "İçe aktarma önizlemesi",
+          "preview_success": "EVA önizlemesi yüklendi",
+          "preview_error": "EVA önizlemesi yüklenemedi",
+          "import_started": "EVA içe aktarma başlatıldı",
+          "import_error": "EVA içe aktarma başlatılamadı",
+          "tasks": "Görevler",
+          "comments": "Yorumlar",
+          "attachments": "Ekler",
+          "documents": "Belgeler",
+          "testcases": "Test senaryoları",
+          "labels": "Etiketler",
+          "users": "Kullanıcılar",
+          "cycles": "Döngüler",
+          "tasks_project": "Görev projesi",
+          "tasks_project_description": "İçe aktarılan EVA görevlerini alacak Plane projesini seçin.",
+          "testcase_project": "Test senaryoları projesi",
+          "testcase_project_description": "İçe aktarılan EVA test senaryolarını alacak Plane projesini seçin.",
+          "select_tasks_project": "Görev projesi seç",
+          "select_testcase_project": "Test senaryoları projesi seç",
+          "projects_must_differ": "Görevler ve test senaryoları farklı Plane projelerine aktarılmalıdır.",
+          "import_scope": "Ice aktarma kapsami",
+          "import_scope_description": "EVA verilerinden hangilerinin Plane e aktarilacagini secin.",
+          "import_scope_required": "En az bir ice aktarma kapsami secin.",
+          "import_tasks_option": "Gorevler",
+          "import_tasks_option_description": "Gorevleri, gorev yorumlarini, ekleri ve dokumantasyonu ice aktar.",
+          "import_testcases_option": "Test senaryolari",
+          "import_testcases_option_description": "Test senaryolarini ve yorumlarini ice aktar.",
+          "testcase_comments": "Test senaryosu yorumlari"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "Workloglar",

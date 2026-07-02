@@ -182,7 +182,85 @@
       "imports": {
         "title": "Importy",
         "heading": "Importy",
-        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu."
+        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu.",
+        "previous_imports": "Predchádzajúce importy",
+        "table": {
+          "service": "Služba",
+          "project": "Projekt",
+          "status": "Stav",
+          "created_at": "Vytvorené"
+        },
+        "eva": {
+          "url": "URL inštancie EVA",
+          "url_description": "Základná URL vašej inštancie EvaTeam.",
+          "token": "API token",
+          "token_description": "Bearer token z nastavení zabezpečenia profilu EvaTeam.",
+          "eva_project": "Projekt EVA",
+          "eva_project_description": "Vyberte projekt EvaTeam na import.",
+          "plane_project": "Projekt Plane",
+          "plane_project_description": "Vyberte projekt Plane, do ktorého sa importujú pracovné položky.",
+          "select_eva_project": "Vyberte projekt EVA",
+          "select_plane_project": "Vyberte projekt Plane",
+          "preview": "Náhľad importu",
+          "start_import": "Spustiť import",
+          "preview_title": "Náhľad importu",
+          "preview_success": "Náhľad EVA načítaný",
+          "preview_error": "Nepodarilo sa načítať náhľad EVA",
+          "import_started": "Import EVA spustený",
+          "import_error": "Nepodarilo sa spustiť import EVA",
+          "tasks": "Úlohy",
+          "comments": "Komentáre",
+          "attachments": "Prílohy",
+          "documents": "Dokumenty",
+          "testcases": "Testovacie prípady",
+          "labels": "Štítky",
+          "users": "Používatelia",
+          "cycles": "Cykly",
+          "tasks_project": "Projekt úloh",
+          "tasks_project_description": "Vyberte projekt Plane, do ktorého sa importujú úlohy EVA.",
+          "testcase_project": "Projekt testovacích prípadov",
+          "testcase_project_description": "Vyberte projekt Plane, do ktorého sa importujú testovacie prípady EVA.",
+          "select_tasks_project": "Vyberte projekt úloh",
+          "select_testcase_project": "Vyberte projekt testovacích prípadov",
+          "projects_must_differ": "Úlohy a testovacie prípady musia byť importované do rôznych projektov Plane.",
+          "import_scope": "Rozsah importu",
+          "import_scope_description": "Vyberte, ktore udaje EVA importovat do Plane.",
+          "import_scope_required": "Vyberte aspon jeden rozsah importu.",
+          "import_tasks_option": "Ulohy",
+          "import_tasks_option_description": "Importovat ulohy, komentare k uloham, prilohy a dokumentaciu.",
+          "import_testcases_option": "Testovacie pripady",
+          "import_testcases_option_description": "Importovat testovacie pripady a ich komentare.",
+          "testcase_comments": "Komentare testovacich pripadov"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "Pracovné záznamy",

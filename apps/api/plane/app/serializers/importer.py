@@ -18,3 +18,15 @@ class ImporterSerializer(BaseSerializer):
     class Meta:
         model = Importer
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        metadata = dict(data.get("metadata") or {})
+        if metadata.get("token"):
+            metadata["token"] = "***"
+        if metadata.get("api_token"):
+            metadata["api_token"] = "***"
+        if metadata.get("rtm_api_token"):
+            metadata["rtm_api_token"] = "***"
+        data["metadata"] = metadata
+        return data

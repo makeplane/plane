@@ -265,6 +265,10 @@
         "title": "Adaugă stări",
         "description": "Selectează stările prin care progresează elementul de lucru."
       }
+    },
+    "imports": {
+      "title": "Niciun import efectuat",
+      "description": "Găsește aici toate importurile anterioare și descarcă-le."
     }
   }
 }

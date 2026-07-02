@@ -265,6 +265,10 @@
         "title": "Zustände hinzufügen",
         "description": "Wählen Sie die Zustände aus, die das Arbeitselement durchläuft."
       }
+    },
+    "imports": {
+      "title": "Keine Importe",
+      "description": "Hier finden Sie Ihre Importhistorie."
     }
   }
 }

@@ -265,6 +265,10 @@
         "title": "Dodaj stany",
         "description": "Wybierz stany, przez które przechodzi element pracy."
       }
+    },
+    "imports": {
+      "title": "Brak importów",
+      "description": "Znajdziesz tu historię swoich importów."
     }
   }
 }

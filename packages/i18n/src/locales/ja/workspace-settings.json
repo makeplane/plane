@@ -182,7 +182,85 @@
       "imports": {
         "title": "インポート",
         "heading": "インポート",
-        "description": "既存のプロジェクト管理ツールからデータを接続・インポートして、ワークフロー統合を効率化します。"
+        "description": "既存のプロジェクト管理ツールからデータを接続・インポートして、ワークフロー統合を効率化します。",
+        "previous_imports": "以前のインポート",
+        "table": {
+          "service": "サービス",
+          "project": "プロジェクト",
+          "status": "ステータス",
+          "created_at": "作成日時"
+        },
+        "eva": {
+          "url": "EVA インスタンス URL",
+          "url_description": "EvaTeam インスタンスのベース URL。",
+          "token": "API トークン",
+          "token_description": "EvaTeam プロフィールのセキュリティ設定から取得した Bearer トークン。",
+          "eva_project": "EVA プロジェクト",
+          "eva_project_description": "インポートする EvaTeam プロジェクトを選択します。",
+          "plane_project": "Plane プロジェクト",
+          "plane_project_description": "インポートした作業項目を受け取る Plane プロジェクトを選択します。",
+          "select_eva_project": "EVA プロジェクトを選択",
+          "select_plane_project": "Plane プロジェクトを選択",
+          "preview": "インポートをプレビュー",
+          "start_import": "インポートを開始",
+          "preview_title": "インポートプレビュー",
+          "preview_success": "EVA プレビューを読み込みました",
+          "preview_error": "EVA プレビューを読み込めませんでした",
+          "import_started": "EVA インポートを開始しました",
+          "import_error": "EVA インポートを開始できませんでした",
+          "tasks": "タスク",
+          "comments": "コメント",
+          "attachments": "添付ファイル",
+          "documents": "ドキュメント",
+          "testcases": "テストケース",
+          "labels": "ラベル",
+          "users": "ユーザー",
+          "cycles": "サイクル",
+          "tasks_project": "タスク プロジェクト",
+          "tasks_project_description": "インポートした EVA タスクを受け取る Plane プロジェクトを選択します。",
+          "testcase_project": "テストケース プロジェクト",
+          "testcase_project_description": "インポートした EVA テストケースを受け取る Plane プロジェクトを選択します。",
+          "select_tasks_project": "タスク プロジェクトを選択",
+          "select_testcase_project": "テストケース プロジェクトを選択",
+          "projects_must_differ": "タスクとテストケースは異なる Plane プロジェクトにインポートする必要があります。",
+          "import_scope": "インポート範囲",
+          "import_scope_description": "Plane にインポートする EVA データを選択します。",
+          "import_scope_required": "インポート範囲を少なくとも 1 つ選択してください。",
+          "import_tasks_option": "タスク",
+          "import_tasks_option_description": "タスク、タスクのコメント、添付ファイル、ドキュメントをインポートします。",
+          "import_testcases_option": "テストケース",
+          "import_testcases_option_description": "テストケースとそのコメントをインポートします。",
+          "testcase_comments": "テストケースのコメント"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "作業ログ",

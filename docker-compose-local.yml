@@ -61,7 +61,7 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
 
   api:
     build:
@@ -77,10 +77,14 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+      AWS_S3_PUBLIC_ENDPOINT_URL: http://localhost:9000
     depends_on:
       - plane-db
       - plane-redis
       - plane-mq
+      - plane-minio
     ports:
       - "8000:8000"
 
@@ -98,10 +102,13 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      AWS_S3_ENDPOINT_URL: http://plane-minio:9000
     depends_on:
       - api
       - plane-db
       - plane-redis
+      - plane-minio
 
   beat-worker:
     build:
@@ -117,10 +124,13 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      AWS_S3_ENDPOINT_URL: http://plane-minio:9000
     depends_on:
       - api
       - plane-db
       - plane-redis
+      - plane-minio
 
   migrator:
     build:
@@ -136,9 +146,12 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      AWS_S3_ENDPOINT_URL: http://plane-minio:9000
     depends_on:
       - plane-db
       - plane-redis
+      - plane-minio
 
 volumes:
   redisdata:

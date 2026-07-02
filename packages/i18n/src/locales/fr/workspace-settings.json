@@ -182,7 +182,85 @@
       "imports": {
         "title": "Importations",
         "heading": "Importations",
-        "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail."
+        "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail.",
+        "previous_imports": "Importations précédentes",
+        "table": {
+          "service": "Service",
+          "project": "Projet",
+          "status": "Statut",
+          "created_at": "Créé le"
+        },
+        "eva": {
+          "url": "URL de l'instance EVA",
+          "url_description": "URL de base de votre instance EvaTeam.",
+          "token": "Jeton API",
+          "token_description": "Jeton Bearer depuis les paramètres de sécurité de votre profil EvaTeam.",
+          "eva_project": "Projet EVA",
+          "eva_project_description": "Sélectionnez le projet EvaTeam à importer.",
+          "plane_project": "Projet Plane",
+          "plane_project_description": "Sélectionnez le projet Plane qui recevra les éléments de travail importés.",
+          "select_eva_project": "Sélectionner un projet EVA",
+          "select_plane_project": "Sélectionner un projet Plane",
+          "preview": "Aperçu de l'importation",
+          "start_import": "Démarrer l'importation",
+          "preview_title": "Aperçu de l'importation",
+          "preview_success": "Aperçu EVA chargé",
+          "preview_error": "Impossible de charger l'aperçu EVA",
+          "import_started": "Importation EVA démarrée",
+          "import_error": "Impossible de démarrer l'importation EVA",
+          "tasks": "Tâches",
+          "comments": "Commentaires",
+          "attachments": "Pièces jointes",
+          "documents": "Documents",
+          "testcases": "Cas de test",
+          "labels": "Libellés",
+          "users": "Utilisateurs",
+          "cycles": "Cycles",
+          "tasks_project": "Projet des tâches",
+          "tasks_project_description": "Sélectionnez le projet Plane qui recevra les tâches EVA importées.",
+          "testcase_project": "Projet des cas de test",
+          "testcase_project_description": "Sélectionnez le projet Plane qui recevra les cas de test EVA importés.",
+          "select_tasks_project": "Sélectionner le projet des tâches",
+          "select_testcase_project": "Sélectionner le projet des cas de test",
+          "projects_must_differ": "Les tâches et les cas de test doivent être importés dans des projets Plane différents.",
+          "import_scope": "Perimetre d importation",
+          "import_scope_description": "Choisissez les donnees EVA a importer dans Plane.",
+          "import_scope_required": "Selectionnez au moins un perimetre d importation.",
+          "import_tasks_option": "Taches",
+          "import_tasks_option_description": "Importer les taches, leurs commentaires, les pieces jointes et la documentation.",
+          "import_testcases_option": "Cas de test",
+          "import_testcases_option_description": "Importer les cas de test et leurs commentaires.",
+          "testcase_comments": "Commentaires des cas de test"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "Journaux de travail",

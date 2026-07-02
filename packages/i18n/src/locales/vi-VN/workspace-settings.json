@@ -182,7 +182,85 @@
       "imports": {
         "title": "Nhập dữ liệu",
         "heading": "Nhập",
-        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc.",
+        "previous_imports": "Lần nhập trước",
+        "table": {
+          "service": "Dịch vụ",
+          "project": "Dự án",
+          "status": "Trạng thái",
+          "created_at": "Tạo lúc"
+        },
+        "eva": {
+          "url": "URL phiên bản EVA",
+          "url_description": "URL cơ sở của phiên bản EvaTeam của bạn.",
+          "token": "Token API",
+          "token_description": "Token Bearer từ cài đặt bảo mật hồ sơ EvaTeam.",
+          "eva_project": "Dự án EVA",
+          "eva_project_description": "Chọn dự án EvaTeam để nhập.",
+          "plane_project": "Dự án Plane",
+          "plane_project_description": "Chọn dự án Plane sẽ nhận các mục công việc được nhập.",
+          "select_eva_project": "Chọn dự án EVA",
+          "select_plane_project": "Chọn dự án Plane",
+          "preview": "Xem trước nhập",
+          "start_import": "Bắt đầu nhập",
+          "preview_title": "Xem trước nhập",
+          "preview_success": "Đã tải xem trước EVA",
+          "preview_error": "Không thể tải xem trước EVA",
+          "import_started": "Đã bắt đầu nhập EVA",
+          "import_error": "Không thể bắt đầu nhập EVA",
+          "tasks": "Tác vụ",
+          "comments": "Bình luận",
+          "attachments": "Tệp đính kèm",
+          "documents": "Tài liệu",
+          "testcases": "Trường hợp kiểm thử",
+          "labels": "Nhãn",
+          "users": "Người dùng",
+          "cycles": "Chu kỳ",
+          "tasks_project": "Dự án tác vụ",
+          "tasks_project_description": "Chọn dự án Plane sẽ nhận các tác vụ EVA được nhập.",
+          "testcase_project": "Dự án test case",
+          "testcase_project_description": "Chọn dự án Plane sẽ nhận các test case EVA được nhập.",
+          "select_tasks_project": "Chọn dự án tác vụ",
+          "select_testcase_project": "Chọn dự án test case",
+          "projects_must_differ": "Tác vụ và test case phải được nhập vào các dự án Plane khác nhau.",
+          "import_scope": "Pham vi nhap",
+          "import_scope_description": "Chon du lieu EVA nao se nhap vao Plane.",
+          "import_scope_required": "Chon it nhat mot pham vi nhap.",
+          "import_tasks_option": "Tac vu",
+          "import_tasks_option_description": "Nhap tac vu, binh luan tac vu, tep dinh kem va tai lieu.",
+          "import_testcases_option": "Test case",
+          "import_testcases_option_description": "Nhap test case va binh luan cua chung.",
+          "testcase_comments": "Binh luan test case"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "Nhật ký công việc",

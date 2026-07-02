@@ -265,6 +265,10 @@
         "title": "Aggiungi stati",
         "description": "Seleziona gli stati attraverso i quali avanza l'elemento di lavoro."
       }
+    },
+    "imports": {
+      "title": "Nessuna importazione ancora",
+      "description": "Trova qui tutte le tue importazioni precedenti e scaricale."
     }
   }
 }

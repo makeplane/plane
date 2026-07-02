@@ -265,6 +265,10 @@
         "title": "Thêm trạng thái",
         "description": "Chọn các trạng thái mà mục công việc sẽ đi qua."
       }
+    },
+    "imports": {
+      "title": "Chưa có nhập dữ liệu",
+      "description": "Tìm tất cả các lần nhập trước đây và tải xuống chúng tại đây."
     }
   }
 }

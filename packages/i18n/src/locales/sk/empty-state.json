@@ -265,6 +265,10 @@
         "title": "Pridať stavy",
         "description": "Vyberte stavy, cez ktoré pracovná položka prechádza."
       }
+    },
+    "imports": {
+      "title": "Žiadne importy",
+      "description": "Tu nájdete históriu importov."
     }
   }
 }

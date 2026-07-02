@@ -204,3 +204,30 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "http://plane-minio:9000",
+            "AWS_S3_PUBLIC_ENDPOINT_URL": "http://localhost:9000",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_presigned_urls_use_public_endpoint_when_configured(self, mock_boto3):
+        internal_client = Mock()
+        public_client = Mock()
+        public_client.generate_presigned_post.return_value = {"url": "http://localhost:9000/uploads", "fields": {}}
+        mock_boto3.client.side_effect = [internal_client, public_client]
+
+        storage = S3Storage()
+        storage.generate_presigned_post("test-object", "image/png", 1024)
+
+        assert mock_boto3.client.call_count == 2
+        assert mock_boto3.client.call_args_list[0][1]["endpoint_url"] == "http://plane-minio:9000"
+        assert mock_boto3.client.call_args_list[1][1]["endpoint_url"] == "http://localhost:9000"
+        public_client.generate_presigned_post.assert_called_once()

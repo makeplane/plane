@@ -265,6 +265,10 @@
         "title": "Durum ekle",
         "description": "İş öğesinin ilerlediği durumları seçin."
       }
+    },
+    "imports": {
+      "title": "Henüz içe aktarma yok",
+      "description": "Tüm önceki içe aktarmalarınızı burada bulabilir ve indirebilirsiniz."
     }
   }
 }

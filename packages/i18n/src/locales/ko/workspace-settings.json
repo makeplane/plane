@@ -182,7 +182,85 @@
       "imports": {
         "title": "임포트",
         "heading": "임포트",
-        "description": "기존 프로젝트 관리 도구에서 데이터를 연결하고 가져와 워크플로우 통합을 간소화하세요."
+        "description": "기존 프로젝트 관리 도구에서 데이터를 연결하고 가져와 워크플로우 통합을 간소화하세요.",
+        "previous_imports": "이전 가져오기",
+        "table": {
+          "service": "서비스",
+          "project": "프로젝트",
+          "status": "상태",
+          "created_at": "생성일"
+        },
+        "eva": {
+          "url": "EVA 인스턴스 URL",
+          "url_description": "EvaTeam 인스턴스의 기본 URL입니다.",
+          "token": "API 토큰",
+          "token_description": "EvaTeam 프로필 보안 설정의 Bearer 토큰입니다.",
+          "eva_project": "EVA 프로젝트",
+          "eva_project_description": "가져올 EvaTeam 프로젝트를 선택하세요.",
+          "plane_project": "Plane 프로젝트",
+          "plane_project_description": "가져온 작업 항목을 받을 Plane 프로젝트를 선택하세요.",
+          "select_eva_project": "EVA 프로젝트 선택",
+          "select_plane_project": "Plane 프로젝트 선택",
+          "preview": "가져오기 미리보기",
+          "start_import": "가져오기 시작",
+          "preview_title": "가져오기 미리보기",
+          "preview_success": "EVA 미리보기를 불러왔습니다",
+          "preview_error": "EVA 미리보기를 불러올 수 없습니다",
+          "import_started": "EVA 가져오기가 시작되었습니다",
+          "import_error": "EVA 가져오기를 시작할 수 없습니다",
+          "tasks": "작업",
+          "comments": "댓글",
+          "attachments": "첨부 파일",
+          "documents": "문서",
+          "testcases": "테스트 케이스",
+          "labels": "라벨",
+          "users": "사용자",
+          "cycles": "사이클",
+          "tasks_project": "작업 프로젝트",
+          "tasks_project_description": "가져온 EVA 작업을 받을 Plane 프로젝트를 선택하세요.",
+          "testcase_project": "테스트 케이스 프로젝트",
+          "testcase_project_description": "가져온 EVA 테스트 케이스를 받을 Plane 프로젝트를 선택하세요.",
+          "select_tasks_project": "작업 프로젝트 선택",
+          "select_testcase_project": "테스트 케이스 프로젝트 선택",
+          "projects_must_differ": "작업과 테스트 케이스는 서로 다른 Plane 프로젝트로 가져와야 합니다.",
+          "import_scope": "가져오기 범위",
+          "import_scope_description": "Plane으로 가져올 EVA 데이터를 선택하세요.",
+          "import_scope_required": "가져오기 범위를 하나 이상 선택하세요.",
+          "import_tasks_option": "작업",
+          "import_tasks_option_description": "작업, 작업 댓글, 첨부 파일, 문서를 가져옵니다.",
+          "import_testcases_option": "테스트 케이스",
+          "import_testcases_option_description": "테스트 케이스와 해당 댓글을 가져옵니다.",
+          "testcase_comments": "테스트 케이스 댓글"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "워크로그",

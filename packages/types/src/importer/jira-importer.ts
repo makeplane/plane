@@ -4,39 +4,54 @@
  * See the LICENSE file for details.
  */
 
+export interface IJiraMetadata {
+  cloud_hostname: string;
+  email: string;
+  api_token: string;
+  project_key: string;
+  rtm_api_base_url?: string;
+  rtm_api_token?: string;
+}
+
+export interface IJiraImporterUser {
+  jira_account_id?: string;
+  username: string;
+  email: string;
+  import: "invite" | "map" | false;
+  plane_user_id?: string;
+}
+
+export interface IJiraImporterConfig {
+  jql?: string;
+  issue_type_name?: string;
+  custom_field_mappings?: Record<string, string>;
+  state_mappings?: Record<string, string>;
+}
+
+export interface IJiraImporterData {
+  users: IJiraImporterUser[];
+  invite_users?: boolean;
+}
+
 export interface IJiraImporterForm {
   metadata: IJiraMetadata;
-  config: IJiraConfig;
-  data: IJiraData;
+  config: IJiraImporterConfig;
+  data: IJiraImporterData;
   project_id: string;
 }
 
-export interface IJiraConfig {
-  epics_to_modules: boolean;
-}
-
-export interface IJiraData {
-  users: User[];
-  invite_users: boolean;
-  total_issues: number;
+export interface IJiraPreviewResponse {
+  total_testcases: number;
+  total_comments: number;
   total_labels: number;
   total_states: number;
-  total_modules: number;
+  total_users: number;
+  users: IJiraImporterUser[];
+  states: string[];
+  jql?: string;
 }
 
-export interface User {
-  username: string;
-  import: "invite" | "map" | false;
-  email: string;
-}
-
-export interface IJiraMetadata {
-  cloud_hostname: string;
-  api_token: string;
-  project_key: string;
-  email: string;
-}
-
+/** @deprecated Legacy preview shape retained for compatibility */
 export interface IJiraResponse {
   issues: number;
   modules: number;
@@ -61,4 +76,9 @@ export interface IJiraResponseAvatarUrls {
   "24x24": string;
   "16x16": string;
   "32x32": string;
+}
+
+/** @deprecated Legacy config retained for compatibility */
+export interface IJiraConfig {
+  epics_to_modules: boolean;
 }

@@ -182,7 +182,85 @@
       "imports": {
         "title": "导入",
         "heading": "导入",
-        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。"
+        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。",
+        "previous_imports": "以前的导入",
+        "table": {
+          "service": "服务",
+          "project": "项目",
+          "status": "状态",
+          "created_at": "创建时间"
+        },
+        "eva": {
+          "url": "EVA 实例 URL",
+          "url_description": "您的 EvaTeam 实例的基础 URL。",
+          "token": "API 令牌",
+          "token_description": "来自 EvaTeam 个人资料安全设置的 Bearer 令牌。",
+          "eva_project": "EVA 项目",
+          "eva_project_description": "选择要导入的 EvaTeam 项目。",
+          "plane_project": "Plane 项目",
+          "plane_project_description": "选择将接收导入工作项的 Plane 项目。",
+          "select_eva_project": "选择 EVA 项目",
+          "select_plane_project": "选择 Plane 项目",
+          "preview": "预览导入",
+          "start_import": "开始导入",
+          "preview_title": "导入预览",
+          "preview_success": "已加载 EVA 预览",
+          "preview_error": "无法加载 EVA 预览",
+          "import_started": "已开始 EVA 导入",
+          "import_error": "无法开始 EVA 导入",
+          "tasks": "任务",
+          "comments": "评论",
+          "attachments": "附件",
+          "documents": "文档",
+          "testcases": "测试用例",
+          "labels": "标签",
+          "users": "用户",
+          "cycles": "周期",
+          "tasks_project": "任务项目",
+          "tasks_project_description": "选择将接收导入 EVA 任务的 Plane 项目。",
+          "testcase_project": "测试用例项目",
+          "testcase_project_description": "选择将接收导入 EVA 测试用例的 Plane 项目。",
+          "select_tasks_project": "选择任务项目",
+          "select_testcase_project": "选择测试用例项目",
+          "projects_must_differ": "任务和测试用例必须导入到不同的 Plane 项目。",
+          "import_scope": "导入范围",
+          "import_scope_description": "选择要导入到 Plane 的 EVA 数据。",
+          "import_scope_required": "请至少选择一个导入范围。",
+          "import_tasks_option": "任务",
+          "import_tasks_option_description": "导入任务、任务评论、附件和文档。",
+          "import_testcases_option": "测试用例",
+          "import_testcases_option_description": "导入测试用例及其评论。",
+          "testcase_comments": "测试用例评论"
+        },
+        "progress": {
+          "queued": "Queued",
+          "extracting": "Extracting data",
+          "setup": "Preparing import",
+          "tasks": "Importing tasks",
+          "testcases": "Importing test cases",
+          "comments": "Importing comments",
+          "attachments": "Importing attachments",
+          "relations": "Importing relations",
+          "documents": "Importing documents"
+        },
+        "jira_rtm": {
+          "rtm_token_guide": {
+            "title": "How to create an RTM API token",
+            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "steps": {
+              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
+              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
+              "open_auth": "Select REST API authentication.",
+              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
+              "generate_token": "Click Generate token.",
+              "select_user": "Select the Jira user the token should act on behalf of.",
+              "enter_label": "Enter a label, for example Plane import.",
+              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
+              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+            },
+            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
+          }
+        }
       },
       "worklogs": {
         "title": "工作日志",

@@ -265,6 +265,10 @@
         "title": "Add states",
         "description": "Select the states through which the work item progresses."
       }
+    },
+    "imports": {
+      "title": "No imports yet",
+      "description": "Find all your previous imports here and download them."
     }
   }
 }
