@@ -15,7 +15,7 @@ import type { IImporterService } from "@plane/types";
 import { Table } from "@plane/ui";
 import { ImportProgress } from "@/components/importer/import-progress";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTER_SERVICES_LIST } from "@plane/constants";
 import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
