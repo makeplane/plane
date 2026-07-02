@@ -8,10 +8,13 @@ from plane.app.views.importer.eva import (
     EvaImporterListEndpoint,
     EvaImporterPreviewEndpoint,
 )
+from plane.app.views.importer.jira import JiraImporterCreateEndpoint, JiraImporterPreviewEndpoint
 
 __all__ = [
     "EvaImporterCreateEndpoint",
     "EvaImporterDetailEndpoint",
     "EvaImporterListEndpoint",
     "EvaImporterPreviewEndpoint",
+    "JiraImporterCreateEndpoint",
+    "JiraImporterPreviewEndpoint",
 ]

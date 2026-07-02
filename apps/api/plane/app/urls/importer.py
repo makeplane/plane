@@ -9,6 +9,8 @@ from plane.app.views.importer import (
     EvaImporterDetailEndpoint,
     EvaImporterListEndpoint,
     EvaImporterPreviewEndpoint,
+    JiraImporterCreateEndpoint,
+    JiraImporterPreviewEndpoint,
 )
 
 urlpatterns = [
@@ -36,5 +38,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/importers/eva/",
         EvaImporterCreateEndpoint.as_view(http_method_names=["post"]),
         name="eva-importer-create",
+    ),
+    path(
+        "workspaces/<str:slug>/importers/jira/",
+        JiraImporterPreviewEndpoint.as_view(http_method_names=["get"]),
+        name="jira-importer-preview",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/importers/jira/",
+        JiraImporterCreateEndpoint.as_view(http_method_names=["post"]),
+        name="jira-importer-create",
     ),
 ]

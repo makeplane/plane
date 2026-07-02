@@ -5,17 +5,21 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
+import type { IJiraImporterForm, IJiraMetadata, IJiraPreviewResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
-// types
+
+const integrationServiceType = "jira";
 
 export class JiraImporterService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getJiraProjectInfo(workspaceSlug: string, params: IJiraMetadata): Promise<IJiraResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/importers/jira`, {
+  async getJiraPreview(
+    workspaceSlug: string,
+    params: IJiraMetadata & { jql?: string; issue_type_name?: string }
+  ): Promise<IJiraPreviewResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/importers/${integrationServiceType}/`, {
       params,
     })
       .then((response) => response?.data)
@@ -24,8 +28,11 @@ export class JiraImporterService extends APIService {
       });
   }
 
-  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraResponse> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
+  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraPreviewResponse> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${data.project_id}/importers/${integrationServiceType}/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

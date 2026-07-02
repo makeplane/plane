@@ -24,5 +24,9 @@ class ImporterSerializer(BaseSerializer):
         metadata = dict(data.get("metadata") or {})
         if metadata.get("token"):
             metadata["token"] = "***"
+        if metadata.get("api_token"):
+            metadata["api_token"] = "***"
+        if metadata.get("rtm_api_token"):
+            metadata["rtm_api_token"] = "***"
         data["metadata"] = metadata
         return data
