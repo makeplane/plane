@@ -15,7 +15,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IEvaImporterForm, IEvaPreviewResponse, IEvaProjectOption } from "@plane/types";
 import { CustomSearchSelect, Input, Spinner, Checkbox } from "@plane/ui";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTER_SERVICES_LIST } from "@plane/constants";
 import useDebounce from "@/hooks/use-debounce";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";

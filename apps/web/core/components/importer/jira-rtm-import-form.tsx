@@ -15,7 +15,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IJiraImporterForm, IJiraPreviewResponse } from "@plane/types";
 import { CustomSearchSelect, Input, Spinner } from "@plane/ui";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTER_SERVICES_LIST } from "@plane/constants";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { JiraImporterService } from "@/services/integrations/jira.service";
