@@ -674,10 +674,26 @@ class BasePaginator:
         per_page = self.get_per_page(request, default_per_page, max_per_page)
         # Convert the cursor value to integer and float from string
         input_cursor = None
-        try:
-            input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
-        except ValueError:
-            raise ParseError(detail="Invalid cursor parameter.")
+        input_cursor_value = request.GET.get(self.cursor_name)
+        page_value = request.GET.get("page")
+
+        if input_cursor_value is not None:
+            try:
+                input_cursor = cursor_cls.from_string(input_cursor_value)
+            except ValueError:
+                raise ParseError(detail="Invalid cursor parameter.")
+        elif page_value is not None:
+            try:
+                page_number = int(page_value)
+            except ValueError:
+                raise ParseError(detail="Page parameter must be a valid integer.")
+
+            if page_number < 1:
+                raise ParseError(detail="Page parameter must be greater than or equal to 1.")
+
+            input_cursor = cursor_cls(per_page, page_number - 1, False)
+        else:
+            input_cursor = cursor_cls(per_page, 0, False)
 
         if not paginator:
             if group_by_field_name:
@@ -718,7 +734,7 @@ class BasePaginator:
                 "grouped_by": group_by_field_name,
                 "sub_grouped_by": sub_group_by_field_name,
                 "total_count": (cursor_result.hits),
-                "next_cursor": str(cursor_result.next),
+                "next_cursor": str(cursor_result.next) if cursor_result.next.has_results else None,
                 "prev_cursor": str(cursor_result.prev),
                 "next_page_results": cursor_result.next.has_results,
                 "prev_page_results": cursor_result.prev.has_results,
