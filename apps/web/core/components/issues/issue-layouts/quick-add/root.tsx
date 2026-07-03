@@ -126,7 +126,26 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
         error: {
           title: t("common.error.label"),
-          message: (err) => err?.message || t("common.error.message"),
+          message: (err) => {
+            const getErrorMessage = (error: any): string | undefined => {
+              if (!error) return undefined;
+              if (typeof error === "string") return error;
+              if (Array.isArray(error)) {
+                return getErrorMessage(error[0]);
+              }
+              if (typeof error === "object") {
+                if (error.message && typeof error.message === "string") {
+                  return error.message;
+                }
+                const keys = Object.keys(error);
+                if (keys.length > 0) {
+                  return getErrorMessage(error[keys[0]]);
+                }
+              }
+              return undefined;
+            };
+            return getErrorMessage(err) || t("common.error.message");
+          },
         },
       });
 
