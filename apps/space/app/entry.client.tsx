@@ -8,6 +8,19 @@ import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { HydratedRouter } from "react-router/dom";
 
+if (typeof window !== "undefined" && typeof window.requestIdleCallback !== "function") {
+  window.requestIdleCallback = (cb: any) => {
+    const start = Date.now();
+    return setTimeout(() => {
+      cb({
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+      });
+    }, 1) as any;
+  };
+  window.cancelIdleCallback = (id: any) => clearTimeout(id);
+}
+
 startTransition(() => {
   hydrateRoot(
     document,
