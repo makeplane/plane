@@ -69,7 +69,15 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at", "total_time_spent"]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "updated_by",
+            "updated_at",
+            "completed_at",
+            "total_time_spent",
+        ]
         exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):

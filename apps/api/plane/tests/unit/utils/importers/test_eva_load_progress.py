@@ -90,7 +90,10 @@ def test_eva_loader_repairs_existing_page_description():
 
     with (
         patch("plane.utils.importers.eva.load.Page.objects.filter") as page_filter,
-        patch("plane.utils.importers.eva.load.ProjectPage.objects.filter", return_value=MagicMock(exists=MagicMock(return_value=True))),
+        patch(
+            "plane.utils.importers.eva.load.ProjectPage.objects.filter",
+            return_value=MagicMock(exists=MagicMock(return_value=True)),
+        ),
         patch.object(loader, "_update_progress"),
         patch.object(loader, "_import_description_media", return_value=repaired_html) as import_media,
     ):

@@ -12,7 +12,18 @@ from uuid import UUID
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from plane.db.models import Importer, Issue, IssueAssignee, IssueComment, IssueLabel, Label, Project, ProjectMember, State, Workspace
+from plane.db.models import (
+    Importer,
+    Issue,
+    IssueAssignee,
+    IssueComment,
+    IssueLabel,
+    Label,
+    Project,
+    ProjectMember,
+    State,
+    Workspace,
+)
 from plane.utils.importers.jira.constants import JIRA_EXTERNAL_SOURCE, JIRA_TESTCASE_LABEL
 from plane.utils.importers.jira.transform import JiraTransformer
 
