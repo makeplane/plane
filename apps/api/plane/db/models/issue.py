@@ -168,6 +168,10 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         null=True,
         blank=True,
     )
+    total_time_spent = models.IntegerField(
+        default=0,
+        verbose_name="Total Time Spent (seconds)",
+    )
 
     issue_objects = IssueManager()
 

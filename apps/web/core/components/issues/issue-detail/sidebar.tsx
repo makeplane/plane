@@ -264,6 +264,8 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               projectId={projectId}
               issueId={issueId}
               disabled={!isEditable}
+              stateId={issue?.state_id}
+              updatedAt={issue?.updated_at}
             />
 
             <WorkItemAdditionalSidebarProperties

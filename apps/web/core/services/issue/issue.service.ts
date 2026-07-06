@@ -456,4 +456,68 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getTimeLogs(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<
+    Array<{
+      id: string;
+      user_id: string | null;
+      date: string;
+      created_at: string;
+      started_at: string;
+      stopped_at: string | null;
+      duration_seconds: number;
+      duration_formatted: string;
+    }>
+  > {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/time-logs/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createTimeLog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: { date: string; duration_seconds: number; user_id?: string }
+  ) {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/time-logs/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateTimeLog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    timeLogId: string,
+    data: { date: string; duration_seconds: number; user_id?: string }
+  ) {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/time-logs/${timeLogId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteTimeLog(workspaceSlug: string, projectId: string, issueId: string, timeLogId: string) {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/time-logs/${timeLogId}/`
+    ).catch((error) => {
+      throw error?.response?.data;
+    });
+  }
 }

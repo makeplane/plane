@@ -5,6 +5,7 @@
 # Python imports
 import copy
 import json
+from datetime import datetime, timedelta
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -55,6 +56,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
+    IssueTimeLog,
     ProjectUserProperty,
     ModuleIssue,
     Project,
@@ -73,6 +75,13 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.time_tracking import (
+    handle_issue_state_change,
+    parse_manual_time_log_payload,
+    recalculate_total_time_spent,
+    resolve_time_log_user,
+    serialize_time_log,
+)
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -187,6 +196,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "total_time_spent",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -452,6 +462,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "total_time_spent",
                 )
                 .first()
             )
@@ -665,9 +676,15 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        old_state_id = issue.state_id
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
+
+            new_state_id = request.data.get("state_id")
+            if new_state_id is not None and str(new_state_id) != str(old_state_id):
+                handle_issue_state_change(issue, old_state_id, new_state_id, actor=request.user)
+
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
@@ -883,6 +900,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "total_time_spent",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -1353,3 +1371,83 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         # Serialize the issue
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IssueTimeLogsEndpoint(BaseAPIView):
+    """List and manually create time logs for a work item."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, issue_id):
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_logs = IssueTimeLog.objects.filter(issue=issue).order_by("-date", "-started_at")
+        return Response([serialize_time_log(log) for log in time_logs], status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id, issue_id):
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+
+        log_date, duration_seconds, error = parse_manual_time_log_payload(request.data)
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        log_user, error = resolve_time_log_user(request.data, project_id, default_user=request.user)
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        started_at = timezone.make_aware(datetime.combine(log_date, datetime.min.time()))
+        time_log = IssueTimeLog.objects.create(
+            issue=issue,
+            user=log_user,
+            date=log_date,
+            started_at=started_at,
+            stopped_at=started_at + timedelta(seconds=duration_seconds),
+            duration_seconds=duration_seconds,
+            workspace=issue.workspace,
+            project=issue.project,
+            created_by=request.user,
+        )
+        recalculate_total_time_spent(issue)
+
+        return Response(serialize_time_log(time_log), status=status.HTTP_201_CREATED)
+
+
+class IssueTimeLogDetailEndpoint(BaseAPIView):
+    """Edit or remove a single manual time log entry."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def patch(self, request, slug, project_id, issue_id, pk):
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
+
+        log_date, duration_seconds, error = parse_manual_time_log_payload(
+            request.data,
+            default_date=time_log.date,
+            default_duration_seconds=time_log.duration_seconds,
+        )
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        log_user, error = resolve_time_log_user(
+            request.data, project_id, default_user=time_log.user or request.user
+        )
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        time_log.date = log_date
+        time_log.user = log_user
+        time_log.started_at = timezone.make_aware(datetime.combine(log_date, datetime.min.time()))
+        time_log.stopped_at = time_log.started_at + timedelta(seconds=duration_seconds)
+        time_log.duration_seconds = duration_seconds
+        time_log.save(update_fields=["date", "user", "started_at", "stopped_at", "duration_seconds", "updated_at"])
+        recalculate_total_time_spent(issue)
+
+        return Response(serialize_time_log(time_log), status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
+        time_log.delete()
+        recalculate_total_time_spent(issue)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

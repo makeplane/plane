@@ -809,6 +809,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "total_time_spent",
         ]
         read_only_fields = fields
 

@@ -18,6 +18,8 @@ from plane.api.views import (
     WorkspaceIssueAPIEndpoint,
     IssueSearchEndpoint,
     IssueRelationListCreateAPIEndpoint,
+    IssueTimeLogsAPIEndpoint,
+    IssueTimeLogDetailAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -41,6 +43,16 @@ old_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
         IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/time-logs/",
+        IssueTimeLogsAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="issue-time-logs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/time-logs/<uuid:pk>/",
+        IssueTimeLogDetailAPIEndpoint.as_view(http_method_names=["patch", "delete"]),
+        name="issue-time-log-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
@@ -105,6 +117,16 @@ new_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/",
         IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="work-item-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/time-logs/",
+        IssueTimeLogsAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-time-logs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/time-logs/<uuid:pk>/",
+        IssueTimeLogDetailAPIEndpoint.as_view(http_method_names=["patch", "delete"]),
+        name="work-item-time-log-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/",
