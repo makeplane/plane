@@ -103,6 +103,7 @@ export class IssueStore implements IIssueStore {
     if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
       this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        return undefined;
       });
     }
     // assignees
@@ -154,6 +155,7 @@ export class IssueStore implements IIssueStore {
       sub_issues_count: issue?.sub_issues_count,
       attachment_count: issue?.attachment_count,
       link_count: issue?.link_count,
+      total_time_spent: issue?.total_time_spent,
       project_id: issue?.project_id,
       parent_id: issue?.parent_id,
       cycle_id: issue?.cycle_id,
@@ -288,6 +290,7 @@ export class IssueStore implements IIssueStore {
     if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
       this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        return undefined;
       });
     }
 
