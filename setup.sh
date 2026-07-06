@@ -181,10 +181,10 @@ function initialize_local_env_files() {
 
 # Resolve the effective mail domain / local-mode flags. When MAIL_DOMAIN is
 # unset in the root .env we run in local mode: domain "mail.local", self-signed
-# TLS, webmail on localhost. IMPORTANT: we deliberately do NOT write MAIL_DOMAIN
-# into the root .env in local mode — the Caddy proxy enables its mail site (and
-# would attempt a doomed Let's Encrypt cert for mail.mail.local) whenever
-# MAIL_DOMAIN is set there. Echoes "<domain>|<true|false>" for callers.
+# TLS. IMPORTANT: we deliberately do NOT write MAIL_DOMAIN into the root .env
+# in local mode — the Caddy proxy enables its mail site (and would attempt a
+# doomed Let's Encrypt cert for mail.mail.local) whenever MAIL_DOMAIN is set
+# there. Echoes "<domain>|<true|false>" for callers.
 function resolve_mail_domain() {
     local mail_domain
     mail_domain=$(get_env_value "MAIL_DOMAIN" "$ROOT_ENV_PATH")
@@ -205,16 +205,6 @@ function apply_mail_env_defaults() {
 
     update_env_file "MAIL_DOMAIN" "$mail_domain" "$API_ENV_PATH"
     update_env_file "MAIL_LOCAL" "$mail_local" "$API_ENV_PATH"
-
-    # In local mode leave WEBMAIL_URL empty so the API derives it from the
-    # request host (http://<host>:8025) — this way the webmail link points at
-    # whatever domain god-mode was opened on, not "localhost". In production we
-    # serve Roundcube via Caddy at a stable webmail subdomain.
-    if [[ "$mail_local" == "true" ]]; then
-        update_env_file "WEBMAIL_URL" "" "$API_ENV_PATH"
-    else
-        update_env_file "WEBMAIL_URL" "https://webmail.${mail_domain}" "$API_ENV_PATH"
-    fi
 }
 
 function compose_base_args() {
@@ -480,12 +470,11 @@ function start_mail_services() {
         echo "   Local mode (no domain): self-signed TLS, mail.${mail_domain}"
         echo "   SMTP:    localhost:587 (STARTTLS)"
         echo "   IMAPS:   localhost:993"
-        echo "   Webmail: http://localhost:8025"
         echo "   Manage mailboxes in god-mode -> Mail (http://localhost/god-mode)"
+        echo "   Read/send mail in-app at http://localhost/mail"
     else
         echo "   SMTP:    mail.${mail_domain}:587"
         echo "   IMAPS:   mail.${mail_domain}:993"
-        echo "   Webmail: https://webmail.${mail_domain}"
     fi
     echo ""
 }

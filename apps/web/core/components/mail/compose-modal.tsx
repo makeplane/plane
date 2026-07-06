@@ -7,13 +7,14 @@
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Maximize2, Minimize2, Paperclip, Save, Send, X } from "lucide-react";
+import { FileUp, Maximize2, Minimize2, Paperclip, Save, Send, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { TMailTemplate } from "@plane/types";
 import { useMail } from "@/hooks/store/use-mail";
 import { splitRecipients } from "./helpers";
+import { convertMailFileToHtml, isImportableMailFile } from "./mail-import";
 import { MailRichText } from "./mail-rich-text";
 
 const escapeHtml = (value: string) =>
@@ -38,12 +39,14 @@ const htmlToText = (html: string) => {
   return node.innerText.trim();
 };
 
+type TPendingAction = { kind: "template"; template: TMailTemplate } | { kind: "import"; html: string };
+
 export const ComposeModal = observer(function ComposeModal() {
   const { t } = useTranslation();
   const mail = useMail();
   const draft = mail.composeDraft;
   const [expanded, setExpanded] = useState(false);
-  const [pendingTemplate, setPendingTemplate] = useState<TMailTemplate | null>(null);
+  const [pendingAction, setPendingAction] = useState<TPendingAction | null>(null);
 
   if (!mail.composeOpen) return null;
 
@@ -57,19 +60,24 @@ export const ComposeModal = observer(function ComposeModal() {
       body_html: bodyHtml,
       body_text: template.body_text || htmlToText(bodyHtml),
     });
-    setPendingTemplate(null);
+    setPendingAction(null);
+  };
+
+  const applyImport = (html: string) => {
+    mail.updateComposeDraft({ body_html: html, body_text: htmlToText(html) });
+    setPendingAction(null);
   };
 
   const selectTemplate = (template: TMailTemplate) => {
     if (hasWrittenContent()) {
-      setPendingTemplate(template);
+      setPendingAction({ kind: "template", template });
       return;
     }
     applyTemplate(template);
   };
 
   const closeCompose = () => {
-    setPendingTemplate(null);
+    setPendingAction(null);
     setExpanded(false);
     mail.closeCompose();
   };
@@ -84,10 +92,30 @@ export const ComposeModal = observer(function ComposeModal() {
     }
   };
 
+  const importFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (!isImportableMailFile(file.name)) {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.import_unsupported") });
+      return;
+    }
+    try {
+      const html = await convertMailFileToHtml(file);
+      if (hasWrittenContent()) {
+        setPendingAction({ kind: "import", html });
+      } else {
+        applyImport(html);
+      }
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("mail.compose.import_error") });
+    }
+  };
+
   const sendMessage = async () => {
     try {
       await mail.sendCompose();
-      setPendingTemplate(null);
+      setPendingAction(null);
       setExpanded(false);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.sent") });
     } catch {
@@ -98,7 +126,7 @@ export const ComposeModal = observer(function ComposeModal() {
   const saveDraft = async () => {
     try {
       await mail.saveDraft();
-      setPendingTemplate(null);
+      setPendingAction(null);
       setExpanded(false);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("mail.compose.draft_saved") });
     } catch {
@@ -183,10 +211,21 @@ export const ComposeModal = observer(function ComposeModal() {
           )}
 
           <div className="flex h-14 items-center justify-between border-t border-[var(--mail-border)] px-4">
-            <label className="mail-icon-button cursor-pointer" title={t("mail.compose.attach")}>
-              <Paperclip className="size-4" />
-              <input className="hidden" type="file" multiple onChange={uploadFiles} />
-            </label>
+            <div className="flex items-center gap-1">
+              <label className="mail-icon-button cursor-pointer" title={t("mail.compose.attach")}>
+                <Paperclip className="size-4" />
+                <input className="hidden" type="file" multiple onChange={uploadFiles} />
+              </label>
+              <label className="mail-icon-button cursor-pointer" title={t("mail.compose.import")}>
+                <FileUp className="size-4" />
+                <input
+                  className="hidden"
+                  type="file"
+                  accept=".html,.htm,.md,.markdown,text/html,text/markdown"
+                  onChange={importFile}
+                />
+              </label>
+            </div>
             <div className="flex items-center gap-2">
               <button className="mail-secondary-button" type="button" onClick={saveDraft} disabled={mail.actionLoader}>
                 <Save className="size-4" />
@@ -226,21 +265,33 @@ export const ComposeModal = observer(function ComposeModal() {
           </div>
         </aside>
       </section>
-      {pendingTemplate && (
+      {pendingAction && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 px-4">
           <div className="shadow-xl w-full max-w-[420px] rounded-lg border border-[var(--mail-border)] bg-[var(--mail-panel)] p-5">
             <h2 className="text-base font-semibold text-[var(--mail-ink)]">
-              {t("mail.compose.template_replace_title")}
+              {pendingAction.kind === "template"
+                ? t("mail.compose.template_replace_title")
+                : t("mail.compose.import_replace_title")}
             </h2>
             <p className="text-sm mt-2 leading-6 text-[var(--mail-muted)]">
-              {t("mail.compose.template_replace_description")}
+              {pendingAction.kind === "template"
+                ? t("mail.compose.template_replace_description")
+                : t("mail.compose.import_replace_description")}
             </p>
             <div className="mt-5 flex justify-end gap-2">
-              <button className="mail-secondary-button" type="button" onClick={() => setPendingTemplate(null)}>
+              <button className="mail-secondary-button" type="button" onClick={() => setPendingAction(null)}>
                 {t("mail.settings.cancel")}
               </button>
-              <button className="mail-primary-button" type="button" onClick={() => applyTemplate(pendingTemplate)}>
-                {t("mail.compose.template_replace_confirm")}
+              <button
+                className="mail-primary-button"
+                type="button"
+                onClick={() =>
+                  pendingAction.kind === "template" ? applyTemplate(pendingAction.template) : applyImport(pendingAction.html)
+                }
+              >
+                {pendingAction.kind === "template"
+                  ? t("mail.compose.template_replace_confirm")
+                  : t("mail.compose.import_replace_confirm")}
               </button>
             </div>
           </div>

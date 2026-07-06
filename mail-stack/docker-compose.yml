@@ -82,32 +82,6 @@ services:
     networks:
       - mail-internal
 
-  roundcube:
-    image: roundcube/roundcubemail:latest
-    container_name: roundcube
-    restart: unless-stopped
-    environment:
-      ROUNDCUBEMAIL_DEFAULT_HOST: tls://dovecot
-      ROUNDCUBEMAIL_DEFAULT_PORT: "143"
-      ROUNDCUBEMAIL_SMTP_SERVER: tls://postfix
-      ROUNDCUBEMAIL_SMTP_PORT: "587"
-      ROUNDCUBEMAIL_DB_TYPE: sqlite
-    ports:
-      # Published on all interfaces so the webmail is reachable remotely over
-      # http://<host>:8025 in local mode (no domain). NOTE: this is plain HTTP
-      # (no TLS) — open the port in the server firewall. In production prefer
-      # serving Roundcube via Caddy at https://webmail.<MAIL_DOMAIN>.
-      - "8025:80"
-    volumes:
-      - ./data/roundcube:/var/roundcube/db
-      - ./roundcube/custom.php:/var/roundcube/config/custom.php:ro
-    depends_on:
-      - postfix
-      - dovecot
-    networks:
-      - mail-internal
-      - plane_default
-
   cert-reloader:
     image: alpine:3.20
     container_name: cert-reloader

@@ -44,7 +44,6 @@ from plane.mail.models import (
 )
 from plane.mail.resolver import ResolveMailboxMixin
 from plane.mail.utils import hash_mail_password, verify_mail_password
-from plane.license.utils.instance_value import get_configuration_value
 
 from .base import BaseAPIView, BaseViewSet
 
@@ -61,32 +60,12 @@ def get_default_mail_domain_name():
     return "mail.local"
 
 
-def get_webmail_url(mail_domain=None):
-    mail_webmail_url, legacy_webmail_url = get_configuration_value(
-        [
-            {"key": "MAIL_WEBMAIL_URL", "default": os.environ.get("MAIL_WEBMAIL_URL", "")},
-            {"key": "WEBMAIL_URL", "default": os.environ.get("WEBMAIL_URL", "")},
-        ]
-    )
-    configured_url = (mail_webmail_url or legacy_webmail_url or "").strip().rstrip("/")
-    if configured_url:
-        return configured_url
-
-    domain = (mail_domain or get_default_mail_domain_name() or "").strip().lower().rstrip(".")
-    if not domain:
-        return None
-    if domain == "mail.local":
-        return "http://localhost:8025"
-    return f"https://webmail.{domain}"
-
-
 def mailbox_payload(mailbox):
     mail_domain = mailbox.domain.domain if mailbox.domain_id else get_default_mail_domain_name()
     return {
         "has_mailbox": True,
         "mailbox": MailboxSerializer(mailbox).data,
         "mail_domain": mail_domain,
-        "webmail_url": get_webmail_url(mail_domain),
     }
 
 
@@ -116,7 +95,7 @@ class MailConfigMeEndpoint(MailAPIView):
         if mailbox is None:
             mail_domain = get_default_mail_domain_name()
             return Response(
-                {"has_mailbox": False, "mail_domain": mail_domain, "webmail_url": get_webmail_url(mail_domain)},
+                {"has_mailbox": False, "mail_domain": mail_domain},
                 status=status.HTTP_200_OK,
             )
 

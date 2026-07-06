@@ -35,7 +35,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
   mail: {
     Icon: Server,
     name: "Почтовый сервер",
-    description: "Ящики, алиасы и веб-почта.",
+    description: "Ящики и алиасы.",
     href: `/mail/`,
   },
   workspace: {

@@ -46,5 +46,4 @@ export type TMailAliasCreatePayload = {
 export type TMailConfig = {
   mail_domain: string;
   mail_local: boolean;
-  webmail_url: string;
 };

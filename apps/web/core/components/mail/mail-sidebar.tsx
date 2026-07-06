@@ -7,19 +7,7 @@
 import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { observer } from "mobx-react";
-import {
-  Archive,
-  FileText,
-  Globe2,
-  Inbox,
-  PenLine,
-  Plus,
-  Send,
-  Settings,
-  ShieldAlert,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { Archive, FileText, Inbox, PenLine, Plus, Send, Settings, ShieldAlert, Star, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { useMail } from "@/hooks/store/use-mail";
@@ -73,21 +61,6 @@ export const MailSidebar = observer(function MailSidebar() {
         <PenLine className="size-4" />
         {t("mail.compose.new")}
       </button>
-
-      {mail.webmailUrl && (
-        <NavLink
-          to="/mail/webmail"
-          className={({ isActive }) =>
-            cn(
-              "text-sm mb-3 flex h-9 items-center gap-2 rounded-md px-2.5 text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]",
-              isActive && "shadow-sm bg-white text-[var(--mail-ink)]"
-            )
-          }
-        >
-          <Globe2 className="size-4 flex-shrink-0" />
-          <span className="truncate">{t("mail.sidebar.webmail")}</span>
-        </NavLink>
-      )}
 
       <nav className="flex flex-1 flex-col gap-1">
         {folders.map((folder) => {

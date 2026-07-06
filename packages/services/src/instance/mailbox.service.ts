@@ -27,7 +27,7 @@ export class MailboxService extends APIService {
     super(API_BASE_URL);
   }
 
-  /** Returns mail-stack runtime info (webmail URL, domain, local mode). */
+  /** Returns mail-stack runtime info (domain, local mode). */
   async config(): Promise<TMailConfig> {
     return this.get("/api/instances/mail/config/")
       .then((response) => response.data)

@@ -508,7 +508,6 @@ function Start-MailServices {
     Write-Host "   Mail stack started"
     Write-Host "   SMTP:    mail.$($mailDomain):587"
     Write-Host "   IMAPS:   mail.$($mailDomain):993"
-    Write-Host "   Webmail: https://webmail.$($mailDomain)"
     Write-Host ""
 }
 

@@ -1,8 +1,10 @@
 # Mail stack for Gizmo
 
-Postfix + Dovecot + Rspamd + Roundcube, deployed alongside Gizmo on the
-same host. TLS certificates are issued by Gizmo's Caddy proxy and shared
-read-only into Postfix/Dovecot via a named Docker volume.
+Postfix + Dovecot + Rspamd, deployed alongside Gizmo on the same host.
+TLS certificates are issued by Gizmo's Caddy proxy and shared read-only
+into Postfix/Dovecot via a named Docker volume. Mailboxes are read and
+sent from Gizmo's own in-app mail client at `/mail` (no separate webmail
+service is deployed).
 
 Mailboxes, domains and aliases live in **plane-db** (tables `mailboxes`,
 `mail_domains`, `mail_aliases`) and are managed from the god-mode panel
@@ -28,8 +30,7 @@ starts without Caddy/Let's Encrypt. Then:
   (`http://localhost/god-mode` → Почтовый сервер).
 - Connect a mail client: IMAP `localhost:993`, SMTP `localhost:587` (STARTTLS),
   accept the self-signed certificate.
-- Webmail (Roundcube): `http://localhost:8025`, also embedded in the god-mode
-  page.
+- Or read/send mail from Gizmo's own client at `http://localhost/mail`.
 
 Sending mail to the public internet still requires a real domain, DNS, rDNS and
 an open outbound port 25 — see the production steps below.
@@ -41,17 +42,16 @@ Internet
   ├──> 25/587/465  → Postfix → Rspamd milter → Dovecot LMTP → Maildir
   ├──> 143/993     → Dovecot (IMAP)
   └──> 80/443      → Gizmo Caddy
-                       ├─ webmail.<MAIL_DOMAIN> → Roundcube
                        └─ mail.<MAIL_DOMAIN>    → stub (cert only)
 
 Gizmo api/worker/beat-worker ──extra_hosts──> host-gateway:587 → Postfix
+Gizmo web app (/mail) ──IMAP/SMTP──> Dovecot / Postfix
 ```
 
 ## Pre-requisites
 
 1. DNS records (replace `<MAIL_DOMAIN>` with your apex, e.g. `example.com`):
    - `A    mail.<MAIL_DOMAIN>     SERVER_IP`
-   - `A    webmail.<MAIL_DOMAIN>  SERVER_IP`
    - `MX   <MAIL_DOMAIN>          mail.<MAIL_DOMAIN>  priority 10`
    - `TXT  <MAIL_DOMAIN>          "v=spf1 mx -all"`
    - `TXT  _dmarc.<MAIL_DOMAIN>   "v=DMARC1; p=quarantine; rua=mailto:postmaster@<MAIL_DOMAIN>"`
@@ -198,9 +198,6 @@ These paths are critical:
   outbound SMTP from Gizmo resolves to the host gateway IP and hits the
   published port 587 of Postfix directly, bypassing NAT hairpin. The TLS
   cert CN still matches `mail.<MAIL_DOMAIN>`, so validation succeeds.
-- Roundcube uses SQLite by default — fine for a small team. If you have
-  many concurrent users, migrate to a dedicated Postgres DB (not
-  `plane-db`).
 - Gizmo Intake Email (turning incoming mail into work items) is NOT
   configured here — it requires routing inbound mail into Gizmo's API
   and is intentionally out of scope for this MVP.

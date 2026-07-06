@@ -10,6 +10,7 @@ import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TMailMessageDetail } from "@plane/types";
 import { formatMailAddress, formatMailDate } from "./helpers";
+import { MailHtmlFrame } from "./mail-html-frame";
 
 type Props = {
   folderKey: string;
@@ -95,10 +96,7 @@ export const MessageView = observer(function MessageView(props: Props) {
         </div>
 
         {message.html ? (
-          <div
-            className="mail-message-body text-sm mt-6 max-w-4xl leading-7 text-[var(--mail-ink)]"
-            dangerouslySetInnerHTML={{ __html: message.html }}
-          />
+          <MailHtmlFrame html={message.html} />
         ) : (
           <pre className="mail-message-body text-sm mt-6 max-w-4xl leading-7 break-words whitespace-pre-wrap text-[var(--mail-ink)]">
             {message.text}

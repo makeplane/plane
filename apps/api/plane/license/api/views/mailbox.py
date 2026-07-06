@@ -13,7 +13,6 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers import MailboxSerializer, MailAliasSerializer
-from plane.license.utils.instance_value import get_configuration_value
 from plane.mail.models import MailDomain, Mailbox, MailAlias
 from plane.mail.utils import hash_mail_password
 
@@ -150,7 +149,7 @@ class MailAliasEndpoint(BaseAPIView):
 
 
 class MailConfigEndpoint(BaseAPIView):
-    """Returns mail-stack runtime info for the god-mode UI (webmail URL, mode)."""
+    """Returns mail-stack runtime info for the god-mode UI (domain, mode)."""
 
     permission_classes = [InstanceAdminPermission]
 
@@ -161,31 +160,7 @@ class MailConfigEndpoint(BaseAPIView):
             or not mail_domain
         )
 
-        mail_webmail_url, legacy_webmail_url = get_configuration_value(
-            [
-                {"key": "MAIL_WEBMAIL_URL", "default": os.environ.get("MAIL_WEBMAIL_URL", "")},
-                {"key": "WEBMAIL_URL", "default": os.environ.get("WEBMAIL_URL", "")},
-            ]
-        )
-        webmail_url = (mail_webmail_url or legacy_webmail_url or "").strip().rstrip("/")
-        if not webmail_url:
-            if mail_local:
-                # Local mode: Roundcube is published on port 8025 (plain HTTP).
-                # Derive the host from the current request so the link points at
-                # the same domain god-mode was opened on (not "localhost").
-                try:
-                    host = request.get_host().split(":")[0]
-                except Exception:
-                    host = "localhost"
-                webmail_url = f"http://{host}:8025"
-            else:
-                webmail_url = f"https://webmail.{mail_domain}"
-
         return Response(
-            {
-                "mail_domain": mail_domain,
-                "mail_local": mail_local,
-                "webmail_url": webmail_url,
-            },
+            {"mail_domain": mail_domain, "mail_local": mail_local},
             status=status.HTTP_200_OK,
         )

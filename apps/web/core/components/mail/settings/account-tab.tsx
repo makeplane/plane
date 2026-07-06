@@ -4,9 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Link } from "react-router";
 import { observer } from "mobx-react";
-import { ExternalLink, Globe2 } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
@@ -48,29 +46,6 @@ export const MailAccountSettings = observer(function MailAccountSettings() {
           </div>
         </div>
       </Card>
-
-      {mail.webmailUrl && (
-        <>
-          <SectionTitle>{t("mail.settings.account.integrations")}</SectionTitle>
-          <Card>
-            <CardRow last>
-              <span className="text-[var(--mail-muted)]">
-                <Globe2 className="size-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-[var(--mail-ink)]">
-                  {t("mail.settings.account.webmail_title")}
-                </div>
-                <div className="text-sm mt-0.5 truncate text-[var(--mail-muted)]">{mail.webmailUrl}</div>
-              </div>
-              <Link to="/mail/webmail" className="mail-secondary-button">
-                <ExternalLink className="size-4" />
-                {t("mail.settings.account.open_webmail")}
-              </Link>
-            </CardRow>
-          </Card>
-        </>
-      )}
 
       <SectionTitle>{t("mail.settings.account.general")}</SectionTitle>
       <Card>

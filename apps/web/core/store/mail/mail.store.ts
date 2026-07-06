@@ -49,7 +49,6 @@ export interface IMailStore {
   hasMailbox: boolean;
   mailboxEmail: string;
   mailDomain: string;
-  webmailUrl: string;
   getFolderByKey: (folderKey: string) => TMailFolder | undefined;
   hasMoreMessages: (folderKey: string) => boolean;
   loadMoreMessages: (folderKey: string) => Promise<void>;
@@ -259,7 +258,6 @@ export class MailStore implements IMailStore {
       hasMailbox: computed,
       mailboxEmail: computed,
       mailDomain: computed,
-      webmailUrl: computed,
       fetchMe: action,
       createAccount: action,
       loginAccount: action,
@@ -306,10 +304,6 @@ export class MailStore implements IMailStore {
 
   get mailDomain() {
     return this.me?.mail_domain ?? this.me?.mailbox?.domain ?? "mail.local";
-  }
-
-  get webmailUrl() {
-    return this.me?.webmail_url ?? "";
   }
 
   getFolderByKey = computedFn((folderKey: string) => this.folders.find((folder) => folder.key === folderKey));
