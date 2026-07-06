@@ -713,6 +713,19 @@ def media_library_root() -> Path:
     return Path(settings.MEDIA_LIBRARY_ROOT).resolve(strict=False)
 
 
+def get_document_thumbnail_hint(format_value: str, meta: dict | None = None) -> str | None:
+    if isinstance(meta, dict):
+        thumbnail_hint = meta.get("thumbnail")
+        if isinstance(thumbnail_hint, str) and thumbnail_hint.strip():
+            return thumbnail_hint.strip()
+
+        source_value = str(meta.get("source") or "").strip().lower()
+        if source_value == "plane-coach" and str(format_value or "").strip().lower() == "json":
+            return "attachment/video-icon.png"
+
+    return None
+
+
 def get_document_icon_source(format_value: str, thumbnail_hint: str | None = None) -> Path | None:
     base_public_dirs: list[Path] = []
     base_from_settings = Path(settings.BASE_DIR).parent.parent / "web" / "public"

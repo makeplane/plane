@@ -398,15 +398,13 @@ export const mapArtifactsToMediaItems = (
       mediaType === "video" ? downloadablePath || directDownloadPath : directDownloadPath || downloadablePath;
 
     const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
-    const planeCoachFallbackThumbnail =
-      metaSource === "plane-coach" && !metaThumbnail && !thumbnailByLink.get(artifact.name) ? getPlaneCoachThumbnailPath() : "";
+    const planeCoachThumbnail =
+      metaSource === "plane-coach" && mediaType === "document" ? metaThumbnail || getPlaneCoachThumbnailPath() : "";
     const fallbackThumbnail =
       mediaType === "image"
         ? resolvedPath
-        : planeCoachFallbackThumbnail || (mediaType === "document" ? getDocumentThumbnailPath(format) : "");
-    const thumbnail = resolveArtifactPath(
-      metaThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail
-    );
+        : planeCoachThumbnail || (mediaType === "document" ? getDocumentThumbnailPath(format) : "");
+    const thumbnail = resolveArtifactPath(planeCoachThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail);
 
     return {
       id: artifact.name,

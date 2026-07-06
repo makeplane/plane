@@ -28,6 +28,7 @@ from plane.utils.media_library import (
     filter_media_library_artifacts,
     generate_thumbnail,
     get_document_icon_source,
+    get_document_thumbnail_hint,
     hydrate_artifacts_with_meta,
     manifest_path,
     media_library_root,
@@ -634,7 +635,7 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                     )
                     image_thumbnail_action = "view"
                 if format_value not in _VIDEO_FORMATS and format_value not in _IMAGE_FORMATS:
-                    thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
+                    thumbnail_hint = get_document_thumbnail_hint(format_value, meta)
                     doc_thumbnail_source = get_document_icon_source(format_value, thumbnail_hint)
                     if doc_thumbnail_source:
                         doc_thumbnail_name = f"{primary_artifact_name}-thumb"
@@ -1026,10 +1027,8 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                 validate_segment(thumbnail_name, "artifactId")
                 if thumbnail_name in existing_names or thumbnail_name in incoming_names:
                     continue
-                thumbnail_hint = None
                 meta_value = artifact.get("meta")
-                if isinstance(meta_value, dict):
-                    thumbnail_hint = meta_value.get("thumbnail")
+                thumbnail_hint = get_document_thumbnail_hint(format_value, meta_value)
                 doc_thumbnail_source = get_document_icon_source(format_value, thumbnail_hint)
                 if not doc_thumbnail_source:
                     continue
