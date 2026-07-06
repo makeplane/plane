@@ -14,6 +14,13 @@ DEBUG = int(os.environ.get("DEBUG", 0)) == 1
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# Behind a reverse proxy that rewrites the Host header to the upstream's own
+# address (e.g. Railway's private-networking proxy), request.get_host() must
+# use X-Forwarded-Host to see the original public host instead of the
+# internal one. Presigned MinIO/S3 upload URLs are built from get_host(), so
+# without this they point at an unreachable internal hostname.
+USE_X_FORWARDED_HOST = True
+
 INSTALLED_APPS += ("scout_apm.django",)  # noqa
 
 
