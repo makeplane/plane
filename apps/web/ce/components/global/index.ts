@@ -4,4 +4,3 @@
  * See the LICENSE file for details.
  */
 
-export * from "./version-number";

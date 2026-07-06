@@ -11,6 +11,7 @@ import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // gizmo imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
 import { CustomMenu, CustomSelect } from "@plane/ui";
@@ -40,6 +41,7 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
 
@@ -82,7 +84,9 @@ export function NameColumn(props: NameProps) {
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
                     <CircleMinus className="size-3.5 flex-shrink-0" />
-                    {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
+                    {rowData.member?.id === currentUser?.id
+                      ? t("workspace_settings.settings.members.leave")
+                      : t("workspace_settings.settings.members.remove")}
                   </div>
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -103,6 +107,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   } = useMember();
   const { data: currentUser } = useUser();
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { t } = useTranslation();
   // form info
   const {
     control,
@@ -148,7 +153,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
         <Controller
           name="role"
           control={control}
-          rules={{ required: "Role is required." }}
+          rules={{ required: t("workspace_settings.settings.members.role_required") }}
           render={() => (
             <CustomSelect
               value={rowData.original_role}
@@ -162,8 +167,8 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
 
                     setToast({
                       type: TOAST_TYPE.ERROR,
-                      title: "Пока нельзя изменить эту роль.",
-                      message: errorString ?? "An error occurred while updating member role. Please try again.",
+                      title: t("error"),
+                      message: errorString ?? t("workspace_settings.settings.members.role_update_error"),
                     });
                   }
                 );

@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Disclosure } from "@headlessui/react";
 // gizmo imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -44,6 +45,7 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
   const isSuspended = rowData.is_active === false;
@@ -100,7 +102,10 @@ export function NameColumn(props: NameProps) {
                     }}
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.WORKSPACE_MEMBER_TABLE_CONTEXT_MENU}
                   >
-                    <TrashIcon className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
+                    <TrashIcon className="size-3.5 align-middle" />{" "}
+                    {id === currentUser?.id
+                      ? t("workspace_settings.settings.members.leave")
+                      : t("workspace_settings.settings.members.remove")}
                   </div>
                 )}
               />
@@ -114,6 +119,7 @@ export function NameColumn(props: NameProps) {
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, workspaceSlug } = props;
+  const { t } = useTranslation();
   // form info
   const {
     control,
@@ -138,7 +144,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
       {isSuspended ? (
         <div className="flex w-32">
           <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
-            Suspended
+            {t("workspace_settings.settings.members.suspended")}
           </Pill>
         </div>
       ) : isRoleNonEditable ? (
@@ -149,7 +155,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
         <Controller
           name="role"
           control={control}
-          rules={{ required: "Role is required." }}
+          rules={{ required: t("workspace_settings.settings.members.role_required") }}
           render={({ field: { value } }) => (
             <CustomSelect
               value={value as EUserPermissions}
@@ -165,8 +171,8 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
-                    title: "Ошибка!",
-                    message: errorString ?? "An error occurred while updating member role. Please try again.",
+                    title: t("error"),
+                    message: errorString ?? t("workspace_settings.settings.members.role_update_error"),
                   });
                 }
               }}

@@ -7,6 +7,7 @@
 import { useEffect, useRef } from "react";
 import type { ComponentType } from "react";
 import { Bold, Italic, Link2, List, ListOrdered, Underline } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -16,19 +17,25 @@ type Props = {
   className?: string;
 };
 
-type ToolButton = { icon: ComponentType<{ className?: string }>; command: string; title: string; prompt?: boolean };
+type ToolButton = {
+  icon: ComponentType<{ className?: string }>;
+  command: string;
+  titleKey: string;
+  prompt?: boolean;
+};
 
 const TOOL_BUTTONS: ToolButton[] = [
-  { icon: Bold, command: "bold", title: "Полужирный" },
-  { icon: Italic, command: "italic", title: "Курсив" },
-  { icon: Underline, command: "underline", title: "Подчёркнутый" },
-  { icon: List, command: "insertUnorderedList", title: "Маркированный список" },
-  { icon: ListOrdered, command: "insertOrderedList", title: "Нумерованный список" },
-  { icon: Link2, command: "createLink", title: "Ссылка", prompt: true },
+  { icon: Bold, command: "bold", titleKey: "mail.compose.toolbar.bold" },
+  { icon: Italic, command: "italic", titleKey: "mail.compose.toolbar.italic" },
+  { icon: Underline, command: "underline", titleKey: "mail.compose.toolbar.underline" },
+  { icon: List, command: "insertUnorderedList", titleKey: "mail.compose.toolbar.bullet_list" },
+  { icon: ListOrdered, command: "insertOrderedList", titleKey: "mail.compose.toolbar.numbered_list" },
+  { icon: Link2, command: "createLink", titleKey: "mail.compose.toolbar.link", prompt: true },
 ];
 
 export function MailRichText(props: Props) {
   const { html, placeholder, onChange, className } = props;
+  const { t } = useTranslation();
   const editorRef = useRef<HTMLDivElement>(null);
 
   // Sync external changes (template insert, reset) without disturbing the caret
@@ -65,7 +72,7 @@ export function MailRichText(props: Props) {
           <button
             key={button.command}
             type="button"
-            title={button.title}
+            title={t(button.titleKey)}
             className="grid size-8 place-items-center rounded text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]"
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => runCommand(button)}

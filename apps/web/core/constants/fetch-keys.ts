@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { EUserPermissions, IJiraMetadata } from "@plane/types";
+import type { EUserPermissions } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -110,16 +110,6 @@ export const USER_ACTIVITY = (params: { cursor?: string }) => `USER_ACTIVITY_${p
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 
-// integrations
-export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
-export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
-  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
-
-export const JIRA_IMPORTER_DETAIL = (workspaceSlug: string, params: IJiraMetadata) => {
-  const { api_token, cloud_hostname, email, project_key } = params;
-
-  return `JIRA_IMPORTER_DETAIL_${workspaceSlug.toUpperCase()}_${api_token}_${cloud_hostname}_${email}_${project_key}`;
-};
 
 //import-export
 export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>

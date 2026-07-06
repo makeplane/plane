@@ -1490,6 +1490,11 @@ export default {
             invalid: "Email is invalid",
           },
         },
+        leave: "Leave",
+        remove: "Remove",
+        suspended: "Suspended",
+        role_required: "Role is required.",
+        role_update_error: "An error occurred while updating member role. Please try again.",
       },
       billing_and_plans: {
         heading: "Billing & Plans",
@@ -2756,6 +2761,15 @@ export default {
       no_labels: "No labels yet",
       webmail: "Roundcube",
     },
+    folders: {
+      inbox: "Inbox",
+      starred: "Starred",
+      sent: "Sent",
+      drafts: "Drafts",
+      archive: "Archive",
+      spam: "Spam",
+      trash: "Trash",
+    },
     list: {
       empty: "No messages in this folder",
       unknown_sender: "Unknown sender",
@@ -2805,6 +2819,14 @@ export default {
       draft_saved: "Draft saved",
       draft_error: "Could not save draft",
       upload_error: "Could not upload attachment",
+      toolbar: {
+        bold: "Bold",
+        italic: "Italic",
+        underline: "Underline",
+        bullet_list: "Bulleted list",
+        numbered_list: "Numbered list",
+        link: "Link",
+      },
     },
     search: {
       title: "Search",

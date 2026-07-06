@@ -17,9 +17,6 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useChatSupport } from "@/hooks/use-chat-support";
-// gizmo web components
-import { PlaneVersionNumber } from "@/plane-web/components/global";
-
 export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
@@ -98,9 +95,6 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-11">Форум</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
-          <PlaneVersionNumber />
-        </div>
       </CustomMenu>
     </>
   );

@@ -23,7 +23,7 @@ export const BillingRoot = observer(function BillingRoot() {
         />
         <div className="mt-6">
           <SettingsBoxedControlItem
-            title="Community"
+            title="Gizmo"
             description="Неограниченное количество проектов, рабочих элементов, циклов, модулей, страниц и хранилища"
           />
         </div>

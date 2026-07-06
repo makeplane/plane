@@ -24,15 +24,7 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { useMail } from "@/hooks/store/use-mail";
 
-const FALLBACK_FOLDERS = [
-  { key: "inbox", label: "Входящие", unread: 0 },
-  { key: "starred", label: "Помеченные", unread: 0 },
-  { key: "sent", label: "Отправленные", unread: 0 },
-  { key: "drafts", label: "Черновики", unread: 0 },
-  { key: "archive", label: "Архив", unread: 0 },
-  { key: "spam", label: "Спам", unread: 0 },
-  { key: "trash", label: "Корзина", unread: 0 },
-];
+const FALLBACK_FOLDER_KEYS = ["inbox", "starred", "sent", "drafts", "archive", "spam", "trash"] as const;
 
 const ICONS = {
   inbox: Inbox,
@@ -48,7 +40,8 @@ export const MailSidebar = observer(function MailSidebar() {
   const { t } = useTranslation();
   const mail = useMail();
   const navigate = useNavigate();
-  const folders = mail.folders.length ? mail.folders : FALLBACK_FOLDERS;
+  const fallbackFolders = FALLBACK_FOLDER_KEYS.map((key) => ({ key, label: t(`mail.folders.${key}`), unread: 0 }));
+  const folders = mail.folders.length ? mail.folders : fallbackFolders;
 
   useEffect(() => {
     if (!mail.labels.length) mail.fetchSettings().catch(() => undefined);

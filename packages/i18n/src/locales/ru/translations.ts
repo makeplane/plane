@@ -221,7 +221,6 @@ export default {
   your_account: "Ваш аккаунт",
   security: "Безопасность",
   activity: "Активность",
-  appearance: "Внешний вид",
   preferences: "Настройки",
   language_and_time: "Язык и время",
   notifications: "Уведомления",
@@ -1419,13 +1418,7 @@ export default {
     summary_of_projects: "Сводка по проектам",
     project_insights: "Аналитика проекта",
     started_work_items: "Начатые {entity}",
-    total_work_items: "Общее количество {entity}",
-    total_projects: "Всего проектов",
-    total_admins: "Всего администраторов",
-    total_users: "Всего пользователей",
-    total_intake: "Общий доход",
     un_started_work_items: "Не начатые {entity}",
-    total_guests: "Всего гостей",
     completed_work_items: "Завершённые {entity}",
     total: "Общее количество {entity}",
   },
@@ -1655,7 +1648,7 @@ export default {
         details: {
           full_name: "Полное имя",
           display_name: "Отображаемое имя",
-          email_address: "Email",
+          email_address: "Email-адрес",
           account_type: "Тип аккаунта",
           authentication: "Аутентификация",
           joining_date: "Дата присоединения",
@@ -1671,6 +1664,11 @@ export default {
             invalid: "Неверный email",
           },
         },
+        leave: "Покинуть",
+        remove: "Удалить",
+        suspended: "Заблокирован",
+        role_required: "Роль обязательна.",
+        role_update_error: "Не удалось изменить роль участника. Попробуйте ещё раз.",
       },
       billing_and_plans: {
         heading: "Оплата и тарифы",
@@ -2919,7 +2917,7 @@ export default {
       title: "Почта",
       refresh: "Обновить",
       back: "Назад",
-      webmail: "Webmail",
+      webmail: "Веб-почта",
     },
     sidebar: {
       new_label: "Новый ярлык",
@@ -2927,6 +2925,15 @@ export default {
       labels: "Ярлыки",
       no_labels: "Ярлыков пока нет",
       webmail: "Roundcube",
+    },
+    folders: {
+      inbox: "Входящие",
+      starred: "Помеченные",
+      sent: "Отправленные",
+      drafts: "Черновики",
+      archive: "Архив",
+      spam: "Спам",
+      trash: "Корзина",
     },
     list: {
       empty: "В этой папке нет писем",
@@ -2977,6 +2984,14 @@ export default {
       draft_saved: "Черновик сохранён",
       draft_error: "Не удалось сохранить черновик",
       upload_error: "Не удалось загрузить вложение",
+      toolbar: {
+        bold: "Полужирный",
+        italic: "Курсив",
+        underline: "Подчёркнутый",
+        bullet_list: "Маркированный список",
+        numbered_list: "Нумерованный список",
+        link: "Ссылка",
+      },
     },
     search: {
       title: "Поиск",
@@ -3160,7 +3175,7 @@ export default {
       back: "Назад в приложение",
       features: {
         imap: {
-          title: "Live IMAP",
+          title: "IMAP в реальном времени",
           description: "Письма читаются из Dovecot без локального зеркала.",
         },
         smtp: {
