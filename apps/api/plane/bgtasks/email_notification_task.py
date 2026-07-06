@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Module imports
 from plane.db.models import EmailNotificationLog, Issue, User
@@ -163,9 +164,12 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             ri = redis_instance()
             base_api = ri.get(str(issue_id)).decode() if ri.get(str(issue_id)) else None
 
-            # Skip if base api is not present
+            # Fall back to the configured web URL if the cached origin is missing
             if not base_api:
-                return
+                logging.getLogger("plane.worker").warning(
+                    f"Redis origin key missing for issue {issue_id}; falling back to WEB_URL for email notification links"
+                )
+                base_api = settings.WEB_URL
 
             data = create_payload(notification_data=notification_data)
 
