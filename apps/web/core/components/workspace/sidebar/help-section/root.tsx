@@ -6,9 +6,8 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { HelpCircle, User } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { PageIcon } from "@plane/propel/icons";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
