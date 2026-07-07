@@ -143,3 +143,30 @@ class TestProjectMemberIsActiveAuthz:
         assert response.status_code == status.HTTP_200_OK
         target_member.refresh_from_db()
         assert target_member.is_active is False
+
+    def test_workspace_admin_with_low_project_role_can_deactivate(self, workspace, project, create_user):
+        """
+        Positive control: the intended workspace-admin bypass is preserved.
+
+        A workspace ADMIN (role 20) may deactivate any project member — even a
+        project ADMIN — despite holding only a project GUEST role, because
+        is_workspace_admin short-circuits the role-comparison guard. Locks in the
+        bypass so future changes don't silently remove it.
+        """
+        ws_admin = _make_user("ws-admin@plane.so")
+        # workspace ADMIN (20) but only a project GUEST (5)
+        _add_member(workspace, project, ws_admin, ws_role=20, project_role=5)
+        # victim is the project ADMIN (create_user) set up by the `project` fixture
+        victim = ProjectMember.objects.get(project=project, member=create_user)
+
+        client = APIClient()
+        client.force_authenticate(user=ws_admin)
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, victim.id),
+            {"is_active": False},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        victim.refresh_from_db()
+        assert victim.is_active is False
