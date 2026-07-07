@@ -6,6 +6,7 @@
 import json
 import uuid
 import re
+from datetime import datetime, timedelta
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -85,6 +86,13 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.time_tracking import (
+    handle_issue_state_change,
+    recalculate_total_time_spent,
+    serialize_time_log,
+    parse_manual_time_log_payload,
+    resolve_time_log_user,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -747,6 +755,10 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+
+        # Capture old state_id before save for time tracking
+        old_state_id = issue.state_id
+
         serializer = IssueSerializer(
             issue,
             data=request.data,
@@ -773,6 +785,11 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+
+            # Handle time tracking when state changes
+            new_state_id = request.data.get("state_id")
+            if new_state_id is not None and str(new_state_id) != str(old_state_id):
+                handle_issue_state_change(issue, old_state_id, new_state_id, actor=request.user)
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=requested_data,
@@ -839,6 +856,158 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueTimeLogsAPIEndpoint(BaseAPIView):
+    """Issue Time Logs Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+    model = Issue
+
+    @work_item_docs(
+        operation_id="list_work_item_time_logs",
+        summary="List work item time logs",
+        description="Retrieve all time logs for a specific work item.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(description="Time logs retrieved successfully"),
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """Get time logs for a work item"""
+        from plane.db.models import IssueTimeLog
+
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_logs = IssueTimeLog.objects.filter(issue=issue).order_by("-date", "-started_at")
+
+        return Response(
+            [serialize_time_log(log) for log in time_logs],
+            status=status.HTTP_200_OK,
+        )
+
+    @work_item_docs(
+        operation_id="create_work_item_time_log",
+        summary="Create a manual work item time log",
+        description="Manually add a time log entry for a work item (not driven by a state-change timer).",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            201: OpenApiResponse(description="Time log created successfully"),
+            400: OpenApiResponse(description="Invalid date or duration"),
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Manually create a time log entry for a work item"""
+        from plane.db.models import IssueTimeLog
+
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+
+        log_date, duration_seconds, error = parse_manual_time_log_payload(request.data)
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        log_user, error = resolve_time_log_user(request.data, project_id, default_user=request.user)
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        started_at = timezone.make_aware(datetime.combine(log_date, datetime.min.time()))
+        time_log = IssueTimeLog.objects.create(
+            issue=issue,
+            user=log_user,
+            date=log_date,
+            started_at=started_at,
+            stopped_at=started_at + timedelta(seconds=duration_seconds),
+            duration_seconds=duration_seconds,
+            workspace=issue.workspace,
+            project=issue.project,
+            created_by=request.user,
+        )
+        recalculate_total_time_spent(issue)
+
+        return Response(serialize_time_log(time_log), status=status.HTTP_201_CREATED)
+
+
+class IssueTimeLogDetailAPIEndpoint(BaseAPIView):
+    """Issue Time Log Detail Endpoint — edit or remove a single manual time log entry"""
+
+    permission_classes = [ProjectEntityPermission]
+    model = Issue
+
+    @work_item_docs(
+        operation_id="update_work_item_time_log",
+        summary="Update a work item time log",
+        description="Edit the date or duration of an existing time log entry.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(description="Time log updated successfully"),
+            400: OpenApiResponse(description="Invalid date or duration"),
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def patch(self, request, slug, project_id, issue_id, pk):
+        """Update an existing time log entry"""
+        from plane.db.models import IssueTimeLog
+
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
+
+        log_date, duration_seconds, error = parse_manual_time_log_payload(
+            request.data,
+            default_date=time_log.date,
+            default_duration_seconds=time_log.duration_seconds,
+        )
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        log_user, error = resolve_time_log_user(
+            request.data, project_id, default_user=time_log.user or request.user
+        )
+        if error:
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
+
+        time_log.date = log_date
+        time_log.user = log_user
+        time_log.started_at = timezone.make_aware(datetime.combine(log_date, datetime.min.time()))
+        time_log.stopped_at = time_log.started_at + timedelta(seconds=duration_seconds)
+        time_log.duration_seconds = duration_seconds
+        time_log.save(update_fields=["date", "user", "started_at", "stopped_at", "duration_seconds", "updated_at"])
+        recalculate_total_time_spent(issue)
+
+        return Response(serialize_time_log(time_log), status=status.HTTP_200_OK)
+
+    @work_item_docs(
+        operation_id="delete_work_item_time_log",
+        summary="Delete a work item time log",
+        description="Permanently delete a time log entry from a work item.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            204: DELETED_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, issue_id, pk):
+        """Delete a time log entry"""
+        from plane.db.models import IssueTimeLog
+
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
+        time_log.delete()
+        recalculate_total_time_spent(issue)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

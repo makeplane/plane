@@ -36,7 +36,8 @@ def test_looks_like_broken_eva_image_html_detects_unmigrated_images():
     )
     assert (
         looks_like_broken_eva_image_html(
-            '<image-component src="https://eva.example.com/files/obj/doc/picture.png" status="uploaded"></image-component>',
+            '<image-component src="https://eva.example.com/files/obj/doc/picture.png" '
+            'status="uploaded"></image-component>',
             "https://eva.example.com",
         )
         is True

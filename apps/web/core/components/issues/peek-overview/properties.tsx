@@ -258,6 +258,8 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          stateId={issue?.state_id}
+          updatedAt={issue?.updated_at}
         />
 
         <WorkItemAdditionalSidebarProperties

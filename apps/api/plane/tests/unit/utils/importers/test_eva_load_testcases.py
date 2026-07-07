@@ -196,7 +196,8 @@ def test_eva_loader_repairs_testcase_images_in_testcase_project(create_user, wor
 
     broken_html = (
         '<p><em>EVA test case: NDOC-TC-279</em></p>'
-        '<image-component src="https://eva.devstream.by/files/obj/CmfTestcase/x/IMG_0598.HEIC" status="uploaded"></image-component>'
+        '<image-component src="https://eva.devstream.by/files/obj/CmfTestcase/x/IMG_0598.HEIC" '
+        'status="uploaded"></image-component>'
     )
     repaired_html = (
         '<p><em>EVA test case: NDOC-TC-279</em></p>'

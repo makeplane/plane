@@ -384,7 +384,11 @@ def _migrate_eva_image(
     extension = _file_extension(filename)
     if not is_inline_displayable_image(content_type, extension):
         if not issue_id or not should_store_image_as_attachment(content_type, extension):
-            logger.warning("Skipping unsupported EVA image %s (%s) without issue attachment target", absolute_url, content_type)
+            logger.warning(
+                "Skipping unsupported EVA image %s (%s) without issue attachment target",
+                absolute_url,
+                content_type,
+            )
             return ImageMigrationResult(mode="failed")
 
         attachment_href = _store_downloaded_media(

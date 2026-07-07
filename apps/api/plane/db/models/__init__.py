@@ -81,6 +81,8 @@ from .favorite import UserFavorite
 
 from .issue_type import IssueType
 
+from .issue_time_log import IssueTimeLog
+
 from .recent_visit import UserRecentVisit
 
 from .label import Label

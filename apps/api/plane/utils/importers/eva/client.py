@@ -92,7 +92,9 @@ class EvaApiClient:
                 details=details,
             ) from error
         except urllib.error.URLError as error:
-            raise EvaApiError(f"Connection error while downloading {full_url}: {error.reason}", method="download") from error
+            raise EvaApiError(
+                f"Connection error while downloading {full_url}: {error.reason}", method="download"
+            ) from error
 
         filename = urllib.parse.unquote(urllib.parse.urlparse(full_url).path.rsplit("/", 1)[-1]) or "image.png"
         if not content_type or content_type == "application/octet-stream":

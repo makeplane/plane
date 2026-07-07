@@ -77,6 +77,7 @@ export type TBaseIssue = {
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
+  total_time_spent: number;
 };
 
 type IssueRelation = {
