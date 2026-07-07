@@ -13,7 +13,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 // icons
 // constants
 import { getDate } from "@plane/utils";
-import { MONTHS_LIST } from "@/constants/calendar";
+import { getMonthsList } from "@/constants/calendar";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -47,29 +47,30 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
   });
 
   const { activeMonthDate } = issueCalendarView.calendarFilters;
+  const monthsList = getMonthsList();
 
   const getWeekLayoutHeader = (): string => {
     const allDaysOfActiveWeek = issueCalendarView.allDaysOfActiveWeek;
 
-    if (!allDaysOfActiveWeek) return "Week view";
+    if (!allDaysOfActiveWeek) return "Неделя";
 
     const daysList = Object.keys(allDaysOfActiveWeek);
 
     const firstDay = getDate(daysList[0]);
     const lastDay = getDate(daysList[daysList.length - 1]);
 
-    if (!firstDay || !lastDay) return "Week view";
+    if (!firstDay || !lastDay) return "Неделя";
 
     if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;
+      return `${monthsList[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;
 
     if (firstDay.getFullYear() !== lastDay.getFullYear()) {
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
+      return `${monthsList[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
+        monthsList[lastDay.getMonth() + 1].shortTitle
       } ${lastDay.getFullYear()}`;
     } else
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
+      return `${monthsList[firstDay.getMonth() + 1].shortTitle} - ${
+        monthsList[lastDay.getMonth() + 1].shortTitle
       } ${lastDay.getFullYear()}`;
   };
 
@@ -89,7 +90,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
           disabled={calendarLayout === "week"}
         >
           {calendarLayout === "month"
-            ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+            ? `${monthsList[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
             : getWeekLayoutHeader()}
         </button>
       </Popover.Button>
@@ -133,7 +134,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
               </button>
             </div>
             <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
-              {Object.values(MONTHS_LIST).map((month, index) => (
+              {Object.values(monthsList).map((month, index) => (
                 <button
                   key={month.shortTitle}
                   type="button"

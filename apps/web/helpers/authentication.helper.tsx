@@ -139,7 +139,7 @@ const errorCodeMessages: {
   },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `Учётная запись деактивирована`,
-    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `Учётная запись деактивирована. Обратитесь к ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "администратору"}.`,
   },
   [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
     title: `Неверный пароль`,
@@ -159,14 +159,14 @@ const errorCodeMessages: {
     title: `Пользователь уже существует`,
     message: (email = undefined) => (
       <div>
-        Your account is already registered.&nbsp;
+        Такой аккаунт уже зарегистрирован.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
-          Sign In
+          Войдите
         </Link>
-        &nbsp;now.
+        &nbsp;сейчас.
       </div>
     ),
   },
@@ -195,14 +195,14 @@ const errorCodeMessages: {
     title: `Пользователь не существует`,
     message: (email = undefined) => (
       <div>
-        No account found.&nbsp;
+        Аккаунт не найден.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
-          Create one
+          Создайте его
         </Link>
-        &nbsp;to get started.
+        ,&nbsp;чтобы начать.
       </div>
     ),
   },
@@ -342,11 +342,11 @@ const errorCodeMessages: {
     title: `Администратор уже существует`,
     message: () => (
       <div>
-        Admin user already exists.&nbsp;
+        Администратор уже существует.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
-          Sign In
+          Войдите
         </Link>
-        &nbsp;now.
+        &nbsp;сейчас.
       </div>
     ),
   },
@@ -354,17 +354,17 @@ const errorCodeMessages: {
     title: `Администратор не существует`,
     message: () => (
       <div>
-        Admin user does not exist.&nbsp;
+        Администратор не существует.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
-          Sign In
+          Войдите
         </Link>
-        &nbsp;now.
+        &nbsp;сейчас.
       </div>
     ),
   },
   [EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED]: {
     title: `Учётная запись администратора деактивирована`,
-    message: () => <div>Your account is deactivated</div>,
+    message: () => <div>Ваша учётная запись деактивирована</div>,
   },
   [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
@@ -431,8 +431,8 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     return {
       type: EErrorAlertType.BANNER_ALERT,
       code: errorCode,
-      title: errorCodeMessages[errorCode]?.title || "Error",
-      message: errorCodeMessages[errorCode]?.message(email) || "Something went wrong. Please try again.",
+      title: errorCodeMessages[errorCode]?.title || "Ошибка",
+      message: errorCodeMessages[errorCode]?.message(email) || "Что-то пошло не так. Попробуйте ещё раз.",
     };
 
   return undefined;

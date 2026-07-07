@@ -43,12 +43,12 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
     <>
       {/* page details */}
       <div className="cursor-default">
-        <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
+        <Tooltip tooltipHeading="Владелец" tooltipContent={ownerDetails?.display_name}>
           <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
         </Tooltip>
       </div>
       <div className="cursor-default text-tertiary">
-        <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
+        <Tooltip tooltipContent={access === 0 ? "Публичный" : "Приватный"}>
           {access === 0 ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div>
@@ -56,7 +56,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       <Minus className="-mx-3 h-5 w-5 rotate-90 text-placeholder" strokeWidth={1} />
 
       {/* page info */}
-      <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
+      <Tooltip tooltipContent={`Создано ${renderFormattedDate(created_at)}`}>
         <span className="grid h-4 w-4 cursor-default place-items-center">
           <Info className="h-4 w-4 text-tertiary" />
         </span>

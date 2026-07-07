@@ -10,6 +10,7 @@ import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 // gizmo types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { translate } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
@@ -97,7 +98,7 @@ export const getGroupByColumns = ({
     return [
       {
         id: "All Issues",
-        name: `All ${isEpic ? "Epics" : "work items"}`,
+        name: translate(isEpic ? "all_epics" : "all_work_items"),
         payload: {},
         icon: undefined,
       },
@@ -169,12 +170,12 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
       icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
-      dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
+      dropErrorMessage: isDropDisabled ? translate("cannot_move_to_completed_cycle") : undefined,
     });
   });
   cycles.push({
     id: "None",
-    name: "None",
+    name: translate("none"),
     icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -201,7 +202,7 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   });
   modules.push({
     id: "None",
-    name: "None",
+    name: translate("none"),
     icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -230,7 +231,7 @@ const getStateGroupColumns = (): IGroupByColumn[] => {
   // map state groups to group by columns
   return Object.values(stateGroups).map((stateGroup) => ({
     id: stateGroup.key,
-    name: stateGroup.label,
+    name: translate(`workspace_projects.state.${stateGroup.key}`),
     icon: (
       <div className="size-4 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} size={EIconSize.LG} />
@@ -245,7 +246,7 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   // map priorities to group by columns
   return priorities.map((priority) => ({
     id: priority.key,
-    name: priority.title,
+    name: translate(priority.key),
     icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));
@@ -256,7 +257,7 @@ const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] =
   // map labels to group by columns
   const labels = [
     ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
-    { id: "None", name: "None", color: "#666" },
+    { id: "None", name: translate("none"), color: "#666" },
   ];
   // map labels to group by columns
   return labels.map((label) => ({
@@ -289,7 +290,7 @@ const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGrou
     });
   });
   if (includeNone) {
-    assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+    assigneeColumns.push({ id: "None", name: translate("none"), icon: <Avatar size="md" />, payload: {} });
   }
 
   return assigneeColumns;

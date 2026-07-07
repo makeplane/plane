@@ -99,7 +99,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         <StartOfWeekPreference
           option={{
             title: "Первый день недели",
-            description: "This will change how all calendars in your app look.",
+            description: "Это изменит отображение всех календарей в приложении.",
           }}
         />
       </div>

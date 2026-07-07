@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import type { Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
@@ -62,7 +63,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     maxDate,
     onChange,
     onClose,
-    placeholder = "Date",
+    placeholder,
     placement,
     showTooltip = false,
     tabIndex,
@@ -71,6 +72,9 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     renderByDefault = true,
     labelClassName = "",
   } = props;
+  // i18n
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("date");
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
@@ -138,8 +142,8 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       <DropdownButton
         className={buttonClassName}
         isActive={isOpen}
-        tooltipHeading={placeholder}
-        tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
+        tooltipHeading={resolvedPlaceholder}
+        tooltipContent={value ? renderFormattedDate(value, formatToken) : t("none")}
         showTooltip={showTooltip}
         variant={buttonVariant}
         renderToolTipByDefault={renderByDefault}
@@ -147,7 +151,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
           <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
-            {value ? renderFormattedDate(value, formatToken) : placeholder}
+            {value ? renderFormattedDate(value, formatToken) : resolvedPlaceholder}
           </span>
         )}
         {isClearable && !disabled && isDateSelected && (

@@ -53,7 +53,7 @@ export const getCycleFilterConfig =
   (params: TCreateCycleFilterParams) =>
     createFilterConfig<P>({
       id: key,
-      label: "Cycle",
+      label: "Цикл",
       ...params,
       icon: params.filterIcon,
       supportedOperatorConfigsMap: new Map([

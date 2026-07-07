@@ -24,35 +24,12 @@ type TAuthHeader = {
   currentAuthStep: EAuthSteps;
 };
 
-const Titles = {
-  [EAuthModes.SIGN_IN]: {
-    [EAuthSteps.EMAIL]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Gizmo.",
-    },
-    [EAuthSteps.PASSWORD]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Gizmo.",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Gizmo.",
-    },
-  },
-  [EAuthModes.SIGN_UP]: {
-    [EAuthSteps.EMAIL]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Gizmo account.",
-    },
-    [EAuthSteps.PASSWORD]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Gizmo account.",
-    },
-    [EAuthSteps.UNIQUE_CODE]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Gizmo account.",
-    },
-  },
+const authModeKey = (mode: EAuthModes) => (mode === EAuthModes.SIGN_UP ? "sign_up" : "sign_in");
+
+const authStepKey = (step: EAuthSteps) => {
+  if (step === EAuthSteps.PASSWORD) return "password";
+  if (step === EAuthSteps.UNIQUE_CODE) return "unique_code";
+  return "email";
 };
 
 const workSpaceService = new WorkspaceService();
@@ -87,14 +64,14 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
             {workspace.name}
           </div>
         ),
-        subHeader:
-          mode == EAuthModes.SIGN_UP
-            ? "Create an account to start managing work with your team."
-            : "Log in to start managing work with your team.",
+        subHeader: t(`auth.${authModeKey(mode)}.header.label`),
       };
     }
 
-    return Titles[mode][step];
+    return {
+      header: t(`auth.${authModeKey(mode)}.header.step.${authStepKey(step)}.header`),
+      subHeader: t(`auth.${authModeKey(mode)}.header.step.${authStepKey(step)}.sub_header`),
+    };
   };
 
   const { header, subHeader } = getHeaderSubHeader(currentAuthStep, authMode, invitation || undefined, invitationEmail);

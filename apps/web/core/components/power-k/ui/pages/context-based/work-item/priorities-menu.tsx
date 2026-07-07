@@ -8,6 +8,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // gizmo imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 import type { TIssue, TIssuePriorities } from "@plane/types";
 // local imports
@@ -20,6 +21,7 @@ type Props = {
 
 export const PowerKWorkItemPrioritiesMenu = observer(function PowerKWorkItemPrioritiesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
+  const { t } = useTranslation();
 
   return (
     <Command.Group>
@@ -27,7 +29,7 @@ export const PowerKWorkItemPrioritiesMenu = observer(function PowerKWorkItemPrio
         <PowerKModalCommandItem
           key={priority.key}
           iconNode={<PriorityIcon priority={priority.key} />}
-          label={priority.title}
+          label={t(priority.key)}
           isSelected={priority.key === workItemDetails.priority}
           onSelect={() => handleSelect(priority.key)}
         />

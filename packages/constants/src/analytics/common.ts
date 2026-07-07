@@ -104,86 +104,86 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
 
 export const ANALYTICS_DURATION_FILTER_OPTIONS = [
   {
-    name: "Yesterday",
+    i18nKey: "workspace_analytics.duration.yesterday",
     value: "yesterday",
   },
   {
-    name: "Last 7 days",
+    i18nKey: "workspace_analytics.duration.last_7_days",
     value: "last_7_days",
   },
   {
-    name: "Last 30 days",
+    i18nKey: "workspace_analytics.duration.last_30_days",
     value: "last_30_days",
   },
   {
-    name: "Last 3 months",
+    i18nKey: "workspace_analytics.duration.last_3_months",
     value: "last_3_months",
   },
 ];
 
-export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; label: string }[] = [
+export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; i18nKey: string }[] = [
   {
     value: ChartXAxisProperty.STATES,
-    label: "State name",
+    i18nKey: "workspace_analytics.axis.state_name",
   },
   {
     value: ChartXAxisProperty.STATE_GROUPS,
-    label: "State group",
+    i18nKey: "workspace_analytics.axis.state_group",
   },
   {
     value: ChartXAxisProperty.PRIORITY,
-    label: "Priority",
+    i18nKey: "workspace_analytics.axis.priority",
   },
   {
     value: ChartXAxisProperty.LABELS,
-    label: "Label",
+    i18nKey: "workspace_analytics.axis.label",
   },
   {
     value: ChartXAxisProperty.ASSIGNEES,
-    label: "Assignee",
+    i18nKey: "workspace_analytics.axis.assignee",
   },
   {
     value: ChartXAxisProperty.ESTIMATE_POINTS,
-    label: "Estimate point",
+    i18nKey: "workspace_analytics.axis.estimate_point",
   },
   {
     value: ChartXAxisProperty.CYCLES,
-    label: "Cycle",
+    i18nKey: "workspace_analytics.axis.cycle",
   },
   {
     value: ChartXAxisProperty.MODULES,
-    label: "Module",
+    i18nKey: "workspace_analytics.axis.module",
   },
   {
     value: ChartXAxisProperty.COMPLETED_AT,
-    label: "Completed date",
+    i18nKey: "workspace_analytics.axis.completed_date",
   },
   {
     value: ChartXAxisProperty.TARGET_DATE,
-    label: "Due date",
+    i18nKey: "workspace_analytics.axis.due_date",
   },
   {
     value: ChartXAxisProperty.START_DATE,
-    label: "Start date",
+    i18nKey: "workspace_analytics.axis.start_date",
   },
   {
     value: ChartXAxisProperty.CREATED_AT,
-    label: "Created date",
+    i18nKey: "workspace_analytics.axis.created_date",
   },
 ];
 
-export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; label: string }[] = [
+export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; i18nKey: string }[] = [
   {
     value: ChartYAxisMetric.WORK_ITEM_COUNT,
-    label: "Work item",
+    i18nKey: "workspace_analytics.metric.work_item",
   },
   {
     value: ChartYAxisMetric.ESTIMATE_POINT_COUNT,
-    label: "Estimate",
+    i18nKey: "workspace_analytics.metric.estimate",
   },
   {
     value: ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,
-    label: "Epic",
+    i18nKey: "workspace_analytics.metric.epic",
   },
 ];
 

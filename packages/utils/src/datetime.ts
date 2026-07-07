@@ -5,7 +5,24 @@
  */
 
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
+import type { Locale } from "date-fns";
+import { enUS, ru } from "date-fns/locale";
 import { isNumber } from "lodash-es";
+
+const DATE_FNS_LOCALES: Record<string, Locale> = { ru, en: enUS };
+
+// Module-level "active" date-fns locale, kept in sync with the app's current
+// UI language via `setDateFnsLocale` (called from @plane/i18n on init/change).
+// A plain (non-React) module has no access to the translation context, so
+// this is the simplest way to make every date/time formatter below locale-aware
+// without threading a `locale` param through 70+ call sites across the app.
+let activeDateFnsLocale: Locale = ru;
+
+export const setDateFnsLocale = (language: string): void => {
+  activeDateFnsLocale = DATE_FNS_LOCALES[language] ?? enUS;
+};
+
+export const getDateFnsLocale = (): Locale => activeDateFnsLocale;
 
 // Format Date Helpers
 /**
@@ -29,10 +46,10 @@ export const renderFormattedDate = (
   let formattedDate;
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
-    formattedDate = format(parsedDate, formatToken);
+    formattedDate = format(parsedDate, formatToken, { locale: activeDateFnsLocale });
   } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
-    formattedDate = format(parsedDate, "MMM dd, yyyy");
+    formattedDate = format(parsedDate, "MMM dd, yyyy", { locale: activeDateFnsLocale });
   }
   return formattedDate;
 };
@@ -51,7 +68,7 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in short format (MMM dd)
-  const formattedDate = format(parsedDate, "MMM dd");
+  const formattedDate = format(parsedDate, "MMM dd", { locale: activeDateFnsLocale });
   return formattedDate;
 };
 
@@ -91,11 +108,11 @@ export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" |
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in 12 hour format if in12HourFormat is true
   if (timeFormat === "12-hour") {
-    const formattedTime = format(parsedDate, "hh:mm a");
+    const formattedTime = format(parsedDate, "hh:mm a", { locale: activeDateFnsLocale });
     return formattedTime;
   }
   // Format the date in 24 hour format
-  const formattedTime = format(parsedDate, "HH:mm");
+  const formattedTime = format(parsedDate, "HH:mm", { locale: activeDateFnsLocale });
   return formattedTime;
 };
 
@@ -175,7 +192,7 @@ export const calculateTimeAgo = (time: string | number | Date | null): string =>
   // return if undefined
   if (!parsedTime) return ""; // Return empty string for invalid dates
   // Format the time in the form of amount of time passed since the event happened
-  const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
+  const distance = formatDistanceToNow(parsedTime, { addSuffix: true, locale: activeDateFnsLocale });
   return distance;
 };
 
@@ -500,12 +517,12 @@ export const formatDateRange = (
 
   // If only start date is provided
   if (parsedStartDate && !parsedEndDate) {
-    return format(parsedStartDate, "MMM dd, yyyy");
+    return format(parsedStartDate, "MMM dd, yyyy", { locale: activeDateFnsLocale });
   }
 
   // If only end date is provided
   if (!parsedStartDate && parsedEndDate) {
-    return format(parsedEndDate, "MMM dd, yyyy");
+    return format(parsedEndDate, "MMM dd, yyyy", { locale: activeDateFnsLocale });
   }
 
   // If both dates are provided
@@ -517,21 +534,21 @@ export const formatDateRange = (
 
     // Same year, same month
     if (startYear === endYear && startMonth === endMonth) {
-      const startDay = format(parsedStartDate, "dd");
-      const endDay = format(parsedEndDate, "dd");
-      return `${format(parsedStartDate, "MMM")} ${startDay} - ${endDay}, ${startYear}`;
+      const startDay = format(parsedStartDate, "dd", { locale: activeDateFnsLocale });
+      const endDay = format(parsedEndDate, "dd", { locale: activeDateFnsLocale });
+      return `${format(parsedStartDate, "MMM", { locale: activeDateFnsLocale })} ${startDay} - ${endDay}, ${startYear}`;
     }
 
     // Same year, different month
     if (startYear === endYear) {
-      const startFormatted = format(parsedStartDate, "MMM dd");
-      const endFormatted = format(parsedEndDate, "MMM dd");
+      const startFormatted = format(parsedStartDate, "MMM dd", { locale: activeDateFnsLocale });
+      const endFormatted = format(parsedEndDate, "MMM dd", { locale: activeDateFnsLocale });
       return `${startFormatted} - ${endFormatted}, ${startYear}`;
     }
 
     // Different year
-    const startFormatted = format(parsedStartDate, "MMM dd, yyyy");
-    const endFormatted = format(parsedEndDate, "MMM dd, yyyy");
+    const startFormatted = format(parsedStartDate, "MMM dd, yyyy", { locale: activeDateFnsLocale });
+    const endFormatted = format(parsedEndDate, "MMM dd, yyyy", { locale: activeDateFnsLocale });
     return `${startFormatted} - ${endFormatted}`;
   }
 

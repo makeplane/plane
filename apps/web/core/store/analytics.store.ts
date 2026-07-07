@@ -6,6 +6,7 @@
 
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
+import { translate } from "@plane/i18n";
 import type { TAnalyticsTabsBase } from "@plane/types";
 
 type DurationType = (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number]["value"];
@@ -63,7 +64,8 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
   }
 
   get selectedDurationLabel() {
-    return ANALYTICS_DURATION_FILTER_OPTIONS.find((item) => item.value === this.selectedDuration)?.name ?? null;
+    const option = ANALYTICS_DURATION_FILTER_OPTIONS.find((item) => item.value === this.selectedDuration);
+    return option ? translate(option.i18nKey) : null;
   }
 
   updateSelectedProjects = (projects: string[]) => {

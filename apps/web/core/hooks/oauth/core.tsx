@@ -8,6 +8,7 @@
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { TOAuthConfigs, TOAuthOption } from "@plane/types";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
@@ -25,6 +26,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   const next_path = searchParams.get("next_path");
   // theme
   const { resolvedTheme } = useTheme();
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { config } = useInstance();
   // derived values
@@ -38,7 +41,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   const oAuthOptions: TOAuthOption[] = [
     {
       id: "google",
-      text: `${oauthActionText} with Google`,
+      text: t("auth.common.continue_with", { action: oauthActionText, provider: "Google" }),
       icon: <img src={googleLogo} height={18} width={18} alt="Google Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
@@ -47,7 +50,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "github",
-      text: `${oauthActionText} with GitHub`,
+      text: t("auth.common.continue_with", { action: oauthActionText, provider: "GitHub" }),
       icon: (
         <img
           src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
@@ -63,7 +66,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "gitlab",
-      text: `${oauthActionText} with GitLab`,
+      text: t("auth.common.continue_with", { action: oauthActionText, provider: "GitLab" }),
       icon: <img src={gitlabLogo} height={18} width={18} alt="GitLab Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
@@ -72,7 +75,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "gitea",
-      text: `${oauthActionText} with Gitea`,
+      text: t("auth.common.continue_with", { action: oauthActionText, provider: "Gitea" }),
       icon: <img src={giteaLogo} height={18} width={18} alt="Gitea Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);

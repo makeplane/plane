@@ -82,7 +82,7 @@ function BorderButton(props: ButtonProps) {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -132,7 +132,7 @@ function BorderButton(props: ButtonProps) {
               "text-placeholder": !priority || priority === "none",
             })}
           >
-            {priorityDetails?.title ?? placeholder}
+            {priorityDetails ? t(priorityDetails.key) : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -223,7 +223,7 @@ function BackgroundButton(props: ButtonProps) {
               "text-placeholder": !priority || priority === "none",
             })}
           >
-            {priorityDetails?.title ?? t("common.priority") ?? placeholder}
+            {priorityDetails ? t(priorityDetails.key) : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -257,7 +257,7 @@ function TransparentButton(props: ButtonProps) {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -307,7 +307,7 @@ function TransparentButton(props: ButtonProps) {
               "text-placeholder": !priority || priority === "none",
             })}
           >
-            {priorityDetails?.title ?? t("common.priority") ?? placeholder}
+            {priorityDetails ? t(priorityDetails.key) : placeholder}
           </span>
         )}
         {dropdownArrow && (
@@ -369,7 +369,7 @@ export function PriorityDropdown(props: Props) {
     content: (
       <div className="flex items-center gap-2">
         <PriorityIcon priority={priority.key} size={14} withContainer />
-        <span className="flex-grow truncate">{priority.title}</span>
+        <span className="flex-grow truncate">{t(priority.key)}</span>
       </div>
     ),
   }));

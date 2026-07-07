@@ -7,6 +7,7 @@
 import { IntlMessageFormat } from "intl-messageformat";
 import { get, merge } from "lodash-es";
 import { makeAutoObservable, runInAction } from "mobx";
+import { setDateFnsLocale } from "@plane/utils";
 // constants
 import {
   FALLBACK_LANGUAGE,
@@ -25,6 +26,19 @@ import type { TLanguage, ILanguageOption, ITranslations } from "../types";
  * Provides methods to translate keys with params and change the language
  * Uses IntlMessageFormat to format the translations
  */
+// The last-constructed store instance. Lets plain (non-React) modules that
+// have no access to the translation context — e.g. MobX store helpers —
+// still call the module-level `translate` export below.
+let activeTranslationStore: TranslationStore | null = null;
+
+/**
+ * Translates a key using the currently active TranslationStore, for use in
+ * plain modules that cannot call the `useTranslation` hook. Falls back to
+ * returning the key itself if no store has been constructed yet.
+ */
+export const translate = (key: string, params?: Record<string, unknown>): string =>
+  activeTranslationStore ? activeTranslationStore.t(key, params) : key;
+
 export class TranslationStore {
   // Core translations that are always loaded
   private coreTranslations: ITranslations = {
@@ -53,6 +67,7 @@ export class TranslationStore {
     this.initializeLanguage();
     // Load all the translations
     this.loadTranslations();
+    activeTranslationStore = this;
   }
 
   /** Initializes the language based on the local storage or browser language */
@@ -278,6 +293,7 @@ export class TranslationStore {
         this.currentLocale = lng;
         this.messageCache.clear(); // Clear cache when language changes
       });
+      setDateFnsLocale(lng);
     } catch (error) {
       console.error("Failed to set language:", error);
     }

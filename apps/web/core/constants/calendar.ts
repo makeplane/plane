@@ -4,107 +4,59 @@
  * See the LICENSE file for details.
  */
 
+import { format } from "date-fns";
 import type { TCalendarLayouts } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
+import { getDateFnsLocale } from "@plane/utils";
 
-export const MONTHS_LIST: {
-  [monthNumber: number]: {
-    shortTitle: string;
-    title: string;
-  };
-} = {
-  1: {
-    shortTitle: "Jan",
-    title: "January",
-  },
-  2: {
-    shortTitle: "Feb",
-    title: "February",
-  },
-  3: {
-    shortTitle: "Mar",
-    title: "March",
-  },
-  4: {
-    shortTitle: "Apr",
-    title: "April",
-  },
-  5: {
-    shortTitle: "May",
-    title: "May",
-  },
-  6: {
-    shortTitle: "Jun",
-    title: "June",
-  },
-  7: {
-    shortTitle: "Jul",
-    title: "July",
-  },
-  8: {
-    shortTitle: "Aug",
-    title: "August",
-  },
-  9: {
-    shortTitle: "Sep",
-    title: "September",
-  },
-  10: {
-    shortTitle: "Oct",
-    title: "October",
-  },
-  11: {
-    shortTitle: "Nov",
-    title: "November",
-  },
-  12: {
-    shortTitle: "Dec",
-    title: "December",
-  },
+const DAY_VALUES = [
+  EStartOfTheWeek.SUNDAY,
+  EStartOfTheWeek.MONDAY,
+  EStartOfTheWeek.TUESDAY,
+  EStartOfTheWeek.WEDNESDAY,
+  EStartOfTheWeek.THURSDAY,
+  EStartOfTheWeek.FRIDAY,
+  EStartOfTheWeek.SATURDAY,
+];
+
+/**
+ * Builds the month lookup (1-12) using the app's current UI language so
+ * calendar views never fall back to hardcoded English month names.
+ */
+export const getMonthsList = (): {
+  [monthNumber: number]: { shortTitle: string; title: string };
+} => {
+  const locale = getDateFnsLocale();
+  const months: { [monthNumber: number]: { shortTitle: string; title: string } } = {};
+  for (let month = 0; month < 12; month++) {
+    const date = new Date(2024, month, 1);
+    months[month + 1] = {
+      shortTitle: format(date, "MMM", { locale }),
+      title: format(date, "MMMM", { locale }),
+    };
+  }
+  return months;
 };
 
-export const DAYS_LIST: {
-  [dayIndex: number]: {
-    shortTitle: string;
-    title: string;
-    value: EStartOfTheWeek;
-  };
-} = {
-  1: {
-    shortTitle: "Sun",
-    title: "Sunday",
-    value: EStartOfTheWeek.SUNDAY,
-  },
-  2: {
-    shortTitle: "Mon",
-    title: "Monday",
-    value: EStartOfTheWeek.MONDAY,
-  },
-  3: {
-    shortTitle: "Tue",
-    title: "Tuesday",
-    value: EStartOfTheWeek.TUESDAY,
-  },
-  4: {
-    shortTitle: "Wed",
-    title: "Wednesday",
-    value: EStartOfTheWeek.WEDNESDAY,
-  },
-  5: {
-    shortTitle: "Thu",
-    title: "Thursday",
-    value: EStartOfTheWeek.THURSDAY,
-  },
-  6: {
-    shortTitle: "Fri",
-    title: "Friday",
-    value: EStartOfTheWeek.FRIDAY,
-  },
-  7: {
-    shortTitle: "Sat",
-    title: "Saturday",
-    value: EStartOfTheWeek.SATURDAY,
-  },
+/**
+ * Builds the weekday lookup (1-7, Sunday-first) using the app's current UI
+ * language so calendar views never fall back to hardcoded English day names.
+ */
+export const getDaysList = (): {
+  [dayIndex: number]: { shortTitle: string; title: string; value: EStartOfTheWeek };
+} => {
+  const locale = getDateFnsLocale();
+  // 2024-01-07 is a Sunday; walking forward from there covers Sun..Sat in order.
+  const days: { [dayIndex: number]: { shortTitle: string; title: string; value: EStartOfTheWeek } } = {};
+  for (let day = 0; day < 7; day++) {
+    const date = new Date(2024, 0, 7 + day);
+    days[day + 1] = {
+      shortTitle: format(date, "EEE", { locale }),
+      title: format(date, "EEEE", { locale }),
+      value: DAY_VALUES[day],
+    };
+  }
+  return days;
 };
 
 export const CALENDAR_LAYOUTS: {
@@ -115,10 +67,10 @@ export const CALENDAR_LAYOUTS: {
 } = {
   month: {
     key: "month",
-    title: "Month layout",
+    title: "Вид: месяц",
   },
   week: {
     key: "week",
-    title: "Week layout",
+    title: "Вид: неделя",
   },
 };

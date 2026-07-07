@@ -6,7 +6,9 @@
 
 // components
 import { observer } from "mobx-react";
+import { Mail } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { TopNavPowerK } from "@/components/navigation";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
@@ -24,6 +26,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   // store hooks
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
@@ -87,6 +90,16 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 </div>
               ),
               isActive: pathname?.includes("/notifications/"),
+            }}
+          />
+        </Tooltip>
+        <Tooltip tooltipContent={t("mail_nav")} position="bottom">
+          <AppSidebarItem
+            variant="link"
+            item={{
+              href: "/mail",
+              icon: <Mail className="size-5" />,
+              isActive: pathname?.startsWith("/mail"),
             }}
           />
         </Tooltip>

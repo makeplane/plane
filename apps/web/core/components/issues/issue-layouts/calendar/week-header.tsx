@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { EStartOfTheWeek } from "@plane/types";
 import { getOrderedDays } from "@plane/utils";
-import { DAYS_LIST } from "@/constants/calendar";
+import { getDaysList } from "@/constants/calendar";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
@@ -24,7 +24,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
   const startOfWeek = data?.start_of_the_week;
 
   // derived
-  const orderedDays = getOrderedDays(Object.values(DAYS_LIST), (item) => item.value, startOfWeek);
+  const orderedDays = getOrderedDays(Object.values(getDaysList()), (item) => item.value, startOfWeek);
 
   return (
     <div

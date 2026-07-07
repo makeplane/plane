@@ -139,14 +139,14 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
     return parsedBars;
   }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
 
-  const yAxisLabel = useMemo(
-    () => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
-    [props.y_axis]
-  );
-  const xAxisLabel = useMemo(
-    () => ANALYTICS_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
-    [props.x_axis]
-  );
+  const yAxisLabel = useMemo(() => {
+    const option = ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis);
+    return option ? t(option.i18nKey) : props.y_axis;
+  }, [props.y_axis, t]);
+  const xAxisLabel = useMemo(() => {
+    const option = ANALYTICS_X_AXIS_VALUES.find((item) => item.value === props.x_axis);
+    return option ? t(option.i18nKey) : props.x_axis;
+  }, [props.x_axis, t]);
 
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(
     () => [

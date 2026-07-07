@@ -30,7 +30,7 @@ export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
   const formattedDate = renderFormattedDate(due_date);
 
   return (
-    <Tooltip tooltipHeading="Due Date" tooltipContent={formattedDate}>
+    <Tooltip tooltipHeading="Срок выполнения" tooltipContent={formattedDate}>
       <div
         className={cn("flex h-full items-center gap-1 rounded-sm px-2.5 py-1 text-11 text-primary", {
           "text-danger-primary": shouldHighLight && due_date && shouldHighlightIssueDueDate(due_date, state?.group),
@@ -38,7 +38,7 @@ export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
         })}
       >
         <DueDatePropertyIcon className="size-3 flex-shrink-0" />
-        {formattedDate ? formattedDate : "No Date"}
+        {formattedDate ? formattedDate : "Без даты"}
       </div>
     </Tooltip>
   );
