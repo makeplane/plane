@@ -261,6 +261,25 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+        # Guard privileged `is_active` mutations (member (de)activation). These are NOT
+        # covered by the role block above, so without this check a GUEST could PATCH
+        # {"is_active": false} while omitting "role" to deactivate any member — including
+        # admins — and take over the project. Mirror the role block and destroy(): only a
+        # project admin (or workspace admin) may (de)activate a member, and never one whose
+        # role is equal to or higher than the requester's own.
+        if "is_active" in request.data:
+            if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
+                return Response(
+                    {"error": "You do not have permission to update member status"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            if project_member.role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot update the status of a member with a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
