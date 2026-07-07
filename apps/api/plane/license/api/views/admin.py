@@ -333,6 +333,25 @@ class InstanceAdminSignInEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
+        # Reject bot service accounts (defense-in-depth for the same intent as
+        # BOT_USER_LOGIN_FORBIDDEN on the app/space flow). Bots are internal
+        # identities that act only via API tokens and must never sign in to the
+        # admin console. A bot is never registered as an InstanceAdmin, so this
+        # is not reachable today, but the guard closes the path regardless.
+        # Reuse ADMIN_AUTHENTICATION_FAILED so no bot-specific admin error code
+        # is disclosed to the caller.
+        if user.is_bot:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_AUTHENTICATION_FAILED"],
+                error_message="ADMIN_AUTHENTICATION_FAILED",
+                payload={"email": email},
+            )
+            url = urljoin(
+                base_host(request=request, is_admin=True),
+                "?" + urlencode(exc.get_error_dict()),
+            )
+            return HttpResponseRedirect(url)
+
         # is_active
         if not user.is_active:
             exc = AuthenticationException(
