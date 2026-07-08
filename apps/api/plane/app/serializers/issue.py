@@ -20,6 +20,7 @@ from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
     User,
     Issue,
+    IssueType,
     IssueActivity,
     IssueComment,
     ProjectUserProperty,
@@ -99,6 +100,9 @@ class IssueCreateSerializer(BaseSerializer):
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
 
     class Meta:
         model = Issue
@@ -194,6 +198,17 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
+        # Check the work item type belongs to the project (IssueType is workspace-level,
+        # linked to projects only via ProjectIssueType) else raise validation error
+        if (
+            attrs.get("type")
+            and not IssueType.objects.filter(
+                project_issue_types__project_id=self.context.get("project_id"),
+                pk=attrs.get("type").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError("Type is not valid please pass a valid type_id")
+
         return attrs
 
     def create(self, validated_data):
@@ -204,8 +219,15 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
+        issue_type = validated_data.pop("type", None)
+        if not issue_type:
+            # Fall back to the project's default work item type when one exists
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id, is_default=True
+            ).first()
+
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -809,6 +831,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "type_id",
         ]
         read_only_fields = fields
 
@@ -853,6 +876,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sequence_id": instance.sequence_id,
             "project_id": instance.project_id,
             "parent_id": instance.parent_id,
+            "type_id": instance.type_id,
             "created_at": instance.created_at,
             "updated_at": instance.updated_at,
             "created_by": instance.created_by_id,

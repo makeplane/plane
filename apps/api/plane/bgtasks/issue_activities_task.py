@@ -25,6 +25,7 @@ from plane.db.models import (
     IssueComment,
     IssueReaction,
     IssueSubscriber,
+    IssueType,
     Label,
     Module,
     Project,
@@ -221,6 +222,47 @@ def track_state(
                 comment="updated the state to",
                 old_identifier=old_state.id if old_state else None,
                 new_identifier=new_state.id if new_state else None,
+                epoch=epoch,
+            )
+        )
+
+
+# Track changes in the work item type of the issue
+def track_type(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_type_id = current_instance.get("type_id") or current_instance.get("type")
+    requested_type_id = requested_data.get("type_id") or requested_data.get("type")
+
+    if current_type_id is not None and not is_valid_uuid(current_type_id):
+        current_type_id = None
+    if requested_type_id is not None and not is_valid_uuid(requested_type_id):
+        requested_type_id = None
+
+    if current_type_id != requested_type_id:
+        new_type = IssueType.objects.filter(pk=requested_type_id).first()
+        old_type = IssueType.objects.filter(pk=current_type_id).first()
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_type.name if old_type else None,
+                new_value=new_type.name if new_type else None,
+                field="type",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the work item type to",
+                old_identifier=old_type.id if old_type else None,
+                new_identifier=new_type.id if new_type else None,
                 epoch=epoch,
             )
         )
@@ -606,6 +648,7 @@ def update_issue_activity(
         "parent_id": track_parent,
         "priority": track_priority,
         "state_id": track_state,
+        "type_id": track_type,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
@@ -617,6 +660,7 @@ def update_issue_activity(
         # External endpoint keys
         "parent": track_parent,
         "state": track_state,
+        "type": track_type,
         "assignees": track_assignees,
         "labels": track_labels,
     }
