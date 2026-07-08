@@ -32,6 +32,7 @@ from plane.app.views import (
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
     IssuePageEndpoint,
+    IssueWorkLogViewSet,
 )
 
 urlpatterns = [
@@ -182,6 +183,29 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
+    ## Issue Worklogs (time tracking)
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/",
+        IssueWorkLogViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-issue-worklog",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/<uuid:pk>/",
+        IssueWorkLogViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-worklog",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/total-worklogs/",
+        IssueWorkLogViewSet.as_view({"get": "total_worklogs"}),
+        name="project-total-worklogs",
+    ),
+    ## End Issue Worklogs
     # Issue Subscribers
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
