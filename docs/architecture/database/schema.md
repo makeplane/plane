@@ -2,7 +2,7 @@
 
 > Fichier tenu à jour par `@update-writer-after-implement` après chaque migration.
 > BDD : PostgreSQL 15 · ORM : Django 4.2 (migrations dans `apps/api/plane/db/migrations/`).
-> Dernière mise à jour : 2026-07-08 (migration 0125).
+> Dernière mise à jour : 2026-07-08 (migration 0126).
 
 ---
 
@@ -151,7 +151,7 @@ Une entrée de temps loggé sur un work item. `duration` en **minutes** (entier)
 | `created_by_id` / `updated_by_id` | FK users null | audit (`SET_NULL`) |
 | `created_at` / `updated_at` / `deleted_at` | timestamptz | soft delete via manager `objects` |
 
-Index : `(issue)`, `(project, logged_by)`.
+Index : `(issue)`, `(project, logged_by)`. UniqueConstraint partielle : `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration 0126 — idempotence d'import, `external_*` create-only).
 
 #### Notes (worklogs)
 
