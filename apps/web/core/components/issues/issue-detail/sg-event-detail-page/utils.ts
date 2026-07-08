@@ -249,10 +249,21 @@ const findTagDataValue = (tag: Record<string, unknown>, names: string[]) => {
   const dataEntries = asArray(tag.data);
   for (const entry of dataEntries) {
     const entryRecord = asRecord(entry);
-    const tagName = toText(entryRecord.tag).toLowerCase().replace(/\s+/g, "_");
+    const tagName = toText(
+      entryRecord.tag ??
+        entryRecord.field ??
+        entryRecord.field_name ??
+        entryRecord.fieldName ??
+        entryRecord.name ??
+        entryRecord.key
+    )
+      .toLowerCase()
+      .replace(/\s+/g, "_");
     const match = names.some((name) => tagName === name || tagName.includes(name));
     if (!match) continue;
-    const tagValue = toText(entryRecord.value);
+    const tagValue = toText(
+      entryRecord.value ?? entryRecord.field_value ?? entryRecord.fieldValue ?? entryRecord.val
+    );
     if (tagValue) return tagValue;
   }
 
@@ -307,7 +318,7 @@ const formatCricketRuns = (value: string) => {
   if (!value) return "--";
   const numericValue = Number(value);
   if (Number.isFinite(numericValue)) {
-    return `${numericValue} run${numericValue === 1 ? "" : "s"}`;
+    return String(numericValue);
   }
   return formatLooseLabel(value);
 };
@@ -316,6 +327,15 @@ const formatCricketOver = (displayValue: string, overNumber: string, ballInOver:
   if (displayValue) return displayValue;
   if (overNumber && ballInOver) return `${overNumber}.${ballInOver}`;
   if (overNumber) return `Over ${overNumber}`;
+  return "";
+};
+
+const formatCricketOverGroup = (overNumber: string, overDisplay: string) => {
+  if (overNumber) return `Over ${overNumber}`;
+
+  const displayOverNumber = overDisplay.match(/\b(\d+)(?:\.\d+)?\b/)?.[1] || "";
+  if (displayOverNumber) return `Over ${displayOverNumber}`;
+
   return "";
 };
 
@@ -393,7 +413,7 @@ export const buildClockOnlyPlaylistTimestampFallback = (value: string, baseEvent
 
 export const playlistHasMediaSegments = async (playlistUrl: string) => {
   try {
-    const response = await fetch(`/api/hls?url=${encodeURIComponent(playlistUrl)}`, { cache: "no-store" });
+    const response = await fetch(playlistUrl, { cache: "no-store" });
     if (!response.ok) {
       return true;
     }
@@ -538,12 +558,19 @@ const buildTagRowBySport = (
       break;
     }
     case "cricket": {
-      const overDisplay = findTagDataValue(tag, ["over_display", "over"]);
+      const overDisplay = findTagDataValue(tag, ["over_display"]);
       const overNumber = findTagDataValue(tag, ["over_number"]);
       const ballInOver = findTagDataValue(tag, ["ball_in_over"]);
       const overValue = formatCricketOver(overDisplay, overNumber, ballInOver);
-      const runs = findTagDataValue(tag, ["runs_scored", "points_or_runs_scored", "runs", "run_value"]);
-      groupValue = overValue ? `Over ${overValue}` : SPORT_TABLE_CONFIGS.cricket.defaultGroupValue;
+      const overGroupValue = formatCricketOverGroup(overNumber, overDisplay);
+      const runs = findTagDataValue(tag, [
+        "score_home",
+        "runs_scored",
+        "points_or_runs_scored",
+        "runs",
+        "run_value",
+      ]);
+      groupValue = overGroupValue || SPORT_TABLE_CONFIGS.cricket.defaultGroupValue;
       primaryDetail = overValue || "--";
       secondaryDetail = formatCricketRuns(runs);
       break;

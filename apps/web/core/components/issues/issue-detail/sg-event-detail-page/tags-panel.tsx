@@ -64,6 +64,7 @@ export const SgEventTagsPanel = ({
 }: SgEventTagsPanelProps) => {
   const isCompactFootballTable = Boolean(sportTableConfig.isCompactFootballTable);
   const tableGridClass = isCompactFootballTable ? FOOTBALL_TAG_TABLE_GRID_CLASS : TAG_TABLE_GRID_CLASS;
+  const tableSurfaceWidthClass = isCompactFootballTable ? "min-w-[1024px]" : "min-w-[1120px]";
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
@@ -141,11 +142,11 @@ export const SgEventTagsPanel = ({
         </div>
       </div>
 
-      <div className="max-h-[520px] overflow-auto">
-        <div className="min-w-full">
+      <div className="max-h-[520px] overflow-x-scroll overflow-y-auto">
+        <div className={cn("min-w-full", tableSurfaceWidthClass)}>
           <div
             className={cn(
-              "sticky top-0 z-[2] grid w-full gap-3 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-5 py-3 text-xs text-custom-text-300",
+              "sticky top-0 z-[2] grid min-w-full gap-3 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-5 py-3 text-xs text-custom-text-300",
               tableGridClass
             )}
           >
@@ -188,7 +189,7 @@ export const SgEventTagsPanel = ({
                     title={
                       <div
                         className={cn(
-                          "grid w-full items-center gap-3 bg-custom-background-90 px-5 py-3",
+                          "grid min-w-full items-center gap-3 bg-custom-background-90 px-5 py-3",
                           tableGridClass
                         )}
                       >
@@ -221,7 +222,7 @@ export const SgEventTagsPanel = ({
                           <div
                             key={row.id}
                             className={cn(
-                              "grid w-full cursor-pointer gap-3 border-t border-custom-border-200 px-5 py-3 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90",
+                              "grid min-w-full cursor-pointer gap-3 border-t border-custom-border-200 px-5 py-3 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90",
                               activePlaybackOverrideId === `sg-tag-${row.id}` && "bg-custom-background-90",
                               tableGridClass
                             )}

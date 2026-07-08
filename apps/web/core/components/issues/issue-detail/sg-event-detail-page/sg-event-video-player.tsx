@@ -1,12 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import videojs from "video.js";
+import { cn } from "@plane/utils";
 import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getQualitySelection, getVideoRepresentations } from "ce/features/media-library/utils/media-detail-utils";
-import videojs from "video.js";
-import { cn } from "@plane/utils";
-import { buildSourceCandidates } from "@/components/issues/peek-overview/webhook-utils/webhook-artifacts-utils";
 import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./constants";
 
 type SgEventVideoPlayerProps = {
@@ -31,6 +30,8 @@ type TQualityOption = {
   rep: TQualityRepresentation | null;
   selected: boolean;
 };
+
+const HLS_MIME_TYPES = ["application/x-mpegURL", "application/vnd.apple.mpegurl"] as const;
 
 export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds = null }: SgEventVideoPlayerProps) => {
   const normalizedAction = (item?.action ?? "").toLowerCase();
@@ -267,14 +268,19 @@ export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds =
         : resolvedVideoFormat === "mp4"
           ? "video/mp4"
           : undefined;
-    const rawSource =
+    const resolvedSource =
       effectiveVideoSrc ||
       (typeof item?.videoSrc === "string" && item.videoSrc.trim()) ||
       (typeof item?.fileSrc === "string" && item.fileSrc.trim()) ||
       "";
     const sourceCandidates =
       resolvedVideoFormat === "m3u8"
-        ? buildSourceCandidates(rawSource, true, resolvedVideoFormat)
+        ? HLS_MIME_TYPES.map((hlsType) => ({
+            crossOrigin,
+            src: resolvedSource,
+            type: hlsType,
+            withCredentials: useCredentials,
+          }))
         : [
             {
               crossOrigin,
