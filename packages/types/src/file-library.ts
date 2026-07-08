@@ -23,17 +23,45 @@ export type TLibraryFileAttributes = {
   size: number;
 };
 
+export type TFileFolder = {
+  id: string;
+  name: string;
+  parent: string | null;
+  workspace_id: string;
+  file_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TFileTag = {
+  id: string;
+  name: string;
+  color: string;
+  workspace_id: string;
+  file_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type TLibraryFile = {
   id: string;
   attributes: TLibraryFileAttributes;
   size: number;
   is_uploaded: boolean;
   workspace_id: string;
+  folder_id: string | null;
   category_ids: string[];
+  tag_ids: string[];
   created_by: string | null;
   created_at: string;
   updated_at: string;
 };
+
+export type TLibraryBulkAction =
+  | { action: "move"; file_ids: string[]; folder_id?: string | null; new_folder_name?: string; parent_id?: string | null }
+  | { action: "delete"; file_ids: string[] }
+  | { action: "add_categories" | "remove_categories"; file_ids: string[]; category_ids: string[] }
+  | { action: "add_tags" | "remove_tags"; file_ids: string[]; tag_ids: string[] };
 
 export type TLibraryFileUploadResponse = {
   upload_data: {
@@ -46,6 +74,7 @@ export type TLibraryFileUploadResponse = {
 
 export type TLibraryFileFilters = {
   category?: string;
+  tag?: string;
   search?: string;
   type?: string;
 };

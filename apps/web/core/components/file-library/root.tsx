@@ -8,22 +8,26 @@ import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, FolderCog, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FolderPlus, Layers, Tags, Trash2, Upload } from "lucide-react";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
-import type { TPreviewFile } from "./file-preview-modal";
-import { FilePreviewModal } from "./file-preview-modal";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Popover } from "@plane/propel/popover";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore, Breadcrumbs } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useFileLibrary } from "@/hooks/store/use-file-library";
 // local imports
-import { ManageCategoriesModal } from "./manage-categories-modal";
+import { BulkActionsModal } from "./bulk-actions-modal";
+import type { TPreviewFile } from "./file-preview-modal";
+import { FilePreviewModal } from "./file-preview-modal";
+import { FolderSelect } from "./shared";
+import { UploadModal } from "./upload-modal";
 
 type Props = {
   workspaceSlug: string;
@@ -36,14 +40,25 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const {
     categoryIds,
     getCategoryById,
-    fileIds,
+    tagIds,
+    getTagById,
+    folderIds,
+    getFolderById,
+    getFolderPath,
+    getFilteredFileIds,
     getFileById,
+    filters,
+    setFilters,
     fetchCategories,
+    fetchFolders,
+    fetchTags,
     fetchFiles,
-    uploadFile,
+    createFolder,
     deleteFile,
     addFileCategories,
     removeFileCategory,
+    addFileTags,
+    removeFileTag,
     getFileDownloadUrl,
     getPresignedViewUrl,
     filesLoader,
@@ -51,71 +66,56 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   // states
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<TPreviewFile | null>(null);
-  const [isManageCategoriesOpen, setIsManageCategoriesOpen] = useState(false);
+  const [pendingUploads, setPendingUploads] = useState<File[]>([]);
+  const [isBulkOpen, setIsBulkOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPath, setCurrentPath] = useState("");
+  const [browseKey, setBrowseKey] = useState(0);
+  const [browsePath, setBrowsePath] = useState("");
+  const [newFolderParent, setNewFolderParent] = useState<string | null>(null);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
 
   // data
-  useSWR(`FILE_LIBRARY_CATEGORIES_${workspaceSlug}`, () => fetchCategories(workspaceSlug), {
-    revalidateOnFocus: false,
-  });
-  useSWR(`FILE_LIBRARY_FILES_${workspaceSlug}`, () => fetchFiles(workspaceSlug), {
-    revalidateOnFocus: false,
-  });
+  useSWR(`FILE_LIBRARY_CATEGORIES_${workspaceSlug}`, () => fetchCategories(workspaceSlug), { revalidateOnFocus: false });
+  useSWR(`FILE_LIBRARY_FOLDERS_${workspaceSlug}`, () => fetchFolders(workspaceSlug), { revalidateOnFocus: false });
+  useSWR(`FILE_LIBRARY_TAGS_${workspaceSlug}`, () => fetchTags(workspaceSlug), { revalidateOnFocus: false });
+  useSWR(`FILE_LIBRARY_FILES_${workspaceSlug}`, () => fetchFiles(workspaceSlug), { revalidateOnFocus: false });
 
-  // upload
-  const handleDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      if (acceptedFiles.length === 0) return;
-      setIsUploading(true);
-      // Uploads run in parallel — each file goes straight to storage via its own
-      // presigned URL, so they don't contend with each other, and one failing
-      // shouldn't block or delay the rest.
-      await Promise.allSettled(
-        acceptedFiles.map(async (file) => {
-          try {
-            await uploadFile(workspaceSlug, file);
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: t("success"),
-              message: t("file_library.upload.success", { name: file.name }),
-            });
-          } catch (error: any) {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("error"),
-              message: error?.error ?? t("file_library.upload.failed", { name: file.name }),
-            });
-          }
-        })
-      );
-      setIsUploading(false);
-    },
-    [workspaceSlug, uploadFile, t]
+  // folder path helpers (path string = "A/B/C/")
+  const folderPathString = useCallback(
+    (folderId: string | null) =>
+      getFolderPath(folderId)
+        .map((folder) => folder.name)
+        .join("/") + (folderId ? "/" : ""),
+    [getFolderPath]
   );
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    open: openFilePicker,
-  } = useDropzone({
+  const currentFolderId = useMemo(() => {
+    if (!currentPath) return null;
+    const match = folderIds.find((id) => folderPathString(id) === currentPath);
+    return match ?? null;
+  }, [currentPath, folderIds, folderPathString]);
+
+  // dropzone → open the categorization modal instead of uploading directly
+  const handleDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) setPendingUploads(acceptedFiles);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive, open: openFilePicker } = useDropzone({
     onDrop: handleDrop,
     noClick: true,
     noKeyboard: true,
   });
 
-  // manifest: categories are folders; a file appears in every category it
-  // belongs to, and at the root when it has none
-  const items = useMemo<FileSystemItem[]>(() => {
+  // manifest: real folders; files live in exactly one folder.
+  // Computed inline (no useMemo): the MobX getters are stable references, so a
+  // memo would never invalidate when filesMap fills after the initial fetch —
+  // the observer re-render is what keeps this fresh.
+  const buildItems = (): FileSystemItem[] => {
     const manifest: FileSystemItem[] = [];
-    const categoryNameById: Record<string, string> = {};
-    for (const categoryId of categoryIds) {
-      const category = getCategoryById(categoryId);
-      if (!category) continue;
-      categoryNameById[categoryId] = category.name;
-      manifest.push({ kind: "folder", path: `${category.name}/` });
+    for (const folderId of folderIds) {
+      manifest.push({ kind: "folder", path: folderPathString(folderId) });
     }
     const usedPaths = new Set<string>();
     const uniquePath = (base: string) => {
@@ -129,26 +129,24 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       usedPaths.add(candidate);
       return candidate;
     };
-    for (const fileId of fileIds) {
+    for (const fileId of getFilteredFileIds()) {
       const file = getFileById(fileId);
       if (!file) continue;
-      const parents = file.category_ids.map((id) => categoryNameById[id]).filter(Boolean);
-      const targets = parents.length > 0 ? parents.map((name) => `${name}/`) : [""];
-      for (const prefix of targets) {
-        manifest.push({
-          kind: "file",
-          path: uniquePath(`${prefix}${file.attributes.name}`),
-          name: file.attributes.name,
-          contentType: file.attributes.type,
-          size: file.size,
-          createdAt: file.created_at,
-          updatedAt: file.updated_at,
-          metadata: { assetId: file.id },
-        });
-      }
+      const prefix = folderPathString(file.folder_id);
+      manifest.push({
+        kind: "file",
+        path: uniquePath(`${prefix}${file.attributes.name}`),
+        name: file.attributes.name,
+        contentType: file.attributes.type,
+        size: file.size,
+        createdAt: file.created_at,
+        updatedAt: file.updated_at,
+        metadata: { assetId: file.id },
+      });
     }
     return manifest;
-  }, [categoryIds, fileIds, getCategoryById, getFileById]);
+  };
+  const items = buildItems();
 
   const getFileUrl = useCallback(
     (file: FileSystemFileItem) => {
@@ -167,33 +165,16 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const handleFileOpen = useCallback((fsFile: FileSystemFileItem) => {
     const assetId = fsFile.metadata?.assetId;
     if (!assetId) return;
-    setPreviewFile({
-      assetId,
-      name: fsFile.name ?? fsFile.path,
-      contentType: fsFile.contentType ?? "",
-    });
+    setPreviewFile({ assetId, name: fsFile.name ?? fsFile.path, contentType: fsFile.contentType ?? "" });
   }, []);
 
-  // selection helpers
-  const selectedFile = selectedAssetId ? getFileById(selectedAssetId) : undefined;
-
-  const handleToggleCategory = async (categoryId: string) => {
-    if (!selectedFile) return;
-    const category = getCategoryById(categoryId);
-    try {
-      if (selectedFile.category_ids.includes(categoryId)) {
-        await removeFileCategory(workspaceSlug, selectedFile.id, categoryId);
-      } else {
-        await addFileCategories(workspaceSlug, selectedFile.id, [categoryId]);
-      }
-    } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: error?.error ?? t("file_library.categories.assign_failed", { name: category?.name ?? "" }),
-      });
-    }
+  const navigateTo = (path: string) => {
+    setBrowsePath(path);
+    setCurrentPath(path);
+    setBrowseKey((k) => k + 1);
   };
+
+  const selectedFile = selectedAssetId ? getFileById(selectedAssetId) : undefined;
 
   const handleDelete = async () => {
     if (!selectedFile) return;
@@ -209,13 +190,71 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     }
   };
 
+  const handleCreateFolder = async () => {
+    const name = newFolderName.trim();
+    if (!name) return;
+    try {
+      await createFolder(workspaceSlug, { name, parent: newFolderParent });
+      setNewFolderName("");
+      setIsNewFolderOpen(false);
+    } catch (error: any) {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") });
+    }
+  };
+
+  const breadcrumbTrail = getFolderPath(currentFolderId);
+
+  const labelPopover = (
+    kind: "categories" | "tags",
+    ids: string[],
+    getById: (id: string) => { id: string; name: string; pdf_only?: boolean } | undefined,
+    assigned: string[],
+    onToggle: (id: string) => void
+  ) => (
+    <Popover>
+      <Popover.Button className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1 text-12 hover:bg-layer-1-hover">
+        {kind === "categories" ? <Layers className="size-3.5" /> : <Tags className="size-3.5" />}
+        {t(`file_library.${kind}.title`)}
+      </Popover.Button>
+      <Popover.Panel side="bottom" align="end">
+        <div className="max-h-60 w-56 space-y-0.5 overflow-y-auto rounded-md border border-subtle bg-layer-1 p-2 shadow-raised-200">
+          {ids.map((id) => {
+            const item = getById(id);
+            if (!item) return null;
+            const isAssigned = assigned.includes(id);
+            const isDisabled = Boolean(item.pdf_only) && selectedFile?.attributes.type !== "application/pdf";
+            return (
+              <button
+                key={id}
+                type="button"
+                disabled={isDisabled}
+                title={isDisabled ? t("file_library.categories.pdf_only_hint") : undefined}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-13",
+                  isDisabled ? "cursor-not-allowed text-placeholder" : "hover:bg-layer-1-hover"
+                )}
+                onClick={() => onToggle(id)}
+              >
+                <span className="truncate">{item.name}</span>
+                {isAssigned && <Check className="size-3.5 shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      </Popover.Panel>
+    </Popover>
+  );
+
   return (
     <div className="flex h-full w-full flex-col">
-      <ManageCategoriesModal
+      <UploadModal
         workspaceSlug={workspaceSlug}
-        isOpen={isManageCategoriesOpen}
-        onClose={() => setIsManageCategoriesOpen(false)}
+        files={pendingUploads}
+        onFilesChange={setPendingUploads}
+        defaultFolderId={currentFolderId}
+        onClose={() => setPendingUploads([])}
       />
+      <BulkActionsModal workspaceSlug={workspaceSlug} isOpen={isBulkOpen} onClose={() => setIsBulkOpen(false)} />
       <FilePreviewModal workspaceSlug={workspaceSlug} file={previewFile} onClose={() => setPreviewFile(null)} />
       <AlertModalCore
         isOpen={isDeleteModalOpen}
@@ -227,53 +266,94 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       />
 
       {/* toolbar */}
-      <div className="flex items-center justify-between gap-2 border-b border-subtle px-4 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-subtle px-4 py-2">
         <div className="flex items-center gap-2">
-          <Button variant="primary" size="base" onClick={openFilePicker} loading={isUploading}>
+          <Button variant="primary" size="base" onClick={openFilePicker}>
             <Upload className="size-3.5" />
             {t("file_library.upload.button")}
           </Button>
-          <Button variant="secondary" size="base" onClick={() => setIsManageCategoriesOpen(true)}>
-            <FolderCog className="size-3.5" />
-            {t("file_library.categories.manage_button")}
+          <Popover open={isNewFolderOpen} onOpenChange={setIsNewFolderOpen}>
+            <Popover.Button className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1.5 text-12 hover:bg-layer-1-hover">
+              <FolderPlus className="size-3.5" />
+              {t("file_library.folders.new_button")}
+            </Popover.Button>
+            <Popover.Panel side="bottom" align="start">
+              <div className="w-64 space-y-2 rounded-md border border-subtle bg-layer-1 p-3 shadow-raised-200">
+                <FolderSelect value={newFolderParent} onChange={setNewFolderParent} />
+                <input
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void handleCreateFolder();
+                  }}
+                  placeholder={t("file_library.folders.new_placeholder")}
+                  className="w-full rounded-sm border border-strong bg-transparent px-2 py-1 text-12"
+                />
+                <Button variant="primary" size="base" className="w-full" onClick={() => void handleCreateFolder()}>
+                  {t("file_library.folders.create")}
+                </Button>
+              </div>
+            </Popover.Panel>
+          </Popover>
+          <Button variant="secondary" size="base" onClick={() => setIsBulkOpen(true)}>
+            <Files className="size-3.5" />
+            {t("file_library.bulk.button")}
           </Button>
+          {/* filters */}
+          <select
+            className="rounded-sm border border-subtle bg-transparent px-1.5 py-1 text-12"
+            value={filters.category ?? ""}
+            onChange={(e) => setFilters({ category: e.target.value || undefined })}
+          >
+            <option value="">{t("file_library.filters.all_categories")}</option>
+            {categoryIds.map((id) => (
+              <option key={id} value={id}>
+                {getCategoryById(id)?.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="rounded-sm border border-subtle bg-transparent px-1.5 py-1 text-12"
+            value={filters.tag ?? ""}
+            onChange={(e) => setFilters({ tag: e.target.value || undefined })}
+          >
+            <option value="">{t("file_library.filters.all_tags")}</option>
+            {tagIds.map((id) => (
+              <option key={id} value={id}>
+                {getTagById(id)?.name}
+              </option>
+            ))}
+          </select>
         </div>
         {selectedFile && (
           <div className="flex items-center gap-2">
-            <span className="max-w-48 truncate text-12 text-tertiary">{selectedFile.attributes.name}</span>
-            <Popover>
-              <Popover.Button className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1 text-12 hover:bg-layer-1-hover">
-                <Tags className="size-3.5" />
-                {t("file_library.categories.assign_button")}
-              </Popover.Button>
-              <Popover.Panel side="bottom" align="end">
-                <div className="max-h-60 w-56 space-y-0.5 overflow-y-auto rounded-md border border-subtle bg-layer-1 p-2 shadow-raised-200">
-                  {categoryIds.map((categoryId) => {
-                    const category = getCategoryById(categoryId);
-                    if (!category) return null;
-                    const isAssigned = selectedFile.category_ids.includes(categoryId);
-                    const isPdf = selectedFile.attributes.type === "application/pdf";
-                    const isDisabled = category.pdf_only && !isPdf;
-                    return (
-                      <button
-                        key={categoryId}
-                        type="button"
-                        disabled={isDisabled}
-                        title={isDisabled ? t("file_library.categories.pdf_only_hint") : undefined}
-                        className={cn(
-                          "flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-13",
-                          isDisabled ? "cursor-not-allowed text-placeholder" : "hover:bg-layer-1-hover"
-                        )}
-                        onClick={() => void handleToggleCategory(categoryId)}
-                      >
-                        <span className="truncate">{category.name}</span>
-                        {isAssigned && <Check className="size-3.5 shrink-0" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Popover.Panel>
-            </Popover>
+            <span className="max-w-40 truncate text-12 text-tertiary">{selectedFile.attributes.name}</span>
+            {labelPopover(
+              "categories",
+              categoryIds,
+              (id) => getCategoryById(id),
+              selectedFile.category_ids,
+              (id) =>
+                void (selectedFile.category_ids.includes(id)
+                  ? removeFileCategory(workspaceSlug, selectedFile.id, id)
+                  : addFileCategories(workspaceSlug, selectedFile.id, [id])
+                ).catch((error: any) =>
+                  setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
+                )
+            )}
+            {labelPopover(
+              "tags",
+              tagIds,
+              (id) => getTagById(id),
+              selectedFile.tag_ids,
+              (id) =>
+                void (selectedFile.tag_ids.includes(id)
+                  ? removeFileTag(workspaceSlug, selectedFile.id, id)
+                  : addFileTags(workspaceSlug, selectedFile.id, [id])
+                ).catch((error: any) =>
+                  setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
+                )
+            )}
             <a
               href={getFileDownloadUrl(workspaceSlug, selectedFile.id)}
               className="rounded-sm p-1.5 hover:bg-layer-1-hover"
@@ -291,6 +371,31 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             </button>
           </div>
         )}
+      </div>
+
+      {/* breadcrumbs */}
+      <div className="border-b border-subtle px-4 py-1.5">
+        <Breadcrumbs>
+          <Breadcrumbs.Item
+            component={
+              <button type="button" onClick={() => navigateTo("")}>
+                <BreadcrumbLink label={t("file_library.title")} icon={<Files className="h-3.5 w-3.5 text-tertiary" />} />
+              </button>
+            }
+            isLast={breadcrumbTrail.length === 0}
+          />
+          {breadcrumbTrail.map((folder, index) => (
+            <Breadcrumbs.Item
+              key={folder.id}
+              component={
+                <button type="button" onClick={() => navigateTo(folderPathString(folder.id))}>
+                  <BreadcrumbLink label={folder.name} />
+                </button>
+              }
+              isLast={index === breadcrumbTrail.length - 1}
+            />
+          ))}
+        </Breadcrumbs>
       </div>
 
       {/* browser + dropzone */}
@@ -314,11 +419,14 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
           </div>
         ) : (
           <FileSystem
+            key={browseKey}
             items={items}
             title={t("file_library.title")}
             defaultView="icons"
+            defaultPath={browsePath}
             className="h-full"
             getFileUrl={getFileUrl}
+            onPathChange={setCurrentPath}
             onSelectionChange={handleSelectionChange}
             onFileOpen={handleFileOpen}
           />

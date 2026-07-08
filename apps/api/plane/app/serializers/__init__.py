@@ -136,4 +136,9 @@ from .draft import (
     DraftIssueDetailSerializer,
 )
 
-from .file_library import FileCategorySerializer, FileLibraryAssetSerializer
+from .file_library import (
+    FileCategorySerializer,
+    FileFolderSerializer,
+    FileLibraryAssetSerializer,
+    FileTagSerializer,
+)

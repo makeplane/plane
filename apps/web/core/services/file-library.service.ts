@@ -8,7 +8,15 @@ import type { AxiosRequestConfig } from "axios";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import type { TFileCategory, TLibraryFile, TLibraryFileFilters, TLibraryFileUploadResponse } from "@plane/types";
+import type {
+  TFileCategory,
+  TFileFolder,
+  TFileTag,
+  TLibraryBulkAction,
+  TLibraryFile,
+  TLibraryFileFilters,
+  TLibraryFileUploadResponse,
+} from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -59,6 +67,102 @@ export class FileLibraryService extends APIService {
       });
   }
 
+  // folders
+
+  async getFolders(workspaceSlug: string): Promise<TFileFolder[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/file-folders/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createFolder(workspaceSlug: string, data: Partial<TFileFolder>): Promise<TFileFolder> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-folders/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateFolder(workspaceSlug: string, folderId: string, data: Partial<TFileFolder>): Promise<TFileFolder> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/file-folders/${folderId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteFolder(workspaceSlug: string, folderId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/file-folders/${folderId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // tags
+
+  async getTags(workspaceSlug: string): Promise<TFileTag[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/file-tags/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createTag(workspaceSlug: string, data: Partial<TFileTag>): Promise<TFileTag> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-tags/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateTag(workspaceSlug: string, tagId: string, data: Partial<TFileTag>): Promise<TFileTag> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/file-tags/${tagId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteTag(workspaceSlug: string, tagId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/file-tags/${tagId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // tag links
+
+  async addFileTags(workspaceSlug: string, assetId: string, tagIds: string[]): Promise<TLibraryFile> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-library/files/${assetId}/tags/`, { tag_ids: tagIds })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeFileTag(workspaceSlug: string, assetId: string, tagId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/file-library/files/${assetId}/tags/${tagId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // bulk
+
+  async bulkAction(workspaceSlug: string, payload: TLibraryBulkAction): Promise<{ status: string; skipped?: string[] }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-library/files/bulk/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // files
 
   async getFiles(workspaceSlug: string, filters?: TLibraryFileFilters): Promise<TLibraryFile[]> {
@@ -80,10 +184,14 @@ export class FileLibraryService extends APIService {
   async uploadFile(
     workspaceSlug: string,
     file: File,
-    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"],
+    folderId?: string | null
   ): Promise<TLibraryFileUploadResponse> {
     const fileMetaData = await getFileMetaDataForUpload(file);
-    return this.post(`/api/workspaces/${workspaceSlug}/file-library/files/`, fileMetaData)
+    return this.post(`/api/workspaces/${workspaceSlug}/file-library/files/`, {
+      ...fileMetaData,
+      folder_id: folderId ?? undefined,
+    })
       .then(async (response) => {
         const uploadResponse: TLibraryFileUploadResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(uploadResponse as any, file);

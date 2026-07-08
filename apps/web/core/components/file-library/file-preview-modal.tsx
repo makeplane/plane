@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Download, Loader2, X } from "lucide-react";
 // plane imports
 import { CsvViewer, DocxViewerPreview, PDFViewer, XlsxViewerPreview } from "@plane/extend-ui";
 import { useTranslation } from "@plane/i18n";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useFileLibrary } from "@/hooks/store/use-file-library";
 
@@ -86,39 +86,8 @@ export const FilePreviewModal = observer(function FilePreviewModal(props: Props)
     };
   }, [file, workspaceSlug, getPresignedViewUrl]);
 
-  // close on escape
-  useEffect(() => {
-    if (!file) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [file, onClose]);
-
-  // The backdrop and panel are non-interactive layout elements — they don't need
-  // JSX onClick/keyboard handling of their own (Escape, handled above, is the
-  // keyboard equivalent). Listeners are attached imperatively via ref instead of
-  // JSX props so they close-on-backdrop-click / stop the panel from bubbling to
-  // it, without static-analysis a11y rules mistaking either div for something a
-  // keyboard user is expected to activate directly.
-  //
-  // The ref callbacks below have empty dep arrays so they fire exactly once per
-  // mount (never re-run on re-render), which is what makes it safe to attach a
-  // plain, un-removed listener inside them. onClose is read through a ref so the
-  // listener always calls the latest closure without needing to be re-attached.
-  const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
-  const closeOnBackdropClick = useCallback((element: HTMLDivElement | null) => {
-    element?.addEventListener("click", () => onCloseRef.current());
-  }, []);
-  const stopClickFromReachingBackdrop = useCallback((element: HTMLDivElement | null) => {
-    element?.addEventListener("click", (e) => e.stopPropagation());
-  }, []);
-
-  if (!file) return null;
-
   const renderBody = () => {
+    if (!file) return null;
     if (isLoading || (kind === "csv" && csvData === null && !error)) {
       return (
         <div className="flex h-full items-center justify-center">
@@ -182,35 +151,39 @@ export const FilePreviewModal = observer(function FilePreviewModal(props: Props)
     }
   };
 
-  return createPortal(
-    <div ref={closeOnBackdropClick} className="fixed inset-0 z-30 flex items-center justify-center bg-backdrop/80 p-4">
-      <div
-        ref={stopClickFromReachingBackdrop}
-        className="flex h-[92vh] w-[92vw] flex-col overflow-hidden rounded-lg border border-subtle bg-canvas shadow-raised-300"
-      >
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-subtle px-4 py-2.5">
-          <span className="truncate text-14 font-medium">{file.name}</span>
-          <div className="flex items-center gap-1">
-            <a
-              href={getFileDownloadUrl(workspaceSlug, file.assetId)}
-              className="rounded-sm p-1.5 hover:bg-layer-1-hover"
-              title={t("file_library.download")}
-            >
-              <Download className="size-4" />
-            </a>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-sm p-1.5 hover:bg-layer-1-hover"
-              title={t("close")}
-            >
-              <X className="size-4" />
-            </button>
+  return (
+    <ModalCore
+      isOpen={file !== null}
+      handleClose={onClose}
+      position={EModalPosition.CENTER}
+      width={EModalWidth.VIIXL}
+      className="flex h-[85vh] flex-col overflow-hidden"
+    >
+      {file && (
+        <>
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-subtle px-4 py-2.5">
+            <span className="truncate text-14 font-medium">{file.name}</span>
+            <div className="flex items-center gap-1">
+              <a
+                href={getFileDownloadUrl(workspaceSlug, file.assetId)}
+                className="rounded-sm p-1.5 hover:bg-layer-1-hover"
+                title={t("file_library.download")}
+              >
+                <Download className="size-4" />
+              </a>
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-sm p-1.5 hover:bg-layer-1-hover"
+                title={t("close")}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="min-h-0 flex-1">{renderBody()}</div>
-      </div>
-    </div>,
-    document.body
+          <div className="min-h-0 flex-1">{renderBody()}</div>
+        </>
+      )}
+    </ModalCore>
   );
 });

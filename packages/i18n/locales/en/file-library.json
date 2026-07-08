@@ -14,7 +14,17 @@
       "button": "Upload files",
       "drop_here": "Drop files to upload them",
       "success": "{name} uploaded successfully",
-      "failed": "Failed to upload {name}"
+      "failed": "Failed to upload {name}",
+      "modal_title": "Upload {count, plural, one {# file} other {# files}}",
+      "files_section": "Files",
+      "select_all": "All",
+      "select_none": "None",
+      "select_pdfs": "Only PDFs",
+      "pdfs_as_contracts": "Categorize PDFs as Contratos automatically",
+      "bulk_success": "{count, plural, one {# file uploaded} other {# files uploaded}}",
+      "confirm": "Upload {count, plural, one {# file} other {# files}}",
+      "add_more": "Add more files",
+      "remove_file": "Remove from list"
     },
     "categories": {
       "manage_button": "Categories",
@@ -29,11 +39,38 @@
       "create_failed": "Failed to create the category",
       "update_failed": "Failed to update the category",
       "delete_title": "Delete category {name}?",
-      "delete_description": "Files will only be unlinked from this category — no file will be deleted."
+      "delete_description": "Files will only be unlinked from this category — no file will be deleted.",
+      "title": "Categories"
     },
     "preview": {
       "error": "Could not load the file preview",
       "no_preview": "No preview available for this file type"
+    },
+    "folders": {
+      "root": "Library root",
+      "destination": "Destination folder",
+      "new_button": "New folder",
+      "new_placeholder": "New folder name",
+      "create": "Create folder"
+    },
+    "tags": {
+      "title": "Tags",
+      "new_placeholder": "New tag name"
+    },
+    "filters": {
+      "all_categories": "All categories",
+      "all_tags": "All tags"
+    },
+    "bulk": {
+      "button": "Bulk actions",
+      "title": "Bulk file actions",
+      "move": "Move",
+      "apply": "Apply",
+      "applied": "Changes applied",
+      "remove_mode": "Remove instead of add",
+      "delete_warning": "The selected files will be deleted. This cannot be undone.",
+      "search_placeholder": "Search files",
+      "selected_count": "{count} selected"
     }
   }
 }

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 
 // plane internal packages
@@ -28,14 +28,6 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
   const { getWorkspaceById, updateWorkspaceFeature } = useWorkspace();
   // derived values
   const workspace = getWorkspaceById(workspaceId);
-
-  // Stops a click on the toggle area from bubbling up to the enclosing <a> and navigating away.
-  const shieldClickFromNavigation = useCallback((element: HTMLDivElement | null) => {
-    element?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
-  }, []);
 
   const handleFileLibraryToggle = async () => {
     if (!workspace || isUpdatingFeature) return;
@@ -118,14 +110,20 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       </div>
       <div className="flex flex-shrink-0 items-center gap-4">
         <Tooltip tooltipContent="Enable the file library + contracts module for this workspace">
-          {/* Not an interactive element itself — it only shields the nested (already
-              keyboard-accessible) ToggleSwitch from the parent anchor's click-to-navigate.
-              The listener is attached imperatively so static-analysis a11y rules, which
-              assume any onClick JSX prop means "this element itself is interactive", don't
-              flag it. */}
+          {/* Not interactive itself — only shields the nested ToggleSwitch (already
+              keyboard-accessible) from the parent anchor's click-to-navigate. Must use
+              React's onClick (not a native addEventListener): React 17+ delegates all
+              event handling from a single listener at the app root, relying on native
+              bubbling to reach it. A native stopPropagation() on an intermediate node
+              would swallow the event before React's root ever sees it, breaking every
+              handler inside — including the switch itself. */}
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
           <div
-            ref={shieldClickFromNavigation}
             className={`flex items-center gap-2 ${isUpdatingFeature ? "opacity-70" : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
             <span className="text-11 font-medium text-secondary">File library</span>
             <ToggleSwitch
