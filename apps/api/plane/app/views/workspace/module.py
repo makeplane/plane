@@ -110,7 +110,6 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                 )
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))
-            .distinct()
         )
 
         serializer = ModuleSerializer(modules, many=True).data

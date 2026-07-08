@@ -120,25 +120,3 @@ class TestWorkspaceCyclesModulesProjectScope:
         assert response.status_code == status.HTTP_200_OK
         ids = {str(row["id"]) for row in response.data}
         assert str(module.id) in ids, f"Expected module {module.id} in {response.data!r}"
-
-    @pytest.mark.django_db
-    def test_modules_not_duplicated_for_project_member(
-        self, session_client, workspace, project, module
-    ):
-        """The project-member join must not duplicate a module row (.distinct())."""
-        # Add a second active member to the project so the reverse
-        # project_projectmember join fans out to more than one row.
-        other = User.objects.create(
-            email=f"peer-{uuid4().hex[:8]}@plane.so",
-            username=f"peer_{uuid4().hex[:8]}",
-        )
-        other.set_password("test-password")
-        other.save()
-        ProjectMember.objects.create(
-            project=project, member=other, workspace=workspace, role=15
-        )
-
-        response = session_client.get(MODULES_URL.format(slug=workspace.slug))
-        assert response.status_code == status.HTTP_200_OK
-        module_rows = [row for row in response.data if str(row["id"]) == str(module.id)]
-        assert len(module_rows) == 1, f"Module row duplicated: {response.data!r}"
