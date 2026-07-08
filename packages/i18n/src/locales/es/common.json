@@ -867,5 +867,52 @@
       "description": "Exporta elementos de trabajo a un archivo JSON.",
       "short_description": "Exportar como json"
     }
+  },
+  "worklog": {
+    "log_work": "Registrar tiempo",
+    "edit_work": "Editar registro de tiempo",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "description": "Descripción",
+    "description_placeholder": "¿En qué trabajaste?",
+    "submit": "Registrar",
+    "update": "Actualizar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "duration_error": "Introduce una duración mayor que cero.",
+    "logged": "registró",
+    "delete_confirmation": "¿Seguro que quieres eliminar este registro de tiempo? Esta acción no se puede deshacer.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Éxito",
+          "message": "Tiempo registrado correctamente."
+        },
+        "error": {
+          "title": "Error",
+          "message": "No se pudo registrar el tiempo. Inténtalo de nuevo."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Éxito",
+          "message": "Registro de tiempo actualizado correctamente."
+        },
+        "error": {
+          "title": "Error",
+          "message": "No se pudo actualizar. Inténtalo de nuevo."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Éxito",
+          "message": "Registro de tiempo eliminado correctamente."
+        },
+        "error": {
+          "title": "Error",
+          "message": "No se pudo eliminar. Inténtalo de nuevo."
+        }
+      }
+    }
   }
 }

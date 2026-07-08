@@ -867,5 +867,52 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Ghi nhận thời gian",
+    "edit_work": "Chỉnh sửa bản ghi thời gian",
+    "hours": "Giờ",
+    "minutes": "Phút",
+    "description": "Mô tả",
+    "description_placeholder": "Bạn đã làm việc gì?",
+    "submit": "Ghi nhận",
+    "update": "Cập nhật",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "duration_error": "Nhập thời lượng lớn hơn 0.",
+    "logged": "đã ghi nhận",
+    "delete_confirmation": "Bạn có chắc chắn muốn xóa mục thời gian này không? Hành động này không thể hoàn tác.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Thành công",
+          "message": "Đã ghi nhận thời gian thành công."
+        },
+        "error": {
+          "title": "Lỗi",
+          "message": "Không thể ghi nhận thời gian. Vui lòng thử lại."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công",
+          "message": "Đã cập nhật bản ghi thời gian thành công."
+        },
+        "error": {
+          "title": "Lỗi",
+          "message": "Không thể cập nhật. Vui lòng thử lại."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Thành công",
+          "message": "Đã xóa bản ghi thời gian thành công."
+        },
+        "error": {
+          "title": "Lỗi",
+          "message": "Không thể xóa. Vui lòng thử lại."
+        }
+      }
+    }
   }
 }

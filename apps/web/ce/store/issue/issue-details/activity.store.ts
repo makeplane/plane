@@ -125,6 +125,15 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
+    const worklogs = this.store.worklog.getWorklogsByIssueId(issueId);
+    worklogs.forEach((worklog) => {
+      activityComments.push({
+        id: worklog.id,
+        activity_type: EActivityFilterType.WORKLOG,
+        created_at: worklog.created_at,
+      });
+    });
+
     return activityComments;
   }
 

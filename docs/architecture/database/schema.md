@@ -2,7 +2,7 @@
 
 > Fichier tenu à jour par `@update-writer-after-implement` après chaque migration.
 > BDD : PostgreSQL 15 · ORM : Django 4.2 (migrations dans `apps/api/plane/db/migrations/`).
-> Dernière mise à jour : 2026-07-08 (migration 0124).
+> Dernière mise à jour : 2026-07-08 (migration 0126).
 
 ---
 
@@ -134,3 +134,28 @@ Index : `(issue, property)`.
 - Aucune permission stockée sur les lignes ; l'accès est résolu dynamiquement (mutations de définition = ADMIN projet ; valeurs = droit d'édition du work item).
 - Isolation projet stricte : `type∈projet`, `option∈property`, RELATION-user ∈ membres actifs du projet, RELATION-issue ∈ projet.
 - Cast/validation centralisés dans `plane/utils/issue_property.py` (une colonne par type).
+
+## Table `issue_worklogs` (time tracking — module work-item-time-tracking, migration 0125)
+
+Une entrée de temps loggé sur un work item. `duration` en **minutes** (entier).
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | |
+| `workspace_id` / `project_id` | FK | dénormalisé (hérité de `ProjectBaseModel`) |
+| `issue_id` | FK issues | `on_delete=CASCADE`, related_name `issue_worklogs` |
+| `logged_by_id` | FK users null | **`on_delete=SET_NULL`** — rétention audit/facturation, related_name `worklogs` |
+| `duration` | integer ≥ 0 | **minutes** (`PositiveIntegerField`) |
+| `description` | text | défaut `""` |
+| `external_source` / `external_id` | varchar null | ingestion / dédup MCP (409 sur doublon) |
+| `created_by_id` / `updated_by_id` | FK users null | audit (`SET_NULL`) |
+| `created_at` / `updated_at` / `deleted_at` | timestamptz | soft delete via manager `objects` |
+
+Index : `(issue)`, `(project, logged_by)`. UniqueConstraint partielle : `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration 0126 — idempotence d'import, `external_*` create-only).
+
+#### Notes (worklogs)
+
+- Écriture (POST/PATCH/DELETE) gatée en 400 sur `projects.is_time_tracking_enabled` (toggle projet dormant activé côté web).
+- `logged_by` imposé serveur à la création (jamais depuis le payload) ; édition/suppression réservées à l'auteur ou à un admin projet.
+- Rollup `total-worklogs/` = somme des minutes **par work item** (`[{issue_id, duration}]`), soft-deleted exclus (manager `objects`).
+- Pas de lignes `issue_activities` pour les worklogs : le feed d'activité web est construit côté client depuis le store worklog.

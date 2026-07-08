@@ -867,5 +867,52 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "worklog": {
+    "log_work": "Zaman kaydet",
+    "edit_work": "Zaman kaydını düzenle",
+    "hours": "Saat",
+    "minutes": "Dakika",
+    "description": "Açıklama",
+    "description_placeholder": "Ne üzerinde çalıştınız?",
+    "submit": "Kaydet",
+    "update": "Güncelle",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "duration_error": "Sıfırdan büyük bir süre girin.",
+    "logged": "şu süreyi kaydetti:",
+    "delete_confirmation": "Bu zaman kaydını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Başarılı",
+          "message": "Zaman başarıyla kaydedildi."
+        },
+        "error": {
+          "title": "Hata",
+          "message": "Zaman kaydedilemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı",
+          "message": "Zaman kaydı başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata",
+          "message": "Güncelleme başarısız. Lütfen tekrar deneyin."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Başarılı",
+          "message": "Zaman kaydı başarıyla silindi."
+        },
+        "error": {
+          "title": "Hata",
+          "message": "Silme başarısız. Lütfen tekrar deneyin."
+        }
+      }
+    }
   }
 }

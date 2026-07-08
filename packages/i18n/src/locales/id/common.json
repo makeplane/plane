@@ -867,5 +867,52 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "worklog": {
+    "log_work": "Catat waktu",
+    "edit_work": "Edit catatan waktu",
+    "hours": "Jam",
+    "minutes": "Menit",
+    "description": "Deskripsi",
+    "description_placeholder": "Apa yang Anda kerjakan?",
+    "submit": "Catat",
+    "update": "Perbarui",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "duration_error": "Masukkan durasi lebih dari nol.",
+    "logged": "mencatat",
+    "delete_confirmation": "Yakin ingin menghapus catatan waktu ini? Tindakan ini tidak dapat dibatalkan.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Berhasil",
+          "message": "Waktu berhasil dicatat."
+        },
+        "error": {
+          "title": "Kesalahan",
+          "message": "Gagal mencatat waktu. Silakan coba lagi."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Berhasil",
+          "message": "Catatan waktu berhasil diperbarui."
+        },
+        "error": {
+          "title": "Kesalahan",
+          "message": "Gagal memperbarui. Silakan coba lagi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Berhasil",
+          "message": "Catatan waktu berhasil dihapus."
+        },
+        "error": {
+          "title": "Kesalahan",
+          "message": "Gagal menghapus. Silakan coba lagi."
+        }
+      }
+    }
   }
 }

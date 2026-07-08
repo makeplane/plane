@@ -34,6 +34,7 @@ export * from "./issues/issue-identifier";
 export * from "./issues/issue-type";
 export * from "./issues/issue-property";
 export * from "./issues/issue-property-values";
+export * from "./issues/worklog";
 export * from "./layout";
 export * from "./module";
 export * from "./navigation-preferences";

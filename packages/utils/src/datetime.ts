@@ -371,6 +371,24 @@ export const convertMinutesToHoursMinutesString = (totalMinutes: number): string
 };
 
 /**
+ * @description formats a worklog duration (in minutes) into a compact human string.
+ * Always returns a non-empty label ("0m" for a zero/invalid duration) with no trailing space,
+ * suitable for direct display next to a work item.
+ * @param { number } minutes total duration in minutes
+ * @returns { string } e.g. "2h 30m", "45m", "0m"
+ * @example formatWorklogDuration(150) // "2h 30m"
+ * @example formatWorklogDuration(45)  // "45m"
+ * @example formatWorklogDuration(0)   // "0m"
+ */
+export const formatWorklogDuration = (minutes: number): string => {
+  const safeMinutes = Number.isFinite(minutes) && minutes > 0 ? Math.floor(minutes) : 0;
+  const { hours, minutes: mins } = convertMinutesToHoursAndMinutes(safeMinutes);
+  if (hours && mins) return `${hours}h ${mins}m`;
+  if (hours) return `${hours}h`;
+  return `${mins}m`;
+};
+
+/**
  * @description calculates the read time for a document using the words count
  * @param {number} wordsCount
  * @returns {number} total number of seconds
