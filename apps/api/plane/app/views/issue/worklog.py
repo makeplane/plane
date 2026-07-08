@@ -84,6 +84,23 @@ class IssueWorkLogViewSet(BaseViewSet):
         if _is_unaccepted_intake_issue(project_id, issue_id):
             return Response({"error": INTAKE_WORK_ITEM_ERROR}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Deduplicate by external identity when provided (parity with the v1 surface)
+        if request.data.get("external_id") and request.data.get("external_source"):
+            existing = IssueWorkLog.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+            ).first()
+            if existing is not None:
+                return Response(
+                    {
+                        "error": "Worklog with the same external id and external source already exists",
+                        "id": str(existing.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
         serializer = IssueWorkLogSerializer(data=request.data)
         if serializer.is_valid():
             # logged_by is forced to the caller server-side; never client-writable.

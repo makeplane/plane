@@ -23,8 +23,9 @@ export type TIssueWorklogLoggedByDetail = {
 export type TIssueWorklog = {
   id: string;
   issue: string;
-  logged_by: string;
-  logged_by_detail: TIssueWorklogLoggedByDetail;
+  /** null when the author account was deleted (FK SET_NULL — billing records survive) */
+  logged_by: string | null;
+  logged_by_detail: TIssueWorklogLoggedByDetail | null;
   duration: number;
   description: string;
   workspace: string;

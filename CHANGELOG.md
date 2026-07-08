@@ -32,6 +32,8 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 - **web/pages-nested** — L'action « New sub-page » est aussi disponible depuis la barre d'outils d'une page ouverte (`editor/toolbar/options-dropdown.tsx`), et plus seulement depuis le menu des lignes de la liste des pages.
 - **api/intake-email (sécurité/robustesse)** — Webhook idempotent via `message_id` (dédup `external_id`), scope de throttle dédié (`intake_email`), et émission de l'activité + notification + version de description à la création (parité avec l'intake in-app). Correction du libellé i18n de la pastille de provenance.
 - **web/views-publish (a11y)** — Le badge « Live » d'une vue publiée est rendu comme `<button>` (au lieu d'un `<div>` cliquable) : accessible au clavier et désactivé pour les non-admins.
+- **api/work-item-time-tracking (intégrité, revue adversariale)** — Identité externe (`external_source`/`external_id`) rendue **create-only** (ignorée en PATCH sur les deux surfaces), dédup 409 ajoutée au create interne (parité avec la v1), et contrainte d'unicité partielle en BDD `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration `0126`) — l'idempotence d'import résiste désormais aux races. Décisions documentées en spec : lectures non gatées par le toggle (soft-gate produit), listes non bornées (contrat SDK).
+- **web/work-item-time-tracking (revue adversariale)** — L'édition d'un worklog peut désormais **vider la description** (le champ est toujours envoyé en édition) ; types `TIssueWorklog.logged_by`/`logged_by_detail` alignés sur le backend (`null` si l'auteur a été supprimé — FK `SET_NULL`).
 
 ### Removed
 
@@ -42,3 +44,4 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 - Migration `0123_issue_pages` — création de la table `issue_pages` (jointure issue ↔ page), 2 index (`page_id`, `issue_id`) et 1 UniqueConstraint partielle `WHERE deleted_at IS NULL`.
 - Migration `0124_issue_properties` — création des tables `issue_properties`, `issue_property_options`, `issue_property_values` (custom properties, stockage typé) + index (dépend de `0123`).
 - Migration `0125_issue_worklogs` — création de la table `issue_worklogs` (time tracking) : FK `issue` (CASCADE) / `logged_by` (SET_NULL), `duration` (minutes), `description`, `external_source`/`external_id`, soft-delete, 2 index (`(issue)`, `(project, logged_by)`) ; dépend de `0124`.
+- Migration `0126_issue_worklog_external_unique` — UniqueConstraint partielle sur `issue_worklogs (project, external_source, external_id) WHERE deleted_at IS NULL` (idempotence d'import) ; dépend de `0125`.

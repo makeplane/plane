@@ -45,6 +45,19 @@ class IssueWorkLog(ProjectBaseModel):
             models.Index(fields=["issue"], name="issue_worklogs_issue_id_idx"),
             models.Index(fields=["project", "logged_by"], name="issue_worklogs_proj_logged_idx"),
         ]
+        constraints = [
+            # Import idempotency invariant: one live worklog per external identity
+            # per project (backs the applicative 409 dedup against races).
+            models.UniqueConstraint(
+                fields=["project", "external_source", "external_id"],
+                condition=models.Q(
+                    deleted_at__isnull=True,
+                    external_source__isnull=False,
+                    external_id__isnull=False,
+                ),
+                name="worklog_unique_external_id_when_deleted_at_null",
+            )
+        ]
 
     def __str__(self):
         return f"{self.issue_id} <{self.duration}m>"

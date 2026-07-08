@@ -66,6 +66,12 @@ class IssueWorkLog(ProjectBaseModel):
 ### Webhooks
 Hors V1 (le modèle `Webhook` n'a pas de flag worklog ; cohérent avec les property values non webhookées).
 
+### Décisions issues de la revue sécurité adversariale (2026-07-08)
+- **Lectures non gatées par le toggle** (décision assumée, BK-1) : désactiver `is_time_tracking_enabled` bloque les écritures (400) mais laisse les lectures/agrégats accessibles aux membres du projet — les données restent scopées membres, aucune fuite cross-tenant ; c'est un soft-gate produit, pas une frontière de sécurité.
+- **Identité externe create-only + contrainte DB** (BK-2, corrigé) : `external_source`/`external_id` sont ignorés en PATCH (serializers), la dédup 409 s'applique aux deux surfaces de création, et une `UniqueConstraint` partielle `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration `0126`) garantit l'idempotence d'import contre les races.
+- **Listes non paginées non bornées** (décision assumée, BK-3) : le contrat SDK/MCP impose un tableau simple ; pas de cap serveur en V1 (tailles pratiques bornées par le rythme de saisie humaine). À réévaluer si un usage machine massif apparaît.
+- **Worklog sur work item archivé possible** (BK-4, info) : non bloqué en V1 (l'upstream ne documente rien) ; les lectures excluent déjà les projets archivés.
+
 ## Web (apps/web — tout en `ce/` + `core/`, PAS de dossier `ee/` ; alias `@/plane-web/*` → `./ce/*`)
 
 - **Types** : `TIssueWorklog`, `TIssueWorklogSummary` dans `packages/types` ; ajouter `is_time_tracking_enabled?: boolean` à `IProject` (`packages/types/src/project/projects.ts`, absent aujourd'hui) → rebuild `@plane/types`.

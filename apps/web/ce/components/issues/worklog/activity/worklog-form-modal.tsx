@@ -85,8 +85,12 @@ export const WorklogFormModal = observer(function WorklogFormModal(props: TWorkl
     }
     setDurationError(null);
     setIsSubmitting(true);
-    const description = data.description?.trim();
-    const payload: TWorklogFormData = { duration: totalMinutes, ...(description ? { description } : {}) };
+    const description = data.description?.trim() ?? "";
+    // on edit, always send description (even empty) so clearing it reaches the server
+    const payload: TWorklogFormData = {
+      duration: totalMinutes,
+      ...(isEditing || description ? { description } : {}),
+    };
     const scope = isEditing ? "update" : "create";
     try {
       if (isEditing && worklog) {

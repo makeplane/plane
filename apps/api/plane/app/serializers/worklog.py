@@ -59,3 +59,14 @@ class IssueWorkLogSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
+        # The partial UniqueConstraint on (project, external_source, external_id)
+        # would make DRF auto-require the external fields on every create.
+        # Dedup is enforced by the views (409) and by the DB constraint (races).
+        validators = []
+
+    def update(self, instance, validated_data):
+        # External identity is create-only: rewriting it on PATCH would break
+        # import idempotency (the 409 dedup contract on creation).
+        validated_data.pop("external_source", None)
+        validated_data.pop("external_id", None)
+        return super().update(instance, validated_data)

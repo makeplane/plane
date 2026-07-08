@@ -341,3 +341,69 @@ class TestWorklogAppValidationAndGates:
         url = list_url(workspace.slug, project.id, issue.id)
         response = session_client.post(url, {"duration": 10}, format="json")
         assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.contract
+class TestWorklogAppExternalIdentity:
+    @pytest.mark.django_db
+    def test_create_duplicate_external_id_conflict(self, session_client, workspace, project, issue, create_user):
+        IssueWorkLog.objects.create(
+            workspace=workspace,
+            project=project,
+            issue=issue,
+            logged_by=create_user,
+            duration=10,
+            external_source="jira",
+            external_id="EXT-1",
+        )
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(
+            url, {"duration": 20, "external_source": "jira", "external_id": "EXT-1"}, format="json"
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert IssueWorkLog.objects.count() == 1
+
+    @pytest.mark.django_db
+    def test_patch_cannot_rewrite_external_identity(self, session_client, workspace, project, issue, create_user):
+        worklog = IssueWorkLog.objects.create(
+            workspace=workspace,
+            project=project,
+            issue=issue,
+            logged_by=create_user,
+            duration=10,
+            external_source="jira",
+            external_id="EXT-1",
+        )
+        url = detail_url(workspace.slug, project.id, issue.id, worklog.id)
+        response = session_client.patch(
+            url, {"duration": 15, "external_source": "github", "external_id": "EXT-2"}, format="json"
+        )
+        assert response.status_code == status.HTTP_200_OK
+        worklog.refresh_from_db()
+        assert worklog.duration == 15
+        assert worklog.external_source == "jira"
+        assert worklog.external_id == "EXT-1"
+
+    @pytest.mark.django_db
+    def test_db_constraint_blocks_duplicate_external_identity(self, workspace, project, issue, create_user):
+        from django.db import IntegrityError
+
+        IssueWorkLog.objects.create(
+            workspace=workspace,
+            project=project,
+            issue=issue,
+            logged_by=create_user,
+            duration=10,
+            external_source="jira",
+            external_id="EXT-1",
+        )
+        with pytest.raises(IntegrityError):
+            IssueWorkLog.objects.create(
+                workspace=workspace,
+                project=project,
+                issue=issue,
+                logged_by=create_user,
+                duration=20,
+                external_source="jira",
+                external_id="EXT-1",
+            )
