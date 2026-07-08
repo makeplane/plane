@@ -5,7 +5,7 @@
 | Module  | api/work-item-time-tracking   |
 | Version | 0.1.0                         |
 | Date    | 2026-07-08                    |
-| Statut  | PLAN — à valider              |
+| Statut  | IMPLÉMENTÉ                    |
 | Source  | Cadrage 2026-07-08 (doc Plane Pro + permissions matrix + API développeurs + SDK/MCP publics) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Réimplémentation CE (AGPL, sans code plane-ee) du **time tracking** (feature Pro). V1 = worklogs par work item + cumul « Tracked time » + résumé projet API. Approbations (Business) hors V1.

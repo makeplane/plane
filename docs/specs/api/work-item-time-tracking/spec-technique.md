@@ -3,13 +3,14 @@
 | Champ   | Valeur                        |
 |---------|-------------------------------|
 | Module  | api/work-item-time-tracking   |
-| Version | 0.2.0                         |
+| Version | 1.0.0                         |
 | Date    | 2026-07-08                    |
-| Statut  | PLAN — à valider              |
+| Statut  | IMPLÉMENTÉ                    |
 | Source  | Cadrage 2026-07-08 (code CE + doc développeurs + SDK plane-python-sdk/MCP publics) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Réimplémentation CE (AGPL, sans code plane-ee) du **time tracking** (feature Pro). V1 = saisie/CRUD de worklogs + cumul. Les **approbations** (Business) sont hors V1.
 > Révision 0.2.0 : alignement sur le cadrage vérifié (chemins réels du SDK, seam d'activité web, permissions matrix, rétention `logged_by`).
+> **1.0.0 (IMPLÉMENTÉ)** : backend (modèle `IssueWorkLog`, migration `0125`, API interne + externe v1 alignée MCP) + web (types/store/service, 4 stubs CE, toggle projet, i18n 19 locales). **47 tests pytest verts** contre la BDD Docker, contrat vérifié sur l'API vivante, `check:types` web vert. Voir VERSIONNING.md.
 
 ---
 
