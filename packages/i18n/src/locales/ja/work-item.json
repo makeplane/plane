@@ -42,6 +42,7 @@
       }
     },
     "new": "新規作業項目",
+    "count_tooltip": "{count, plural, other {このプロジェクトには # 件のエピックがあります}}",
     "adding": "作業項目を追加中",
     "create": {
       "success": "作業項目を作成しました"

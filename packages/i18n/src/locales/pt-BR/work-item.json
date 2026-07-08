@@ -42,6 +42,7 @@
       }
     },
     "new": "Novo Item de trabalho",
+    "count_tooltip": "{count, plural, one {Há # épico neste projeto} other {Há # épicos neste projeto}}",
     "adding": "Adicionando item de trabalho",
     "create": {
       "success": "Item de trabalho criado com sucesso"

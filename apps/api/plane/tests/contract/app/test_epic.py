@@ -528,3 +528,98 @@ class TestEpicTransverseGuards:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert IssueType.objects.filter(pk=epic_type.id).exists()
+
+
+@pytest.mark.contract
+class TestEpicConversionGuards:
+    """A work item already linked to a cycle/module cannot be converted into an epic (BK-1)."""
+
+    def _patch_issue(self, client, slug, project_id, issue_id, payload):
+        return client.patch(
+            f"/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/",
+            payload,
+            format="json",
+        )
+
+    @pytest.mark.django_db
+    def test_convert_issue_in_cycle_to_epic_rejected(
+        self, session_client, workspace, project, create_user, epic_type, default_type
+    ):
+        issue = make_issue(project, default_type)
+        cycle = Cycle.objects.create(name="Cycle C", project=project, workspace=workspace, owned_by=create_user)
+        CycleIssue.objects.create(cycle=cycle, issue=issue, project=project, workspace=workspace)
+        response = self._patch_issue(
+            session_client, workspace.slug, project.id, issue.id, {"type_id": str(epic_type.id)}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        issue.refresh_from_db()
+        assert issue.type_id == default_type.id
+
+    @pytest.mark.django_db
+    def test_convert_issue_in_module_to_epic_rejected(
+        self, session_client, workspace, project, epic_type, default_type
+    ):
+        issue = make_issue(project, default_type)
+        module = Module.objects.create(name="Module M", project=project, workspace=workspace)
+        ModuleIssue.objects.create(module=module, issue=issue, project=project, workspace=workspace)
+        response = self._patch_issue(
+            session_client, workspace.slug, project.id, issue.id, {"type_id": str(epic_type.id)}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        issue.refresh_from_db()
+        assert issue.type_id == default_type.id
+
+    @pytest.mark.django_db
+    def test_convert_unlinked_issue_to_epic_allowed(
+        self, session_client, workspace, project, epic_type, default_type
+    ):
+        issue = make_issue(project, default_type)
+        response = self._patch_issue(
+            session_client, workspace.slug, project.id, issue.id, {"type_id": str(epic_type.id)}
+        )
+        # issue partial_update returns 204 No Content on success
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        issue.refresh_from_db()
+        assert issue.type_id == epic_type.id
+
+    @pytest.mark.django_db
+    def test_cycle_list_excludes_epic(self, session_client, workspace, project, create_user, epic_type):
+        epic = make_epic(project, epic_type)
+        cycle = Cycle.objects.create(name="Cycle L", project=project, workspace=workspace, owned_by=create_user)
+        # force an inconsistent link directly to prove the list still hides it
+        CycleIssue.objects.create(cycle=cycle, issue=epic, project=project, workspace=workspace)
+        response = session_client.get(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/cycles/{cycle.id}/cycle-issues/"
+        )
+        assert response.status_code == status.HTTP_200_OK
+        body = response.json()
+        rows = body if isinstance(body, list) else body.get("results", [])
+        assert str(epic.id) not in {str(r["id"]) for r in rows}
+
+
+@pytest.mark.contract
+class TestEpicSearchPickers:
+    """Epics are excluded from the cycle/module/sub_issue pickers but kept as valid parents (BK-3)."""
+
+    def _search(self, client, slug, project_id, **params):
+        qs = "&".join(f"{k}={v}" for k, v in params.items())
+        return client.get(f"/api/workspaces/{slug}/projects/{project_id}/search-issues/?{qs}")
+
+    @pytest.mark.django_db
+    def test_sub_issue_picker_excludes_epics(self, session_client, workspace, project, epic_type, default_type):
+        epic = make_epic(project, epic_type)
+        issue = make_issue(project, default_type)
+        resp = self._search(session_client, workspace.slug, project.id, sub_issue="true", issue_id=str(issue.id))
+        assert resp.status_code == status.HTTP_200_OK
+        ids = {str(r["id"]) for r in resp.data}
+        assert str(epic.id) not in ids
+
+    @pytest.mark.django_db
+    def test_cycle_picker_excludes_epics(self, session_client, workspace, project, epic_type, default_type):
+        epic = make_epic(project, epic_type)
+        issue = make_issue(project, default_type)
+        resp = self._search(session_client, workspace.slug, project.id, cycle="true")
+        assert resp.status_code == status.HTTP_200_OK
+        ids = {str(r["id"]) for r in resp.data}
+        assert str(epic.id) not in ids
+        assert str(issue.id) in ids

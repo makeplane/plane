@@ -73,7 +73,7 @@ export const ProjectEpicsHeader = observer(function ProjectEpicsHeader() {
           {epicsCount && epicsCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${epicsCount} ${epicsCount > 1 ? "epics" : "epic"} in this project`}
+              tooltipContent={t("epic.count_tooltip", { count: epicsCount })}
               position="bottom"
             >
               <CountChip count={epicsCount} />

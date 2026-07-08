@@ -42,6 +42,7 @@
       }
     },
     "new": "New work item",
+    "count_tooltip": "{count, plural, one {There is # epic in this project} other {There are # epics in this project}}",
     "adding": "Adding work item",
     "create": {
       "success": "Work item created successfully"

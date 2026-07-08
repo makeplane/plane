@@ -7,6 +7,8 @@
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui icons
 import {
   CycleIcon,
@@ -52,21 +54,25 @@ interface IPeekOverviewProperties {
   issueId: string;
   disabled: boolean;
   issueOperations: TIssueOperations;
+  issueServiceType?: TIssueServiceType;
 }
 
 export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled, issueServiceType = EIssueServiceType.ISSUES } =
+    props;
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const {
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
+  // epics carry no estimate/cycle/module/parent (the backend rejects them) — hide those pickers
+  const isEpic = issueServiceType === EIssueServiceType.EPICS;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
@@ -189,7 +195,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </div>
         </SidebarPropertyListItem>
 
-        {isEstimateEnabled && (
+        {!isEpic && isEstimateEnabled && (
           <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
             <EstimateDropdown
               value={issue.estimate_point ?? undefined}
@@ -208,7 +214,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </SidebarPropertyListItem>
         )}
 
-        {projectDetails?.module_view && (
+        {!isEpic && projectDetails?.module_view && (
           <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
             <IssueModuleSelect
               className="w-full grow"
@@ -221,7 +227,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </SidebarPropertyListItem>
         )}
 
-        {projectDetails?.cycle_view && (
+        {!isEpic && projectDetails?.cycle_view && (
           <SidebarPropertyListItem
             icon={CycleIcon}
             label={t("common.cycle")}
@@ -238,16 +244,18 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </SidebarPropertyListItem>
         )}
 
-        <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
-          <IssueParentSelectRoot
-            className="h-7.5 w-full grow"
-            disabled={disabled}
-            issueId={issueId}
-            issueOperations={issueOperations}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
-        </SidebarPropertyListItem>
+        {!isEpic && (
+          <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
+            <IssueParentSelectRoot
+              className="h-7.5 w-full grow"
+              disabled={disabled}
+              issueId={issueId}
+              issueOperations={issueOperations}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          </SidebarPropertyListItem>
+        )}
 
         <SidebarPropertyListItem icon={LabelPropertyIcon} label={t("common.labels")}>
           <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />

@@ -42,6 +42,7 @@
       }
     },
     "new": "Nová pracovní položka",
+    "count_tooltip": "{count, plural, one {V tomto projektu je # epik} few {V tomto projektu jsou # epiky} other {V tomto projektu je # epik}}",
     "adding": "Přidávání pracovní položky",
     "create": {
       "success": "Pracovní položka úspěšně vytvořena"

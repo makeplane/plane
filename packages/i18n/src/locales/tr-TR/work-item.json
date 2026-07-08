@@ -42,6 +42,7 @@
       }
     },
     "new": "Yeni İş Öğesi",
+    "count_tooltip": "{count, plural, other {Bu projede # epik var}}",
     "adding": "İş öğesi ekleniyor",
     "create": {
       "success": "İş öğesi başarıyla oluşturuldu"

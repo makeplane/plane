@@ -58,6 +58,8 @@ class EpicViewSet(IssueViewSet):
         data.pop("parent", None)
         data.pop("parent_id", None)
         data.pop("type", None)
+        # epics carry no estimate/cycle/module — never let the client set them
+        data.pop("estimate_point", None)
         if epic_type is not None:
             data["type_id"] = str(epic_type.id)
         else:

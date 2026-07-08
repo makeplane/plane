@@ -128,8 +128,10 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
               )}
               <ProjectEpicsLayout activeLayout={activeLayout} />
             </div>
-            {/* peek overview */}
+            {/* epic peek overview (reads the epic detail store via the EPIC context) */}
             <IssuePeekOverview />
+            {/* standard peek for children / related work items opened from within an epic */}
+            <IssuePeekOverview storeType={EIssuesStoreType.PROJECT} />
           </div>
         )}
       </ProjectLevelWorkItemFiltersHOC>

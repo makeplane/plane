@@ -172,6 +172,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 isSubmitting={isSubmitting}
                 disabled={disabled}
                 embedIssue={embedIssue}
+                issueServiceType={issueServiceType}
               />
               {/* content */}
               <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">

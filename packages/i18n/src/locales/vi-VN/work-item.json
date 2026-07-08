@@ -42,6 +42,7 @@
       }
     },
     "new": "Mục công việc mới",
+    "count_tooltip": "{count, plural, other {Có # epic trong dự án này}}",
     "adding": "Đang thêm mục công việc",
     "create": {
       "success": "Đã tạo mục công việc thành công"

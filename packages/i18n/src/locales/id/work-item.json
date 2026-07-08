@@ -42,6 +42,7 @@
       }
     },
     "new": "Item Kerja Baru",
+    "count_tooltip": "{count, plural, other {Ada # epik dalam proyek ini}}",
     "adding": "Menambahkan item kerja",
     "create": {
       "success": "Item kerja berhasil dibuat"

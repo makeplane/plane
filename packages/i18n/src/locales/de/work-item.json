@@ -42,6 +42,7 @@
       }
     },
     "new": "Neues Arbeitselement",
+    "count_tooltip": "{count, plural, one {Es gibt # Epic in diesem Projekt} other {Es gibt # Epics in diesem Projekt}}",
     "adding": "Arbeitselement wird hinzugefügt",
     "create": {
       "success": "Arbeitselement erfolgreich erstellt"

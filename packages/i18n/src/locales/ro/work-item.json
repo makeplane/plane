@@ -42,6 +42,7 @@
       }
     },
     "new": "Activitate nouă",
+    "count_tooltip": "{count, plural, one {Există # epică în acest proiect} few {Există # epice în acest proiect} other {Există # de epice în acest proiect}}",
     "adding": "Se adaugă activitatea",
     "create": {
       "success": "Activitatea a fost creată cu succes"

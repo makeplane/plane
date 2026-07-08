@@ -42,6 +42,7 @@
       }
     },
     "new": "Nowy element pracy",
+    "count_tooltip": "{count, plural, one {W tym projekcie jest # epik} few {W tym projekcie są # epiki} many {W tym projekcie jest # epików} other {W tym projekcie jest # epiku}}",
     "adding": "Dodawanie elementu pracy",
     "create": {
       "success": "Element pracy utworzono pomyślnie"

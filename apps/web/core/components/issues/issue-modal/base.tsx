@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TBaseIssue, TIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -74,7 +74,10 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-  const { fetchIssue } = useIssueDetail();
+  // This modal only edits standard work items (epics have their own modal, and
+  // storeType EPIC is coerced to PROJECT above). Pin the detail store to ISSUES
+  // so it resolves correctly even when rendered under the epics store context.
+  const { fetchIssue } = useIssueDetail(EIssueServiceType.ISSUES);
   const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // current store details
@@ -93,8 +96,13 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
-    if (response) setDescription(response?.description_html || "<p></p>");
+    try {
+      const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
+      setDescription(response?.description_html || "<p></p>");
+    } catch {
+      // never leave the editor stuck on the loading state if the fetch fails
+      setDescription(data?.description_html || "<p></p>");
+    }
   };
 
   useEffect(() => {

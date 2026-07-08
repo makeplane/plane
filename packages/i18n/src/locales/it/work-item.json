@@ -42,6 +42,7 @@
       }
     },
     "new": "Nuovo elemento di lavoro",
+    "count_tooltip": "{count, plural, one {C'è # epic in questo progetto} other {Ci sono # epic in questo progetto}}",
     "adding": "Aggiunta dell'elemento di lavoro in corso",
     "create": {
       "success": "Elemento di lavoro creato con successo"
