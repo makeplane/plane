@@ -3,9 +3,9 @@
 | Champ   | Valeur     |
 |---------|------------|
 | Module  | api/epics  |
-| Version | 0.1.0      |
+| Version | 1.0.0      |
 | Date    | 2026-07-08 |
-| Statut  | PLAN — à valider |
+| Statut  | IMPLÉMENTÉ |
 | Source  | Cadrage 2026-07-08 (doc Plane + blog migration mai 2026 + code CE) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Réimplémentation CE (AGPL, sans code plane-ee) des **Epics** (feature Pro). Design cible = celui que les seams du fork v1.3.1 attendent (section Epics dédiée par projet, ère EE 1.x), avec les invariants du modèle moderne (epic = work item type `is_epic`).

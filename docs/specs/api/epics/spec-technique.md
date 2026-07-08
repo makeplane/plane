@@ -3,12 +3,19 @@
 | Champ   | Valeur     |
 |---------|------------|
 | Module  | api/epics  |
-| Version | 0.1.0      |
+| Version | 1.0.0      |
 | Date    | 2026-07-08 |
-| Statut  | PLAN — à valider |
+| Statut  | IMPLÉMENTÉ |
 | Source  | Cadrage 2026-07-08 (code CE exhaustif + doc/blog upstream + SDK/MCP publics) |
 
-> ⚠️ Garde ADR-001 bypassée (décision dev). Epic = `Issue` avec `type.is_epic=True` — **aucun nouveau modèle, aucune migration** (sauf si un guard DB s'avère nécessaire ; leaf actuel sur cette branche : `0124_issue_properties` — ⚠️ la PR #15 non mergée porte `0125`/`0126`).
+> ⚠️ Garde ADR-001 bypassée (décision dev). Epic = `Issue` avec `type.is_epic=True` — **aucun nouveau modèle, aucune migration**.
+> **1.0.0 (IMPLÉMENTÉ)** : backend (routes internes `/epics/…` via viewsets paramétrés `type__is_epic=True`, aucun nouveau modèle, aucune migration) + guards transverses (`filter_epics`, exclusions cycles/modules/archive, `is_epic` strippé au POST des types sur 2 surfaces, type Epic non supprimable) + web (stores `ProjectEpics`/`ProjectEpicsFilter` réels, route+page `/projects/:id/epics`, sidebar gated, `CreateUpdateEpicModal`, empty state, fix peek `issueServiceType`). **53 tests pytest verts** contre la BDD Docker, contrat vérifié E2E sur l'API vivante, `check:types` web EXIT=0. Voir VERSIONNING.md.
+
+### Écarts d'implémentation
+
+- **Résolution contextuelle du peek** : `useIssueDetail()` résout son store par défaut depuis `IssuesStoreContext` ; la section epics utilise le contexte `epicDetail`. La prop `issueServiceType` est threadée root → view → widgets (piège relevé au cadrage, résolu).
+- **Filtres epics** : `ProjectEpicsFilter` utilise une clé localStorage distincte (piège relevé au cadrage, implémenté).
+- **Refactoring store core** : `ProjectIssuesFilter` refactorisé avec méthodes protégées `handleFetch/Update*` (contrainte MobX : les champs `action` ne sont pas redéfinissables en sous-classe).
 
 ---
 
