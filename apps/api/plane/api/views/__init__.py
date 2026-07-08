@@ -18,6 +18,14 @@ from .issue_type import (
     WorkItemTypeListCreateAPIEndpoint,
     WorkItemTypeDetailAPIEndpoint,
 )
+from .issue_property import (
+    IssuePropertyListCreateAPIEndpoint,
+    IssuePropertyDetailAPIEndpoint,
+    IssuePropertyOptionListCreateAPIEndpoint,
+    IssuePropertyOptionDetailAPIEndpoint,
+    IssuePropertyValueListAPIEndpoint,
+    IssuePropertyValueSetAPIEndpoint,
+)
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,

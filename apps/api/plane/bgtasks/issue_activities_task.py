@@ -1705,3 +1705,41 @@ def issue_activity(
     except Exception as e:
         log_exception(e)
         return
+
+
+@shared_task
+def issue_property_value_activity(
+    property_id,
+    display_name,
+    verb,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    old_value,
+    new_value,
+    epoch,
+):
+    """Record an activity entry when a custom property value changes.
+
+    Only the value of the given property for the given work item is stored, so
+    no data outside the work item's scope can leak into the activity feed.
+    """
+    try:
+        IssueActivity.objects.create(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            actor_id=actor_id,
+            verb=verb,
+            field="property_value",
+            old_value=old_value,
+            new_value=new_value,
+            old_identifier=property_id,
+            comment=f"{verb} the value of {display_name}",
+            epoch=epoch,
+        )
+        return
+    except Exception as e:
+        log_exception(e)
+        return

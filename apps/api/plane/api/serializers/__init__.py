@@ -32,6 +32,11 @@ from .issue import (
 )
 from .state import StateLiteSerializer, StateSerializer
 from .issue_type import IssueTypeSerializer
+from .issue_property import (
+    IssuePropertySerializer,
+    IssuePropertyOptionSerializer,
+    IssuePropertyValueSerializer,
+)
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
