@@ -19,6 +19,7 @@ class WorkspaceSerializer(BaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     total_projects = serializers.IntegerField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
+    is_file_library_enabled = serializers.BooleanField(read_only=True, default=False)
 
     def validate_name(self, value):
         # Check if the name contains a URL (kept consistent with the app-level

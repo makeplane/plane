@@ -1,0 +1,37 @@
+/*
+ * shadcn/ui theme tokens required by the vendored extend.ai components,
+ * mapped onto Plane's runtime CSS variables so light/dark themes stay in
+ * sync with the rest of the app.
+ */
+
+@theme inline {
+  --color-background: var(--bg-canvas);
+  --color-foreground: var(--txt-primary);
+  --color-card: var(--bg-layer-1);
+  --color-card-foreground: var(--txt-primary);
+  --color-popover: var(--bg-layer-1);
+  --color-popover-foreground: var(--txt-primary);
+  --color-primary: var(--bg-accent-primary);
+  --color-primary-foreground: var(--txt-on-color);
+  --color-secondary: var(--bg-layer-2);
+  --color-secondary-foreground: var(--txt-primary);
+  --color-muted: var(--bg-layer-2);
+  --color-muted-foreground: var(--txt-secondary);
+  --color-accent: var(--bg-layer-2-hover);
+  --color-accent-foreground: var(--txt-primary);
+  --color-destructive: var(--bg-danger-primary);
+  --color-destructive-foreground: var(--txt-on-color);
+  --color-border: var(--border-subtle);
+  --color-input: var(--border-strong);
+  --color-ring: var(--border-accent-strong);
+  --color-sidebar: var(--bg-layer-1);
+  --color-sidebar-foreground: var(--txt-primary);
+  --color-sidebar-border: var(--border-subtle);
+  --color-sidebar-accent: var(--bg-layer-2-hover);
+  --color-sidebar-accent-foreground: var(--txt-primary);
+
+  --radius-sm: calc(0.625rem - 4px);
+  --radius-md: calc(0.625rem - 2px);
+  --radius-lg: 0.625rem;
+  --radius-xl: calc(0.625rem + 4px);
+}

@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Cambia email",
+        "description": "Inserisci un nuovo indirizzo email per ricevere un link di verifica.",
+        "toasts": {
+          "success_title": "Successo!",
+          "success_message": "Email aggiornata con successo. Accedi di nuovo."
+        },
+        "form": {
+          "email": {
+            "label": "Nuova email",
+            "placeholder": "Inserisci la tua email",
+            "errors": {
+              "required": "L’email è obbligatoria",
+              "invalid": "L’email non è valida",
+              "exists": "L’email esiste già. Usane un’altra.",
+              "validation_failed": "La verifica dell’email non è riuscita. Riprova."
+            }
+          },
+          "code": {
+            "label": "Codice univoco",
+            "placeholder": "123456",
+            "helper_text": "Codice di verifica inviato alla tua nuova email.",
+            "errors": {
+              "required": "Il codice univoco è obbligatorio",
+              "invalid": "Codice di verifica non valido. Riprova."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continua",
+          "confirm": "Conferma",
+          "cancel": "Annulla"
+        },
+        "states": {
+          "sending": "Invio…"
+        }
+      }
+    },
+    "preferences": {
+      "heading": "Preferenze",
+      "description": "Personalizza la tua esperienza dell'app al modo in cui lavori"
+    },
+    "notifications": {
+      "heading": "Notifiche via email",
+      "description": "Rimani aggiornato sugli elementi di lavoro a cui sei iscritto. Abilita questa opzione per ricevere notifiche.",
+      "select_default_view": "Seleziona vista predefinita",
+      "compact": "Compatto",
+      "full": "Schermo intero"
+    },
+    "security": {
+      "heading": "Sicurezza"
+    },
+    "api_tokens": {
+      "title": "Token di accesso personali",
+      "description": "Genera token API sicuri per integrare i tuoi dati con sistemi e applicazioni esterni."
+    },
+    "activity": {
+      "heading": "Attività",
+      "description": "Traccia le tue azioni e modifiche recenti su tutti i progetti ed elementi di lavoro."
+    },
+    "connections": {
+      "title": "Connessioni",
+      "heading": "Connessioni",
+      "description": "Gestisci le impostazioni delle connessioni del tuo spazio di lavoro."
+    }
+  },
+  "profile": {
+    "label": "Profilo",
+    "page_label": "Il tuo lavoro",
+    "work": "Lavoro",
+    "details": {
+      "joined_on": "Iscritto il",
+      "time_zone": "Fuso orario"
+    },
+    "stats": {
+      "workload": "Carico di lavoro",
+      "overview": "Panoramica",
+      "created": "Elementi di lavoro creati",
+      "assigned": "Elementi di lavoro assegnati",
+      "subscribed": "Elementi di lavoro iscritti",
+      "state_distribution": {
+        "title": "Elementi di lavoro per stato",
+        "empty": "Crea elementi di lavoro per visualizzarli per stato nel grafico per un'analisi migliore."
+      },
+      "priority_distribution": {
+        "title": "Elementi di lavoro per priorità",
+        "empty": "Crea elementi di lavoro per visualizzarli per priorità nel grafico per un'analisi migliore."
+      },
+      "recent_activity": {
+        "title": "Attività recente",
+        "empty": "Non abbiamo trovato dati. Per favore, controlla i tuoi input",
+        "button": "Scarica l'attività di oggi",
+        "button_loading": "Download in corso"
+      }
+    },
+    "actions": {
+      "profile": "Profilo",
+      "security": "Sicurezza",
+      "activity": "Attività",
+      "preferences": "Preferenze",
+      "notifications": "Notifiche",
+      "api-tokens": "Token di accesso personali",
+      "connections": "Connessioni"
+    },
+    "tabs": {
+      "summary": "Riepilogo",
+      "assigned": "Assegnati",
+      "created": "Creati",
+      "subscribed": "Iscritti",
+      "activity": "Attività"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Nessuna attività ancora",
+        "description": "Inizia creando un nuovo elemento di lavoro! Aggiungi dettagli e proprietà ad esso. Esplora Plane per vedere la tua attività."
+      },
+      "assigned": {
+        "title": "Nessun elemento di lavoro assegnato a te",
+        "description": "Gli elementi di lavoro assegnati a te possono essere tracciati da qui."
+      },
+      "created": {
+        "title": "Nessun elemento di lavoro ancora",
+        "description": "Tutti gli elementi di lavoro creati da te appariranno qui. Tracciali direttamente da qui."
+      },
+      "subscribed": {
+        "title": "Nessun elemento di lavoro ancora",
+        "description": "Iscriviti agli elementi di lavoro che ti interessano, tracciali tutti qui."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferenza di sistema"
+      },
+      "light": {
+        "label": "Chiaro"
+      },
+      "dark": {
+        "label": "Scuro"
+      },
+      "light_contrast": {
+        "label": "Contrasto elevato chiaro"
+      },
+      "dark_contrast": {
+        "label": "Contrasto elevato scuro"
+      },
+      "custom": {
+        "label": "Tema personalizzato"
+      }
+    }
+  }
+}

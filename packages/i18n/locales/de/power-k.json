@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Arbeitselemente massenweise löschen"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Arbeitselement-Aktionen",
+        "indicator": "Arbeitselement",
+        "change_state": "Status ändern",
+        "change_priority": "Priorität ändern",
+        "change_assignees": "Zuweisen an",
+        "assign_to_me": "Mir zuweisen",
+        "unassign_from_me": "Zuweisung aufheben",
+        "change_estimate": "Schätzung ändern",
+        "add_to_cycle": "Zum Zyklus hinzufügen",
+        "add_to_modules": "Zu Modulen hinzufügen",
+        "add_labels": "Labels hinzufügen",
+        "subscribe": "Benachrichtigungen abonnieren",
+        "unsubscribe": "Benachrichtigungen abbestellen",
+        "delete": "Löschen",
+        "copy_id": "ID kopieren",
+        "copy_id_toast_success": "Arbeitselement-ID in die Zwischenablage kopiert.",
+        "copy_id_toast_error": "Fehler beim Kopieren der Arbeitselement-ID in die Zwischenablage.",
+        "copy_title": "Titel kopieren",
+        "copy_title_toast_success": "Arbeitselement-Titel in die Zwischenablage kopiert.",
+        "copy_title_toast_error": "Fehler beim Kopieren des Arbeitselement-Titels in die Zwischenablage.",
+        "copy_url": "URL kopieren",
+        "copy_url_toast_success": "Arbeitselement-URL in die Zwischenablage kopiert.",
+        "copy_url_toast_error": "Fehler beim Kopieren der Arbeitselement-URL in die Zwischenablage."
+      },
+      "cycle": {
+        "title": "Zyklus-Aktionen",
+        "indicator": "Zyklus",
+        "add_to_favorites": "Zu Favoriten hinzufügen",
+        "remove_from_favorites": "Aus Favoriten entfernen",
+        "copy_url": "URL kopieren",
+        "copy_url_toast_success": "Zyklus-URL in die Zwischenablage kopiert.",
+        "copy_url_toast_error": "Fehler beim Kopieren der Zyklus-URL in die Zwischenablage."
+      },
+      "module": {
+        "title": "Modul-Aktionen",
+        "indicator": "Modul",
+        "add_remove_members": "Mitglieder hinzufügen/entfernen",
+        "change_status": "Status ändern",
+        "add_to_favorites": "Zu Favoriten hinzufügen",
+        "remove_from_favorites": "Aus Favoriten entfernen",
+        "copy_url": "URL kopieren",
+        "copy_url_toast_success": "Modul-URL in die Zwischenablage kopiert.",
+        "copy_url_toast_error": "Fehler beim Kopieren der Modul-URL in die Zwischenablage."
+      },
+      "page": {
+        "title": "Seiten-Aktionen",
+        "indicator": "Seite",
+        "lock": "Sperren",
+        "unlock": "Entsperren",
+        "make_private": "Privat machen",
+        "make_public": "Öffentlich machen",
+        "archive": "Archivieren",
+        "restore": "Wiederherstellen",
+        "add_to_favorites": "Zu Favoriten hinzufügen",
+        "remove_from_favorites": "Aus Favoriten entfernen",
+        "copy_url": "URL kopieren",
+        "copy_url_toast_success": "Seiten-URL in die Zwischenablage kopiert.",
+        "copy_url_toast_error": "Fehler beim Kopieren der Seiten-URL in die Zwischenablage."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Neues Arbeitselement",
+      "create_page": "Neue Seite",
+      "create_view": "Neue Ansicht",
+      "create_cycle": "Neuer Zyklus",
+      "create_module": "Neues Modul",
+      "create_project": "Neues Projekt",
+      "create_workspace": "Neuer Arbeitsbereich",
+      "create_project_automation": "Neue Automatisierung"
+    },
+    "navigation_actions": {
+      "open_workspace": "Arbeitsbereich öffnen",
+      "nav_home": "Zur Startseite",
+      "nav_inbox": "Zum Posteingang",
+      "nav_your_work": "Zu Ihrer Arbeit",
+      "nav_account_settings": "Zu Kontoeinstellungen",
+      "open_project": "Projekt öffnen",
+      "nav_projects_list": "Zur Projektliste",
+      "nav_all_workspace_work_items": "Zu allen Arbeitselementen",
+      "nav_assigned_workspace_work_items": "Zu zugewiesenen Arbeitselementen",
+      "nav_created_workspace_work_items": "Zu erstellten Arbeitselementen",
+      "nav_subscribed_workspace_work_items": "Zu abonnierten Arbeitselementen",
+      "nav_workspace_analytics": "Zu Arbeitsbereich-Analysen",
+      "nav_workspace_drafts": "Zu Arbeitsbereich-Entwürfen",
+      "nav_workspace_archives": "Zu Arbeitsbereich-Archiven",
+      "open_workspace_setting": "Arbeitsbereichseinstellung öffnen",
+      "nav_workspace_settings": "Zu Arbeitsbereichseinstellungen",
+      "nav_project_work_items": "Zu Arbeitselementen",
+      "open_project_cycle": "Zyklus öffnen",
+      "nav_project_cycles": "Zu Zyklen",
+      "open_project_module": "Modul öffnen",
+      "nav_project_modules": "Zu Modulen",
+      "open_project_view": "Projektansicht öffnen",
+      "nav_project_views": "Zu Projektansichten",
+      "nav_project_pages": "Zu Seiten",
+      "nav_project_intake": "Zum Intake",
+      "nav_project_archives": "Zu Projektarchiven",
+      "open_project_setting": "Projekteinstellung öffnen",
+      "nav_project_settings": "Zu Projekteinstellungen",
+      "nav_workspace_active_cycle": "Zu allen aktiven Zyklen",
+      "nav_project_overview": "Zur Projektübersicht"
+    },
+    "account_actions": {
+      "sign_out": "Abmelden",
+      "workspace_invites": "Arbeitsbereich-Einladungen"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "App-Seitenleiste umschalten",
+      "copy_current_page_url": "Aktuelle Seiten-URL kopieren",
+      "copy_current_page_url_toast_success": "Aktuelle Seiten-URL in die Zwischenablage kopiert.",
+      "copy_current_page_url_toast_error": "Fehler beim Kopieren der aktuellen Seiten-URL in die Zwischenablage.",
+      "focus_top_nav_search": "Suchfeld fokussieren"
+    },
+    "preferences_actions": {
+      "update_theme": "Erscheinungsbild ändern",
+      "update_timezone": "Zeitzone ändern",
+      "update_start_of_week": "Ersten Wochentag ändern",
+      "update_language": "Sprache der Benutzeroberfläche ändern",
+      "toast": {
+        "theme": {
+          "success": "Erscheinungsbild erfolgreich aktualisiert.",
+          "error": "Erscheinungsbild konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        },
+        "timezone": {
+          "success": "Zeitzone erfolgreich aktualisiert.",
+          "error": "Zeitzone konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        },
+        "generic": {
+          "success": "Einstellungen erfolgreich aktualisiert.",
+          "error": "Einstellungen konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Tastenkombinationen öffnen",
+      "open_plane_documentation": "Plane-Dokumentation öffnen",
+      "join_forum": "Forum beitreten",
+      "report_bug": "Fehler melden",
+      "chat_with_us": "Chat mit uns"
+    },
+    "page_placeholders": {
+      "default": "Befehl eingeben oder suchen",
+      "open_workspace": "Arbeitsbereich öffnen",
+      "open_project": "Projekt öffnen",
+      "open_workspace_setting": "Arbeitsbereichseinstellung öffnen",
+      "open_project_cycle": "Zyklus öffnen",
+      "open_project_module": "Modul öffnen",
+      "open_project_view": "Projektansicht öffnen",
+      "open_project_setting": "Projekteinstellung öffnen",
+      "update_work_item_state": "Status ändern",
+      "update_work_item_priority": "Priorität ändern",
+      "update_work_item_assignee": "Zuweisen an",
+      "update_work_item_estimate": "Schätzung ändern",
+      "update_work_item_cycle": "Zum Zyklus hinzufügen",
+      "update_work_item_module": "Zu Modulen hinzufügen",
+      "update_work_item_labels": "Labels hinzufügen",
+      "update_module_member": "Mitglieder ändern",
+      "update_module_status": "Status ändern",
+      "update_theme": "Erscheinungsbild ändern",
+      "update_timezone": "Zeitzone ändern",
+      "update_start_of_week": "Ersten Wochentag ändern",
+      "update_language": "Sprache ändern"
+    },
+    "search_menu": {
+      "no_results": "Keine Ergebnisse gefunden",
+      "clear_search": "Suche löschen",
+      "go_to_advanced_search": "Zur erweiterten Suche"
+    },
+    "footer": {
+      "workspace_level": "Arbeitsbereich-Ebene"
+    },
+    "group_titles": {
+      "actions": "Aktionen",
+      "contextual": "Kontextbezogen",
+      "navigation": "Navigieren",
+      "create": "Erstellen",
+      "general": "Allgemein",
+      "settings": "Einstellungen",
+      "account": "Konto",
+      "miscellaneous": "Sonstiges",
+      "preferences": "Einstellungen",
+      "help": "Hilfe"
+    }
+  }
+}

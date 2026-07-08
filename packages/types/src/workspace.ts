@@ -34,6 +34,8 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  // Per-workspace feature flags (annotated on instance-admin responses)
+  is_file_library_enabled?: boolean;
 }
 
 export interface IWorkspaceLite {

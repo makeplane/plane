@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Vaše poznámky",
+    "placeholder": "kliknutím začnite písať",
+    "all": "Všetky poznámky",
+    "no-data": "Zapisujte nápady a myšlienky. Pridajte prvú poznámku.",
+    "add": "Pridať poznámku",
+    "search_placeholder": "Hľadať podľa názvu",
+    "delete": "Zmazať poznámku",
+    "delete_confirmation": "Naozaj chcete zmazať túto poznámku?",
+    "empty_state": {
+      "simple": "Zapisujte nápady a myšlienky. Pridajte prvú poznámku.",
+      "general": {
+        "title": "Poznámky sú rýchle záznamy.",
+        "description": "Zapisujte myšlienky a pristupujte k nim odkiaľkoľvek.",
+        "primary_button": {
+          "text": "Pridať poznámku"
+        }
+      },
+      "search": {
+        "title": "Nenašli sa žiadne poznámky.",
+        "description": "Skúste iný výraz alebo vytvorte novú.",
+        "primary_button": {
+          "text": "Pridať poznámku"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Názov poznámky môže mať max. 100 znakov.",
+        "already_exists": "Poznámka bez popisu už existuje"
+      },
+      "created": {
+        "title": "Poznámka vytvorená",
+        "message": "Poznámka bola úspešne vytvorená"
+      },
+      "not_created": {
+        "title": "Vytvorenie zlyhalo",
+        "message": "Poznámku sa nepodarilo vytvoriť"
+      },
+      "updated": {
+        "title": "Poznámka aktualizovaná",
+        "message": "Poznámka bola úspešne aktualizovaná"
+      },
+      "not_updated": {
+        "title": "Aktualizácia zlyhala",
+        "message": "Poznámku sa nepodarilo aktualizovať"
+      },
+      "removed": {
+        "title": "Poznámka zmazaná",
+        "message": "Poznámka bola úspešne zmazaná"
+      },
+      "not_removed": {
+        "title": "Mazanie zlyhalo",
+        "message": "Poznámku sa nepodarilo zmazať"
+      }
+    }
+  }
+}

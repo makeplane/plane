@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Pridajte položky pre sledovanie pokroku"
+      },
+      "chart": {
+        "title": "Pridajte položky pre zobrazenie burndown grafu."
+      },
+      "priority_issue": {
+        "title": "Zobrazia sa vysoko prioritné pracovné položky."
+      },
+      "assignee": {
+        "title": "Priraďte položky pre prehľad priradení."
+      },
+      "label": {
+        "title": "Pridajte štítky pre analýzu podľa štítkov."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cyklus} few {Cykly} other {Cyklov}}",
+    "no_cycle": "Žiadny cyklus"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Pridajte pracovné položky do cyklu, aby ste videli jeho\n pokrok"
+      },
+      "priority": {
+        "title": "Sledujte pracovné položky s vysokou prioritou riešené v\n cykle na prvý pohľad."
+      },
+      "assignee": {
+        "title": "Pridajte priradeným osobám pracovné položky, aby ste videli\n rozdelenie práce podľa priradených osôb."
+      },
+      "label": {
+        "title": "Pridajte štítky k pracovným položkám, aby ste videli\n rozdelenie práce podľa štítkov."
+      }
+    }
+  }
+}

@@ -30,6 +30,10 @@ export interface IWorkspaceRootStore {
   loader: boolean;
   // observables
   workspaces: Record<string, IWorkspace>;
+  featureFlagsMap: Record<string, Record<string, boolean>>;
+  // feature flags
+  fetchWorkspaceFeatures: (workspaceSlug: string) => Promise<void>;
+  isWorkspaceFeatureEnabled: (workspaceSlug: string, key: string) => boolean;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
@@ -74,6 +78,7 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
+  featureFlagsMap: Record<string, Record<string, boolean>> = {};
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
   projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse> = {};
   // services
@@ -91,6 +96,7 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       loader: observable.ref,
       // observables
       workspaces: observable,
+      featureFlagsMap: observable,
       navigationPreferencesMap: observable,
       projectNavigationPreferencesMap: observable,
       // computed
@@ -255,6 +261,21 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       console.error("Failed to delete workspace:", error);
     }
   };
+
+  fetchWorkspaceFeatures = async (workspaceSlug: string) => {
+    try {
+      const response = await this.workspaceService.fetchWorkspaceFeatures(workspaceSlug);
+      runInAction(() => {
+        this.featureFlagsMap[workspaceSlug] = response.features;
+      });
+    } catch (error) {
+      console.error("Failed to fetch workspace features:", error);
+    }
+  };
+
+  isWorkspaceFeatureEnabled = computedFn((workspaceSlug: string, key: string): boolean =>
+    Boolean(this.featureFlagsMap[workspaceSlug]?.[key])
+  );
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {

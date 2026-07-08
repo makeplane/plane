@@ -382,6 +382,14 @@ export class WorkspaceService extends APIService {
       });
   }
 
+  async fetchWorkspaceFeatures(workspaceSlug: string): Promise<{ features: Record<string, boolean> }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/features/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async updateSidebarPreference(
     workspaceSlug: string,
     key: string,

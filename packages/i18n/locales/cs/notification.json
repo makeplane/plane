@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Schránka",
+    "page_label": "{workspace} - Schránka",
+    "options": {
+      "mark_all_as_read": "Označit vše jako přečtené",
+      "mark_read": "Označit jako přečtené",
+      "mark_unread": "Označit jako nepřečtené",
+      "refresh": "Obnovit",
+      "filters": "Filtry schránky",
+      "show_unread": "Zobrazit nepřečtené",
+      "show_snoozed": "Zobrazit odložené",
+      "show_archived": "Zobrazit archivované",
+      "mark_archive": "Archivovat",
+      "mark_unarchive": "Zrušit archivaci",
+      "mark_snooze": "Odložit",
+      "mark_unsnooze": "Zrušit odložení"
+    },
+    "toasts": {
+      "read": "Oznámení přečteno",
+      "unread": "Označeno jako nepřečtené",
+      "archived": "Archivováno",
+      "unarchived": "Zrušena archivace",
+      "snoozed": "Odloženo",
+      "unsnoozed": "Zrušeno odložení"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Vyberte pro podrobnosti."
+      },
+      "all": {
+        "title": "Žádné přiřazené položky",
+        "description": "Zobrazí se zde aktualizace přiřazených položek."
+      },
+      "mentions": {
+        "title": "Žádné zmínky",
+        "description": "Zobrazí se zde zmínky o vás."
+      }
+    },
+    "tabs": {
+      "all": "Vše",
+      "mentions": "Zmínky"
+    },
+    "filter": {
+      "assigned": "Přiřazeno mě",
+      "created": "Vytvořil jsem",
+      "subscribed": "Odebírám"
+    },
+    "snooze": {
+      "1_day": "1 den",
+      "3_days": "3 dny",
+      "5_days": "5 dní",
+      "1_week": "1 týden",
+      "2_weeks": "2 týdny",
+      "custom": "Vlastní"
+    }
+  }
+}

@@ -352,6 +352,11 @@ CELERY_IMPORTS = (
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+# The file library is a general document store (not the 5 MB attachment limit).
+# Uploads go directly to storage via a presigned POST, so this ceiling only
+# guards against abusive range requests. Default: 5 GB.
+FILE_LIBRARY_SIZE_LIMIT = int(os.environ.get("FILE_LIBRARY_SIZE_LIMIT", 5 * 1024 * 1024 * 1024))
+
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 # Github Access Token

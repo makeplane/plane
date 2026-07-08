@@ -7,7 +7,8 @@
 import { set } from "lodash-es";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // plane imports
-import { InstanceWorkspaceService } from "@plane/services";
+import { InstanceWorkspaceService, InstanceWorkspaceFeatureService } from "@plane/services";
+import type { TWorkspaceFeatureKey } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
@@ -27,6 +28,7 @@ export interface IWorkspaceStore {
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  updateWorkspaceFeature: (workspaceId: string, key: TWorkspaceFeatureKey, isEnabled: boolean) => Promise<void>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -36,6 +38,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   paginationInfo: TPaginationInfo | undefined = undefined;
   // services
   instanceWorkspaceService;
+  instanceWorkspaceFeatureService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -53,8 +56,10 @@ export class WorkspaceStore implements IWorkspaceStore {
       fetchNextWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      updateWorkspaceFeature: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
+    this.instanceWorkspaceFeatureService = new InstanceWorkspaceFeatureService();
   }
 
   // computed
@@ -152,5 +157,21 @@ export class WorkspaceStore implements IWorkspaceStore {
     } finally {
       this.loader = "loaded";
     }
+  };
+
+  /**
+   * @description Enables or disables a per-workspace feature flag
+   */
+  updateWorkspaceFeature = async (
+    workspaceId: string,
+    key: TWorkspaceFeatureKey,
+    isEnabled: boolean
+  ): Promise<void> => {
+    const response = await this.instanceWorkspaceFeatureService.update(workspaceId, key, isEnabled);
+    runInAction(() => {
+      if (key === "file_library") {
+        set(this.workspaces, [workspaceId, "is_file_library_enabled"], response.is_enabled);
+      }
+    });
   };
 }

@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Adaugă activități în ciclu pentru a vedea progresul"
+      },
+      "chart": {
+        "title": "Adaugă activități în ciclu pentru a vedea graficul de finalizare a activităților."
+      },
+      "priority_issue": {
+        "title": "Observă rapid activitățile cu prioritate ridicată abordate în ciclu."
+      },
+      "assignee": {
+        "title": "Adaugă responsabili pentru a vedea repartizarea muncii pe persoane."
+      },
+      "label": {
+        "title": "Adaugă etichete activităților pentru a vedea repartizarea muncii pe etichete."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Ciclu} other {Cicluri}}",
+    "no_cycle": "Niciun ciclu"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Adaugă elemente de lucru la ciclu pentru a-i vedea\n progresul"
+      },
+      "priority": {
+        "title": "Observă elementele de lucru cu prioritate ridicată abordate în\n ciclu dintr-o privire."
+      },
+      "assignee": {
+        "title": "Adaugă responsabili la elementele de lucru pentru a vedea o\n defalcare a muncii după responsabili."
+      },
+      "label": {
+        "title": "Adaugă etichete la elementele de lucru pentru a vedea\n defalcarea muncii după etichete."
+      }
+    }
+  }
+}

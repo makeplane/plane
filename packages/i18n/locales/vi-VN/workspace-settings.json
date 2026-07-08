@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Cài đặt không gian làm việc",
+    "page_label": "{workspace} - Cài đặt chung",
+    "key_created": "Đã tạo khóa",
+    "copy_key": "Sao chép và lưu khóa này trong Plane Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
+    "token_copied": "Đã sao chép token vào bảng tạm.",
+    "settings": {
+      "general": {
+        "title": "Chung",
+        "upload_logo": "Tải lên logo",
+        "edit_logo": "Chỉnh sửa logo",
+        "name": "Tên không gian làm việc",
+        "company_size": "Quy mô công ty",
+        "url": "URL không gian làm việc",
+        "workspace_timezone": "Múi giờ không gian làm việc",
+        "update_workspace": "Cập nhật không gian làm việc",
+        "delete_workspace": "Xóa không gian làm việc này",
+        "delete_workspace_description": "Khi xóa không gian làm việc, tất cả dữ liệu và tài nguyên trong không gian làm việc đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+        "delete_btn": "Xóa không gian làm việc này",
+        "delete_modal": {
+          "title": "Bạn có chắc chắn muốn xóa không gian làm việc này không?",
+          "description": "Bạn hiện đang dùng thử gói trả phí của chúng tôi. Vui lòng hủy dùng thử trước khi tiếp tục.",
+          "dismiss": "Đóng",
+          "cancel": "Hủy dùng thử",
+          "success_title": "Đã xóa không gian làm việc.",
+          "success_message": "Sắp chuyển hướng đến trang hồ sơ của bạn.",
+          "error_title": "Thao tác thất bại.",
+          "error_message": "Vui lòng thử lại."
+        },
+        "errors": {
+          "name": {
+            "required": "Tên là bắt buộc",
+            "max_length": "Tên không gian làm việc không nên vượt quá 80 ký tự"
+          },
+          "company_size": {
+            "required": "Quy mô công ty là bắt buộc",
+            "select_a_range": "Chọn quy mô tổ chức"
+          }
+        }
+      },
+      "members": {
+        "title": "Thành viên",
+        "add_member": "Thêm thành viên",
+        "pending_invites": "Lời mời đang chờ xử lý",
+        "invitations_sent_successfully": "Đã gửi lời mời thành công",
+        "leave_confirmation": "Bạn có chắc chắn muốn rời khỏi không gian làm việc này không? Bạn sẽ không thể truy cập không gian làm việc này nữa. Hành động này không thể hoàn tác.",
+        "details": {
+          "full_name": "Tên đầy đủ",
+          "display_name": "Tên hiển thị",
+          "email_address": "Địa chỉ email",
+          "account_type": "Loại tài khoản",
+          "authentication": "Xác thực",
+          "joining_date": "Ngày tham gia"
+        },
+        "modal": {
+          "title": "Mời người cộng tác",
+          "description": "Mời người cộng tác trong không gian làm việc của bạn.",
+          "button": "Gửi lời mời",
+          "button_loading": "Đang gửi lời mời",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "Chúng tôi cần một địa chỉ email để mời họ.",
+            "invalid": "Email không hợp lệ"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Thanh toán và Kế hoạch",
+        "description": "Chọn gói của bạn, quản lý đăng ký và dễ dàng nâng cấp khi nhu cầu của bạn phát triển.",
+        "title": "Thanh toán và Kế hoạch",
+        "current_plan": "Kế hoạch hiện tại",
+        "free_plan": "Bạn đang sử dụng kế hoạch miễn phí",
+        "view_plans": "Xem kế hoạch"
+      },
+      "exports": {
+        "heading": "Xuất",
+        "description": "Xuất dữ liệu dự án của bạn dưới nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
+        "title": "Xuất",
+        "exporting": "Đang xuất",
+        "previous_exports": "Xuất trước đây",
+        "export_separate_files": "Xuất dữ liệu thành các tệp riêng biệt",
+        "exporting_projects": "Đang xuất dự án",
+        "format": "Định dạng",
+        "filters_info": "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
+        "modal": {
+          "title": "Xuất đến",
+          "toasts": {
+            "success": {
+              "title": "Xuất thành công",
+              "message": "Bạn có thể tải xuống {entity} đã xuất từ phần xuất trước đây"
+            },
+            "error": {
+              "title": "Xuất thất bại",
+              "message": "Xuất không thành công. Vui lòng thử lại."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhook",
+        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện dự án xảy ra.",
+        "title": "Webhooks",
+        "add_webhook": "Thêm webhook",
+        "modal": {
+          "title": "Tạo webhook",
+          "details": "Chi tiết Webhook",
+          "payload": "URL tải",
+          "question": "Bạn muốn những sự kiện nào kích hoạt webhook này?",
+          "error": "URL là bắt buộc"
+        },
+        "secret_key": {
+          "title": "Khóa bí mật",
+          "message": "Tạo token để đăng nhập tải webhook"
+        },
+        "options": {
+          "all": "Gửi tất cả",
+          "individual": "Chọn từng sự kiện"
+        },
+        "toasts": {
+          "created": {
+            "title": "Đã tạo Webhook",
+            "message": "Webhook đã được tạo thành công"
+          },
+          "not_created": {
+            "title": "Chưa tạo Webhook",
+            "message": "Không thể tạo webhook"
+          },
+          "updated": {
+            "title": "Đã cập nhật Webhook",
+            "message": "Webhook đã được cập nhật thành công"
+          },
+          "not_updated": {
+            "title": "Chưa cập nhật Webhook",
+            "message": "Không thể cập nhật webhook"
+          },
+          "removed": {
+            "title": "Đã xóa Webhook",
+            "message": "Webhook đã được xóa thành công"
+          },
+          "not_removed": {
+            "title": "Chưa xóa Webhook",
+            "message": "Không thể xóa webhook"
+          },
+          "secret_key_copied": {
+            "message": "Đã sao chép khóa bí mật vào bảng tạm."
+          },
+          "secret_key_not_copied": {
+            "message": "Đã xảy ra lỗi khi sao chép khóa bí mật."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Token API",
+        "description": "Tạo token API bảo mật để tích hợp dữ liệu của bạn với các hệ thống và ứng dụng bên ngoài.",
+        "title": "Token API",
+        "add_token": "Thêm token truy cập",
+        "create_token": "Tạo token",
+        "never_expires": "Không bao giờ hết hạn",
+        "generate_token": "Tạo token",
+        "generating": "Đang tạo",
+        "delete": {
+          "title": "Xóa token API",
+          "description": "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Plane nữa. Hành động này không thể hoàn tác.",
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã xóa token API thành công"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa token API"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Tích hợp",
+        "heading": "Tích hợp",
+        "description": "Kết nối với các công cụ và dịch vụ phổ biến để đồng bộ hóa công việc của bạn trong toàn bộ hệ sinh thái quy trình làm việc.",
+        "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
+        "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
+      },
+      "imports": {
+        "title": "Nhập dữ liệu",
+        "heading": "Nhập",
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
+      },
+      "worklogs": {
+        "title": "Nhật ký công việc",
+        "heading": "Nhật ký công việc",
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
+      },
+      "group_syncing": {
+        "title": "Đồng bộ nhóm",
+        "heading": "Đồng bộ nhóm",
+        "description": "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò. Quyền truy cập người dùng được cập nhật tự động khi thành viên nhóm thay đổi trong IdP của bạn, đơn giản hóa quy trình onboarding và offboarding.",
+        "enable": {
+          "title": "Bật đồng bộ nhóm",
+          "description": "Tự động thêm người dùng vào dự án dựa trên các nhóm nhà cung cấp danh tính."
+        },
+        "config": {
+          "title": "Cấu hình đồng bộ nhóm",
+          "description": "Thiết lập cách các nhóm nhà cung cấp danh tính được ánh xạ tới dự án và vai trò.",
+          "sync_on_login": {
+            "title": "Đồng bộ khi đăng nhập",
+            "description": "Cập nhật thành viên nhóm và quyền truy cập dự án khi người dùng đăng nhập."
+          },
+          "sync_offline": {
+            "title": "Đồng bộ ngoại tuyến",
+            "description": "Chạy đồng bộ mỗi sáu giờ tự động, không cần chờ người dùng đăng nhập."
+          },
+          "auto_remove": {
+            "title": "Tự động xóa",
+            "description": "Tự động xóa người dùng khỏi dự án khi họ không còn khớp với nhóm."
+          },
+          "group_attribute_key": {
+            "title": "Khóa thuộc tính nhóm",
+            "description": "Thuộc tính nhà cung cấp danh tính dùng để xác định và đồng bộ nhóm người dùng.",
+            "placeholder": "Nhóm"
+          }
+        },
+        "group_mapping": {
+          "title": "Ánh xạ nhóm",
+          "description": "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò.",
+          "button_text": "Thêm đồng bộ nhóm mới"
+        },
+        "toast": {
+          "updating": "Đang cập nhật tính năng đồng bộ nhóm",
+          "success": "Tính năng đồng bộ nhóm đã được cập nhật thành công.",
+          "error": "Cập nhật tính năng đồng bộ nhóm thất bại!"
+        },
+        "delete_modal": {
+          "title": "Xóa đồng bộ nhóm",
+          "content": "Người dùng mới từ nhóm danh tính này sẽ không còn được thêm vào dự án. Người dùng đã thêm sẽ giữ vai trò hiện tại của họ."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Nhóm người dùng",
+            "required": "Nhóm người dùng là bắt buộc",
+            "placeholder": "Nhập tên nhóm IdP"
+          },
+          "project": {
+            "text": "Dự án",
+            "required": "Dự án là bắt buộc",
+            "placeholder": "Chọn dự án"
+          },
+          "default_role": {
+            "text": "Vai trò dự án",
+            "required": "Vai trò dự án là bắt buộc",
+            "placeholder": "Chọn vai trò dự án"
+          }
+        }
+      },
+      "identity": {
+        "title": "Danh tính",
+        "heading": "Danh tính",
+        "description": "Cấu hình miền của bạn và bật Đăng nhập một lần"
+      },
+      "project_states": {
+        "title": "Trạng thái dự án",
+        "heading": "Xem tổng quan tiến độ cho tất cả dự án.",
+        "description": "Trạng thái Dự án là tính năng chỉ có trong Plane để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
+        "go_to_settings": "Đi đến cài đặt"
+      },
+      "projects": {
+        "title": "Dự án",
+        "description": "Quản lý trạng thái dự án, bật nhãn dự án và các cấu hình khác.",
+        "tabs": {
+          "states": "Trạng thái dự án",
+          "labels": "Nhãn dự án"
+        }
+      },
+      "templates": {
+        "title": "Mẫu",
+        "heading": "Mẫu",
+        "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
+      },
+      "relations": {
+        "title": "Quan hệ",
+        "heading": "Quan hệ",
+        "description": "Tạo và quản lý các loại quan hệ kết nối các mục công việc trong không gian làm việc của bạn."
+      },
+      "cancel_trial": {
+        "title": "Hủy bỏ dùng thử trước.",
+        "description": "Bạn đang có gói dùng thử cho một trong các gói trả phí của chúng tôi. Vui lòng hủy nó trước để tiếp tục.",
+        "dismiss": "Bỏ qua",
+        "cancel": "Hủy dùng thử",
+        "cancel_success_title": "Đã hủy dùng thử.",
+        "cancel_success_message": "Bây giờ bạn có thể xóa workspace.",
+        "cancel_error_title": "Điều đó không hoạt động.",
+        "cancel_error_message": "Vui lòng thử lại."
+      },
+      "applications": {
+        "internal": "Nội bộ",
+        "title": "Ứng dụng",
+        "applicationId_copied": "ID ứng dụng đã được sao chép vào clipboard",
+        "clientId_copied": "ID khách hàng đã được sao chép vào clipboard",
+        "clientSecret_copied": "Secret khách hàng đã được sao chép vào clipboard",
+        "third_party_apps": "Ứng dụng thứ ba",
+        "your_apps": "Ứng dụng của bạn",
+        "connect": "Kết nối",
+        "connected": "Đã kết nối",
+        "disconnect": "Ngắt kết nối",
+        "install": "Cài đặt",
+        "installed": "Đã cài đặt",
+        "configure": "Cấu hình",
+        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_credentials_regenrated": {
+          "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
+          "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
+        },
+        "app_created": {
+          "title": "Ứng dụng đã được tạo thành công",
+          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
+        },
+        "installed_apps": "Ứng dụng đã cài đặt",
+        "all_apps": "Tất cả ứng dụng",
+        "internal_apps": "Ứng dụng nội bộ",
+        "app_name_title": "Bạn sẽ gọi ứng dụng này là gì",
+        "app_description_title": {
+          "label": "Mô tả dài",
+          "placeholder": "Viết mô tả dài cho marketplace. Nhấn '/' để xem lệnh."
+        },
+        "authorization_grant_type": {
+          "title": "Loại kết nối",
+          "description": "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ"
+        },
+        "website": {
+          "title": "Trang web",
+          "description": "Liên kết đến trang web của ứng dụng của bạn.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Trình tạo ứng dụng",
+          "description": "Người hoặc tổ chức tạo ra ứng dụng."
+        },
+        "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "setup_url": {
+          "label": "URL thiết lập",
+          "description": "Người dùng sẽ được chuyển hướng đến URL này khi họ cài đặt ứng dụng.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các workspace nơi ứng dụng của bạn được cài đặt.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Khóa bí mật Webhook",
+          "description": "Khóa bí mật được sử dụng để xác minh các yêu cầu webhook đến.",
+          "placeholder": "Nhập một khóa bí mật ngẫu nhiên"
+        },
+        "redirect_uris": {
+          "label": "URI chuyển hướng (cách nhau bằng dấu cách)",
+          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
+        "client_id_and_secret": "ID khách hàng và Secret",
+        "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
+        "client_id_and_secret_download": "Bạn có thể tải xuống một CSV với khóa từ đây.",
+        "application_id": "ID ứng dụng",
+        "client_id": "ID khách hàng",
+        "client_secret": "Secret khách hàng",
+        "export_as_csv": "Xuất ra CSV",
+        "slug_already_exists": "Slug đã tồn tại",
+        "failed_to_create_application": "Không thể tạo ứng dụng",
+        "upload_logo": "Tải lên Logo",
+        "app_name_error": "Tên ứng dụng là bắt buộc",
+        "app_short_description_title": "Đưa ra một mô tả ngắn cho ứng dụng này",
+        "app_short_description_error": "Mô tả ngắn ứng dụng là bắt buộc",
+        "app_description_error": "Mô tả ứng dụng là bắt buộc",
+        "app_slug_title": "Slug ứng dụng",
+        "app_slug_error": "Slug ứng dụng là bắt buộc",
+        "invalid_website_error": "Trang web không hợp lệ",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook là bắt buộc",
+        "invalid_webhook_url_error": "URL Webhook không hợp lệ",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs là bắt buộc",
+        "invalid_redirect_uris_error": "Redirect URIs không hợp lệ",
+        "redirect_uris_description": "Nhập các URI cách nhau bởi dấu cách mà ứng dụng sẽ chuyển hướng sau khi người dùng e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins là bắt buộc",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins không hợp lệ",
+        "authorized_javascript_origins_description": "Nhập các nguồn cách nhau bởi dấu cách mà ứng dụng sẽ được phép thực hiện yêu cầu e.g app.com example.com",
+        "create_app": "Tạo ứng dụng",
+        "update_app": "Cập nhật ứng dụng",
+        "build_your_own_app": "Tạo ứng dụng của riêng bạn",
+        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng",
+        "regenerate_client_secret_description": "Tạo lại khóa bí mật. Nếu bạn tạo lại khóa, bạn có thể sao chép khóa hoặc tải xuống nó thành một tệp CSV ngay sau đó.",
+        "regenerate_client_secret": "Tạo lại khóa bí mật",
+        "regenerate_client_secret_confirm_title": "Bạn có chắc chắn muốn tạo lại khóa bí mật?",
+        "regenerate_client_secret_confirm_description": "Ứng dụng sử dụng khóa này sẽ ngừng hoạt động. Bạn sẽ cần cập nhật khóa trong ứng dụng.",
+        "regenerate_client_secret_confirm_cancel": "Hủy bỏ",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Truy cập chỉ đọc vào workspace của bạn",
+        "write_access_to_workspace": "Truy cập viết vào workspace của bạn",
+        "read_only_access_to_user_profile": "Truy cập chỉ đọc vào hồ sơ người dùng của bạn",
+        "write_access_to_user_profile": "Truy cập viết vào hồ sơ người dùng của bạn",
+        "connect_app_to_workspace": "Kết nối {app} vào workspace của bạn {workspace}",
+        "user_permissions": "Quyền người dùng",
+        "user_permissions_description": "Quyền người dùng được sử dụng để cấp quyền truy cập vào hồ sơ người dùng.",
+        "workspace_permissions": "Quyền workspace",
+        "workspace_permissions_description": "Quyền workspace được sử dụng để cấp quyền truy cập vào workspace.",
+        "with_the_permissions": "với quyền",
+        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Plane của bạn và hồ sơ.",
+        "choose_workspace_to_connect_app_with": "Chọn một workspace để kết nối ứng dụng",
+        "app_consent_workspace_permissions_title": "{app} muốn",
+        "app_consent_user_permissions_title": "{app} cũng có thể yêu cầu quyền của người dùng cho các tài nguyên sau. Các quyền này sẽ được yêu cầu và được cấp phép chỉ bởi một người dùng.",
+        "app_consent_accept_title": "Bằng cách chấp nhận, bạn",
+        "app_consent_accept_1": "Cấp quyền truy cập vào dữ liệu Plane của bạn ở bất kỳ đâu bạn có thể sử dụng ứng dụng bên trong hoặc ngoài Plane",
+        "app_consent_accept_2": "Đồng ý với Chính sách bảo mật và Điều khoản sử dụng của {app}",
+        "accepting": "Đang chấp nhận...",
+        "accept": "Chấp nhận",
+        "categories": "Danh mục",
+        "select_app_categories": "Chọn danh mục ứng dụng",
+        "categories_title": "Danh mục",
+        "categories_error": "Danh mục là bắt buộc",
+        "invalid_categories_error": "Danh mục không hợp lệ",
+        "categories_description": "Chọn các danh mục phù hợp nhất với ứng dụng",
+        "supported_plans": "Gói được Hỗ trợ",
+        "supported_plans_description": "Chọn các gói không gian làm việc có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
+        "select_plans": "Chọn Gói",
+        "privacy_policy_url_title": "URL Chính sách bảo mật",
+        "privacy_policy_url_error": "URL Chính sách bảo mật là bắt buộc",
+        "invalid_privacy_policy_url_error": "URL Chính sách bảo mật không hợp lệ",
+        "terms_of_service_url_title": "URL Điều khoản sử dụng",
+        "terms_of_service_url_error": "URL Điều khoản sử dụng là bắt buộc",
+        "invalid_terms_of_service_url_error": "URL Điều khoản sử dụng không hợp lệ",
+        "support_url_title": "URL Hỗ trợ",
+        "support_url_error": "URL Hỗ trợ là bắt buộc",
+        "invalid_support_url_error": "URL Hỗ trợ không hợp lệ",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video là bắt buộc",
+        "invalid_video_url_error": "URL Video không hợp lệ",
+        "setup_url_error": "URL Cài đặt là bắt buộc",
+        "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
+        "configuration_url_title": "URL Cấu hình",
+        "configuration_url_error": "URL Cấu hình là bắt buộc",
+        "invalid_configuration_url_error": "URL Cấu hình không hợp lệ",
+        "contact_email_title": "Email Liên hệ",
+        "contact_email_error": "Email Liên hệ là bắt buộc",
+        "invalid_contact_email_error": "Email Liên hệ không hợp lệ",
+        "upload_attachments": "Tải lên tệp đính kèm",
+        "uploading_images": "Tải lên {count, plural, one {hình ảnh} other {hình ảnh}}",
+        "drop_images_here": "Đặt hình ảnh vào đây",
+        "click_to_upload_images": "Nhấp để tải lên hình ảnh",
+        "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
+        "uploading": "Đang tải lên...",
+        "upload_and_save": "Tải lên và lưu",
+        "app_consent_no_access_title": "Yêu cầu cài đặt",
+        "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên workspace cài đặt nó. Liên hệ với quản trị viên workspace của bạn để tiếp tục.",
+        "app_consent_unapproved_title": "Ứng dụng này chưa được Plane xem xét hoặc phê duyệt.",
+        "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với không gian làm việc của bạn.",
+        "go_to_app": "Đi đến ứng dụng",
+        "enable_app_mentions": "Bật đề cập ứng dụng",
+        "enable_app_mentions_tooltip": "Khi bật tính năng này, người dùng có thể đề cập hoặc gán Work Items cho ứng dụng này.",
+        "scopes": "Phạm vi",
+        "select_scopes": "Chọn phạm vi",
+        "read_access_to": "Quyền truy cập chỉ đọc tới",
+        "write_access_to": "Quyền truy cập ghi tới",
+        "global_permission_expiration": "Phạm vi toàn cục sắp hết hạn. Thay vào đó hãy dùng phạm vi chi tiết. Ví dụ: dùng project:read thay vì đọc toàn cục.",
+        "selected_scopes": "Đã chọn {count}",
+        "scopes_and_permissions": "Phạm vi & Quyền",
+        "read": "Đọc",
+        "write": "Ghi",
+        "scope_description": {
+          "projects": "Truy cập dự án và mọi thực thể liên quan đến dự án",
+          "wiki": "Truy cập wiki và mọi thực thể liên quan đến wiki",
+          "workspaces": "Truy cập không gian làm việc và mọi thực thể liên quan",
+          "stickies": "Truy cập ghi chú dán và mọi thực thể liên quan",
+          "profile": "Truy cập thông tin hồ sơ người dùng",
+          "agents": "Truy cập vào agents và tất cả các thực thể liên quan đến agent",
+          "assets": "Truy cập vào tài sản và tất cả các thực thể liên quan đến tài sản"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script",
+        "new_script": "Script mới",
+        "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Chưa tạo token API",
+        "description": "API Plane có thể được sử dụng để tích hợp dữ liệu Plane của bạn với bất kỳ hệ thống bên ngoài nào. Tạo token để bắt đầu."
+      },
+      "webhooks": {
+        "title": "Chưa thêm webhook",
+        "description": "Tạo webhook để nhận cập nhật theo thời gian thực và tự động hóa hành động."
+      },
+      "exports": {
+        "title": "Chưa có xuất dữ liệu",
+        "description": "Mỗi khi xuất, bạn sẽ có một bản sao ở đây để tham khảo."
+      },
+      "imports": {
+        "title": "Chưa có nhập dữ liệu",
+        "description": "Tìm tất cả các lần nhập trước đây và tải xuống chúng tại đây."
+      }
+    }
+  }
+}

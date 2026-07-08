@@ -54,6 +54,8 @@ cryptography==48.0.1
 lxml==6.1.0
 # s3
 boto3==1.34.96
+# vector search
+pgvector==0.3.6
 # http client (pinned to address CVE-2026-44431 and CVE-2026-44432)
 urllib3>=2.7.0
 # requests — used directly for webhook delivery & link unfurling; pinned to

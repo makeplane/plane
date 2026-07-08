@@ -1,0 +1,59 @@
+{
+  "name": "@plane/extend-ui",
+  "version": "1.3.1",
+  "private": true,
+  "description": "Vendored extend.ai UI components (file system browser + document viewers) adapted to the Plane monorepo",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "check:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.4.1",
+    "@embedpdf/core": "^2.14.4",
+    "@embedpdf/engines": "^2.14.4",
+    "@embedpdf/models": "^2.14.4",
+    "@embedpdf/plugin-document-manager": "^2.14.4",
+    "@embedpdf/plugin-interaction-manager": "^2.14.4",
+    "@embedpdf/plugin-render": "^2.14.4",
+    "@embedpdf/plugin-rotate": "^2.14.4",
+    "@embedpdf/plugin-scroll": "^2.14.4",
+    "@embedpdf/plugin-search": "^2.14.4",
+    "@embedpdf/plugin-selection": "^2.14.4",
+    "@embedpdf/plugin-thumbnail": "^2.14.4",
+    "@embedpdf/plugin-tiling": "^2.14.4",
+    "@embedpdf/plugin-viewport": "^2.14.4",
+    "@embedpdf/plugin-zoom": "^2.14.4",
+    "@extend-ai/react-docx": "^0.7.5",
+    "@extend-ai/react-xlsx": "0.13.4",
+    "@glideapps/glide-data-grid": "6.0.4-alpha24",
+    "@hugeicons/core-free-icons": "^4.2.0",
+    "@hugeicons/react": "^1.1.6",
+    "@pierre/trees": "1.0.0-beta.4",
+    "@tanstack/react-virtual": "^3.13.12",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "catalog:",
+    "cmdk": "^1.1.1",
+    "papaparse": "^5.5.3",
+    "pdf-lib": "^1.17.1",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
+}

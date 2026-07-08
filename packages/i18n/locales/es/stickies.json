@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Tus notas adhesivas",
+    "placeholder": "haz clic para escribir aquí",
+    "all": "Todas las notas adhesivas",
+    "no-data": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega una nota adhesiva para comenzar.",
+    "add": "Agregar nota adhesiva",
+    "search_placeholder": "Buscar por título",
+    "delete": "Eliminar nota adhesiva",
+    "delete_confirmation": "¿Estás seguro de que quieres eliminar esta nota adhesiva?",
+    "empty_state": {
+      "simple": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega una nota adhesiva para comenzar.",
+      "general": {
+        "title": "Las notas adhesivas son notas rápidas y tareas pendientes que anotas al vuelo.",
+        "description": "Captura tus pensamientos e ideas sin esfuerzo creando notas adhesivas a las que puedes acceder en cualquier momento y desde cualquier lugar.",
+        "primary_button": {
+          "text": "Agregar nota adhesiva"
+        }
+      },
+      "search": {
+        "title": "Eso no coincide con ninguna de tus notas adhesivas.",
+        "description": "Prueba un término diferente o háznoslo saber\nsi estás seguro de que tu búsqueda es correcta.",
+        "primary_button": {
+          "text": "Agregar nota adhesiva"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "El nombre de la nota adhesiva no puede tener más de 100 caracteres.",
+        "already_exists": "Ya existe una nota adhesiva sin descripción"
+      },
+      "created": {
+        "title": "Nota adhesiva creada",
+        "message": "La nota adhesiva se ha creado exitosamente"
+      },
+      "not_created": {
+        "title": "Nota adhesiva no creada",
+        "message": "No se pudo crear la nota adhesiva"
+      },
+      "updated": {
+        "title": "Nota adhesiva actualizada",
+        "message": "La nota adhesiva se ha actualizado exitosamente"
+      },
+      "not_updated": {
+        "title": "Nota adhesiva no actualizada",
+        "message": "No se pudo actualizar la nota adhesiva"
+      },
+      "removed": {
+        "title": "Nota adhesiva eliminada",
+        "message": "La nota adhesiva se ha eliminado exitosamente"
+      },
+      "not_removed": {
+        "title": "Nota adhesiva no eliminada",
+        "message": "No se pudo eliminar la nota adhesiva"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "@plane/typescript-config/react-library.json",
+  "include": ["src"],
+  "compilerOptions": {
+    // Vendored third-party sources target React 19 types; keep checks relaxed
+    // so upstream updates drop in without local churn
+    "strict": false,
+    "exactOptionalPropertyTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noImplicitAny": false
+  },
+  "exclude": ["node_modules", "dist"]
+}

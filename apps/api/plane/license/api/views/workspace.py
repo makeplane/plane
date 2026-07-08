@@ -6,12 +6,19 @@
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F
+from django.db.models import OuterRef, Func, F, Exists
 
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.license.api.permissions import InstanceAdminPermission
-from plane.db.models import Workspace, WorkspaceMember, Project
+from plane.db.models import (
+    DEFAULT_CONTRACT_CATEGORY_NAME,
+    FileCategory,
+    Project,
+    Workspace,
+    WorkspaceFeature,
+    WorkspaceMember,
+)
 from plane.license.api.serializers import WorkspaceSerializer
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -53,7 +60,17 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
             .values("count")
         )
 
-        workspaces = Workspace.objects.annotate(total_projects=project_count, total_members=member_count)
+        file_library_enabled = WorkspaceFeature.objects.filter(
+            workspace_id=OuterRef("id"),
+            key=WorkspaceFeature.FeatureKey.FILE_LIBRARY,
+            is_enabled=True,
+        )
+
+        workspaces = Workspace.objects.annotate(
+            total_projects=project_count,
+            total_members=member_count,
+            is_file_library_enabled=Exists(file_library_enabled),
+        )
 
         # Add search functionality
         search = request.query_params.get("search", None)
@@ -108,3 +125,56 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_409_CONFLICT,
                 )
+
+
+class InstanceWorkspaceFeatureEndpoint(BaseAPIView):
+    """Manage per-workspace feature flags from the instance admin (god-mode)."""
+
+    permission_classes = [InstanceAdminPermission]
+
+    def get(self, request, workspace_id):
+        workspace = Workspace.objects.filter(id=workspace_id).first()
+        if workspace is None:
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        enabled_keys = set(
+            WorkspaceFeature.objects.filter(workspace=workspace, is_enabled=True).values_list("key", flat=True)
+        )
+        features = {key: (key in enabled_keys) for key, _ in WorkspaceFeature.FeatureKey.choices}
+        return Response(
+            {"workspace_id": str(workspace.id), "features": features},
+            status=status.HTTP_200_OK,
+        )
+
+    def patch(self, request, workspace_id):
+        workspace = Workspace.objects.filter(id=workspace_id).first()
+        if workspace is None:
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        key = request.data.get("key")
+        is_enabled = request.data.get("is_enabled")
+
+        valid_keys = {choice for choice, _ in WorkspaceFeature.FeatureKey.choices}
+        if key not in valid_keys or not isinstance(is_enabled, bool):
+            return Response(
+                {"error": "A valid feature key and a boolean is_enabled are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        feature, _ = WorkspaceFeature.objects.update_or_create(
+            workspace=workspace, key=key, defaults={"is_enabled": is_enabled}
+        )
+
+        # Enabling the file library guarantees the protected default
+        # "Contratos" category exists for the workspace.
+        if key == WorkspaceFeature.FeatureKey.FILE_LIBRARY and is_enabled:
+            FileCategory.objects.get_or_create(
+                workspace=workspace,
+                name=DEFAULT_CONTRACT_CATEGORY_NAME,
+                defaults={"is_default": True, "pdf_only": True},
+            )
+
+        return Response(
+            {"workspace_id": str(workspace.id), "key": feature.key, "is_enabled": feature.is_enabled},
+            status=status.HTTP_200_OK,
+        )

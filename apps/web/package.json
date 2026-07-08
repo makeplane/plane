@@ -27,6 +27,7 @@
     "@headlessui/react": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
+    "@plane/extend-ui": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/i18n": "workspace:*",
     "@plane/propel": "workspace:*",

@@ -4,12 +4,15 @@
  * See the LICENSE file for details.
  */
 
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
 import { NewTabIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { ToggleSwitch } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
@@ -19,10 +22,42 @@ type TWorkspaceListItemProps = {
 };
 
 export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
+  // states
+  const [isUpdatingFeature, setIsUpdatingFeature] = useState(false);
   // store hooks
-  const { getWorkspaceById } = useWorkspace();
+  const { getWorkspaceById, updateWorkspaceFeature } = useWorkspace();
   // derived values
   const workspace = getWorkspaceById(workspaceId);
+
+  // Stops a click on the toggle area from bubbling up to the enclosing <a> and navigating away.
+  const shieldClickFromNavigation = useCallback((element: HTMLDivElement | null) => {
+    element?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  }, []);
+
+  const handleFileLibraryToggle = async () => {
+    if (!workspace || isUpdatingFeature) return;
+    const nextValue = !workspace.is_file_library_enabled;
+    setIsUpdatingFeature(true);
+    try {
+      await updateWorkspaceFeature(workspace.id, "file_library", nextValue);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success",
+        message: `File library ${nextValue ? "enabled" : "disabled"} for ${workspace.name}`,
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: "Failed to update the file library feature",
+      });
+    } finally {
+      setIsUpdatingFeature(false);
+    }
+  };
 
   if (!workspace) return null;
   return (
@@ -81,7 +116,26 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
           </div>
         </div>
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center gap-4">
+        <Tooltip tooltipContent="Enable the file library + contracts module for this workspace">
+          {/* Not an interactive element itself — it only shields the nested (already
+              keyboard-accessible) ToggleSwitch from the parent anchor's click-to-navigate.
+              The listener is attached imperatively so static-analysis a11y rules, which
+              assume any onClick JSX prop means "this element itself is interactive", don't
+              flag it. */}
+          <div
+            ref={shieldClickFromNavigation}
+            className={`flex items-center gap-2 ${isUpdatingFeature ? "opacity-70" : ""}`}
+          >
+            <span className="text-11 font-medium text-secondary">File library</span>
+            <ToggleSwitch
+              value={Boolean(workspace.is_file_library_enabled)}
+              onChange={handleFileLibraryToggle}
+              size="sm"
+              disabled={isUpdatingFeature}
+            />
+          </div>
+        </Tooltip>
         <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>

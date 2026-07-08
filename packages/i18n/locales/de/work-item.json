@@ -1,0 +1,426 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Arbeitselement} few {Arbeitselemente} other {Arbeitselemente}}",
+    "all": "Alle Arbeitselemente",
+    "edit": "Arbeitselement bearbeiten",
+    "title": {
+      "label": "Titel des Arbeitselements",
+      "required": "Ein Titel für das Arbeitselement ist erforderlich."
+    },
+    "add": {
+      "press_enter": "Drücken Sie 'Enter', um ein weiteres Arbeitselement hinzuzufügen",
+      "label": "Arbeitselement hinzufügen",
+      "cycle": {
+        "failed": "Hinzufügen des Arbeitselements zum Zyklus fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "success": "{count, plural, one {Arbeitselement} few {Arbeitselemente} other {Arbeitselemente}} zum Zyklus hinzugefügt.",
+        "loading": "{count, plural, one {Arbeitselement} other {Arbeitselemente}} werden zum Zyklus hinzugefügt"
+      },
+      "assignee": "Zugewiesene hinzufügen",
+      "start_date": "Startdatum hinzufügen",
+      "due_date": "Fälligkeitsdatum hinzufügen",
+      "parent": "Übergeordnetes Arbeitselement hinzufügen",
+      "sub_issue": "Untergeordnetes Arbeitselement hinzufügen",
+      "dependency": "Abhängigkeit hinzufügen",
+      "relation": "Beziehung hinzufügen",
+      "link": "Link hinzufügen",
+      "existing": "Vorhandenes Arbeitselement hinzufügen"
+    },
+    "remove": {
+      "label": "Arbeitselement entfernen",
+      "cycle": {
+        "loading": "Arbeitselement wird aus dem Zyklus entfernt",
+        "success": "Arbeitselement aus dem Zyklus entfernt.",
+        "failed": "Das Entfernen des Arbeitselements aus dem Zyklus ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "module": {
+        "loading": "Arbeitselement wird aus dem Modul entfernt",
+        "success": "Arbeitselement aus dem Modul entfernt.",
+        "failed": "Das Entfernen des Arbeitselements aus dem Modul ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "parent": {
+        "label": "Übergeordnetes Arbeitselement entfernen"
+      }
+    },
+    "new": "Neues Arbeitselement",
+    "adding": "Arbeitselement wird hinzugefügt",
+    "create": {
+      "success": "Arbeitselement erfolgreich erstellt"
+    },
+    "priority": {
+      "urgent": "Dringend",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "display": {
+      "properties": {
+        "label": "Anzuzeigende Eigenschaften",
+        "id": "ID",
+        "issue_type": "Typ des Arbeitselements",
+        "sub_issue_count": "Anzahl untergeordneter Elemente",
+        "attachment_count": "Anzahl Anhänge",
+        "created_on": "Erstellt am",
+        "sub_issue": "Untergeordnetes Element",
+        "work_item_count": "Anzahl Arbeitselemente"
+      },
+      "extra": {
+        "show_sub_issues": "Untergeordnete Elemente anzeigen",
+        "show_empty_groups": "Leere Gruppen anzeigen"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Dieses Layout wird sortiert nach",
+      "list": "Liste",
+      "kanban": "Kanban",
+      "calendar": "Kalender",
+      "spreadsheet": "Tabellenansicht",
+      "gantt": "Zeitachsenansicht",
+      "title": {
+        "list": "Listenlayout",
+        "kanban": "Kanban-Layout",
+        "calendar": "Kalenderlayout",
+        "spreadsheet": "Tabellenlayout",
+        "gantt": "Zeitachsenlayout"
+      }
+    },
+    "states": {
+      "active": "Aktiv",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Kommentar hinzufügen",
+      "switch": {
+        "private": "Zu privatem Kommentar wechseln",
+        "public": "Zu öffentlichem Kommentar wechseln"
+      },
+      "create": {
+        "success": "Kommentar erfolgreich erstellt",
+        "error": "Kommentar konnte nicht erstellt werden. Bitte versuchen Sie es später erneut."
+      },
+      "update": {
+        "success": "Kommentar erfolgreich aktualisiert",
+        "error": "Kommentar konnte nicht aktualisiert werden. Bitte versuchen Sie es später erneut."
+      },
+      "remove": {
+        "success": "Kommentar erfolgreich entfernt",
+        "error": "Kommentar konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
+      },
+      "upload": {
+        "error": "Anhang konnte nicht hochgeladen werden. Bitte versuchen Sie es später erneut."
+      },
+      "copy_link": {
+        "success": "Kommentar-Link in die Zwischenablage kopiert",
+        "error": "Fehler beim Kopieren des Kommentar-Links. Bitte versuchen Sie es später erneut."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Antwort hinzufügen",
+          "placeholder": "Antwort hinzufügen"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Antworten konnten nicht geladen werden"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Antwort erfolgreich erstellt"
+            },
+            "error": {
+              "message": "Antwort konnte nicht erstellt werden"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Antwort erfolgreich aktualisiert"
+            },
+            "error": {
+              "message": "Antwort konnte nicht aktualisiert werden"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Antwort erfolgreich gelöscht"
+            },
+            "error": {
+              "message": "Antwort konnte nicht gelöscht werden"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Arbeitselement existiert nicht",
+        "description": "Das gesuchte Arbeitselement existiert nicht, wurde archiviert oder gelöscht.",
+        "primary_button": {
+          "text": "Weitere Arbeitselemente anzeigen"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Verwandte Arbeitselemente"
+    },
+    "archive": {
+      "description": "Nur abgeschlossene oder abgebrochene Arbeitselemente können archiviert werden",
+      "label": "Arbeitselement archivieren",
+      "confirm_message": "Möchten Sie dieses Arbeitselement wirklich archivieren? Alle archivierten Elemente können später wiederhergestellt werden.",
+      "success": {
+        "label": "Erfolgreich archiviert",
+        "message": "Ihre archivierten Elemente finden Sie in den Projektarchiven."
+      },
+      "failed": {
+        "message": "Archivierung des Arbeitselements fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Wiederherstellung erfolgreich",
+        "message": "Ihr Arbeitselement ist jetzt wieder in den Arbeitselementen des Projekts zu finden."
+      },
+      "failed": {
+        "message": "Wiederherstellung des Arbeitselements fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "relation": {
+      "relates_to": "Steht in Beziehung zu",
+      "duplicate": "Duplikat",
+      "blocked_by": "Blockiert durch",
+      "blocking": "Blockiert",
+      "start_before": "Beginnt Vor",
+      "start_after": "Beginnt Nach",
+      "finish_before": "Endet Vor",
+      "finish_after": "Endet Nach",
+      "implements": "Implementiert",
+      "implemented_by": "Implementiert von"
+    },
+    "copy_link": "Link zum Arbeitselement kopieren",
+    "delete": {
+      "label": "Arbeitselement löschen",
+      "error": "Fehler beim Löschen des Arbeitselements"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Arbeitselement erfolgreich abonniert",
+        "unsubscribed": "Abo für Arbeitselement beendet"
+      }
+    },
+    "select": {
+      "error": "Wählen Sie mindestens ein Arbeitselement aus",
+      "empty": "Keine Arbeitselemente ausgewählt",
+      "add_selected": "Ausgewählte Arbeitselemente hinzufügen",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Alle abwählen"
+    },
+    "open_in_full_screen": "Arbeitselement im Vollbild öffnen",
+    "duplicate": {
+      "modal": {
+        "title": "Eine Kopie in ein anderes Projekt erstellen",
+        "description1": "Dies erstellt eine Kopie des Arbeitselements.",
+        "description2": "Alle Eigenschaftsdaten werden beim Duplizieren entfernt.",
+        "placeholder": "Projekt auswählen"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Arbeitselement erfolgreich dupliziert"
+        },
+        "error": {
+          "message": "Arbeitselement konnte nicht dupliziert werden"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Seiten verknüpfen",
+      "show_wiki_pages": "Wiki-Seiten anzeigen",
+      "link_pages_to": "Seiten verknüpfen mit",
+      "linked_pages": "Verknüpfte Seiten",
+      "no_description": "Diese Seite ist leer. Schreiben Sie etwas hinein und sehen Sie es hier anstelle dieses Platzhalters",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Seiten aktualisiert",
+            "message": "Seiten wurden erfolgreich aktualisiert"
+          },
+          "error": {
+            "title": "Seiten nicht aktualisiert",
+            "message": "Seiten konnten nicht aktualisiert werden"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Seite entfernt",
+            "message": "Seite wurde erfolgreich entfernt"
+          },
+          "error": {
+            "title": "Seite nicht entfernt",
+            "message": "Seite konnte nicht entfernt werden"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Klicken zum Hochstimmen",
+      "click_to_downvote": "Klicken zum Runterstimmen",
+      "click_to_view_upvotes": "Klicken um Hochstimmen anzuzeigen",
+      "click_to_view_downvotes": "Klicken um Runterstimmen anzuzeigen"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Untergeordnetes Arbeitselement erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des untergeordneten Elements"
+    },
+    "remove": {
+      "success": "Untergeordnetes Arbeitselement erfolgreich entfernt",
+      "error": "Fehler beim Entfernen des untergeordneten Elements"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Sie haben keine untergeordneten Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle untergeordneten Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      },
+      "list_filters": {
+        "title": "Sie haben keine Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Keine passenden Elemente"
+      },
+      "no_issues": {
+        "title": "Keine Elemente"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Keine Kommentare",
+        "description": "Kommentare dienen der Diskussion und der Nachverfolgung von Elementen."
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Arbeitsaufgaben können nicht archiviert werden",
+        "message": "Nur Arbeitsaufgaben, die zu den Statusgruppen Abgeschlossen oder Abgebrochen gehören, können archiviert werden."
+      },
+      "invalid_issue_start_date": {
+        "title": "Arbeitsaufgaben können nicht aktualisiert werden",
+        "message": "Das ausgewählte Startdatum liegt nach dem Fälligkeitsdatum für einige Arbeitsaufgaben. Stellen Sie sicher, dass das Startdatum vor dem Fälligkeitsdatum liegt."
+      },
+      "invalid_issue_target_date": {
+        "title": "Arbeitsaufgaben können nicht aktualisiert werden",
+        "message": "Das ausgewählte Fälligkeitsdatum liegt vor dem Startdatum für einige Arbeitsaufgaben. Stellen Sie sicher, dass das Fälligkeitsdatum nach dem Startdatum liegt."
+      },
+      "invalid_state_transition": {
+        "title": "Arbeitsaufgaben können nicht aktualisiert werden",
+        "message": "Statusänderung ist für einige Arbeitsaufgaben nicht erlaubt. Stellen Sie sicher, dass die Statusänderung zulässig ist."
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Wiederkehrende Arbeitsaufgaben",
+      "description": "Setzen Sie Ihre wiederkehrende Arbeit einmalig und wir kümmern uns um die Wiederholungen. Sie sehen alles hier, wenn es Zeit ist.",
+      "new_recurring_work_item": "Neue wiederkehrende Arbeitsaufgabe",
+      "update_recurring_work_item": "Wiederkehrende Arbeitsaufgabe aktualisieren",
+      "form": {
+        "interval": {
+          "title": "Zeitplan",
+          "start_date": {
+            "validation": {
+              "required": "Startdatum ist erforderlich"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Intervalltyp ist erforderlich"
+            }
+          }
+        },
+        "button": {
+          "create": "Wiederkehrende Arbeitsaufgabe erstellen",
+          "update": "Wiederkehrende Arbeitsaufgabe aktualisieren"
+        }
+      },
+      "create_button": {
+        "label": "Wiederkehrende Arbeitsaufgabe erstellen",
+        "no_permission": "Wenden Sie sich an Ihren Projektadministrator, um wiederkehrende Arbeitsaufgaben zu erstellen"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Ihre Arbeit, auf Autopilot",
+        "description": "Einmal einstellen. Wir erinnern Sie daran, wenn es fällig ist. Upgrade auf Business, um wiederkehrende Arbeit mühelos zu machen."
+      },
+      "no_templates": {
+        "button": "Erstellen Sie Ihre erste wiederkehrende Arbeitsaufgabe"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe erstellt",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, ist jetzt für Ihren Arbeitsbereich verfügbar."
+        },
+        "error": {
+          "title": "Wir konnten diese wiederkehrende Arbeitsaufgabe diesmal nicht erstellen.",
+          "message": "Versuchen Sie, Ihre Angaben erneut zu speichern oder kopieren Sie sie in eine neue wiederkehrende Arbeitsaufgabe, vorzugsweise in einem anderen Tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe geändert",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, wurde geändert."
+        },
+        "error": {
+          "title": "Wir konnten die Änderungen an dieser wiederkehrenden Arbeitsaufgabe nicht speichern.",
+          "message": "Versuchen Sie, Ihre Angaben erneut zu speichern oder kommen Sie später zu dieser wiederkehrenden Arbeitsaufgabe zurück. Wenn weiterhin Probleme auftreten, kontaktieren Sie uns."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe gelöscht",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, wurde aus Ihrem Arbeitsbereich gelöscht."
+        },
+        "error": {
+          "title": "Wir konnten diese wiederkehrende Arbeitsaufgabe nicht löschen.",
+          "message": "Versuchen Sie es erneut oder kommen Sie später darauf zurück. Wenn Sie sie dann immer noch nicht löschen können, kontaktieren Sie uns."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Wiederkehrende Arbeitsaufgabe löschen",
+      "description": {
+        "prefix": "Sind Sie sicher, dass Sie die wiederkehrende Arbeitsaufgabe löschen möchten-",
+        "suffix": "? Alle mit der wiederkehrenden Arbeitsaufgabe verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    }
+  },
+  "epic": {
+    "new": "Neues Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Epic wird hinzugefügt",
+    "create": {
+      "success": "Epic erfolgreich erstellt"
+    },
+    "add": {
+      "label": "Epic hinzufügen",
+      "press_enter": "Drücken Sie 'Enter', um ein weiteres Epic hinzuzufügen"
+    },
+    "title": {
+      "label": "Epic-Titel",
+      "required": "Ein Titel für das Epic ist erforderlich."
+    }
+  }
+}

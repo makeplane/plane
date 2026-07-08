@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Garis Besar",
+        "empty_state": {
+          "title": "Judul hilang",
+          "description": "Mari tambahkan beberapa judul di halaman ini untuk melihatnya di sini."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Kata",
+          "characters": "Karakter",
+          "paragraphs": "Paragraf",
+          "read_time": "Waktu baca"
+        },
+        "actors_info": {
+          "edited_by": "Disunting oleh",
+          "created_by": "Dibuat oleh"
+        },
+        "version_history": {
+          "label": "Riwayat versi",
+          "current_version": "Versi saat ini",
+          "highlight_changes": "Sorot perubahan"
+        }
+      },
+      "assets": {
+        "label": "Aset",
+        "download_button": "Unduh",
+        "empty_state": {
+          "title": "Gambar hilang",
+          "description": "Tambahkan gambar untuk melihatnya di sini."
+        }
+      },
+      "comments": {
+        "label": "Komentar",
+        "empty_state": {
+          "title": "Tidak ada komentar",
+          "description": "Tambahkan komentar untuk melihatnya di sini."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Nama sticky tidak boleh lebih dari 100 karakter.",
+        "already_exists": "Sudah ada sticky tanpa deskripsi"
+      },
+      "created": {
+        "title": "Sticky dibuat",
+        "message": "Sticky berhasil dibuat"
+      },
+      "not_created": {
+        "title": "Sticky tidak dibuat",
+        "message": "Sticky tidak dapat dibuat"
+      },
+      "updated": {
+        "title": "Sticky diperbarui",
+        "message": "Sticky berhasil diperbarui"
+      },
+      "not_updated": {
+        "title": "Sticky tidak diperbarui",
+        "message": "Sticky tidak dapat diperbarui"
+      },
+      "removed": {
+        "title": "Sticky dihapus",
+        "message": "Sticky berhasil dihapus"
+      },
+      "not_removed": {
+        "title": "Sticky tidak dihapus",
+        "message": "Sticky tidak dapat dihapus"
+      }
+    },
+    "open_button": "Buka panel navigasi",
+    "close_button": "Tutup panel navigasi",
+    "outline_floating_button": "Buka garis besar"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Pindahkan",
+        "loading": "Memindahkan"
+      },
+      "cannot_move_to_teamspace": "Halaman pribadi dan yang dibagikan tidak dapat dipindahkan ke teamspace.",
+      "placeholders": {
+        "workspace_to_all": "Cari proyek dan teamspace",
+        "workspace_to_project": "Cari proyek",
+        "project_to_all": "Cari proyek dan teamspace",
+        "project_to_project": "Cari proyek",
+        "project_to_all_with_wiki": "Cari koleksi wiki, proyek, dan teamspace",
+        "project_to_project_with_wiki": "Cari koleksi wiki dan proyek"
+      },
+      "toasts": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Halaman berhasil dipindahkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Halaman tidak dapat dipindahkan. Silakan coba lagi nanti."
+        },
+        "collection_error": {
+          "title": "Dipindahkan ke wiki",
+          "message": "Halaman dipindahkan ke wiki, tetapi tidak dapat ditambahkan ke koleksi yang dipilih. Halaman tetap berada di General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Hapus dari koleksi",
+      "success_message": "Halaman dihapus dari koleksi.",
+      "error_message": "Halaman tidak dapat dihapus dari koleksi. Silakan coba lagi."
+    }
+  }
+}

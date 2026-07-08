@@ -135,3 +135,5 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .file_library import FileCategorySerializer, FileLibraryAssetSerializer

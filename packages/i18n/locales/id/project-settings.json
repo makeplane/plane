@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Masukkan ID proyek",
+      "please_select_a_timezone": "Silakan pilih zona waktu",
+      "archive_project": {
+        "title": "Arsipkan proyek",
+        "description": "Mengarsipkan proyek akan menghapus proyek Anda dari navigasi samping meskipun Anda masih dapat mengaksesnya dari halaman proyek Anda. Anda dapat memulihkan proyek tersebut atau menghapusnya kapan saja.",
+        "button": "Arsipkan proyek"
+      },
+      "delete_project": {
+        "title": "Hapus proyek",
+        "description": "Ketika menghapus proyek, semua data dan sumber daya di dalam proyek tersebut akan dihapus secara permanen dan tidak dapat dipulihkan.",
+        "button": "Hapus proyek saya"
+      },
+      "toast": {
+        "success": "Proyek berhasil diperbarui",
+        "error": "Proyek tidak dapat diperbarui. Silakan coba lagi."
+      }
+    },
+    "members": {
+      "label": "Anggota",
+      "project_lead": "Pemimpin proyek",
+      "project_lead_description": "Pilih pimpinan proyek untuk proyek ini.",
+      "default_assignee": "Penugas default",
+      "default_assignee_description": "Pilih penerima tugas default untuk proyek ini.",
+      "project_subscribers": "Pelanggan proyek",
+      "project_subscribers_description": "Pilih anggota yang akan menerima notifikasi untuk proyek ini.",
+      "guest_super_permissions": {
+        "title": "Beri akses tampilan untuk semua item kerja untuk pengguna tamu:",
+        "sub_heading": "Ini akan memungkinkan tamu untuk memiliki akses tampilan ke semua item kerja proyek."
+      },
+      "invite_members": {
+        "title": "Undang anggota",
+        "sub_heading": "Undang anggota untuk bekerja di proyek Anda.",
+        "select_co_worker": "Pilih rekan kerja"
+      }
+    },
+    "states": {
+      "heading": "Status",
+      "description": "Tentukan dan sesuaikan status alur kerja untuk melacak kemajuan item kerja Anda.",
+      "describe_this_state_for_your_members": "Jelaskan status ini untuk anggota Anda.",
+      "empty_state": {
+        "title": "Tidak ada status yang tersedia untuk grup {groupKey}",
+        "description": "Silakan buat status baru"
+      }
+    },
+    "labels": {
+      "heading": "Label",
+      "description": "Buat label kustom untuk mengkategorikan dan mengatur item kerja Anda",
+      "label_title": "Judul label",
+      "label_title_is_required": "Judul label diperlukan",
+      "label_max_char": "Nama label tidak boleh lebih dari 255 karakter",
+      "toast": {
+        "error": "Kesalahan saat memperbarui label"
+      }
+    },
+    "estimates": {
+      "heading": "Perkiraan",
+      "description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
+      "label": "Perkiraan",
+      "title": "Aktifkan perkiraan untuk proyek saya",
+      "enable_description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
+      "no_estimate": "Tidak ada perkiraan",
+      "new": "Sistem perkiraan baru",
+      "create": {
+        "custom": "Kustom",
+        "start_from_scratch": "Mulai dari awal",
+        "choose_template": "Pilih template",
+        "choose_estimate_system": "Pilih sistem perkiraan",
+        "enter_estimate_point": "Masukkan perkiraan",
+        "step": "Langkah {step} dari {total}",
+        "label": "Buat perkiraan"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Perkiraan dibuat",
+            "message": "Perkiraan telah berhasil dibuat"
+          },
+          "error": {
+            "title": "Pembuatan perkiraan gagal",
+            "message": "Kami tidak dapat membuat perkiraan baru, silakan coba lagi."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Perkiraan dimodifikasi",
+            "message": "Perkiraan telah diperbarui dalam proyek Anda."
+          },
+          "error": {
+            "title": "Modifikasi perkiraan gagal",
+            "message": "Kami tidak dapat memodifikasi perkiraan, silakan coba lagi"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Berhasil!",
+            "message": "Perkiraan telah diaktifkan."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Berhasil!",
+            "message": "Perkiraan telah dinonaktifkan."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Perkiraan tidak dapat dinonaktifkan. Silakan coba lagi"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimasi diurutkan ulang",
+            "message": "Estimasi telah diurutkan ulang dalam proyek Anda."
+          },
+          "error": {
+            "title": "Pengurutan ulang estimasi gagal",
+            "message": "Kami tidak dapat mengurutkan ulang estimasi, silakan coba lagi"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistem estimasi dibuat",
+            "message": "Berhasil dibuat dan diaktifkan"
+          },
+          "error": {
+            "title": "Kesalahan",
+            "message": "Terjadi kesalahan"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Perkiraan harus lebih besar dari 0.",
+        "unable_to_process": "Kami tidak dapat memproses permintaan Anda, silakan coba lagi.",
+        "numeric": "Perkiraan harus berupa nilai numerik.",
+        "character": "Perkiraan harus berupa nilai karakter.",
+        "empty": "Nilai perkiraan tidak boleh kosong.",
+        "already_exists": "Nilai perkiraan sudah ada.",
+        "unsaved_changes": "Anda memiliki beberapa perubahan yang belum disimpan, Harap simpan sebelum mengklik selesai",
+        "remove_empty": "Perkiraan tidak boleh kosong. Masukkan nilai di setiap bidang atau hapus yang tidak memiliki nilai.",
+        "fill": "Harap isi bidang estimasi ini",
+        "repeat": "Nilai estimasi tidak boleh diulang"
+      },
+      "systems": {
+        "points": {
+          "label": "Poin",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Kuadrat",
+          "custom": "Kustom"
+        },
+        "categories": {
+          "label": "Kategori",
+          "t_shirt_sizes": "Ukuran Baju",
+          "easy_to_hard": "Mudah ke sulit",
+          "custom": "Kustom"
+        },
+        "time": {
+          "label": "Waktu",
+          "hours": "Jam"
+        }
+      },
+      "edit": {
+        "title": "Edit sistem estimasi",
+        "add_or_update": {
+          "title": "Tambah, perbarui atau hapus estimasi",
+          "description": "Kelola sistem saat ini dengan menambah, memperbarui atau menghapus poin atau kategori."
+        },
+        "switch": {
+          "title": "Ubah tipe estimasi",
+          "description": "Konversi sistem poin Anda ke sistem kategori dan sebaliknya."
+        }
+      },
+      "switch": "Alihkan sistem estimasi",
+      "current": "Sistem estimasi saat ini",
+      "select": "Pilih sistem estimasi"
+    },
+    "automations": {
+      "label": "Otomatisasi",
+      "heading": "Otomatisasi",
+      "description": "Konfigurasikan aksi otomatis untuk menyederhanakan alur kerja manajemen proyek Anda dan mengurangi tugas manual.",
+      "auto-archive": {
+        "title": "Arsip otomatis item kerja yang ditutup",
+        "description": "Plane akan mengarsipkan secara otomatis item kerja yang telah selesai atau dibatalkan.",
+        "duration": "Arsip otomatis item kerja yang ditutup selama"
+      },
+      "auto-close": {
+        "title": "Tutup otomatis item kerja",
+        "description": "Plane akan menutup secara otomatis item kerja yang belum selesai atau dibatalkan.",
+        "duration": "Tutup otomatis item kerja yang tidak aktif selama",
+        "auto_close_status": "Status penutupan otomatis"
+      },
+      "auto-remind": {
+        "title": "Pengingat otomatis",
+        "description": "Plane akan mengirim pengingat otomatis via email dan notifikasi dalam aplikasi untuk memantau kemajuan proyek Anda.",
+        "duration": "Kirim pengingat sebelum"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Belum ada label",
+        "description": "Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
+      },
+      "estimates": {
+        "title": "Belum ada sistem perkiraan",
+        "description": "Buat serangkaian perkiraan untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
+        "primary_button": "Tambah sistem perkiraan"
+      },
+      "integrations": {
+        "title": "Tidak ada integrasi yang dikonfigurasi",
+        "description": "Konfigurasikan GitHub dan integrasi lainnya untuk menyinkronkan item kerja proyek Anda."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Aktifkan alur kerja",
+        "description": "Atur alur kerja untuk mengontrol pergerakan item kerja",
+        "no_states_tooltip": "Tidak ada status yang ditambahkan ke alur kerja.",
+        "no_work_item_types_tooltip": "Tidak ada tipe item kerja yang ditambahkan ke alur kerja.",
+        "no_states_or_work_item_types_tooltip": "Tidak ada status atau tipe item kerja yang ditambahkan ke alur kerja.",
+        "toast": {
+          "loading": {
+            "enabling": "Mengaktifkan alur kerja",
+            "disabling": "Menonaktifkan alur kerja"
+          },
+          "success": {
+            "title": "Berhasil!",
+            "message": "Alur kerja berhasil diaktifkan."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Gagal mengaktifkan alur kerja. Silakan coba lagi."
+          }
+        }
+      },
+      "heading": "Alur Kerja",
+      "description": "Otomatisasi transisi item kerja dan tetapkan aturan untuk mengontrol bagaimana tugas berpindah melalui pipeline proyek Anda.",
+      "add_button": "Tambah alur kerja baru",
+      "search": "Cari alur kerja",
+      "detail": {
+        "define": "Tentukan alur kerja",
+        "add_states": "Tambah status",
+        "unmapped_states": {
+          "title": "Status tak terpetakan terdeteksi",
+          "description": "Beberapa item kerja untuk tipe yang dipilih saat ini berada dalam status yang tidak ada dalam alur kerja ini.",
+          "note": "Jika Anda mengaktifkan alur kerja ini, item ini akan otomatis dipindahkan ke status awal untuk alur kerja ini.",
+          "label": "Status hilang",
+          "tooltip": "Beberapa item kerja berada dalam status yang tidak dipetakan ke alur kerja ini. Buka alur kerja untuk meninjau."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Semua status sedang digunakan",
+          "description": "Semua status yang ditentukan untuk proyek ini sudah ada dalam alur kerja Anda saat ini."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Alur kerja ini berlaku untuk tipe item kerja apa pun yang tidak ditetapkan ke alur kerja."
+      },
+      "create": {
+        "heading": "Buat alur kerja baru",
+        "name": {
+          "placeholder": "Tambah nama unik",
+          "validation": {
+            "max_length": "Nama harus kurang dari 255 karakter",
+            "required": "Nama diperlukan",
+            "invalid": "Nama hanya boleh berisi huruf, angka, spasi, tanda hubung, dan apostrof"
+          }
+        },
+        "description": {
+          "placeholder": "Tambah deskripsi singkat",
+          "validation": {
+            "invalid": "Deskripsi hanya boleh berisi huruf, angka, spasi, tanda hubung, dan apostrof"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipe item kerja"
+        },
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil dibuat."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal membuat alur kerja. Silakan coba lagi."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil diperbarui."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal memperbarui alur kerja. Silakan coba lagi."
+        }
+      },
+      "delete": {
+        "loading": "Menghapus alur kerja",
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil dihapus."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal menghapus alur kerja. Silakan coba lagi."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Status berhasil ditambahkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal menambahkan status. Silakan coba lagi."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipe item kerja",
+      "description": "Buat dan sesuaikan berbagai tipe item kerja dengan properti unik"
+    },
+    "features": {
+      "cycles": {
+        "title": "Siklus",
+        "short_title": "Siklus",
+        "description": "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        "toggle_title": "Aktifkan siklus",
+        "toggle_description": "Rencanakan pekerjaan dalam jangka waktu yang terfokus."
+      },
+      "modules": {
+        "title": "Modul",
+        "short_title": "Modul",
+        "description": "Atur pekerjaan menjadi sub-proyek dengan pemimpin dan penerima tugas khusus.",
+        "toggle_title": "Aktifkan modul",
+        "toggle_description": "Anggota proyek akan dapat membuat dan mengedit modul."
+      },
+      "views": {
+        "title": "Tampilan",
+        "short_title": "Tampilan",
+        "description": "Simpan pengurutan, filter, dan opsi tampilan kustom atau bagikan dengan tim Anda.",
+        "toggle_title": "Aktifkan tampilan",
+        "toggle_description": "Anggota proyek akan dapat membuat dan mengedit tampilan."
+      },
+      "pages": {
+        "title": "Halaman",
+        "short_title": "Halaman",
+        "description": "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
+        "toggle_title": "Aktifkan halaman",
+        "toggle_description": "Anggota proyek akan dapat membuat dan mengedit halaman."
+      },
+      "intake": {
+        "intake_responsibility": "Tanggung jawab penerimaan",
+        "intake_sources": "Sumber penerimaan",
+        "title": "Penerimaan",
+        "short_title": "Penerimaan",
+        "description": "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
+        "toggle_title": "Aktifkan penerimaan",
+        "toggle_description": "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
+        "toggle_tooltip_on": "Minta Admin Proyek untuk mengaktifkan ini.",
+        "toggle_tooltip_off": "Minta Admin Proyek untuk menonaktifkan ini.",
+        "notify_assignee": {
+          "title": "Beritahu yang ditugaskan",
+          "description": "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi"
+        },
+        "in_app": {
+          "title": "Dalam aplikasi",
+          "description": "Dapatkan item kerja baru dari Anggota dan Tamu di ruang kerja Anda tanpa mengganggu item kerja yang ada."
+        },
+        "email": {
+          "title": "Email",
+          "description": "Kumpulkan item kerja baru dari siapa saja yang mengirim email ke alamat email Plane.",
+          "fieldName": "ID Email"
+        },
+        "form": {
+          "title": "Formulir",
+          "description": "Izinkan orang di luar ruang kerja Anda membuat item kerja baru potensial melalui formulir khusus dan aman.",
+          "fieldName": "URL formulir default",
+          "create_forms": "Buat Formulir menggunakan jenis item kerja",
+          "manage_forms": "Kelola formulir",
+          "manage_forms_tooltip": "Minta Admin Ruang Kerja untuk mengelola ini.",
+          "create_form": "Buat formulir",
+          "edit_form": "Edit detail formulir",
+          "form_title": "Judul formulir",
+          "form_title_required": "Judul formulir wajib diisi",
+          "work_item_type": "Jenis item kerja",
+          "remove_property": "Hapus properti",
+          "select_properties": "Pilih properti",
+          "search_placeholder": "Cari properti",
+          "toasts": {
+            "success_create": "Formulir penerimaan berhasil dibuat",
+            "success_update": "Formulir penerimaan berhasil diperbarui",
+            "error_create": "Gagal membuat formulir penerimaan",
+            "error_update": "Gagal memperbarui formulir penerimaan"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Mengatur yang ditugaskan...",
+            "success": {
+              "title": "Berhasil!",
+              "message": "Yang ditugaskan berhasil diatur."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Terjadi kesalahan saat mengatur yang ditugaskan. Silakan coba lagi."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Pelacakan waktu",
+        "short_title": "Pelacakan waktu",
+        "description": "Catat waktu yang dihabiskan untuk item kerja dan proyek.",
+        "toggle_title": "Aktifkan pelacakan waktu",
+        "toggle_description": "Anggota proyek akan dapat mencatat waktu yang dikerjakan."
+      },
+      "milestones": {
+        "title": "Tonggak",
+        "short_title": "Tonggak",
+        "description": "Tonggak menyediakan lapisan untuk menyelaraskan item kerja menuju tanggal penyelesaian bersama.",
+        "toggle_title": "Aktifkan tonggak",
+        "toggle_description": "Organisir item kerja berdasarkan tenggat tonggak."
+      },
+      "toasts": {
+        "loading": "Memperbarui fitur proyek...",
+        "success": "Fitur proyek berhasil diperbarui.",
+        "error": "Terjadi kesalahan saat memperbarui fitur proyek. Silakan coba lagi."
+      }
+    },
+    "project_updates": {
+      "heading": "Pembaruan Proyek",
+      "description": "Pelacakan terpadu dan pemantauan kemajuan untuk proyek ini"
+    },
+    "templates": {
+      "heading": "Templat",
+      "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman saat Anda menggunakan templat."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Penjadwalan otomatis siklus",
+        "description": "Jaga agar siklus tetap berjalan tanpa pengaturan manual.",
+        "tooltip": "Buat siklus baru secara otomatis berdasarkan jadwal yang Anda pilih.",
+        "edit_button": "Edit",
+        "form": {
+          "cycle_title": {
+            "label": "Judul siklus",
+            "placeholder": "Judul",
+            "tooltip": "Judul akan ditambahkan dengan nomor untuk siklus berikutnya. Misalnya: Desain - 1/2/3",
+            "validation": {
+              "required": "Judul siklus wajib diisi",
+              "max_length": "Judul tidak boleh melebihi 255 karakter"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durasi siklus",
+            "unit": "Minggu",
+            "validation": {
+              "required": "Durasi siklus wajib diisi",
+              "min": "Durasi siklus harus minimal 1 minggu",
+              "max": "Durasi siklus tidak boleh melebihi 30 minggu",
+              "positive": "Durasi siklus harus positif"
+            }
+          },
+          "cooldown_period": {
+            "label": "Periode pendinginan",
+            "unit": "hari",
+            "tooltip": "Jeda antara siklus sebelum siklus berikutnya dimulai.",
+            "validation": {
+              "required": "Periode pendinginan wajib diisi",
+              "negative": "Periode pendinginan tidak boleh negatif"
+            }
+          },
+          "start_date": {
+            "label": "Hari mulai siklus",
+            "validation": {
+              "required": "Tanggal mulai wajib diisi",
+              "past": "Tanggal mulai tidak boleh di masa lalu"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Jumlah siklus mendatang",
+            "validation": {
+              "required": "Jumlah siklus wajib diisi",
+              "min": "Setidaknya 1 siklus diperlukan",
+              "max": "Tidak dapat menjadwalkan lebih dari 3 siklus"
+            }
+          },
+          "auto_rollover": {
+            "label": "Pemindahan otomatis item pekerjaan",
+            "tooltip": "Pada hari siklus selesai, pindahkan semua item pekerjaan yang belum selesai ke siklus berikutnya."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Mengaktifkan penjadwalan otomatis siklus",
+            "loading_disable": "Menonaktifkan penjadwalan otomatis siklus",
+            "success": {
+              "title": "Berhasil!",
+              "message": "Penjadwalan otomatis siklus berhasil diaktifkan."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal mengaktifkan penjadwalan otomatis siklus."
+            }
+          },
+          "save": {
+            "loading": "Menyimpan konfigurasi penjadwalan otomatis siklus",
+            "success": {
+              "title": "Berhasil!",
+              "message_create": "Konfigurasi penjadwalan otomatis siklus berhasil disimpan.",
+              "message_update": "Konfigurasi penjadwalan otomatis siklus berhasil diperbarui."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message_create": "Gagal menyimpan konfigurasi penjadwalan otomatis siklus.",
+              "message_update": "Gagal memperbarui konfigurasi penjadwalan otomatis siklus."
+            }
+          }
+        }
+      }
+    }
+  }
+}
