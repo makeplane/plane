@@ -17,6 +17,7 @@ import type {
   TIssueServiceType,
   TIssuesResponse,
   TIssueSubIssues,
+  TPage,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -329,6 +330,37 @@ export class IssueService extends APIService {
   async deleteIssueLink(workspaceSlug: string, projectId: string, issueId: string, linkId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "links" : "issue-links"}/${linkId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchIssuePages(workspaceSlug: string, projectId: string, issueId: string): Promise<TPage[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/issue-pages/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async attachIssuePage(workspaceSlug: string, projectId: string, issueId: string, pageId: string): Promise<TPage> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/issue-pages/`,
+      { page_id: pageId }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async detachIssuePage(workspaceSlug: string, projectId: string, issueId: string, pageId: string): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/issue-pages/${pageId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

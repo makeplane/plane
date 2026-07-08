@@ -7,7 +7,7 @@
 import React from "react";
 import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, PageIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
@@ -15,6 +15,7 @@ import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/is
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
+import { IssuePagesActionButton } from "./pages";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
 import { IssueDetailWidgetButton } from "./widget-button";
@@ -85,6 +86,19 @@ export function IssueDetailWidgetActionButtons(props: Props) {
             <IssueDetailWidgetButton
               title={t("common.attach")}
               icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              disabled={disabled}
+            />
+          }
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {!hideWidgets?.includes("pages") && (
+        <IssuePagesActionButton
+          customButton={
+            <IssueDetailWidgetButton
+              title={t("issue.pages.link_pages")}
+              icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
               disabled={disabled}
             />
           }

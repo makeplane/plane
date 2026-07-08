@@ -1014,6 +1014,63 @@ def delete_link_activity(
     )
 
 
+def create_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="linked a page",
+            verb="created",
+            actor_id=actor_id,
+            field="page",
+            new_value="",
+            new_identifier=requested_data.get("page_id", None) if requested_data else None,
+            epoch=epoch,
+        )
+    )
+
+
+def delete_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="unlinked a page",
+            verb="deleted",
+            actor_id=actor_id,
+            field="page",
+            old_value="",
+            old_identifier=requested_data.get("page_id", None) if requested_data else None,
+            new_value="",
+            epoch=epoch,
+        )
+    )
+
+
 def create_attachment_activity(
     requested_data,
     current_instance,
@@ -1551,6 +1608,8 @@ def issue_activity(
             "link.activity.created": create_link_activity,
             "link.activity.updated": update_link_activity,
             "link.activity.deleted": delete_link_activity,
+            "page.activity.created": create_page_activity,
+            "page.activity.deleted": delete_page_activity,
             "attachment.activity.created": create_attachment_activity,
             "attachment.activity.deleted": delete_attachment_activity,
             "issue_relation.activity.created": create_issue_relation_activity,
