@@ -6,6 +6,10 @@
 from rest_framework import serializers
 
 # Module imports
+from plane.app.serializers.worklog import (
+    MAX_WORKLOG_DESCRIPTION_LENGTH,
+    MAX_WORKLOG_DURATION_MINUTES,
+)
 from plane.db.models import IssueWorkLog
 
 from .base import BaseSerializer
@@ -26,6 +30,10 @@ class IssueWorkLogSerializer(BaseSerializer):
     project_id = serializers.UUIDField(read_only=True)
     workspace_id = serializers.UUIDField(read_only=True)
     logged_by = serializers.UUIDField(source="logged_by_id", read_only=True)
+    duration = serializers.IntegerField(min_value=1, max_value=MAX_WORKLOG_DURATION_MINUTES)
+    description = serializers.CharField(
+        max_length=MAX_WORKLOG_DESCRIPTION_LENGTH, required=False, allow_blank=True
+    )
 
     class Meta:
         model = IssueWorkLog

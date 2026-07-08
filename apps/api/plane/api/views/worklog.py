@@ -15,11 +15,22 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import IssueWorkLogSerializer
-from plane.db.models import IssueWorkLog, Project, ProjectMember
+from plane.db.models import IntakeIssue, IssueWorkLog, Project, ProjectMember
+from plane.db.models.intake import IntakeIssueStatus
 from plane.db.models.project import ROLE
 from .base import BaseAPIView
 
 TIME_TRACKING_DISABLED_ERROR = "Time tracking is disabled for this project."
+INTAKE_WORK_ITEM_ERROR = "Time cannot be logged on an intake work item until it is accepted."
+
+
+def _is_unaccepted_intake_issue(project_id, issue_id):
+    """Worklogs are blocked on intake work items that have not been accepted yet."""
+    return (
+        IntakeIssue.objects.filter(project_id=project_id, issue_id=issue_id)
+        .exclude(status=IntakeIssueStatus.ACCEPTED)
+        .exists()
+    )
 
 
 def _is_project_admin(user, slug, project_id):
@@ -65,11 +76,14 @@ class IssueWorkLogListCreateAPIEndpoint(BaseAPIView):
         responses={200: OpenApiResponse(description="List of worklogs", response=IssueWorkLogSerializer)},
     )
     def get(self, request, slug, project_id, issue_id):
-        """List work item worklogs."""
-        return self.paginate(
-            request=request,
-            queryset=self.get_queryset(),
-            on_results=lambda worklogs: IssueWorkLogSerializer(worklogs, many=True).data,
+        """List work item worklogs.
+
+        Returns a plain (non-paginated) JSON array — the shape the public
+        Plane SDK / MCP ``list_work_logs`` client expects.
+        """
+        return Response(
+            IssueWorkLogSerializer(self.get_queryset(), many=True).data,
+            status=status.HTTP_200_OK,
         )
 
     @extend_schema(
@@ -84,6 +98,9 @@ class IssueWorkLogListCreateAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id)
         if not project.is_time_tracking_enabled:
             return Response({"error": TIME_TRACKING_DISABLED_ERROR}, status=status.HTTP_400_BAD_REQUEST)
+
+        if _is_unaccepted_intake_issue(project_id, issue_id):
+            return Response({"error": INTAKE_WORK_ITEM_ERROR}, status=status.HTTP_400_BAD_REQUEST)
 
         # Deduplicate by external identity when provided
         if request.data.get("external_id") and request.data.get("external_source"):

@@ -7,6 +7,8 @@ from rest_framework import status
 from uuid import uuid4
 
 from plane.db.models import (
+    Intake,
+    IntakeIssue,
     Issue,
     IssueWorkLog,
     Project,
@@ -15,6 +17,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
+from plane.db.models.intake import IntakeIssueStatus
 
 
 def make_user(email=None, role_ws=None, workspace=None, project=None, role_project=15):
@@ -265,3 +268,54 @@ class TestWorklogAppRollup:
         totals = {row["issue_id"]: row["duration"] for row in response.json()}
         assert totals[str(issue.id)] == 40
         assert keep.id is not None
+
+
+@pytest.mark.contract
+class TestWorklogAppValidationAndGates:
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("duration", [0, -5, 525601, "abc"])
+    def test_create_invalid_duration_rejected(self, session_client, workspace, project, issue, duration):
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(url, {"duration": duration}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_description_too_long_rejected(self, session_client, workspace, project, issue):
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(url, {"duration": 10, "description": "x" * 5001}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_forged_logged_by_ignored(self, session_client, workspace, project, issue, create_user):
+        other = make_user(workspace=workspace, project=project)
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(
+            url,
+            {"duration": 10, "logged_by": str(other.id), "created_by": str(other.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        assert IssueWorkLog.objects.get(pk=response.json()["id"]).logged_by_id == create_user.id
+
+    @pytest.mark.django_db
+    def test_create_rejected_on_unaccepted_intake_work_item(self, session_client, workspace, project, issue):
+        intake = Intake.objects.create(name="Intake", project=project, workspace=workspace)
+        IntakeIssue.objects.create(
+            intake=intake, issue=issue, project=project, workspace=workspace, status=IntakeIssueStatus.PENDING
+        )
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(url, {"duration": 10}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_allowed_on_accepted_intake_work_item(self, session_client, workspace, project, issue):
+        intake = Intake.objects.create(name="Intake", project=project, workspace=workspace)
+        IntakeIssue.objects.create(
+            intake=intake, issue=issue, project=project, workspace=workspace, status=IntakeIssueStatus.ACCEPTED
+        )
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = session_client.post(url, {"duration": 10}, format="json")
+        assert response.status_code == status.HTTP_201_CREATED

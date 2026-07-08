@@ -13,9 +13,20 @@ from rest_framework.response import Response
 from .. import BaseViewSet
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import IssueWorkLogSerializer
-from plane.db.models import IssueWorkLog, Project, ProjectMember
+from plane.db.models import IntakeIssue, IssueWorkLog, Project, ProjectMember
+from plane.db.models.intake import IntakeIssueStatus
 
 TIME_TRACKING_DISABLED_ERROR = "Time tracking is disabled for this project."
+INTAKE_WORK_ITEM_ERROR = "Time cannot be logged on an intake work item until it is accepted."
+
+
+def _is_unaccepted_intake_issue(project_id, issue_id):
+    """Worklogs are blocked on intake work items that have not been accepted yet."""
+    return (
+        IntakeIssue.objects.filter(project_id=project_id, issue_id=issue_id)
+        .exclude(status=IntakeIssueStatus.ACCEPTED)
+        .exists()
+    )
 
 
 class IssueWorkLogViewSet(BaseViewSet):
@@ -56,6 +67,9 @@ class IssueWorkLogViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
         if not project.is_time_tracking_enabled:
             return Response({"error": TIME_TRACKING_DISABLED_ERROR}, status=status.HTTP_400_BAD_REQUEST)
+
+        if _is_unaccepted_intake_issue(project_id, issue_id):
+            return Response({"error": INTAKE_WORK_ITEM_ERROR}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = IssueWorkLogSerializer(data=request.data)
         if serializer.is_valid():

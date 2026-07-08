@@ -8,6 +8,8 @@ from rest_framework.test import APIClient
 from uuid import uuid4
 
 from plane.db.models import (
+    Intake,
+    IntakeIssue,
     Issue,
     IssueWorkLog,
     Project,
@@ -17,6 +19,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.db.models.api import APIToken
+from plane.db.models.intake import IntakeIssueStatus
 
 
 def make_user(email=None, workspace=None, role_ws=15, project=None, role_project=15):
@@ -128,14 +131,17 @@ class TestWorklogAPICreate:
 @pytest.mark.contract
 class TestWorklogAPIListRetrieve:
     @pytest.mark.django_db
-    def test_list_returns_worklogs(self, api_key_client, workspace, project, issue, create_user):
+    def test_list_returns_plain_array(self, api_key_client, workspace, project, issue, create_user):
+        """SDK/MCP contract: the worklog list is a plain JSON array, not a paginated envelope."""
         IssueWorkLog.objects.create(
             workspace=workspace, project=project, issue=issue, logged_by=create_user, duration=10
         )
         url = list_url(workspace.slug, project.id, issue.id)
         response = api_key_client.get(url)
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 1
+        assert isinstance(response.data, list)
+        assert len(response.data) == 1
+        assert response.data[0]["duration"] == 10
 
     @pytest.mark.django_db
     def test_retrieve(self, api_key_client, workspace, project, issue, create_user):
@@ -223,3 +229,55 @@ class TestWorklogAPIIsolation:
         url = detail_url(workspace.slug, project.id, issue.id, worklog.id)
         response = api_key_client.get(url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.contract
+class TestWorklogAPIValidationAndGates:
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("duration", [0, -5, 525601, "abc"])
+    def test_create_invalid_duration_rejected(self, api_key_client, workspace, project, issue, duration):
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = api_key_client.post(url, {"duration": duration}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_description_too_long_rejected(self, api_key_client, workspace, project, issue):
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = api_key_client.post(url, {"duration": 10, "description": "x" * 5001}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_forged_logged_by_ignored(self, api_key_client, workspace, project, issue, create_user):
+        other = make_user(workspace=workspace, role_ws=15, project=project, role_project=15)
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = api_key_client.post(
+            url,
+            {"duration": 10, "logged_by": str(other.id), "created_by": str(other.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        assert str(response.data["logged_by"]) == str(create_user.id)
+        assert IssueWorkLog.objects.get(pk=response.data["id"]).logged_by_id == create_user.id
+
+    @pytest.mark.django_db
+    def test_create_rejected_on_unaccepted_intake_work_item(self, api_key_client, workspace, project, issue):
+        intake = Intake.objects.create(name="Intake", project=project, workspace=workspace)
+        IntakeIssue.objects.create(
+            intake=intake, issue=issue, project=project, workspace=workspace, status=IntakeIssueStatus.PENDING
+        )
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = api_key_client.post(url, {"duration": 10}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_allowed_on_accepted_intake_work_item(self, api_key_client, workspace, project, issue):
+        intake = Intake.objects.create(name="Intake", project=project, workspace=workspace)
+        IntakeIssue.objects.create(
+            intake=intake, issue=issue, project=project, workspace=workspace, status=IntakeIssueStatus.ACCEPTED
+        )
+        url = list_url(workspace.slug, project.id, issue.id)
+        response = api_key_client.post(url, {"duration": 10}, format="json")
+        assert response.status_code == status.HTTP_201_CREATED
