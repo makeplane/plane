@@ -11,6 +11,7 @@ from .external import urlpatterns as external_urls
 from .intake import urlpatterns as intake_urls
 from .issue import urlpatterns as issue_urls
 from .issue_type import urlpatterns as issue_type_urls
+from .issue_property import urlpatterns as issue_property_urls
 from .module import urlpatterns as module_urls
 from .notification import urlpatterns as notification_urls
 from .page import urlpatterns as page_urls
@@ -33,6 +34,7 @@ urlpatterns = [
     *intake_urls,
     *issue_urls,
     *issue_type_urls,
+    *issue_property_urls,
     *module_urls,
     *notification_urls,
     *page_urls,

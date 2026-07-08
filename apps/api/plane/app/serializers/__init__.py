@@ -3,6 +3,11 @@
 # See the LICENSE file for details.
 
 from .base import BaseSerializer
+from .issue_property import (
+    IssuePropertySerializer,
+    IssuePropertyOptionSerializer,
+    IssuePropertyValueSerializer,
+)
 from .user import (
     UserSerializer,
     UserLiteSerializer,

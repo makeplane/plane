@@ -1,0 +1,7 @@
+# VERSIONNING — api/work-item-properties
+
+| Version | Date | Type | Description | Fichiers touchés |
+|---------|------|------|-------------|------------------|
+| 0.1.0 | 2026-07-08 | feat | Custom properties : 3 modèles greenfield + migration 0124 + util cast/validation + serializers + CRUD interne & externe MCP (définitions/options/valeurs) + activité ; durcissements sécurité (immuabilité type, DECIMAL fini, required, cap multi) ; web (types, services, stores, provider handlers, rendu par type, gestion, activité). 43 tests pytest verts, typecheck web vert. | apps/api/plane/db/models/issue_property.py, db/migrations/0124_issue_properties.py, utils/issue_property.py, app/serializers/issue_property.py, app/views/issue_property/base.py, app/urls/issue_property.py, api/serializers/issue_property.py, api/views/issue_property.py, api/urls/issue_property.py, bgtasks/issue_activities_task.py, tests/{unit/utils,contract/app,contract/api}/test_issue_propert*, + registres __init__ ; apps/web/core/{services/issue-property*.ts, store/issue-property*.ts, hooks/store/use-issue-property*.ts, store/root.store.ts}, apps/web/ce/{store/issue-property*.ts, components/issues/issue-properties/*, issue-modal/{provider,modal-additional-properties}.tsx, issue-details/{additional-properties,issue-properties-activity/root}.tsx}, packages/types/src/issues/issue-property*.ts |
+
+> Table mise à jour par @update-writer-after-implement après chaque implémentation.

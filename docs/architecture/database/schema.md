@@ -2,7 +2,7 @@
 
 > Fichier tenu à jour par `@update-writer-after-implement` après chaque migration.
 > BDD : PostgreSQL 15 · ORM : Django 4.2 (migrations dans `apps/api/plane/db/migrations/`).
-> Dernière mise à jour : 2026-07-08 (migration 0123).
+> Dernière mise à jour : 2026-07-08 (migration 0124).
 
 ---
 
@@ -67,3 +67,70 @@ Le manager par défaut `objects` filtre `deleted_at IS NULL`. `all_objects` reto
 - Invariant applicatif (non contraint en DB) : `issue.workspace_id == page.workspace_id`.
 - Le `delete()` est un soft-delete (pose `deleted_at`). Permet le ré-attachement d'une page précédemment détachée.
 - Ordering par défaut : `-created_at`.
+
+---
+
+## Table `issue_properties` (custom property definition — module work-item-properties, migration 0124)
+
+Définition d'une propriété custom rattachée à un type de work item.
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | |
+| `workspace_id` | FK workspaces | dérivé du projet |
+| `project_id` | FK projects | |
+| `issue_type_id` | FK issue_types | related_name `properties` |
+| `display_name` | varchar(255) | |
+| `description` | text | |
+| `property_type` | varchar | TEXT/DECIMAL/BOOLEAN/DATETIME/OPTION/RELATION/URL (EMAIL/FILE/FORMULA réservés) |
+| `relation_type` | varchar null | USER/ISSUE (si RELATION) |
+| `is_required` / `is_multi` / `is_active` | bool | |
+| `default_value` | text null | |
+| `settings` | jsonb | ex. format texte |
+| `sort_order` | float | |
+| `external_source` / `external_id` | varchar null | |
+| `created_at`/`updated_at`/`deleted_at`/`created_by`/`updated_by` | BaseModel | soft-delete |
+
+Index : `(issue_type, project)`. **Immuables après création** : `property_type`, `relation_type`.
+
+## Table `issue_property_options` (choix d'une propriété OPTION)
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | |
+| `workspace_id` / `project_id` | FK | |
+| `property_id` | FK issue_properties | related_name `options` |
+| `name` | varchar(255) | |
+| `description` | text | |
+| `is_active` / `is_default` | bool | |
+| `sort_order` | float | |
+| `logo_props` | jsonb | |
+| `external_source` / `external_id` | varchar null | |
+
+Index : `issue_prop_opt_prop_proj_idx` sur `(property, project)`.
+
+## Table `issue_property_values` (valeur par work item — stockage typé)
+
+Une ligne par valeur ; `is_multi` ⇒ plusieurs lignes par (issue, property).
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | |
+| `workspace_id` / `project_id` | FK | |
+| `issue_id` | FK issues | related_name `property_values` |
+| `property_id` | FK issue_properties | related_name `values` |
+| `value_text` | text null | TEXT/URL |
+| `value_boolean` | bool null | BOOLEAN |
+| `value_decimal` | numeric null | DECIMAL (NaN/Inf rejetés) |
+| `value_datetime` | timestamptz null | DATETIME |
+| `value_uuid` | uuid null | RELATION (user/issue) |
+| `value_option_id` | FK issue_property_options null | OPTION |
+| `external_source` / `external_id` | varchar null | |
+
+Index : `(issue, property)`.
+
+#### Notes (properties)
+
+- Aucune permission stockée sur les lignes ; l'accès est résolu dynamiquement (mutations de définition = ADMIN projet ; valeurs = droit d'édition du work item).
+- Isolation projet stricte : `type∈projet`, `option∈property`, RELATION-user ∈ membres actifs du projet, RELATION-issue ∈ projet.
+- Cast/validation centralisés dans `plane/utils/issue_property.py` (une colonne par type).

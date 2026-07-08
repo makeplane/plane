@@ -85,6 +85,11 @@ from .workspace.sticky import WorkspaceStickyViewSet
 
 from .state.base import StateViewSet, IntakeStateEndpoint
 from .issue_type.base import IssueTypeViewSet, IssueTypeEnableEndpoint
+from .issue_property.base import (
+    IssuePropertyEndpoint,
+    IssuePropertyOptionEndpoint,
+    IssuePropertyValueEndpoint,
+)
 from .view.base import (
     WorkspaceViewViewSet,
     WorkspaceViewIssuesViewSet,
