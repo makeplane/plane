@@ -71,6 +71,8 @@ Hors V1 (le modèle `Webhook` n'a pas de flag worklog ; cohérent avec les prope
 - **Identité externe create-only + contrainte DB** (BK-2, corrigé) : `external_source`/`external_id` sont ignorés en PATCH (serializers), la dédup 409 s'applique aux deux surfaces de création, et une `UniqueConstraint` partielle `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration `0126`) garantit l'idempotence d'import contre les races.
 - **Listes non paginées non bornées** (décision assumée, BK-3) : le contrat SDK/MCP impose un tableau simple ; pas de cap serveur en V1 (tailles pratiques bornées par le rythme de saisie humaine). À réévaluer si un usage machine massif apparaît.
 - **Worklog sur work item archivé possible** (BK-4, info) : non bloqué en V1 (l'upstream ne documente rien) ; les lectures excluent déjà les projets archivés.
+- **Description vide en édition** (WB-1, corrigé) : `worklog-form-modal.tsx` envoie toujours le champ `description` en PATCH (même vide) — sans ça, un champ absent est ignoré par le serializer et la description ne peut pas être effacée.
+- **Types `logged_by` nullables** (WB-3, corrigé) : `TIssueWorklog.logged_by` et `logged_by_detail` sont `null | …` dans `packages/types` pour refléter le `SET_NULL` Django ; les rendus de l'auteur doivent gérer le cas absent (utilisateur supprimé).
 
 ## Web (apps/web — tout en `ce/` + `core/`, PAS de dossier `ee/` ; alias `@/plane-web/*` → `./ce/*`)
 
