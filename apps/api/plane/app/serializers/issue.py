@@ -209,6 +209,12 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Type is not valid please pass a valid type_id")
 
+        # An epic can never have a parent work item
+        issue_type = attrs.get("type", self.instance.type if self.instance else None)
+        parent = attrs.get("parent", self.instance.parent if self.instance else None)
+        if parent is not None and issue_type is not None and issue_type.is_epic:
+            raise serializers.ValidationError("An epic cannot have a parent")
+
         return attrs
 
     def create(self, validated_data):

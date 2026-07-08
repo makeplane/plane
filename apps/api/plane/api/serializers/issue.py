@@ -66,6 +66,8 @@ class IssueSerializer(BaseSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
+    # Read-only flag — true when the work item's type is an epic type
+    is_epic = serializers.BooleanField(source="type.is_epic", read_only=True, default=False)
 
     class Meta:
         model = Issue

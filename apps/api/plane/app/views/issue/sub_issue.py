@@ -215,6 +215,13 @@ class SubIssuesEndpoint(BaseAPIView):
         # Scope to workspace to prevent cross-tenant IDOR
         sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids, workspace__slug=slug)
 
+        # Epics can never be nested under another work item
+        if sub_issues.filter(type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added as sub-work items"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         for sub_issue in sub_issues:
             sub_issue.parent = parent_issue
 

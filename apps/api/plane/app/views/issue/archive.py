@@ -256,6 +256,11 @@ class IssueArchiveViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        if issue.type_id is not None and issue.type.is_epic:
+            return Response(
+                {"error": "Epics cannot be archived"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
                 {"error": "Can only archive completed or cancelled state group issue"},
@@ -315,6 +320,11 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
         issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids).select_related(
             "state"
         )
+        if issues.filter(type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be archived"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         bulk_archive_issues = []
         for issue in issues:
             if issue.state.group not in ["completed", "cancelled"]:

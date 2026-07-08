@@ -212,6 +212,12 @@ class ModuleIssueViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+        # Epics can never be added to a module
+        if Issue.objects.filter(pk__in=issues, type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added to a module"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         project = Project.objects.get(pk=project_id)
         # Scope to workspace+project to prevent cross-tenant IDOR
         issues = list(
@@ -258,6 +264,12 @@ class ModuleIssueViewSet(BaseViewSet):
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
+        # Epics can never be added to a module
+        if modules and Issue.objects.filter(pk=issue_id, type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added to a module"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         project = Project.objects.get(pk=project_id)
 
         if modules:

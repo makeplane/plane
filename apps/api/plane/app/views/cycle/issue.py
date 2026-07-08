@@ -227,6 +227,13 @@ class CycleIssueViewSet(BaseViewSet):
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Epics can never be added to a cycle
+        if Issue.objects.filter(pk__in=issues, type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added to a cycle"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 
         if cycle.end_date is not None and cycle.end_date < timezone.now():

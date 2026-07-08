@@ -59,6 +59,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_type import filter_epics
 from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
@@ -136,14 +137,18 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         filters = issue_filters(request.query_params, "GET")
 
         order_by_param = request.GET.get("order_by", "-created_at")
-        issue_queryset = Issue.issue_objects.filter(
-            id__in=Issue.issue_objects.filter(
-                Q(assignees__in=[user_id]) | Q(created_by_id=user_id) | Q(issue_subscribers__subscriber_id=user_id),
+        issue_queryset = filter_epics(
+            Issue.issue_objects.filter(
+                id__in=Issue.issue_objects.filter(
+                    Q(assignees__in=[user_id])
+                    | Q(created_by_id=user_id)
+                    | Q(issue_subscribers__subscriber_id=user_id),
+                    workspace__slug=slug,
+                ).values_list("id", flat=True),
                 workspace__slug=slug,
-            ).values_list("id", flat=True),
-            workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+            )
         )
 
         # Apply filtering from filterset
