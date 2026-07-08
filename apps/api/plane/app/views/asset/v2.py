@@ -324,8 +324,14 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         """
         if asset.project_id is None:
             return None
+        # Scope the membership lookup to the asset's workspace as well as its
+        # project, mirroring allow_permission's PROJECT branch. This prevents a
+        # member of the same project in a different workspace from passing the
+        # check should an asset row ever be inconsistent (asset.workspace_id !=
+        # asset.project.workspace_id).
         is_project_member = ProjectMember.objects.filter(
             member=request.user,
+            workspace_id=asset.workspace_id,
             project_id=asset.project_id,
             is_active=True,
         ).exists()
