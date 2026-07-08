@@ -867,5 +867,52 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovat jako JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Zaznamenat čas",
+    "edit_work": "Upravit záznam času",
+    "hours": "Hodiny",
+    "minutes": "Minuty",
+    "description": "Popis",
+    "description_placeholder": "Na čem jste pracovali?",
+    "submit": "Zaznamenat",
+    "update": "Aktualizovat",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "duration_error": "Zadejte dobu trvání větší než nula.",
+    "logged": "zaznamenal(a)",
+    "delete_confirmation": "Opravdu chcete smazat tento časový záznam? Tuto akci nelze vrátit zpět.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Úspěch",
+          "message": "Čas byl úspěšně zaznamenán."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Zaznamenání času se nezdařilo. Zkuste to znovu."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspěch",
+          "message": "Záznam času byl úspěšně aktualizován."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Aktualizace se nezdařila. Zkuste to znovu."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Úspěch",
+          "message": "Záznam času byl úspěšně smazán."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Smazání se nezdařilo. Zkuste to znovu."
+        }
+      }
+    }
   }
 }

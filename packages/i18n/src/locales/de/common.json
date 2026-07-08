@@ -867,5 +867,52 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "worklog": {
+    "log_work": "Zeit erfassen",
+    "edit_work": "Zeiterfassung bearbeiten",
+    "hours": "Stunden",
+    "minutes": "Minuten",
+    "description": "Beschreibung",
+    "description_placeholder": "Woran haben Sie gearbeitet?",
+    "submit": "Erfassen",
+    "update": "Aktualisieren",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "duration_error": "Geben Sie eine Dauer größer als null ein.",
+    "logged": "erfasste",
+    "delete_confirmation": "Möchten Sie diesen Zeiteintrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Erfolg",
+          "message": "Zeit erfolgreich erfasst."
+        },
+        "error": {
+          "title": "Fehler",
+          "message": "Zeit konnte nicht erfasst werden. Bitte erneut versuchen."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Erfolg",
+          "message": "Zeiterfassung erfolgreich aktualisiert."
+        },
+        "error": {
+          "title": "Fehler",
+          "message": "Aktualisierung fehlgeschlagen. Bitte erneut versuchen."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Erfolg",
+          "message": "Zeiterfassung erfolgreich gelöscht."
+        },
+        "error": {
+          "title": "Fehler",
+          "message": "Löschen fehlgeschlagen. Bitte erneut versuchen."
+        }
+      }
+    }
   }
 }

@@ -867,5 +867,52 @@
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
     }
+  },
+  "worklog": {
+    "log_work": "Log work",
+    "edit_work": "Edit worklog",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "description": "Description",
+    "description_placeholder": "What did you work on?",
+    "submit": "Log work",
+    "update": "Update",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "duration_error": "Enter a duration greater than zero.",
+    "logged": "logged",
+    "delete_confirmation": "Are you sure you want to delete this time entry? This action cannot be undone.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Success",
+          "message": "Time logged successfully."
+        },
+        "error": {
+          "title": "Error",
+          "message": "Failed to log time. Please try again."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Success",
+          "message": "Worklog updated successfully."
+        },
+        "error": {
+          "title": "Error",
+          "message": "Failed to update worklog. Please try again."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Success",
+          "message": "Worklog deleted successfully."
+        },
+        "error": {
+          "title": "Error",
+          "message": "Failed to delete worklog. Please try again."
+        }
+      }
+    }
   }
 }

@@ -867,5 +867,52 @@
       "description": "Esporta elementi di lavoro in un file JSON.",
       "short_description": "Esporta come JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Registra tempo",
+    "edit_work": "Modifica registrazione",
+    "hours": "Ore",
+    "minutes": "Minuti",
+    "description": "Descrizione",
+    "description_placeholder": "Su cosa hai lavorato?",
+    "submit": "Registra",
+    "update": "Aggiorna",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "duration_error": "Inserisci una durata maggiore di zero.",
+    "logged": "ha registrato",
+    "delete_confirmation": "Vuoi davvero eliminare questa registrazione di tempo? Questa azione non può essere annullata.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Operazione riuscita",
+          "message": "Tempo registrato correttamente."
+        },
+        "error": {
+          "title": "Errore",
+          "message": "Registrazione del tempo non riuscita. Riprova."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Operazione riuscita",
+          "message": "Registrazione aggiornata correttamente."
+        },
+        "error": {
+          "title": "Errore",
+          "message": "Aggiornamento non riuscito. Riprova."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Operazione riuscita",
+          "message": "Registrazione eliminata correttamente."
+        },
+        "error": {
+          "title": "Errore",
+          "message": "Eliminazione non riuscita. Riprova."
+        }
+      }
+    }
   }
 }

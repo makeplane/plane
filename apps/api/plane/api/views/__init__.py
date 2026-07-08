@@ -81,3 +81,9 @@ from .page_link import (
     WorkItemPageLinkListCreateAPIEndpoint,
     WorkItemPageLinkDetailAPIEndpoint,
 )
+
+from .worklog import (
+    IssueWorkLogListCreateAPIEndpoint,
+    IssueWorkLogDetailAPIEndpoint,
+    IssueWorkLogProjectSummaryAPIEndpoint,
+)

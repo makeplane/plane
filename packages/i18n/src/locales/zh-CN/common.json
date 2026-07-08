@@ -867,5 +867,52 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
+  },
+  "worklog": {
+    "log_work": "记录工时",
+    "edit_work": "编辑工时",
+    "hours": "小时",
+    "minutes": "分钟",
+    "description": "描述",
+    "description_placeholder": "您做了哪些工作？",
+    "submit": "记录",
+    "update": "更新",
+    "cancel": "取消",
+    "delete": "删除",
+    "duration_error": "请输入大于零的时长。",
+    "logged": "记录了",
+    "delete_confirmation": "确定要删除此时间记录吗？此操作无法撤销。",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功",
+          "message": "工时记录成功。"
+        },
+        "error": {
+          "title": "错误",
+          "message": "工时记录失败，请重试。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功",
+          "message": "工时更新成功。"
+        },
+        "error": {
+          "title": "错误",
+          "message": "更新失败，请重试。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "成功",
+          "message": "工时删除成功。"
+        },
+        "error": {
+          "title": "错误",
+          "message": "删除失败，请重试。"
+        }
+      }
+    }
   }
 }

@@ -867,5 +867,52 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Zarejestruj czas",
+    "edit_work": "Edytuj wpis czasu",
+    "hours": "Godziny",
+    "minutes": "Minuty",
+    "description": "Opis",
+    "description_placeholder": "Nad czym pracowałeś?",
+    "submit": "Zarejestruj",
+    "update": "Zaktualizuj",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "duration_error": "Podaj czas trwania większy niż zero.",
+    "logged": "zarejestrował(a)",
+    "delete_confirmation": "Czy na pewno chcesz usunąć ten wpis czasu? Tej akcji nie można cofnąć.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Sukces",
+          "message": "Czas zarejestrowany pomyślnie."
+        },
+        "error": {
+          "title": "Błąd",
+          "message": "Nie udało się zarejestrować czasu. Spróbuj ponownie."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukces",
+          "message": "Wpis czasu zaktualizowany pomyślnie."
+        },
+        "error": {
+          "title": "Błąd",
+          "message": "Nie udało się zaktualizować. Spróbuj ponownie."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Sukces",
+          "message": "Wpis czasu usunięty pomyślnie."
+        },
+        "error": {
+          "title": "Błąd",
+          "message": "Nie udało się usunąć. Spróbuj ponownie."
+        }
+      }
+    }
   }
 }

@@ -867,5 +867,52 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Înregistrează timp",
+    "edit_work": "Editează înregistrarea",
+    "hours": "Ore",
+    "minutes": "Minute",
+    "description": "Descriere",
+    "description_placeholder": "La ce ai lucrat?",
+    "submit": "Înregistrează",
+    "update": "Actualizează",
+    "cancel": "Anulează",
+    "delete": "Șterge",
+    "duration_error": "Introdu o durată mai mare decât zero.",
+    "logged": "a înregistrat",
+    "delete_confirmation": "Sigur doriți să ștergeți această înregistrare de timp? Această acțiune nu poate fi anulată.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Succes",
+          "message": "Timp înregistrat cu succes."
+        },
+        "error": {
+          "title": "Eroare",
+          "message": "Înregistrarea timpului a eșuat. Încearcă din nou."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes",
+          "message": "Înregistrare actualizată cu succes."
+        },
+        "error": {
+          "title": "Eroare",
+          "message": "Actualizarea a eșuat. Încearcă din nou."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Succes",
+          "message": "Înregistrare ștearsă cu succes."
+        },
+        "error": {
+          "title": "Eroare",
+          "message": "Ștergerea a eșuat. Încearcă din nou."
+        }
+      }
+    }
   }
 }
