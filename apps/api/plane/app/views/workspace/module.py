@@ -21,7 +21,12 @@ class WorkspaceModulesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         modules = (
-            Module.objects.filter(workspace__slug=slug)
+            Module.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
@@ -105,6 +110,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                 )
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
         )
 
         serializer = ModuleSerializer(modules, many=True).data

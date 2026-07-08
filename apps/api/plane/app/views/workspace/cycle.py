@@ -21,7 +21,12 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         cycles = (
-            Cycle.objects.filter(workspace__slug=slug)
+            Cycle.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")
