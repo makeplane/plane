@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Vos post-it",
+    "placeholder": "cliquez pour écrire ici",
+    "all": "Toutes les post-it",
+    "no-data": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
+    "add": "Ajouter un post-it",
+    "search_placeholder": "Rechercher par titre",
+    "delete": "Supprimer le post-it",
+    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer ce post-it ?",
+    "empty_state": {
+      "simple": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
+      "general": {
+        "title": "Les post-it sont des notes rapides et des tâches que vous prenez à la volée.",
+        "description": "Capturez vos pensées et idées facilement en créant des post-it que vous pouvez consulter à tout moment et de n’importe où.",
+        "primary_button": {
+          "text": "Ajouter un post-it"
+        }
+      },
+      "search": {
+        "title": "Cela ne correspond à aucun de vos post-it.",
+        "description": "Essayez un terme différent ou faites-nous savoir\nsi vous êtes sûr que votre recherche est correcte.",
+        "primary_button": {
+          "text": "Ajouter un post-it"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Le nom du post-it ne peut pas dépasser 100 caractères.",
+        "already_exists": "Il existe déjà un post-it sans description"
+      },
+      "created": {
+        "title": "Post-it créé",
+        "message": "Le post-it a été créé avec succès"
+      },
+      "not_created": {
+        "title": "Post-it non créé",
+        "message": "Le post-it n’a pas pu être créé"
+      },
+      "updated": {
+        "title": "Post-it mis à jour",
+        "message": "Le post-it a été mis à jour avec succès"
+      },
+      "not_updated": {
+        "title": "Post-it non mis à jour",
+        "message": "Le post-it n’a pas pu être mis à jour"
+      },
+      "removed": {
+        "title": "Post-it supprimé",
+        "message": "Le post-it a été supprimé avec succès"
+      },
+      "not_removed": {
+        "title": "Post-it non supprimé",
+        "message": "Le post-it n’a pas pu être supprimé"
+      }
+    }
+  }
+}

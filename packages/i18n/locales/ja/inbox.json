@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "保留中",
+        "description": "保留中"
+      },
+      "declined": {
+        "title": "却下",
+        "description": "却下"
+      },
+      "snoozed": {
+        "title": "スヌーズ",
+        "description": "残り{days, plural, one{# 日} other{# 日}}"
+      },
+      "accepted": {
+        "title": "承認済み",
+        "description": "承認済み"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "作業項目を却下",
+        "content": "作業項目{value}を却下してもよろしいですか？"
+      },
+      "delete": {
+        "title": "作業項目を削除",
+        "content": "作業項目{value}を削除してもよろしいですか？",
+        "success": "作業項目を削除しました"
+      }
+    },
+    "errors": {
+      "snooze_permission": "プロジェクト管理者のみが作業項目をスヌーズ/スヌーズ解除できます",
+      "accept_permission": "プロジェクト管理者のみが作業項目を承認できます",
+      "decline_permission": "プロジェクト管理者のみが作業項目を却下できます"
+    },
+    "actions": {
+      "accept": "承認",
+      "decline": "却下",
+      "snooze": "スヌーズ",
+      "unsnooze": "スヌーズ解除",
+      "copy": "作業項目のリンクをコピー",
+      "delete": "削除",
+      "open": "作業項目を開く",
+      "mark_as_duplicate": "重複としてマーク",
+      "move": "{value}をプロジェクトの作業項目に移動"
+    },
+    "source": {
+      "in-app": "アプリ内"
+    },
+    "order_by": {
+      "created_at": "作成日",
+      "updated_at": "更新日",
+      "id": "ID"
+    },
+    "label": "インテーク",
+    "page_label": "{workspace} - インテーク",
+    "modal": {
+      "title": "インテーク作業項目を作成"
+    },
+    "tabs": {
+      "open": "オープン",
+      "closed": "クローズ"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "オープンな作業項目がありません",
+        "description": "オープンな作業項目はここで見つかります。新しい作業項目を作成してください。"
+      },
+      "sidebar_closed_tab": {
+        "title": "クローズされた作業項目がありません",
+        "description": "承認または却下されたすべての作業項目はここで見つかります。"
+      },
+      "sidebar_filter": {
+        "title": "一致する作業項目がありません",
+        "description": "インテークに適用されたフィルターに一致する作業項目がありません。新しい作業項目を作成してください。"
+      },
+      "detail": {
+        "title": "詳細を表示する作業項目を選択してください。"
+      }
+    }
+  }
+}

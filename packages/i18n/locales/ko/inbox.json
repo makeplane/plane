@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "보류 중",
+        "description": "보류 중"
+      },
+      "declined": {
+        "title": "거절됨",
+        "description": "거절됨"
+      },
+      "snoozed": {
+        "title": "미루기",
+        "description": "{days, plural, one{# 일} other{# 일}} 남음"
+      },
+      "accepted": {
+        "title": "수락됨",
+        "description": "수락됨"
+      },
+      "duplicate": {
+        "title": "중복",
+        "description": "중복"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "작업 항목 거절",
+        "content": "작업 항목 {value}을(를) 거절하시겠습니까?"
+      },
+      "delete": {
+        "title": "작업 항목 삭제",
+        "content": "작업 항목 {value}을(를) 삭제하시겠습니까?",
+        "success": "작업 항목이 성공적으로 삭제되었습니다"
+      }
+    },
+    "errors": {
+      "snooze_permission": "프로젝트 관리자만 작업 항목을 미루거나 미루기 해제할 수 있습니다",
+      "accept_permission": "프로젝트 관리자만 작업 항목을 수락할 수 있습니다",
+      "decline_permission": "프로젝트 관리자만 작업 항목을 거절할 수 있습니다"
+    },
+    "actions": {
+      "accept": "수락",
+      "decline": "거절",
+      "snooze": "미루기",
+      "unsnooze": "미루기 해제",
+      "copy": "작업 항목 링크 복사",
+      "delete": "삭제",
+      "open": "작업 항목 열기",
+      "mark_as_duplicate": "중복으로 표시",
+      "move": "{value}을(를) 프로젝트 작업 항목으로 이동"
+    },
+    "source": {
+      "in-app": "앱 내"
+    },
+    "order_by": {
+      "created_at": "생성일",
+      "updated_at": "업데이트일",
+      "id": "ID"
+    },
+    "label": "접수",
+    "page_label": "{workspace} - 접수",
+    "modal": {
+      "title": "접수 작업 항목 생성"
+    },
+    "tabs": {
+      "open": "열기",
+      "closed": "닫기"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "열린 작업 항목 없음",
+        "description": "여기에서 열린 작업 항목을 찾을 수 있습니다. 새 작업 항목을 생성하세요."
+      },
+      "sidebar_closed_tab": {
+        "title": "닫힌 작업 항목 없음",
+        "description": "수락되거나 거절된 모든 작업 항목을 여기에서 찾을 수 있습니다."
+      },
+      "sidebar_filter": {
+        "title": "일치하는 작업 항목 없음",
+        "description": "적용된 필터와 일치하는 작업 항목이 없습니다. 새 작업 항목을 생성하세요."
+      },
+      "detail": {
+        "title": "작업 항목의 세부 정보를 보려면 선택하세요."
+      }
+    }
+  }
+}

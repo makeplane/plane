@@ -53,6 +53,16 @@ from .workspace.favorite import (
 )
 from .workspace.recent_visit import UserRecentVisitViewSet
 from .workspace.user_preference import WorkspaceUserPreferenceViewSet
+from .workspace.feature import WorkspaceFeatureEndpoint
+
+from .file_library import (
+    FileCategoryDetailEndpoint,
+    FileCategoryEndpoint,
+    FileCategoryLinkEndpoint,
+    FileLibraryAssetDetailEndpoint,
+    FileLibraryAssetDownloadEndpoint,
+    FileLibraryAssetEndpoint,
+)
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,

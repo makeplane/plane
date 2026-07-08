@@ -8,10 +8,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
+import { Files } from "lucide-react";
 // plane imports
 import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useLocalStorage from "@/hooks/use-local-storage";
 // local imports
 import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
@@ -20,10 +22,13 @@ import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params
   const { workspaceSlug } = useParams();
+  // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspace();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
+  const isFileLibraryEnabled = isWorkspaceFeatureEnabled(workspaceSlug?.toString() ?? "", "file_library");
 
   const SIDEBAR_WORKSPACE_MENU_ITEMS = [
     {
@@ -54,6 +59,18 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: AnalyticsIcon,
     },
+    // File library module, enabled per workspace from god-mode
+    ...(isFileLibraryEnabled
+      ? [
+          {
+            key: "file-library",
+            labelTranslationKey: "sidebar.library",
+            href: `/${workspaceSlug}/file-library/`,
+            access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+            Icon: Files,
+          },
+        ]
+      : []),
   ];
 
   return (

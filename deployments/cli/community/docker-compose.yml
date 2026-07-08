@@ -172,7 +172,7 @@ services:
 
   # Comment this if you already have a database running
   plane-db:
-    image: postgres:15.7-alpine
+    image: pgvector/pgvector:pg15
     command: postgres -c 'max_connections=1000'
     deploy:
       replicas: 1

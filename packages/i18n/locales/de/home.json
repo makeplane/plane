@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Ihr Schnellstartleitfaden",
+      "not_right_now": "Jetzt nicht",
+      "create_project": {
+        "title": "Projekt erstellen",
+        "description": "Die meisten Dinge beginnen mit einem Projekt in Plane.",
+        "cta": "Los geht's"
+      },
+      "invite_team": {
+        "title": "Team einladen",
+        "description": "Arbeiten Sie mit Kollegen zusammen, um zu gestalten, bereitzustellen und zu verwalten.",
+        "cta": "Einladen"
+      },
+      "configure_workspace": {
+        "title": "Konfigurieren Sie Ihren Arbeitsbereich.",
+        "description": "Aktivieren oder deaktivieren Sie Funktionen oder gehen Sie weiter ins Detail.",
+        "cta": "Diesen Bereich konfigurieren"
+      },
+      "personalize_account": {
+        "title": "Personalisieren Sie Plane.",
+        "description": "Wählen Sie ein Profilbild, Farben und mehr.",
+        "cta": "Jetzt personalisieren"
+      },
+      "widgets": {
+        "title": "Ohne Widgets ist es ruhig, schalten Sie sie ein",
+        "description": "Es scheint, als seien alle Ihre Widgets deaktiviert. Aktivieren Sie sie für ein besseres Erlebnis!",
+        "primary_button": {
+          "text": "Widgets verwalten"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Speichern Sie hier Links zu wichtigen Dingen, auf die Sie schnell zugreifen möchten.",
+      "add": "Schnelllink hinzufügen",
+      "title": "Schnelllink",
+      "title_plural": "Schnelllinks"
+    },
+    "recents": {
+      "title": "Zuletzt verwendet",
+      "empty": {
+        "project": "Ihre kürzlich aufgerufenen Projekte erscheinen hier, nachdem Sie sie geöffnet haben.",
+        "page": "Ihre kürzlich aufgerufenen Seiten erscheinen hier, nachdem Sie sie geöffnet haben.",
+        "issue": "Ihre kürzlich aufgerufenen Arbeitselemente erscheinen hier, nachdem Sie sie geöffnet haben.",
+        "default": "Sie haben noch keine kürzlichen Elemente."
+      },
+      "filters": {
+        "all": "Alle",
+        "projects": "Projekte",
+        "pages": "Seiten",
+        "issues": "Arbeitselemente"
+      }
+    },
+    "new_at_plane": {
+      "title": "Neu in Plane"
+    },
+    "quick_tutorial": {
+      "title": "Schnelles Tutorial"
+    },
+    "widget": {
+      "reordered_successfully": "Widget erfolgreich verschoben.",
+      "reordering_failed": "Beim Verschieben des Widgets ist ein Fehler aufgetreten."
+    },
+    "manage_widgets": "Widgets verwalten",
+    "title": "Startseite",
+    "star_us_on_github": "Geben Sie uns einen Stern auf GitHub",
+    "business_trial_banner": {
+      "title": "Ihre 14-tägige Business-Testversion ist aktiv!",
+      "description": "Entdecken Sie alle Business-Funktionen. Wenn Sie bereit sind, können Sie ein Abonnement abschließen. Es erfolgt keine automatische Abrechnung.",
+      "trial_ends_today": "Testversion endet heute",
+      "trial_ends_in_days": "Testversion endet in {days, plural, one {# Tag} other {# Tagen}}",
+      "start_subscription": "Abonnement starten",
+      "explore_business_features": "Business-Funktionen entdecken"
+    }
+  }
+}

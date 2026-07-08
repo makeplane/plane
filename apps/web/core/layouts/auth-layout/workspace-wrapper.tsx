@@ -57,7 +57,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
+  const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences, fetchWorkspaceFeatures } =
+    useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -127,6 +128,13 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetch per-workspace feature flags (managed from god-mode)
+  useSWR(
+    workspaceSlug ? `WORKSPACE_FEATURES_${workspaceSlug.toString()}` : null,
+    workspaceSlug ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -159,14 +167,15 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-13 font-medium">{currentUser?.email}</div>
-              <div
+              <button
+                type="button"
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
                 <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
                   <LogOut size={14} />
                 </Tooltip>
-              </div>
+              </button>
             </div>
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">

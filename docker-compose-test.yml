@@ -24,7 +24,7 @@
 
 services:
   test-db:
-    image: postgres:15.7-alpine
+    image: pgvector/pgvector:pg15
     networks:
       - test_env
     env_file:

@@ -1,0 +1,39 @@
+{
+  "file_library": {
+    "title": "Biblioteca",
+    "download": "Descargar",
+    "delete": "Eliminar",
+    "delete_title": "¿Eliminar {name}?",
+    "delete_description": "El archivo se eliminará de la biblioteca. Esta acción no se puede deshacer.",
+    "delete_failed": "No se pudo eliminar el archivo",
+    "empty": {
+      "title": "Aún no hay archivos",
+      "description": "Sube tu primer archivo arrastrándolo aquí o con el botón de abajo."
+    },
+    "upload": {
+      "button": "Subir archivos",
+      "drop_here": "Suelta los archivos para subirlos",
+      "success": "{name} se subió correctamente",
+      "failed": "No se pudo subir {name}"
+    },
+    "categories": {
+      "manage_button": "Categorías",
+      "manage_title": "Gestionar categorías",
+      "new_placeholder": "Nombre de la nueva categoría",
+      "add": "Agregar",
+      "file_count": "{count, plural, one {# archivo} other {# archivos}}",
+      "default_protected": "Esta es la categoría por defecto y no puede eliminarse",
+      "pdf_only_hint": "Solo se pueden agregar archivos PDF a esta categoría",
+      "assign_button": "Categorías",
+      "assign_failed": "No se pudo actualizar la categoría {name}",
+      "create_failed": "No se pudo crear la categoría",
+      "update_failed": "No se pudo actualizar la categoría",
+      "delete_title": "¿Eliminar la categoría {name}?",
+      "delete_description": "Los archivos solo se desvincularán de esta categoría — ningún archivo será eliminado."
+    },
+    "preview": {
+      "error": "No se pudo cargar la vista previa",
+      "no_preview": "No hay vista previa disponible para este tipo de archivo"
+    }
+  }
+}

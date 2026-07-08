@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Arbeitsaufgabentypen",
+    "label_lowercase": "arbeitsaufgabentypen",
+    "settings": {
+      "description": "Passen Sie eigene Eigenschaften an und fügen Sie sie hinzu, um sie an die Bedürfnisse Ihres Teams anzupassen.",
+      "cant_delete_default_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist.",
+      "set_as_default": "Als Standard festlegen",
+      "cant_set_default_inactive_message": "Aktivieren Sie diesen Typ, bevor Sie ihn als Standard festlegen",
+      "set_default_confirmation": {
+        "title": "Als Standard-Arbeitselementtyp festlegen",
+        "description": "Wenn Sie {name} als Standard festlegen, wird er in alle Projekte in diesem Arbeitsbereich importiert. Alle neuen Arbeitselemente verwenden dann standardmäßig diesen Typ.",
+        "confirm_button": "Als Standard festlegen"
+      },
+      "properties": {
+        "title": "Benutzerdefinierte Eigenschaften",
+        "description": "Erstellen und passen Sie Eigenschaften an.",
+        "tooltip": "Jeder Arbeitsaufgabentyp wird mit einem Standardsatz von Eigenschaften wie Titel, Beschreibung, Bearbeiter, Status, Priorität, Startdatum, Fälligkeitsdatum, Modul, Zyklus usw. geliefert. Sie können auch Ihre eigenen Eigenschaften anpassen und hinzufügen, um sie an die Bedürfnisse Ihres Teams anzupassen.",
+        "add_button": "Neue Eigenschaft hinzufügen",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Aus Arbeitsbereich importieren"
+          }
+        },
+        "dropdown": {
+          "label": "Eigenschaftstyp",
+          "placeholder": "Typ auswählen"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Zahl"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Datum"
+          },
+          "member_picker": {
+            "label": "Mitgliederauswahl"
+          },
+          "formula": {
+            "label": "Formel"
+          }
+        },
+        "attributes": {
+          "label": "Attribute",
+          "text": {
+            "single_line": {
+              "label": "Einzeilig"
+            },
+            "multi_line": {
+              "label": "Absatz"
+            },
+            "readonly": {
+              "label": "Schreibgeschützt",
+              "header": "Schreibgeschützte Daten"
+            },
+            "invalid_text_format": {
+              "label": "Ungültiges Textformat"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Zahl hinzufügen"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Einzelauswahl"
+            },
+            "multi_select": {
+              "label": "Mehrfachauswahl"
+            },
+            "no_default_value": {
+              "label": "Kein Standardwert"
+            }
+          },
+          "boolean": {
+            "label": "Wahr | Falsch",
+            "no_default": "Kein Standardwert"
+          },
+          "option": {
+            "create_update": {
+              "label": "Optionen",
+              "form": {
+                "placeholder": "Option hinzufügen",
+                "errors": {
+                  "name": {
+                    "required": "Optionsname ist erforderlich.",
+                    "integrity": "Option mit gleichem Namen existiert bereits."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Option auswählen",
+                "multi": {
+                  "default": "Optionen auswählen",
+                  "variable": "{count} Optionen ausgewählt"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Erfolg!",
+              "message": "Eigenschaft {name} erfolgreich erstellt."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Fehler beim Erstellen der Eigenschaft. Bitte versuchen Sie es erneut!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Erfolg!",
+              "message": "Eigenschaft {name} erfolgreich aktualisiert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Fehler beim Aktualisieren der Eigenschaft. Bitte versuchen Sie es erneut!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Erfolg!",
+              "message": "Eigenschaft {name} erfolgreich gelöscht."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Fehler beim Löschen der Eigenschaft. Bitte versuchen Sie es erneut!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} der Eigenschaft {name}",
+            "success": {
+              "title": "Erfolg!",
+              "message": "Eigenschaft {name} erfolgreich {action}."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Fehler beim {action} der Eigenschaft. Bitte versuchen Sie es erneut!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Neue benutzerdefinierte Eigenschaft erstellen",
+            "update": "Benutzerdefinierte Eigenschaft aktualisieren"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Titel"
+            },
+            "description": {
+              "placeholder": "Beschreibung"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Sie müssen Ihre Eigenschaft benennen.",
+              "max_length": "Eigenschaftsname sollte 255 Zeichen nicht überschreiten."
+            },
+            "property_type": {
+              "required": "Sie müssen einen Eigenschaftstyp auswählen."
+            },
+            "options": {
+              "required": "Sie müssen mindestens eine Option hinzufügen."
+            },
+            "formula": {
+              "required": "Formelausdruck ist erforderlich.",
+              "invalid": "Ungültige Formel: {error}",
+              "circular_reference": "Zirkuläre Referenz erkannt. Eine Formel kann nicht direkt oder indirekt auf sich selbst verweisen.",
+              "invalid_reference": "Formel verweist auf eine nicht existierende Eigenschaft."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Formelfeld",
+          "tooltip": "Geben Sie eine Formel mit der Syntax '{'Feldname'}' ein. Unterstützt +, -, *, / und & Operatoren.",
+          "placeholder": "Formel eingeben",
+          "test_button": "Test",
+          "validating": "Wird überprüft",
+          "validation_success": "Formel ist gültig! Gibt {resultType} zurück",
+          "validation_success_with_refs": "Formel ist gültig! Gibt {resultType} zurück ({count} Feld(er) referenziert)",
+          "error": {
+            "empty": "Bitte geben Sie eine Formel ein",
+            "missing_context": "Fehlender Workspace-, Projekt- oder Arbeitsaufgabentyp-Kontext",
+            "validation_failed": "Validierung fehlgeschlagen"
+          },
+          "picker": {
+            "no_match": "Keine passenden Eigenschaften",
+            "no_available": "Keine verfügbaren Eigenschaften"
+          }
+        },
+        "enable_disable": {
+          "label": "Aktiv",
+          "tooltip": {
+            "disabled": "Klicken zum Deaktivieren",
+            "enabled": "Klicken zum Aktivieren"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Diese Eigenschaft löschen",
+          "description": "Das Löschen von Eigenschaften kann zum Verlust vorhandener Daten führen.",
+          "secondary_description": "Möchten Sie die Eigenschaft stattdessen deaktivieren?",
+          "primary_button": "{action}, löschen",
+          "secondary_button": "Ja, deaktivieren"
+        },
+        "mandate_confirmation": {
+          "label": "Pflichtfeld",
+          "content": "Es scheint eine Standardoption für diese Eigenschaft zu geben. Wenn Sie die Eigenschaft als Pflichtfeld festlegen, wird der Standardwert entfernt und die Benutzer müssen einen Wert ihrer Wahl hinzufügen.",
+          "tooltip": {
+            "disabled": "Dieser Eigenschaftstyp kann nicht als Pflichtfeld festgelegt werden",
+            "enabled": "Deaktivieren, um das Feld als optional zu markieren",
+            "checked": "Aktivieren, um das Feld als Pflichtfeld zu markieren"
+          }
+        },
+        "empty_state": {
+          "title": "Benutzerdefinierte Eigenschaften hinzufügen",
+          "description": "Neue Eigenschaften, die Sie für diesen Arbeitsaufgabentyp hinzufügen, werden hier angezeigt."
+        }
+      },
+      "types": {
+        "title": "Typen",
+        "description": "Erstellen und passen Sie Arbeitselementtypen mit Eigenschaften an.",
+        "sort_options": {
+          "project_count": "Anzahl der zugehörigen Projekte"
+        },
+        "filter_options": {
+          "show_active": "Aktive anzeigen",
+          "show_inactive": "Inaktive anzeigen"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Neu erstellen",
+            "import_from_workspace": "Aus Arbeitsbereich importieren"
+          },
+          "banner": {
+            "with_access": "Aktivieren Sie Arbeitsaufgabentypen, um Typen von der Arbeitsbereichsebene zu importieren",
+            "without_access": "Arbeitsaufgabentypen sind deaktiviert. Wenden Sie sich an den Arbeitsbereichs-Administrator, um sie in den Arbeitsbereichseinstellungen zu aktivieren."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Benutzerdefinierte Eigenschaften",
+        "add_button": "Eigenschaften hinzufügen",
+        "modal": {
+          "title": "Eigenschaften hinzufügen",
+          "empty": {
+            "title": "Keine Eigenschaften verfügbar",
+            "description": "Alle Eigenschaften wurden bereits mit diesem Typ verknüpft."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Eigenschaft trennen",
+          "description": "Das Trennen dieser Eigenschaft löscht dauerhaft alle ihre Werte in jedem Arbeitselement dieses Typs. Diese Aktion kann nicht rückgängig gemacht werden.",
+          "input_label": "Geben Sie",
+          "input_label_suffix": "zum Fortfahren ein:",
+          "confirm": "Eigenschaft trennen",
+          "loading": "Wird getrennt"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Diesen Typ löschen",
+        "description": "Das Löschen von Typen kann zum Verlust vorhandener Daten führen.",
+        "can_disable_warning": "Möchten Sie stattdessen den Typ deaktivieren?",
+        "primary_button": "Ja, löschen",
+        "toast": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Arbeitselementtyp wurde erfolgreich gelöscht."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Löschen des Arbeitselementtyps fehlgeschlagen. Bitte versuchen Sie es erneut!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Der Standard-Arbeitselementtyp kann nicht gelöscht werden",
+          "cannot_delete_work_item_type_with_associated_work_items": "Arbeitselementtyp mit zugeordneten Arbeitselementen kann nicht gelöscht werden"
+        }
+      }
+    },
+    "create": {
+      "title": "Arbeitsaufgabentyp erstellen",
+      "button": "Arbeitsaufgabentyp hinzufügen",
+      "toast": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Arbeitsaufgabentyp erfolgreich erstellt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": {
+            "default": "Arbeitselementtyp konnte nicht erstellt werden. Bitte versuchen Sie es erneut!",
+            "conflict": "Der Typ {name} existiert bereits. Bitte wählen Sie einen anderen Namen."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Arbeitsaufgabentyp aktualisieren",
+      "button": "Arbeitsaufgabentyp aktualisieren",
+      "toast": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Arbeitsaufgabentyp {name} erfolgreich aktualisiert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": {
+            "default": "Arbeitselementtyp konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut!",
+            "conflict": "Der Typ {name} existiert bereits. Bitte wählen Sie einen anderen Namen."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Geben Sie diesem Arbeitsaufgabentyp einen eindeutigen Namen"
+        },
+        "description": {
+          "placeholder": "Beschreiben Sie, wofür dieser Arbeitsaufgabentyp gedacht ist und wann er verwendet werden soll."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} des Arbeitsaufgabentyps {name}",
+        "success": {
+          "title": "Erfolg!",
+          "message": "Arbeitsaufgabentyp {name} erfolgreich {action}."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Fehler beim {action} des Arbeitsaufgabentyps. Bitte versuchen Sie es erneut!"
+        }
+      },
+      "tooltip": "Klicken zum {action}"
+    },
+    "change_confirmation": {
+      "title": "Arbeitsaufgabentyp ändern?",
+      "description": "Das Ändern des Arbeitsaufgabentyps kann zum Verlust von benutzerdefinierten Eigenschaftswerten führen, die spezifisch für den aktuellen Typ sind. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "button": {
+        "loading": "Wird geändert",
+        "default": "Typ ändern"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Arbeitsaufgabentypen aktivieren",
+        "description": "Gestalten Sie Arbeitsaufgaben an Ihre Arbeit mit Arbeitsaufgabentypen an. Passen Sie sie mit Icons, Hintergründen und Eigenschaften an und konfigurieren Sie sie für dieses Projekt.",
+        "primary_button": {
+          "text": "Aktivieren"
+        },
+        "confirmation": {
+          "title": "Einmal aktiviert, können Arbeitsaufgabentypen nicht deaktiviert werden.",
+          "description": "Planes Arbeitsaufgabe wird zum Standard-Arbeitsaufgabentyp für dieses Projekt und wird mit seinem Icon und Hintergrund in diesem Projekt angezeigt.",
+          "button": {
+            "default": "Aktivieren",
+            "loading": "Einrichten"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Holen Sie sich Pro, um Arbeitsaufgabentypen zu aktivieren.",
+        "description": "Gestalten Sie Arbeitsaufgaben an Ihre Arbeit mit Arbeitsaufgabentypen an. Passen Sie sie mit Icons, Hintergründen und Eigenschaften an und konfigurieren Sie sie für dieses Projekt.",
+        "primary_button": {
+          "text": "Pro holen"
+        }
+      },
+      "upgrade": {
+        "title": "Upgrade durchführen, um Arbeitsaufgabentypen zu aktivieren.",
+        "description": "Gestalten Sie Arbeitsaufgaben an Ihre Arbeit mit Arbeitsaufgabentypen an. Passen Sie sie mit Icons, Hintergründen und Eigenschaften an und konfigurieren Sie sie für dieses Projekt.",
+        "primary_button": {
+          "text": "Upgrade"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hierarchie",
+      "tab_label": "Hierarchie",
+      "description": "Richten Sie Hierarchieebenen ein, um Ihre Arbeit zu organisieren. Jede Ebene definiert eine Eltern-Beziehung mit dem Element direkt darüber und eine Kind-Beziehung mit dem Element direkt darunter. ",
+      "sidebar_label": "Hierarchie",
+      "enable_control": {
+        "title": "Hierarchie aktivieren",
+        "description": "Erstellen Sie Eltern-Kind-Beziehungen zwischen verschiedenen Arbeitselement-Typen.",
+        "tooltip": "Sie können die Hierarchie nach der Aktivierung nicht mehr deaktivieren."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Definieren Sie zuerst Arbeitselement-Typen, um eine neue Hierarchie zu erstellen.",
+        "cta": "Einstellungen für Arbeitselement-Typen"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Ziehen Sie einen Typ hierher, um eine neue Hierarchieebene hinzuzufügen",
+      "empty_level_placeholder": "Ziehen Sie einen Arbeitselement-Typ auf Ebene {level}",
+      "drag_tooltip": "Ziehen zum Ändern der Ebene",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Als Standard festlegen",
+          "toast": {
+            "loading": "Als Standard festlegen...",
+            "success": {
+              "title": "Erfolg!",
+              "message": "Hierarchieebene {level} erfolgreich als Standard festgelegt."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Hierarchieebene {level} konnte nicht als Standard festgelegt werden. Bitte versuchen Sie es erneut."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Verschiebe {workItemTypeName} in Ebene {level}...",
+        "success": {
+          "title": "Erfolg!",
+          "message": "{workItemTypeName} wurde erfolgreich in Ebene {level} verschoben."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Speichern trennt bestehende Verknüpfungen",
+      "content": {
+        "intro": "Der Arbeitselement-Typ „{workItemTypeName}“ umfasst:",
+        "parent_items": "{count, plural, one {# übergeordnete Verknüpfung wird} other {# übergeordnete Verknüpfungen werden}} entfernt.",
+        "child_items": "{count, plural, one {Unterarbeitselement} other {Unterarbeitselemente}}",
+        "parent_line_suffix_when_also_children": ", und ",
+        "footer": "Diese Änderung entfernt übergeordnete und untergeordnete Beziehungen bei vorhandenen Arbeitselementen des Typs {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Geben Sie „bestätigen“ ein, um fortzufahren.",
+        "placeholder": "bestätigen"
+      },
+      "error_toast": {
+        "title": "Fehler!",
+        "message": "Verknüpfungen konnten nicht aufgehoben und gespeichert werden. Bitte versuchen Sie es erneut."
+      },
+      "confirm_button": {
+        "loading": "Speichern",
+        "default": "Trotzdem speichern"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Fehler!",
+        "message": "Der ausgewählte Arbeitselement-Typ kann nicht zum Erstellen eines neuen Arbeitselements verwendet werden, da dies die Hierarchieregeln verletzt."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Fehler!",
+        "message": "Der Arbeitselement-Typ kann nicht aktualisiert werden, da dies die Hierarchieregeln verletzt."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Hierarchieebene",
+      "invalid_level_toast": {
+        "title": "Fehler!",
+        "message": "Der Arbeitselement-Typ kann nicht aktualisiert werden, da dies die Hierarchieregeln verletzt."
+      }
+    }
+  }
+}

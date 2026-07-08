@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Povolit nové pracovní položky",
+      "work_item_creation_disable_tooltip": "Vytváření pracovních položek je pro tento stav zakázáno",
+      "default_state": "Výchozí stav umožňuje všem členům vytvářet nové pracovní položky. To nelze změnit",
+      "state_change_count": "{count, plural, one {1 povolená změna stavu} other {{count} povolené změny stavu}}",
+      "movers_count": "{count, plural, one {1 uvedený recenzent} other {{count} uvedení recenzenti}}",
+      "state_changes": {
+        "label": {
+          "default": "Přidat povolenou změnu stavu",
+          "loading": "Přidávání povolené změny stavu"
+        },
+        "move_to": "Změnit stav na",
+        "movers": {
+          "label": "Když je recenzováno",
+          "tooltip": "Recenzenti jsou lidé, kteří mají povolení přesunout pracovní položky z jednoho stavu do druhého.",
+          "add": "Přidat recenzenty"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Nemůžete přesunout tuto pracovní položku sem."
+    },
+    "workflow_enabled": {
+      "label": "Změna stavu"
+    },
+    "workflow_tree": {
+      "label": "Pro pracovní položky v",
+      "state_change_label": "může ji přesunout na"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Ovládejte chaos změn a recenzí pomocí pracovních toků.",
+        "description": "Nastavte pravidla pro to, kam se vaše práce přesouvá, kým a kdy pomocí pracovních toků v Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Zobrazit historii změn",
+      "reset_workflow": "Resetovat pracovní tok"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Opravdu chcete resetovat tento pracovní tok?",
+        "description": "Pokud resetujete tento pracovní tok, všechna vaše pravidla pro změnu stavu budou smazána a budete je muset znovu vytvořit, abyste je mohli v tomto projektu používat."
+      },
+      "delete_state_change": {
+        "title": "Opravdu chcete smazat toto pravidlo změny stavu?",
+        "description": "Jakmile bude smazáno, tuto změnu nelze vrátit zpět a budete muset pravidlo znovu nastavit, pokud ho chcete mít v tomto projektu."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} pracovní tok",
+        "success": {
+          "title": "Úspěch",
+          "message": "Pracovní tok {action} úspěšně"
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Pracovní tok nemohl být {action}. Zkuste to prosím znovu."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Úspěch",
+          "message": "Pracovní tok byl úspěšně resetován"
+        },
+        "error": {
+          "title": "Chyba při resetování pracovního toku",
+          "message": "Pracovní tok nemohl být resetován. Zkuste to prosím znovu."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Chyba při přidávání pravidla změny stavu",
+          "message": "Pravidlo změny stavu nemohlo být přidáno. Zkuste to prosím znovu."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Chyba při úpravě pravidla změny stavu",
+          "message": "Pravidlo změny stavu nemohlo být upraveno. Zkuste to prosím znovu."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Chyba při odstraňování pravidla změny stavu",
+          "message": "Pravidlo změny stavu nemohlo být odstraněno. Zkuste to prosím znovu."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Chyba při úpravě recenzentů pravidla změny stavu",
+          "message": "Recenzenti pravidla změny stavu nemohli být upraveni. Zkuste to prosím znovu."
+        }
+      }
+    }
+  }
+}

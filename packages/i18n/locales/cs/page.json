@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Osnova",
+        "empty_state": {
+          "title": "Chybí nadpisy",
+          "description": "Přidejte na tuto stránku nějaké nadpisy, aby se zde zobrazily."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Slova",
+          "characters": "Znaky",
+          "paragraphs": "Odstavce",
+          "read_time": "Doba čtení"
+        },
+        "actors_info": {
+          "edited_by": "Upravil",
+          "created_by": "Vytvořil"
+        },
+        "version_history": {
+          "label": "Historie verzí",
+          "current_version": "Aktuální verze",
+          "highlight_changes": "Zvýraznit změny"
+        }
+      },
+      "assets": {
+        "label": "Přílohy",
+        "download_button": "Stáhnout",
+        "empty_state": {
+          "title": "Chybí obrázky",
+          "description": "Přidejte obrázky, aby se zde zobrazily."
+        }
+      },
+      "comments": {
+        "label": "Komentáře",
+        "empty_state": {
+          "title": "Žádné komentáře",
+          "description": "Přidejte komentáře, aby se zde zobrazily."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Název poznámky nesmí být delší než 100 znaků.",
+        "already_exists": "Již existuje poznámka bez popisu"
+      },
+      "created": {
+        "title": "Poznámka vytvořena",
+        "message": "Poznámka byla úspěšně vytvořena"
+      },
+      "not_created": {
+        "title": "Poznámka nebyla vytvořena",
+        "message": "Poznámku se nepodařilo vytvořit"
+      },
+      "updated": {
+        "title": "Poznámka aktualizována",
+        "message": "Poznámka byla úspěšně aktualizována"
+      },
+      "not_updated": {
+        "title": "Poznámka nebyla aktualizována",
+        "message": "Poznámku se nepodařilo aktualizovat"
+      },
+      "removed": {
+        "title": "Poznámka odstraněna",
+        "message": "Poznámka byla úspěšně odstraněna"
+      },
+      "not_removed": {
+        "title": "Poznámka nebyla odstraněna",
+        "message": "Poznámku se nepodařilo odstranit"
+      }
+    },
+    "open_button": "Otevřít navigační panel",
+    "close_button": "Zavřít navigační panel",
+    "outline_floating_button": "Otevřít osnovu"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Přesunout",
+        "loading": "Přesouvání"
+      },
+      "cannot_move_to_teamspace": "Soukromé a sdílené stránky nelze přesunout do týmového prostoru.",
+      "placeholders": {
+        "workspace_to_all": "Hledat projekty a týmové prostory",
+        "workspace_to_project": "Hledat projekty",
+        "project_to_all": "Hledat projekty a týmové prostory",
+        "project_to_project": "Hledat projekty",
+        "project_to_all_with_wiki": "Hledat wiki kolekce, projekty a týmové prostory",
+        "project_to_project_with_wiki": "Hledat wiki kolekce a projekty"
+      },
+      "toasts": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Stránka byla úspěšně přesunuta."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Stránku se nepodařilo přesunout. Zkuste to prosím později."
+        },
+        "collection_error": {
+          "title": "Přesunuto do wiki",
+          "message": "Stránka byla přesunuta do wiki, ale nepodařilo se ji přidat do vybrané kolekce. Zůstává v General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Odebrat z kolekce",
+      "success_message": "Stránka byla odebrána z kolekce.",
+      "error_message": "Stránku se nepodařilo odebrat z kolekce. Zkuste to prosím znovu."
+    }
+  }
+}

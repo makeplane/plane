@@ -1,0 +1,39 @@
+{
+  "file_library": {
+    "title": "Library",
+    "download": "Download",
+    "delete": "Delete",
+    "delete_title": "Delete {name}?",
+    "delete_description": "The file will be removed from the library. This action cannot be undone.",
+    "delete_failed": "Failed to delete the file",
+    "empty": {
+      "title": "No files yet",
+      "description": "Upload your first file by dragging it here or using the button below."
+    },
+    "upload": {
+      "button": "Upload files",
+      "drop_here": "Drop files to upload them",
+      "success": "{name} uploaded successfully",
+      "failed": "Failed to upload {name}"
+    },
+    "categories": {
+      "manage_button": "Categories",
+      "manage_title": "Manage categories",
+      "new_placeholder": "New category name",
+      "add": "Add",
+      "file_count": "{count, plural, one {# file} other {# files}}",
+      "default_protected": "This is the default category and cannot be deleted",
+      "pdf_only_hint": "Only PDF files can be added to this category",
+      "assign_button": "Categories",
+      "assign_failed": "Failed to update the {name} category",
+      "create_failed": "Failed to create the category",
+      "update_failed": "Failed to update the category",
+      "delete_title": "Delete category {name}?",
+      "delete_description": "Files will only be unlinked from this category — no file will be deleted."
+    },
+    "preview": {
+      "error": "Could not load the file preview",
+      "no_preview": "No preview available for this file type"
+    }
+  }
+}

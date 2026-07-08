@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Your quickstart guide",
+      "not_right_now": "Not right now",
+      "create_project": {
+        "title": "Create a project",
+        "description": "Most things start with a project in Plane.",
+        "cta": "Get started"
+      },
+      "invite_team": {
+        "title": "Invite your team",
+        "description": "Build, ship, and manage with coworkers.",
+        "cta": "Get them in"
+      },
+      "configure_workspace": {
+        "title": "Set up your workspace.",
+        "description": "Turn features on or off or go beyond that.",
+        "cta": "Configure this workspace"
+      },
+      "personalize_account": {
+        "title": "Make Plane yours.",
+        "description": "Choose your picture, colors, and more.",
+        "cta": "Personalize now"
+      },
+      "widgets": {
+        "title": "It's Quiet Without Widgets, Turn Them On",
+        "description": "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+        "primary_button": {
+          "text": "Manage widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Save links to work things that you'd like handy.",
+      "add": "Add quick Link",
+      "title": "Quicklink",
+      "title_plural": "Quicklinks"
+    },
+    "recents": {
+      "title": "Recents",
+      "empty": {
+        "project": "Your recent projects will appear here once you visit one.",
+        "page": "Your recent pages will appear here once you visit one.",
+        "issue": "Your recent work items will appear here once you visit one.",
+        "default": "You don't have any recents yet."
+      },
+      "filters": {
+        "all": "All",
+        "projects": "Projects",
+        "pages": "Pages",
+        "issues": "Work items"
+      }
+    },
+    "new_at_plane": {
+      "title": "New at Plane"
+    },
+    "quick_tutorial": {
+      "title": "Quick tutorial"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordered successfully.",
+      "reordering_failed": "Error occurred while reordering widget."
+    },
+    "manage_widgets": "Manage widgets",
+    "title": "Home",
+    "star_us_on_github": "Star us on GitHub",
+    "business_trial_banner": {
+      "title": "Your 14-day Business plan trial is live!",
+      "description": "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
+      "trial_ends_today": "Trial ends today",
+      "trial_ends_in_days": "Trial ends in {days, plural, one {# day} other {# days}}",
+      "start_subscription": "Start subscription",
+      "explore_business_features": "Explore Business features"
+    }
+  }
+}

@@ -49,7 +49,7 @@ services:
       - "9090:9090"
 
   plane-db:
-    image: postgres:15.7-alpine
+    image: pgvector/pgvector:pg15
     restart: unless-stopped
     networks:
       - dev_env

@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "작업 항목 일괄 삭제"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "작업 항목 액션",
+        "indicator": "작업 항목",
+        "change_state": "상태 변경",
+        "change_priority": "우선순위 변경",
+        "change_assignees": "담당자 지정",
+        "assign_to_me": "나에게 할당",
+        "unassign_from_me": "나에게서 할당 해제",
+        "change_estimate": "추정치 변경",
+        "add_to_cycle": "주기에 추가",
+        "add_to_modules": "모듈에 추가",
+        "add_labels": "레이블 추가",
+        "subscribe": "알림 구독",
+        "unsubscribe": "알림 구독 취소",
+        "delete": "삭제",
+        "copy_id": "ID 복사",
+        "copy_id_toast_success": "작업 항목 ID가 클립보드에 복사되었습니다.",
+        "copy_id_toast_error": "작업 항목 ID를 클립보드에 복사하는 중 오류가 발생했습니다.",
+        "copy_title": "제목 복사",
+        "copy_title_toast_success": "작업 항목 제목이 클립보드에 복사되었습니다.",
+        "copy_title_toast_error": "작업 항목 제목을 클립보드에 복사하는 중 오류가 발생했습니다.",
+        "copy_url": "URL 복사",
+        "copy_url_toast_success": "작업 항목 URL이 클립보드에 복사되었습니다.",
+        "copy_url_toast_error": "작업 항목 URL을 클립보드에 복사하는 중 오류가 발생했습니다."
+      },
+      "cycle": {
+        "title": "주기 액션",
+        "indicator": "주기",
+        "add_to_favorites": "즐겨찾기에 추가",
+        "remove_from_favorites": "즐겨찾기에서 제거",
+        "copy_url": "URL 복사",
+        "copy_url_toast_success": "주기 URL이 클립보드에 복사되었습니다.",
+        "copy_url_toast_error": "주기 URL을 클립보드에 복사하는 중 오류가 발생했습니다."
+      },
+      "module": {
+        "title": "모듈 액션",
+        "indicator": "모듈",
+        "add_remove_members": "멤버 추가/제거",
+        "change_status": "상태 변경",
+        "add_to_favorites": "즐겨찾기에 추가",
+        "remove_from_favorites": "즐겨찾기에서 제거",
+        "copy_url": "URL 복사",
+        "copy_url_toast_success": "모듈 URL이 클립보드에 복사되었습니다.",
+        "copy_url_toast_error": "모듈 URL을 클립보드에 복사하는 중 오류가 발생했습니다."
+      },
+      "page": {
+        "title": "페이지 액션",
+        "indicator": "페이지",
+        "lock": "잠금",
+        "unlock": "잠금 해제",
+        "make_private": "비공개로 설정",
+        "make_public": "공개로 설정",
+        "archive": "아카이브",
+        "restore": "복원",
+        "add_to_favorites": "즐겨찾기에 추가",
+        "remove_from_favorites": "즐겨찾기에서 제거",
+        "copy_url": "URL 복사",
+        "copy_url_toast_success": "페이지 URL이 클립보드에 복사되었습니다.",
+        "copy_url_toast_error": "페이지 URL을 클립보드에 복사하는 중 오류가 발생했습니다."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "새 작업 항목",
+      "create_page": "새 페이지",
+      "create_view": "새 보기",
+      "create_cycle": "새 주기",
+      "create_module": "새 모듈",
+      "create_project": "새 프로젝트",
+      "create_workspace": "새 작업 공간",
+      "create_project_automation": "새 자동화"
+    },
+    "navigation_actions": {
+      "open_workspace": "작업 공간 열기",
+      "nav_home": "홈으로 이동",
+      "nav_inbox": "받은 편지함으로 이동",
+      "nav_your_work": "나의 작업으로 이동",
+      "nav_account_settings": "계정 설정으로 이동",
+      "open_project": "프로젝트 열기",
+      "nav_projects_list": "프로젝트 목록으로 이동",
+      "nav_all_workspace_work_items": "모든 작업 항목으로 이동",
+      "nav_assigned_workspace_work_items": "할당된 작업 항목으로 이동",
+      "nav_created_workspace_work_items": "생성한 작업 항목으로 이동",
+      "nav_subscribed_workspace_work_items": "구독한 작업 항목으로 이동",
+      "nav_workspace_analytics": "작업 공간 분석으로 이동",
+      "nav_workspace_drafts": "작업 공간 초안으로 이동",
+      "nav_workspace_archives": "작업 공간 아카이브로 이동",
+      "open_workspace_setting": "작업 공간 설정 열기",
+      "nav_workspace_settings": "작업 공간 설정으로 이동",
+      "nav_project_work_items": "작업 항목으로 이동",
+      "open_project_cycle": "주기 열기",
+      "nav_project_cycles": "주기로 이동",
+      "open_project_module": "모듈 열기",
+      "nav_project_modules": "모듈로 이동",
+      "open_project_view": "프로젝트 보기 열기",
+      "nav_project_views": "프로젝트 보기로 이동",
+      "nav_project_pages": "페이지로 이동",
+      "nav_project_intake": "접수로 이동",
+      "nav_project_archives": "프로젝트 아카이브로 이동",
+      "open_project_setting": "프로젝트 설정 열기",
+      "nav_project_settings": "프로젝트 설정으로 이동",
+      "nav_workspace_active_cycle": "모든 활성 주기로 이동",
+      "nav_project_overview": "프로젝트 개요로 이동"
+    },
+    "account_actions": {
+      "sign_out": "로그아웃",
+      "workspace_invites": "작업 공간 초대"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "앱 사이드바 전환",
+      "copy_current_page_url": "현재 페이지 URL 복사",
+      "copy_current_page_url_toast_success": "현재 페이지 URL이 클립보드에 복사되었습니다.",
+      "copy_current_page_url_toast_error": "현재 페이지 URL을 클립보드에 복사하는 중 오류가 발생했습니다.",
+      "focus_top_nav_search": "검색 입력에 포커스"
+    },
+    "preferences_actions": {
+      "update_theme": "인터페이스 테마 변경",
+      "update_timezone": "시간대 변경",
+      "update_start_of_week": "주 시작 요일 변경",
+      "update_language": "인터페이스 언어 변경",
+      "toast": {
+        "theme": {
+          "success": "테마가 성공적으로 업데이트되었습니다.",
+          "error": "테마 업데이트에 실패했습니다. 다시 시도해 주세요."
+        },
+        "timezone": {
+          "success": "시간대가 성공적으로 업데이트되었습니다.",
+          "error": "시간대 업데이트에 실패했습니다. 다시 시도해 주세요."
+        },
+        "generic": {
+          "success": "환경 설정이 성공적으로 업데이트되었습니다.",
+          "error": "환경 설정 업데이트에 실패했습니다. 다시 시도해 주세요."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "키보드 단축키 열기",
+      "open_plane_documentation": "Plane 문서 열기",
+      "join_forum": "포럼 참여",
+      "report_bug": "버그 신고",
+      "chat_with_us": "문의하기"
+    },
+    "page_placeholders": {
+      "default": "명령어 또는 검색어를 입력하세요",
+      "open_workspace": "작업 공간 열기",
+      "open_project": "프로젝트 열기",
+      "open_workspace_setting": "작업 공간 설정 열기",
+      "open_project_cycle": "주기 열기",
+      "open_project_module": "모듈 열기",
+      "open_project_view": "프로젝트 보기 열기",
+      "open_project_setting": "프로젝트 설정 열기",
+      "update_work_item_state": "상태 변경",
+      "update_work_item_priority": "우선순위 변경",
+      "update_work_item_assignee": "담당자 지정",
+      "update_work_item_estimate": "추정치 변경",
+      "update_work_item_cycle": "주기에 추가",
+      "update_work_item_module": "모듈에 추가",
+      "update_work_item_labels": "레이블 추가",
+      "update_module_member": "멤버 변경",
+      "update_module_status": "상태 변경",
+      "update_theme": "테마 변경",
+      "update_timezone": "시간대 변경",
+      "update_start_of_week": "주 시작 요일 변경",
+      "update_language": "언어 변경"
+    },
+    "search_menu": {
+      "no_results": "결과를 찾을 수 없습니다",
+      "clear_search": "검색 지우기",
+      "go_to_advanced_search": "고급 검색으로 이동"
+    },
+    "footer": {
+      "workspace_level": "작업 공간 수준"
+    },
+    "group_titles": {
+      "actions": "액션",
+      "contextual": "컨텍스트",
+      "navigation": "탐색",
+      "create": "생성",
+      "general": "일반",
+      "settings": "설정",
+      "account": "계정",
+      "miscellaneous": "기타",
+      "preferences": "환경 설정",
+      "help": "도움말"
+    }
+  }
+}

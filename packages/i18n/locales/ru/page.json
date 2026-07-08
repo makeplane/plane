@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Отсутствуют заголовки",
+          "description": "Давайте добавим несколько заголовков на эту страницу, чтобы увидеть их здесь."
+        }
+      },
+      "info": {
+        "label": "Информация",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символы",
+          "paragraphs": "Абзацы",
+          "read_time": "Время чтения"
+        },
+        "actors_info": {
+          "edited_by": "Отредактировано",
+          "created_by": "Создано"
+        },
+        "version_history": {
+          "label": "История версий",
+          "current_version": "Текущая версия",
+          "highlight_changes": "Выделить изменения"
+        }
+      },
+      "assets": {
+        "label": "Ресурсы",
+        "download_button": "Скачать",
+        "empty_state": {
+          "title": "Отсутствуют изображения",
+          "description": "Добавьте изображения, чтобы увидеть их здесь."
+        }
+      },
+      "comments": {
+        "label": "Комментарии",
+        "empty_state": {
+          "title": "Нет комментариев",
+          "description": "Добавьте комментарии, чтобы увидеть их здесь."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Название стикера не может быть длиннее 100 символов.",
+        "already_exists": "Стикер без описания уже существует"
+      },
+      "created": {
+        "title": "Стикер создан",
+        "message": "Стикер успешно создан"
+      },
+      "not_created": {
+        "title": "Ошибка создания стикера",
+        "message": "Не удалось создать стикер"
+      },
+      "updated": {
+        "title": "Стикер обновлён",
+        "message": "Стикер успешно обновлён"
+      },
+      "not_updated": {
+        "title": "Ошибка обновления",
+        "message": "Не удалось обновить стикер"
+      },
+      "removed": {
+        "title": "Стикер удалён",
+        "message": "Стикер успешно удалён"
+      },
+      "not_removed": {
+        "title": "Ошибка удаления",
+        "message": "Не удалось удалить стикер"
+      }
+    },
+    "open_button": "Открыть панель навигации",
+    "close_button": "Закрыть панель навигации",
+    "outline_floating_button": "Открыть структуру"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Переместить",
+        "loading": "Перемещение"
+      },
+      "cannot_move_to_teamspace": "Приватные и общие страницы нельзя переместить в командное пространство.",
+      "placeholders": {
+        "workspace_to_all": "Искать проекты и командные пространства",
+        "workspace_to_project": "Искать проекты",
+        "project_to_all": "Искать проекты и командные пространства",
+        "project_to_project": "Искать проекты",
+        "project_to_all_with_wiki": "Искать коллекции wiki, проекты и командные пространства",
+        "project_to_project_with_wiki": "Искать коллекции wiki и проекты"
+      },
+      "toasts": {
+        "success": {
+          "title": "Успех!",
+          "message": "Страница успешно перемещена."
+        },
+        "error": {
+          "title": "Ошибка!",
+          "message": "Не удалось переместить страницу. Повторите попытку позже."
+        },
+        "collection_error": {
+          "title": "Перемещено в wiki",
+          "message": "Страница была перемещена в wiki, но её не удалось добавить в выбранную коллекцию. Она остаётся в General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Удалить из коллекции",
+      "success_message": "Страница удалена из коллекции.",
+      "error_message": "Не удалось удалить страницу из коллекции. Повторите попытку."
+    }
+  }
+}
