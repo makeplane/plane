@@ -59,6 +59,7 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
+  is_issue_type_enabled?: boolean;
 }
 
 export type TProjectAnalyticsCountParams = {

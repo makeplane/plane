@@ -31,6 +31,7 @@ from .issue import (
     RelatedIssueSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
+from .issue_type import IssueTypeSerializer
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
