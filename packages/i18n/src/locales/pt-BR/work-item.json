@@ -42,6 +42,7 @@
       }
     },
     "new": "Novo Item de trabalho",
+    "count_tooltip": "{count, plural, one {Há # épico neste projeto} other {Há # épicos neste projeto}}",
     "adding": "Adicionando item de trabalho",
     "create": {
       "success": "Item de trabalho criado com sucesso"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Épico} other {Épicos}}",
     "adding": "Adicionando épico",
     "create": {
-      "success": "Épico criado com sucesso"
+      "label": "Criar Épico",
+      "success": "Épico criado com sucesso",
+      "failed": "Não foi possível criar o Épico"
+    },
+    "update": {
+      "label": "Atualizar Épico"
     },
     "add": {
       "label": "Adicionar Épico",

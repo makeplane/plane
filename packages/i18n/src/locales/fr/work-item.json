@@ -42,6 +42,7 @@
       }
     },
     "new": "Nouvel élément de travail",
+    "count_tooltip": "{count, plural, one {Il y a # epic dans ce projet} other {Il y a # epics dans ce projet}}",
     "adding": "Ajout d’un élément de travail",
     "create": {
       "success": "Élément de travail créé avec succès"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epic} other {Epics}}",
     "adding": "Ajout d’un epic",
     "create": {
-      "success": "Epic créé avec succès"
+      "label": "Créer un Epic",
+      "success": "Epic créé avec succès",
+      "failed": "L’Epic n’a pas pu être créé"
+    },
+    "update": {
+      "label": "Mettre à jour l’Epic"
     },
     "add": {
       "label": "Ajouter un Epic",

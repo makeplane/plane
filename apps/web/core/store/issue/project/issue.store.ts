@@ -13,7 +13,9 @@ import type {
   IssuePaginationOptions,
   TIssuesResponse,
   TBulkOperationsPayload,
+  TIssueServiceType,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // helpers
 // base class
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";
@@ -63,8 +65,12 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   // filter store
   issueFilterStore: IProjectIssuesFilter;
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectIssuesFilter) {
-    super(_rootStore, issueFilterStore);
+  constructor(
+    _rootStore: IIssueRootStore,
+    issueFilterStore: IProjectIssuesFilter,
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
+  ) {
+    super(_rootStore, issueFilterStore, false, serviceType);
     makeObservable(this, {
       fetchIssues: action,
       fetchNextIssues: action,
@@ -83,7 +89,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param projectId
    */
   fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
-    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    if (projectId) this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
 
   /** */

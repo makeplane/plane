@@ -165,6 +165,14 @@ from .issue.subscriber import IssueSubscriberViewSet
 
 from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
 
+from .epic.base import (
+    EpicViewSet,
+    EpicListEndpoint,
+    EpicDetailEndpoint,
+    EpicPaginatedViewSet,
+    EpicIssuesEndpoint,
+)
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,

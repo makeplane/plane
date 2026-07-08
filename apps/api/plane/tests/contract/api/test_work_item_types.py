@@ -138,8 +138,9 @@ class TestWorkItemTypeDetailAPIEndpoint:
 
     @pytest.mark.django_db
     def test_delete_success(self, api_key_client, workspace, project):
-        epic = IssueType.objects.create(workspace=workspace, name="Epic", is_epic=True)
-        ProjectIssueType.objects.create(project=project, issue_type=epic, is_default=False)
-        response = api_key_client.delete(type_detail_url(workspace.slug, project.id, epic.id))
+        # a non-default, non-epic type is deletable (module epics: the epic type is protected)
+        bug_type = IssueType.objects.create(workspace=workspace, name="Bug")
+        ProjectIssueType.objects.create(project=project, issue_type=bug_type, is_default=False)
+        response = api_key_client.delete(type_detail_url(workspace.slug, project.id, bug_type.id))
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not IssueType.objects.filter(id=epic.id).exists()
+        assert not IssueType.objects.filter(id=bug_type.id).exists()

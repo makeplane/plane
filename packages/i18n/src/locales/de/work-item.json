@@ -42,6 +42,7 @@
       }
     },
     "new": "Neues Arbeitselement",
+    "count_tooltip": "{count, plural, one {Es gibt # Epic in diesem Projekt} other {Es gibt # Epics in diesem Projekt}}",
     "adding": "Arbeitselement wird hinzugefügt",
     "create": {
       "success": "Arbeitselement erfolgreich erstellt"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epic} other {Epics}}",
     "adding": "Epic wird hinzugefügt",
     "create": {
-      "success": "Epic erfolgreich erstellt"
+      "label": "Epic erstellen",
+      "success": "Epic erfolgreich erstellt",
+      "failed": "Epic konnte nicht erstellt werden"
+    },
+    "update": {
+      "label": "Epic aktualisieren"
     },
     "add": {
       "label": "Epic hinzufügen",

@@ -87,7 +87,11 @@ class WorkItemTypeListCreateAPIEndpoint(BaseAPIView):
             )
 
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        serializer = IssueTypeSerializer(data=request.data)
+
+        # is_epic can never be set at creation — the only epic type is the seeded one
+        data = {key: value for key, value in request.data.items() if key != "is_epic"}
+
+        serializer = IssueTypeSerializer(data=data)
         if serializer.is_valid():
             with transaction.atomic():
                 issue_type = serializer.save(workspace_id=project.workspace_id)
@@ -173,6 +177,14 @@ class WorkItemTypeDetailAPIEndpoint(WorkItemTypeListCreateAPIEndpoint):
         if issue_type.is_default:
             return Response(
                 {"error": "The default work item type cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Deleting the epic type would SET_NULL every epic's type (soft-delete
+        # cascade), silently turning them into plain work items.
+        if issue_type.is_epic:
+            return Response(
+                {"error": "The epic work item type cannot be deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

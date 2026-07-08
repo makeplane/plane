@@ -2,8 +2,22 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db.models import Q
+
 # Module imports
 from plane.db.models import IssueType, ProjectIssueType
+
+
+def filter_epics(queryset, is_epic=False):
+    """Scope a work item queryset to epics or standard work items.
+
+    Standard listings must exclude epics (work items whose type has
+    ``is_epic=True``) while epic listings must only contain them.
+    """
+    if is_epic:
+        return queryset.filter(type__is_epic=True)
+    return queryset.filter(Q(type__isnull=True) | Q(type__is_epic=False))
 
 
 def create_default_issue_types(project):

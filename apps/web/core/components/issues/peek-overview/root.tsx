@@ -40,22 +40,19 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
+  const issueStoreType = useIssueStoreType();
+  const storeType = issueStoreFromProps ?? issueStoreType;
+  // epics live in a dedicated detail store — read the peek from the right one
+  const issueServiceType = storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
   const {
     peekIssue,
     setPeekIssue,
     issue: { fetchIssue },
     fetchActivities,
-  } = useIssueDetail();
-  const issueStoreType = useIssueStoreType();
-  const storeType = issueStoreFromProps ?? issueStoreType;
+  } = useIssueDetail(issueServiceType);
   const { issues } = useIssues(storeType);
 
-  useWorkItemProperties(
-    peekIssue?.projectId,
-    peekIssue?.workspaceSlug,
-    peekIssue?.issueId,
-    storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
-  );
+  useWorkItemProperties(peekIssue?.projectId, peekIssue?.workspaceSlug, peekIssue?.issueId, issueServiceType);
   // state
   const [error, setError] = useState(false);
 
@@ -247,6 +244,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
+      issueServiceType={issueServiceType}
     />
   );
 });

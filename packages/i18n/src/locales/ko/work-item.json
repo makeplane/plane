@@ -42,6 +42,7 @@
       }
     },
     "new": "새 작업 항목",
+    "count_tooltip": "{count, plural, other {이 프로젝트에 #개의 에픽이 있습니다}}",
     "adding": "작업 항목 추가 중",
     "create": {
       "success": "작업 항목이 성공적으로 생성되었습니다"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {에픽} other {에픽}}",
     "adding": "에픽 추가 중",
     "create": {
-      "success": "에픽이 성공적으로 생성되었습니다"
+      "label": "에픽 생성",
+      "success": "에픽이 성공적으로 생성되었습니다",
+      "failed": "에픽을 생성하지 못했습니다"
+    },
+    "update": {
+      "label": "에픽 수정"
     },
     "add": {
       "label": "에픽 추가",

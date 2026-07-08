@@ -4,18 +4,25 @@
  * See the LICENSE file for details.
  */
 
+import { EIssueServiceType } from "@plane/types";
 import type { IProjectIssues } from "@/store/issue/project";
 import { ProjectIssues } from "@/store/issue/project";
 import type { IIssueRootStore } from "@/store/issue/root.store";
 import type { IProjectEpicsFilter } from "./filter.store";
 
-// @ts-nocheck - This class will never be used, extending similar class to avoid type errors
-
 export type IProjectEpics = IProjectIssues;
 
-// @ts-nocheck - This class will never be used, extending similar class to avoid type errors
+/**
+ * Store for the project-level epics list.
+ * Same behavior as the project work items store, but every network call is
+ * routed to the /epics/ endpoints (EIssueServiceType.EPICS): the backend
+ * annotates the list, forces the epic type on create and rejects parents.
+ *
+ * NOTE: epics cannot be archived server-side (no /epics/:id/archive/ route) —
+ * the epic UI never calls `archiveIssue` (no Archive quick action for epics).
+ */
 export class ProjectEpics extends ProjectIssues implements IProjectEpics {
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectEpicsFilter) {
-    super(_rootStore, issueFilterStore);
+    super(_rootStore, issueFilterStore, EIssueServiceType.EPICS);
   }
 }

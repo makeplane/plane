@@ -63,7 +63,9 @@ class IssueActivityEndpoint(BaseAPIView):
             )
         )
 
-        if request.GET.get("activity_type", None) == "issue-property":
+        # Epic history is served by the same endpoint — the web app only switches
+        # the activity_type prefix when the service type is EPICS
+        if request.GET.get("activity_type", None) in ("issue-property", "epic-property"):
             issue_activities = issue_activities.prefetch_related(
                 Prefetch(
                     "issue__issue_intake",
@@ -74,7 +76,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             return Response(issue_activities, status=status.HTTP_200_OK)
 
-        if request.GET.get("activity_type", None) == "issue-comment":
+        if request.GET.get("activity_type", None) in ("issue-comment", "epic-comment"):
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
             return Response(issue_comments, status=status.HTTP_200_OK)
 

@@ -209,6 +209,30 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Type is not valid please pass a valid type_id")
 
+        # An epic can never have a parent work item
+        issue_type = attrs.get("type", self.instance.type if self.instance else None)
+        parent = attrs.get("parent", self.instance.parent if self.instance else None)
+        if parent is not None and issue_type is not None and issue_type.is_epic:
+            raise serializers.ValidationError("An epic cannot have a parent")
+
+        # Converting a work item that already lives in a cycle/module into an epic
+        # would smuggle the epic into those lists (epics are barred from cycles/modules).
+        # Guard the conversion path here since the cycle/module guards only run on add.
+        if (
+            self.instance is not None
+            and issue_type is not None
+            and issue_type.is_epic
+            and (self.instance.type is None or not self.instance.type.is_epic)
+        ):
+            if CycleIssue.objects.filter(issue=self.instance, deleted_at__isnull=True).exists():
+                raise serializers.ValidationError(
+                    "Remove the work item from its cycle before converting it to an epic"
+                )
+            if ModuleIssue.objects.filter(issue=self.instance, deleted_at__isnull=True).exists():
+                raise serializers.ValidationError(
+                    "Remove the work item from its module before converting it to an epic"
+                )
+
         return attrs
 
     def create(self, validated_data):
@@ -959,12 +983,16 @@ class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
     is_intake = serializers.BooleanField(read_only=True)
+    # lets the web route an epic opened full-page (/browse, new tab) to the epic
+    # detail store; false when the work item has no type (mirror of the v1 serializer)
+    is_epic = serializers.BooleanField(source="type.is_epic", read_only=True, default=False)
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "description_html",
             "is_subscribed",
             "is_intake",
+            "is_epic",
         ]
         read_only_fields = fields
 

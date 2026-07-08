@@ -42,6 +42,7 @@
       }
     },
     "new": "Nová pracovná položka",
+    "count_tooltip": "{count, plural, one {V tomto projekte je # epika} few {V tomto projekte sú # epiky} other {V tomto projekte je # epík}}",
     "adding": "Pridávanie pracovnej položky",
     "create": {
       "success": "Pracovná položka bola úspešne vytvorená"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epika} few {Epiky} other {Epík}}",
     "adding": "Pridávam epiku",
     "create": {
-      "success": "Epika bola úspešne vytvorená"
+      "label": "Vytvoriť epiku",
+      "success": "Epika bola úspešne vytvorená",
+      "failed": "Epiku sa nepodarilo vytvoriť"
+    },
+    "update": {
+      "label": "Aktualizovať epiku"
     },
     "add": {
       "label": "Pridať epiku",

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TIssueServiceType, TNameDescriptionLoader } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -38,6 +38,7 @@ interface IIssueView {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
+  issueServiceType?: TIssueServiceType;
 }
 
 export const IssueView = observer(function IssueView(props: IIssueView) {
@@ -52,6 +53,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     embedIssue = false,
     embedRemoveCurrentNotification,
     issueOperations,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -68,7 +70,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     setPeekIssue,
     isAnyModalOpen,
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
   const issue = getIssueById(issueId);
   // remove peek id
@@ -170,6 +172,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 isSubmitting={isSubmitting}
                 disabled={disabled}
                 embedIssue={embedIssue}
+                issueServiceType={issueServiceType}
               />
               {/* content */}
               <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">
@@ -193,7 +196,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                         projectId={projectId}
                         issueId={issueId}
                         disabled={disabled || is_archived}
-                        issueServiceType={EIssueServiceType.ISSUES}
+                        issueServiceType={issueServiceType}
                       />
                     </div>
 
@@ -234,7 +237,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                             projectId={projectId}
                             issueId={issueId}
                             disabled={disabled}
-                            issueServiceType={EIssueServiceType.ISSUES}
+                            issueServiceType={issueServiceType}
                           />
                         </div>
 

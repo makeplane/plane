@@ -21,6 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
@@ -84,7 +85,9 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       issue.project_id ?? undefined
     ) && !readOnly;
 
-  const isArchivingAllowed = !issue.archived_at && isEditingAllowed;
+  // epics cannot be archived (no /epics/:id/archive/ route on the backend)
+  const isEpic = !!issue.is_epic;
+  const isArchivingAllowed = !issue.archived_at && !isEpic && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isRestoringAllowed = !!issue.archived_at && isEditingAllowed;
 
@@ -140,7 +143,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal: customDeleteAction,
     setArchiveIssueModal: customArchiveAction,
-    setDuplicateWorkItemModal: customDuplicateAction,
+    // the workspace-level duplication flow creates a standard work item — not available for epics
+    setDuplicateWorkItemModal: isEpic ? undefined : customDuplicateAction,
     handleDelete: customDeleteAction,
     handleUpdate,
     handleArchive: customArchiveAction,
@@ -210,21 +214,37 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
         }}
         onSubmit={handleDelete}
       />
-      <CreateUpdateIssueModal
-        isOpen={createUpdateIssueModal}
-        onClose={() => {
-          setCreateUpdateIssueModal(false);
-          setIssueToEdit(undefined);
-          if (toggleEditIssueModal) toggleEditIssueModal(false);
-        }}
-        data={issueToEdit ?? duplicateIssuePayload}
-        onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) await handleUpdate(data);
-        }}
-        storeType={EIssuesStoreType.PROJECT}
-        fetchIssueDetails={false}
-      />
-      {issue.project_id && workspaceSlug && (
+      {isEpic ? (
+        <CreateUpdateEpicModal
+          isOpen={createUpdateIssueModal}
+          onClose={() => {
+            setCreateUpdateIssueModal(false);
+            setIssueToEdit(undefined);
+            if (toggleEditIssueModal) toggleEditIssueModal(false);
+          }}
+          data={issueToEdit ?? duplicateIssuePayload}
+          onSubmit={async (data) => {
+            if (issueToEdit && handleUpdate) await handleUpdate(data);
+          }}
+          fetchIssueDetails={false}
+        />
+      ) : (
+        <CreateUpdateIssueModal
+          isOpen={createUpdateIssueModal}
+          onClose={() => {
+            setCreateUpdateIssueModal(false);
+            setIssueToEdit(undefined);
+            if (toggleEditIssueModal) toggleEditIssueModal(false);
+          }}
+          data={issueToEdit ?? duplicateIssuePayload}
+          onSubmit={async (data) => {
+            if (issueToEdit && handleUpdate) await handleUpdate(data);
+          }}
+          storeType={EIssuesStoreType.PROJECT}
+          fetchIssueDetails={false}
+        />
+      )}
+      {!isEpic && issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
           workItemId={issue.id}
           isOpen={duplicateWorkItemModal}

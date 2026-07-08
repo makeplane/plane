@@ -42,6 +42,7 @@ from plane.db.models import (
     ModuleIssue,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_type import filter_epics
 from plane.utils.order_queryset import VIEW_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
@@ -217,7 +218,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
+        return filter_epics(Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")))
 
     @method_decorator(gzip_page)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")

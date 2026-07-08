@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.db.models import Issue, ProjectMember, IssueRelation
 from plane.utils.issue_search import search_issues
+from plane.utils.issue_type import filter_epics
 
 
 class IssueSearchEndpoint(BaseAPIView):
@@ -134,6 +135,12 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if module:
             issues = self.exclude_issues_in_module(issues, module)
+
+        # Epics belong to none of these pickers: they can't be sub-work-items and
+        # can't join a cycle/module. (They remain valid parents, so the parent
+        # picker is intentionally left untouched.)
+        if sub_issue == "true" or cycle == "true" or module:
+            issues = filter_epics(issues)
 
         if target_date == "none":
             issues = self.filter_issues_without_target_date(issues)

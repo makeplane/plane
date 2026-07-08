@@ -34,6 +34,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_type import filter_epics
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
@@ -82,7 +83,9 @@ class ModuleIssueViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return (
+        # epics are barred from modules; exclude them here as defense in depth so a
+        # residual inconsistent link can never surface an epic in a module listing
+        return filter_epics(
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
@@ -212,6 +215,12 @@ class ModuleIssueViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+        # Epics can never be added to a module
+        if Issue.objects.filter(pk__in=issues, type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added to a module"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         project = Project.objects.get(pk=project_id)
         # Scope to workspace+project to prevent cross-tenant IDOR
         issues = list(
@@ -258,6 +267,12 @@ class ModuleIssueViewSet(BaseViewSet):
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
+        # Epics can never be added to a module
+        if modules and Issue.objects.filter(pk=issue_id, type__is_epic=True).exists():
+            return Response(
+                {"error": "Epics cannot be added to a module"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         project = Project.objects.get(pk=project_id)
 
         if modules:

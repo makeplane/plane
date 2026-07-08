@@ -42,6 +42,7 @@
       }
     },
     "new": "新工作事項",
+    "count_tooltip": "{count, plural, other {此專案中有 # 個 Epic}}",
     "adding": "新增工作事項中",
     "create": {
       "success": "工作事項建立成功"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epic} other {Epic}}",
     "adding": "新增 Epic 中",
     "create": {
-      "success": "Epic 建立成功"
+      "label": "建立 Epic",
+      "success": "Epic 建立成功",
+      "failed": "無法建立 Epic"
+    },
+    "update": {
+      "label": "更新 Epic"
     },
     "add": {
       "label": "新增 Epic",

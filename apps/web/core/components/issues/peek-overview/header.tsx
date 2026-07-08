@@ -13,8 +13,8 @@ import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TNameDescriptionLoader } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import type { TIssueServiceType, TNameDescriptionLoader } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
@@ -65,6 +65,7 @@ export type PeekOverviewHeaderProps = {
   toggleEditIssueModal: (value: boolean) => void;
   handleRestoreIssue: () => Promise<void>;
   isSubmitting: TNameDescriptionLoader;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader(props: PeekOverviewHeaderProps) {
@@ -84,6 +85,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     toggleEditIssueModal,
     handleRestoreIssue,
     isSubmitting,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -203,7 +205,12 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-2">
           {currentUser && !isArchived && (
-            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+            <IssueSubscription
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              serviceType={issueServiceType}
+            />
           )}
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />

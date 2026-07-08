@@ -7,6 +7,7 @@
 export * from "./all-issue";
 export * from "./archived-issue";
 export * from "./cycle-issue";
+export * from "./epic";
 export * from "./module-issue";
 export * from "./project-issue";
 export * from "./helper";

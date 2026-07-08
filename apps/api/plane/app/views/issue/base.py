@@ -63,6 +63,7 @@ from plane.db.models import (
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
+from plane.utils.issue_type import filter_epics
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -80,6 +81,8 @@ from .. import BaseAPIView, BaseViewSet
 class IssueListEndpoint(BaseAPIView):
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
+    # When True the endpoint serves epics only; otherwise epics are excluded
+    is_epic = False
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
@@ -91,7 +94,10 @@ class IssueListEndpoint(BaseAPIView):
         issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
 
         # Base queryset with basic filters
-        queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
+        queryset = filter_epics(
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids),
+            is_epic=self.is_epic,
+        )
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
@@ -200,6 +206,9 @@ class IssueViewSet(BaseViewSet):
     search_fields = ["name"]
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
+    # When True the viewset lists epics only; otherwise epics are excluded from listings.
+    # Detail, create and update endpoints are left type-agnostic on purpose.
+    is_epic = False
 
     def get_serializer_class(self):
         return IssueCreateSerializer if self.action in ["create", "update", "partial_update"] else IssueSerializer
@@ -263,7 +272,7 @@ class IssueViewSet(BaseViewSet):
         filters = issue_filters(query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset()
+        issue_queryset = filter_epics(self.get_queryset(), is_epic=self.is_epic)
 
         # Apply rich filters
         issue_queryset = self.filter_queryset(issue_queryset)
@@ -489,7 +498,7 @@ class IssueViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 pk=pk,
             )
-            .select_related("state")
+            .select_related("state", "type")
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .annotate(
                 link_count=Subquery(
@@ -804,11 +813,17 @@ class DeletedIssuesListViewSet(BaseAPIView):
 
 
 class IssuePaginatedViewSet(BaseViewSet):
+    # When True the viewset serves epics only; otherwise epics are excluded
+    is_epic = False
+
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
         project_id = self.kwargs.get("project_id")
 
-        issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
+        issue_queryset = filter_epics(
+            Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id),
+            is_epic=self.is_epic,
+        )
 
         return (
             issue_queryset.select_related("state")
@@ -892,7 +907,10 @@ class IssuePaginatedViewSet(BaseViewSet):
             required_fields.append("description_html")
 
         # querying issues
-        base_queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
+        base_queryset = filter_epics(
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id),
+            is_epic=self.is_epic,
+        )
 
         base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
@@ -966,6 +984,8 @@ class IssuePaginatedViewSet(BaseViewSet):
 class IssueDetailEndpoint(BaseAPIView):
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
+    # When True the endpoint serves epics only; otherwise epics are excluded
+    is_epic = False
 
     def apply_annotations(self, issues):
         return (
@@ -1046,9 +1066,10 @@ class IssueDetailEndpoint(BaseAPIView):
             .values("id")
         )
         # Main issue query
-        issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
-            Exists(permission_subquery)
-        )
+        issue = filter_epics(
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id),
+            is_epic=self.is_epic,
+        ).filter(Exists(permission_subquery))
 
         # Add additional prefetch based on expand parameter
         if self.expand:
@@ -1224,7 +1245,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         issue = (
             Issue.objects.filter(project_id=project.id)
             .filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
+            .select_related("workspace", "project", "state", "parent", "type")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .annotate(

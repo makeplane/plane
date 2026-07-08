@@ -42,6 +42,7 @@
       }
     },
     "new": "Nová pracovní položka",
+    "count_tooltip": "{count, plural, one {V tomto projektu je # epik} few {V tomto projektu jsou # epiky} other {V tomto projektu je # epik}}",
     "adding": "Přidávání pracovní položky",
     "create": {
       "success": "Pracovní položka úspěšně vytvořena"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epik} other {Epiky}}",
     "adding": "Přidávám epik",
     "create": {
-      "success": "Epik úspěšně vytvořen"
+      "label": "Vytvořit epik",
+      "success": "Epik úspěšně vytvořen",
+      "failed": "Epik se nepodařilo vytvořit"
+    },
+    "update": {
+      "label": "Aktualizovat epik"
     },
     "add": {
       "label": "Přidat epik",

@@ -42,6 +42,7 @@
       }
     },
     "new": "Item Kerja Baru",
+    "count_tooltip": "{count, plural, other {Ada # epik dalam proyek ini}}",
     "adding": "Menambahkan item kerja",
     "create": {
       "success": "Item kerja berhasil dibuat"
@@ -412,7 +413,12 @@
     "label": "{count, plural, one {Epik} other {Epik}}",
     "adding": "Menambahkan epik",
     "create": {
-      "success": "Epik berhasil dibuat"
+      "label": "Buat Epik",
+      "success": "Epik berhasil dibuat",
+      "failed": "Epik gagal dibuat"
+    },
+    "update": {
+      "label": "Perbarui Epik"
     },
     "add": {
       "label": "Tambahkan Epik",
