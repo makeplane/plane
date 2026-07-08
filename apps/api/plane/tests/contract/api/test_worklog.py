@@ -230,6 +230,25 @@ class TestWorklogAPIIsolation:
         response = api_key_client.get(url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    @pytest.mark.django_db
+    def test_create_rejected_for_issue_of_another_project(self, api_key_client, workspace, project, create_user):
+        other_project = Project.objects.create(
+            name="Other", identifier="OT", workspace=workspace, is_time_tracking_enabled=True
+        )
+        ProjectMember.objects.create(project=other_project, member=create_user, role=20, is_active=True)
+        foreign_issue = Issue.objects.create(name="Foreign", project=other_project, workspace=workspace)
+        url = list_url(workspace.slug, project.id, foreign_issue.id)
+        response = api_key_client.post(url, {"duration": 30}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_rejected_for_nonexistent_issue(self, api_key_client, workspace, project):
+        url = list_url(workspace.slug, project.id, uuid4())
+        response = api_key_client.post(url, {"duration": 30}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueWorkLog.objects.count() == 0
+
 
 @pytest.mark.contract
 class TestWorklogAPIValidationAndGates:

@@ -15,13 +15,14 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import IssueWorkLogSerializer
-from plane.db.models import IntakeIssue, IssueWorkLog, Project, ProjectMember
+from plane.db.models import IntakeIssue, Issue, IssueWorkLog, Project, ProjectMember
 from plane.db.models.intake import IntakeIssueStatus
 from plane.db.models.project import ROLE
 from .base import BaseAPIView
 
 TIME_TRACKING_DISABLED_ERROR = "Time tracking is disabled for this project."
 INTAKE_WORK_ITEM_ERROR = "Time cannot be logged on an intake work item until it is accepted."
+ISSUE_NOT_IN_PROJECT_ERROR = "Work item not found in this project."
 
 
 def _is_unaccepted_intake_issue(project_id, issue_id):
@@ -31,6 +32,15 @@ def _is_unaccepted_intake_issue(project_id, issue_id):
         .exclude(status=IntakeIssueStatus.ACCEPTED)
         .exists()
     )
+
+
+def _issue_belongs_to_project(slug, project_id, issue_id):
+    """The target work item must belong to this project/workspace (isolation).
+
+    Guards against logging time against a work item of another project (dangling
+    worklog) or against a non-existent id (FK IntegrityError -> 500).
+    """
+    return Issue.objects.filter(pk=issue_id, project_id=project_id, workspace__slug=slug).exists()
 
 
 def _is_project_admin(user, slug, project_id):
@@ -98,6 +108,9 @@ class IssueWorkLogListCreateAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id)
         if not project.is_time_tracking_enabled:
             return Response({"error": TIME_TRACKING_DISABLED_ERROR}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not _issue_belongs_to_project(slug, project_id, issue_id):
+            return Response({"error": ISSUE_NOT_IN_PROJECT_ERROR}, status=status.HTTP_404_NOT_FOUND)
 
         if _is_unaccepted_intake_issue(project_id, issue_id):
             return Response({"error": INTAKE_WORK_ITEM_ERROR}, status=status.HTTP_400_BAD_REQUEST)

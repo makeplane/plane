@@ -230,6 +230,28 @@ class TestWorklogAppIsolation:
         response = session_client.get(url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    @pytest.mark.django_db
+    def test_create_rejected_for_issue_of_another_project(self, session_client, workspace, project, create_user):
+        # A work item that lives in a different project of the same workspace.
+        other_project = Project.objects.create(
+            name="Other", identifier="OT", workspace=workspace, is_time_tracking_enabled=True
+        )
+        ProjectMember.objects.create(project=other_project, member=create_user, role=20, is_active=True)
+        foreign_issue = Issue.objects.create(name="Foreign", project=other_project, workspace=workspace)
+        # Log time against the foreign issue through THIS project's scope -> 404, no dangling row.
+        url = list_url(workspace.slug, project.id, foreign_issue.id)
+        response = session_client.post(url, {"duration": 30}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueWorkLog.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_create_rejected_for_nonexistent_issue(self, session_client, workspace, project):
+        # A well-formed but non-existent work item id -> clean 404 (not a 500 FK error).
+        url = list_url(workspace.slug, project.id, uuid4())
+        response = session_client.post(url, {"duration": 30}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueWorkLog.objects.count() == 0
+
 
 @pytest.mark.contract
 class TestWorklogAppRollup:
