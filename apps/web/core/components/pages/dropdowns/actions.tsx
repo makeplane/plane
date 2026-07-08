@@ -4,26 +4,29 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
+import { ArchiveRestoreIcon, FileOutput, FilePlus, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
 import { EPageAccess } from "@plane/constants";
 // plane editor
 import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
 import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -37,6 +40,7 @@ export type TPageActions =
   | "open-in-new-tab"
   | "copy-link"
   | "make-a-copy"
+  | "new-sub-page"
   | "archive-restore"
   | "delete"
   | "version-history"
@@ -58,6 +62,10 @@ export const PageActions = observer(function PageActions(props: Props) {
   const [movePageModal, setMovePageModal] = useState(false);
   // params
   const { workspaceSlug } = useParams();
+  // router
+  const router = useAppRouter();
+  // store hooks
+  const { canCurrentUserCreatePage, createPage } = usePageStore(storeType);
   // page flag
   const { isMovePageEnabled } = usePageFlag({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -66,6 +74,24 @@ export const PageActions = observer(function PageActions(props: Props) {
   const { pageOperations } = usePageOperations({
     page,
   });
+  // handle sub-page creation
+  const handleCreateSubPage = useCallback(async () => {
+    const projectId = page.project_ids?.[0];
+    if (!workspaceSlug || !projectId || !page.id) return;
+    try {
+      const res = await createPage({
+        access: page.access,
+        parent: page.id,
+      });
+      if (res?.id) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
+    } catch (err) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: (err as { data?: { error?: string } })?.data?.error || "Page could not be created. Please try again.",
+      });
+    }
+  }, [createPage, page, router, workspaceSlug]);
   // derived values
   const {
     access,
@@ -124,6 +150,15 @@ export const PageActions = observer(function PageActions(props: Props) {
           shouldRender: canCurrentUserDuplicatePage,
         },
         {
+          key: "new-sub-page",
+          action: () => {
+            handleCreateSubPage();
+          },
+          title: "New sub-page",
+          icon: FilePlus,
+          shouldRender: canCurrentUserCreatePage && !archived_at,
+        },
+        {
           key: "archive-restore",
           action: () => {
             pageOperations.toggleArchive();
@@ -162,11 +197,13 @@ export const PageActions = observer(function PageActions(props: Props) {
       canCurrentUserChangeAccess,
       archived_at,
       canCurrentUserDuplicatePage,
+      canCurrentUserCreatePage,
       canCurrentUserArchivePage,
       canCurrentUserDeletePage,
       canCurrentUserMovePage,
       isMovePageEnabled,
       pageOperations,
+      handleCreateSubPage,
     ]
   );
   // arrange options

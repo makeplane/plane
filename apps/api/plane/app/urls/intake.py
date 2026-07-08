@@ -8,11 +8,17 @@ from django.urls import path
 from plane.app.views import (
     IntakeViewSet,
     IntakeIssueViewSet,
+    IntakeEmailWebhookEndpoint,
     IntakeWorkItemDescriptionVersionEndpoint,
 )
 
 
 urlpatterns = [
+    path(
+        "intake/email/",
+        IntakeEmailWebhookEndpoint.as_view(),
+        name="intake-email-webhook",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/",
         IntakeViewSet.as_view({"get": "list", "post": "create"}),

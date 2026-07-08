@@ -75,7 +75,9 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
-                {inboxIssue.source && <InboxSourcePill source={inboxIssue.source} />}
+                {inboxIssue.source && (
+                  <InboxSourcePill source={inboxIssue.source} sourceEmail={inboxIssue.source_email} />
+                )}
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>

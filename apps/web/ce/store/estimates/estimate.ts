@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import { orderBy, set } from "lodash-es";
+import { orderBy, set, unset } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import type {
   IEstimate as IEstimateType,
   IEstimatePoint as IEstimatePointType,
+  TEstimatePointsObject,
   TEstimateSystemKeys,
 } from "@plane/types";
 // plane web services
@@ -34,11 +35,22 @@ export interface IEstimate extends Omit<IEstimateType, "points"> {
   estimatePointIds: string[] | undefined;
   estimatePointById: (estimatePointId: string) => IEstimatePointType | undefined;
   // actions
+  updateEstimateSortOrder: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TEstimatePointsObject[]
+  ) => Promise<IEstimateType | undefined>;
   creteEstimatePoint: (
     workspaceSlug: string,
     projectId: string,
     payload: Partial<IEstimatePointType>
   ) => Promise<IEstimatePointType | undefined>;
+  deleteEstimatePoint: (
+    workspaceSlug: string,
+    projectId: string,
+    estimatePointId: string,
+    newEstimatePointId: string | undefined
+  ) => Promise<IEstimatePointType[] | undefined>;
 }
 
 export class Estimate implements IEstimate {
@@ -82,7 +94,9 @@ export class Estimate implements IEstimate {
       asJson: computed,
       estimatePointIds: computed,
       // actions
+      updateEstimateSortOrder: action,
       creteEstimatePoint: action,
+      deleteEstimatePoint: action,
     });
     this.id = this.data.id;
     this.name = this.data.name;
@@ -136,6 +150,38 @@ export class Estimate implements IEstimate {
 
   // actions
   /**
+   * @description update the sort order of the estimate points
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { TEstimatePointsObject[] } payload
+   * @returns { IEstimateType | undefined }
+   */
+  updateEstimateSortOrder = async (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TEstimatePointsObject[]
+  ): Promise<IEstimateType | undefined> => {
+    if (!this.id || !payload) return;
+
+    const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
+      estimate_points: payload,
+    });
+    if (estimate) {
+      runInAction(() => {
+        estimate.points?.forEach((estimatePoint) => {
+          if (estimatePoint.id)
+            this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
+              key: estimatePoint.key,
+              value: estimatePoint.value,
+            });
+        });
+      });
+    }
+
+    return estimate;
+  };
+
+  /**
    * @description create an estimate point
    * @param { string } workspaceSlug
    * @param { string } projectId
@@ -157,5 +203,46 @@ export class Estimate implements IEstimate {
         }
       });
     }
+  };
+
+  /**
+   * @description delete an estimate point and re-map the issues to the new estimate point
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { string } estimatePointId
+   * @param { string | undefined } newEstimatePointId
+   * @returns { IEstimatePointType[] | undefined }
+   */
+  deleteEstimatePoint = async (
+    workspaceSlug: string,
+    projectId: string,
+    estimatePointId: string,
+    newEstimatePointId: string | undefined
+  ): Promise<IEstimatePointType[] | undefined> => {
+    if (!this.id) return;
+
+    const updatedEstimatePoints = await estimateService.removeEstimatePoint(
+      workspaceSlug,
+      projectId,
+      this.id,
+      estimatePointId,
+      newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
+    );
+
+    runInAction(() => {
+      unset(this.estimatePoints, [estimatePointId]);
+    });
+    if (updatedEstimatePoints && updatedEstimatePoints.length > 0) {
+      runInAction(() => {
+        updatedEstimatePoints.forEach((estimatePoint) => {
+          if (estimatePoint.id)
+            this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
+              key: estimatePoint.key,
+            });
+        });
+      });
+    }
+
+    return updatedEstimatePoints;
   };
 }

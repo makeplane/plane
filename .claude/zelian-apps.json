@@ -1,0 +1,10 @@
+{
+  "apps": {
+    "api": { "root": "apps/api", "stack": "django" },
+    "web": { "root": "apps/web", "stack": "react-router-v7" },
+    "admin": { "root": "apps/admin", "stack": "react-router-v7" },
+    "space": { "root": "apps/space", "stack": "react-router-v7" },
+    "live": { "root": "apps/live", "stack": "express" },
+    "proxy": { "root": "apps/proxy", "stack": "caddy" }
+  }
+}

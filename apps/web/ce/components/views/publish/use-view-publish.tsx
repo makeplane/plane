@@ -4,10 +4,26 @@
  * See the LICENSE file for details.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => ({
-  isPublishModalOpen: false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setPublishModalOpen: (value: boolean) => {},
-  publishContextMenu: undefined,
-});
+import { useState } from "react";
+import { Earth } from "lucide-react";
+// ui
+import type { TContextMenuItem } from "@plane/ui";
+
+export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => {
+  const [isPublishModalOpen, setPublishModalOpen] = useState(false);
+
+  const publishContextMenu: TContextMenuItem | undefined = isAuthorized
+    ? {
+        key: "publish",
+        action: () => setPublishModalOpen(true),
+        title: isPublished ? "Unpublish" : "Publish",
+        icon: Earth,
+      }
+    : undefined;
+
+  return {
+    isPublishModalOpen,
+    setPublishModalOpen,
+    publishContextMenu,
+  };
+};

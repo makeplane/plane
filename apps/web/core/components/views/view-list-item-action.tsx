@@ -59,6 +59,9 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+  // Unpublishing (offered inside the modal) is admin-only on the server, so
+  // only admins get the interactive "Live" badge that opens it.
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const access = view.access;
 
@@ -100,13 +103,17 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
       </div>
 
       {view?.anchor && publishLink ? (
-        <div
-          className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-success-subtle px-3 py-1.5 text-11 font-medium text-success-primary"
-          onClick={() => setPublishModalOpen(true)}
+        <button
+          type="button"
+          disabled={!isAdmin}
+          className={`flex items-center gap-1.5 rounded-sm bg-success-subtle px-3 py-1.5 text-11 font-medium text-success-primary ${
+            isAdmin ? "cursor-pointer" : "cursor-default"
+          }`}
+          onClick={isAdmin ? () => setPublishModalOpen(true) : undefined}
         >
           <span className="size-1.5 flex-shrink-0 rounded-full bg-success-primary" />
           Live
-        </div>
+        </button>
       ) : (
         <></>
       )}

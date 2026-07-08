@@ -28,6 +28,7 @@ export interface IInboxIssueStore {
   issue: Partial<TIssue>;
   snoozed_till: Date | undefined;
   source: EInboxIssueSource | undefined;
+  source_email: string | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
   duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
@@ -48,6 +49,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   issue: Partial<TIssue> = {};
   snoozed_till: Date | undefined;
   source: EInboxIssueSource | undefined;
+  source_email: string | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
   duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined = undefined;
@@ -70,6 +72,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
     this.source = data?.source || undefined;
+    this.source_email = data?.source_email || undefined;
     this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
     this.workspaceSlug = workspaceSlug;
     this.projectId = projectId;
@@ -86,6 +89,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       duplicate_issue_detail: observable,
       created_by: observable,
       source: observable,
+      source_email: observable,
       // actions
       updateInboxIssueStatus: action,
       updateInboxIssueDuplicateTo: action,

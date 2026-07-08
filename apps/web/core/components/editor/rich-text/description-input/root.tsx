@@ -11,10 +11,12 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import type { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
+import { useIssuePageEmbed } from "@/components/editor/embeds/page-embed";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -137,6 +139,14 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
+  // "/page" slash command + page-embed block, only wired for issue descriptions
+  const isIssueDescription = fileAssetType === EFileAssetType.ISSUE_DESCRIPTION;
+  const pageEmbedProps = useIssuePageEmbed({
+    workspaceSlug,
+    projectId: projectId ?? "",
+    issueId: entityId,
+  });
+  const extendedEditorProps = isIssueDescription && projectId && !disabled ? pageEmbedProps : undefined;
   // translation
   const { t } = useTranslation();
   // form info
@@ -241,6 +251,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
           workspaceSlug={workspaceSlug}
           workspaceId={workspaceDetails.id}
           projectId={projectId}
+          extendedEditorProps={extendedEditorProps}
           dragDropEnabled
           onChange={(description_json, description_html, options) => {
             if (description_html === lastSavedContent.current) return;

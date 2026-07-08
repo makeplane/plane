@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "framework_version": "2.6.1",
+  "project_id": "69342259-2cb2-4795-9486-8a4e7d3e9c92",
+  "initialized_at": "2026-06-30T15:06:48.898Z",
+  "stack": "React Router v7.15.1 (anciennement Remix), mode SSG (`ssr: false`)",
+  "monorepo": true,
+  "apps": [
+    {
+      "name": "api",
+      "root": "apps/api",
+      "stack": "django"
+    },
+    {
+      "name": "web",
+      "root": "apps/web",
+      "stack": "react-router-v7"
+    },
+    {
+      "name": "admin",
+      "root": "apps/admin",
+      "stack": "react-router-v7"
+    },
+    {
+      "name": "space",
+      "root": "apps/space",
+      "stack": "react-router-v7"
+    },
+    {
+      "name": "live",
+      "root": "apps/live",
+      "stack": "express"
+    },
+    {
+      "name": "proxy",
+      "root": "apps/proxy",
+      "stack": "caddy"
+    }
+  ],
+  "initialized_via": "retro"
+}

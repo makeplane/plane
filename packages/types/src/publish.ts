@@ -7,7 +7,7 @@
 import type { IProject, IProjectLite } from "./project";
 import type { IWorkspaceLite } from "./workspace";
 
-export type TPublishEntityType = "project" | "page";
+export type TPublishEntityType = "project" | "page" | "view";
 
 export type TProjectPublishLayouts = "calendar" | "gantt" | "kanban" | "list" | "spreadsheet";
 

@@ -7,7 +7,7 @@
 import { forwardRef } from "react";
 // plane imports
 import { RichTextEditorWithRef } from "@plane/editor";
-import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
+import type { EditorRefApi, IEditorPropsExtended, IRichTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -27,6 +27,7 @@ type RichTextEditorWrapperProps = MakeOptional<
   workspaceId: string;
   projectId?: string;
   issueSequenceId?: number;
+  extendedEditorProps?: IEditorPropsExtended;
 } & (
     | {
         editable: false;
@@ -49,6 +50,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
     workspaceSlug,
     workspaceId,
     projectId,
+    extendedEditorProps,
     disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
@@ -96,7 +98,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
-      extendedEditorProps={{}}
+      extendedEditorProps={extendedEditorProps ?? {}}
       {...rest}
       containerClassName={cn("relative pb-3 pl-3", containerClassName)}
     />

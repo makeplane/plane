@@ -35,6 +35,7 @@ class IntakeIssueSerializer(BaseSerializer):
             "duplicate_to",
             "snoozed_till",
             "source",
+            "source_email",
             "issue",
             "created_by",
         ]
@@ -103,6 +104,7 @@ class IntakeIssueDetailSerializer(BaseSerializer):
             "snoozed_till",
             "duplicate_issue_detail",
             "source",
+            "source_email",
             "issue",
         ]
         read_only_fields = ["project", "workspace"]

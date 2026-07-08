@@ -7,7 +7,7 @@
 import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // plane imports
-import { SitesProjectPublishService } from "@plane/services";
+import { SitesProjectPublishService, SitesViewPublishService } from "@plane/services";
 import type { TProjectPublishSettings } from "@plane/types";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
@@ -18,6 +18,7 @@ export interface IPublishListStore {
   publishMap: Record<string, PublishStore>; // anchor => PublishStore
   // actions
   fetchPublishSettings: (pageId: string) => Promise<TProjectPublishSettings>;
+  fetchViewPublishSettings: (anchor: string) => Promise<TProjectPublishSettings>;
 }
 
 export class PublishListStore implements IPublishListStore {
@@ -25,6 +26,7 @@ export class PublishListStore implements IPublishListStore {
   publishMap: Record<string, PublishStore> = {}; // anchor => PublishStore
   // service
   publishService;
+  viewPublishService;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
@@ -32,9 +34,11 @@ export class PublishListStore implements IPublishListStore {
       publishMap: observable,
       // actions
       fetchPublishSettings: action,
+      fetchViewPublishSettings: action,
     });
     // services
     this.publishService = new SitesProjectPublishService();
+    this.viewPublishService = new SitesViewPublishService();
   }
 
   /**
@@ -43,6 +47,20 @@ export class PublishListStore implements IPublishListStore {
    */
   fetchPublishSettings = async (anchor: string) => {
     const response = await this.publishService.retrieveSettingsByAnchor(anchor);
+    runInAction(() => {
+      if (response.anchor) {
+        set(this.publishMap, [response.anchor], new PublishStore(this.rootStore, response));
+      }
+    });
+    return response;
+  };
+
+  /**
+   * @description fetch publish settings of a published view
+   * @param {string} anchor
+   */
+  fetchViewPublishSettings = async (anchor: string) => {
+    const response = await this.viewPublishService.retrieveSettingsByAnchor(anchor);
     runInAction(() => {
       if (response.anchor) {
         set(this.publishMap, [response.anchor], new PublishStore(this.rootStore, response));
