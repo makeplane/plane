@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Épico} other {Épicos}}",
     "adding": "Adicionando épico",
     "create": {
-      "success": "Épico criado com sucesso"
+      "label": "Criar Épico",
+      "success": "Épico criado com sucesso",
+      "failed": "Não foi possível criar o Épico"
+    },
+    "update": {
+      "label": "Atualizar Épico"
     },
     "add": {
       "label": "Adicionar Épico",

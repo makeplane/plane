@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epik} other {Epikler}}",
     "adding": "Epik ekleniyor",
     "create": {
-      "success": "Epik başarıyla oluşturuldu"
+      "label": "Epik oluştur",
+      "success": "Epik başarıyla oluşturuldu",
+      "failed": "Epik oluşturulamadı"
+    },
+    "update": {
+      "label": "Epik güncelle"
     },
     "add": {
       "label": "Epik Ekle",

@@ -412,7 +412,12 @@
     "label": "{count, plural, one {エピック} other {エピック}}",
     "adding": "エピックを追加中",
     "create": {
-      "success": "エピックを作成しました"
+      "label": "エピックを作成",
+      "success": "エピックを作成しました",
+      "failed": "エピックを作成できませんでした"
+    },
+    "update": {
+      "label": "エピックを更新"
     },
     "add": {
       "label": "エピックを追加",

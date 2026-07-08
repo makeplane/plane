@@ -134,7 +134,14 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     }
   );
 
-  fetchFilters = async (workspaceSlug: string, projectId: string) => {
+  fetchFilters = async (workspaceSlug: string, projectId: string) => this.handleFetchFilters(workspaceSlug, projectId);
+
+  /**
+   * NOTE: MobX annotates the `fetchFilters` field as an action, making it
+   * non-writable — subclasses cannot re-declare it. Override this protected
+   * prototype method instead to customize the fetch behavior.
+   */
+  protected async handleFetchFilters(workspaceSlug: string, projectId: string): Promise<void> {
     const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
 
     const richFilters = _filters?.rich_filters;
@@ -164,18 +171,26 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       set(this.filters, [projectId, "displayProperties"], displayProperties);
       set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
     });
-  };
+  }
 
   /**
    * NOTE: This method is designed as a fallback function for the work item filter store.
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IProjectIssuesFilter["updateFilterExpression"] = async (
-    workspaceSlug,
-    projectId,
-    filters
-  ) => {
+  updateFilterExpression: IProjectIssuesFilter["updateFilterExpression"] = async (workspaceSlug, projectId, filters) =>
+    this.handleUpdateFilterExpression(workspaceSlug, projectId, filters);
+
+  /**
+   * NOTE: MobX annotates the `updateFilterExpression` field as an action, making
+   * it non-writable — subclasses cannot re-declare it. Override this protected
+   * prototype method instead to customize the update behavior.
+   */
+  protected async handleUpdateFilterExpression(
+    workspaceSlug: string,
+    projectId: string,
+    filters: TWorkItemFilterExpression
+  ): Promise<void> {
     try {
       runInAction(() => {
         set(this.filters, [projectId, "richFilters"], filters);
@@ -186,12 +201,25 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
         rich_filters: filters,
       });
     } catch (error) {
-      console.log("error while updating rich filters", error);
+      console.error("error while updating rich filters", error);
       throw error;
     }
-  };
+  }
 
-  updateFilters: IProjectIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters) => {
+  updateFilters: IProjectIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters) =>
+    this.handleUpdateFilters(workspaceSlug, projectId, type, filters);
+
+  /**
+   * NOTE: MobX annotates the `updateFilters` field as an action, making it
+   * non-writable — subclasses cannot re-declare it. Override this protected
+   * prototype method instead to customize the update behavior.
+   */
+  protected async handleUpdateFilters(
+    workspaceSlug: string,
+    projectId: string,
+    type: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
+  ): Promise<void> {
     try {
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId])) return;
 
@@ -299,5 +327,5 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       this.fetchFilters(workspaceSlug, projectId);
       throw error;
     }
-  };
+  }
 }

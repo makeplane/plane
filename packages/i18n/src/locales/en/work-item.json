@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epic} other {Epics}}",
     "adding": "Adding epic",
     "create": {
-      "success": "Epic created successfully"
+      "label": "Create Epic",
+      "success": "Epic created successfully",
+      "failed": "Epic could not be created"
+    },
+    "update": {
+      "label": "Update Epic"
     },
     "add": {
       "label": "Add Epic",

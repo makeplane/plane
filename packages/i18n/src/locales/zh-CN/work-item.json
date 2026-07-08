@@ -412,7 +412,12 @@
     "label": "{count, plural, one {史诗} other {史诗}}",
     "adding": "正在添加史诗",
     "create": {
-      "success": "史诗创建成功"
+      "label": "创建史诗",
+      "success": "史诗创建成功",
+      "failed": "无法创建史诗"
+    },
+    "update": {
+      "label": "更新史诗"
     },
     "add": {
       "label": "添加史诗",

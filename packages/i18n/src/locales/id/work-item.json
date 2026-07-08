@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epik} other {Epik}}",
     "adding": "Menambahkan epik",
     "create": {
-      "success": "Epik berhasil dibuat"
+      "label": "Buat Epik",
+      "success": "Epik berhasil dibuat",
+      "failed": "Epik gagal dibuat"
+    },
+    "update": {
+      "label": "Perbarui Epik"
     },
     "add": {
       "label": "Tambahkan Epik",

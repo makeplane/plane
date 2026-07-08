@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epik} other {Epiki}}",
     "adding": "Dodawanie epiku",
     "create": {
-      "success": "Epik utworzono pomyślnie"
+      "label": "Utwórz epik",
+      "success": "Epik utworzono pomyślnie",
+      "failed": "Nie udało się utworzyć epiku"
+    },
+    "update": {
+      "label": "Zaktualizuj epik"
     },
     "add": {
       "label": "Dodaj epik",

@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epik} other {Epiky}}",
     "adding": "Přidávám epik",
     "create": {
-      "success": "Epik úspěšně vytvořen"
+      "label": "Vytvořit epik",
+      "success": "Epik úspěšně vytvořen",
+      "failed": "Epik se nepodařilo vytvořit"
+    },
+    "update": {
+      "label": "Aktualizovat epik"
     },
     "add": {
       "label": "Přidat epik",

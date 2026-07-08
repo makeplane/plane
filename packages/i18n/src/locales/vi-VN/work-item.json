@@ -412,7 +412,12 @@
     "label": "{count, plural, one {sử thi} other {sử thi}}",
     "adding": "Đang thêm sử thi",
     "create": {
-      "success": "Đã tạo sử thi thành công"
+      "label": "Tạo sử thi",
+      "success": "Đã tạo sử thi thành công",
+      "failed": "Không thể tạo sử thi"
+    },
+    "update": {
+      "label": "Cập nhật sử thi"
     },
     "add": {
       "label": "Thêm sử thi",

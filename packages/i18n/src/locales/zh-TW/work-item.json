@@ -412,7 +412,12 @@
     "label": "{count, plural, one {Epic} other {Epic}}",
     "adding": "新增 Epic 中",
     "create": {
-      "success": "Epic 建立成功"
+      "label": "建立 Epic",
+      "success": "Epic 建立成功",
+      "failed": "無法建立 Epic"
+    },
+    "update": {
+      "label": "更新 Epic"
     },
     "add": {
       "label": "新增 Epic",
