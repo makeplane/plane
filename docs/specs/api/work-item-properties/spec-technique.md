@@ -5,7 +5,28 @@
 | Module  | api/work-item-properties |
 | Version | 0.1.0                    |
 | Date    | 2026-07-08               |
-| Statut  | PLAN — à valider         |
+| Statut  | IMPLÉMENTÉ v0.1.0 (2026-07-08) |
+
+---
+
+## État d'implémentation (2026-07-08)
+
+Implémenté (backend + web), **vérifié par exécution réelle** :
+- Backend : 3 modèles greenfield (`IssueProperty`, `IssuePropertyOption`, `IssuePropertyValue` à colonnes typées), migration `0124_issue_properties`, util de cast/validation, serializers, CRUD interne (session) + externe v1/MCP (définitions, options, valeurs), activité `property_value`. Types V1 : TEXT/DECIMAL/BOOLEAN/DATETIME/OPTION/RELATION(USER/ISSUE)/URL.
+- `makemigrations --check` propre, migration `0124` appliquée à la BDD, **43 tests pytest verts**.
+- Web : types `@plane/types` (IIssueProperty/Option/Value + enums), services + stores, handlers réels du `IssueModalProvider` (validation required + persistance), rendu polymorphe par type (modale + sidebar détail), panneau de gestion propriétés/options, activité. Typecheck web vert.
+
+### Revue sécurité adversariale (5 findings minor confirmés, corrigés ; 0 critical/major)
+1. `property_type`/`relation_type` rendus **immuables au PATCH** (interne + v1) — un changement orphelinait les valeurs typées stockées.
+2. DECIMAL rejette **NaN/Infinity**.
+3. `required` non contournable via éléments vides d'une liste `is_multi`.
+4. **Cap** `MAX_MULTI_VALUES=100` sur les valeurs multi (anti-amplification).
+> Le finding « isolation type/projet » a été **rejeté** en vérification : l'isolation (type∈projet, option∈propriété, member∈projet) est correcte.
+
+### Reste à faire (non-bloquant, cf. open_issues du volet web)
+- Router le panneau de gestion des propriétés dans les settings projet (page « Work item Types » à monter).
+- Rendu read-only dans les layouts liste/spreadsheet ; picker RELATION-issue ; reset des valeurs en « create more » ; résolution des labels option/member dans l'activité.
+- `useMemo` sur le context value du provider (warning perf mineur, pattern préexistant).
 
 ---
 
