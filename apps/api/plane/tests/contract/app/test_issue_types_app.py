@@ -39,7 +39,9 @@ def project(db, workspace, create_user):
 @pytest.fixture
 def member_client(db, workspace, project):
     """Return a session client authenticated as a project member (role 15)"""
-    member = User.objects.create(email=f"member-{uuid4().hex[:8]}@plane.so", first_name="Member")
+    member = User.objects.create(
+        email=f"member-{uuid4().hex[:8]}@plane.so", username=f"member-{uuid4().hex[:12]}", first_name="Member"
+    )
     WorkspaceMember.objects.create(workspace=workspace, member=member, role=15, is_active=True)
     ProjectMember.objects.create(project=project, member=member, role=15, is_active=True)
     client = APIClient()

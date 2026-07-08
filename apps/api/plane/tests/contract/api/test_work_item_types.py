@@ -40,7 +40,9 @@ def project(db, workspace, create_user):
 @pytest.fixture
 def member_key_client(db, workspace, project):
     """Return an API key client authenticated as a project member (role 15)"""
-    member = User.objects.create(email=f"member-{uuid4().hex[:8]}@plane.so", first_name="Member")
+    member = User.objects.create(
+        email=f"member-{uuid4().hex[:8]}@plane.so", username=f"member-{uuid4().hex[:12]}", first_name="Member"
+    )
     WorkspaceMember.objects.create(workspace=workspace, member=member, role=15, is_active=True)
     ProjectMember.objects.create(project=project, member=member, role=15, is_active=True)
     token = APIToken.objects.create(user=member, label="Member Token", token=f"member-{uuid4().hex}")
