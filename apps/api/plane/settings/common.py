@@ -141,6 +141,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "30/minute",
         "asset_id": "5/minute",
+        "intake_email": "120/minute",
     },
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
@@ -152,6 +153,10 @@ REST_FRAMEWORK = {
 
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
+
+# Intake email webhook — shared secret used to verify the HMAC-SHA256 signature
+# of incoming email payloads. Empty (default) disables the endpoint.
+INTAKE_EMAIL_WEBHOOK_SECRET = os.environ.get("INTAKE_EMAIL_WEBHOOK_SECRET", "")
 
 # Django Auth Backend
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default

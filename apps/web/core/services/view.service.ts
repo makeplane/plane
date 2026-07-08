@@ -5,7 +5,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IProjectView } from "@plane/types";
+import type { IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 // helpers
@@ -57,6 +57,27 @@ export class ViewService extends APIService {
 
   async getViewIssues(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async publishView(
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    data: Partial<TPublishViewSettings>
+  ): Promise<TPublishViewDetails> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async unPublishView(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

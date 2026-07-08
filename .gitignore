@@ -117,3 +117,11 @@ packages/i18n/src/types/keys.generated.ts
 
 # Local security notes (not for version control)
 /security/
+
+# Claude Code session runtime (not for version control)
+.claude/.events.log
+.claude/.quality-score.log
+.claude/.session-edited-files.json
+.claude/.session-start-sha
+.claude/.session-start-time
+.claude/worktrees/

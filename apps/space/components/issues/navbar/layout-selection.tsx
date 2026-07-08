@@ -15,6 +15,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
+import { usePublishBasePath } from "@/hooks/use-publish-base-path";
 // mobx
 import type { TIssueLayout } from "@/types/issue";
 import { IssueLayoutIcon } from "./layout-icon";
@@ -40,11 +41,12 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
   // derived values
   const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+  const basePath = usePublishBasePath(anchor);
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
     updateIssueFilters(anchor, "display_filters", "layout", boardView);
     const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
-    router.push(`/issues/${anchor}?${queryParam}`);
+    router.push(`${basePath}?${queryParam}`);
   };
 
   return (

@@ -58,6 +58,7 @@ from plane.db.models import (
     IssueComment,
     IssueLink,
     IssueReaction,
+    IssueView,
     ProjectMember,
     CommentReaction,
     DeployBoard,
@@ -68,6 +69,38 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.exception_logger import log_exception
+
+
+class _PublishedViewFilterView:
+    """Minimal view shim exposing the FilterSet for ComplexFilterBackend."""
+
+    filterset_class = IssueFilterSet
+
+
+def apply_published_view_filters(queryset, issue_view, request):
+    """Apply a published view's saved filters to an issue queryset server-side.
+
+    Prefers ``rich_filters`` (the format the current UI writes); falls back to
+    the legacy ``query`` mapping for views created before rich filters existed.
+    An unfiltered view legitimately returns the whole project. Fails closed
+    (returns an empty queryset) if a stored filter cannot be applied, since this
+    runs on an anonymous, publicly reachable surface.
+    """
+    rich_filters = issue_view.rich_filters or {}
+    if rich_filters:
+        try:
+            return ComplexFilterBackend().filter_queryset(
+                request, queryset, _PublishedViewFilterView(), filter_data=rich_filters
+            )
+        except Exception as e:
+            log_exception(e)
+            return queryset.none()
+    legacy_query = issue_view.query or {}
+    if legacy_query:
+        return queryset.filter(**legacy_query)
+    return queryset
 
 
 class ProjectIssuesPublicEndpoint(BaseAPIView):
@@ -77,11 +110,19 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name__in=["project", "view"]).first()
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        project_id = deploy_board.entity_identifier
+        # The filters of a published view are always applied on the server
+        published_view = None
+        if deploy_board.entity_name == "view":
+            published_view = IssueView.objects.filter(pk=deploy_board.entity_identifier).first()
+            if not published_view:
+                return Response({"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND)
+            project_id = deploy_board.project_id
+        else:
+            project_id = deploy_board.entity_identifier
         slug = deploy_board.workspace.slug
 
         issue_queryset = (
@@ -122,6 +163,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .values("count")
             )
         ).distinct()
+
+        if published_view is not None:
+            issue_queryset = apply_published_view_filters(issue_queryset, published_view, request)
 
         issue_queryset = issue_queryset.filter(**filters)
 
@@ -597,13 +641,23 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
     def get(self, request, anchor, issue_id):
         deploy_board = DeployBoard.objects.get(anchor=anchor)
 
+        # The filters of a published view are always applied on the server
+        published_view = None
+        if deploy_board.entity_name == "view":
+            published_view = IssueView.objects.filter(pk=deploy_board.entity_identifier).first()
+            if not published_view:
+                return Response({"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND)
+
+        base_issue_queryset = Issue.issue_objects.filter(
+            pk=issue_id,
+            workspace__slug=deploy_board.workspace.slug,
+            project_id=deploy_board.project_id,
+        )
+        if published_view is not None:
+            base_issue_queryset = apply_published_view_filters(base_issue_queryset, published_view, request)
+
         issue_queryset = (
-            Issue.issue_objects.filter(
-                pk=issue_id,
-                workspace__slug=deploy_board.workspace.slug,
-                project_id=deploy_board.project_id,
-            )
-            .select_related("workspace", "project", "state", "parent")
+            base_issue_queryset.select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(

@@ -41,6 +41,14 @@ export class ProjectPageService extends APIService {
       });
   }
 
+  async fetchSubPages(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/sub-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async create(workspaceSlug: string, projectId: string, data: Partial<TPage>): Promise<TPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => response?.data)

@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // hooks
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
+import { usePublishBasePath } from "@/hooks/use-publish-base-path";
 // store
 import type { TIssueLayout, TIssueQueryFilters } from "@/types/issue";
 // components
@@ -29,6 +30,7 @@ export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: 
   const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
   const userFilters = issueFilters?.filters || {};
+  const basePath = usePublishBasePath(anchor);
 
   const appliedFilters: any = {};
   Object.entries(userFilters).forEach(([key, value]) => {
@@ -57,9 +59,9 @@ export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: 
       if (labels.length > 0) params.labels = labels.join(",");
 
       const qs = new URLSearchParams(params).toString();
-      router.push(`/issues/${anchor}?${qs}`);
+      router.push(`${basePath}?${qs}`);
     },
-    [activeLayout, anchor, issueFilters, router]
+    [activeLayout, basePath, issueFilters, router]
   );
 
   const handleFilters = useCallback(
@@ -89,7 +91,7 @@ export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: 
       true
     );
 
-    router.push(`/issues/${anchor}?${`board=${activeLayout || "list"}`}`);
+    router.push(`${basePath}?${`board=${activeLayout || "list"}`}`);
   };
 
   if (Object.keys(appliedFilters).length === 0) return null;

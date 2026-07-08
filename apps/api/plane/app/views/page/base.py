@@ -8,7 +8,7 @@ from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import (
     Exists,
     OuterRef,
@@ -78,7 +78,7 @@ class PageViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
     search_fields = ["name"]
 
-    def get_queryset(self):
+    def get_base_queryset(self):
         subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_type="page",
@@ -94,7 +94,6 @@ class PageViewSet(BaseViewSet):
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
-            .filter(parent__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .prefetch_related("projects")
             .select_related("workspace")
@@ -126,7 +125,24 @@ class PageViewSet(BaseViewSet):
             .distinct()
         )
 
+    def get_queryset(self):
+        return self.get_base_queryset().filter(parent__isnull=True)
+
     def create(self, request, slug, project_id):
+        parent = request.data.get("parent", None)
+        if parent and not Page.objects.filter(
+            Q(owned_by=request.user) | Q(access=0),
+            pk=parent,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+            archived_at__isnull=True,
+        ).exists():
+            return Response(
+                {"error": "The parent page must belong to the same project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = PageSerializer(
             data=request.data,
             context={
@@ -146,52 +162,87 @@ class PageViewSet(BaseViewSet):
                 old_description_html=None,
                 page_id=serializer.data["id"],
             )
-            page = self.get_queryset().get(pk=serializer.data["id"])
+            page = self.get_base_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, page_id):
         try:
-            page = Page.objects.get(
-                pk=page_id,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+            with transaction.atomic():
+                parent = request.data.get("parent", None)
+                # Lock the page and its prospective parent in a deterministic
+                # (pk-ordered) sequence so concurrent re-parenting cannot race
+                # into a parent cycle (e.g. A->B and B->A committing together).
+                lock_ids = sorted({str(page_id), str(parent)}) if parent else [str(page_id)]
+                list(Page.objects.select_for_update().filter(pk__in=lock_ids).order_by("id"))
 
-            if page.is_locked:
-                return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
-
-            parent = request.data.get("parent", None)
-            if parent:
-                _ = Page.objects.get(
-                    pk=parent,
+                page = Page.objects.filter(
+                    pk=page_id,
                     workspace__slug=slug,
                     projects__id=project_id,
                     project_pages__deleted_at__isnull=True,
-                )
+                ).get()
 
-            # Only update access if the page owner is the requesting  user
-            if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
-                return Response(
-                    {"error": "Access cannot be updated since this page is owned by someone else"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                if page.is_locked:
+                    return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer = PageDetailSerializer(page, data=request.data, partial=True)
-            page_description = page.description_html
-            if serializer.is_valid():
-                serializer.save()
-                # capture the page transaction
-                if request.data.get("description_html"):
-                    page_transaction.delay(
-                        new_description_html=request.data.get("description_html", "<p></p>"),
-                        old_description_html=page_description,
-                        page_id=page_id,
+                if parent:
+                    if str(parent) == str(page_id):
+                        return Response(
+                            {"error": "A page cannot be its own parent"},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+
+                    # The parent must be in the same project, non-archived, and
+                    # visible to the requester (own page or public).
+                    if not Page.objects.filter(
+                        Q(owned_by=request.user) | Q(access=0),
+                        pk=parent,
+                        workspace__slug=slug,
+                        projects__id=project_id,
+                        project_pages__deleted_at__isnull=True,
+                        archived_at__isnull=True,
+                    ).exists():
+                        return Response(
+                            {"error": "The parent page must belong to the same project"},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+
+                    # The parent cannot be the page itself or one of its
+                    # descendants. Walk up the ancestor chain, guarding against
+                    # pre-existing cycles in the data with a visited set.
+                    seen_ancestor_ids = {str(page_id)}
+                    ancestor_id = Page.objects.filter(pk=parent).values_list("parent_id", flat=True).first()
+                    while ancestor_id is not None:
+                        if str(ancestor_id) == str(page_id) or str(ancestor_id) in seen_ancestor_ids:
+                            return Response(
+                                {"error": "A page cannot be moved under one of its own descendants"},
+                                status=status.HTTP_400_BAD_REQUEST,
+                            )
+                        seen_ancestor_ids.add(str(ancestor_id))
+                        ancestor_id = Page.objects.filter(pk=ancestor_id).values_list("parent_id", flat=True).first()
+
+                # Only update access if the page owner is the requesting  user
+                if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+                    return Response(
+                        {"error": "Access cannot be updated since this page is owned by someone else"},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                serializer = PageDetailSerializer(page, data=request.data, partial=True)
+                page_description = page.description_html
+                if serializer.is_valid():
+                    serializer.save()
+                    # capture the page transaction
+                    if request.data.get("description_html"):
+                        page_transaction.delay(
+                            new_description_html=request.data.get("description_html", "<p></p>"),
+                            old_description_html=page_description,
+                            page_id=page_id,
+                        )
+
+                    return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
@@ -200,7 +251,7 @@ class PageViewSet(BaseViewSet):
             )
 
     def retrieve(self, request, slug, project_id, page_id=None):
-        page = self.get_queryset().filter(pk=page_id).first()
+        page = self.get_base_queryset().filter(pk=page_id).first()
         project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
@@ -290,6 +341,23 @@ class PageViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
+        pages = PageSerializer(queryset, many=True).data
+        return Response(pages, status=status.HTTP_200_OK)
+
+    def sub_pages(self, request, slug, project_id, page_id):
+        queryset = self.get_base_queryset().filter(parent_id=page_id)
         project = Project.objects.get(pk=project_id)
         if (
             ProjectMember.objects.filter(

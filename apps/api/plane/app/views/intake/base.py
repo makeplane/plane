@@ -3,9 +3,13 @@
 # See the LICENSE file for details.
 
 # Python imports
+import hashlib
+import hmac
 import json
+from uuid import UUID
 
 # Django import
+from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
@@ -16,7 +20,9 @@ from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 
 # Module imports
 from ..base import BaseViewSet
@@ -45,6 +51,7 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import INTAKE_ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.bgtasks.intake_email_task import create_intake_issue_from_email
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.app.views.base import BaseAPIView
@@ -567,6 +574,65 @@ class IntakeIssueViewSet(BaseViewSet):
 
         intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IntakeEmailWebhookEndpoint(BaseAPIView):
+    """Provider-agnostic inbound email webhook secured by an HMAC-SHA256 signature."""
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "intake_email"
+
+    @staticmethod
+    def resolve_intake_id(recipient):
+        # The recipient local part carries the intake id, either as
+        # `intake+<intake_uuid>@<domain>` or `<intake_uuid>@<domain>`
+        if "@" not in recipient:
+            return None
+        local_part = recipient.split("@", 1)[0].strip()
+        if local_part.lower().startswith("intake+"):
+            local_part = local_part[len("intake+") :]
+        try:
+            return UUID(local_part)
+        except ValueError:
+            return None
+
+    def post(self, request):
+        secret = settings.INTAKE_EMAIL_WEBHOOK_SECRET
+        if not secret:
+            return Response({"error": "Email intake is not configured"}, status=status.HTTP_403_FORBIDDEN)
+
+        signature = request.headers.get("X-Plane-Signature", "")
+        expected_signature = hmac.new(secret.encode("utf-8"), request.body, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(signature.encode("utf-8"), expected_signature.encode("utf-8")):
+            return Response({"error": "Invalid signature"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            payload = json.loads(request.body.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return Response({"error": "Invalid payload"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not isinstance(payload, dict):
+            return Response({"error": "Invalid payload"}, status=status.HTTP_400_BAD_REQUEST)
+
+        intake_id = self.resolve_intake_id(str(payload.get("recipient") or ""))
+        if intake_id is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        intake = Intake.objects.filter(pk=intake_id, project__intake_view=True).first()
+        if intake is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        create_intake_issue_from_email.delay(
+            intake_id=str(intake.id),
+            sender=str(payload.get("sender") or ""),
+            subject=str(payload.get("subject") or ""),
+            body_text=str(payload.get("body_text") or ""),
+            body_html=str(payload.get("body_html") or ""),
+            message_id=str(payload.get("message_id") or "") or None,
+        )
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):

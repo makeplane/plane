@@ -15,6 +15,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+import { usePublishBasePath } from "@/hooks/use-publish-base-path";
 // store
 import type { PublishStore } from "@/store/publish/publish.store";
 // types
@@ -47,6 +48,7 @@ export const NavbarControls = observer(function NavbarControls(props: NavbarCont
   const { anchor, view_props, workspace_detail } = publishSettings;
   const issueFilters = anchor ? getIssueFilters(anchor) : undefined;
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+  const basePath = usePublishBasePath(anchor ?? "");
 
   const isInIframe = useIsInIframe();
 
@@ -84,13 +86,14 @@ export const NavbarControls = observer(function NavbarControls(props: NavbarCont
 
           if (!isIssueFiltersUpdated(anchor, params)) {
             initIssueFilters(anchor, params);
-            router.push(`/issues/${anchor}?${queryParam}`);
+            router.push(`${basePath}?${queryParam}`);
           }
         }
       }
     }
   }, [
     anchor,
+    basePath,
     board,
     labels,
     state,

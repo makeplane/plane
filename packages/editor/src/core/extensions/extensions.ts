@@ -27,6 +27,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  PageEmbedExtension,
   Table,
   TableCell,
   TableHeader,
@@ -121,6 +122,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomColorExtension,
     CustomTextAlignExtension,
     CustomCalloutExtension,
+    PageEmbedExtension({
+      widgetCallback: extendedEditorProps?.pageEmbedWidgetCallback,
+    }),
     UtilityExtension({
       disabledExtensions,
       flaggedExtensions,

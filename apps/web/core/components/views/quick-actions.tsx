@@ -45,10 +45,9 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
-  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
-    !!view.anchor,
-    isAdmin || isOwner
-  );
+  // Publishing is an admin-only action on the server; only surface it to admins
+  // so the entry never leads to a guaranteed 403 for a non-admin owner.
+  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(!!view.anchor, isAdmin);
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>

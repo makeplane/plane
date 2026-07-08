@@ -90,6 +90,7 @@ from .view.base import (
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
 )
+from .view.publish import IssueViewPublishEndpoint
 from .cycle.base import (
     CycleViewSet,
     CycleDateCheckEndpoint,
@@ -193,6 +194,7 @@ from .estimate.base import (
 from .intake.base import (
     IntakeViewSet,
     IntakeIssueViewSet,
+    IntakeEmailWebhookEndpoint,
     IntakeWorkItemDescriptionVersionEndpoint,
 )
 

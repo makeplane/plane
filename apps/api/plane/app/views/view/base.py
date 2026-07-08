@@ -26,6 +26,7 @@ from rest_framework.response import Response
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
 from plane.db.models import (
+    DeployBoard,
     Issue,
     FileAsset,
     IssueLink,
@@ -288,6 +289,13 @@ class IssueViewViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="view",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -396,6 +404,14 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_name="view",
             ).delete(soft=False)
+            # Unpublish the view: DeployBoard has no FK to the view, so it is
+            # not cascade-cleaned and would leave a live public anchor behind.
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},

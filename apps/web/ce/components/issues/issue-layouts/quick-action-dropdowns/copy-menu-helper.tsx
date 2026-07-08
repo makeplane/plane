@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { CopyPlus } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 
@@ -22,7 +23,25 @@ export interface CopyMenuHelperProps {
 }
 
 export const createCopyMenuWithDuplication = (props: CopyMenuHelperProps): TContextMenuItem => {
-  const { baseItem } = props;
+  const { baseItem, setDuplicateWorkItemModal } = props;
 
-  return baseItem;
+  if (!setDuplicateWorkItemModal) return baseItem;
+
+  return {
+    ...baseItem,
+    nestedMenuItems: [
+      {
+        key: "copy-work-item",
+        title: baseItem.title,
+        icon: baseItem.icon,
+        action: baseItem.action,
+      },
+      {
+        key: "duplicate-work-item",
+        title: "Duplicate",
+        icon: CopyPlus,
+        action: () => setDuplicateWorkItemModal(true),
+      },
+    ],
+  };
 };

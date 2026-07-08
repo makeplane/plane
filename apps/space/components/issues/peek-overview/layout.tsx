@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { usePublishBasePath } from "@/hooks/use-publish-base-path";
 // local imports
 import { FullScreenPeekView } from "./full-screen-peek-view";
 import { SidePeekView } from "./side-peek-view";
@@ -33,6 +34,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
   const { peekMode, setPeekId, getIssueById, fetchIssueDetails } = useIssueDetails();
   // derived values
   const issueDetails = peekId ? getIssueById(peekId.toString()) : undefined;
+  const basePath = usePublishBasePath(anchor);
   // state
   const isSidePeekOpen = !!peekId && peekMode === "side";
   const isModalPeekOpen = !!peekId && (peekMode === "modal" || peekMode === "full");
@@ -58,7 +60,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
     if (state && state.length > 0) queryParams = { ...queryParams, state: state };
     if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
     queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/issues/${anchor}?${queryParams}`);
+    router.push(`${basePath}?${queryParams}`);
   };
 
   return (

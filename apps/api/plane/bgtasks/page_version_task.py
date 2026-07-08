@@ -26,8 +26,15 @@ def track_page_version(page_id, existing_instance, user_id):
 
         # Get the current instance
         current_instance = json.loads(existing_instance) if existing_instance is not None else {}
-        sub_pages = {}
 
+        # Snapshot the direct children of the page
+        sub_pages = {
+            str(sub_page_id): {
+                "name": name,
+                "archived_at": archived_at.isoformat() if archived_at else None,
+            }
+            for sub_page_id, name, archived_at in page.child_page.values_list("id", "name", "archived_at")
+        }
 
         # Create a version if description_html is updated
         if current_instance.get("description_html") != page.description_html:

@@ -4,6 +4,11 @@ packages:
   - "!apps/api"
   - "!apps/proxy"
 
+# Dev local : ne pas re-vérifier/réinstaller les deps avant chaque script turbo
+# (les deps sont déjà installées ; évite le "Recreating node_modules" en boucle)
+verifyDepsBeforeRun: false
+confirmModulesPurge: false
+
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": "1.7.4"
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "1.4.0"
