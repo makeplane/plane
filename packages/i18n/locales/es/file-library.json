@@ -14,7 +14,17 @@
       "button": "Subir archivos",
       "drop_here": "Suelta los archivos para subirlos",
       "success": "{name} se subió correctamente",
-      "failed": "No se pudo subir {name}"
+      "failed": "No se pudo subir {name}",
+      "modal_title": "Subir {count, plural, one {# archivo} other {# archivos}}",
+      "files_section": "Archivos",
+      "select_all": "Todos",
+      "select_none": "Ninguno",
+      "select_pdfs": "Solo PDFs",
+      "pdfs_as_contracts": "Categorizar los PDFs como Contratos automáticamente",
+      "bulk_success": "{count, plural, one {# archivo subido} other {# archivos subidos}}",
+      "confirm": "Subir {count, plural, one {# archivo} other {# archivos}}",
+      "add_more": "Agregar más archivos",
+      "remove_file": "Quitar de la lista"
     },
     "categories": {
       "manage_button": "Categorías",
@@ -29,11 +39,38 @@
       "create_failed": "No se pudo crear la categoría",
       "update_failed": "No se pudo actualizar la categoría",
       "delete_title": "¿Eliminar la categoría {name}?",
-      "delete_description": "Los archivos solo se desvincularán de esta categoría — ningún archivo será eliminado."
+      "delete_description": "Los archivos solo se desvincularán de esta categoría — ningún archivo será eliminado.",
+      "title": "Categorías"
     },
     "preview": {
       "error": "No se pudo cargar la vista previa",
       "no_preview": "No hay vista previa disponible para este tipo de archivo"
+    },
+    "folders": {
+      "root": "Raíz de la biblioteca",
+      "destination": "Carpeta de destino",
+      "new_button": "Nueva carpeta",
+      "new_placeholder": "Nombre de la nueva carpeta",
+      "create": "Crear carpeta"
+    },
+    "tags": {
+      "title": "Tags",
+      "new_placeholder": "Nombre del nuevo tag"
+    },
+    "filters": {
+      "all_categories": "Todas las categorías",
+      "all_tags": "Todos los tags"
+    },
+    "bulk": {
+      "button": "Acciones masivas",
+      "title": "Acciones masivas de archivos",
+      "move": "Mover",
+      "apply": "Aplicar",
+      "applied": "Cambios aplicados",
+      "remove_mode": "Quitar en lugar de agregar",
+      "delete_warning": "Los archivos seleccionados se eliminarán. Esto no se puede deshacer.",
+      "search_placeholder": "Buscar archivos",
+      "selected_count": "{count} seleccionados"
     }
   }
 }

@@ -6,7 +6,13 @@ from .base import (
     FileCategoryDetailEndpoint,
     FileCategoryEndpoint,
     FileCategoryLinkEndpoint,
+    FileFolderDetailEndpoint,
+    FileFolderEndpoint,
     FileLibraryAssetDetailEndpoint,
     FileLibraryAssetDownloadEndpoint,
     FileLibraryAssetEndpoint,
+    FileLibraryBulkActionEndpoint,
+    FileTagDetailEndpoint,
+    FileTagEndpoint,
+    FileTagLinkEndpoint,
 )

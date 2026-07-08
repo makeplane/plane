@@ -38,6 +38,93 @@ class WorkspaceFeature(BaseModel):
         return f"{self.workspace_id} {self.key} {self.is_enabled}"
 
 
+class FileFolder(BaseModel):
+    """A folder in the workspace file library.
+
+    Folders are the physical location of a file (a file lives in exactly one
+    folder, or at the root); categories and tags are orthogonal labels.
+    """
+
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="file_folders")
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
+
+    class Meta:
+        constraints = [
+            # Postgres treats NULLs as distinct, so root folders (parent IS
+            # NULL) need their own uniqueness constraint
+            models.UniqueConstraint(
+                fields=["workspace", "parent", "name"],
+                condition=Q(parent__isnull=False, deleted_at__isnull=True),
+                name="unique_file_folder_name_per_parent_when_not_deleted",
+            ),
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=Q(parent__isnull=True, deleted_at__isnull=True),
+                name="unique_root_file_folder_name_when_not_deleted",
+            ),
+        ]
+        verbose_name = "File Folder"
+        verbose_name_plural = "File Folders"
+        db_table = "file_folders"
+        ordering = ("name",)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class FileTag(BaseModel):
+    """Free-form label for library files (e.g. an artist name).
+
+    The AI contract pipeline links contracts to artist tags so every file of
+    an artist can be filtered in one step.
+    """
+
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="file_tags")
+    name = models.CharField(max_length=255)
+    color = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=Q(deleted_at__isnull=True),
+                name="unique_workspace_file_tag_name_when_not_deleted",
+            )
+        ]
+        verbose_name = "File Tag"
+        verbose_name_plural = "File Tags"
+        db_table = "file_tags"
+        ordering = ("name",)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class FileTagLink(BaseModel):
+    """Link between a file asset and a tag; deleting a tag only removes links."""
+
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="file_tag_links")
+    file_asset = models.ForeignKey("db.FileAsset", on_delete=models.CASCADE, related_name="tag_links")
+    tag = models.ForeignKey("db.FileTag", on_delete=models.CASCADE, related_name="file_links")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["file_asset", "tag"],
+                condition=Q(deleted_at__isnull=True),
+                name="unique_file_asset_tag_when_not_deleted",
+            )
+        ]
+        verbose_name = "File Tag Link"
+        verbose_name_plural = "File Tag Links"
+        db_table = "file_tag_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.file_asset_id} -> {self.tag_id}"
+
+
 class FileCategory(BaseModel):
     """User-defined category for classifying file-library assets in a workspace."""
 

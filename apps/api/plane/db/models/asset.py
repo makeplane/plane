@@ -56,6 +56,9 @@ class FileAsset(BaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, null=True, related_name="assets")
     comment = models.ForeignKey("db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, null=True, related_name="assets")
+    # Physical location within the workspace file library (null = library root).
+    # SET_NULL so deleting a folder never deletes its files.
+    folder = models.ForeignKey("db.FileFolder", on_delete=models.SET_NULL, null=True, blank=True, related_name="files")
     entity_type = models.CharField(max_length=255, null=True, blank=True)
     entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)

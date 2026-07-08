@@ -59,9 +59,15 @@ from .file_library import (
     FileCategoryDetailEndpoint,
     FileCategoryEndpoint,
     FileCategoryLinkEndpoint,
+    FileFolderDetailEndpoint,
+    FileFolderEndpoint,
     FileLibraryAssetDetailEndpoint,
     FileLibraryAssetDownloadEndpoint,
     FileLibraryAssetEndpoint,
+    FileLibraryBulkActionEndpoint,
+    FileTagDetailEndpoint,
+    FileTagEndpoint,
+    FileTagLinkEndpoint,
 )
 
 from .workspace.member import (

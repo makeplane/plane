@@ -135,6 +135,8 @@ export type FileSystemProps = {
   onViewChange?: (view: FileSystemView) => void;
   /** Folder prefix to open initially, e.g. `"invoices/"`. */
   defaultPath?: string;
+  /** Local addition: reports the folder prefix the user navigated to. */
+  onPathChange?: (path: string) => void;
   onSelectionChange?: (item: FileSystemItem | null) => void;
   /**
    * Called on file open (double-click), replacing the built-in behavior. By
@@ -1189,6 +1191,7 @@ export function FileSystem({
   view: viewProp,
   onViewChange,
   defaultPath = "",
+  onPathChange,
   onSelectionChange,
   onFileOpen,
   getFileUrl,
@@ -1217,6 +1220,11 @@ export function FileSystem({
   const currentPath = history.stack[history.index] ?? "";
   const canGoBack = history.index > 0;
   const canGoForward = history.index < history.stack.length - 1;
+
+  // Local addition: surface navigation to the host app (breadcrumbs etc.)
+  React.useEffect(() => {
+    onPathChange?.(currentPath);
+  }, [currentPath, onPathChange]);
 
   const [selectedPath, setSelectedPath] = React.useState<string | null>(null);
   const selectedEntry = React.useMemo(() => {

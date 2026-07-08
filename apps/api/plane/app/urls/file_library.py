@@ -8,9 +8,15 @@ from plane.app.views import (
     FileCategoryDetailEndpoint,
     FileCategoryEndpoint,
     FileCategoryLinkEndpoint,
+    FileFolderDetailEndpoint,
+    FileFolderEndpoint,
     FileLibraryAssetDetailEndpoint,
     FileLibraryAssetDownloadEndpoint,
     FileLibraryAssetEndpoint,
+    FileLibraryBulkActionEndpoint,
+    FileTagDetailEndpoint,
+    FileTagEndpoint,
+    FileTagLinkEndpoint,
 )
 
 urlpatterns = [
@@ -25,9 +31,34 @@ urlpatterns = [
         name="file-category-detail",
     ),
     path(
+        "workspaces/<str:slug>/file-folders/",
+        FileFolderEndpoint.as_view(),
+        name="file-folders",
+    ),
+    path(
+        "workspaces/<str:slug>/file-folders/<uuid:folder_id>/",
+        FileFolderDetailEndpoint.as_view(),
+        name="file-folder-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/file-tags/",
+        FileTagEndpoint.as_view(),
+        name="file-tags",
+    ),
+    path(
+        "workspaces/<str:slug>/file-tags/<uuid:tag_id>/",
+        FileTagDetailEndpoint.as_view(),
+        name="file-tag-detail",
+    ),
+    path(
         "workspaces/<str:slug>/file-library/files/",
         FileLibraryAssetEndpoint.as_view(),
         name="file-library-assets",
+    ),
+    path(
+        "workspaces/<str:slug>/file-library/files/bulk/",
+        FileLibraryBulkActionEndpoint.as_view(),
+        name="file-library-bulk",
     ),
     path(
         "workspaces/<str:slug>/file-library/files/<uuid:asset_id>/",
@@ -48,5 +79,15 @@ urlpatterns = [
         "workspaces/<str:slug>/file-library/files/<uuid:asset_id>/categories/<uuid:category_id>/",
         FileCategoryLinkEndpoint.as_view(),
         name="file-library-asset-category-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/file-library/files/<uuid:asset_id>/tags/",
+        FileTagLinkEndpoint.as_view(),
+        name="file-library-asset-tags",
+    ),
+    path(
+        "workspaces/<str:slug>/file-library/files/<uuid:asset_id>/tags/<uuid:tag_id>/",
+        FileTagLinkEndpoint.as_view(),
+        name="file-library-asset-tag-detail",
     ),
 ]
