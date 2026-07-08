@@ -14,6 +14,10 @@ import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { AnalyticsStore } from "@/plane-web/store/analytics.store";
 import type { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { CommandPaletteStore } from "@/plane-web/store/command-palette.store";
+import type { IIssuePropertyStore } from "@/plane-web/store/issue-property.store";
+import { IssuePropertyStore } from "@/plane-web/store/issue-property.store";
+import type { IIssuePropertyValueStore } from "@/plane-web/store/issue-property-value.store";
+import { IssuePropertyValueStore } from "@/plane-web/store/issue-property-value.store";
 import type { IIssueTypeStore } from "@/plane-web/store/issue-type.store";
 import { IssueTypeStore } from "@/plane-web/store/issue-type.store";
 import { PowerKStore } from "@/plane-web/store/power-k.store";
@@ -86,6 +90,8 @@ export class CoreRootStore {
   issue: IIssueRootStore;
   state: IStateStore;
   issueType: IIssueTypeStore;
+  issueProperty: IIssuePropertyStore;
+  issuePropertyValue: IIssuePropertyValueStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
   analytics: IAnalyticsStore;
@@ -123,6 +129,8 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.issueType = new IssueTypeStore(this);
+    this.issueProperty = new IssuePropertyStore(this);
+    this.issuePropertyValue = new IssuePropertyValueStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.multipleSelect = new MultipleSelectStore();
@@ -158,6 +166,8 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.issueType = new IssueTypeStore(this);
+    this.issueProperty = new IssuePropertyStore(this);
+    this.issuePropertyValue = new IssuePropertyValueStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);
