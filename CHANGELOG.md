@@ -16,6 +16,7 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 - **api/views-publish** — Publication/dépublication d'une vue projet via anchor (permission admin projet), rendu public SSR côté `space` (`/views/:anchor`) avec application serveur des filtres de la vue. Nouveaux services front + modal CE `views/publish/*`.
 - **api/intake-email** — Ingestion d'intake par email : webhook signé HMAC-SHA256 (`X-Plane-Signature`), tâche Celery créant un `IntakeIssue` (`source=EMAIL`, `source_email`) avec sanitization HTML (RETRO-101) et arrivée en triage. Badge de provenance CE `inbox/source-pill.tsx`.
 - **web/work-item-page-embed** — Commande slash `/page` dans la description d'un work item : crée une page projet, insère un bloc-page cliquable (façon Notion) et ajoute un lien retour vers la page sur le work item. Nouveau nœud Tiptap `page-embed` (`packages/editor`, persistance `div[data-block-type]` compatible sanitizer nh3, zéro modif backend) + carte/hook côté web (`components/editor/embeds/page-embed/*`). Canal `extendedEditorProps` (widget NodeView + option slash) câblé de bout en bout.
+- **api/work-item-pages** — Relation work item ↔ pages : table de jointure `issue_pages`, endpoints internes session-auth (GET/POST/DELETE `/issue-pages/`) et endpoints externes token-auth MCP (GET/POST/DELETE `/v1/.../pages/`, operation_ids `list_work_item_pages` / `attach_page_to_work_item` / `detach_page_from_work_item`). Filtrage par ligne pour ne pas exposer les pages privées d'autrui. Activité `page.activity.created` / `page.activity.deleted`. Web : store `issue-page` + widget `issue-detail-widgets/pages/`.
 
 ### Changed
 
@@ -27,6 +28,7 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 - **web/pages-nested** — Une sous-page archivée individuellement reste atteignable dans l'onglet Archived et ne s'affiche plus sous un parent actif.
 - **web/pages-nested** — L'action « New sub-page » est aussi disponible depuis la barre d'outils d'une page ouverte (`editor/toolbar/options-dropdown.tsx`), et plus seulement depuis le menu des lignes de la liste des pages.
 - **api/intake-email (sécurité/robustesse)** — Webhook idempotent via `message_id` (dédup `external_id`), scope de throttle dédié (`intake_email`), et émission de l'activité + notification + version de description à la création (parité avec l'intake in-app). Correction du libellé i18n de la pastille de provenance.
+- **web/views-publish (a11y)** — Le badge « Live » d'une vue publiée est rendu comme `<button>` (au lieu d'un `<div>` cliquable) : accessible au clavier et désactivé pour les non-admins.
 
 ### Removed
 
@@ -34,3 +36,4 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 
 - Migration `0122_alter_intakeissue_source` — ajout de la valeur `EMAIL` aux choices de `IntakeIssue.source` (AlterField, aucun SQL de données). Schéma dormant réutilisé (colonne `source_email` déjà présente).
 - Aucune nouvelle table : `pages-nested` exploite `Page.parent` / `PageVersion.sub_pages_data` existants ; `views-publish` réutilise le modèle `DeployBoard`.
+- Migration `0123_issue_pages` — création de la table `issue_pages` (jointure issue ↔ page), 2 index (`page_id`, `issue_id`) et 1 UniqueConstraint partielle `WHERE deleted_at IS NULL`.

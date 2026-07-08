@@ -6,6 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // hooks
@@ -16,6 +17,7 @@ import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
+import { PagesCollapsible } from "./pages";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
 
@@ -36,16 +38,30 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
     subIssues: { subIssuesByIssueId },
     attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
+    issuePage: { getIssuePageIds },
+    fetchIssuePages,
   } = useIssueDetail(issueServiceType);
+  // fetch linked pages
+  useSWR(
+    workspaceSlug && projectId && issueId && !hideWidgets?.includes("pages")
+      ? `ISSUE_PAGES_${workspaceSlug}_${projectId}_${issueId}`
+      : null,
+    workspaceSlug && projectId && issueId && !hideWidgets?.includes("pages")
+      ? () => fetchIssuePages(workspaceSlug, projectId, issueId)
+      : null,
+    { revalidateOnFocus: false, revalidateOnReconnect: false }
+  );
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
+  const issuePagesCount = getIssuePageIds(issueId)?.length ?? 0;
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
   const shouldRenderRelations = issueRelationsCount > 0 && !hideWidgets?.includes("relations");
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
+  const shouldRenderPages = issuePagesCount > 0 && !hideWidgets?.includes("pages");
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
   const attachmentsCount = getAttachmentsCountByIssueId(issueId);
   const shouldRenderAttachments =
@@ -82,6 +98,15 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
       )}
       {shouldRenderAttachments && (
         <AttachmentsCollapsible
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {shouldRenderPages && (
+        <PagesCollapsible
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}

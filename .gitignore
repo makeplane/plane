@@ -124,4 +124,5 @@ packages/i18n/src/types/keys.generated.ts
 .claude/.session-edited-files.json
 .claude/.session-start-sha
 .claude/.session-start-time
+.claude/.update-writer-ran
 .claude/worktrees/

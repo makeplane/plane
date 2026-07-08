@@ -63,3 +63,8 @@ from .user import UserEndpoint
 from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
+
+from .page_link import (
+    WorkItemPageLinkListCreateAPIEndpoint,
+    WorkItemPageLinkDetailAPIEndpoint,
+)

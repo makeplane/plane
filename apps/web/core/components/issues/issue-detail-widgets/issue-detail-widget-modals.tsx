@@ -19,6 +19,8 @@ import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-
 // helpers
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { useLinkOperations } from "./links/helper";
+import { LinkPagesModal } from "./pages";
+import { usePageOperations } from "./pages/helper";
 import { useSubIssueOperations } from "./sub-issues/helper";
 
 type Props = {
@@ -38,6 +40,8 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     setIssueLinkData,
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
+    isIssuePagesModalOpen,
+    toggleIssuePagesModal,
     isSubIssuesModalOpen,
     toggleSubIssuesModal,
     relationKey,
@@ -53,6 +57,7 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
   // helper hooks
   const subIssueOperations = useSubIssueOperations(issueServiceType);
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
+  const handlePageOperations = usePageOperations(workspaceSlug, projectId, issueId, issueServiceType);
 
   // handlers
   const handleIssueCrudState = (
@@ -100,6 +105,11 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     toggleIssueLinkModalStore(false);
     setLastWidgetAction("links");
     setIssueLinkData(null);
+  };
+
+  const handleIssuePagesModalOnClose = () => {
+    toggleIssuePagesModal(false);
+    setLastWidgetAction("pages");
   };
 
   const handleRelationOnClose = () => {
@@ -161,6 +171,18 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
           isModalOpen={isIssueLinkModalOpen}
           handleOnClose={handleIssueLinkModalOnClose}
           linkOperations={handleLinkOperations}
+          issueServiceType={issueServiceType}
+        />
+      )}
+
+      {!hideWidgets?.includes("pages") && (
+        <LinkPagesModal
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          isModalOpen={isIssuePagesModalOpen}
+          handleOnClose={handleIssuePagesModalOnClose}
+          pageOperations={handlePageOperations}
           issueServiceType={issueServiceType}
         />
       )}

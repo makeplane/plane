@@ -133,6 +133,27 @@ class PageDetailSerializer(PageSerializer):
         fields = PageSerializer.Meta.fields + ["description_html"]
 
 
+class IssuePageSerializer(BaseSerializer):
+    """Lightweight page representation returned for work item <-> page links."""
+
+    project_ids = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "logo_props",
+            "access",
+            "archived_at",
+            "project_ids",
+        ]
+        read_only_fields = ["name", "logo_props", "access", "archived_at"]
+
+    def get_project_ids(self, obj):
+        return [project.id for project in obj.projects.all()]
+
+
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion
