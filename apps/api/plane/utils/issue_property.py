@@ -53,6 +53,10 @@ V1_PROPERTY_TYPES = {
 _TRUTHY = {"true", "1", "yes", "on"}
 _FALSY = {"false", "0", "no", "off", ""}
 
+# Upper bound on the number of values accepted for an is_multi property, to
+# prevent request amplification / resource exhaustion.
+MAX_MULTI_VALUES = 100
+
 
 def _empty_value_kwargs():
     """Return a dict with every typed value column reset to ``None``."""
@@ -98,9 +102,13 @@ def cast_property_value(prop, raw_value, project_id):
 
     if property_type == PropertyTypeEnum.DECIMAL.value:
         try:
-            kwargs["value_decimal"] = Decimal(str(raw_value))
+            decimal_value = Decimal(str(raw_value))
         except (InvalidOperation, ValueError):
             raise serializers.ValidationError("The provided value is not a valid number.")
+        # Reject NaN / Infinity, which Decimal(str(...)) constructs happily.
+        if not decimal_value.is_finite():
+            raise serializers.ValidationError("The provided value is not a valid number.")
+        kwargs["value_decimal"] = decimal_value
         return kwargs
 
     if property_type == PropertyTypeEnum.BOOLEAN.value:
@@ -178,6 +186,8 @@ def cast_property_values(prop, raw_values, project_id):
             values = list(raw_values)
         else:
             values = [raw_values]
+        if len(values) > MAX_MULTI_VALUES:
+            raise serializers.ValidationError(f"This property accepts at most {MAX_MULTI_VALUES} values.")
     else:
         if isinstance(raw_values, (list, tuple)):
             if len(raw_values) > 1:
@@ -197,7 +207,14 @@ def validate_required_value(prop, raw_values):
         return
     if raw_values is None:
         raise serializers.ValidationError("This property is required.")
-    if isinstance(raw_values, (list, tuple)) and len(raw_values) == 0:
-        raise serializers.ValidationError("This property is required.")
-    if isinstance(raw_values, str) and raw_values.strip() == "":
+
+    def _is_blank(v):
+        return v is None or (isinstance(v, str) and v.strip() == "")
+
+    if isinstance(raw_values, (list, tuple)):
+        # Require at least one non-blank element (an all-empty list bypasses the check otherwise).
+        if not any(not _is_blank(v) for v in raw_values):
+            raise serializers.ValidationError("This property is required.")
+        return
+    if _is_blank(raw_values):
         raise serializers.ValidationError("This property is required.")

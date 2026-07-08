@@ -137,7 +137,10 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         issue_property = self.get_queryset().get(pk=property_id)
-        serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
+        # property_type / relation_type are immutable after creation: changing them would
+        # orphan already-stored typed values (each type maps to a distinct value column).
+        data = {key: value for key, value in request.data.items() if key not in ("property_type", "relation_type")}
+        serializer = IssuePropertySerializer(issue_property, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
