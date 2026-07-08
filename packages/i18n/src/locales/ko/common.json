@@ -867,5 +867,52 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "worklog": {
+    "log_work": "작업 시간 기록",
+    "edit_work": "작업 시간 편집",
+    "hours": "시간",
+    "minutes": "분",
+    "description": "설명",
+    "description_placeholder": "어떤 작업을 하셨나요?",
+    "submit": "기록",
+    "update": "업데이트",
+    "cancel": "취소",
+    "delete": "삭제",
+    "duration_error": "0보다 큰 시간을 입력하세요.",
+    "logged": "님이 기록함:",
+    "delete_confirmation": "이 시간 기록을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "성공",
+          "message": "작업 시간이 기록되었습니다."
+        },
+        "error": {
+          "title": "오류",
+          "message": "작업 시간 기록에 실패했습니다. 다시 시도해 주세요."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "성공",
+          "message": "작업 시간이 업데이트되었습니다."
+        },
+        "error": {
+          "title": "오류",
+          "message": "업데이트에 실패했습니다. 다시 시도해 주세요."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "성공",
+          "message": "작업 시간이 삭제되었습니다."
+        },
+        "error": {
+          "title": "오류",
+          "message": "삭제에 실패했습니다. 다시 시도해 주세요."
+        }
+      }
+    }
   }
 }

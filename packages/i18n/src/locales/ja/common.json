@@ -867,5 +867,52 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "worklog": {
+    "log_work": "作業時間を記録",
+    "edit_work": "作業時間を編集",
+    "hours": "時間",
+    "minutes": "分",
+    "description": "説明",
+    "description_placeholder": "何に取り組みましたか？",
+    "submit": "記録",
+    "update": "更新",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "duration_error": "0より大きい時間を入力してください。",
+    "logged": "が記録した時間:",
+    "delete_confirmation": "この作業時間の記録を削除してもよろしいですか？この操作は元に戻せません。",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功",
+          "message": "作業時間を記録しました。"
+        },
+        "error": {
+          "title": "エラー",
+          "message": "作業時間の記録に失敗しました。もう一度お試しください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功",
+          "message": "作業時間を更新しました。"
+        },
+        "error": {
+          "title": "エラー",
+          "message": "更新に失敗しました。もう一度お試しください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "成功",
+          "message": "作業時間を削除しました。"
+        },
+        "error": {
+          "title": "エラー",
+          "message": "削除に失敗しました。もう一度お試しください。"
+        }
+      }
+    }
   }
 }

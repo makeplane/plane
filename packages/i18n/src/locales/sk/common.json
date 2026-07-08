@@ -867,5 +867,52 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
     }
+  },
+  "worklog": {
+    "log_work": "Zaznamenať čas",
+    "edit_work": "Upraviť záznam času",
+    "hours": "Hodiny",
+    "minutes": "Minúty",
+    "description": "Popis",
+    "description_placeholder": "Na čom ste pracovali?",
+    "submit": "Zaznamenať",
+    "update": "Aktualizovať",
+    "cancel": "Zrušiť",
+    "delete": "Odstrániť",
+    "duration_error": "Zadajte trvanie väčšie ako nula.",
+    "logged": "zaznamenal(a)",
+    "delete_confirmation": "Naozaj chcete odstrániť tento časový záznam? Túto akciu nie je možné vrátiť späť.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Úspech",
+          "message": "Čas bol úspešne zaznamenaný."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Zaznamenanie času zlyhalo. Skúste to znova."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspech",
+          "message": "Záznam času bol úspešne aktualizovaný."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Aktualizácia zlyhala. Skúste to znova."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Úspech",
+          "message": "Záznam času bol úspešne odstránený."
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Odstránenie zlyhalo. Skúste to znova."
+        }
+      }
+    }
   }
 }

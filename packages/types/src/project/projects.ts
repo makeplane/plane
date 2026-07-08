@@ -60,6 +60,7 @@ export interface IProject extends IPartialProject {
   timezone?: string;
   next_work_item_sequence?: number;
   is_issue_type_enabled?: boolean;
+  is_time_tracking_enabled?: boolean;
 }
 
 export type TProjectAnalyticsCountParams = {

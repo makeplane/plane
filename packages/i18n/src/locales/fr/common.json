@@ -867,5 +867,52 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
+  },
+  "worklog": {
+    "log_work": "Enregistrer du temps",
+    "edit_work": "Modifier le temps",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "description": "Description",
+    "description_placeholder": "Sur quoi avez-vous travaillé ?",
+    "submit": "Enregistrer",
+    "update": "Mettre à jour",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "duration_error": "Saisissez une durée supérieure à zéro.",
+    "logged": "a consigné",
+    "delete_confirmation": "Voulez-vous vraiment supprimer cette entrée de temps ? Cette action est irréversible.",
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Succès",
+          "message": "Temps enregistré avec succès."
+        },
+        "error": {
+          "title": "Erreur",
+          "message": "Échec de l'enregistrement du temps. Veuillez réessayer."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succès",
+          "message": "Temps mis à jour avec succès."
+        },
+        "error": {
+          "title": "Erreur",
+          "message": "Échec de la mise à jour. Veuillez réessayer."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Succès",
+          "message": "Temps supprimé avec succès."
+        },
+        "error": {
+          "title": "Erreur",
+          "message": "Échec de la suppression. Veuillez réessayer."
+        }
+      }
+    }
   }
 }
