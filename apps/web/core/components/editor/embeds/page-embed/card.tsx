@@ -5,9 +5,13 @@
  */
 
 import { FileText } from "lucide-react";
+import { observer } from "mobx-react";
 import { Link } from "react-router";
+import useSWR from "swr";
 // plane imports
-import { cn } from "@plane/utils";
+import { cn, getPageName } from "@plane/utils";
+// hooks
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 
 type Props = {
   pageId: string;
@@ -16,11 +20,27 @@ type Props = {
   projectId: string;
 };
 
-export function PageEmbedCard(props: Props) {
+export const PageEmbedCard = observer(function PageEmbedCard(props: Props) {
   const { pageId, pageTitle, workspaceSlug, projectId } = props;
+  // store hooks
+  const { getPageById, fetchPageDetails } = usePageStore(EPageStoreType.PROJECT);
+
+  // Load the page so the card reflects its *current* title. The node's stored
+  // `data-name` is only a creation-time snapshot ("Untitled"), so relying on it
+  // leaves the card stale after the page is renamed. SWR dedupes across cards.
+  useSWR(
+    pageId && workspaceSlug && projectId ? `PAGE_EMBED_DETAILS_${workspaceSlug}_${projectId}_${pageId}` : null,
+    pageId && workspaceSlug && projectId
+      ? () => fetchPageDetails(workspaceSlug, projectId, pageId, { trackVisit: false })
+      : null,
+    { revalidateOnFocus: false }
+  );
 
   if (!pageId) return null;
 
+  const pageInstance = getPageById(pageId);
+  // live title once loaded; fall back to the node snapshot while the fetch is in flight
+  const title = pageInstance ? getPageName(pageInstance.name) : pageTitle || "Untitled";
   const href = `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
 
   return (
@@ -33,8 +53,8 @@ export function PageEmbedCard(props: Props) {
         )}
       >
         <FileText className="size-4 flex-shrink-0 text-tertiary" />
-        <span className="truncate">{pageTitle || "Untitled"}</span>
+        <span className="truncate">{title}</span>
       </Link>
     </div>
   );
-}
+});
