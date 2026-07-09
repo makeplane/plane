@@ -135,3 +135,10 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .template import (
+    WorkItemTemplateSerializer,
+    WorkItemTemplateCreateSerializer,
+    WorkItemTemplateItemSerializer,
+    WorkItemTemplateDependencySerializer,
+)
