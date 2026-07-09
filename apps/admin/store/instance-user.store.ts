@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { set } from "lodash-es";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // plane imports
 import { InstanceUserService } from "@plane/services";
@@ -67,10 +66,11 @@ export class InstanceUserStore implements IInstanceUserStore {
       const data = await this.instanceUserService.list();
       runInAction(() => {
         const { results, ...paginationInfo } = data;
+        this.users = {};
         results.forEach((user: IUser) => {
-          set(this.users, [user.id], user);
+          this.users[user.id] = user;
         });
-        set(this, "paginationInfo", paginationInfo);
+        this.paginationInfo = paginationInfo;
       });
       return data.results;
     } catch (error) {
@@ -89,9 +89,9 @@ export class InstanceUserStore implements IInstanceUserStore {
       runInAction(() => {
         const { results, ...paginationInfo } = data;
         results.forEach((user: IUser) => {
-          set(this.users, [user.id], user);
+          this.users[user.id] = user;
         });
-        set(this, "paginationInfo", paginationInfo);
+        this.paginationInfo = paginationInfo;
       });
       return data.results;
     } catch (error) {
@@ -108,7 +108,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       this.loader = "mutation";
       const updated = await this.instanceUserService.update(userId, data);
       runInAction(() => {
-        set(this.users, [userId], updated);
+        this.users[userId] = updated;
       });
       return updated;
     } catch (error) {

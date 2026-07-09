@@ -25,7 +25,7 @@ const UserManagementPage = observer(function UserManagementPage(_props: Route.Co
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
 
   // fetch data
-  useSWR("INSTANCE_USERS", () => fetchUsers());
+  const { error } = useSWR("INSTANCE_USERS", () => fetchUsers());
 
   return (
     <PageWrapper
@@ -34,7 +34,11 @@ const UserManagementPage = observer(function UserManagementPage(_props: Route.Co
         description: "View all users and deactivate or reactivate their accounts.",
       }}
     >
-      {loader !== "init-loader" ? (
+      {error ? (
+        <p className="pt-6 text-sm text-danger-secondary">
+          Failed to load users. Please refresh the page.
+        </p>
+      ) : loader !== "init-loader" ? (
         <>
           <div className="flex items-center gap-2 text-16 font-medium pt-6 pb-2">
             All users on this instance
