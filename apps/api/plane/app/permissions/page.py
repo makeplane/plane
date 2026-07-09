@@ -39,7 +39,15 @@ class ProjectPagePermission(BasePermission):
             return False
 
         if page_id:
-            page = Page.objects.get(id=page_id, workspace__slug=slug)
+            # Scope the page to the project in the URL. Resolving the page by
+            # workspace + page_id alone allowed a member of one project to read
+            # pages belonging to another project in the same workspace
+            # (GHSA-g49r / GHSA-ghcr). Page-to-Project is an M2M via ProjectPage.
+            page = Page.objects.filter(
+                id=page_id, workspace__slug=slug, projects__id=project_id
+            ).first()
+            if page is None:
+                return False
 
             # Allow access if the user is the owner of the page
             if page.owned_by_id == user_id:
