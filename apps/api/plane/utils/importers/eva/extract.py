@@ -36,6 +36,7 @@ class EvaExtractor:
             {
                 "filter": [["parent_id", "==", project_id]],
                 "fields": ["id", "code", "cmf_created_at", "status_closed_at"],
+                "include_archived": "true",
             },
         )
 
