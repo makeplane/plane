@@ -447,10 +447,143 @@ const getTagSourceUrl = (tag: Record<string, unknown>) =>
     "path",
   ]);
 
+const getSourceTagId = (tag: Record<string, unknown>) =>
+  toText(
+    tag.id ??
+      tag.tag_id ??
+      tag.tagId ??
+      tag.event_tag_id ??
+      tag.eventTagId ??
+      tag.uuid ??
+      tag.guid ??
+      tag._id
+  );
+
+const normalizeComparableTagValue = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+const splitTimecodeRange = (value: string) => {
+  const [start = "", end = ""] = value.split("-").map((part) => part.trim());
+
+  return {
+    end: end.replace(/\s+/g, ""),
+    start: start.replace(/\s+/g, ""),
+  };
+};
+
+const buildSgTagRowDedupeKey = (
+  row: Pick<
+    SgTagRow,
+    "action" | "groupValue" | "player" | "primaryDetail" | "result" | "secondaryDetail" | "team" | "timecode"
+  >
+) => {
+  const { start, end } = splitTimecodeRange(row.timecode);
+
+  return JSON.stringify({
+    action: normalizeComparableTagValue(row.action),
+    end,
+    groupValue: normalizeComparableTagValue(row.groupValue),
+    player: normalizeComparableTagValue(row.player),
+    primaryDetail: normalizeComparableTagValue(row.primaryDetail),
+    result: normalizeComparableTagValue(row.result),
+    secondaryDetail: normalizeComparableTagValue(row.secondaryDetail),
+    start,
+    team: normalizeComparableTagValue(row.team),
+  });
+};
+
+const buildStableSgTagRowId = (
+  row: Pick<
+    SgTagRow,
+    "action" | "groupValue" | "player" | "primaryDetail" | "result" | "secondaryDetail" | "team" | "timecode"
+  >,
+  sourceTagId: string | null
+) => sourceTagId || `sg-tag-${buildSgTagRowDedupeKey(row)}`;
+
+const getTagRowCompletenessScore = (row: SgTagRow) =>
+  [
+    row.sourceTagId,
+    row.sourceUrl,
+    row.playlistTimestamp,
+    row.playlistFallbackTimestamp,
+    row.clipStartSeconds !== null ? "clip-start" : "",
+    row.clipEndSeconds !== null ? "clip-end" : "",
+    row.player !== "--" ? row.player : "",
+    row.result !== "--" ? row.result : "",
+    row.primaryDetail !== "--" ? row.primaryDetail : "",
+    row.secondaryDetail !== "--" ? row.secondaryDetail : "",
+  ].filter(Boolean).length;
+
+const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
+  const preferredRow =
+    getTagRowCompletenessScore(nextRow) > getTagRowCompletenessScore(currentRow) ? nextRow : currentRow;
+  const fallbackRow = preferredRow === nextRow ? currentRow : nextRow;
+  const mergedRow = {
+    ...preferredRow,
+    clipEndSeconds: preferredRow.clipEndSeconds ?? fallbackRow.clipEndSeconds,
+    clipStartSeconds: preferredRow.clipStartSeconds ?? fallbackRow.clipStartSeconds,
+    player: preferredRow.player !== "--" ? preferredRow.player : fallbackRow.player,
+    playlistFallbackTimestamp: preferredRow.playlistFallbackTimestamp ?? fallbackRow.playlistFallbackTimestamp,
+    playlistTimestamp: preferredRow.playlistTimestamp ?? fallbackRow.playlistTimestamp,
+    primaryDetail: preferredRow.primaryDetail !== "--" ? preferredRow.primaryDetail : fallbackRow.primaryDetail,
+    result: preferredRow.result !== "--" ? preferredRow.result : fallbackRow.result,
+    secondaryDetail: preferredRow.secondaryDetail !== "--" ? preferredRow.secondaryDetail : fallbackRow.secondaryDetail,
+    sourceTagId: preferredRow.sourceTagId ?? fallbackRow.sourceTagId,
+    sourceUrl: preferredRow.sourceUrl || fallbackRow.sourceUrl,
+    team: preferredRow.team !== "--" ? preferredRow.team : fallbackRow.team,
+    timecode: preferredRow.timecode !== "--" ? preferredRow.timecode : fallbackRow.timecode,
+  } satisfies SgTagRow;
+
+  return {
+    ...mergedRow,
+    id: buildStableSgTagRowId(mergedRow, mergedRow.sourceTagId),
+  } satisfies SgTagRow;
+};
+
+export const dedupeTagRows = (rows: SgTagRow[]) => {
+  const rowsByKey = new Map<string, SgTagRow>();
+  const sourceIdToKey = new Map<string, string>();
+  let duplicateCount = 0;
+
+  rows.forEach((row) => {
+    const contentKey = buildSgTagRowDedupeKey(row);
+    const mappedSourceKey = row.sourceTagId ? sourceIdToKey.get(row.sourceTagId) : undefined;
+    const existingKey = mappedSourceKey ?? (rowsByKey.has(contentKey) ? contentKey : undefined);
+
+    if (!existingKey) {
+      rowsByKey.set(contentKey, row);
+      if (row.sourceTagId) {
+        sourceIdToKey.set(row.sourceTagId, contentKey);
+      }
+      return;
+    }
+
+    duplicateCount += 1;
+    const currentRow = rowsByKey.get(existingKey);
+    if (currentRow) {
+      rowsByKey.set(existingKey, mergeDuplicateTagRows(currentRow, row));
+    }
+
+    if (row.sourceTagId) {
+      sourceIdToKey.set(row.sourceTagId, existingKey);
+    }
+  });
+
+  if (duplicateCount > 0 && process.env.NODE_ENV !== "production") {
+    console.info(
+      `[sg-event-detail] Removed ${duplicateCount} duplicate tag row${duplicateCount === 1 ? "" : "s"}.`
+    );
+  }
+
+  return Array.from(rowsByKey.values());
+};
+
 const buildTagRowBySport = (
   tag: Record<string, unknown>,
   sport: SportTableKind,
-  index: number,
   baseEventDateTime?: string | null
 ): SgTagRow | null => {
   const player =
@@ -495,6 +628,7 @@ const buildTagRowBySport = (
   const playlistTimestamp = normalizePlaylistTimestamp(rawPlaylistTimestamp, baseEventDateTime);
   const playlistFallbackTimestamp = buildClockOnlyPlaylistTimestampFallback(rawPlaylistTimestamp, baseEventDateTime);
   const sourceUrl = getTagSourceUrl(tag);
+  const sourceTagId = getSourceTagId(tag) || null;
   const clipStartSeconds = parseTimecodeToSeconds(
     findTagDataValue(tag, ["clip_start", "start", "video_timecode_clip_start", "start_timecode"]) || timecode
   );
@@ -594,18 +728,33 @@ const buildTagRowBySport = (
     return null;
   }
 
+  const stableId = buildStableSgTagRowId(
+    {
+      action: normalizedAction,
+      groupValue,
+      player: normalizedPlayer,
+      primaryDetail,
+      result: result || "--",
+      secondaryDetail,
+      team: team || "--",
+      timecode,
+    },
+    sourceTagId
+  );
+
   return {
     action: normalizedAction,
     clipEndSeconds,
     clipStartSeconds,
     groupValue,
-    id: `${sport}-${groupValue}-${normalizedAction}-${index}`,
+    id: stableId,
     player: normalizedPlayer,
     playlistFallbackTimestamp,
     playlistTimestamp,
     primaryDetail,
     result: result || "--",
     secondaryDetail,
+    sourceTagId,
     sourceUrl,
     team: team || "--",
     timecode,
@@ -624,12 +773,14 @@ export const normalizeTagRows = (
   const rawTags = pickArray([root, nestedEvent, nestedRawEvent], ["tags", "event_tags", "eventTags"]);
 
   if (rawTags.length > 0) {
-    return rawTags
-      .map((entry, index) => buildTagRowBySport(asRecord(entry), sport, index, baseEventDateTime))
-      .filter((row): row is SgTagRow => Boolean(row));
+    return dedupeTagRows(
+      rawTags
+        .map((entry) => buildTagRowBySport(asRecord(entry), sport, baseEventDateTime))
+        .filter((row): row is SgTagRow => Boolean(row))
+    );
   }
 
-  return (eventDetails?.structuredTags ?? []).map((tag, index) => {
+  return dedupeTagRows((eventDetails?.structuredTags ?? []).map((tag) => {
     const defaultConfig = SPORT_TABLE_CONFIGS[sport] ?? SPORT_TABLE_CONFIGS.default;
     const quarterValue =
       sport === "basketball"
@@ -647,7 +798,24 @@ export const normalizeTagRows = (
       clipEndSeconds: null,
       clipStartSeconds: tag.timeRange ? parseTimecodeToSeconds(tag.timeRange) : null,
       groupValue,
-      id: `${sport}-${groupValue}-${tag.action || "tag"}-${index}`,
+      id: buildStableSgTagRowId(
+        {
+          action: tag.action ? formatLooseLabel(tag.action) : tag.label,
+          groupValue,
+          player: "--",
+          primaryDetail:
+            sport === "american-football" || sport === "basketball"
+              ? quarterValue
+              : defaultConfig.primaryDetailLabel === "Match Time"
+                ? tag.timeRange || tag.timestamp || "--"
+                : "--",
+          result: tag.result ? formatLooseLabel(tag.result) : "--",
+          secondaryDetail: "--",
+          team: tag.team ? formatLooseLabel(tag.team) : "--",
+          timecode: tag.timeRange || tag.timestamp || "--",
+        },
+        null
+      ),
       player: "--",
       playlistFallbackTimestamp: buildClockOnlyPlaylistTimestampFallback(tag.timestamp || "", baseEventDateTime),
       playlistTimestamp: normalizePlaylistTimestamp(tag.timestamp || "", baseEventDateTime),
@@ -656,14 +824,15 @@ export const normalizeTagRows = (
           ? quarterValue
           : defaultConfig.primaryDetailLabel === "Match Time"
             ? tag.timeRange || tag.timestamp || "--"
-            : "--",
+          : "--",
       result: tag.result ? formatLooseLabel(tag.result) : "--",
       secondaryDetail: "--",
+      sourceTagId: null,
       sourceUrl: "",
       team: tag.team ? formatLooseLabel(tag.team) : "--",
       timecode: tag.timeRange || tag.timestamp || "--",
     } satisfies SgTagRow;
-  });
+  }));
 };
 
 export const buildBaseEventDateTime = (dateValue: string, timeValue: string) => {

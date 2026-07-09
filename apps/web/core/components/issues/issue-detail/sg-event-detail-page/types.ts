@@ -1,6 +1,6 @@
+import type { TIssue } from "@plane/types";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import type { TEventMediaDetails } from "ce/features/media-library/utils/media-event";
-import type { TIssue } from "@plane/types";
 
 export type SportTableKind = "american-football" | "baseball" | "soccer" | "basketball" | "cricket" | "default";
 
@@ -38,6 +38,7 @@ export type SgTagRow = {
   primaryDetail: string;
   result: string;
   secondaryDetail: string;
+  sourceTagId: string | null;
   sourceUrl: string;
   team: string;
   timecode: string;

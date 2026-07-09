@@ -7,7 +7,12 @@ import { Download, FileText, FileWarning } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ImageFullScreenModal } from "@plane/editor";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { buildDownloadUrl, DOCUMENT_PREVIEW_STYLE, getMetaNumber } from "../utils/media-detail-utils";
+import {
+  buildDownloadUrl,
+  DOCUMENT_PREVIEW_STYLE,
+  getDisplayMediaTitle,
+  getMetaNumber,
+} from "../utils/media-detail-utils";
 import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
 import type { TQualityOption } from "./player-ui";
 
@@ -94,6 +99,7 @@ export const MediaDetailPreview = ({
     }
     return { width: window.innerWidth, height: window.innerHeight };
   });
+  const displayTitle = getDisplayMediaTitle(item?.title);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -312,7 +318,7 @@ export const MediaDetailPreview = ({
                 imagePreviewAvailable ? (
                   <img
                     src={effectiveImageSrc}
-                    alt={item.title}
+                    alt={displayTitle}
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-contain"
@@ -368,7 +374,7 @@ export const MediaDetailPreview = ({
               ) : documentPreviewHtml ? (
                 <div className="overflow-hidden rounded-lg bg-white" style={previewHeightStyle}>
                   <iframe
-                    title={`${item.title}-preview`}
+                    title={`${displayTitle}-preview`}
                     className="h-full w-full"
                     sandbox=""
                     srcDoc={`<!doctype html><html><head>${DOCUMENT_PREVIEW_STYLE}</head><body><div class="document-preview">${sanitizedDocumentPreviewHtml}</div></body></html>`}
@@ -377,7 +383,7 @@ export const MediaDetailPreview = ({
               ) : documentPreviewUrl ? (
                 <iframe
                   src={documentPreviewUrl}
-                  title={item.title}
+                  title={displayTitle}
                   className="h-full w-full rounded-lg bg-white"
                   style={previewHeightStyle}
                   onLoad={() => setIsDocumentPreviewBroken(false)}
@@ -426,7 +432,7 @@ export const MediaDetailPreview = ({
               ) : (
                 <iframe
                   src={effectiveDocumentSrc}
-                  title={item.title}
+                  title={displayTitle}
                   className="w-full rounded-lg bg-white"
                   style={previewHeightStyle}
                   onLoad={() => setIsDocumentPreviewBroken(false)}

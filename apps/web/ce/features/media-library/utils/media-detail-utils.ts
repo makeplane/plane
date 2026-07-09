@@ -15,6 +15,22 @@ export const formatMetaValue = (value: unknown): string => {
   return JSON.stringify(value) || "";
 };
 
+export const getDisplayMediaTitle = (value?: string | null) => {
+  const normalizedValue = value?.trim() || "";
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  return (
+    normalizedValue
+      .replace(/\s+final\s+event\s+json$/i, "")
+      .replace(/\s+final\s+json$/i, "")
+      .replace(/\s+json$/i, "")
+      .trim() || normalizedValue
+  );
+};
+
 export const formatMetaLabel = (value: string) => {
   if (!value) return value;
   return value
