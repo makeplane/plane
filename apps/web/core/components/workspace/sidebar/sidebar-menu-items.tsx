@@ -6,6 +6,7 @@
 
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -22,6 +23,7 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // store hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useLocalStorage from "@/hooks/use-local-storage";
 import {
   usePersonalNavigationPreferences,
@@ -32,6 +34,7 @@ import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-it
 
 export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
+  const { workspaceSlug } = useParams();
   const { setValue: toggleWorkspaceMenu, storedValue: isWorkspaceMenuOpen } = useLocalStorage<boolean>(
     "is_workspace_menu_open",
     true
@@ -39,11 +42,14 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   // store hooks
   const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
+  const { isWorkspaceFeatureEnabled } = useWorkspace();
   // hooks
   const { preferences: personalPreferences } = usePersonalNavigationPreferences();
   const { preferences: workspacePreferences } = useWorkspaceNavigationPreferences();
   // translation
   const { t } = useTranslation();
+  // derived values
+  const isFileLibraryEnabled = isWorkspaceFeatureEnabled(workspaceSlug?.toString() ?? "", "file_library");
 
   const toggleListDisclosure = (isOpen: boolean) => {
     toggleWorkspaceMenu(isOpen);
@@ -84,14 +90,20 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   const sortedNavigationItems = useMemo(
     () =>
-      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
-        const preference = workspacePreferences.items[item.key];
-        return {
-          ...item,
-          sort_order: preference ? preference.sort_order : 0,
-        };
-      }).sort((a, b) => a.sort_order - b.sort_order),
-    [workspacePreferences]
+      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS
+        // "file-library" is the only entry gated by a per-workspace feature
+        // flag rather than a role; hide it entirely (from sidebar and pin
+        // dialog alike) when the module is off for this workspace.
+        .filter((item) => item.key !== "file-library" || isFileLibraryEnabled)
+        .map((item) => {
+          const preference = workspacePreferences.items[item.key];
+          return {
+            ...item,
+            sort_order: preference ? preference.sort_order : 0,
+          };
+        })
+        .sort((a, b) => a.sort_order - b.sort_order),
+    [workspacePreferences, isFileLibraryEnabled]
   );
 
   return (

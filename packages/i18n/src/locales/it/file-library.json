@@ -1,6 +1,6 @@
 {
   "file_library": {
-    "title": "Library",
+    "title": "Files",
     "download": "Download",
     "delete": "Delete",
     "delete_title": "Delete {name}?",
@@ -22,7 +22,9 @@
       "select_pdfs": "Only PDFs",
       "pdfs_as_contracts": "Categorize PDFs as Contratos automatically",
       "bulk_success": "{count, plural, one {# file uploaded} other {# files uploaded}}",
-      "confirm": "Upload {count, plural, one {# file} other {# files}}"
+      "confirm": "Upload {count, plural, one {# file} other {# files}}",
+      "add_more": "Add more files",
+      "remove_file": "Remove from list"
     },
     "categories": {
       "manage_button": "Categories",
