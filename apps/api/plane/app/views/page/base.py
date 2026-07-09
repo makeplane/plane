@@ -184,6 +184,15 @@ class PageViewSet(BaseViewSet):
                     project_pages__deleted_at__isnull=True,
                 ).get()
 
+                # is_locked / archived_at are owner-or-admin state transitions owned
+                # by the dedicated lock/ and archive/ endpoints. Reject them here so a
+                # plain member cannot lock or archive another user's public page via PATCH.
+                if "is_locked" in request.data or "archived_at" in request.data:
+                    return Response(
+                        {"error": "Use the lock/ and archive/ endpoints to change these fields"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 if page.is_locked:
                     return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
