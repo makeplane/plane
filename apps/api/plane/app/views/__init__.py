@@ -193,6 +193,13 @@ from .page.base import (
     PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
+from .page.workspace import (
+    WorkspacePageViewSet,
+    WorkspacePageFavoriteViewSet,
+    WorkspacePagesDescriptionViewSet,
+    WorkspacePageVersionEndpoint,
+    WorkspacePageDuplicateEndpoint,
+)
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint

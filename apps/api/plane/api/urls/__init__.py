@@ -16,6 +16,7 @@ from .user import urlpatterns as user_patterns
 from .work_item import urlpatterns as work_item_patterns
 from .invite import urlpatterns as invite_patterns
 from .sticky import urlpatterns as sticky_patterns
+from .page import urlpatterns as page_patterns
 from .page_link import urlpatterns as page_link_patterns
 from .worklog import urlpatterns as worklog_patterns
 
@@ -34,6 +35,7 @@ urlpatterns = [
     *work_item_patterns,
     *invite_patterns,
     *sticky_patterns,
+    *page_patterns,
     *page_link_patterns,
     *worklog_patterns,
 ]
