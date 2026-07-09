@@ -63,7 +63,9 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   // derived values
   const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? false;
 
-  const handleLinkClick = () => toggleExtendedSidebar(true);
+  // close the extended-sidebar flyout on navigation, otherwise it stays open
+  // over the page and the click appears to do nothing
+  const handleLinkClick = () => toggleExtendedSidebar(false);
 
   useEffect(() => {
     const element = navigationIemRef.current;
