@@ -23,13 +23,19 @@ class PageVersionEndpoint(BaseAPIView):
             # for the URL project so a page belonging to (or removed from)
             # another project cannot be read via this endpoint (GHSA-g49r /
             # GHSA-ghcr). The active-link partial-unique constraint keeps the
-            # join to a single row, so get() stays unambiguous.
-            page_version = PageVersion.objects.get(
-                workspace__slug=slug,
-                page__project_pages__project_id=project_id,
-                page__project_pages__deleted_at__isnull=True,
-                page_id=page_id,
-                pk=pk,
+            # join to a single row; distinct() is a defensive guard so the
+            # page__project_pages join can never make get() raise
+            # MultipleObjectsReturned (a 500).
+            page_version = (
+                PageVersion.objects.filter(
+                    workspace__slug=slug,
+                    page__project_pages__project_id=project_id,
+                    page__project_pages__deleted_at__isnull=True,
+                    page_id=page_id,
+                    pk=pk,
+                )
+                .distinct()
+                .get()
             )
             # Serialize the page version
             serializer = PageVersionDetailSerializer(page_version)
