@@ -176,6 +176,9 @@ class GlobalSearchEndpoint(BaseAPIView):
                 projects__archived_at__isnull=True,
                 workspace__slug=slug,
             )
+            # a private page is only searchable by its owner (parity with the
+            # project-scoped page search which already filters access=0)
+            .filter(Q(access=0) | Q(owned_by=self.request.user))
             .annotate(
                 project_ids=Coalesce(
                     ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
