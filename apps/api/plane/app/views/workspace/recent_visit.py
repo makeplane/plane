@@ -30,7 +30,7 @@ class UserRecentVisitViewSet(BaseViewSet):
         if entity_name:
             user_recent_visits = user_recent_visits.filter(entity_name=entity_name)
 
-        user_recent_visits = user_recent_visits.filter(entity_name__in=["issue", "page", "project"])
+        user_recent_visits = user_recent_visits.filter(entity_name__in=["issue", "page", "project", "workspace_page"])
 
         serializer = WorkspaceRecentVisitSerializer(user_recent_visits[:20], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

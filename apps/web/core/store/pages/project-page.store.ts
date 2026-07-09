@@ -55,7 +55,7 @@ export interface IProjectPageStore {
   // actions
   fetchPagesList: (
     workspaceSlug: string,
-    projectId: string,
+    projectId?: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
   fetchSubPages: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage[] | undefined>;
@@ -228,7 +228,7 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description fetch all the pages
    */
-  fetchPagesList = async (workspaceSlug: string, projectId: string, pageType?: TPageNavigationTabs) => {
+  fetchPagesList = async (workspaceSlug: string, projectId?: string, pageType?: TPageNavigationTabs) => {
     try {
       if (!workspaceSlug || !projectId) return undefined;
 

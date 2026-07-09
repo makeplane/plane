@@ -77,6 +77,13 @@ from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
 
+from .page import (
+    WorkspacePageListCreateAPIEndpoint,
+    WorkspacePageDetailAPIEndpoint,
+    ProjectPageListCreateAPIEndpoint,
+    ProjectPageDetailAPIEndpoint,
+)
+
 from .page_link import (
     WorkItemPageLinkListCreateAPIEndpoint,
     WorkItemPageLinkDetailAPIEndpoint,

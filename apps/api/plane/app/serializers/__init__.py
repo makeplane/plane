@@ -105,6 +105,7 @@ from .importer import ImporterSerializer
 from .page import (
     PageSerializer,
     PageDetailSerializer,
+    WorkspacePageSerializer,
     PageVersionSerializer,
     PageBinaryUpdateSerializer,
     PageVersionDetailSerializer,
