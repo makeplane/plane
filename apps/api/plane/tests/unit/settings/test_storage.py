@@ -57,6 +57,31 @@ class TestS3StorageSignedURLExpiration:
             "AWS_ACCESS_KEY_ID": "test-key",
             "AWS_SECRET_ACCESS_KEY": "test-secret",
             "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_S3_ENDPOINT_URL": "http://plane-minio:9000",
+            "MINIO_PUBLIC_ENDPOINT_URL": "http://localhost:9000",
+            "USE_MINIO": "1",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_minio_uses_public_endpoint_for_request_signed_urls(self, mock_boto3):
+        """Test MinIO signed URLs use a browser-reachable endpoint when configured"""
+        mock_boto3.client.return_value = Mock()
+        request = Mock()
+        request.scheme = "http"
+        request.get_host.return_value = "localhost:8000"
+
+        S3Storage(request=request)
+
+        call_kwargs = mock_boto3.client.call_args[1]
+        assert call_kwargs["endpoint_url"] == "http://localhost:9000"
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
             "AWS_REGION": "us-east-1",
         },
         clear=True,

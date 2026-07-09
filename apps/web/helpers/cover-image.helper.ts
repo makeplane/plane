@@ -276,6 +276,10 @@ export const handleCoverImageChange = async (
     return;
   }
 
+  if (uploadConfig.isUserAsset && !newImage.startsWith("http")) {
+    return;
+  }
+
   return { cover_image: newImage };
 };
 
