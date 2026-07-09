@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Jira 站点",
+          "cloud_hostname_description": "您的 Atlassian Cloud 主机名，例如 company.atlassian.net。",
+          "email": "Jira 账户邮箱",
+          "email_description": "拥有该 API 令牌的 Jira 账户的邮箱地址。",
+          "api_token": "Jira API 令牌",
+          "api_token_description": "来自您 Atlassian 账户安全设置中的 API 令牌。",
+          "project_key": "Jira 项目密钥",
+          "project_key_description": "包含 RTM 测试用例的项目密钥。",
+          "issue_type_name": "测试用例的工作项类型",
+          "issue_type_name_description": "用于 RTM 测试用例的 Jira 工作项类型。",
+          "jql": "自定义 JQL",
+          "jql_description": "可选的 JQL 覆盖。为空时，将根据上方的项目和工作项类型选择测试用例。",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "RTM API 基础 URL",
+          "rtm_api_base_url_description": "可选。来自 RTM → REST API authentication 的 RTM REST API URL，用于获取测试步骤。",
+          "rtm_api_token": "RTM API 令牌",
+          "rtm_api_token_description": "可选。来自 RTM 应用设置的 RTM Bearer 令牌。为空时将回退使用 Jira API 令牌。",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "如何创建 RTM API 令牌",
+            "intro": "使用此令牌导入 RTM 测试步骤，它与您的 Atlassian Jira API 令牌是分开的。",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "打开您的 Jira Cloud 站点，进入使用 Requirements and Test Management（RTM）的项目。",
+              "open_menu": "打开 RTM 应用，然后点击 RTM 标题栏中的三点菜单（⋯）。",
+              "open_auth": "选择 REST API authentication。",
+              "copy_base_url": "复制对话框中显示的 API 基础 URL（例如 https://rtm-api.hexygen.com/api 或欧盟对应地址）。",
+              "generate_token": "点击 Generate token。",
+              "select_user": "选择该令牌将代表其操作的 Jira 用户。",
+              "enter_label": "输入标签，例如 Plane import。",
+              "copy_token": "点击 Generate，然后立即复制令牌。关闭对话框后将无法再次查看。",
+              "paste_into_plane": "将 API 基础 URL 和令牌粘贴到下方的 RTM API 基础 URL 和 RTM API 令牌字段中。"
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "RTM API 令牌与上方用于 Jira 站点、邮箱和 API 令牌的 id.atlassian.com API 令牌不同。"
+          },
+          "plane_project": "Plane 项目",
+          "plane_project_description": "选择用于接收导入的 Jira RTM 测试用例的 Plane 项目。",
+          "select_plane_project": "选择 Plane 项目",
+          "project_required": "开始导入前请先选择一个 Plane 项目。",
+          "preview": "导入预览",
+          "start_import": "开始导入",
+          "preview_title": "导入预览",
+          "preview_jql": "JQL",
+          "preview_success": "已加载 Jira RTM 预览",
+          "preview_error": "无法加载 Jira RTM 预览",
+          "import_started": "Jira RTM 导入已开始",
+          "import_error": "无法开始 Jira RTM 导入",
+          "testcases": "测试用例",
+          "comments": "评论",
+          "labels": "标签",
+          "users": "用户"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

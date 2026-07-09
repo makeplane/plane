@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Situs Jira",
+          "cloud_hostname_description": "Nama host Atlassian Cloud Anda, misalnya company.atlassian.net.",
+          "email": "Email akun Jira",
+          "email_description": "Alamat email akun Jira pemilik token API.",
+          "api_token": "Token API Jira",
+          "api_token_description": "Token API dari pengaturan keamanan akun Atlassian Anda.",
+          "project_key": "Kunci proyek Jira",
+          "project_key_description": "Kunci proyek yang berisi kasus uji RTM.",
+          "issue_type_name": "Jenis item kerja untuk kasus uji",
+          "issue_type_name_description": "Jenis item kerja Jira yang digunakan untuk kasus uji RTM.",
+          "jql": "JQL kustom",
+          "jql_description": "Penggantian JQL opsional. Jika kosong, kasus uji dipilih berdasarkan proyek dan jenis item kerja di atas.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "URL dasar API RTM",
+          "rtm_api_base_url_description": "Opsional. URL REST API RTM dari RTM → REST API authentication. Digunakan untuk mengambil langkah-langkah uji.",
+          "rtm_api_token": "Token API RTM",
+          "rtm_api_token_description": "Opsional. Token Bearer RTM dari pengaturan aplikasi RTM. Jika kosong, akan menggunakan token API Jira.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "Cara membuat token API RTM",
+            "intro": "Gunakan token ini untuk mengimpor langkah-langkah uji RTM. Token ini berbeda dari token API Atlassian Jira Anda.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Buka situs Jira Cloud Anda dan buka proyek yang menggunakan Requirements and Test Management (RTM).",
+              "open_menu": "Buka aplikasi RTM, lalu klik menu tiga titik (⋯) di header RTM.",
+              "open_auth": "Pilih REST API authentication.",
+              "copy_base_url": "Salin URL dasar API yang ditampilkan di kotak dialog (misalnya https://rtm-api.hexygen.com/api atau padanan UE).",
+              "generate_token": "Klik Generate token.",
+              "select_user": "Pilih pengguna Jira yang atas namanya token ini akan bertindak.",
+              "enter_label": "Masukkan label, misalnya Plane import.",
+              "copy_token": "Klik Generate, lalu segera salin token tersebut. Anda tidak akan bisa melihatnya lagi setelah menutup kotak dialog.",
+              "paste_into_plane": "Tempel URL dasar API dan token ke kolom URL dasar API RTM dan Token API RTM di bawah ini."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "Token API RTM berbeda dengan token API dari id.atlassian.com yang digunakan di atas untuk situs Jira, email, dan token API."
+          },
+          "plane_project": "Proyek Plane",
+          "plane_project_description": "Pilih proyek Plane yang akan menerima kasus uji Jira RTM yang diimpor.",
+          "select_plane_project": "Pilih proyek Plane",
+          "project_required": "Pilih proyek Plane sebelum memulai impor.",
+          "preview": "Pratinjau impor",
+          "start_import": "Mulai impor",
+          "preview_title": "Pratinjau impor",
+          "preview_jql": "JQL",
+          "preview_success": "Pratinjau Jira RTM dimuat",
+          "preview_error": "Tidak dapat memuat pratinjau Jira RTM",
+          "import_started": "Impor Jira RTM dimulai",
+          "import_error": "Tidak dapat memulai impor Jira RTM",
+          "testcases": "Kasus uji",
+          "comments": "Komentar",
+          "labels": "Label",
+          "users": "Pengguna"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

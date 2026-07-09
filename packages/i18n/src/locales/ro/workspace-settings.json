@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Site Jira",
+          "cloud_hostname_description": "Numele de gazdă al contului dvs. Atlassian Cloud, de exemplu company.atlassian.net.",
+          "email": "E-mail cont Jira",
+          "email_description": "Adresa de e-mail a contului Jira căruia îi aparține tokenul API.",
+          "api_token": "Token API Jira",
+          "api_token_description": "Token API din setările de securitate ale contului dvs. Atlassian.",
+          "project_key": "Cheia proiectului Jira",
+          "project_key_description": "Cheia proiectului care conține cazurile de test RTM.",
+          "issue_type_name": "Tip de element pentru cazurile de test",
+          "issue_type_name_description": "Tipul de element Jira utilizat pentru cazurile de test RTM.",
+          "jql": "JQL personalizat",
+          "jql_description": "Suprascriere JQL opțională. Dacă este gol, cazurile de test sunt selectate în funcție de proiectul și tipul de element de mai sus.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "URL de bază al API-ului RTM",
+          "rtm_api_base_url_description": "Opțional. URL-ul API REST RTM din RTM → REST API authentication. Utilizat pentru a prelua pașii de test.",
+          "rtm_api_token": "Token API RTM",
+          "rtm_api_token_description": "Opțional. Token Bearer RTM din setările aplicației RTM. Dacă este gol, se folosește tokenul API Jira.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "Cum se creează un token API RTM",
+            "intro": "Utilizați acest token pentru a importa pașii de test RTM. Este diferit de tokenul dvs. API Atlassian Jira.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Deschideți site-ul Jira Cloud și accesați un proiect care utilizează Requirements and Test Management (RTM).",
+              "open_menu": "Deschideți aplicația RTM, apoi faceți clic pe meniul cu trei puncte (⋯) din antetul RTM.",
+              "open_auth": "Selectați REST API authentication.",
+              "copy_base_url": "Copiați URL-ul de bază al API-ului afișat în casetă de dialog (de exemplu https://rtm-api.hexygen.com/api sau echivalentul UE).",
+              "generate_token": "Faceți clic pe Generate token.",
+              "select_user": "Selectați utilizatorul Jira în numele căruia va acționa tokenul.",
+              "enter_label": "Introduceți o etichetă, de exemplu Plane import.",
+              "copy_token": "Faceți clic pe Generate, apoi copiați imediat tokenul. Nu îl veți mai putea vizualiza după închiderea casetei de dialog.",
+              "paste_into_plane": "Lipiți URL-ul de bază al API-ului și tokenul în câmpurile URL de bază API RTM și Token API RTM de mai jos."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "Tokenul API RTM nu este același cu tokenul API de la id.atlassian.com folosit mai sus pentru site Jira, e-mail și token API."
+          },
+          "plane_project": "Proiect Plane",
+          "plane_project_description": "Selectați proiectul Plane care ar trebui să primească cazurile de test Jira RTM importate.",
+          "select_plane_project": "Selectați proiectul Plane",
+          "project_required": "Selectați un proiect Plane înainte de a începe importul.",
+          "preview": "Previzualizare import",
+          "start_import": "Începeți importul",
+          "preview_title": "Previzualizare import",
+          "preview_jql": "JQL",
+          "preview_success": "Previzualizarea Jira RTM a fost încărcată",
+          "preview_error": "Previzualizarea Jira RTM nu a putut fi încărcată",
+          "import_started": "Importul Jira RTM a început",
+          "import_error": "Importul Jira RTM nu a putut fi început",
+          "testcases": "Cazuri de test",
+          "comments": "Comentarii",
+          "labels": "Etichete",
+          "users": "Utilizatori"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Trang Jira",
+          "cloud_hostname_description": "Tên máy chủ Atlassian Cloud của bạn, ví dụ company.atlassian.net.",
+          "email": "Email tài khoản Jira",
+          "email_description": "Địa chỉ email của tài khoản Jira sở hữu token API.",
+          "api_token": "Token API Jira",
+          "api_token_description": "Token API từ cài đặt bảo mật tài khoản Atlassian của bạn.",
+          "project_key": "Khóa dự án Jira",
+          "project_key_description": "Khóa dự án chứa các trường hợp kiểm thử RTM.",
+          "issue_type_name": "Loại công việc cho trường hợp kiểm thử",
+          "issue_type_name_description": "Loại công việc Jira được dùng cho các trường hợp kiểm thử RTM.",
+          "jql": "JQL tùy chỉnh",
+          "jql_description": "Ghi đè JQL tùy chọn. Nếu để trống, các trường hợp kiểm thử sẽ được chọn theo dự án và loại công việc ở trên.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "URL cơ sở API RTM",
+          "rtm_api_base_url_description": "Tùy chọn. URL REST API của RTM từ RTM → REST API authentication. Dùng để lấy các bước kiểm thử.",
+          "rtm_api_token": "Token API RTM",
+          "rtm_api_token_description": "Tùy chọn. Token Bearer của RTM từ cài đặt ứng dụng RTM. Nếu để trống, sẽ dùng token API Jira.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "Cách tạo token API RTM",
+            "intro": "Dùng token này để nhập các bước kiểm thử RTM. Token này khác với token API Atlassian Jira của bạn.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Mở trang Jira Cloud của bạn và chuyển đến một dự án sử dụng Requirements and Test Management (RTM).",
+              "open_menu": "Mở ứng dụng RTM, sau đó nhấp vào menu ba chấm (⋯) trên tiêu đề RTM.",
+              "open_auth": "Chọn REST API authentication.",
+              "copy_base_url": "Sao chép URL cơ sở API hiển thị trong hộp thoại (ví dụ https://rtm-api.hexygen.com/api hoặc phiên bản dành cho EU).",
+              "generate_token": "Nhấp vào Generate token.",
+              "select_user": "Chọn người dùng Jira mà token sẽ đại diện hành động.",
+              "enter_label": "Nhập một nhãn, ví dụ Plane import.",
+              "copy_token": "Nhấp vào Generate, sau đó sao chép token ngay lập tức. Bạn sẽ không thể xem lại sau khi đóng hộp thoại.",
+              "paste_into_plane": "Dán URL cơ sở API và token vào các trường URL cơ sở API RTM và Token API RTM bên dưới."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "Token API RTM không giống với token API từ id.atlassian.com được dùng ở trên cho trang Jira, email và token API."
+          },
+          "plane_project": "Dự án Plane",
+          "plane_project_description": "Chọn dự án Plane sẽ nhận các trường hợp kiểm thử Jira RTM đã nhập.",
+          "select_plane_project": "Chọn dự án Plane",
+          "project_required": "Chọn một dự án Plane trước khi bắt đầu nhập.",
+          "preview": "Xem trước nhập",
+          "start_import": "Bắt đầu nhập",
+          "preview_title": "Xem trước nhập",
+          "preview_jql": "JQL",
+          "preview_success": "Đã tải xem trước Jira RTM",
+          "preview_error": "Không thể tải xem trước Jira RTM",
+          "import_started": "Đã bắt đầu nhập Jira RTM",
+          "import_error": "Không thể bắt đầu nhập Jira RTM",
+          "testcases": "Trường hợp kiểm thử",
+          "comments": "Bình luận",
+          "labels": "Nhãn",
+          "users": "Người dùng"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {
