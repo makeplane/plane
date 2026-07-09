@@ -115,11 +115,31 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   }
 
   /**
+   * @description id of the workspace currently in the route, used to scope the
+   * getters so pages accumulated for other workspaces in `data` never leak in.
+   */
+  private get currentWorkspaceId() {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return undefined;
+    return this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug.toString())?.id;
+  }
+
+  /**
+   * @description pages of the workspace currently in the route
+   */
+  private get currentWorkspacePages() {
+    const workspaceId = this.currentWorkspaceId;
+    const pages = Object.values(this?.data || {});
+    if (!workspaceId) return pages;
+    return pages.filter((page) => page.workspace === workspaceId);
+  }
+
+  /**
    * @description check if any page is available
    */
   get isAnyPageAvailable() {
     if (this.loader) return true;
-    return Object.keys(this.data).length > 0;
+    return this.currentWorkspacePages.length > 0;
   }
 
   /**
@@ -142,7 +162,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    */
   getCurrentProjectPageIdsByTab = computedFn((pageType: TPageNavigationTabs) => {
     // helps to filter pages based on the pageType
-    let pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
+    let pagesByType = filterPagesByPageType(pageType, this.currentWorkspacePages);
     // A page is a root of the current tab when it has no parent, or when its
     // parent is not part of this tab (e.g. an archived sub-page whose parent is
     // still active must surface at the archived tab root rather than disappear).
@@ -157,10 +177,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   /**
    * @description get all workspace page ids
    */
-  getCurrentProjectPageIds = computedFn(() => {
-    const pages = Object.values(this?.data || {});
-    return pages.map((page) => page.id) as string[];
-  });
+  getCurrentProjectPageIds = computedFn(() => this.currentWorkspacePages.map((page) => page.id) as string[]);
 
   /**
    * @description get the filtered workspace page ids based on the pageType
@@ -168,7 +185,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    */
   getCurrentProjectFilteredPageIdsByTab = computedFn((pageType: TPageNavigationTabs) => {
     // helps to filter pages based on the pageType
-    const pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
+    const pagesByType = filterPagesByPageType(pageType, this.currentWorkspacePages);
     // Treat a page as a tab root when it has no parent, or when its parent is
     // not part of this tab (keeps archived sub-pages of active parents reachable).
     const idsInType = new Set(pagesByType.map((p) => p.id));

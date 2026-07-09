@@ -181,6 +181,15 @@ class WorkspacePageViewSet(PageViewSet):
 
                 page = self._get_workspace_page(slug, page_id)
 
+                # is_locked / archived_at are owner-or-admin state transitions owned
+                # by the dedicated lock/ and archive/ endpoints. Reject them here so a
+                # plain member cannot lock or archive another user's public page via PATCH.
+                if "is_locked" in request.data or "archived_at" in request.data:
+                    return Response(
+                        {"error": "Use the lock/ and archive/ endpoints to change these fields"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 if page.is_locked:
                     return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -313,6 +322,15 @@ class WorkspacePageViewSet(PageViewSet):
 
         page.access = access
         page.save()
+
+        # When a page becomes private, drop other users' recent-visit rows so its
+        # title/logo/owner stop surfacing in their recents (they can no longer read it).
+        if access == Page.PRIVATE_ACCESS:
+            UserRecentVisit.objects.filter(
+                entity_name="workspace_page",
+                entity_identifier=str(page_id),
+            ).exclude(user_id=page.owned_by_id).delete(soft=False)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, slug):

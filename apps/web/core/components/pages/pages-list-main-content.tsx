@@ -55,11 +55,13 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
     ? allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE)
     : allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT);
   // empty state copy differs between project pages and the workspace wiki
-  const emptyStateTitleKey = isWorkspacePage ? "project_empty_state.wiki.title" : "project_empty_state.pages.title";
+  const emptyStateTitleKey = isWorkspacePage ? "workspace_empty_state.wiki.title" : "project_empty_state.pages.title";
   const emptyStateDescriptionKey = isWorkspacePage
-    ? "project_empty_state.wiki.description"
+    ? "workspace_empty_state.wiki.description"
     : "project_empty_state.pages.description";
-  const emptyStateCtaKey = isWorkspacePage ? "project_empty_state.wiki.cta_primary" : "project_empty_state.pages.cta_primary";
+  const emptyStateCtaKey = isWorkspacePage
+    ? "workspace_empty_state.wiki.cta_primary"
+    : "project_empty_state.pages.cta_primary";
 
   // handle page create
   const handleCreatePage = async () => {
@@ -75,6 +77,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
           ? `/${workspaceSlug}/wiki/${res?.id}`
           : `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(redirectionLink);
+        return res;
       })
       .catch((err) => {
         setToast({

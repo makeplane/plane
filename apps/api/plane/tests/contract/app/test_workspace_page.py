@@ -707,3 +707,68 @@ class TestRecentVisitsWhitelist:
         assert len(entries) == 1
         assert entries[0]["entity_identifier"] == str(page.id)
         assert entries[0]["entity_data"]["name"] == "Visited"
+
+
+@pytest.mark.contract
+class TestWorkspacePagePatchGuards(TestWorkspacePageBase):
+    """PATCH must not smuggle lock/archive state transitions (BK-1)."""
+
+    @pytest.mark.django_db
+    def test_member_cannot_lock_public_page_via_patch(self, member_client, workspace, create_user):
+        page = make_wiki_page(workspace, create_user, "Public")  # owned by someone else, public
+        response = member_client.patch(
+            self.detail_url(workspace.slug, page.id), {"is_locked": True}, format="json"
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        page.refresh_from_db()
+        assert page.is_locked is False
+
+    @pytest.mark.django_db
+    def test_member_cannot_archive_public_page_via_patch(self, member_client, workspace, create_user):
+        page = make_wiki_page(workspace, create_user, "Public")
+        response = member_client.patch(
+            self.detail_url(workspace.slug, page.id), {"archived_at": "2020-01-01"}, format="json"
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        page.refresh_from_db()
+        assert page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_owner_can_still_rename_via_patch(self, session_client, workspace, create_user):
+        page = make_wiki_page(workspace, create_user, "Old name")
+        response = session_client.patch(
+            self.detail_url(workspace.slug, page.id), {"name": "New name"}, format="json"
+        )
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.name == "New name"
+
+
+@pytest.mark.contract
+class TestWorkspacePageAccessRecentVisitCleanup(TestWorkspacePageBase):
+    """Flipping a page to private purges other users' recent-visit rows (BK-2)."""
+
+    @pytest.mark.django_db
+    def test_private_flip_purges_other_users_recent_visits(self, session_client, workspace, create_user, member_user):
+        page = make_wiki_page(workspace, create_user, "Public", access=0)
+        # a visit recorded by another member
+        UserRecentVisit.objects.create(
+            workspace=workspace,
+            user=member_user,
+            entity_name="workspace_page",
+            entity_identifier=str(page.id),
+        )
+        # a visit by the owner themselves
+        UserRecentVisit.objects.create(
+            workspace=workspace,
+            user=create_user,
+            entity_name="workspace_page",
+            entity_identifier=str(page.id),
+        )
+        response = session_client.post(self.access_url(workspace.slug, page.id), {"access": 1}, format="json")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        # the other member's visit is gone; the owner's is kept
+        assert not UserRecentVisit.objects.filter(
+            entity_identifier=str(page.id), user=member_user
+        ).exists()
+        assert UserRecentVisit.objects.filter(entity_identifier=str(page.id), user=create_user).exists()
