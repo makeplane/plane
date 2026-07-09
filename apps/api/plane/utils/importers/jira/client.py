@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import base64
 import json
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -32,7 +33,16 @@ class JiraApiError(Exception):
 
 
 class JiraApiClient:
-    def __init__(self, cloud_hostname: str, email: str, api_token: str, *, timeout: int = 60):
+    def __init__(
+        self,
+        cloud_hostname: str,
+        email: str,
+        api_token: str,
+        *,
+        timeout: int = 60,
+        max_retries: int = 2,
+        retry_delay: float = 1,
+    ):
         hostname = cloud_hostname.strip().rstrip("/")
         if hostname.startswith("https://"):
             hostname = hostname[len("https://") :]
@@ -42,6 +52,8 @@ class JiraApiClient:
         self.email = email
         self.api_token = api_token
         self.timeout = timeout
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
 
     @property
     def base_url(self) -> str:
@@ -78,23 +90,37 @@ class JiraApiClient:
             data = json.dumps(body).encode()
             headers["Content-Type"] = "application/json"
 
-        request = urllib.request.Request(url, data=data, headers=headers, method=method)
+        for attempt in range(self.max_retries + 1):
+            request = urllib.request.Request(url, data=data, headers=headers, method=method)
 
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = response.read()
-                if not raw:
-                    return None
-                return json.loads(raw)
-        except urllib.error.HTTPError as error:
-            details = error.read().decode("utf-8", errors="replace")
-            raise JiraApiError(
-                f"HTTP {error.code} while calling {path}",
-                path=path,
-                details=details,
-            ) from error
-        except urllib.error.URLError as error:
-            raise JiraApiError(f"Connection error while calling {path}: {error.reason}", path=path) from error
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                    raw = response.read()
+                    if not raw:
+                        return None
+                    return json.loads(raw)
+            except urllib.error.HTTPError as error:
+                details = error.read().decode("utf-8", errors="replace")
+                if error.code in {429, 500, 502, 503, 504} and attempt < self.max_retries:
+                    self._sleep_before_retry(attempt)
+                    continue
+                raise JiraApiError(
+                    f"HTTP {error.code} while calling {path}",
+                    path=path,
+                    details=details,
+                ) from error
+            except urllib.error.URLError as error:
+                if attempt < self.max_retries:
+                    self._sleep_before_retry(attempt)
+                    continue
+                raise JiraApiError(f"Connection error while calling {path}: {error.reason}", path=path) from error
+
+        raise JiraApiError(f"Connection error while calling {path}", path=path)
+
+    def _sleep_before_retry(self, attempt: int) -> None:
+        if self.retry_delay <= 0:
+            return
+        time.sleep(self.retry_delay * (attempt + 1))
 
     def get(self, path: str, *, params: dict[str, Any] | None = None) -> Any:
         return self.request("GET", path, params=params)
