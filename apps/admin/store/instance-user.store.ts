@@ -19,7 +19,7 @@ export interface IInstanceUserStore {
   paginationInfo: TPaginationInfo | undefined;
   // computed
   userIds: string[];
-  // helper actions
+  // helpers
   getUserById: (userId: string) => IUser | undefined;
   // fetch actions
   fetchUsers: () => Promise<IUser[]>;
@@ -44,8 +44,6 @@ export class InstanceUserStore implements IInstanceUserStore {
       paginationInfo: observable,
       // computed
       userIds: computed,
-      // helper actions
-      getUserById: action,
       // fetch actions
       fetchUsers: action,
       fetchNextUsers: action,
@@ -60,7 +58,6 @@ export class InstanceUserStore implements IInstanceUserStore {
     return Object.keys(this.users);
   }
 
-  // helper actions
   getUserById = (userId: string) => this.users[userId];
 
   // fetch actions
@@ -80,7 +77,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error fetching users", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => { this.loader = "loaded"; });
     }
   };
 
@@ -101,7 +98,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error fetching next users", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => { this.loader = "loaded"; });
     }
   };
 
@@ -118,7 +115,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error updating user", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => { this.loader = "loaded"; });
     }
   };
 }

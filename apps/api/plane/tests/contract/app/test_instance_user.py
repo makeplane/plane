@@ -152,6 +152,21 @@ class TestInstanceUserPatch:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
+    def test_non_boolean_is_active_rejected(self, admin_client, other_user):
+        url = reverse("instance-user", kwargs={"pk": other_user.pk})
+        response = admin_client.patch(url, {"is_active": "false"}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        other_user.refresh_from_db()
+        assert other_user.is_active is True
+
+    @pytest.mark.django_db
+    def test_deactivate_preserves_instance_admin_flag(self, admin_client, create_user, instance):
+        url = reverse("instance-user", kwargs={"pk": create_user.pk})
+        response = admin_client.patch(url, {"is_active": True}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["is_instance_admin"] is True
+
+    @pytest.mark.django_db
     def test_unknown_user_returns_404(self, admin_client):
         url = reverse("instance-user", kwargs={"pk": uuid.uuid4()})
         response = admin_client.patch(url, {"is_active": False}, format="json")

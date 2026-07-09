@@ -38,23 +38,25 @@ class InstanceUserEndpoint(BaseAPIView):
         )
 
     def patch(self, request, pk):
-        user = User.objects.filter(pk=pk, is_bot=False).first()
+        user = User.objects.filter(pk=pk, is_bot=False).annotate(
+            is_instance_admin=Exists(InstanceAdmin.objects.filter(user=OuterRef("pk")))
+        ).first()
         if not user:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Only allow toggling is_active
         is_active = request.data.get("is_active")
         if is_active is None:
             return Response({"error": "is_active is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not isinstance(is_active, bool):
+            return Response({"error": "is_active must be a boolean"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Prevent admins from deactivating themselves
         if user.pk == request.user.pk and not is_active:
             return Response(
                 {"error": "You cannot deactivate your own account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user.is_active = bool(is_active)
+        user.is_active = is_active
         user.save(update_fields=["is_active"])
 
         return Response(InstanceUserSerializer(user).data, status=status.HTTP_200_OK)

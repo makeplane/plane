@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { getFileURL } from "@plane/utils";
+import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 // hooks
 import { useInstanceUser, useUser } from "@/hooks/store";
@@ -85,18 +86,15 @@ export const UserListItem = observer(function UserListItem({ userId }: TUserList
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        disabled={isUpdating || isCurrentUser}
+      <Button
+        variant={user.is_active ? "error-outline" : "secondary"}
+        size="base"
+        disabled={isCurrentUser}
+        loading={isUpdating}
         onClick={toggleActive}
-        className={`shrink-0 rounded-md px-3 py-1.5 text-12 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-          user.is_active
-            ? "border border-red-400 text-red-500 hover:bg-red-500/10"
-            : "border border-green-500 text-green-600 hover:bg-green-500/10"
-        }`}
       >
         {user.is_active ? "Deactivate" : "Activate"}
-      </button>
+      </Button>
     </div>
   );
 });
