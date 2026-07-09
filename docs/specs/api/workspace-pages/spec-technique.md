@@ -3,12 +3,13 @@
 | Champ   | Valeur              |
 |---------|---------------------|
 | Module  | api/workspace-pages |
-| Version | 0.1.0               |
+| Version | 1.0.0               |
 | Date    | 2026-07-09          |
-| Statut  | PLAN — à valider    |
+| Statut  | IMPLÉMENTÉ          |
 | Source  | Cadrage 2026-07-09 (code CE exhaustif + doc/SDK/MCP publics) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Page workspace = `Page(is_global=True)` sans lignes `ProjectPage` — **aucune migration** (leaf `0126` intact). Module full-stack : API Django + apps/live + web.
+> **1.0.0 (IMPLÉMENTÉ)** : backend (API interne miroir + `WorkspacePagePermission` + garde anti-IDOR `is_global`/`projects__isnull` + invariant conteneur + `access/` durci + v1 2 scopes) + live (`workspace_page` + `WorkspacePageService`, 42 tests vitest) + web (routes `/wiki`, stores `EPageStoreType.WORKSPACE`, sidebar, nested généralisé). **72 tests pytest + 37 non-régression** (Docker) + gardes de sécurité validés E2E sur l'API vivante. Revue adversariale menée en parallèle — corrections éventuelles en `fix(...)`.
 
 ---
 
