@@ -10,12 +10,13 @@ export const usePreloadResources = () => {
       ReactDOM.preload(url, { as: "fetch", crossOrigin: "use-credentials" });
     };
 
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
     const urls = [
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/instances/`,
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/`,
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/profile/`,
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/settings/`,
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`,
+      `${apiBaseUrl}/api/instances/`,
+      `${apiBaseUrl}/api/users/me/`,
+      `${apiBaseUrl}/api/users/me/profile/`,
+      `${apiBaseUrl}/api/users/me/settings/`,
+      `${apiBaseUrl}/api/users/me/workspaces/?v=${Date.now()}`,
     ];
 
     urls.forEach((url) => preloadItem(url));
