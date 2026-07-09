@@ -65,9 +65,10 @@ export const PageListBlock = observer(function PageListBlockItem(props: TPageLis
       return;
     }
     setIsExpanded(true);
-    if (!subPageIds && workspaceSlug && projectId) {
+    // workspace (wiki) pages have no projectId — the store ignores it, so we only gate on workspaceSlug
+    if (!subPageIds && workspaceSlug) {
       setIsFetchingSubPages(true);
-      fetchSubPages(workspaceSlug.toString(), projectId.toString(), pageId)
+      fetchSubPages(workspaceSlug.toString(), projectId?.toString() ?? "", pageId)
         .catch(() => setIsExpanded(false))
         .finally(() => setIsFetchingSubPages(false));
     }

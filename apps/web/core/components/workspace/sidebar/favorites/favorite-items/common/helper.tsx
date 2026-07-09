@@ -8,6 +8,11 @@ import { FAVORITE_ITEM_LINKS } from "@plane/constants";
 import type { IFavorite } from "@plane/types";
 
 export const generateFavoriteItemLink = (workspaceSlug: string, favorite: IFavorite) => {
+  // a favorited page with no project scope is a workspace (wiki) page → route to /:ws/wiki/:id
+  if (favorite.entity_type === "page" && !favorite.project_id) {
+    return `/${workspaceSlug}/wiki/${favorite.entity_identifier}`;
+  }
+
   const entityLinkDetails = FAVORITE_ITEM_LINKS[favorite.entity_type];
 
   if (!entityLinkDetails) {

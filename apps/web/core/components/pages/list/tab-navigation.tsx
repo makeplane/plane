@@ -11,8 +11,8 @@ import type { TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
 
 type TPageTabNavigation = {
-  workspaceSlug: string;
-  projectId: string;
+  /** Base path of the pages list, e.g. `/:ws/projects/:projectId/pages` or `/:ws/wiki`. */
+  basePath: string;
   pageType: TPageNavigationTabs;
 };
 
@@ -33,7 +33,7 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
 ];
 
 export function PageTabNavigation(props: TPageTabNavigation) {
-  const { workspaceSlug, projectId, pageType } = props;
+  const { basePath, pageType } = props;
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
     if (tabKey === pageType) e.preventDefault();
@@ -44,7 +44,7 @@ export function PageTabNavigation(props: TPageTabNavigation) {
       {pageTabs.map((tab) => (
         <Link
           key={tab.key}
-          href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}
+          href={`${basePath}?type=${tab.key}`}
           onClick={(e) => handleTabClick(e, tab.key)}
           className="flex h-full flex-col"
         >

@@ -5,39 +5,41 @@
  */
 
 import { unset, set } from "lodash-es";
-import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
+import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { EUserPermissions } from "@plane/constants";
 import type { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
-// plane web constants
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
-import { ProjectPageService } from "@/services/page";
+import { WorkspacePageService } from "@/services/page";
 // store
 import type { CoreRootStore } from "../root.store";
-import type { TProjectPage } from "./project-page";
-import { ProjectPage } from "./project-page";
+import type { TWorkspacePage } from "./workspace-page";
+import { WorkspacePage } from "./workspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
 
-export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
-  EUserPermissions.ADMIN,
-  EUserPermissions.MEMBER,
-  EUserProjectRoles.ADMIN,
-  EUserProjectRoles.MEMBER,
-];
+// Workspace (wiki) pages are visible/creatable to workspace members and admins; guests are excluded server-side.
+export const ROLE_PERMISSIONS_TO_CREATE_WORKSPACE_PAGE = [EUserPermissions.ADMIN, EUserPermissions.MEMBER];
 
-export interface IProjectPageStore {
+/**
+ * Store contract for workspace-level (wiki) pages.
+ *
+ * The method names/signatures mirror {@link IProjectPageStore} so the shared page
+ * components (`PagesListView`, `PagesListRoot`, `PageListBlock`, …) can consume either
+ * store interchangeably via `usePageStore(storeType)`. The `projectId` parameters are
+ * accepted for signature-compatibility and ignored — wiki pages have no project scope.
+ */
+export interface IWorkspacePageStore {
   // observables
   loader: TLoader;
-  data: Record<string, TProjectPage>; // pageId => Page
+  data: Record<string, TWorkspacePage>; // pageId => Page
   subPageIds: Record<string, string[]>; // parent pageId => sub-page ids
   error: TError | undefined;
   filters: TPageFilters;
@@ -48,7 +50,7 @@ export interface IProjectPageStore {
   getCurrentProjectPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectPageIds: (projectId: string) => string[];
   getCurrentProjectFilteredPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
-  getPageById: (pageId: string) => TProjectPage | undefined;
+  getPageById: (pageId: string) => TWorkspacePage | undefined;
   getSubPageIds: (pageId: string) => string[] | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
@@ -61,7 +63,7 @@ export interface IProjectPageStore {
   fetchSubPages: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage[] | undefined>;
   fetchPageDetails: (
     workspaceSlug: string,
-    projectId: string,
+    projectId: string | undefined,
     pageId: string,
     options?: { trackVisit?: boolean }
   ) => Promise<TPage | undefined>;
@@ -70,10 +72,10 @@ export interface IProjectPageStore {
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
 }
 
-export class ProjectPageStore implements IProjectPageStore {
+export class WorkspacePageStore implements IWorkspacePageStore {
   // observables
   loader: TLoader = "init-loader";
-  data: Record<string, TProjectPage> = {}; // pageId => Page
+  data: Record<string, TWorkspacePage> = {}; // pageId => Page
   subPageIds: Record<string, string[]> = {}; // parent pageId => sub-page ids
   error: TError | undefined = undefined;
   filters: TPageFilters = {
@@ -82,7 +84,7 @@ export class ProjectPageStore implements IProjectPageStore {
     sortBy: "desc",
   };
   // service
-  service: ProjectPageService;
+  service: WorkspacePageService;
   rootStore: CoreRootStore;
 
   constructor(private store: RootStore) {
@@ -109,15 +111,7 @@ export class ProjectPageStore implements IProjectPageStore {
     });
     this.rootStore = store;
     // service
-    this.service = new ProjectPageService();
-    // initialize display filters of the current project
-    reaction(
-      () => this.store.router.projectId,
-      (projectId) => {
-        if (!projectId) return;
-        this.filters.searchQuery = "";
-      }
-    );
+    this.service = new WorkspacePageService();
   }
 
   /**
@@ -129,33 +123,31 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   /**
-   * @description returns true if the current logged in user can create a page
+   * @description returns true if the current logged in user can create a workspace page
    */
   get canCurrentUserCreatePage() {
-    const { workspaceSlug, projectId } = this.store.router;
-    const currentUserProjectRole = this.store.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
-      workspaceSlug?.toString() || "",
-      projectId?.toString() || ""
+    const { workspaceSlug } = this.store.router;
+    const currentUserWorkspaceRole = workspaceSlug
+      ? this.store.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString())
+      : undefined;
+    return (
+      !!currentUserWorkspaceRole &&
+      ROLE_PERMISSIONS_TO_CREATE_WORKSPACE_PAGE.includes(currentUserWorkspaceRole as EUserPermissions)
     );
-    return !!currentUserProjectRole && ROLE_PERMISSIONS_TO_CREATE_PAGE.includes(currentUserProjectRole);
   }
 
   /**
-   * @description get the current project page ids based on the pageType
+   * @description get the workspace page ids based on the pageType
    * @param {TPageNavigationTabs} pageType
    */
   getCurrentProjectPageIdsByTab = computedFn((pageType: TPageNavigationTabs) => {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
     // helps to filter pages based on the pageType
     let pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
     // A page is a root of the current tab when it has no parent, or when its
     // parent is not part of this tab (e.g. an archived sub-page whose parent is
     // still active must surface at the archived tab root rather than disappear).
     const idsInType = new Set(pagesByType.map((p) => p.id));
-    pagesByType = pagesByType.filter(
-      (p) => p.project_ids?.includes(projectId) && (!p.parent || !idsInType.has(p.parent))
-    );
+    pagesByType = pagesByType.filter((p) => !p.parent || !idsInType.has(p.parent));
 
     const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
 
@@ -163,23 +155,18 @@ export class ProjectPageStore implements IProjectPageStore {
   });
 
   /**
-   * @description get the current project page ids
-   * @param {string} projectId
+   * @description get all workspace page ids
    */
-  getCurrentProjectPageIds = computedFn((projectId: string) => {
-    if (!projectId) return [];
-    const pages = Object.values(this?.data || {}).filter((page) => page.project_ids?.includes(projectId));
+  getCurrentProjectPageIds = computedFn(() => {
+    const pages = Object.values(this?.data || {});
     return pages.map((page) => page.id) as string[];
   });
 
   /**
-   * @description get the current project filtered page ids based on the pageType
+   * @description get the filtered workspace page ids based on the pageType
    * @param {TPageNavigationTabs} pageType
    */
   getCurrentProjectFilteredPageIdsByTab = computedFn((pageType: TPageNavigationTabs) => {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
-
     // helps to filter pages based on the pageType
     const pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
     // Treat a page as a tab root when it has no parent, or when its parent is
@@ -187,7 +174,6 @@ export class ProjectPageStore implements IProjectPageStore {
     const idsInType = new Set(pagesByType.map((p) => p.id));
     let filteredPages = pagesByType.filter(
       (p) =>
-        p.project_ids?.includes(projectId) &&
         (!p.parent || !idsInType.has(p.parent)) &&
         getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
@@ -226,11 +212,11 @@ export class ProjectPageStore implements IProjectPageStore {
     });
 
   /**
-   * @description fetch all the pages
+   * @description fetch all the workspace pages
    */
-  fetchPagesList = async (workspaceSlug: string, projectId?: string, pageType?: TPageNavigationTabs) => {
+  fetchPagesList = async (workspaceSlug: string, _projectId?: string, pageType?: TPageNavigationTabs) => {
     try {
-      if (!workspaceSlug || !projectId) return undefined;
+      if (!workspaceSlug) return undefined;
 
       const currentPageIds = pageType ? this.getCurrentProjectPageIdsByTab(pageType) : undefined;
       runInAction(() => {
@@ -238,19 +224,18 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const pages = await this.service.fetchAll(workspaceSlug, projectId);
+      const pages = await this.service.fetchAll(workspaceSlug);
       runInAction(() => {
         for (const page of pages) {
           if (page?.id) {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
-
               const { name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {
               // If new page, create a new instance with all data
-              set(this.data, [page.id], new ProjectPage(this.store, page));
+              set(this.data, [page.id], new WorkspacePage(this.store, page));
             }
           }
         }
@@ -274,23 +259,22 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the direct sub-pages of a page
    * @param {string} pageId
    */
-  fetchSubPages = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchSubPages = async (workspaceSlug: string, _projectId: string, pageId: string) => {
     try {
-      if (!workspaceSlug || !projectId || !pageId) return undefined;
+      if (!workspaceSlug || !pageId) return undefined;
 
-      const pages = await this.service.fetchSubPages(workspaceSlug, projectId, pageId);
+      const pages = await this.service.fetchSubPages(workspaceSlug, pageId);
       runInAction(() => {
         for (const page of pages) {
           if (page?.id) {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
-
               const { name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {
               // If new page, create a new instance with all data
-              set(this.data, [page.id], new ProjectPage(this.store, page));
+              set(this.data, [page.id], new WorkspacePage(this.store, page));
             }
           }
         }
@@ -317,11 +301,11 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (...args: Parameters<IProjectPageStore["fetchPageDetails"]>) => {
-    const [workspaceSlug, projectId, pageId, options] = args;
+  fetchPageDetails = async (...args: Parameters<IWorkspacePageStore["fetchPageDetails"]>) => {
+    const [workspaceSlug, _projectId, pageId, options] = args;
     const { trackVisit } = options || {};
     try {
-      if (!workspaceSlug || !projectId || !pageId) return undefined;
+      if (!workspaceSlug || !pageId) return undefined;
 
       const currentPageId = this.getPageById(pageId);
       runInAction(() => {
@@ -329,7 +313,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true);
+      const page = await this.service.fetchById(workspaceSlug, pageId, trackVisit ?? true);
 
       runInAction(() => {
         if (page?.id) {
@@ -337,7 +321,7 @@ export class ProjectPageStore implements IProjectPageStore {
           if (pageInstance) {
             pageInstance.mutateProperties(page, false);
           } else {
-            set(this.data, [page.id], new ProjectPage(this.store, page));
+            set(this.data, [page.id], new WorkspacePage(this.store, page));
           }
         }
         this.loader = undefined;
@@ -357,23 +341,23 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   /**
-   * @description create a page
+   * @description create a workspace page
    * @param {Partial<TPage>} pageData
    */
   createPage = async (pageData: Partial<TPage>) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return undefined;
+      const { workspaceSlug } = this.store.router;
+      if (!workspaceSlug) return undefined;
 
       runInAction(() => {
         this.loader = "mutation-loader";
         this.error = undefined;
       });
 
-      const page = await this.service.create(workspaceSlug, projectId, pageData);
+      const page = await this.service.create(workspaceSlug, pageData);
       runInAction(() => {
         if (page?.id) {
-          set(this.data, [page.id], new ProjectPage(this.store, page));
+          set(this.data, [page.id], new WorkspacePage(this.store, page));
           // register the page in the sub-pages map of its parent, if already fetched
           if (page.parent && this.subPageIds[page.parent] && !this.subPageIds[page.parent].includes(page.id)) {
             set(this.subPageIds, [page.parent], [...this.subPageIds[page.parent], page.id]);
@@ -401,10 +385,10 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   removePage = async ({ pageId, shouldSync: _shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId || !pageId) return undefined;
+      const { workspaceSlug } = this.store.router;
+      if (!workspaceSlug || !pageId) return undefined;
 
-      await this.service.remove(workspaceSlug, projectId, pageId);
+      await this.service.remove(workspaceSlug, pageId);
       runInAction(() => {
         const parentId = this.data[pageId]?.parent;
         unset(this.data, [pageId]);
@@ -431,21 +415,9 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   /**
-   * @description move a page to a new project
-   * @param {string} workspaceSlug
-   * @param {string} projectId
-   * @param {string} pageId
-   * @param {string} newProjectId
+   * @description moving a wiki page between containers is not supported in CE — kept for signature parity.
    */
-  movePage = async (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => {
-    try {
-      await this.service.move(workspaceSlug, projectId, pageId, newProjectId);
-      runInAction(() => {
-        unset(this.data, [pageId]);
-      });
-    } catch (error) {
-      console.error("Unable to move page", error);
-      throw error;
-    }
+  movePage = async () => {
+    throw new Error("Moving workspace pages is not supported.");
   };
 }
