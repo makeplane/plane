@@ -16,8 +16,7 @@ import { calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { usePageStore } from "@/hooks/store";
-import type { EPageStoreType } from "@/hooks/store";
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 // local imports
 import { PageAppliedFiltersList } from "../list/applied-filters";
 import { PageFiltersSelection } from "../list/filters";
@@ -27,7 +26,8 @@ import { PageTabNavigation } from "../list/tab-navigation";
 
 type Props = {
   pageType: TPageNavigationTabs;
-  projectId: string;
+  /** Optional — absent for workspace-level (wiki) pages. */
+  projectId?: string;
   storeType: EPageStoreType;
   workspaceSlug: string;
 };
@@ -35,6 +35,11 @@ type Props = {
 export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: Props) {
   const { pageType, projectId, storeType, workspaceSlug } = props;
   const { t } = useTranslation();
+  // base path of the current pages list (project pages vs workspace wiki)
+  const basePath =
+    storeType === EPageStoreType.WORKSPACE
+      ? `/${workspaceSlug}/wiki`
+      : `/${workspaceSlug}/projects/${projectId}/pages`;
   // store hooks
   const { filters, updateFilters, clearAllFilters } = usePageStore(storeType);
   const {
@@ -62,7 +67,7 @@ export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: 
     <>
       <Header variant={EHeaderVariant.SECONDARY}>
         <Header.LeftItem>
-          <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
+          <PageTabNavigation basePath={basePath} pageType={pageType} />
         </Header.LeftItem>
         <Header.RightItem className="items-center">
           <PageSearchInput

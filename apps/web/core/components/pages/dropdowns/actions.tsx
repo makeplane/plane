@@ -25,8 +25,7 @@ import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
-import type { EPageStoreType } from "@/hooks/store";
-import { usePageStore } from "@/hooks/store";
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -77,13 +76,20 @@ export const PageActions = observer(function PageActions(props: Props) {
   // handle sub-page creation
   const handleCreateSubPage = useCallback(async () => {
     const projectId = page.project_ids?.[0];
-    if (!workspaceSlug || !projectId || !page.id) return;
+    const isWorkspacePage = storeType === EPageStoreType.WORKSPACE;
+    // project pages need a projectId; workspace (wiki) pages don't
+    if (!workspaceSlug || !page.id || (!isWorkspacePage && !projectId)) return;
     try {
       const res = await createPage({
         access: page.access,
         parent: page.id,
       });
-      if (res?.id) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
+      if (res?.id) {
+        const redirectionLink = isWorkspacePage
+          ? `/${workspaceSlug}/wiki/${res.id}`
+          : `/${workspaceSlug}/projects/${projectId}/pages/${res.id}`;
+        router.push(redirectionLink);
+      }
     } catch (err) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -91,7 +97,7 @@ export const PageActions = observer(function PageActions(props: Props) {
         message: (err as { data?: { error?: string } })?.data?.error || "Page could not be created. Please try again.",
       });
     }
-  }, [createPage, page, router, workspaceSlug]);
+  }, [createPage, page, router, storeType, workspaceSlug]);
   // derived values
   const {
     access,

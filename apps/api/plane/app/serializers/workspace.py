@@ -300,6 +300,7 @@ def get_entity_model_and_serializer(entity_type):
     entity_map = {
         "issue": (Issue, IssueRecentVisitSerializer),
         "page": (Page, PageRecentVisitSerializer),
+        "workspace_page": (Page, PageRecentVisitSerializer),
         "project": (Project, ProjectRecentVisitSerializer),
     }
     return entity_map.get(entity_type, (None, None))

@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // components
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { useProject } from "@/hooks/store/use-project";
@@ -31,12 +31,18 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   const { children, pageType, storeType } = props;
   // plane hooks
   const { t } = useTranslation();
+  // derived values
+  const isWorkspacePage = storeType === EPageStoreType.WORKSPACE;
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
-    usePageStore(storeType);
+  const {
+    isAnyPageAvailable,
+    getCurrentProjectFilteredPageIdsByTab,
+    getCurrentProjectPageIdsByTab,
+    loader,
+    createPage,
+  } = usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
-  const { createPage } = usePageStore(EPageStoreType.PROJECT);
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -45,10 +51,17 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   // derived values
   const pageIds = getCurrentProjectPageIdsByTab(pageType);
   const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformEmptyStateActions = isWorkspacePage
+    ? allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE)
+    : allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT);
+  // empty state copy differs between project pages and the workspace wiki
+  const emptyStateTitleKey = isWorkspacePage ? "workspace_empty_state.wiki.title" : "project_empty_state.pages.title";
+  const emptyStateDescriptionKey = isWorkspacePage
+    ? "workspace_empty_state.wiki.description"
+    : "project_empty_state.pages.description";
+  const emptyStateCtaKey = isWorkspacePage
+    ? "workspace_empty_state.wiki.cta_primary"
+    : "project_empty_state.pages.cta_primary";
 
   // handle page create
   const handleCreatePage = async () => {
@@ -60,8 +73,11 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
 
     await createPage(payload)
       .then((res) => {
-        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
-        router.push(pageId);
+        const redirectionLink = isWorkspacePage
+          ? `/${workspaceSlug}/wiki/${res?.id}`
+          : `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        router.push(redirectionLink);
+        return res;
       })
       .catch((err) => {
         setToast({
@@ -80,11 +96,11 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project_empty_state.pages.title")}
-          description={t("project_empty_state.pages.description")}
+          title={t(emptyStateTitleKey)}
+          description={t(emptyStateDescriptionKey)}
           actions={[
             {
-              label: t("project_empty_state.pages.cta_primary"),
+              label: t(emptyStateCtaKey),
               onClick: () => {
                 handleCreatePage();
               },
@@ -99,11 +115,11 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project_empty_state.pages.title")}
-          description={t("project_empty_state.pages.description")}
+          title={t(emptyStateTitleKey)}
+          description={t(emptyStateDescriptionKey)}
           actions={[
             {
-              label: t("project_empty_state.pages.cta_primary"),
+              label: t(emptyStateCtaKey),
               onClick: () => {
                 handleCreatePage();
               },
@@ -117,11 +133,11 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project_empty_state.pages.title")}
-          description={t("project_empty_state.pages.description")}
+          title={t(emptyStateTitleKey)}
+          description={t(emptyStateDescriptionKey)}
           actions={[
             {
-              label: t("project_empty_state.pages.cta_primary"),
+              label: t(emptyStateCtaKey),
               onClick: () => {
                 handleCreatePage();
               },

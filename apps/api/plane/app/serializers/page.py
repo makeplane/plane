@@ -133,6 +133,54 @@ class PageDetailSerializer(PageSerializer):
         fields = PageSerializer.Meta.fields + ["description_html"]
 
 
+class WorkspacePageSerializer(PageSerializer):
+    """Serializer for workspace (wiki) pages.
+
+    A workspace page is a ``Page`` with ``is_global=True`` and no ``ProjectPage``
+    row — both invariants are enforced server-side here, whatever the client
+    sends. The workspace is resolved from the URL slug by the view.
+    """
+
+    def create(self, validated_data):
+        labels = validated_data.pop("labels", None)
+        # Annotation-only fields — never model columns
+        validated_data.pop("label_ids", None)
+        validated_data.pop("project_ids", None)
+        workspace_id = self.context["workspace_id"]
+        owned_by_id = self.context["owned_by_id"]
+        description_json = self.context["description_json"]
+        description_binary = self.context["description_binary"]
+        description_html = self.context["description_html"]
+
+        # Create the page — is_global is forced and no ProjectPage row is created
+        page = Page.objects.create(
+            **validated_data,
+            description_json=description_json,
+            description_binary=description_binary,
+            description_html=description_html,
+            owned_by_id=owned_by_id,
+            workspace_id=workspace_id,
+            is_global=True,
+        )
+
+        # Create page labels
+        if labels is not None:
+            PageLabel.objects.bulk_create(
+                [
+                    PageLabel(
+                        label=label,
+                        page=page,
+                        workspace_id=page.workspace_id,
+                        created_by_id=page.created_by_id,
+                        updated_by_id=page.updated_by_id,
+                    )
+                    for label in labels
+                ],
+                batch_size=10,
+            )
+        return page
+
+
 class IssuePageSerializer(BaseSerializer):
     """Lightweight page representation returned for work item <-> page links."""
 

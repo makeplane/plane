@@ -35,7 +35,7 @@ export function RecentPage(props: BlockProps) {
   const ownerDetails = getUserDetails(pageDetails?.owned_by);
   const pageLink = pageDetails.project_id
     ? `/${workspaceSlug}/projects/${pageDetails.project_id}/pages/${pageDetails.id}`
-    : `/${workspaceSlug}/pages/${pageDetails.id}`;
+    : `/${workspaceSlug}/wiki/${pageDetails.id}`;
 
   return (
     <ListItem

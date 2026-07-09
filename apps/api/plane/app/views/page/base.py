@@ -184,6 +184,15 @@ class PageViewSet(BaseViewSet):
                     project_pages__deleted_at__isnull=True,
                 ).get()
 
+                # is_locked / archived_at are owner-or-admin state transitions owned
+                # by the dedicated lock/ and archive/ endpoints. Reject them here so a
+                # plain member cannot lock or archive another user's public page via PATCH.
+                if "is_locked" in request.data or "archived_at" in request.data:
+                    return Response(
+                        {"error": "Use the lock/ and archive/ endpoints to change these fields"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 if page.is_locked:
                     return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -320,7 +329,14 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def access(self, request, slug, project_id, page_id):
-        access = request.data.get("access", 0)
+        # access is required and must be a valid choice — an empty body must never
+        # silently flip a private page to public, and out-of-range values must be rejected
+        access = request.data.get("access")
+        if access not in (Page.PUBLIC_ACCESS, Page.PRIVATE_ACCESS):
+            return Response(
+                {"error": "Invalid access value, expected 0 (public) or 1 (private)"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -329,7 +345,7 @@ class PageViewSet(BaseViewSet):
         )
 
         # Only update access if the page owner is the requesting user
-        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+        if page.access != access and page.owned_by_id != request.user.id:
             return Response(
                 {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
