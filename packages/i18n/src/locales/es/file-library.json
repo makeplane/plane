@@ -59,7 +59,12 @@
     },
     "filters": {
       "all_categories": "Todas las categorías",
-      "all_tags": "Todos los tags"
+      "all_tags": "Todos los tags",
+      "title": "Filtros",
+      "add": "Agregar filtro",
+      "clear_all": "Limpiar todo",
+      "button": "Filtros",
+      "search_placeholder": "Buscar filtro"
     },
     "bulk": {
       "button": "Acciones masivas",
@@ -71,6 +76,15 @@
       "delete_warning": "Los archivos seleccionados se eliminarán. Esto no se puede deshacer.",
       "search_placeholder": "Buscar archivos",
       "selected_count": "{count} seleccionados"
+    },
+    "order": {
+      "newest": "Más recientes",
+      "name_asc": "Nombre A-Z",
+      "name_desc": "Nombre Z-A",
+      "type": "Tipo",
+      "size": "Más grandes",
+      "modified": "Modificados recientemente",
+      "label": "Orden"
     }
   }
 }

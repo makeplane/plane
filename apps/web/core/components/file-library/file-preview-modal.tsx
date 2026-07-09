@@ -134,7 +134,7 @@ export const FilePreviewModal = observer(function FilePreviewModal(props: Props)
           />
         );
       case "csv":
-        return <CsvViewer data={csvData ?? ""} search className="h-full" />;
+        return <CsvViewer data={csvData ?? ""} showActions={false} className="h-full" />;
       default:
         return (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-tertiary">
@@ -157,7 +157,8 @@ export const FilePreviewModal = observer(function FilePreviewModal(props: Props)
       handleClose={onClose}
       position={EModalPosition.CENTER}
       width={EModalWidth.VIIXL}
-      className="flex h-[85vh] flex-col overflow-hidden"
+      // Full screen on mobile to maximize the viewing surface
+      className="flex flex-col overflow-hidden max-sm:h-dvh max-sm:w-screen max-sm:max-w-none max-sm:rounded-none sm:h-[85vh]"
     >
       {file && (
         <>

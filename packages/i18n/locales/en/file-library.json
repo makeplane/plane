@@ -59,7 +59,12 @@
     },
     "filters": {
       "all_categories": "All categories",
-      "all_tags": "All tags"
+      "all_tags": "All tags",
+      "title": "Filters",
+      "add": "Add filter",
+      "clear_all": "Clear all",
+      "button": "Filters",
+      "search_placeholder": "Search filters"
     },
     "bulk": {
       "button": "Bulk actions",
@@ -71,6 +76,15 @@
       "delete_warning": "The selected files will be deleted. This cannot be undone.",
       "search_placeholder": "Search files",
       "selected_count": "{count} selected"
+    },
+    "order": {
+      "newest": "Newest first",
+      "name_asc": "Name A-Z",
+      "name_desc": "Name Z-A",
+      "type": "Type",
+      "size": "Largest first",
+      "modified": "Recently modified",
+      "label": "Sort"
     }
   }
 }

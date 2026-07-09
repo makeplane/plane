@@ -65,6 +65,37 @@ const LazyXlsxViewerPreview = React.lazy(() =>
     default: mod.XlsxViewerPreview,
   }))
 );
+// Local addition: CSV/TSV preview support
+const LazyCsvViewer = React.lazy(() =>
+  import("./csv-viewer").then((mod) => ({
+    default: mod.CsvViewer,
+  }))
+);
+
+/** Local addition: fetches the CSV text behind a resolved URL and renders the grid. */
+function CsvViewerFromUrl({ url, className }: { url: string; className?: string }) {
+  const [data, setData] = React.useState<string | null>(null);
+  const [failed, setFailed] = React.useState(false);
+  React.useEffect(() => {
+    let cancelled = false;
+    setData(null);
+    setFailed(false);
+    fetch(url)
+      .then((res) => res.text())
+      .then((text) => {
+        if (!cancelled) setData(text);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
+  if (failed) return <div className="text-muted-foreground grid h-full place-items-center text-sm">–</div>;
+  if (data === null) return <FileSystemViewerLoading />;
+  return <LazyCsvViewer data={data} className={className} />;
+}
 
 export type FileSystemView = "icons" | "list" | "columns" | "gallery";
 
@@ -137,6 +168,10 @@ export type FileSystemProps = {
   defaultPath?: string;
   /** Local addition: reports the folder prefix the user navigated to. */
   onPathChange?: (path: string) => void;
+  /** Local addition: hides the built-in sort/filter/search cluster (the host provides its own, e.g. server-driven). */
+  hideToolbarControls?: boolean;
+  /** Local addition: externally controlled sort; folders always sort first. */
+  sortOverride?: { key: FileSystemSortKey; direction: "asc" | "desc" };
   onSelectionChange?: (item: FileSystemItem | null) => void;
   /**
    * Called on file open (double-click), replacing the built-in behavior. By
@@ -370,7 +405,7 @@ function fileTypeFilterGroup(mime: string): FileTypeFilterGroup {
   return "Archives & binary";
 }
 
-export type FileSystemViewerKind = "docx" | "image" | "pdf" | "xlsx";
+export type FileSystemViewerKind = "csv" | "docx" | "image" | "pdf" | "xlsx";
 
 function viewerKindForFile(file: FileSystemFileItem): FileSystemViewerKind | null {
   if (file.contentType?.startsWith("image/")) return "image";
@@ -382,6 +417,9 @@ function viewerKindForFile(file: FileSystemFileItem): FileSystemViewerKind | nul
   if (name.endsWith(".docx")) return "docx";
   if (name.endsWith(".xlsx")) return "xlsx";
   if (/\.(avif|gif|jpe?g|png|svg|webp)$/.test(name)) return "image";
+  // Local addition: CSV/TSV render with the data-grid viewer
+  if (file.contentType === "text/csv" || file.contentType === "text/tab-separated-values") return "csv";
+  if (name.endsWith(".csv") || name.endsWith(".tsv")) return "csv";
 
   return null;
 }
@@ -389,6 +427,7 @@ function viewerKindForFile(file: FileSystemFileItem): FileSystemViewerKind | nul
 // PDF and DOCX pages want height; spreadsheets want width; images get a
 // roomy but contained frame.
 const VIEWER_DIALOG_CLASSNAMES: Record<FileSystemViewerKind, string> = {
+  csv: "h-[85vh] w-[min(96vw,100rem)] max-w-none",
   docx: "h-[88vh] w-[min(96vw,68rem)] max-w-none",
   image: "max-h-[88vh] w-fit max-w-[min(96vw,64rem)]",
   pdf: "h-[88vh] w-[min(96vw,68rem)] max-w-none",
@@ -515,6 +554,9 @@ function entrySortTimestamp(entry: FileSystemEntry, key: "createdAt" | "updatedA
 // the name order so results stay stable. The name tiebreak ignores the
 // direction, like Finder.
 function compareEntriesBySort(left: FileSystemEntry, right: FileSystemEntry, sort: FileSystemSortState) {
+  // Local addition: folders always group before files, whatever the sort key
+  if (left.kind !== right.kind) return left.kind === "folder" ? -1 : 1;
+
   let result = 0;
 
   if (sort.key === "name") {
@@ -1192,6 +1234,8 @@ export function FileSystem({
   onViewChange,
   defaultPath = "",
   onPathChange,
+  hideToolbarControls = false,
+  sortOverride,
   onSelectionChange,
   onFileOpen,
   getFileUrl,
@@ -1239,7 +1283,9 @@ export function FileSystem({
   const searchQuery = normalizeSearchQuery(searchInput);
   const isSearching = searchQuery.length > 0;
 
-  const [sort, setSort] = React.useState(DEFAULT_SORT);
+  const [internalSort, setSort] = React.useState(DEFAULT_SORT);
+  // Local addition: the host can drive the sort (e.g. mirroring a DB order)
+  const sort = sortOverride ?? internalSort;
   const [filters, setFilters] = React.useState<FileSystemFilter[]>([]);
   const hasActiveFilters = filters.length > 0;
 
@@ -1921,27 +1967,31 @@ export function FileSystem({
           </Tabs>
         )}
         <div className="flex min-w-0 items-center justify-end gap-1">
-          <FileSystemSortSelect
-            layout={headerLayout}
-            onKeyChange={applySortKey}
-            showLabel={!isBelowIpadWidth}
-            sort={sort}
-          />
-          <FileSystemFilterMenu
-            fileTypeOptions={fileTypeOptions}
-            filters={filters}
-            onOpenCustomRange={openDateRangeDialog}
-            onSelectDatePreset={setDatePresetFilter}
-            onToggleFileType={toggleFileTypeFilterValue}
-          />
-          <FileSystemSearchField
-            inputRef={searchInputRef}
-            isExpanded={isSearchExpanded}
-            layout={headerLayout}
-            onExpandedChange={setIsSearchExpanded}
-            onValueChange={setSearchInput}
-            value={searchInput}
-          />
+          {!hideToolbarControls && (
+            <>
+              <FileSystemSortSelect
+                layout={headerLayout}
+                onKeyChange={applySortKey}
+                showLabel={!isBelowIpadWidth}
+                sort={sort}
+              />
+              <FileSystemFilterMenu
+                fileTypeOptions={fileTypeOptions}
+                filters={filters}
+                onOpenCustomRange={openDateRangeDialog}
+                onSelectDatePreset={setDatePresetFilter}
+                onToggleFileType={toggleFileTypeFilterValue}
+              />
+              <FileSystemSearchField
+                inputRef={searchInputRef}
+                isExpanded={isSearchExpanded}
+                layout={headerLayout}
+                onExpandedChange={setIsSearchExpanded}
+                onValueChange={setSearchInput}
+                value={searchInput}
+              />
+            </>
+          )}
         </div>
       </div>
       {hasActiveFilters ? (
@@ -4334,6 +4384,15 @@ function FileSystemGalleryStage({
             showUpload={false}
             toolbarActions={toolbarActions}
           />
+        </React.Suspense>
+      </div>
+    );
+  }
+  if (viewerKind === "csv" && url) {
+    return (
+      <div className={viewerFrameClassName}>
+        <React.Suspense fallback={<FileSystemViewerLoading />}>
+          <CsvViewerFromUrl url={url} className={cn("h-full min-h-0", isDialog && "overflow-hidden rounded-2xl")} />
         </React.Suspense>
       </div>
     );
