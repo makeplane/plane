@@ -30,6 +30,9 @@ export default defineConfig(() => ({
     alias: {
       // Next.js compatibility shims used within space
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
+      // Consume @plane/i18n from source so Vite handles the runtime dynamic import
+      // of ../locales/*.json (the published dist ships no locale files).
+      "@plane/i18n": path.resolve(__dirname, "../../packages/i18n/src/index.ts"),
     },
     dedupe: ["react", "react-dom"],
   },
