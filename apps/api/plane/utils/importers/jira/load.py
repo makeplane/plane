@@ -50,6 +50,7 @@ class JiraLoader:
     def run(self, extracted: dict[str, Any]) -> dict[str, Any]:
         testcases = extracted.get("testcases", [])
         comments = extracted.get("comments", [])
+        self.warnings.extend(extracted.get("warnings") or [])
         self._init_progress(testcases, comments)
         self._update_progress("setup", force=True)
 

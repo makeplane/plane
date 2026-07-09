@@ -4,11 +4,14 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
-from .client import JiraApiClient
+from .client import JiraApiClient, JiraApiError
 from .constants import DEFAULT_ISSUE_TYPE_NAME, ISSUE_FIELDS, SEARCH_PAGE_SIZE
 from .rtm_client import build_rtm_client, fetch_rtm_steps_for_issue
+
+logger = logging.getLogger("plane.worker")
 
 
 def build_default_jql(project_key: str, issue_type_name: str = DEFAULT_ISSUE_TYPE_NAME) -> str:
@@ -21,6 +24,7 @@ class JiraExtractor:
         self.client = client
         self.metadata = metadata or {}
         self.rtm_client = build_rtm_client(self.metadata)
+        self.warnings: list[str] = []
 
     def resolve_jql(self, *, project_key: str, config: dict[str, Any]) -> str:
         custom_jql = (config.get("jql") or "").strip()
@@ -52,6 +56,7 @@ class JiraExtractor:
         return issues
 
     def extract_testcases(self, *, project_key: str, config: dict[str, Any]) -> dict[str, Any]:
+        self.warnings = []
         jql = self.resolve_jql(project_key=project_key, config=config)
         issues = self.search_all_issues(jql=jql)
         self._enrich_testcases_with_steps(issues)
@@ -61,6 +66,7 @@ class JiraExtractor:
             "jql": jql,
             "testcases": issues,
             "comments": comments,
+            "warnings": self.warnings,
         }
 
     def preview_counts(
@@ -131,7 +137,13 @@ class JiraExtractor:
                 continue
             start_at = 0
             while True:
-                response = self.client.list_comments(issue_key, start_at=start_at, max_results=SEARCH_PAGE_SIZE)
+                try:
+                    response = self.client.list_comments(issue_key, start_at=start_at, max_results=SEARCH_PAGE_SIZE)
+                except JiraApiError as error:
+                    warning = f"Skipped Jira comments for {issue_key}: {error}"
+                    logger.warning(warning)
+                    self.warnings.append(warning)
+                    break
                 batch = response.get("comments") or []
                 for comment in batch:
                     comments.append(

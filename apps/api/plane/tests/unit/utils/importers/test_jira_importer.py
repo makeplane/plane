@@ -161,17 +161,19 @@ def test_jira_loader_imports_testcases(create_user, workspace):
             }
         ],
         "comments": [],
+        "warnings": ["Skipped Jira comments for PROJ-1: connection reset"],
     }
 
     with patch("plane.utils.importers.jira.load.Importer.objects.filter") as importer_filter:
         importer_filter.return_value.update = MagicMock()
-        loader.run(extracted)
+        imported_data = loader.run(extracted)
 
     issue = Issue.objects.get(external_id="PROJ-1", project=project)
     assert issue.name == "Login test"
     assert issue.external_source == JIRA_EXTERNAL_SOURCE
     assert issue.priority == "high"
     assert Label.objects.filter(project=project, name=JIRA_TESTCASE_LABEL).exists()
+    assert imported_data["warnings"] == ["Skipped Jira comments for PROJ-1: connection reset"]
 
 
 @pytest.mark.unit
@@ -196,3 +198,23 @@ def test_jira_extractor_paginates_search():
     assert len(extracted["testcases"]) == 2
     assert client.search_issues.call_count == 2
     assert client.search_issues.call_args_list[1].kwargs["next_page_token"] == "page-2"
+
+
+@pytest.mark.unit
+def test_jira_extractor_skips_comment_connection_errors():
+    client = MagicMock()
+    client.search_issues.return_value = {
+        "issues": [{"id": "1", "key": "PROJ-1"}],
+        "isLast": True,
+    }
+    client.get_issue_properties.return_value = {"keys": []}
+    client.list_comments.side_effect = JiraApiError(
+        "Connection error while calling /issue/PROJ-1/comment: [Errno 104] Connection reset by peer"
+    )
+
+    extractor = JiraExtractor(client)
+    extracted = extractor.extract_testcases(project_key="PROJ", config={})
+
+    assert extracted["testcases"] == [{"id": "1", "key": "PROJ-1"}]
+    assert extracted["comments"] == []
+    assert "Skipped Jira comments for PROJ-1" in extracted["warnings"][0]
