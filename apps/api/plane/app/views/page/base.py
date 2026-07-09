@@ -329,7 +329,14 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def access(self, request, slug, project_id, page_id):
-        access = request.data.get("access", 0)
+        # access is required and must be a valid choice — an empty body must never
+        # silently flip a private page to public, and out-of-range values must be rejected
+        access = request.data.get("access")
+        if access not in (Page.PUBLIC_ACCESS, Page.PRIVATE_ACCESS):
+            return Response(
+                {"error": "Invalid access value, expected 0 (public) or 1 (private)"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -338,7 +345,7 @@ class PageViewSet(BaseViewSet):
         )
 
         # Only update access if the page owner is the requesting user
-        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+        if page.access != access and page.owned_by_id != request.user.id:
             return Response(
                 {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,

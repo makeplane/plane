@@ -233,3 +233,46 @@ class TestPagePatchGuards(TestPageBase):
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
         assert page.name == "New"
+
+
+@pytest.mark.contract
+class TestPageAccessValidation(TestPageBase):
+    """The access endpoint must require a valid access value (leak fix)."""
+
+    def get_access_url(self, workspace_slug, project_id, page_id):
+        return f"/api/workspaces/{workspace_slug}/projects/{project_id}/pages/{page_id}/access/"
+
+    @pytest.mark.django_db
+    def test_empty_body_does_not_flip_private_page_public(self, session_client, workspace, project, create_user):
+        # a page created private (access=1) must not become public on an empty POST body
+        page = Page.objects.create(workspace=workspace, name="Secret", owned_by=create_user, access=1)
+        ProjectPage.objects.create(workspace=workspace, project=project, page=page)
+
+        url = self.get_access_url(workspace.slug, project.id, page.id)
+        response = session_client.post(url, {}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        page.refresh_from_db()
+        assert page.access == 1
+
+    @pytest.mark.django_db
+    def test_invalid_access_value_rejected(self, session_client, workspace, project, create_user):
+        page = make_page(workspace, project, create_user, "A page")
+
+        url = self.get_access_url(workspace.slug, project.id, page.id)
+        response = session_client.post(url, {"access": 42}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        page.refresh_from_db()
+        assert page.access == 0
+
+    @pytest.mark.django_db
+    def test_valid_access_change_succeeds(self, session_client, workspace, project, create_user):
+        page = make_page(workspace, project, create_user, "A page")
+
+        url = self.get_access_url(workspace.slug, project.id, page.id)
+        response = session_client.post(url, {"access": 1}, format="json")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        page.refresh_from_db()
+        assert page.access == 1
