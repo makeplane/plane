@@ -76,6 +76,14 @@ NOTIFICATION_ORDER_BY_ALLOWLIST = frozenset({
     "updated_at",
 })
 
+# Page list queryset.
+PAGE_ORDER_BY_ALLOWLIST = frozenset({
+    "created_at",
+    "updated_at",
+    "name",
+    "sort_order",
+})
+
 
 def sanitize_order_by(value, allowed_fields, default="-created_at"):
     """Return a safe ordering string derived from *value*.

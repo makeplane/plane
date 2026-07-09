@@ -46,6 +46,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
+from plane.utils.order_queryset import PAGE_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
@@ -100,7 +101,18 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
-            .order_by(self.request.GET.get("order_by", "-created_at"))
+            # Sanitize the user-supplied order_by against an allowlist before it
+            # reaches .order_by(): Django resolves the field at call time, so an
+            # unknown field raises FieldError (500 DoS) and a relation path
+            # (e.g. owned_by__password) enables ORM relational traversal
+            # (GHSA-2v48).
+            .order_by(
+                sanitize_order_by(
+                    self.request.GET.get("order_by", "-created_at"),
+                    PAGE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                )
+            )
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
             .annotate(
