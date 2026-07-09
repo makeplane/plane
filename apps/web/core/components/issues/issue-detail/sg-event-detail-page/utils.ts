@@ -24,13 +24,14 @@ export const firstNonEmptyRecord = (...values: unknown[]): Record<string, unknow
 
 export const getCpServerBaseUrl = () => process.env.NEXT_PUBLIC_CP_SERVER_URL?.replace(/\/$/, "") ?? "";
 
-export const getArchivedHlsBaseUrl = () => {
-  const explicitBaseUrl = process.env.NEXT_PUBLIC_HLS_SERVER_URL?.trim() || "";
-  if (explicitBaseUrl) {
-    return explicitBaseUrl.replace(/\/$/, "");
-  }
+const DEFAULT_ARCHIVED_HLS_BASE_URL = "/hls";
 
-  return process.env.NEXT_PUBLIC_HLS_SERVER_URL;
+export const getArchivedHlsBaseUrl = () => {
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_HLS_SERVER_URL?.trim();
+  const baseUrl = configuredBaseUrl || DEFAULT_ARCHIVED_HLS_BASE_URL;
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, "");
+
+  return normalizedBaseUrl || DEFAULT_ARCHIVED_HLS_BASE_URL;
 };
 
 export const toText = (value: unknown): string => {
@@ -115,7 +116,7 @@ export const buildArchivedStreamUrl = (streamName: string) => {
 };
 
 export const buildArchivedPlaylistUrl = (playlistFileName: string) => {
-  const normalizedFileName = playlistFileName.trim();
+  const normalizedFileName = playlistFileName.trim().replace(/^\/+/, "");
   if (!normalizedFileName) return null;
 
   return `${getArchivedHlsBaseUrl()}/${normalizedFileName}`;
