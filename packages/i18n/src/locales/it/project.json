@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Giorni rimanenti",
       "completed": "Completato",
-      "yet_to_start": "Non ancora iniziato",
+      "planned": "Pianificato",
       "in_progress": "In corso",
       "draft": "Bozza"
     },

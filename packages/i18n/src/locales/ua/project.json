@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Залишилося днів",
       "completed": "Завершено",
-      "yet_to_start": "Ще не почався",
+      "planned": "Заплановано",
       "in_progress": "У процесі",
       "draft": "Чернетка"
     },

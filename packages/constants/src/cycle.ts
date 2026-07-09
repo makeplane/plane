@@ -22,9 +22,9 @@ export const CYCLE_STATUS: {
     bgColor: "bg-amber-50",
   },
   {
-    i18n_label: "project_cycles.status.yet_to_start",
+    i18n_label: "project_cycles.status.planned",
     value: "upcoming",
-    i18n_title: "project_cycles.status.yet_to_start",
+    i18n_title: "project_cycles.status.planned",
     color: "#3F76FF",
     textColor: "text-blue-500",
     bgColor: "bg-indigo-50",

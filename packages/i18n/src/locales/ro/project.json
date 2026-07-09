@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Zile rămase",
       "completed": "Finalizat",
-      "yet_to_start": "Nu a început",
+      "planned": "Planificate",
       "in_progress": "În desfășurare",
       "draft": "Schiță"
     },

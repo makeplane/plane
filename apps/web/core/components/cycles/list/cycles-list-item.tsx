@@ -8,6 +8,8 @@ import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { CYCLE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
@@ -44,6 +46,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
   const pathname = usePathname();
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   // store hooks
   const { getCycleById } = useCycle();
 
@@ -56,6 +59,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isActive = cycleStatus === "current";
+  const currentCycleStatus = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   // handlers
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
@@ -93,6 +97,19 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
             <span className="text-9 text-primary">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
+      }
+      appendTitleElement={
+        currentCycleStatus && (
+          <span
+            className="flex-shrink-0 rounded-sm px-2 py-0.5 text-11 font-medium"
+            style={{
+              color: currentCycleStatus.color,
+              backgroundColor: `${currentCycleStatus.color}20`,
+            }}
+          >
+            {t(currentCycleStatus.i18n_title)}
+          </span>
+        )
       }
       actionableItems={
         <CycleListItemAction

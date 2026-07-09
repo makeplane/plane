@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Дней осталось",
       "completed": "Завершено",
-      "yet_to_start": "Ещё не начато",
+      "planned": "Запланировано",
       "in_progress": "В процессе",
       "draft": "Черновик"
     },

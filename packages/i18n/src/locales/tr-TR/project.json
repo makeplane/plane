@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Kalan gün",
       "completed": "Tamamlandı",
-      "yet_to_start": "Başlamadı",
+      "planned": "Planlandı",
       "in_progress": "Devam Ediyor",
       "draft": "Taslak"
     },

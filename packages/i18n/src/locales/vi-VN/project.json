@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Số ngày còn lại",
       "completed": "Đã hoàn thành",
-      "yet_to_start": "Chưa bắt đầu",
+      "planned": "Đã lên kế hoạch",
       "in_progress": "Đang tiến hành",
       "draft": "Bản nháp"
     },
