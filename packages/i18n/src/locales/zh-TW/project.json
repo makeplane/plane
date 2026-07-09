@@ -47,7 +47,7 @@
     "status": {
       "days_left": "剩餘天數",
       "completed": "已完成",
-      "yet_to_start": "尚未開始",
+      "planned": "已規劃",
       "in_progress": "進行中",
       "draft": "草稿"
     },

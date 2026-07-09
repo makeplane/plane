@@ -47,7 +47,7 @@
     "status": {
       "days_left": "残り日数",
       "completed": "完了",
-      "yet_to_start": "開始前",
+      "planned": "計画済み",
       "in_progress": "進行中",
       "draft": "下書き"
     },

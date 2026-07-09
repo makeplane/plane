@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Jiraサイト",
+          "cloud_hostname_description": "Atlassian Cloudのホスト名（例: company.atlassian.net）を入力してください。",
+          "email": "Jiraアカウントのメールアドレス",
+          "email_description": "APIトークンを所有するJiraアカウントのメールアドレス。",
+          "api_token": "Jira APIトークン",
+          "api_token_description": "Atlassianアカウントのセキュリティ設定から取得したAPIトークン。",
+          "project_key": "Jiraプロジェクトキー",
+          "project_key_description": "RTMテストケースを含むプロジェクトキー。",
+          "issue_type_name": "テストケースの課題タイプ",
+          "issue_type_name_description": "RTMテストケースに使用されるJiraの課題タイプ。",
+          "jql": "カスタムJQL",
+          "jql_description": "任意のJQLオーバーライド。空欄の場合、上記のプロジェクトと課題タイプに基づいてテストケースが選択されます。",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "RTM APIベースURL",
+          "rtm_api_base_url_description": "任意。RTM → REST API authenticationから取得するRTM REST APIのURL。テストステップの取得に使用されます。",
+          "rtm_api_token": "RTM APIトークン",
+          "rtm_api_token_description": "任意。RTMアプリの設定から取得するRTM Bearerトークン。空欄の場合はJira APIトークンが使用されます。",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "RTM APIトークンの作成方法",
+            "intro": "このトークンを使用してRTMのテストステップをインポートします。Atlassian Jira APIトークンとは別のものです。",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Jira Cloudサイトを開き、Requirements and Test Management（RTM）を使用しているプロジェクトに移動します。",
+              "open_menu": "RTMアプリを開き、RTMヘッダーの3点メニュー（⋯）をクリックします。",
+              "open_auth": "REST API authenticationを選択します。",
+              "copy_base_url": "ダイアログに表示されたAPIベースURL（例: https://rtm-api.hexygen.com/api、またはEU相当のもの）をコピーします。",
+              "generate_token": "Generate tokenをクリックします。",
+              "select_user": "トークンが代理として動作するJiraユーザーを選択します。",
+              "enter_label": "ラベルを入力します（例: Plane import）。",
+              "copy_token": "Generateをクリックし、トークンをすぐにコピーしてください。ダイアログを閉じると再表示できません。",
+              "paste_into_plane": "APIベースURLとトークンを、下のRTM APIベースURLとRTM APIトークンの各フィールドに貼り付けます。"
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "RTM APIトークンは、上記のJiraサイト・メール・APIトークンで使用するid.atlassian.comのAPIトークンとは異なります。"
+          },
+          "plane_project": "Planeプロジェクト",
+          "plane_project_description": "インポートしたJira RTMテストケースの受け取り先となるPlaneプロジェクトを選択してください。",
+          "select_plane_project": "Planeプロジェクトを選択",
+          "project_required": "インポートを開始する前にPlaneプロジェクトを選択してください。",
+          "preview": "インポートのプレビュー",
+          "start_import": "インポートを開始",
+          "preview_title": "インポートのプレビュー",
+          "preview_jql": "JQL",
+          "preview_success": "Jira RTMのプレビューを読み込みました",
+          "preview_error": "Jira RTMのプレビューを読み込めませんでした",
+          "import_started": "Jira RTMのインポートを開始しました",
+          "import_error": "Jira RTMのインポートを開始できませんでした",
+          "testcases": "テストケース",
+          "comments": "コメント",
+          "labels": "ラベル",
+          "users": "ユーザー"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

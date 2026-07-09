@@ -47,7 +47,7 @@
     "status": {
       "days_left": "남은 일수",
       "completed": "완료됨",
-      "yet_to_start": "시작되지 않음",
+      "planned": "계획됨",
       "in_progress": "진행 중",
       "draft": "초안"
     },

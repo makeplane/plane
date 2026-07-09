@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Сайт Jira",
+          "cloud_hostname_description": "Ім'я хоста вашого Atlassian Cloud, наприклад company.atlassian.net.",
+          "email": "Email облікового запису Jira",
+          "email_description": "Адреса електронної пошти облікового запису Jira, якому належить API-токен.",
+          "api_token": "API-токен Jira",
+          "api_token_description": "API-токен з налаштувань безпеки вашого облікового запису Atlassian.",
+          "project_key": "Ключ проєкту Jira",
+          "project_key_description": "Ключ проєкту, що містить тест-кейси RTM.",
+          "issue_type_name": "Тип задачі для тест-кейсу",
+          "issue_type_name_description": "Тип задачі Jira, який використовується для тест-кейсів RTM.",
+          "jql": "Користувацький JQL",
+          "jql_description": "Необов'язкове перевизначення JQL. Якщо поле порожнє, тест-кейси вибираються за проєктом і типом задачі вище.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "Базовий URL API RTM",
+          "rtm_api_base_url_description": "Необов'язково. URL REST API RTM з розділу RTM → REST API authentication. Використовується для отримання кроків тесту.",
+          "rtm_api_token": "API-токен RTM",
+          "rtm_api_token_description": "Необов'язково. Bearer-токен RTM з налаштувань застосунку RTM. Якщо поле порожнє, використовується API-токен Jira.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "Як створити API-токен RTM",
+            "intro": "Використовуйте цей токен для імпорту кроків тесту RTM. Він відрізняється від вашого API-токена Atlassian Jira.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Відкрийте ваш сайт Jira Cloud і перейдіть у проєкт, що використовує Requirements and Test Management (RTM).",
+              "open_menu": "Відкрийте застосунок RTM, потім натисніть меню з трьома крапками (⋯) у заголовку RTM.",
+              "open_auth": "Виберіть REST API authentication.",
+              "copy_base_url": "Скопіюйте базовий URL API, показаний у діалоговому вікні (наприклад, https://rtm-api.hexygen.com/api або європейський аналог).",
+              "generate_token": "Натисніть Generate token.",
+              "select_user": "Виберіть користувача Jira, від імені якого діятиме токен.",
+              "enter_label": "Введіть назву, наприклад Plane import.",
+              "copy_token": "Натисніть Generate, потім одразу скопіюйте токен. Після закриття діалогу ви не зможете побачити його знову.",
+              "paste_into_plane": "Вставте базовий URL API і токен у поля «Базовий URL API RTM» та «API-токен RTM» нижче."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "API-токен RTM — це не те саме, що API-токен з id.atlassian.com, вказаний вище для сайту Jira, email та API-токена."
+          },
+          "plane_project": "Проєкт Plane",
+          "plane_project_description": "Виберіть проєкт Plane, до якого буде імпортовано тест-кейси Jira RTM.",
+          "select_plane_project": "Виберіть проєкт Plane",
+          "project_required": "Перед початком імпорту виберіть проєкт Plane.",
+          "preview": "Попередній перегляд імпорту",
+          "start_import": "Почати імпорт",
+          "preview_title": "Попередній перегляд імпорту",
+          "preview_jql": "JQL",
+          "preview_success": "Попередній перегляд Jira RTM завантажено",
+          "preview_error": "Не вдалося завантажити попередній перегляд Jira RTM",
+          "import_started": "Імпорт Jira RTM розпочато",
+          "import_error": "Не вдалося запустити імпорт Jira RTM",
+          "testcases": "Тест-кейси",
+          "comments": "Коментарі",
+          "labels": "Мітки",
+          "users": "Користувачі"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

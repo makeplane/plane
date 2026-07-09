@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Hari tersisa",
       "completed": "Selesai",
-      "yet_to_start": "Belum dimulai",
+      "planned": "Direncanakan",
       "in_progress": "Sedang berlangsung",
       "draft": "Draf"
     },

@@ -47,7 +47,7 @@
     "status": {
       "days_left": "Zbývá dnů",
       "completed": "Dokončeno",
-      "yet_to_start": "Ještě nezačato",
+      "planned": "Plánováno",
       "in_progress": "V průběhu",
       "draft": "Koncept"
     },

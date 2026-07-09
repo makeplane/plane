@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Web Jira",
+          "cloud_hostname_description": "Názov hostiteľa vášho Atlassian Cloud, napríklad company.atlassian.net.",
+          "email": "E-mail účtu Jira",
+          "email_description": "E-mailová adresa účtu Jira, ktorému patrí API token.",
+          "api_token": "API token Jira",
+          "api_token_description": "API token z bezpečnostného nastavenia vášho účtu Atlassian.",
+          "project_key": "Kľúč projektu Jira",
+          "project_key_description": "Kľúč projektu obsahujúceho testovacie prípady RTM.",
+          "issue_type_name": "Typ úlohy pre testovacie prípady",
+          "issue_type_name_description": "Typ úlohy Jira použitý pre testovacie prípady RTM.",
+          "jql": "Vlastné JQL",
+          "jql_description": "Voliteľné prepísanie JQL. Ak je prázdne, testovacie prípady sa vyberajú podľa projektu a typu úlohy vyššie.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "Základná URL API RTM",
+          "rtm_api_base_url_description": "Voliteľné. URL REST API RTM z RTM → REST API authentication. Používa sa na získanie krokov testu.",
+          "rtm_api_token": "API token RTM",
+          "rtm_api_token_description": "Voliteľné. Bearer token RTM z nastavení aplikácie RTM. Ak je prázdny, použije sa API token Jira.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "Ako vytvoriť API token RTM",
+            "intro": "Tento token použite na import krokov testu RTM. Líši sa od vášho API tokenu Atlassian Jira.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Otvorte svoj web Jira Cloud a prejdite do projektu, ktorý používa Requirements and Test Management (RTM).",
+              "open_menu": "Otvorte aplikáciu RTM a potom kliknite na ponuku s tromi bodkami (⋯) v hlavičke RTM.",
+              "open_auth": "Vyberte REST API authentication.",
+              "copy_base_url": "Skopírujte základnú URL API zobrazenú v dialógovom okne (napríklad https://rtm-api.hexygen.com/api alebo ekvivalent pre EÚ).",
+              "generate_token": "Kliknite na Generate token.",
+              "select_user": "Vyberte používateľa Jira, v mene ktorého bude token konať.",
+              "enter_label": "Zadajte popis, napríklad Plane import.",
+              "copy_token": "Kliknite na Generate a token ihneď skopírujte. Po zatvorení dialógového okna ho už nebude možné znova zobraziť.",
+              "paste_into_plane": "Vložte základnú URL API a token do polí Základná URL API RTM a API token RTM nižšie."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "API token RTM nie je to isté ako API token z id.atlassian.com použitý vyššie pre web Jira, e-mail a API token."
+          },
+          "plane_project": "Projekt Plane",
+          "plane_project_description": "Vyberte projekt Plane, do ktorého sa majú importovať testovacie prípady Jira RTM.",
+          "select_plane_project": "Vybrať projekt Plane",
+          "project_required": "Pred začatím importu vyberte projekt Plane.",
+          "preview": "Náhľad importu",
+          "start_import": "Spustiť import",
+          "preview_title": "Náhľad importu",
+          "preview_jql": "JQL",
+          "preview_success": "Náhľad Jira RTM načítaný",
+          "preview_error": "Náhľad Jira RTM sa nepodarilo načítať",
+          "import_started": "Import Jira RTM spustený",
+          "import_error": "Import Jira RTM sa nepodarilo spustiť",
+          "testcases": "Testovacie prípady",
+          "comments": "Komentáre",
+          "labels": "Štítky",
+          "users": "Používatelia"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

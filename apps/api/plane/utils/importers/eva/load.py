@@ -11,7 +11,6 @@ from typing import Any
 from uuid import UUID
 
 from django.contrib.auth import get_user_model
-from django.db import models
 from django.utils import timezone
 
 from plane.db.models import (
@@ -277,7 +276,20 @@ class EvaLoader:
             self.stats["labels"] += 1
         return label_map
 
+    def _cycle_dates(self, list_record: dict[str, Any] | None) -> dict[str, Any]:
+        if not list_record:
+            return {}
+        end_date = self.transformer.parse_date(list_record.get("status_closed_at"))
+        if not end_date:
+            # EVA sprint is still open; Plane requires both dates or neither.
+            return {}
+        start_date = self.transformer.parse_date(list_record.get("cmf_created_at"))
+        if not start_date:
+            return {}
+        return {"start_date": start_date, "end_date": end_date}
+
     def _ensure_cycles(self, extracted: dict[str, Any]) -> dict[str, UUID]:
+        lists_by_code = {item["code"]: item for item in extracted.get("cycle_lists", []) if item.get("code")}
         cycle_map: dict[str, UUID] = {}
         for task in extracted.get("tasks", []):
             for item in task.get("lists") or []:
@@ -302,6 +314,7 @@ class EvaLoader:
                     created_by=self.actor,
                     external_source=EVA_EXTERNAL_SOURCE,
                     external_id=code,
+                    **self._cycle_dates(lists_by_code.get(code)),
                 )
                 cycle_map[code] = cycle.id
                 self.stats["cycles"] += 1

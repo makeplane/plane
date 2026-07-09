@@ -30,6 +30,15 @@ class EvaExtractor:
     def list_users(self) -> list[dict[str, Any]]:
         return self.client.call("CmfPerson.list", {"fields": ["id", "login", "name", "code"]})
 
+    def list_lists(self, project_id: str) -> list[dict[str, Any]]:
+        return self.client.call(
+            "CmfList.list",
+            {
+                "filter": [["parent_id", "==", project_id]],
+                "fields": ["id", "code", "cmf_created_at", "status_closed_at"],
+            },
+        )
+
     def list_tasks(self, project_id: str) -> list[dict[str, Any]]:
         return self.client.call(
             "CmfTask.list",
@@ -87,6 +96,7 @@ class EvaExtractor:
         testcases = self.list_testcases(project_id) if import_testcases else []
         testcase_ids = [testcase["id"] for testcase in testcases if testcase.get("id")]
         testcase_comments = self.list_comments(testcase_ids) if import_testcases else []
+        cycle_lists = self.list_lists(project_id) if import_tasks else []
 
         return {
             "project_id": project_id,
@@ -96,6 +106,7 @@ class EvaExtractor:
             "attachments": attachments,
             "documents": documents,
             "testcases": testcases,
+            "cycle_lists": cycle_lists,
         }
 
     def preview_counts(self, project_id: str) -> dict[str, int]:

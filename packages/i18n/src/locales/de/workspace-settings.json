@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Jira-Site",
+          "cloud_hostname_description": "Ihr Atlassian-Cloud-Hostname, zum Beispiel company.atlassian.net.",
+          "email": "Jira-Konto-E-Mail",
+          "email_description": "E-Mail-Adresse des Jira-Kontos, dem das API-Token gehört.",
+          "api_token": "Jira-API-Token",
+          "api_token_description": "API-Token aus den Sicherheitseinstellungen Ihres Atlassian-Kontos.",
+          "project_key": "Jira-Projektschlüssel",
+          "project_key_description": "Projektschlüssel, der die RTM-Testfälle enthält.",
+          "issue_type_name": "Vorgangstyp für Testfälle",
+          "issue_type_name_description": "Jira-Vorgangstyp, der für RTM-Testfälle verwendet wird.",
+          "jql": "Benutzerdefinierte JQL",
+          "jql_description": "Optionale JQL-Überschreibung. Wenn leer, werden Testfälle anhand von Projekt und Vorgangstyp oben ausgewählt.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "RTM-API-Basis-URL",
+          "rtm_api_base_url_description": "Optional. RTM-REST-API-URL aus RTM → REST API authentication. Wird zum Abrufen der Testschritte verwendet.",
+          "rtm_api_token": "RTM-API-Token",
+          "rtm_api_token_description": "Optional. RTM-Bearer-Token aus den RTM-App-Einstellungen. Fällt bei leerem Feld auf das Jira-API-Token zurück.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "So erstellen Sie ein RTM-API-Token",
+            "intro": "Verwenden Sie dieses Token, um RTM-Testschritte zu importieren. Es unterscheidet sich von Ihrem Atlassian-Jira-API-Token.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Öffnen Sie Ihre Jira-Cloud-Site und wechseln Sie zu einem Projekt, das Requirements and Test Management (RTM) verwendet.",
+              "open_menu": "Öffnen Sie die RTM-App und klicken Sie dann auf das Drei-Punkte-Menü (⋯) in der RTM-Kopfzeile.",
+              "open_auth": "REST API authentication auswählen.",
+              "copy_base_url": "Kopieren Sie die im Dialog angezeigte API-Basis-URL (zum Beispiel https://rtm-api.hexygen.com/api oder das EU-Äquivalent).",
+              "generate_token": "Auf Generate token klicken.",
+              "select_user": "Wählen Sie den Jira-Benutzer aus, in dessen Namen das Token agieren soll.",
+              "enter_label": "Ein Label eingeben, zum Beispiel Plane import.",
+              "copy_token": "Auf Generate klicken und das Token sofort kopieren. Nach dem Schließen des Dialogs ist es nicht erneut sichtbar.",
+              "paste_into_plane": "API-Basis-URL und Token unten in die Felder RTM-API-Basis-URL und RTM-API-Token einfügen."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "Das RTM-API-Token ist nicht dasselbe wie das oben für Jira-Site, E-Mail und API-Token verwendete API-Token von id.atlassian.com."
+          },
+          "plane_project": "Plane-Projekt",
+          "plane_project_description": "Wählen Sie das Plane-Projekt aus, das importierte Jira-RTM-Testfälle erhalten soll.",
+          "select_plane_project": "Plane-Projekt auswählen",
+          "project_required": "Wählen Sie vor dem Import ein Plane-Projekt aus.",
+          "preview": "Import-Vorschau",
+          "start_import": "Import starten",
+          "preview_title": "Import-Vorschau",
+          "preview_jql": "JQL",
+          "preview_success": "Jira-RTM-Vorschau geladen",
+          "preview_error": "Jira-RTM-Vorschau konnte nicht geladen werden",
+          "import_started": "Jira-RTM-Import gestartet",
+          "import_error": "Jira-RTM-Import konnte nicht gestartet werden",
+          "testcases": "Testfälle",
+          "comments": "Kommentare",
+          "labels": "Labels",
+          "users": "Benutzer"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

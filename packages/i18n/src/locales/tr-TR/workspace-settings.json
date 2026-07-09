@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Jira sitesi",
+          "cloud_hostname_description": "Atlassian Cloud ana bilgisayar adınız, örneğin company.atlassian.net.",
+          "email": "Jira hesabı e-postası",
+          "email_description": "API belirtecinin sahibi olan Jira hesabının e-posta adresi.",
+          "api_token": "Jira API belirteci",
+          "api_token_description": "Atlassian hesabınızın güvenlik ayarlarından alınan API belirteci.",
+          "project_key": "Jira proje anahtarı",
+          "project_key_description": "RTM test senaryolarını içeren proje anahtarı.",
+          "issue_type_name": "Test senaryosu iş öğesi türü",
+          "issue_type_name_description": "RTM test senaryoları için kullanılan Jira iş öğesi türü.",
+          "jql": "Özel JQL",
+          "jql_description": "İsteğe bağlı JQL geçersiz kılma. Boşsa, test senaryoları yukarıdaki proje ve iş öğesi türüne göre seçilir.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "RTM API temel URL'si",
+          "rtm_api_base_url_description": "İsteğe bağlı. RTM → REST API authentication üzerinden alınan RTM REST API URL'si. Test adımlarını almak için kullanılır.",
+          "rtm_api_token": "RTM API belirteci",
+          "rtm_api_token_description": "İsteğe bağlı. RTM uygulama ayarlarından alınan RTM Bearer belirteci. Boşsa Jira API belirtecine geri döner.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "RTM API belirteci nasıl oluşturulur",
+            "intro": "RTM test adımlarını içe aktarmak için bu belirteci kullanın. Atlassian Jira API belirtecinizden farklıdır.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Jira Cloud sitenizi açın ve Requirements and Test Management (RTM) kullanan bir projeye gidin.",
+              "open_menu": "RTM uygulamasını açın, ardından RTM başlığındaki üç nokta menüsüne (⋯) tıklayın.",
+              "open_auth": "REST API authentication seçeneğini seçin.",
+              "copy_base_url": "İletişim kutusunda gösterilen API temel URL'sini kopyalayın (örneğin https://rtm-api.hexygen.com/api veya AB karşılığı).",
+              "generate_token": "Generate token seçeneğine tıklayın.",
+              "select_user": "Belirtecin adına hareket edeceği Jira kullanıcısını seçin.",
+              "enter_label": "Bir etiket girin, örneğin Plane import.",
+              "copy_token": "Generate seçeneğine tıklayın, ardından belirteci hemen kopyalayın. İletişim kutusunu kapattıktan sonra tekrar göremezsiniz.",
+              "paste_into_plane": "API temel URL'sini ve belirteci aşağıdaki RTM API temel URL'si ve RTM API belirteci alanlarına yapıştırın."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "RTM API belirteci, yukarıda Jira sitesi, e-posta ve API belirteci için kullanılan id.atlassian.com API belirteciyle aynı değildir."
+          },
+          "plane_project": "Plane projesi",
+          "plane_project_description": "İçe aktarılan Jira RTM test senaryolarını alacak Plane projesini seçin.",
+          "select_plane_project": "Plane projesi seçin",
+          "project_required": "İçe aktarmayı başlatmadan önce bir Plane projesi seçin.",
+          "preview": "İçe aktarma önizlemesi",
+          "start_import": "İçe aktarmayı başlat",
+          "preview_title": "İçe aktarma önizlemesi",
+          "preview_jql": "JQL",
+          "preview_success": "Jira RTM önizlemesi yüklendi",
+          "preview_error": "Jira RTM önizlemesi yüklenemedi",
+          "import_started": "Jira RTM içe aktarımı başlatıldı",
+          "import_error": "Jira RTM içe aktarımı başlatılamadı",
+          "testcases": "Test senaryoları",
+          "comments": "Yorumlar",
+          "labels": "Etiketler",
+          "users": "Kullanıcılar"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {

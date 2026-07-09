@@ -244,22 +244,59 @@
           "documents": "Importing documents"
         },
         "jira_rtm": {
+          "cloud_hostname": "Jira 사이트",
+          "cloud_hostname_description": "Atlassian Cloud 호스트 이름입니다(예: company.atlassian.net).",
+          "email": "Jira 계정 이메일",
+          "email_description": "API 토큰을 소유한 Jira 계정의 이메일 주소입니다.",
+          "api_token": "Jira API 토큰",
+          "api_token_description": "Atlassian 계정 보안 설정에서 가져온 API 토큰입니다.",
+          "project_key": "Jira 프로젝트 키",
+          "project_key_description": "RTM 테스트 케이스가 포함된 프로젝트 키입니다.",
+          "issue_type_name": "테스트 케이스 작업 항목 유형",
+          "issue_type_name_description": "RTM 테스트 케이스에 사용되는 Jira 작업 항목 유형입니다.",
+          "jql": "사용자 지정 JQL",
+          "jql_description": "선택적 JQL 재정의입니다. 비워 두면 위의 프로젝트와 작업 항목 유형에 따라 테스트 케이스가 선택됩니다.",
+          "jql_placeholder": "project = PROJ AND issuetype = \"Test Case\"",
+          "rtm_api_base_url": "RTM API 기본 URL",
+          "rtm_api_base_url_description": "선택 사항입니다. RTM → REST API authentication에서 가져온 RTM REST API URL로, 테스트 단계를 가져오는 데 사용됩니다.",
+          "rtm_api_token": "RTM API 토큰",
+          "rtm_api_token_description": "선택 사항입니다. RTM 앱 설정에서 가져온 RTM Bearer 토큰입니다. 비워 두면 Jira API 토큰을 사용합니다.",
           "rtm_token_guide": {
-            "title": "How to create an RTM API token",
-            "intro": "Use this token to import RTM test steps. It is separate from your Atlassian Jira API token.",
+            "title": "RTM API 토큰을 만드는 방법",
+            "intro": "이 토큰을 사용해 RTM 테스트 단계를 가져오세요. Atlassian Jira API 토큰과는 별개입니다.",
             "steps": {
-              "open_rtm": "Open your Jira Cloud site and go to a project that uses Requirements and Test Management (RTM).",
-              "open_menu": "Open the RTM app, then click the three-dot menu (⋯) in the RTM header.",
-              "open_auth": "Select REST API authentication.",
-              "copy_base_url": "Copy the API base URL shown in the dialog (for example https://rtm-api.hexygen.com/api or the EU equivalent).",
-              "generate_token": "Click Generate token.",
-              "select_user": "Select the Jira user the token should act on behalf of.",
-              "enter_label": "Enter a label, for example Plane import.",
-              "copy_token": "Click Generate, then copy the token immediately. You will not be able to view it again after closing the dialog.",
-              "paste_into_plane": "Paste the API base URL and token into the RTM API base URL and RTM API token fields below."
+              "open_rtm": "Jira Cloud 사이트를 열고 Requirements and Test Management(RTM)를 사용하는 프로젝트로 이동합니다.",
+              "open_menu": "RTM 앱을 연 다음 RTM 헤더의 점 세 개 메뉴(⋯)를 클릭합니다.",
+              "open_auth": "REST API authentication을 선택합니다.",
+              "copy_base_url": "대화 상자에 표시된 API 기본 URL(예: https://rtm-api.hexygen.com/api 또는 EU용 URL)을 복사합니다.",
+              "generate_token": "Generate token을 클릭합니다.",
+              "select_user": "토큰이 대신 작동할 Jira 사용자를 선택합니다.",
+              "enter_label": "레이블을 입력합니다(예: Plane import).",
+              "copy_token": "Generate를 클릭한 다음 즉시 토큰을 복사하세요. 대화 상자를 닫으면 다시 볼 수 없습니다.",
+              "paste_into_plane": "아래의 RTM API 기본 URL과 RTM API 토큰 필드에 API 기본 URL과 토큰을 붙여넣습니다."
             },
-            "note": "The RTM API token is not the same as the API token from id.atlassian.com used for Jira site, email, and API token above."
-          }
+            "note": "RTM API 토큰은 위의 Jira 사이트, 이메일, API 토큰에 사용되는 id.atlassian.com의 API 토큰과 다릅니다."
+          },
+          "plane_project": "Plane 프로젝트",
+          "plane_project_description": "가져온 Jira RTM 테스트 케이스를 받을 Plane 프로젝트를 선택하세요.",
+          "select_plane_project": "Plane 프로젝트 선택",
+          "project_required": "가져오기를 시작하기 전에 Plane 프로젝트를 선택하세요.",
+          "preview": "가져오기 미리보기",
+          "start_import": "가져오기 시작",
+          "preview_title": "가져오기 미리보기",
+          "preview_jql": "JQL",
+          "preview_success": "Jira RTM 미리보기를 불러왔습니다",
+          "preview_error": "Jira RTM 미리보기를 불러올 수 없습니다",
+          "import_started": "Jira RTM 가져오기가 시작되었습니다",
+          "import_error": "Jira RTM 가져오기를 시작할 수 없습니다",
+          "testcases": "테스트 케이스",
+          "comments": "댓글",
+          "labels": "레이블",
+          "users": "사용자"
+        },
+        "providers": {
+          "eva": "EvaTeam",
+          "jira_rtm": "Jira RTM"
         }
       },
       "worklogs": {
