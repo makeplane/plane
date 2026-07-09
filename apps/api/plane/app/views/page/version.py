@@ -19,21 +19,29 @@ class PageVersionEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided
         if pk:
-            # Return a single page version. Scope to the project in the URL so a
-            # page belonging to another project cannot be read via this endpoint
-            # (GHSA-g49r / GHSA-ghcr).
+            # Return a single page version. Scope to an *active* ProjectPage link
+            # for the URL project so a page belonging to (or removed from)
+            # another project cannot be read via this endpoint (GHSA-g49r /
+            # GHSA-ghcr). The active-link partial-unique constraint keeps the
+            # join to a single row, so get() stays unambiguous.
             page_version = PageVersion.objects.get(
-                workspace__slug=slug, page__projects__id=project_id, page_id=page_id, pk=pk
+                workspace__slug=slug,
+                page__project_pages__project_id=project_id,
+                page__project_pages__deleted_at__isnull=True,
+                page_id=page_id,
+                pk=pk,
             )
             # Serialize the page version
             serializer = PageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        # Return all page versions (scoped to the project in the URL). distinct()
-        # guards against duplicate rows when a page has both an active and a
-        # soft-deleted ProjectPage link to the same project.
+        # Return all page versions scoped to an active ProjectPage link for the
+        # URL project (defense in depth).
         page_versions = PageVersion.objects.filter(
-            workspace__slug=slug, page__projects__id=project_id, page_id=page_id
-        ).distinct()
+            workspace__slug=slug,
+            page__project_pages__project_id=project_id,
+            page__project_pages__deleted_at__isnull=True,
+            page_id=page_id,
+        )
         # Serialize the page versions
         serializer = PageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

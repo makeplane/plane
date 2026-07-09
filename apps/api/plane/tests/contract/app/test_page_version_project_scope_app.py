@@ -15,6 +15,7 @@ workspace via that project's URL.
 import uuid
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import (
@@ -117,6 +118,26 @@ class TestPageVersionProjectScope:
         assert response.status_code == status.HTTP_200_OK
         returned_ids = {str(item["id"]) for item in response.json()}
         assert str(version_a.id) in returned_ids
+
+    @pytest.mark.django_db
+    def test_revoked_project_link_denied(self, session_client, workspace, create_user):
+        """A page whose ProjectPage link to the attacker's project was
+        soft-deleted (page removed from the project) must be denied, even
+        though the attacker is a member of that project."""
+        victim, project_a, _, _, _ = self._setup(workspace, create_user)
+
+        page = Page.objects.create(
+            workspace=workspace, owned_by=victim, access=Page.PUBLIC_ACCESS, name="Removed page"
+        )
+        # Link exists but is soft-deleted → the page no longer belongs to A.
+        ProjectPage.objects.create(
+            workspace=workspace, project=project_a, page=page, deleted_at=timezone.now()
+        )
+        _make_version(workspace, page, victim)
+
+        response = session_client.get(_page_versions_url(workspace.slug, project_a.id, page.id))
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.django_db
     def test_cross_project_version_list_not_a_member_anywhere(self, session_client, workspace, create_user):
