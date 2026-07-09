@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@plane/constants";
 
 import type { TMediaArtifact } from "@/services/media-library.service";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
+import { getDisplayMediaTitle } from "./media-detail-utils";
 import { getEventMediaContextLabel, getEventMediaDateLabel, getEventMediaDetails } from "./media-event";
 
 type TArtifactContext = {
@@ -284,6 +285,20 @@ export const mapArtifactsToMediaItems = (
   artifacts: TMediaArtifact[],
   context?: TArtifactContext
 ): TMediaItem[] => {
+  const formatDisplayTitle = (title: string, format: string, mediaType: TMediaItem["mediaType"]) => {
+    const normalizedTitle = title.trim();
+
+    if (!normalizedTitle) {
+      return "";
+    }
+
+    if (mediaType === "document") {
+      return getDisplayMediaTitle(normalizedTitle);
+    }
+
+    return normalizedTitle;
+  };
+
   const thumbnailByLink = new Map<string, string>();
   const mediaTypeByName = new Map<string, TMediaItem["mediaType"]>();
   const artifactByName = new Map<string, TMediaArtifact>();
@@ -336,7 +351,8 @@ export const mapArtifactsToMediaItems = (
     const workItemId = getArtifactWorkItemId(artifact, meta);
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const linkedTitle = format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
-    const displayTitle = eventDetails?.title || linkedTitle;
+    const displayTitle = formatDisplayTitle(eventDetails?.title || linkedTitle, format, mediaType);
+    // console.log("Display Title:", displayTitle, "Format:", format, "Media Type:", mediaType, "Event Details:", eventDetails, "Linked Artifact:", linkedArtifact);
     const baseDescription = (artifact.description ?? getMetaString(meta, ["description", "summary"], "")).trim();
     const eventContextLabel = getEventMediaContextLabel(meta);
     const eventDateLabel = getEventMediaDateLabel(meta);
@@ -449,7 +465,7 @@ export const groupMediaItemsByTag = (
     else grouped.set(key, [item]);
   }
 
-  // console.log("Grouped Items:", items);
+  console.log("Grouped Items:", items);
 
   return Array.from(grouped.entries()).map(([title, sectionItems]) => ({
     title,

@@ -24,6 +24,7 @@ import { useVideoDuration } from "../hooks/use-video-duration";
 import type { TMediaItem } from "../types/media-library.types";
 import {
   formatMetaValue,
+  getDisplayMediaTitle,
   resolveOppositionLogoUrl,
 } from "../utils/media-detail-utils";
 import {
@@ -141,6 +142,7 @@ export const MediaCard = ({
   const eventMetrics = getEventMediaMetrics(item);
   const eventContextLabel = getEventMediaContextLabel(item);
   const itemDescription = item.description || eventContextLabel || "";
+  const displayTitle = getDisplayMediaTitle(item.title);
 
   useEffect(() => {
     setIsThumbnailUnavailable(!item.thumbnail);
@@ -191,7 +193,7 @@ export const MediaCard = ({
     [eventDetails?.program, eventDetails?.level].filter((entry): entry is string => Boolean(entry)).join(" · ") ||
     eventContextLabel ||
     "Completed event package";
-  const eventPreviewTitle = eventDetails?.title || item.title;
+  const eventPreviewTitle = getDisplayMediaTitle(eventDetails?.title || item.title);
   const eventPreviewMeta = [eventDetails?.sport, eventDetails?.program, eventDetails?.level]
     .filter((entry): entry is string => Boolean(entry))
     .join(" · ");
@@ -357,7 +359,7 @@ export const MediaCard = ({
           ) : (
             <Image
               src={item.thumbnail}
-              alt={item.title}
+              alt={displayTitle}
               width={100}
               height={100}
               loading="lazy"
@@ -374,7 +376,7 @@ export const MediaCard = ({
             ) : (
               <Image
                 src={item.thumbnail}
-                alt={item.title}
+                alt={displayTitle}
                 width={100}
                 height={100}
                 loading="lazy"
@@ -402,7 +404,7 @@ export const MediaCard = ({
       </div>
       <div className="mt-2 space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
+          <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{displayTitle}</div>
         </div>
         {itemDescription ? (
           <div className="line-clamp-2 text-[11px] text-custom-text-300">{itemDescription}</div>

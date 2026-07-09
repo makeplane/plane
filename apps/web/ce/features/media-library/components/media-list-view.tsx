@@ -6,6 +6,7 @@ import Link from "next/link";
 import { File, Image, ImageOff, Video } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
+import { getDisplayMediaTitle } from "../utils/media-detail-utils";
 import { getEventMediaDateLabel, isEventMediaItem } from "../utils/media-event";
 
 const MediaListRow = ({
@@ -21,6 +22,7 @@ const MediaListRow = ({
 }) => {
   const [isThumbnailUnavailable, setIsThumbnailUnavailable] = useState(!item.thumbnail);
   const isEventItem = isEventMediaItem(item);
+  const displayTitle = getDisplayMediaTitle(item.title);
 
   useEffect(() => {
     setIsThumbnailUnavailable(!item.thumbnail);
@@ -69,7 +71,7 @@ const MediaListRow = ({
             {!isThumbnailUnavailable ? (
               <img
                 src={item.thumbnail}
-                alt={item.title}
+                alt={displayTitle}
                 onError={() => setIsThumbnailUnavailable(true)}
                 className={`h-full w-full ${isLinkedDocumentThumbnail ? "object-contain p-3" : "object-cover"}`}
               />
@@ -87,7 +89,7 @@ const MediaListRow = ({
       </TableCell>
       <TableCell className="min-w-[240px] border-r border-custom-border-200">
         <Link href={itemHref} onClick={handleItemClick} className="block min-w-0">
-          <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
+          <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{displayTitle}</div>
           {item.description ? <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div> : null}
         </Link>
       </TableCell>
