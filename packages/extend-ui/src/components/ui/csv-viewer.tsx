@@ -47,6 +47,8 @@ type CsvViewerProps = {
   className?: string;
   data?: string;
   search?: boolean;
+  /** Local addition: hides the "..." actions menu (download/upload). */
+  showActions?: boolean;
 };
 
 type CsvSearchResult = {
@@ -489,7 +491,7 @@ function useIsDarkTheme() {
   return isDark;
 }
 
-export function CsvViewer({ className, data, search = false }: CsvViewerProps) {
+export function CsvViewer({ className, data, search = false, showActions = true }: CsvViewerProps) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const gridRef = React.useRef<DataEditorRef | null>(null);
   const isDark = useIsDarkTheme();
@@ -704,14 +706,16 @@ export function CsvViewer({ className, data, search = false }: CsvViewerProps) {
               className="hidden"
               onChange={handleUpload}
             />
-            <CsvFileActionsMenu
-              downloadDisabled={
-                Boolean(parsed.error) || isPending || (parsed.headers.length === 0 && parsed.rows.length === 0)
-              }
-              isPending={isPending}
-              onDownload={handleDownload}
-              onUploadClick={() => inputRef.current?.click()}
-            />
+            {showActions && (
+              <CsvFileActionsMenu
+                downloadDisabled={
+                  Boolean(parsed.error) || isPending || (parsed.headers.length === 0 && parsed.rows.length === 0)
+                }
+                isPending={isPending}
+                onDownload={handleDownload}
+                onUploadClick={() => inputRef.current?.click()}
+              />
+            )}
           </div>
         </TooltipProvider>
       </div>

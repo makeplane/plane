@@ -166,7 +166,16 @@ export class FileLibraryService extends APIService {
   // files
 
   async getFiles(workspaceSlug: string, filters?: TLibraryFileFilters): Promise<TLibraryFile[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/file-library/files/`, { params: filters })
+    // Build a query where multi-value filters repeat their key
+    // (?category=a&category=b), which Django's request.getlist() expects.
+    const params = new URLSearchParams();
+    (filters?.categories ?? []).forEach((id) => params.append("category", id));
+    (filters?.tags ?? []).forEach((id) => params.append("tag", id));
+    if (filters?.search) params.set("search", filters.search);
+    if (filters?.type) params.set("type", filters.type);
+    if (filters?.order) params.set("order", filters.order);
+    const query = params.toString();
+    return this.get(`/api/workspaces/${workspaceSlug}/file-library/files/${query ? `?${query}` : ""}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -14,6 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import {
   usePersonalNavigationPreferences,
@@ -54,6 +55,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { isWorkspaceFeatureEnabled } = useWorkspace();
   const {
     preferences: personalPreferences,
     togglePersonalItem,
@@ -79,13 +81,12 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const workspaceItems = useMemo(() => {
+    const slug = workspaceSlug?.toString() || "";
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
-      const hasPermission = allowPermissions(
-        item.access,
-        EUserPermissionsLevel.WORKSPACE,
-        workspaceSlug?.toString() || ""
-      );
+      const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
+      // "file-library" only appears once the module is enabled for this workspace
+      if (item.key === "file-library" && !isWorkspaceFeatureEnabled(slug, "file_library")) return false;
       return hasPermission;
     }).map((item) => {
       // Get pinned status and sort order from localStorage
@@ -102,7 +103,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     });
 
     return items.sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [workspaceSlug, allowPermissions, workspacePreferences]);
+  }, [workspaceSlug, allowPermissions, workspacePreferences, isWorkspaceFeatureEnabled]);
 
   // Handle checkbox toggle
   const handleWorkspaceItemToggle = useCallback(

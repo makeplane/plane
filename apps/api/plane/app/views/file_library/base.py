@@ -133,17 +133,18 @@ class FileLibraryAssetEndpoint(FileLibraryBaseView):
             .order_by("-created_at")
         )
 
-        # Filter by category (or files without any category)
-        category_id = request.query_params.get("category")
-        if category_id == "none":
+        # Filter by category — multiple values are OR'd (like work-item
+        # filters); the special value "none" matches uncategorized files
+        category_ids = request.query_params.getlist("category")
+        if "none" in category_ids:
             assets = assets.filter(category_links__isnull=True)
-        elif category_id:
-            assets = assets.filter(category_links__category_id=category_id)
+        elif category_ids:
+            assets = assets.filter(category_links__category_id__in=category_ids)
 
-        # Filter by tag
-        tag_id = request.query_params.get("tag")
-        if tag_id:
-            assets = assets.filter(tag_links__tag_id=tag_id)
+        # Filter by tag — multiple values OR'd
+        tag_ids = request.query_params.getlist("tag")
+        if tag_ids:
+            assets = assets.filter(tag_links__tag_id__in=tag_ids)
 
         # Filter by folder ("root" = files without folder)
         folder_id = request.query_params.get("folder")
@@ -161,6 +162,21 @@ class FileLibraryAssetEndpoint(FileLibraryBaseView):
         file_type = request.query_params.get("type")
         if file_type:
             assets = assets.filter(attributes__type__istartswith=file_type)
+
+        # Database-side ordering ("-" prefix = descending)
+        order = request.query_params.get("order")
+        order_map = {
+            "name": "attributes__name",
+            "type": "attributes__type",
+            "size": "size",
+            "created_at": "created_at",
+            "updated_at": "updated_at",
+        }
+        if order:
+            descending = order.startswith("-")
+            field = order_map.get(order.lstrip("-"))
+            if field:
+                assets = assets.order_by(f"-{field}" if descending else field)
 
         serializer = FileLibraryAssetSerializer(assets.distinct(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

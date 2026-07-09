@@ -73,8 +73,11 @@ export type TLibraryFileUploadResponse = {
 };
 
 export type TLibraryFileFilters = {
-  category?: string;
-  tag?: string;
+  /** OR'd within the group, like work-item filters ("none" = uncategorized) */
+  categories?: string[];
+  tags?: string[];
   search?: string;
   type?: string;
+  /** e.g. "name", "-size", "created_at" — resolved by the database */
+  order?: string;
 };

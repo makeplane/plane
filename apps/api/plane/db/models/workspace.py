@@ -425,6 +425,10 @@ class WorkspaceUserPreference(BaseModel):
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
         STICKIES = "stickies", "Stickies"
+        # Key matches WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS's "file-library"
+        # entry in packages/constants/src/workspace.ts exactly — the sidebar PATCH
+        # endpoint silently no-ops for any key without a pre-seeded row here.
+        FILE_LIBRARY = "file-library", "File Library"
 
     workspace = models.ForeignKey(
         "db.Workspace",

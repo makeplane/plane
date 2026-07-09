@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, Files, FolderPlus, Layers, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
@@ -16,16 +16,18 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Popover } from "@plane/propel/popover";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { AlertModalCore, Breadcrumbs } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useFileLibrary } from "@/hooks/store/use-file-library";
 // local imports
 import { BulkActionsModal } from "./bulk-actions-modal";
 import type { TPreviewFile } from "./file-preview-modal";
 import { FilePreviewModal } from "./file-preview-modal";
+import { AppliedFiltersList } from "./filters-bar";
+import { FiltersDropdown } from "./filters-dropdown";
+import { FolderBreadcrumbs } from "./folder-breadcrumbs";
 import { FolderSelect } from "./shared";
 import { UploadModal } from "./upload-modal";
 
@@ -43,7 +45,6 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     tagIds,
     getTagById,
     folderIds,
-    getFolderById,
     getFolderPath,
     getFilteredFileIds,
     getFileById,
@@ -65,6 +66,7 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   } = useFileLibrary();
   // states
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<TPreviewFile | null>(null);
   const [pendingUploads, setPendingUploads] = useState<File[]>([]);
   const [isBulkOpen, setIsBulkOpen] = useState(false);
@@ -76,6 +78,23 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const [newFolderParent, setNewFolderParent] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
+
+  // Server-driven search/filter/order: any filter change refetches from the
+  // database (debounced so typing doesn't fire a request per keystroke)
+  const [searchInput, setSearchInput] = useState("");
+  const isFirstFilterRun = useRef(true);
+  useEffect(() => {
+    const handle = setTimeout(() => setFilters({ search: searchInput.trim() || undefined }), 350);
+    return () => clearTimeout(handle);
+  }, [searchInput, setFilters]);
+  useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
+    void fetchFiles(workspaceSlug);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   // data
   useSWR(`FILE_LIBRARY_CATEGORIES_${workspaceSlug}`, () => fetchCategories(workspaceSlug), { revalidateOnFocus: false });
@@ -97,6 +116,9 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     const match = folderIds.find((id) => folderPathString(id) === currentPath);
     return match ?? null;
   }, [currentPath, folderIds, folderPathString]);
+
+  // Uploads default to the selected folder, else the folder we're inside, else root
+  const uploadTargetFolderId = selectedFolderId ?? currentFolderId;
 
   // dropzone → open the categorization modal instead of uploading directly
   const handleDrop = useCallback((acceptedFiles: File[]) => {
@@ -157,10 +179,23 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     [workspaceSlug, getPresignedViewUrl]
   );
 
-  const handleSelectionChange = useCallback((item: FileSystemItem | null) => {
-    if (item && item.kind === "file") setSelectedAssetId(item.metadata?.assetId ?? null);
-    else setSelectedAssetId(null);
-  }, []);
+  const handleSelectionChange = useCallback(
+    (item: FileSystemItem | null) => {
+      if (item && item.kind === "file") {
+        setSelectedAssetId(item.metadata?.assetId ?? null);
+        setSelectedFolderId(null);
+      } else if (item && item.kind === "folder") {
+        setSelectedAssetId(null);
+        // resolve the folder id from its path so uploads can target it
+        const match = folderIds.find((id) => folderPathString(id) === item.path);
+        setSelectedFolderId(match ?? null);
+      } else {
+        setSelectedAssetId(null);
+        setSelectedFolderId(null);
+      }
+    },
+    [folderIds, folderPathString]
+  );
 
   const handleFileOpen = useCallback((fsFile: FileSystemFileItem) => {
     const assetId = fsFile.metadata?.assetId;
@@ -202,7 +237,18 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     }
   };
 
-  const breadcrumbTrail = getFolderPath(currentFolderId);
+  // Mirror the DB order inside the browser (folders always sort first)
+  const sortOverride = useMemo(() => {
+    const map: Record<string, { key: "name" | "kind" | "size" | "createdAt" | "updatedAt"; direction: "asc" | "desc" }> = {
+      "-created_at": { key: "createdAt", direction: "desc" },
+      name: { key: "name", direction: "asc" },
+      "-name": { key: "name", direction: "desc" },
+      type: { key: "kind", direction: "asc" },
+      "-size": { key: "size", direction: "desc" },
+      "-updated_at": { key: "updatedAt", direction: "desc" },
+    };
+    return map[filters.order ?? "-created_at"];
+  }, [filters.order]);
 
   const labelPopover = (
     kind: "categories" | "tags",
@@ -214,7 +260,7 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     <Popover>
       <Popover.Button className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1 text-12 hover:bg-layer-1-hover">
         {kind === "categories" ? <Layers className="size-3.5" /> : <Tags className="size-3.5" />}
-        {t(`file_library.${kind}.title`)}
+        <span className="hidden sm:inline">{t(`file_library.${kind}.title`)}</span>
       </Popover.Button>
       <Popover.Panel side="bottom" align="end">
         <div className="max-h-60 w-56 space-y-0.5 overflow-y-auto rounded-md border border-subtle bg-layer-1 p-2 shadow-raised-200">
@@ -245,13 +291,15 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     </Popover>
   );
 
+  const iconAction = "flex size-8 items-center justify-center rounded-sm border border-subtle text-secondary hover:bg-layer-1-hover";
+
   return (
     <div className="flex h-full w-full flex-col">
       <UploadModal
         workspaceSlug={workspaceSlug}
         files={pendingUploads}
         onFilesChange={setPendingUploads}
-        defaultFolderId={currentFolderId}
+        defaultFolderId={uploadTargetFolderId}
         onClose={() => setPendingUploads([])}
       />
       <BulkActionsModal workspaceSlug={workspaceSlug} isOpen={isBulkOpen} onClose={() => setIsBulkOpen(false)} />
@@ -265,19 +313,106 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
         content={t("file_library.delete_description")}
       />
 
-      {/* toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-subtle px-4 py-2">
-        <div className="flex items-center gap-2">
-          <Button variant="primary" size="base" onClick={openFilePicker}>
-            <Upload className="size-3.5" />
-            {t("file_library.upload.button")}
-          </Button>
+      {/* toolbar — single compact row: folder breadcrumbs + actions */}
+      <div className="flex items-center justify-between gap-2 border-b border-subtle px-2 py-1.5 sm:px-4">
+        {/* Scrolls horizontally instead of clipping/overlapping the toolbar when the trail is deep */}
+        <div className="horizontal-scrollbar scrollbar-xs flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+          <FolderBreadcrumbs currentFolderId={currentFolderId} onNavigate={(id) => navigateTo(folderPathString(id))} />
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          {/* selected-file quick actions */}
+          {selectedFile && (
+            <>
+              <span className="hidden max-w-32 truncate text-12 text-tertiary lg:inline">
+                {selectedFile.attributes.name}
+              </span>
+              {labelPopover(
+                "categories",
+                categoryIds,
+                (id) => getCategoryById(id),
+                selectedFile.category_ids,
+                (id) =>
+                  void (selectedFile.category_ids.includes(id)
+                    ? removeFileCategory(workspaceSlug, selectedFile.id, id)
+                    : addFileCategories(workspaceSlug, selectedFile.id, [id])
+                  ).catch((error: any) =>
+                    setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
+                  )
+              )}
+              {labelPopover(
+                "tags",
+                tagIds,
+                (id) => getTagById(id),
+                selectedFile.tag_ids,
+                (id) =>
+                  void (selectedFile.tag_ids.includes(id)
+                    ? removeFileTag(workspaceSlug, selectedFile.id, id)
+                    : addFileTags(workspaceSlug, selectedFile.id, [id])
+                  ).catch((error: any) =>
+                    setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
+                  )
+              )}
+              <a
+                href={getFileDownloadUrl(workspaceSlug, selectedFile.id)}
+                className={iconAction}
+                title={t("file_library.download")}
+              >
+                <Download className="size-4" />
+              </a>
+              <button
+                type="button"
+                className={cn(iconAction, "text-danger-primary")}
+                onClick={() => setIsDeleteModalOpen(true)}
+                title={t("file_library.delete")}
+              >
+                <Trash2 className="size-4" />
+              </button>
+              <span className="mx-1 h-5 w-px bg-subtle" />
+            </>
+          )}
+
+          {/* search (collapses to icon-triggered popover on mobile) */}
+          <div className="relative hidden sm:block">
+            <Search className="absolute top-1/2 left-1.5 size-3.5 -translate-y-1/2 text-tertiary" />
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder={t("file_library.bulk.search_placeholder")}
+              className="w-36 rounded-sm border border-subtle bg-transparent py-1 pl-6 pr-1.5 text-12 lg:w-44"
+            />
+          </div>
+
+          {/* filters — work-items-style dropdown of properties + values */}
+          <FiltersDropdown />
+
+          {/* order */}
+          <select
+            className="h-8 max-w-28 rounded-sm border border-subtle bg-transparent px-1.5 text-12 sm:max-w-none"
+            value={filters.order ?? "-created_at"}
+            onChange={(e) => setFilters({ order: e.target.value })}
+            title={t("file_library.order.label")}
+          >
+            <option value="-created_at">{t("file_library.order.newest")}</option>
+            <option value="name">{t("file_library.order.name_asc")}</option>
+            <option value="-name">{t("file_library.order.name_desc")}</option>
+            <option value="type">{t("file_library.order.type")}</option>
+            <option value="-size">{t("file_library.order.size")}</option>
+            <option value="-updated_at">{t("file_library.order.modified")}</option>
+          </select>
+
+          <span className="mx-0.5 h-5 w-px bg-subtle" />
+
+          {/* primary actions — icon-only, tooltip-labelled */}
+          <Tooltip tooltipContent={t("file_library.upload.button")}>
+            <button type="button" className={cn(iconAction, "bg-accent-primary text-on-color hover:opacity-90")} onClick={openFilePicker}>
+              <Upload className="size-4" />
+            </button>
+          </Tooltip>
           <Popover open={isNewFolderOpen} onOpenChange={setIsNewFolderOpen}>
-            <Popover.Button className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1.5 text-12 hover:bg-layer-1-hover">
-              <FolderPlus className="size-3.5" />
-              {t("file_library.folders.new_button")}
+            <Popover.Button className={iconAction} title={t("file_library.folders.new_button")}>
+              <FolderPlus className="size-4" />
             </Popover.Button>
-            <Popover.Panel side="bottom" align="start">
+            <Popover.Panel side="bottom" align="end">
               <div className="w-64 space-y-2 rounded-md border border-subtle bg-layer-1 p-3 shadow-raised-200">
                 <FolderSelect value={newFolderParent} onChange={setNewFolderParent} />
                 <input
@@ -295,108 +430,16 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
               </div>
             </Popover.Panel>
           </Popover>
-          <Button variant="secondary" size="base" onClick={() => setIsBulkOpen(true)}>
-            <Files className="size-3.5" />
-            {t("file_library.bulk.button")}
-          </Button>
-          {/* filters */}
-          <select
-            className="rounded-sm border border-subtle bg-transparent px-1.5 py-1 text-12"
-            value={filters.category ?? ""}
-            onChange={(e) => setFilters({ category: e.target.value || undefined })}
-          >
-            <option value="">{t("file_library.filters.all_categories")}</option>
-            {categoryIds.map((id) => (
-              <option key={id} value={id}>
-                {getCategoryById(id)?.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="rounded-sm border border-subtle bg-transparent px-1.5 py-1 text-12"
-            value={filters.tag ?? ""}
-            onChange={(e) => setFilters({ tag: e.target.value || undefined })}
-          >
-            <option value="">{t("file_library.filters.all_tags")}</option>
-            {tagIds.map((id) => (
-              <option key={id} value={id}>
-                {getTagById(id)?.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {selectedFile && (
-          <div className="flex items-center gap-2">
-            <span className="max-w-40 truncate text-12 text-tertiary">{selectedFile.attributes.name}</span>
-            {labelPopover(
-              "categories",
-              categoryIds,
-              (id) => getCategoryById(id),
-              selectedFile.category_ids,
-              (id) =>
-                void (selectedFile.category_ids.includes(id)
-                  ? removeFileCategory(workspaceSlug, selectedFile.id, id)
-                  : addFileCategories(workspaceSlug, selectedFile.id, [id])
-                ).catch((error: any) =>
-                  setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
-                )
-            )}
-            {labelPopover(
-              "tags",
-              tagIds,
-              (id) => getTagById(id),
-              selectedFile.tag_ids,
-              (id) =>
-                void (selectedFile.tag_ids.includes(id)
-                  ? removeFileTag(workspaceSlug, selectedFile.id, id)
-                  : addFileTags(workspaceSlug, selectedFile.id, [id])
-                ).catch((error: any) =>
-                  setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.error ?? t("error") })
-                )
-            )}
-            <a
-              href={getFileDownloadUrl(workspaceSlug, selectedFile.id)}
-              className="rounded-sm p-1.5 hover:bg-layer-1-hover"
-              title={t("file_library.download")}
-            >
-              <Download className="size-4" />
-            </a>
-            <button
-              type="button"
-              className="rounded-sm p-1.5 text-danger-primary hover:bg-layer-1-hover"
-              onClick={() => setIsDeleteModalOpen(true)}
-              title={t("file_library.delete")}
-            >
-              <Trash2 className="size-4" />
+          <Tooltip tooltipContent={t("file_library.bulk.button")}>
+            <button type="button" className={iconAction} onClick={() => setIsBulkOpen(true)}>
+              <Files className="size-4" />
             </button>
-          </div>
-        )}
+          </Tooltip>
+        </div>
       </div>
 
-      {/* breadcrumbs */}
-      <div className="border-b border-subtle px-4 py-1.5">
-        <Breadcrumbs>
-          <Breadcrumbs.Item
-            component={
-              <button type="button" onClick={() => navigateTo("")}>
-                <BreadcrumbLink label={t("file_library.title")} icon={<Files className="h-3.5 w-3.5 text-tertiary" />} />
-              </button>
-            }
-            isLast={breadcrumbTrail.length === 0}
-          />
-          {breadcrumbTrail.map((folder, index) => (
-            <Breadcrumbs.Item
-              key={folder.id}
-              component={
-                <button type="button" onClick={() => navigateTo(folderPathString(folder.id))}>
-                  <BreadcrumbLink label={folder.name} />
-                </button>
-              }
-              isLast={index === breadcrumbTrail.length - 1}
-            />
-          ))}
-        </Breadcrumbs>
-      </div>
+      {/* applied filters row — pills grouped by property, like work items */}
+      <AppliedFiltersList />
 
       {/* browser + dropzone */}
       <div {...getRootProps()} className="relative h-full min-h-0 w-full">
@@ -427,6 +470,8 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             className="h-full"
             getFileUrl={getFileUrl}
             onPathChange={setCurrentPath}
+            hideToolbarControls
+            sortOverride={sortOverride}
             onSelectionChange={handleSelectionChange}
             onFileOpen={handleFileOpen}
           />

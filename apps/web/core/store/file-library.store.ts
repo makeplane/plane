@@ -45,6 +45,8 @@ export interface IFileLibraryStore {
   getFolderPath: (folderId: string | null) => TFileFolder[];
   // actions
   setFilters: (filters: TLibraryFileFilters) => void;
+  toggleFilterValue: (key: "categories" | "tags", value: string) => void;
+  clearAllFilters: () => void;
   fetchCategories: (workspaceSlug: string) => Promise<void>;
   createCategory: (workspaceSlug: string, data: Partial<TFileCategory>) => Promise<TFileCategory>;
   updateCategory: (workspaceSlug: string, categoryId: string, data: Partial<TFileCategory>) => Promise<TFileCategory>;
@@ -105,6 +107,8 @@ export class FileLibraryStore implements IFileLibraryStore {
       fileIds: computed,
       // actions
       setFilters: action,
+      toggleFilterValue: action,
+      clearAllFilters: action,
       fetchCategories: action,
       createCategory: action,
       updateCategory: action,
@@ -143,10 +147,35 @@ export class FileLibraryStore implements IFileLibraryStore {
       .map((file) => file.id);
   }
 
+  /**
+   * Depth-first tree order (each folder immediately followed by its children),
+   * not a flat alphabetical sort — otherwise same-named folders under
+   * different parents (e.g. two folders called "test") interleave and the
+   * tree renders as a broken/disconnected list wherever it's shown flat
+   * (the folder picker, "new folder" parent select).
+   */
   get folderIds() {
-    return Object.values(this.foldersMap)
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((folder) => folder.id);
+    const childrenByParent = new Map<string | null, TFileFolder[]>();
+    for (const folder of Object.values(this.foldersMap)) {
+      const parentKey = folder.parent ?? null;
+      const siblings = childrenByParent.get(parentKey) ?? [];
+      siblings.push(folder);
+      childrenByParent.set(parentKey, siblings);
+    }
+    for (const siblings of childrenByParent.values()) siblings.sort((a, b) => a.name.localeCompare(b.name));
+
+    const ordered: string[] = [];
+    const visited = new Set<string>();
+    const visit = (parentKey: string | null) => {
+      for (const folder of childrenByParent.get(parentKey) ?? []) {
+        if (visited.has(folder.id)) continue; // defensive: never loop on a stray cycle
+        visited.add(folder.id);
+        ordered.push(folder.id);
+        visit(folder.id);
+      }
+    };
+    visit(null);
+    return ordered;
   }
 
   get tagIds() {
@@ -164,20 +193,9 @@ export class FileLibraryStore implements IFileLibraryStore {
 
   getFileById = computedFn((fileId: string) => this.filesMap[fileId]);
 
-  getFilteredFileIds = computedFn(() => {
-    const { category, tag, search, type } = this.filters;
-    return Object.values(this.filesMap)
-      .filter((file) => {
-        if (category === "none" && file.category_ids.length > 0) return false;
-        if (category && category !== "none" && !file.category_ids.includes(category)) return false;
-        if (tag && !file.tag_ids.includes(tag)) return false;
-        if (search && !file.attributes.name.toLowerCase().includes(search.toLowerCase())) return false;
-        if (type && !file.attributes.type.toLowerCase().startsWith(type.toLowerCase())) return false;
-        return true;
-      })
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .map((file) => file.id);
-  });
+  // Files are already filtered and ordered by the database; the browser just
+  // renders what's in the map (folders are added and sorted by the UI).
+  getFilteredFileIds = computedFn(() => Object.values(this.filesMap).map((file) => file.id));
 
   /** Trail from the root down to the given folder (empty for the root). */
   getFolderPath = computedFn((folderId: string | null) => {
@@ -193,6 +211,17 @@ export class FileLibraryStore implements IFileLibraryStore {
   // actions
   setFilters = (filters: TLibraryFileFilters) => {
     this.filters = { ...this.filters, ...filters };
+  };
+
+  /** Adds/removes a value from a multi-value filter group (categories | tags). */
+  toggleFilterValue = (key: "categories" | "tags", value: string) => {
+    const current = this.filters[key] ?? [];
+    const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    this.filters = { ...this.filters, [key]: next.length > 0 ? next : undefined };
+  };
+
+  clearAllFilters = () => {
+    this.filters = { ...this.filters, categories: undefined, tags: undefined };
   };
 
   fetchCategories = async (workspaceSlug: string) => {
@@ -244,7 +273,8 @@ export class FileLibraryStore implements IFileLibraryStore {
   fetchFiles = async (workspaceSlug: string) => {
     try {
       this.filesLoader = true;
-      const files = await this.fileLibraryService.getFiles(workspaceSlug);
+      // Filters resolve against the database, not just the loaded set
+      const files = await this.fileLibraryService.getFiles(workspaceSlug, { ...this.filters });
       runInAction(() => {
         this.filesMap = {};
         files.forEach((file) => set(this.filesMap, [file.id], file));
