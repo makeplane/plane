@@ -119,6 +119,76 @@ describe("computeLoadedPreview (TEST-19 / FE-01 / FE-02)", () => {
     expect(preview.get("wi-B")).toEqual({ start_date: "2026-05-12", target_date: "2026-05-13" });
   });
 
+  it("backward: duration-managed predecessor derives start via working days (Python parity)", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-05-07",
+        target_date: "2026-05-08",
+        planned_duration_working_days: 2,
+      },
+      "wi-B": { id: "wi-B", start_date: "2026-05-11", target_date: "2026-05-12" },
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-B",
+      original_start_date: "2026-05-11",
+      original_target_date: "2026-05-12",
+      requested_start_date: "2026-05-08",
+      requested_target_date: "2026-05-09",
+    });
+
+    // Mirrors test_duration_managed_predecessor_preserves_working_duration_when_pulled_left.
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-06", target_date: "2026-05-07" });
+  });
+
+  it("backward: weekend required target snaps to Friday for duration-managed predecessor", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-01-12",
+        target_date: "2026-01-16",
+        planned_duration_working_days: 5,
+      },
+      "wi-B": { id: "wi-B", start_date: "2026-01-19", target_date: "2026-01-23" },
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-B",
+      original_start_date: "2026-01-19",
+      original_target_date: "2026-01-23",
+      requested_start_date: "2026-01-12",
+      requested_target_date: "2026-01-16",
+    });
+
+    // Mirrors test_backward_weekend_required_target_snaps_to_friday_for_duration_item:
+    // candidate target Jan 11 (Sun) → Friday Jan 9; start = subtract 5 working days.
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-01-05", target_date: "2026-01-09" });
+  });
+
+  it("dragged: weekend requested start derives target from next Monday", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-01-05",
+        target_date: "2026-01-05",
+        planned_duration_working_days: 1,
+      },
+    };
+
+    const preview = computeLoadedPreview([], items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-01-05",
+      original_target_date: "2026-01-05",
+      requested_start_date: "2026-01-10", // Saturday
+      requested_target_date: "2026-01-10",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-01-10", target_date: "2026-01-12" });
+  });
+
   it("incomplete loaded data: silently skips successors not in items_by_id (server is authoritative; D-04a)", () => {
     const items_by_id: Record<string, LoadedWorkItem> = {
       "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
@@ -216,6 +286,40 @@ describe("applyServerWorkItems (TEST-21 / FE-04)", () => {
     expect(next["wi-A"].start_date).toBe("2026-05-09");
     expect(next["wi-Z"]).toBeUndefined();
     expect(Object.keys(next)).toEqual(["wi-A"]);
+  });
+
+  it("merges planned_duration_working_days only when the server row carries the key", () => {
+    const current = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-05-04",
+        target_date: "2026-05-08",
+        planned_duration_working_days: 5,
+        updated_at: "2026-05-04T00:00:00Z",
+      },
+    };
+
+    const withKey = applyServerWorkItems(current, [
+      {
+        id: "wi-A",
+        start_date: "2026-05-07",
+        target_date: "2026-05-13",
+        planned_duration_working_days: 4,
+        updated_at: "2026-05-05T00:00:00Z",
+      },
+    ]);
+    expect(withKey["wi-A"].planned_duration_working_days).toBe(4);
+
+    const withoutKey = applyServerWorkItems(current, [
+      {
+        id: "wi-A",
+        start_date: "2026-05-07",
+        target_date: "2026-05-13",
+        updated_at: "2026-05-05T00:00:00Z",
+      },
+    ] as never);
+    expect(withoutKey["wi-A"].planned_duration_working_days).toBe(5);
+    expect(withoutKey["wi-A"].start_date).toBe("2026-05-07");
   });
 
   it("immutability (D-04c): does not mutate the input current snapshot or server array", () => {

@@ -134,13 +134,21 @@ export function computeLoadedPreview(
         // No violation? leave it alone.
         if (pred.target_date <= candidateTargetStr) continue;
 
+        // Working-day durations only round-trip through working-day targets —
+        // mirror the server's Friday snap (scheduling.working_day_target_on_or_before).
+        const effectiveTargetStr =
+          pred.planned_duration_working_days != null
+            ? _latestWorkingDayOnOrBefore(candidateTargetStr)
+            : candidateTargetStr;
+        if (!effectiveTargetStr) continue;
+
         const newStartStr =
           pred.planned_duration_working_days != null
-            ? _subtractWorkingDays(candidateTargetStr, pred.planned_duration_working_days)
-            : _subtractCalendarDurationStart(pred, candidateTargetStr);
+            ? _subtractWorkingDays(effectiveTargetStr, pred.planned_duration_working_days)
+            : _subtractCalendarDurationStart(pred, effectiveTargetStr);
         if (!newStartStr) continue;
 
-        result.set(pred.id, { start_date: newStartStr, target_date: candidateTargetStr });
+        result.set(pred.id, { start_date: newStartStr, target_date: effectiveTargetStr });
         if (!visited.has(pred.id)) {
           visited.add(pred.id);
           queue.push(pred.id);
@@ -196,6 +204,16 @@ function _isWeekend(value: string): boolean {
   const [year, month, day] = value.split("-").map(Number);
   const weekday = new Date(year, month - 1, day).getDay();
   return weekday === 0 || weekday === 6;
+}
+
+function _latestWorkingDayOnOrBefore(value: string): string | null {
+  let current = value;
+  while (_isWeekend(current)) {
+    const prev = renderFormattedPayloadDate(addDaysToDate(current, -1));
+    if (!prev) return null;
+    current = prev;
+  }
+  return current;
 }
 
 /**
