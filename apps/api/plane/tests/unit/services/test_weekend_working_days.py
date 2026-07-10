@@ -56,6 +56,42 @@ class TestWeekendWorkingDays:
             target_date=date(2026, 5, 11),
         ) == (date(2026, 5, 8), date(2026, 5, 11), 2)
 
+    def test_weekend_target_edit_clears_duration(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(2026, 1, 5),
+            current_target_date=date(2026, 1, 9),
+            current_planned_duration_working_days=5,
+            target_date=date(2026, 1, 11),  # Sunday — never round-trips
+        )
+        assert (start, target, duration) == (date(2026, 1, 5), date(2026, 1, 11), None)
+
+    def test_target_edit_beyond_max_duration_clears_duration(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(2026, 1, 5),
+            current_target_date=date(2026, 1, 9),
+            current_planned_duration_working_days=5,
+            target_date=date(2027, 6, 1),  # 367 working days from start
+        )
+        assert (start, target, duration) == (date(2026, 1, 5), date(2027, 6, 1), None)
+
+    def test_target_edit_at_max_duration_boundary_keeps_duration(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(2026, 1, 5),
+            current_target_date=date(2026, 1, 9),
+            current_planned_duration_working_days=5,
+            target_date=date(2027, 5, 31),  # exactly 366 working days, lands Monday
+        )
+        assert duration == 366
+
+    def test_weekend_start_roundtrip_keeps_duration(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(2026, 1, 10),  # Saturday start is allowed by spec
+            current_target_date=None,
+            current_planned_duration_working_days=None,
+            target_date=date(2026, 1, 12),  # Monday; count=1 and add(Sat,1)==Monday
+        )
+        assert (start, target, duration) == (date(2026, 1, 10), date(2026, 1, 12), 1)
+
     def test_weekend_and_working_day_classification(self):
         assert is_weekend(date(2026, 5, 9)) is True
         assert is_working_day(date(2026, 5, 9)) is False

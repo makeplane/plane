@@ -109,6 +109,50 @@ class TestIssueWorkingDayDuration:
         issue.refresh_from_db()
         assert issue.planned_duration_working_days == 2
 
+    def test_patch_weekend_target_keeps_date_and_clears_duration(
+        self, session_client, workspace, project_with_member
+    ):
+        project, _state = project_with_member
+        issue = IssueFactory.create(
+            project=project,
+            start_date="2026-01-05",
+            target_date="2026-01-09",
+            planned_duration_working_days=5,
+        )
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"target_date": "2026-01-11"},  # Sunday
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        issue.refresh_from_db()
+        assert issue.target_date.isoformat() == "2026-01-11"  # user's date untouched
+        assert issue.planned_duration_working_days is None
+
+    def test_patch_multi_year_target_clears_duration_instead_of_overflowing(
+        self, session_client, workspace, project_with_member
+    ):
+        project, _state = project_with_member
+        issue = IssueFactory.create(
+            project=project,
+            start_date="2026-01-05",
+            target_date="2026-01-09",
+            planned_duration_working_days=5,
+        )
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"target_date": "2027-06-01"},  # 367 working days
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        issue.refresh_from_db()
+        assert issue.target_date.isoformat() == "2027-06-01"
+        assert issue.planned_duration_working_days is None
+
     def test_clearing_duration_keeps_explicit_target_date_behavior(
         self, session_client, workspace, project_with_member
     ):

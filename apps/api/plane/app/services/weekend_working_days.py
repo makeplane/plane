@@ -83,6 +83,29 @@ def count_working_days(start: date, target: date) -> int:
     return counted
 
 
+def _recalculated_duration(start: date, target: date) -> int | None:
+    """Duration derived from a direct target-date edit (caller guarantees start <= target).
+
+    Only ranges that round-trip through `add_working_days` stay duration-managed:
+    weekend-landing targets and ranges beyond MAX_WORKING_DAY_DURATION fall back
+    to explicit-date behavior (None) instead of storing an inconsistent triple.
+
+    The max-target bound is computed first so a far-future target (e.g. year
+    9999 from a date picker) exits after ~500 iterations instead of walking
+    the whole range day by day — `count_working_days` below is then bounded
+    by the same ~500-day window.
+    """
+    max_target = add_working_days(start, MAX_WORKING_DAY_DURATION)
+    if target > max_target:
+        return None
+    working_days = count_working_days(start, target)
+    if working_days < 1:
+        return None
+    if add_working_days(start, working_days) != target:
+        return None
+    return working_days
+
+
 def normalize_working_day_schedule(
     *,
     current_start_date: date | None,
@@ -124,8 +147,7 @@ def normalize_working_day_schedule(
         elif start is not None:
             if target < start:
                 raise ValueError("Start date cannot exceed target date")
-            working_days = count_working_days(start, target)
-            duration = working_days if working_days >= 1 else None
+            duration = _recalculated_duration(start, target)
     elif start_provided and duration is not None and start is not None:
         target = add_working_days(start, duration)
 
