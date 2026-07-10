@@ -67,3 +67,27 @@ class TestPageOrderByAllowlist:
         response = session_client.get(_pages_url(workspace.slug, project.id))
 
         assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_allowlisted_order_by_actually_orders_results(self, session_client, workspace, create_user):
+        """An allowlisted order_by must actually affect the result ordering —
+        guards against the param being silently overridden by a later
+        .order_by() call."""
+        project = Project.objects.create(name="P2", identifier="ORD", workspace=workspace)
+        ProjectMember.objects.create(
+            workspace=workspace, project=project, member=create_user, role=20, is_active=True
+        )
+        # Non-favorite public pages so the favourite-first primary sort is a
+        # no-op and the secondary (name) ordering is observable.
+        for name in ("Gamma", "Alpha", "Beta"):
+            page = Page.objects.create(
+                workspace=workspace, owned_by=create_user, access=Page.PUBLIC_ACCESS, name=name
+            )
+            ProjectPage.objects.create(workspace=workspace, project=project, page=page)
+
+        asc = session_client.get(_pages_url(workspace.slug, project.id), {"order_by": "name"})
+        desc = session_client.get(_pages_url(workspace.slug, project.id), {"order_by": "-name"})
+
+        assert asc.status_code == status.HTTP_200_OK
+        assert [p["name"] for p in asc.json()] == ["Alpha", "Beta", "Gamma"]
+        assert [p["name"] for p in desc.json()] == ["Gamma", "Beta", "Alpha"]

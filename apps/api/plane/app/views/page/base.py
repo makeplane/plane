@@ -101,20 +101,23 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
-            # Sanitize the user-supplied order_by against an allowlist before it
-            # reaches .order_by(): Django resolves the field at call time, so an
-            # unknown field raises FieldError (500 DoS) and a relation path
-            # (e.g. owned_by__password) enables ORM relational traversal
-            # (GHSA-2v48).
+            .prefetch_related("labels")
+            # Sanitize the user-supplied order_by against an allowlist: Django
+            # resolves the field at call time, so an unknown field raises
+            # FieldError (500 DoS) and a relation path (e.g. owned_by__password)
+            # enables ORM relational traversal (GHSA-2v48). Favourites stay
+            # pinned first; the sanitized user ordering is the secondary sort
+            # (a single .order_by() so it is not overridden), with id as a
+            # stable tiebreak for pagination.
             .order_by(
+                "-is_favorite",
                 sanitize_order_by(
                     self.request.GET.get("order_by", "-created_at"),
                     PAGE_ORDER_BY_ALLOWLIST,
                     default="-created_at",
-                )
+                ),
+                "id",
             )
-            .prefetch_related("labels")
-            .order_by("-is_favorite", "-created_at")
             .annotate(
                 project=Exists(
                     ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
