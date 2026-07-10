@@ -15,6 +15,7 @@ default. Tests in 03-03 use ``mocker.patch`` on
 bypass this.
 """
 from datetime import date, datetime, timedelta, timezone as dt_timezone
+from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
@@ -147,17 +148,16 @@ class TestTimelinePropagation:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_existing_bulk_update_endpoint_unchanged(
-        self, session_client, workspace, create_user
-    ):
-        """API-11 regression smoke against ``IssueBulkUpdateDateEndpoint``.
+    def test_bulk_update_endpoint_contract(self, session_client, workspace, create_user, monkeypatch):
+        """API-11 structural smoke against ``IssueBulkUpdateDateEndpoint``.
 
-        Per Open Question 5: structural smoke only, NOT a full behavior
-        re-verification. We POST one updates entry with new dates, assert
-        200, and assert the response body's top-level keys match the
-        existing ``{"message": ...}`` shape (see
-        ``apps/api/plane/app/views/issue/base.py:1093-1170``).
+        The weekend working-day duration branch intentionally extended the
+        response from ``{"message"}`` to ``{"message", "issues"}`` so the
+        frontend can merge server-normalized schedules. Full duration
+        semantics live in ``test_issue_bulk_update_dates.py``; this remains
+        a structural smoke only.
         """
+        monkeypatch.setattr("plane.app.views.issue.base.issue_activity.delay", Mock())
         # Set up a project + issue + project membership so the existing
         # @allow_permission([ROLE.ADMIN, ROLE.MEMBER]) decorator passes.
         project = ProjectFactory.create(workspace=workspace, created_by=create_user)
@@ -184,11 +184,14 @@ class TestTimelinePropagation:
 
         assert response.status_code == status.HTTP_200_OK
         body = response.json()
-        # Existing endpoint returns a flat {"message": "..."} body.
-        assert set(body.keys()) == {"message"}, (
-            f"IssueBulkUpdateDateEndpoint shape changed; got keys "
-            f"{set(body.keys())}. API-11 regression — see Plan 03-01."
-        )
+        assert set(body.keys()) == {"message", "issues"}
+        assert len(body["issues"]) == 1
+        assert set(body["issues"][0].keys()) == {
+            "id",
+            "start_date",
+            "target_date",
+            "planned_duration_working_days",
+        }
 
 
 # ---------------------------------------------------------------------------
