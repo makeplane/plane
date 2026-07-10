@@ -166,7 +166,7 @@ class WorkItemTemplateViewSet(BaseViewSet):
             {
                 "parent_issue_id": str(parent_issue.id),
                 "child_issue_ids": {
-                    str(item.id): str(issue.id)
+                    item: str(issue.id)
                     for item, issue in item_to_issue_map.items()
                 },
                 "total_issues": len(template_items) + 1,

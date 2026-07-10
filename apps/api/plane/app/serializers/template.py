@@ -17,7 +17,22 @@ from plane.db.models.issue import IssueRelationChoices
 VALID_RELATION_TYPES = {choice.value for choice in IssueRelationChoices}
 
 
+class TemplateItemIdField(serializers.Field):
+    """Accepts any string on write; outputs the PK (UUID) on read."""
+
+    def to_representation(self, value):
+        if hasattr(value, "pk"):
+            return str(value.pk)
+        return str(value)
+
+    def to_internal_value(self, data):
+        return str(data)
+
+
 class WorkItemTemplateDependencySerializer(BaseSerializer):
+    source_template_item = TemplateItemIdField()
+    target_template_item = TemplateItemIdField()
+
     def validate_relation_type(self, value):
         if value not in VALID_RELATION_TYPES:
             raise serializers.ValidationError(
@@ -48,6 +63,8 @@ class WorkItemTemplateDependencySerializer(BaseSerializer):
 
 
 class WorkItemTemplateItemSerializer(BaseSerializer):
+    id = TemplateItemIdField(required=False)
+
     class Meta:
         model = WorkItemTemplateItem
         fields = [
@@ -224,8 +241,15 @@ class WorkItemTemplateCreateSerializer(BaseSerializer):
 
         item_map = {}
         for item_data in items_data:
-            item = WorkItemTemplateItem.objects.create(template=template, **item_data)
-            item_map[item_data.get("id")] = item
+            temp_id = item_data.pop("id", None)
+            item = WorkItemTemplateItem.objects.create(
+                template=template,
+                project_id=template.project_id,
+                workspace_id=template.workspace_id,
+                **item_data,
+            )
+            key = str(temp_id) if temp_id else str(item.id)
+            item_map[key] = item
 
         for dep_data in dependencies_data:
             source_id = dep_data.pop("source_template_item")
@@ -234,6 +258,8 @@ class WorkItemTemplateCreateSerializer(BaseSerializer):
             target_item = item_map[target_id]
             WorkItemTemplateDependency.objects.create(
                 template=template,
+                project_id=template.project_id,
+                workspace_id=template.workspace_id,
                 source_template_item=source_item,
                 target_template_item=target_item,
                 **dep_data,
@@ -252,26 +278,46 @@ class WorkItemTemplateCreateSerializer(BaseSerializer):
         if items_data is not None:
             existing_items = {str(item.id): item for item in instance.items.all()}
             incoming_ids = set()
+            item_map = {}
             for item_data in items_data:
-                item_id = item_data.get("id")
-                if item_id and str(item_id) in existing_items:
-                    item = existing_items[str(item_id)]
+                temp_id = item_data.pop("id", None)
+                if temp_id and str(temp_id) in existing_items:
+                    item = existing_items[str(temp_id)]
                     for attr, value in item_data.items():
-                        if attr != "id":
-                            setattr(item, attr, value)
+                        setattr(item, attr, value)
                     item.save()
-                    incoming_ids.add(str(item_id))
+                    incoming_ids.add(str(temp_id))
+                    item_map[str(temp_id)] = item
                 else:
-                    new_item = WorkItemTemplateItem.objects.create(template=instance, **item_data)
+                    new_item = WorkItemTemplateItem.objects.create(
+                        template=instance,
+                        project_id=instance.project_id,
+                        workspace_id=instance.workspace_id,
+                        **item_data,
+                    )
                     incoming_ids.add(str(new_item.id))
+                    key = str(temp_id) if temp_id else str(new_item.id)
+                    item_map[key] = new_item
 
             for item_id, item in existing_items.items():
                 if item_id not in incoming_ids:
                     item.delete()
+                    item_map.pop(item_id, None)
 
         if dependencies_data is not None:
             instance.dependencies.all().delete()
             for dep_data in dependencies_data:
-                WorkItemTemplateDependency.objects.create(template=instance, **dep_data)
+                source_id = dep_data.pop("source_template_item")
+                target_id = dep_data.pop("target_template_item")
+                source_item = item_map[source_id]
+                target_item = item_map[target_id]
+                WorkItemTemplateDependency.objects.create(
+                    template=instance,
+                    project_id=instance.project_id,
+                    workspace_id=instance.workspace_id,
+                    source_template_item=source_item,
+                    target_template_item=target_item,
+                    **dep_data,
+                )
 
         return instance
