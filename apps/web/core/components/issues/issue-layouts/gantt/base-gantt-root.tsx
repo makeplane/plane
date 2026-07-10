@@ -189,7 +189,28 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         }
       } else {
         // D-01b: resize / half-block / multi-row — unchanged path (verbatim).
-        await issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
+        // A move that falls through here would read as a target edit on the
+        // bulk endpoint and silently recalculate the stored working-day
+        // duration — send start-only so the server derives target from the
+        // stored duration instead (Mutation Rule 2).
+        const sanitizedUpdates =
+          context.dragDirection === "move"
+            ? updates.map((update) => {
+                // Only full-range payloads are converted. A target-only
+                // half-block (duration stored without start_date is allowed
+                // by spec) must pass through untouched — stripping its
+                // target_date would empty the schedule patch and turn the
+                // move into a silent no-op on the server.
+                if (!update.start_date || !update.target_date) return update;
+                const blockData = issueTimelineStore.blocksMap[update.id]?.data as
+                  | { planned_duration_working_days?: number | null }
+                  | undefined;
+                if (blockData?.planned_duration_working_days == null) return update;
+                const { target_date: _targetDate, ...startOnly } = update;
+                return startOnly;
+              })
+            : updates;
+        await issues.updateIssueDates(workspaceSlug.toString(), sanitizedUpdates, projectId.toString()).catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
