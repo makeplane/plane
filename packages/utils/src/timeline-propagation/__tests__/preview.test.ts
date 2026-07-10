@@ -317,7 +317,7 @@ describe("applyServerWorkItems (TEST-21 / FE-04)", () => {
         target_date: "2026-05-13",
         updated_at: "2026-05-05T00:00:00Z",
       },
-    ] as never);
+    ]);
     expect(withoutKey["wi-A"].planned_duration_working_days).toBe(5);
     expect(withoutKey["wi-A"].start_date).toBe("2026-05-07");
   });
