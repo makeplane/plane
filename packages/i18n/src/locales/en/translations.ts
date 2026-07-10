@@ -632,6 +632,8 @@ export default {
     toggle_peek_view_layout: "Toggle peek view layout",
     options: "Options",
     duration: "Duration",
+    duration_placeholder: "Enter days",
+    working_days: "working days",
     today: "Today",
     week: "Week",
     month: "Month",

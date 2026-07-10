@@ -68,6 +68,7 @@ export type TBaseIssue = {
   updated_at: string;
   start_date: string | null;
   target_date: string | null;
+  planned_duration_working_days?: number | null;
   completed_at: string | null;
   archived_at: string | null;
 
@@ -145,6 +146,7 @@ export type TBulkIssueProperties = Pick<
   | "assignee_ids"
   | "start_date"
   | "target_date"
+  | "planned_duration_working_days"
   | "module_ids"
   | "cycle_id"
   | "estimate_point"

@@ -21,6 +21,13 @@ Module scope (PROP-18): move-only.
 # Python imports
 from datetime import date, timedelta
 
+# Module imports
+from plane.app.services.weekend_working_days import (
+    add_working_days,
+    latest_working_day_on_or_before,
+    subtract_working_days,
+)
+
 
 def range_duration(start: date, target: date) -> timedelta:
     """Return `target - start`. `start == target` → `timedelta(0)` (D-03)."""
@@ -30,6 +37,21 @@ def range_duration(start: date, target: date) -> timedelta:
 def add_calendar_days(d: date, n: int) -> date:
     """Return `d + n` calendar days (n may be negative). Calendar-day only (D-03 / PROP-11)."""
     return d + timedelta(days=n)
+
+
+def target_for_working_duration(start: date, duration: int) -> date:
+    """Return the target date for an inclusive weekend-only working-day duration."""
+    return add_working_days(start, duration)
+
+
+def start_for_working_duration(target: date, duration: int) -> date:
+    """Return the start date for an inclusive weekend-only working-day duration."""
+    return subtract_working_days(target, duration)
+
+
+def working_day_target_on_or_before(target: date) -> date:
+    """Snap a weekend-landing target to the closest earlier working day."""
+    return latest_working_day_on_or_before(target)
 
 
 def next_valid_start(after_target: date) -> date:

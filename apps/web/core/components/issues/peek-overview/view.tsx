@@ -73,6 +73,11 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement && issuePeekOverviewRef.current?.contains(activeElement)) {
+      activeElement.blur();
+    }
+
     setPeekIssue(undefined);
     if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };

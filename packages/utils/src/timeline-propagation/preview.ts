@@ -11,7 +11,12 @@ import { addDaysToDate, findTotalDaysInRange, renderFormattedPayloadDate } from 
 export type LoadedGraphEdge = { predecessor_id: string; successor_id: string };
 
 /** Loaded Work Item (id + dated range) — Phase 5 supplies the snapshot at beginPreview. */
-export type LoadedWorkItem = { id: string; start_date: string; target_date: string };
+export type LoadedWorkItem = {
+  id: string;
+  start_date: string;
+  target_date: string;
+  planned_duration_working_days?: number | null;
+};
 
 /** Loaded-graph preview map: per Work Item id, the new (start_date, target_date) under the requested move. */
 export type PreviewResult = Map<string, { start_date: string; target_date: string }>;
@@ -60,10 +65,16 @@ export function computeLoadedPreview(
   dragged: ComputeLoadedPreviewDragged
 ): PreviewResult {
   const result: PreviewResult = new Map();
+  const draggedItem = items_by_id[dragged.id];
+  const draggedTarget =
+    draggedItem?.planned_duration_working_days != null
+      ? (_addWorkingDays(dragged.requested_start_date, draggedItem.planned_duration_working_days) ??
+        dragged.requested_target_date)
+      : dragged.requested_target_date;
   // The dragged Work Item always lands at the requested dates (move-only; PROP-18).
   result.set(dragged.id, {
     start_date: dragged.requested_start_date,
-    target_date: dragged.requested_target_date,
+    target_date: draggedTarget,
   });
 
   // Compute delta in calendar days from original_start to requested_start.
@@ -97,10 +108,10 @@ export function computeLoadedPreview(
         // No violation? leave the successor alone (gap preservation, PROP-07).
         if (succ.start_date >= candidateStart) continue;
 
-        const duration = findTotalDaysInRange(succ.start_date, succ.target_date, false);
-        if (duration === undefined) continue;
-        const newTarget = addDaysToDate(candidateStart, duration);
-        const newTargetStr = renderFormattedPayloadDate(newTarget);
+        const newTargetStr =
+          succ.planned_duration_working_days != null
+            ? _addWorkingDays(candidateStart, succ.planned_duration_working_days)
+            : _addCalendarDurationTarget(succ, candidateStart);
         if (!newTargetStr) continue;
 
         result.set(succ.id, { start_date: candidateStart, target_date: newTargetStr });
@@ -123,13 +134,21 @@ export function computeLoadedPreview(
         // No violation? leave it alone.
         if (pred.target_date <= candidateTargetStr) continue;
 
-        const duration = findTotalDaysInRange(pred.start_date, pred.target_date, false);
-        if (duration === undefined) continue;
-        const newStartDate = addDaysToDate(candidateTargetStr, -duration);
-        const newStartStr = renderFormattedPayloadDate(newStartDate);
+        // Working-day durations only round-trip through working-day targets —
+        // mirror the server's Friday snap (scheduling.working_day_target_on_or_before).
+        const effectiveTargetStr =
+          pred.planned_duration_working_days != null
+            ? _latestWorkingDayOnOrBefore(candidateTargetStr)
+            : candidateTargetStr;
+        if (!effectiveTargetStr) continue;
+
+        const newStartStr =
+          pred.planned_duration_working_days != null
+            ? _subtractWorkingDays(effectiveTargetStr, pred.planned_duration_working_days)
+            : _subtractCalendarDurationStart(pred, effectiveTargetStr);
         if (!newStartStr) continue;
 
-        result.set(pred.id, { start_date: newStartStr, target_date: candidateTargetStr });
+        result.set(pred.id, { start_date: newStartStr, target_date: effectiveTargetStr });
         if (!visited.has(pred.id)) {
           visited.add(pred.id);
           queue.push(pred.id);
@@ -139,6 +158,62 @@ export function computeLoadedPreview(
   }
 
   return result;
+}
+
+function _addCalendarDurationTarget(item: LoadedWorkItem, candidateStart: string): string | null {
+  const duration = findTotalDaysInRange(item.start_date, item.target_date, false);
+  if (duration === undefined) return null;
+  return renderFormattedPayloadDate(addDaysToDate(candidateStart, duration)) ?? null;
+}
+
+function _subtractCalendarDurationStart(item: LoadedWorkItem, candidateTarget: string): string | null {
+  const duration = findTotalDaysInRange(item.start_date, item.target_date, false);
+  if (duration === undefined) return null;
+  return renderFormattedPayloadDate(addDaysToDate(candidateTarget, -duration)) ?? null;
+}
+
+function _addWorkingDays(start: string, duration: number): string | null {
+  if (duration < 1) return null;
+  let current = start;
+  let counted = 0;
+  while (counted < duration) {
+    if (!_isWeekend(current)) counted += 1;
+    if (counted === duration) return current;
+    const next = renderFormattedPayloadDate(addDaysToDate(current, 1));
+    if (!next) return null;
+    current = next;
+  }
+  return current;
+}
+
+function _subtractWorkingDays(target: string, duration: number): string | null {
+  if (duration < 1) return null;
+  let current = target;
+  let counted = 0;
+  while (counted < duration) {
+    if (!_isWeekend(current)) counted += 1;
+    if (counted === duration) return current;
+    const previous = renderFormattedPayloadDate(addDaysToDate(current, -1));
+    if (!previous) return null;
+    current = previous;
+  }
+  return current;
+}
+
+function _isWeekend(value: string): boolean {
+  const [year, month, day] = value.split("-").map(Number);
+  const weekday = new Date(year, month - 1, day).getDay();
+  return weekday === 0 || weekday === 6;
+}
+
+function _latestWorkingDayOnOrBefore(value: string): string | null {
+  let current = value;
+  while (_isWeekend(current)) {
+    const prev = renderFormattedPayloadDate(addDaysToDate(current, -1));
+    if (!prev) return null;
+    current = prev;
+  }
+  return current;
 }
 
 /**
@@ -192,7 +267,13 @@ export function diffHiddenUpdate(
  * this projection). Returns a new object — never mutates inputs (D-04c).
  */
 export function applyServerWorkItems<
-  T extends { id: string; start_date?: string | null; target_date?: string | null; updated_at?: string },
+  T extends {
+    id: string;
+    start_date?: string | null;
+    target_date?: string | null;
+    planned_duration_working_days?: number | null;
+    updated_at?: string;
+  },
 >(current: Readonly<Record<string, T>>, server_work_items: readonly TTimelinePropagationWorkItem[]): Record<string, T> {
   const next: Record<string, T> = { ...current };
   for (const wi of server_work_items) {
@@ -202,6 +283,9 @@ export function applyServerWorkItems<
       ...existing,
       start_date: wi.start_date,
       target_date: wi.target_date,
+      ...("planned_duration_working_days" in wi
+        ? { planned_duration_working_days: wi.planned_duration_working_days }
+        : {}),
       updated_at: wi.updated_at,
     };
   }

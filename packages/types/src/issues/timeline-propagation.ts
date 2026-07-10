@@ -47,6 +47,7 @@ export type TTimelinePropagationWorkItem = {
   id: string;
   start_date: string;
   target_date: string;
+  planned_duration_working_days?: number | null;
   /** ISO 8601 with microseconds (Phase 3 D-04 / D-05f single-now invariant). */
   updated_at: string;
 };

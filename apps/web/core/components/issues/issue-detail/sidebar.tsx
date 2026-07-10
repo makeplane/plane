@@ -4,9 +4,12 @@
  * See the LICENSE file for details.
  */
 
+import { CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
+import { useEffect, useRef, useState } from "react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Input } from "@plane/ui";
 // ui
 import {
   CycleIcon,
@@ -48,6 +51,8 @@ import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
+const DurationPropertyIcon = ({ className }: { className?: string }) => <CalendarDays className={className} />;
+
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -68,6 +73,13 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
   const issue = getIssueById(issueId);
+  const [durationInput, setDurationInput] = useState("");
+  const durationInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setDurationInput(issue?.planned_duration_working_days?.toString() ?? "");
+  }, [issue?.planned_duration_working_days]);
+
   if (!issue) return <></>;
 
   const createdByDetails = getUserDetails(issue.created_by);
@@ -81,6 +93,32 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const commitDurationInput = () => {
+    const currentValue = issue.planned_duration_working_days?.toString() ?? "";
+    const nextValue = durationInput.trim();
+    if (nextValue === currentValue) return;
+
+    if (nextValue === "") {
+      issueOperations.update(workspaceSlug, projectId, issueId, { planned_duration_working_days: null });
+      return;
+    }
+
+    if (!/^\d+$/.test(nextValue)) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    const parsedDuration = Number.parseInt(nextValue, 10);
+    if (parsedDuration < 1 || parsedDuration > 366) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    issueOperations.update(workspaceSlug, projectId, issueId, {
+      planned_duration_working_days: parsedDuration,
+    });
+  };
 
   return (
     <>
@@ -160,6 +198,50 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
               />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem
+              icon={DurationPropertyIcon}
+              label={t("common.duration")}
+              childrenClassName="min-w-0"
+            >
+              <label
+                className={cn(
+                  "flex h-7.5 w-full min-w-0 items-center gap-1.5 rounded-sm border px-2 focus-within:border-accent-strong focus-within:ring-1 focus-within:ring-accent-strong",
+                  isEditable
+                    ? "cursor-text border-strong bg-surface-1"
+                    : "cursor-not-allowed border-subtle-1 bg-layer-1"
+                )}
+                onMouseDown={(event) => {
+                  if (event.target !== durationInputRef.current) {
+                    event.preventDefault();
+                    durationInputRef.current?.focus();
+                  }
+                }}
+              >
+                <Input
+                  ref={durationInputRef}
+                  aria-label={t("common.duration_placeholder")}
+                  type="text"
+                  inputMode="numeric"
+                  value={durationInput}
+                  onChange={(event) => setDurationInput(event.target.value.replace(/\D/g, ""))}
+                  onBlur={commitDurationInput}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.currentTarget.blur();
+                    if (event.key === "Escape") {
+                      setDurationInput(issue.planned_duration_working_days?.toString() ?? "");
+                      event.currentTarget.blur();
+                    }
+                  }}
+                  placeholder={t("common.duration_placeholder")}
+                  disabled={!isEditable}
+                  mode="true-transparent"
+                  inputSize="xs"
+                  className="h-full min-w-0 flex-1 px-0 py-0 text-body-xs-regular text-primary disabled:cursor-not-allowed"
+                />
+                <span className="shrink-0 text-body-xs-regular text-tertiary">{t("common.working_days")}</span>
+              </label>
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>

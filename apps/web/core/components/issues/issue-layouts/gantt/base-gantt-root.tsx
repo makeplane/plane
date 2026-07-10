@@ -124,11 +124,19 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
             edges.push({ predecessor_id: srcId, successor_id: targetId });
           }
         }
-        const items_by_id: Record<string, { id: string; start_date: string; target_date: string }> = {};
+        const items_by_id: Record<
+          string,
+          { id: string; start_date: string; target_date: string; planned_duration_working_days?: number | null }
+        > = {};
         for (const id of visibleIds) {
           const block = blocksMap[id];
           if (block?.start_date && block?.target_date) {
-            items_by_id[id] = { id, start_date: block.start_date, target_date: block.target_date };
+            items_by_id[id] = {
+              id,
+              start_date: block.start_date,
+              target_date: block.target_date,
+              planned_duration_working_days: block.data?.planned_duration_working_days,
+            };
           }
         }
         return { edges, items_by_id };
@@ -181,7 +189,28 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         }
       } else {
         // D-01b: resize / half-block / multi-row — unchanged path (verbatim).
-        await issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
+        // A move that falls through here would read as a target edit on the
+        // bulk endpoint and silently recalculate the stored working-day
+        // duration — send start-only so the server derives target from the
+        // stored duration instead (Mutation Rule 2).
+        const sanitizedUpdates =
+          context.dragDirection === "move"
+            ? updates.map((update) => {
+                // Only full-range payloads are converted. A target-only
+                // half-block (duration stored without start_date is allowed
+                // by spec) must pass through untouched — stripping its
+                // target_date would empty the schedule patch and turn the
+                // move into a silent no-op on the server.
+                if (!update.start_date || !update.target_date) return update;
+                const blockData = issueTimelineStore.blocksMap[update.id]?.data as
+                  | { planned_duration_working_days?: number | null }
+                  | undefined;
+                if (blockData?.planned_duration_working_days == null) return update;
+                const { target_date: _targetDate, ...startOnly } = update;
+                return startOnly;
+              })
+            : updates;
+        await issues.updateIssueDates(workspaceSlug.toString(), sanitizedUpdates, projectId.toString()).catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),

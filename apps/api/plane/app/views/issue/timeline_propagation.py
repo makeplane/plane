@@ -163,9 +163,7 @@ class TimelinePropagationView(BaseAPIView):
             requested_start_date=validated["requested_start_date"],
             requested_target_date=validated["requested_target_date"],
         )
-        expected_versions = {
-            move_intent.work_item_id: validated["expected_updated_at"]
-        }
+        expected_versions = {move_intent.work_item_id: validated["expected_updated_at"]}
 
         with transaction.atomic():
             # 4a. Lock the dragged row first (race-safe stale check).
@@ -191,8 +189,7 @@ class TimelinePropagationView(BaseAPIView):
             #     ``relation_type='blocked_by'`` internally per Phase 1 D-04.
             relations = (
                 IssueRelation.objects.filter(
-                    Q(issue__project_id=project_id)
-                    | Q(related_issue__project_id=project_id),
+                    Q(issue__project_id=project_id) | Q(related_issue__project_id=project_id),
                     workspace__slug=slug,
                     deleted_at__isnull=True,
                 )
@@ -212,7 +209,14 @@ class TimelinePropagationView(BaseAPIView):
                 project_id=project_id,
                 archived_at__isnull=True,
                 is_draft=False,
-            ).only("id", "project_id", "start_date", "target_date", "updated_at")
+            ).only(
+                "id",
+                "project_id",
+                "start_date",
+                "target_date",
+                "updated_at",
+                "planned_duration_working_days",
+            )
             work_items_by_id = {
                 i.id: ScheduledWorkItem(
                     id=i.id,
@@ -220,14 +224,13 @@ class TimelinePropagationView(BaseAPIView):
                     start_date=i.start_date,
                     target_date=i.target_date,
                     updated_at=i.updated_at,
+                    planned_duration_working_days=i.planned_duration_working_days,
                 )
                 for i in items
             }
 
             # 4d. Run the algorithm.
-            result = propagate_move(
-                graph, work_items_by_id, move_intent, expected_versions
-            )
+            result = propagate_move(graph, work_items_by_id, move_intent, expected_versions)
 
             # 4e. Failure path — return the {code, message} envelope. No
             #     bulk_update has been called, so all-or-nothing is satisfied
@@ -238,15 +241,14 @@ class TimelinePropagationView(BaseAPIView):
             # 4f. Success path — capture pre-update snapshot (Plan 03-03 will
             #     consume this for the audit/webhook current_instance kwargs)
             #     and bulk_update the propagated rows.
-            pre_update_snapshot = {
-                upd.id: work_items_by_id[upd.id] for upd in result.updates
-            }
+            pre_update_snapshot = {upd.id: work_items_by_id[upd.id] for upd in result.updates}
 
             instances = []
             for upd in result.updates:
                 inst = Issue(id=upd.id)
                 inst.start_date = upd.start_date
                 inst.target_date = upd.target_date
+                inst.planned_duration_working_days = upd.planned_duration_working_days
                 # MUST set explicitly — auto_now is bypassed by bulk_update
                 # (RESEARCH Pitfall 1; existing IssueBulkUpdateDateEndpoint
                 # omits this and is a latent bug we do NOT replicate).
@@ -254,7 +256,13 @@ class TimelinePropagationView(BaseAPIView):
                 instances.append(inst)
 
             Issue.objects.bulk_update(
-                instances, ["start_date", "target_date", "updated_at"]
+                instances,
+                [
+                    "start_date",
+                    "target_date",
+                    "planned_duration_working_days",
+                    "updated_at",
+                ],
             )
 
             # Plan 03-03 — Audit + webhook fan-out. Register every ``.delay(...)``
@@ -363,17 +371,10 @@ class TimelinePropagationView(BaseAPIView):
                     "work_items": [
                         {
                             "id": str(upd.id),
-                            "start_date": (
-                                upd.start_date.isoformat()
-                                if upd.start_date
-                                else None
-                            ),
-                            "target_date": (
-                                upd.target_date.isoformat()
-                                if upd.target_date
-                                else None
-                            ),
+                            "start_date": (upd.start_date.isoformat() if upd.start_date else None),
+                            "target_date": (upd.target_date.isoformat() if upd.target_date else None),
                             "updated_at": now.isoformat(),
+                            "planned_duration_working_days": upd.planned_duration_working_days,
                         }
                         for upd in result.updates
                     ],

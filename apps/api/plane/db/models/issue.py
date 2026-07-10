@@ -144,6 +144,11 @@ class Issue(ProjectBaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
+    planned_duration_working_days = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(366)],
+    )
     assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,

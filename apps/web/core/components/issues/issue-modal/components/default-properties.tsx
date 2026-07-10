@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -14,7 +15,7 @@ import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, Input } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
@@ -179,6 +180,34 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
               tabIndex={getIndex("start_date")}
             />
           </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name="planned_duration_working_days"
+        render={({ field: { value, onChange } }) => (
+          <label className="flex h-7 min-w-36 cursor-text items-center gap-1.5 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 text-caption-sm-regular">
+            <CalendarDays className="h-3 w-3 shrink-0 text-secondary" />
+            <Input
+              aria-label={t("common.duration_placeholder")}
+              type="text"
+              inputMode="numeric"
+              value={value ?? ""}
+              onChange={(event) => {
+                const nextValue = event.target.value.replace(/\D/g, "");
+                const nextDuration = nextValue === "" ? null : Number.parseInt(nextValue, 10);
+                if (nextDuration !== null && (nextDuration < 1 || nextDuration > 366)) return;
+                onChange(nextDuration);
+                handleFormChange();
+              }}
+              placeholder={t("common.duration")}
+              mode="true-transparent"
+              inputSize="xs"
+              className="h-full min-w-0 flex-1 px-0 py-0 text-caption-sm-regular"
+              tabIndex={getIndex("planned_duration_working_days")}
+            />
+            <span className="shrink-0 whitespace-nowrap text-tertiary">{t("common.working_days")}</span>
+          </label>
         )}
       />
       <Controller

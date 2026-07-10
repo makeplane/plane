@@ -111,6 +111,7 @@ class ScheduledWorkItem:
     start_date: date | None
     target_date: date | None
     updated_at: datetime
+    planned_duration_working_days: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -142,6 +143,7 @@ class WorkItemUpdate:
     start_date: date
     target_date: date
     updated_at: datetime
+    planned_duration_working_days: int | None = None
 
 
 @dataclass(frozen=True, slots=True)

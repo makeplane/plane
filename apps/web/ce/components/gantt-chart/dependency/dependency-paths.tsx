@@ -14,7 +14,7 @@ import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import type { TIssueRelationTypes } from "@/plane-web/types";
-import { buildBezierPath } from "./build-bezier";
+import { buildElbowPath } from "./build-bezier";
 import { hasBlockingDateConflict } from "./date-check";
 
 type Props = {
@@ -180,7 +180,7 @@ export const TimelineDependencyPaths = observer(function TimelineDependencyPaths
         </marker>
       </defs>
       {lines.map((line) => {
-        const d = buildBezierPath(line.x1, line.y1, line.x2, line.y2);
+        const d = buildElbowPath(line.x1, line.y1, line.x2, line.y2);
         const midX = (line.x1 + line.x2) / 2;
         const midY = (line.y1 + line.y2) / 2;
         const key = `${line.sourceId}-${line.relationType}-${line.targetId}`;

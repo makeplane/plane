@@ -576,9 +576,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       // call API to update the issue
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-      if (response?.updated_at) {
-        // Keep optimistic state aligned with the server version used by timeline propagation stale checks.
-        this.rootIssueStore.issues.updateIssue(issueId, { updated_at: response.updated_at });
+      if (response) {
+        const issueBeforeServerResponse = clone(this.rootIssueStore.issues.getIssueById(issueId));
+        this.rootIssueStore.issues.updateIssue(issueId, response);
+        this.updateIssueList(this.rootIssueStore.issues.getIssueById(issueId), issueBeforeServerResponse);
       }
 
       // call fetch Parent Stats
@@ -788,7 +789,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         }
       });
 
-      await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+      const response = await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+      runInAction(() => {
+        for (const updatedIssue of response?.issues ?? []) {
+          const issueBeforeServerResponse = clone(this.rootIssueStore.issues.getIssueById(updatedIssue.id));
+          this.rootIssueStore.issues.updateIssue(updatedIssue.id, updatedIssue);
+          this.updateIssueList(this.rootIssueStore.issues.getIssueById(updatedIssue.id), issueBeforeServerResponse);
+        }
+      });
     } catch (e) {
       runInAction(() => {
         for (const previousDates of issueDatesBeforeChange) {

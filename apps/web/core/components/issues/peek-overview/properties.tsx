@@ -4,7 +4,9 @@
  * See the LICENSE file for details.
  */
 
+import { CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
+import { useEffect, useRef, useState } from "react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -21,6 +23,7 @@ import {
   EstimatePropertyIcon,
   ParentPropertyIcon,
 } from "@plane/propel/icons";
+import { Input } from "@plane/ui";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -46,6 +49,8 @@ import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
 
+const DurationPropertyIcon = ({ className }: { className?: string }) => <CalendarDays className={className} />;
+
 interface IPeekOverviewProperties {
   workspaceSlug: string;
   projectId: string;
@@ -66,6 +71,13 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { getUserDetails } = useMember();
   // derived values
   const issue = getIssueById(issueId);
+  const [durationInput, setDurationInput] = useState("");
+  const durationInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setDurationInput(issue?.planned_duration_working_days?.toString() ?? "");
+  }, [issue?.planned_duration_working_days]);
+
   if (!issue) return <></>;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
@@ -77,6 +89,32 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
+
+  const commitDurationInput = () => {
+    const currentValue = issue.planned_duration_working_days?.toString() ?? "";
+    const nextValue = durationInput.trim();
+    if (nextValue === currentValue) return;
+
+    if (nextValue === "") {
+      issueOperations.update(workspaceSlug, projectId, issueId, { planned_duration_working_days: null });
+      return;
+    }
+
+    if (!/^\d+$/.test(nextValue)) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    const parsedDuration = Number.parseInt(nextValue, 10);
+    if (parsedDuration < 1 || parsedDuration > 366) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    issueOperations.update(workspaceSlug, projectId, issueId, {
+      planned_duration_working_days: parsedDuration,
+    });
+  };
 
   return (
     <div>
@@ -161,6 +199,44 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
+        </SidebarPropertyListItem>
+
+        <SidebarPropertyListItem icon={DurationPropertyIcon} label={t("common.duration")} childrenClassName="min-w-0">
+          <label
+            className={cn(
+              "flex h-7.5 w-full min-w-0 items-center gap-1.5 rounded-sm border px-2 focus-within:border-accent-strong focus-within:ring-1 focus-within:ring-accent-strong",
+              disabled ? "cursor-not-allowed border-subtle-1 bg-layer-1" : "cursor-text border-strong bg-surface-1"
+            )}
+            onMouseDown={(event) => {
+              if (event.target !== durationInputRef.current) {
+                event.preventDefault();
+                durationInputRef.current?.focus();
+              }
+            }}
+          >
+            <Input
+              ref={durationInputRef}
+              aria-label={t("common.duration_placeholder")}
+              type="text"
+              inputMode="numeric"
+              value={durationInput}
+              onChange={(event) => setDurationInput(event.target.value.replace(/\D/g, ""))}
+              onBlur={commitDurationInput}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+                if (event.key === "Escape") {
+                  setDurationInput(issue.planned_duration_working_days?.toString() ?? "");
+                  event.currentTarget.blur();
+                }
+              }}
+              placeholder={t("common.duration_placeholder")}
+              disabled={disabled}
+              mode="true-transparent"
+              inputSize="xs"
+              className="h-full min-w-0 flex-1 px-0 py-0 text-body-xs-medium text-primary disabled:cursor-not-allowed"
+            />
+            <span className="shrink-0 text-body-xs-medium text-tertiary">{t("common.working_days")}</span>
+          </label>
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>

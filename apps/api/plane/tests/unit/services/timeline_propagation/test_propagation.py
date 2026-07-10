@@ -66,6 +66,7 @@ def _make_scheduled(
     start: date | None,
     target: date | None,
     updated_at: datetime = _FIXED_NOW,
+    planned_duration_working_days: int | None = None,
 ) -> ScheduledWorkItem:
     return ScheduledWorkItem(
         id=item_id,
@@ -73,6 +74,7 @@ def _make_scheduled(
         start_date=start,
         target_date=target,
         updated_at=updated_at,
+        planned_duration_working_days=planned_duration_working_days,
     )
 
 
@@ -267,6 +269,180 @@ class TestRightwardPropagation:
         assert b_update.id == b
         assert b_update.start_date == date(2026, 5, 10)  # 7 + 3
         assert b_update.target_date == date(2026, 5, 13)  # 10 + 3
+
+
+@pytest.mark.unit
+class TestWorkingDayDurationPropagation:
+    def test_duration_managed_dragged_item_derives_weekend_adjusted_target(self):
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 7),
+                target=date(2026, 5, 8),
+                planned_duration_working_days=2,
+            ),
+            b: _make_scheduled(
+                b,
+                proj,
+                start=date(2026, 5, 11),
+                target=date(2026, 5, 12),
+                planned_duration_working_days=2,
+            ),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 8),
+            requested_start=date(2026, 5, 8),
+            requested_target=date(2026, 5, 9),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert result.is_success
+        assert len(result.updates) == 2
+        assert result.updates[0].target_date == date(2026, 5, 11)
+        b_update = result.updates[1]
+        assert b_update.start_date == date(2026, 5, 12)
+        assert b_update.target_date == date(2026, 5, 13)
+        assert b_update.planned_duration_working_days == 2
+
+    def test_duration_managed_predecessor_preserves_working_duration_when_pulled_left(self):
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 7),
+                target=date(2026, 5, 8),
+                planned_duration_working_days=2,
+            ),
+            b: _make_scheduled(b, proj, start=date(2026, 5, 11), target=date(2026, 5, 12)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 5, 11),
+            original_target=date(2026, 5, 12),
+            requested_start=date(2026, 5, 8),
+            requested_target=date(2026, 5, 9),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert result.is_success
+        assert len(result.updates) == 2
+        a_update = result.updates[1]
+        assert a_update.id == a
+        assert a_update.start_date == date(2026, 5, 6)
+        assert a_update.target_date == date(2026, 5, 7)
+        assert a_update.planned_duration_working_days == 2
+
+    def test_backward_weekend_required_target_snaps_to_friday_for_duration_item(self):
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 1, 12),
+                target=date(2026, 1, 16),
+                planned_duration_working_days=5,
+            ),
+            b: _make_scheduled(b, proj, start=date(2026, 1, 19), target=date(2026, 1, 23)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 1, 19),
+            original_target=date(2026, 1, 23),
+            requested_start=date(2026, 1, 12),
+            requested_target=date(2026, 1, 16),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert result.is_success
+        assert len(result.updates) == 2
+        a_update = result.updates[1]
+        assert a_update.id == a
+        # required_target = Jan 11 (Sunday) → snapped to Friday Jan 9;
+        # start derived from the stored working-day duration, so the triple
+        # round-trips: add_working_days(Jan 5, 5) == Jan 9.
+        assert a_update.target_date == date(2026, 1, 9)
+        assert a_update.start_date == date(2026, 1, 5)
+        assert a_update.planned_duration_working_days == 5
+
+    def test_duration_dragged_pushes_calendar_day_successor_unchanged_semantics(self):
+        """混在チェーン: duration 無し successor は従来のカレンダー日シフトを維持する。"""
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 6),
+                target=date(2026, 5, 7),
+                planned_duration_working_days=2,
+            ),
+            # B spans Fri→Mon (weekend inside) and is NOT duration-managed.
+            b: _make_scheduled(b, proj, start=date(2026, 5, 8), target=date(2026, 5, 11)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 6),
+            original_target=date(2026, 5, 7),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 8),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert result.is_success
+        b_update = result.updates[1]
+        # Calendar-day behavior: +1 day shift, weekend-start allowed, span preserved.
+        assert b_update.start_date == date(2026, 5, 9)  # Saturday
+        assert b_update.target_date == date(2026, 5, 12)
+        assert b_update.planned_duration_working_days is None
+
+    def test_duration_dragged_ignores_requested_target_range_change(self):
+        """range_duration ガードのバイパス仕様を固定: duration 管理 dragged の
+        requested_target は無視され、常に stored duration から導出される。"""
+        proj = uuid4()
+        a = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 7),
+                target=date(2026, 5, 8),
+                planned_duration_working_days=2,
+            ),
+        }
+        graph = _make_load_result(_make_adjacency(nodes={a}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 8),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 13),  # range grew — would fail for non-duration items
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert result.is_success
+        assert result.updates[0].start_date == date(2026, 5, 7)
+        assert result.updates[0].target_date == date(2026, 5, 8)  # derived, request ignored
 
 
 # --------------------------------------------------------------------------
@@ -562,6 +738,7 @@ class TestPropagationLimit:
 
     def _build_chain(self, length: int) -> tuple[LoadResult, dict[UUID, ScheduledWorkItem], list[UUID]]:
         from datetime import timedelta as _td
+
         proj = uuid4()
         ids = [uuid4() for _ in range(length)]
         # A1 → A2 → ... → AN, all adjacent (target + 1 = next start).
@@ -574,7 +751,8 @@ class TestPropagationLimit:
             item_start = base + _td(days=2 * i)
             item_target = item_start + _td(days=1)  # 2-day span
             items[item_id] = _make_scheduled(
-                item_id, proj,
+                item_id,
+                proj,
                 start=item_start,
                 target=item_target,
             )
@@ -586,6 +764,7 @@ class TestPropagationLimit:
     def test_TEST_12_at_101_distinct_affected_fails(self):
         """Chain of 101 nodes, all adjacent; drag A1 right by 1 day forces all 101 to shift."""
         from datetime import timedelta as _td  # test fixture only — production code is forbidden
+
         graph, items, ids = self._build_chain(101)
         first = ids[0]
         intent = _make_intent(
@@ -605,6 +784,7 @@ class TestPropagationLimit:
     def test_at_100_distinct_affected_succeeds(self):
         """Chain of 100 nodes; drag A1 right by 1 day forces all 100 to shift; succeeds."""
         from datetime import timedelta as _td
+
         graph, items, ids = self._build_chain(100)
         first = ids[0]
         intent = _make_intent(
@@ -1204,6 +1384,7 @@ class TestBackwardWalkGaps:
     def test_backward_limit_exceeded_in_backward_walk(self):
         """Line 342: PROPAGATION_LIMIT_EXCEEDED during the backward walk (> 100 predecessors)."""
         from datetime import timedelta as _td
+
         proj = uuid4()
         # Build a chain of 101 predecessors: P1 ← P2 ← ... ← P101 ← B.
         # All adjacent. Drag B leftward; the backward walk must update > 100 items.
@@ -1284,11 +1465,13 @@ class TestBackwardWalkGaps:
         # C: start=5/11, target=5/13 → adjacent to B (5/10+1=5/11), NOT adjacent to A
         # Drag C left by 4 days → C.start=5/7, C.target=5/9
         # Backward walk from C: visit A (required_target = C.new_start-1 = 5/6; new_target=min(5/8,5/6)=5/6 → shift=2)
-        # A new: start=5/4, target=5/6. Visit B (required_target = C.new_start-1 = 5/6; new_target=min(5/10,5/6)=5/6 → shift=4)
+        # A new: start=5/4, target=5/6. Visit B:
+        # required_target = C.new_start-1 = 5/6; new_target=min(5/10,5/6)=5/6 → shift=4
         # B new: start=5/2, target=5/6.
         # From A: visit D (required_target = A.new_start-1 = 5/3; D.new_target=min(5/5,5/3)=5/3 → shift=2)
         # D visited, new_dates_by_id[D]=(5/-1..wait), D: start=5/1-2=4/29, target=5/3.
-        # From B: visit D again (required_target = B.new_start-1 = 5/1; need new_target=min(5/3,5/1)=5/1 < 5/3 → re-enqueue)
+        # From B: visit D again; required_target = B.new_start-1 = 5/1.
+        # new_target=min(5/3,5/1)=5/1 < 5/3 → re-enqueue.
         items = {
             d: _make_scheduled(d, proj, start=date(2026, 5, 1), target=date(2026, 5, 5)),
             a: _make_scheduled(a, proj, start=date(2026, 5, 6), target=date(2026, 5, 8)),

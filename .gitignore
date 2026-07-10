@@ -111,6 +111,9 @@ build/
 temp/
 scripts/
 
+# Local Git worktrees
+.worktrees/
+
 # Playwright E2E (apps/web)
 apps/web/playwright/.auth/
 apps/web/test-results/

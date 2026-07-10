@@ -51,6 +51,9 @@ from .scheduling import (
     next_valid_start,
     previous_valid_target,
     range_duration,
+    start_for_working_duration,
+    target_for_working_duration,
+    working_day_target_on_or_before,
 )
 from .types import (
     Adjacency,
@@ -100,9 +103,18 @@ def propagate_move(
             message="requested date range is invalid (target < start)",
             work_item_id=dragged_id,
         )
-    if range_duration(
-        move_intent.original_start_date, move_intent.original_target_date
-    ) != range_duration(
+    dragged_duration = None
+    dragged_snapshot = work_items_by_id.get(dragged_id)
+    if dragged_snapshot is not None:
+        dragged_duration = dragged_snapshot.planned_duration_working_days
+
+    effective_requested_target_date = move_intent.requested_target_date
+    if dragged_duration is not None:
+        effective_requested_target_date = target_for_working_duration(
+            move_intent.requested_start_date,
+            dragged_duration,
+        )
+    elif range_duration(move_intent.original_start_date, move_intent.original_target_date) != range_duration(
         move_intent.requested_start_date, move_intent.requested_target_date
     ):
         return _fail(
@@ -134,8 +146,7 @@ def propagate_move(
     # --- D-06 step 4: SCHEDULE_CHANGED (D-08 dragged-item-only) ---
     expected_updated_at = expected_versions.get(dragged_id)
     has_schedule_changed_since_drag_start = (
-        dragged.start_date != move_intent.original_start_date
-        or dragged.target_date != move_intent.original_target_date
+        dragged.start_date != move_intent.original_start_date or dragged.target_date != move_intent.original_target_date
     )
     if expected_updated_at is None or has_schedule_changed_since_drag_start:
         return _fail(
@@ -147,7 +158,7 @@ def propagate_move(
 
     # --- D-10: build cross-project reverse indices ONCE ---
     cross_project_out: dict[UUID, list[Edge]] = {}  # forward: keyed by predecessor
-    cross_project_in: dict[UUID, list[Edge]] = {}   # backward: keyed by successor
+    cross_project_in: dict[UUID, list[Edge]] = {}  # backward: keyed by successor
     for e in graph.adjacency.cross_project_edges:
         cross_project_out.setdefault(e.predecessor_id, []).append(e)
         cross_project_in.setdefault(e.successor_id, []).append(e)
@@ -158,7 +169,7 @@ def propagate_move(
     # --- Always emit dragged item update (PROP-03 / TEST-01) ---
     affected: set[UUID] = {dragged_id}
     new_dates_by_id: dict[UUID, tuple[date, date]] = {
-        dragged_id: (move_intent.requested_start_date, move_intent.requested_target_date),
+        dragged_id: (move_intent.requested_start_date, effective_requested_target_date),
     }
 
     # --- D-01: delta == 0 → no traversal ---
@@ -261,7 +272,7 @@ def _walk_forward(
                 continue  # frontier-stop (PROP-07 gap preserved); succ NOT counted
 
             # D-02: target += shift (PROP-09 duration preservation)
-            new_target = add_calendar_days(succ.target_date, shift_days)
+            new_target = _target_after_start_shift(succ, new_start, shift_days)
 
             # D-11: lazy limit check after each insertion (Pitfall 8 — eager)
             if succ_id not in affected:
@@ -340,7 +351,14 @@ def _walk_backward(
             if shift_days == 0:
                 continue  # frontier-stop
 
-            new_start = add_calendar_days(pred.start_date, -shift_days)
+            if pred.planned_duration_working_days is not None:
+                # Working-day durations only round-trip through working-day
+                # targets; pulling back to Friday still satisfies
+                # `target <= required_target`.
+                new_target = working_day_target_on_or_before(new_target)
+                shift_days = (pred.target_date - new_target).days
+
+            new_start = _start_before_target_shift(pred, new_target, shift_days)
 
             if pred_id not in affected:
                 affected.add(pred_id)
@@ -363,6 +381,22 @@ def _walk_backward(
     return None  # success
 
 
+def _target_after_start_shift(item: ScheduledWorkItem, new_start: date, shift_days: int) -> date:
+    if item.planned_duration_working_days is not None:
+        return target_for_working_duration(new_start, item.planned_duration_working_days)
+    if item.target_date is None:
+        raise ValueError("target_date is required")
+    return add_calendar_days(item.target_date, shift_days)
+
+
+def _start_before_target_shift(item: ScheduledWorkItem, new_target: date, shift_days: int) -> date:
+    if item.planned_duration_working_days is not None:
+        return start_for_working_duration(new_target, item.planned_duration_working_days)
+    if item.start_date is None:
+        raise ValueError("start_date is required")
+    return add_calendar_days(item.start_date, -shift_days)
+
+
 def _ok(
     dragged_id: UUID,
     work_items_by_id: Mapping[UUID, ScheduledWorkItem],
@@ -382,6 +416,7 @@ def _ok(
             start_date=dragged_start,
             target_date=dragged_target,
             updated_at=work_items_by_id[dragged_id].updated_at,  # D-04 INPUT value
+            planned_duration_working_days=work_items_by_id[dragged_id].planned_duration_working_days,
         )
     )
     for other_id in sorted(affected - {dragged_id}):
@@ -392,6 +427,7 @@ def _ok(
                 start_date=s,
                 target_date=t,
                 updated_at=work_items_by_id[other_id].updated_at,
+                planned_duration_working_days=work_items_by_id[other_id].planned_duration_working_days,
             )
         )
     updates = tuple(updates_list)
