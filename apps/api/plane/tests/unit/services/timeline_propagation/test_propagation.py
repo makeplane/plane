@@ -381,6 +381,69 @@ class TestWorkingDayDurationPropagation:
         assert a_update.start_date == date(2026, 1, 5)
         assert a_update.planned_duration_working_days == 5
 
+    def test_duration_dragged_pushes_calendar_day_successor_unchanged_semantics(self):
+        """混在チェーン: duration 無し successor は従来のカレンダー日シフトを維持する。"""
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 6),
+                target=date(2026, 5, 7),
+                planned_duration_working_days=2,
+            ),
+            # B spans Fri→Mon (weekend inside) and is NOT duration-managed.
+            b: _make_scheduled(b, proj, start=date(2026, 5, 8), target=date(2026, 5, 11)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 6),
+            original_target=date(2026, 5, 7),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 8),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert result.is_success
+        b_update = result.updates[1]
+        # Calendar-day behavior: +1 day shift, weekend-start allowed, span preserved.
+        assert b_update.start_date == date(2026, 5, 9)  # Saturday
+        assert b_update.target_date == date(2026, 5, 12)
+        assert b_update.planned_duration_working_days is None
+
+    def test_duration_dragged_ignores_requested_target_range_change(self):
+        """range_duration ガードのバイパス仕様を固定: duration 管理 dragged の
+        requested_target は無視され、常に stored duration から導出される。"""
+        proj = uuid4()
+        a = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 7),
+                target=date(2026, 5, 8),
+                planned_duration_working_days=2,
+            ),
+        }
+        graph = _make_load_result(_make_adjacency(nodes={a}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 8),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 13),  # range grew — would fail for non-duration items
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert result.is_success
+        assert result.updates[0].start_date == date(2026, 5, 7)
+        assert result.updates[0].target_date == date(2026, 5, 8)  # derived, request ignored
+
 
 # --------------------------------------------------------------------------
 # TEST-03 (PROP-05 + PROP-09): leftward propagation to one predecessor
