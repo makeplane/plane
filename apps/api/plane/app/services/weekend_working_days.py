@@ -95,10 +95,18 @@ def _recalculated_duration(start: date, target: date) -> int | None:
     the whole range day by day — `count_working_days` below is then bounded
     by the same ~500-day window.
     """
-    max_target = add_working_days(start, MAX_WORKING_DAY_DURATION)
+    try:
+        max_target = add_working_days(start, MAX_WORKING_DAY_DURATION)
+    except OverflowError:
+        max_target = date.max
     if target > max_target:
         return None
-    working_days = count_working_days(start, target)
+    if target == date.max:
+        working_days = int(is_working_day(target))
+        if start < target:
+            working_days += count_working_days(start, target - timedelta(days=1))
+    else:
+        working_days = count_working_days(start, target)
     if working_days < 1:
         return None
     if add_working_days(start, working_days) != target:

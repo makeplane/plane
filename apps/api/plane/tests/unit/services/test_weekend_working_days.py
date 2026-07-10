@@ -83,6 +83,15 @@ class TestWeekendWorkingDays:
         )
         assert duration == 366
 
+    def test_target_edit_near_date_max_keeps_duration_without_overflow(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(9999, 12, 30),
+            current_target_date=None,
+            current_planned_duration_working_days=None,
+            target_date=date.max,
+        )
+        assert (start, target, duration) == (date(9999, 12, 30), date.max, 2)
+
     def test_weekend_start_roundtrip_keeps_duration(self):
         start, target, duration = normalize_working_day_schedule(
             current_start_date=date(2026, 1, 10),  # Saturday start is allowed by spec
