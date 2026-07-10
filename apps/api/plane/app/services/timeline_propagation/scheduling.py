@@ -22,7 +22,11 @@ Module scope (PROP-18): move-only.
 from datetime import date, timedelta
 
 # Module imports
-from plane.app.services.weekend_working_days import add_working_days, subtract_working_days
+from plane.app.services.weekend_working_days import (
+    add_working_days,
+    latest_working_day_on_or_before,
+    subtract_working_days,
+)
 
 
 def range_duration(start: date, target: date) -> timedelta:
@@ -43,6 +47,11 @@ def target_for_working_duration(start: date, duration: int) -> date:
 def start_for_working_duration(target: date, duration: int) -> date:
     """Return the start date for an inclusive weekend-only working-day duration."""
     return subtract_working_days(target, duration)
+
+
+def working_day_target_on_or_before(target: date) -> date:
+    """Snap a weekend-landing target to the closest earlier working day."""
+    return latest_working_day_on_or_before(target)
 
 
 def next_valid_start(after_target: date) -> date:

@@ -345,6 +345,42 @@ class TestWorkingDayDurationPropagation:
         assert a_update.target_date == date(2026, 5, 7)
         assert a_update.planned_duration_working_days == 2
 
+    def test_backward_weekend_required_target_snaps_to_friday_for_duration_item(self):
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 1, 12),
+                target=date(2026, 1, 16),
+                planned_duration_working_days=5,
+            ),
+            b: _make_scheduled(b, proj, start=date(2026, 1, 19), target=date(2026, 1, 23)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 1, 19),
+            original_target=date(2026, 1, 23),
+            requested_start=date(2026, 1, 12),
+            requested_target=date(2026, 1, 16),
+        )
+
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert result.is_success
+        assert len(result.updates) == 2
+        a_update = result.updates[1]
+        assert a_update.id == a
+        # required_target = Jan 11 (Sunday) → snapped to Friday Jan 9;
+        # start derived from the stored working-day duration, so the triple
+        # round-trips: add_working_days(Jan 5, 5) == Jan 9.
+        assert a_update.target_date == date(2026, 1, 9)
+        assert a_update.start_date == date(2026, 1, 5)
+        assert a_update.planned_duration_working_days == 5
+
 
 # --------------------------------------------------------------------------
 # TEST-03 (PROP-05 + PROP-09): leftward propagation to one predecessor

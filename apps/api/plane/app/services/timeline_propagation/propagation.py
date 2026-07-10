@@ -53,6 +53,7 @@ from .scheduling import (
     range_duration,
     start_for_working_duration,
     target_for_working_duration,
+    working_day_target_on_or_before,
 )
 from .types import (
     Adjacency,
@@ -349,6 +350,13 @@ def _walk_backward(
 
             if shift_days == 0:
                 continue  # frontier-stop
+
+            if pred.planned_duration_working_days is not None:
+                # Working-day durations only round-trip through working-day
+                # targets; pulling back to Friday still satisfies
+                # `target <= required_target`.
+                new_target = working_day_target_on_or_before(new_target)
+                shift_days = (pred.target_date - new_target).days
 
             new_start = _start_before_target_shift(pred, new_target, shift_days)
 
