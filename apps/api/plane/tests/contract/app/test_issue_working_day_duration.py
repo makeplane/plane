@@ -191,3 +191,113 @@ class TestIssueWorkingDayDuration:
         response = session_client.post(_issue_collection_url(workspace.slug, project.id), payload, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_patch_non_schedule_field_returns_schedule_body(
+        self, session_client, workspace, project_with_member
+    ):
+        """204→200 契約変更の回帰テスト: schedule 以外の PATCH でも同じ body 形状を返す。"""
+        project, _state = project_with_member
+        issue = IssueFactory.create(project=project)
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"name": "Renamed issue"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        body = response.json()
+        assert set(body.keys()) == {
+            "id",
+            "start_date",
+            "target_date",
+            "planned_duration_working_days",
+            "updated_at",
+        }
+        assert body["id"] == str(issue.id)
+
+    def test_patch_duration_and_target_together_duration_wins(
+        self, session_client, workspace, project_with_member
+    ):
+        project, _state = project_with_member
+        issue = IssueFactory.create(
+            project=project,
+            start_date="2026-05-04",
+            target_date="2026-05-08",
+            planned_duration_working_days=5,
+        )
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"target_date": "2026-05-06", "planned_duration_working_days": 2},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        issue.refresh_from_db()
+        assert issue.target_date.isoformat() == "2026-05-05"  # derived from duration, not the sent target
+        assert issue.planned_duration_working_days == 2
+
+    def test_patch_start_date_rederives_target_from_stored_duration(
+        self, session_client, workspace, project_with_member
+    ):
+        """Mutation Rule 2 の API 経路（部分更新）検証。"""
+        project, _state = project_with_member
+        issue = IssueFactory.create(
+            project=project,
+            start_date="2026-05-04",
+            target_date="2026-05-08",
+            planned_duration_working_days=5,
+        )
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"start_date": "2026-05-07"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        issue.refresh_from_db()
+        assert issue.target_date.isoformat() == "2026-05-13"
+        assert issue.planned_duration_working_days == 5
+
+    def test_duration_validation_boundaries(self, session_client, workspace, project_with_member):
+        project, state = project_with_member
+        issue = IssueFactory.create(
+            project=project,
+            start_date="2026-05-04",
+            target_date="2026-05-08",
+        )
+        url = _issue_detail_url(workspace.slug, project.id, issue.id)
+
+        for bad in (367, -1, "abc"):
+            response = session_client.patch(url, {"planned_duration_working_days": bad}, format="json")
+            assert response.status_code == status.HTTP_400_BAD_REQUEST, bad
+
+        # 仕様: "A duration without start_date is allowed but cannot derive target_date."
+        response = session_client.post(
+            _issue_collection_url(workspace.slug, project.id),
+            {"name": "No-start duration", "state_id": str(state.id), "planned_duration_working_days": 3},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        body = response.json()
+        assert body["planned_duration_working_days"] == 3
+        assert body["target_date"] is None
+
+    def test_all_weekend_range_stores_dates_without_duration(
+        self, session_client, workspace, project_with_member
+    ):
+        project, _state = project_with_member
+        issue = IssueFactory.create(project=project, start_date="2026-05-09")  # Saturday
+
+        response = session_client.patch(
+            _issue_detail_url(workspace.slug, project.id, issue.id),
+            {"target_date": "2026-05-10"},  # Sunday — zero working days in range
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        issue.refresh_from_db()
+        assert issue.target_date.isoformat() == "2026-05-10"
+        assert issue.planned_duration_working_days is None

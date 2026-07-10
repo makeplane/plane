@@ -101,6 +101,16 @@ class TestWeekendWorkingDays:
         )
         assert (start, target, duration) == (date(2026, 1, 10), date(2026, 1, 12), 1)
 
+    def test_duration_wins_over_explicit_target_in_same_patch(self):
+        start, target, duration = normalize_working_day_schedule(
+            current_start_date=date(2026, 5, 4),
+            current_target_date=date(2026, 5, 8),
+            current_planned_duration_working_days=5,
+            target_date=date(2026, 5, 6),
+            planned_duration_working_days=2,
+        )
+        assert (start, target, duration) == (date(2026, 5, 4), date(2026, 5, 5), 2)
+
     def test_weekend_and_working_day_classification(self):
         assert is_weekend(date(2026, 5, 9)) is True
         assert is_working_day(date(2026, 5, 9)) is False
