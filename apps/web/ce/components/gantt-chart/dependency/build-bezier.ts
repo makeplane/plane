@@ -5,16 +5,23 @@
  */
 
 /**
+ * Minimum horizontal control-handle length (px). Without a floor the curve
+ * collapses onto its chord — a bare diagonal line — whenever the two anchors
+ * are horizontally close (adjacent tasks), which is exactly the ugly case.
+ */
+const MIN_HANDLE = 24;
+
+/**
  * Build a cubic Bézier SVG path between two anchor points used for timeline
- * dependency lines. The two control points are offset horizontally by
- * `|x2 - x1| / 2` which produces the Jira/Linear-like side-slider look
- * regardless of drag direction.
+ * dependency lines. The two control points are offset horizontally by at least
+ * `MIN_HANDLE`, or `|x2 - x1| / 2` when larger, producing the Jira/Linear-like
+ * side-slider look regardless of drag direction.
  *
  * All coordinates are in the gantt chart SVG local coordinate system (the
  * caller is responsible for translating clientX/clientY into that system).
  */
 export function buildBezierPath(x1: number, y1: number, x2: number, y2: number): string {
-  const horizontalOffset = Math.abs(x2 - x1) / 2;
+  const horizontalOffset = Math.max(Math.abs(x2 - x1) / 2, MIN_HANDLE);
   // Horizontally extend the control points; leaving y untouched preserves
   // the smooth S-curve between two different rows.
   const cx1 = x1 + horizontalOffset;
