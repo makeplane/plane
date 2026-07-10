@@ -7,6 +7,7 @@ from unittest import mock
 from django.db import transaction
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
+from rest_framework import serializers as drf_serializers
 
 from plane.db.models import (
     WorkItemTemplate,
@@ -14,6 +15,7 @@ from plane.db.models import (
     WorkItemTemplateDependency,
     Issue,
     IssueRelation,
+    IssueType,
     Project,
     Workspace,
     User,
@@ -376,8 +378,6 @@ class TestWorkItemTemplateInstantiation:
         """
         Test template items with issue types
         """
-        from plane.db.models import IssueType
-
         # Create an issue type
         issue_type = IssueType.objects.create(
             name="Bug",
@@ -527,8 +527,8 @@ class TestWorkItemTemplateInstantiation:
         # Verify fields are mapped correctly
         assert child_issue.name == "Test Item"
         assert child_issue.priority == "high"
-        # Note: description_html is set to "<p></p>" in current implementation
-        assert child_issue.description_html == "<p></p>"
+        # description should be mapped from item.description
+        assert child_issue.description_html == "Test item description"
         assert child_issue.parent.project == project
         assert child_issue.workspace == project.workspace
         assert child_issue.created_by == user
@@ -542,12 +542,21 @@ class TestWorkItemTemplateInstantiation:
 
         # Test that duplicate dependencies with same items are prevented
         item = template.items.first()
+        other_item = WorkItemTemplateItem.objects.create(
+            template=template,
+            name="Other Item",
+            sort_order=2,
+            project=project,
+            workspace=project.workspace,
+            created_by=user,
+            updated_by=user,
+        )
 
         # Create first dependency
         dep1 = WorkItemTemplateDependency.objects.create(
             template=template,
             source_template_item=item,
-            target_template_item=item,
+            target_template_item=other_item,
             relation_type="blocked_by",
             project=project,
             workspace=project.workspace,
@@ -560,7 +569,7 @@ class TestWorkItemTemplateInstantiation:
             dep2 = WorkItemTemplateDependency.objects.create(
                 template=template,
                 source_template_item=item,
-                target_template_item=item,
+                target_template_item=other_item,
                 relation_type="blocked_by",  # Same as first
                 project=project,
                 workspace=project.workspace,
@@ -578,10 +587,241 @@ class TestWorkItemTemplateInstantiation:
         from plane.app.views.template import WorkItemTemplateViewSet
         assert ProjectEntityPermission in WorkItemTemplateViewSet.permission_classes
 
-        # Test that permission checks are performed
-        # This is more of an integration test - the permission class should
-        # validate that the user has access to the project
-        pass
+    def test_self_dependency_rejected(self, db, project, user):
+        """
+        Test that self-dependencies are rejected by the serializer
+        """
+        from rest_framework import serializers as drf_serializers
+
+        payload = {
+            "name": "Template with self-dependency",
+            "items": [
+                {"id": "item-1", "name": "Item 1", "sort_order": 1},
+            ],
+            "dependencies": [
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "item-1",
+                    "relation_type": "blocked_by",
+                }
+            ],
+        }
+        serializer = WorkItemTemplateCreateSerializer(data=payload)
+        assert not serializer.is_valid()
+        assert "dependencies" in str(serializer.errors).lower() or any(
+            "self" in str(e).lower() for e in serializer.errors.values()
+        )
+
+    def test_invalid_relation_type_rejected(self, db, project, user):
+        """
+        Test that invalid relation types are rejected by the serializer
+        """
+        payload = {
+            "name": "Template with invalid relation",
+            "items": [
+                {"id": "item-1", "name": "Item 1", "sort_order": 1},
+                {"id": "item-2", "name": "Item 2", "sort_order": 2},
+            ],
+            "dependencies": [
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "item-2",
+                    "relation_type": "invalid_relation",
+                }
+            ],
+        }
+        serializer = WorkItemTemplateCreateSerializer(data=payload)
+        assert not serializer.is_valid()
+
+    def test_cross_template_dependency_rejected(self, db, project, user):
+        """
+        Test that dependencies referencing items outside the items list are rejected
+        """
+        payload = {
+            "name": "Template with cross-template dep",
+            "items": [
+                {"id": "item-1", "name": "Item 1", "sort_order": 1},
+            ],
+            "dependencies": [
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "nonexistent-item",
+                    "relation_type": "blocked_by",
+                }
+            ],
+        }
+        serializer = WorkItemTemplateCreateSerializer(data=payload)
+        assert not serializer.is_valid()
+
+    def test_cycle_detection_rejected(self, db, project, user):
+        """
+        Test that circular dependencies are rejected by the serializer
+        """
+        payload = {
+            "name": "Template with cycle",
+            "items": [
+                {"id": "item-1", "name": "Item 1", "sort_order": 1},
+                {"id": "item-2", "name": "Item 2", "sort_order": 2},
+                {"id": "item-3", "name": "Item 3", "sort_order": 3},
+            ],
+            "dependencies": [
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "item-2",
+                    "relation_type": "blocked_by",
+                },
+                {
+                    "source_template_item": "item-2",
+                    "target_template_item": "item-3",
+                    "relation_type": "blocked_by",
+                },
+                {
+                    "source_template_item": "item-3",
+                    "target_template_item": "item-1",
+                    "relation_type": "blocked_by",
+                },
+            ],
+        }
+        serializer = WorkItemTemplateCreateSerializer(data=payload)
+        assert not serializer.is_valid()
+        errors = str(serializer.errors)
+        assert "cycle" in errors.lower() or "circular" in errors.lower()
+
+    def test_deletion_cascade(self, db, project, user):
+        """
+        Test that deleting a template cascades to its items and dependencies
+        """
+        template = self._create_minimal_template(db, project, user)
+
+        # Create an additional item and dependency
+        item = template.items.first()
+        item2 = WorkItemTemplateItem.objects.create(
+            template=template,
+            name="Second Item",
+            sort_order=2,
+            project=project,
+            workspace=project.workspace,
+            created_by=user,
+            updated_by=user,
+        )
+        WorkItemTemplateDependency.objects.create(
+            template=template,
+            source_template_item=item,
+            target_template_item=item2,
+            relation_type="blocked_by",
+            project=project,
+            workspace=project.workspace,
+            created_by=user,
+            updated_by=user,
+        )
+
+        item_count = WorkItemTemplateItem.objects.filter(template=template).count()
+        dep_count = WorkItemTemplateDependency.objects.filter(template=template).count()
+        assert item_count == 2
+        assert dep_count == 1
+
+        # Delete the template
+        template_id = template.id
+        template.delete()
+
+        # Verify cascade
+        assert WorkItemTemplate.objects.filter(id=template_id).count() == 0
+        assert WorkItemTemplateItem.objects.filter(template_id=template_id).count() == 0
+        assert WorkItemTemplateDependency.objects.filter(template_id=template_id).count() == 0
+
+    def test_url_patterns(self, db, project, user):
+        """
+        Test that URL patterns are properly configured
+        """
+        from django.urls import resolve, reverse
+
+        # Verify the URL names resolve correctly
+        slug = project.workspace.slug
+        project_id = project.id
+        template_id = "00000000-0000-0000-0000-000000000001"
+
+        list_url = reverse(
+            "project-work-item-templates",
+            kwargs={"slug": slug, "project_id": project_id},
+        )
+        assert str(project_id) in list_url
+        assert slug in list_url
+
+        detail_url = reverse(
+            "project-work-item-templates",
+            kwargs={"slug": slug, "project_id": project_id, "pk": template_id},
+        )
+        assert str(template_id) in detail_url
+
+        instantiate_url = reverse(
+            "project-work-item-templates-instantiate",
+            kwargs={"slug": slug, "project_id": project_id, "pk": template_id},
+        )
+        assert str(template_id) in instantiate_url
+        assert "instantiate" in instantiate_url
+
+    def test_instantiation_with_description_html_mapped(
+        self, db, project, user, state
+    ):
+        """
+        Test that template/item descriptions are correctly mapped to issue description_html
+        """
+        # Create a template with description
+        template = WorkItemTemplate.objects.create(
+            name="Desc Template",
+            description="<p>Parent description</p>",
+            project=project,
+            workspace=project.workspace,
+            created_by=user,
+            updated_by=user,
+        )
+
+        item = WorkItemTemplateItem.objects.create(
+            template=template,
+            name="Desc Item",
+            description="<p>Child description</p>",
+            sort_order=1,
+            project=project,
+            workspace=project.workspace,
+            created_by=user,
+            updated_by=user,
+        )
+
+        response = self._instantiate_template(template, user, project)
+        data = response.data
+
+        parent_issue = Issue.objects.get(id=data["parent_issue_id"])
+        assert parent_issue.description_html == "<p>Parent description</p>"
+
+        child_issue_id = list(data["child_issue_ids"].values())[0]
+        child_issue = Issue.objects.get(id=child_issue_id)
+        assert child_issue.description_html == "<p>Child description</p>"
+
+    def test_duplicate_dependency_rejected(self, db, project, user):
+        """
+        Test that duplicate dependency definitions are rejected
+        """
+        payload = {
+            "name": "Template with duplicate dep",
+            "items": [
+                {"id": "item-1", "name": "Item 1", "sort_order": 1},
+                {"id": "item-2", "name": "Item 2", "sort_order": 2},
+            ],
+            "dependencies": [
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "item-2",
+                    "relation_type": "blocked_by",
+                },
+                {
+                    "source_template_item": "item-1",
+                    "target_template_item": "item-2",
+                    "relation_type": "blocked_by",
+                },
+            ],
+        }
+        serializer = WorkItemTemplateCreateSerializer(data=payload)
+        assert not serializer.is_valid()
 
     def _create_minimal_template(self, db, project, user):
         """

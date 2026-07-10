@@ -24,8 +24,6 @@ from plane.app.serializers import (
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     WorkItemTemplate,
-    WorkItemTemplateItem,
-    WorkItemTemplateDependency,
     Issue,
     IssueRelation,
     Project,
@@ -50,6 +48,9 @@ class WorkItemTemplateViewSet(BaseViewSet):
             WorkItemTemplate.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .prefetch_related("items", "dependencies")
             .order_by("-created_at")
@@ -69,9 +70,9 @@ class WorkItemTemplateViewSet(BaseViewSet):
     @action(detail=True, methods=["post"])
     def instantiate(self, request, slug, project_id, pk=None):
         template = self.get_object()
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-        template_items = list(template.items.all().order_by("sort_order"))
+        # Use prefetched data to avoid extra queries
+        template_items = list(template.items.all())
         dependencies = list(template.dependencies.all())
 
         if not template_items:
@@ -85,12 +86,12 @@ class WorkItemTemplateViewSet(BaseViewSet):
         with transaction.atomic():
             # 1. Create parent issue from template
             parent_issue = Issue.objects.create(
-                project=project,
-                workspace=project.workspace,
+                project_id=project_id,
+                workspace_id=template.workspace_id,
                 name=template.name,
-                description_html="<p></p>",
-                description_stripped=None,
+                description_html=template.description or "<p></p>",
                 priority=template.priority,
+                type_id=template.type_id,
                 created_by=request.user,
                 updated_by=request.user,
             )
@@ -98,13 +99,14 @@ class WorkItemTemplateViewSet(BaseViewSet):
             # 2. Create child issues from template items
             for item in template_items:
                 child_issue = Issue.objects.create(
-                    project=project,
-                    workspace=project.workspace,
+                    project_id=project_id,
+                    workspace_id=template.workspace_id,
                     parent=parent_issue,
                     name=item.name,
-                    description_html="<p></p>",
-                    description_stripped=None,
+                    description_html=item.description or "<p></p>",
                     priority=item.priority,
+                    sort_order=item.sort_order,
+                    type_id=item.type_id,
                     created_by=request.user,
                     updated_by=request.user,
                 )
@@ -120,13 +122,13 @@ class WorkItemTemplateViewSet(BaseViewSet):
                         issue=target_issue,
                         related_issue=source_issue,
                         relation_type=dep.relation_type,
-                        project=project,
-                        workspace=project.workspace,
+                        project_id=project_id,
+                        workspace_id=template.workspace_id,
                         created_by=request.user,
                         updated_by=request.user,
                     )
 
-            # 4. Fire activity events
+            # 4. Fire activity events for child issues
             for item in template_items:
                 child_issue = item_to_issue_map[str(item.id)]
                 issue_activity.delay(
@@ -144,6 +146,7 @@ class WorkItemTemplateViewSet(BaseViewSet):
                     origin=base_host(request=request, is_app=True),
                 )
 
+            # 5. Fire activity event for parent issue
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(

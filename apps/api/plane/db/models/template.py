@@ -7,6 +7,7 @@ from django.db import models
 
 # Module imports
 from plane.db.models.project import ProjectBaseModel
+from plane.db.models.issue import IssueRelationChoices
 
 
 class WorkItemTemplate(ProjectBaseModel):
@@ -99,14 +100,15 @@ class WorkItemTemplateDependency(ProjectBaseModel):
     )
     relation_type = models.CharField(
         max_length=20,
-        default="blocked_by",
+        choices=IssueRelationChoices.choices,
+        default=IssueRelationChoices.BLOCKED_BY,
     )
-    # Project and workspace are inherited from parent project/workspace
 
     class Meta:
         verbose_name = "Work Item Template Dependency"
         verbose_name_plural = "Work Item Template Dependencies"
         db_table = "work_item_template_dependencies"
+        ordering = ("-created_at",)
         unique_together = ["template", "source_template_item", "target_template_item", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
