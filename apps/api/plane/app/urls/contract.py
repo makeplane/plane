@@ -1,0 +1,108 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+from django.urls import path
+
+from plane.app.views import (
+    ContractDetailEndpoint,
+    ContractJobsEndpoint,
+    ContractQueryEndpoint,
+    ContractReanalyzeConfirmEndpoint,
+    ContractReanalyzeEndpoint,
+    ContractRetryEndpoint,
+    ContractsEndpoint,
+    InternalAssetPresignedUrlEndpoint,
+    InternalContractChunksEndpoint,
+    InternalContractDataEndpoint,
+    InternalContractTextEndpoint,
+    InternalContractThumbnailEndpoint,
+    InternalJobProgressEndpoint,
+    InternalQueryResultEndpoint,
+    InternalWorkspaceContractsEndpoint,
+)
+
+urlpatterns = [
+    # Workspace-facing
+    path(
+        "workspaces/<str:slug>/contracts/",
+        ContractsEndpoint.as_view(),
+        name="contracts",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/jobs/",
+        ContractJobsEndpoint.as_view(),
+        name="contract-jobs",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/queries/",
+        ContractQueryEndpoint.as_view(),
+        name="contract-queries",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/<uuid:contract_id>/",
+        ContractDetailEndpoint.as_view(),
+        name="contract-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/<uuid:contract_id>/jobs/",
+        ContractJobsEndpoint.as_view(),
+        name="contract-detail-jobs",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/<uuid:contract_id>/retry/",
+        ContractRetryEndpoint.as_view(),
+        name="contract-retry",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/<uuid:contract_id>/reanalyze/",
+        ContractReanalyzeEndpoint.as_view(),
+        name="contract-reanalyze",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/<uuid:contract_id>/reanalyze/confirm/",
+        ContractReanalyzeConfirmEndpoint.as_view(),
+        name="contract-reanalyze-confirm",
+    ),
+    # Internal (Cloudflare Worker)
+    path(
+        "internal/assets/<uuid:asset_id>/presigned-url/",
+        InternalAssetPresignedUrlEndpoint.as_view(),
+        name="internal-asset-presigned",
+    ),
+    path(
+        "internal/contract-jobs/<uuid:job_id>/progress/",
+        InternalJobProgressEndpoint.as_view(),
+        name="internal-job-progress",
+    ),
+    path(
+        "internal/contracts/<uuid:contract_id>/text/",
+        InternalContractTextEndpoint.as_view(),
+        name="internal-contract-text",
+    ),
+    path(
+        "internal/contracts/<uuid:contract_id>/extracted-data/",
+        InternalContractDataEndpoint.as_view(),
+        name="internal-contract-data",
+    ),
+    path(
+        "internal/contracts/<uuid:contract_id>/chunks/",
+        InternalContractChunksEndpoint.as_view(),
+        name="internal-contract-chunks",
+    ),
+    path(
+        "internal/contracts/<uuid:contract_id>/thumbnail/",
+        InternalContractThumbnailEndpoint.as_view(),
+        name="internal-contract-thumbnail",
+    ),
+    path(
+        "internal/workspaces/<uuid:workspace_id>/contracts/",
+        InternalWorkspaceContractsEndpoint.as_view(),
+        name="internal-workspace-contracts",
+    ),
+    path(
+        "internal/contract-queries/<uuid:query_id>/result/",
+        InternalQueryResultEndpoint.as_view(),
+        name="internal-query-result",
+    ),
+]

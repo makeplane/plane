@@ -1,0 +1,17 @@
+{
+  "name": "plane-contracts-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker + Workflows running the Plane contracts AI pipeline",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "check:types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260708.1",
+    "typescript": "^5.8.0",
+    "wrangler": "^4.20.0"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plane-contracts-pipeline",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-01",
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "head_sampling_rate": 1
+    }
+  },
+  "workflows": [
+    {
+      "name": "contract-pipeline",
+      "binding": "CONTRACT_PIPELINE",
+      "class_name": "ContractPipelineWorkflow"
+    },
+    {
+      "name": "contract-query",
+      "binding": "CONTRACT_QUERY",
+      "class_name": "ContractQueryWorkflow"
+    }
+  ],
+  // Non-secret config. Secrets are set with `wrangler secret put`:
+  //   CF_WORKER_TRIGGER_SECRET, PLANE_INTERNAL_API_SECRET,
+  //   OPENAI_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, DEEPSEEK_API_KEY
+  // For local dev put them in .dev.vars (gitignored).
+  "vars": {
+    // Base provider/model selection — never hardcoded in source
+    "AI_PROVIDER": "gemini",
+    "GEMINI_MODEL_FALLBACK_LIST": "gemini-2.5-flash-lite,gemini-2.5-flash",
+    "DEEPSEEK_MODEL": "deepseek-chat",
+    "OPENAI_EMBEDDING_MODEL": "text-embedding-3-small",
+    "EMBEDDING_DIMENSIONS": "1536",
+    // Django internal API base URL (public URL in prod, localhost in dev)
+    "PLANE_INTERNAL_API_URL": "http://localhost:8000",
+    // External text-extraction service: POST {url} -> {extracted_text}
+    "TEXT_EXTRACTOR_API_URL": "https://aws-textract.onrender.com/extract-text"
+  }
+}

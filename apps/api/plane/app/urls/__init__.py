@@ -8,6 +8,7 @@ from .asset import urlpatterns as asset_urls
 from .cycle import urlpatterns as cycle_urls
 from .estimate import urlpatterns as estimate_urls
 from .external import urlpatterns as external_urls
+from .contract import urlpatterns as contract_urls
 from .file_library import urlpatterns as file_library_urls
 from .intake import urlpatterns as intake_urls
 from .issue import urlpatterns as issue_urls
@@ -30,6 +31,7 @@ urlpatterns = [
     *cycle_urls,
     *estimate_urls,
     *external_urls,
+    *contract_urls,
     *file_library_urls,
     *intake_urls,
     *issue_urls,

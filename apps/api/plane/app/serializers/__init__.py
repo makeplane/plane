@@ -142,3 +142,9 @@ from .file_library import (
     FileLibraryAssetSerializer,
     FileTagSerializer,
 )
+from .contract import (
+    ContractProcessingJobSerializer,
+    ContractQuerySerializer,
+    ContractSerializer,
+    ContractUpdateSerializer,
+)

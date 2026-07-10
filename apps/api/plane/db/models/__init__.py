@@ -26,6 +26,13 @@ from .file_library import (
     FileTagLink,
     WorkspaceFeature,
 )
+from .contract import (
+    Contract,
+    ContractChunk,
+    ContractProcessingJob,
+    ContractQuery,
+    ContractStatusIAProcessed,
+)
 from .importer import Importer
 from .intake import Intake, IntakeIssue
 from .integration import (

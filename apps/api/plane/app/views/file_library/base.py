@@ -332,12 +332,21 @@ class FileCategoryLinkEndpoint(FileLibraryBaseView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        linked_default = False
         for category in categories:
-            FileCategoryLink.objects.get_or_create(
+            _, created = FileCategoryLink.objects.get_or_create(
                 file_asset=asset,
                 category=category,
                 defaults={"workspace_id": asset.workspace_id},
             )
+            if category.is_default and created:
+                linked_default = True
+
+        # Linking a PDF to "Contratos" starts the AI pipeline automatically
+        if linked_default:
+            from plane.app.views.contract.base import ensure_contract_for_asset
+
+            ensure_contract_for_asset(asset, user=request.user)
 
         serializer = FileLibraryAssetSerializer(asset)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -571,6 +580,8 @@ class FileLibraryBulkActionEndpoint(FileLibraryBaseView):
             if not categories:
                 return Response({"error": "No valid categories provided"}, status=status.HTTP_400_BAD_REQUEST)
             if action == "add_categories":
+                from plane.app.views.contract.base import ensure_contract_for_asset
+
                 pdf_only = [c for c in categories if c.pdf_only]
                 skipped = []
                 for asset in assets:
@@ -579,9 +590,12 @@ class FileLibraryBulkActionEndpoint(FileLibraryBaseView):
                         if category.pdf_only and not is_pdf:
                             skipped.append(asset.attributes.get("name"))
                             continue
-                        FileCategoryLink.objects.get_or_create(
+                        _, created = FileCategoryLink.objects.get_or_create(
                             file_asset=asset, category=category, defaults={"workspace_id": workspace.id}
                         )
+                        # Linking a PDF to "Contratos" starts the AI pipeline
+                        if category.is_default and created:
+                            ensure_contract_for_asset(asset, user=request.user)
                 if pdf_only and skipped:
                     return Response(
                         {"status": "partial", "skipped": skipped},

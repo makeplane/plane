@@ -85,6 +85,130 @@
       "size": "Largest first",
       "modified": "Recently modified",
       "label": "Sort"
+    },
+    "contracts": {
+      "title": "Contracts",
+      "search_placeholder": "Search contracts",
+      "active_jobs": "{count, plural, one {# active analysis} other {# active analyses}}",
+      "save": "Save changes",
+      "save_success": "Contract updated",
+      "save_failed": "Failed to update the contract",
+      "ai_model": "Analyzed with {model}",
+      "document": "Document",
+      "yes": "Yes",
+      "no": "No",
+      "empty": {
+        "title": "No contracts yet",
+        "description": "Categorize a PDF file as Contratos in the file library to start the AI analysis pipeline."
+      },
+      "status": {
+        "vigente": "Active",
+        "finalizado": "Ended",
+        "no_especificado": "Not specified"
+      },
+      "type": {
+        "arrendamientos": "Leases",
+        "alquileres": "Rentals",
+        "vehiculos": "Vehicles",
+        "servicios": "Services",
+        "artistas": "Artists"
+      },
+      "processing": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "completed": "Analyzed",
+        "error": "Error"
+      },
+      "fields": {
+        "titulo": "Title",
+        "resumen_general": "Summary",
+        "nombre_grupo": "Group name",
+        "artistas": "Artists",
+        "testigos": "Witnesses",
+        "involucrados": "Involved parties",
+        "es_notariado": "Notarized",
+        "fecha_inicio": "Start date",
+        "fecha_fin": "End date",
+        "fecha_fin_efectiva": "Effective end date",
+        "es_posible_expandirlo": "Extension possible",
+        "tiempo_extension_posible": "Possible extension time",
+        "expansion_time_description": "Extension clause",
+        "estatus_contrato": "Contract status",
+        "tipo_contrato": "Contract type",
+        "processing_status": "AI analysis",
+        "periodo_coleccion": "Collection period",
+        "collection_period_description": "Collection period description",
+        "collection_period_duration": "Collection period duration",
+        "periodo_retencion": "Retention period",
+        "retention_period_description": "Retention period description",
+        "retention_period_duration": "Retention period duration"
+      },
+      "filters": {
+        "people": "People",
+        "person": "Person",
+        "person_placeholder": "Involved party or witness",
+        "artist": "Artist",
+        "artist_placeholder": "Artist name",
+        "year": "Year",
+        "year_placeholder": "Start or end year"
+      },
+      "retry": {
+        "button": "Retry",
+        "hint": "Pick specific stages, or run everything again",
+        "all": "Retry everything",
+        "selected": "Retry selected stages",
+        "started": "Retry queued",
+        "failed": "Failed to queue the retry",
+        "extract_text": "Text extraction",
+        "generate_embeddings": "Embeddings (vectorization)",
+        "ai_analysis": "AI analysis",
+        "extract_thumbnail": "Thumbnail"
+      },
+      "reanalyze": {
+        "button": "Re-analyze",
+        "hint": "Runs the AI again and proposes new values without overwriting until you confirm",
+        "started": "Re-analysis queued",
+        "failed": "Failed to queue the re-analysis",
+        "pending_title": "The re-analysis finished — review the proposed data before applying it",
+        "accept": "Apply proposed data",
+        "discard": "Discard",
+        "applied": "Proposed data applied",
+        "discarded": "Proposed data discarded"
+      },
+      "tabs": {
+        "info": "Information",
+        "process": "Process"
+      },
+      "process": {
+        "pipeline_state": "Pipeline state",
+        "text_extracted": "Text extracted on {date}",
+        "text_pending": "Text not extracted yet",
+        "analyzed": "AI analysis completed on {date}",
+        "no_jobs": "No runs yet for this contract"
+      },
+      "task_type": {
+        "extract_full": "Full analysis",
+        "retry_partial": "Partial retry",
+        "reanalyze": "Re-analysis",
+        "query": "Query"
+      },
+      "job_status": {
+        "queued": "Queued",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed"
+      },
+      "query": {
+        "button": "AI query",
+        "title": "Ask about your contracts",
+        "description": "The question runs against the content of every analyzed contract. The result appears here and is also emailed to you.",
+        "placeholder": "e.g. Which artist contracts expire this year?",
+        "submit": "Ask",
+        "started": "Query started — you will get the result by email",
+        "failed": "Failed to start the query",
+        "emailed": "Emailed",
+        "empty": "No queries yet"
+      }
     }
   }
 }

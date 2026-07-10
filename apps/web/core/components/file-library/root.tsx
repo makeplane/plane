@@ -8,7 +8,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, Files, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FileText, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Link } from "react-router";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
@@ -370,6 +371,15 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
               <span className="mx-1 h-5 w-px bg-subtle" />
             </>
           )}
+
+          {/* contracts sub-module (AI-analyzed PDFs) */}
+          <Link
+            to={`/${workspaceSlug}/file-library/contracts`}
+            className="flex h-8 items-center gap-1 rounded-sm border border-subtle px-2 text-12 hover:bg-layer-1-hover"
+          >
+            <FileText className="size-3.5" />
+            <span className="hidden sm:inline">{t("file_library.contracts.title")}</span>
+          </Link>
 
           {/* search (collapses to icon-triggered popover on mobile) */}
           <div className="relative hidden sm:block">

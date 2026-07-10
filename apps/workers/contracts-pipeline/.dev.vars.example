@@ -1,0 +1,7 @@
+# Local development secrets for `wrangler dev` — copy to .dev.vars (gitignored).
+# In production set each one with `wrangler secret put <NAME>`.
+CF_WORKER_TRIGGER_SECRET="dev-trigger-secret"
+PLANE_INTERNAL_API_SECRET="dev-internal-secret"
+OPENAI_API_KEY=""
+GOOGLE_GENERATIVE_AI_API_KEY=""
+DEEPSEEK_API_KEY=""
