@@ -11,6 +11,7 @@ from plane.app.services.weekend_working_days import (
     count_working_days,
     is_weekend,
     is_working_day,
+    latest_working_day_on_or_before,
     normalize_working_day_schedule,
     subtract_working_days,
 )
@@ -71,3 +72,12 @@ class TestWeekendWorkingDays:
     def test_rejects_target_before_start_when_counting(self):
         with pytest.raises(ValueError, match="target must be on or after start"):
             count_working_days(date(2026, 5, 11), date(2026, 5, 8))
+
+    def test_latest_working_day_on_or_before_weekday_is_identity(self):
+        assert latest_working_day_on_or_before(date(2026, 1, 12)) == date(2026, 1, 12)
+
+    def test_latest_working_day_on_or_before_saturday_snaps_to_friday(self):
+        assert latest_working_day_on_or_before(date(2026, 1, 10)) == date(2026, 1, 9)
+
+    def test_latest_working_day_on_or_before_sunday_snaps_to_friday(self):
+        assert latest_working_day_on_or_before(date(2026, 1, 11)) == date(2026, 1, 9)

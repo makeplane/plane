@@ -61,6 +61,14 @@ def subtract_working_days(target: date, duration: int) -> date:
         current -= timedelta(days=1)
 
 
+def latest_working_day_on_or_before(d: date) -> date:
+    """Return `d` when it is a working day, else the closest earlier working day."""
+    current = d
+    while is_weekend(current):
+        current -= timedelta(days=1)
+    return current
+
+
 def count_working_days(start: date, target: date) -> int:
     """Count working days in the inclusive range from start to target."""
     if target < start:
