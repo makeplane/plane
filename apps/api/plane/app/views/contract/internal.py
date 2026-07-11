@@ -129,6 +129,10 @@ def apply_extracted_data(contract, data):
 class InternalBaseView(BaseAPIView):
     authentication_classes = []
     permission_classes = [WorkerServicePermission]
+    # Server-to-server traffic authenticated by shared secret. Without a user
+    # session DRF's global AnonRateThrottle (30/min) would strangle concurrent
+    # pipelines with 429 RATE_LIMIT_EXCEEDED.
+    throttle_classes = []
 
 
 class InternalAssetPresignedUrlEndpoint(InternalBaseView):
@@ -250,8 +254,12 @@ class InternalContractChunksEndpoint(InternalBaseView):
         if not isinstance(chunks, list) or not chunks:
             return Response({"error": "chunks must be a non-empty list"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Replace wholesale: chunking is deterministic over the current text
-        ContractChunk.objects.filter(contract=contract).delete(soft=False)
+        # Large embedding payloads arrive in batches (Django's body-size limit):
+        # the first batch replaces the previous chunk set, the rest append.
+        mode = request.data.get("mode", "replace")
+        if mode == "replace":
+            # Chunking is deterministic over the current text
+            ContractChunk.objects.filter(contract=contract).delete(soft=False)
         ContractChunk.objects.bulk_create(
             [
                 ContractChunk(

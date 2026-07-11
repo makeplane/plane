@@ -83,15 +83,8 @@ async function callDeepseek(env: Env, req: StructuredJsonRequest): Promise<strin
   return text;
 }
 
-/** Runs the configured provider chain and returns the raw JSON text + model used. */
-export async function generateStructuredJson(env: Env, req: StructuredJsonRequest): Promise<StructuredJsonResult> {
-  const provider = (env.AI_PROVIDER || "gemini").toLowerCase();
-
-  if (provider === "deepseek") {
-    return { text: await callDeepseek(env, req), model: env.DEEPSEEK_MODEL || "deepseek-chat" };
-  }
-
-  // gemini primary: walk the fallback chain, then DeepSeek as last resort
+/** Walks the Gemini fallback chain; throws (with the last error) if all fail. */
+async function geminiChainStructuredJson(env: Env, req: StructuredJsonRequest): Promise<StructuredJsonResult> {
   const models = (env.GEMINI_MODEL_FALLBACK_LIST || "")
     .split(",")
     .map((m) => m.trim())
@@ -108,12 +101,41 @@ export async function generateStructuredJson(env: Env, req: StructuredJsonReques
       console.log(JSON.stringify({ message: "gemini model unavailable, trying next", model }));
     }
   }
+  throw lastError ?? new Error("All Gemini models failed");
+}
+
+/**
+ * Runs the configured provider (AI_PROVIDER, default "deepseek") and returns
+ * the raw JSON text + model used. Each provider falls back to the other as a
+ * last resort, so a provider outage doesn't fail the pipeline.
+ */
+export async function generateStructuredJson(env: Env, req: StructuredJsonRequest): Promise<StructuredJsonResult> {
+  const provider = (env.AI_PROVIDER || "deepseek").toLowerCase();
+
+  if (provider === "deepseek") {
+    try {
+      return { text: await callDeepseek(env, req), model: env.DEEPSEEK_MODEL || "deepseek-chat" };
+    } catch (deepseekError) {
+      console.log(JSON.stringify({ message: "deepseek unavailable, falling back to gemini chain" }));
+      try {
+        return await geminiChainStructuredJson(env, req);
+      } catch {
+        throw deepseekError;
+      }
+    }
+  }
+
+  // gemini primary: walk the fallback chain, then DeepSeek as last resort
   try {
-    console.log(JSON.stringify({ message: "all gemini models unavailable, falling back to deepseek" }));
-    return { text: await callDeepseek(env, req), model: `deepseek:${env.DEEPSEEK_MODEL || "deepseek-chat"}` };
-  } catch (deepseekError) {
-    console.error(JSON.stringify({ message: "deepseek fallback failed", error: String(deepseekError) }));
-    throw lastError ?? deepseekError;
+    return await geminiChainStructuredJson(env, req);
+  } catch (geminiError) {
+    try {
+      console.log(JSON.stringify({ message: "all gemini models unavailable, falling back to deepseek" }));
+      return { text: await callDeepseek(env, req), model: `deepseek:${env.DEEPSEEK_MODEL || "deepseek-chat"}` };
+    } catch (deepseekError) {
+      console.error(JSON.stringify({ message: "deepseek fallback failed", error: String(deepseekError) }));
+      throw geminiError;
+    }
   }
 }
 
@@ -228,7 +250,7 @@ export async function generateText(
   query: string,
   preferredModel?: string
 ): Promise<{ text: string; model: string }> {
-  const provider = (env.AI_PROVIDER || "gemini").toLowerCase();
+  const provider = (env.AI_PROVIDER || "deepseek").toLowerCase();
 
   if (preferredModel) {
     const isDeepseek = deepseekModels(env).includes(preferredModel);
@@ -249,7 +271,20 @@ export async function generateText(
 
   if (provider === "deepseek") {
     const model = deepseekModels(env)[0];
-    return { text: await callDeepseekChat(env, model, system, history, query), model };
+    try {
+      return { text: await callDeepseekChat(env, model, system, history, query), model };
+    } catch (deepseekError) {
+      // Fall back to the Gemini chain so a DeepSeek outage doesn't kill chat
+      const geminiFallback = geminiModels(env);
+      for (const geminiModel of geminiFallback) {
+        try {
+          return { text: await callGeminiChat(env, geminiModel, system, history, query), model: geminiModel };
+        } catch (error) {
+          if (!(error as Error & { retryable?: boolean }).retryable) throw error;
+        }
+      }
+      throw deepseekError;
+    }
   }
 
   const models = geminiModels(env);

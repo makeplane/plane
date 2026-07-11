@@ -179,15 +179,19 @@ export class ContractPipelineWorkflow extends WorkflowEntrypoint<Env, PipelinePa
             const batch = chunks.slice(i, i + 64);
             embeddings.push(...(await generateEmbeddings(this.env, batch.map((c) => c.text))));
           }
-          await api.saveChunks(
-            contractId,
-            chunks.map((chunk, i) => ({
-              index: chunk.index,
-              content: chunk.text,
-              token_count: chunk.tokens,
-              embedding: embeddings[i],
-            }))
-          );
+          const records = chunks.map((chunk, i) => ({
+            index: chunk.index,
+            content: chunk.text,
+            token_count: chunk.tokens,
+            embedding: embeddings[i],
+          }));
+          // Persist in batches: a 1536-dim vector is ~30KB serialized, so a
+          // full contract easily exceeds Django's request-body limit (→ 413).
+          // First batch replaces the old chunk set, the rest append.
+          const SAVE_BATCH = 40;
+          for (let i = 0; i < records.length; i += SAVE_BATCH) {
+            await api.saveChunks(contractId, records.slice(i, i + SAVE_BATCH), i === 0 ? "replace" : "append");
+          }
           return { skipped: false, count: chunks.length };
         });
       }
