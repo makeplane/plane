@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} selected",
+    "clear_selection": "Clear selection",
+    "archive_success": "Work items archived successfully",
+    "delete_confirmation": {
+      "title": "Delete work items",
+      "description": "Are you sure you want to delete the selected work items? This action cannot be undone."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Unable to archive work items",

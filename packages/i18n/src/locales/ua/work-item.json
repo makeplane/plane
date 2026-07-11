@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "Вибрано: {count}",
+    "clear_selection": "Очистити вибір",
+    "archive_success": "Робочі елементи успішно заархівовано",
+    "delete_confirmation": {
+      "title": "Видалити робочі елементи",
+      "description": "Ви впевнені, що хочете видалити вибрані робочі елементи? Цю дію неможливо скасувати."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Неможливо архівувати робочі елементи",

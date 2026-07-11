@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "Đã chọn {count}",
+    "clear_selection": "Xóa lựa chọn",
+    "archive_success": "Đã lưu trữ các mục công việc thành công",
+    "delete_confirmation": {
+      "title": "Xóa các mục công việc",
+      "description": "Bạn có chắc chắn muốn xóa các mục công việc đã chọn không? Hành động này không thể hoàn tác."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Không thể lưu trữ mục công việc",

@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} 件選択中",
+    "clear_selection": "選択をクリア",
+    "archive_success": "作業アイテムをアーカイブしました",
+    "delete_confirmation": {
+      "title": "作業アイテムを削除",
+      "description": "選択した作業アイテムを削除してもよろしいですか？この操作は取り消せません。"
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "作業項目をアーカイブできません",

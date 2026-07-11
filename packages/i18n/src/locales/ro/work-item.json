@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} selectate",
+    "clear_selection": "Șterge selecția",
+    "archive_success": "Elementele de lucru au fost arhivate cu succes",
+    "delete_confirmation": {
+      "title": "Șterge elementele de lucru",
+      "description": "Sigur doriți să ștergeți elementele de lucru selectate? Această acțiune nu poate fi anulată."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Imposibil de arhivat elementele de lucru",

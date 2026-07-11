@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} ausgewählt",
+    "clear_selection": "Auswahl aufheben",
+    "archive_success": "Arbeitselemente erfolgreich archiviert",
+    "delete_confirmation": {
+      "title": "Arbeitselemente löschen",
+      "description": "Möchten Sie die ausgewählten Arbeitselemente wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Arbeitsaufgaben können nicht archiviert werden",

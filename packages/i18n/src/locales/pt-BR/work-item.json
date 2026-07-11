@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} selecionado(s)",
+    "clear_selection": "Limpar seleção",
+    "archive_success": "Itens de trabalho arquivados com sucesso",
+    "delete_confirmation": {
+      "title": "Excluir itens de trabalho",
+      "description": "Tem certeza de que deseja excluir os itens de trabalho selecionados? Esta ação não pode ser desfeita."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Não é possível arquivar itens de trabalho",

@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "Vybráno: {count}",
+    "clear_selection": "Zrušit výběr",
+    "archive_success": "Pracovní položky byly úspěšně archivovány",
+    "delete_confirmation": {
+      "title": "Odstranit pracovní položky",
+      "description": "Opravdu chcete odstranit vybrané pracovní položky? Tuto akci nelze vrátit zpět."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Nelze archivovat pracovní položky",

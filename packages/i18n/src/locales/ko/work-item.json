@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count}개 선택됨",
+    "clear_selection": "선택 해제",
+    "archive_success": "작업 항목이 보관되었습니다",
+    "delete_confirmation": {
+      "title": "작업 항목 삭제",
+      "description": "선택한 작업 항목을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "작업 항목을 아카이브할 수 없습니다",
