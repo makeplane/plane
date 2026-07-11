@@ -33,6 +33,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
+from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -70,6 +71,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.bulk_issue import bulk_issue_operations, BulkIssueOperationError
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -1377,3 +1379,30 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         # Serialize the issue
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BulkIssueOperationEndpoint(BaseAPIView):
+    """Bulk edit multiple properties on a set of work items in one request.
+
+    SET/REPLACE semantics for every provided property; the whole batch is
+    rejected (400) with no partial write if any value is invalid.
+    """
+
+    permission_classes = [ProjectEntityPermission]
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        try:
+            operated_ids = bulk_issue_operations(
+                slug=slug,
+                project_id=project_id,
+                issue_ids=request.data.get("issue_ids", []),
+                properties=request.data.get("properties", {}),
+                actor_id=str(request.user.id),
+                origin=base_host(request=request, is_app=True),
+                notification=True,
+            )
+        except BulkIssueOperationError as error:
+            return Response({"error": error.message}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"issue_ids": operated_ids}, status=status.HTTP_200_OK)
