@@ -27,7 +27,7 @@ import { BaseGanttRoot } from "../gantt";
 import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
 import { CycleListLayout } from "../list/roots/cycle-root";
 import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 function CycleIssueLayout(props: {
   activeLayout: EIssueLayoutTypes | undefined;

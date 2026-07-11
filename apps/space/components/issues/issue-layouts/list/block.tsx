@@ -6,8 +6,7 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { Link, useSearchParams } from "react-router";
-import { useParams } from "@/hooks/use-params";
+import { Link, useSearchParams, useParams } from "react-router";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -37,8 +36,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
   // hooks
-  const { project_details } = usePublish(anchor.toString());
+  const { project_details } = usePublish(anchor);
   const { getIsIssuePeeked, setPeekId, getIssueById } = useIssueDetails();
+
+  if (!anchor) return null;
 
   const handleIssuePeekOverview = () => {
     setPeekId(issueId);

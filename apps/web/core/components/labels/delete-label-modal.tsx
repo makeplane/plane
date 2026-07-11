@@ -13,7 +13,7 @@ import type { IIssueLabel } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isOpen: boolean;

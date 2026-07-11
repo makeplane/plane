@@ -8,10 +8,12 @@ import { observer } from "mobx-react";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectViewCalendarLayout = observer(function ProjectViewCalendarLayout() {
   const { viewId } = useParams();
+
+  if (!viewId) return null;
 
   return <BaseCalendarRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

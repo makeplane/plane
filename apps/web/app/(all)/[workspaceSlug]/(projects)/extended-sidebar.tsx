@@ -16,7 +16,7 @@ import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-prefer
 // plane-web imports
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   // refs
@@ -32,7 +32,7 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   const currentWorkspaceNavigationPreferences = workspacePreferences.items;
 
   const sortedNavigationItems = useMemo(() => {
-    const slug = workspaceSlug.toString();
+    const slug = workspaceSlug?.toString() ?? "";
 
     return WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
@@ -114,6 +114,8 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   };
 
   const handleClose = useCallback(() => toggleExtendedSidebar(false), [toggleExtendedSidebar]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <ExtendedSidebarWrapper

@@ -4,9 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 /**
  * Custom hook to detect different workspace paths

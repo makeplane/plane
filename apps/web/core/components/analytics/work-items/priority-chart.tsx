@@ -28,7 +28,7 @@ import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
 import { generateBarColor } from "./utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -58,7 +58,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   const { resolvedTheme } = useTheme();
   // router
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const workspaceSlug = params.workspaceSlug?.toString() ?? "";
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-

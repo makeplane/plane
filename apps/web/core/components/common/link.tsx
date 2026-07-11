@@ -23,12 +23,23 @@ export type TLinkProps = React.ComponentProps<"a"> & {
  * consistent with the slash-terminated hrefs that active-state checks compare against.
  * External and fragment targets are handed to a plain anchor untouched.
  */
-export const Link = React.forwardRef<HTMLAnchorElement, TLinkProps>(function Link({ href, replace, ...rest }, ref) {
+export const Link = React.forwardRef<HTMLAnchorElement, TLinkProps>(function Link(
+  { href, replace, children, ...rest },
+  ref
+) {
   if (NON_ROUTE_HREF_REGEX.test(href)) {
-    return <a ref={ref} href={href} {...rest} />;
+    return (
+      <a ref={ref} href={href} {...rest}>
+        {children}
+      </a>
+    );
   }
 
-  return <RouterLink ref={ref} to={ensureTrailingSlash(href)} replace={replace} {...rest} />;
+  return (
+    <RouterLink ref={ref} to={ensureTrailingSlash(href)} replace={replace} {...rest}>
+      {children}
+    </RouterLink>
+  );
 });
 
 export default Link;

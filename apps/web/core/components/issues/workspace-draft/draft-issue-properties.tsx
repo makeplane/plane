@@ -28,7 +28,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssuePropertyLabels } from "../issue-layouts/properties";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // local components
 
 export interface IIssueProperties {

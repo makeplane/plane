@@ -22,9 +22,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 
 export const ModulesListView = observer(function ModulesListView() {
   // router

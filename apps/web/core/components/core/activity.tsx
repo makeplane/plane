@@ -38,7 +38,7 @@ import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // types
 
 export function IssueLink({ activity }: { activity: IIssueActivity }) {

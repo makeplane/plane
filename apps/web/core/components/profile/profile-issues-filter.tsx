@@ -18,7 +18,7 @@ import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/com
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
   // i18n

@@ -19,7 +19,7 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";
 import { ArchivedIssueListLayout } from "../list/roots/archived-issue-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot() {
   // router

@@ -15,9 +15,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   // store hooks

@@ -13,7 +13,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // navigation
@@ -21,6 +21,8 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // store hooks
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
+
+  if (!workspaceSlug) return null;
 
   const SIDEBAR_USER_MENU_ITEMS = [
     {

@@ -13,7 +13,7 @@ import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +33,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   } = useIssues(EIssuesStoreType.CYCLE);
 
   const { workspaceSlug, projectId } = useParams();
+
+  if (!workspaceSlug || !projectId) return null;
 
   const transferIssue = async (payload: { new_cycle_id: string }) => {
     if (!workspaceSlug || !projectId || !cycleId) return;

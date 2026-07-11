@@ -18,9 +18,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {
@@ -44,6 +42,8 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
   const { allowPermissions } = useUserPermissions();
   // store hooks
   const { toggleSidebar } = useAppTheme();
+
+  if (!workspaceSlug) return null;
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {

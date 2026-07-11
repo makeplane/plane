@@ -11,7 +11,7 @@ import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IDeleteWebhook {
   isOpen: boolean;

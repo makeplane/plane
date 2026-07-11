@@ -17,7 +17,7 @@ import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   activity: IUserActivityResponse | undefined;

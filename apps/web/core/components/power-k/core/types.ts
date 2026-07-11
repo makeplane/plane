@@ -16,8 +16,10 @@ import type { TAppRouter } from "@/hooks/use-app-router";
 export type TPowerKContextType = "work-item" | "page" | "cycle" | "module" | TPowerKContextTypeExtended;
 
 export type TPowerKContext = {
-  // Route information
-  params: Record<string, string | string[] | undefined>;
+  // Route information. Values come from React Router's route params (`string | undefined`), but the
+  // providers also merge in store-derived ids such as `workItemDetails.project_id`, which is
+  // nullable — hence `null` is admitted here. Consumers read these via `?.toString()`.
+  params: Readonly<Record<string, string | null | undefined>>;
   // Current user
   currentUserId?: string;
   activeCommand: TPowerKCommandConfig | null;

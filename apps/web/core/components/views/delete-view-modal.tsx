@@ -15,7 +15,7 @@ import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

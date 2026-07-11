@@ -15,7 +15,7 @@ import { useSticky } from "@/hooks/use-stickies";
 // components
 import { ContentOverflowWrapper } from "../../core/content-overflow-HOC";
 import { StickiesLayout } from "./stickies-list";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type StickiesTruncatedProps = {
   handleClose?: () => void;
@@ -34,6 +34,8 @@ export const StickiesTruncated = observer(function StickiesTruncated(props: Stic
     workspaceSlug ? () => fetchWorkspaceStickies(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  if (!workspaceSlug) return null;
 
   return (
     <ContentOverflowWrapper

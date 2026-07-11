@@ -13,7 +13,7 @@ import type { TIssue } from "@plane/types";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issue: TIssue;

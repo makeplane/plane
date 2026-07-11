@@ -13,7 +13,7 @@ import type { IWorkspaceView } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   data: IWorkspaceView;

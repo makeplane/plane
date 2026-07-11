@@ -22,7 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { IntakeIcon } from "@plane/propel/icons";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
@@ -35,6 +35,8 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
 
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();
+
+  if (!workspaceSlug || !projectId) return null;
 
   // derived value
   const isAuthorized = allowPermissions(

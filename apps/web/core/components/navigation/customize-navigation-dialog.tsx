@@ -23,7 +23,7 @@ import {
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 // types
 import type { TPersonalNavigationItemKey } from "@plane/types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TCustomizeNavigationDialogProps = {
   isOpen: boolean;

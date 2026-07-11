@@ -12,7 +12,7 @@ import { ModuleIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // ui
 
 type Props = {

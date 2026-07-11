@@ -25,7 +25,7 @@ import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { ProjectService } from "@/services/project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isOpen: boolean;

@@ -36,7 +36,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { isIssueNew } from "../utils";
 import { IssueColumn } from "./issue-column";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;

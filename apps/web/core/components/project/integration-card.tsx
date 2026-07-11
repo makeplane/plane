@@ -17,7 +17,7 @@ import { SelectRepository } from "@/components/integration/github/select-reposit
 import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
 // services
 import { ProjectService } from "@/services/project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   integration: IWorkspaceIntegration;

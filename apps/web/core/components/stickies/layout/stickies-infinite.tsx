@@ -13,7 +13,7 @@ import { cn } from "@plane/utils";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const StickiesInfinite = observer(function StickiesInfinite() {
   const { workspaceSlug } = useParams();
@@ -28,24 +28,26 @@ export const StickiesInfinite = observer(function StickiesInfinite() {
 
   useSWR(
     workspaceSlug ? `WORKSPACE_STICKIES_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWorkspaceStickies(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => fetchWorkspaceStickies(workspaceSlug?.toString() ?? "") : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const handleLoadMore = () => {
     if (loader === "pagination") return;
-    fetchNextWorkspaceStickies(workspaceSlug?.toString());
+    fetchNextWorkspaceStickies(workspaceSlug?.toString() ?? "");
   };
 
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
   const shouldObserve = hasNextPage && loader !== "pagination";
-  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString());
+  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString() ?? "");
   useIntersectionObserver(containerRef, shouldObserve ? elementRef : null, handleLoadMore);
+
+  if (!workspaceSlug) return null;
 
   return (
     <ContentWrapper ref={containerRef} className="space-y-4">
       <StickiesLayout
-        workspaceSlug={workspaceSlug.toString()}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
         intersectionElement={
           hasNextPage &&
           workspaceStickies?.length >= STICKIES_PER_PAGE && (

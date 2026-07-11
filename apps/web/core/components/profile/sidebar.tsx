@@ -27,7 +27,7 @@ import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { ProfileSidebarTime } from "./time";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TProfileSidebar = {
   userProjectsData: IUserProfileProjectSegregation | undefined;

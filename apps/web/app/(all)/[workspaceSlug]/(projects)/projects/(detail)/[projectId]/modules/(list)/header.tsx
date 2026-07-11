@@ -22,7 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
@@ -35,6 +35,8 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
   const { loader } = useProject();
 
   const { t } = useTranslation();
+
+  if (!workspaceSlug || !projectId) return null;
 
   // auth
   const canUserCreateModule = allowPermissions(

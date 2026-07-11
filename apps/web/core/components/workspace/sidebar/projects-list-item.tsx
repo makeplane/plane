@@ -43,7 +43,7 @@ import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -100,7 +100,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   // Get available navigation items for this project
   const navigationItems = useNavigationItems({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString() ?? "",
     projectId,
     project,
     allowPermissions,
@@ -108,11 +108,11 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const availableTabKeys = navigationItems.map((item) => item.key);
 
   // Get preferences from hook
-  const { tabPreferences } = useTabPreferences(workspaceSlug.toString(), projectId);
+  const { tabPreferences } = useTabPreferences(workspaceSlug?.toString() ?? "", projectId);
   const defaultTabKey = tabPreferences.defaultTab;
   // Validate that the default tab is available
   const validatedDefaultTabKey = availableTabKeys.includes(defaultTabKey) ? defaultTabKey : DEFAULT_TAB_KEY;
-  const defaultTabUrl = project ? getTabUrl(workspaceSlug.toString(), project.id, validatedDefaultTabKey) : "";
+  const defaultTabUrl = project ? getTabUrl(workspaceSlug?.toString() ?? "", project.id, validatedDefaultTabKey) : "";
 
   // toggle project list open
   const setIsProjectListOpen = useCallback(
@@ -123,13 +123,13 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
+    workspaceSlug?.toString() ?? "",
     project?.id
   );
   const isAuthorized = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
+    workspaceSlug?.toString() ?? "",
     project?.id
   );
 
@@ -259,6 +259,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       }
     };
   }, [URLProjectId, project?.id, setIsProjectListOpen]);
+
+  if (!workspaceSlug) return null;
 
   if (!project) return null;
 
@@ -481,7 +483,10 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               {isProjectListOpen && (
                 <Disclosure.Panel as="div" className="relative mt-1 mb-1.5 flex flex-col gap-0.5 pl-6">
                   <div className="absolute top-0 bottom-1 left-[15px] w-[1px] bg-layer-3" />
-                  <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                  <ProjectNavigationRoot
+                    workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    projectId={projectId.toString()}
+                  />
                 </Disclosure.Panel>
               )}
             </Transition>

@@ -18,7 +18,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export type TWorkItemLevelModalsProps = {
   workItemIdentifier: string | undefined;

@@ -19,7 +19,7 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectViewListItem } from "./view-list-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectViewsList = observer(function ProjectViewsList() {
   const { projectId } = useParams();
@@ -29,6 +29,9 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
   const { toggleCreateViewModal } = useCommandPalette();
   const { getProjectViews, getFilteredProjectViews, loader } = useProjectView();
   const { allowPermissions } = useUserPermissions();
+
+  if (!projectId) return null;
+
   // derived values
   const projectViews = getProjectViews(projectId?.toString());
   const filteredProjectViews = getFilteredProjectViews(projectId?.toString());

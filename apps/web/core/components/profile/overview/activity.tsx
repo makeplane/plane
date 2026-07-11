@@ -21,7 +21,7 @@ import { USER_PROFILE_ACTIVITY } from "@plane/constants";
 import { useUser } from "@/hooks/store/user";
 // services
 import { UserService } from "@/services/user.service";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const userService = new UserService();
 

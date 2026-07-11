@@ -9,7 +9,7 @@ import { Link } from "@/components/common/link";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import { truncateText } from "@plane/utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = { view: { key: string; i18n_label: string } };
 

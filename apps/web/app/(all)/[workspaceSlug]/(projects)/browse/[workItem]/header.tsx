@@ -18,7 +18,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // local components
 import { WorkItemDetailsHeader } from "./work-item-header";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
   // router
@@ -29,10 +29,12 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
-  const issueId = getIssueIdByIdentifier(workItem?.toString());
+  const issueId = getIssueIdByIdentifier(workItem?.toString() ?? "");
   const issueDetails = issueId ? getIssueById(issueId?.toString()) : undefined;
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+
+  if (!workspaceSlug || !workItem) return null;
 
   return (
     <>

@@ -12,9 +12,7 @@ import { IssuesLayoutsRoot } from "@/components/issues/issue-layouts";
 import { usePublish } from "@/hooks/store/publish";
 import { useLabel } from "@/hooks/store/use-label";
 import { useStates } from "@/hooks/store/use-state";
-import { useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 
 const IssuesPage = observer(function IssuesPage() {
   // params

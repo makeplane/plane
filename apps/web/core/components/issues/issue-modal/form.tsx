@@ -48,7 +48,7 @@ import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-mod
 import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-issues";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
@@ -157,7 +157,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   const projectId = watch("project_id");
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
-    workspaceSlug: workspaceSlug?.toString(),
+    workspaceSlug: workspaceSlug?.toString() ?? "",
     watch: watch,
   });
 
@@ -179,7 +179,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         reset(getUpdateFormDataForReset(projectId, getValues()));
       }
     }
-    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
+    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString() ?? "", projectId);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
@@ -209,7 +209,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
       handleTemplateChange({
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: workspaceSlug?.toString() ?? "",
         reset,
         editorRef,
       });
@@ -232,7 +232,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     if (
       !handlePropertyValuesValidation({
         projectId: projectId,
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: workspaceSlug?.toString() ?? "",
         watch: watch,
       })
     )
@@ -256,7 +256,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         setGptAssistantModal(false);
         if (isCreateMoreToggleEnabled && workItemTemplateId) {
           handleTemplateChange({
-            workspaceSlug: workspaceSlug?.toString(),
+            workspaceSlug: workspaceSlug?.toString() ?? "",
             reset,
             editorRef,
           });
@@ -284,11 +284,11 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         issueId: data.id,
         issueTypeId: data.type_id,
         projectId: data.project_id,
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: workspaceSlug?.toString() ?? "",
         isDraft: true,
       });
 
-      await moveIssue(workspaceSlug.toString(), data.id, {
+      await moveIssue(workspaceSlug?.toString() ?? "", data.id, {
         ...data,
         ...getValues(),
       } as TWorkspaceDraftIssue);
@@ -315,7 +315,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
+    workspaceSlug?.toString() ?? "",
     projectDetails?.workspace.toString(),
     projectId ?? undefined,
     {
@@ -340,7 +340,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     const stateDetails = getStateById(issue.state_id);
 
     setSelectedParentIssue(
-      convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
+      convertWorkItemDataToSearchResponse(workspaceSlug?.toString() ?? "", issue, projectDetails, stateDetails)
     );
   }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
@@ -369,6 +369,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
       resizeObserver.disconnect();
     };
   }, [formRef, modalContainerRef]);
+
+  if (!workspaceSlug) return null;
 
   // TODO: Remove this after the de-dupe feature is implemented
 
@@ -420,7 +422,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                 </div>
                 {duplicateIssues.length > 0 && (
                   <DeDupeButtonRoot
-                    workspaceSlug={workspaceSlug?.toString()}
+                    workspaceSlug={workspaceSlug?.toString() ?? ""}
                     isDuplicateModalOpen={isDuplicateModalOpen}
                     label={
                       duplicateIssues.length === 1
@@ -467,7 +469,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   editorRef={editorRef}
                   submitBtnRef={submitBtnRef}
                   gptAssistantModal={gptAssistantModal}
-                  workspaceSlug={workspaceSlug?.toString()}
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
                   projectId={projectId}
                   handleFormChange={handleFormChange}
                   handleDescriptionHTMLDataChange={(description_html) =>
@@ -483,7 +485,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                 isDraft={isDraft}
                 workItemId={data?.id ?? data?.sourceIssueId}
                 projectId={projectId}
-                workspaceSlug={workspaceSlug?.toString()}
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
             </div>
             <div
@@ -497,7 +499,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   control={control}
                   id={data?.id}
                   projectId={projectId}
-                  workspaceSlug={workspaceSlug?.toString()}
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
                   selectedParentIssue={selectedParentIssue}
                   startDate={watch("start_date")}
                   targetDate={watch("target_date")}
@@ -583,7 +585,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
               issues={duplicateIssues}
               handleDuplicateIssueModal={handleDuplicateIssueModal}
             />

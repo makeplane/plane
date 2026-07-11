@@ -27,7 +27,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isOpen: boolean;
@@ -90,6 +90,8 @@ export function ParentIssuesListModal({
         setIsLoading(false);
       });
   }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>

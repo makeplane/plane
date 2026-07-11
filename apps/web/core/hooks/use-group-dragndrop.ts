@@ -12,7 +12,7 @@ import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.sto
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useIssues } from "./store/use-issues";
 import { useIssuesActions } from "./use-issues-actions";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type DNDStoreType =
   | EIssuesStoreType.PROJECT

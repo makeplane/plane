@@ -14,7 +14,7 @@ import { useExtendedContextIndicator } from "@/plane-web/components/command-pale
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 // local imports
 import type { TPowerKContextType } from "../core/types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TArgs = {
   activeContext: TPowerKContextType | null;

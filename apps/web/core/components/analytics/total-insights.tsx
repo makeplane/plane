@@ -18,7 +18,7 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { AnalyticsService } from "@/services/analytics.service";
 // local imports
 import InsightCard from "./insight-card";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const analyticsService = new AnalyticsService();
 
@@ -58,7 +58,7 @@ const TotalInsights = observer(function TotalInsights({
   peekView?: boolean;
 }) {
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const workspaceSlug = params.workspaceSlug?.toString() ?? "";
   const { t } = useTranslation();
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { data: totalInsightsData, isLoading } = useSWR(

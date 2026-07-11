@@ -13,7 +13,7 @@ import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { ShortcutsModal } from "./ui/modal/shortcuts-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type GlobalShortcutsProps = {
   context: TPowerKContext;

@@ -36,7 +36,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
@@ -98,6 +98,8 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
+
+  if (!workspaceSlug || !projectId) return null;
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 

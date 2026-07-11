@@ -19,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

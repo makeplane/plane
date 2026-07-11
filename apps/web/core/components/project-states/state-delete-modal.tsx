@@ -13,7 +13,7 @@ import type { IState } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TStateDeleteModal = {
   isOpen: boolean;

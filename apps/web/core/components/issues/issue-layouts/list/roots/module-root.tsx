@@ -13,7 +13,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModuleListLayout = observer(function ModuleListLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();

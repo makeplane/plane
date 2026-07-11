@@ -23,7 +23,7 @@ import {
 } from "@plane/types";
 import { useWorkspace } from "./store/use-workspace";
 import useLocalStorage from "./use-local-storage";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const APP_RAIL_PREFERENCES_KEY = "app_rail_preferences";
 

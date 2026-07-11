@@ -15,7 +15,7 @@ import { cn } from "@plane/utils";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const CustomizedInsights = observer(function CustomizedInsights({
   peekView,
@@ -32,6 +32,8 @@ const CustomizedInsights = observer(function CustomizedInsights({
       y_axis: isEpic ? ChartYAxisMetric.EPIC_WORK_ITEM_COUNT : ChartYAxisMetric.WORK_ITEM_COUNT,
     },
   });
+
+  if (!workspaceSlug) return null;
 
   const params = {
     x_axis: watch("x_axis"),

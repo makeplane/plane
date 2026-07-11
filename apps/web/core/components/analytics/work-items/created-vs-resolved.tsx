@@ -20,7 +20,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ChartLoader } from "../loaders";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const analyticsService = new AnalyticsService();
 const CreatedVsResolved = observer(function CreatedVsResolved() {
@@ -35,7 +35,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
   } = useAnalytics();
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const workspaceSlug = params.workspaceSlug?.toString() ?? "";
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
     () =>

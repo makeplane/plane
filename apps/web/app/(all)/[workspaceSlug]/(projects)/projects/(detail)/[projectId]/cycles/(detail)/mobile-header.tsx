@@ -21,7 +21,7 @@ import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const SUPPORTED_LAYOUTS = [
   { key: "list", titleTranslationKey: "issue.layouts.list", icon: ListLayoutIcon },

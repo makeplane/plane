@@ -19,7 +19,7 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const TopNavPowerK = observer(() => {
   // router

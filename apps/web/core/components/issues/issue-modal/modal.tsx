@@ -11,7 +11,7 @@ import type { EIssuesStoreType, TIssue } from "@plane/types";
 // plane web imports
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateIssueModalBase } from "./base";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;

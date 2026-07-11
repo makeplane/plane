@@ -16,7 +16,7 @@ import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-ite
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { WorkspaceViewForm } from "./form";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   data?: IWorkspaceView;

@@ -23,7 +23,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -42,6 +42,9 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
     pageId: pageId?.toString() ?? "",
     storeType,
   });
+
+  if (!workspaceSlug || !projectId) return null;
+
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 

@@ -24,7 +24,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // hooks
 
 type Props = {

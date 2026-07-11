@@ -12,7 +12,7 @@ import type { TIssue } from "@plane/types";
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issue: TIssue;

@@ -15,13 +15,15 @@ import { StickySearch } from "@/components/stickies/modal/search";
 import { useStickyOperations } from "@/components/stickies/sticky/use-operations";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
   const { workspaceSlug } = useParams();
   // hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
-  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() ?? "" });
+
+  if (!workspaceSlug) return null;
 
   return (
     <>

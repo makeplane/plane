@@ -13,7 +13,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 // local imports
 import { PowerKModuleStatusMenu } from "./status-menu";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   activePage: TPowerKPageType | null;

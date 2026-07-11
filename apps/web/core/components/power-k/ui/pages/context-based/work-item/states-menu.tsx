@@ -12,7 +12,7 @@ import { Spinner } from "@plane/ui";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { PowerKProjectStatesMenuItems } from "@/plane-web/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   handleSelect: (stateId: string) => void;
@@ -25,6 +25,9 @@ export const PowerKProjectStatesMenu = observer(function PowerKProjectStatesMenu
   const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectStateIds, getStateById } = useProjectState();
+
+  if (!workspaceSlug) return null;
+
   // derived values
   const projectStateIds = workItemDetails.project_id ? getProjectStateIds(workItemDetails.project_id) : undefined;
   const projectStates = projectStateIds ? projectStateIds.map((stateId) => getStateById(stateId)) : undefined;

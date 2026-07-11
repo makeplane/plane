@@ -32,7 +32,7 @@ import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states
@@ -118,6 +118,8 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
     return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions[layout];
   }, [activeLayout]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <>

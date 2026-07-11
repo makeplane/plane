@@ -14,7 +14,7 @@ import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/u
 import { useMember } from "@/hooks/store/use-member";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   page: TPageInstance;

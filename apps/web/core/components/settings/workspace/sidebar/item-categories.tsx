@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useLocation } from "react-router";
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 // plane imports
 import {
   EUserPermissionsLevel,

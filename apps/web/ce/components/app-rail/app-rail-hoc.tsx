@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { PlaneNewIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];

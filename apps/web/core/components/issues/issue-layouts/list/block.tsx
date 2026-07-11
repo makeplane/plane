@@ -35,7 +35,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IssueBlockProps {
   issueId: string;

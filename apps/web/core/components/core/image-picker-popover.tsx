@@ -26,7 +26,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TTabOption = {
   key: string;

@@ -24,9 +24,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-import { useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 
 type Props = {
   isDefaultView: boolean;

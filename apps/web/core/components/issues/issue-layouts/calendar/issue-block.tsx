@@ -27,7 +27,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issue: TIssue;
@@ -58,9 +58,12 @@ export const CalendarIssueBlock = observer(
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (issue: TIssue) =>
+      handleRedirection(workspaceSlug?.toString() ?? "", issue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+
+    if (!workspaceSlug) return null;
 
     const customActionButton = (
       <div
@@ -80,7 +83,7 @@ export const CalendarIssueBlock = observer(
     const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
     const workItemLink = generateWorkItemLink({
-      workspaceSlug: workspaceSlug?.toString(),
+      workspaceSlug: workspaceSlug?.toString() ?? "",
       projectId: issue?.project_id,
       issueId: issue?.id,
       projectIdentifier,

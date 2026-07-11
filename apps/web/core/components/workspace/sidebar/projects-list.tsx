@@ -32,9 +32,7 @@ import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferen
 import type { TProject } from "@plane/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // states

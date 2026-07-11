@@ -13,7 +13,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CycleCalendarLayout = observer(function CycleCalendarLayout() {
   const { currentProjectCompletedCycleIds } = useCycle();

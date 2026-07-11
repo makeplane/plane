@@ -19,7 +19,7 @@ import { SettingsControlItem } from "@/components/settings/control-item";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

@@ -19,9 +19,7 @@ import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { StarUsOnGitHubLink } from "@/app/(all)/[workspaceSlug]/(projects)/star-us-link";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router

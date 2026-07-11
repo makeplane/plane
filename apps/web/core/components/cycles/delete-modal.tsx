@@ -16,9 +16,7 @@ import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 
 interface ICycleDelete {
   cycle: ICycle;

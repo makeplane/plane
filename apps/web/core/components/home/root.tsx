@@ -17,7 +17,7 @@ import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   // store hooks

@@ -19,7 +19,7 @@ import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   handleRemove: () => Promise<void>;

@@ -11,7 +11,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import type { TWorkItemStateDropdownBaseProps } from "./base";
 import { WorkItemStateDropdownBase } from "./base";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TWorkItemStateDropdownProps = Omit<
   TWorkItemStateDropdownBaseProps,

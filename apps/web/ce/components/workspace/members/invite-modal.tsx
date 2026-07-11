@@ -16,7 +16,7 @@ import { InvitationFields } from "@/components/workspace/invite-modal/fields";
 import { InvitationForm } from "@/components/workspace/invite-modal/form";
 // hooks
 import { useWorkspaceInvitationActions } from "@/hooks/use-workspace-invitation";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export type TSendWorkspaceInvitationModalProps = {
   isOpen: boolean;
@@ -37,6 +37,8 @@ export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvit
     onSubmit,
     onClose,
   });
+
+  if (!workspaceSlug) return null;
 
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>

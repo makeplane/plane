@@ -21,7 +21,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
@@ -33,6 +33,8 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   const { t } = useTranslation();
+
+  if (!workspaceSlug || !projectId) return null;
 
   const canUserCreateCycle = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

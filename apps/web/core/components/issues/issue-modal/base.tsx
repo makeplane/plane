@@ -32,7 +32,7 @@ import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
@@ -81,8 +81,11 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
+  // This modal also opens from workspace level, where the route carries no work-item / project /
+  // module segment. Every param read here is therefore genuinely optional and must stay that way —
+  // guarding the component on them would stop the modal from opening outside a project.
   const routerProjectIdentifier = workItem?.toString().split("-")[0];
-  const projectIdFromRouter = getProjectByIdentifier(routerProjectIdentifier)?.id;
+  const projectIdFromRouter = routerProjectIdentifier ? getProjectByIdentifier(routerProjectIdentifier)?.id : undefined;
   const projectId = data?.project_id ?? routerProjectId?.toString() ?? projectIdFromRouter;
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
@@ -175,7 +178,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       // use the project issue store to create issues
       else if (
         (payload.cycle_id !== cycleId && storeType === EIssuesStoreType.CYCLE) ||
-        (!payload.module_ids?.includes(moduleId?.toString()) && storeType === EIssuesStoreType.MODULE)
+        (!!moduleId && !payload.module_ids?.includes(moduleId.toString()) && storeType === EIssuesStoreType.MODULE)
       ) {
         response = await projectIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
       } // else just use the existing store type's create method
@@ -210,7 +213,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         if (
           payload.module_ids &&
           payload.module_ids.length > 0 &&
-          (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+          (!moduleId || !payload.module_ids.includes(moduleId.toString()) || storeType !== EIssuesStoreType.MODULE)
         ) {
           await addIssueToModule(response, payload.module_ids);
         }

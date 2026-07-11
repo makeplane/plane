@@ -15,7 +15,7 @@ import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type FormData = {
   projectName: string;

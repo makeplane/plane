@@ -25,7 +25,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface ILabelDropdownProps {
   projectId: string | null;
@@ -161,7 +161,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
   };
 
   const handleAddLabel = async (labelName: string) => {
-    if (!projectId) return;
+    if (!workspaceSlug || !projectId) return;
     setSubmitting(true);
     const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
     onChange([...value, label.id]);

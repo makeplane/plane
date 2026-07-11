@@ -15,7 +15,7 @@ import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 import { IconButton } from "@plane/propel/icon-button";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const StickySearch = observer(function StickySearch() {
   // router
@@ -42,7 +42,7 @@ export const StickySearch = observer(function StickySearch() {
   };
 
   const fetchStickies = async () => {
-    await fetchWorkspaceStickies(workspaceSlug.toString());
+    await fetchWorkspaceStickies(workspaceSlug?.toString() ?? "");
   };
 
   const debouncedSearch = useCallback(
@@ -51,6 +51,8 @@ export const StickySearch = observer(function StickySearch() {
     }, 500),
     [fetchWorkspaceStickies]
   );
+
+  if (!workspaceSlug) return null;
 
   return (
     <div className="my-auto mr-2 flex items-center">

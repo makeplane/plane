@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@plane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
 import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // types
 
 type Props = {

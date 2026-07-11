@@ -14,7 +14,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { StickiesTruncated } from "../layout/stickies-truncated";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TProps = {
   handleClose?: () => void;
@@ -27,7 +27,9 @@ export const Stickies = observer(function Stickies(props: TProps) {
   // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   // sticky operations
-  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() ?? "" });
+
+  if (!workspaceSlug) return null;
 
   return (
     <div className="min-h-[620px] p-6 pb-0">

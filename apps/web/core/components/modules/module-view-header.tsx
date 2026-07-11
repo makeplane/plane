@@ -29,7 +29,7 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
 import { IconButton } from "@plane/propel/icon-button";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {

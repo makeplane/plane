@@ -39,7 +39,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;

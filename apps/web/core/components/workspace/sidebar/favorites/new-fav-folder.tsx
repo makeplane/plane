@@ -17,7 +17,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TForm = {
   name: string;
@@ -71,7 +71,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
         message: t("folder_name_cannot_be_empty"),
       });
 
-    addFavorite(workspaceSlug.toString(), formData)
+    addFavorite(workspaceSlug?.toString() ?? "", formData)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -110,7 +110,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
         message: t("folder_name_cannot_be_empty"),
       });
 
-    updateFavorite(workspaceSlug.toString(), favoriteId, payload)
+    updateFavorite(workspaceSlug?.toString() ?? "", favoriteId, payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -137,6 +137,9 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
   useOutsideClickDetector(ref, () => {
     setCreateNewFolder(false);
   });
+
+  if (!workspaceSlug) return null;
+
   return (
     <div className="flex items-center gap-1.5 px-2 py-[1px]" ref={ref}>
       <FavoriteFolderIcon className="size-4" />

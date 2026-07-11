@@ -19,7 +19,7 @@ import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by"
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // i18n

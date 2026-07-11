@@ -20,7 +20,7 @@ import { Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@pla
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useProjectPublish } from "@/hooks/store/use-project-publish";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isOpen: boolean;

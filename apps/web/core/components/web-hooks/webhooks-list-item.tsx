@@ -10,7 +10,7 @@ import type { IWebhook } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IWebhookListItem {
   webhook: IWebhook;

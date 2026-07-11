@@ -21,7 +21,7 @@ import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface Props {
   className?: string;
@@ -82,6 +82,8 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
       }
     }
   }, [isOpen, isMobile]);
+
+  if (!workspaceSlug) return null;
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {

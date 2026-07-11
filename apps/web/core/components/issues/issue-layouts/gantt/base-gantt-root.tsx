@@ -28,7 +28,7 @@ import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { IssueGanttBlock } from "./blocks";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
@@ -98,7 +98,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         target_date?: string;
       }[]
     ) =>
-      issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
+      issues.updateIssueDates(workspaceSlug?.toString() ?? "", updates, projectId?.toString() ?? "").catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
@@ -107,6 +107,8 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
       }),
     [issues, projectId, workspaceSlug]
   );
+
+  if (!workspaceSlug || !projectId) return null;
 
   const quickAdd =
     enableIssueCreation && isAllowed && !isCompletedCycle ? (

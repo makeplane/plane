@@ -14,7 +14,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issue: TIssue;

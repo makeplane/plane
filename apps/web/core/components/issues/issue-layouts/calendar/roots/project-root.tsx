@@ -12,7 +12,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CalendarLayout = observer(function CalendarLayout() {
   // router

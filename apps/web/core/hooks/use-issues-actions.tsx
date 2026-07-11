@@ -20,7 +20,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { useIssues } from "./store/use-issues";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface IssueActions {
   fetchIssues: (

@@ -19,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { DefaultWorkspaceViewQuickActions } from "./default-view-quick-action";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 import { WorkspaceViewQuickActions } from "./quick-action";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const ViewTab = observer(function ViewTab(props: { viewId: string }) {
   const { viewId } = props;

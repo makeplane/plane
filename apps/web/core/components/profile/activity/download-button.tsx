@@ -12,7 +12,7 @@ import { Button } from "@plane/propel/button";
 // helpers
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { UserService } from "@/services/user.service";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const userService = new UserService();
 

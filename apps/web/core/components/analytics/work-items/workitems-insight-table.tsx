@@ -24,7 +24,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import { exportCSV } from "../export";
 import { InsightTable } from "../insight-table";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const analyticsService = new AnalyticsService();
 
@@ -42,7 +42,7 @@ declare module "@tanstack/react-table" {
 const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
   // router
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const workspaceSlug = params.workspaceSlug?.toString() ?? "";
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();

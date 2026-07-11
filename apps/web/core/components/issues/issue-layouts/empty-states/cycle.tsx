@@ -21,7 +21,7 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CycleEmptyState = observer(function CycleEmptyState() {
   // router

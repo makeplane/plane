@@ -15,7 +15,7 @@ import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;

@@ -8,7 +8,7 @@ import { useState } from "react";
 import type { PageProps } from "@react-pdf/renderer";
 import { pdf } from "@react-pdf/renderer";
 import { Controller, useForm } from "react-hook-form";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -156,7 +156,7 @@ export function ExportPageModal(props: Props) {
       const blob = await pdf(<PDFDocument content={parsedPageContent} pageFormat={selectedPageFormat} />).toBlob();
       initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
     } catch (error) {
-      throw new Error(`Error in exporting as a PDF: ${error}`);
+      throw new Error(`Error in exporting as a PDF: ${error}`, { cause: error });
     }
   };
   // handle export as markdown
@@ -171,7 +171,7 @@ export function ExportPageModal(props: Props) {
       const blob = new Blob([parsedMarkdownContent], { type: "text/markdown" });
       initiateDownload(blob, `${fileName}.md`);
     } catch (error) {
-      throw new Error(`Error in exporting as markdown: ${error}`);
+      throw new Error(`Error in exporting as markdown: ${error}`, { cause: error });
     }
   };
   // handle export

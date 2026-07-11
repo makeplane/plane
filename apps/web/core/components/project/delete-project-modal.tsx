@@ -14,7 +14,7 @@ import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type DeleteProjectModal = {
   isOpen: boolean;

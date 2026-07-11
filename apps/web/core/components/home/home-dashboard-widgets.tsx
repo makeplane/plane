@@ -24,9 +24,7 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const HOME_WIDGETS_LIST: {
   [key in THomeWidgetKeys]: {
@@ -79,7 +77,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;
 
   // derived values
-  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
+  const isWikiApp = pathname.includes(`/${workspaceSlug?.toString() ?? ""}/pages`);
   if (!workspaceSlug) return null;
   if (loading || loader !== "loaded") return <HomeLoader />;
 
@@ -87,7 +85,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
     <div className="relative flex h-full w-full flex-col gap-7">
       <HomePageHeader />
       <ManageWidgetsModal
-        workspaceSlug={workspaceSlug.toString()}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
         isModalOpen={showWidgetSettings}
         handleOnClose={() => toggleWidgetSettings(false)}
       />
@@ -101,7 +99,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
             if (!WidgetComponent || !isEnabled) return null;
             return (
               <div key={key} className="py-4">
-                <WidgetComponent workspaceSlug={workspaceSlug.toString()} />
+                <WidgetComponent workspaceSlug={workspaceSlug?.toString() ?? ""} />
               </div>
             );
           })}

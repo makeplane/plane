@@ -12,7 +12,7 @@ import type { TCommentsOperations, TIssueComment } from "@plane/types";
 // local components
 import { CommentCard } from "./card/root";
 import { CommentCreate } from "./comment-create";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TCommentsWrapper = {
   projectId?: string;
@@ -46,7 +46,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
     () =>
       isEditingAllowed && (
         <CommentCreate
-          workspaceSlug={workspaceSlug}
+          workspaceSlug={workspaceSlug ?? ""}
           entityId={entityId}
           activityOperations={activityOperations}
           projectId={projectId}
@@ -71,7 +71,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
           return (
             <CommentCard
               key={comment.id}
-              workspaceSlug={workspaceSlug}
+              workspaceSlug={workspaceSlug ?? ""}
               entityId={entityId}
               comment={comment}
               activityOperations={activityOperations}

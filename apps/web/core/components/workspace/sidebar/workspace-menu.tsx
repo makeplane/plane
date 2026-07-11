@@ -15,7 +15,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // local imports
 import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
 import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params

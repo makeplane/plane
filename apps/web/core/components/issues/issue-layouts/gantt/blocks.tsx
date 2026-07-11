@@ -27,7 +27,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import { WorkItemPreviewCard } from "../../preview-card";
 import { getBlockViewDetails } from "../utils";
 import type { GanttStoreType } from "./base-gantt-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issueId: string;

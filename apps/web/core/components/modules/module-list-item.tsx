@@ -20,9 +20,7 @@ import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useLocation, useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useSearchParams, useParams } from "react-router";
 
 type Props = {
   moduleId: string;
@@ -40,6 +38,8 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+
+  if (!workspaceSlug || !projectId) return null;
 
   // derived values
   const moduleDetails = getModuleById(moduleId);

@@ -18,7 +18,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   // router
@@ -29,6 +29,9 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
+
+  if (!workItem) return null;
+
   // derived values
   const issueId = getIssueIdByIdentifier(workItem?.toString());
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;

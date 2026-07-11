@@ -25,7 +25,7 @@ import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IHeaderGroupByCard {
   groupID: string;

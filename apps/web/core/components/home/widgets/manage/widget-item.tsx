@@ -29,7 +29,7 @@ import { useHome } from "@/hooks/store/use-home";
 import { HOME_WIDGETS_LIST } from "../../home-dashboard-widgets";
 import { WidgetItemDragHandle } from "./widget-item-drag-handle";
 import { getCanDrop, getInstructionFromPayload } from "./widget.helpers";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   widgetId: string;
@@ -119,6 +119,8 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef?.current, isDragging, isLastChild, widget.key]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <div className="">

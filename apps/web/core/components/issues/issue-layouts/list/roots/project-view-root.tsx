@@ -12,10 +12,12 @@ import { observer } from "mobx-react";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseListRoot } from "../base-list-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectViewListLayout = observer(function ProjectViewListLayout() {
   const { viewId } = useParams();
+
+  if (!viewId) return null;
 
   return <BaseListRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

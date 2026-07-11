@@ -20,7 +20,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;

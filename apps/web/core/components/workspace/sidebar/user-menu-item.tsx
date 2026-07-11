@@ -16,9 +16,7 @@ import { NotificationAppSidebarOption } from "@/components/workspace-notificatio
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export interface SidebarUserMenuItemProps {
   item: {
@@ -42,6 +40,8 @@ export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: 
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleSidebar } = useAppTheme();
+
+  if (!workspaceSlug) return null;
 
   const isActive = pathname === item.href;
 

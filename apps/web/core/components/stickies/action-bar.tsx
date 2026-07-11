@@ -22,7 +22,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const StickyActionBar = observer(function StickyActionBar() {
   // states
@@ -52,6 +52,8 @@ export const StickyActionBar = observer(function StickyActionBar() {
     setShowRecentSticky(false);
     setIsExpanded(false);
   });
+
+  if (!workspaceSlug) return null;
 
   return (
     <div

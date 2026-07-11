@@ -32,7 +32,7 @@ import useDebounce from "@/hooks/use-debounce";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type FormInput = {
   delete_issue_ids: string[];

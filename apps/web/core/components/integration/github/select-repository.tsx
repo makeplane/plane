@@ -13,7 +13,7 @@ import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { truncateText } from "@plane/utils";
 import { ProjectService } from "@/services/project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // types
 
 type Props = {
@@ -47,7 +47,7 @@ export function SelectRepository(props: Props) {
 
   const { data: paginatedData, size, setSize, isValidating } = useSWRInfinite(getKey, fetchGithubRepos);
 
-  let userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
+  let userRepositories = (paginatedData ?? []).flatMap((data) => data.repositories);
   userRepositories = userRepositories.filter((data) => data?.id);
 
   const totalCount = paginatedData && paginatedData.length > 0 ? paginatedData[0].total_count : 0;

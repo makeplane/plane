@@ -14,7 +14,7 @@ import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/m
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import type { IMemberFilters } from "@/store/member/utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const useMemberColumns = () => {
   // states
@@ -30,6 +30,11 @@ export const useMemberColumns = () => {
     },
   } = useMember();
   const { t } = useTranslation();
+
+  // A hook cannot early-return (its consumers destructure the result, and bailing out would
+  // violate the rules of hooks), so the workspace slug is narrowed to a string here instead.
+  // This hook is only ever called from workspace settings, where the segment is always present.
+  const workspaceSlugString = workspaceSlug ?? "";
 
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -56,7 +61,7 @@ export const useMemberColumns = () => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug}
+          workspaceSlug={workspaceSlugString}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -104,7 +109,7 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlugString} />,
     },
 
     {

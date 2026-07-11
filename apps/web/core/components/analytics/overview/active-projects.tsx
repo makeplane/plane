@@ -16,7 +16,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import ActiveProjectItem from "./active-project-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const ActiveProjects = observer(function ActiveProjects() {
   const { t } = useTranslation();

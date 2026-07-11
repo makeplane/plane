@@ -46,7 +46,7 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface IIssueProperties {
   issue: TIssue;

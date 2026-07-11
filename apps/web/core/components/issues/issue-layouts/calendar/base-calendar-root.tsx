@@ -22,7 +22,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import type { IQuickActionProps } from "../list/list-view-types";
 import { CalendarChart } from "./calendar";
 import { handleDragDrop } from "./utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export type CalendarStoreType =
   | EIssuesStoreType.PROJECT

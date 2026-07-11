@@ -16,7 +16,7 @@ import type { EPageStoreType } from "@/hooks/store";
 import { usePageStore } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;

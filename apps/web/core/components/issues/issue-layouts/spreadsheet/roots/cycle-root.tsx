@@ -13,7 +13,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const CycleSpreadsheetLayout = observer(function CycleSpreadsheetLayout() {
   // router

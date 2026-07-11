@@ -36,7 +36,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { FavoriteRoot } from "./favorite-items";
 import { getCanDrop, getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   isLastChild: boolean;
@@ -137,6 +137,8 @@ export function FavoriteFolder(props: Props) {
   }, [isDragging, favorite.id, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+
+  if (!workspaceSlug) return null;
 
   return folderToRename ? (
     <NewFavoriteFolder

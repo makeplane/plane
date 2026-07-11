@@ -12,7 +12,7 @@ import type { ChartYAxisMetric } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // plane web constants
 type Props = {
   value: ChartYAxisMetric;

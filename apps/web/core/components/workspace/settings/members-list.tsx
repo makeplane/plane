@@ -20,7 +20,7 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { WorkspaceInvitationsListItem } from "./invitations-list-item";
 import { WorkspaceMembersListItem } from "./members-list-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const WorkspaceMembersList = observer(function WorkspaceMembersList(props: {
   searchQuery: string;

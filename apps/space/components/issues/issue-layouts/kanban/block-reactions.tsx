@@ -12,7 +12,7 @@ import { IssueEmojiReactions } from "@/components/issues/reactions/issue-emoji-r
 import { IssueVotes } from "@/components/issues/reactions/issue-vote-reactions";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issueId: string;
@@ -20,7 +20,9 @@ type Props = {
 export const BlockReactions = observer(function BlockReactions(props: Props) {
   const { issueId } = props;
   const { anchor } = useParams();
-  const { canVote, canReact } = usePublish(anchor.toString());
+  const { canVote, canReact } = usePublish(anchor);
+
+  if (!anchor) return null;
 
   // if the user cannot vote or react then return empty
   if (!canVote && !canReact) return <></>;

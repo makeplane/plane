@@ -20,7 +20,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 // services
 import { IssueService } from "@/services/issue";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const issueService = new IssueService();
 
@@ -36,6 +36,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
       ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       : null
   );
+
+  if (!workspaceSlug || !projectId || !archivedIssueId) return null;
 
   return (
     <Header>

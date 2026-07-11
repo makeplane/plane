@@ -18,7 +18,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalSearchResults } from "./search-results";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // services init
 const workspaceService = new WorkspaceService();
 

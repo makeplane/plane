@@ -48,7 +48,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { IconButton } from "@plane/propel/icon-button";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
@@ -110,6 +110,8 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
     },
     [projectId, updateFilters]
   );
+
+  if (!workspaceSlug || !projectId) return null;
 
   const switcherOptions = projectModuleIds
     ?.map((id) => {

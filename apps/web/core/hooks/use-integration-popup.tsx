@@ -5,7 +5,7 @@
  */
 
 import { useRef, useState } from "react";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const useIntegrationPopup = ({
   provider,

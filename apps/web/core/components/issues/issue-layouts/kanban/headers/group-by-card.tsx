@@ -22,7 +22,7 @@ import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;

@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Link } from "react-router";
-import { useParams } from "@/hooks/use-params";
+import { Link, useParams } from "react-router";
 // plane imports
 import { ROLE } from "@plane/constants";
 import { Popover } from "@plane/propel/popover";

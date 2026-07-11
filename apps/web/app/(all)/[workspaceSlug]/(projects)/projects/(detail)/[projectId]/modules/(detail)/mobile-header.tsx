@@ -21,7 +21,7 @@ import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const SUPPORTED_LAYOUTS = [
   { key: "list", i18n_title: "issue.layouts.list", icon: ListLayoutIcon },
@@ -48,7 +48,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
@@ -56,7 +56,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
@@ -64,11 +64,13 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
+
+  if (!workspaceSlug || !projectId || !moduleId) return null;
 
   return (
     <div className="block md:hidden">

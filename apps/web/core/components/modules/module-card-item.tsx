@@ -35,9 +35,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useLocation, useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useSearchParams, useParams } from "react-router";
 
 type Props = {
   moduleId: string;

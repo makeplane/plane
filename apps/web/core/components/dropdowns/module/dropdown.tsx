@@ -12,7 +12,7 @@ import { useModule } from "@/hooks/store/use-module";
 import type { TDropdownProps } from "../types";
 // local imports
 import { ModuleDropdownBase } from "./base";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TModuleDropdownProps = TDropdownProps & {
   button?: ReactNode;

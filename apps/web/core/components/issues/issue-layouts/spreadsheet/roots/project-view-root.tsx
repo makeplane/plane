@@ -10,12 +10,14 @@ import { observer } from "mobx-react";
 // components
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // types
 // constants
 
 export const ProjectViewSpreadsheetLayout = observer(function ProjectViewSpreadsheetLayout() {
   const { viewId } = useParams();
+
+  if (!viewId) return null;
 
   return <BaseSpreadsheetRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

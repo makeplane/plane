@@ -35,9 +35,7 @@ import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
 import { TransferIssuesModal } from "../transfer-issues-modal";
-import { useLocation, useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useSearchParams, useParams } from "react-router";
 
 type Props = {
   workspaceSlug: string;

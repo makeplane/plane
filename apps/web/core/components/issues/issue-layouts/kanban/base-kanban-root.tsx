@@ -31,7 +31,7 @@ import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-t
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT

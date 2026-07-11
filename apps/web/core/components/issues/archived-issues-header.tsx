@@ -18,7 +18,7 @@ import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-to
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ArchivedIssuesHeader = observer(function ArchivedIssuesHeader() {
   // router

@@ -10,7 +10,7 @@ import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
 import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 // types
 type Props = {

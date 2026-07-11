@@ -17,7 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { ViewQuickActions } from "./quick-actions";
 import { ViewListItemAction } from "./view-list-item-action";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   view: IProjectView;
@@ -31,6 +31,8 @@ export const ProjectViewListItem = observer(function ProjectViewListItem(props: 
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { isMobile } = usePlatformOS();
+
+  if (!workspaceSlug || !projectId) return null;
 
   return (
     <ListItem

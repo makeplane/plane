@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 // components
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModuleSpreadsheetLayout = observer(function ModuleSpreadsheetLayout() {
   const { moduleId } = useParams();

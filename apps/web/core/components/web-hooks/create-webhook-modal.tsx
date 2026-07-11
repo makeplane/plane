@@ -20,7 +20,7 @@ import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;

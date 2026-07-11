@@ -26,7 +26,7 @@ import type { EPageStoreType } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export type TPageActions =
   | "full-screen"

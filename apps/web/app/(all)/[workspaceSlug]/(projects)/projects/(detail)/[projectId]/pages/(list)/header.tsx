@@ -23,8 +23,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 
-import { useSearchParams } from "react-router";
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 export const PagesListHeader = observer(function PagesListHeader() {
@@ -38,6 +37,9 @@ export const PagesListHeader = observer(function PagesListHeader() {
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
+
+  if (!workspaceSlug || !projectId) return null;
+
   // handle page create
   const handleCreatePage = async () => {
     setIsCreatingPage(true);

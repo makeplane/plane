@@ -11,7 +11,7 @@ import { ProjectRoot } from "@/components/project/root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectPageRoot = observer(function ProjectPageRoot() {
   // router

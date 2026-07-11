@@ -11,7 +11,7 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { MemberDropdownBase } from "./base";
 import type { MemberDropdownProps } from "./types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TMemberDropdownProps = {
   icon?: LucideIcon;

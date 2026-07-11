@@ -12,7 +12,7 @@ import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { GlobalViewListItem } from "./view-list-item";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   searchQuery: string;

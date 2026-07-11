@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 // TODO: If projectViewId changes, everything breaks. Figure out a better way to handle this.
 export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {

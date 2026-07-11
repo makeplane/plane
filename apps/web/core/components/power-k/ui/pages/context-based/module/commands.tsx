@@ -19,7 +19,7 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useUser } from "@/hooks/store/user";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation

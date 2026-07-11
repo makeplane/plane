@@ -25,7 +25,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT

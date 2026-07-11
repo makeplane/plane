@@ -19,7 +19,7 @@ import type { TCycleGroups } from "@plane/types";
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // types
 
 type DropdownOptions =

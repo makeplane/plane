@@ -12,7 +12,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ListLayout = observer(function ListLayout() {
   // router

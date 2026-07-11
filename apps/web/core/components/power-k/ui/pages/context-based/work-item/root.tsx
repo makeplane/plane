@@ -20,7 +20,7 @@ import { PowerKWorkItemLabelsMenu } from "./labels-menu";
 import { PowerKWorkItemModulesMenu } from "./modules-menu";
 import { PowerKWorkItemPrioritiesMenu } from "./priorities-menu";
 import { PowerKProjectStatesMenu } from "./states-menu";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   activePage: TPowerKPageType | null;

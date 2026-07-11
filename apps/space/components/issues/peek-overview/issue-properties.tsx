@@ -26,7 +26,7 @@ import { usePublish } from "@/hooks/store/publish";
 import { useStates } from "@/hooks/store/use-state";
 // types
 import type { IIssue, IPeekMode } from "@/types/issue";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   issueDetails: IIssue;
@@ -45,6 +45,8 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
   const { anchor } = useParams();
 
   const { project_details } = usePublish(anchor?.toString());
+
+  if (!anchor) return null;
 
   const priority = issueDetails.priority ? getIssuePriorityFilters(issueDetails.priority) : null;
 

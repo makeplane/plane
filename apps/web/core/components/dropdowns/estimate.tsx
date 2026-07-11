@@ -24,7 +24,7 @@ import { DropdownButton } from "./buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
 import type { TDropdownProps } from "./types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = TDropdownProps & {
   button?: ReactNode;

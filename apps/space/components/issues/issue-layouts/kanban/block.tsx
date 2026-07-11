@@ -6,8 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-import { Link, useSearchParams } from "react-router";
-import { useParams } from "@/hooks/use-params";
+import { Link, useSearchParams, useParams } from "react-router";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -44,7 +43,9 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const { issue, displayProperties } = props;
   const { anchor } = useParams();
   // hooks
-  const { project_details } = usePublish(anchor.toString());
+  const { project_details } = usePublish(anchor);
+
+  if (!anchor) return null;
 
   return (
     <div className="space-y-2 px-3 py-2">

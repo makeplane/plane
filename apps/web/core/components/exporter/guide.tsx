@@ -12,9 +12,7 @@ import { EXPORT_SERVICES_LIST } from "@plane/constants";
 // local imports
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
-import { useSearchParams } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useSearchParams, useParams } from "react-router";
 
 export const ExportGuide = observer(function ExportGuide() {
   // router
@@ -24,6 +22,8 @@ export const ExportGuide = observer(function ExportGuide() {
   // state
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
+
+  if (!workspaceSlug) return null;
 
   return (
     <>

@@ -19,7 +19,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -61,6 +61,8 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
   const { loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
+
+  if (!workspaceSlug || !projectId) return null;
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);
 

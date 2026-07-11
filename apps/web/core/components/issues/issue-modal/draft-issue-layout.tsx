@@ -19,7 +19,7 @@ import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { ConfirmIssueDiscard } from "../confirm-issue-discard";
 import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;

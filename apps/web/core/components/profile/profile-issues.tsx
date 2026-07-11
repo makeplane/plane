@@ -19,7 +19,7 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   type: "assigned" | "subscribed" | "created";
@@ -49,6 +49,8 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  if (!workspaceSlug || !userId) return null;
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROFILE}>

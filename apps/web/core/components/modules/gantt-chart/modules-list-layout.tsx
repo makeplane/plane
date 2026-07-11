@@ -16,7 +16,7 @@ import { ModuleGanttBlock } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModulesListGanttChartView = observer(function ModulesListGanttChartView() {
   // router
@@ -25,6 +25,8 @@ export const ModulesListGanttChartView = observer(function ModulesListGanttChart
   const { currentProjectDetails } = useProject();
   const { getFilteredModuleIds, updateModuleDetails } = useModule();
   const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
+
+  if (!workspaceSlug || !projectId) return null;
 
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;

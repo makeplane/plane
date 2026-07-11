@@ -13,7 +13,7 @@ import type { TCycleGroups } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // ui
 // types
 

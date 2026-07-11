@@ -11,7 +11,7 @@ import { USER_PROFILE_ACTIVITY } from "@plane/constants";
 import { UserService } from "@/services/user.service";
 // components
 import { ActivityList } from "./activity-list";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 // fetch-keys
 
 // services

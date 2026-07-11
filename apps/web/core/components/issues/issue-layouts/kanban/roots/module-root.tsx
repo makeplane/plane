@@ -13,7 +13,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModuleKanBanLayout = observer(function ModuleKanBanLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();

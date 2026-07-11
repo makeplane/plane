@@ -19,7 +19,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-wor
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = {
   invitationId: string;
@@ -38,6 +38,9 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
+
+  if (!workspaceSlug) return null;
+
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
   const currentWorkspaceMemberInfo = workspaceInfoBySlug(workspaceSlug.toString());

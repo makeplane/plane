@@ -18,7 +18,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ProjectInsightsLoader } from "../loaders";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 const RadarChart = lazy(function RadarChart() {
   return import("@plane/propel/charts/radar-chart").then((mod) => ({
@@ -31,7 +31,7 @@ const analyticsService = new AnalyticsService();
 const ProjectInsights = observer(function ProjectInsights() {
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const workspaceSlug = params.workspaceSlug?.toString() ?? "";
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
 

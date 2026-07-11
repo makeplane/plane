@@ -16,7 +16,7 @@ import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type Props = { viewId: string };
 

@@ -15,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { TWorkItemLabelSelectBaseProps } from "./base";
 import { WorkItemLabelSelectBase } from "./base";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TWorkItemLabelSelectProps = Omit<TWorkItemLabelSelectBaseProps, "labelIds" | "getLabelById" | "onDropdownOpen"> & {
   projectId: string | undefined;

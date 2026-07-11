@@ -19,9 +19,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
@@ -56,7 +54,7 @@ export const ProjectRoot = observer(function ProjectRoot() {
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
 
-      updateFilters(workspaceSlug.toString(), { [key]: newValues });
+      updateFilters(workspaceSlug?.toString() ?? "", { [key]: newValues });
     },
     [currentWorkspaceFilters, updateFilters, workspaceSlug]
   );
@@ -64,21 +62,23 @@ export const ProjectRoot = observer(function ProjectRoot() {
   const handleRemoveDisplayFilter = useCallback(
     (key: TProjectAppliedDisplayFilterKeys) => {
       if (!workspaceSlug) return;
-      updateDisplayFilters(workspaceSlug.toString(), { [key]: false });
+      updateDisplayFilters(workspaceSlug?.toString() ?? "", { [key]: false });
     },
     [updateDisplayFilters, workspaceSlug]
   );
 
   const handleClearAllFilters = useCallback(() => {
     if (!workspaceSlug) return;
-    clearAllFilters(workspaceSlug.toString());
-    clearAllAppliedDisplayFilters(workspaceSlug.toString());
-    if (isArchived) updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
+    clearAllFilters(workspaceSlug?.toString() ?? "");
+    clearAllAppliedDisplayFilters(workspaceSlug?.toString() ?? "");
+    if (isArchived) updateDisplayFilters(workspaceSlug?.toString() ?? "", { archived_projects: true });
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: isArchived });
+    updateDisplayFilters(workspaceSlug?.toString() ?? "", { archived_projects: isArchived });
   }, [pathname]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <>

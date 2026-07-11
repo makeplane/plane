@@ -21,7 +21,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { GlobalShortcutsProvider } from "./global-shortcuts";
 import { ProjectsAppPowerKCommandsList } from "./ui/modal/commands-list";
 import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 /**
  * Projects App PowerK provider

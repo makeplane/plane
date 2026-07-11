@@ -12,12 +12,14 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProfileIssuesKanBanLayout = observer(function ProfileIssuesKanBanLayout() {
   // router
   const { workspaceSlug, profileViewId } = useParams();
   const { allowPermissions } = useUserPermissions();
+
+  if (!workspaceSlug) return null;
 
   const canEditPropertiesBasedOnProject = (projectId: string) =>
     allowPermissions(

@@ -27,9 +27,7 @@ import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-prefer
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 type TExtendedSidebarItemProps = {
   item: IWorkspaceSidebarNavigationItem;
@@ -135,6 +133,8 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
       })
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
+
+  if (!workspaceSlug) return null;
 
   const itemHref =
     item.key === "your_work"

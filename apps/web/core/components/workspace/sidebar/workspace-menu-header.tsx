@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 // store hooks
 import { useUserPermissions } from "@/hooks/store/user";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 export type SidebarWorkspaceMenuHeaderProps = {

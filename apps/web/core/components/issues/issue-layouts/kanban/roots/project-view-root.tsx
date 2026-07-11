@@ -12,10 +12,12 @@ import { observer } from "mobx-react";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ProjectViewKanBanLayout = observer(function ProjectViewKanBanLayout() {
   const { viewId } = useParams();
+
+  if (!viewId) return null;
 
   return <BaseKanBanRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

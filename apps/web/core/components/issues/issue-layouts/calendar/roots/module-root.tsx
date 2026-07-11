@@ -13,7 +13,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ModuleCalendarLayout = observer(function ModuleCalendarLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();

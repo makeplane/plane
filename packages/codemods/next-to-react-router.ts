@@ -26,6 +26,35 @@ import type {
  *   --routerImport=@/hooks/use-app-router     module exporting useAppRouter
  *   --linkImport=@/components/common/link     module exporting Link (omit to leave next/link alone)
  */
+/** Local name a hook is bound to in a file, e.g. `usePathname as usePath`. */
+function localNameFor(
+  importedName: string,
+  decl: ImportDeclaration
+): string | undefined {
+  for (const spec of decl.specifiers ?? []) {
+    if (
+      spec.type === "ImportSpecifier" &&
+      spec.imported.name === importedName
+    ) {
+      return spec.local?.name ?? importedName;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Detach the comments sitting above a node. A removed import takes its leading comments with it,
+ * and when that import is the first statement in the file those comments are the license header —
+ * so they have to be handed to whichever node ends up first instead.
+ */
+function takeLeadingComments(node: { comments?: unknown[] | null }): unknown[] {
+  const comments = (node.comments ?? []).filter(
+    (c) => (c as { leading?: boolean }).leading
+  );
+  node.comments = null;
+  return comments;
+}
+
 export default function transform(
   file: FileInfo,
   api: API,
@@ -46,37 +75,6 @@ export default function transform(
   let needsAppRouter = false;
   let needsLocalLink = false;
   let didTransform = false;
-
-  /** Local name a hook is bound to in this file, e.g. `usePathname as usePath`. */
-  const localNameFor = (
-    importedName: string,
-    decl: ImportDeclaration
-  ): string | undefined => {
-    for (const spec of decl.specifiers ?? []) {
-      if (
-        spec.type === "ImportSpecifier" &&
-        spec.imported.name === importedName
-      ) {
-        return spec.local?.name ?? importedName;
-      }
-    }
-    return undefined;
-  };
-
-  /**
-   * Detach the comments sitting above a node. A removed import takes its leading comments
-   * with it, and when that import is the first statement in the file those comments are the
-   * license header — so they have to be handed to whichever node ends up first instead.
-   */
-  const takeLeadingComments = (node: {
-    comments?: unknown[] | null;
-  }): unknown[] => {
-    const comments = (node.comments ?? []).filter(
-      (c) => (c as { leading?: boolean }).leading
-    );
-    node.comments = null;
-    return comments;
-  };
 
   /** Re-attach salvaged comments above the program's first remaining statement. */
   const reattachLeadingComments = (comments: unknown[]): void => {

@@ -23,7 +23,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { TProject } from "@plane/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
   // refs

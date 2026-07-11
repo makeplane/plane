@@ -35,7 +35,7 @@ import type { TargetData } from "./favorites.helpers";
 import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 import { IconButton } from "@plane/propel/icon-button";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   // states
@@ -57,7 +57,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMoveToFolder = (sourceId: string, destinationId: string) => {
-    moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
+    moveFavoriteToFolder(workspaceSlug?.toString() ?? "", sourceId, {
       parent: destinationId,
     }).catch(() => {
       setToast({
@@ -109,7 +109,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   };
 
   const handleRemoveFromFavorites = (favorite: IFavorite) => {
-    deleteFavorite(workspaceSlug.toString(), favorite.id)
+    deleteFavorite(workspaceSlug?.toString() ?? "", favorite.id)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -128,7 +128,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   };
 
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
-    removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
+    removeFromFavoriteFolder(workspaceSlug?.toString() ?? "", favoriteId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
@@ -139,7 +139,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
 
   const handleReorder = useCallback(
     (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
-      reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
+      reOrderFavorite(workspaceSlug?.toString() ?? "", favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -177,6 +177,8 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef.current, isDragging]);
+
+  if (!workspaceSlug) return null;
 
   return (
     <>
@@ -268,7 +270,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                         />
                       ) : (
                         <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
                           favorite={fav}
                           isLastChild={index === length - 1}
                           parentId={undefined}

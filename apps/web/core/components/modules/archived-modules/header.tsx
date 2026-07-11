@@ -22,7 +22,7 @@ import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modu
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router

@@ -18,9 +18,7 @@ import { useAppRailVisibility } from "@/lib/app-rail/context";
 import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 export const AppRailRoot = observer(() => {
   // router

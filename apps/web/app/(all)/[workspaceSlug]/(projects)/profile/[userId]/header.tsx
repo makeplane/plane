@@ -20,7 +20,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { Button } from "@plane/propel/button";
 
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type TUserProfileHeader = {

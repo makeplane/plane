@@ -13,7 +13,7 @@ import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui"
 // components
 import { getDate, cn } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 type TNotificationSnoozeModal = {
   isOpen: boolean;

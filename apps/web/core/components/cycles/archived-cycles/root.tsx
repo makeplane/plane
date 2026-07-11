@@ -20,7 +20,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleAppliedFiltersList } from "../applied-filters";
 import { ArchivedCyclesView } from "./view";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 export const ArchivedCycleLayoutRoot = observer(function ArchivedCycleLayoutRoot() {
   // router

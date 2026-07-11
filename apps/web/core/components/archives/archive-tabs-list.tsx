@@ -10,9 +10,7 @@ import { Link } from "@/components/common/link";
 import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useLocation } from "react-router";
-
-import { useParams } from "@/hooks/use-params";
+import { useLocation, useParams } from "react-router";
 
 const ARCHIVES_TAB_LIST: {
   key: string;

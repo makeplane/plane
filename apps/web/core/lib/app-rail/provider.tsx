@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { AppRailVisibilityContext } from "./context";
 import type { IAppRailVisibilityContext } from "./types";
-import { useParams } from "@/hooks/use-params";
+import { useParams } from "react-router";
 
 interface AppRailVisibilityProviderProps {
   children: React.ReactNode;
