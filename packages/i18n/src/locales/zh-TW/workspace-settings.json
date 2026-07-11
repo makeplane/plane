@@ -63,6 +63,19 @@
             "required": "我們需要電子郵件地址才能邀請他們。",
             "invalid": "電子郵件無效"
           }
+        },
+        "activity": {
+          "title": "工作區活動",
+          "filters": {
+            "all_members": "所有成員",
+            "all_projects": "所有專案",
+            "date_range": {
+              "today": "今天",
+              "last_7_days": "最近 7 天",
+              "last_30_days": "最近 30 天",
+              "all_time": "全部時間"
+            }
+          }
         }
       },
       "billing_and_plans": {

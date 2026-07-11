@@ -79,6 +79,20 @@ export const WORKSPACE_MEMBER_ME_INFORMATION = (workspaceSlug: string) =>
 export const WORKSPACE_MEMBER_ACTIVITY = (workspaceSlug: string) =>
   `WORKSPACE_MEMBER_ACTIVITY_${workspaceSlug.toUpperCase()}`;
 
+export const WORKSPACE_ACTIVITY = (
+  workspaceSlug: string,
+  params: {
+    cursor?: string;
+    actor?: string[];
+    project?: string[];
+    start_date?: string;
+    end_date?: string;
+  }
+) =>
+  `WORKSPACE_ACTIVITY_${workspaceSlug.toUpperCase()}_${params?.cursor}_${(params?.actor ?? [])
+    .toSorted()
+    .join(",")}_${(params?.project ?? []).toSorted().join(",")}_${params?.start_date}_${params?.end_date}`;
+
 export const WORKSPACE_PROJECTS_ROLES_INFORMATION = (workspaceSlug: string) =>
   `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug.toUpperCase()}`;
 

@@ -4,6 +4,6 @@
  * See the LICENSE file for details.
  */
 
-export * from "./activity";
-export * from "./invite-modal";
-export * from "./members-activity-button";
+export * from "./activity-drawer";
+export * from "./activity-filters";
+export * from "./activity-list";

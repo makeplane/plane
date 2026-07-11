@@ -53,6 +53,14 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceUserProperties,
 )
+from plane.utils.activity_filters import (
+    ActivityFilterError,
+    apply_activity_filters,
+    apply_date_range,
+    parse_activity_filters,
+    parse_date_range,
+    workspace_activity_visibility_q,
+)
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -383,6 +391,11 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
         projects = request.query_params.getlist("project", [])
 
+        try:
+            start_date, end_date = parse_date_range(request.query_params)
+        except ActivityFilterError as e:
+            return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
         queryset = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
@@ -394,6 +407,46 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
         if projects:
             queryset = queryset.filter(project__in=projects)
+
+        queryset = apply_date_range(queryset, start_date, end_date)
+
+        return self.paginate(
+            order_by=sanitize_order_by(
+                request.GET.get("order_by", "-created_at"),
+                ACTIVITY_ORDER_BY_ALLOWLIST,
+                "-created_at",
+            ),
+            request=request,
+            queryset=queryset,
+            on_results=lambda issue_activities: IssueActivitySerializer(issue_activities, many=True).data,
+        )
+
+
+class WorkspaceActivityEndpoint(BaseAPIView):
+    """Read-only feed of the work item activities across the whole workspace.
+
+    Same scoping rules as WorkspaceUserActivityEndpoint (only projects where
+    the requester is an active member, archived projects excluded) but without
+    pinning the actor in the URL. Supports repeatable `actor` / `project`
+    filters and an inclusive `start_date` / `end_date` range.
+    """
+
+    permission_classes = [WorkspaceEntityPermission]
+
+    def get(self, request, slug):
+        try:
+            activity_filters = parse_activity_filters(request.query_params)
+        except ActivityFilterError as e:
+            return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = IssueActivity.objects.filter(
+            ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            workspace_activity_visibility_q(request.user),
+            workspace__slug=slug,
+            project__archived_at__isnull=True,
+        ).select_related("actor", "workspace", "issue", "project")
+
+        queryset = apply_activity_filters(queryset, activity_filters)
 
         return self.paginate(
             order_by=sanitize_order_by(

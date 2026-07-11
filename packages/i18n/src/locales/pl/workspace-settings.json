@@ -63,6 +63,19 @@
             "required": "Wymagany jest adres e-mail.",
             "invalid": "E-mail jest nieprawidłowy"
           }
+        },
+        "activity": {
+          "title": "Aktywność przestrzeni roboczej",
+          "filters": {
+            "all_members": "Wszyscy członkowie",
+            "all_projects": "Wszystkie projekty",
+            "date_range": {
+              "today": "Dzisiaj",
+              "last_7_days": "Ostatnie 7 dni",
+              "last_30_days": "Ostatnie 30 dni",
+              "all_time": "Cały okres"
+            }
+          }
         }
       },
       "billing_and_plans": {

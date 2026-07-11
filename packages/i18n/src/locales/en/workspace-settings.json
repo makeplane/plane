@@ -63,6 +63,19 @@
             "required": "We need an email address to invite them.",
             "invalid": "Email is invalid"
           }
+        },
+        "activity": {
+          "title": "Workspace activity",
+          "filters": {
+            "all_members": "All members",
+            "all_projects": "All projects",
+            "date_range": {
+              "today": "Today",
+              "last_7_days": "Last 7 days",
+              "last_30_days": "Last 30 days",
+              "all_time": "All time"
+            }
+          }
         }
       },
       "billing_and_plans": {

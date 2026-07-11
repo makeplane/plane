@@ -63,6 +63,19 @@
             "required": "Vyžaduje se e-mailová adresa.",
             "invalid": "E-mail je neplatný"
           }
+        },
+        "activity": {
+          "title": "Aktivita pracovního prostoru",
+          "filters": {
+            "all_members": "Všichni členové",
+            "all_projects": "Všechny projekty",
+            "date_range": {
+              "today": "Dnes",
+              "last_7_days": "Posledních 7 dní",
+              "last_30_days": "Posledních 30 dní",
+              "all_time": "Celé období"
+            }
+          }
         }
       },
       "billing_and_plans": {

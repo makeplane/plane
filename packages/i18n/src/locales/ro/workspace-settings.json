@@ -63,6 +63,19 @@
             "required": "Avem nevoie de o adresă de email pentru a trimite invitația.",
             "invalid": "Adresa de email este invalidă"
           }
+        },
+        "activity": {
+          "title": "Activitatea spațiului de lucru",
+          "filters": {
+            "all_members": "Toți membrii",
+            "all_projects": "Toate proiectele",
+            "date_range": {
+              "today": "Astăzi",
+              "last_7_days": "Ultimele 7 zile",
+              "last_30_days": "Ultimele 30 de zile",
+              "all_time": "Tot timpul"
+            }
+          }
         }
       },
       "billing_and_plans": {

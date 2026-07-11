@@ -63,6 +63,19 @@
             "required": "Precisamos de um endereço de e-mail para convidá-los.",
             "invalid": "E-mail inválido"
           }
+        },
+        "activity": {
+          "title": "Atividade do espaço de trabalho",
+          "filters": {
+            "all_members": "Todos os membros",
+            "all_projects": "Todos os projetos",
+            "date_range": {
+              "today": "Hoje",
+              "last_7_days": "Últimos 7 dias",
+              "last_30_days": "Últimos 30 dias",
+              "all_time": "Todo o período"
+            }
+          }
         }
       },
       "billing_and_plans": {

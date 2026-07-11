@@ -63,6 +63,19 @@
             "required": "Eine E-Mail-Adresse ist erforderlich.",
             "invalid": "E-Mail ist ungültig"
           }
+        },
+        "activity": {
+          "title": "Arbeitsbereich-Aktivität",
+          "filters": {
+            "all_members": "Alle Mitglieder",
+            "all_projects": "Alle Projekte",
+            "date_range": {
+              "today": "Heute",
+              "last_7_days": "Letzte 7 Tage",
+              "last_30_days": "Letzte 30 Tage",
+              "all_time": "Gesamter Zeitraum"
+            }
+          }
         }
       },
       "billing_and_plans": {

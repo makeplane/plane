@@ -26,6 +26,7 @@ import type {
   IWorkspaceSidebarNavigationItem,
   IWorkspaceSidebarNavigation,
   IWorkspaceUserPropertiesResponse,
+  IUserActivityResponse,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -280,6 +281,35 @@ export class WorkspaceService extends APIService {
       },
       config
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getWorkspaceActivity(
+    workspaceSlug: string,
+    params?: {
+      actor?: string[];
+      project?: string[];
+      start_date?: string;
+      end_date?: string;
+      cursor?: string;
+      per_page?: number;
+    }
+  ): Promise<IUserActivityResponse> {
+    // build the query string manually so repeatable params (actor, project) are
+    // serialized as repeated keys (?actor=<uuid>&actor=<uuid>) as expected by the API
+    const searchParams = new URLSearchParams();
+    params?.actor?.forEach((actorId) => searchParams.append("actor", actorId));
+    params?.project?.forEach((projectId) => searchParams.append("project", projectId));
+    if (params?.start_date) searchParams.set("start_date", params.start_date);
+    if (params?.end_date) searchParams.set("end_date", params.end_date);
+    if (params?.cursor) searchParams.set("cursor", params.cursor);
+    if (params?.per_page) searchParams.set("per_page", params.per_page.toString());
+    const queryString = searchParams.toString();
+
+    return this.get(`/api/workspaces/${workspaceSlug}/activity/${queryString ? `?${queryString}` : ""}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

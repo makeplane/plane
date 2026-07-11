@@ -63,6 +63,19 @@
             "required": "Введите email адрес, чтобы пригласить участников",
             "invalid": "Неверный email"
           }
+        },
+        "activity": {
+          "title": "Активность рабочего пространства",
+          "filters": {
+            "all_members": "Все участники",
+            "all_projects": "Все проекты",
+            "date_range": {
+              "today": "Сегодня",
+              "last_7_days": "Последние 7 дней",
+              "last_30_days": "Последние 30 дней",
+              "all_time": "За всё время"
+            }
+          }
         }
       },
       "billing_and_plans": {
