@@ -10,6 +10,12 @@
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Réimplémentation CE (AGPL, sans code plane-ee) de la feature **« Workspace Activity Logs »** (plan Business — matrice `plans.tsx:740` : *« See filterable activity logs for your entire workspace »*). Source de données = `IssueActivity` existant — **zéro migration**.
 
+## ADRs
+
+*Aucun ADR lié.*
+
+> *Table auto-générée par adr-linker. Ne pas éditer manuellement.*
+
 ---
 
 ## Contexte
