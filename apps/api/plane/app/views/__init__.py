@@ -277,4 +277,5 @@ from .contract import (
     InternalJobProgressEndpoint,
     InternalQueryResultEndpoint,
     InternalWorkspaceContractsEndpoint,
+    InternalWorkspaceTagsEndpoint,
 )

@@ -162,7 +162,15 @@
         "extract_text": "Text extraction",
         "generate_embeddings": "Embeddings (vectorization)",
         "ai_analysis": "AI analysis",
-        "extract_thumbnail": "Thumbnail"
+        "extract_thumbnail": "Thumbnail",
+        "modal_title": "What do you want to retry?",
+        "modal_title_bulk": "Retry {count, plural, one {# contract} other {# contracts}}",
+        "modal_description": "Re-running only the failed stage skips work that already succeeded (e.g. keep the extracted text and redo just the AI analysis).",
+        "full_title": "Whole process",
+        "full_description": "Text extraction, embeddings, AI analysis and thumbnail, from scratch.",
+        "partial_title": "Specific stages only",
+        "partial_description": "Pick which stages to run; everything else is reused as-is.",
+        "confirm": "Retry"
       },
       "reanalyze": {
         "button": "Re-analyze",

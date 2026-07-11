@@ -5,3 +5,9 @@ PLANE_INTERNAL_API_SECRET="dev-internal-secret"
 OPENAI_API_KEY=""
 GOOGLE_GENERATIVE_AI_API_KEY=""
 DEEPSEEK_API_KEY=""
+# AWS credentials for Textract (same account/bucket the API uses for S3)
+AWS_ACCESS_KEY_ID=""
+AWS_SECRET_ACCESS_KEY=""
+# wrangler.jsonc's top-level `vars.PLANE_INTERNAL_API_URL` is the production
+# value; this overrides it back to localhost for local `wrangler dev` only.
+PLANE_INTERNAL_API_URL="http://localhost:8000"

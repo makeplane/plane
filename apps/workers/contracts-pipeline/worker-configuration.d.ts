@@ -11,6 +11,8 @@ interface Env {
   OPENAI_API_KEY: string;
   GOOGLE_GENERATIVE_AI_API_KEY: string;
   DEEPSEEK_API_KEY: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
   // Vars (wrangler.jsonc)
   AI_PROVIDER: string;
   GEMINI_MODEL_FALLBACK_LIST: string;
@@ -20,5 +22,7 @@ interface Env {
   OPENAI_EMBEDDING_MODEL: string;
   EMBEDDING_DIMENSIONS: string;
   PLANE_INTERNAL_API_URL: string;
+  TEXT_EXTRACTION_MODE: string;
+  AWS_REGION: string;
   TEXT_EXTRACTOR_API_URL: string;
 }

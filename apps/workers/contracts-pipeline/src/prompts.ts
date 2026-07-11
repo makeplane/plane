@@ -62,10 +62,18 @@ ${extractedText}
 
 export const ARTISTS_KEYS = ["artistas"];
 
-export const artistsPrompt = (extractedText: string) => `
+export const artistsPrompt = (extractedText: string, existingTags: string[] = []) => `
 Extrae los artistas de este contrato y responde en json con la clave "artistas" (array de strings).
 El nombre de los artistas se identifica porque se les denomina como EL ARTISTA.
-Este es el contrato:
+${
+  existingTags.length > 0
+    ? `ETIQUETAS DE ARTISTAS YA EXISTENTES EN EL SISTEMA:
+${existingTags.map((tag) => `- ${tag}`).join("\n")}
+
+REGLA IMPORTANTE: si un artista del contrato corresponde a una etiqueta existente — aunque el nombre esté escrito distinto (mayúsculas, con o sin segundos nombres/apellidos, alias o nombre artístico) — devuelve EXACTAMENTE el texto de la etiqueta existente en lugar de una variante nueva. Solo devuelve un nombre nuevo cuando el artista no corresponda a ninguna etiqueta existente.
+`
+    : ""
+}Este es el contrato:
 ${extractedText}
 `;
 

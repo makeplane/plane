@@ -115,9 +115,14 @@ export class ContractService extends APIService {
   async bulkAction(
     workspaceSlug: string,
     action: "retry" | "reanalyze",
-    contractIds: string[]
+    contractIds: string[],
+    retryOptions?: TContractRetryOptions
   ): Promise<{ dispatched: string[]; skipped: string[] }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/contracts/bulk/`, { action, contract_ids: contractIds })
+    return this.post(`/api/workspaces/${workspaceSlug}/contracts/bulk/`, {
+      action,
+      contract_ids: contractIds,
+      retry_options: retryOptions ?? {},
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

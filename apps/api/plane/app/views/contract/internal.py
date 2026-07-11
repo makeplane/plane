@@ -135,11 +135,21 @@ class InternalAssetPresignedUrlEndpoint(InternalBaseView):
     """Resolves a presigned GET URL for an asset so the Worker can download it."""
 
     def get(self, request, asset_id):
+        import os
+
         asset = FileAsset.objects.get(id=asset_id)
         storage = S3Storage()
         url = storage.generate_presigned_url(object_name=asset.asset.name)
         return Response(
-            {"url": url, "name": (asset.attributes or {}).get("name"), "type": (asset.attributes or {}).get("type")},
+            {
+                "url": url,
+                "name": (asset.attributes or {}).get("name"),
+                "type": (asset.attributes or {}).get("type"),
+                # S3 location so Textract can read the document in place
+                # (no presigned URL, no download to the Worker)
+                "s3_key": asset.asset.name,
+                "s3_bucket": os.environ.get("AWS_S3_BUCKET_NAME"),
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -324,6 +334,19 @@ class InternalWorkspaceContractsEndpoint(InternalBaseView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class InternalWorkspaceTagsEndpoint(InternalBaseView):
+    """Existing file-tag names, sent to the artists-extraction prompt so the
+    AI maps a detected artist onto an existing tag (spelling/alias variants)
+    instead of minting near-duplicates.
+    """
+
+    def get(self, request, workspace_id):
+        names = list(
+            FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values_list("name", flat=True)[:500]
+        )
+        return Response({"tags": names}, status=status.HTTP_200_OK)
 
 
 class InternalChunkSearchEndpoint(InternalBaseView):

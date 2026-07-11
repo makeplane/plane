@@ -37,7 +37,12 @@
     "EMBEDDING_DIMENSIONS": "1536",
     // Django internal API base URL (public URL in prod, localhost in dev)
     "PLANE_INTERNAL_API_URL": "http://localhost:8000",
-    // External text-extraction service: POST {url} -> {extracted_text}
+    // Text extraction: "textract" calls AWS Textract directly against the S3
+    // bucket (async job + step.sleep polling — no download, no presigned URL);
+    // "api" falls back to the external POST {url} -> {extracted_text} service.
+    "TEXT_EXTRACTION_MODE": "textract",
+    "AWS_REGION": "us-east-1",
+    // External text-extraction service (TEXT_EXTRACTION_MODE=api fallback)
     "TEXT_EXTRACTOR_API_URL": "https://aws-textract.onrender.com/extract-text"
   }
 }

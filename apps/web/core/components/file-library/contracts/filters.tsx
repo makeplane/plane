@@ -73,8 +73,10 @@ export function ContractFiltersDropdown(props: Props) {
           <span className="rounded-full bg-accent-primary px-1 text-10 text-on-color">{activeCount}</span>
         )}
       </Popover.Button>
-      <Popover.Panel side="bottom" align="start">
-        <div className="w-72 space-y-2.5 rounded-md border border-subtle bg-layer-1 p-2.5 shadow-raised-200">
+      {/* The propel Popover portals to <body> without a z-index — raise it above
+          sticky table headers and the peek panel (z-[25]) */}
+      <Popover.Panel side="bottom" align="start" positionerClassName="z-[30]">
+        <div className="max-h-[70vh] w-72 space-y-2.5 overflow-y-auto rounded-md border border-subtle bg-layer-1 p-2.5 shadow-raised-200">
           {/* Free-text filters resolved by the database (icontains) */}
           <div className="space-y-1.5">
             <p className="text-11 font-medium text-tertiary">{t("file_library.contracts.filters.people")}</p>
@@ -105,8 +107,9 @@ export function ContractFiltersDropdown(props: Props) {
             </div>
           </div>
 
-          {/* Enum filters, OR'd within the group */}
-          <div className="max-h-64 space-y-2 overflow-y-auto">
+          {/* Enum filters, OR'd within the group (incl. analysis state, e.g.
+              "Completado" for contracts whose pipeline already finished) */}
+          <div className="space-y-2">
             {MULTI_SECTIONS.map((section) => (
               <div key={section.key}>
                 <p className="px-1 py-0.5 text-11 font-medium text-tertiary">{t(section.i18nKey)}</p>
