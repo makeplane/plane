@@ -6,21 +6,29 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import DynamicBaseSerializer
-from plane.db.models import Webhook, WebhookLog
+from .base import BaseSerializer
+from plane.db.models import Webhook
 from plane.db.models.webhook import validate_domain, validate_schema
 from plane.utils.webhook import validate_webhook_url
 
 
-class WebhookSerializer(DynamicBaseSerializer):
+class WebhookSerializer(BaseSerializer):
+    """Public token-API serializer for workspace webhooks.
+
+    Mirrors the internal app-API webhook serializer: enforces the schema/domain
+    validators plus the shared SSRF/disallowed-domain guard, and keeps
+    ``secret_key`` server-generated (read-only) so it is returned on create but
+    never accepted as input.
+    """
+
     url = serializers.URLField(validators=[validate_schema, validate_domain])
 
     def _validate_webhook_url(self, url):
         """Validate a webhook URL against SSRF and disallowed-domain rules.
 
         Thin adapter binding the serializer's request context to the shared
-        ``validate_webhook_url`` guard so the SSRF/URL checks live in a single
-        place shared with the public token API.
+        ``validate_webhook_url`` guard, mirroring the internal app-API
+        serializer so the SSRF/URL checks cannot drift between the two.
         """
         validate_webhook_url(url, self.context.get("request"))
 
@@ -37,12 +45,23 @@ class WebhookSerializer(DynamicBaseSerializer):
 
     class Meta:
         model = Webhook
-        fields = "__all__"
-        read_only_fields = ["workspace", "secret_key", "deleted_at"]
-
-
-class WebhookLogSerializer(DynamicBaseSerializer):
-    class Meta:
-        model = WebhookLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "webhook"]
+        fields = [
+            "id",
+            "url",
+            "is_active",
+            "secret_key",
+            "project",
+            "issue",
+            "module",
+            "cycle",
+            "issue_comment",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "secret_key",
+            "created_at",
+            "updated_at",
+        ]
