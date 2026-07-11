@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from .activity import urlpatterns as activity_patterns
 from .asset import urlpatterns as asset_patterns
 from .cycle import urlpatterns as cycle_patterns
 from .intake import urlpatterns as intake_patterns
@@ -21,6 +22,7 @@ from .page_link import urlpatterns as page_link_patterns
 from .worklog import urlpatterns as worklog_patterns
 
 urlpatterns = [
+    *activity_patterns,
     *asset_patterns,
     *cycle_patterns,
     *intake_patterns,

@@ -94,3 +94,5 @@ from .worklog import (
     IssueWorkLogDetailAPIEndpoint,
     IssueWorkLogProjectSummaryAPIEndpoint,
 )
+
+from .activity import WorkspaceActivityListAPIEndpoint

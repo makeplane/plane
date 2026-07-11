@@ -17,6 +17,7 @@ from plane.app.views import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceThemeViewSet,
     WorkspaceUserProfileStatsEndpoint,
+    WorkspaceActivityEndpoint,
     WorkspaceUserActivityEndpoint,
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
@@ -133,6 +134,11 @@ urlpatterns = [
         "workspaces/<str:slug>/user-stats/<uuid:user_id>/",
         WorkspaceUserProfileStatsEndpoint.as_view(),
         name="workspace-user-stats",
+    ),
+    path(
+        "workspaces/<str:slug>/activity/",
+        WorkspaceActivityEndpoint.as_view(),
+        name="workspace-activity",
     ),
     path(
         "workspaces/<str:slug>/user-activity/<uuid:user_id>/",
