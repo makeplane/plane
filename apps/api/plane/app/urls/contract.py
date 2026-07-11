@@ -26,6 +26,7 @@ from plane.app.views import (
     InternalJobProgressEndpoint,
     InternalQueryResultEndpoint,
     InternalWorkspaceContractsEndpoint,
+    InternalWorkspaceTagsEndpoint,
 )
 
 urlpatterns = [
@@ -135,6 +136,11 @@ urlpatterns = [
         "internal/workspaces/<uuid:workspace_id>/chunks/search/",
         InternalChunkSearchEndpoint.as_view(),
         name="internal-chunk-search",
+    ),
+    path(
+        "internal/workspaces/<uuid:workspace_id>/file-tags/",
+        InternalWorkspaceTagsEndpoint.as_view(),
+        name="internal-workspace-tags",
     ),
     path(
         "internal/contract-queries/<uuid:query_id>/result/",

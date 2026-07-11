@@ -217,10 +217,18 @@ export class ContractPipelineWorkflow extends WorkflowEntrypoint<Env, PipelinePa
             return { data: JSON.stringify(parsed), model };
           });
 
+        // Existing artist tags travel into the prompt so the AI maps name
+        // variants (alias, casing, partial names) onto them instead of
+        // creating near-duplicate tags for the same artist.
+        const existingTags = await step.do("load existing tags", async () => {
+          const { tags } = await api.getWorkspaceTags(event.payload.workspace_id);
+          return tags;
+        });
+
         const [primary, secondary, artists] = await Promise.all([
           analyzeStep("analyze primary", primaryPrompt(fileName, extractedText, currentDateIso), PRIMARY_KEYS, 4096),
           analyzeStep("analyze secondary", secondaryPrompt(fileName, extractedText), SECONDARY_KEYS, 2048),
-          analyzeStep("analyze artists", artistsPrompt(extractedText), ARTISTS_KEYS, 2048),
+          analyzeStep("analyze artists", artistsPrompt(extractedText, existingTags), ARTISTS_KEYS, 2048),
         ]);
 
         await step.do("save extracted data", async () => {

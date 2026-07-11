@@ -28,4 +28,5 @@ from .internal import (
     InternalJobProgressEndpoint,
     InternalQueryResultEndpoint,
     InternalWorkspaceContractsEndpoint,
+    InternalWorkspaceTagsEndpoint,
 )

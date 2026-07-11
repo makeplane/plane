@@ -336,6 +336,19 @@ class InternalWorkspaceContractsEndpoint(InternalBaseView):
         )
 
 
+class InternalWorkspaceTagsEndpoint(InternalBaseView):
+    """Existing file-tag names, sent to the artists-extraction prompt so the
+    AI maps a detected artist onto an existing tag (spelling/alias variants)
+    instead of minting near-duplicates.
+    """
+
+    def get(self, request, workspace_id):
+        names = list(
+            FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values_list("name", flat=True)[:500]
+        )
+        return Response({"tags": names}, status=status.HTTP_200_OK)
+
+
 class InternalChunkSearchEndpoint(InternalBaseView):
     """Vector search over the workspace's contract chunks (RAG retrieval for
     the general chat). Ranks by cosine distance and returns the top chunks

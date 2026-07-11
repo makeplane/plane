@@ -74,6 +74,8 @@ export function internalApi(env: Env) {
       }>("GET", `/internal/workspaces/${workspaceId}/contracts/?offset=${offset}&limit=${limit}`),
     saveQueryResult: (queryId: string, result: Record<string, unknown>, status: "COMPLETED" | "FAILED") =>
       request<{ status: string }>("POST", `/internal/contract-queries/${queryId}/result/`, { result, status }),
+    getWorkspaceTags: (workspaceId: string) =>
+      request<{ tags: string[] }>("GET", `/internal/workspaces/${workspaceId}/file-tags/`),
     searchChunks: (workspaceId: string, embedding: number[], limit: number) =>
       request<{
         results: Array<{
