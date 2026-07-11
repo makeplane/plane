@@ -81,7 +81,7 @@ export class IssueTypeStore implements IIssueTypeStore {
    */
   get projectIssueTypes() {
     const projectId = this.router.projectId;
-    return this.getProjectIssueTypes(projectId);
+    return this.getProjectIssueTypes(projectId, false);
   }
 
   /**
@@ -112,7 +112,7 @@ export class IssueTypeStore implements IIssueTypeStore {
    * @param projectId
    */
   getProjectIssueTypeIds = computedFn((projectId: string | null | undefined) => {
-    const issueTypes = this.getProjectIssueTypes(projectId);
+    const issueTypes = this.getProjectIssueTypes(projectId, false);
     return issueTypes?.map((issueType) => issueType.id);
   });
 
@@ -130,7 +130,7 @@ export class IssueTypeStore implements IIssueTypeStore {
    * @param projectId
    */
   getProjectEpicId = computedFn((projectId: string | null | undefined) => {
-    const issueTypes = this.getProjectIssueTypes(projectId);
+    const issueTypes = this.getProjectIssueTypes(projectId, false);
     return issueTypes?.find((issueType) => issueType.is_epic)?.id;
   });
 
