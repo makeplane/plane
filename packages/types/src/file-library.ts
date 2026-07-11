@@ -52,6 +52,9 @@ export type TLibraryFile = {
   folder_id: string | null;
   category_ids: string[];
   tag_ids: string[];
+  /** Set when the file is tracked as a contract (PDF linked to "Contratos") */
+  contract_id: string | null;
+  contract_processing_status: "PENDING" | "PROCESSING" | "COMPLETED" | "ERROR" | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;

@@ -8,7 +8,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, Files, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FileText, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Link, useSearchParams } from "react-router";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
@@ -78,6 +79,18 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const [newFolderParent, setNewFolderParent] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
+
+  // Deep link (Power K file search): ?preview=<asset_id> opens the viewer
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const previewId = searchParams.get("preview");
+    if (!previewId) return;
+    const file = getFileById(previewId);
+    if (!file) return; // files not loaded yet — retried when the loader settles
+    setPreviewFile({ assetId: file.id, name: file.attributes.name, contentType: file.attributes.type });
+    setSearchParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, filesLoader]);
 
   // Server-driven search/filter/order: any filter change refetches from the
   // database (debounced so typing doesn't fire a request per keystroke)
@@ -155,6 +168,14 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       const file = getFileById(fileId);
       if (!file) continue;
       const prefix = folderPathString(file.folder_id);
+      // Contract indicator: which files are contracts + live pipeline state
+      const contractBadge = file.contract_id
+        ? file.contract_processing_status === "PROCESSING" || file.contract_processing_status === "PENDING"
+          ? { label: t("file_library.contracts.processing.processing"), tone: "processing" as const }
+          : file.contract_processing_status === "ERROR"
+            ? { label: t("file_library.contracts.processing.error"), tone: "danger" as const }
+            : { label: t("file_library.contracts.badge"), tone: "success" as const }
+        : null;
       manifest.push({
         kind: "file",
         path: uniquePath(`${prefix}${file.attributes.name}`),
@@ -163,6 +184,7 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
         size: file.size,
         createdAt: file.created_at,
         updatedAt: file.updated_at,
+        badge: contractBadge,
         metadata: { assetId: file.id },
       });
     }
@@ -184,6 +206,15 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       if (item && item.kind === "file") {
         setSelectedAssetId(item.metadata?.assetId ?? null);
         setSelectedFolderId(null);
+        // Touch devices have no double-tap "open" gesture — a single tap
+        // both selects and opens the viewer.
+        if (item.metadata?.assetId && window.matchMedia("(pointer: coarse)").matches) {
+          setPreviewFile({
+            assetId: item.metadata.assetId,
+            name: item.name ?? item.path,
+            contentType: item.contentType ?? "",
+          });
+        }
       } else if (item && item.kind === "folder") {
         setSelectedAssetId(null);
         // resolve the folder id from its path so uploads can target it
@@ -370,6 +401,15 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
               <span className="mx-1 h-5 w-px bg-subtle" />
             </>
           )}
+
+          {/* contracts sub-module (AI-analyzed PDFs) */}
+          <Link
+            to={`/${workspaceSlug}/file-library/contracts`}
+            className="flex h-8 items-center gap-1 rounded-sm border border-subtle px-2 text-12 hover:bg-layer-1-hover"
+          >
+            <FileText className="size-3.5" />
+            <span className="hidden sm:inline">{t("file_library.contracts.title")}</span>
+          </Link>
 
           {/* search (collapses to icon-triggered popover on mobile) */}
           <div className="relative hidden sm:block">

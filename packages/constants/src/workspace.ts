@@ -230,6 +230,14 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     labelTranslationKey: "sidebar.library",
     href: `/file-library/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    // exact-section match so /file-library/contracts highlights Contratos only
+    highlight: (pathname: string, url: string) => pathname.includes(url) && !pathname.includes("/file-library/contracts"),
+  },
+  contracts: {
+    key: "contracts",
+    labelTranslationKey: "sidebar.contracts",
+    href: `/file-library/contracts/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
@@ -239,6 +247,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebar
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["file-library"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["contracts"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {

@@ -85,6 +85,10 @@ export const coreRoutes: RouteConfigEntry[] = [
         // File library
         layout("./(all)/[workspaceSlug]/(projects)/file-library/layout.tsx", [
           route(":workspaceSlug/file-library", "./(all)/[workspaceSlug]/(projects)/file-library/page.tsx"),
+          route(
+            ":workspaceSlug/file-library/contracts",
+            "./(all)/[workspaceSlug]/(projects)/file-library/contracts/page.tsx"
+          ),
         ]),
 
         // Notifications

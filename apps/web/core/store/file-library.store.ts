@@ -272,7 +272,9 @@ export class FileLibraryStore implements IFileLibraryStore {
 
   fetchFiles = async (workspaceSlug: string) => {
     try {
-      this.filesLoader = true;
+      runInAction(() => {
+        this.filesLoader = true;
+      });
       // Filters resolve against the database, not just the loaded set
       const files = await this.fileLibraryService.getFiles(workspaceSlug, { ...this.filters });
       runInAction(() => {
@@ -280,7 +282,9 @@ export class FileLibraryStore implements IFileLibraryStore {
         files.forEach((file) => set(this.filesMap, [file.id], file));
       });
     } finally {
-      this.filesLoader = false;
+      runInAction(() => {
+        this.filesLoader = false;
+      });
     }
   };
 

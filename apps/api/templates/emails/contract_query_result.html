@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #1f2937; max-width: 640px; margin: 0 auto; padding: 24px;">
+    <h2 style="margin-bottom: 4px;">Resultado de tu consulta de contratos</h2>
+    <p style="color: #6b7280; margin-top: 0;">{{ workspace_name }}</p>
+
+    <p style="background: #f3f4f6; border-radius: 6px; padding: 12px;"><strong>Consulta:</strong> {{ query }}</p>
+
+    <p>{{ summary }}</p>
+
+    {% if matches %}
+    <h3>Contratos que coinciden ({{ matches|length }})</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead>
+        <tr style="text-align: left; border-bottom: 2px solid #e5e7eb;">
+          <th style="padding: 6px;">Contrato</th>
+          <th style="padding: 6px;">Artistas</th>
+          <th style="padding: 6px;">Fin efectivo</th>
+          <th style="padding: 6px;">Razón</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for match in matches %}
+        <tr style="border-bottom: 1px solid #f3f4f6;">
+          <td style="padding: 6px;">{{ match.title }}</td>
+          <td style="padding: 6px;">{{ match.artists|default:"—" }}</td>
+          <td style="padding: 6px;">{{ match.final_end_date|default:"—" }}</td>
+          <td style="padding: 6px; color: #6b7280;">{{ match.reason }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color: #6b7280;">Ningún contrato coincidió con la consulta.</p>
+    {% endif %}
+
+    <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
+      Se analizaron {{ scanned_count }} contrato(s) con texto extraído.
+    </p>
+  </body>
+</html>

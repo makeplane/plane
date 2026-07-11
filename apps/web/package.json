@@ -17,6 +17,7 @@
     "fix:format": "oxfmt ."
   },
   "dependencies": {
+    "@assistant-ui/react": "^0.10.50",
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
@@ -47,6 +48,7 @@
     "date-fns": "catalog:",
     "emoji-picker-react": "catalog:",
     "export-to-csv": "catalog:",
+    "framer-motion": "catalog:",
     "isbot": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",

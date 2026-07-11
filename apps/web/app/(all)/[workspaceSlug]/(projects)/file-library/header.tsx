@@ -5,7 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { Files } from "lucide-react";
+import { FileText, Files } from "lucide-react";
+import { useLocation, useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -13,6 +14,9 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 
 export const FileLibraryHeader = observer(function FileLibraryHeader() {
   const { t } = useTranslation();
+  const { workspaceSlug } = useParams();
+  const { pathname } = useLocation();
+  const isContracts = pathname.includes("/file-library/contracts");
 
   return (
     <Header>
@@ -21,9 +25,23 @@ export const FileLibraryHeader = observer(function FileLibraryHeader() {
           <Breadcrumbs>
             <Breadcrumbs.Item
               component={
-                <BreadcrumbLink label={t("sidebar.library")} icon={<Files className="h-4 w-4 text-tertiary" />} />
+                <BreadcrumbLink
+                  href={isContracts ? `/${workspaceSlug}/file-library` : undefined}
+                  label={t("sidebar.library")}
+                  icon={<Files className="h-4 w-4 text-tertiary" />}
+                />
               }
             />
+            {isContracts && (
+              <Breadcrumbs.Item
+                component={
+                  <BreadcrumbLink
+                    label={t("file_library.contracts.title")}
+                    icon={<FileText className="h-4 w-4 text-tertiary" />}
+                  />
+                }
+              />
+            )}
           </Breadcrumbs>
         </div>
       </Header.LeftItem>

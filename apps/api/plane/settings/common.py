@@ -357,6 +357,15 @@ FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 # guards against abusive range requests. Default: 5 GB.
 FILE_LIBRARY_SIZE_LIMIT = int(os.environ.get("FILE_LIBRARY_SIZE_LIMIT", 5 * 1024 * 1024 * 1024))
 
+# Contracts AI pipeline (Cloudflare Worker + Workflows)
+# Shared secret the Worker sends back in X-Plane-Internal-Key when calling the
+# /api/internal/ endpoints (mirrors the LIVE_SERVER_SECRET_KEY pattern)
+PLANE_INTERNAL_API_SECRET = os.environ.get("PLANE_INTERNAL_API_SECRET")
+# Base URL of the deployed trigger Worker (http://localhost:8787 with wrangler dev)
+CF_WORKER_TRIGGER_URL = os.environ.get("CF_WORKER_TRIGGER_URL")
+# Secret Django sends in X-Trigger-Secret when asking the Worker to start a run
+CF_WORKER_TRIGGER_SECRET = os.environ.get("CF_WORKER_TRIGGER_SECRET")
+
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 # Github Access Token

@@ -85,6 +85,160 @@
       "size": "Más grandes",
       "modified": "Modificados recientemente",
       "label": "Orden"
+    },
+    "contracts": {
+      "title": "Contratos",
+      "search_placeholder": "Buscar contratos",
+      "active_jobs": "{count, plural, one {# análisis activo} other {# análisis activos}}",
+      "save": "Guardar cambios",
+      "save_success": "Contrato actualizado",
+      "save_failed": "No se pudo actualizar el contrato",
+      "ai_model": "Analizado con {model}",
+      "document": "Documento",
+      "yes": "Sí",
+      "no": "No",
+      "empty": {
+        "title": "Aún no hay contratos",
+        "description": "Categorice un archivo PDF como Contratos en la biblioteca de archivos para iniciar el análisis con IA."
+      },
+      "status": {
+        "vigente": "Vigente",
+        "finalizado": "Finalizado",
+        "no_especificado": "No especificado"
+      },
+      "type": {
+        "arrendamientos": "Arrendamientos",
+        "alquileres": "Alquileres",
+        "vehiculos": "Vehículos",
+        "servicios": "Servicios",
+        "artistas": "Artistas"
+      },
+      "processing": {
+        "pending": "Pendiente",
+        "processing": "Procesando",
+        "completed": "Analizado",
+        "error": "Error"
+      },
+      "fields": {
+        "titulo": "Título",
+        "resumen_general": "Resumen",
+        "nombre_grupo": "Nombre del grupo",
+        "artistas": "Artistas",
+        "testigos": "Testigos",
+        "involucrados": "Involucrados",
+        "es_notariado": "Notariado",
+        "fecha_inicio": "Fecha de inicio",
+        "fecha_fin": "Fecha de fin",
+        "fecha_fin_efectiva": "Fecha de fin efectiva",
+        "es_posible_expandirlo": "Extensión posible",
+        "tiempo_extension_posible": "Tiempo de extensión posible",
+        "expansion_time_description": "Cláusula de extensión",
+        "estatus_contrato": "Estatus del contrato",
+        "tipo_contrato": "Tipo de contrato",
+        "processing_status": "Análisis de IA",
+        "periodo_coleccion": "Periodo de colección",
+        "collection_period_description": "Descripción del periodo de colección",
+        "collection_period_duration": "Duración del periodo de colección",
+        "periodo_retencion": "Periodo de retención",
+        "retention_period_description": "Descripción del periodo de retención",
+        "retention_period_duration": "Duración del periodo de retención"
+      },
+      "filters": {
+        "people": "Personas",
+        "person": "Persona",
+        "person_placeholder": "Involucrado o testigo",
+        "artist": "Artista",
+        "artist_placeholder": "Nombre del artista",
+        "year": "Año",
+        "year_placeholder": "Año de inicio o fin"
+      },
+      "retry": {
+        "button": "Reintentar",
+        "hint": "Elija etapas específicas o vuelva a ejecutar todo",
+        "all": "Reintentar todo",
+        "selected": "Reintentar etapas seleccionadas",
+        "started": "Reintento en cola",
+        "failed": "No se pudo encolar el reintento",
+        "extract_text": "Extracción de texto",
+        "generate_embeddings": "Embeddings (vectorización)",
+        "ai_analysis": "Análisis de IA",
+        "extract_thumbnail": "Miniatura"
+      },
+      "reanalyze": {
+        "button": "Reanalizar",
+        "hint": "Vuelve a ejecutar la IA y propone valores nuevos sin sobrescribir hasta que usted confirme",
+        "started": "Reanálisis en cola",
+        "failed": "No se pudo encolar el reanálisis",
+        "pending_title": "El reanálisis terminó: revise los datos propuestos antes de aplicarlos",
+        "accept": "Aplicar datos propuestos",
+        "discard": "Descartar",
+        "applied": "Datos propuestos aplicados",
+        "discarded": "Datos propuestos descartados"
+      },
+      "tabs": {
+        "document": "Documento",
+        "info": "Información",
+        "process": "Proceso",
+        "chat": "Chat"
+      },
+      "badge": "Contrato",
+      "preview_info": "Información del contrato",
+      "open_in_contracts": "Abrir en Contratos",
+      "bulk": {
+        "selected": "{count} seleccionados",
+        "clear": "Limpiar selección",
+        "dispatched": "{count, plural, one {# análisis en cola} other {# análisis en cola}} ({skipped} omitidos)",
+        "failed": "No se pudo encolar la acción masiva"
+      },
+      "chat": {
+        "button": "Chat con IA",
+        "title": "Chat de contratos",
+        "placeholder": "Pregunte sobre sus contratos…",
+        "send": "Enviar",
+        "thinking": "Pensando…",
+        "failed": "No se pudo procesar el mensaje",
+        "new_chat": "Nuevo chat",
+        "history": "Historial",
+        "no_chats": "Aún no hay chats",
+        "untitled": "Chat sin título",
+        "sources_used": "Documentos utilizados para esta respuesta",
+        "open_document": "Abrir en una ventana nueva",
+        "empty_general_title": "Pregunte lo que sea sobre sus contratos",
+        "empty_general_description": "Las respuestas se basan en el contenido vectorizado de todos los contratos analizados, y cada respuesta muestra los documentos que utilizó.",
+        "empty_contract_title": "Pregunte sobre este contrato",
+        "empty_contract_description": "El texto completo extraído de este contrato es el contexto de cada respuesta.",
+        "power_k_search": "Buscar en contratos con IA"
+      },
+      "process": {
+        "pipeline_state": "Estado del pipeline",
+        "text_extracted": "Texto extraído el {date}",
+        "text_pending": "Texto aún no extraído",
+        "analyzed": "Análisis de IA completado el {date}",
+        "no_jobs": "Aún no hay ejecuciones para este contrato"
+      },
+      "task_type": {
+        "extract_full": "Análisis completo",
+        "retry_partial": "Reintento parcial",
+        "reanalyze": "Reanálisis",
+        "query": "Consulta"
+      },
+      "job_status": {
+        "queued": "En cola",
+        "running": "En ejecución",
+        "completed": "Completado",
+        "failed": "Fallido"
+      },
+      "query": {
+        "button": "Consulta con IA",
+        "title": "Pregunte sobre sus contratos",
+        "description": "La pregunta se ejecuta sobre el contenido de todos los contratos analizados. El resultado aparece aquí y también se le envía por correo.",
+        "placeholder": "p. ej. ¿Qué contratos de artistas vencen este año?",
+        "submit": "Preguntar",
+        "started": "Consulta iniciada: recibirá el resultado por correo",
+        "failed": "No se pudo iniciar la consulta",
+        "emailed": "Enviado por correo",
+        "empty": "Aún no hay consultas"
+      }
     }
   }
 }

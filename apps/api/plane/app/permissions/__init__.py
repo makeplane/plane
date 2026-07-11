@@ -20,3 +20,4 @@ from .project import (
 )
 from .base import allow_permission, ROLE
 from .page import ProjectPagePermission
+from .internal import WorkerServicePermission
