@@ -1463,24 +1463,39 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-        serializer = IssueCommentCreateSerializer(data=request.data)
+        serializer = IssueCommentCreateSerializer(data=request.data, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
-            # Update the created_at and the created_by and save the comment
+            # Update the created_at and the created_by and save the comment.
+            # `actor` is deliberately left as the authenticated user set on save above:
+            # it was previously reassigned from the client-supplied `created_by` but
+            # never persisted (it is absent from update_fields), so the in-memory
+            # instance — which is serialized below for the activity payload and the
+            # response — disagreed with the stored row.
             issue_comment.created_at = request.data.get("created_at", timezone.now())
             issue_comment.created_by_id = request.data.get("created_by", request.user.id)
-            issue_comment.actor_id = request.data.get("created_by", request.user.id)
             issue_comment.save(update_fields=["created_at", "created_by"])
 
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                actor_id=str(issue_comment.created_by_id),
+                # Serialize the persisted comment (not the create serializer) so the
+                # activity carries the comment id and the server-rendered mention
+                # markup in comment_html; the notification pipeline needs both to
+                # link the activity to the comment and fire mention notifications.
+                requested_data=json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder),
+                # The activity actor drives who notifications are attributed to (and who
+                # is skipped as the trigger), so it must be the authenticated caller —
+                # `created_by` is client-supplied and would let a caller make mention
+                # notifications appear to come from someone else. Matches the internal
+                # app comment view and the public work-item endpoints.
+                actor_id=str(request.user.id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
 
             # Send the model activity
@@ -1588,7 +1603,6 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Validates external ID uniqueness if provided.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
         # Validation check if the issue already exists
@@ -1610,17 +1624,28 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-        serializer = IssueCommentCreateSerializer(issue_comment, data=request.data, partial=True)
+        serializer = IssueCommentCreateSerializer(
+            issue_comment, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
-            serializer.save()
+            # Use the instance returned by save() rather than re-reading the row: it
+            # already holds exactly what this request persisted, and a re-fetch could
+            # pick up a concurrent update, making the activity payload (and the mention
+            # diff below) describe someone else's write.
+            issue_comment = serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",
-                requested_data=requested_data,
+                # Serialize the persisted comment so the activity sees the
+                # server-rendered mention markup in comment_html; diffing it
+                # against current_instance is what surfaces newly added mentions.
+                requested_data=json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             # Send the model activity
             model_activity.delay(
@@ -1633,7 +1658,6 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 origin=base_host(request=request, is_app=True),
             )
 
-            issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1667,6 +1691,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
