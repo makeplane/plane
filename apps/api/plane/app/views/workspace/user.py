@@ -59,6 +59,7 @@ from plane.utils.activity_filters import (
     apply_date_range,
     parse_activity_filters,
     parse_date_range,
+    workspace_activity_visibility_q,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -440,9 +441,8 @@ class WorkspaceActivityEndpoint(BaseAPIView):
 
         queryset = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            workspace_activity_visibility_q(request.user),
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
         ).select_related("actor", "workspace", "issue", "project")
 

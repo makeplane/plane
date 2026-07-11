@@ -14,6 +14,12 @@ import re
 import uuid
 from datetime import datetime
 
+# Django imports
+from django.db.models import Exists, OuterRef, Q
+
+# Module imports
+from plane.utils.permissions.base import ROLE
+
 DATE_FORMAT = "%Y-%m-%d"
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -91,3 +97,40 @@ def apply_activity_filters(queryset, filters):
     if filters["project_ids"]:
         queryset = queryset.filter(project_id__in=filters["project_ids"])
     return apply_date_range(queryset, filters["start_date"], filters["end_date"])
+
+
+def workspace_activity_visibility_q(user):
+    """Return a Q restricting an IssueActivity feed to what *user* may read.
+
+    Mirrors the per-project issue visibility rule (see issue/base.py): the
+    requester sees a work item's activity when, on that project, they are an
+    active member with a role above GUEST, or a GUEST while the project has
+    ``guest_view_all_features=True``, or a GUEST on a project with
+    ``guest_view_all_features=False`` but only for work items they created.
+
+    The membership/role test is expressed with correlated ``Exists`` subqueries
+    on ``ProjectMember`` (like issue/base.py) rather than a join, because a
+    multi-valued relation (``project__project_projectmember``) inside an OR'd Q
+    produces separate/promoted joins and silently mismatches. ``issue__created_by``
+    is a single-valued relation from IssueActivity, so it stays a plain lookup.
+    This Q also enforces the base scoping (active membership required by both
+    subqueries), so callers do not need a separate membership filter.
+    """
+    # Lazy import to avoid a models <-> utils import cycle at module load.
+    from plane.db.models import ProjectMember
+
+    active_membership = ProjectMember.objects.filter(
+        project_id=OuterRef("project_id"),
+        member=user,
+        is_active=True,
+    )
+    # Full visibility: role above GUEST, or a GUEST on a guest_view_all_features project.
+    full_access = active_membership.filter(
+        Q(role__gt=ROLE.GUEST.value) | Q(role=ROLE.GUEST.value, project__guest_view_all_features=True)
+    )
+    # Restricted GUEST: only work items the requester created.
+    restricted_guest = active_membership.filter(
+        role=ROLE.GUEST.value,
+        project__guest_view_all_features=False,
+    )
+    return Q(Exists(full_access)) | (Q(Exists(restricted_guest)) & Q(issue__created_by=user))

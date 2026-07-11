@@ -63,6 +63,16 @@ def noon_utc(year, month, day):
     return datetime(year, month, day, 12, 0, 0, tzinfo=dt_timezone.utc)
 
 
+def make_issue(project, workspace, name="Issue", created_by=None):
+    """Create an Issue and (optionally) pin its creator via .update() (bypasses
+    BaseModel.save() which overwrites created_by from the request user)."""
+    issue = Issue.objects.create(name=name, project=project, workspace=workspace)
+    if created_by is not None:
+        Issue.objects.filter(pk=issue.pk).update(created_by=created_by)
+        issue.refresh_from_db()
+    return issue
+
+
 def feed_url(slug):
     return f"/api/v1/workspaces/{slug}/activities/"
 
@@ -232,3 +242,35 @@ class TestWorkspaceActivityAPIScoping:
         response = client.get(feed_url(workspace.slug))
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @pytest.mark.django_db
+    def test_guest_without_view_all_sees_only_own_created_work_item_activity(self, workspace, project, create_user):
+        # Token surface must enforce guest_view_all_features exactly like the internal feed.
+        assert project.guest_view_all_features is False
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        own_issue = make_issue(project, workspace, name="Guest Issue", created_by=guest)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        own = make_activity(project, own_issue, create_user)
+        leaked = make_activity(project, foreign_issue, create_user)
+
+        client = api_client_for(guest)
+        response = client.get(feed_url(workspace.slug))
+
+        assert response.status_code == status.HTTP_200_OK
+        ids = [str(row["id"]) for row in response.data["results"]]
+        assert ids == [str(own.id)]
+        assert str(leaked.id) not in ids
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_sees_all_project_activity(self, workspace, project, create_user):
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        a1 = make_activity(project, foreign_issue, create_user)
+
+        client = api_client_for(guest)
+        response = client.get(feed_url(workspace.slug))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(row["id"]) for row in response.data["results"]] == [str(a1.id)]

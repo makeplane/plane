@@ -58,6 +58,19 @@ def noon_utc(year, month, day):
     return datetime(year, month, day, 12, 0, 0, tzinfo=dt_timezone.utc)
 
 
+def make_issue(project, workspace, name="Issue", created_by=None):
+    """Create an Issue and (optionally) pin its creator.
+
+    BaseModel.save() overwrites created_by from the request user (None in a
+    shell/test), so setting it needs a queryset .update() to bypass save().
+    """
+    issue = Issue.objects.create(name=name, project=project, workspace=workspace)
+    if created_by is not None:
+        Issue.objects.filter(pk=issue.pk).update(created_by=created_by)
+        issue.refresh_from_db()
+    return issue
+
+
 def feed_url(slug):
     return f"/api/workspaces/{slug}/activity/"
 
@@ -272,6 +285,10 @@ class TestWorkspaceActivityScoping:
 
     @pytest.mark.django_db
     def test_guest_limited_to_their_projects(self, session_client, workspace, project, issue, create_user):
+        # A guest never sees activity from a project they do not belong to,
+        # even when guest_view_all_features is enabled on their own project.
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
         guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
         other_project = Project.objects.create(name="Other", identifier="OP", workspace=workspace)
         ProjectMember.objects.create(project=other_project, member=create_user, role=20, is_active=True)
@@ -284,6 +301,42 @@ class TestWorkspaceActivityScoping:
 
         assert response.status_code == status.HTTP_200_OK
         assert [row["id"] for row in response.json()["results"]] == [str(visible.id)]
+
+    @pytest.mark.django_db
+    def test_guest_without_view_all_sees_only_own_created_work_item_activity(
+        self, session_client, workspace, project, create_user
+    ):
+        # guest_view_all_features=False (project fixture default): a guest only
+        # sees activity for work items they created — not the whole project.
+        assert project.guest_view_all_features is False
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        own_issue = make_issue(project, workspace, name="Guest Issue", created_by=guest)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        own = make_activity(project, own_issue, create_user)  # actor irrelevant; issue ownership is what gates
+        leaked = make_activity(project, foreign_issue, create_user)
+
+        session_client.force_authenticate(user=guest)
+        response = session_client.get(feed_url(workspace.slug))
+
+        assert response.status_code == status.HTTP_200_OK
+        ids = [row["id"] for row in response.json()["results"]]
+        assert ids == [str(own.id)]
+        assert str(leaked.id) not in ids
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_sees_all_project_activity(self, session_client, workspace, project, create_user):
+        # guest_view_all_features=True: the guest sees every work item's activity in that project.
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        a1 = make_activity(project, foreign_issue, create_user)
+
+        session_client.force_authenticate(user=guest)
+        response = session_client.get(feed_url(workspace.slug))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [row["id"] for row in response.json()["results"]] == [str(a1.id)]
 
     @pytest.mark.django_db
     def test_archived_project_excluded(self, session_client, workspace, project, issue, create_user):

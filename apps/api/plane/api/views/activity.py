@@ -20,6 +20,7 @@ from plane.utils.activity_filters import (
     ActivityFilterError,
     apply_activity_filters,
     parse_activity_filters,
+    workspace_activity_visibility_q,
 )
 from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_order_by
 
@@ -37,9 +38,8 @@ class WorkspaceActivityListAPIEndpoint(BaseAPIView):
     def get_queryset(self):
         return IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            workspace_activity_visibility_q(self.request.user),
             workspace__slug=self.kwargs.get("slug"),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
         ).select_related("actor", "workspace", "issue", "project")
 
