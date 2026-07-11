@@ -3,12 +3,13 @@
 | Champ   | Valeur                    |
 |---------|---------------------------|
 | Module  | api/workspace-activity-log |
-| Version | 0.1.0                     |
+| Version | 1.0.0                     |
 | Date    | 2026-07-11                |
-| Statut  | PLAN — à valider          |
+| Statut  | IMPLÉMENTÉ                 |
 | Source  | Cadrage 2026-07-11 (fichier:ligne vérifiés) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). **Zéro migration** (leaf `0126` intact) : lecture seule de `IssueActivity`. Module 2 surfaces : API Django (interne + v1/MCP) + web.
+> **1.0.0 (IMPLÉMENTÉ)** : feed workspace (`WorkspaceActivityEndpoint`) + v1/MCP (`WorkspaceActivityListAPIEndpoint`), filtres dates additifs sur le per-user, helper `plane/utils/activity_filters.py`, visibilité guest (`workspace_activity_visibility_q` via `Exists`). Web : drawer d'activité (bouton Members), service+store+i18n. **46 tests pytest** (Docker) + E2E navigateur (drawer, filtre membre) + E2E API vivante (interne + v1 token). Revue adversariale menée — corrections `fix(...)` intégrées (voir § Revue).
 
 ---
 
@@ -76,4 +77,18 @@
 - **Interne feed** : nominal (multi-acteurs, tri décroissant), filtre `actor` (1 et N), filtre `project`, `start_date`/`end_date` (bornes incluses, plage vide, invalides → 400, start>end → 400), exclusions field, pagination cursor, scoping projets du demandeur (le test anti-fuite clé), guest borné, cross-workspace, non-membre → 403.
 - **Per-user modifié** : non-régression sans params (réponse identique), avec plage de dates.
 - **v1** : auth token OK / absente → 401, mêmes filtres, `fields`/`expand`, enveloppe paginée, scoping identique, non-membre → 403.
+- **Guest** : sans `guest_view_all_features` → ne voit que l'activité de ses propres work items ; avec → voit tout le projet ; hors projet → rien (2 surfaces).
 - `makemigrations --check --dry-run` = « No changes detected ».
+
+## Revue sécurité adversariale (2026-07-11 — 2 auditeurs + double vérif, 6 findings confirmés / 2 rejetés)
+
+| ID | Sévérité | Traitement |
+|----|----------|-----------|
+| **BK-1 / WB-1** | high | **CORRIGÉ.** Le feed contournait `guest_view_all_features` : un guest membre d'un projet (`guest_view_all_features=False`) pouvait énumérer l'activité de TOUS les work items. Fix : `workspace_activity_visibility_q(user)` (sous-requêtes `Exists` corrélées sur `ProjectMember`, pattern `issue/base.py`) appliqué aux 2 nouveaux endpoints ; 4 tests ajoutés. |
+| **WB-5** | low | **CORRIGÉ.** `key={workspaceSlug}` sur le drawer — les filtres UUID ne survivent plus à une navigation inter-workspace. |
+| **BK-3** | low | **ACCEPTÉ.** `expand=actor` (v1) expose l'email de l'acteur — comportement **hérité et cohérent** avec `IssueActivityListAPIEndpoint` (v1 existant) ; les emails des membres sont déjà lisibles via l'endpoint members. Pas de divergence de serializer. |
+| **WB-2** | low/med | **ACCEPTÉ (documenté).** Les presets de période utilisent le jour **local du navigateur** ; le serveur filtre via `TimezoneMixin` (fuseau du profil). Cohérent avec le filtrage de dates de toute la plateforme Plane. Écart uniquement si fuseau navigateur ≠ fuseau profil (bordure de journée). |
+| **WB-4** | low | **ACCEPTÉ.** `mutateWorkspaceMembersActivity` implémente le contrat abstrait de la base ; le drawer CE s'appuie sur `revalidateOnFocus/Mount` de SWR, donc aucun appelant CE — point d'extension fonctionnel (pas un no-op). |
+| BK-2, WB-3 | — | **REJETÉS** en double vérif (per_page interne = parité voulue avec le per-user ; matching de préfixe SWR sans chemin d'exploitation, méthode sans appelant). |
+
+> **Leak pré-existant identique** sur `WorkspaceUserActivityEndpoint` + `ExportWorkspaceUserActivityEndpoint` (endpoints hors périmètre module) → **branche `fix/` dédiée + PR séparée après merge** (réutilise ce helper). Voir la discipline `fix/` du projet.
