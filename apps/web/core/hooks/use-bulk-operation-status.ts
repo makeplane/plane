@@ -4,4 +4,8 @@
  * See the LICENSE file for details.
  */
 
-export const useBulkOperationStatus = () => false;
+/**
+ * @description In the Community Edition the bulk operations infrastructure ships enabled.
+ * Returning `true` unlocks multiple selection + the bulk edit toolbar in the list/spreadsheet/gantt layouts.
+ */
+export const useBulkOperationStatus = () => true;

@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} seçildi",
+    "clear_selection": "Seçimi temizle",
+    "archive_success": "İş öğeleri başarıyla arşivlendi",
+    "delete_confirmation": {
+      "title": "İş öğelerini sil",
+      "description": "Seçili iş öğelerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "İş öğeleri arşivlenemiyor",

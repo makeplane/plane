@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "Wybrano: {count}",
+    "clear_selection": "Wyczyść zaznaczenie",
+    "archive_success": "Elementy pracy zostały zarchiwizowane",
+    "delete_confirmation": {
+      "title": "Usuń elementy pracy",
+      "description": "Czy na pewno chcesz usunąć wybrane elementy pracy? Tej operacji nie można cofnąć."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Nie można zarchiwizować elementów pracy",

@@ -84,6 +84,7 @@ from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_ord
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.bulk_issue import bulk_issue_operations, BulkIssueOperationError
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
@@ -843,6 +844,38 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BulkIssueOperationAPIEndpoint(BaseAPIView):
+    """Bulk edit multiple properties on a set of work items (token / MCP API).
+
+    SET/REPLACE semantics for every provided property; the whole batch is
+    rejected (400) with no partial write if any value is invalid.
+    """
+
+    permission_classes = [ProjectEntityPermission]
+
+    def post(self, request, slug, project_id):
+        """Bulk update work items
+
+        Set/replace one or more properties (state, priority, assignees, labels,
+        dates, modules, cycle, estimate) on a list of work items in a single
+        atomic request.
+        """
+        try:
+            operated_ids = bulk_issue_operations(
+                slug=slug,
+                project_id=project_id,
+                issue_ids=request.data.get("issue_ids", []),
+                properties=request.data.get("properties", {}),
+                actor_id=str(request.user.id),
+                origin=base_host(request=request, is_app=False),
+                notification=True,
+            )
+        except BulkIssueOperationError as error:
+            return Response({"error": error.message}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"issue_ids": operated_ids}, status=status.HTTP_200_OK)
 
 
 class LabelListCreateAPIEndpoint(BaseAPIView):

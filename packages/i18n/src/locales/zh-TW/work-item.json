@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "已選擇 {count} 項",
+    "clear_selection": "清除選擇",
+    "archive_success": "工作項目已成功封存",
+    "delete_confirmation": {
+      "title": "刪除工作項目",
+      "description": "確定要刪除所選的工作項目嗎？此動作無法復原。"
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "無法歸檔工作項目",

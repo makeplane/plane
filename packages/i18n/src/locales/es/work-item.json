@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} seleccionado(s)",
+    "clear_selection": "Borrar selección",
+    "archive_success": "Elementos de trabajo archivados correctamente",
+    "delete_confirmation": {
+      "title": "Eliminar elementos de trabajo",
+      "description": "¿Estás seguro de que quieres eliminar los elementos de trabajo seleccionados? Esta acción no se puede deshacer."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "No se pueden archivar elementos de trabajo",

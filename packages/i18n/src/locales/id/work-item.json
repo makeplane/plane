@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "{count} dipilih",
+    "clear_selection": "Hapus pilihan",
+    "archive_success": "Item pekerjaan berhasil diarsipkan",
+    "delete_confirmation": {
+      "title": "Hapus item pekerjaan",
+      "description": "Apakah Anda yakin ingin menghapus item pekerjaan yang dipilih? Tindakan ini tidak dapat dibatalkan."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Tidak dapat mengarsipkan item kerja",

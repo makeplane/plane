@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "已选择 {count} 项",
+    "clear_selection": "清除选择",
+    "archive_success": "工作项已成功归档",
+    "delete_confirmation": {
+      "title": "删除工作项",
+      "description": "确定要删除所选工作项吗？此操作无法撤销。"
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "无法归档工作项",

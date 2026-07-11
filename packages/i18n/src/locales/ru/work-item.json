@@ -310,6 +310,13 @@
     }
   },
   "bulk_operations": {
+    "selection_count": "Выбрано: {count}",
+    "clear_selection": "Очистить выбор",
+    "archive_success": "Рабочие элементы успешно заархивированы",
+    "delete_confirmation": {
+      "title": "Удалить рабочие элементы",
+      "description": "Вы уверены, что хотите удалить выбранные рабочие элементы? Это действие нельзя отменить."
+    },
     "error_details": {
       "invalid_archive_state_group": {
         "title": "Не удалось архивировать рабочие элементы",
