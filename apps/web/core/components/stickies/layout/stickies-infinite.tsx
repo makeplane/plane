@@ -6,7 +6,6 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { STICKIES_PER_PAGE } from "@plane/constants";
 import { ContentWrapper, Loader } from "@plane/ui";
@@ -14,6 +13,7 @@ import { cn } from "@plane/utils";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
+import { useParams } from "@/hooks/use-params";
 
 export const StickiesInfinite = observer(function StickiesInfinite() {
   const { workspaceSlug } = useParams();

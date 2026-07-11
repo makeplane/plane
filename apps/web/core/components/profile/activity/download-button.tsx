@@ -5,7 +5,6 @@
  */
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 // services
 // ui
 import { useTranslation } from "@plane/i18n";
@@ -13,6 +12,7 @@ import { Button } from "@plane/propel/button";
 // helpers
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { UserService } from "@/services/user.service";
+import { useParams } from "@/hooks/use-params";
 
 const userService = new UserService();
 

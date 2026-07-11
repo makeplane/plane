@@ -7,7 +7,6 @@
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -20,6 +19,7 @@ import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { ConfirmIssueDiscard } from "../confirm-issue-discard";
 import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
+import { useParams } from "@/hooks/use-params";
 
 export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;

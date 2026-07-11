@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
@@ -16,6 +15,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   data: Partial<IUserLite>;

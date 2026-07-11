@@ -6,12 +6,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import type { TWorkItemStateDropdownBaseProps } from "./base";
 import { WorkItemStateDropdownBase } from "./base";
+import { useParams } from "@/hooks/use-params";
 
 type TWorkItemStateDropdownProps = Omit<
   TWorkItemStateDropdownBaseProps,

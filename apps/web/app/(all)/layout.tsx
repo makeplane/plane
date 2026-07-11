@@ -6,7 +6,6 @@
 
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
-import { PreloadResources } from "./layout.preload";
 
 export const meta: Route.MetaFunction = () => [
   { name: "robots", content: "noindex, nofollow" },
@@ -14,10 +13,5 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function AppLayout() {
-  return (
-    <>
-      <PreloadResources />
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }

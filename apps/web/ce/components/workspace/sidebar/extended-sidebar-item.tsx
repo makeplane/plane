@@ -9,8 +9,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { Pin, PinOff } from "lucide-react";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
@@ -28,6 +27,9 @@ import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-prefer
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type TExtendedSidebarItemProps = {
   item: IWorkspaceSidebarNavigationItem;
@@ -52,7 +54,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
 
   // nextjs hooks
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleExtendedSidebar } = useAppTheme();

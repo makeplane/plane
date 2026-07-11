@@ -7,7 +7,6 @@
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -22,6 +21,7 @@ import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-ite
 import { SidebarChartRoot } from "@/plane-web/components/cycles";
 // local imports
 import { CycleProgressStats } from "./progress-stats";
+import { useSearchParams } from "react-router";
 
 type TCycleAnalyticsProgress = {
   workspaceSlug: string;
@@ -61,7 +61,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   // props
   const { workspaceSlug, projectId, cycleId } = props;
   // router
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const peekCycle = searchParams.get("peekCycle") || undefined;
   // plane hooks
   const { t } = useTranslation();

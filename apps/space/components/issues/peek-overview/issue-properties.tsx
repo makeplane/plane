@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -27,6 +26,7 @@ import { usePublish } from "@/hooks/store/publish";
 import { useStates } from "@/hooks/store/use-state";
 // types
 import type { IIssue, IPeekMode } from "@/types/issue";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issueDetails: IIssue;

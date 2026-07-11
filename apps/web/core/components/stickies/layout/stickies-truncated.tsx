@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import useSWR from "swr";
 // plane utils
 import { useTranslation } from "@plane/i18n";
@@ -16,6 +15,7 @@ import { useSticky } from "@/hooks/use-stickies";
 // components
 import { ContentOverflowWrapper } from "../../core/content-overflow-HOC";
 import { StickiesLayout } from "./stickies-list";
+import { useParams } from "@/hooks/use-params";
 
 type StickiesTruncatedProps = {
   handleClose?: () => void;

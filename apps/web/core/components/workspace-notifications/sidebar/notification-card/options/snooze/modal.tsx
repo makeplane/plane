@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
@@ -14,6 +13,7 @@ import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui"
 // components
 import { getDate, cn } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
+import { useParams } from "@/hooks/use-params";
 
 type TNotificationSnoozeModal = {
   isOpen: boolean;

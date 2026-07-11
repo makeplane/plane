@@ -7,7 +7,6 @@
 import type { MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, ArrowRight, CalendarDays } from "lucide-react";
 // plane imports
@@ -36,6 +35,9 @@ import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
 import { TransferIssuesModal } from "../transfer-issues-modal";
+import { useLocation, useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   workspaceSlug: string;
@@ -64,8 +66,8 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     useTimeZoneConverter(projectId);
   // router
   const router = useAppRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
+  const pathname = useLocation().pathname;
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { allowPermissions } = useUserPermissions();

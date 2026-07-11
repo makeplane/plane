@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types

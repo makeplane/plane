@@ -8,7 +8,7 @@ import type React from "react";
 import type { LucideIcon } from "lucide-react";
 import { Bell, CircleUser, KeyRound, LockIcon, Settings2 } from "lucide-react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
+import { useParams } from "@/hooks/use-params";
 // plane imports
 import {
   GROUPED_PROFILE_SETTINGS,

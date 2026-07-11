@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { Menu, Settings } from "lucide-react";
 // icons
 import { Breadcrumbs } from "@plane/ui";
@@ -16,6 +15,7 @@ import { useTheme } from "@/hooks/store";
 // local imports
 import { CORE_HEADER_SEGMENT_LABELS } from "./core";
 import { EXTENDED_HEADER_SEGMENT_LABELS } from "./extended";
+import { useLocation } from "react-router";
 
 export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
@@ -35,7 +35,7 @@ const HEADER_SEGMENT_LABELS = {
 };
 
 export const AdminHeader = observer(function AdminHeader() {
-  const pathName = usePathname();
+  const pathName = useLocation().pathname;
 
   // Function to dynamically generate breadcrumb items based on pathname
   const generateBreadcrumbItems = (pathname: string) => {

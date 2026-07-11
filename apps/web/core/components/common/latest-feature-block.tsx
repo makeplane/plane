@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { useTheme } from "next-themes";
 // icons
 import { Lightbulb } from "lucide-react";

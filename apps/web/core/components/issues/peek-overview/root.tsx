@@ -6,7 +6,6 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // Plane imports
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -23,6 +22,7 @@ import { useWorkItemProperties } from "@/hooks/use-issue-properties";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
+import { useLocation } from "react-router";
 
 export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWorkItemPeekOverview) {
   const {
@@ -33,7 +33,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   } = props;
   const { t } = useTranslation();
   // router
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hook
   const { allowPermissions } = useUserPermissions();
 

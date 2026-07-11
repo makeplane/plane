@@ -16,7 +16,6 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -30,6 +29,7 @@ import { useHome } from "@/hooks/store/use-home";
 import { HOME_WIDGETS_LIST } from "../../home-dashboard-widgets";
 import { WidgetItemDragHandle } from "./widget-item-drag-handle";
 import { getCanDrop, getInstructionFromPayload } from "./widget.helpers";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   widgetId: string;

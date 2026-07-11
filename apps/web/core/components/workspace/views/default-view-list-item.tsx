@@ -5,11 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import { truncateText } from "@plane/utils";
+import { useParams } from "@/hooks/use-params";
 
 type Props = { view: { key: string; i18n_label: string } };
 

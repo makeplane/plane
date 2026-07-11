@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -21,6 +20,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleAppliedFiltersList } from "../applied-filters";
 import { ArchivedCyclesView } from "./view";
+import { useParams } from "@/hooks/use-params";
 
 export const ArchivedCycleLayoutRoot = observer(function ArchivedCycleLayoutRoot() {
   // router

@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 // Plane imports
 import type { IWebhook } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
+import { useParams } from "@/hooks/use-params";
 
 interface IWebhookListItem {
   webhook: IWebhook;

@@ -6,7 +6,6 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ArchiveX } from "lucide-react";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
@@ -20,6 +19,7 @@ import { SettingsControlItem } from "@/components/settings/control-item";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

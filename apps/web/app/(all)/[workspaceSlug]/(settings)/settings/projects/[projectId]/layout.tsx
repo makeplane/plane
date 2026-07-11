@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile/nav";
@@ -19,7 +18,7 @@ import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sideba
 function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // router
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   return (
     <>

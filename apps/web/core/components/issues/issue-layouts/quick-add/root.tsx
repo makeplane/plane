@@ -7,7 +7,6 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
 // plane imports
@@ -20,6 +19,7 @@ import { cn, createIssuePayload } from "@plane/utils";
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
+import { useParams } from "@/hooks/use-params";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;

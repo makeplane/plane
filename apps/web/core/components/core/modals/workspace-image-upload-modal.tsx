@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
@@ -20,6 +19,7 @@ import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   handleRemove: () => Promise<void>;

@@ -6,7 +6,6 @@
 
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
@@ -20,11 +19,14 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const { t } = useTranslation();
   // store
   const { totalProjectIds, filteredProjectIds } = useProject();

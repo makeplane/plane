@@ -7,7 +7,6 @@
 import type { FC } from "react";
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // types
@@ -26,6 +25,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+import { useParams } from "@/hooks/use-params";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT

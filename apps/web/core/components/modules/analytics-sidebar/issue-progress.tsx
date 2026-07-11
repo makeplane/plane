@@ -6,7 +6,6 @@
 
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EEstimateSystem } from "@plane/constants";
@@ -25,6 +24,7 @@ import { ModuleProgressStats } from "@/components/modules";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
+import { useSearchParams } from "react-router";
 // plane web constants
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;
@@ -41,7 +41,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   // props
   const { workspaceSlug, projectId, moduleId } = props;
   // router
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const peekModule = searchParams.get("peekModule") || undefined;
   // plane hooks
   const { t } = useTranslation();

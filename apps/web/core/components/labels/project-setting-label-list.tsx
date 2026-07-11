@@ -6,7 +6,6 @@
 
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -26,6 +25,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
   // router

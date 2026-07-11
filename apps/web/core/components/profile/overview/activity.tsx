@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { useTranslation } from "@plane/i18n";
@@ -22,6 +21,7 @@ import { USER_PROFILE_ACTIVITY } from "@plane/constants";
 import { useUser } from "@/hooks/store/user";
 // services
 import { UserService } from "@/services/user.service";
+import { useParams } from "@/hooks/use-params";
 
 const userService = new UserService();
 

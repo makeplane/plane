@@ -7,9 +7,8 @@
 import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-
 import { useTranslation } from "@plane/i18n";
+
 // plane imports
 import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -22,6 +21,7 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { QuickAddIssueRoot } from "../quick-add";
+import { useParams } from "@/hooks/use-params";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;

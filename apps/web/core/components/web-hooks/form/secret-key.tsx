@@ -7,7 +7,6 @@
 import { useState } from "react";
 import { range } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -25,6 +24,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
+import { useParams } from "@/hooks/use-params";
 // hooks
 
 type Props = {

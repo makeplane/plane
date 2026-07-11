@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -17,6 +16,9 @@ import { NotificationAppSidebarOption } from "@/components/workspace-notificatio
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export interface SidebarUserMenuItemProps {
   item: {
@@ -34,7 +36,7 @@ export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: 
   const { item, draftIssueCount } = props;
   // nextjs hooks
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // package hooks
   const { t } = useTranslation();
   // store hooks

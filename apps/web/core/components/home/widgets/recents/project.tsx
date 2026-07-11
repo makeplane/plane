@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useRouter } from "next/navigation";
 // plane types
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
@@ -12,6 +11,7 @@ import { calculateTimeAgo } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
 
 type BlockProps = {
@@ -22,7 +22,7 @@ type BlockProps = {
 export function RecentProject(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // derived values
   const projectDetails: TProjectEntityData = activity.entity_data as TProjectEntityData;
 

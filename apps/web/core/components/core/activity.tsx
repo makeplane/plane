@@ -6,7 +6,6 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // store hooks
 // icons
 import {
@@ -39,6 +38,7 @@ import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useParams } from "@/hooks/use-params";
 // types
 
 export function IssueLink({ activity }: { activity: IIssueActivity }) {

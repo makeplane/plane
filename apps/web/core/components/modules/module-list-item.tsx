@@ -6,7 +6,6 @@
 
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
 import { Info } from "lucide-react";
 import { CheckIcon } from "@plane/propel/icons";
@@ -21,6 +20,9 @@ import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useLocation, useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   moduleId: string;
@@ -33,8 +35,8 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
+  const pathname = useLocation().pathname;
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();

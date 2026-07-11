@@ -5,7 +5,6 @@
  */
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -26,6 +25,7 @@ import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { ProjectService } from "@/services/project";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isOpen: boolean;

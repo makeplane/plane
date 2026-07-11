@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { PageIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
@@ -24,6 +23,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
+import { useParams } from "@/hooks/use-params";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;

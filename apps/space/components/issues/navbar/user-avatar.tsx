@@ -6,8 +6,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Link } from "react-router";
-import { usePathname, useSearchParams } from "next/navigation";
+import { Link, useLocation, useSearchParams } from "react-router";
 import { usePopper } from "react-popper";
 import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
@@ -25,8 +24,8 @@ import { useUser } from "@/hooks/store/use-user";
 const authService = new AuthService();
 
 export const UserAvatar = observer(function UserAvatar() {
-  const pathName = usePathname();
-  const searchParams = useSearchParams();
+  const pathName = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   // query params
   const board = searchParams.get("board") || undefined;
   const labels = searchParams.get("labels") || undefined;

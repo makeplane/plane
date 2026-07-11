@@ -6,8 +6,6 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useMemo } from "react";
-// types
-import { useParams } from "next/navigation";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EDraftIssuePaginationType } from "@plane/constants";
 import type {
@@ -22,6 +20,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { useIssues } from "./store/use-issues";
+import { useParams } from "@/hooks/use-params";
 
 export interface IssueActions {
   fetchIssues: (

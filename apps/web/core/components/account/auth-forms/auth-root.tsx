@@ -6,7 +6,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 // plane imports
 import { OAuthOptions } from "@plane/ui";
 // helpers
@@ -26,6 +25,7 @@ import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
+import { useSearchParams } from "react-router";
 
 type TAuthRoot = {
   authMode: EAuthModes;
@@ -33,7 +33,7 @@ type TAuthRoot = {
 
 export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   // query params
   const emailParam = searchParams.get("email");
   const invitation_id = searchParams.get("invitation_id");

@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Disclosure } from "@headlessui/react";
 // plane imports
@@ -21,6 +20,7 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { WorkspaceInvitationsListItem } from "./invitations-list-item";
 import { WorkspaceMembersListItem } from "./members-list-item";
+import { useParams } from "@/hooks/use-params";
 
 export const WorkspaceMembersList = observer(function WorkspaceMembersList(props: {
   searchQuery: string;

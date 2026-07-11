@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { AlertCircle } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // ui

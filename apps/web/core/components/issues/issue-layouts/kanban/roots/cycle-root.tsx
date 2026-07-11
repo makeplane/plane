@@ -6,7 +6,6 @@
 
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
@@ -17,6 +16,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
+import { useParams } from "@/hooks/use-params";
 
 export const CycleKanBanLayout = observer(function CycleKanBanLayout() {
   const { workspaceSlug, projectId, cycleId } = useParams();

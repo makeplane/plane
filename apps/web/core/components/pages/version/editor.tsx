@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
 import type { JSONContent, TPageVersion } from "@plane/types";
@@ -18,6 +17,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import type { EPageStoreType } from "@/hooks/store";
+import { useParams } from "@/hooks/use-params";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;

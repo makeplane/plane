@@ -6,7 +6,6 @@
 
 // ui
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
 import { PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,6 +20,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { Button } from "@plane/propel/button";
 
+import { useParams } from "@/hooks/use-params";
+import { useAppRouter } from "@/hooks/use-app-router";
+
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
   type?: string | undefined;
@@ -31,7 +33,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const { data: currentUser } = useUser();

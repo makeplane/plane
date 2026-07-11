@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectViewCalendarLayout = observer(function ProjectViewCalendarLayout() {
   const { viewId } = useParams();

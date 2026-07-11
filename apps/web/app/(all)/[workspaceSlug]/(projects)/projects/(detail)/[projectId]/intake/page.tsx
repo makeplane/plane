@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -23,12 +22,13 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/page";
+import { useSearchParams } from "react-router";
 
 function ProjectInboxPage({ params }: Route.ComponentProps) {
   /// router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = params;
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigationTab = searchParams.get("currentTab");
   const inboxIssueId = searchParams.get("inboxIssueId");
   // theme hook

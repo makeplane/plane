@@ -6,7 +6,6 @@
 
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
 import { MoreHorizontal, ArchiveIcon, Settings } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
@@ -19,6 +18,9 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // store hooks
 import { useUserPermissions } from "@/hooks/store/user";
+
+import { useParams } from "@/hooks/use-params";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export type SidebarWorkspaceMenuHeaderProps = {
   isWorkspaceMenuOpen: boolean;
@@ -35,7 +37,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const { workspaceSlug } = useParams();
-  const router = useRouter();
+  const router = useAppRouter();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
 

@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
 import { ModuleStatusIcon } from "@plane/propel/icons";
@@ -19,6 +18,7 @@ import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   moduleId: string;

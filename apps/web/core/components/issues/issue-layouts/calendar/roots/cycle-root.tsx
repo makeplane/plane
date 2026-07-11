@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -14,6 +13,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
+import { useParams } from "@/hooks/use-params";
 
 export const CycleCalendarLayout = observer(function CycleCalendarLayout() {
   const { currentProjectCompletedCycleIds } = useCycle();

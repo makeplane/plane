@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // helpers
@@ -15,6 +14,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issue: TIssue;

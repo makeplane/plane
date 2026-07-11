@@ -6,7 +6,6 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 // types
@@ -18,6 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { ViewQuickActions } from "./quick-actions";
 import { ViewListItemAction } from "./view-list-item-action";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   view: IProjectView;

@@ -5,7 +5,6 @@
  */
 
 import type { ReactNode } from "react";
-import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import { ThemeProvider, useTheme } from "next-themes";
@@ -81,13 +80,16 @@ export function Layout({ children }: { children: ReactNode }) {
         </ThemeProvider>
         <Scripts />
         {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <Script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
+          <script
+            id="clarity-tracking"
+            dangerouslySetInnerHTML={{
+              __html: `(function(c,l,a,r,i,t,y){
               c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
               t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
               y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </Script>
+          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`,
+            }}
+          />
         )}
       </body>
     </html>

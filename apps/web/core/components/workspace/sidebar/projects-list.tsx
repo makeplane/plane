@@ -8,7 +8,6 @@ import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -33,6 +32,9 @@ import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferen
 import type { TProject } from "@plane/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // states
@@ -51,7 +53,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   // auth
   const isAuthorizedUser = allowPermissions(

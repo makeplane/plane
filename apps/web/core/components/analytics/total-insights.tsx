@@ -6,7 +6,6 @@
 
 // plane package imports
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import type { IInsightField } from "@plane/constants";
 import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
@@ -19,6 +18,7 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { AnalyticsService } from "@/services/analytics.service";
 // local imports
 import InsightCard from "./insight-card";
+import { useParams } from "@/hooks/use-params";
 
 const analyticsService = new AnalyticsService();
 

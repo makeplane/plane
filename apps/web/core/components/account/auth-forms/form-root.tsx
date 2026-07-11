@@ -6,7 +6,6 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import { EAuthModes, EAuthSteps } from "@plane/constants";
 import type { IEmailCheckData } from "@plane/types";
 // helpers
@@ -21,6 +20,7 @@ import { AuthService } from "@/services/auth.service";
 import { AuthEmailForm } from "./email";
 import { AuthPasswordForm } from "./password";
 import { AuthUniqueCodeForm } from "./unique-code";
+import { useSearchParams } from "react-router";
 
 type TAuthFormRoot = {
   authStep: EAuthSteps;
@@ -40,7 +40,7 @@ export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot)
   // router
   const router = useAppRouter();
   // query params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // states
   const [isExistingEmail, setIsExistingEmail] = useState(false);

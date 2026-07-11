@@ -7,7 +7,6 @@
 import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
@@ -37,6 +36,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { isIssueNew } from "../utils";
 import { IssueColumn } from "./issue-column";
+import { useParams } from "@/hooks/use-params";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;

@@ -4,7 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { useParams, usePathname } from "next/navigation";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 /**
  * Custom hook to detect different workspace paths
@@ -12,7 +14,7 @@ import { useParams, usePathname } from "next/navigation";
  */
 export const useWorkspacePaths = () => {
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   const isSettingsPath = pathname.includes(`/${workspaceSlug}/settings`);
   const isWikiPath = pathname.includes(`/${workspaceSlug}/wiki`);

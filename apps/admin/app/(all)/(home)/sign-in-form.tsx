@@ -5,7 +5,6 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
@@ -20,6 +19,7 @@ import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";
+import { useSearchParams } from "react-router";
 
 // service initialization
 const authService = new AuthService();
@@ -51,7 +51,7 @@ const defaultFromData: TFormData = {
 
 export function InstanceSignInForm() {
   // search params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;

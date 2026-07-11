@@ -6,8 +6,8 @@
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-import { Link } from "react-router";
-import { useParams, useSearchParams } from "next/navigation";
+import { Link, useSearchParams } from "react-router";
+import { useParams } from "@/hooks/use-params";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -73,7 +73,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
 
 export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueBlockProps) {
   const { issueId, groupId, subGroupId, displayProperties } = props;
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   // query params
   const board = searchParams.get("board");
   // hooks

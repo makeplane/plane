@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // types
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // store hooks

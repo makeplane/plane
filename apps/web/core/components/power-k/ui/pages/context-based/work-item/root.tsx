@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EIssueServiceType } from "@plane/types";
 // components
@@ -21,6 +20,7 @@ import { PowerKWorkItemLabelsMenu } from "./labels-menu";
 import { PowerKWorkItemModulesMenu } from "./modules-menu";
 import { PowerKWorkItemPrioritiesMenu } from "./priorities-menu";
 import { PowerKProjectStatesMenu } from "./states-menu";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   activePage: TPowerKPageType | null;

@@ -7,7 +7,6 @@
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
 // components
@@ -19,6 +18,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // types
 import type { TIssueQueryFilters } from "@/types/issue";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type IssueFiltersDropdownProps = {
   anchor: string;
@@ -27,7 +27,7 @@ type IssueFiltersDropdownProps = {
 export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props: IssueFiltersDropdownProps) {
   const { anchor } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // hooks
   const { getIssueFilters, updateIssueFilters } = useIssueFilter();
   // derived values

@@ -7,7 +7,6 @@
 import React, { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -21,6 +20,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
+import { useParams } from "@/hooks/use-params";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;

@@ -5,7 +5,6 @@
  */
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -21,6 +20,7 @@ import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
+import { useParams } from "@/hooks/use-params";
 
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;

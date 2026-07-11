@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // Plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
@@ -14,6 +13,7 @@ import type { IState } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useParams } from "@/hooks/use-params";
 
 type TStateDeleteModal = {
   isOpen: boolean;

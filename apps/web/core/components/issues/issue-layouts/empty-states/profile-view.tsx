@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { useParams } from "@/hooks/use-params";
 
 // TODO: If projectViewId changes, everything breaks. Figure out a better way to handle this.
 export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {

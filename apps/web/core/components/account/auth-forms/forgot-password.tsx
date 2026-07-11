@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
@@ -23,6 +22,7 @@ import { AuthService } from "@/services/auth.service";
 // local components
 import { FormContainer } from "./common/container";
 import { AuthFormHeader } from "./common/header";
+import { useSearchParams } from "react-router";
 
 type TForgotPasswordFormValues = {
   email: string;
@@ -37,7 +37,7 @@ const authService = new AuthService();
 
 export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   // search params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
   // plane hooks
   const { t } = useTranslation();

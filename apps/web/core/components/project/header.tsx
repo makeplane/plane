@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // i18n
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -22,6 +21,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // components
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
+import { useLocation } from "react-router";
 
 export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   // i18n
@@ -30,7 +30,7 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // auth
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

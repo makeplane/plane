@@ -7,7 +7,6 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
@@ -23,6 +22,7 @@ import { CommentCardEditForm } from "./edit-form";
 import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
 import { Avatar, Tooltip } from "@plane/ui";
 import { useMember } from "@/hooks/store/use-member";
+import { useLocation } from "react-router";
 
 export type TCommentCardDisplayProps = {
   activityOperations: TCommentsOperations;
@@ -71,7 +71,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   const userReactions = activityOperations.userReactions(comment.id);
 
   // navigation
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // derived values
   const commentBlockId = `comment-${comment?.id}`;
   // Check if there are any reactions to determine if we should render the footer

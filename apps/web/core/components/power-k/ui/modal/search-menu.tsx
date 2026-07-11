@@ -5,7 +5,6 @@
  */
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 // plane imports
 import { WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import type { IWorkspaceSearchResults } from "@plane/types";
@@ -19,6 +18,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalSearchResults } from "./search-results";
+import { useParams } from "@/hooks/use-params";
 // services init
 const workspaceService = new WorkspaceService();
 

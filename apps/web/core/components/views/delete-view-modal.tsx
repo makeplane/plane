@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,6 +14,9 @@ import type { IProjectView } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";
+
+import { useParams } from "@/hooks/use-params";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   data: IProjectView;
@@ -28,7 +30,7 @@ export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(p
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { deleteView } = useProjectView();
   const { t } = useTranslation();

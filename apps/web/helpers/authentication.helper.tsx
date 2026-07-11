@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // plane imports
 import { SUPPORT_EMAIL } from "@plane/constants";
 

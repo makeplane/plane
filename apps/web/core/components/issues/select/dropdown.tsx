@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueLabel } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
@@ -16,6 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { TWorkItemLabelSelectBaseProps } from "./base";
 import { WorkItemLabelSelectBase } from "./base";
+import { useParams } from "@/hooks/use-params";
 
 type TWorkItemLabelSelectProps = Omit<TWorkItemLabelSelectBaseProps, "labelIds" | "getLabelById" | "onDropdownOpen"> & {
   projectId: string | undefined;

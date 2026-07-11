@@ -5,7 +5,7 @@
  */
 
 import { useCallback } from "react";
-import { useSearchParams, usePathname } from "next/navigation";
+import { useLocation, useSearchParams } from "react-router";
 
 type TParamsToAdd = {
   [key: string]: string;
@@ -13,8 +13,8 @@ type TParamsToAdd = {
 
 export const useQueryParams = () => {
   // next navigation
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
+  const pathname = useLocation().pathname;
 
   const updateQueryParams = useCallback(
     ({ paramsToAdd = {}, paramsToRemove = [] }: { paramsToAdd?: TParamsToAdd; paramsToRemove?: string[] }) => {

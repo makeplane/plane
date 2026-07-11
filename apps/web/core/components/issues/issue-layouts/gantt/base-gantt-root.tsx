@@ -6,7 +6,6 @@
 
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -29,6 +28,7 @@ import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { IssueGanttBlock } from "./blocks";
+import { useParams } from "@/hooks/use-params";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;

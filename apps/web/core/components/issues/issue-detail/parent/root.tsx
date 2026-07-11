@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
@@ -25,6 +24,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 // types
 import type { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export type TIssueParentDetail = {
   workspaceSlug: string;
@@ -37,7 +37,7 @@ export type TIssueParentDetail = {
 export const IssueParentDetail = observer(function IssueParentDetail(props: TIssueParentDetail) {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { t } = useTranslation();
   // hooks
   const { issueMap } = useIssues();

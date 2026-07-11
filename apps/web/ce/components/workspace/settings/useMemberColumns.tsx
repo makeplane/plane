@@ -5,7 +5,6 @@
  */
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
@@ -15,6 +14,7 @@ import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/m
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import type { IMemberFilters } from "@/store/member/utils";
+import { useParams } from "@/hooks/use-params";
 
 export const useMemberColumns = () => {
   // states

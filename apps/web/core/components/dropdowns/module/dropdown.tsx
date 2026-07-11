@@ -6,13 +6,13 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 // types
 import type { TDropdownProps } from "../types";
 // local imports
 import { ModuleDropdownBase } from "./base";
+import { useParams } from "@/hooks/use-params";
 
 type TModuleDropdownProps = TDropdownProps & {
   button?: ReactNode;

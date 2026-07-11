@@ -5,7 +5,7 @@
  */
 
 import { useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams } from "@/hooks/use-params";
 
 const useIntegrationPopup = ({
   provider,

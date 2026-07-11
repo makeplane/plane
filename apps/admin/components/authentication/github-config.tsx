@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // plane packages
 import type { TAdminAuthErrorInfo } from "@plane/constants";
 import { SUPPORT_EMAIL, EAdminAuthErrorCodes } from "@plane/constants";

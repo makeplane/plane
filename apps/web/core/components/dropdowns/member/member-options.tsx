@@ -7,7 +7,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
@@ -22,6 +21,7 @@ import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useParams } from "@/hooks/use-params";
 
 interface Props {
   className?: string;

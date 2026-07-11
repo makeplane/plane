@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import useSWR from "swr";
 // components
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -31,7 +30,7 @@ const userService = new UserService();
 function UseProfileLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, userId } = params;
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();

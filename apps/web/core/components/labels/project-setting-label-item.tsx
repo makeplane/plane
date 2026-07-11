@@ -6,7 +6,6 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
@@ -18,6 +17,7 @@ import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import type { ICustomMenuItem } from "./label-block/label-item-block";
 import { LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   label: IIssueLabel;

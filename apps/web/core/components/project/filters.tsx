@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -20,6 +19,7 @@ import { useProjectFilter } from "@/hooks/store/use-project-filter";
 // local imports
 import { ProjectFiltersSelection } from "./dropdowns/filters";
 import { ProjectOrderByDropdown } from "./dropdowns/order-by";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   filterMenuButton?: React.ReactNode;

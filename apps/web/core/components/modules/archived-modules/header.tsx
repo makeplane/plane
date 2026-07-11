@@ -6,7 +6,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -23,6 +22,7 @@ import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modu
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
+import { useParams } from "@/hooks/use-params";
 
 export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router

@@ -6,7 +6,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 // plane imports
 import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
@@ -26,12 +25,13 @@ import { AuthHeader } from "./auth-header";
 import { AuthEmailForm } from "./email";
 import { AuthPasswordForm } from "./password";
 import { AuthUniqueCodeForm } from "./unique-code";
+import { useSearchParams } from "react-router";
 
 const authService = new SitesAuthService();
 
 export const AuthRoot = observer(function AuthRoot() {
   // router params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
   const error_code = searchParams.get("error_code") || undefined;
   const nextPath = searchParams.get("next_path") || undefined;

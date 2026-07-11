@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -17,6 +16,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import ActiveProjectItem from "./active-project-item";
+import { useParams } from "@/hooks/use-params";
 
 const ActiveProjects = observer(function ActiveProjects() {
   const { t } = useTranslation();

@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
 // ui
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
@@ -19,6 +18,9 @@ import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import type { TIssueLayout } from "@/types/issue";
 import { IssueLayoutIcon } from "./layout-icon";
 
+import { useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
+
 type Props = {
   anchor: string;
 };
@@ -28,8 +30,8 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
   // hooks
   const { t } = useTranslation();
   // router
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const [searchParams] = useSearchParams();
   // query params
   const labels = searchParams.get("labels");
   const state = searchParams.get("state");

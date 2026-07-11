@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { Popover } from "@plane/propel/popover";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -28,6 +27,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import { WorkItemPreviewCard } from "../../preview-card";
 import { getBlockViewDetails } from "../utils";
 import type { GanttStoreType } from "./base-gantt-root";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issueId: string;

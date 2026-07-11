@@ -6,8 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { useParams, useRouter } from "next/navigation";
 import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -20,6 +18,9 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/hooks/store";
+
+import { useParams } from "@/hooks/use-params";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   children: React.ReactNode;
@@ -40,7 +41,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // derived values
   const pageIds = getCurrentProjectPageIdsByTab(pageType);

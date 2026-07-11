@@ -5,7 +5,6 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
@@ -18,6 +17,7 @@ import { getPasswordStrength, validatePersonName, validateCompanyName } from "@p
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { Banner } from "../common/banner";
 import { FormHeader } from "./form-header";
+import { useSearchParams } from "react-router";
 
 // service initialization
 const authService = new AuthService();
@@ -59,7 +59,7 @@ const defaultFromData: TFormData = {
 
 export function InstanceSetupForm() {
   // search params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const firstNameParam = searchParams?.get("first_name") || undefined;
   const lastNameParam = searchParams?.get("last_name") || undefined;
   const companyParam = searchParams?.get("company") || undefined;

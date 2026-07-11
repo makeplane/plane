@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import useSWR from "swr";
 // plane types
 import { getButtonStyling } from "@plane/propel/button";

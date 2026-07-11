@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Link } from "react-router";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router";
 import { Lock } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
@@ -29,7 +28,7 @@ type Props = {
 export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActivity(props: Props) {
   const { anchor } = props;
   // router
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hooks
   const { details, peekId } = useIssueDetails();
   const { data: currentUser } = useUser();

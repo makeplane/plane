@@ -6,7 +6,6 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
 import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
@@ -19,6 +18,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   integration: IWorkspaceIntegration;

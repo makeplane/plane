@@ -14,7 +14,6 @@ import type {
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
@@ -36,6 +35,7 @@ import type { TargetData } from "./favorites.helpers";
 import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 import { IconButton } from "@plane/propel/icon-button";
+import { useParams } from "@/hooks/use-params";
 
 export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   // states

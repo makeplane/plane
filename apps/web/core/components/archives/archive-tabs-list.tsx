@@ -5,12 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 // types
 import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 const ARCHIVES_TAB_LIST: {
   key: string;
@@ -37,7 +39,7 @@ const ARCHIVES_TAB_LIST: {
 export const ArchiveTabsList = observer(function ArchiveTabsList() {
   // router
   const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hooks
   const { getProjectById } = useProject();
 

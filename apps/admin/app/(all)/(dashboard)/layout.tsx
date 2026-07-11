@@ -6,7 +6,6 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { AdminHeader } from "@/components/common/header";
@@ -17,10 +16,11 @@ import { useUser } from "@/hooks/store";
 // local components
 import type { Route } from "./+types/layout";
 import { AdminSidebar } from "./sidebar";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 function AdminLayout(_props: Route.ComponentProps) {
   // router
-  const { replace } = useRouter();
+  const { replace } = useAppRouter();
   // store hooks
   const { isUserLoggedIn } = useUser();
 

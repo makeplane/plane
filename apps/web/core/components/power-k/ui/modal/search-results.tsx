@@ -6,7 +6,6 @@
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
@@ -14,6 +13,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
 import { PowerKModalCommandItem } from "./command-item";
 import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   closePalette: () => void;

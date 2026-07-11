@@ -6,7 +6,6 @@
 
 import { useCallback, useMemo } from "react";
 import type { RefObject } from "react";
-import { useSearchParams } from "next/navigation";
 import type { EditorRefApi } from "@plane/editor";
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
@@ -18,6 +17,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 import type { INavigationPaneExtension } from "@/components/pages/navigation-pane";
 import type { TPageInstance } from "@/store/pages/base-page";
+import { useSearchParams } from "react-router";
 
 export type TPageExtensionHookParams = {
   page: TPageInstance;
@@ -27,7 +27,7 @@ export type TPageExtensionHookParams = {
 export const usePagesPaneExtensions = (_params: TPageExtensionHookParams) => {
   const router = useAppRouter();
   const { updateQueryParams } = useQueryParams();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   // Generic navigation pane logic - hook manages feature-specific routing
   const navigationPaneQueryParam = searchParams.get(

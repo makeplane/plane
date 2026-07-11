@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
@@ -14,6 +13,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectSpreadsheetLayout = observer(function ProjectSpreadsheetLayout() {
   // router

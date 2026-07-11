@@ -6,7 +6,6 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -22,6 +21,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { GlobalShortcutsProvider } from "./global-shortcuts";
 import { ProjectsAppPowerKCommandsList } from "./ui/modal/commands-list";
 import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper";
+import { useParams } from "@/hooks/use-params";
 
 /**
  * Projects App PowerK provider

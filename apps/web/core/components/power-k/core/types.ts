@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import type { useRouter } from "next/navigation";
 // plane web imports
 import type {
   TPowerKContextTypeExtended,
   TPowerKPageTypeExtended,
   TPowerKSearchResultsKeysExtended,
 } from "@/plane-web/components/command-palette/power-k/types";
+// hooks
+import type { TAppRouter } from "@/hooks/use-app-router";
 
 export type TPowerKContextType = "work-item" | "page" | "cycle" | "module" | TPowerKContextTypeExtended;
 
@@ -25,7 +26,7 @@ export type TPowerKContext = {
   shouldShowContextBasedActions: boolean;
   setShouldShowContextBasedActions: (shouldShowContextBasedActions: boolean) => void;
   // Router for navigation
-  router: ReturnType<typeof useRouter>;
+  router: TAppRouter;
   // UI control
   closePalette: () => void;
   setActiveCommand: (command: TPowerKCommandConfig | null) => void;

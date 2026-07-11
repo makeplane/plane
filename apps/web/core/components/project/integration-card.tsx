@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceIntegration } from "@plane/types";
@@ -18,6 +17,7 @@ import { SelectRepository } from "@/components/integration/github/select-reposit
 import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
 // services
 import { ProjectService } from "@/services/project";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   integration: IWorkspaceIntegration;

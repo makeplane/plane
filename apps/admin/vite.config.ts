@@ -27,15 +27,9 @@ export default defineConfig(() => ({
   },
   plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
-    alias: {
-      // Next.js compatibility shims used within admin
-      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
-      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
-    },
     dedupe: ["react", "react-dom"],
   },
   server: {
     host: "127.0.0.1",
   },
-  // No SSR-specific overrides needed; alias resolves to ESM build
 }));

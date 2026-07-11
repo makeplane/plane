@@ -6,7 +6,6 @@
 
 import { useCallback, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
@@ -17,6 +16,7 @@ import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-prefer
 // plane-web imports
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
+import { useParams } from "@/hooks/use-params";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   // refs

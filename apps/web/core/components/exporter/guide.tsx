@@ -6,18 +6,20 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
 import { mutate } from "swr";
 // constants
 import { EXPORT_SERVICES_LIST } from "@plane/constants";
 // local imports
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
+import { useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const ExportGuide = observer(function ExportGuide() {
   // router
   const { workspaceSlug } = useParams();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const provider = searchParams.get("provider");
   // state
   const per_page = 10;

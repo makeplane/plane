@@ -6,7 +6,6 @@
 
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
@@ -14,6 +13,7 @@ import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { ShortcutsModal } from "./ui/modal/shortcuts-root";
+import { useParams } from "@/hooks/use-params";
 
 type GlobalShortcutsProps = {
   context: TPowerKContext;

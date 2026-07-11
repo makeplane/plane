@@ -17,7 +17,6 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 
 import { orderBy } from "lodash-es";
-import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { Star, MoreHorizontal, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -37,6 +36,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { FavoriteRoot } from "./favorite-items";
 import { getCanDrop, getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isLastChild: boolean;

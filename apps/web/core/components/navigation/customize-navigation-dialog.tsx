@@ -6,7 +6,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
@@ -24,6 +23,7 @@ import {
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 // types
 import type { TPersonalNavigationItemKey } from "@plane/types";
+import { useParams } from "@/hooks/use-params";
 
 type TCustomizeNavigationDialogProps = {
   isOpen: boolean;

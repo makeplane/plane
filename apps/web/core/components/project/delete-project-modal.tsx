@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // Plane imports
@@ -15,6 +14,7 @@ import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useParams } from "@/hooks/use-params";
 
 type DeleteProjectModal = {
   isOpen: boolean;

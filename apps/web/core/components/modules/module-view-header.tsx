@@ -6,7 +6,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
@@ -30,6 +29,7 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
 import { IconButton } from "@plane/propel/icon-button";
+import { useParams } from "@/hooks/use-params";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {

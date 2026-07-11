@@ -6,13 +6,13 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issue: TIssue;

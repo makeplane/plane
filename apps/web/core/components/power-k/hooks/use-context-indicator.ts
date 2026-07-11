@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 // plane imports
 import { getPageName } from "@plane/utils";
 // hooks
@@ -15,6 +14,7 @@ import { useExtendedContextIndicator } from "@/plane-web/components/command-pale
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 // local imports
 import type { TPowerKContextType } from "../core/types";
+import { useParams } from "@/hooks/use-params";
 
 type TArgs = {
   activeContext: TPowerKContextType | null;

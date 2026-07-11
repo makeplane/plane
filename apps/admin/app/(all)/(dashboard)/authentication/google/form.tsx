@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { useForm } from "react-hook-form";
 import { Monitor } from "lucide-react";
 // plane internal packages

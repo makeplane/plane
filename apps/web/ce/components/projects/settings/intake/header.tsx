@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -23,6 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { IntakeIcon } from "@plane/propel/icons";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states

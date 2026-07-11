@@ -5,7 +5,6 @@
  */
 
 import { useCallback } from "react";
-import { useParams } from "next/navigation";
 import { Star, StarOff } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -18,6 +17,7 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUser } from "@/hooks/store/user";
+import { useParams } from "@/hooks/use-params";
 
 export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation

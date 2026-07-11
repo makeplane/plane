@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
@@ -15,6 +14,7 @@ import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/u
 import { useMember } from "@/hooks/store/use-member";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   page: TPageInstance;

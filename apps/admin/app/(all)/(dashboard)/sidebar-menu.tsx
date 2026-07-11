@@ -5,18 +5,18 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane internal packages
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";
 import { useSidebarMenu } from "@/hooks/use-sidebar-menu";
+import { useLocation } from "react-router";
 
 export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
   // router
-  const pathName = usePathname();
+  const pathName = useLocation().pathname;
   // store hooks
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // derived values

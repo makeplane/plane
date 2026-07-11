@@ -6,7 +6,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
@@ -49,6 +48,7 @@ import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-mod
 import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-issues";
+import { useParams } from "@/hooks/use-params";
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;

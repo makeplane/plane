@@ -6,8 +6,7 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import useSWR from "swr";
 // ui
 import { LogOut } from "lucide-react";
@@ -40,6 +39,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useParams } from "@/hooks/use-params";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;

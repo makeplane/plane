@@ -7,13 +7,13 @@
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 // hooks
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // store
 import type { TIssueLayout, TIssueQueryFilters } from "@/types/issue";
 // components
 import { AppliedFiltersList } from "./filters-list";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TIssueAppliedFilters = {
   anchor: string;
@@ -22,7 +22,7 @@ type TIssueAppliedFilters = {
 export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: TIssueAppliedFilters) {
   const { anchor } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { getIssueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
   // derived values

@@ -6,7 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 
 import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // Plane

@@ -6,7 +6,6 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,12 +22,13 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
 import type { Route } from "./+types/page";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {
   const { tabId } = params;
 
   // hooks
-  const router = useRouter();
+  const router = useAppRouter();
 
   // plane imports
   const { t } = useTranslation();

@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // plane i18n
@@ -28,6 +27,7 @@ import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/is
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useParams } from "@/hooks/use-params";
 
 export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHeader() {
   // plane i18n

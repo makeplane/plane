@@ -6,7 +6,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import {
   EIssueFilterType,
@@ -33,6 +32,7 @@ import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
+import { useParams } from "@/hooks/use-params";
 
 export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states

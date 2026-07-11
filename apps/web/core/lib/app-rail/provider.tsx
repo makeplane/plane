@@ -6,10 +6,10 @@
 
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { AppRailVisibilityContext } from "./context";
 import type { IAppRailVisibilityContext } from "./types";
+import { useParams } from "@/hooks/use-params";
 
 interface AppRailVisibilityProviderProps {
   children: React.ReactNode;

@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
@@ -17,6 +16,7 @@ import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-ite
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { WorkspaceViewForm } from "./form";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   data?: IWorkspaceView;

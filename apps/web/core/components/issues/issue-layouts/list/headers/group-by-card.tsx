@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { CircleDashed } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
 // types
@@ -26,6 +25,7 @@ import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { useParams } from "@/hooks/use-params";
 
 interface IHeaderGroupByCard {
   groupID: string;

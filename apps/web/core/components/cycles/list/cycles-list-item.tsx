@@ -7,7 +7,6 @@
 import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
@@ -22,6 +21,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
 import { CycleListItemAction } from "./cycle-list-item-action";
+import { useLocation, useSearchParams } from "react-router";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -40,8 +40,8 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
   const parentRef = useRef(null);
   // router
   const router = useAppRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
+  const pathname = useLocation().pathname;
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks

@@ -6,10 +6,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+
 import { PlusIcon } from "@plane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -20,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { DefaultWorkspaceViewQuickActions } from "./default-view-quick-action";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 import { WorkspaceViewQuickActions } from "./quick-action";
+import { useParams } from "@/hooks/use-params";
 
 const ViewTab = observer(function ViewTab(props: { viewId: string }) {
   const { viewId } = props;

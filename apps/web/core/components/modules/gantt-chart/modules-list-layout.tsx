@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // PLane
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData, IBlockUpdateDependencyData, IModule } from "@plane/types";
@@ -17,6 +16,7 @@ import { ModuleGanttBlock } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
+import { useParams } from "@/hooks/use-params";
 
 export const ModulesListGanttChartView = observer(function ModulesListGanttChartView() {
   // router

@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -21,6 +20,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 // services
 import { IssueService } from "@/services/issue";
+import { useParams } from "@/hooks/use-params";
 
 const issueService = new IssueService();
 

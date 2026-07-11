@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useRouter } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -13,10 +12,11 @@ import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useProject } from "./store/use-project";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const useIssuePeekOverviewRedirection = (isEpic: boolean = false) => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   //   store hooks
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail(
     isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES

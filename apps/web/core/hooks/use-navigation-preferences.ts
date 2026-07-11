@@ -5,7 +5,6 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
 import type {
   TPersonalNavigationItemKey,
   TPersonalNavigationPreferences,
@@ -24,6 +23,7 @@ import {
 } from "@plane/types";
 import { useWorkspace } from "./store/use-workspace";
 import useLocalStorage from "./use-local-storage";
+import { useParams } from "@/hooks/use-params";
 
 const APP_RAIL_PREFERENCES_KEY = "app_rail_preferences";
 

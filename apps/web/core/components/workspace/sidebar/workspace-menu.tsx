@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
@@ -16,6 +15,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // local imports
 import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
 import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
+import { useParams } from "@/hooks/use-params";
 
 export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params

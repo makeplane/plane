@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
@@ -14,6 +13,7 @@ import type { IIssueLabel } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isOpen: boolean;

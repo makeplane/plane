@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
@@ -13,6 +12,7 @@ import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { GlobalViewListItem } from "./view-list-item";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   searchQuery: string;

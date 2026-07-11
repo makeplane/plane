@@ -6,7 +6,6 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
 // plane imports
 import { CORE_EXTENSIONS } from "@plane/editor";
@@ -18,6 +17,7 @@ import { AdditionalPageNavigationPaneAssetItem } from "@/plane-web/components/pa
 import { PageNavigationPaneAssetsTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/assets";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   page: TPageInstance;

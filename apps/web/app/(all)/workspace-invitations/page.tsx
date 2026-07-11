@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Share2, Star, User2 } from "lucide-react";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
@@ -22,6 +21,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WorkspaceService } from "@/services/workspace.service";
+import { useSearchParams } from "react-router";
 // services
 
 // service initialization
@@ -31,7 +31,7 @@ function WorkspaceInvitationPage() {
   // router
   const router = useAppRouter();
   // query params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const invitation_id = searchParams.get("invitation_id");
   const slug = searchParams.get("slug");
   const token = searchParams.get("token");

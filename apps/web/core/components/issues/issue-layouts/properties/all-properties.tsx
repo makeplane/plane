@@ -8,7 +8,6 @@ import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { Paperclip } from "lucide-react";
 // i18n
@@ -47,6 +46,7 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
+import { useParams } from "@/hooks/use-params";
 
 export interface IIssueProperties {
   issue: TIssue;

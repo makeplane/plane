@@ -6,8 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
@@ -17,6 +16,7 @@ import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
+import { useParams } from "@/hooks/use-params";
 
 type Props = { viewId: string };
 

@@ -6,8 +6,7 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -21,6 +20,9 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
@@ -34,7 +36,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   additionalStaticItems,
 }: Props) {
   const { t } = useTranslation();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
   const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();

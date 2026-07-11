@@ -6,11 +6,10 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+
 import { Button } from "@plane/propel/button";
 import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -21,6 +20,7 @@ import { Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@pla
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useProjectPublish } from "@/hooks/store/use-project-publish";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isOpen: boolean;

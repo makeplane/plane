@@ -6,8 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
-import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -18,6 +16,7 @@ import type { EPageStoreType } from "@/hooks/store";
 import { usePageStore } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { useParams } from "@/hooks/use-params";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;

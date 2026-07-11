@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
 import type { TOAuthConfigs, TOAuthOption } from "@plane/types";
@@ -17,10 +15,11 @@ import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
+import { useSearchParams } from "react-router";
 
 export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   //router
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   // query params
   const next_path = searchParams.get("next_path");
   // theme

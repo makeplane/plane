@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useRouter } from "next/navigation";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane import
@@ -14,6 +13,7 @@ import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type BlockProps = {
   activity: TActivityEntityData;
@@ -24,7 +24,7 @@ type BlockProps = {
 export function RecentPage(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { getUserDetails } = useMember();
   // derived values

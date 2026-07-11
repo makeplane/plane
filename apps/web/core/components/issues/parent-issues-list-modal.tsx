@@ -5,7 +5,6 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 // icons
 import { Rocket } from "lucide-react";
 // headless ui
@@ -28,6 +27,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isOpen: boolean;

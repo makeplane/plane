@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EEstimateSystem } from "@plane/constants";
 import { ProjectIcon } from "@plane/propel/icons";
 import type { ChartYAxisMetric } from "@plane/types";
@@ -13,6 +12,7 @@ import type { ChartYAxisMetric } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useParams } from "@/hooks/use-params";
 // plane web constants
 type Props = {
   value: ChartYAxisMetric;

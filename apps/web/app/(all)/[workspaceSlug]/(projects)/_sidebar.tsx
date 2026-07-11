@@ -6,8 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { useParams, usePathname } from "next/navigation";
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
@@ -17,6 +15,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   // store hooks
@@ -33,7 +34,7 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
   // routes
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 

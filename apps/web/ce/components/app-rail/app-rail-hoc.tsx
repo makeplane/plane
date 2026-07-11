@@ -7,10 +7,10 @@
 // hoc/withDockItems.tsx
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { PlaneNewIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
+import { useParams } from "@/hooks/use-params";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];

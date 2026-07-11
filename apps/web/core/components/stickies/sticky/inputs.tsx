@@ -5,7 +5,6 @@
  */
 
 import { useCallback, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -14,6 +13,7 @@ import { cn, isCommentEmpty } from "@plane/utils";
 import { StickyEditor } from "@/components/editor/sticky-editor";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useLocation } from "react-router";
 
 // const StickyEditor = dynamic(() => import("../../editor/sticky-editor").then((mod) => mod.StickyEditor), {
 //   ssr: false,
@@ -34,7 +34,7 @@ export function StickyInput(props: TProps) {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // navigation
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values

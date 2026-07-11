@@ -7,7 +7,6 @@
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
@@ -16,6 +15,7 @@ import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 import { IconButton } from "@plane/propel/icon-button";
+import { useParams } from "@/hooks/use-params";
 
 export const StickySearch = observer(function StickySearch() {
   // router

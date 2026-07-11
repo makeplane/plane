@@ -7,7 +7,6 @@
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -25,6 +24,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import { exportCSV } from "../export";
 import { InsightTable } from "../insight-table";
+import { useParams } from "@/hooks/use-params";
 
 const analyticsService = new AnalyticsService();
 

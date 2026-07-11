@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,6 +18,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {
@@ -37,7 +39,7 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
 
   const { t } = useTranslation();
   // nextjs hooks
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
   // store hooks

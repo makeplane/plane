@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@plane/propel/banner";
@@ -20,11 +19,12 @@ import { IssueDetailRoot } from "@/components/issues/issue-detail";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import type { Route } from "./+types/page";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = params;
-  const router = useRouter();
+  const router = useAppRouter();
   // states
   // hooks
   const {

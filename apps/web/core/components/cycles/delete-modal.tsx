@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -17,6 +16,9 @@ import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 interface ICycleDelete {
   cycle: ICycle;
@@ -36,7 +38,7 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
   // router
   const router = useAppRouter();
   const { cycleId } = useParams();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");
 
   const formSubmit = async () => {

@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { History, MessageSquare } from "lucide-react";
 // plane imports
 import type { IUserActivityResponse } from "@plane/types";
@@ -18,6 +17,7 @@ import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   activity: IUserActivityResponse | undefined;

@@ -7,7 +7,6 @@
 import React, { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
@@ -28,6 +27,7 @@ import { BaseGanttRoot } from "../gantt";
 import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
 import { CycleListLayout } from "../list/roots/cycle-root";
 import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
+import { useParams } from "@/hooks/use-params";
 
 function CycleIssueLayout(props: {
   activeLayout: EIssueLayoutTypes | undefined;

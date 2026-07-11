@@ -6,7 +6,6 @@
 
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // hooks
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -14,6 +13,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+import { useParams } from "@/hooks/use-params";
 
 export const CycleSpreadsheetLayout = observer(function CycleSpreadsheetLayout() {
   // router

@@ -5,8 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
-import { useParams } from "react-router";
+import { useLocation } from "react-router";
+import { useParams } from "@/hooks/use-params";
 // plane imports
 import {
   EUserPermissionsLevel,
@@ -32,7 +32,7 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
   const { projectId } = props;
   // params
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // translation

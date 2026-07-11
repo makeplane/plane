@@ -6,7 +6,6 @@
 
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -20,6 +19,7 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
+import { useParams } from "@/hooks/use-params";
 
 export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRoot() {
   // router

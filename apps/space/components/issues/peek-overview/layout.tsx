@@ -6,13 +6,15 @@
 
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // local imports
 import { FullScreenPeekView } from "./full-screen-peek-view";
 import { SidePeekView } from "./side-peek-view";
+
+import { useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TIssuePeekOverview = {
   anchor: string;
@@ -22,8 +24,8 @@ type TIssuePeekOverview = {
 
 export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIssuePeekOverview) {
   const { anchor, peekId, handlePeekClose } = props;
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const [searchParams] = useSearchParams();
   // query params
   const board = searchParams.get("board") || undefined;
   const state = searchParams.get("state") || undefined;

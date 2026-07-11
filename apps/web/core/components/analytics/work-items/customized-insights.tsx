@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -16,6 +15,7 @@ import { cn } from "@plane/utils";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
+import { useParams } from "@/hooks/use-params";
 
 const CustomizedInsights = observer(function CustomizedInsights({
   peekView,

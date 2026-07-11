@@ -5,7 +5,6 @@
  */
 
 import { useCallback } from "react";
-import { useParams } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, Star, StarOff } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
@@ -17,6 +16,7 @@ import { copyTextToClipboard } from "@plane/utils";
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // plane web imports
 import { EPageStoreType, usePageStore } from "@/hooks/store";
+import { useParams } from "@/hooks/use-params";
 
 export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation

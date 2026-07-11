@@ -16,7 +16,6 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import type { InstructionType } from "@plane/types";
@@ -24,6 +23,7 @@ import type { InstructionType } from "@plane/types";
 import { StickyNote } from "../sticky";
 // helpers
 import { getInstructionFromPayload } from "./sticky.helpers";
+import { useLocation } from "react-router";
 
 type Props = {
   stickyId: string;
@@ -44,7 +44,7 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
   // refs
   const elementRef = useRef<HTMLDivElement>(null);
   // navigation
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   useEffect(() => {
     const element = elementRef.current;

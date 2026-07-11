@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -19,6 +18,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // local components
 import { WorkItemDetailsHeader } from "./work-item-header";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
   // router

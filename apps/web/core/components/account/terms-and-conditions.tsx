@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { EAuthModes } from "@plane/constants";
 
 interface TermsAndConditionsProps {

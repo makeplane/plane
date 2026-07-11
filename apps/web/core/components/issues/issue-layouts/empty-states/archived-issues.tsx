@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,6 +14,7 @@ import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyState() {
   // router

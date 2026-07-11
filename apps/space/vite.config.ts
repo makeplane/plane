@@ -27,10 +27,6 @@ export default defineConfig(() => ({
   },
   plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
-    alias: {
-      // Next.js compatibility shims used within space
-      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
-    },
     dedupe: ["react", "react-dom"],
   },
   server: {

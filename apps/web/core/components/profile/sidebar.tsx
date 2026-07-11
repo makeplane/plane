@@ -6,7 +6,6 @@
 
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -28,6 +27,7 @@ import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { ProfileSidebarTime } from "./time";
+import { useParams } from "@/hooks/use-params";
 
 type TProfileSidebar = {
   userProjectsData: IUserProfileProjectSegregation | undefined;

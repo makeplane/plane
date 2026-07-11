@@ -6,7 +6,6 @@
 
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -28,6 +27,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issue: TIssue;

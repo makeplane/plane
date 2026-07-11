@@ -6,8 +6,7 @@
 
 import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 // plane imports
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -24,6 +23,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
+import { useSearchParams } from "react-router";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -36,7 +36,7 @@ type InboxIssueListItemProps = {
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
   // store
   const { currentTab, getIssueInboxByIssueId } = useProjectInbox();

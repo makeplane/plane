@@ -6,7 +6,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -33,6 +32,7 @@ import useDebounce from "@/hooks/use-debounce";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
+import { useParams } from "@/hooks/use-params";
 
 type FormInput = {
   delete_issue_ids: string[];

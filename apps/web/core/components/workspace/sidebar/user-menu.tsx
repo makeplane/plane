@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { DraftIcon, HomeIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -14,6 +13,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
+import { useParams } from "@/hooks/use-params";
 
 export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // navigation

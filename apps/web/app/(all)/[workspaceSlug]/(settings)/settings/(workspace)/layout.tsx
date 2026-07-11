@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
@@ -27,7 +26,7 @@ const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // derived values
   const { accessKey } = pathnameToAccessKey(pathname);
   const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);

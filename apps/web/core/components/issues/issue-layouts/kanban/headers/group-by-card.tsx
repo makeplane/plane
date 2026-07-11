@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
@@ -23,6 +22,7 @@ import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { useParams } from "@/hooks/use-params";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;

@@ -6,7 +6,7 @@
 
 import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // icons
 import { CirclePlus, LogOut, Mails } from "lucide-react";
 // ui

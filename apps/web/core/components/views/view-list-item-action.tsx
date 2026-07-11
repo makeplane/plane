@@ -6,7 +6,6 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Earth } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
@@ -28,6 +27,7 @@ import { ButtonAvatars } from "../dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "./delete-view-modal";
 import { CreateUpdateProjectViewModal } from "./modal";
 import { ViewQuickActions } from "./quick-actions";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

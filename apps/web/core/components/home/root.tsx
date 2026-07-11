@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ContentWrapper } from "@plane/ui";
@@ -18,6 +17,7 @@ import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
+import { useParams } from "@/hooks/use-params";
 
 export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   // store hooks

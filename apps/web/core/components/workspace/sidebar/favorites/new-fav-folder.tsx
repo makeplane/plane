@@ -6,7 +6,6 @@
 
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -18,6 +17,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useParams } from "@/hooks/use-params";
 
 type TForm = {
   name: string;

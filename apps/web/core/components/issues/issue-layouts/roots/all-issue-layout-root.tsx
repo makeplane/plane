@@ -6,7 +6,6 @@
 
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -25,6 +24,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+import { useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   isDefaultView: boolean;
@@ -40,7 +42,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // search params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateFilterExpression },

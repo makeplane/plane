@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { Button } from "@plane/propel/button";
 // assets
 import PlaneTakeOffImage from "@/app/assets/images/plane-takeoff.png?url";

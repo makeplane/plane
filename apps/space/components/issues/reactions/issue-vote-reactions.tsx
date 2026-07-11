@@ -7,7 +7,6 @@
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -17,6 +16,9 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+
+import { useLocation, useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TIssueVotes = {
   anchor: string;
@@ -29,9 +31,9 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
-  const router = useRouter();
-  const pathName = usePathname();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const pathName = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   // query params
   const peekId = searchParams.get("peekId") || undefined;
   const board = searchParams.get("board") || undefined;

@@ -6,7 +6,6 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -16,6 +15,7 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useLocation, useSearchParams } from "react-router";
 
 type TPageType = EPageTypes;
 
@@ -30,9 +30,9 @@ const isValidURL = (url: string): boolean => {
 };
 
 export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const router = useAppRouter();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;

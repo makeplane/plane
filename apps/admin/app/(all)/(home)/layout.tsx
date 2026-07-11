@@ -6,14 +6,14 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Outlet } from "react-router";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 function RootLayout() {
   // router
-  const { replace } = useRouter();
+  const { replace } = useAppRouter();
   // store hooks
   const { isUserLoggedIn } = useUser();
 

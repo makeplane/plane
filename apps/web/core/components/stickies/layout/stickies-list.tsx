@@ -11,12 +11,11 @@ import type {
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -37,6 +36,7 @@ import { useStickyOperations } from "../sticky/use-operations";
 import { StickiesLoader } from "./stickies-loader";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
+import { useLocation } from "react-router";
 
 type TStickiesLayout = {
   workspaceSlug: string;
@@ -50,7 +50,7 @@ type TProps = TStickiesLayout & {
 export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks

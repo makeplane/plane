@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -20,6 +19,7 @@ import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by"
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // i18n

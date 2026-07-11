@@ -5,8 +5,7 @@
  */
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
@@ -19,12 +18,13 @@ import { validateSlug, validateWorkspaceName } from "@plane/utils";
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const instanceWorkspaceService = new InstanceWorkspaceService();
 
 export function WorkspaceCreateForm() {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);

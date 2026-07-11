@@ -6,8 +6,7 @@
 
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -20,6 +19,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export type TNavigationItem = {
   name: string;
@@ -50,7 +52,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     issue: { getIssueIdByIdentifier, getIssueById },
   } = useIssueDetail();
   // pathname
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // derived values
   const workItemId = workItemIdentifierFromRoute
     ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())

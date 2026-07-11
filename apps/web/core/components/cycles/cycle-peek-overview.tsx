@@ -6,13 +6,13 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@plane/utils";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { CycleDetailsSidebar } from "./analytics-sidebar";
+import { useLocation, useSearchParams } from "react-router";
 
 type Props = {
   projectId?: string;
@@ -24,8 +24,8 @@ export const CyclePeekOverview = observer(function CyclePeekOverview(props: Prop
   const { projectId: propsProjectId, workspaceSlug, isArchived } = props;
   // router
   const router = useAppRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const pathname = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");
   // refs
   const ref = React.useRef(null);

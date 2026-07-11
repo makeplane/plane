@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import type { TPowerKPageType } from "@/components/power-k/core/types";
 import { PowerKMembersMenu } from "@/components/power-k/menus/members";
@@ -14,6 +13,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 // local imports
 import { PowerKModuleStatusMenu } from "./status-menu";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   activePage: TPowerKPageType | null;

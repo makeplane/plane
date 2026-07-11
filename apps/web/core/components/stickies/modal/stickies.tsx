@@ -5,16 +5,16 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-
 // plane ui
 import { RecentStickyIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
+
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // components
 import { StickiesTruncated } from "../layout/stickies-truncated";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
+import { useParams } from "@/hooks/use-params";
 
 type TProps = {
   handleClose?: () => void;

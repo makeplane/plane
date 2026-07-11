@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -31,6 +30,9 @@ import {
   PAGE_NAVIGATION_PANE_WIDTH,
 } from "./index";
 
+import { useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
+
 type Props = {
   handleClose: () => void;
   isNavigationPaneOpen: boolean;
@@ -45,8 +47,8 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
   const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
 
   // navigation
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const [searchParams] = useSearchParams();
   // query params
   const { updateQueryParams } = useQueryParams();
   // derived values

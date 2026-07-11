@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
 // plane imports
 import type { TPageVersion } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -18,6 +17,9 @@ import type { EPageStoreType } from "@/hooks/store";
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "../navigation-pane";
 import type { TVersionEditorProps } from "./editor";
 import { PageVersionsMainContent } from "./main-content";
+
+import { useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   editorComponent: React.FC<TVersionEditorProps>;
@@ -31,8 +33,8 @@ type Props = {
 export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
   const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const [searchParams] = useSearchParams();
   // query params
   const { updateQueryParams } = useQueryParams();
   // derived values

@@ -6,7 +6,6 @@
 
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -27,6 +26,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
+import { useParams } from "@/hooks/use-params";
 
 type TTabOption = {
   key: string;

@@ -7,8 +7,7 @@
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
 import {
@@ -36,6 +35,9 @@ import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useLocation, useSearchParams } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   moduleId: string;
@@ -48,8 +50,8 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
+  const pathname = useLocation().pathname;
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();

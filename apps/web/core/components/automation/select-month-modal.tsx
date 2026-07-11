@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
 import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { useParams } from "@/hooks/use-params";
 
 // types
 type Props = {

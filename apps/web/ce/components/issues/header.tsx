@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { Circle } from "lucide-react";
 // plane imports
@@ -37,6 +36,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { useParams } from "@/hooks/use-params";
 
 export const IssuesHeader = observer(function IssuesHeader() {
   // router

@@ -6,7 +6,6 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
@@ -23,6 +22,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
+import { useParams } from "@/hooks/use-params";
 
 export const StickyActionBar = observer(function StickyActionBar() {
   // states

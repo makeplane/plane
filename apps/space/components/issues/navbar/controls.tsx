@@ -6,7 +6,6 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
 // components
 import { IssueFiltersDropdown } from "@/components/issues/filters";
 // helpers
@@ -24,6 +23,9 @@ import { IssuesLayoutSelection } from "./layout-selection";
 import { NavbarTheme } from "./theme";
 import { UserAvatar } from "./user-avatar";
 
+import { useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
+
 export type NavbarControlsProps = {
   publishSettings: PublishStore;
 };
@@ -32,8 +34,8 @@ export const NavbarControls = observer(function NavbarControls(props: NavbarCont
   // props
   const { publishSettings } = props;
   // router
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const [searchParams] = useSearchParams();
   // query params
   const board = searchParams.get("board") || undefined;
   const labels = searchParams.get("labels") || undefined;

@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { ProjectRoot } from "@/components/project/root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useParams } from "@/hooks/use-params";
 
 export const ProjectPageRoot = observer(function ProjectPageRoot() {
   // router

@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -27,6 +26,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType } from "@/hooks/store";
 import type { Route } from "./+types/page";
+import { useSearchParams } from "react-router";
 
 const getPageType = (pageType?: string | null): TPageNavigationTabs => {
   if (pageType === "private") return "private";
@@ -37,7 +37,7 @@ const getPageType = (pageType?: string | null): TPageNavigationTabs => {
 function ProjectPagesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
   const { workspaceSlug, projectId } = params;
   // theme hook

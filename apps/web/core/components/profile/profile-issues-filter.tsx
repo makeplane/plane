@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
@@ -19,6 +18,7 @@ import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/com
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useParams } from "@/hooks/use-params";
 
 export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
   // i18n

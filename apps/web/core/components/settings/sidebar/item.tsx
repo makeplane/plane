@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 // plane imports
 import { cn } from "@plane/utils";
 import type { LucideIcon } from "lucide-react";

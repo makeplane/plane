@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -25,6 +24,9 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const HOME_WIDGETS_LIST: {
   [key in THomeWidgetKeys]: {
@@ -64,7 +66,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   // router
   const { workspaceSlug } = useParams();
   // navigation
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // theme hook
   const { resolvedTheme } = useTheme();
   // store hooks

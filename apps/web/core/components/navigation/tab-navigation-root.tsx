@@ -6,7 +6,8 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, useLocation, Link, useNavigate } from "react-router";
+import { useLocation, Link, useNavigate } from "react-router";
+import { useParams } from "@/hooks/use-params";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";

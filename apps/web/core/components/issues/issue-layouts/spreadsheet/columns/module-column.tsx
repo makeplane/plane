@@ -7,13 +7,13 @@
 import { useCallback } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { useParams } from "@/hooks/use-params";
 
 type Props = {
   issue: TIssue;

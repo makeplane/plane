@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "@/components/common/link";
 import { useTheme } from "next-themes";
 // plane imports
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";

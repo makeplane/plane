@@ -6,8 +6,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link } from "@/components/common/link";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -23,6 +22,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM } from "../..";
+import { useSearchParams } from "react-router";
 
 type Props = {
   page: TPageInstance;
@@ -79,7 +79,7 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
 ) {
   const { page, versionHistory } = props;
   // navigation
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const activeVersion = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   // derived values
   const { id } = page;

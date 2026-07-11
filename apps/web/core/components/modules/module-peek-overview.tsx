@@ -6,13 +6,13 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@plane/utils";
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { ModuleAnalyticsSidebar } from "./";
+import { useLocation, useSearchParams } from "react-router";
 
 type Props = {
   projectId: string;
@@ -27,8 +27,8 @@ export const ModulePeekOverview = observer(function ModulePeekOverview({
 }: Props) {
   // router
   const router = useAppRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const pathname = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   const peekModule = searchParams.get("peekModule");
   // refs
   const ref = React.useRef(null);

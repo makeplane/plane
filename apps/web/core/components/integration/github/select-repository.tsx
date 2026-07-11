@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import type { IWorkspaceIntegration } from "@plane/types";
 // services
@@ -14,6 +13,7 @@ import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { truncateText } from "@plane/utils";
 import { ProjectService } from "@/services/project";
+import { useParams } from "@/hooks/use-params";
 // types
 
 type Props = {

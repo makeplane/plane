@@ -6,8 +6,8 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { Link } from "react-router";
-import { useParams, useSearchParams } from "next/navigation";
+import { Link, useSearchParams } from "react-router";
+import { useParams } from "@/hooks/use-params";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -31,7 +31,7 @@ interface IssueBlockProps {
 export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { anchor } = useParams();
   const { issueId, displayProperties } = props;
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   // query params
   const board = searchParams.get("board");
   // ref

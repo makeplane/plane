@@ -4,9 +4,7 @@
  * See the LICENSE file for details.
  */
 
-"use client";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
 import { SettingsIcon } from "lucide-react";
 import { ContextMenu } from "@plane/propel/context-menu";
 import { CheckIcon } from "@plane/propel/icons";
@@ -20,11 +18,14 @@ import { useAppRailVisibility } from "@/lib/app-rail/context";
 import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
+import { useLocation } from "react-router";
+
+import { useParams } from "@/hooks/use-params";
 
 export const AppRailRoot = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();

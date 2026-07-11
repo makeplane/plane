@@ -6,7 +6,6 @@
 
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -19,6 +18,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ProjectInsightsLoader } from "../loaders";
+import { useParams } from "@/hooks/use-params";
 
 const RadarChart = lazy(function RadarChart() {
   return import("@plane/propel/charts/radar-chart").then((mod) => ({

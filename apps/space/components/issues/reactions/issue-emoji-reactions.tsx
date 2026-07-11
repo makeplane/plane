@@ -6,7 +6,6 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
 import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
 import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
@@ -18,6 +17,9 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 
+import { useLocation, useSearchParams } from "react-router";
+import { useAppRouter } from "@/hooks/use-app-router";
+
 type IssueEmojiReactionsProps = {
   anchor: string;
   issueIdFromProps?: string;
@@ -28,9 +30,9 @@ export const IssueEmojiReactions = observer(function IssueEmojiReactions(props: 
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   // router
-  const router = useRouter();
-  const pathName = usePathname();
-  const searchParams = useSearchParams();
+  const router = useAppRouter();
+  const pathName = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   // query params
   const peekId = searchParams.get("peekId") || undefined;
   const board = searchParams.get("board") || undefined;
