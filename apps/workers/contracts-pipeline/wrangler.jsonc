@@ -27,11 +27,11 @@
   // For local dev put them in .dev.vars (gitignored).
   "vars": {
     // Base provider/model selection — never hardcoded in source
-    "AI_PROVIDER": "gemini",
+    "AI_PROVIDER": "deepseek",
     "GEMINI_MODEL_FALLBACK_LIST": "gemini-2.5-flash-lite,gemini-2.5-flash",
-    "DEEPSEEK_MODEL": "deepseek-chat",
+    "DEEPSEEK_MODEL": "deepseek-v4-flash",
     // Chat model picker: selectable DeepSeek models + the default selection
-    "DEEPSEEK_MODEL_LIST": "deepseek-v4-flash,deepseek-chat",
+    "DEEPSEEK_MODEL_LIST": "deepseek-v4-flash,deepseek-v4-pro",
     "CHAT_DEFAULT_MODEL": "deepseek-v4-flash",
     "OPENAI_EMBEDDING_MODEL": "text-embedding-3-small",
     "EMBEDDING_DIMENSIONS": "1536",

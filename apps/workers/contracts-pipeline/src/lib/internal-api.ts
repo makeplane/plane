@@ -57,8 +57,11 @@ export function internalApi(env: Env) {
       }),
     chunksExist: (contractId: string) =>
       request<{ exists: boolean; count: number }>("GET", `/internal/contracts/${contractId}/chunks/`),
-    saveChunks: (contractId: string, chunks: Array<{ index: number; content: string; token_count: number; embedding: number[] }>) =>
-      request<{ status: string }>("POST", `/internal/contracts/${contractId}/chunks/`, { chunks }),
+    saveChunks: (
+      contractId: string,
+      chunks: Array<{ index: number; content: string; token_count: number; embedding: number[] }>,
+      mode: "replace" | "append" = "replace"
+    ) => request<{ status: string }>("POST", `/internal/contracts/${contractId}/chunks/`, { chunks, mode }),
     createThumbnailUpload: (contractId: string) =>
       request<{ upload_data: { url: string; fields: Record<string, string> }; asset_id: string }>(
         "POST",
