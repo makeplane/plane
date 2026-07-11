@@ -2,17 +2,25 @@
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
+ *
+ * Contract peek: same panel modes as the work-item peek overview
+ * (side-peek / modal / full-screen, rendered through the full-screen portal).
+ * Desktop splits document + tabs; mobile is single-focus — one top-level tab
+ * set (document, info, process, chat) where each view takes the whole panel.
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { AlertTriangle, Check, ChevronDown, Loader2, RefreshCcw, Sparkles, X } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { PDFViewer } from "@plane/extend-ui";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { Popover } from "@plane/propel/popover";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TContract, TContractJob, TContractRetryOptions, TContractUpdatePayload } from "@plane/types";
 import { cn } from "@plane/utils";
 // services
@@ -36,7 +44,15 @@ type Props = {
   onMutate: () => void;
 };
 
-type Tab = "info" | "process" | "chat";
+type TPeekModes = "side-peek" | "modal" | "full-screen";
+/** "document" is mobile-only (desktop always shows the PDF beside the tabs) */
+type Tab = "document" | "info" | "process" | "chat";
+
+const PEEK_OPTIONS: { key: TPeekModes; icon: typeof SidePanelIcon; i18nKey: string }[] = [
+  { key: "side-peek", icon: SidePanelIcon, i18nKey: "common.side_peek" },
+  { key: "modal", icon: CenterPanelIcon, i18nKey: "common.modal" },
+  { key: "full-screen", icon: FullScreenPanelIcon, i18nKey: "common.full_screen" },
+];
 
 const EDITABLE_TEXT_FIELDS: { key: keyof TContractUpdatePayload; i18nKey: string; textarea?: boolean }[] = [
   { key: "titulo", i18nKey: "file_library.contracts.fields.titulo" },
@@ -75,13 +91,16 @@ export function ContractPeekPanel(props: Props) {
   const { workspaceSlug, contractId, onClose, onMutate } = props;
   const { t } = useTranslation();
   // states
-  const [tab, setTab] = useState<Tab>("info");
+  const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
+  const [tab, setTab] = useState<Tab>("document");
   const [draft, setDraft] = useState<TContractUpdatePayload>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isActing, setIsActing] = useState(false);
   const [retrySelection, setRetrySelection] = useState<TContractRetryOptions>({});
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [showPdf, setShowPdf] = useState(true);
+
+  // On desktop the PDF is always visible, so "document" behaves as "info"
+  const paneTab: Exclude<Tab, "document"> = tab === "document" ? "info" : tab;
 
   // contract detail
   const {
@@ -109,6 +128,15 @@ export function ContractPeekPanel(props: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeJobId]);
+
+  // Escape closes (matches the work-item peek behavior)
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
 
   // PDF presigned URL
   useEffect(() => {
@@ -211,14 +239,187 @@ export function ContractPeekPanel(props: Props) {
 
   const inputClass = "w-full rounded-sm border border-subtle bg-transparent px-2 py-1 text-13";
 
-  return (
-    <div className="absolute inset-0 z-20 flex justify-end">
+  const pdfViewer = pdfUrl ? (
+    <PDFViewer src={pdfUrl} fileName={contract?.file_name ?? "contract.pdf"} className="h-full" showUpload={false} />
+  ) : (
+    <div className="flex h-full items-center justify-center text-tertiary">
+      <Loader2 className="size-5 animate-spin" />
+    </div>
+  );
+
+  const infoPane = (
+    <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
+      {SELECT_FIELDS.map((field) => (
+        <label key={field.key} className="block space-y-1">
+          <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
+          <select
+            value={(draftValue(field.key) as string | null) ?? ""}
+            onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
+            className={inputClass}
+          >
+            <option value="">—</option>
+            {field.options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {t(option.i18nKey)}
+              </option>
+            ))}
+          </select>
+        </label>
+      ))}
+      <label className="flex items-center gap-2 py-1">
+        <input
+          type="checkbox"
+          checked={!!draftValue("es_notariado")}
+          onChange={(e) => setDraft((prev) => ({ ...prev, es_notariado: e.target.checked }))}
+        />
+        <span className="text-13">{t("file_library.contracts.fields.es_notariado")}</span>
+      </label>
+      {DATE_FIELDS.map((field) => (
+        <label key={field.key} className="block space-y-1">
+          <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
+          <input
+            type="date"
+            value={(draftValue(field.key) as string | null) ?? ""}
+            onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
+            className={inputClass}
+          />
+        </label>
+      ))}
+      {EDITABLE_TEXT_FIELDS.map((field) => (
+        <label key={field.key} className="block space-y-1">
+          <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
+          {field.textarea ? (
+            <textarea
+              rows={3}
+              value={(draftValue(field.key) as string | null) ?? ""}
+              onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
+              className={inputClass}
+            />
+          ) : (
+            <input
+              type="text"
+              value={(draftValue(field.key) as string | null) ?? ""}
+              onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
+              className={inputClass}
+            />
+          )}
+        </label>
+      ))}
+      {contract?.ai_model_used && (
+        <p className="text-11 text-tertiary">{t("file_library.contracts.ai_model", { model: contract.ai_model_used })}</p>
+      )}
+    </div>
+  );
+
+  const processPane = (
+    <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
+      <div className="rounded-md border border-subtle p-3 text-12">
+        <p className="font-medium">{t("file_library.contracts.process.pipeline_state")}</p>
+        <p className="mt-1 text-tertiary">
+          {contract?.text_extracted_at
+            ? t("file_library.contracts.process.text_extracted", {
+                date: new Date(contract.text_extracted_at).toLocaleString(),
+              })
+            : t("file_library.contracts.process.text_pending")}
+        </p>
+        {contract?.processed_at && (
+          <p className="text-tertiary">
+            {t("file_library.contracts.process.analyzed", { date: new Date(contract.processed_at).toLocaleString() })}
+          </p>
+        )}
+      </div>
+      {(jobs ?? []).length === 0 ? (
+        <p className="text-12 text-tertiary">{t("file_library.contracts.process.no_jobs")}</p>
+      ) : (
+        (jobs ?? []).map((job) => <JobCard key={job.id} job={job} />)
+      )}
+    </div>
+  );
+
+  const chatPane = contract ? (
+    <div className="min-h-0 flex-1">
+      <ContractChatPanel workspaceSlug={workspaceSlug} mode="CONTRACT" contractId={contract.id} compact />
+    </div>
+  ) : null;
+
+  const loaderPane = (
+    <div className="flex flex-1 items-center justify-center">
+      <Loader2 className="size-5 animate-spin text-tertiary" />
+    </div>
+  );
+
+  const saveBar = paneTab === "info" && isDirty && (
+    <div className="flex shrink-0 items-center justify-end gap-2 border-t border-subtle px-4 py-2.5">
+      <Button variant="secondary" size="sm" onClick={() => setDraft({})} disabled={isSaving}>
+        {t("cancel")}
+      </Button>
+      <Button variant="primary" size="sm" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? <Loader2 className="size-3.5 animate-spin" /> : t("file_library.contracts.save")}
+      </Button>
+    </div>
+  );
+
+  const tabButton = (key: Tab, extraClass = "") => (
+    <button
+      key={key}
+      type="button"
+      onClick={() => setTab(key)}
+      disabled={key === "chat" && !contract?.text_extracted_at}
+      className={cn(
+        "rounded-t-sm border-b-2 px-3 py-1.5 text-12 font-medium disabled:opacity-40",
+        (key === "document" ? tab === "document" : paneTab === key && tab !== "document")
+          ? "border-accent-strong text-accent-primary"
+          : "border-transparent text-tertiary hover:text-secondary",
+        extraClass
+      )}
+    >
+      {t(`file_library.contracts.tabs.${key}`)}
+    </button>
+  );
+
+  const panelClassName = cn(
+    "absolute z-[25] flex flex-col overflow-hidden rounded-sm border border-subtle bg-surface-1 transition-all duration-300",
+    {
+      // Wider sheet than the work-item peek so the document + data read comfortably
+      "top-0 right-0 bottom-0 w-full border-0 border-l lg:w-[80%] xl:w-[72%]": peekMode === "side-peek",
+      "top-[8.33%] left-[8.33%] size-5/6 max-lg:top-0 max-lg:left-0 max-lg:size-full": peekMode === "modal",
+      "inset-0 lg:m-4": peekMode === "full-screen",
+    }
+  );
+
+  const portalContainer = typeof document !== "undefined" ? document.getElementById("full-screen-portal") : null;
+
+  const content = (
+    <div className="absolute inset-0 z-[24]">
       {/* backdrop */}
       <button type="button" className="absolute inset-0 bg-black/20" onClick={onClose} aria-label={t("close")} />
-      <div className="relative flex h-full w-full flex-col border-l border-subtle bg-surface-1 shadow-raised-200 lg:w-[62%]">
+      <div
+        className={panelClassName}
+        style={{
+          boxShadow:
+            "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
+        }}
+      >
         {/* header */}
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-subtle px-4 py-2.5">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-subtle px-3 py-2.5 sm:px-4">
           <div className="flex min-w-0 items-center gap-2">
+            {/* peek mode switcher (desktop) */}
+            <div className="hidden items-center gap-0.5 rounded-md border border-subtle p-0.5 lg:flex">
+              {PEEK_OPTIONS.map((option) => (
+                <Tooltip key={option.key} tooltipContent={t(option.i18nKey)}>
+                  <button
+                    type="button"
+                    onClick={() => setPeekMode(option.key)}
+                    className={cn(
+                      "rounded-sm p-1",
+                      peekMode === option.key ? "bg-layer-1 text-primary" : "text-tertiary hover:bg-layer-1-hover"
+                    )}
+                  >
+                    <option.icon className="size-3.5" />
+                  </button>
+                </Tooltip>
+              ))}
+            </div>
             <span className="truncate text-14 font-medium">
               {contract?.titulo ?? contract?.file_name ?? t("file_library.contracts.title")}
             </span>
@@ -292,7 +493,9 @@ export function ContractPeekPanel(props: Props) {
               {proposedEntries.map(([key, value]) => (
                 <p key={key} className="truncate">
                   <span className="font-medium">{key}:</span>{" "}
-                  {Array.isArray(value) ? value.map((v) => (typeof v === "object" && v !== null ? JSON.stringify(v) : String(v))).join(", ") : String(value)}
+                  {Array.isArray(value)
+                    ? value.map((v) => (typeof v === "object" && v !== null ? JSON.stringify(v) : String(v))).join(", ")
+                    : String(value)}
                 </p>
               ))}
             </div>
@@ -307,169 +510,49 @@ export function ContractPeekPanel(props: Props) {
           </div>
         )}
 
-        {/* body */}
-        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          {/* PDF viewer */}
-          <div className={cn("min-h-0 border-b border-subtle lg:w-1/2 lg:border-b-0 lg:border-r", showPdf ? "h-64 lg:h-auto" : "h-9")}>
-            <button
-              type="button"
-              className="flex w-full items-center justify-between px-3 py-2 text-11 font-medium text-tertiary lg:hidden"
-              onClick={() => setShowPdf((v) => !v)}
-            >
-              {t("file_library.contracts.document")}
-              <ChevronDown className={cn("size-3.5 transition-transform", showPdf ? "rotate-180" : "")} />
-            </button>
-            {showPdf && (
-              <div className="h-[calc(100%-2.25rem)] lg:h-full">
-                {pdfUrl ? (
-                  <PDFViewer src={pdfUrl} fileName={contract?.file_name ?? "contract.pdf"} className="h-full" showUpload={false} />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-tertiary">
-                    <Loader2 className="size-5 animate-spin" />
-                  </div>
-                )}
-              </div>
-            )}
+        {/* ── Mobile: single-focus views behind top-level tabs ─────────── */}
+        <div className="flex min-h-0 flex-1 flex-col lg:hidden">
+          <div className="flex shrink-0 items-center gap-1 overflow-x-auto border-b border-subtle px-3 pt-2">
+            {(["document", "info", "process", "chat"] as Tab[]).map((key) => tabButton(key))}
           </div>
+          {tab === "document" ? (
+            <div className="min-h-0 flex-1">{pdfViewer}</div>
+          ) : isLoading || !contract ? (
+            loaderPane
+          ) : tab === "chat" ? (
+            chatPane
+          ) : tab === "process" ? (
+            processPane
+          ) : (
+            infoPane
+          )}
+          {tab !== "document" && saveBar}
+        </div>
 
-          {/* info / process tabs */}
+        {/* ── Desktop: document beside the tabbed pane ─────────────────── */}
+        <div className="hidden min-h-0 flex-1 lg:flex">
+          <div className="min-h-0 w-1/2 border-r border-subtle">{pdfViewer}</div>
           <div className="flex min-h-0 flex-1 flex-col">
             <div className="flex shrink-0 items-center gap-1 border-b border-subtle px-3 pt-2">
-              {(["info", "process", "chat"] as Tab[]).map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setTab(key)}
-                  disabled={key === "chat" && !contract?.text_extracted_at}
-                  className={cn(
-                    "rounded-t-sm border-b-2 px-3 py-1.5 text-12 font-medium disabled:opacity-40",
-                    tab === key ? "border-accent-strong text-accent-primary" : "border-transparent text-tertiary hover:text-secondary"
-                  )}
-                >
-                  {t(`file_library.contracts.tabs.${key}`)}
-                </button>
-              ))}
+              {(["info", "process", "chat"] as Tab[]).map((key) => tabButton(key))}
             </div>
-
             {isLoading || !contract ? (
-              <div className="flex flex-1 items-center justify-center">
-                <Loader2 className="size-5 animate-spin text-tertiary" />
-              </div>
-            ) : tab === "chat" ? (
-              <div className="min-h-0 flex-1">
-                <ContractChatPanel workspaceSlug={workspaceSlug} mode="CONTRACT" contractId={contract.id} compact />
-              </div>
-            ) : tab === "info" ? (
-              <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-                {SELECT_FIELDS.map((field) => (
-                  <label key={field.key} className="block space-y-1">
-                    <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
-                    <select
-                      value={(draftValue(field.key) as string | null) ?? ""}
-                      onChange={(e) =>
-                        setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">—</option>
-                      {field.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {t(option.i18nKey)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ))}
-                <label className="flex items-center gap-2 py-1">
-                  <input
-                    type="checkbox"
-                    checked={!!draftValue("es_notariado")}
-                    onChange={(e) => setDraft((prev) => ({ ...prev, es_notariado: e.target.checked }))}
-                  />
-                  <span className="text-13">{t("file_library.contracts.fields.es_notariado")}</span>
-                </label>
-                {DATE_FIELDS.map((field) => (
-                  <label key={field.key} className="block space-y-1">
-                    <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
-                    <input
-                      type="date"
-                      value={(draftValue(field.key) as string | null) ?? ""}
-                      onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
-                      className={inputClass}
-                    />
-                  </label>
-                ))}
-                {EDITABLE_TEXT_FIELDS.map((field) => (
-                  <label key={field.key} className="block space-y-1">
-                    <span className="text-11 font-medium text-tertiary">{t(field.i18nKey)}</span>
-                    {field.textarea ? (
-                      <textarea
-                        rows={3}
-                        value={(draftValue(field.key) as string | null) ?? ""}
-                        onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
-                        className={inputClass}
-                      />
-                    ) : (
-                      <input
-                        type="text"
-                        value={(draftValue(field.key) as string | null) ?? ""}
-                        onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value || null }))}
-                        className={inputClass}
-                      />
-                    )}
-                  </label>
-                ))}
-                {contract.ai_model_used && (
-                  <p className="text-11 text-tertiary">
-                    {t("file_library.contracts.ai_model", { model: contract.ai_model_used })}
-                  </p>
-                )}
-              </div>
+              loaderPane
+            ) : paneTab === "chat" ? (
+              chatPane
+            ) : paneTab === "process" ? (
+              processPane
             ) : (
-              <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-                {/* vectorization / extraction quick state */}
-                <div className="rounded-md border border-subtle p-3 text-12">
-                  <p className="font-medium">{t("file_library.contracts.process.pipeline_state")}</p>
-                  <p className="mt-1 text-tertiary">
-                    {contract.text_extracted_at
-                      ? t("file_library.contracts.process.text_extracted", {
-                          date: new Date(contract.text_extracted_at).toLocaleString(),
-                        })
-                      : t("file_library.contracts.process.text_pending")}
-                  </p>
-                  {contract.processed_at && (
-                    <p className="text-tertiary">
-                      {t("file_library.contracts.process.analyzed", {
-                        date: new Date(contract.processed_at).toLocaleString(),
-                      })}
-                    </p>
-                  )}
-                </div>
-                {/* job history */}
-                {(jobs ?? []).length === 0 ? (
-                  <p className="text-12 text-tertiary">{t("file_library.contracts.process.no_jobs")}</p>
-                ) : (
-                  (jobs ?? []).map((job) => <JobCard key={job.id} job={job} />)
-                )}
-              </div>
+              infoPane
             )}
-
-            {/* save bar */}
-            {tab === "info" && isDirty && (
-              <div className="flex shrink-0 items-center justify-end gap-2 border-t border-subtle px-4 py-2.5">
-                <Button variant="secondary" size="sm" onClick={() => setDraft({})} disabled={isSaving}>
-                  {t("cancel")}
-                </Button>
-                <Button variant="primary" size="sm" onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? <Loader2 className="size-3.5 animate-spin" /> : t("file_library.contracts.save")}
-                </Button>
-              </div>
-            )}
+            {saveBar}
           </div>
         </div>
       </div>
     </div>
   );
+
+  return portalContainer ? createPortal(content, portalContainer) : content;
 }
 
 function JobCard({ job }: { job: TContractJob }) {

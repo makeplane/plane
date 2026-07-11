@@ -176,6 +176,7 @@
         "discarded": "Datos propuestos descartados"
       },
       "tabs": {
+        "document": "Documento",
         "info": "Información",
         "process": "Proceso",
         "chat": "Chat"

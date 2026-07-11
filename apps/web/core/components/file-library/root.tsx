@@ -206,6 +206,15 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       if (item && item.kind === "file") {
         setSelectedAssetId(item.metadata?.assetId ?? null);
         setSelectedFolderId(null);
+        // Touch devices have no double-tap "open" gesture — a single tap
+        // both selects and opens the viewer.
+        if (item.metadata?.assetId && window.matchMedia("(pointer: coarse)").matches) {
+          setPreviewFile({
+            assetId: item.metadata.assetId,
+            name: item.name ?? item.path,
+            contentType: item.contentType ?? "",
+          });
+        }
       } else if (item && item.kind === "folder") {
         setSelectedAssetId(null);
         // resolve the folder id from its path so uploads can target it

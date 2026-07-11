@@ -176,6 +176,7 @@
         "discarded": "Proposed data discarded"
       },
       "tabs": {
+        "document": "Document",
         "info": "Information",
         "process": "Process",
         "chat": "Chat"
