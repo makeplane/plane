@@ -1,18 +1,18 @@
 [data-mail] {
-  --mail-bg: #fbfaf7;
-  --mail-panel: #ffffff;
-  --mail-sidebar: #f1eee7;
-  --mail-border: #e4e1d9;
-  --mail-hover: #f3f0e8;
-  --mail-unread: #fff8ef;
-  --mail-warning: #fff4df;
-  --mail-ink: #201e1a;
-  --mail-muted: #746f65;
-  --mail-accent: #c24e2c;
-  --mail-accent-strong: #a63f22;
-  --mail-accent-soft: #f4ded6;
-  --mail-compose-header: #201e1a;
-  --mail-compose-header-ink: #ffffff;
+  --mail-bg: var(--background-color-canvas, #f6f6f6);
+  --mail-panel: var(--background-color-layer-2, #ffffff);
+  --mail-sidebar: var(--background-color-layer-1, #f3f3f3);
+  --mail-border: var(--border-color-subtle, #e5e5e5);
+  --mail-hover: var(--background-color-layer-1-hover, #ebebeb);
+  --mail-unread: var(--background-color-accent-subtle, #f0efff);
+  --mail-warning: var(--background-color-warning-subtle, #fff7df);
+  --mail-ink: var(--text-color-primary, #171717);
+  --mail-muted: var(--text-color-secondary, #6b6b6b);
+  --mail-accent: var(--background-color-accent-primary, #5e6ad2);
+  --mail-accent-strong: var(--background-color-accent-primary-hover, #4f5abf);
+  --mail-accent-soft: var(--background-color-accent-subtle, #ecebff);
+  --mail-compose-header: var(--background-color-inverse, #171717);
+  --mail-compose-header-ink: var(--text-color-inverse, #ffffff);
   color-scheme: light;
   font-family:
     "Hanken Grotesk",
@@ -25,20 +25,6 @@
 }
 
 [data-mail][data-mail-theme="dark"] {
-  --mail-bg: #101114;
-  --mail-panel: #17191d;
-  --mail-sidebar: #14161a;
-  --mail-border: #2a2d33;
-  --mail-hover: #20242b;
-  --mail-unread: #1d242b;
-  --mail-warning: #302719;
-  --mail-ink: #f3f0e8;
-  --mail-muted: #a9a39a;
-  --mail-accent: #f07a55;
-  --mail-accent-strong: #ff8b66;
-  --mail-accent-soft: #3b251f;
-  --mail-compose-header: #0f1115;
-  --mail-compose-header-ink: #f3f0e8;
   color-scheme: dark;
 }
 
@@ -61,6 +47,16 @@
 
 .mail-root {
   letter-spacing: 0;
+}
+
+.mail-root :focus-visible {
+  outline: 2px solid var(--mail-accent);
+  outline-offset: 2px;
+}
+
+[data-mail][data-mail-density="compact"] .mail-sidebar {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
 }
 
 .mail-icon-button {
@@ -169,4 +165,35 @@
 .mail-compose-editor ol {
   list-style: decimal;
   padding-left: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .mail-sidebar {
+    width: 14rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .mail-sidebar {
+    width: 4.25rem;
+    padding-right: 0.625rem;
+    padding-left: 0.625rem;
+  }
+
+  .mail-sidebar .mail-sidebar-label,
+  .mail-sidebar .mail-sidebar-meta,
+  .mail-sidebar .mail-sidebar-section {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-mail] *,
+  [data-mail] *::before,
+  [data-mail] *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

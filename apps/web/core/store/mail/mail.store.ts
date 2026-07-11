@@ -96,7 +96,8 @@ const EMPTY_COMPOSE: TMailComposePayload = {
   uploaded_attachments: [],
 };
 
-const MAIL_PREFERENCES_STORAGE_KEY = "plane_mail_preferences";
+const MAIL_PREFERENCES_STORAGE_KEY = "gizmo_mail_preferences";
+const LEGACY_MAIL_PREFERENCES_STORAGE_KEY = "plane_mail_preferences";
 const MAIL_PREFERENCE_DENSITIES = ["comfortable", "compact"] as const;
 const MAIL_PREFERENCE_THEMES = ["system", "light", "dark"] as const;
 const MAIL_PREFERENCE_READING_PANES = ["right", "bottom", "none"] as const;
@@ -126,7 +127,11 @@ const readPreferenceFromStorage = (mailboxId?: string): Record<string, unknown> 
   if (typeof window === "undefined") return null;
 
   try {
-    const rawValue = window.localStorage.getItem(storageKeyForMailbox(mailboxId));
+    const rawValue =
+      window.localStorage.getItem(storageKeyForMailbox(mailboxId)) ??
+      window.localStorage.getItem(
+        mailboxId ? `${LEGACY_MAIL_PREFERENCES_STORAGE_KEY}:${mailboxId}` : LEGACY_MAIL_PREFERENCES_STORAGE_KEY
+      );
     if (!rawValue) return null;
 
     const parsedValue = JSON.parse(rawValue);
@@ -211,6 +216,7 @@ const getMailErrorMessage = (error: unknown) => {
 };
 
 export class MailStore implements IMailStore {
+  private messageRequestId = 0;
   loader = false;
   messageLoader = false;
   actionLoader = false;
@@ -440,24 +446,28 @@ export class MailStore implements IMailStore {
   };
 
   fetchMessage = async (folderKey: string, uid: string) => {
+    const requestId = ++this.messageRequestId;
     this.messageLoader = true;
     try {
       const response = await this.service.message(folderKey, uid);
       runInAction(() => {
+        if (requestId !== this.messageRequestId) return;
         this.selectedMessage = response;
         this.messageLoader = false;
       });
       return response;
     } catch (error) {
       runInAction(() => {
-        this.messageLoader = false;
+        if (requestId === this.messageRequestId) this.messageLoader = false;
       });
       throw error;
     }
   };
 
   clearSelectedMessage = () => {
+    this.messageRequestId += 1;
     this.selectedMessage = null;
+    this.messageLoader = false;
   };
 
   setFlags = async (folderKey: string, uid: string, data: { read?: boolean; starred?: boolean }) => {
@@ -553,6 +563,17 @@ export class MailStore implements IMailStore {
   };
 
   openCompose = (draft: Partial<TMailComposePayload> = {}) => {
+    const hasExistingDraft =
+      this.composeDraft.to.length > 0 ||
+      Boolean(this.composeDraft.subject.trim()) ||
+      Boolean(this.composeDraft.body_text?.trim()) ||
+      Boolean(this.composeDraft.body_html?.trim()) ||
+      Boolean(this.composeDraft.uploaded_attachments?.length);
+    if (Object.keys(draft).length === 0 && hasExistingDraft) {
+      this.composeOpen = true;
+      return;
+    }
+
     const defaultSignature =
       this.signatures.find((signature) => signature.id === this.preferences.default_signature && signature.is_active) ??
       this.signatures.find((signature) => signature.is_default && signature.is_active);
@@ -610,6 +631,7 @@ export class MailStore implements IMailStore {
       await this.service.saveDraft(this.composeDraft);
       runInAction(() => {
         this.composeOpen = false;
+        this.composeDraft = { ...EMPTY_COMPOSE };
         this.actionLoader = false;
       });
       await this.fetchFolders().catch(() => undefined);
@@ -630,7 +652,7 @@ export class MailStore implements IMailStore {
   };
 
   fetchSettings = async () => {
-    const [signatures, templates, filters, labels, savedSearches, forwarding, preferences] = await Promise.all([
+    const [signatures, templates, filters, labels, savedSearches, forwarding, preferences] = await Promise.allSettled([
       this.service.signatures(),
       this.service.templates(),
       this.service.filters(),
@@ -638,15 +660,16 @@ export class MailStore implements IMailStore {
       this.service.savedSearches(),
       this.service.forwarding(),
       this.service.preferences(),
-    ]);
+    ] as const);
     runInAction(() => {
-      this.signatures = signatures;
-      this.templates = templates;
-      this.filters = filters;
-      this.labels = labels;
-      this.savedSearches = savedSearches;
-      this.forwarding = forwarding;
-      this.preferences = normalizeMailPreference(preferences, this.preferences);
+      if (signatures.status === "fulfilled") this.signatures = signatures.value;
+      if (templates.status === "fulfilled") this.templates = templates.value;
+      if (filters.status === "fulfilled") this.filters = filters.value;
+      if (labels.status === "fulfilled") this.labels = labels.value;
+      if (savedSearches.status === "fulfilled") this.savedSearches = savedSearches.value;
+      if (forwarding.status === "fulfilled") this.forwarding = forwarding.value;
+      if (preferences.status === "fulfilled")
+        this.preferences = normalizeMailPreference(preferences.value, this.preferences);
       persistPreferenceToStorage(this.preferences, this.me?.mailbox?.id);
     });
   };

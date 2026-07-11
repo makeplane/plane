@@ -6,13 +6,14 @@
 
 // components
 import { PageHead } from "@/components/core/page-title";
+import { MessengerFrame } from "./messenger-frame";
 
 function MessengerPage() {
   return (
     <>
-      <PageHead title="Мессенджер" />
+      <PageHead title="Gizmo Messenger" />
       <div className="relative h-full w-full overflow-hidden">
-        <iframe src="/messenger/" className="h-full w-full border-0" title="Мессенджер" />
+        <MessengerFrame />
       </div>
     </>
   );

@@ -202,9 +202,21 @@ export const ComposeModal = observer(function ComposeModal() {
               {draft.uploaded_attachments.map((attachment) => (
                 <span
                   key={attachment.key}
-                  className="text-xs rounded-md bg-[var(--mail-hover)] px-2 py-1 text-[var(--mail-ink)]"
+                  className="text-xs inline-flex items-center gap-1 rounded-md bg-[var(--mail-hover)] py-1 pr-1 pl-2 text-[var(--mail-ink)]"
                 >
-                  {attachment.filename}
+                  <span className="max-w-52 truncate">{attachment.filename}</span>
+                  <button
+                    type="button"
+                    className="grid size-5 place-items-center rounded hover:bg-[var(--mail-panel)]"
+                    aria-label={`${t("mail.compose.remove_attachment")}: ${attachment.filename}`}
+                    onClick={() =>
+                      mail.updateComposeDraft({
+                        uploaded_attachments: draft.uploaded_attachments?.filter((item) => item.key !== attachment.key),
+                      })
+                    }
+                  >
+                    <X className="size-3" />
+                  </button>
                 </span>
               ))}
             </div>
@@ -286,7 +298,9 @@ export const ComposeModal = observer(function ComposeModal() {
                 className="mail-primary-button"
                 type="button"
                 onClick={() =>
-                  pendingAction.kind === "template" ? applyTemplate(pendingAction.template) : applyImport(pendingAction.html)
+                  pendingAction.kind === "template"
+                    ? applyTemplate(pendingAction.template)
+                    : applyImport(pendingAction.html)
                 }
               >
                 {pendingAction.kind === "template"

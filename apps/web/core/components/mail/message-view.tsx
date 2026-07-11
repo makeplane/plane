@@ -52,10 +52,22 @@ export const MessageView = observer(function MessageView(props: Props) {
     <section className="flex min-w-0 flex-1 flex-col bg-[var(--mail-bg)]">
       <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-[var(--mail-border)] bg-[var(--mail-panel)] px-5">
         <div className="flex items-center gap-1">
-          <button className="mail-icon-button" type="button" onClick={onArchive} title={t("mail.actions.archive")}>
+          <button
+            className="mail-icon-button"
+            type="button"
+            onClick={onArchive}
+            disabled={folderKey === "archive"}
+            title={t("mail.actions.archive")}
+          >
             <Archive className="size-4" />
           </button>
-          <button className="mail-icon-button" type="button" onClick={onSpam} title={t("mail.actions.spam")}>
+          <button
+            className="mail-icon-button"
+            type="button"
+            onClick={onSpam}
+            disabled={folderKey === "spam"}
+            title={t("mail.actions.spam")}
+          >
             <ShieldAlert className="size-4" />
           </button>
           <button className="mail-icon-button" type="button" onClick={onDelete} title={t("mail.actions.delete")}>
@@ -110,8 +122,8 @@ export const MessageView = observer(function MessageView(props: Props) {
               {message.attachments.map((attachment) => (
                 <a
                   key={attachment.part_id}
-                  href={`${API_BASE_URL}/api/mail/folders/${folderKey}/messages/${message.uid}/attachments/${attachment.part_id}/`}
-                  className="text-sm flex items-center gap-3 rounded-md border border-[var(--mail-border)] bg-white px-3 py-2 text-[var(--mail-ink)] hover:border-[var(--mail-accent)]"
+                  href={`${API_BASE_URL}/api/mail/folders/${encodeURIComponent(folderKey)}/messages/${encodeURIComponent(message.uid)}/attachments/${encodeURIComponent(attachment.part_id)}/`}
+                  className="text-sm flex items-center gap-3 rounded-md border border-[var(--mail-border)] bg-[var(--mail-panel)] px-3 py-2 text-[var(--mail-ink)] hover:border-[var(--mail-accent)]"
                 >
                   <Download className="size-4 text-[var(--mail-muted)]" />
                   <span className="min-w-0 flex-1 truncate">{attachment.filename}</span>

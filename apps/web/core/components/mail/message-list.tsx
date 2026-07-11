@@ -94,7 +94,7 @@ export const MessageList = observer(function MessageList(props: Props) {
             const rowClassName = cn(
               "block border-b border-[var(--mail-border)] px-4 hover:bg-[var(--mail-hover)]",
               compact ? "py-2" : "py-3",
-              selectedUid === message.uid && "bg-white",
+              selectedUid === message.uid && "bg-[var(--mail-panel)] ring-1 ring-[var(--mail-accent)] ring-inset",
               !message.is_read && "bg-[var(--mail-unread)]",
               isOutboundPlaceholder && "cursor-default"
             );
@@ -146,7 +146,7 @@ export const MessageList = observer(function MessageList(props: Props) {
                       !message.is_read ? "font-semibold text-[var(--mail-ink)]" : "text-[var(--mail-ink)]"
                     )}
                   >
-                    {message.subject}
+                    {message.subject || t("mail.list.no_subject")}
                   </div>
                   {message.has_attachments && <Paperclip className="size-3.5 flex-shrink-0 text-[var(--mail-muted)]" />}
                 </div>
@@ -185,7 +185,7 @@ export const MessageList = observer(function MessageList(props: Props) {
               type="button"
               onClick={onLoadMore}
               disabled={loadingMore}
-              className="text-sm w-full rounded-md border border-[var(--mail-border)] bg-white py-2 font-medium text-[var(--mail-muted)] hover:border-[var(--mail-accent)] hover:text-[var(--mail-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="text-sm w-full rounded-md border border-[var(--mail-border)] bg-[var(--mail-panel)] py-2 font-medium text-[var(--mail-muted)] hover:border-[var(--mail-accent)] hover:text-[var(--mail-accent)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loadingMore ? t("mail.list.loading_more") : t("mail.list.load_more")}
             </button>

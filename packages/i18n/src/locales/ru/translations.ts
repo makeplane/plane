@@ -2137,8 +2137,7 @@ export default {
       labels: "Метки",
       work_items_closed:
         "{count, plural, one {рабочий элемент закрыт} few {рабочих элемента закрыто} other {рабочих элементов закрыто}}",
-      work_items_count:
-        "{count, plural, one {# рабочий элемент} few {# рабочих элемента} other {# рабочих элементов}}",
+      work_items_count: "{count, plural, one {# рабочий элемент} few {# рабочих элемента} other {# рабочих элементов}}",
       cancelled_work_items_excluded:
         "{count, plural, one {# отменённый рабочий элемент исключён из этого отчёта.} few {# отменённых рабочих элемента исключены из этого отчёта.} other {# отменённых рабочих элементов исключено из этого отчёта.}}",
       pending_points: "Осталось очков",
@@ -2987,6 +2986,7 @@ export default {
     list: {
       empty: "В этой папке нет писем",
       unknown_sender: "Неизвестный отправитель",
+      no_subject: "(Без темы)",
       star: "Пометить",
       unstar: "Снять пометку",
       load_more: "Загрузить ещё",
@@ -3018,6 +3018,7 @@ export default {
       cc: "Копия",
       subject: "Тема",
       attach: "Прикрепить файлы",
+      remove_attachment: "Удалить вложение",
       save_draft: "В черновики",
       send: "Отправить",
       fullscreen: "На весь экран",

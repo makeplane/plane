@@ -16,7 +16,7 @@ import { useUserProfile } from "@/hooks/store/user";
 import { ComposeModal } from "./compose-modal";
 import { MailSidebar } from "./mail-sidebar";
 
-const resolvePlaneThemeForMail = (theme: string | undefined, customThemeUsesDarkPalette?: boolean) => {
+const resolveGizmoThemeForMail = (theme: string | undefined, customThemeUsesDarkPalette?: boolean) => {
   if (theme === "dark" || theme === "dark-contrast") return "dark";
   if (theme === "custom" && customThemeUsesDarkPalette) return "dark";
   return "light";
@@ -32,7 +32,7 @@ export const MailShell = observer(function MailShell() {
   const isLogin = location.pathname === "/mail/login";
   const mailTheme = useMemo(() => {
     if (mail.preferences.theme === "light" || mail.preferences.theme === "dark") return mail.preferences.theme;
-    return resolvePlaneThemeForMail(resolvedTheme, userProfile?.theme?.darkPalette);
+    return resolveGizmoThemeForMail(resolvedTheme, userProfile?.theme?.darkPalette);
   }, [mail.preferences.theme, resolvedTheme, userProfile?.theme?.darkPalette]);
   const mailDensity = mail.preferences.density === "compact" ? "compact" : "comfortable";
 

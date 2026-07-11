@@ -2812,6 +2812,7 @@ export default {
     list: {
       empty: "No messages in this folder",
       unknown_sender: "Unknown sender",
+      no_subject: "(No subject)",
       star: "Star",
       unstar: "Remove star",
       load_more: "Load more",
@@ -2843,6 +2844,7 @@ export default {
       cc: "Cc",
       subject: "Subject",
       attach: "Attach files",
+      remove_attachment: "Remove attachment",
       save_draft: "Save draft",
       send: "Send",
       fullscreen: "Fullscreen",

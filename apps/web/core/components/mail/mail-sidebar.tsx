@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { observer } from "mobx-react";
 import { Archive, FileText, Inbox, PenLine, Plus, Send, Settings, ShieldAlert, Star, Trash2 } from "lucide-react";
@@ -31,16 +30,12 @@ export const MailSidebar = observer(function MailSidebar() {
   const fallbackFolders = FALLBACK_FOLDER_KEYS.map((key) => ({ key, label: t(`mail.folders.${key}`), unread: 0 }));
   const folders = mail.folders.length ? mail.folders : fallbackFolders;
 
-  useEffect(() => {
-    if (!mail.labels.length) mail.fetchSettings().catch(() => undefined);
-  }, [mail]);
-
   const initials = (mail.mailboxEmail.split("@")[0]?.slice(0, 2) || "@@").toUpperCase();
 
   return (
     <aside className="mail-sidebar flex h-full w-[280px] flex-shrink-0 flex-col border-r border-[var(--mail-border)] bg-[var(--mail-sidebar)] px-4 py-5">
       <div className="mb-5 flex items-center justify-between">
-        <div>
+        <div className="mail-sidebar-meta">
           <div className="text-lg font-semibold text-[var(--mail-ink)]">Gizmo Mail</div>
           <div className="text-xs max-w-[190px] truncate text-[var(--mail-muted)]">{mail.mailboxEmail}</div>
         </div>
@@ -59,7 +54,7 @@ export const MailSidebar = observer(function MailSidebar() {
         onClick={() => mail.openCompose()}
       >
         <PenLine className="size-4" />
-        {t("mail.compose.new")}
+        <span className="mail-sidebar-label">{t("mail.compose.new")}</span>
       </button>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -72,16 +67,16 @@ export const MailSidebar = observer(function MailSidebar() {
               className={({ isActive }) =>
                 cn(
                   "text-sm flex h-9 items-center justify-between rounded-md px-2.5 text-[var(--mail-muted)] hover:bg-[var(--mail-hover)] hover:text-[var(--mail-ink)]",
-                  isActive && "shadow-sm bg-white text-[var(--mail-ink)]"
+                  isActive && "shadow-sm bg-[var(--mail-panel)] text-[var(--mail-ink)]"
                 )
               }
             >
               <span className="flex min-w-0 items-center gap-2">
                 <Icon className="size-4 flex-shrink-0" />
-                <span className="truncate">{folder.label}</span>
+                <span className="mail-sidebar-label truncate">{folder.label}</span>
               </span>
               {!!folder.unread && (
-                <span className="text-xs rounded-full bg-[var(--mail-accent-soft)] px-2 py-0.5 text-[var(--mail-accent)]">
+                <span className="mail-sidebar-label text-xs rounded-full bg-[var(--mail-accent-soft)] px-2 py-0.5 text-[var(--mail-accent)]">
                   {folder.unread}
                 </span>
               )}
@@ -90,7 +85,7 @@ export const MailSidebar = observer(function MailSidebar() {
         })}
       </nav>
 
-      <div className="mt-4 border-t border-[var(--mail-border)] pt-4">
+      <div className="mail-sidebar-section mt-4 border-t border-[var(--mail-border)] pt-4">
         <div className="mb-1 flex items-center justify-between px-2.5">
           <span className="text-xs font-semibold tracking-wide text-[var(--mail-muted)] uppercase">
             {t("mail.sidebar.labels")}
@@ -130,7 +125,9 @@ export const MailSidebar = observer(function MailSidebar() {
         <span className="text-xs grid size-8 flex-shrink-0 place-items-center rounded-full bg-[var(--mail-ink)] font-semibold text-white">
           {initials}
         </span>
-        <span className="text-xs min-w-0 flex-1 truncate text-[var(--mail-muted)]">{mail.mailboxEmail}</span>
+        <span className="mail-sidebar-label text-xs min-w-0 flex-1 truncate text-[var(--mail-muted)]">
+          {mail.mailboxEmail}
+        </span>
       </NavLink>
     </aside>
   );

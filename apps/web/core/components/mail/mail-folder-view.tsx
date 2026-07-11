@@ -84,9 +84,27 @@ export const MailFolderView = observer(function MailFolderView() {
           folderKey={folderKey}
           message={selected}
           loading={mail.messageLoader}
-          onArchive={() => selected && mail.moveMessages(folderKey, "archive", [selected.uid])}
-          onDelete={() => selected && mail.deleteMessages(folderKey, [selected.uid], folderKey === "trash")}
-          onSpam={() => selected && mail.moveMessages(folderKey, "spam", [selected.uid])}
+          onArchive={() => {
+            if (!selected || folderKey === "archive") return;
+            void mail
+              .moveMessages(folderKey, "archive", [selected.uid])
+              .then(() => navigate(`/mail/${folderKey}`))
+              .catch(() => undefined);
+          }}
+          onDelete={() => {
+            if (!selected) return;
+            void mail
+              .deleteMessages(folderKey, [selected.uid], folderKey === "trash")
+              .then(() => navigate(`/mail/${folderKey}`))
+              .catch(() => undefined);
+          }}
+          onSpam={() => {
+            if (!selected || folderKey === "spam") return;
+            void mail
+              .moveMessages(folderKey, "spam", [selected.uid])
+              .then(() => navigate(`/mail/${folderKey}`))
+              .catch(() => undefined);
+          }}
           onToggleStar={() => selected && mail.setFlags(folderKey, selected.uid, { starred: !selected.is_starred })}
           onReply={() =>
             selected &&
