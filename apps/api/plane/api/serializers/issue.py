@@ -69,7 +69,7 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
         exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
@@ -480,44 +480,52 @@ class IssueLinkSerializer(BaseSerializer):
         ]
 
 
+class IssueRelationRefSerializer(serializers.Serializer):
+    """Project-scoped reference to a related work item."""
+
+    project_id = serializers.UUIDField(help_text="Project containing the related work item")
+    issue_id = serializers.UUIDField(help_text="ID of the related work item")
+
+
 class IssueRelationResponseSerializer(serializers.Serializer):
     """
     Serializer for issue relations response showing grouped relation types.
 
-    Returns issue IDs organized by relation type for efficient client-side processing.
+    Each list contains project_id and issue_id pairs so clients can resolve
+    cross-project relations.
     """
 
     blocking = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that are blocking this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items blocking this issue",
     )
     blocked_by = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that this issue is blocked by",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items this issue is blocked by",
     )
     duplicate = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that are duplicates of this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Duplicate work items",
     )
     relates_to = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that relate to this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Related work items",
     )
     start_after = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that start after this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that start after this issue",
     )
     start_before = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that start before this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that start before this issue",
     )
     finish_after = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that finish after this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that finish after this issue",
     )
     finish_before = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs that finish before this issue",
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that finish before this issue",
     )
 
 
@@ -737,14 +745,12 @@ class IssueCommentSerializer(BaseSerializer):
         exclude = ["comment_stripped", "comment_json"]
 
     def validate(self, data):
-        try:
-            if data.get("comment_html", None) is not None:
-                parsed = html.fromstring(data["comment_html"])
-                parsed_str = html.tostring(parsed, encoding="unicode")
-                data["comment_html"] = parsed_str
-
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+        if "comment_html" in data and data["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                data["comment_html"] = sanitized_html
         return data
 
 
@@ -842,6 +848,7 @@ class IssueExpandSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "completed_at",
         ]
 
 

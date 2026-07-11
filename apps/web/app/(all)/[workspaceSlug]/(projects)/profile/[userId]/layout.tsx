@@ -15,7 +15,7 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProfileSidebar } from "@/components/profile/sidebar";
 // constants
-import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@plane/constants";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import useSize from "@/hooks/use-window-size";

@@ -18,7 +18,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
-import type { TPlanDetail } from "@/constants/plans";
+import type { TPlanDetail } from "@/components/workspace/billing/comparison/plans";
 // local imports
 import { PlanFrequencyToggle } from "./frequency-toggle";
 

@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Posteingang",
+    "page_label": "{workspace} - Posteingang",
+    "options": {
+      "mark_all_as_read": "Alle als gelesen markieren",
+      "mark_read": "Als gelesen markieren",
+      "mark_unread": "Als ungelesen markieren",
+      "refresh": "Aktualisieren",
+      "filters": "Posteingangsfilter",
+      "show_unread": "Ungelesene anzeigen",
+      "show_snoozed": "Verschobene anzeigen",
+      "show_archived": "Archivierte anzeigen",
+      "mark_archive": "Archivieren",
+      "mark_unarchive": "Archivierung aufheben",
+      "mark_snooze": "Verschieben",
+      "mark_unsnooze": "Wiederherstellen"
+    },
+    "toasts": {
+      "read": "Benachrichtigung gelesen",
+      "unread": "Als ungelesen markiert",
+      "archived": "Archiviert",
+      "unarchived": "Archivierung aufgehoben",
+      "snoozed": "Verschoben",
+      "unsnoozed": "Wiederhergestellt"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Wählen Sie ein Element, um Details anzuzeigen."
+      },
+      "all": {
+        "title": "Keine zugewiesenen Elemente",
+        "description": "Hier sehen Sie Aktualisierungen zu Ihnen zugewiesenen Elementen."
+      },
+      "mentions": {
+        "title": "Keine Erwähnungen",
+        "description": "Hier sehen Sie Erwähnungen über Sie."
+      }
+    },
+    "tabs": {
+      "all": "Alle",
+      "mentions": "Erwähnungen"
+    },
+    "filter": {
+      "assigned": "Mir zugewiesen",
+      "created": "Von mir erstellt",
+      "subscribed": "Abonniert"
+    },
+    "snooze": {
+      "1_day": "1 Tag",
+      "3_days": "3 Tage",
+      "5_days": "5 Tage",
+      "1_week": "1 Woche",
+      "2_weeks": "2 Wochen",
+      "custom": "Benutzerdefiniert"
+    }
+  }
+}

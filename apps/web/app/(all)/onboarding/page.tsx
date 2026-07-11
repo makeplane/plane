@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { OnboardingRoot } from "@/components/onboarding";
 // constants
-import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+import { USER_WORKSPACES_LIST } from "@plane/constants";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks

@@ -7,7 +7,7 @@
 import { CircleDot, XCircle } from "lucide-react";
 import { RelatedIcon, DuplicatePropertyIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
-import type { TIssueRelationTypes } from "../../types";
+import type { TIssueRelationTypes } from "@plane/types";
 
 export * from "./activity";
 

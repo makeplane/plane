@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Hızlı başlangıç rehberiniz",
+      "not_right_now": "Şimdi değil",
+      "create_project": {
+        "title": "Proje oluştur",
+        "description": "Çoğu şey Plane'de bir projeyle başlar.",
+        "cta": "Başla"
+      },
+      "invite_team": {
+        "title": "Ekibinizi davet edin",
+        "description": "Ekip arkadaşlarınızla birlikte inşa edin, gönderin ve yönetin.",
+        "cta": "Davet et"
+      },
+      "configure_workspace": {
+        "title": "Çalışma alanınızı ayarlayın.",
+        "description": "Özellikleri açıp kapatın veya daha fazlasını yapın.",
+        "cta": "Yapılandır"
+      },
+      "personalize_account": {
+        "title": "Plane'yi kendinize özelleştirin.",
+        "description": "Resminizi, renklerinizi ve daha fazlasını seçin.",
+        "cta": "Kişiselleştir"
+      },
+      "widgets": {
+        "title": "Widget'lar Kapalıyken Sessiz, Onları Açın",
+        "description": "Görünüşe göre tüm widget'larınız kapalı. Deneyiminizi geliştirmek için şimdi etkinleştirin!",
+        "primary_button": {
+          "text": "Widget'ları yönet"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Kolay erişim için hızlı bağlantılar ekleyin.",
+      "add": "Hızlı bağlantı ekle",
+      "title": "Hızlı Bağlantı",
+      "title_plural": "Hızlı Bağlantılar"
+    },
+    "recents": {
+      "title": "Sonlar",
+      "empty": {
+        "project": "Bir projeyi ziyaret ettikten sonra son projeleriniz burada görünecek.",
+        "page": "Bir sayfayı ziyaret ettikten sonra son sayfalarınız burada görünecek.",
+        "issue": "Bir iş öğesini ziyaret ettikten sonra son iş öğeleriniz burada görünecek.",
+        "default": "Henüz hiç sonunuz yok."
+      },
+      "filters": {
+        "all": "Tüm öğeler",
+        "projects": "Projeler",
+        "pages": "Sayfalar",
+        "issues": "İş öğeleri"
+      }
+    },
+    "new_at_plane": {
+      "title": "Plane'de Yenilikler"
+    },
+    "quick_tutorial": {
+      "title": "Hızlı eğitim"
+    },
+    "widget": {
+      "reordered_successfully": "Widget başarıyla yeniden sıralandı.",
+      "reordering_failed": "Widget yeniden sıralanırken hata oluştu."
+    },
+    "manage_widgets": "Widget'ları yönet",
+    "title": "Ana Sayfa",
+    "star_us_on_github": "Bizi GitHub'da yıldızlayın",
+    "business_trial_banner": {
+      "title": "14 günlük Business planı denemeniz aktif!",
+      "description": "Tüm Business özelliklerini keşfedin. Hazır olduğunuzda abone olmayı seçin. Otomatik olarak faturalandırılmayacaksınız.",
+      "trial_ends_today": "Deneme bugün sona eriyor",
+      "trial_ends_in_days": "Deneme {days} gün içinde sona eriyor",
+      "start_subscription": "Aboneliği başlat",
+      "explore_business_features": "Business özelliklerini keşfet"
+    }
+  }
+}

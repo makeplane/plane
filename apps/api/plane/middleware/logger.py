@@ -3,12 +3,14 @@
 # See the LICENSE file for details.
 
 # Python imports
+import hashlib
+import hmac
 import logging
 import time
 
 # Django imports
+from django.conf import settings
 from django.http import HttpRequest
-from django.utils import timezone
 
 # Third party imports
 from rest_framework.request import Request
@@ -77,7 +79,7 @@ class RequestLoggerMiddleware:
 
 class APITokenLogMiddleware:
     """
-    Middleware to log External API requests to MongoDB or PostgreSQL.
+    Middleware to log External API requests to PostgreSQL.
     """
 
     def __init__(self, get_response):
@@ -111,6 +113,20 @@ class APITokenLogMiddleware:
         except UnicodeDecodeError:
             return "[Could not decode content]"
 
+    # Headers whose values must never be persisted in plaintext logs
+    SENSITIVE_HEADERS = frozenset({"x-api-key", "authorization", "cookie"})
+
+    def _redacted_headers(self, request):
+        """
+        Returns the request headers as a string with sensitive values redacted,
+        so that credentials such as the API key are never stored in plaintext.
+        """
+        redacted = {
+            key: ("[REDACTED]" if key.lower() in self.SENSITIVE_HEADERS else value)
+            for key, value in request.headers.items()
+        }
+        return str(redacted)
+
     def process_request(self, request, response, request_body):
         api_key_header = "X-Api-Key"
         api_key = request.headers.get(api_key_header)
@@ -121,32 +137,25 @@ class APITokenLogMiddleware:
 
         try:
             log_data = {
-                "token_identifier": api_key,
+                # Tokenize the (high-entropy) API key into a stable, non-reversible
+                # identifier so logs can be correlated to a token without ever
+                # persisting the raw key. A keyed HMAC is used rather than a bare
+                # hash so the digest cannot be precomputed from a known key value.
+                "token_identifier": hmac.new(
+                    settings.SECRET_KEY.encode(), api_key.encode(), hashlib.sha256
+                ).hexdigest(),
                 "path": request.path,
                 "method": request.method,
                 "query_params": request.META.get("QUERY_STRING", ""),
-                "headers": str(request.headers),
+                "headers": self._redacted_headers(request),
                 "body": self._safe_decode_body(request_body) if request_body else None,
                 "response_body": self._safe_decode_body(response.content) if response.content else None,
                 "response_code": response.status_code,
                 "ip_address": get_client_ip(request=request),
                 "user_agent": request.META.get("HTTP_USER_AGENT", None),
             }
-            user_id = (
-                str(request.user.id)
-                if getattr(request, "user") and getattr(request.user, "is_authenticated", False)
-                else None
-            )
-            # Additional fields for MongoDB
-            mongo_log = {
-                **log_data,
-                "created_at": timezone.now(),
-                "updated_at": timezone.now(),
-                "created_by": user_id,
-                "updated_by": user_id,
-            }
 
-            process_logs.delay(log_data=log_data, mongo_log=mongo_log)
+            process_logs.delay(log_data=log_data)
 
         except Exception as e:
             log_exception(e)

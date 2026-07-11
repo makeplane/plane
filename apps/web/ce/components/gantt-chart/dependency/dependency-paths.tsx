@@ -9,11 +9,11 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TIssueRelationTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
-import type { TIssueRelationTypes } from "@/plane-web/types";
 import { buildElbowPath } from "./build-bezier";
 import { hasBlockingDateConflict } from "./date-check";
 

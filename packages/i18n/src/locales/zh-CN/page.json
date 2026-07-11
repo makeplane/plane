@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大纲",
+        "empty_state": {
+          "title": "缺少标题",
+          "description": "让我们在这个页面添加一些标题来在这里查看它们。"
+        }
+      },
+      "info": {
+        "label": "信息",
+        "document_info": {
+          "words": "字数",
+          "characters": "字符数",
+          "paragraphs": "段落数",
+          "read_time": "阅读时间"
+        },
+        "actors_info": {
+          "edited_by": "编辑者",
+          "created_by": "创建者"
+        },
+        "version_history": {
+          "label": "版本历史",
+          "current_version": "当前版本",
+          "highlight_changes": "高亮显示更改"
+        }
+      },
+      "assets": {
+        "label": "资源",
+        "download_button": "下载",
+        "empty_state": {
+          "title": "缺少图片",
+          "description": "添加图片以在这里查看它们。"
+        }
+      },
+      "comments": {
+        "label": "评论",
+        "empty_state": {
+          "title": "暂无评论",
+          "description": "添加评论以在此处查看。"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便签名称不能超过 100 个字符。",
+        "already_exists": "已存在一个没有描述的便签"
+      },
+      "created": {
+        "title": "便签已创建",
+        "message": "便签已成功创建"
+      },
+      "not_created": {
+        "title": "便签未创建",
+        "message": "无法创建便签"
+      },
+      "updated": {
+        "title": "便签已更新",
+        "message": "便签已成功更新"
+      },
+      "not_updated": {
+        "title": "便签未更新",
+        "message": "无法更新便签"
+      },
+      "removed": {
+        "title": "便签已移除",
+        "message": "便签已成功移除"
+      },
+      "not_removed": {
+        "title": "便签未移除",
+        "message": "无法移除便签"
+      }
+    },
+    "open_button": "打开导航面板",
+    "close_button": "关闭导航面板",
+    "outline_floating_button": "打开大纲"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "移动",
+        "loading": "正在移动"
+      },
+      "cannot_move_to_teamspace": "私有和共享页面无法移动到团队空间。",
+      "placeholders": {
+        "workspace_to_all": "搜索项目和团队空间",
+        "workspace_to_project": "搜索项目",
+        "project_to_all": "搜索项目和团队空间",
+        "project_to_project": "搜索项目",
+        "project_to_all_with_wiki": "搜索 Wiki 集合、项目和团队空间",
+        "project_to_project_with_wiki": "搜索 Wiki 集合和项目"
+      },
+      "toasts": {
+        "success": {
+          "title": "成功！",
+          "message": "页面移动成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "无法移动页面。请稍后重试。"
+        },
+        "collection_error": {
+          "title": "已移动到 Wiki",
+          "message": "页面已移动到 Wiki，但无法添加到所选集合中。它会保留在 General 中。"
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "从集合中移除",
+      "success_message": "页面已从集合中移除。",
+      "error_message": "无法将页面从集合中移除。请重试。"
+    }
+  }
+}

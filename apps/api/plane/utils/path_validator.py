@@ -7,7 +7,48 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.conf import settings
 
 # Python imports
+import os
 from urllib.parse import urlparse
+
+
+def sanitize_filename(filename):
+    """
+    Sanitize a filename to prevent path traversal attacks.
+
+    Strips directory components, path traversal sequences, and null bytes
+    from user-supplied filenames used in upload paths and S3 object keys.
+
+    Returns None for empty/missing input so callers can still validate
+    that a filename was provided.
+    """
+    if not filename or not isinstance(filename, str):
+        return None
+
+    # Strip null bytes
+    filename = filename.replace("\x00", "")
+
+    # Normalize backslashes so os.path.basename handles Windows-style paths on POSIX
+    filename = filename.replace("\\", "/")
+
+    # Take only the basename to remove any directory components
+    filename = os.path.basename(filename)
+
+    # Remove any remaining path traversal sequences
+    filename = filename.replace("..", "")
+
+    # Strip whitespace before removing leading dots so " .env" is caught
+    filename = filename.strip()
+
+    # Remove leading dots (hidden files)
+    filename = filename.lstrip(".")
+
+    # Strip any remaining whitespace
+    filename = filename.strip()
+
+    if not filename:
+        return None
+
+    return filename
 
 
 def _contains_suspicious_patterns(path: str) -> bool:
@@ -49,20 +90,15 @@ def _contains_suspicious_patterns(path: str) -> bool:
 
 def get_allowed_hosts() -> list[str]:
     """Get the allowed hosts from the settings."""
-    base_origin = settings.WEB_URL or settings.APP_BASE_URL
-
     allowed_hosts = []
-    if base_origin:
-        host = urlparse(base_origin).netloc
-        allowed_hosts.append(host)
-    if settings.ADMIN_BASE_URL:
-        # Get only the host
-        host = urlparse(settings.ADMIN_BASE_URL).netloc
-        allowed_hosts.append(host)
-    if settings.SPACE_BASE_URL:
-        # Get only the host
-        host = urlparse(settings.SPACE_BASE_URL).netloc
-        allowed_hosts.append(host)
+    # Include every configured base URL; WEB_URL and APP_BASE_URL may differ
+    # (e.g. WEB_URL points at the API host, APP_BASE_URL at the web app), and
+    # both need to be allowed for redirects to either origin to pass safety checks.
+    for setting in (settings.WEB_URL, settings.APP_BASE_URL, settings.ADMIN_BASE_URL, settings.SPACE_BASE_URL):
+        if setting:
+            host = urlparse(setting).netloc
+            if host and host not in allowed_hosts:
+                allowed_hosts.append(host)
     return allowed_hosts
 
 

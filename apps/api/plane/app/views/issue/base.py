@@ -100,6 +100,7 @@ class IssueListEndpoint(BaseAPIView):
         # Apply legacy filters
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = queryset.filter(**filters)
+        issue_queryset = issue_queryset.filter(state__deleted_at__isnull=True)
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
@@ -158,7 +159,7 @@ class IssueListEndpoint(BaseAPIView):
         )
 
         if self.fields or self.expand:
-            issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
+            issues = IssueSerializer(issue_queryset, many=True, fields=self.fields, expand=self.expand).data
         else:
             issues = issue_queryset.values(
                 "id",
@@ -773,10 +774,10 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         total_issues = len(issues)
 
         # First, delete all related cycle issues
-        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        CycleIssue.objects.filter(issue__in=issues).delete()
 
         # Then, delete all related module issues
-        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        ModuleIssue.objects.filter(issue__in=issues).delete()
 
         # Finally, delete the issues themselves
         issues.delete()

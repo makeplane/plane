@@ -22,7 +22,7 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
 
   return (
     <div className="shrink-0">
-      <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("workspace")}</div>
+      <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("common.workspace")}</div>
       <div className="flex flex-col">
         {Object.values(workspaces).map((workspace) => (
           <SettingsSidebarItem

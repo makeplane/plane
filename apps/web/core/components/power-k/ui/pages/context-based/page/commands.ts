@@ -16,7 +16,7 @@ import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // plane web imports
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 
 export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation

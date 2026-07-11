@@ -16,7 +16,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // constants
-import { PROJECT_DETAILS } from "@/constants/fetch-keys";
+import { PROJECT_DETAILS } from "@plane/constants";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";

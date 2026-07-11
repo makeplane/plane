@@ -18,7 +18,7 @@ import { ApiTokenListItem } from "@/components/api-token/token-list-item";
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 // constants
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST } from "@plane/constants";
 
 const apiTokenService = new APITokenService();
 
@@ -38,7 +38,7 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
     <div className="size-full">
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <ProfileSettingsHeading
-        title={t("account_settings.api_tokens.heading")}
+        title={t("account_settings.api_tokens.title")}
         description={t("account_settings.api_tokens.description")}
         control={
           <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>

@@ -211,7 +211,8 @@ class SubIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
+        # Scope to workspace to prevent cross-tenant IDOR
+        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids, workspace__slug=slug)
 
         for sub_issue in sub_issues:
             sub_issue.parent = parent_issue

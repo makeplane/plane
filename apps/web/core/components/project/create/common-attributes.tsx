@@ -18,7 +18,7 @@ import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
 // helpers
 // plane-web types
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@plane/types";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;

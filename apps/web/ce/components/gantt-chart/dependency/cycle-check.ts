@@ -4,9 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssueRelationMap } from "@plane/types";
-import { REVERSE_RELATIONS } from "@/constants/gantt-chart";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import { REVERSE_RELATIONS } from "@plane/constants";
+import type { TIssueRelationMap, TIssueRelationTypes } from "@plane/types";
 
 /**
  * Hard cap on DFS depth. Keeps the cycle walk bounded even if the store is

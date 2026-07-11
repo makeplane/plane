@@ -257,7 +257,7 @@ Expected: exactly the 19 `packages/i18n/src/locales/<locale>/translations.ts` pa
 
 **Interfaces:**
 - Consumes: legacy default-export objects still present as the `HEAD` side of each modify/delete conflict and upstream JSON locale files.
-- Produces: `work_item.duration_placeholder`, `work_item.working_days`, `gantt_dependency.*`, and `timeline.propagation.*` in every locale's `common.json`; non-English missing duration/propagation values fall back to the English fork copy so key parity stays at 100%.
+- Produces: `common.duration_placeholder`, `common.working_days`, `gantt_dependency.*`, and `timeline.propagation.*` in every locale's `common.json`; non-English missing duration/propagation values fall back to the English fork copy so key parity stays at 100%.
 
 - [ ] **Step 1: Add the one-shot migration script**
 
@@ -292,7 +292,7 @@ const locales = [
 
 type JsonObject = Record<string, unknown>;
 type LegacyTranslations = {
-  work_item: Record<string, unknown>;
+  common: Record<string, unknown>;
   gantt_dependency?: JsonObject;
   timeline?: JsonObject;
 };
@@ -310,7 +310,12 @@ const legacyByLocale = new Map<string, LegacyTranslations>();
 for (const locale of locales) legacyByLocale.set(locale, await loadLegacy(locale));
 
 const english = legacyByLocale.get("en");
-if (!english?.gantt_dependency || !english.timeline) {
+if (
+  !english?.common.duration_placeholder ||
+  !english.common.working_days ||
+  !english.gantt_dependency ||
+  !english.timeline
+) {
   throw new Error("English fork translation keys are incomplete");
 }
 
@@ -320,12 +325,12 @@ for (const locale of locales) {
 
   const commonPath = path.join(localesDir, locale, "common.json");
   const common = JSON.parse(await readFile(commonPath, "utf8")) as JsonObject;
-  const workItem = common.work_item as Record<string, unknown>;
-  if (!workItem) throw new Error(`Missing work_item object: ${locale}`);
+  const commonNamespace = common.common as Record<string, unknown>;
+  if (!commonNamespace) throw new Error(`Missing common object: ${locale}`);
 
-  workItem.duration_placeholder =
-    legacy.work_item.duration_placeholder ?? english.work_item.duration_placeholder;
-  workItem.working_days = legacy.work_item.working_days ?? english.work_item.working_days;
+  commonNamespace.duration_placeholder =
+    legacy.common.duration_placeholder ?? english.common.duration_placeholder;
+  commonNamespace.working_days = legacy.common.working_days ?? english.common.working_days;
   common.gantt_dependency = legacy.gantt_dependency ?? english.gantt_dependency;
   common.timeline = legacy.timeline ?? english.timeline;
 
@@ -372,7 +377,7 @@ Run:
 ```bash
 corepack pnpm --filter=@plane/i18n check:sync
 corepack pnpm --filter=@plane/i18n generate:types
-rg -n 'gantt_dependency|timeline\.propagation|work_item\.duration_placeholder|work_item\.working_days' \
+rg -n 'gantt_dependency|timeline\.propagation|common\.duration_placeholder|common\.working_days' \
   packages/i18n/src/types/keys.generated.ts
 ```
 
@@ -561,7 +566,7 @@ Report the merge commit SHA, exact commands run, pass/fail counts, and any skipp
 - The integration commit contains both `556990ec9780` and `dc9d80b2d2a4` in its ancestry.
 - No unmerged paths or conflict markers remain.
 - All 19 legacy `translations.ts` files are replaced by upstream JSON namespaces.
-- Every locale contains the fork's duration, dependency, and propagation keys and `@plane/i18n check:sync` passes.
+- Every locale contains the fork's `common.duration_placeholder`, `common.working_days`, dependency, and propagation keys and `@plane/i18n check:sync` passes.
 - `planned_duration_working_days` remains in the model, serializer, API responses, TypeScript contracts, and timeline preview reconciliation.
 - Timeline propagation and working-day API/unit tests pass without weakening assertions.
 - Utils Vitest, targeted TypeScript checks, repository `pnpm check`, and `pnpm build` pass.

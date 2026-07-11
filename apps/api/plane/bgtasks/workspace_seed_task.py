@@ -10,6 +10,7 @@ import uuid
 from typing import Dict
 import logging
 from datetime import timedelta
+from urllib.parse import urlparse
 
 # Django imports
 from django.conf import settings
@@ -526,7 +527,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
             last_name="",
             is_bot=True,
             bot_type=BotTypeEnum.WORKSPACE_SEED,
-            email=f"bot_user_{workspace.id}@plane.so",
+            email=f"bot_user_{workspace.id}@{urlparse(settings.WEB_URL or 'https://plane.so').hostname or 'plane.so'}",
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
         )

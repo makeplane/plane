@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // components
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

@@ -23,7 +23,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;

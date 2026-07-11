@@ -16,7 +16,7 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 // plane web imports
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@plane/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
 import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";

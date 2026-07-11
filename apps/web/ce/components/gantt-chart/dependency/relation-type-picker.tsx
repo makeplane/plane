@@ -6,8 +6,8 @@
 
 import { useEffect, useRef } from "react";
 import { useTranslation } from "@plane/i18n";
+import type { TIssueRelationTypes } from "@plane/types";
 import { cn } from "@plane/utils";
-import type { TIssueRelationTypes } from "@/plane-web/types";
 import type { TPickerPayload } from "./use-dependency-drag";
 
 type Props = {

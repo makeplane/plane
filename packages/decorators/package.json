@@ -24,10 +24,10 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/express": "4.17.23",
+    "@types/express": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "^8.5.10",
-    "reflect-metadata": "^0.2.2",
+    "@types/ws": "catalog:",
+    "reflect-metadata": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

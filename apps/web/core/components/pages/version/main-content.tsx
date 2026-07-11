@@ -14,7 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // helpers
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // local imports
 import type { TVersionEditorProps } from "./editor";
 

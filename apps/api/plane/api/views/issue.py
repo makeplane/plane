@@ -23,11 +23,8 @@ from django.db.models import (
     Value,
     When,
     Subquery,
-    UUIDField,
 )
-from django.db.models.functions import Coalesce
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
+
 from django.utils import timezone
 from django.conf import settings
 
@@ -82,6 +79,12 @@ from plane.db.models import (
     Workspace,
 )
 from plane.settings.storage import S3Storage
+from plane.utils.path_validator import sanitize_filename
+from plane.utils.order_queryset import (
+    ACTIVITY_ORDER_BY_ALLOWLIST,
+    ISSUE_ORDER_BY_ALLOWLIST,
+    sanitize_order_by,
+)
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
@@ -330,7 +333,14 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-        order_by_param = request.GET.get("order_by", "-created_at")
+        # Reject any field not in the allowlist before it reaches .order_by().
+        # An unrecognised value is replaced with the safe default, preventing
+        # ORM order_by injection via relational traversal (GHSA-p885-6jpg-cr2p).
+        order_by_param = sanitize_order_by(
+            request.GET.get("order_by", "-created_at"),
+            ISSUE_ORDER_BY_ALLOWLIST,
+            default="-created_at",
+        )
 
         issue_queryset = (
             self.get_queryset()
@@ -480,6 +490,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
 
             # Send the model activity
@@ -639,6 +651,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         project_id=str(project_id),
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=base_host(request=request, is_app=True),
                     )
                     # Send the model activity for webhook dispatch
                     model_activity.delay(
@@ -697,6 +711,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         project_id=str(project_id),
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=base_host(request=request, is_app=True),
                     )
                     # Send the model activity for webhook dispatch
                     model_activity.delay(
@@ -782,6 +798,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             # Send the model activity for webhook dispatch
             model_activity.delay(
@@ -1694,7 +1712,9 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
             )
             .filter(project__archived_at__isnull=True)
             .select_related("actor", "workspace", "issue", "project")
-        ).order_by(request.GET.get("order_by", "created_at"))
+        ).order_by(
+            sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+        )
 
         return self.paginate(
             request=request,
@@ -1751,7 +1771,9 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
                 .filter(project__archived_at__isnull=True)
                 .select_related("actor", "workspace", "issue", "project")
             )
-            .order_by(request.GET.get("order_by", "created_at"))
+            .order_by(
+                sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+            )
             .first()
         )
 
@@ -1861,7 +1883,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        name = request.data.get("name")
+        name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type", False)
         size = request.data.get("size")
         external_id = request.data.get("external_id")
@@ -2292,14 +2314,35 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
                         name="Work Item Relations Response",
                         value={
                             "blocking": [
-                                "550e8400-e29b-41d4-a716-446655440000",
-                                "550e8400-e29b-41d4-a716-446655440001",
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440000",
+                                },
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440001",
+                                },
                             ],
-                            "blocked_by": ["550e8400-e29b-41d4-a716-446655440002"],
+                            "blocked_by": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440011",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440002",
+                                },
+                            ],
                             "duplicate": [],
-                            "relates_to": ["550e8400-e29b-41d4-a716-446655440003"],
+                            "relates_to": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440003",
+                                },
+                            ],
                             "start_after": [],
-                            "start_before": ["550e8400-e29b-41d4-a716-446655440004"],
+                            "start_before": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440012",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440004",
+                                },
+                            ],
                             "finish_after": [],
                             "finish_before": [],
                         },
@@ -2316,42 +2359,81 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         Retrieve all relationships for a work item organized by relation type.
         Returns a structured response with relations grouped by type.
         """
-        empty_uuid_array = Value([], output_field=ArrayField(UUIDField()))
-
-        def _agg_ids(field, **filter_kwargs):
-            return Coalesce(
-                ArrayAgg(field, filter=Q(**filter_kwargs), distinct=True),
-                empty_uuid_array,
-            )
-
-        issue_relation_qs = IssueRelation.objects.filter(
+        relations = IssueRelation.objects.filter(
             Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
             workspace__slug=slug,
-        )
-
-        relation_ids = issue_relation_qs.aggregate(
-            blocking_ids=_agg_ids("issue_id", relation_type="blocked_by", related_issue_id=issue_id),
-            blocked_by_ids=_agg_ids("related_issue_id", relation_type="blocked_by", issue_id=issue_id),
-            duplicate_ids=_agg_ids("related_issue_id", relation_type="duplicate", issue_id=issue_id),
-            duplicate_ids_related=_agg_ids("issue_id", relation_type="duplicate", related_issue_id=issue_id),
-            relates_to_ids=_agg_ids("related_issue_id", relation_type="relates_to", issue_id=issue_id),
-            relates_to_ids_related=_agg_ids("issue_id", relation_type="relates_to", related_issue_id=issue_id),
-            start_after_ids=_agg_ids("issue_id", relation_type="start_before", related_issue_id=issue_id),
-            start_before_ids=_agg_ids("related_issue_id", relation_type="start_before", issue_id=issue_id),
-            finish_after_ids=_agg_ids("issue_id", relation_type="finish_before", related_issue_id=issue_id),
-            finish_before_ids=_agg_ids("related_issue_id", relation_type="finish_before", issue_id=issue_id),
+        ).values(
+            "relation_type",
+            "issue_id",
+            "related_issue_id",
+            issue_project_id=F("issue__project_id"),
+            related_issue_project_id=F("related_issue__project_id"),
         )
 
         response_data = {
-            "blocking": relation_ids["blocking_ids"],
-            "blocked_by": relation_ids["blocked_by_ids"],
-            "duplicate": list(set(relation_ids["duplicate_ids"] + relation_ids["duplicate_ids_related"])),
-            "relates_to": list(set(relation_ids["relates_to_ids"] + relation_ids["relates_to_ids_related"])),
-            "start_after": relation_ids["start_after_ids"],
-            "start_before": relation_ids["start_before_ids"],
-            "finish_after": relation_ids["finish_after_ids"],
-            "finish_before": relation_ids["finish_before_ids"],
+            "blocking": [],
+            "blocked_by": [],
+            "duplicate": [],
+            "relates_to": [],
+            "start_after": [],
+            "start_before": [],
+            "finish_after": [],
+            "finish_before": [],
         }
+        seen_duplicate = set()
+        seen_relates_to = set()
+
+        for rel in relations:
+            rt = rel["relation_type"]
+            if rt == "blocked_by":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["blocking"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["blocked_by"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+            elif rt == "duplicate":
+                if str(rel["issue_id"]) == str(issue_id) and rel["related_issue_id"] not in seen_duplicate:
+                    seen_duplicate.add(rel["related_issue_id"])
+                    response_data["duplicate"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+                if str(rel["related_issue_id"]) == str(issue_id) and rel["issue_id"] not in seen_duplicate:
+                    seen_duplicate.add(rel["issue_id"])
+                    response_data["duplicate"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+            elif rt == "relates_to":
+                if str(rel["issue_id"]) == str(issue_id) and rel["related_issue_id"] not in seen_relates_to:
+                    seen_relates_to.add(rel["related_issue_id"])
+                    response_data["relates_to"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+                if str(rel["related_issue_id"]) == str(issue_id) and rel["issue_id"] not in seen_relates_to:
+                    seen_relates_to.add(rel["issue_id"])
+                    response_data["relates_to"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+            elif rt == "start_before":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["start_after"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["start_before"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+            elif rt == "finish_before":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["finish_after"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["finish_before"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -2423,6 +2505,15 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
         actual_relation = get_actual_relation(relation_type)
         is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
+
+        # Scope to workspace to prevent cross-tenant IDOR
+        # Relations can cross projects so only workspace scope is enforced
+        issues = list(
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                pk__in=issues,
+            ).values_list("id", flat=True)
+        )
 
         IssueRelation.objects.bulk_create(
             [

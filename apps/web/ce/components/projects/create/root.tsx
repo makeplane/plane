@@ -20,7 +20,7 @@ import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helpe
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@plane/types";
 import { ProjectAttributes } from "./attributes";
 import { getProjectFormValues } from "./utils";
 
@@ -110,7 +110,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
         if (setToFavorite) {
           handleAddToFavorites(res.id);
         }
-        handleNextStep(res.id);
+        return handleNextStep(res.id);
       })
       .catch((err) => {
         try {
@@ -119,8 +119,9 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
           const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
           const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const nameSpecialCharError = errorData?.name?.includes("PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS");
 
-          if (nameError || identifierError) {
+          if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
                 type: TOAST_TYPE.ERROR,
@@ -134,6 +135,14 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
+              });
+            }
+
+            if (nameSpecialCharError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {

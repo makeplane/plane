@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Čekající",
+        "description": "Čekající"
+      },
+      "declined": {
+        "title": "Odmítnuto",
+        "description": "Odmítnuto"
+      },
+      "snoozed": {
+        "title": "Odloženo",
+        "description": "Zbývá {days, plural, one{# den} few{# dny} other{# dnů}}"
+      },
+      "accepted": {
+        "title": "Přijato",
+        "description": "Přijato"
+      },
+      "duplicate": {
+        "title": "Duplikát",
+        "description": "Duplikát"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Odmítnout pracovní položku",
+        "content": "Opravdu chcete odmítnout pracovní položku {value}?"
+      },
+      "delete": {
+        "title": "Smazat pracovní položku",
+        "content": "Opravdu chcete smazat pracovní položku {value}?",
+        "success": "Pracovní položka úspěšně smazána"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Pouze správci projektu mohou odkládat/zrušit odložení pracovních položek",
+      "accept_permission": "Pouze správci projektu mohou přijímat pracovní položky",
+      "decline_permission": "Pouze správci projektu mohou odmítnout pracovní položky"
+    },
+    "actions": {
+      "accept": "Přijmout",
+      "decline": "Odmítnout",
+      "snooze": "Odložit",
+      "unsnooze": "Zrušit odložení",
+      "copy": "Kopírovat odkaz na pracovní položku",
+      "delete": "Smazat",
+      "open": "Otevřít pracovní položku",
+      "mark_as_duplicate": "Označit jako duplikát",
+      "move": "Přesunout {value} do pracovních položek projektu"
+    },
+    "source": {
+      "in-app": "v aplikaci"
+    },
+    "order_by": {
+      "created_at": "Vytvořeno dne",
+      "updated_at": "Aktualizováno dne",
+      "id": "ID"
+    },
+    "label": "Příjem",
+    "page_label": "{workspace} - Příjem",
+    "modal": {
+      "title": "Vytvořit přijatou pracovní položku"
+    },
+    "tabs": {
+      "open": "Otevřené",
+      "closed": "Uzavřené"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Žádné otevřené pracovní položky",
+        "description": "Zde najdete otevřené pracovní položky. Vytvořte novou."
+      },
+      "sidebar_closed_tab": {
+        "title": "Žádné uzavřené pracovní položky",
+        "description": "Všechny přijaté nebo odmítnuté pracovní položky najdete zde."
+      },
+      "sidebar_filter": {
+        "title": "Žádné odpovídající pracovní položky",
+        "description": "Žádná položka neodpovídá filtru v příjmu. Vytvořte novou."
+      },
+      "detail": {
+        "title": "Vyberte pracovní položku pro zobrazení podrobností."
+      }
+    }
+  }
+}

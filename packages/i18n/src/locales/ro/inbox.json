@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "În așteptare",
+        "description": "În așteptare"
+      },
+      "declined": {
+        "title": "Respinse",
+        "description": "Respinse"
+      },
+      "snoozed": {
+        "title": "Amânate",
+        "description": "{days, plural, one{# zi} other{# zile}} rămase"
+      },
+      "accepted": {
+        "title": "Acceptate",
+        "description": "Acceptate"
+      },
+      "duplicate": {
+        "title": "Duplicate",
+        "description": "Duplicate"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Respinge activitatea",
+        "content": "Ești sigur că vrei să respingi activitatea {value}?"
+      },
+      "delete": {
+        "title": "Șterge activitatea",
+        "content": "Ești sigur că vrei să ștergi activitatea {value}?",
+        "success": "Activitatea a fost ștersă cu succes"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Doar administratorii proiectului pot amâna/dezactiva amânarea activităților",
+      "accept_permission": "Doar administratorii proiectului pot accepta activități",
+      "decline_permission": "Doar administratorii proiectului pot respinge activități"
+    },
+    "actions": {
+      "accept": "Acceptă",
+      "decline": "Respinge",
+      "snooze": "Amână",
+      "unsnooze": "Dezactivează amânarea",
+      "copy": "Copiază link-ul activității",
+      "delete": "Șterge",
+      "open": "Deschide activitatea",
+      "mark_as_duplicate": "Marchează ca duplicat",
+      "move": "Mută {value} în activitățile proiectului"
+    },
+    "source": {
+      "in-app": "în aplicație"
+    },
+    "order_by": {
+      "created_at": "Creată la",
+      "updated_at": "Actualizată la",
+      "id": "ID"
+    },
+    "label": "Cereri",
+    "page_label": "{workspace} - Cereri",
+    "modal": {
+      "title": "Creează o cerere în Cereri"
+    },
+    "tabs": {
+      "open": "Deschise",
+      "closed": "Închise"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Nicio cerere deschisă",
+        "description": "Găsește aici cererile primite. Creează o cerere nouă."
+      },
+      "sidebar_closed_tab": {
+        "title": "Nicio cerere închisă",
+        "description": "Toate cererile, fie acceptate, fie respinse, pot fi găsite aici."
+      },
+      "sidebar_filter": {
+        "title": "Nicio cerere gasită",
+        "description": "Nicio cerere nu se potrivește cu filtrul aplicat în Cereri. Creează o cerere nouă."
+      },
+      "detail": {
+        "title": "Selectează o cerere pentru a-i vedea detaliile."
+      }
+    }
+  }
+}

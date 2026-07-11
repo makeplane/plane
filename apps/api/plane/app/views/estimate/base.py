@@ -113,7 +113,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        estimate = Estimate.objects.get(pk=estimate_id)
+        estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
 
         if request.data.get("estimate"):
             estimate.name = request.data.get("estimate").get("name", estimate.name)
@@ -158,6 +158,17 @@ class EstimatePointEndpoint(BaseViewSet):
             return Response(
                 {"error": "Key and value are required"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Verify the estimate belongs to this workspace and project before creating a point
+        estimate = Estimate.objects.filter(
+            pk=estimate_id,
+            workspace__slug=slug,
+            project_id=project_id,
+        ).first()
+        if not estimate:
+            return Response(
+                {"error": "Estimate not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         key = request.data.get("key", 0)
         value = request.data.get("value", "")
@@ -227,8 +238,18 @@ class EstimatePointEndpoint(BaseViewSet):
                     epoch=int(timezone.now().timestamp()),
                 )
 
-        # delete the estimate point
-        old_estimate_point = EstimatePoint.objects.filter(pk=estimate_point_id).first()
+        # delete the estimate point — scope to this estimate/project/workspace to prevent cross-tenant key manipulation
+        old_estimate_point = EstimatePoint.objects.filter(
+            pk=estimate_point_id,
+            estimate_id=estimate_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).first()
+        if not old_estimate_point:
+            return Response(
+                {"error": "Estimate point not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         # rearrange the estimate points
         updated_estimate_points = []

@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "받은 편지함",
+    "page_label": "{workspace} - 받은 편지함",
+    "options": {
+      "mark_all_as_read": "모두 읽음으로 표시",
+      "mark_read": "읽음으로 표시",
+      "mark_unread": "읽지 않음으로 표시",
+      "refresh": "새로 고침",
+      "filters": "받은 편지함 필터",
+      "show_unread": "읽지 않음 표시",
+      "show_snoozed": "미루기 표시",
+      "show_archived": "아카이브 표시",
+      "mark_archive": "아카이브",
+      "mark_unarchive": "아카이브 해제",
+      "mark_snooze": "미루기",
+      "mark_unsnooze": "미루기 해제"
+    },
+    "toasts": {
+      "read": "알림이 읽음으로 표시되었습니다",
+      "unread": "알림이 읽지 않음으로 표시되었습니다",
+      "archived": "알림이 아카이브되었습니다",
+      "unarchived": "알림이 아카이브 해제되었습니다",
+      "snoozed": "알림이 미루기되었습니다",
+      "unsnoozed": "알림이 미루기 해제되었습니다"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "세부 정보를 보려면 선택하세요."
+      },
+      "all": {
+        "title": "할당된 작업 항목 없음",
+        "description": "할당된 작업 항목의 업데이트를 여기에서 확인할 수 있습니다"
+      },
+      "mentions": {
+        "title": "할당된 작업 항목 없음",
+        "description": "할당된 작업 항목의 업데이트를 여기에서 확인할 수 있습니다"
+      }
+    },
+    "tabs": {
+      "all": "모두",
+      "mentions": "멘션"
+    },
+    "filter": {
+      "assigned": "나에게 할당됨",
+      "created": "내가 생성함",
+      "subscribed": "내가 구독함"
+    },
+    "snooze": {
+      "1_day": "1일",
+      "3_days": "3일",
+      "5_days": "5일",
+      "1_week": "1주",
+      "2_weeks": "2주",
+      "custom": "사용자 정의"
+    }
+  }
+}

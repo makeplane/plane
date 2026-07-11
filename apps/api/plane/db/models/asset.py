@@ -11,10 +11,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 # Module import
+from plane.utils.path_validator import sanitize_filename
+
 from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
+    filename = sanitize_filename(filename) or uuid4().hex
     if instance.workspace_id is not None:
         return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
     return f"user-{uuid4().hex}-{filename}"

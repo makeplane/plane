@@ -236,9 +236,29 @@ class CycleIssueViewSet(BaseViewSet):
             )
 
         # Get all CycleIssues already created
-        cycle_issues = list(CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues))
+        # Scope to workspace+project to prevent cross-tenant IDOR: without this
+        # scope, foreign-tenant CycleIssue rows matched by issue_id would be
+        # reassigned to the caller's cycle (GHSA-4w5x-wc9w-f47x).
+        cycle_issues = list(
+            CycleIssue.objects.filter(
+                ~Q(cycle_id=cycle_id),
+                issue_id__in=issues,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+        )
         existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
+
+        # Scope to workspace+project to prevent cross-tenant IDOR
+        new_issues = list(
+            str(i)
+            for i in Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk__in=new_issues,
+            ).values_list("id", flat=True)
+        )
 
         # New issues to create
         created_records = CycleIssue.objects.bulk_create(

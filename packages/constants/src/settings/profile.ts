@@ -17,6 +17,11 @@ export const PROFILE_SETTINGS_CATEGORIES: PROFILE_SETTINGS_CATEGORY[] = [
   PROFILE_SETTINGS_CATEGORY.DEVELOPER,
 ];
 
+export const PROFILE_SETTINGS_CATEGORY_LABELS: Record<PROFILE_SETTINGS_CATEGORY, string> = {
+  [PROFILE_SETTINGS_CATEGORY.YOUR_PROFILE]: "common.your_profile",
+  [PROFILE_SETTINGS_CATEGORY.DEVELOPER]: "common.developer",
+};
+
 export const PROFILE_SETTINGS: Record<
   TProfileSettingsTabs,
   {
@@ -31,10 +36,6 @@ export const PROFILE_SETTINGS: Record<
   security: {
     key: "security",
     i18n_label: "profile.actions.security",
-  },
-  activity: {
-    key: "activity",
-    i18n_label: "profile.actions.activity",
   },
   preferences: {
     key: "preferences",
@@ -61,7 +62,6 @@ export const GROUPED_PROFILE_SETTINGS: Record<
     PROFILE_SETTINGS["preferences"],
     PROFILE_SETTINGS["notifications"],
     PROFILE_SETTINGS["security"],
-    PROFILE_SETTINGS["activity"],
   ],
   [PROFILE_SETTINGS_CATEGORY.DEVELOPER]: [PROFILE_SETTINGS["api-tokens"]],
 };

@@ -8,7 +8,12 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useParams } from "react-router";
 // plane imports
-import { EUserPermissionsLevel, GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_CATEGORIES } from "@plane/constants";
+import {
+  EUserPermissionsLevel,
+  GROUPED_WORKSPACE_SETTINGS,
+  WORKSPACE_SETTINGS_CATEGORIES,
+  WORKSPACE_SETTINGS_CATEGORY_LABELS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
@@ -39,7 +44,9 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
 
         return (
           <div key={category} className="shrink-0 py-3 first:pt-0 last:pb-0">
-            <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t(category)}</div>
+            <div className="p-2 text-caption-md-medium text-tertiary capitalize">
+              {t(WORKSPACE_SETTINGS_CATEGORY_LABELS[category])}
+            </div>
             <div className="flex flex-col">
               {accessibleItems.map((item) => {
                 const isItemActive =

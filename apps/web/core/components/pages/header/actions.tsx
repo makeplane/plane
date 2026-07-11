@@ -10,7 +10,7 @@ import { PageLockControl } from "@/plane-web/components/pages/header/lock-contro
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
 // plane web hooks
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports

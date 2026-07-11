@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "クイックスタートガイド",
+      "not_right_now": "今はしない",
+      "create_project": {
+        "title": "プロジェクトを作成",
+        "description": "Planeのほとんどはプロジェクトから始まります。",
+        "cta": "始める"
+      },
+      "invite_team": {
+        "title": "チームを招待",
+        "description": "同僚と一緒に構築、デプロイ、管理しましょう。",
+        "cta": "招待する"
+      },
+      "configure_workspace": {
+        "title": "ワークスペースを設定する。",
+        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定を行ったりできます。",
+        "cta": "このワークスペースを設定"
+      },
+      "personalize_account": {
+        "title": "Planeをあなた好みにカスタマイズ。",
+        "description": "プロフィール画像、カラー、その他の設定を選択してください。",
+        "cta": "今すぐパーソナライズ"
+      },
+      "widgets": {
+        "title": "ウィジェットがないと静かですね、オンにしましょう",
+        "description": "すべてのウィジェットがオフになっているようです。体験を向上させるために\n今すぐ有効にしましょう！",
+        "primary_button": {
+          "text": "ウィジェットを管理"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "手元に置いておきたい作業関連のリンクを保存してください。",
+      "add": "クイックリンクを追加",
+      "title": "クイックリンク",
+      "title_plural": "クイックリンク"
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+        "project": "プロジェクトを訪問すると、最近のプロジェクトがここに表示されます。",
+        "page": "ページを訪問すると、最近のページがここに表示されます。",
+        "issue": "作業項目を訪問すると、最近の作業項目がここに表示されます。",
+        "default": "まだ最近の項目がありません。"
+      },
+      "filters": {
+        "all": "すべて",
+        "projects": "プロジェクト",
+        "pages": "ページ",
+        "issues": "作業項目"
+      }
+    },
+    "new_at_plane": {
+      "title": "Planeの新機能"
+    },
+    "quick_tutorial": {
+      "title": "クイックチュートリアル"
+    },
+    "widget": {
+      "reordered_successfully": "ウィジェットの並び替えが完了しました。",
+      "reordering_failed": "ウィジェットの並び替え中にエラーが発生しました。"
+    },
+    "manage_widgets": "ウィジェットを管理",
+    "title": "ホーム",
+    "star_us_on_github": "GitHubでスターをつける",
+    "business_trial_banner": {
+      "title": "14日間のBusinessプラントライアルが開始されました！",
+      "description": "すべてのBusiness機能をお試しください。準備ができたら、サブスクリプションをお選びください。自動的に請求されることはありません。",
+      "trial_ends_today": "トライアルは本日終了",
+      "trial_ends_in_days": "トライアル終了まであと{days}日",
+      "start_subscription": "サブスクリプションを開始",
+      "explore_business_features": "Business機能を探索"
+    }
+  }
+}

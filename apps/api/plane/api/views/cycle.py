@@ -46,6 +46,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
+from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
@@ -305,7 +306,9 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
         if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
             request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleCreateSerializer(data=request.data, context={"request": request})
+            serializer = CycleCreateSerializer(
+                data=request.data, context={"request": request, "project_id": project_id}
+            )
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -516,7 +519,9 @@ class CycleDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True, context={"request": request})
+        serializer = CycleUpdateSerializer(
+            cycle, data=request.data, partial=True, context={"request": request, "project_id": project_id}
+        )
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -850,7 +855,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         Returns paginated results with work item details, assignees, and labels.
         """
         # List
-        order_by = request.GET.get("order_by", "created_at")
+        order_by = sanitize_order_by(request.GET.get("order_by", "created_at"), ISSUE_ORDER_BY_ALLOWLIST, "created_at")
         issues = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True)
             .annotate(
@@ -940,6 +945,16 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
             str(cycle_issue.issue_id) for cycle_issue in cycle_issues if str(cycle_issue.issue_id) in issues
         ]
         new_issues = list(set(issues) - set(existing_issues))
+
+        # Scope to workspace+project to prevent cross-tenant IDOR
+        new_issues = list(
+            str(i)
+            for i in Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk__in=new_issues,
+            ).values_list("id", flat=True)
+        )
 
         # New issues to create
         created_records = CycleIssue.objects.bulk_create(

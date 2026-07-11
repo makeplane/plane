@@ -24,6 +24,7 @@ from plane.db.models import FileAsset, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
+from plane.utils.path_validator import sanitize_filename
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.utils.host import base_host
 
@@ -97,7 +98,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
-        name = request.data.get("name")
+        name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", False)
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
 
@@ -147,7 +148,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+        )
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
@@ -170,7 +173,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
             # Get the asset
-            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id)
 
             # Check if the asset is uploaded
             if not asset.is_uploaded:
@@ -201,7 +204,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+        )
         serializer = IssueAttachmentSerializer(issue_attachment)
 
         # Send this activity only if the attachment is not uploaded before
@@ -218,9 +223,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 origin=base_host(request=request, is_app=True),
             )
 
-            # Update the attachment
+            # Update the attachment — do NOT overwrite created_by; it is set at
+            # creation time and must not be reassigned (GHSA-5mxw-g5mw-3v3w).
             issue_attachment.is_uploaded = True
-            issue_attachment.created_by = request.user
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:

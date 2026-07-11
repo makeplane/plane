@@ -16,7 +16,7 @@ import { CustomMenu } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@plane/types";
 
 type Props = {
   issueId: string;

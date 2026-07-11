@@ -54,7 +54,7 @@ class WorkspaceOwnerPermission(BasePermission):
             return False
 
         return WorkspaceMember.objects.filter(
-            workspace__slug=view.workspace_slug, member=request.user, role=Admin
+            workspace__slug=view.workspace_slug, member=request.user, role=Admin, is_active=True
         ).exists()
 
 

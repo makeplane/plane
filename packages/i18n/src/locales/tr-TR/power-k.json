@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "İş öğelerini toplu sil"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "İş öğesi eylemleri",
+        "indicator": "İş öğesi",
+        "change_state": "Durumu değiştir",
+        "change_priority": "Önceliği değiştir",
+        "change_assignees": "Kişiye ata",
+        "assign_to_me": "Bana ata",
+        "unassign_from_me": "Benden kaldır",
+        "change_estimate": "Tahmini değiştir",
+        "add_to_cycle": "Döngüye ekle",
+        "add_to_modules": "Modüllere ekle",
+        "add_labels": "Etiket ekle",
+        "subscribe": "Bildirimlere abone ol",
+        "unsubscribe": "Bildirim aboneliğinden çık",
+        "delete": "Sil",
+        "copy_id": "ID'yi kopyala",
+        "copy_id_toast_success": "İş öğesi ID'si panoya kopyalandı.",
+        "copy_id_toast_error": "İş öğesi ID'si panoya kopyalanırken bir hata oluştu.",
+        "copy_title": "Başlığı kopyala",
+        "copy_title_toast_success": "İş öğesi başlığı panoya kopyalandı.",
+        "copy_title_toast_error": "İş öğesi başlığı panoya kopyalanırken bir hata oluştu.",
+        "copy_url": "URL'yi kopyala",
+        "copy_url_toast_success": "İş öğesi URL'si panoya kopyalandı.",
+        "copy_url_toast_error": "İş öğesi URL'si panoya kopyalanırken bir hata oluştu."
+      },
+      "cycle": {
+        "title": "Döngü eylemleri",
+        "indicator": "Döngü",
+        "add_to_favorites": "Favorilere ekle",
+        "remove_from_favorites": "Favorilerden kaldır",
+        "copy_url": "URL'yi kopyala",
+        "copy_url_toast_success": "Döngü URL'si panoya kopyalandı.",
+        "copy_url_toast_error": "Döngü URL'si panoya kopyalanırken bir hata oluştu."
+      },
+      "module": {
+        "title": "Modül eylemleri",
+        "indicator": "Modül",
+        "add_remove_members": "Üye ekle/kaldır",
+        "change_status": "Durumu değiştir",
+        "add_to_favorites": "Favorilere ekle",
+        "remove_from_favorites": "Favorilerden kaldır",
+        "copy_url": "URL'yi kopyala",
+        "copy_url_toast_success": "Modül URL'si panoya kopyalandı.",
+        "copy_url_toast_error": "Modül URL'si panoya kopyalanırken bir hata oluştu."
+      },
+      "page": {
+        "title": "Sayfa eylemleri",
+        "indicator": "Sayfa",
+        "lock": "Kilitle",
+        "unlock": "Kilidi aç",
+        "make_private": "Özel yap",
+        "make_public": "Herkese açık yap",
+        "archive": "Arşivle",
+        "restore": "Geri yükle",
+        "add_to_favorites": "Favorilere ekle",
+        "remove_from_favorites": "Favorilerden kaldır",
+        "copy_url": "URL'yi kopyala",
+        "copy_url_toast_success": "Sayfa URL'si panoya kopyalandı.",
+        "copy_url_toast_error": "Sayfa URL'si panoya kopyalanırken bir hata oluştu."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Yeni iş öğesi",
+      "create_page": "Yeni sayfa",
+      "create_view": "Yeni görünüm",
+      "create_cycle": "Yeni döngü",
+      "create_module": "Yeni modül",
+      "create_project": "Yeni proje",
+      "create_workspace": "Yeni çalışma alanı",
+      "create_project_automation": "Yeni otomasyon"
+    },
+    "navigation_actions": {
+      "open_workspace": "Bir çalışma alanı aç",
+      "nav_home": "Ana sayfaya git",
+      "nav_inbox": "Gelen kutusuna git",
+      "nav_your_work": "Çalışmalarınıza git",
+      "nav_account_settings": "Hesap ayarlarına git",
+      "open_project": "Bir proje aç",
+      "nav_projects_list": "Projeler listesine git",
+      "nav_all_workspace_work_items": "Tüm iş öğelerine git",
+      "nav_assigned_workspace_work_items": "Atanan iş öğelerine git",
+      "nav_created_workspace_work_items": "Oluşturulan iş öğelerine git",
+      "nav_subscribed_workspace_work_items": "Abone olunan iş öğelerine git",
+      "nav_workspace_analytics": "Çalışma alanı analitiklerine git",
+      "nav_workspace_drafts": "Çalışma alanı taslaklarına git",
+      "nav_workspace_archives": "Çalışma alanı arşivlerine git",
+      "open_workspace_setting": "Bir çalışma alanı ayarı aç",
+      "nav_workspace_settings": "Çalışma alanı ayarlarına git",
+      "nav_project_work_items": "İş öğelerine git",
+      "open_project_cycle": "Bir döngü aç",
+      "nav_project_cycles": "Döngülere git",
+      "open_project_module": "Bir modül aç",
+      "nav_project_modules": "Modüllere git",
+      "open_project_view": "Bir proje görünümü aç",
+      "nav_project_views": "Proje görünümlerine git",
+      "nav_project_pages": "Sayfalara git",
+      "nav_project_intake": "Talebe git",
+      "nav_project_archives": "Proje arşivlerine git",
+      "open_project_setting": "Bir proje ayarı aç",
+      "nav_project_settings": "Proje ayarlarına git",
+      "nav_workspace_active_cycle": "Tüm aktif döngülere git",
+      "nav_project_overview": "Proje genel bakışına git"
+    },
+    "account_actions": {
+      "sign_out": "Çıkış yap",
+      "workspace_invites": "Çalışma alanı davetleri"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Uygulama kenar çubuğunu aç/kapat",
+      "copy_current_page_url": "Geçerli sayfa URL'sini kopyala",
+      "copy_current_page_url_toast_success": "Geçerli sayfa URL'si panoya kopyalandı.",
+      "copy_current_page_url_toast_error": "Geçerli sayfa URL'si panoya kopyalanırken bir hata oluştu.",
+      "focus_top_nav_search": "Arama girişine odaklan"
+    },
+    "preferences_actions": {
+      "update_theme": "Arayüz temasını değiştir",
+      "update_timezone": "Saat dilimini değiştir",
+      "update_start_of_week": "Haftanın ilk gününü değiştir",
+      "update_language": "Arayüz dilini değiştir",
+      "toast": {
+        "theme": {
+          "success": "Tema başarıyla güncellendi.",
+          "error": "Tema güncellenemedi. Lütfen tekrar deneyin."
+        },
+        "timezone": {
+          "success": "Saat dilimi başarıyla güncellendi.",
+          "error": "Saat dilimi güncellenemedi. Lütfen tekrar deneyin."
+        },
+        "generic": {
+          "success": "Tercihler başarıyla güncellendi.",
+          "error": "Tercihler güncellenemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Klavye kısayollarını aç",
+      "open_plane_documentation": "Plane belgelerini aç",
+      "join_forum": "Forumumuza katılın",
+      "report_bug": "Hata bildir",
+      "chat_with_us": "Bizimle sohbet edin"
+    },
+    "page_placeholders": {
+      "default": "Bir komut yazın veya arayın",
+      "open_workspace": "Bir çalışma alanı aç",
+      "open_project": "Bir proje aç",
+      "open_workspace_setting": "Bir çalışma alanı ayarı aç",
+      "open_project_cycle": "Bir döngü aç",
+      "open_project_module": "Bir modül aç",
+      "open_project_view": "Bir proje görünümü aç",
+      "open_project_setting": "Bir proje ayarı aç",
+      "update_work_item_state": "Durumu değiştir",
+      "update_work_item_priority": "Önceliği değiştir",
+      "update_work_item_assignee": "Kişiye ata",
+      "update_work_item_estimate": "Tahmini değiştir",
+      "update_work_item_cycle": "Döngüye ekle",
+      "update_work_item_module": "Modüllere ekle",
+      "update_work_item_labels": "Etiket ekle",
+      "update_module_member": "Üyeleri değiştir",
+      "update_module_status": "Durumu değiştir",
+      "update_theme": "Temayı değiştir",
+      "update_timezone": "Saat dilimini değiştir",
+      "update_start_of_week": "Haftanın ilk gününü değiştir",
+      "update_language": "Dili değiştir"
+    },
+    "search_menu": {
+      "no_results": "Sonuç bulunamadı",
+      "clear_search": "Aramayı temizle",
+      "go_to_advanced_search": "Gelişmiş aramaya git"
+    },
+    "footer": {
+      "workspace_level": "Çalışma alanı seviyesi"
+    },
+    "group_titles": {
+      "actions": "Eylemler",
+      "contextual": "Bağlamsal",
+      "navigation": "Gezin",
+      "create": "Oluştur",
+      "general": "Genel",
+      "settings": "Ayarlar",
+      "account": "Hesap",
+      "miscellaneous": "Çeşitli",
+      "preferences": "Tercihler",
+      "help": "Yardım"
+    }
+  }
+}

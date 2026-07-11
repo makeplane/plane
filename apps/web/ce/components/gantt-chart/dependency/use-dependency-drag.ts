@@ -7,9 +7,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TIssueRelationTypes } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
-import type { TIssueRelationTypes } from "@/plane-web/types";
 import type { TDependencyDragEdge } from "@/plane-web/store/timeline/base-timeline.store";
 import { CHART_CONTENT_ID, clientToChart } from "./chart-coords";
 import { relationAlreadyExists, wouldCreateCycle } from "./cycle-check";

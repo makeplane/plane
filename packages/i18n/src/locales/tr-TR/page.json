@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Ana Hat",
+        "empty_state": {
+          "title": "Eksik başlıklar",
+          "description": "Bu sayfaya bazı başlıklar ekleyelim ki burada görebilelim."
+        }
+      },
+      "info": {
+        "label": "Bilgi",
+        "document_info": {
+          "words": "Kelimeler",
+          "characters": "Karakterler",
+          "paragraphs": "Paragraflar",
+          "read_time": "Okuma süresi"
+        },
+        "actors_info": {
+          "edited_by": "Düzenleyen",
+          "created_by": "Oluşturan"
+        },
+        "version_history": {
+          "label": "Sürüm geçmişi",
+          "current_version": "Mevcut sürüm",
+          "highlight_changes": "Değişiklikleri vurgula"
+        }
+      },
+      "assets": {
+        "label": "Varlıklar",
+        "download_button": "İndir",
+        "empty_state": {
+          "title": "Eksik görseller",
+          "description": "Burada görmek için görseller ekleyin."
+        }
+      },
+      "comments": {
+        "label": "Yorumlar",
+        "empty_state": {
+          "title": "Yorum yok",
+          "description": "Burada görmek için yorum ekleyin."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Yapışkan not adı 100 karakterden uzun olamaz.",
+        "already_exists": "Açıklaması olmayan bir yapışkan not zaten mevcut"
+      },
+      "created": {
+        "title": "Yapışkan not oluşturuldu",
+        "message": "Yapışkan not başarıyla oluşturuldu"
+      },
+      "not_created": {
+        "title": "Yapışkan not oluşturulamadı",
+        "message": "Yapışkan not oluşturulamadı"
+      },
+      "updated": {
+        "title": "Yapışkan not güncellendi",
+        "message": "Yapışkan not başarıyla güncellendi"
+      },
+      "not_updated": {
+        "title": "Yapışkan not güncellenemedi",
+        "message": "Yapışkan not güncellenemedi"
+      },
+      "removed": {
+        "title": "Yapışkan not kaldırıldı",
+        "message": "Yapışkan not başarıyla kaldırıldı"
+      },
+      "not_removed": {
+        "title": "Yapışkan not kaldırılamadı",
+        "message": "Yapışkan not kaldırılamadı"
+      }
+    },
+    "open_button": "Navigasyon panelini aç",
+    "close_button": "Navigasyon panelini kapat",
+    "outline_floating_button": "Ana hatları aç"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Taşı",
+        "loading": "Taşınıyor"
+      },
+      "cannot_move_to_teamspace": "Özel ve paylaşılan sayfalar takım alanına taşınamaz.",
+      "placeholders": {
+        "workspace_to_all": "Projeleri ve takım alanlarını ara",
+        "workspace_to_project": "Projeleri ara",
+        "project_to_all": "Projeleri ve takım alanlarını ara",
+        "project_to_project": "Projeleri ara",
+        "project_to_all_with_wiki": "Wiki koleksiyonlarını, projeleri ve takım alanlarını ara",
+        "project_to_project_with_wiki": "Wiki koleksiyonlarını ve projeleri ara"
+      },
+      "toasts": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Sayfa başarıyla taşındı."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Sayfa taşınamadı. Lütfen daha sonra tekrar deneyin."
+        },
+        "collection_error": {
+          "title": "Wiki'ye taşındı",
+          "message": "Sayfa wiki'ye taşındı, ancak seçilen koleksiyona eklenemedi. General içinde kalır."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Koleksiyondan kaldır",
+      "success_message": "Sayfa koleksiyondan kaldırıldı.",
+      "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
+    }
+  }
+}

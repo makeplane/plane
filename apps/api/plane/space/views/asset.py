@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import DeployBoard, FileAsset
 from plane.settings.storage import S3Storage
+from plane.utils.path_validator import sanitize_filename
 
 # Module imports
 from .base import BaseAPIView
@@ -41,9 +42,10 @@ class EntityAssetEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # get the asset id
+        # get the asset id — scope to project to prevent cross-project IDOR
         asset = FileAsset.objects.get(
             workspace_id=deploy_board.workspace_id,
+            project_id=deploy_board.project_id,
             pk=pk,
             entity_type__in=[
                 FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
@@ -73,7 +75,7 @@ class EntityAssetEndpoint(BaseAPIView):
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the asset
-        name = request.data.get("name")
+        name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
         entity_type = request.data.get("entity_type", "")
@@ -139,8 +141,8 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # get the asset id
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace)
+        # get the asset id — scope to project to prevent cross-project IDOR
+        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -179,8 +181,8 @@ class AssetRestoreEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get the asset
-        asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace)
+        # Get the asset — scope to project to prevent cross-project IDOR
+        asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])

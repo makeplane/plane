@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "개요",
+        "empty_state": {
+          "title": "제목이 없습니다",
+          "description": "이 페이지에 제목을 추가하여 여기에서 확인해보세요."
+        }
+      },
+      "info": {
+        "label": "정보",
+        "document_info": {
+          "words": "단어",
+          "characters": "문자",
+          "paragraphs": "단락",
+          "read_time": "읽기 시간"
+        },
+        "actors_info": {
+          "edited_by": "편집자",
+          "created_by": "작성자"
+        },
+        "version_history": {
+          "label": "버전 기록",
+          "current_version": "현재 버전",
+          "highlight_changes": "변경 사항 강조 표시"
+        }
+      },
+      "assets": {
+        "label": "자산",
+        "download_button": "다운로드",
+        "empty_state": {
+          "title": "이미지가 없습니다",
+          "description": "이미지를 추가하여 여기에서 확인하세요."
+        }
+      },
+      "comments": {
+        "label": "댓글",
+        "empty_state": {
+          "title": "댓글 없음",
+          "description": "댓글을 추가하여 여기에서 확인하세요."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "스티키 이름은 100자를 초과할 수 없습니다.",
+        "already_exists": "설명이 없는 스티키가 이미 존재합니다"
+      },
+      "created": {
+        "title": "스티키 생성됨",
+        "message": "스티키가 성공적으로 생성되었습니다"
+      },
+      "not_created": {
+        "title": "스티키가 생성되지 않음",
+        "message": "스티키를 생성할 수 없습니다"
+      },
+      "updated": {
+        "title": "스티키 업데이트됨",
+        "message": "스티키가 성공적으로 업데이트되었습니다"
+      },
+      "not_updated": {
+        "title": "스티키가 업데이트되지 않음",
+        "message": "스티키를 업데이트할 수 없습니다"
+      },
+      "removed": {
+        "title": "스티키 제거됨",
+        "message": "스티키가 성공적으로 제거되었습니다"
+      },
+      "not_removed": {
+        "title": "스티키가 제거되지 않음",
+        "message": "스티키를 제거할 수 없습니다"
+      }
+    },
+    "open_button": "네비게이션 패널 열기",
+    "close_button": "네비게이션 패널 닫기",
+    "outline_floating_button": "개요 열기"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "이동",
+        "loading": "이동 중"
+      },
+      "cannot_move_to_teamspace": "비공개 및 공유 페이지는 팀스페이스로 이동할 수 없습니다.",
+      "placeholders": {
+        "workspace_to_all": "프로젝트 및 팀스페이스 검색",
+        "workspace_to_project": "프로젝트 검색",
+        "project_to_all": "프로젝트 및 팀스페이스 검색",
+        "project_to_project": "프로젝트 검색",
+        "project_to_all_with_wiki": "위키 컬렉션, 프로젝트 및 팀스페이스 검색",
+        "project_to_project_with_wiki": "위키 컬렉션 및 프로젝트 검색"
+      },
+      "toasts": {
+        "success": {
+          "title": "성공!",
+          "message": "페이지가 성공적으로 이동되었습니다."
+        },
+        "error": {
+          "title": "오류!",
+          "message": "페이지를 이동할 수 없습니다. 나중에 다시 시도해 주세요."
+        },
+        "collection_error": {
+          "title": "위키로 이동됨",
+          "message": "페이지가 위키로 이동되었지만 선택한 컬렉션에 추가할 수 없었습니다. 페이지는 General에 그대로 유지됩니다."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "컬렉션에서 제거",
+      "success_message": "페이지가 컬렉션에서 제거되었습니다.",
+      "error_message": "페이지를 컬렉션에서 제거할 수 없습니다. 다시 시도해 주세요."
+    }
+  }
+}

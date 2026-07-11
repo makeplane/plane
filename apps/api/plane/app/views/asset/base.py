@@ -4,17 +4,20 @@
 
 # Third party imports
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
+from plane.app.permissions import WorkspaceMemberPermission
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
 
 
 class FileAssetEndpoint(BaseAPIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
+    permission_classes = [IsAuthenticated, WorkspaceMemberPermission]
 
     """
     A viewset for viewing and editing task instances.
@@ -33,10 +36,11 @@ class FileAssetEndpoint(BaseAPIView):
             )
 
     def post(self, request, slug):
+        # WorkspaceMemberPermission already rejects unknown slugs before this runs.
+        # Use .get() so any TOCTOU race still surfaces as a 404 via ObjectDoesNotExist.
+        workspace = Workspace.objects.get(slug=slug)
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
-            # Get the workspace
-            workspace = Workspace.objects.get(slug=slug)
             serializer.save(workspace_id=workspace.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -50,6 +54,8 @@ class FileAssetEndpoint(BaseAPIView):
 
 
 class FileAssetViewSet(BaseViewSet):
+    permission_classes = [IsAuthenticated, WorkspaceMemberPermission]
+
     def restore(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
