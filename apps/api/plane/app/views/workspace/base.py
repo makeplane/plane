@@ -43,6 +43,7 @@ from plane.db.models import (
     Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
+from plane.utils.activity_filters import workspace_activity_visibility_q
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
@@ -382,10 +383,9 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
 
         user_activities = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            workspace_activity_visibility_q(request.user),
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             actor_id=user_id,
         ).select_related("actor", "workspace", "issue", "project")[:10000]
 

@@ -79,6 +79,10 @@ def user_activity_url(slug, user_id):
     return f"/api/workspaces/{slug}/user-activity/{user_id}/"
 
 
+def user_activity_export_url(slug, user_id):
+    return f"/api/workspaces/{slug}/user-activity/{user_id}/export/"
+
+
 @pytest.fixture
 def project(db, workspace, create_user):
     project = Project.objects.create(
@@ -431,3 +435,75 @@ class TestWorkspaceUserActivityNonRegression:
             {"start_date": "2026-06-10", "end_date": "2026-06-01"},
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.contract
+class TestWorkspaceUserActivityGuestVisibility:
+    """The per-user endpoint and its CSV export must enforce guest_view_all_features.
+
+    Fix for the pre-existing leak: a workspace guest querying another member's
+    activity used to see activity for work items they had no right to see.
+    """
+
+    @pytest.mark.django_db
+    def test_per_user_guest_without_view_all_sees_only_own_created_work_items(
+        self, session_client, workspace, project, create_user
+    ):
+        assert project.guest_view_all_features is False
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        own_issue = make_issue(project, workspace, name="Guest Issue", created_by=guest)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        # Both activities are authored by the *target* user (create_user).
+        own = make_activity(project, own_issue, create_user)
+        leaked = make_activity(project, foreign_issue, create_user)
+
+        session_client.force_authenticate(user=guest)
+        response = session_client.get(user_activity_url(workspace.slug, create_user.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        ids = [row["id"] for row in response.json()["results"]]
+        assert ids == [str(own.id)]
+        assert str(leaked.id) not in ids
+
+    @pytest.mark.django_db
+    def test_per_user_guest_with_view_all_sees_target_activity(
+        self, session_client, workspace, project, create_user
+    ):
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
+        guest = make_user(workspace=workspace, role_ws=5, project=project, role_project=5)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        a1 = make_activity(project, foreign_issue, create_user)
+
+        session_client.force_authenticate(user=guest)
+        response = session_client.get(user_activity_url(workspace.slug, create_user.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [row["id"] for row in response.json()["results"]] == [str(a1.id)]
+
+    @pytest.mark.django_db
+    def test_export_project_guest_without_view_all_only_exports_own_created_work_items(
+        self, session_client, workspace, project, create_user
+    ):
+        # The CSV export is POST-gated to workspace Admin/Member; the reachable leak
+        # is a workspace MEMBER who is a GUEST on the project (project role 5).
+        assert project.guest_view_all_features is False
+        guest = make_user(workspace=workspace, role_ws=15, project=project, role_project=5)
+        own_issue = make_issue(project, workspace, name="Guest Issue", created_by=guest)
+        foreign_issue = make_issue(project, workspace, name="Foreign Issue", created_by=create_user)
+        make_activity(project, own_issue, create_user, created_on=noon_utc(2026, 6, 5))
+        make_activity(project, foreign_issue, create_user, created_on=noon_utc(2026, 6, 5))
+
+        session_client.force_authenticate(user=guest)
+        response = session_client.post(
+            user_activity_export_url(workspace.slug, create_user.id),
+            {"date": "2026-06-05"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response["Content-Type"].startswith("text/csv")
+        data_rows = [line for line in response.content.decode().strip().splitlines() if line]
+        # Header + exactly one data row (the guest-created work item); the foreign
+        # work item's activity is excluded (before the fix there were two rows).
+        assert len(data_rows) == 2
