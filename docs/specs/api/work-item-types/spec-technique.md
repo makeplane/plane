@@ -72,6 +72,10 @@ Remplacer les stubs CE (résolus via `@/plane-web/* -> ./ce/*`) :
 - Toggle projet dans les settings (`project/settings/features-list` — l'entrée existe, la câbler avec confirmation irréversible + `UpgradeBadge` retiré).
 - **Ne PAS** implémenter les composants custom-properties (provider no-op laissé tel quel) — module suivant.
 
+## Pitfalls identifiés
+
+- **`computedFn`/`DeepMap` — arité d'appel constante (web)** : `getProjectIssueTypes` dans `core/store/issue-type.store.ts` est un `computedFn` mémoïsé par une `DeepMap` MobX ; cette structure exige que tous les appels utilisent **exactement le même nombre d'arguments**. Toujours passer les deux arguments `(projectId, activeOnly)` même quand `activeOnly=false` est la valeur par défaut — omettre le second argument sur un seul call-site déclenche `DeepMap should be used with functions with a consistent length` selon l'ordre de rendu. Reproduit et corrigé (fix/issue-type-computedfn-arity, 2026-07-11).
+
 ## Tests
 
 - pytest : CRUD interne + v1, permissions (admin vs member), un seul défaut, seeding à l'activation, exposition `type_id` sur issue, resolve par name. Non exécutés en local (pas d'env BDD).
