@@ -22,9 +22,9 @@
 
 1. **Activer la sélection** : lever le gate → la multi-sélection (déjà codée) devient active dans **List + Spreadsheet** ; sur les layouts epic, elle reste désactivée (comportement existant `isEpic`).
 2. **Toolbar d'action** (remplace la bannière) : barre sticky en bas quand ≥1 work item est sélectionné → **compteur** de sélection + dropdowns d'édition + **bouton « Update »** + actions **Archive** / **Delete** + **clear**.
-3. **Édition de propriétés en masse** (sémantique **SET / remplacer**, décision dev 2026-07-11) : l'utilisateur choisit des valeurs qui s'accumulent localement (rien n'est envoyé avant « Update »). Au clic, un seul appel applique les propriétés **présentes** à tous les work items sélectionnés :
-   - Scalaires : `state`, `priority`, `start_date`, `target_date`, `cycle`, `estimate point` → posés tels quels.
-   - Multi-valeurs (`assignés`, `labels`, `modules`) → **remplacent** l'ensemble existant (parité avec l'édition unitaire).
+3. **Édition de propriétés en masse** (décision dev 2026-07-11 : **scalaires = SET**, **multi-valeurs = ADD/append** — sémantique native de Plane, révélée par le store optimiste upstream `uniq([...old, ...new])`) : l'utilisateur choisit des valeurs qui s'accumulent localement (rien n'est envoyé avant « Update »). Au clic, un seul appel applique les propriétés **présentes** à tous les work items sélectionnés :
+   - Scalaires : `state`, `priority`, `start_date`, `target_date`, `cycle`, `estimate point` → **remplacent** la valeur existante.
+   - Multi-valeurs (`assignés`, `labels`, `modules`) → **s'ajoutent** à l'ensemble existant (append dédupliqué) ; une liste vide est un no-op (ne vide pas).
    - Champs **absents** du payload = inchangés.
 4. **Champs V1** : tous ceux de `TBulkIssueProperties` (state, priority, assignés, labels, start/target date, cycle, module, estimate point), **chacun gaté par la dispo projet** (estimate si activé, cycle/module si leur vue est activée).
 5. **Archive / Delete en masse** : réutilisent les endpoints CE existants (`bulk-archive-issues/`, `bulk-delete-issues/`). Delete garde une confirmation (irréversible) ; archive valide déjà que l'état est completed/cancelled.
@@ -48,7 +48,7 @@
 
 ## Hors V1
 
-- Sémantique **ADD / REMOVE** pour les champs multi-valeurs (V1 = SET) — évolution future.
+- Sémantique **SET / remplacement** et **REMOVE** pour les champs multi-valeurs (V1 = ADD/append) — évolution future (permettrait de vider/retirer en masse).
 - **Bulk-subscribe** (`bulk-subscribe-issues/`, référencé par le front, absent CE) — hors périmètre V1 (petit add-on possible ultérieurement).
 - Bulk **cross-projet** (workspace) — les endpoints sont scoping `/projects/<id>/` ; V1 = intra-projet (la sélection multiple est déjà par projet).
 - Bulk sur layouts **Board/Calendar/Gantt** — V1 = List + Spreadsheet (seuls câblés).
@@ -65,7 +65,7 @@
 
 ## Critères d'acceptation
 
-- `POST /bulk-operation-issues/` applique les propriétés présentes (SET) à N work items, en transaction, avec activité par item ; validations serveur → 400 (état/membre/label/module/cycle/estimate hors projet, dates incohérentes, lot vide).
+- `POST /bulk-operation-issues/` applique les propriétés présentes (scalaires SET, M2M ADD) à N work items (≤100), en transaction, avec activité par item dispatchée sur commit ; validations serveur → 400 (état/membre/label/module/cycle/estimate hors projet, dates incohérentes, lot vide/hors borne, payload malformé).
 - Isolation projet stricte (un `issue_id` d'un autre projet → 400, aucune fuite) ; permissions ADMIN+MEMBER imposées (guest/viewer → 403).
 - v1 token : même contrat, testé avec APIToken réel dans Docker ; aligne un futur outil MCP bulk.
 - Web : gate levé, toolbar fonctionnelle (compteur, dropdowns gatés par features projet, Update, archive/delete, clear) dans List + Spreadsheet ; `check:types` EXIT=0 ; i18n complète.
