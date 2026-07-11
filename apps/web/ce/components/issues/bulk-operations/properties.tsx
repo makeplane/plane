@@ -96,7 +96,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
       <DateDropdown
         value={properties.start_date ?? null}
         onChange={(date: Date | null) => handleChange({ start_date: renderFormattedPayloadDate(date) ?? null })}
-        placeholder={t("common.start_date")}
+        placeholder={t("start_date")}
         icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="border-with-text"
         disabled={disabled}
@@ -106,7 +106,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
       <DateDropdown
         value={properties.target_date ?? null}
         onChange={(date: Date | null) => handleChange({ target_date: renderFormattedPayloadDate(date) ?? null })}
-        placeholder={t("common.due_date")}
+        placeholder={t("due_date")}
         icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="border-with-text"
         disabled={disabled}

@@ -86,7 +86,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("common.error"),
+        title: t("common.error.label"),
         message: t("entity.update.failed", { entity: handleEntityLabel() }),
       });
     } finally {
@@ -108,7 +108,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("common.error"),
+        title: t("common.error.label"),
         message: t("common.something_went_wrong"),
       });
     } finally {
@@ -131,7 +131,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("common.error"),
+        title: t("common.error.label"),
         message: t("entity.delete.failed", { entity: handleEntityLabel() }),
       });
     } finally {
