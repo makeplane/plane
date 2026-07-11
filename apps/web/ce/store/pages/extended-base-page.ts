@@ -15,8 +15,9 @@ export type TExtendedPageInstance = TPageExtended & {
 export class ExtendedBasePage implements TExtendedPageInstance {
   // The body is intentionally empty: this is the community-edition stub, and the constructor
   // exists to define the signature that `BasePage`'s `super(store, page, services)` call and the
-  // enterprise variant both rely on. Deleting it as a "useless constructor" breaks the subclass.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-useless-constructor
+  // enterprise variant both rely on. (no-useless-constructor is disabled repo-wide in
+  // .oxlintrc.json, because its autofix deletes constructors like this one.)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(store: RootStore, page: TPage, services: TBasePageServices) {}
 
   get asJSONExtended(): TExtendedPageInstance["asJSONExtended"] {
