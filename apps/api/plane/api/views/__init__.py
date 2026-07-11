@@ -71,4 +71,6 @@ from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
 
+from .service_account import ServiceAccountAPIEndpoint
+
 from .sticky import StickyViewSet

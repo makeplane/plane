@@ -77,6 +77,25 @@ class RequestLoggerMiddleware:
         return response
 
 
+# A view can set this attribute on its response to keep the (secret-bearing)
+# body out of the api_activity_logs table — the response-body analogue of
+# APITokenLogMiddleware.SENSITIVE_HEADERS. Use it for endpoints that return a
+# credential (e.g. a freshly minted API token) which must never be persisted in
+# plaintext.
+REDACT_RESPONSE_BODY_ATTR = "_plane_redact_log_body"
+
+
+def redact_response_body(response):
+    """Flag a response so APITokenLogMiddleware does not persist its body.
+
+    Returns the response so it can be used inline, e.g.::
+
+        return redact_response_body(Response(data, status=201))
+    """
+    setattr(response, REDACT_RESPONSE_BODY_ATTR, True)
+    return response
+
+
 class APITokenLogMiddleware:
     """
     Middleware to log External API requests to PostgreSQL.
@@ -136,6 +155,13 @@ class APITokenLogMiddleware:
             return
 
         try:
+            # A secret-bearing response (e.g. a newly minted API token) must not
+            # be persisted in plaintext — mirrors the header redaction above.
+            if getattr(response, REDACT_RESPONSE_BODY_ATTR, False):
+                response_body = "[REDACTED]"
+            else:
+                response_body = self._safe_decode_body(response.content) if response.content else None
+
             log_data = {
                 # Tokenize the (high-entropy) API key into a stable, non-reversible
                 # identifier so logs can be correlated to a token without ever
@@ -149,7 +175,7 @@ class APITokenLogMiddleware:
                 "query_params": request.META.get("QUERY_STRING", ""),
                 "headers": self._redacted_headers(request),
                 "body": self._safe_decode_body(request_body) if request_body else None,
-                "response_body": self._safe_decode_body(response.content) if response.content else None,
+                "response_body": response_body,
                 "response_code": response.status_code,
                 "ip_address": get_client_ip(request=request),
                 "user_agent": request.META.get("HTTP_USER_AGENT", None),

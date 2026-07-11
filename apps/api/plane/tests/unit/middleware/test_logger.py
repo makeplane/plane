@@ -20,7 +20,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
 
-from plane.middleware.logger import APITokenLogMiddleware
+from plane.middleware.logger import APITokenLogMiddleware, redact_response_body
 
 
 @pytest.fixture
@@ -56,9 +56,7 @@ class TestAPITokenLogMiddleware:
     def test_token_identifier_is_hashed_not_plaintext(self, middleware, request_factory):
         log_data = self._captured_log_data(middleware, request_factory)
 
-        expected_hash = hmac.new(
-            settings.SECRET_KEY.encode(), self.API_KEY.encode(), hashlib.sha256
-        ).hexdigest()
+        expected_hash = hmac.new(settings.SECRET_KEY.encode(), self.API_KEY.encode(), hashlib.sha256).hexdigest()
         assert log_data["token_identifier"] == expected_hash
         assert self.API_KEY not in log_data["token_identifier"]
 
@@ -77,3 +75,24 @@ class TestAPITokenLogMiddleware:
         with patch("plane.middleware.logger.process_logs") as process_logs:
             middleware.process_request(request, HttpResponse(b"{}"), request_body=b"")
             assert not process_logs.delay.called
+
+    def test_response_body_is_logged_by_default(self, middleware, request_factory):
+        request = request_factory.get("/api/v1/workspaces/", HTTP_X_API_KEY=self.API_KEY)
+        request.user = AnonymousUser()
+        response = HttpResponse(b'{"ok": true}')
+        with patch("plane.middleware.logger.process_logs") as process_logs:
+            middleware.process_request(request, response, request_body=b"")
+            log_data = process_logs.delay.call_args.kwargs["log_data"]
+        assert log_data["response_body"] == '{"ok": true}'
+
+    def test_flagged_response_body_is_redacted(self, middleware, request_factory):
+        # A view that returns a secret (e.g. a minted API token) flags its response
+        # via redact_response_body so the body is never persisted in plaintext.
+        request = request_factory.post("/api/v1/workspaces/x/service-accounts/", HTTP_X_API_KEY=self.API_KEY)
+        request.user = AnonymousUser()
+        response = redact_response_body(HttpResponse(b'{"token": "plane_api_supersecret"}'))
+        with patch("plane.middleware.logger.process_logs") as process_logs:
+            middleware.process_request(request, response, request_body=b"")
+            log_data = process_logs.delay.call_args.kwargs["log_data"]
+        assert log_data["response_body"] == "[REDACTED]"
+        assert "plane_api_supersecret" not in log_data["response_body"]

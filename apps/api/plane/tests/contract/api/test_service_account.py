@@ -1,0 +1,246 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+"""
+Contract tests for workspace service (machine) accounts.
+
+Proves that a service account created without any invite/email/password flow is
+a valid, distinct actor: it authenticates with its own API token and its writes
+are attributed to it via ``created_by``.
+
+Covered surfaces:
+- the ``create_service_account`` management command, and
+- the admin-scoped ``POST /api/v1/workspaces/{slug}/service-accounts/`` endpoint.
+"""
+
+from unittest.mock import patch
+
+import pytest
+from django.core.management import call_command
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from plane.db.models import APIToken, BotTypeEnum, Project, User, Workspace, WorkspaceMember
+from plane.db.models.api import generate_token
+
+USERS_ME_URL = "/api/v1/users/me/"
+
+
+def _client_for_token(token: str) -> APIClient:
+    client = APIClient()
+    client.credentials(HTTP_X_API_KEY=token)
+    return client
+
+
+def _service_account_for(workspace: Workspace) -> WorkspaceMember:
+    return WorkspaceMember.objects.select_related("member").get(
+        workspace=workspace,
+        member__is_bot=True,
+        member__bot_type=BotTypeEnum.SERVICE,
+    )
+
+
+@pytest.mark.contract
+class TestServiceAccountCommand:
+    """The management command provisions a valid, distinct, token-authing actor."""
+
+    @pytest.mark.django_db
+    def test_command_creates_active_verified_bot_member_with_token(self, workspace):
+        call_command(
+            "create_service_account",
+            workspace=workspace.slug,
+            name="CI Provisioner",
+            role="admin",
+        )
+
+        member = _service_account_for(workspace)
+        user = member.member
+
+        # A valid actor: active + email verified, with no password round-trip.
+        assert user.is_active is True
+        assert user.is_email_verified is True
+        assert user.is_email_valid is True
+        assert user.is_bot is True
+        assert user.bot_type == BotTypeEnum.SERVICE
+        assert user.is_password_autoset is True
+        assert user.display_name == "CI Provisioner"
+
+        # Added as a workspace member with the requested role.
+        assert member.role == 20
+        assert member.is_active is True
+
+        # A workspace-scoped bot API token was minted.
+        token = APIToken.objects.get(user=user)
+        assert token.user_type == 1  # Bot
+        assert token.is_service is True
+        assert token.workspace_id == workspace.id
+        assert token.token.startswith("plane_api_")
+
+    @pytest.mark.django_db
+    def test_command_token_authenticates_as_distinct_actor(self, workspace):
+        call_command("create_service_account", workspace=workspace.slug, name="Robby", role="admin")
+
+        user = _service_account_for(workspace).member
+        token = APIToken.objects.get(user=user)
+
+        response = _client_for_token(token.token).get(USERS_ME_URL)
+
+        assert response.status_code == status.HTTP_200_OK
+        # The token resolves to the service account itself — a distinct identity.
+        assert str(response.data["id"]) == str(user.id)
+        assert response.data["email"] == user.email
+        assert response.data["display_name"] == "Robby"
+
+    @pytest.mark.django_db
+    def test_command_service_account_writes_are_attributed_to_it(self, workspace):
+        call_command("create_service_account", workspace=workspace.slug, name="Author Bot", role="admin")
+
+        user = _service_account_for(workspace).member
+        token = APIToken.objects.get(user=user)
+        client = _client_for_token(token.token)
+
+        response = client.post(
+            f"/api/v1/workspaces/{workspace.slug}/projects/",
+            {"name": "Provisioned Project", "identifier": "PROV"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        project = Project.objects.get(id=response.data["id"])
+        # The write is attributed to the service account, not to any human.
+        assert project.created_by_id == user.id
+
+    @pytest.mark.django_db
+    def test_command_supports_member_role(self, workspace):
+        call_command("create_service_account", workspace=workspace.slug, name="Member Bot", role="member")
+
+        member = _service_account_for(workspace)
+        assert member.role == 15
+
+    @pytest.mark.django_db
+    def test_command_unknown_workspace_errors(self):
+        from django.core.management.base import CommandError
+
+        with pytest.raises(CommandError):
+            call_command("create_service_account", workspace="does-not-exist", name="X", role="admin")
+
+    @pytest.mark.django_db
+    def test_command_duplicate_email_errors_cleanly(self, workspace):
+        User.objects.create(username="taken", email="taken@plane.so")
+
+        from django.core.management.base import CommandError
+
+        with pytest.raises(CommandError):
+            call_command(
+                "create_service_account",
+                workspace=workspace.slug,
+                name="Dup",
+                role="admin",
+                email="taken@plane.so",
+            )
+
+    @pytest.mark.django_db
+    def test_command_integrity_error_becomes_command_error(self, workspace):
+        # A uniqueness collision that slips past the pre-check (e.g. an email
+        # race) surfaces as IntegrityError from the helper; the command must
+        # translate it into a readable CommandError, not a raw traceback.
+        from django.core.management.base import CommandError
+        from django.db import IntegrityError
+
+        with patch(
+            "plane.db.management.commands.create_service_account.create_service_account",
+            side_effect=IntegrityError("duplicate key value violates unique constraint"),
+        ):
+            with pytest.raises(CommandError):
+                call_command("create_service_account", workspace=workspace.slug, name="Race", role="admin")
+
+
+@pytest.mark.contract
+class TestServiceAccountEndpoint:
+    """The admin-scoped HTTP endpoint mirrors the command."""
+
+    def _url(self, slug: str) -> str:
+        return f"/api/v1/workspaces/{slug}/service-accounts/"
+
+    @pytest.mark.django_db
+    def test_admin_creates_service_account_and_token_works(self, api_key_client, workspace, create_user):
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "HTTP Bot", "role": "admin"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        assert response.data["role"] == 20
+        assert response.data["display_name"] == "HTTP Bot"
+        token = response.data["token"]
+        assert token.startswith("plane_api_")
+
+        # Provisioning is attributed to the acting admin (via crum current-user).
+        member = WorkspaceMember.objects.get(member_id=response.data["id"], workspace=workspace)
+        assert member.created_by_id == create_user.id
+        assert APIToken.objects.get(user_id=response.data["id"]).created_by_id == create_user.id
+
+        # The returned token authenticates as the newly created distinct actor.
+        me = _client_for_token(token).get(USERS_ME_URL)
+        assert me.status_code == status.HTTP_200_OK
+        assert str(me.data["id"]) == str(response.data["id"])
+
+        # And its writes attribute to it.
+        created = _client_for_token(token).post(
+            f"/api/v1/workspaces/{workspace.slug}/projects/",
+            {"name": "HTTP Provisioned", "identifier": "HTTPP"},
+            format="json",
+        )
+        assert created.status_code == status.HTTP_201_CREATED, created.data
+        project = Project.objects.get(id=created.data["id"])
+        assert str(project.created_by_id) == str(response.data["id"])
+
+    @pytest.mark.django_db
+    def test_minted_token_is_not_persisted_in_request_log(self, api_key_client, workspace):
+        # The admin calls this endpoint WITH their X-Api-Key, so APITokenLogMiddleware
+        # runs and would otherwise persist the response body (which carries the
+        # freshly minted token) into api_activity_logs in plaintext. The response is
+        # flagged for body redaction; assert the logged body never contains the token.
+        with patch("plane.middleware.logger.process_logs") as process_logs:
+            response = api_key_client.post(
+                self._url(workspace.slug),
+                {"name": "Secret Bot", "role": "admin"},
+                format="json",
+            )
+            assert response.status_code == status.HTTP_201_CREATED, response.data
+            token = response.data["token"]
+            assert process_logs.delay.called
+            log_data = process_logs.delay.call_args.kwargs["log_data"]
+
+        assert log_data["response_body"] == "[REDACTED]"
+        assert token not in (log_data["response_body"] or "")
+
+    @pytest.mark.django_db
+    def test_non_admin_member_is_forbidden(self, api_client, workspace):
+        # A guest member of the workspace is not a workspace admin.
+        guest = User.objects.create(username="guest_user", email="guest@plane.so")
+        guest.set_password("guest-pass")
+        guest.save()
+        WorkspaceMember.objects.create(workspace=workspace, member=guest, role=5, is_active=True)
+        guest_token = APIToken.objects.create(user=guest, label="guest-token", token=generate_token())
+
+        response = _client_for_token(guest_token.token).post(
+            self._url(workspace.slug),
+            {"name": "Should Fail", "role": "admin"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        # No service account leaked into the workspace.
+        assert not WorkspaceMember.objects.filter(workspace=workspace, member__bot_type=BotTypeEnum.SERVICE).exists()
+
+    @pytest.mark.django_db
+    def test_unauthenticated_is_rejected(self, api_client, workspace):
+        response = api_client.post(
+            self._url(workspace.slug),
+            {"name": "Anon", "role": "admin"},
+            format="json",
+        )
+        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
