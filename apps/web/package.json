@@ -48,6 +48,7 @@
     "date-fns": "catalog:",
     "emoji-picker-react": "catalog:",
     "export-to-csv": "catalog:",
+    "fflate": "^0.8.3",
     "framer-motion": "catalog:",
     "isbot": "catalog:",
     "lodash-es": "catalog:",

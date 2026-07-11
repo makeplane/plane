@@ -2,6 +2,11 @@
   "file_library": {
     "title": "Archivos",
     "download": "Descargar",
+    "download_all": "Descargar",
+    "download_all_hint": "Descarga todos los archivos que coinciden con los filtros actuales (todos los archivos si no hay filtros aplicados)",
+    "download_selected": "Descargar seleccionados",
+    "download_started": "{count, plural, one {Iniciando # descarga} other {Preparando ZIP con # archivos}}",
+    "download_failed": "No se pudieron descargar algunos archivos",
     "delete": "Eliminar",
     "delete_title": "¿Eliminar {name}?",
     "delete_description": "El archivo se eliminará de la biblioteca. Esta acción no se puede deshacer.",

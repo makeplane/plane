@@ -2,6 +2,11 @@
   "file_library": {
     "title": "Files",
     "download": "Download",
+    "download_all": "Download",
+    "download_all_hint": "Downloads every file matching the current filters (all files when no filters are applied)",
+    "download_selected": "Download selected",
+    "download_started": "{count, plural, one {Starting # download} other {Preparing ZIP with # files}}",
+    "download_failed": "Some files could not be downloaded",
     "delete": "Delete",
     "delete_title": "Delete {name}?",
     "delete_description": "The file will be removed from the library. This action cannot be undone.",

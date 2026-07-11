@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { FileText, Search } from "lucide-react";
 // plane imports
@@ -21,12 +21,14 @@ type Props = {
   workspaceSlug: string;
   isOpen: boolean;
   onClose: () => void;
+  /** Pre-seeds the file selection (e.g. from the browser's multi-select) */
+  initialFileIds?: string[];
 };
 
 type TBulkTab = "move" | "categories" | "tags" | "delete";
 
 export const BulkActionsModal = observer(function BulkActionsModal(props: Props) {
-  const { workspaceSlug, isOpen, onClose } = props;
+  const { workspaceSlug, isOpen, onClose, initialFileIds } = props;
   const { t } = useTranslation();
   const {
     fileIds,
@@ -52,6 +54,12 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
   const [labelIds, setLabelIds] = useState<string[]>([]);
   const [removeMode, setRemoveMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Each open starts from the caller's selection (empty when opened bare)
+  useEffect(() => {
+    if (isOpen) setSelectedFileIds(initialFileIds ?? []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const visibleFileIds = fileIds.filter((id) => {
     const file = getFileById(id);

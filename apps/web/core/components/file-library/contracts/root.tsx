@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, MessageSquare, RefreshCcw, Search, Sparkles, X } from "lucide-react";
+import { Download, Loader2, MessageSquare, RefreshCcw, Search, Sparkles, X } from "lucide-react";
 import { useSearchParams } from "react-router";
 import useSWR from "swr";
 // plane imports
@@ -15,6 +15,8 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TContract, TContractFilters, TContractJob, TContractRetryOptions } from "@plane/types";
 // services
 import { contractService } from "@/services/contract.service";
+// local imports
+import { downloadAssets } from "../download";
 // local imports
 import { ContractChatModal } from "./chat/chat-modal";
 import { AppliedContractFilters, ContractFiltersDropdown } from "./filters";
@@ -104,6 +106,27 @@ export function ContractsRoot(props: Props) {
   const toggleSelectAll = () =>
     setSelectedIds((previous) => (previous.length === (contracts ?? []).length ? [] : (contracts ?? []).map((c) => c.id)));
 
+  // Downloads the contracts' backing documents: one file directly, several
+  // bundled into a ZIP. Callers pass the filtered list or the selection.
+  const downloadContractFiles = async (contractsToDownload: TContract[]) => {
+    const targets = contractsToDownload
+      .filter((contract): contract is TContract & { file_asset_id: string } => !!contract.file_asset_id)
+      .map((contract) => ({
+        assetId: contract.file_asset_id,
+        name: contract.file_name ?? `${contract.titulo ?? contract.id}.pdf`,
+      }));
+    if (targets.length === 0) return;
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("file_library.download_started", { count: targets.length }),
+    });
+    try {
+      await downloadAssets(workspaceSlug, targets, "contratos");
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("file_library.download_failed") });
+    }
+  };
+
   const handleBulk = async (action: "retry" | "reanalyze", retryOptions?: TContractRetryOptions) => {
     if (selectedIds.length === 0 || isBulkActing) return;
     setIsBulkActing(true);
@@ -141,7 +164,18 @@ export function ContractsRoot(props: Props) {
               className="w-36 rounded-md border border-subtle bg-transparent py-1.5 pl-8 pr-2 text-12 sm:w-64"
             />
           </div>
-          <ContractFiltersDropdown filters={filters} onChange={setFilters} />
+          <ContractFiltersDropdown workspaceSlug={workspaceSlug} filters={filters} onChange={setFilters} />
+          {/* contextual download: every contract matching the current filters */}
+          <button
+            type="button"
+            onClick={() => void downloadContractFiles(contracts ?? [])}
+            disabled={(contracts ?? []).length === 0}
+            title={t("file_library.download_all_hint")}
+            className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1.5 text-12 hover:bg-layer-1-hover disabled:opacity-50"
+          >
+            <Download className="size-3.5" />
+            <span className="hidden lg:inline">{t("file_library.download_all")}</span>
+          </button>
         </div>
         <div className="flex items-center gap-2">
           {(activeJobs?.length ?? 0) > 0 && (
@@ -165,7 +199,12 @@ export function ContractsRoot(props: Props) {
       </div>
 
       {/* applied filter pills */}
-      <AppliedContractFilters filters={filters} onChange={setFilters} onClearAll={() => setFiltersState({})} />
+      <AppliedContractFilters
+        workspaceSlug={workspaceSlug}
+        filters={filters}
+        onChange={setFilters}
+        onClearAll={() => setFiltersState({})}
+      />
 
       {/* bulk actions bar */}
       {selectedIds.length > 0 && (
@@ -180,6 +219,16 @@ export function ContractsRoot(props: Props) {
           <Button variant="secondary" size="sm" onClick={() => void handleBulk("reanalyze")} disabled={isBulkActing}>
             <Sparkles className="size-3.5" />
             {t("file_library.contracts.reanalyze.button")}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              void downloadContractFiles((contracts ?? []).filter((contract) => selectedIds.includes(contract.id)))
+            }
+          >
+            <Download className="size-3.5" />
+            {t("file_library.download_selected")}
           </Button>
           <button
             type="button"

@@ -46,7 +46,7 @@ export const FiltersDropdown = observer(function FiltersDropdown() {
   const query = search.trim().toLowerCase();
 
   return (
-    <Popover>
+    <Popover modal>
       <Popover.Button
         className={cn(
           "flex items-center gap-1 rounded-sm border border-subtle px-2 py-1.5 text-12 hover:bg-layer-1-hover",
@@ -59,7 +59,7 @@ export const FiltersDropdown = observer(function FiltersDropdown() {
           <span className="rounded-full bg-accent-primary px-1 text-10 text-on-color">{activeCount}</span>
         )}
       </Popover.Button>
-      <Popover.Panel side="bottom" align="start">
+      <Popover.Panel positionerClassName="z-100" side="bottom" align="start">
         <div className="w-64 rounded-md border border-subtle bg-layer-1 p-2 shadow-raised-200">
           <div className="relative mb-1.5">
             <Search className="absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-tertiary" />
