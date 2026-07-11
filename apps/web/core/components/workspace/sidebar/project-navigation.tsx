@@ -147,7 +147,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     };
 
     // sort navigation items by sortOrder
-    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).sort(
+    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).toSorted(
       (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
     );
 

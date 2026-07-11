@@ -28,8 +28,8 @@ type Props = {
   totalProjects: number;
 };
 
-const MEMBERS_FILTERS = ["lead", "members"];
-const DATE_FILTERS = ["created_at"];
+const MEMBERS_FILTERS = new Set(["lead", "members"]);
+const DATE_FILTERS = new Set(["created_at"]);
 
 export function ProjectAppliedFiltersList(props: Props) {
   const { t } = useTranslation();
@@ -69,14 +69,14 @@ export function ProjectAppliedFiltersList(props: Props) {
                   values={value}
                 />
               )}
-              {DATE_FILTERS.includes(filterKey) && (
+              {DATE_FILTERS.has(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
                   values={value}
                 />
               )}
-              {MEMBERS_FILTERS.includes(filterKey) && (
+              {MEMBERS_FILTERS.has(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}

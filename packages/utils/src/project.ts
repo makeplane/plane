@@ -100,11 +100,11 @@ export const orderProjects = (projects: TProject[], orderByKey: TProjectOrderByO
 
   if (orderByKey === "sort_order") orderedProjects = sortBy(projects, [(p) => p.sort_order]);
   if (orderByKey === "name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]);
-  if (orderByKey === "-name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]).reverse();
+  if (orderByKey === "-name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]).toReversed();
   if (orderByKey === "created_at") orderedProjects = sortBy(projects, [(p) => p.created_at]);
   if (orderByKey === "-created_at") orderedProjects = sortBy(projects, [(p) => !p.created_at]);
   if (orderByKey === "members_length") orderedProjects = sortBy(projects, [(p) => p.members?.length]);
-  if (orderByKey === "-members_length") orderedProjects = sortBy(projects, [(p) => p.members?.length]).reverse();
+  if (orderByKey === "-members_length") orderedProjects = sortBy(projects, [(p) => p.members?.length]).toReversed();
 
   return orderedProjects;
 };

@@ -292,7 +292,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         set(this.issuesMap, [issueId], {
           ...issueBeforeUpdate,
           ...payload,
-          ...{ updated_at: getCurrentDateTimeInISO() },
+          updated_at: getCurrentDateTimeInISO(),
         });
       });
       const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);

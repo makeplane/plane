@@ -19,7 +19,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const DISABLED_ORDERING_OPTIONS = ["sort_order"];
+const DISABLED_ORDERING_OPTIONS = new Set(["sort_order"]);
 
 export function ProjectOrderByDropdown(props: Props) {
   const { onChange, value, isMobile = false } = props;
@@ -28,7 +28,7 @@ export function ProjectOrderByDropdown(props: Props) {
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
   const isDescending = value?.[0] === "-";
-  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.includes(value);
+  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.has(value);
 
   return (
     <CustomMenu

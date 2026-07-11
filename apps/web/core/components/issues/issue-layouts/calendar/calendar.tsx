@@ -122,7 +122,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
 
   if (!calendarPayload || !formattedDatePayload)
     return (

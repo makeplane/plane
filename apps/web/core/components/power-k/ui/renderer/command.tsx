@@ -37,7 +37,7 @@ export function CommandRenderer(props: Props) {
     {} as Record<TPowerKCommandGroup, TPowerKCommandConfig[]>
   );
 
-  const sortedGroups = Object.keys(commandsByGroup).sort((a, b) => {
+  const sortedGroups = Object.keys(commandsByGroup).toSorted((a, b) => {
     const aPriority = POWER_K_GROUP_PRIORITY[a as TPowerKCommandGroup];
     const bPriority = POWER_K_GROUP_PRIORITY[b as TPowerKCommandGroup];
     return aPriority - bPriority;

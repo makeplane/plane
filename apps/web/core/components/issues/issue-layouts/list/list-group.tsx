@@ -236,15 +236,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
       })
     );
-  }, [
-    groupRef?.current,
-    group,
-    orderBy,
-    getGroupIndex,
-    setDragColumnOrientation,
-    setIsDraggingOverColumn,
-    isWorkflowDropDisabled,
-  ]);
+  }, [group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn, isWorkflowDropDisabled]);
 
   const isDragAllowed = group_by ? DRAG_ALLOWED_GROUPS.includes(group_by) : true;
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;

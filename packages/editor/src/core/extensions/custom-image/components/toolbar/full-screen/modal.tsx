@@ -82,7 +82,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
         targetZoom = ZOOM_STEPS.find((step) => step > prev) ?? MAX_ZOOM;
       } else {
         // Reverse the array to find the next lower step
-        targetZoom = [...ZOOM_STEPS].reverse().find((step) => step < prev) ?? MIN_ZOOM;
+        targetZoom = [...ZOOM_STEPS].toReversed().find((step) => step < prev) ?? MIN_ZOOM;
       }
 
       // Reset position when zoom matches initial magnification

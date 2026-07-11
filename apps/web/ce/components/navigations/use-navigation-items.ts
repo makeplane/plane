@@ -108,7 +108,7 @@ export const useNavigationItems = ({
     });
 
     // Sort by sortOrder
-    return filteredItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    return filteredItems.toSorted((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   }, [workspaceSlug, projectId, baseNavigation, allowPermissions, project?.id]);
 
   return navigationItems;

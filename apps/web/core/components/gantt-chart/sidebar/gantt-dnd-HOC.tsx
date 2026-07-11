@@ -94,7 +94,7 @@ export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
         },
       })
     );
-  }, [blockRef?.current, isLastChild, onDrop]);
+  }, [isLastChild, onDrop]);
 
   useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove(HIGHLIGHT_WITH_LINE));
 

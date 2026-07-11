@@ -101,7 +101,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
       };
     });
 
-    return items.sort((a, b) => a.sortOrder - b.sortOrder);
+    return items.toSorted((a, b) => a.sortOrder - b.sortOrder);
   }, [workspaceSlug, allowPermissions, workspacePreferences]);
 
   // Handle checkbox toggle
@@ -150,7 +150,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
       };
     });
 
-    return items.sort((a, b) => a.sortOrder - b.sortOrder);
+    return items.toSorted((a, b) => a.sortOrder - b.sortOrder);
   }, [personalPreferences, filteredPersonalItems]);
 
   // Prevent typing invalid characters in number input

@@ -109,7 +109,7 @@ export const sortMembers = <T>(
 
   const { field, direction } = parseOrderKey(orderBy);
 
-  return [...members].sort((a, b) => {
+  return [...members].toSorted((a, b) => {
     const aKey = getMemberKey(a);
     const bKey = getMemberKey(b);
     const aMemberDetails = memberDetailsMap[aKey];
