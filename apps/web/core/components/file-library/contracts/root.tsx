@@ -12,7 +12,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { TContract, TContractFilters, TContractJob } from "@plane/types";
+import type { TContract, TContractFilters, TContractJob, TContractRetryOptions } from "@plane/types";
 // services
 import { contractService } from "@/services/contract.service";
 // local imports
@@ -20,6 +20,7 @@ import { ContractChatModal } from "./chat/chat-modal";
 import { AppliedContractFilters, ContractFiltersDropdown } from "./filters";
 import { ContractPeekPanel } from "./peek-panel";
 import { ContractQueryModal } from "./query-modal";
+import { RetryOptionsModal } from "./retry-options-modal";
 import { ContractsTable } from "./table";
 
 type Props = {
@@ -39,6 +40,7 @@ export function ContractsRoot(props: Props) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInitialQuery, setChatInitialQuery] = useState<string | undefined>(undefined);
   const [isBulkActing, setIsBulkActing] = useState(false);
+  const [isBulkRetryModalOpen, setIsBulkRetryModalOpen] = useState(false);
 
   const setFilters = (next: Partial<TContractFilters>) => setFiltersState((prev) => ({ ...prev, ...next }));
 
@@ -102,11 +104,16 @@ export function ContractsRoot(props: Props) {
   const toggleSelectAll = () =>
     setSelectedIds((previous) => (previous.length === (contracts ?? []).length ? [] : (contracts ?? []).map((c) => c.id)));
 
-  const handleBulk = async (action: "retry" | "reanalyze") => {
+  const handleBulk = async (action: "retry" | "reanalyze", retryOptions?: TContractRetryOptions) => {
     if (selectedIds.length === 0 || isBulkActing) return;
     setIsBulkActing(true);
     try {
-      const { dispatched, skipped } = await contractService.bulkAction(workspaceSlug, action, selectedIds);
+      const { dispatched, skipped } = await contractService.bulkAction(
+        workspaceSlug,
+        action,
+        selectedIds,
+        retryOptions
+      );
       setSelectedIds([]);
       void mutateContracts();
       setToast({
@@ -166,7 +173,7 @@ export function ContractsRoot(props: Props) {
           <span className="text-12 font-medium">
             {t("file_library.contracts.bulk.selected", { count: selectedIds.length })}
           </span>
-          <Button variant="secondary" size="sm" onClick={() => void handleBulk("retry")} disabled={isBulkActing}>
+          <Button variant="secondary" size="sm" onClick={() => setIsBulkRetryModalOpen(true)} disabled={isBulkActing}>
             <RefreshCcw className="size-3.5" />
             {t("file_library.contracts.retry.button")}
           </Button>
@@ -227,6 +234,12 @@ export function ContractsRoot(props: Props) {
         workspaceSlug={workspaceSlug}
         isOpen={isQueryModalOpen}
         onClose={() => setIsQueryModalOpen(false)}
+      />
+      <RetryOptionsModal
+        isOpen={isBulkRetryModalOpen}
+        onClose={() => setIsBulkRetryModalOpen(false)}
+        onConfirm={(options) => handleBulk("retry", options)}
+        count={selectedIds.length}
       />
     </div>
   );

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, Files, FileText, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FileText, FolderPlus, Layers, Loader2, Search, Tags, Trash2, Upload } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
@@ -22,6 +22,8 @@ import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useFileLibrary } from "@/hooks/store/use-file-library";
+// services
+import { contractService } from "@/services/contract.service";
 // local imports
 import { BulkActionsModal } from "./bulk-actions-modal";
 import type { TPreviewFile } from "./file-preview-modal";
@@ -114,6 +116,21 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   useSWR(`FILE_LIBRARY_FOLDERS_${workspaceSlug}`, () => fetchFolders(workspaceSlug), { revalidateOnFocus: false });
   useSWR(`FILE_LIBRARY_TAGS_${workspaceSlug}`, () => fetchTags(workspaceSlug), { revalidateOnFocus: false });
   useSWR(`FILE_LIBRARY_FILES_${workspaceSlug}`, () => fetchFiles(workspaceSlug), { revalidateOnFocus: false });
+
+  // Active contract analyses (shared SWR key with the contracts page). While
+  // any run is live, also refresh the file list so the badges track progress.
+  const { data: activeJobs } = useSWR(
+    `CONTRACT_ACTIVE_JOBS_${workspaceSlug}`,
+    () => contractService.getJobs(workspaceSlug, { active: true }),
+    { refreshInterval: (latest) => ((latest?.length ?? 0) > 0 ? 2000 : 15000) }
+  );
+  const previousActiveJobCount = useRef(0);
+  useEffect(() => {
+    const count = activeJobs?.length ?? 0;
+    if (previousActiveJobCount.current > 0 && count < previousActiveJobCount.current) void fetchFiles(workspaceSlug);
+    previousActiveJobCount.current = count;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeJobs?.length]);
 
   // folder path helpers (path string = "A/B/C/")
   const folderPathString = useCallback(
@@ -410,6 +427,20 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             <FileText className="size-3.5" />
             <span className="hidden sm:inline">{t("file_library.contracts.title")}</span>
           </Link>
+
+          {/* live pipeline monitor — mirrors the contracts page badge */}
+          {(activeJobs?.length ?? 0) > 0 && (
+            <Link
+              to={`/${workspaceSlug}/file-library/contracts`}
+              className="flex h-8 items-center gap-1.5 rounded-full bg-accent-primary/10 px-2.5 text-11 font-medium text-accent-primary hover:bg-accent-primary/20"
+            >
+              <Loader2 className="size-3 animate-spin" />
+              <span className="hidden sm:inline">
+                {t("file_library.contracts.active_jobs", { count: activeJobs?.length ?? 0 })}
+              </span>
+              <span className="sm:hidden">{activeJobs?.length ?? 0}</span>
+            </Link>
+          )}
 
           {/* search (collapses to icon-triggered popover on mobile) */}
           <div className="relative hidden sm:block">

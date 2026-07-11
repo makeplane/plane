@@ -135,11 +135,21 @@ class InternalAssetPresignedUrlEndpoint(InternalBaseView):
     """Resolves a presigned GET URL for an asset so the Worker can download it."""
 
     def get(self, request, asset_id):
+        import os
+
         asset = FileAsset.objects.get(id=asset_id)
         storage = S3Storage()
         url = storage.generate_presigned_url(object_name=asset.asset.name)
         return Response(
-            {"url": url, "name": (asset.attributes or {}).get("name"), "type": (asset.attributes or {}).get("type")},
+            {
+                "url": url,
+                "name": (asset.attributes or {}).get("name"),
+                "type": (asset.attributes or {}).get("type"),
+                # S3 location so Textract can read the document in place
+                # (no presigned URL, no download to the Worker)
+                "s3_key": asset.asset.name,
+                "s3_bucket": os.environ.get("AWS_S3_BUCKET_NAME"),
+            },
             status=status.HTTP_200_OK,
         )
 

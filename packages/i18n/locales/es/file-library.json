@@ -162,7 +162,15 @@
         "extract_text": "Extracción de texto",
         "generate_embeddings": "Embeddings (vectorización)",
         "ai_analysis": "Análisis de IA",
-        "extract_thumbnail": "Miniatura"
+        "extract_thumbnail": "Miniatura",
+        "modal_title": "¿Qué desea reintentar?",
+        "modal_title_bulk": "Reintentar {count, plural, one {# contrato} other {# contratos}}",
+        "modal_description": "Reejecutar solo la etapa fallida evita repetir trabajo que ya salió bien (p. ej., conservar el texto extraído y rehacer solo el análisis de IA).",
+        "full_title": "Todo el proceso",
+        "full_description": "Extracción de texto, embeddings, análisis de IA y miniatura, desde cero.",
+        "partial_title": "Solo etapas específicas",
+        "partial_description": "Elija qué etapas ejecutar; el resto se reutiliza tal cual.",
+        "confirm": "Reintentar"
       },
       "reanalyze": {
         "button": "Reanalizar",

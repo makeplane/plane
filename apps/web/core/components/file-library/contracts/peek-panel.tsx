@@ -11,14 +11,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { AlertTriangle, Check, ChevronDown, Loader2, RefreshCcw, Sparkles, X } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCcw, Sparkles, X } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { PDFViewer } from "@plane/extend-ui";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { Popover } from "@plane/propel/popover";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TContract, TContractJob, TContractRetryOptions, TContractUpdatePayload } from "@plane/types";
@@ -28,13 +27,9 @@ import { contractService } from "@/services/contract.service";
 import { fileLibraryService } from "@/services/file-library.service";
 // local imports
 import { ContractChatPanel } from "./chat/chat-panel";
-import {
-  CONTRACT_STATUS_OPTIONS,
-  CONTRACT_TYPE_OPTIONS,
-  RETRY_OPTIONS,
-  YES_NO_UNSPECIFIED_OPTIONS,
-} from "./constants";
+import { CONTRACT_STATUS_OPTIONS, CONTRACT_TYPE_OPTIONS, YES_NO_UNSPECIFIED_OPTIONS } from "./constants";
 import { ProcessingBadge } from "./processing-badge";
+import { RetryOptionsModal } from "./retry-options-modal";
 
 type Props = {
   workspaceSlug: string;
@@ -96,7 +91,7 @@ export function ContractPeekPanel(props: Props) {
   const [draft, setDraft] = useState<TContractUpdatePayload>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isActing, setIsActing] = useState(false);
-  const [retrySelection, setRetrySelection] = useState<TContractRetryOptions>({});
+  const [isRetryModalOpen, setIsRetryModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   // On desktop the PDF is always visible, so "document" behaves as "info"
@@ -181,12 +176,11 @@ export function ContractPeekPanel(props: Props) {
     }
   };
 
-  const handleRetry = async () => {
+  const handleRetry = async (options: TContractRetryOptions) => {
     if (!contract) return;
     setIsActing(true);
     try {
-      await contractService.retryContract(workspaceSlug, contract.id, retrySelection);
-      setRetrySelection({});
+      await contractService.retryContract(workspaceSlug, contract.id, options);
       await Promise.all([mutateJobs(), mutateContract()]);
       onMutate();
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("file_library.contracts.retry.started") });
@@ -426,48 +420,17 @@ export function ContractPeekPanel(props: Props) {
             {contract && <ProcessingBadge contract={contract} activeJob={activeJob} />}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            {/* Retry all / per-subtask */}
-            <Popover>
-              <Popover.Button
-                className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1 text-12 hover:bg-layer-1-hover disabled:opacity-50"
-                disabled={isActing || !!activeJob}
-              >
-                <RefreshCcw className="size-3.5" />
-                <span className="hidden sm:inline">{t("file_library.contracts.retry.button")}</span>
-                <ChevronDown className="size-3" />
-              </Popover.Button>
-              <Popover.Panel side="bottom" align="end">
-                <div className="w-60 space-y-1 rounded-md border border-subtle bg-layer-1 p-2 shadow-raised-200">
-                  <p className="px-1 text-11 text-tertiary">{t("file_library.contracts.retry.hint")}</p>
-                  {RETRY_OPTIONS.map((option) => {
-                    const isChecked = !!retrySelection[option.key];
-                    return (
-                      <button
-                        key={option.key}
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
-                        onClick={() => setRetrySelection((prev) => ({ ...prev, [option.key]: !prev[option.key] }))}
-                      >
-                        <span
-                          className={cn(
-                            "flex size-4 shrink-0 items-center justify-center rounded-sm border",
-                            isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
-                          )}
-                        >
-                          {isChecked && <Check className="size-3" />}
-                        </span>
-                        {t(option.i18nKey)}
-                      </button>
-                    );
-                  })}
-                  <Button variant="primary" size="sm" className="w-full" onClick={handleRetry} disabled={isActing}>
-                    {Object.values(retrySelection).some(Boolean)
-                      ? t("file_library.contracts.retry.selected")
-                      : t("file_library.contracts.retry.all")}
-                  </Button>
-                </div>
-              </Popover.Panel>
-            </Popover>
+            {/* Retry: opens the shared full-or-partial options dialog */}
+            <button
+              type="button"
+              onClick={() => setIsRetryModalOpen(true)}
+              disabled={isActing || !!activeJob}
+              className="flex items-center gap-1 rounded-sm border border-subtle px-2 py-1 text-12 hover:bg-layer-1-hover disabled:opacity-50"
+              title={t("file_library.contracts.retry.hint")}
+            >
+              <RefreshCcw className="size-3.5" />
+              <span className="hidden sm:inline">{t("file_library.contracts.retry.button")}</span>
+            </button>
             {/* Reanalyze (proposes, doesn't overwrite) */}
             <button
               type="button"
@@ -528,6 +491,12 @@ export function ContractPeekPanel(props: Props) {
           )}
           {tab !== "document" && saveBar}
         </div>
+
+        <RetryOptionsModal
+          isOpen={isRetryModalOpen}
+          onClose={() => setIsRetryModalOpen(false)}
+          onConfirm={handleRetry}
+        />
 
         {/* ── Desktop: document beside the tabbed pane ─────────────────── */}
         <div className="hidden min-h-0 flex-1 lg:flex">

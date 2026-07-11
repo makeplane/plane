@@ -203,6 +203,13 @@ class ContractsBulkEndpoint(FileLibraryBaseView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Optional per-stage selection (same contract as single retry):
+        # empty/absent selection = full retry
+        raw_options = request.data.get("retry_options") or {}
+        retry_options = {key: bool(raw_options.get(key)) for key in RETRY_OPTION_KEYS}
+        if not any(retry_options.values()):
+            retry_options = {key: True for key in RETRY_OPTION_KEYS}
+
         contracts = Contract.objects.filter(id__in=contract_ids, workspace__slug=slug)
         dispatched, skipped = [], []
         for contract in contracts:
@@ -224,7 +231,7 @@ class ContractsBulkEndpoint(FileLibraryBaseView):
                     else ContractProcessingJob.TaskType.RETRY_PARTIAL
                 ),
                 user=request.user,
-                metadata={"retry_options": {key: True for key in RETRY_OPTION_KEYS}} if action == "retry" else None,
+                metadata={"retry_options": retry_options} if action == "retry" else None,
             )
             dispatched.append(str(job.id))
         return Response({"dispatched": dispatched, "skipped": skipped}, status=status.HTTP_200_OK)
