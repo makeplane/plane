@@ -53,7 +53,9 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
+from plane.bgtasks.webhook_task import webhook_activity
 from plane.app.permissions import ProjectPagePermission
+from plane.utils.host import base_host
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -145,6 +147,20 @@ class PageViewSet(BaseViewSet):
                 new_description_html=request.data.get("description_html", "<p></p>"),
                 old_description_html=None,
                 page_id=serializer.data["id"],
+            )
+            # Dispatch the webhook for the page creation
+            webhook_activity.delay(
+                event="page",
+                verb="created",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=base_host(request=request, is_app=True),
+                event_id=serializer.data["id"],
+                old_identifier=None,
+                new_identifier=None,
             )
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
@@ -402,6 +418,20 @@ class PageViewSet(BaseViewSet):
         ).update(parent=None)
 
         page.delete()
+        # Dispatch the webhook for the page deletion
+        webhook_activity.delay(
+            event="page",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=page.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
         # Delete the user favorite page
         UserFavorite.objects.filter(
             project=project_id,
@@ -609,6 +639,22 @@ class PageDuplicateEndpoint(BaseAPIView):
                 created_by_id=page.created_by_id,
                 updated_by_id=page.updated_by_id,
             )
+
+        # Duplicating a page creates a new page, so it fires a "created" webhook
+        # just like PageViewSet.create does.
+        webhook_activity.delay(
+            event="page",
+            verb="created",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=page.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
 
         page_transaction.delay(
             new_description_html=page.description_html,

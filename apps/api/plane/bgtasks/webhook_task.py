@@ -30,6 +30,7 @@ from plane.api.serializers import (
     IssueExpandSerializer,
     ModuleIssueSerializer,
     ModuleSerializer,
+    PageSerializer,
     ProjectSerializer,
     UserLiteSerializer,
     IntakeIssueSerializer,
@@ -41,6 +42,7 @@ from plane.db.models import (
     IssueComment,
     Module,
     ModuleIssue,
+    Page,
     Project,
     User,
     Webhook,
@@ -63,6 +65,7 @@ SERIALIZER_MAPPER = {
     "cycle_issue": CycleIssueSerializer,
     "module_issue": ModuleIssueSerializer,
     "issue_comment": IssueCommentSerializer,
+    "page": PageSerializer,
     "user": UserLiteSerializer,
     "intake_issue": IntakeIssueSerializer,
 }
@@ -75,6 +78,7 @@ MODEL_MAPPER = {
     "cycle_issue": CycleIssue,
     "module_issue": ModuleIssue,
     "issue_comment": IssueComment,
+    "page": Page,
     "user": User,
     "intake_issue": IntakeIssue,
 }
@@ -411,7 +415,7 @@ def webhook_activity(
     to all active webhooks for the workspace.
 
     Args:
-        event (str): Type of event (project, issue, module, cycle, issue_comment)
+        event (str): Type of event (project, issue, module, cycle, issue_comment, page)
         verb (str): Action performed (created, updated, deleted)
         field (Optional[str]): Name of the field that was changed
         old_value (Any): Previous value of the field
@@ -447,6 +451,9 @@ def webhook_activity(
 
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
+
+        if event == "page":
+            webhooks = webhooks.filter(page=True)
 
         for webhook in webhooks:
             webhook_send_task.delay(

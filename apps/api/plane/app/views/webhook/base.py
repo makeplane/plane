@@ -52,6 +52,7 @@ class WebhookEndpoint(BaseAPIView):
                     "cycle",
                     "module",
                     "issue_comment",
+                    "page",
                 ),
                 many=True,
             )
@@ -71,6 +72,7 @@ class WebhookEndpoint(BaseAPIView):
                     "cycle",
                     "module",
                     "issue_comment",
+                    "page",
                 ),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -94,6 +96,7 @@ class WebhookEndpoint(BaseAPIView):
                 "cycle",
                 "module",
                 "issue_comment",
+                "page",
             ),
         )
         if serializer.is_valid():
