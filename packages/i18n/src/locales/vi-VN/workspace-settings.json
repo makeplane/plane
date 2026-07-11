@@ -63,6 +63,19 @@
             "required": "Chúng tôi cần một địa chỉ email để mời họ.",
             "invalid": "Email không hợp lệ"
           }
+        },
+        "activity": {
+          "title": "Hoạt động của không gian làm việc",
+          "filters": {
+            "all_members": "Tất cả thành viên",
+            "all_projects": "Tất cả dự án",
+            "date_range": {
+              "today": "Hôm nay",
+              "last_7_days": "7 ngày qua",
+              "last_30_days": "30 ngày qua",
+              "all_time": "Toàn bộ thời gian"
+            }
+          }
         }
       },
       "billing_and_plans": {

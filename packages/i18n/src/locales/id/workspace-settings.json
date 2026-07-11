@@ -63,6 +63,19 @@
             "required": "Kami perlu alamat email untuk mengundang mereka.",
             "invalid": "Email tidak valid"
           }
+        },
+        "activity": {
+          "title": "Aktivitas ruang kerja",
+          "filters": {
+            "all_members": "Semua anggota",
+            "all_projects": "Semua proyek",
+            "date_range": {
+              "today": "Hari ini",
+              "last_7_days": "7 hari terakhir",
+              "last_30_days": "30 hari terakhir",
+              "all_time": "Sepanjang waktu"
+            }
+          }
         }
       },
       "billing_and_plans": {

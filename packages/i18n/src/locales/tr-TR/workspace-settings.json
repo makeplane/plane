@@ -63,6 +63,19 @@
             "required": "Davet etmek için bir e-posta adresine ihtiyacımız var.",
             "invalid": "E-posta geçersiz"
           }
+        },
+        "activity": {
+          "title": "Çalışma alanı aktivitesi",
+          "filters": {
+            "all_members": "Tüm üyeler",
+            "all_projects": "Tüm projeler",
+            "date_range": {
+              "today": "Bugün",
+              "last_7_days": "Son 7 gün",
+              "last_30_days": "Son 30 gün",
+              "all_time": "Tüm zamanlar"
+            }
+          }
         }
       },
       "billing_and_plans": {

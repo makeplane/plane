@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { mutate } from "swr";
 // store
 import { BaseWorkspaceRootStore } from "@/store/workspace";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -18,7 +19,9 @@ export class WorkspaceRootStore extends BaseWorkspaceRootStore {
    * Mutate workspace members activity
    * @param workspaceSlug
    */
-  mutateWorkspaceMembersActivity = async (_workspaceSlug: string) => {
-    // No-op in default/CE version
+  mutateWorkspaceMembersActivity = async (workspaceSlug: string) => {
+    // revalidate every SWR key holding workspace activity pages for this workspace
+    const workspaceActivityKeyPrefix = `WORKSPACE_ACTIVITY_${workspaceSlug.toUpperCase()}_`;
+    await mutate((key) => typeof key === "string" && key.startsWith(workspaceActivityKeyPrefix));
   };
 }

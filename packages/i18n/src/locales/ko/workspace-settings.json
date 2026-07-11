@@ -63,6 +63,19 @@
             "required": "초대하려면 이메일 주소가 필요합니다.",
             "invalid": "이메일이 유효하지 않습니다"
           }
+        },
+        "activity": {
+          "title": "작업 공간 활동",
+          "filters": {
+            "all_members": "모든 멤버",
+            "all_projects": "모든 프로젝트",
+            "date_range": {
+              "today": "오늘",
+              "last_7_days": "최근 7일",
+              "last_30_days": "최근 30일",
+              "all_time": "전체 기간"
+            }
+          }
         }
       },
       "billing_and_plans": {

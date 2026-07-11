@@ -63,6 +63,19 @@
             "required": "招待するにはメールアドレスが必要です。",
             "invalid": "メールアドレスが無効です"
           }
+        },
+        "activity": {
+          "title": "ワークスペースのアクティビティ",
+          "filters": {
+            "all_members": "すべてのメンバー",
+            "all_projects": "すべてのプロジェクト",
+            "date_range": {
+              "today": "今日",
+              "last_7_days": "過去7日間",
+              "last_30_days": "過去30日間",
+              "all_time": "全期間"
+            }
+          }
         }
       },
       "billing_and_plans": {
