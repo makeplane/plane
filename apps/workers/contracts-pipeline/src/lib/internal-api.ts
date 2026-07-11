@@ -34,7 +34,13 @@ export function internalApi(env: Env) {
 
   return {
     getPresignedUrl: (assetId: string) =>
-      request<{ url: string; name: string | null; type: string | null }>("GET", `/internal/assets/${assetId}/presigned-url/`),
+      request<{
+        url: string;
+        name: string | null;
+        type: string | null;
+        s3_key: string | null;
+        s3_bucket: string | null;
+      }>("GET", `/internal/assets/${assetId}/presigned-url/`),
     reportProgress: (
       jobId: string,
       data: { progress?: number; current_stage?: string; status?: string; error?: { message: string; stage: string } }

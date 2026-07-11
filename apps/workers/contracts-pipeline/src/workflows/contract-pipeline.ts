@@ -12,6 +12,7 @@ import { generateEmbeddings, generateStructuredJson } from "../lib/ai";
 import { chunkText } from "../lib/chunking";
 import { internalApi } from "../lib/internal-api";
 import { parseJsonResponse } from "../lib/json-repair";
+import { collectTextDetectionText, getTextDetectionStatus, startTextDetection, type TextractError } from "../lib/textract";
 import {
   ARTISTS_KEYS,
   PRIMARY_KEYS,
@@ -39,6 +40,20 @@ export type PipelineParams = {
 
 const AI_RETRIES: WorkflowStepConfig = { retries: { limit: 2, delay: "10 seconds", backoff: "exponential" } };
 
+// Textract throttles under burst load (ProvisionedThroughputExceededException
+// at ~5-20 async starts/second) — a deep exponential-backoff retry chain lets
+// many concurrent pipelines self-space instead of failing.
+const TEXTRACT_RETRIES: WorkflowStepConfig = {
+  retries: { limit: 8, delay: "3 seconds", backoff: "exponential" },
+  timeout: "2 minutes",
+};
+
+/** Maps AWS errors: throttling stays retryable, everything else aborts the step chain. */
+const rethrowTextract = (error: unknown): never => {
+  if ((error as TextractError).retryable) throw error;
+  throw new NonRetryableError(error instanceof Error ? error.message : String(error));
+};
+
 export class ContractPipelineWorkflow extends WorkflowEntrypoint<Env, PipelineParams> {
   async run(event: WorkflowEvent<PipelineParams>, step: WorkflowStep) {
     const { job_id: jobId, contract_id: contractId, mode, retry_options: retryOptions } = event.payload;
@@ -64,34 +79,87 @@ export class ContractPipelineWorkflow extends WorkflowEntrypoint<Env, PipelinePa
       });
 
       if ((!extractedText || wants("extract_text")) && !isReanalysis) {
-        extractedText = await step.do(
-          "extract text",
-          { retries: { limit: 3, delay: "30 seconds", backoff: "exponential" }, timeout: "10 minutes" },
-          async () => {
-            await report(20, "Extrayendo texto");
+        const extractionMode = (this.env.TEXT_EXTRACTION_MODE || "textract").toLowerCase();
+
+        if (extractionMode === "textract") {
+          // ── Textract straight from S3: no presigned URL, no download ──
+          const location = await step.do("resolve asset location", async () => {
             const assetId = event.payload.asset_id;
             if (!assetId) throw new NonRetryableError("asset_id missing from payload");
-            const { url } = await api.getPresignedUrl(assetId);
-            if (!this.env.TEXT_EXTRACTOR_API_URL) {
-              throw new NonRetryableError("TEXT_EXTRACTOR_API_URL is not configured");
+            const { s3_key, s3_bucket } = await api.getPresignedUrl(assetId);
+            if (!s3_key || !s3_bucket) throw new NonRetryableError("Asset S3 location unavailable");
+            await report(15, "Iniciando extracción de texto (Textract)");
+            return { key: s3_key, bucket: s3_bucket };
+          });
+
+          const textractJobId = await step.do("start textract job", TEXTRACT_RETRIES, async () => {
+            try {
+              return await startTextDetection(this.env, location.bucket, location.key);
+            } catch (error) {
+              return rethrowTextract(error);
             }
-            // External extraction service contract: POST {url} -> {extracted_text}
-            const response = await fetch(this.env.TEXT_EXTRACTOR_API_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ url }),
+          });
+
+          // Poll with step.sleep — idle time costs no CPU, so long documents
+          // (Textract can take minutes) never hit Worker wall-time limits.
+          let textractStatus = "IN_PROGRESS";
+          for (let attempt = 0; attempt < 120 && textractStatus === "IN_PROGRESS"; attempt++) {
+            await step.sleep(`textract wait ${attempt}`, attempt < 12 ? "5 seconds" : "15 seconds");
+            textractStatus = await step.do(`textract status ${attempt}`, TEXTRACT_RETRIES, async () => {
+              try {
+                const { status } = await getTextDetectionStatus(this.env, textractJobId);
+                return status;
+              } catch (error) {
+                return rethrowTextract(error);
+              }
             });
-            if (!response.ok) {
-              throw new Error(`Text extractor -> ${response.status}: ${(await response.text()).slice(0, 300)}`);
-            }
-            const data = await response.json<{ extracted_text?: string }>();
-            const text = data.extracted_text?.trim();
-            if (!text) throw new NonRetryableError("The extractor returned no text for this document");
-            await api.saveContractText(contractId, text);
-            await report(35, "Texto extraído");
-            return text;
           }
-        );
+          if (textractStatus !== "SUCCEEDED" && textractStatus !== "PARTIAL_SUCCESS") {
+            throw new NonRetryableError(`Textract job ended with status ${textractStatus}`);
+          }
+
+          extractedText = await step.do("collect textract text", TEXTRACT_RETRIES, async () => {
+            try {
+              const text = (await collectTextDetectionText(this.env, textractJobId)).trim();
+              if (!text) throw new NonRetryableError("Textract returned no text for this document");
+              await api.saveContractText(contractId, text);
+              await report(35, "Texto extraído");
+              return text;
+            } catch (error) {
+              if (error instanceof NonRetryableError) throw error;
+              return rethrowTextract(error);
+            }
+          });
+        } else {
+          // ── Fallback: external extraction API (POST {url} -> {extracted_text}) ──
+          extractedText = await step.do(
+            "extract text",
+            { retries: { limit: 3, delay: "30 seconds", backoff: "exponential" }, timeout: "10 minutes" },
+            async () => {
+              await report(20, "Extrayendo texto");
+              const assetId = event.payload.asset_id;
+              if (!assetId) throw new NonRetryableError("asset_id missing from payload");
+              const { url } = await api.getPresignedUrl(assetId);
+              if (!this.env.TEXT_EXTRACTOR_API_URL) {
+                throw new NonRetryableError("TEXT_EXTRACTOR_API_URL is not configured");
+              }
+              const response = await fetch(this.env.TEXT_EXTRACTOR_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url }),
+              });
+              if (!response.ok) {
+                throw new Error(`Text extractor -> ${response.status}: ${(await response.text()).slice(0, 300)}`);
+              }
+              const data = await response.json<{ extracted_text?: string }>();
+              const text = data.extracted_text?.trim();
+              if (!text) throw new NonRetryableError("The extractor returned no text for this document");
+              await api.saveContractText(contractId, text);
+              await report(35, "Texto extraído");
+              return text;
+            }
+          );
+        }
       }
 
       if (!extractedText) {
