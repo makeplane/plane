@@ -47,4 +47,32 @@ urlpatterns = [
         IssuePropertyValueSetAPIEndpoint.as_view(http_method_names=["get", "post", "patch", "delete"]),
         name="work-item-property-values",
     ),
+    # Aliases matching the official MCP SDK (plane_sdk), which uses the
+    # `work-item-properties` resource segment (definitions and their options)
+    # instead of the shorter `properties` segment used above.
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/work-item-properties/",
+        IssuePropertyListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-properties-alias",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/work-item-properties/<uuid:property_id>/",
+        IssuePropertyDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="work-item-properties-detail-alias",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-properties/<uuid:property_id>/options/",
+        IssuePropertyOptionListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-property-options-alias",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-properties/<uuid:property_id>/options/<uuid:option_id>/",
+        IssuePropertyOptionDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="work-item-property-options-detail-alias",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/work-item-properties/<uuid:property_id>/values/",
+        IssuePropertyValueSetAPIEndpoint.as_view(http_method_names=["get", "post", "patch", "delete"]),
+        name="work-item-property-values-alias",
+    ),
 ]
