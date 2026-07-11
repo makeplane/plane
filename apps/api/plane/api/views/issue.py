@@ -49,6 +49,8 @@ from plane.api.serializers import (
     IssueRelationCreateSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
+    IssueSubscriberSerializer,
+    IssueSubscriberCreateSerializer,
     IssueSerializer,
     LabelSerializer,
     IssueAttachmentUploadSerializer,
@@ -72,6 +74,7 @@ from plane.db.models import (
     IssueComment,
     IssueLink,
     IssueRelation,
+    IssueSubscriber,
     Label,
     Project,
     ProjectMember,
@@ -94,6 +97,7 @@ from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
     work_item_relation_docs,
+    work_item_subscriber_docs,
     label_docs,
     issue_link_docs,
     issue_comment_docs,
@@ -108,6 +112,7 @@ from plane.utils.openapi import (
     COMMENT_ID_PARAMETER,
     LINK_ID_PARAMETER,
     ATTACHMENT_ID_PARAMETER,
+    SUBSCRIBER_ID_PARAMETER,
     ACTIVITY_ID_PARAMETER,
     PROJECT_ID_QUERY_PARAMETER,
     CURSOR_PARAMETER,
@@ -2573,3 +2578,182 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class IssueSubscriberListCreateAPIEndpoint(BaseAPIView):
+    """Work Item Subscriber (watcher) List and Create Endpoint"""
+
+    serializer_class = IssueSubscriberSerializer
+    model = IssueSubscriber
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            IssueSubscriber.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .select_related("subscriber")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @work_item_subscriber_docs(
+        operation_id="list_work_item_subscribers",
+        summary="List work item subscribers",
+        description="Retrieve all users subscribed to (watching) a work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                IssueSubscriberSerializer,
+                "PaginatedIssueSubscriberResponse",
+                "Paginated list of work item subscribers",
+                "Paginated Work Item Subscribers",
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item subscribers
+
+        Retrieve all users subscribed to (watching) a work item. Each entry
+        embeds the subscriber's user profile under ``member``.
+        """
+        # The work item must exist within this project/workspace, so a bogus
+        # issue id returns a 404 rather than a misleading empty list (matches
+        # post()'s behavior and the documented ISSUE_NOT_FOUND_RESPONSE).
+        if not Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).exists():
+            return Response(
+                {"error": "The requested resource does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda issue_subscribers: (
+                IssueSubscriberSerializer(issue_subscribers, many=True, fields=self.fields, expand=self.expand).data
+            ),
+        )
+
+    @work_item_subscriber_docs(
+        operation_id="add_work_item_subscriber",
+        summary="Add work item subscriber",
+        description="Subscribe a workspace/project member to a work item so they watch its updates.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueSubscriberCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Add subscriber",
+                    value={"subscriber_id": "550e8400-e29b-41d4-a716-446655440000"},
+                )
+            ],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Work item subscriber added successfully",
+                response=IssueSubscriberSerializer,
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Add a work item subscriber
+
+        Subscribe a project member to a work item by their user id. The target
+        user must be an active member of the project. Duplicate subscriptions
+        are rejected.
+        """
+        serializer = IssueSubscriberCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        subscriber_id = serializer.validated_data["subscriber_id"]
+
+        # The work item must exist within this project/workspace
+        if not Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).exists():
+            return Response(
+                {"error": "The requested resource does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # The target user must be an active member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member_id=subscriber_id,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "The user is not a member of the project."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Reject duplicate subscriptions cleanly
+        if IssueSubscriber.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            subscriber_id=subscriber_id,
+        ).exists():
+            return Response(
+                {"error": "User already subscribed to the work item."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issue_subscriber = IssueSubscriber.objects.create(
+            issue_id=issue_id,
+            subscriber_id=subscriber_id,
+            project_id=project_id,
+        )
+        serializer = IssueSubscriberSerializer(issue_subscriber)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class IssueSubscriberDetailAPIEndpoint(BaseAPIView):
+    """Work Item Subscriber (watcher) Detail Endpoint"""
+
+    serializer_class = IssueSubscriberSerializer
+    model = IssueSubscriber
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_subscriber_docs(
+        operation_id="remove_work_item_subscriber",
+        summary="Remove work item subscriber",
+        description="Unsubscribe a user from a work item by their user id.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            SUBSCRIBER_ID_PARAMETER,
+        ],
+        responses={
+            204: OpenApiResponse(description="Work item subscriber removed successfully"),
+            404: OpenApiResponse(description="Work item subscriber not found"),
+        },
+    )
+    def delete(self, request, slug, project_id, issue_id, subscriber_id):
+        """Remove a work item subscriber
+
+        Unsubscribe a user from a work item by their user id.
+        """
+        issue_subscriber = IssueSubscriber.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            subscriber_id=subscriber_id,
+        )
+        issue_subscriber.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

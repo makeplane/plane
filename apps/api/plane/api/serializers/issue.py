@@ -21,6 +21,7 @@ from plane.db.models import (
     IssueLabel,
     IssueLink,
     IssueRelation,
+    IssueSubscriber,
     Label,
     ProjectMember,
     State,
@@ -478,6 +479,67 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class IssueSubscriberSerializer(BaseSerializer):
+    """
+    Serializer for work item subscribers (watchers).
+
+    Reuses the ``IssueSubscriber`` through-model to expose who is watching a
+    work item on the public API. ``subscriber`` is the subscriber's user id and
+    ``member`` embeds that user's lightweight profile.
+    """
+
+    member = UserLiteSerializer(source="subscriber", read_only=True)
+
+    def to_representation(self, instance):
+        # ``member`` already embeds the subscriber's UserLite profile via
+        # ``source="subscriber"``. It is not a real relation on IssueSubscriber,
+        # so the generic ``expand`` handling in BaseSerializer would treat an
+        # ``expand=member`` request as an unknown relation and overwrite the
+        # embedded profile with ``instance.member_id`` (which does not exist →
+        # ``None``). Exclude ``member`` from that fallback so the profile is
+        # preserved, while leaving every other expandable field untouched.
+        original_expand = self.expand
+        if original_expand:
+            self.expand = [field for field in original_expand if field != "member"]
+        try:
+            return super().to_representation(instance)
+        finally:
+            self.expand = original_expand
+
+    class Meta:
+        model = IssueSubscriber
+        fields = [
+            "id",
+            "subscriber",
+            "member",
+            "issue",
+            "project",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "subscriber",
+            "member",
+            "issue",
+            "project",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class IssueSubscriberCreateSerializer(serializers.Serializer):
+    """Request payload for adding a subscriber (watcher) to a work item."""
+
+    subscriber_id = serializers.UUIDField(help_text="User ID of the subscriber (watcher) to add to the work item")
 
 
 class IssueRelationRefSerializer(serializers.Serializer):
