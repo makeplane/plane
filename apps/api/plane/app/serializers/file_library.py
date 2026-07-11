@@ -95,6 +95,8 @@ class FileCategorySerializer(BaseSerializer):
 class FileLibraryAssetSerializer(BaseSerializer):
     category_ids = serializers.SerializerMethodField()
     tag_ids = serializers.SerializerMethodField()
+    contract_id = serializers.SerializerMethodField()
+    contract_processing_status = serializers.SerializerMethodField()
 
     class Meta:
         model = FileAsset
@@ -107,6 +109,8 @@ class FileLibraryAssetSerializer(BaseSerializer):
             "folder_id",
             "category_ids",
             "tag_ids",
+            "contract_id",
+            "contract_processing_status",
             "created_by",
             "created_at",
             "updated_at",
@@ -119,3 +123,18 @@ class FileLibraryAssetSerializer(BaseSerializer):
 
     def get_tag_ids(self, obj):
         return [str(link.tag_id) for link in obj.tag_links.all()]
+
+    def _contract(self, obj):
+        # OneToOne reverse; relies on the view's select/prefetch of `contract`
+        try:
+            return obj.contract
+        except Exception:
+            return None
+
+    def get_contract_id(self, obj):
+        contract = self._contract(obj)
+        return str(contract.id) if contract else None
+
+    def get_contract_processing_status(self, obj):
+        contract = self._contract(obj)
+        return contract.processing_status if contract else None

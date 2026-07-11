@@ -326,6 +326,45 @@ class InternalWorkspaceContractsEndpoint(InternalBaseView):
         )
 
 
+class InternalChunkSearchEndpoint(InternalBaseView):
+    """Vector search over the workspace's contract chunks (RAG retrieval for
+    the general chat). Ranks by cosine distance and returns the top chunks
+    with their source-contract metadata.
+    """
+
+    def post(self, request, workspace_id):
+        from pgvector.django import CosineDistance
+
+        embedding = request.data.get("embedding")
+        if not isinstance(embedding, list) or not embedding:
+            return Response({"error": "embedding is required"}, status=status.HTTP_400_BAD_REQUEST)
+        limit = min(int(request.data.get("limit", 12)), 40)
+
+        chunks = (
+            ContractChunk.objects.filter(workspace_id=workspace_id)
+            .annotate(distance=CosineDistance("embedding", embedding))
+            .select_related("contract", "contract__file_asset")
+            .order_by("distance")[:limit]
+        )
+        results = []
+        for chunk in chunks:
+            contract = chunk.contract
+            results.append(
+                {
+                    "content": chunk.content,
+                    "chunk_index": chunk.chunk_index,
+                    "similarity": round(1.0 - float(chunk.distance), 4),
+                    "contract_id": str(contract.id),
+                    "title": contract.titulo,
+                    "file_name": (contract.file_asset.attributes or {}).get("name")
+                    if contract.file_asset_id
+                    else None,
+                    "asset_id": str(contract.file_asset_id) if contract.file_asset_id else None,
+                }
+            )
+        return Response({"results": results}, status=status.HTTP_200_OK)
+
+
 class InternalQueryResultEndpoint(InternalBaseView):
     def post(self, request, query_id):
         from plane.bgtasks.contract_task import send_contract_query_email

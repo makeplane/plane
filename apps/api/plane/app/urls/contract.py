@@ -5,14 +5,20 @@
 from django.urls import path
 
 from plane.app.views import (
+    ContractChatDetailEndpoint,
+    ContractChatMessageEndpoint,
+    ContractChatModelsEndpoint,
+    ContractChatsEndpoint,
     ContractDetailEndpoint,
     ContractJobsEndpoint,
     ContractQueryEndpoint,
     ContractReanalyzeConfirmEndpoint,
     ContractReanalyzeEndpoint,
     ContractRetryEndpoint,
+    ContractsBulkEndpoint,
     ContractsEndpoint,
     InternalAssetPresignedUrlEndpoint,
+    InternalChunkSearchEndpoint,
     InternalContractChunksEndpoint,
     InternalContractDataEndpoint,
     InternalContractTextEndpoint,
@@ -38,6 +44,31 @@ urlpatterns = [
         "workspaces/<str:slug>/contracts/queries/",
         ContractQueryEndpoint.as_view(),
         name="contract-queries",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/bulk/",
+        ContractsBulkEndpoint.as_view(),
+        name="contracts-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/chats/",
+        ContractChatsEndpoint.as_view(),
+        name="contract-chats",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/chats/models/",
+        ContractChatModelsEndpoint.as_view(),
+        name="contract-chat-models",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/chats/<uuid:chat_id>/",
+        ContractChatDetailEndpoint.as_view(),
+        name="contract-chat-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/contracts/chats/<uuid:chat_id>/messages/",
+        ContractChatMessageEndpoint.as_view(),
+        name="contract-chat-messages",
     ),
     path(
         "workspaces/<str:slug>/contracts/<uuid:contract_id>/",
@@ -99,6 +130,11 @@ urlpatterns = [
         "internal/workspaces/<uuid:workspace_id>/contracts/",
         InternalWorkspaceContractsEndpoint.as_view(),
         name="internal-workspace-contracts",
+    ),
+    path(
+        "internal/workspaces/<uuid:workspace_id>/chunks/search/",
+        InternalChunkSearchEndpoint.as_view(),
+        name="internal-chunk-search",
     ),
     path(
         "internal/contract-queries/<uuid:query_id>/result/",

@@ -68,5 +68,17 @@ export function internalApi(env: Env) {
       }>("GET", `/internal/workspaces/${workspaceId}/contracts/?offset=${offset}&limit=${limit}`),
     saveQueryResult: (queryId: string, result: Record<string, unknown>, status: "COMPLETED" | "FAILED") =>
       request<{ status: string }>("POST", `/internal/contract-queries/${queryId}/result/`, { result, status }),
+    searchChunks: (workspaceId: string, embedding: number[], limit: number) =>
+      request<{
+        results: Array<{
+          content: string;
+          chunk_index: number;
+          similarity: number;
+          contract_id: string;
+          title: string | null;
+          file_name: string | null;
+          asset_id: string | null;
+        }>;
+      }>("POST", `/internal/workspaces/${workspaceId}/chunks/search/`, { embedding, limit }),
   };
 }

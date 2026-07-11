@@ -9,10 +9,18 @@ from .base import (
     ContractReanalyzeConfirmEndpoint,
     ContractReanalyzeEndpoint,
     ContractRetryEndpoint,
+    ContractsBulkEndpoint,
     ContractsEndpoint,
+)
+from .chat import (
+    ContractChatDetailEndpoint,
+    ContractChatMessageEndpoint,
+    ContractChatModelsEndpoint,
+    ContractChatsEndpoint,
 )
 from .internal import (
     InternalAssetPresignedUrlEndpoint,
+    InternalChunkSearchEndpoint,
     InternalContractChunksEndpoint,
     InternalContractDataEndpoint,
     InternalContractTextEndpoint,

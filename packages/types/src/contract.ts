@@ -126,7 +126,39 @@ export type TContractRetryOptions = {
   extract_thumbnail?: boolean;
 };
 
+export type TContractChatMode = "GENERAL" | "CONTRACT";
+
+export type TContractChat = {
+  id: string;
+  workspace_id: string;
+  user_id: string;
+  title: string;
+  mode: TContractChatMode;
+  contract_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TContractChatSource = {
+  contract_id: string;
+  title: string | null;
+  file_name: string | null;
+  asset_id: string | null;
+  similarity: number;
+};
+
+export type TContractChatMessage = {
+  id: string;
+  chat_id: string;
+  role: "USER" | "ASSISTANT";
+  content: string;
+  sources: TContractChatSource[] | null;
+  created_at: string;
+};
+
 export type TContractFilters = {
+  /** Exact match on the backing file asset (viewer lookups) */
+  asset_id?: string;
   search?: string;
   person?: string;
   artist?: string;

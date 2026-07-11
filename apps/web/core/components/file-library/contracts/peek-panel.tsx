@@ -19,6 +19,7 @@ import { cn } from "@plane/utils";
 import { contractService } from "@/services/contract.service";
 import { fileLibraryService } from "@/services/file-library.service";
 // local imports
+import { ContractChatPanel } from "./chat/chat-panel";
 import {
   CONTRACT_STATUS_OPTIONS,
   CONTRACT_TYPE_OPTIONS,
@@ -35,7 +36,7 @@ type Props = {
   onMutate: () => void;
 };
 
-type Tab = "info" | "process";
+type Tab = "info" | "process" | "chat";
 
 const EDITABLE_TEXT_FIELDS: { key: keyof TContractUpdatePayload; i18nKey: string; textarea?: boolean }[] = [
   { key: "titulo", i18nKey: "file_library.contracts.fields.titulo" },
@@ -334,17 +335,18 @@ export function ContractPeekPanel(props: Props) {
           {/* info / process tabs */}
           <div className="flex min-h-0 flex-1 flex-col">
             <div className="flex shrink-0 items-center gap-1 border-b border-subtle px-3 pt-2">
-              {(["info", "process"] as Tab[]).map((key) => (
+              {(["info", "process", "chat"] as Tab[]).map((key) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => setTab(key)}
+                  disabled={key === "chat" && !contract?.text_extracted_at}
                   className={cn(
-                    "rounded-t-sm border-b-2 px-3 py-1.5 text-12 font-medium",
+                    "rounded-t-sm border-b-2 px-3 py-1.5 text-12 font-medium disabled:opacity-40",
                     tab === key ? "border-accent-strong text-accent-primary" : "border-transparent text-tertiary hover:text-secondary"
                   )}
                 >
-                  {t(key === "info" ? "file_library.contracts.tabs.info" : "file_library.contracts.tabs.process")}
+                  {t(`file_library.contracts.tabs.${key}`)}
                 </button>
               ))}
             </div>
@@ -352,6 +354,10 @@ export function ContractPeekPanel(props: Props) {
             {isLoading || !contract ? (
               <div className="flex flex-1 items-center justify-center">
                 <Loader2 className="size-5 animate-spin text-tertiary" />
+              </div>
+            ) : tab === "chat" ? (
+              <div className="min-h-0 flex-1">
+                <ContractChatPanel workspaceSlug={workspaceSlug} mode="CONTRACT" contractId={contract.id} compact />
               </div>
             ) : tab === "info" ? (
               <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">

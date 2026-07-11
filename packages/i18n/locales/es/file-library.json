@@ -177,7 +177,36 @@
       },
       "tabs": {
         "info": "Información",
-        "process": "Proceso"
+        "process": "Proceso",
+        "chat": "Chat"
+      },
+      "badge": "Contrato",
+      "preview_info": "Información del contrato",
+      "open_in_contracts": "Abrir en Contratos",
+      "bulk": {
+        "selected": "{count} seleccionados",
+        "clear": "Limpiar selección",
+        "dispatched": "{count, plural, one {# análisis en cola} other {# análisis en cola}} ({skipped} omitidos)",
+        "failed": "No se pudo encolar la acción masiva"
+      },
+      "chat": {
+        "button": "Chat con IA",
+        "title": "Chat de contratos",
+        "placeholder": "Pregunte sobre sus contratos…",
+        "send": "Enviar",
+        "thinking": "Pensando…",
+        "failed": "No se pudo procesar el mensaje",
+        "new_chat": "Nuevo chat",
+        "history": "Historial",
+        "no_chats": "Aún no hay chats",
+        "untitled": "Chat sin título",
+        "sources_used": "Documentos utilizados para esta respuesta",
+        "open_document": "Abrir en una ventana nueva",
+        "empty_general_title": "Pregunte lo que sea sobre sus contratos",
+        "empty_general_description": "Las respuestas se basan en el contenido vectorizado de todos los contratos analizados, y cada respuesta muestra los documentos que utilizó.",
+        "empty_contract_title": "Pregunte sobre este contrato",
+        "empty_contract_description": "El texto completo extraído de este contrato es el contexto de cada respuesta.",
+        "power_k_search": "Buscar en contratos con IA"
       },
       "process": {
         "pipeline_state": "Estado del pipeline",

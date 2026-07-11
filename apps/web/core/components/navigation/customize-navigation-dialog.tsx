@@ -85,8 +85,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
       const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
-      // "file-library" only appears once the module is enabled for this workspace
-      if (item.key === "file-library" && !isWorkspaceFeatureEnabled(slug, "file_library")) return false;
+      // "file-library" / "contracts" only appear once the module is enabled for this workspace
+      if ((item.key === "file-library" || item.key === "contracts") && !isWorkspaceFeatureEnabled(slug, "file_library"))
+        return false;
       return hasPermission;
     }).map((item) => {
       // Get pinned status and sort order from localStorage

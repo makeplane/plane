@@ -220,3 +220,57 @@ class ContractQuery(BaseModel):
 
     def __str__(self):
         return str(self.query)[:60]
+
+
+class ContractChat(BaseModel):
+    """A chat session over contracts. `mode=GENERAL` answers with RAG over the
+    workspace's vectorized chunks; `mode=CONTRACT` is scoped to one contract
+    and receives its full extracted text as system context.
+    """
+
+    class Mode(models.TextChoices):
+        GENERAL = "GENERAL", "General"
+        CONTRACT = "CONTRACT", "Contract"
+
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="contract_chats")
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="contract_chats")
+    title = models.CharField(max_length=255, blank=True)
+    mode = models.CharField(max_length=20, choices=Mode.choices, default=Mode.GENERAL)
+    contract = models.ForeignKey(
+        "db.Contract", on_delete=models.CASCADE, null=True, blank=True, related_name="chats"
+    )
+
+    class Meta:
+        verbose_name = "Contract Chat"
+        verbose_name_plural = "Contract Chats"
+        db_table = "contract_chats"
+        ordering = ("-updated_at",)
+
+    def __str__(self):
+        return self.title or str(self.id)
+
+
+class ContractChatMessage(BaseModel):
+    """One turn of a contract chat. Assistant turns keep the list of source
+    documents (contracts/chunks) the answer was grounded on.
+    """
+
+    class Role(models.TextChoices):
+        USER = "USER", "User"
+        ASSISTANT = "ASSISTANT", "Assistant"
+
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="contract_chat_messages")
+    chat = models.ForeignKey("db.ContractChat", on_delete=models.CASCADE, related_name="messages")
+    role = models.CharField(max_length=20, choices=Role.choices)
+    content = models.TextField()
+    # [{contract_id, title, file_name, asset_id, similarity}] for assistant turns
+    sources = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Contract Chat Message"
+        verbose_name_plural = "Contract Chat Messages"
+        db_table = "contract_chat_messages"
+        ordering = ("created_at",)
+
+    def __str__(self):
+        return f"{self.role}: {str(self.content)[:40]}"

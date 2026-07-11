@@ -130,6 +130,8 @@ class FileLibraryAssetEndpoint(FileLibraryBaseView):
                 Prefetch("category_links", queryset=FileCategoryLink.objects.all()),
                 Prefetch("tag_links", queryset=FileTagLink.objects.all()),
             )
+            # Contract badge data (is-contract + pipeline state) without N+1
+            .select_related("contract")
             .order_by("-created_at")
         )
 

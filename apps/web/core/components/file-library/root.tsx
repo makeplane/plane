@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
 import { Check, Download, Files, FileText, FolderPlus, Layers, Search, Tags, Trash2, Upload } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 // plane imports
 import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
@@ -79,6 +79,18 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const [newFolderParent, setNewFolderParent] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
+
+  // Deep link (Power K file search): ?preview=<asset_id> opens the viewer
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const previewId = searchParams.get("preview");
+    if (!previewId) return;
+    const file = getFileById(previewId);
+    if (!file) return; // files not loaded yet — retried when the loader settles
+    setPreviewFile({ assetId: file.id, name: file.attributes.name, contentType: file.attributes.type });
+    setSearchParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, filesLoader]);
 
   // Server-driven search/filter/order: any filter change refetches from the
   // database (debounced so typing doesn't fire a request per keystroke)
@@ -156,6 +168,14 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       const file = getFileById(fileId);
       if (!file) continue;
       const prefix = folderPathString(file.folder_id);
+      // Contract indicator: which files are contracts + live pipeline state
+      const contractBadge = file.contract_id
+        ? file.contract_processing_status === "PROCESSING" || file.contract_processing_status === "PENDING"
+          ? { label: t("file_library.contracts.processing.processing"), tone: "processing" as const }
+          : file.contract_processing_status === "ERROR"
+            ? { label: t("file_library.contracts.processing.error"), tone: "danger" as const }
+            : { label: t("file_library.contracts.badge"), tone: "success" as const }
+        : null;
       manifest.push({
         kind: "file",
         path: uniquePath(`${prefix}${file.attributes.name}`),
@@ -164,6 +184,7 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
         size: file.size,
         createdAt: file.created_at,
         updatedAt: file.updated_at,
+        badge: contractBadge,
         metadata: { assetId: file.id },
       });
     }

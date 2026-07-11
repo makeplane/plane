@@ -117,6 +117,162 @@ export async function generateStructuredJson(env: Env, req: StructuredJsonReques
   }
 }
 
+export type ChatMessage = { role: "user" | "assistant"; content: string };
+
+async function callGeminiChat(
+  env: Env,
+  model: string,
+  system: string,
+  history: ChatMessage[],
+  query: string
+): Promise<string> {
+  const contents = [
+    ...history.map((message) => ({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: message.content }],
+    })),
+    { role: "user", parts: [{ text: query }] },
+  ];
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GOOGLE_GENERATIVE_AI_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents,
+        generationConfig: { maxOutputTokens: 2048 },
+      }),
+    }
+  );
+  const bodyText = await response.text();
+  if (!response.ok) {
+    const error = new Error(`Gemini ${model} -> ${response.status}: ${bodyText.slice(0, 300)}`);
+    (error as Error & { retryable?: boolean }).retryable = isRetryableGeminiError(response.status, bodyText);
+    throw error;
+  }
+  const data = JSON.parse(bodyText) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+  const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+  if (!text) throw new Error(`Gemini ${model} returned an empty response`);
+  return text;
+}
+
+async function callDeepseekChat(
+  env: Env,
+  model: string,
+  system: string,
+  history: ChatMessage[],
+  query: string
+): Promise<string> {
+  const response = await fetch("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: "system", content: system }, ...history, { role: "user", content: query }],
+      max_tokens: 2048,
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`DeepSeek ${model} -> ${response.status}: ${(await response.text()).slice(0, 300)}`);
+  }
+  const data = await response.json<{ choices?: Array<{ message?: { content?: string } }> }>();
+  const text = data.choices?.[0]?.message?.content ?? "";
+  if (!text) throw new Error(`DeepSeek ${model} returned an empty response`);
+  return text;
+}
+
+export type ChatModelOption = { id: string; provider: "gemini" | "deepseek" };
+
+const geminiModels = (env: Env): string[] =>
+  (env.GEMINI_MODEL_FALLBACK_LIST || "")
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+
+const deepseekModels = (env: Env): string[] => {
+  const list = (env.DEEPSEEK_MODEL_LIST || env.DEEPSEEK_MODEL || "deepseek-chat")
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  return list;
+};
+
+/** Selectable chat models, entirely env-driven (never hardcoded in the UI). */
+export function listChatModels(env: Env): { models: ChatModelOption[]; default_model: string } {
+  const models: ChatModelOption[] = [
+    ...deepseekModels(env).map((id) => ({ id, provider: "deepseek" as const })),
+    ...geminiModels(env).map((id) => ({ id, provider: "gemini" as const })),
+  ];
+  const fallback = models[0]?.id ?? "deepseek-chat";
+  const configuredDefault = env.CHAT_DEFAULT_MODEL?.trim();
+  const default_model =
+    configuredDefault && models.some((model) => model.id === configuredDefault) ? configuredDefault : fallback;
+  return { models, default_model };
+}
+
+/**
+ * Free-text chat turn. `preferredModel` (from the UI picker) runs first when
+ * it is one of the env-declared models; on retryable failure the normal
+ * provider chain takes over.
+ */
+export async function generateText(
+  env: Env,
+  system: string,
+  history: ChatMessage[],
+  query: string,
+  preferredModel?: string
+): Promise<{ text: string; model: string }> {
+  const provider = (env.AI_PROVIDER || "gemini").toLowerCase();
+
+  if (preferredModel) {
+    const isDeepseek = deepseekModels(env).includes(preferredModel);
+    const isGemini = geminiModels(env).includes(preferredModel);
+    if (isDeepseek) {
+      return { text: await callDeepseekChat(env, preferredModel, system, history, query), model: preferredModel };
+    }
+    if (isGemini) {
+      try {
+        return { text: await callGeminiChat(env, preferredModel, system, history, query), model: preferredModel };
+      } catch (error) {
+        if (!(error as Error & { retryable?: boolean }).retryable) throw error;
+        console.log(JSON.stringify({ message: "preferred gemini model unavailable, falling back", preferredModel }));
+      }
+    }
+    // Unknown model ids fall through to the configured chain
+  }
+
+  if (provider === "deepseek") {
+    const model = deepseekModels(env)[0];
+    return { text: await callDeepseekChat(env, model, system, history, query), model };
+  }
+
+  const models = geminiModels(env);
+  if (models.length === 0) throw new Error("GEMINI_MODEL_FALLBACK_LIST is not configured");
+
+  let lastError: unknown;
+  for (const model of models) {
+    try {
+      return { text: await callGeminiChat(env, model, system, history, query), model };
+    } catch (error) {
+      lastError = error;
+      if (!(error as Error & { retryable?: boolean }).retryable) throw error;
+      console.log(JSON.stringify({ message: "gemini chat model unavailable, trying next", model }));
+    }
+  }
+  try {
+    const model = deepseekModels(env)[0];
+    return { text: await callDeepseekChat(env, model, system, history, query), model: `deepseek:${model}` };
+  } catch (deepseekError) {
+    throw lastError ?? deepseekError;
+  }
+}
+
 /** OpenAI embeddings (text-embedding-3-small @ 1536 dims by default). */
 export async function generateEmbeddings(env: Env, texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];

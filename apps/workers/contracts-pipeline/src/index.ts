@@ -5,6 +5,8 @@
  * Django never needs a broad Cloudflare account token.
  */
 
+import { handleChat, type ChatRequest } from "./chat";
+import { listChatModels } from "./lib/ai";
 import { ContractPipelineWorkflow, type PipelineParams } from "./workflows/contract-pipeline";
 import { ContractQueryWorkflow, type QueryParams } from "./workflows/contract-query";
 
@@ -29,13 +31,18 @@ export default {
       return Response.json({ status: "ok" });
     }
 
-    if (request.method !== "POST") {
-      return Response.json({ error: "Method not allowed" }, { status: 405 });
-    }
-
     const provided = request.headers.get("X-Trigger-Secret") ?? "";
     if (!(await verifySecret(provided, env.CF_WORKER_TRIGGER_SECRET))) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Env-declared chat models for the UI picker
+    if (url.pathname === "/models" && request.method === "GET") {
+      return Response.json(listChatModels(env));
+    }
+
+    if (request.method !== "POST") {
+      return Response.json({ error: "Method not allowed" }, { status: 405 });
     }
 
     try {
@@ -66,6 +73,15 @@ export default {
         });
         console.log(JSON.stringify({ message: "query instance created", id: instance.id, job: params.job_id }));
         return Response.json({ workflow_instance_id: instance.id });
+      }
+
+      if (url.pathname === "/chat") {
+        const body = await request.json<ChatRequest>();
+        if (!body.workspace_id || !body.query || !body.mode) {
+          return Response.json({ error: "workspace_id, mode and query are required" }, { status: 400 });
+        }
+        const result = await handleChat(env, body);
+        return Response.json(result);
       }
 
       return Response.json({ error: "Not found" }, { status: 404 });

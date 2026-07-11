@@ -140,10 +140,38 @@ export type FileSystemFileItem = {
   previewPageCount?: number;
   /** Thumbnail aspect ratio (width / height). Defaults to a portrait page. */
   previewAspectRatio?: number;
+  /** Small status pill next to the name (e.g. contract / processing state). */
+  badge?: FileSystemFileBadge | null;
   metadata?: Record<string, string>;
 };
 
+export type FileSystemFileBadge = {
+  label: string;
+  tone?: "neutral" | "processing" | "success" | "danger";
+};
+
 export type FileSystemItem = FileSystemFolderItem | FileSystemFileItem;
+
+const FILE_BADGE_TONE_CLASSES: Record<NonNullable<FileSystemFileBadge["tone"]>, string> = {
+  neutral: "bg-muted text-muted-foreground",
+  processing: "bg-blue-500/15 text-blue-600 animate-pulse dark:text-blue-400",
+  success: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+  danger: "bg-red-500/15 text-red-600 dark:text-red-400",
+};
+
+/** Small status pill shown next to file names (list rows + grid tiles). */
+function FileSystemBadgePill({ badge }: { badge: FileSystemFileBadge }) {
+  return (
+    <span
+      className={cn(
+        "shrink-0 rounded-full px-1.5 py-px text-[10px] font-medium leading-tight",
+        FILE_BADGE_TONE_CLASSES[badge.tone ?? "neutral"]
+      )}
+    >
+      {badge.label}
+    </span>
+  );
+}
 
 export type FileSystemLoadChildrenArgs = {
   path: string;
@@ -3267,6 +3295,11 @@ function FileSystemIconsView({ entries, onOpen, onSelect, renderFilePreview, sel
                   )}
                 >
                   <span className="line-clamp-2">{entry.name}</span>
+                  {entry.kind === "file" && entry.badge ? (
+                    <span className="mt-0.5 flex justify-center">
+                      <FileSystemBadgePill badge={entry.badge} />
+                    </span>
+                  ) : null}
                 </span>
               </button>
             );
@@ -4219,6 +4252,7 @@ const FileSystemColumn = React.memo(function FileSystemColumn({
                     <FileTypeIcon fileName={entry.name} className="size-4 shrink-0" />
                   )}
                   <span className="min-w-0 flex-1 truncate">{entry.name}</span>
+                  {entry.kind === "file" && entry.badge ? <FileSystemBadgePill badge={entry.badge} /> : null}
                   {entry.kind === "folder" && folderHasChildren(index, entry) ? (
                     <HugeiconsIcon
                       icon={ArrowRight01Icon}

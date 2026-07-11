@@ -6,7 +6,7 @@
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import Contract, ContractProcessingJob, ContractQuery
+from plane.db.models import Contract, ContractChat, ContractChatMessage, ContractProcessingJob, ContractQuery
 
 from .base import BaseSerializer
 
@@ -88,6 +88,29 @@ class ContractProcessingJobSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+        read_only_fields = fields
+
+
+class ContractChatSerializer(BaseSerializer):
+    class Meta:
+        model = ContractChat
+        fields = [
+            "id",
+            "workspace_id",
+            "user_id",
+            "title",
+            "mode",
+            "contract_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class ContractChatMessageSerializer(BaseSerializer):
+    class Meta:
+        model = ContractChatMessage
+        fields = ["id", "chat_id", "role", "content", "sources", "created_at"]
         read_only_fields = fields
 
 

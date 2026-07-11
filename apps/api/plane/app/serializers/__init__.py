@@ -143,6 +143,8 @@ from .file_library import (
     FileTagSerializer,
 )
 from .contract import (
+    ContractChatMessageSerializer,
+    ContractChatSerializer,
     ContractProcessingJobSerializer,
     ContractQuerySerializer,
     ContractSerializer,

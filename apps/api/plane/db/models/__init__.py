@@ -28,6 +28,8 @@ from .file_library import (
 )
 from .contract import (
     Contract,
+    ContractChat,
+    ContractChatMessage,
     ContractChunk,
     ContractProcessingJob,
     ContractQuery,

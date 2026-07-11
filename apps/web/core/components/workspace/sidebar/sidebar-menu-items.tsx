@@ -91,10 +91,10 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
   const sortedNavigationItems = useMemo(
     () =>
       WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS
-        // "file-library" is the only entry gated by a per-workspace feature
-        // flag rather than a role; hide it entirely (from sidebar and pin
+        // "file-library" and "contracts" are gated by a per-workspace feature
+        // flag rather than a role; hide them entirely (from sidebar and pin
         // dialog alike) when the module is off for this workspace.
-        .filter((item) => item.key !== "file-library" || isFileLibraryEnabled)
+        .filter((item) => (item.key !== "file-library" && item.key !== "contracts") || isFileLibraryEnabled)
         .map((item) => {
           const preference = workspacePreferences.items[item.key];
           return {

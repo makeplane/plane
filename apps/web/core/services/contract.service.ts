@@ -8,6 +8,9 @@
 import { API_BASE_URL } from "@plane/constants";
 import type {
   TContract,
+  TContractChat,
+  TContractChatMessage,
+  TContractChatMode,
   TContractFilters,
   TContractJob,
   TContractQuery,
@@ -25,6 +28,7 @@ export class ContractService extends APIService {
   async getContracts(workspaceSlug: string, filters?: TContractFilters): Promise<TContract[]> {
     // Multi-value filters repeat their key (?estatus=a&estatus=b) — Django getlist()
     const params = new URLSearchParams();
+    if (filters?.asset_id) params.set("asset_id", filters.asset_id);
     if (filters?.search) params.set("search", filters.search);
     if (filters?.person) params.set("person", filters.person);
     if (filters?.artist) params.set("artist", filters.artist);
@@ -102,6 +106,88 @@ export class ContractService extends APIService {
       ? `/api/workspaces/${workspaceSlug}/contracts/${options.contractId}/jobs/`
       : `/api/workspaces/${workspaceSlug}/contracts/jobs/`;
     return this.get(`${base}${query ? `?${query}` : ""}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkAction(
+    workspaceSlug: string,
+    action: "retry" | "reanalyze",
+    contractIds: string[]
+  ): Promise<{ dispatched: string[]; skipped: string[] }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/contracts/bulk/`, { action, contract_ids: contractIds })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // chat
+
+  async getChatModels(
+    workspaceSlug: string
+  ): Promise<{ models: Array<{ id: string; provider: "gemini" | "deepseek" }>; default_model: string }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/contracts/chats/models/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getChats(
+    workspaceSlug: string,
+    options?: { mode?: TContractChatMode; contractId?: string }
+  ): Promise<TContractChat[]> {
+    const params = new URLSearchParams();
+    if (options?.mode) params.set("mode", options.mode);
+    if (options?.contractId) params.set("contract_id", options.contractId);
+    const query = params.toString();
+    return this.get(`/api/workspaces/${workspaceSlug}/contracts/chats/${query ? `?${query}` : ""}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createChat(
+    workspaceSlug: string,
+    data: { mode: TContractChatMode; contract_id?: string; title?: string }
+  ): Promise<TContractChat> {
+    return this.post(`/api/workspaces/${workspaceSlug}/contracts/chats/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getChatDetail(
+    workspaceSlug: string,
+    chatId: string
+  ): Promise<{ chat: TContractChat; messages: TContractChatMessage[] }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/contracts/chats/${chatId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteChat(workspaceSlug: string, chatId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/contracts/chats/${chatId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async sendChatMessage(
+    workspaceSlug: string,
+    chatId: string,
+    message: string,
+    model?: string
+  ): Promise<{ user_message: TContractChatMessage; assistant_message: TContractChatMessage }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/contracts/chats/${chatId}/messages/`, { message, model })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

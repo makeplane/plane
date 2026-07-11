@@ -177,7 +177,36 @@
       },
       "tabs": {
         "info": "Information",
-        "process": "Process"
+        "process": "Process",
+        "chat": "Chat"
+      },
+      "badge": "Contract",
+      "preview_info": "Contract info",
+      "open_in_contracts": "Open in Contracts",
+      "bulk": {
+        "selected": "{count} selected",
+        "clear": "Clear selection",
+        "dispatched": "{count, plural, one {# analysis queued} other {# analyses queued}} ({skipped} skipped)",
+        "failed": "Failed to queue the bulk action"
+      },
+      "chat": {
+        "button": "AI chat",
+        "title": "Contracts chat",
+        "placeholder": "Ask about your contracts…",
+        "send": "Send",
+        "thinking": "Thinking…",
+        "failed": "The message could not be processed",
+        "new_chat": "New chat",
+        "history": "History",
+        "no_chats": "No chats yet",
+        "untitled": "Untitled chat",
+        "sources_used": "Documents used for this answer",
+        "open_document": "Open in a new window",
+        "empty_general_title": "Ask anything about your contracts",
+        "empty_general_description": "Answers are grounded on the vectorized content of every analyzed contract, and each reply shows the documents it used.",
+        "empty_contract_title": "Ask about this contract",
+        "empty_contract_description": "The full extracted text of this contract is the context for every answer.",
+        "power_k_search": "Search contracts with AI"
       },
       "process": {
         "pipeline_state": "Pipeline state",

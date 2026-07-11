@@ -15,6 +15,8 @@ interface Env {
   AI_PROVIDER: string;
   GEMINI_MODEL_FALLBACK_LIST: string;
   DEEPSEEK_MODEL: string;
+  DEEPSEEK_MODEL_LIST: string;
+  CHAT_DEFAULT_MODEL: string;
   OPENAI_EMBEDDING_MODEL: string;
   EMBEDDING_DIMENSIONS: string;
   PLANE_INTERNAL_API_URL: string;

@@ -72,6 +72,9 @@ class ContractsEndpoint(FileLibraryBaseView):
         contracts = Contract.objects.filter(workspace__slug=slug).select_related("file_asset")
 
         # Filters over AI-extracted data
+        asset_id = request.query_params.get("asset_id")
+        if asset_id:
+            contracts = contracts.filter(file_asset_id=asset_id)
         search = request.query_params.get("search")
         if search:
             contracts = contracts.filter(
@@ -183,6 +186,48 @@ class ContractReanalyzeConfirmEndpoint(FileLibraryBaseView):
         contract.proposed_data = None
         contract.save(update_fields=["proposed_data"])
         return Response(ContractSerializer(contract).data, status=status.HTTP_200_OK)
+
+
+class ContractsBulkEndpoint(FileLibraryBaseView):
+    """Bulk actions over contracts: retry (full) or re-analyze many at once."""
+
+    model = ContractProcessingJob
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def post(self, request, slug):
+        action = request.data.get("action")
+        contract_ids = request.data.get("contract_ids") or []
+        if action not in ("retry", "reanalyze") or not isinstance(contract_ids, list) or not contract_ids:
+            return Response(
+                {"error": "action (retry|reanalyze) and contract_ids are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        contracts = Contract.objects.filter(id__in=contract_ids, workspace__slug=slug)
+        dispatched, skipped = [], []
+        for contract in contracts:
+            # Skip contracts that already have an active run
+            if contract.jobs.filter(
+                status__in=[ContractProcessingJob.Status.QUEUED, ContractProcessingJob.Status.RUNNING]
+            ).exists():
+                skipped.append(str(contract.id))
+                continue
+            if action == "reanalyze" and not contract.extracted_text:
+                skipped.append(str(contract.id))
+                continue
+            job = create_and_dispatch_job(
+                workspace=contract.workspace,
+                contract=contract,
+                task_type=(
+                    ContractProcessingJob.TaskType.REANALYZE
+                    if action == "reanalyze"
+                    else ContractProcessingJob.TaskType.RETRY_PARTIAL
+                ),
+                user=request.user,
+                metadata={"retry_options": {key: True for key in RETRY_OPTION_KEYS}} if action == "retry" else None,
+            )
+            dispatched.append(str(job.id))
+        return Response({"dispatched": dispatched, "skipped": skipped}, status=status.HTTP_200_OK)
 
 
 class ContractJobsEndpoint(FileLibraryBaseView):
