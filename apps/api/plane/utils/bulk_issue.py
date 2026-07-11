@@ -34,6 +34,9 @@ from plane.db.models import (
 # Priority values accepted by Issue.PRIORITY_CHOICES
 PRIORITY_CHOICES = {"urgent", "high", "medium", "low", "none"}
 
+# Upper bound on the number of work items a single bulk request may touch.
+MAX_BULK_ISSUES = 100
+
 
 class BulkIssueOperationError(Exception):
     """Raised for any validation failure. The caller maps ``message`` to a 400.
@@ -79,11 +82,22 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
 
     Returns the list of operated issue ids (str) on success.
     """
-    if not issue_ids:
+    if not isinstance(issue_ids, (list, tuple)) or not issue_ids:
         raise BulkIssueOperationError("Issue IDs are required")
 
-    if not properties:
+    # Bound the batch: a single request must not hold a long write transaction
+    # nor fan out an unbounded number of activity tasks.
+    if len(issue_ids) > MAX_BULK_ISSUES:
+        raise BulkIssueOperationError(f"A bulk operation is limited to {MAX_BULK_ISSUES} work items")
+
+    if not isinstance(properties, dict) or not properties:
         raise BulkIssueOperationError("Properties are required")
+
+    # Multi-valued fields must be lists so downstream __in lookups never receive a
+    # scalar (which would raise a TypeError -> 500 instead of a clean 400).
+    for list_field in ("assignee_ids", "label_ids", "module_ids"):
+        if list_field in properties and not isinstance(properties[list_field], (list, tuple)):
+            raise BulkIssueOperationError(f"{list_field} must be a list")
 
     project = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
     if project is None:
@@ -187,6 +201,10 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
     epoch = int(now.timestamp())
     operated_ids = [str(issue.id) for issue in issues]
 
+    # Activity tasks are collected here and dispatched via transaction.on_commit so
+    # a rollback never leaves phantom activities/notifications for un-persisted changes.
+    activity_payloads = []
+
     scalar_fields = []
     if "state_id" in properties and state_id:
         scalar_fields.append("state")
@@ -253,16 +271,18 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
             issue.updated_at = now
 
             if requested:
-                issue_activity.delay(
-                    type="issue.activity.updated",
-                    requested_data=json.dumps(requested, cls=DjangoJSONEncoder),
-                    actor_id=actor_id,
-                    issue_id=iid,
-                    project_id=str(project_id),
-                    current_instance=json.dumps(snapshot, cls=DjangoJSONEncoder),
-                    epoch=epoch,
-                    notification=notification,
-                    origin=origin,
+                activity_payloads.append(
+                    dict(
+                        type="issue.activity.updated",
+                        requested_data=json.dumps(requested, cls=DjangoJSONEncoder),
+                        actor_id=actor_id,
+                        issue_id=iid,
+                        project_id=str(project_id),
+                        current_instance=json.dumps(snapshot, cls=DjangoJSONEncoder),
+                        epoch=epoch,
+                        notification=notification,
+                        origin=origin,
+                    )
                 )
 
         # Scalars: one bulk_update for all issues (updated_at always bumped).
@@ -270,8 +290,10 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
         Issue.objects.bulk_update(issues, update_fields, batch_size=100)
 
         # Labels (ADD): keep the existing rows, only insert the new ones that are
-        # not already present. ignore_conflicts guards the (issue,label) partial
-        # UniqueConstraint (deleted_at is null) against any race.
+        # not already present. NOTE: unlike IssueAssignee/ModuleIssue/CycleIssue,
+        # IssueLabel carries no DB unique constraint, so dedup is done in memory
+        # here (ignore_conflicts is a no-op); two concurrent identical bulk-adds
+        # could still race a duplicate active row — acceptable given the tiny window.
         if "label_ids" in properties:
             new_label_ids = [str(x) for x in (label_ids or [])]
             if new_label_ids:
@@ -334,30 +356,39 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
                         ignore_conflicts=True,
                     )
                     for mid in added:
-                        issue_activity.delay(
-                            type="module.activity.created",
-                            requested_data=json.dumps({"module_id": str(mid)}),
-                            actor_id=actor_id,
-                            issue_id=iid,
-                            project_id=str(project_id),
-                            current_instance=None,
-                            epoch=epoch,
-                            notification=notification,
-                            origin=origin,
+                        activity_payloads.append(
+                            dict(
+                                type="module.activity.created",
+                                requested_data=json.dumps({"module_id": str(mid)}),
+                                actor_id=actor_id,
+                                issue_id=iid,
+                                project_id=str(project_id),
+                                current_instance=None,
+                                epoch=epoch,
+                                notification=notification,
+                                origin=origin,
+                            )
                         )
 
         # Cycle (single, SET): replicate the CycleIssueViewSet.create flow for
         # assignment; soft-delete + per-cycle activity for removal (cycle_id=None).
         if "cycle_id" in properties:
             if cycle_id:
-                existing = list(CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=operated_ids))
-                existing_issue_ids = {str(ci.issue_id) for ci in existing}
                 already_in = {
                     str(x)
                     for x in CycleIssue.objects.filter(cycle_id=cycle_id, issue_id__in=operated_ids).values_list(
                         "issue_id", flat=True
                     )
                 }
+                # Rows in some OTHER cycle. Issues already linked to the target cycle
+                # are excluded: moving their other-cycle row to the target would
+                # collide with the existing target row (non-conventional multi-cycle).
+                existing = [
+                    ci
+                    for ci in CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=operated_ids)
+                    if str(ci.issue_id) not in already_in
+                ]
+                existing_issue_ids = {str(ci.issue_id) for ci in existing}
                 new_issue_ids = [iid for iid in operated_ids if iid not in existing_issue_ids and iid not in already_in]
                 created_records = CycleIssue.objects.bulk_create(
                     [
@@ -372,6 +403,7 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
                         for iid in new_issue_ids
                     ],
                     batch_size=10,
+                    ignore_conflicts=True,
                 )
                 updated_records = []
                 update_cycle_issue_activity = []
@@ -388,21 +420,23 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
                     )
                 CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
                 if created_records or updated_records:
-                    issue_activity.delay(
-                        type="cycle.activity.created",
-                        requested_data=json.dumps({"cycles_list": operated_ids}),
-                        actor_id=actor_id,
-                        issue_id=None,
-                        project_id=str(project_id),
-                        current_instance=json.dumps(
-                            {
-                                "updated_cycle_issues": update_cycle_issue_activity,
-                                "created_cycle_issues": serialize("json", created_records),
-                            }
-                        ),
-                        epoch=epoch,
-                        notification=notification,
-                        origin=origin,
+                    activity_payloads.append(
+                        dict(
+                            type="cycle.activity.created",
+                            requested_data=json.dumps({"cycles_list": operated_ids}),
+                            actor_id=actor_id,
+                            issue_id=None,
+                            project_id=str(project_id),
+                            current_instance=json.dumps(
+                                {
+                                    "updated_cycle_issues": update_cycle_issue_activity,
+                                    "created_cycle_issues": serialize("json", created_records),
+                                }
+                            ),
+                            epoch=epoch,
+                            notification=notification,
+                            origin=origin,
+                        )
                     )
             else:
                 current_cycle_issues = list(CycleIssue.objects.filter(issue_id__in=operated_ids))
@@ -414,22 +448,28 @@ def bulk_issue_operations(*, slug, project_id, issue_ids, properties, actor_id, 
                 for cid, iids in by_cycle.items():
                     cycle = cycle_lookup.get(cid)
                     for iid in iids:
-                        issue_activity.delay(
-                            type="cycle.activity.deleted",
-                            requested_data=json.dumps(
-                                {
-                                    "cycle_id": cid,
-                                    "cycle_name": cycle.name if cycle else "",
-                                    "issues": [iid],
-                                }
-                            ),
-                            actor_id=actor_id,
-                            issue_id=iid,
-                            project_id=str(project_id),
-                            current_instance=None,
-                            epoch=epoch,
-                            notification=notification,
-                            origin=origin,
+                        activity_payloads.append(
+                            dict(
+                                type="cycle.activity.deleted",
+                                requested_data=json.dumps(
+                                    {
+                                        "cycle_id": cid,
+                                        "cycle_name": cycle.name if cycle else "",
+                                        "issues": [iid],
+                                    }
+                                ),
+                                actor_id=actor_id,
+                                issue_id=iid,
+                                project_id=str(project_id),
+                                current_instance=None,
+                                epoch=epoch,
+                                notification=notification,
+                                origin=origin,
+                            )
                         )
+
+        # Dispatch every collected activity only after the transaction commits.
+        if activity_payloads:
+            transaction.on_commit(lambda: [issue_activity.delay(**payload) for payload in activity_payloads])
 
     return operated_ids

@@ -97,15 +97,16 @@ def activity():
 @pytest.mark.contract
 class TestBulkScalarSet:
     @pytest.mark.django_db
-    def test_set_state(self, session_client, workspace, project, activity):
+    def test_set_state(self, session_client, workspace, project, activity, django_capture_on_commit_callbacks):
         state = make_state(project, name="Done", group="completed")
         issue = make_issue(project)
 
-        response = session_client.post(
-            url(workspace.slug, project.id),
-            {"issue_ids": [str(issue.id)], "properties": {"state_id": str(state.id)}},
-            format="json",
-        )
+        with django_capture_on_commit_callbacks(execute=True):
+            response = session_client.post(
+                url(workspace.slug, project.id),
+                {"issue_ids": [str(issue.id)], "properties": {"state_id": str(state.id)}},
+                format="json",
+            )
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json()["issue_ids"] == [str(issue.id)]
@@ -168,16 +169,17 @@ class TestBulkScalarSet:
 
     @pytest.mark.django_db
     def test_set_cycle_assigns_and_emits_cycle_activity(
-        self, session_client, workspace, project, create_user, activity
+        self, session_client, workspace, project, create_user, activity, django_capture_on_commit_callbacks
     ):
         cycle = make_cycle(project, create_user)
         issue = make_issue(project)
 
-        response = session_client.post(
-            url(workspace.slug, project.id),
-            {"issue_ids": [str(issue.id)], "properties": {"cycle_id": str(cycle.id)}},
-            format="json",
-        )
+        with django_capture_on_commit_callbacks(execute=True):
+            response = session_client.post(
+                url(workspace.slug, project.id),
+                {"issue_ids": [str(issue.id)], "properties": {"cycle_id": str(cycle.id)}},
+                format="json",
+            )
 
         assert response.status_code == status.HTTP_200_OK
         assert CycleIssue.objects.filter(issue=issue, cycle=cycle).exists()
@@ -243,17 +245,20 @@ class TestBulkManyToManyAdd:
         assert IssueLabel.objects.filter(issue=issue, label=label).count() == 1
 
     @pytest.mark.django_db
-    def test_add_modules_keeps_existing(self, session_client, workspace, project, activity):
+    def test_add_modules_keeps_existing(
+        self, session_client, workspace, project, activity, django_capture_on_commit_callbacks
+    ):
         keep = make_module(project)
         add = make_module(project)
         issue = make_issue(project)
         ModuleIssue.objects.create(module=keep, issue=issue, project=project, workspace=workspace)
 
-        response = session_client.post(
-            url(workspace.slug, project.id),
-            {"issue_ids": [str(issue.id)], "properties": {"module_ids": [str(keep.id), str(add.id)]}},
-            format="json",
-        )
+        with django_capture_on_commit_callbacks(execute=True):
+            response = session_client.post(
+                url(workspace.slug, project.id),
+                {"issue_ids": [str(issue.id)], "properties": {"module_ids": [str(keep.id), str(add.id)]}},
+                format="json",
+            )
 
         assert response.status_code == status.HTTP_200_OK
         active = set(ModuleIssue.objects.filter(issue=issue).values_list("module_id", flat=True))
@@ -319,14 +324,17 @@ class TestBulkPartialAndMulti:
             assert str(issue.state_id) == str(state.id)
 
     @pytest.mark.django_db
-    def test_activity_emitted_per_item(self, session_client, workspace, project, activity):
+    def test_activity_emitted_per_item(
+        self, session_client, workspace, project, activity, django_capture_on_commit_callbacks
+    ):
         issues = [make_issue(project, name=f"I{i}") for i in range(3)]
 
-        response = session_client.post(
-            url(workspace.slug, project.id),
-            {"issue_ids": [str(i.id) for i in issues], "properties": {"priority": "low"}},
-            format="json",
-        )
+        with django_capture_on_commit_callbacks(execute=True):
+            response = session_client.post(
+                url(workspace.slug, project.id),
+                {"issue_ids": [str(i.id) for i in issues], "properties": {"priority": "low"}},
+                format="json",
+            )
 
         assert response.status_code == status.HTTP_200_OK
         updated = calls_of_type(activity, "issue.activity.updated")
@@ -510,6 +518,40 @@ class TestBulkValidation:
         response = session_client.post(
             url(workspace.slug, project.id),
             {"issue_ids": [str(issue.id)], "properties": {}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_batch_over_limit_rejected(self, session_client, workspace, project):
+        from plane.utils.bulk_issue import MAX_BULK_ISSUES
+        from uuid import uuid4
+
+        too_many = [str(uuid4()) for _ in range(MAX_BULK_ISSUES + 1)]
+        response = session_client.post(
+            url(workspace.slug, project.id),
+            {"issue_ids": too_many, "properties": {"priority": "high"}},
+            format="json",
+        )
+        # bounded before any DB work -> 400, not a 500 or a huge transaction
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_non_dict_properties_returns_400_not_500(self, session_client, workspace, project):
+        issue = make_issue(project)
+        response = session_client.post(
+            url(workspace.slug, project.id),
+            {"issue_ids": [str(issue.id)], "properties": ["state_id"]},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_scalar_for_list_field_returns_400_not_500(self, session_client, workspace, project):
+        issue = make_issue(project)
+        response = session_client.post(
+            url(workspace.slug, project.id),
+            {"issue_ids": [str(issue.id)], "properties": {"assignee_ids": 5}},
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
