@@ -163,6 +163,7 @@ export class IssueStore implements IIssueStore {
       id: issue?.id,
       sequence_id: issue?.sequence_id,
       name: issue?.name,
+      sg_event_id: issue?.sg_event_id,
       description_html: issue?.description_html,
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,

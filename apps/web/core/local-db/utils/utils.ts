@@ -22,6 +22,7 @@ export const addIssueToPersistanceLayer = async (issue: TIssue) => {
     const issuePartial = pick({ ...JSON.parse(JSON.stringify(issue)) }, [
       "id",
       "name",
+      "sg_event_id",
       "state_id",
       "sort_order",
       "completed_at",

@@ -5,6 +5,7 @@ export type Schema = {
 export const issueSchema: Schema = {
   id: "TEXT UNIQUE",
   name: "TEXT",
+  sg_event_id: "TEXT",
   state_id: "TEXT",
   sort_order: "REAL",
   completed_at: "TEXT",
