@@ -91,4 +91,4 @@
 | **WB-4** | low | **ACCEPTÉ.** `mutateWorkspaceMembersActivity` implémente le contrat abstrait de la base ; le drawer CE s'appuie sur `revalidateOnFocus/Mount` de SWR, donc aucun appelant CE — point d'extension fonctionnel (pas un no-op). |
 | BK-2, WB-3 | — | **REJETÉS** en double vérif (per_page interne = parité voulue avec le per-user ; matching de préfixe SWR sans chemin d'exploitation, méthode sans appelant). |
 
-> **Leak pré-existant identique** sur `WorkspaceUserActivityEndpoint` + `ExportWorkspaceUserActivityEndpoint` (endpoints hors périmètre module) → **branche `fix/` dédiée + PR séparée après merge** (réutilise ce helper). Voir la discipline `fix/` du projet.
+> **Leak pré-existant identique** sur `WorkspaceUserActivityEndpoint` + `ExportWorkspaceUserActivityEndpoint` (endpoints hors périmètre module) → **corrigé par la PR #25** (`fix/user-activity-guest-view-all-features`), qui applique ce même helper aux 2 endpoints (+ 3 tests). Traité en branche `fix/` séparée conformément à la discipline projet.
