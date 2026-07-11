@@ -36,6 +36,7 @@ export class ContractService extends APIService {
     (filters?.estatus ?? []).forEach((value) => params.append("estatus", value));
     (filters?.tipo ?? []).forEach((value) => params.append("tipo", value));
     (filters?.processing_status ?? []).forEach((value) => params.append("processing_status", value));
+    (filters?.tags ?? []).forEach((value) => params.append("tag", value));
     if (filters?.fecha_fin_efectiva_after) params.set("fecha_fin_efectiva_after", filters.fecha_fin_efectiva_after);
     if (filters?.fecha_fin_efectiva_before) params.set("fecha_fin_efectiva_before", filters.fecha_fin_efectiva_before);
     const query = params.toString();

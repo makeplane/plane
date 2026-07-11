@@ -167,6 +167,8 @@ export type TContractFilters = {
   estatus?: TContractStatus[];
   tipo?: TContractType[];
   processing_status?: TContractProcessingStatus[];
+  /** FileTag ids linked to the contract's document */
+  tags?: string[];
   fecha_fin_efectiva_after?: string;
   fecha_fin_efectiva_before?: string;
 };

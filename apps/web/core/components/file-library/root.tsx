@@ -8,11 +8,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
-import { Check, Download, Files, FileText, FolderPlus, Layers, Loader2, Search, Tags, Trash2, Upload } from "lucide-react";
+import { Check, Download, Files, FileText, FolderPlus, Layers, Loader2, Search, Tags, Trash2, Upload, X } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 // plane imports
-import type { FileSystemFileItem, FileSystemItem } from "@plane/extend-ui";
+import type { FileSystemFileItem, FileSystemItem, FileSystemView } from "@plane/extend-ui";
 import { FileSystem } from "@plane/extend-ui";
+import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Popover } from "@plane/propel/popover";
@@ -26,6 +27,7 @@ import { useFileLibrary } from "@/hooks/store/use-file-library";
 import { contractService } from "@/services/contract.service";
 // local imports
 import { BulkActionsModal } from "./bulk-actions-modal";
+import { downloadAssets as downloadAssetsBundle } from "./download";
 import type { TPreviewFile } from "./file-preview-modal";
 import { FilePreviewModal } from "./file-preview-modal";
 import { AppliedFiltersList } from "./filters-bar";
@@ -73,6 +75,10 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const [previewFile, setPreviewFile] = useState<TPreviewFile | null>(null);
   const [pendingUploads, setPendingUploads] = useState<File[]>([]);
   const [isBulkOpen, setIsBulkOpen] = useState(false);
+  const [bulkInitialIds, setBulkInitialIds] = useState<string[] | undefined>(undefined);
+  // Multi-selection over the browser (path → asset id), fed by checkboxes
+  // and Ctrl/Cmd+click in every view
+  const [multiSelected, setMultiSelected] = useState<Map<string, string>>(new Map());
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
@@ -81,6 +87,12 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
   const [newFolderParent, setNewFolderParent] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
+
+  // Last-used browser view survives reloads (icons | list | columns | gallery)
+  const { storedValue: storedView, setValue: setStoredView } = useLocalStorage<FileSystemView>(
+    "file_library_view",
+    "icons"
+  );
 
   // Deep link (Power K file search): ?preview=<asset_id> opens the viewer
   const [searchParams, setSearchParams] = useSearchParams();
@@ -251,6 +263,55 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
     setPreviewFile({ assetId, name: fsFile.name ?? fsFile.path, contentType: fsFile.contentType ?? "" });
   }, []);
 
+  // ── Multi-selection + downloads ─────────────────────────────────────
+  const selectedFilePaths = useMemo(() => new Set(multiSelected.keys()), [multiSelected]);
+  const selectedAssetIds = useMemo(() => Array.from(multiSelected.values()), [multiSelected]);
+
+  const handleFileSelectToggle = useCallback((file: FileSystemFileItem) => {
+    const assetId = file.metadata?.assetId;
+    if (!assetId) return;
+    setMultiSelected((previous) => {
+      const next = new Map(previous);
+      if (next.has(file.path)) next.delete(file.path);
+      else next.set(file.path, assetId);
+      return next;
+    });
+  }, []);
+
+  // The list view's tree reports its native multi-selection (Ctrl/Cmd-union,
+  // Shift-range) with replace semantics
+  const handleFileSelectionReplace = useCallback((files: FileSystemFileItem[]) => {
+    setMultiSelected(() => {
+      const next = new Map<string, string>();
+      files.forEach((file) => {
+        const assetId = file.metadata?.assetId;
+        if (assetId) next.set(file.path, assetId);
+      });
+      return next;
+    });
+  }, []);
+
+  // One file downloads directly; several are bundled into a single ZIP
+  const downloadAssets = useCallback(
+    async (assetIds: string[]) => {
+      const targets = assetIds
+        .map((id) => getFileById(id))
+        .filter((file): file is NonNullable<typeof file> => !!file)
+        .map((file) => ({ assetId: file.id, name: file.attributes.name }));
+      if (targets.length === 0) return;
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("file_library.download_started", { count: targets.length }),
+      });
+      try {
+        await downloadAssetsBundle(workspaceSlug, targets);
+      } catch {
+        setToast({ type: TOAST_TYPE.ERROR, title: t("file_library.download_failed") });
+      }
+    },
+    [workspaceSlug, getFileById, t]
+  );
+
   const navigateTo = (path: string) => {
     setBrowsePath(path);
     setCurrentPath(path);
@@ -350,7 +411,17 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
         defaultFolderId={uploadTargetFolderId}
         onClose={() => setPendingUploads([])}
       />
-      <BulkActionsModal workspaceSlug={workspaceSlug} isOpen={isBulkOpen} onClose={() => setIsBulkOpen(false)} />
+      <BulkActionsModal
+        workspaceSlug={workspaceSlug}
+        isOpen={isBulkOpen}
+        onClose={() => {
+          setIsBulkOpen(false);
+          setBulkInitialIds(undefined);
+          // A bulk action (move/tags/delete) may have consumed the selection
+          setMultiSelected(new Map());
+        }}
+        initialFileIds={bulkInitialIds}
+      />
       <FilePreviewModal workspaceSlug={workspaceSlug} file={previewFile} onClose={() => setPreviewFile(null)} />
       <AlertModalCore
         isOpen={isDeleteModalOpen}
@@ -369,7 +440,7 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
         </div>
         <div className="flex shrink-0 items-center gap-1">
           {/* selected-file quick actions */}
-          {selectedFile && (
+          {(selectedFile && !multiSelected.size) && (
             <>
               <span className="hidden max-w-32 truncate text-12 text-tertiary lg:inline">
                 {selectedFile.attributes.name}
@@ -427,6 +498,18 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             <FileText className="size-3.5" />
             <span className="hidden sm:inline">{t("file_library.contracts.title")}</span>
           </Link>
+
+          {/* contextual download: everything matching the current filters */}
+          <button
+            type="button"
+            onClick={() => void downloadAssets(getFilteredFileIds())}
+            disabled={getFilteredFileIds().length === 0}
+            title={t("file_library.download_all_hint")}
+            className="flex h-8 items-center gap-1 rounded-sm border border-subtle px-2 text-12 hover:bg-layer-1-hover disabled:opacity-50"
+          >
+            <Download className="size-3.5" />
+            <span className="hidden lg:inline">{t("file_library.download_all")}</span>
+          </button>
 
           {/* live pipeline monitor — mirrors the contracts page badge */}
           {(activeJobs?.length ?? 0) > 0 && (
@@ -512,6 +595,38 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
       {/* applied filters row — pills grouped by property, like work items */}
       <AppliedFiltersList />
 
+      {/* multi-selection action bar */}
+      {multiSelected.size > 0 && (
+        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-subtle bg-layer-1 px-3 py-2 sm:px-4">
+          <span className="text-12 font-medium">
+            {t("file_library.bulk.selected_count", { count: multiSelected.size })}
+          </span>
+          <Button variant="secondary" size="sm" onClick={() => void downloadAssets(selectedAssetIds)}>
+            <Download className="size-3.5" />
+            {t("file_library.download_selected")}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              setBulkInitialIds(selectedAssetIds);
+              setIsBulkOpen(true);
+            }}
+          >
+            <Layers className="size-3.5" />
+            {t("file_library.bulk.button")}
+          </Button>
+          <button
+            type="button"
+            onClick={() => setMultiSelected(new Map())}
+            className="flex items-center gap-1 rounded-sm px-2 py-1 text-12 text-tertiary hover:bg-layer-1-hover"
+          >
+            <X className="size-3.5" />
+            {t("file_library.contracts.bulk.clear")}
+          </button>
+        </div>
+      )}
+
       {/* browser + dropzone */}
       <div {...getRootProps()} className="relative h-full min-h-0 w-full">
         <input {...getInputProps()} />
@@ -536,7 +651,8 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             key={browseKey}
             items={items}
             title={t("file_library.title")}
-            defaultView="icons"
+            view={storedView ?? "icons"}
+            onViewChange={setStoredView}
             defaultPath={browsePath}
             className="h-full"
             getFileUrl={getFileUrl}
@@ -545,6 +661,9 @@ export const FileLibraryRoot = observer(function FileLibraryRoot(props: Props) {
             sortOverride={sortOverride}
             onSelectionChange={handleSelectionChange}
             onFileOpen={handleFileOpen}
+            selectedFilePaths={selectedFilePaths}
+            onFileSelectToggle={handleFileSelectToggle}
+            onFileSelectionReplace={handleFileSelectionReplace}
           />
         )}
       </div>

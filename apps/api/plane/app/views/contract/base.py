@@ -100,6 +100,9 @@ class ContractsEndpoint(FileLibraryBaseView):
         processing_status = request.query_params.getlist("processing_status")
         if processing_status:
             contracts = contracts.filter(processing_status__in=processing_status)
+        tag_ids = request.query_params.getlist("tag")
+        if tag_ids:
+            contracts = contracts.filter(file_asset__tag_links__tag_id__in=tag_ids).distinct()
         fin_after = request.query_params.get("fecha_fin_efectiva_after")
         if fin_after:
             contracts = contracts.filter(fecha_fin_efectiva__gte=fin_after)

@@ -5,17 +5,31 @@
  */
 
 import { Check, Filter, X } from "lucide-react";
+import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Popover } from "@plane/propel/popover";
-import type { TContractFilters } from "@plane/types";
+import type { TContractFilters, TFileTag } from "@plane/types";
 import { cn } from "@plane/utils";
+// services
+import { fileLibraryService } from "@/services/file-library.service";
 // local imports
 import { CONTRACT_STATUS_OPTIONS, CONTRACT_TYPE_OPTIONS, PROCESSING_STATUS_OPTIONS } from "./constants";
 
 type Props = {
+  workspaceSlug: string;
   filters: TContractFilters;
   onChange: (next: Partial<TContractFilters>) => void;
+};
+
+/** Workspace file tags (SWR-deduped between the dropdown and the pills row) */
+const useWorkspaceTags = (workspaceSlug: string) => {
+  const { data } = useSWR<TFileTag[]>(
+    `FILE_LIBRARY_TAGS_LIST_${workspaceSlug}`,
+    () => fileLibraryService.getTags(workspaceSlug),
+    { revalidateOnFocus: false }
+  );
+  return data ?? [];
 };
 
 const MULTI_SECTIONS = [
@@ -30,20 +44,22 @@ const MULTI_SECTIONS = [
 
 /** Filters over the AI-extracted contract data (multi-value like work items) */
 export function ContractFiltersDropdown(props: Props) {
-  const { filters, onChange } = props;
+  const { workspaceSlug, filters, onChange } = props;
   const { t } = useTranslation();
+  const workspaceTags = useWorkspaceTags(workspaceSlug);
 
   const activeCount =
     (filters.estatus?.length ?? 0) +
     (filters.tipo?.length ?? 0) +
     (filters.processing_status?.length ?? 0) +
+    (filters.tags?.length ?? 0) +
     (filters.person ? 1 : 0) +
     (filters.artist ? 1 : 0) +
     (filters.year ? 1 : 0) +
     (filters.fecha_fin_efectiva_after ? 1 : 0) +
     (filters.fecha_fin_efectiva_before ? 1 : 0);
 
-  const toggleValue = <K extends "estatus" | "tipo" | "processing_status">(key: K, value: string) => {
+  const toggleValue = <K extends "estatus" | "tipo" | "processing_status" | "tags">(key: K, value: string) => {
     const current = (filters[key] ?? []) as string[];
     const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
     onChange({ [key]: next.length > 0 ? next : undefined } as Partial<TContractFilters>);
@@ -107,6 +123,36 @@ export function ContractFiltersDropdown(props: Props) {
             </div>
           </div>
 
+          {/* Tags linked to the contract's document (auto-created per artist) */}
+          {workspaceTags.length > 0 && (
+            <div>
+              <p className="px-1 py-0.5 text-11 font-medium text-tertiary">{t("file_library.tags.title")}</p>
+              <div className="max-h-40 overflow-y-auto">
+                {workspaceTags.map((tag) => {
+                  const isChecked = (filters.tags ?? []).includes(tag.id);
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
+                      onClick={() => toggleValue("tags", tag.id)}
+                    >
+                      <span
+                        className={cn(
+                          "flex size-4 shrink-0 items-center justify-center rounded-sm border",
+                          isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
+                        )}
+                      >
+                        {isChecked && <Check className="size-3" />}
+                      </span>
+                      <span className="truncate">{tag.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Enum filters, OR'd within the group (incl. analysis state, e.g.
               "Completado" for contracts whose pipeline already finished) */}
           <div className="space-y-2">
@@ -145,10 +191,22 @@ export function ContractFiltersDropdown(props: Props) {
 
 /** Applied-filters pills row, work-items style: each value removable in place */
 export function AppliedContractFilters(props: Props & { onClearAll: () => void }) {
-  const { filters, onChange, onClearAll } = props;
+  const { workspaceSlug, filters, onChange, onClearAll } = props;
   const { t } = useTranslation();
+  const workspaceTags = useWorkspaceTags(workspaceSlug);
 
   const pills: { label: string; value: string; onRemove: () => void }[] = [];
+
+  (filters.tags ?? []).forEach((tagId) => {
+    pills.push({
+      label: t("file_library.tags.title"),
+      value: workspaceTags.find((tag) => tag.id === tagId)?.name ?? tagId,
+      onRemove: () => {
+        const next = (filters.tags ?? []).filter((id) => id !== tagId);
+        onChange({ tags: next.length > 0 ? next : undefined });
+      },
+    });
+  });
 
   MULTI_SECTIONS.forEach((section) => {
     ((filters[section.key] ?? []) as string[]).forEach((value) => {

@@ -159,6 +159,53 @@ const FILE_BADGE_TONE_CLASSES: Record<NonNullable<FileSystemFileBadge["tone"]>, 
   danger: "bg-red-500/15 text-red-600 dark:text-red-400",
 };
 
+/**
+ * Multi-select plumbing shared by the item renderers without prop threading.
+ * `toggle === null` means multi-select is disabled and checkboxes hide.
+ */
+const FileSystemMultiSelectContext = React.createContext<{
+  selectedPaths: ReadonlySet<string>;
+  toggle: ((file: FileSystemFileItem) => void) | null;
+  /** Replace-semantics sync used by the list tree's native multi-selection */
+  replace: ((files: FileSystemFileItem[]) => void) | null;
+}>({ selectedPaths: new Set(), toggle: null, replace: null });
+
+/** Toggle checkbox rendered on file entries when multi-select is enabled. */
+function FileSystemMultiSelectCheckbox({ entry, className }: { entry: FileSystemEntry; className?: string }) {
+  const { selectedPaths, toggle } = React.useContext(FileSystemMultiSelectContext);
+  if (!toggle || entry.kind !== "file") return null;
+  const isChecked = selectedPaths.has(entry.path);
+  const anyActive = selectedPaths.size > 0;
+  return (
+    <span
+      role="checkbox"
+      aria-checked={isChecked}
+      onClick={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        toggle(entry);
+      }}
+      onPointerDown={(event) => event.stopPropagation()}
+      onDoubleClick={(event) => event.stopPropagation()}
+      className={cn(
+        "bg-background flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-[4px] border transition-opacity",
+        isChecked
+          ? "border-primary bg-primary text-primary-foreground opacity-100"
+          : anyActive
+            ? "border-muted-foreground/60 opacity-70 hover:opacity-100"
+            : "border-muted-foreground/60 opacity-0 group-hover/fsitem:opacity-100 focus-visible:opacity-100",
+        className
+      )}
+    >
+      {isChecked && (
+        <svg viewBox="0 0 12 12" className="size-3" fill="none" stroke="currentColor" strokeWidth="2">
+          <polyline points="2.5,6.5 5,9 9.5,3.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 /** Small status pill shown next to file names (list rows + grid tiles). */
 function FileSystemBadgePill({ badge }: { badge: FileSystemFileBadge }) {
   return (
@@ -192,6 +239,19 @@ export type FileSystemProps = {
   defaultView?: FileSystemView;
   view?: FileSystemView;
   onViewChange?: (view: FileSystemView) => void;
+  /**
+   * Local addition: multi-selection over files (keyed by `path`). When
+   * `onFileSelectToggle` is provided, files show a toggle checkbox in the
+   * icons/columns/gallery views and Ctrl/Cmd+click toggles in every view.
+   */
+  selectedFilePaths?: ReadonlySet<string>;
+  onFileSelectToggle?: (file: FileSystemFileItem) => void;
+  /**
+   * Local addition: the list view's tree has native multi-selection
+   * (Ctrl/Cmd-union, Shift-range); it reports the full selected file set
+   * here with replace semantics (2+ rows) or an empty array (0-1 rows).
+   */
+  onFileSelectionReplace?: (files: FileSystemFileItem[]) => void;
   /** Folder prefix to open initially, e.g. `"invoices/"`. */
   defaultPath?: string;
   /** Local addition: reports the folder prefix the user navigated to. */
@@ -1270,7 +1330,22 @@ export function FileSystem({
   loadChildren,
   loadPreviewImageUrl,
   renderFilePreview,
+  selectedFilePaths,
+  onFileSelectToggle,
+  onFileSelectionReplace,
 }: FileSystemProps) {
+  const multiSelectValue = React.useMemo(
+    () => ({
+      selectedPaths: selectedFilePaths ?? new Set<string>(),
+      toggle: onFileSelectToggle ?? null,
+      replace: onFileSelectionReplace ?? null,
+    }),
+    [selectedFilePaths, onFileSelectToggle, onFileSelectionReplace]
+  );
+  // Ctrl/Cmd held during the click that produced the selection — checked in
+  // selectAndPrefetchEntry so modifier-click toggles multi-selection in every
+  // view (including the list tree, whose rows we can't decorate).
+  const multiSelectModifierRef = React.useRef(false);
   const [internalView, setInternalView] = React.useState(defaultView);
   const view = viewProp ?? internalView;
   const setView = React.useCallback(
@@ -1847,10 +1922,16 @@ export function FileSystem({
   // Selecting a lazy folder (columns view, keyboard nav) prefetches children.
   const selectAndPrefetchEntry = React.useCallback(
     (entry: FileSystemEntry | null) => {
+      // Modifier-click on a file toggles multi-selection instead of moving
+      // the single selection (works uniformly across all four views).
+      if (entry?.kind === "file" && multiSelectModifierRef.current && onFileSelectToggle) {
+        onFileSelectToggle(entry);
+        return;
+      }
       selectEntry(entry);
       if (entry?.kind === "folder") ensureChildren(entry.path);
     },
-    [ensureChildren, selectEntry]
+    [ensureChildren, selectEntry, onFileSelectToggle]
   );
 
   const goBack = React.useCallback(() => {
@@ -1912,6 +1993,7 @@ export function FileSystem({
   );
 
   return (
+    <FileSystemMultiSelectContext.Provider value={multiSelectValue}>
     <div
       ref={rootRef}
       tabIndex={-1}
@@ -1923,6 +2005,11 @@ export function FileSystem({
           setIsSearchExpanded(true);
           searchInputRef.current?.focus();
         }
+      }}
+      // Records whether the click driving the upcoming selection carried a
+      // multi-select modifier (capture phase runs before the item handlers).
+      onPointerDownCapture={(event) => {
+        multiSelectModifierRef.current = event.ctrlKey || event.metaKey;
       }}
       className={cn("text-foreground flex h-[480px] min-h-0 flex-col overflow-hidden outline-none", className)}
     >
@@ -2171,6 +2258,7 @@ export function FileSystem({
         />
       ) : null}
     </div>
+    </FileSystemMultiSelectContext.Provider>
   );
 }
 
@@ -3264,8 +3352,9 @@ function FileSystemIconsView({ entries, onOpen, onSelect, renderFilePreview, sel
                 onKeyDown={(event) => {
                   if (event.key === "Enter") onOpen(entry);
                 }}
-                className="group flex h-[6.375rem] flex-col items-center gap-1.5 outline-none"
+                className="group group/fsitem relative flex h-[6.375rem] flex-col items-center gap-1.5 outline-none"
               >
+                <FileSystemMultiSelectCheckbox entry={entry} className="absolute top-0.5 left-1.5 z-[1]" />
                 <span
                   className={cn(
                     "group-focus-visible:ring-ring flex h-16 w-20 shrink-0 items-center justify-center rounded-lg p-1 transition-colors group-focus-visible:ring-2",
@@ -3552,6 +3641,8 @@ function FileSystemPierreTree({
       spriteSheet: `<svg data-icon-sprite aria-hidden="true" width="0" height="0">${symbols.join("")}</svg>`,
     };
   }, [currentPath, index, relativePaths]);
+  // Host multi-selection sink for the tree's native multi-select
+  const multiSelect = React.useContext(FileSystemMultiSelectContext);
   const { model } = useFileTree({
     flattenEmptyDirectories: false,
     icons,
@@ -3630,17 +3721,23 @@ function FileSystemPierreTree({
       }
     `,
     onSelectionChange: (selectedPaths) => {
-      const relativePath = selectedPaths[0];
+      // The tree natively multi-selects (Ctrl/Cmd-union, Shift-range). Mirror
+      // the full file set into the host's multi-selection: 2+ rows replace
+      // it, a plain single selection clears it (Finder semantics).
+      const entries = selectedPaths
+        .map(
+          (relativePath) =>
+            index.files.get(`${currentPath}${relativePath}`) ??
+            index.folders.get(normalizeFolderPath(`${currentPath}${relativePath}`)) ??
+            null
+        )
+        .filter((resolved): resolved is FileSystemEntry => resolved !== null);
 
-      if (!relativePath) {
-        onSelect(null);
-        return;
-      }
-
-      const absolutePath = `${currentPath}${relativePath}`;
-      const entry = index.files.get(absolutePath) ?? index.folders.get(normalizeFolderPath(absolutePath)) ?? null;
-
+      const entry = entries[0] ?? null;
       onSelect(entry);
+      multiSelect.replace?.(
+        selectedPaths.length > 1 ? entries.filter((resolved): resolved is FileEntry => resolved.kind === "file") : []
+      );
     },
   });
 
@@ -4234,10 +4331,11 @@ const FileSystemColumn = React.memo(function FileSystemColumn({
                     if (event.key === "Enter") onOpen(entry);
                   }}
                   className={cn(
-                    "text-sm focus-visible:ring-ring flex h-7 shrink-0 items-center gap-2 rounded-md px-2 py-1 text-left outline-none focus-visible:ring-2",
+                    "text-sm focus-visible:ring-ring group/fsitem flex h-7 shrink-0 items-center gap-2 rounded-md px-2 py-1 text-left outline-none focus-visible:ring-2",
                     isSelected ? "bg-primary text-primary-foreground" : isOnTrail ? "bg-accent" : "hover:bg-accent/50"
                   )}
                 >
+                  <FileSystemMultiSelectCheckbox entry={entry} />
                   {entry.kind === "folder" ? (
                     <FileSystemFolderGlyph className="h-3.5 w-auto shrink-0" />
                   ) : coverUrl ? (
@@ -4588,10 +4686,11 @@ function FileSystemGalleryView(props: FileSystemViewProps) {
                   }}
                   title={entry.name}
                   className={cn(
-                    "focus-visible:ring-ring flex size-14 shrink-0 items-center justify-center rounded-md border border-transparent p-1 outline-none focus-visible:ring-2",
+                    "focus-visible:ring-ring group/fsitem relative flex size-14 shrink-0 items-center justify-center rounded-md border border-transparent p-1 outline-none focus-visible:ring-2",
                     isActive && "border-ring/40 bg-accent"
                   )}
                 >
+                  <FileSystemMultiSelectCheckbox entry={entry} className="absolute top-0.5 left-0.5 z-[1]" />
                   {entry.kind === "folder" ? (
                     <FileSystemFolderGlyph className="h-9 w-auto" />
                   ) : (
