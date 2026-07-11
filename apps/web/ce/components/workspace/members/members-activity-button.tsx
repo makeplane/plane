@@ -44,6 +44,7 @@ export const MembersActivityButton = observer(function MembersActivityButton(pro
         {t("common.activity")}
       </Button>
       <WorkspaceActivityDrawer
+        key={workspaceSlug}
         isOpen={isActivityDrawerOpen}
         onClose={() => setIsActivityDrawerOpen(false)}
         workspaceSlug={workspaceSlug}
