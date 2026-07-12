@@ -21,6 +21,10 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
           return false;
         }
 
+        if (!view.editable) {
+          return false;
+        }
+
         let a = event.target as HTMLElement;
         const els: HTMLElement[] = [];
 
