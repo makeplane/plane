@@ -44,6 +44,10 @@ from .views import (
     GiteaOauthInitiateEndpoint,
     GiteaCallbackSpaceEndpoint,
     GiteaOauthInitiateSpaceEndpoint,
+    ZelianCallbackEndpoint,
+    ZelianOauthInitiateEndpoint,
+    ZelianCallbackSpaceEndpoint,
+    ZelianOauthInitiateSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -149,5 +153,18 @@ urlpatterns = [
         "spaces/gitea/callback/",
         GiteaCallbackSpaceEndpoint.as_view(),
         name="space-gitea-callback",
+    ),
+    ## Zelian (Supabase) Oauth
+    path("zelian/", ZelianOauthInitiateEndpoint.as_view(), name="zelian-initiate"),
+    path("zelian/callback/", ZelianCallbackEndpoint.as_view(), name="zelian-callback"),
+    path(
+        "spaces/zelian/",
+        ZelianOauthInitiateSpaceEndpoint.as_view(),
+        name="space-zelian-initiate",
+    ),
+    path(
+        "spaces/zelian/callback/",
+        ZelianCallbackSpaceEndpoint.as_view(),
+        name="space-zelian-callback",
     ),
 ]

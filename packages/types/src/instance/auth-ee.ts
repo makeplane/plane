@@ -4,6 +4,6 @@
  * See the LICENSE file for details.
  */
 
-export type TExtendedLoginMediums = never;
+export type TExtendedLoginMediums = "zelian";
 
 export type TExtendedInstanceAuthenticationModeKeys = never;
