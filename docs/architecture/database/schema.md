@@ -2,7 +2,7 @@
 
 > Fichier tenu à jour par `@update-writer-after-implement` après chaque migration.
 > BDD : PostgreSQL 15 · ORM : Django 4.2 (migrations dans `apps/api/plane/db/migrations/`).
-> Dernière mise à jour : 2026-07-08 (migration 0126).
+> Dernière mise à jour : 2026-07-12 (migration 0128).
 
 ---
 
@@ -159,3 +159,44 @@ Index : `(issue)`, `(project, logged_by)`. UniqueConstraint partielle : `(projec
 - `logged_by` imposé serveur à la création (jamais depuis le payload) ; édition/suppression réservées à l'auteur ou à un admin projet.
 - Rollup `total-worklogs/` = somme des minutes **par work item** (`[{issue_id, duration}]`), soft-deleted exclus (manager `objects`).
 - Pas de lignes `issue_activities` pour les worklogs : le feed d'activité web est construit côté client depuis le store worklog.
+
+---
+
+## Tables `milestones` et `milestone_issues` (jalons projet — migration `0128_milestones`, 2026-07-12)
+
+Calque structurel de `cycles`/`cycle_issues`. Activation par `Project.is_milestone_enabled` (BooleanField, défaut `False`) ajouté à la table `projects` par la même migration.
+
+### `milestones`
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | Hérité de `ProjectBaseModel` |
+| `workspace_id` / `project_id` | UUID FK | Hérité de `ProjectBaseModel` |
+| `name` | varchar(255) | Exposé **`title`** en v1 via `CharField(source="name")` — invariant du contrat SDK Pydantic (`Milestone.model_validate` exige `title`) |
+| `description` | text | Défaut `""` |
+| `target_date` | timestamptz null | Date cible du jalon |
+| `external_source` / `external_id` | varchar(255) null | Dédup import externe (409 si doublon actif sur la même paire) |
+| `sort_order` | double precision | Défaut 65535, auto-décalé à la création (calque Cycle) |
+| `created_at` / `updated_at` / `deleted_at` | timestamptz | Soft-delete (manager `objects` filtre `deleted_at IS NULL`) |
+| `created_by_id` / `updated_by_id` | UUID FK → users | `SET_NULL` |
+
+Annotations de liste (non stockées) : `total_issues` / `completed_issues` (`Count(distinct)`, hors archived/draft/soft-deleted).
+
+### `milestone_issues` (pont N↔N work items)
+
+| Colonne | Type | Notes |
+|---------|------|-------|
+| `id` | UUID PK | Hérité de `ProjectBaseModel` |
+| `workspace_id` / `project_id` | UUID FK | Hérité de `ProjectBaseModel` |
+| `issue_id` | UUID FK → issues | `CASCADE`, `related_name="issue_milestone"` |
+| `milestone_id` | UUID FK → milestones | `CASCADE`, `related_name="issue_milestone"` |
+| `created_at` / `updated_at` / `deleted_at` | timestamptz | Soft-delete |
+| `created_by_id` / `updated_by_id` | UUID FK → users | `SET_NULL` |
+
+Contraintes (calque exact de `cycle_issues`) : `unique_together (issue, milestone, deleted_at)` + `UniqueConstraint(issue, milestone) WHERE deleted_at IS NULL` (`milestone_issue_when_deleted_at_null`). Index FK auto sur `issue_id` et `milestone_id`.
+
+#### Notes (milestones)
+
+- Écriture (POST/PATCH/DELETE milestone ET add/remove work items) gatée en 400 sur `projects.is_milestone_enabled`.
+- Rattachement des work items : un work item ne peut être lié qu'à un milestone de **son propre projet** (400 sinon) ; ajout idempotent (déjà-liés ignorés), retrait v1 par `DELETE` avec body `{"issues":[uuid]}`.
+- Deux couches API : v1 token/MCP (`plane/api`, `title` via `source="name"`, pagination cursor) et interne session (`plane/app`, pour le web). Pas de lignes `issue_activities` pour les milestones (hors scope v1).
