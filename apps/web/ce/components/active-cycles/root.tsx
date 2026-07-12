@@ -6,13 +6,13 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
-import { ContentWrapper, LinearProgressIndicator, Loader } from "@plane/ui";
+import { Button, ContentWrapper, LinearProgressIndicator, Loader } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -28,12 +28,18 @@ type TActiveCycleCardProps = {
 };
 
 const WorkspaceActiveCycleCard = observer(function WorkspaceActiveCycleCard({ cycle }: TActiveCycleCardProps) {
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   // derived values
   const project = getProjectById(cycle.project_id);
   const totalIssues = cycle.total_issues ?? 0;
-  const completionPercentage = totalIssues > 0 ? Math.round(((cycle.completed_issues ?? 0) / totalIssues) * 100) : 0;
+  const cancelledIssues = cycle.cancelled_issues ?? 0;
+  // cancelled work items are excluded from progress (the progress bar below
+  // only stacks completed/started/unstarted/backlog) — keep the badge on the
+  // same denominator so both always agree
+  const scopedIssues = totalIssues - cancelledIssues;
+  const completionPercentage = scopedIssues > 0 ? Math.round(((cycle.completed_issues ?? 0) / scopedIssues) * 100) : 0;
 
   const progressData = PROGRESS_STATE_GROUPS_DETAILS.map((group) => ({
     id: group.key,
@@ -47,7 +53,7 @@ const WorkspaceActiveCycleCard = observer(function WorkspaceActiveCycleCard({ cy
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <CycleIcon className="h-4 w-4 flex-shrink-0 rotate-180 text-tertiary" />
-          <span className="truncate text-15 font-semibold text-primary" title={cycle.name}>
+          <span className="text-15 truncate font-semibold text-primary" title={cycle.name}>
             {cycle.name}
           </span>
         </div>
@@ -72,19 +78,28 @@ const WorkspaceActiveCycleCard = observer(function WorkspaceActiveCycleCard({ cy
         )}
       </div>
 
-      {totalIssues > 0 ? (
+      {scopedIssues > 0 ? (
         <LinearProgressIndicator size="lg" data={progressData} />
       ) : (
         <div className="h-3.5 w-full rounded-xs bg-surface-2" />
       )}
 
-      <div className="flex items-center gap-4 text-12 text-tertiary">
+      <div className="flex flex-wrap items-center gap-4 text-12 text-tertiary">
         <span className="font-medium text-primary">{totalIssues}</span>
-        <span>{cycle.completed_issues ?? 0} completed</span>
-        <span>{cycle.started_issues ?? 0} started</span>
-        <span>
-          {(cycle.unstarted_issues ?? 0) + (cycle.backlog_issues ?? 0)} pending
+        <span className="lowercase">
+          {cycle.completed_issues ?? 0} {t("workspace_projects.state.completed")}
         </span>
+        <span className="lowercase">
+          {cycle.started_issues ?? 0} {t("workspace_projects.state.started")}
+        </span>
+        <span className="lowercase">
+          {(cycle.unstarted_issues ?? 0) + (cycle.backlog_issues ?? 0)} {t("common.pending")}
+        </span>
+        {cancelledIssues > 0 && (
+          <span className="lowercase">
+            {cancelledIssues} {t("workspace_projects.state.cancelled")}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -94,28 +109,37 @@ export const WorkspaceActiveCyclesRoot = observer(function WorkspaceActiveCycles
   const { t } = useTranslation();
   // router params
   const { workspaceSlug } = useParams();
-  // fetch active cycles across the workspace
+  // fetch active cycles across the workspace, one cursor page at a time
+  const getKey = (
+    pageIndex: number,
+    previousPageData: Awaited<ReturnType<typeof cycleService.workspaceActiveCycles>> | null
+  ) => {
+    if (!workspaceSlug) return null;
+    if (previousPageData && !previousPageData.next_page_results) return null;
+    const cursor = previousPageData?.next_cursor ?? `${ACTIVE_CYCLES_PER_PAGE}:0:0`;
+    return `WORKSPACE_ACTIVE_CYCLES_${workspaceSlug.toString()}_${cursor}`;
+  };
   const {
-    data: activeCyclesResponse,
-    isLoading,
+    data: pages,
     error,
-  } = useSWR(
-    workspaceSlug ? `WORKSPACE_ACTIVE_CYCLES_${workspaceSlug.toString()}` : null,
-    workspaceSlug
-      ? () =>
-          cycleService.workspaceActiveCycles(
-            workspaceSlug.toString(),
-            `${ACTIVE_CYCLES_PER_PAGE}:0:0`,
-            ACTIVE_CYCLES_PER_PAGE
-          )
-      : null,
+    isLoading,
+    isValidating,
+    size,
+    setSize,
+  } = useSWRInfinite(
+    getKey,
+    (key: string) => {
+      const cursor = key.split("_").pop() ?? `${ACTIVE_CYCLES_PER_PAGE}:0:0`;
+      return cycleService.workspaceActiveCycles(workspaceSlug!.toString(), cursor, ACTIVE_CYCLES_PER_PAGE);
+    },
     { revalidateOnFocus: false }
   );
 
-  const activeCycles = activeCyclesResponse?.results ?? [];
+  const activeCycles = pages?.flatMap((page) => page.results) ?? [];
+  const hasMore = pages && pages.length > 0 ? pages[pages.length - 1].next_page_results : false;
 
   // loading state
-  if (isLoading && !activeCyclesResponse) {
+  if (isLoading && !pages) {
     return (
       <ContentWrapper>
         <Loader className="flex flex-col gap-4">
@@ -127,7 +151,8 @@ export const WorkspaceActiveCyclesRoot = observer(function WorkspaceActiveCycles
     );
   }
 
-  // error state
+  // error state (a request that failed without an HTTP response rejects with
+  // the raw error, so `error` is always truthy on failure)
   if (error) {
     return (
       <ContentWrapper>
@@ -163,6 +188,13 @@ export const WorkspaceActiveCyclesRoot = observer(function WorkspaceActiveCycles
           <WorkspaceActiveCycleCard key={cycle.id} cycle={cycle} />
         ))}
       </div>
+      {hasMore && (
+        <div className="flex justify-center pb-8">
+          <Button variant="neutral-primary" size="lg" onClick={() => setSize(size + 1)} loading={isValidating}>
+            {t("common.load_more")}
+          </Button>
+        </div>
+      )}
     </ContentWrapper>
   );
 });

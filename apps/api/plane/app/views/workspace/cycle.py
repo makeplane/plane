@@ -138,6 +138,8 @@ class WorkspaceActiveCyclesEndpoint(BaseAPIView):
             )
             .filter(archived_at__isnull=True)
             .filter(project__archived_at__isnull=True)
+            # the whole project UI hides cycles when the feature is disabled
+            .filter(project__cycle_view=True)
             # active window: start_date <= now <= end_date
             .filter(start_date__lte=now, end_date__gte=now)
             .select_related("project", "workspace", "owned_by")
