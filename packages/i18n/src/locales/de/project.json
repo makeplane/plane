@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Funktionen verwalten"
         }
+      },
+      "milestone": {
+        "title": "Meilensteine sind für dieses Projekt nicht aktiviert.",
+        "description": "Gruppieren Sie Arbeitselemente unter einem gemeinsamen Zieldatum und behalten Sie die Lieferung im Blick. Aktivieren Sie die Meilenstein-Funktion für Ihr Projekt, um sie zu nutzen.",
+        "primary_button": {
+          "text": "Funktionen verwalten"
+        }
       }
     }
   },

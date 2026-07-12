@@ -35,7 +35,12 @@ import {
 } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueActivity } from "@plane/types";
-import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
+import {
+  renderFormattedDate,
+  generateWorkItemLink,
+  capitalizeFirstLetter,
+  convertMinutesToHoursMinutesString,
+} from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -150,6 +155,42 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
   }
 };
 
+// shared by the legacy `estimate_point` field and the modern
+// `estimate_${estimate_type}` fields; TIME stores raw minutes -> "Xh Ym"
+const estimateActivityEntry = {
+  message: (activity: IIssueActivity, showIssue: boolean) => {
+    const formatValue = (value: string) =>
+      activity.field === "estimate_time" && value && !isNaN(Number(value))
+        ? convertMinutesToHoursMinutesString(Number(value))
+        : value;
+    if (!activity.new_value)
+      return (
+        <>
+          removed the estimate point
+          {showIssue && (
+            <>
+              {" "}
+              from <IssueLink activity={activity} />
+            </>
+          )}
+        </>
+      );
+    else
+      return (
+        <>
+          set the estimate point to {formatValue(activity.new_value)}
+          {showIssue && (
+            <>
+              {" "}
+              for <IssueLink activity={activity} />
+            </>
+          )}
+        </>
+      );
+  },
+  icon: <TriangleIcon size={12} className="text-secondary" aria-hidden="true" />,
+};
+
 const activityDetails: {
   [key: string]: {
     message: (activity: IIssueActivity, showIssue: boolean, workspaceSlug: string) => React.ReactNode;
@@ -245,35 +286,11 @@ const activityDetails: {
     ),
     icon: <MessageSquareIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
-  estimate_point: {
-    message: (activity, showIssue) => {
-      if (!activity.new_value)
-        return (
-          <>
-            removed the estimate point
-            {showIssue && (
-              <>
-                {" "}
-                from <IssueLink activity={activity} />
-              </>
-            )}
-          </>
-        );
-      else
-        return (
-          <>
-            set the estimate point to {activity.new_value}
-            {showIssue && (
-              <>
-                {" "}
-                for <IssueLink activity={activity} />
-              </>
-            )}
-          </>
-        );
-    },
-    icon: <TriangleIcon size={12} className="text-secondary" aria-hidden="true" />,
-  },
+  estimate_point: estimateActivityEntry,
+  // modern activities record field as `estimate_${estimate_type}`
+  estimate_points: estimateActivityEntry,
+  estimate_categories: estimateActivityEntry,
+  estimate_time: estimateActivityEntry,
   issue: {
     message: (activity) => {
       if (activity.verb === "created")

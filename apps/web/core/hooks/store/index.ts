@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+export * from "./use-milestone";
 export * from "./use-page-store";
 export * from "./use-page";
 export * from "./use-worklog";

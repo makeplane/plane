@@ -914,5 +914,11 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Yeni kilometre taşı",
+  "milestone_attach_work_items": "İş öğeleri ekle",
+  "milestone_empty_state": "Henüz kilometre taşı yok. İş öğelerini ortak bir tamamlanma tarihine hizalamak için bir tane oluşturun.",
+  "milestone_work_items_empty_state": "Bu kilometre taşına henüz iş öğesi eklenmedi.",
+  "milestone_update": "Kilometre taşını düzenle",
+  "milestone_completed_work_items": "Tamamlanan iş öğeleri"
 }

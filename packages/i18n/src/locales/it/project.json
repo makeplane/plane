@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Gestisci funzionalità"
         }
+      },
+      "milestone": {
+        "title": "Le milestone non sono abilitate per questo progetto.",
+        "description": "Raggruppa gli elementi di lavoro sotto una data obiettivo condivisa e monitora la consegna a colpo d'occhio. Abilita la funzionalità milestone per il tuo progetto per iniziare a usarle.",
+        "primary_button": {
+          "text": "Gestisci funzionalità"
+        }
       }
     }
   },

@@ -31,7 +31,7 @@ export function LinearProgressIndicator({
 
   const bars = data.map((item: any) => {
     const width = `${(item.value / total) * 100}%`;
-    if (width === "0%") return <></>;
+    if (width === "0%") return <React.Fragment key={item.id} />;
     const style = {
       width,
       backgroundColor: item.color,

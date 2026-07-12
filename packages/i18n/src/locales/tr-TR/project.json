@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Özellikleri yönet"
         }
+      },
+      "milestone": {
+        "title": "Bu proje için kilometre taşları etkin değil.",
+        "description": "İş öğelerini ortak bir hedef tarih altında gruplandırın ve teslimatı bir bakışta izleyin. Kullanmaya başlamak için projenizde kilometre taşı özelliğini etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
       }
     }
   },

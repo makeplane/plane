@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Gestionar funciones"
         }
+      },
+      "milestone": {
+        "title": "Los hitos no están habilitados para este proyecto.",
+        "description": "Agrupa elementos de trabajo bajo una fecha objetivo común y sigue la entrega de un vistazo. Habilita la función de hitos en tu proyecto para empezar a usarlos.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
       }
     }
   },

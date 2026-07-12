@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Manage features"
         }
+      },
+      "milestone": {
+        "title": "Milestones is not enabled for this project.",
+        "description": "Group work items under a shared target date and track delivery at a glance. Enable the milestones feature for your project to start using them.",
+        "primary_button": {
+          "text": "Manage features"
+        }
       }
     }
   },

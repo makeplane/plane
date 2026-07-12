@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Layers, Timer } from "lucide-react";
+import { Layers, Milestone, Timer } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -83,6 +83,15 @@ const PROJECT_FEATURES_LIST = {
     title: "Time Tracking",
     description: "Log time spent on work items and projects.",
     icon: <Timer className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  milestones: {
+    key: "milestones",
+    property: "is_milestone_enabled",
+    title: "Milestones",
+    description: "Milestones provide a layer to align work items toward shared completion dates.",
+    icon: <Milestone className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },

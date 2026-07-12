@@ -46,6 +46,7 @@ from .issue import (
     IssueVersion,
     IssueDescriptionVersion,
 )
+from .milestone import Milestone, MilestoneIssue
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
 from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion, IssuePage

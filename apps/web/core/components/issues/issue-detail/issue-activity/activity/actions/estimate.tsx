@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { EstimatePropertyIcon } from "@plane/propel/icons";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -24,6 +25,13 @@ export const IssueEstimateActivity = observer(function IssueEstimateActivity(pro
 
   if (!activity) return <></>;
 
+  // TIME estimates store the raw minutes count — render it as "Xh Ym" like
+  // every other estimate surface (mirrors the notification card handler)
+  const formatValue = (value: string) =>
+    activity.field === "estimate_time" && value && !isNaN(Number(value))
+      ? convertMinutesToHoursMinutesString(Number(value))
+      : value;
+
   return (
     <IssueActivityBlockComponent
       icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />}
@@ -32,7 +40,7 @@ export const IssueEstimateActivity = observer(function IssueEstimateActivity(pro
     >
       <>
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point`}
-        {activity.new_value ? activity.new_value : activity?.old_value}
+        {activity.new_value ? formatValue(activity.new_value) : formatValue(activity?.old_value ?? "")}
         {showIssue && (activity.new_value ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

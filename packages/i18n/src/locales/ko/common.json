@@ -914,5 +914,11 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "새 마일스톤",
+  "milestone_attach_work_items": "작업 항목 추가",
+  "milestone_empty_state": "아직 마일스톤이 없습니다. 마일스톤을 만들어 작업 항목을 공통 완료일에 맞춰 정렬하세요.",
+  "milestone_work_items_empty_state": "이 마일스톤에 아직 추가된 작업 항목이 없습니다.",
+  "milestone_update": "마일스톤 편집",
+  "milestone_completed_work_items": "완료된 작업 항목"
 }

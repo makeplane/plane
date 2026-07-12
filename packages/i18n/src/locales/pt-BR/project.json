@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Gerenciar funcionalidades"
         }
+      },
+      "milestone": {
+        "title": "Marcos não estão habilitados para este projeto.",
+        "description": "Agrupe itens de trabalho sob uma data-alvo comum e acompanhe a entrega rapidamente. Habilite o recurso de marcos no seu projeto para começar a usá-los.",
+        "primary_button": {
+          "text": "Gerenciar funcionalidades"
+        }
       }
     }
   },

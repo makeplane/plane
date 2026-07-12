@@ -187,6 +187,7 @@ class ProjectViewSet(BaseViewSet):
             "module_view",
             "page_view",
             "inbox_view",
+            "is_milestone_enabled",
             "guest_view_all_features",
             "project_lead",
             "network",

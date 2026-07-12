@@ -80,7 +80,7 @@ from .workspace.user import (
 )
 from .workspace.estimate import WorkspaceEstimatesEndpoint
 from .workspace.module import WorkspaceModulesEndpoint
-from .workspace.cycle import WorkspaceCyclesEndpoint
+from .workspace.cycle import WorkspaceCyclesEndpoint, WorkspaceActiveCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 
@@ -109,6 +109,9 @@ from .cycle.base import (
 )
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import CycleArchiveUnarchiveEndpoint
+
+from .milestone.base import MilestoneViewSet
+from .milestone.issue import MilestoneIssueViewSet
 
 from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .asset.v2 import (
