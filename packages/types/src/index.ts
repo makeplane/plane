@@ -36,6 +36,7 @@ export * from "./issues/issue-property";
 export * from "./issues/issue-property-values";
 export * from "./issues/worklog";
 export * from "./layout";
+export * from "./milestone";
 export * from "./module";
 export * from "./navigation-preferences";
 export * from "./page";

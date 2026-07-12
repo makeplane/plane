@@ -914,5 +914,11 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Новая веха",
+  "milestone_attach_work_items": "Прикрепить рабочие элементы",
+  "milestone_empty_state": "Пока нет вех. Создайте одну, чтобы выровнять рабочие элементы к общей дате завершения.",
+  "milestone_work_items_empty_state": "К этой вехе пока не прикреплены рабочие элементы.",
+  "milestone_update": "Изменить веху",
+  "milestone_completed_work_items": "Завершённые рабочие элементы"
 }

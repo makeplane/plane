@@ -58,6 +58,11 @@ from .cycle import (
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
 )
+from .milestone import (
+    MilestoneSerializer,
+    MilestoneWriteSerializer,
+    MilestoneIssueSerializer,
+)
 from .asset import FileAssetSerializer
 from .issue import (
     IssueCreateSerializer,

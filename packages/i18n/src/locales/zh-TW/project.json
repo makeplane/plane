@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "管理功能"
         }
+      },
+      "milestone": {
+        "title": "此專案未啟用里程碑。",
+        "description": "將工作項歸入共同的目標日期，一目瞭然地追蹤交付進度。為專案啟用里程碑功能即可開始使用。",
+        "primary_button": {
+          "text": "管理功能"
+        }
       }
     }
   },

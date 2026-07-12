@@ -914,5 +914,11 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Нова віха",
+  "milestone_attach_work_items": "Прикріпити робочі елементи",
+  "milestone_empty_state": "Поки немає віх. Створіть одну, щоб вирівняти робочі елементи до спільної дати завершення.",
+  "milestone_work_items_empty_state": "До цієї віхи поки не прикріплено робочих елементів.",
+  "milestone_update": "Редагувати віху",
+  "milestone_completed_work_items": "Завершені робочі елементи"
 }

@@ -46,6 +46,13 @@ from .cycle import (
     CycleCreateSerializer,
     CycleUpdateSerializer,
 )
+from .milestone import (
+    MilestoneSerializer,
+    MilestoneCreateSerializer,
+    MilestoneUpdateSerializer,
+    MilestoneIssueSerializer,
+    MilestoneIssueRequestSerializer,
+)
 from .module import (
     ModuleSerializer,
     ModuleIssueSerializer,

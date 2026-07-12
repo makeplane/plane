@@ -914,5 +914,11 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Nový míľnik",
+  "milestone_attach_work_items": "Pripojiť pracovné položky",
+  "milestone_empty_state": "Zatiaľ žiadne míľniky. Vytvorte jeden a zosúlaďte pracovné položky so spoločným dátumom dokončenia.",
+  "milestone_work_items_empty_state": "K tomuto míľniku zatiaľ nie sú pripojené žiadne pracovné položky.",
+  "milestone_update": "Upraviť míľnik",
+  "milestone_completed_work_items": "Dokončené pracovné položky"
 }

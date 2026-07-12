@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Zarządzaj funkcjami"
         }
+      },
+      "milestone": {
+        "title": "Kamienie milowe nie są włączone dla tego projektu.",
+        "description": "Grupuj elementy pracy wokół wspólnej daty docelowej i śledź realizację na pierwszy rzut oka. Włącz funkcję kamieni milowych w projekcie, aby zacząć z nich korzystać.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
       }
     }
   },

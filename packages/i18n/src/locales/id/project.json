@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Kelola fitur"
         }
+      },
+      "milestone": {
+        "title": "Milestone tidak diaktifkan untuk proyek ini.",
+        "description": "Kelompokkan item kerja di bawah tanggal target bersama dan pantau pengiriman secara sekilas. Aktifkan fitur milestone untuk proyek Anda untuk mulai menggunakannya.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
       }
     }
   },
