@@ -10,6 +10,7 @@ from .intake import urlpatterns as intake_patterns
 from .issue_property import urlpatterns as issue_property_patterns
 from .label import urlpatterns as label_patterns
 from .member import urlpatterns as member_patterns
+from .milestone import urlpatterns as milestone_patterns
 from .module import urlpatterns as module_patterns
 from .project import urlpatterns as project_patterns
 from .state import urlpatterns as state_patterns
@@ -31,6 +32,7 @@ urlpatterns = [
     *issue_property_patterns,
     *label_patterns,
     *member_patterns,
+    *milestone_patterns,
     *module_patterns,
     *project_patterns,
     *state_patterns,

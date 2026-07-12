@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Nouveau jalon",
+  "milestone_attach_work_items": "Attacher des éléments de travail",
+  "milestone_empty_state": "Aucun jalon pour le moment. Créez-en un pour aligner les éléments de travail sur une date d'achèvement commune.",
+  "milestone_work_items_empty_state": "Aucun élément de travail attaché à ce jalon pour le moment."
 }

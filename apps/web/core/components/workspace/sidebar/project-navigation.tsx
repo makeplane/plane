@@ -6,6 +6,7 @@
 
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { Milestone } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
@@ -129,6 +130,16 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.inbox_view ?? false,
         sortOrder: 6,
+      },
+      {
+        i18n_key: "milestones",
+        key: "milestones",
+        name: "Milestones",
+        href: `/${workspaceSlug}/projects/${projectId}/milestones`,
+        icon: Milestone,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        shouldRender: project?.is_milestone_enabled ?? false,
+        sortOrder: 7,
       },
     ],
     [project]

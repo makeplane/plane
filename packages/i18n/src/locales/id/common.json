@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Milestone baru",
+  "milestone_attach_work_items": "Lampirkan item kerja",
+  "milestone_empty_state": "Belum ada milestone. Buat satu untuk menyelaraskan item kerja menuju tanggal penyelesaian bersama.",
+  "milestone_work_items_empty_state": "Belum ada item kerja yang dilampirkan ke milestone ini."
 }

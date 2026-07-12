@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Reper nou",
+  "milestone_attach_work_items": "Atașează elemente de lucru",
+  "milestone_empty_state": "Niciun reper încă. Creează unul pentru a alinia elementele de lucru către o dată de finalizare comună.",
+  "milestone_work_items_empty_state": "Niciun element de lucru atașat acestui reper încă."
 }

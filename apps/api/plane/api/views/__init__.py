@@ -55,6 +55,12 @@ from .cycle import (
     CycleArchiveUnarchiveAPIEndpoint,
 )
 
+from .milestone import (
+    MilestoneListCreateAPIEndpoint,
+    MilestoneDetailAPIEndpoint,
+    MilestoneIssueAPIEndpoint,
+)
+
 from .module import (
     ModuleListCreateAPIEndpoint,
     ModuleDetailAPIEndpoint,

@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Novo marco",
+  "milestone_attach_work_items": "Anexar itens de trabalho",
+  "milestone_empty_state": "Nenhum marco ainda. Crie um para alinhar os itens de trabalho a uma data de conclusão comum.",
+  "milestone_work_items_empty_state": "Nenhum item de trabalho anexado a este marco ainda."
 }

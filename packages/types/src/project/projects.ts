@@ -40,6 +40,9 @@ export interface IPartialProject {
   created_by?: string;
   updated_by?: string;
   intake_count?: number;
+  // feature toggle, sibling of is_time_tracking_enabled but needed on the
+  // partial project for sidebar navigation gating
+  is_milestone_enabled?: boolean;
 }
 
 export interface IProject extends IPartialProject {

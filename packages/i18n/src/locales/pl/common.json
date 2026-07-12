@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Nowy kamień milowy",
+  "milestone_attach_work_items": "Dołącz elementy pracy",
+  "milestone_empty_state": "Brak kamieni milowych. Utwórz jeden, aby wyrównać elementy pracy do wspólnej daty ukończenia.",
+  "milestone_work_items_empty_state": "Do tego kamienia milowego nie dołączono jeszcze żadnych elementów pracy."
 }

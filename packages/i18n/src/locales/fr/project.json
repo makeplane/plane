@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
+      },
+      "milestone": {
+        "title": "Les Jalons ne sont pas activés pour ce projet.",
+        "description": "Regroupez les éléments de travail autour d'une date cible commune et suivez la livraison d'un coup d'œil. Activez la fonctionnalité Jalons pour votre projet pour commencer à les utiliser.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
       }
     }
   },

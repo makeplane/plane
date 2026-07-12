@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Cột mốc mới",
+  "milestone_attach_work_items": "Đính kèm mục công việc",
+  "milestone_empty_state": "Chưa có cột mốc nào. Tạo một cột mốc để căn chỉnh các mục công việc theo một ngày hoàn thành chung.",
+  "milestone_work_items_empty_state": "Chưa có mục công việc nào được đính kèm vào cột mốc này."
 }

@@ -18,6 +18,8 @@ import type { IIssuePropertyStore } from "@/plane-web/store/issue-property.store
 import { IssuePropertyStore } from "@/plane-web/store/issue-property.store";
 import type { IIssuePropertyValueStore } from "@/plane-web/store/issue-property-value.store";
 import { IssuePropertyValueStore } from "@/plane-web/store/issue-property-value.store";
+import type { IMilestoneStore } from "@/plane-web/store/milestone.store";
+import { MilestoneStore } from "@/plane-web/store/milestone.store";
 import type { IWorklogStore } from "@/plane-web/store/worklog.store";
 import { WorklogStore } from "@/plane-web/store/worklog.store";
 import type { IIssueTypeStore } from "@/plane-web/store/issue-type.store";
@@ -97,6 +99,7 @@ export class CoreRootStore {
   issueProperty: IIssuePropertyStore;
   issuePropertyValue: IIssuePropertyValueStore;
   worklog: IWorklogStore;
+  milestone: IMilestoneStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
   analytics: IAnalyticsStore;
@@ -138,6 +141,7 @@ export class CoreRootStore {
     this.issueProperty = new IssuePropertyStore(this);
     this.issuePropertyValue = new IssuePropertyValueStore(this);
     this.worklog = new WorklogStore(this);
+    this.milestone = new MilestoneStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.multipleSelect = new MultipleSelectStore();
@@ -177,6 +181,7 @@ export class CoreRootStore {
     this.issueProperty = new IssuePropertyStore(this);
     this.issuePropertyValue = new IssuePropertyValueStore(this);
     this.worklog = new WorklogStore(this);
+    this.milestone = new MilestoneStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);

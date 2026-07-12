@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Quản lý tính năng"
         }
+      },
+      "milestone": {
+        "title": "Cột mốc chưa được bật cho dự án này.",
+        "description": "Nhóm các mục công việc theo một ngày mục tiêu chung và theo dõi tiến độ trong nháy mắt. Bật tính năng cột mốc cho dự án của bạn để bắt đầu sử dụng.",
+        "primary_button": {
+          "text": "Quản lý tính năng"
+        }
       }
     }
   },

@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "新建里程碑",
+  "milestone_attach_work_items": "添加工作项",
+  "milestone_empty_state": "暂无里程碑。创建一个里程碑，让工作项对齐到共同的完成日期。",
+  "milestone_work_items_empty_state": "此里程碑暂未关联任何工作项。"
 }

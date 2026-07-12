@@ -110,6 +110,9 @@ from .cycle.base import (
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import CycleArchiveUnarchiveEndpoint
 
+from .milestone.base import MilestoneViewSet
+from .milestone.issue import MilestoneIssueViewSet
+
 from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .asset.v2 import (
     WorkspaceFileAssetEndpoint,

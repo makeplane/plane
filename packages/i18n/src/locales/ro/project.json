@@ -333,6 +333,13 @@
         "primary_button": {
           "text": "Gestionează funcțiile"
         }
+      },
+      "milestone": {
+        "title": "Reperele nu sunt activate pentru acest proiect.",
+        "description": "Grupează elementele de lucru sub o dată țintă comună și urmărește livrarea dintr-o privire. Activează funcția de repere pentru proiectul tău pentru a le folosi.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
       }
     }
   },

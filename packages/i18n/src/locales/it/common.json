@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Nuova milestone",
+  "milestone_attach_work_items": "Allega elementi di lavoro",
+  "milestone_empty_state": "Nessuna milestone al momento. Creane una per allineare gli elementi di lavoro verso una data di completamento condivisa.",
+  "milestone_work_items_empty_state": "Nessun elemento di lavoro collegato a questa milestone."
 }

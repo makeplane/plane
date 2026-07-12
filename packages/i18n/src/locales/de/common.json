@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "Neuer Meilenstein",
+  "milestone_attach_work_items": "Arbeitselemente anhängen",
+  "milestone_empty_state": "Noch keine Meilensteine. Erstellen Sie einen, um Arbeitselemente auf ein gemeinsames Zieldatum auszurichten.",
+  "milestone_work_items_empty_state": "Diesem Meilenstein sind noch keine Arbeitselemente zugeordnet."
 }

@@ -914,5 +914,9 @@
         }
       }
     }
-  }
+  },
+  "milestone_new": "New milestone",
+  "milestone_attach_work_items": "Attach work items",
+  "milestone_empty_state": "No milestones yet. Create one to align work items toward a shared completion date.",
+  "milestone_work_items_empty_state": "No work items attached to this milestone yet."
 }
