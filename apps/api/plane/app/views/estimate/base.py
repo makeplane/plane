@@ -17,6 +17,7 @@ from rest_framework import status
 from ..base import BaseViewSet, BaseAPIView
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
 from plane.db.models import Project, Estimate, EstimatePoint, Issue
+from plane.db.models.estimate import EstimateType
 from plane.app.serializers import (
     EstimateSerializer,
     EstimatePointSerializer,
@@ -63,8 +64,18 @@ class BulkEstimatePointEndpoint(BaseViewSet):
     @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         estimate = request.data.get("estimate")
+        if not isinstance(estimate, dict):
+            return Response(
+                {"error": "estimate is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         estimate_name = estimate.get("name", generate_random_name())
         estimate_type = estimate.get("type", "categories")
+        if estimate_type not in EstimateType.values:
+            return Response(
+                {"error": f"type must be one of {', '.join(EstimateType.values)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         last_used = estimate.get("last_used", False)
         estimate = Estimate.objects.create(
             name=estimate_name,
@@ -116,8 +127,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
 
         if request.data.get("estimate"):
+            requested_type = request.data.get("estimate").get("type", estimate.type)
+            if requested_type not in EstimateType.values:
+                return Response(
+                    {"error": f"type must be one of {', '.join(EstimateType.values)}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             estimate.name = request.data.get("estimate").get("name", estimate.name)
-            estimate.type = request.data.get("estimate").get("type", estimate.type)
+            estimate.type = requested_type
             estimate.save()
 
         estimate_points_data = request.data.get("estimate_points", [])
