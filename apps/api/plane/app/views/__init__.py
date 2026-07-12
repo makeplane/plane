@@ -80,7 +80,7 @@ from .workspace.user import (
 )
 from .workspace.estimate import WorkspaceEstimatesEndpoint
 from .workspace.module import WorkspaceModulesEndpoint
-from .workspace.cycle import WorkspaceCyclesEndpoint
+from .workspace.cycle import WorkspaceCyclesEndpoint, WorkspaceActiveCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 
