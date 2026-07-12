@@ -918,5 +918,7 @@
   "milestone_new": "Nuevo hito",
   "milestone_attach_work_items": "Adjuntar elementos de trabajo",
   "milestone_empty_state": "Aún no hay hitos. Crea uno para alinear los elementos de trabajo hacia una fecha de finalización común.",
-  "milestone_work_items_empty_state": "Aún no hay elementos de trabajo adjuntos a este hito."
+  "milestone_work_items_empty_state": "Aún no hay elementos de trabajo adjuntos a este hito.",
+  "milestone_update": "Editar hito",
+  "milestone_completed_work_items": "Elementos de trabajo completados"
 }

@@ -87,7 +87,7 @@ export const MilestoneIssuesList = observer(function MilestoneIssuesList(props: 
             )}
             <span className="truncate text-13 text-secondary">{workItemDetail?.name ?? milestoneIssue.issue}</span>
             {!disabled && (
-              <Tooltip tooltipContent="Remove" position="top">
+              <Tooltip tooltipContent={t("common.remove")} position="top">
                 <button
                   type="button"
                   className="ml-auto flex-shrink-0 rounded p-0.5 text-tertiary opacity-0 group-hover:opacity-100 hover:bg-layer-transparent-hover hover:text-secondary"

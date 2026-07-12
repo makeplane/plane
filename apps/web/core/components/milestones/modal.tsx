@@ -100,8 +100,9 @@ export const CreateUpdateMilestoneModal = observer(function CreateUpdateMileston
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          {/* temporary hardcoded EN labels — i18n keys to be added with the other locales */}
-          <h3 className="text-18 font-medium text-secondary">{data ? "Update milestone" : "New milestone"}</h3>
+          <h3 className="text-18 font-medium text-secondary">
+            {data ? t("milestone_update") : t("milestone_new")}
+          </h3>
           <div className="space-y-3">
             <div className="space-y-1">
               <Controller

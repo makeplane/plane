@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
+from .issue import IssueProjectLiteSerializer
 from plane.db.models import Milestone, MilestoneIssue
 
 
@@ -56,6 +57,10 @@ class MilestoneSerializer(BaseSerializer):
 
 
 class MilestoneIssueSerializer(BaseSerializer):
+    # expose the work item inline so the web list shows name/identifier, not a
+    # raw UUID (the milestones page does not otherwise load the issue store)
+    issue_detail = IssueProjectLiteSerializer(read_only=True, source="issue")
+
     class Meta:
         model = MilestoneIssue
         fields = "__all__"

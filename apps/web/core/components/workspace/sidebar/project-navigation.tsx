@@ -137,7 +137,8 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         name: "Milestones",
         href: `/${workspaceSlug}/projects/${projectId}/milestones`,
         icon: Milestone,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        // guests can read milestones (backend + page allow it), like cycles/pages
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.is_milestone_enabled ?? false,
         sortOrder: 7,
       },

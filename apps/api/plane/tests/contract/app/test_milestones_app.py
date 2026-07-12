@@ -173,6 +173,11 @@ class TestMilestoneIssuesApp:
         listed = session_client.get(milestone_issues_url(workspace.slug, project.id, milestone.id))
         assert listed.status_code == status.HTTP_200_OK
         assert len(listed.data) == 2
+        # the work item is expanded inline (name/sequence_id), not a bare UUID
+        row = listed.data[0]
+        assert "issue_detail" in row
+        assert row["issue_detail"]["name"] in {issue_a.name, issue_b.name}
+        assert "sequence_id" in row["issue_detail"]
 
         removed = session_client.delete(
             milestone_issue_detail_url(workspace.slug, project.id, milestone.id, issue_a.id)
@@ -199,6 +204,17 @@ class TestMilestoneIssuesApp:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert MilestoneIssue.objects.filter(milestone=milestone).count() == 0
+
+    @pytest.mark.django_db
+    def test_attach_non_dict_body_returns_400_not_500(self, session_client, workspace, project):
+        # Top-level JSON array body -> clean 400, never a 500 (review finding BK-1).
+        milestone = Milestone.objects.create(name="NonDict", project=project, workspace=workspace)
+        response = session_client.post(
+            milestone_issues_url(workspace.slug, project.id, milestone.id),
+            ["some-uuid"],
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.contract

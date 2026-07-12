@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 import { CalendarCheck2, ChevronRight, Paperclip } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -39,9 +40,16 @@ export const MilestoneListItem = observer(function MilestoneListItem(props: Prop
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAttachModalOpen, setIsAttachModalOpen] = useState(false);
   // store hooks
-  const { getMilestoneById, getMilestoneIssuesByMilestoneId, addIssuesToMilestone } = useMilestone();
+  const { getMilestoneById, getMilestoneIssuesByMilestoneId, fetchMilestoneIssues, addIssuesToMilestone } =
+    useMilestone();
   // plane hooks
   const { t } = useTranslation();
+  // load the attached links when the attach modal opens (shared SWR key with
+  // the expanded list) so already-attached items are hidden even before expand
+  useSWR(
+    isAttachModalOpen ? `MILESTONE_ISSUES_${milestoneId}` : null,
+    isAttachModalOpen ? () => fetchMilestoneIssues(workspaceSlug, projectId, milestoneId) : null
+  );
   // derived values
   const milestone = getMilestoneById(milestoneId);
   const attachedIssueIds = new Set(getMilestoneIssuesByMilestoneId(milestoneId).map((link) => link.issue));
@@ -113,7 +121,7 @@ export const MilestoneListItem = observer(function MilestoneListItem(props: Prop
             </span>
           )}
           {totalIssues !== undefined && (
-            <Tooltip tooltipContent="Completed work items" position="top">
+            <Tooltip tooltipContent={t("milestone_completed_work_items")} position="top">
               <span className="flex-shrink-0 rounded bg-layer-1 px-1.5 py-0.5 text-11 font-medium text-tertiary">
                 {completedIssues ?? 0}/{totalIssues}
               </span>

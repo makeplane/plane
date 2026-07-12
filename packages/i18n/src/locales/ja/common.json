@@ -918,5 +918,7 @@
   "milestone_new": "新しいマイルストーン",
   "milestone_attach_work_items": "作業アイテムを追加",
   "milestone_empty_state": "マイルストーンはまだありません。作成して、作業アイテムを共通の完了日に合わせましょう。",
-  "milestone_work_items_empty_state": "このマイルストーンにはまだ作業アイテムが追加されていません。"
+  "milestone_work_items_empty_state": "このマイルストーンにはまだ作業アイテムが追加されていません。",
+  "milestone_update": "マイルストーンを編集",
+  "milestone_completed_work_items": "完了した作業アイテム"
 }
