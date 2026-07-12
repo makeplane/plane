@@ -3,8 +3,8 @@
 | Champ   | Valeur              |
 |---------|---------------------|
 | Module  | api/work-item-pages |
-| Version | 0.1.0               |
-| Date    | 2026-07-08          |
+| Version | 0.1.1               |
+| Date    | 2026-07-11          |
 | Statut  | IMPLÉMENTÉ          |
 
 ---
@@ -73,6 +73,14 @@ OpenAPI : `operation_id` documentés (`list_work_item_pages`, `attach_page_to_wo
 | POST | `/api/v1/workspaces/:slug/projects/:project_id/issues/:issue_id/pages/` | `attach_page_to_work_item` |
 | DELETE | `/api/v1/workspaces/:slug/projects/:project_id/issues/:issue_id/pages/:page_id/` | `detach_page_from_work_item` |
 
+**Alias SDK MCP (ajout additif — fix PR #28, 2026-07-11)** : le SDK officiel `plane_sdk 0.2.19` appelle le segment `work-items/` à la place de `issues/`. Alias enregistrés dans `page_link.py` (mêmes vues, anciennes routes conservées) :
+
+| Méthode | URL alias | operation_id |
+|---------|-----------|--------------|
+| GET | `/api/v1/workspaces/:slug/projects/:project_id/work-items/:issue_id/pages/` | `list_work_item_pages` |
+| POST | `/api/v1/workspaces/:slug/projects/:project_id/work-items/:issue_id/pages/` | `attach_page_to_work_item` |
+| DELETE | `/api/v1/workspaces/:slug/projects/:project_id/work-items/:issue_id/pages/:page_id/` | `detach_page_from_work_item` |
+
 Routes déclarées dans `apps/api/plane/api/urls/page_link.py`, incluses dans `apps/api/plane/api/urls/__init__.py`.
 
 ### Contrôles d'accès (par opération)
@@ -131,7 +139,6 @@ Idempotence `get_or_create` : si la page est déjà attachée (lien actif), l'ac
 ### Reste à faire
 
 - Exécuter les tests pytest dans un environnement avec BDD (`pytest plane/tests/`).
-- Vérifier si les outils MCP attendent les routes sous `/work-items/` (alias) plutôt que `/issues/` — si oui, ajouter un alias ou corriger les routes externes.
 
 ## Schéma BDD
 
