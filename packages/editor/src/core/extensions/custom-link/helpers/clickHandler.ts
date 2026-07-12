@@ -21,45 +21,39 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
           return false;
         }
 
-        if (!view.editable) {
-          return false;
-        }
+        const eventTarget = event.target as HTMLElement | null;
+        const link = eventTarget?.closest?.("a") as HTMLLinkElement | null;
 
-        let a = event.target as HTMLElement;
-        const els: HTMLElement[] = [];
-
-        while (a?.nodeName !== "DIV") {
-          els.push(a);
-          a = a?.parentNode as HTMLElement;
-        }
-
-        if (!els.find((value) => value.nodeName === "A")) {
+        if (!link || !view.dom.contains(link)) {
           return false;
         }
 
         const attrs = getAttributes(view.state, options.type.name);
-        const link = event.target as HTMLLinkElement;
+        const href = link.href ?? attrs.href;
+        const target = link.target ?? attrs.target;
 
-        const href = link?.href ?? attrs.href;
-        const target = link?.target ?? attrs.target;
+        if (!href) {
+          return false;
+        }
 
-        if (link && href) {
-          // Defence-in-depth: link.href is the browser-resolved URL (whitespace
-          // already stripped by the browser's WHATWG URL parser), so a protocol
-          // check here is sufficient to catch any dangerous URI that slipped past
-          // the editor's parse/render-time guards. Matches the blocked-scheme list
-          // in isValidHttpUrl (javascript:, data:, vbscript:, file:, about:)
-          // to keep the policy consistent (GHSA-v2vv-7wq3-8w2j).
-          if (/^(javascript|data|vbscript|file|about):/i.test(href)) {
-            return false;
-          }
-
-          window.open(href, target);
-
+        // Defence-in-depth: link.href is the browser-resolved URL (whitespace
+        // already stripped by the browser's WHATWG URL parser), so a protocol
+        // check here is sufficient to catch any dangerous URI that slipped past
+        // the editor's parse/render-time guards. Matches the blocked-scheme list
+        // in isValidHttpUrl (javascript:, data:, vbscript:, file:, about:)
+        // to keep the policy consistent (GHSA-v2vv-7wq3-8w2j).
+        if (/^(javascript|data|vbscript|file|about):/i.test(href)) {
+          event.preventDefault();
           return true;
         }
 
-        return false;
+        if (!view.editable) {
+          return false;
+        }
+
+        window.open(href, target);
+
+        return true;
       },
     },
   });
