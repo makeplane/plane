@@ -7,7 +7,7 @@ from uuid import uuid4
 import pytest
 from rest_framework import status
 
-from plane.db.models import IssueView, Project, ProjectMember, User, WorkspaceMember
+from plane.db.models import DeployBoard, IssueView, Project, ProjectMember, User, WorkspaceMember
 
 
 def make_user(email=None, role_ws=None, workspace=None, project=None, role_project=15):
@@ -210,3 +210,133 @@ class TestWorkspaceViewAccessWrite:
         assert response.status_code == status.HTTP_200_OK
         view.refresh_from_db()
         assert view.is_locked is False
+
+
+def publish_url(slug, project_id, pk):
+    return f"/api/workspaces/{slug}/projects/{project_id}/views/{pk}/publish/"
+
+
+def search_url(slug):
+    return f"/api/workspaces/{slug}/search/"
+
+
+def favorite_views_url(slug, project_id):
+    return f"/api/workspaces/{slug}/projects/{project_id}/user-favorite-views/"
+
+
+@pytest.mark.contract
+class TestPrivateViewNotServedPublicly:
+    """A private view must not stay reachable through the public DeployBoard
+    anchor (review finding VA-01)."""
+
+    @pytest.mark.django_db
+    def test_cannot_publish_a_private_view(self, session_client, workspace, project):
+        created = session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "Secret", "access": 0},
+            format="json",
+        )
+        pk = created.data["id"]
+
+        response = session_client.post(publish_url(workspace.slug, project.id, pk), {}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert not DeployBoard.objects.filter(entity_name="view", entity_identifier=pk).exists()
+
+    @pytest.mark.django_db
+    def test_turning_a_published_view_private_unpublishes_it(self, session_client, workspace, project):
+        created = session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "Public then private", "access": 1},
+            format="json",
+        )
+        pk = created.data["id"]
+
+        published = session_client.post(publish_url(workspace.slug, project.id, pk), {}, format="json")
+        assert published.status_code == status.HTTP_200_OK
+        assert DeployBoard.objects.filter(entity_name="view", entity_identifier=pk).exists()
+
+        session_client.patch(
+            project_view_detail_url(workspace.slug, project.id, pk),
+            {"access": 0},
+            format="json",
+        )
+
+        assert not DeployBoard.objects.filter(entity_name="view", entity_identifier=pk).exists()
+
+
+@pytest.mark.contract
+class TestPrivateViewNotLeakedViaSearchOrFavorites:
+    @pytest.mark.django_db
+    def test_search_hides_another_members_private_view(self, session_client, workspace, project, create_user):
+        session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "Owner secret view", "access": 0},
+            format="json",
+        )
+        other = make_user(workspace=workspace, project=project)
+        session_client.force_authenticate(user=other)
+
+        response = session_client.get(
+            search_url(workspace.slug),
+            {"search": "secret", "entities": "issue_view", "project_id": str(project.id), "workspace_search": "false"},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        view_hits = list(response.data["results"]["issue_view"])
+        assert view_hits == []
+
+    @pytest.mark.django_db
+    def test_search_still_returns_own_private_view(self, session_client, workspace, project):
+        session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "My secret view", "access": 0},
+            format="json",
+        )
+
+        response = session_client.get(
+            search_url(workspace.slug),
+            {"search": "secret", "entities": "issue_view", "project_id": str(project.id), "workspace_search": "false"},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        names = [v["name"] for v in response.data["results"]["issue_view"]]
+        assert "My secret view" in names
+
+    @pytest.mark.django_db
+    def test_cannot_favorite_another_members_private_view(self, session_client, workspace, project, create_user):
+        created = session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "Owner private", "access": 0},
+            format="json",
+        )
+        pk = created.data["id"]
+        other = make_user(workspace=workspace, project=project)
+        session_client.force_authenticate(user=other)
+
+        response = session_client.post(
+            favorite_views_url(workspace.slug, project.id),
+            {"view": pk},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    def test_can_favorite_a_public_view(self, session_client, workspace, project, create_user):
+        created = session_client.post(
+            project_views_url(workspace.slug, project.id),
+            {"name": "Shared public", "access": 1},
+            format="json",
+        )
+        pk = created.data["id"]
+        other = make_user(workspace=workspace, project=project)
+        session_client.force_authenticate(user=other)
+
+        response = session_client.post(
+            favorite_views_url(workspace.slug, project.id),
+            {"view": pk},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT

@@ -32,6 +32,13 @@ class IssueViewPublishEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, pk):
         issue_view = IssueView.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
 
+        # A private view (access=0) must not be exposed through a public anchor.
+        if issue_view.access == 0:
+            return Response(
+                {"error": "A private view cannot be published. Make it public first."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
         votes = request.data.get("is_votes_enabled", False)
