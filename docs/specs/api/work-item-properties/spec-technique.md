@@ -3,9 +3,9 @@
 | Champ   | Valeur                   |
 |---------|--------------------------|
 | Module  | api/work-item-properties |
-| Version | 0.1.0                    |
-| Date    | 2026-07-08               |
-| Statut  | IMPLÉMENTÉ v0.1.0 (2026-07-08) |
+| Version | 0.1.1                    |
+| Date    | 2026-07-11               |
+| Statut  | IMPLÉMENTÉ v0.1.0 (2026-07-08) · v0.1.1 fix alias MCP (2026-07-11) |
 
 ---
 
@@ -77,7 +77,19 @@ Choix : colonnes typées (pas un JSON opaque) → requêtable/filtrable, cohére
 - (Alternative valeurs : intégrer la persistance des valeurs au flux de create/update d'un work item — cf. provider web.)
 
 ### Externe (api v1, token — MCP)
-Mapping des 9 outils : `create/update/delete/list_work_item_property`, `create_work_item_property_option`, `manage_work_item_type_properties`, `set/get_work_item_property_value` sous `/api/v1/.../work-item-types/:type_id/properties/` et `/api/v1/.../work-items/:issue_id/properties/...`.
+Mapping des 9 outils : `create/update/delete/list_work_item_property`, `create_work_item_property_option`, `manage_work_item_type_properties`, `set/get_work_item_property_value`.
+
+Routes originales (conservées) : segment `properties/` sous `work-item-types/:type_id/properties/` et `work-items/:issue_id/properties/...`.
+
+**Alias SDK MCP (fix PR #28, 2026-07-11)** : `plane_sdk 0.2.19` utilise le segment `work-item-properties`. Alias additifs enregistrés dans `apps/api/plane/api/urls/issue_property.py` (mêmes vues) :
+
+| Ressource | URL alias |
+|-----------|-----------|
+| Définitions (list/create) | `/api/v1/workspaces/:slug/projects/:project_id/work-item-types/:type_id/work-item-properties/` |
+| Définition (detail) | `/api/v1/.../work-item-types/:type_id/work-item-properties/:property_id/` |
+| Options (list/create) | `/api/v1/.../work-item-properties/:property_id/options/` |
+| Option (detail) | `/api/v1/.../work-item-properties/:property_id/options/:option_id/` |
+| Valeurs (get/set/patch/delete) | `/api/v1/.../work-items/:issue_id/work-item-properties/:property_id/values/` |
 
 ### Permissions & isolation
 - Définitions/options : mutations ADMIN projet ; lecture membre.

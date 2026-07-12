@@ -17,16 +17,16 @@ Remplacement de stubs CE (`@/plane-web/*` → `apps/web/ce/*`). Le store CE (`ce
 
 | Fichier | Rôle | État CE actuel |
 |---------|------|----------------|
-| `apps/web/ce/components/estimates/update/modal.tsx` | Modal d'édition | stub `<></>` |
-| `apps/web/ce/components/estimates/points/delete.tsx` | Suppression de point + re-mapping | stub `<></>` |
-| `apps/web/ce/components/estimates/inputs/time-input.tsx` | Input système TIME | stub `<></>` |
-| `apps/web/ce/components/estimates/helper.tsx` | `isEstimateSystemEnabled` | TIME → `false` |
+| `apps/web/ce/components/estimates/update/modal.tsx` | Modal d'édition | ✅ implémenté (phase A) |
+| `apps/web/ce/components/estimates/points/delete.tsx` | Suppression de point + re-mapping | ✅ implémenté (phase A) |
+| `apps/web/ce/components/estimates/inputs/time-input.tsx` | Input système TIME | ✅ implémenté (phase B → module `web/estimates-time`) |
+| `apps/web/ce/components/estimates/helper.tsx` | `isEstimateSystemEnabled` | TIME → `true` (phase B → module `web/estimates-time`) |
 | `apps/web/ce/store/estimates/` | Store estimates CE | complet pour création |
 
 ## Schéma BDD
 
 - Volet points : aucune migration.
-- Volet TIME : ajout de `TIME` à `EstimateType` (`apps/api/plane/db/models/estimate.py:13-15`) → migration Django + adaptation `plane/app/views/estimate/base.py`.
+- Volet TIME : livré par le module `web/estimates-time` (enum `EstimateType.TIME` + migration `0127_alter_estimate_type_time`, validation dans `plane/app/views/estimate/base.py`) — voir docs/specs/web/estimates-time/.
 
 ## API
 

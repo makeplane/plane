@@ -137,6 +137,13 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
   const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
+  // single source for both the button text and its tooltip — TIME estimates
+  // store raw minutes and must always render as "Xh Ym"
+  const selectedEstimateLabel = selectedEstimate
+    ? currentActiveEstimate?.type === EEstimateSystem.TIME
+      ? convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
+      : selectedEstimate.value
+    : undefined;
 
   const onOpen = async () => {
     if (!currentActiveEstimateId && workspaceSlug && projectId)
@@ -190,7 +197,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             className={buttonClassName}
             isActive={isOpen}
             tooltipHeading={t("project_settings.estimates.label")}
-            tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
+            tooltipContent={selectedEstimateLabel ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
@@ -198,15 +205,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             {!hideIcon && <EstimatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
               <span className="truncate">
-                {selectedEstimate ? (
-                  currentActiveEstimate?.type === EEstimateSystem.TIME ? (
-                    convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
-                  ) : (
-                    selectedEstimate.value
-                  )
-                ) : (
-                  <span className="text-placeholder">{placeholder}</span>
-                )}
+                {selectedEstimateLabel ?? <span className="text-placeholder">{placeholder}</span>}
               </span>
             )}
             {dropdownArrow && (

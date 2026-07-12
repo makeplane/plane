@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import React from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -67,9 +68,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       {cycle.total_issues > 0 ? (
         <div className="flex flex-col gap-5">
           {Object.keys(groupedIssues).map((group, index) => (
-            <>
+            <React.Fragment key={group}>
               {groupedIssues[group] > 0 && (
-                <div key={index}>
+                <div>
                   <div
                     className="flex cursor-pointer items-center justify-between gap-2 text-13"
                     onClick={() => {
@@ -91,7 +92,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                   </div>
                 </div>
               )}
-            </>
+            </React.Fragment>
           ))}
           {cycle.cancelled_issues > 0 && (
             <span className="flex items-center gap-2 text-13 text-tertiary">

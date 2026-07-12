@@ -126,17 +126,28 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       hours: {
         title: "Hours",
         i18n_title: "project_settings.estimates.systems.time.hours",
+        // stored in minutes (60 = 1h ... 360 = 6h), rendered via convertMinutesToHoursMinutesString
         values: [
-          { id: undefined, key: 1, value: "1" },
-          { id: undefined, key: 2, value: "2" },
-          { id: undefined, key: 3, value: "3" },
-          { id: undefined, key: 4, value: "4" },
-          { id: undefined, key: 5, value: "5" },
-          { id: undefined, key: 6, value: "6" },
+          { id: undefined, key: 1, value: "60" },
+          { id: undefined, key: 2, value: "120" },
+          { id: undefined, key: 3, value: "180" },
+          { id: undefined, key: 4, value: "240" },
+          { id: undefined, key: 5, value: "300" },
+          { id: undefined, key: 6, value: "360" },
         ],
+      },
+      custom: {
+        title: "Custom",
+        i18n_title: "project_settings.estimates.systems.time.custom",
+        // hidden seed for the "start from scratch" flow; values stored in minutes (60 = 1h, 120 = 2h)
+        values: [
+          { id: undefined, key: 1, value: "60" },
+          { id: undefined, key: 2, value: "120" },
+        ],
+        hide: true,
       },
     },
     is_available: true,
-    is_ee: true,
+    is_ee: false,
   },
 };
