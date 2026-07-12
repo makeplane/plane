@@ -493,6 +493,11 @@ def track_estimate_points(
             if requested_data.get("estimate_point") is not None
             else None
         )
+        # on removal new_estimate is None — resolve the estimate type from
+        # whichever side exists, and bail out if neither point resolves
+        estimate_point = new_estimate or old_estimate
+        if estimate_point is None:
+            return
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -508,7 +513,7 @@ def track_estimate_points(
                 ),
                 old_value=old_estimate.value if old_estimate else None,
                 new_value=new_estimate.value if new_estimate else None,
-                field="estimate_" + new_estimate.estimate.type,
+                field="estimate_" + estimate_point.estimate.type,
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the estimate point to ",
