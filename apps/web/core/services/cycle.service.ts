@@ -74,7 +74,10 @@ export class CycleService extends APIService {
     })
       .then((res) => res?.data)
       .catch((err) => {
-        throw err?.response?.data;
+        // keep the raw error when there is no HTTP response (network failure),
+        // otherwise SWR would store `undefined` and the UI could not tell an
+        // error from an empty result
+        throw err?.response?.data ?? err;
       });
   }
 
