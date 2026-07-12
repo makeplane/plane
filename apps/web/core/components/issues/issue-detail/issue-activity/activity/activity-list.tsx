@@ -67,6 +67,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       return <IssuePriorityActivity {...componentDefaultProps} showIssue={false} />;
     case "estimate_points":
     case "estimate_categories":
+    case "estimate_time":
     case "estimate_point" /* This case is to handle all the older recorded activities for estimates. Field changed from  "estimate_point" -> `estimate_${estimate_type}`*/:
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
