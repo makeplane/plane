@@ -65,7 +65,9 @@ class IssueViewSerializer(DynamicBaseSerializer):
             "project",
             "query",
             "owned_by",
-            "access",
+            # access (0=Private/1=Public) is intentionally writable: the
+            # queryset already hides private views from non-owners and
+            # partial_update is owner-gated. is_locked keeps no write path.
             "is_locked",
         ]
 

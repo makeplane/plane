@@ -55,7 +55,9 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
         newValues = !!value;
       }
       if (Array.isArray(newValues)) {
-        if (!value) newValues = [];
+        // `null` clears the whole facet; guard against EViewAccess.PRIVATE (0)
+        // being treated as falsy, which would wipe the Public filter too
+        if (value === null || value === undefined) newValues = [];
         else newValues = newValues.filter((val) => val !== value) as string[];
       }
 

@@ -223,6 +223,10 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
             workspace__slug=slug,
+        ).filter(
+            # never surface another member's private view (access=0)
+            Q(access=1)
+            | Q(owned_by=self.request.user)
         )
 
         if workspace_search == "false" and project_id:

@@ -374,6 +374,14 @@ class IssueViewViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+                # A view turned private (access=0) must not stay publicly served
+                # through a DeployBoard anchor — unpublish it so "private" holds
+                # everywhere (the space app serves anchors with AllowAny).
+                issue_view.refresh_from_db(fields=["access"])
+                if issue_view.access == 0:
+                    DeployBoard.objects.filter(
+                        entity_name="view", entity_identifier=pk, project_id=project_id
+                    ).delete()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -435,9 +443,18 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        # Only a view the requester may actually see (own or public) can be
+        # favorited — otherwise another member's private view name/logo leaks.
+        view = (
+            IssueView.objects.filter(pk=request.data.get("view"), workspace__slug=slug, project_id=project_id)
+            .filter(Q(owned_by=self.request.user) | Q(access=1))
+            .first()
+        )
+        if not view:
+            return Response({"error": "View not found"}, status=status.HTTP_404_NOT_FOUND)
         _ = UserFavorite.objects.create(
             user=request.user,
-            entity_identifier=request.data.get("view"),
+            entity_identifier=view.id,
             entity_type="view",
             project_id=project_id,
         )
