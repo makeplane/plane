@@ -49,6 +49,8 @@ class MilestoneIssueViewSet(BaseViewSet):
         if not milestones_enabled(project_id):
             return Response({"error": MILESTONES_DISABLED_ERROR}, status=status.HTTP_400_BAD_REQUEST)
 
+        if not isinstance(request.data, dict):
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
         issues = request.data.get("issues", [])
         if not issues or not isinstance(issues, list):
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)

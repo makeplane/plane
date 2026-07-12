@@ -46,6 +46,10 @@ def _parse_issue_ids(request):
 
     Returns ``(issue_ids, error_message)``.
     """
+    # A non-dict JSON body (top-level array/scalar) would make ``.get`` raise
+    # AttributeError -> HTTP 500; reject it cleanly as a 400 instead.
+    if not isinstance(request.data, dict):
+        return None, MISSING_WORK_ITEMS_ERROR
     issues = request.data.get("issues", [])
     if not issues or not isinstance(issues, list):
         return None, MISSING_WORK_ITEMS_ERROR

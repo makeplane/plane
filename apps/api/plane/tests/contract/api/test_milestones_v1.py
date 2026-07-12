@@ -233,3 +233,11 @@ class TestMilestoneWorkItemsV1:
             format="json",
         )
         assert malformed.status_code == status.HTTP_400_BAD_REQUEST
+
+        # A non-dict JSON body (top-level array) must be a clean 400, never a 500 (BK-1).
+        non_dict = v1.post(
+            work_items_url(workspace.slug, project.id, milestone.id),
+            ["some-uuid"],
+            format="json",
+        )
+        assert non_dict.status_code == status.HTTP_400_BAD_REQUEST
