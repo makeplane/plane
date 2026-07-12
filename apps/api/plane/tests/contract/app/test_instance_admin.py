@@ -18,7 +18,7 @@ class TestInstanceAdminSignUp:
     @pytest.mark.django_db
     @pytest.mark.parametrize(
         ("form_value", "expected_value"),
-        [("false", False), ("true", True)],
+        [("false", False), ("true", True), ("False", False), ("True", True), ("1", True)],
     )
     def test_telemetry_form_value_is_coerced_to_boolean(self, client, form_value, expected_value):
         """Form-encoded telemetry values must not interrupt instance setup."""
