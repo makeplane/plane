@@ -14,7 +14,17 @@ class MilestoneWriteSerializer(BaseSerializer):
     class Meta:
         model = Milestone
         fields = "__all__"
-        read_only_fields = ["workspace", "project"]
+        # `fields="__all__"` would otherwise let a PATCH payload reassign audit
+        # attribution (created_by/updated_by), soft-delete (deleted_at) or reorder
+        # (sort_order) — none of these are legitimate client input.
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "deleted_at",
+            "sort_order",
+        ]
 
 
 class MilestoneSerializer(BaseSerializer):

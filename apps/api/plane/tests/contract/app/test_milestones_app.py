@@ -199,3 +199,33 @@ class TestMilestoneIssuesApp:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert MilestoneIssue.objects.filter(milestone=milestone).count() == 0
+
+
+@pytest.mark.contract
+class TestMilestoneWriteSerializerHardening:
+    """PATCH must not let a member reassign audit fields, soft-delete or reorder
+    a milestone via mass-assignment (review finding SEC-ms-1)."""
+
+    @pytest.mark.django_db
+    def test_patch_ignores_audit_softdelete_and_sort_order(self, session_client, workspace, project, create_user):
+        milestone = Milestone.objects.create(name="M", project=project, workspace=workspace)
+        original_created_by = milestone.created_by_id
+        stranger = make_user(workspace=workspace)
+
+        response = session_client.patch(
+            milestone_detail_url(workspace.slug, project.id, milestone.id),
+            {
+                "name": "Renamed",
+                "created_by": str(stranger.id),
+                "deleted_at": "2020-01-01T00:00:00Z",
+                "sort_order": 1.0,
+            },
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        milestone.refresh_from_db()
+        assert milestone.name == "Renamed"
+        assert milestone.created_by_id == original_created_by
+        assert milestone.deleted_at is None
+        assert milestone.sort_order != 1.0
