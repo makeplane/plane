@@ -59,6 +59,7 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
+  state_group_order?: TStateGroups[];
 }
 
 export type TProjectAnalyticsCountParams = {
@@ -96,17 +97,17 @@ export type TProjectMembership = {
   member: string;
   role: TUserPermissions | EUserProjectRoles;
 } & (
-  | {
+    | {
       id: string;
       original_role: EUserProjectRoles;
       created_at: string;
     }
-  | {
+    | {
       id: null;
       original_role: null;
       created_at: null;
     }
-);
+  );
 
 export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
