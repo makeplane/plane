@@ -1,0 +1,63 @@
+# Reference OpenTelemetry Collector config for Plane self-hosters.
+# Run with: otelcol --config=otel-collector.yaml
+# Replace the `debug` exporter with one targeting your backend.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  filelog:
+    include:
+      - /var/lib/docker/containers/*/*-json.log
+    operators:
+      - type: json_parser
+      - type: move
+        from: attributes.trace_id
+        to: trace_id
+      - type: move
+        from: attributes.span_id
+        to: span_id
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+exporters:
+  # Replace `debug` with your real backend. Examples (commented):
+  #
+  # otlphttp/tempo:
+  #   endpoint: http://tempo:4318
+  #
+  # datadog:
+  #   api:
+  #     key: ${DD_API_KEY}
+  #
+  # otlphttp/honeycomb:
+  #   endpoint: https://api.honeycomb.io
+  #   headers:
+  #     x-honeycomb-team: ${HONEYCOMB_API_KEY}
+  #
+  # prometheusremotewrite:
+  #   endpoint: https://prometheus.example.com/api/v1/write
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    logs:
+      receivers: [filelog]
+      processors: [batch]
+      exporters: [debug]
