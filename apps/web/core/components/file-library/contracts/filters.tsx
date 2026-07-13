@@ -9,7 +9,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Popover } from "@plane/propel/popover";
-import type { TContractFilters, TFileTag } from "@plane/types";
+import type { TContractFilters, TFileTag, TFileTagKind } from "@plane/types";
 import { cn } from "@plane/utils";
 // services
 import { fileLibraryService } from "@/services/file-library.service";
@@ -30,6 +30,23 @@ const useWorkspaceTags = (workspaceSlug: string) => {
     { revalidateOnFocus: false }
   );
   return data ?? [];
+};
+
+/** Section order + labels for the kind-grouped tag lists */
+export const TAG_KIND_SECTIONS: { kind: TFileTagKind; i18nKey: string }[] = [
+  { kind: "ARTIST", i18nKey: "file_library.tags.kinds.artist" },
+  { kind: "GROUP", i18nKey: "file_library.tags.kinds.group" },
+  { kind: "PERSON", i18nKey: "file_library.tags.kinds.person" },
+  { kind: "CUSTOM", i18nKey: "file_library.tags.kinds.custom" },
+];
+
+export const groupTagsByKind = (tags: TFileTag[]) => {
+  const groups = new Map<TFileTagKind, TFileTag[]>();
+  tags.forEach((tag) => {
+    const kind: TFileTagKind = tag.kind ?? "CUSTOM";
+    groups.set(kind, [...(groups.get(kind) ?? []), tag]);
+  });
+  return groups;
 };
 
 const MULTI_SECTIONS = [
@@ -123,30 +140,42 @@ export function ContractFiltersDropdown(props: Props) {
             </div>
           </div>
 
-          {/* Tags linked to the contract's document (auto-created per artist) */}
+          {/* Tags linked to the contract's document, grouped by kind so the
+              list reads as artists / groups / people instead of a flat wall */}
           {workspaceTags.length > 0 && (
             <div>
               <p className="px-1 py-0.5 text-11 font-medium text-tertiary">{t("file_library.tags.title")}</p>
-              <div className="max-h-40 overflow-y-auto">
-                {workspaceTags.map((tag) => {
-                  const isChecked = (filters.tags ?? []).includes(tag.id);
+              <div className="max-h-56 overflow-y-auto">
+                {TAG_KIND_SECTIONS.map(({ kind, i18nKey }) => {
+                  const sectionTags = groupTagsByKind(workspaceTags).get(kind) ?? [];
+                  if (sectionTags.length === 0) return null;
                   return (
-                    <button
-                      key={tag.id}
-                      type="button"
-                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
-                      onClick={() => toggleValue("tags", tag.id)}
-                    >
-                      <span
-                        className={cn(
-                          "flex size-4 shrink-0 items-center justify-center rounded-sm border",
-                          isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
-                        )}
-                      >
-                        {isChecked && <Check className="size-3" />}
-                      </span>
-                      <span className="truncate">{tag.name}</span>
-                    </button>
+                    <div key={kind}>
+                      <p className="px-2 pt-1.5 pb-0.5 text-10 font-semibold uppercase tracking-wide text-tertiary">
+                        {t(i18nKey)}
+                      </p>
+                      {sectionTags.map((tag) => {
+                        const isChecked = (filters.tags ?? []).includes(tag.id);
+                        return (
+                          <button
+                            key={tag.id}
+                            type="button"
+                            className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
+                            onClick={() => toggleValue("tags", tag.id)}
+                          >
+                            <span
+                              className={cn(
+                                "flex size-4 shrink-0 items-center justify-center rounded-sm border",
+                                isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
+                              )}
+                            >
+                              {isChecked && <Check className="size-3" />}
+                            </span>
+                            <span className="truncate">{tag.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   );
                 })}
               </div>

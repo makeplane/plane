@@ -225,7 +225,14 @@ export class ContractPipelineWorkflow extends WorkflowEntrypoint<Env, PipelinePa
         // variants (alias, casing, partial names) onto them instead of
         // creating near-duplicate tags for the same artist.
         const existingTags = await step.do("load existing tags", async () => {
-          const { tags } = await api.getWorkspaceTags(event.payload.workspace_id);
+          const { tags, detailed } = await api.getWorkspaceTags(event.payload.workspace_id);
+          // Only artist-kind (and legacy unclassified) tags are relevant for
+          // normalizing artist names; group/person tags would add noise.
+          if (detailed) {
+            return detailed
+              .filter((tag) => tag.kind === "ARTIST" || tag.kind === "CUSTOM")
+              .map((tag) => tag.name);
+          }
           return tags;
         });
 

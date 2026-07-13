@@ -163,6 +163,27 @@ export class FileLibraryService extends APIService {
       });
   }
 
+  // exports (unbounded ZIP builds on the background worker)
+
+  async createBulkExport(workspaceSlug: string, assetIds: string[]): Promise<{ export_id: string }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-library/export/`, { asset_ids: assetIds })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getExportStatus(
+    workspaceSlug: string,
+    exportId: string
+  ): Promise<{ status: "queued" | "processing" | "completed" | "failed"; url: string | null; reason: string | null }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/file-library/export/status/${exportId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // files
 
   async getFiles(workspaceSlug: string, filters?: TLibraryFileFilters): Promise<TLibraryFile[]> {

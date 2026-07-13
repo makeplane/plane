@@ -124,6 +124,8 @@ export type TContractRetryOptions = {
   generate_embeddings?: boolean;
   ai_analysis?: boolean;
   extract_thumbnail?: boolean;
+  /** AI-free: resyncs ARTIST/GROUP/PERSON tags from the contract's stored fields */
+  tags?: boolean;
 };
 
 export type TContractChatMode = "GENERAL" | "CONTRACT";

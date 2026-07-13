@@ -107,23 +107,69 @@ def apply_extracted_data(contract, data):
 
     contract.save()
 
-    # Auto-tag the file by artist so the library can filter "everything of X".
-    # Uses the structured array (never split the joined text — names may
-    # contain commas).
-    artists = data.get("artistas")
-    if isinstance(artists, list) and contract.file_asset_id:
-        for item in artists:
-            name = str(item.get("nombre", item) if isinstance(item, dict) else item).strip()
-            if not name:
-                continue
-            tag = FileTag.objects.filter(workspace_id=contract.workspace_id, name__iexact=name).first()
-            if tag is None:
-                tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name)
-            FileTagLink.objects.get_or_create(
-                file_asset_id=contract.file_asset_id,
-                tag=tag,
-                defaults={"workspace_id": contract.workspace_id},
-            )
+    # Auto-tag the file so the library can filter "everything of X": one tag
+    # per artist (kind ARTIST, "nombre artístico - nombre real"), one for the
+    # group/band (kind GROUP) and one per person appearing in the contract
+    # (kind PERSON). Uses the structured arrays (never split the joined text —
+    # names may contain commas).
+    if contract.file_asset_id:
+
+        def each_name(value):
+            if not isinstance(value, list):
+                return
+            for item in value:
+                yield str(item.get("nombre", item) if isinstance(item, dict) else item)
+
+        for name in each_name(data.get("artistas")):
+            link_contract_tag(contract, name, FileTag.Kind.ARTIST)
+        for name in each_name(data.get("involucrados")):
+            link_contract_tag(contract, name, FileTag.Kind.PERSON)
+        group_name = data.get("nombreGrupo")
+        if group_name and not isinstance(group_name, list):
+            link_contract_tag(contract, group_name, FileTag.Kind.GROUP)
+
+
+def link_contract_tag(contract, name, kind):
+    """Get-or-create a FileTag by name (case-insensitive) and link it to the
+    contract's document. Adopts the given kind on previously-unclassified
+    (CUSTOM) tags so manually-created tags gain a grouping once the AI
+    recognizes them.
+    """
+    name = str(name).strip()
+    if not name or not contract.file_asset_id:
+        return
+    tag = FileTag.objects.filter(workspace_id=contract.workspace_id, name__iexact=name).first()
+    if tag is None:
+        tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name, kind=kind)
+    elif tag.kind == FileTag.Kind.CUSTOM and kind != FileTag.Kind.CUSTOM:
+        tag.kind = kind
+        tag.save(update_fields=["kind"])
+    FileTagLink.objects.get_or_create(
+        file_asset_id=contract.file_asset_id,
+        tag=tag,
+        defaults={"workspace_id": contract.workspace_id},
+    )
+
+
+def resync_contract_tags(contract):
+    """AI-free tag backfill: re-derives ARTIST/GROUP/PERSON tags from the
+    contract's already-stored fields, for contracts analyzed before tag kinds
+    (or the artist name format) existed. Instant and free — no Worker/AI call.
+
+    Trade-off: `artistas`/`involucrados` are stored as a single comma-joined
+    TextField (crm-new schema), so this splits on ", " instead of using the
+    AI's pre-join structured array. A name that itself contains a literal
+    comma will split incorrectly; use "Reanalizar" for full-fidelity tagging
+    in that case.
+    """
+    if not contract.file_asset_id:
+        return
+    for name in (contract.artistas or "").split(", "):
+        link_contract_tag(contract, name, FileTag.Kind.ARTIST)
+    for name in (contract.involucrados or "").split(", "):
+        link_contract_tag(contract, name, FileTag.Kind.PERSON)
+    if contract.nombre_grupo:
+        link_contract_tag(contract, contract.nombre_grupo, FileTag.Kind.GROUP)
 
 
 class InternalBaseView(BaseAPIView):
@@ -351,10 +397,16 @@ class InternalWorkspaceTagsEndpoint(InternalBaseView):
     """
 
     def get(self, request, workspace_id):
-        names = list(
-            FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values_list("name", flat=True)[:500]
+        rows = FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values("name", "kind")[:500]
+        return Response(
+            {
+                # Names-only list kept for backward compatibility with older
+                # Worker deploys; `detailed` carries the kind grouping.
+                "tags": [row["name"] for row in rows],
+                "detailed": list(rows),
+            },
+            status=status.HTTP_200_OK,
         )
-        return Response({"tags": names}, status=status.HTTP_200_OK)
 
 
 class InternalChunkSearchEndpoint(InternalBaseView):

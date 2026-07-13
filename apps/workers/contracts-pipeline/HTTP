@@ -1,0 +1,2 @@
+authenticated /models - 200
+wrong secret /models - 401

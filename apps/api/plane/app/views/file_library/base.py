@@ -298,6 +298,104 @@ class FileLibraryAssetDownloadEndpoint(FileLibraryBaseView):
         return HttpResponseRedirect(signed_url)
 
 
+class FileLibraryExportEndpoint(FileLibraryBaseView):
+    """Streams the requested assets as one ZIP. Files are pulled from S3 and
+    zipped on the fly (zipstream-ng) — nothing is buffered server-side, so the
+    export starts immediately and scales to large batches.
+    """
+
+    model = FileAsset
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        from django.http import StreamingHttpResponse
+        from zipstream import ZipStream
+
+        asset_ids = request.query_params.getlist("asset_id")[:300]
+        assets = list(
+            FileAsset.objects.filter(
+                id__in=asset_ids,
+                workspace__slug=slug,
+                entity_type=FileAsset.EntityTypeContext.WORKSPACE_FILE_LIBRARY,
+                is_uploaded=True,
+                is_deleted=False,
+            )
+        )
+        if not assets:
+            return Response({"error": "No downloadable assets in the selection"}, status=status.HTTP_400_BAD_REQUEST)
+
+        storage = S3Storage()
+        bucket = storage.aws_storage_bucket_name
+
+        def s3_chunks(object_key):
+            # Generator so each S3 GET opens lazily as the ZIP reaches it
+            body = storage.s3_client.get_object(Bucket=bucket, Key=object_key)["Body"]
+            try:
+                yield from body.iter_chunks(chunk_size=256 * 1024)
+            finally:
+                body.close()
+
+        zip_stream = ZipStream(sized=False)
+        used_names = set()
+        for asset in assets:
+            name = sanitize_filename((asset.attributes or {}).get("name") or str(asset.id))
+            candidate, counter = name, 2
+            while candidate in used_names:
+                dot = name.rfind(".")
+                candidate = f"{name[:dot]} ({counter}){name[dot:]}" if dot > 0 else f"{name} ({counter})"
+                counter += 1
+            used_names.add(candidate)
+            zip_stream.add(s3_chunks(asset.asset.name), candidate)
+
+        filename = f"archivos-{timezone.now().date().isoformat()}.zip"
+        response = StreamingHttpResponse(zip_stream, content_type="application/zip")
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        # Body length is unknowable up front; disable proxy buffering hints
+        response["X-Accel-Buffering"] = "no"
+        return response
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug):
+        """Unbounded exports run on the background worker (issue-exporter
+        pattern): the ZIP is built and uploaded to S3, then fetched through a
+        presigned URL the frontend polls for.
+        """
+        from plane.bgtasks.file_library_export_task import file_library_export_task
+        from plane.db.models import ExporterHistory, Workspace
+
+        asset_ids = request.data.get("asset_ids") or []
+        if not isinstance(asset_ids, list) or not asset_ids:
+            return Response({"error": "asset_ids is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        workspace = Workspace.objects.get(slug=slug)
+        exporter = ExporterHistory.objects.create(
+            workspace=workspace,
+            type="file_library",
+            provider="zip",
+            status="queued",
+            initiated_by=request.user,
+            filters={"asset_ids": [str(asset_id) for asset_id in asset_ids]},
+        )
+        file_library_export_task.delay(str(exporter.id))
+        return Response({"export_id": str(exporter.id)}, status=status.HTTP_201_CREATED)
+
+
+class FileLibraryExportStatusEndpoint(FileLibraryBaseView):
+    """Polling surface for background ZIP exports."""
+
+    model = FileAsset
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, export_id):
+        from plane.db.models import ExporterHistory
+
+        exporter = ExporterHistory.objects.get(id=export_id, workspace__slug=slug, type="file_library")
+        return Response(
+            {"status": exporter.status, "url": exporter.url, "reason": exporter.reason or None},
+            status=status.HTTP_200_OK,
+        )
+
+
 class FileCategoryLinkEndpoint(FileLibraryBaseView):
     model = FileCategoryLink
 
