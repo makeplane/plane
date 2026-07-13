@@ -16,7 +16,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 # Module imports
@@ -44,6 +45,7 @@ from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectLiteSerializer,
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
@@ -335,6 +337,88 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ProjectListLiteAPIEndpoint(BaseAPIView):
+    """Project Lite List Endpoint"""
+
+    serializer_class = ProjectLiteSerializer
+    model = Project
+    permission_classes = [ProjectBasePermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        # Projects the user can access: those they are an active member of, plus
+        # public (network=2) ones.
+        return (
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+            .distinct()
+        )
+
+    @project_docs(
+        operation_id="list_projects_lite",
+        summary="List projects (lite)",
+        description="Retrieve a paginated, lightweight list of projects for pickers and references.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            OpenApiParameter(
+                name="include_archived",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description=(
+                    "Include archived projects in the response. Defaults to false. "
+                    "Each project carries an archived_at timestamp (null when not archived)."
+                ),
+            ),
+        ],
+        responses={
+            200: create_paginated_response(
+                ProjectLiteSerializer,
+                "PaginatedProjectLiteResponse",
+                "Paginated list of projects with minimal fields",
+                "Paginated Projects (Lite)",
+            ),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """List projects (lite)
+
+        Retrieve a paginated, lightweight list of projects the user can access in
+        the workspace (projects they are an active member of, plus public projects),
+        optimized for pickers and references.
+        """
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        projects = self.get_queryset()
+
+        # Archived projects are excluded by default; pass ?include_archived=true
+        # (or 1) to include them. Each project's archived_at timestamp marks the
+        # archived ones.
+        include_archived = request.GET.get("include_archived", "false").lower() in ("true", "1")
+        if not include_archived:
+            projects = projects.filter(archived_at__isnull=True)
+
+        projects = projects.order_by(request.GET.get("order_by", "-created_at"))
+        return self.paginate(
+            request=request,
+            queryset=projects,
+            on_results=lambda projects: ProjectLiteSerializer(projects, many=True).data,
+        )
 
 
 class ProjectDetailAPIEndpoint(BaseAPIView):

@@ -21,6 +21,7 @@ from plane.api.serializers import (
     IssueSerializer,
     ModuleIssueSerializer,
     ModuleSerializer,
+    ModuleLiteSerializer,
     ModuleIssueRequestSerializer,
     ModuleCreateSerializer,
     ModuleUpdateSerializer,
@@ -274,6 +275,48 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             on_results=lambda modules: ModuleSerializer(
                 modules, many=True, fields=self.fields, expand=self.expand
             ).data,
+        )
+
+
+class ModuleListLiteAPIEndpoint(BaseAPIView):
+    """Module Lite List Endpoint"""
+
+    serializer_class = ModuleLiteSerializer
+    model = Module
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @module_docs(
+        operation_id="list_modules_lite",
+        summary="List modules (lite)",
+        description="Retrieve a paginated, lightweight list of modules in a project for pickers and references.",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER, ORDER_BY_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                ModuleLiteSerializer,
+                "PaginatedModuleLiteResponse",
+                "Paginated list of modules with minimal fields",
+                "Paginated Modules (Lite)",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List modules (lite)
+
+        Retrieve a paginated, lightweight list of non-archived modules in a project,
+        optimized for pickers and references.
+        """
+        modules = (
+            Module.objects.filter(project_id=project_id, workspace__slug=slug)
+            .filter(archived_at__isnull=True)
+            .select_related("project", "workspace", "lead")
+            .prefetch_related("members")
+            .order_by(request.GET.get("order_by", "-created_at"))
+        )
+        return self.paginate(
+            request=request,
+            queryset=modules,
+            on_results=lambda modules: ModuleLiteSerializer(modules, many=True).data,
         )
 
 

@@ -27,6 +27,7 @@ from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 from plane.api.serializers import (
     CycleIssueSerializer,
     CycleSerializer,
+    CycleLiteSerializer,
     CycleIssueRequestSerializer,
     TransferCycleIssueRequestSerializer,
     CycleCreateSerializer,
@@ -354,6 +355,48 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                 {"error": "Both start date and end date are either required or are to be null"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class CycleListLiteAPIEndpoint(BaseAPIView):
+    """Cycle Lite List Endpoint"""
+
+    serializer_class = CycleLiteSerializer
+    model = Cycle
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @cycle_docs(
+        operation_id="list_cycles_lite",
+        summary="List cycles (lite)",
+        description="Retrieve a paginated, lightweight list of cycles in a project for pickers and references.",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER, ORDER_BY_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                CycleLiteSerializer,
+                "PaginatedCycleLiteResponse",
+                "Paginated list of cycles with minimal fields",
+                "Paginated Cycles (Lite)",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List cycles (lite)
+
+        Retrieve a paginated, lightweight list of non-archived cycles in a project,
+        optimized for pickers and references.
+        """
+        cycles = (
+            Cycle.objects.filter(workspace__slug=slug, project_id=project_id)
+            .filter(archived_at__isnull=True)
+            .select_related("project", "workspace", "owned_by")
+            .order_by(request.GET.get("order_by", "-created_at"))
+            .distinct()
+        )
+        return self.paginate(
+            request=request,
+            queryset=cycles,
+            on_results=lambda cycles: CycleLiteSerializer(cycles, many=True).data,
+        )
 
 
 class CycleDetailAPIEndpoint(BaseAPIView):
