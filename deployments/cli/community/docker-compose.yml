@@ -61,6 +61,16 @@ x-app-env: &app-env
   WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
   WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
 
+# OpenTelemetry APM for the Django API (api, worker, beat-worker).
+# Read at container RUNTIME; off by default. See docs/otel-api-observability/README.md.
+x-otel-env: &otel-env
+  OTEL_ENABLED: ${OTEL_ENABLED:-0}
+  OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+  OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
+  OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
+  OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-plane-api}
+  OTEL_ENVIRONMENT: ${OTEL_ENVIRONMENT:-}
+
 services:
   web:
     image: makeplane/plane-frontend:${APP_RELEASE:-stable}
@@ -115,7 +125,7 @@ services:
     volumes:
       - logs_api:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env, *otel-env]
     depends_on:
       - plane-db
       - plane-redis
@@ -131,7 +141,7 @@ services:
     volumes:
       - logs_worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env, *otel-env]
     depends_on:
       - api
       - plane-db
@@ -148,7 +158,7 @@ services:
     volumes:
       - logs_beat-worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env, *otel-env]
     depends_on:
       - api
       - plane-db
