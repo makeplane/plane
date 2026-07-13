@@ -129,18 +129,23 @@ export function RetryOptionsModal(props: Props) {
                   <button
                     key={option.key}
                     type="button"
-                    className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
+                    className="flex w-full items-start gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
                     onClick={() => setSelection((prev) => ({ ...prev, [option.key]: !prev[option.key] }))}
                   >
                     <span
                       className={cn(
-                        "flex size-4 shrink-0 items-center justify-center rounded-sm border",
+                        "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border",
                         isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
                       )}
                     >
                       {isChecked && <Check className="size-3" />}
                     </span>
-                    {t(option.i18nKey)}
+                    <span>
+                      <span className="block">{t(option.i18nKey)}</span>
+                      {option.hintKey && (
+                        <span className="block text-11 text-tertiary">{t(option.hintKey)}</span>
+                      )}
+                    </span>
                   </button>
                 );
               })}

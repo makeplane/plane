@@ -180,6 +180,8 @@
         "generate_embeddings": "Embeddings (vectorization)",
         "ai_analysis": "AI analysis",
         "extract_thumbnail": "Thumbnail",
+        "tags": "Tags (artists/group/people)",
+        "tags_hint": "Instant, no AI call — rebuilds tags from the data already extracted",
         "modal_title": "What do you want to retry?",
         "modal_title_bulk": "Retry {count, plural, one {# contract} other {# contracts}}",
         "modal_description": "Re-running only the failed stage skips work that already succeeded (e.g. keep the extracted text and redo just the AI analysis).",

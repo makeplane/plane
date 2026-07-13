@@ -22,7 +22,7 @@ from plane.db.models import Contract, ContractProcessingJob, ContractQuery, Work
 
 from ..file_library.base import FileLibraryBaseView
 
-RETRY_OPTION_KEYS = ["extract_text", "generate_embeddings", "ai_analysis", "extract_thumbnail"]
+RETRY_OPTION_KEYS = ["extract_text", "generate_embeddings", "ai_analysis", "extract_thumbnail", "tags"]
 
 
 def ensure_contract_for_asset(asset, user=None):
@@ -46,7 +46,16 @@ def ensure_contract_for_asset(asset, user=None):
 
 
 def create_and_dispatch_job(workspace, contract, task_type, user=None, metadata=None):
-    """Creates a processing job and hands it to the Worker via celery."""
+    """Creates a processing job and hands it to the Worker via celery.
+
+    "tags" is special: it's an AI-free, Django-only resync of ARTIST/GROUP/
+    PERSON tags from the contract's already-stored fields (see
+    resync_contract_tags), so it never touches the Cloudflare pipeline. When
+    it's the only stage selected on a partial retry, the job completes
+    synchronously and instantly; combined with other stages, it still runs
+    right away (cheap) while those other stages dispatch normally.
+    """
+    retry_options = (metadata or {}).get("retry_options") or {}
     job = ContractProcessingJob.objects.create(
         workspace=workspace,
         contract=contract,
@@ -59,6 +68,26 @@ def create_and_dispatch_job(workspace, contract, task_type, user=None, metadata=
     if contract is not None:
         contract.processing_status = "PROCESSING"
         contract.save(update_fields=["processing_status"])
+
+    if retry_options.get("tags"):
+        from django.utils import timezone
+
+        from .internal import resync_contract_tags
+
+        resync_contract_tags(contract)
+
+        other_stages_selected = any(retry_options.get(key) for key in RETRY_OPTION_KEYS if key != "tags")
+        if task_type == ContractProcessingJob.TaskType.RETRY_PARTIAL and not other_stages_selected:
+            job.status = ContractProcessingJob.Status.COMPLETED
+            job.progress = 100
+            job.current_stage = "Tags sincronizadas"
+            job.started_at = timezone.now()
+            job.finished_at = timezone.now()
+            job.save(update_fields=["status", "progress", "current_stage", "started_at", "finished_at"])
+            contract.processing_status = "COMPLETED"
+            contract.save(update_fields=["processing_status"])
+            return job
+
     dispatch_contract_pipeline.delay(str(job.id))
     return job
 

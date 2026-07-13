@@ -28,7 +28,7 @@
   "vars": {
     // Base provider/model selection — never hardcoded in source
     "AI_PROVIDER": "deepseek",
-    "GEMINI_MODEL_FALLBACK_LIST": "gemini-2.5-flash-lite,gemini-2.5-flash",
+    "GEMINI_MODEL_FALLBACK_LIST": "gemini-2.5-flash-lite,gemini-3.1-flash-lite",
     "DEEPSEEK_MODEL": "deepseek-v4-flash",
     // Chat model picker: selectable DeepSeek models + the default selection
     "DEEPSEEK_MODEL_LIST": "deepseek-v4-flash,deepseek-v4-pro",

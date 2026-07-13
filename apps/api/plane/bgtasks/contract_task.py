@@ -30,13 +30,18 @@ def dispatch_contract_pipeline(job_id):
         return
 
     try:
+        # "tags" is a Django-only stage (resync_contract_tags runs it directly
+        # in create_and_dispatch_job) — the Cloudflare pipeline has no step for
+        # it and shouldn't receive it.
+        retry_options = (job.metadata or {}).get("retry_options") or {}
+        worker_retry_options = {key: value for key, value in retry_options.items() if key != "tags"}
         instance_id = trigger_contract_pipeline(
             job_id=job.id,
             contract_id=job.contract_id,
             workspace_id=job.workspace_id,
             asset_id=job.contract.file_asset_id,
             mode=job.task_type,
-            retry_options=(job.metadata or {}).get("retry_options"),
+            retry_options=worker_retry_options,
         )
         job.workflow_instance_id = instance_id
         job.save(update_fields=["workflow_instance_id"])
@@ -45,6 +50,11 @@ def dispatch_contract_pipeline(job_id):
         job.error = {"message": str(e), "stage": "dispatch"}
         job.finished_at = timezone.now()
         job.save(update_fields=["status", "error", "finished_at"])
+        # Mirror the failure onto the contract — dispatch marked it PROCESSING
+        # before the trigger call, and nothing else will ever move it forward.
+        if job.contract_id:
+            job.contract.processing_status = "ERROR"
+            job.contract.save(update_fields=["processing_status"])
         log_exception(e)
 
 

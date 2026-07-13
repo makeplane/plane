@@ -35,9 +35,18 @@ export const YES_NO_UNSPECIFIED_OPTIONS: { value: TYesNoUnspecified; i18nKey: st
   { value: "NO_ESPECIFICADO", i18nKey: "file_library.contracts.status.no_especificado" },
 ];
 
-export const RETRY_OPTIONS: { key: "extract_text" | "generate_embeddings" | "ai_analysis" | "extract_thumbnail"; i18nKey: string }[] = [
+export const RETRY_OPTIONS: {
+  key: "extract_text" | "generate_embeddings" | "ai_analysis" | "extract_thumbnail" | "tags";
+  i18nKey: string;
+  hintKey?: string;
+}[] = [
   { key: "extract_text", i18nKey: "file_library.contracts.retry.extract_text" },
   { key: "generate_embeddings", i18nKey: "file_library.contracts.retry.generate_embeddings" },
   { key: "ai_analysis", i18nKey: "file_library.contracts.retry.ai_analysis" },
   { key: "extract_thumbnail", i18nKey: "file_library.contracts.retry.extract_thumbnail" },
+  {
+    key: "tags",
+    i18nKey: "file_library.contracts.retry.tags",
+    hintKey: "file_library.contracts.retry.tags_hint",
+  },
 ];
