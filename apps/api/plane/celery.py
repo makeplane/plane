@@ -10,7 +10,11 @@ from datetime import timedelta
 # Third party imports
 from celery import Celery
 from pythonjsonlogger.json import JsonFormatter
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import (
+    after_setup_logger,
+    after_setup_task_logger,
+    worker_process_shutdown,
+)
 from celery.schedules import crontab, schedule
 
 # Module imports
@@ -18,6 +22,54 @@ from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+
+# Bootstrap OpenTelemetry before Celery wires up so CeleryInstrumentor can
+# patch task execution. No-op unless OTEL_ENABLED=1.
+from plane.observability.setup import configure_otel, flush_otel  # noqa: E402
+from plane.observability.logging import TraceContextFilter  # noqa: E402
+
+configure_otel()
+
+# Whether to trace-correlate worker logs. Matches the Django LOGGING gate in
+# plane/settings/{local,production}.py; the bootstrap in configure_otel() uses
+# its own (superset) token check.
+_OTEL_LOG_ENABLED = os.environ.get("OTEL_ENABLED", "0").strip().lower() in ("1", "true", "yes")
+
+# Base JSON log fmt (unchanged off-path); the OTel variant appends the
+# trace-context fields that TraceContextFilter populates.
+_CELERY_LOG_FMT = '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s'
+_CELERY_OTEL_LOG_FMT = (
+    '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s '
+    "%(service_name)s %(trace_id)s %(span_id)s %(trace_flags)s"
+)
+
+
+@worker_process_shutdown.connect
+def flush_otel_on_worker_shutdown(*args, **kwargs):
+    """Flush buffered spans/metrics when a prefork child exits.
+
+    Prefork children exit via os._exit and skip atexit, so without this the tail
+    of each child's telemetry is dropped on --max-tasks-per-child recycling and
+    warm shutdown. No-op (bounded, never raises) unless OTel was configured.
+    """
+    flush_otel()
+
+
+def _build_celery_log_handler() -> logging.Handler:
+    """Build the worker's JSON StreamHandler.
+
+    Off-path: identical to the historical handler (same fmt). When OTel logging
+    is enabled, use the extended fmt and attach TraceContextFilter so worker
+    log lines carry trace_id/span_id/service_name, matching the Django request
+    path.
+    """
+    fmt = _CELERY_OTEL_LOG_FMT if _OTEL_LOG_ENABLED else _CELERY_LOG_FMT
+    handler = logging.StreamHandler()
+    handler.setFormatter(fmt=JsonFormatter(fmt))
+    if _OTEL_LOG_ENABLED:
+        handler.addFilter(TraceContextFilter())
+    return handler
+
 
 ri = redis_instance()
 
@@ -98,18 +150,12 @@ app.conf.beat_schedule = {
 # Setup logging
 @after_setup_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 @after_setup_task_logger.connect
 def setup_task_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 # Load task modules from all registered Django app configs.
