@@ -17,4 +17,5 @@ from .base import (
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
+    FileTagMergeEndpoint,
 )

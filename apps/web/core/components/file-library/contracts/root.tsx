@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Download, Loader2, MessageSquare, RefreshCcw, Search, Sparkles, X } from "lucide-react";
+import { Download, Layers, Loader2, MessageSquare, RefreshCcw, Search, Sparkles, X } from "lucide-react";
 import { useSearchParams } from "react-router";
 import useSWR from "swr";
 // plane imports
@@ -16,6 +16,7 @@ import type { TContract, TContractFilters, TContractJob, TContractRetryOptions }
 // services
 import { contractService } from "@/services/contract.service";
 // local imports
+import { BulkActionsModal } from "../bulk-actions-modal";
 import { downloadAssets } from "../download";
 // local imports
 import { ContractChatModal } from "./chat/chat-modal";
@@ -43,6 +44,7 @@ export function ContractsRoot(props: Props) {
   const [chatInitialQuery, setChatInitialQuery] = useState<string | undefined>(undefined);
   const [isBulkActing, setIsBulkActing] = useState(false);
   const [isBulkRetryModalOpen, setIsBulkRetryModalOpen] = useState(false);
+  const [isBulkActionsModalOpen, setIsBulkActionsModalOpen] = useState(false);
 
   const setFilters = (next: Partial<TContractFilters>) => setFiltersState((prev) => ({ ...prev, ...next }));
 
@@ -105,6 +107,13 @@ export function ContractsRoot(props: Props) {
     );
   const toggleSelectAll = () =>
     setSelectedIds((previous) => (previous.length === (contracts ?? []).length ? [] : (contracts ?? []).map((c) => c.id)));
+
+  // The Files bulk-actions modal (move/categories/tags/delete) operates on
+  // file_asset ids, not contract ids — map the selection across
+  const selectedFileAssetIds = (contracts ?? [])
+    .filter((contract) => selectedIds.includes(contract.id))
+    .map((contract) => contract.file_asset_id)
+    .filter((id): id is string => !!id);
 
   // Downloads the contracts' backing documents: one file directly, several
   // bundled into a ZIP. Callers pass the filtered list or the selection.
@@ -230,6 +239,15 @@ export function ContractsRoot(props: Props) {
             <Download className="size-3.5" />
             {t("file_library.download_selected")}
           </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsBulkActionsModalOpen(true)}
+            disabled={selectedFileAssetIds.length === 0}
+          >
+            <Layers className="size-3.5" />
+            {t("file_library.bulk.button")}
+          </Button>
           <button
             type="button"
             onClick={() => setSelectedIds([])}
@@ -289,6 +307,16 @@ export function ContractsRoot(props: Props) {
         onClose={() => setIsBulkRetryModalOpen(false)}
         onConfirm={(options) => handleBulk("retry", options)}
         count={selectedIds.length}
+      />
+      <BulkActionsModal
+        workspaceSlug={workspaceSlug}
+        isOpen={isBulkActionsModalOpen}
+        onClose={() => {
+          setIsBulkActionsModalOpen(false);
+          setSelectedIds([]);
+          void mutateContracts();
+        }}
+        initialFileIds={selectedFileAssetIds}
       />
     </div>
   );

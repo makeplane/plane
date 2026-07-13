@@ -70,6 +70,7 @@ from .file_library import (
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
+    FileTagMergeEndpoint,
 )
 
 from .workspace.member import (
