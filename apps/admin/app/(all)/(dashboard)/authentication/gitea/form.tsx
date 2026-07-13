@@ -31,6 +31,11 @@ type Props = {
 
 type GiteaConfigFormValues = Record<TInstanceGiteaAuthenticationConfigurationKeys, string>;
 
+const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
+  name: "ENABLE_GITEA_SYNC",
+  label: "Gitea",
+};
+
 export function InstanceGiteaConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -112,11 +117,6 @@ export function InstanceGiteaConfigForm(props: Props) {
     },
   ];
 
-  const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
-    name: "ENABLE_GITEA_SYNC",
-    label: "Gitea",
-  };
-
   const GITEA_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Callback_URI",
@@ -132,6 +132,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Gitea OAuth application settings"
           >
             here.
           </a>

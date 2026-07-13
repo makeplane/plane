@@ -21,6 +21,8 @@ export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <button
+      type="button"
+      aria-label="Toggle sidebar"
       className="group flex size-7 cursor-pointer items-center justify-center rounded-sm bg-layer-1 transition-all hover:bg-layer-1-hover md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
@@ -34,24 +36,24 @@ const HEADER_SEGMENT_LABELS = {
   ...EXTENDED_HEADER_SEGMENT_LABELS,
 };
 
+// Function to dynamically generate breadcrumb items based on pathname
+const generateBreadcrumbItems = (pathname: string) => {
+  const pathSegments = pathname.split("/").slice(1); // removing the first empty string.
+  pathSegments.pop();
+
+  let currentUrl = "";
+  const breadcrumbItems = pathSegments.map((segment) => {
+    currentUrl += "/" + segment;
+    return {
+      title: HEADER_SEGMENT_LABELS[segment] ?? segment.toUpperCase(),
+      href: currentUrl,
+    };
+  });
+  return breadcrumbItems;
+};
+
 export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
-
-  // Function to dynamically generate breadcrumb items based on pathname
-  const generateBreadcrumbItems = (pathname: string) => {
-    const pathSegments = pathname.split("/").slice(1); // removing the first empty string.
-    pathSegments.pop();
-
-    let currentUrl = "";
-    const breadcrumbItems = pathSegments.map((segment) => {
-      currentUrl += "/" + segment;
-      return {
-        title: HEADER_SEGMENT_LABELS[segment] ?? segment.toUpperCase(),
-        href: currentUrl,
-      };
-    });
-    return breadcrumbItems;
-  };
 
   const breadcrumbItems = generateBreadcrumbItems(pathName || "");
 

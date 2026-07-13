@@ -32,6 +32,11 @@ type Props = {
 
 type GoogleConfigFormValues = Record<TInstanceGoogleAuthenticationConfigurationKeys, string>;
 
+const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValues> = {
+  name: "ENABLE_GOOGLE_SYNC",
+  label: "Google",
+};
+
 export function InstanceGoogleConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -68,6 +73,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google OAuth client ID documentation"
           >
             Learn more
           </a>
@@ -90,6 +96,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google OAuth client secret documentation"
           >
             Learn more
           </a>
@@ -100,11 +107,6 @@ export function InstanceGoogleConfigForm(props: Props) {
       required: true,
     },
   ];
-
-  const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValues> = {
-    name: "ENABLE_GOOGLE_SYNC",
-    label: "Google",
-  };
 
   const GOOGLE_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
@@ -120,6 +122,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google Cloud Console OAuth client credentials"
           >
             here.
           </a>
@@ -142,6 +145,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google Cloud Console OAuth client credentials"
           >
             here.
           </a>

@@ -31,6 +31,11 @@ type Props = {
 
 type GitlabConfigFormValues = Record<TInstanceGitlabAuthenticationConfigurationKeys, string>;
 
+const GITLAB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GitlabConfigFormValues> = {
+  name: "ENABLE_GITLAB_SYNC",
+  label: "GitLab",
+};
+
 export function InstanceGitlabConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -115,11 +120,6 @@ export function InstanceGitlabConfigForm(props: Props) {
       required: true,
     },
   ];
-
-  const GITLAB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GitlabConfigFormValues> = {
-    name: "ENABLE_GITLAB_SYNC",
-    label: "GitLab",
-  };
 
   const GITLAB_SERVICE_FIELD: TCopyField[] = [
     {
