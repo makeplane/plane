@@ -1,11 +1,11 @@
 # Spec Technique — SSO Zelian (Supabase OAuth 2.1 / OIDC)
 
-| Champ      | Valeur              |
-|------------|----------------------|
-| Module     | api/sso-zelian      |
-| Version    | 0.1.0               |
-| Date       | 2026-07-12          |
-| Statut     | IMPLÉMENTÉ (code, validé offline) — E2E bloqué sur config Supabase |
+| Champ   | Valeur                                       |
+| ------- | -------------------------------------------- |
+| Module  | api/sso-zelian                               |
+| Version | 0.1.1                                        |
+| Date    | 2026-07-13                                   |
+| Statut  | IMPLÉMENTÉ et validé E2E (local, 2026-07-13) |
 
 ---
 
@@ -15,33 +15,34 @@ Réplication **clean-room** du provider OAuth `gitea` (host configurable) + 2 aj
 
 ## Fichiers créés
 
-| Fichier | Rôle |
-|---------|------|
-| `apps/api/plane/authentication/provider/oauth/zelian.py` | `ZelianOAuthProvider` (auth URL + PKCE, token exchange Basic auth + `code_verifier`, mapping userinfo Supabase) |
-| `apps/api/plane/authentication/views/app/zelian.py` | `ZelianOauthInitiateEndpoint` / `ZelianCallbackEndpoint` + helper `generate_pkce_pair()` (verifier/challenge S256 en session) |
-| `apps/api/plane/authentication/views/space/zelian.py` | Variantes Space (réutilise `generate_pkce_pair`) |
-| `apps/web/core/hooks/oauth/extended.tsx` | Hook seam web → bouton « Continue with Zelian », URL `/auth/zelian/` |
-| `apps/space/hooks/oauth/extended.tsx` | Hook seam space → URL `/auth/spaces/zelian/` |
-| `apps/{web,space}/app/assets/logos/zelian-logo.svg` | Logo (placeholder hexagone ⬡) |
-| `apps/api/plane/tests/unit/test_zelian_oauth_provider.py` | 9 tests unitaires offline |
+| Fichier                                                   | Rôle                                                                                                                          |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `apps/api/plane/authentication/provider/oauth/zelian.py`  | `ZelianOAuthProvider` (auth URL + PKCE, token exchange Basic auth + `code_verifier`, mapping userinfo Supabase)               |
+| `apps/api/plane/authentication/views/app/zelian.py`       | `ZelianOauthInitiateEndpoint` / `ZelianCallbackEndpoint` + helper `generate_pkce_pair()` (verifier/challenge S256 en session) |
+| `apps/api/plane/authentication/views/space/zelian.py`     | Variantes Space (réutilise `generate_pkce_pair`)                                                                              |
+| `apps/web/core/hooks/oauth/extended.tsx`                  | Hook seam web → bouton « Continue with Zelian », URL `/auth/zelian/`                                                          |
+| `apps/space/hooks/oauth/extended.tsx`                     | Hook seam space → URL `/auth/spaces/zelian/`                                                                                  |
+| `apps/{web,space}/app/assets/logos/zelian-logo.svg`       | Logo (placeholder hexagone ⬡)                                                                                                 |
+| `apps/api/plane/tests/unit/test_zelian_oauth_provider.py` | 9 tests unitaires offline                                                                                                     |
 
 ## Fichiers modifiés
 
-| Fichier | Modification |
-|---------|--------------|
-| `apps/api/plane/authentication/adapter/error.py` | `ZELIAN_NOT_CONFIGURED=5113`, `ZELIAN_OAUTH_PROVIDER_ERROR=5124` |
-| `apps/api/plane/authentication/adapter/oauth.py` | branche `zelian` dans `authentication_error_code()` |
-| `apps/api/plane/authentication/views/__init__.py` | exports app + space |
-| `apps/api/plane/authentication/urls.py` | 4 routes : `zelian/`, `zelian/callback/`, `spaces/zelian/`, `spaces/zelian/callback/` |
-| `apps/api/plane/license/api/views/instance.py` | `IS_ZELIAN_ENABLED` → `data["is_zelian_enabled"]` |
-| `apps/api/.env.example` | doc des vars `IS_ZELIAN_ENABLED` / `ZELIAN_AUTH_BASE_URL` / `ZELIAN_CLIENT_ID` / `ZELIAN_CLIENT_SECRET` |
-| `packages/types/src/instance/auth-ee.ts` | `TExtendedLoginMediums = "zelian"` |
-| `packages/types/src/instance/base.ts` | `is_zelian_enabled: boolean` sur `IInstanceConfig` |
-| `packages/constants/src/auth/extended.ts` | `EXTENDED_LOGIN_MEDIUM_LABELS.zelian = "Zelian"` |
+| Fichier                                           | Modification                                                                                            |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `apps/api/plane/authentication/adapter/error.py`  | `ZELIAN_NOT_CONFIGURED=5113`, `ZELIAN_OAUTH_PROVIDER_ERROR=5124`                                        |
+| `apps/api/plane/authentication/adapter/oauth.py`  | branche `zelian` dans `authentication_error_code()`                                                     |
+| `apps/api/plane/authentication/views/__init__.py` | exports app + space                                                                                     |
+| `apps/api/plane/authentication/urls.py`           | 4 routes : `zelian/`, `zelian/callback/`, `spaces/zelian/`, `spaces/zelian/callback/`                   |
+| `apps/api/plane/license/api/views/instance.py`    | `IS_ZELIAN_ENABLED` → `data["is_zelian_enabled"]`                                                       |
+| `apps/api/.env.example`                           | doc des vars `IS_ZELIAN_ENABLED` / `ZELIAN_AUTH_BASE_URL` / `ZELIAN_CLIENT_ID` / `ZELIAN_CLIENT_SECRET` |
+| `packages/types/src/instance/auth-ee.ts`          | `TExtendedLoginMediums = "zelian"`                                                                      |
+| `packages/types/src/instance/base.ts`             | `is_zelian_enabled: boolean` sur `IInstanceConfig`                                                      |
+| `packages/constants/src/auth/extended.ts`         | `EXTENDED_LOGIN_MEDIUM_LABELS.zelian = "Zelian"`                                                        |
 
 ## Contrat OAuth (endpoints Supabase)
 
 Base = `ZELIAN_AUTH_BASE_URL` (ex. `https://<ref>.supabase.co/auth/v1`). authorize = `{base}/oauth/authorize`, token = `{base}/oauth/token`, userinfo = `{base}/oauth/userinfo`. Redirect URI construit serveur : `{scheme}://{host}/auth/zelian/callback/`.
+
 - **initiate** : génère `state` + PKCE (`code_verifier` en session, `code_challenge` S256 dans l'URL), redirige vers authorize.
 - **callback** : vérifie `state` (session) → échange `code` + `code_verifier` (Basic auth) → userinfo → `get_or_create` User + `Account(provider="zelian")` → session Django.
 
@@ -53,7 +54,7 @@ Base = `ZELIAN_AUTH_BASE_URL` (ex. `https://<ref>.supabase.co/auth/v1`). authori
 
 - **9 tests unitaires offline** (`test_zelian_oauth_provider.py`) : génération PKCE (S256, unicité), erreur si non configuré / scheme invalide, URL authorize (params PKCE + endpoints + redirect_uri), token/userinfo URLs, token exchange (Basic auth + `code_verifier` + `grant_type`), mapping userinfo (`sub`/name/picture + fallback local-part).
 - Résolution des **4 routes** (URLconf à froid) → bonnes vues. `/api/instances/` expose `is_zelian_enabled`. py_compile + ruff clean. oxlint/oxfmt clean. turbo `check:types` web+space **12/12**.
-- **NON testé** (nécessite un serveur OAuth Supabase configuré) : flux authorize→consent→callback→token→userinfo→user, apparition du bouton avec `IS_ZELIAN_ENABLED=1`.
+- **Validé E2E** le 2026-07-13 (local, projet Supabase dev `jgwcadcexcsifxbbvpzv`) : flux « Sign in with Zelian » → Supabase authorize (PKCE S256) → mire `/oauth/consent` (auto-consent côté serveur, cf. section « Pièges connus ») → callback Plane → `User` + `Account(provider='zelian', provider_account_id=<sub Supabase>)` créés en base (vérifié : `dev@zelian.local`). Apparition du bouton avec `IS_ZELIAN_ENABLED=1` ✓. Config : `apps/api/.env` pointé sur le projet Supabase dev `jgwcadcexcsifxbbvpzv` (non versionné, gitignored).
 
 ## Pièges connus
 
@@ -62,3 +63,4 @@ Base = `ZELIAN_AUTH_BASE_URL` (ex. `https://<ref>.supabase.co/auth/v1`). authori
 - PKCE : `code_verifier` doit survivre entre initiate et callback → stocké en session (comme `state`).
 - Contrat OAuth **VÉRIFIÉ** le 2026-07-12 contre le `.well-known/openid-configuration` réel du projet Supabase Zelian (`athaimiejdlqmdyeipve`) : `authorization_endpoint`/`token_endpoint`/`userinfo_endpoint` = `/oauth/{authorize,token,userinfo}` ✓, `response_types=[code]` ✓, `grant_types` inclut `authorization_code` ✓, `code_challenge_methods` inclut `S256` ✓, `token_endpoint_auth_methods` inclut `client_secret_basic` ✓, `scopes` = openid/profile/email ✓. **Aucune adaptation nécessaire.**
 - **id_token non vérifié par ce provider** : comme `gitea`, on récupère l'identité via le `userinfo_endpoint` (Bearer access_token), pas par décodage du `id_token`. La contrainte « clés JWT asymétriques » (plan §2.3) est donc **non bloquante pour ce flux** (le projet expose RS256/ES256 de toute façon) ; elle reste recommandée pour les autres consommateurs de tokens de l'écosystème.
+- **Auto-consent Supabase (client OAuth first-party)** : avec `@supabase/auth-js` 2.101.1 et le serveur OAuth Supabase activé, un client OAuth enregistré comme first-party est **auto-consenti côté serveur**. `supabase.auth.oauth.getAuthorizationDetails(id)` ne renvoie pas les détails de consentement pour validation manuelle mais directement `{ redirect_url: "<callback>?code=…&state=…" }` — l'autorisation est déjà accordée implicitement par le serveur. **Impact sur la mire `@zelian/auth`** : la page `/oauth/consent` doit détecter la présence de `redirect_url` dans la réponse et rediriger directement **sans** appeler `approveAuthorization`. Appeler `approveAuthorization` sur une autorisation déjà accordée déclenche l'erreur `authorization request is no longer pending`. Le fix correspondant vit dans `C:\Stage\2026-zelian-insider` (`packages/auth/src/app/oauth/consent/page.tsx` + `packages/auth/src/lib/oauthClient.ts`) — **hors arbre plane**, aucun fichier plane modifié.

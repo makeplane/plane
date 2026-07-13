@@ -32,6 +32,8 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) · Versioning 
 
 ### Changed
 
+- **api/sso-zelian** — Validation E2E locale réussie le 2026-07-13 : flux complet « Sign in with Zelian » → Supabase authorize (PKCE S256) → mire `/oauth/consent` (auto-consent) → callback Plane → `User` + `Account(provider='zelian', provider_account_id=<sub Supabase>)` créés en base. Comportement d'auto-consent documenté : avec `@supabase/auth-js` 2.101.1, un client OAuth first-party est auto-consenti côté serveur — `getAuthorizationDetails()` renvoie `redirect_url` directement, sans phase de consentement manuelle. Fix correspondant implémenté dans le repo mire `C:\Stage\2026-zelian-insider` (`packages/auth/src/app/oauth/consent/page.tsx` + `packages/auth/src/lib/oauthClient.ts`) — **hors arbre plane**, aucun fichier source plane modifié. Statut du module passe de « E2E bloqué sur config Supabase » à **« E2E validé »**. Voir `docs/specs/api/sso-zelian/spec-technique.md` (§ Pièges connus — Auto-consent Supabase) pour le détail du contrat.
+
 ### Fixed
 
 - **api (MCP)** — Alias de routes v1 pour aligner nos endpoints sur le SDK MCP officiel (`plane_sdk`), qui a fait évoluer ses segments : `work-items/{id}/pages/` (module work-item-pages, servi jusqu'ici sous `issues/`) et `work-item-properties` / `work-item-properties/{id}/options/` / `work-items/{id}/work-item-properties/{id}/values/` (module work-item-properties, servi sous `properties/`). Ajout additif (mêmes vues, anciennes routes conservées) → les outils MCP `list/attach/detach_work_item_page` et `*_work_item_property*` résolvent désormais. Zéro migration ; 8 tests de résolution.
