@@ -8,6 +8,13 @@ import sys
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+
+    # Bootstrap OpenTelemetry before Django imports so runserver and
+    # management commands are instrumented too. No-op unless OTEL_ENABLED=1.
+    from plane.observability.setup import configure_otel
+
+    configure_otel()
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
