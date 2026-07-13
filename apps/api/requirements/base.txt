@@ -71,6 +71,16 @@ opentelemetry-sdk==1.28.1
 opentelemetry-instrumentation-django==0.49b1
 opentelemetry-exporter-otlp==1.28.1
 opentelemetry-exporter-otlp-proto-grpc==1.28.1
+# Required for http.server.* spans + metrics on the ASGI serving path (uvicorn worker).
+# DjangoInstrumentor declares it only as an optional ASGI extra; without it
+# _is_asgi_supported=False and every ASGI request is skipped (no server span/metric).
+opentelemetry-instrumentation-asgi==0.49b1
+opentelemetry-exporter-otlp-proto-http==1.28.1
+opentelemetry-instrumentation-celery==0.49b1
+opentelemetry-instrumentation-psycopg==0.49b1
+opentelemetry-instrumentation-redis==0.49b1
+opentelemetry-instrumentation-requests==0.49b1
+opentelemetry-instrumentation-httpx==0.49b1
 # OpenAPI Specification
 drf-spectacular==0.28.0
 # html sanitizer
