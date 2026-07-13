@@ -16,6 +16,7 @@ class WorkspaceFeature(BaseModel):
 
     class FeatureKey(models.TextChoices):
         FILE_LIBRARY = "file_library"
+        PAYMENTS = "payments"
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="feature_flags")
     key = models.CharField(max_length=100, choices=FeatureKey.choices)

@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Pagamentos",
+    "budgets": "Orçamentos",
+    "expenses": "Despesas",
+    "categories": "Categorias",
+    "summary": "Orçamento e gastos",
+    "budgeted": "Orçado",
+    "spent": "Gasto",
+    "pending": "Pendente",
+    "remaining": "Restante",
+    "no_budget": "Sem orçamento",
+    "over_budget": "Estourado",
+    "new_expense": "Nova despesa",
+    "edit_expense": "Editar despesa",
+    "new_budget": "Novo orçamento",
+    "manage_categories": "Gerenciar categorias",
+    "expense_count": "{count, plural, one {# despesa} many {# despesas} other {# despesas}}",
+    "fields": {
+      "category": "Categoria",
+      "amount": "Valor",
+      "currency": "Moeda",
+      "date": "Data",
+      "vendor": "Fornecedor",
+      "reference": "Referência",
+      "description": "Descrição",
+      "project": "Projeto",
+      "status": "Status",
+      "period": "Período",
+      "period_start": "Início",
+      "period_end": "Fim",
+      "notes": "Notas",
+      "name": "Nome",
+      "color": "Cor",
+      "documents": "Documentos",
+      "add_files": "Adicionar arquivos"
+    },
+    "status": {
+      "pending": "Pendente",
+      "paid": "Pago",
+      "cancelled": "Cancelado"
+    },
+    "filters": {
+      "all": "Todos",
+      "search": "Buscar",
+      "from": "De",
+      "to": "Até"
+    },
+    "actions": {
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "delete": "Excluir",
+      "download": "Baixar"
+    },
+    "empty": {
+      "expenses": "Nenhuma despesa registrada ainda.",
+      "categories": "Nenhuma categoria ainda. Crie uma para começar a orçar.",
+      "summary": "Nenhum orçamento para este período."
+    },
+    "toasts": {
+      "created": "Despesa registrada",
+      "updated": "Despesa atualizada",
+      "deleted": "Despesa excluída",
+      "error": "Algo deu errado",
+      "duplicate_budget": "Esta categoria já tem um orçamento para esse período",
+      "duplicate_category": "Já existe uma categoria com esse nome"
+    },
+    "delete_expense_title": "Excluir despesa",
+    "delete_expense_description": "A despesa será removida do registro. Não é possível desfazer.",
+    "delete_category_title": "Excluir categoria",
+    "delete_category_description": "As despesas associadas mantêm o histórico mas perdem a categoria. Não é possível desfazer."
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Płatności",
+    "budgets": "Budżety",
+    "expenses": "Wydatki",
+    "categories": "Kategorie",
+    "summary": "Budżet a wydatki",
+    "budgeted": "Zabudżetowano",
+    "spent": "Wydano",
+    "pending": "Oczekujące",
+    "remaining": "Pozostało",
+    "no_budget": "Brak budżetu",
+    "over_budget": "Przekroczono",
+    "new_expense": "Nowy wydatek",
+    "edit_expense": "Edytuj wydatek",
+    "new_budget": "Nowy budżet",
+    "manage_categories": "Zarządzaj kategoriami",
+    "expense_count": "{count, plural, one {# wydatek} few {# wydatki} many {# wydatków} other {# wydatku}}",
+    "fields": {
+      "category": "Kategoria",
+      "amount": "Kwota",
+      "currency": "Waluta",
+      "date": "Data",
+      "vendor": "Dostawca",
+      "reference": "Numer referencyjny",
+      "description": "Opis",
+      "project": "Projekt",
+      "status": "Status",
+      "period": "Okres",
+      "period_start": "Początek",
+      "period_end": "Koniec",
+      "notes": "Notatki",
+      "name": "Nazwa",
+      "color": "Kolor",
+      "documents": "Dokumenty",
+      "add_files": "Dodaj pliki"
+    },
+    "status": {
+      "pending": "Oczekujący",
+      "paid": "Opłacony",
+      "cancelled": "Anulowany"
+    },
+    "filters": {
+      "all": "Wszystkie",
+      "search": "Szukaj",
+      "from": "Od",
+      "to": "Do"
+    },
+    "actions": {
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "download": "Pobierz"
+    },
+    "empty": {
+      "expenses": "Nie zarejestrowano jeszcze wydatków.",
+      "categories": "Brak kategorii. Proszę utworzyć jedną, aby rozpocząć budżetowanie.",
+      "summary": "Brak budżetów w tym okresie."
+    },
+    "toasts": {
+      "created": "Wydatek zarejestrowany",
+      "updated": "Wydatek zaktualizowany",
+      "deleted": "Wydatek usunięty",
+      "error": "Coś poszło nie tak",
+      "duplicate_budget": "Ta kategoria ma już budżet na ten okres",
+      "duplicate_category": "Kategoria o tej nazwie już istnieje"
+    },
+    "delete_expense_title": "Usuń wydatek",
+    "delete_expense_description": "Wydatek zostanie usunięty z rejestru. Tej operacji nie można cofnąć.",
+    "delete_category_title": "Usuń kategorię",
+    "delete_category_description": "Powiązane wydatki zachowują historię, ale tracą kategorię. Tej operacji nie można cofnąć."
+  }
+}

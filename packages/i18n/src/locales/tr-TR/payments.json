@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Ödemeler",
+    "budgets": "Bütçeler",
+    "expenses": "Giderler",
+    "categories": "Kategoriler",
+    "summary": "Bütçe ve harcama",
+    "budgeted": "Bütçelenen",
+    "spent": "Harcanan",
+    "pending": "Bekleyen",
+    "remaining": "Kalan",
+    "no_budget": "Bütçe yok",
+    "over_budget": "Bütçe aşıldı",
+    "new_expense": "Yeni gider",
+    "edit_expense": "Gideri düzenle",
+    "new_budget": "Yeni bütçe",
+    "manage_categories": "Kategorileri yönet",
+    "expense_count": "{count, plural, one {# gider} other {# gider}}",
+    "fields": {
+      "category": "Kategori",
+      "amount": "Tutar",
+      "currency": "Para birimi",
+      "date": "Tarih",
+      "vendor": "Tedarikçi",
+      "reference": "Referans",
+      "description": "Açıklama",
+      "project": "Proje",
+      "status": "Durum",
+      "period": "Dönem",
+      "period_start": "Başlangıç",
+      "period_end": "Bitiş",
+      "notes": "Notlar",
+      "name": "Ad",
+      "color": "Renk",
+      "documents": "Belgeler",
+      "add_files": "Dosya ekle"
+    },
+    "status": {
+      "pending": "Bekliyor",
+      "paid": "Ödendi",
+      "cancelled": "İptal edildi"
+    },
+    "filters": {
+      "all": "Tümü",
+      "search": "Ara",
+      "from": "Başlangıç",
+      "to": "Bitiş"
+    },
+    "actions": {
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "delete": "Sil",
+      "download": "İndir"
+    },
+    "empty": {
+      "expenses": "Henüz gider kaydedilmedi.",
+      "categories": "Henüz kategori yok. Bütçelemeye başlamak için bir tane oluşturun.",
+      "summary": "Bu dönem için bütçe yok."
+    },
+    "toasts": {
+      "created": "Gider kaydedildi",
+      "updated": "Gider güncellendi",
+      "deleted": "Gider silindi",
+      "error": "Bir sorun oluştu",
+      "duplicate_budget": "Bu kategorinin o dönem için zaten bir bütçesi var",
+      "duplicate_category": "Bu ada sahip bir kategori zaten var"
+    },
+    "delete_expense_title": "Gideri sil",
+    "delete_expense_description": "Gider kayıttan kaldırılacak. Bu işlem geri alınamaz.",
+    "delete_category_title": "Kategoriyi sil",
+    "delete_category_description": "İlgili giderler geçmişini korur ancak kategorisini kaybeder. Bu işlem geri alınamaz."
+  }
+}

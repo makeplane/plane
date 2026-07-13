@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Plăți",
+    "budgets": "Bugete",
+    "expenses": "Cheltuieli",
+    "categories": "Categorii",
+    "summary": "Buget și cheltuieli",
+    "budgeted": "Bugetat",
+    "spent": "Cheltuit",
+    "pending": "În așteptare",
+    "remaining": "Rămas",
+    "no_budget": "Fără buget",
+    "over_budget": "Depășit",
+    "new_expense": "Cheltuială nouă",
+    "edit_expense": "Editare cheltuială",
+    "new_budget": "Buget nou",
+    "manage_categories": "Gestionare categorii",
+    "expense_count": "{count, plural, one {# cheltuială} few {# cheltuieli} other {# de cheltuieli}}",
+    "fields": {
+      "category": "Categorie",
+      "amount": "Sumă",
+      "currency": "Monedă",
+      "date": "Dată",
+      "vendor": "Furnizor",
+      "reference": "Referință",
+      "description": "Descriere",
+      "project": "Proiect",
+      "status": "Stare",
+      "period": "Perioadă",
+      "period_start": "Început",
+      "period_end": "Sfârșit",
+      "notes": "Note",
+      "name": "Nume",
+      "color": "Culoare",
+      "documents": "Documente",
+      "add_files": "Adăugare fișiere"
+    },
+    "status": {
+      "pending": "În așteptare",
+      "paid": "Plătit",
+      "cancelled": "Anulat"
+    },
+    "filters": {
+      "all": "Toate",
+      "search": "Căutare",
+      "from": "De la",
+      "to": "Până la"
+    },
+    "actions": {
+      "save": "Salvare",
+      "cancel": "Anulare",
+      "delete": "Ștergere",
+      "download": "Descărcare"
+    },
+    "empty": {
+      "expenses": "Nu există cheltuieli înregistrate.",
+      "categories": "Nicio categorie. Creați una pentru a începe bugetarea.",
+      "summary": "Niciun buget pentru această perioadă."
+    },
+    "toasts": {
+      "created": "Cheltuială înregistrată",
+      "updated": "Cheltuială actualizată",
+      "deleted": "Cheltuială ștearsă",
+      "error": "A apărut o eroare",
+      "duplicate_budget": "Această categorie are deja un buget pentru perioada respectivă",
+      "duplicate_category": "Există deja o categorie cu acest nume"
+    },
+    "delete_expense_title": "Ștergere cheltuială",
+    "delete_expense_description": "Cheltuiala va fi eliminată din registru. Această acțiune nu poate fi anulată.",
+    "delete_category_title": "Ștergere categorie",
+    "delete_category_description": "Cheltuielile asociate își păstrează istoricul, dar pierd categoria. Această acțiune nu poate fi anulată."
+  }
+}

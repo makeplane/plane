@@ -91,6 +91,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Payments (budgets + expense ledger)
+        layout("./(all)/[workspaceSlug]/(projects)/payments/layout.tsx", [
+          route(":workspaceSlug/payments", "./(all)/[workspaceSlug]/(projects)/payments/page.tsx"),
+        ]),
+
         // Notifications
         layout("./(all)/[workspaceSlug]/(projects)/notifications/layout.tsx", [
           route(":workspaceSlug/notifications", "./(all)/[workspaceSlug]/(projects)/notifications/page.tsx"),

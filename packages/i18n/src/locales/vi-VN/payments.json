@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Thanh toán",
+    "budgets": "Ngân sách",
+    "expenses": "Chi phí",
+    "categories": "Danh mục",
+    "summary": "Ngân sách và chi tiêu",
+    "budgeted": "Đã lập ngân sách",
+    "spent": "Đã chi",
+    "pending": "Đang chờ",
+    "remaining": "Còn lại",
+    "no_budget": "Chưa có ngân sách",
+    "over_budget": "Vượt ngân sách",
+    "new_expense": "Chi phí mới",
+    "edit_expense": "Sửa chi phí",
+    "new_budget": "Ngân sách mới",
+    "manage_categories": "Quản lý danh mục",
+    "expense_count": "{count, plural, one {# chi phí} other {# chi phí}}",
+    "fields": {
+      "category": "Danh mục",
+      "amount": "Số tiền",
+      "currency": "Tiền tệ",
+      "date": "Ngày",
+      "vendor": "Nhà cung cấp",
+      "reference": "Tham chiếu",
+      "description": "Mô tả",
+      "project": "Dự án",
+      "status": "Trạng thái",
+      "period": "Kỳ",
+      "period_start": "Bắt đầu",
+      "period_end": "Kết thúc",
+      "notes": "Ghi chú",
+      "name": "Tên",
+      "color": "Màu",
+      "documents": "Tài liệu",
+      "add_files": "Thêm tệp"
+    },
+    "status": {
+      "pending": "Đang chờ",
+      "paid": "Đã thanh toán",
+      "cancelled": "Đã hủy"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "search": "Tìm kiếm",
+      "from": "Từ",
+      "to": "Đến"
+    },
+    "actions": {
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "delete": "Xóa",
+      "download": "Tải xuống"
+    },
+    "empty": {
+      "expenses": "Chưa có chi phí nào được ghi nhận.",
+      "categories": "Chưa có danh mục. Hãy tạo một danh mục để bắt đầu lập ngân sách.",
+      "summary": "Không có ngân sách cho kỳ này."
+    },
+    "toasts": {
+      "created": "Đã ghi nhận chi phí",
+      "updated": "Đã cập nhật chi phí",
+      "deleted": "Đã xóa chi phí",
+      "error": "Đã xảy ra lỗi",
+      "duplicate_budget": "Danh mục này đã có ngân sách cho kỳ đó",
+      "duplicate_category": "Đã tồn tại danh mục có tên này"
+    },
+    "delete_expense_title": "Xóa chi phí",
+    "delete_expense_description": "Chi phí sẽ bị xóa khỏi sổ. Không thể hoàn tác.",
+    "delete_category_title": "Xóa danh mục",
+    "delete_category_description": "Các chi phí liên quan vẫn giữ lịch sử nhưng mất danh mục. Không thể hoàn tác."
+  }
+}

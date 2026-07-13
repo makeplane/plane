@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Platby",
+    "budgets": "Rozpočty",
+    "expenses": "Výdaje",
+    "categories": "Kategorie",
+    "summary": "Rozpočet a výdaje",
+    "budgeted": "Rozpočtováno",
+    "spent": "Utraceno",
+    "pending": "Čekající",
+    "remaining": "Zbývá",
+    "no_budget": "Bez rozpočtu",
+    "over_budget": "Překročeno",
+    "new_expense": "Nový výdaj",
+    "edit_expense": "Upravit výdaj",
+    "new_budget": "Nový rozpočet",
+    "manage_categories": "Spravovat kategorie",
+    "expense_count": "{count, plural, one {# výdaj} few {# výdaje} many {# výdaje} other {# výdajů}}",
+    "fields": {
+      "category": "Kategorie",
+      "amount": "Částka",
+      "currency": "Měna",
+      "date": "Datum",
+      "vendor": "Dodavatel",
+      "reference": "Reference",
+      "description": "Popis",
+      "project": "Projekt",
+      "status": "Stav",
+      "period": "Období",
+      "period_start": "Začátek",
+      "period_end": "Konec",
+      "notes": "Poznámky",
+      "name": "Název",
+      "color": "Barva",
+      "documents": "Dokumenty",
+      "add_files": "Přidat soubory"
+    },
+    "status": {
+      "pending": "Čekající",
+      "paid": "Zaplaceno",
+      "cancelled": "Zrušeno"
+    },
+    "filters": {
+      "all": "Vše",
+      "search": "Hledat",
+      "from": "Od",
+      "to": "Do"
+    },
+    "actions": {
+      "save": "Uložit",
+      "cancel": "Zrušit",
+      "delete": "Smazat",
+      "download": "Stáhnout"
+    },
+    "empty": {
+      "expenses": "Zatím nejsou zaznamenány žádné výdaje.",
+      "categories": "Zatím žádné kategorie. Vytvořte jednu a začněte rozpočtovat.",
+      "summary": "Pro toto období nejsou žádné rozpočty."
+    },
+    "toasts": {
+      "created": "Výdaj zaznamenán",
+      "updated": "Výdaj aktualizován",
+      "deleted": "Výdaj smazán",
+      "error": "Něco se pokazilo",
+      "duplicate_budget": "Tato kategorie už pro dané období rozpočet má",
+      "duplicate_category": "Kategorie s tímto názvem už existuje"
+    },
+    "delete_expense_title": "Smazat výdaj",
+    "delete_expense_description": "Výdaj bude odstraněn z evidence. Tuto akci nelze vrátit zpět.",
+    "delete_category_title": "Smazat kategorii",
+    "delete_category_description": "Související výdaje si zachovají historii, ale přijdou o kategorii. Tuto akci nelze vrátit zpět."
+  }
+}

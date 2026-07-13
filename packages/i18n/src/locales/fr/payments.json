@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Paiements",
+    "budgets": "Budgets",
+    "expenses": "Dépenses",
+    "categories": "Catégories",
+    "summary": "Budget et dépenses",
+    "budgeted": "Budgété",
+    "spent": "Dépensé",
+    "pending": "En attente",
+    "remaining": "Restant",
+    "no_budget": "Aucun budget",
+    "over_budget": "Dépassé",
+    "new_expense": "Nouvelle dépense",
+    "edit_expense": "Modifier la dépense",
+    "new_budget": "Nouveau budget",
+    "manage_categories": "Gérer les catégories",
+    "expense_count": "{count, plural, one {# dépense} many {# dépenses} other {# dépenses}}",
+    "fields": {
+      "category": "Catégorie",
+      "amount": "Montant",
+      "currency": "Devise",
+      "date": "Date",
+      "vendor": "Fournisseur",
+      "reference": "Référence",
+      "description": "Description",
+      "project": "Projet",
+      "status": "Statut",
+      "period": "Période",
+      "period_start": "Début",
+      "period_end": "Fin",
+      "notes": "Notes",
+      "name": "Nom",
+      "color": "Couleur",
+      "documents": "Documents",
+      "add_files": "Ajouter des fichiers"
+    },
+    "status": {
+      "pending": "En attente",
+      "paid": "Payé",
+      "cancelled": "Annulé"
+    },
+    "filters": {
+      "all": "Tous",
+      "search": "Rechercher",
+      "from": "Du",
+      "to": "Au"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "download": "Télécharger"
+    },
+    "empty": {
+      "expenses": "Aucune dépense enregistrée pour le moment.",
+      "categories": "Aucune catégorie. Créez-en une pour commencer à budgéter.",
+      "summary": "Aucun budget pour cette période."
+    },
+    "toasts": {
+      "created": "Dépense enregistrée",
+      "updated": "Dépense mise à jour",
+      "deleted": "Dépense supprimée",
+      "error": "Une erreur est survenue",
+      "duplicate_budget": "Cette catégorie a déjà un budget pour cette période",
+      "duplicate_category": "Une catégorie portant ce nom existe déjà"
+    },
+    "delete_expense_title": "Supprimer la dépense",
+    "delete_expense_description": "La dépense sera retirée du registre. Cette action est irréversible.",
+    "delete_category_title": "Supprimer la catégorie",
+    "delete_category_description": "Les dépenses concernées conservent leur historique mais perdent la catégorie. Cette action est irréversible."
+  }
+}

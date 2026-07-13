@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Pagos",
+    "budgets": "Presupuestos",
+    "expenses": "Gastos",
+    "categories": "Categorías",
+    "summary": "Presupuesto contra gastado",
+    "budgeted": "Presupuestado",
+    "spent": "Gastado",
+    "pending": "Pendiente",
+    "remaining": "Restante",
+    "no_budget": "Sin presupuesto",
+    "over_budget": "Excedido",
+    "new_expense": "Nuevo gasto",
+    "edit_expense": "Editar gasto",
+    "new_budget": "Nuevo presupuesto",
+    "manage_categories": "Administrar categorías",
+    "expense_count": "{count, plural, one {# gasto} other {# gastos}}",
+    "fields": {
+      "category": "Categoría",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "date": "Fecha",
+      "vendor": "Proveedor",
+      "reference": "Referencia",
+      "description": "Descripción",
+      "project": "Proyecto",
+      "status": "Estado",
+      "period": "Periodo",
+      "period_start": "Inicio",
+      "period_end": "Fin",
+      "notes": "Notas",
+      "name": "Nombre",
+      "color": "Color",
+      "documents": "Documentos",
+      "add_files": "Agregar archivos"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "paid": "Pagado",
+      "cancelled": "Cancelado"
+    },
+    "filters": {
+      "all": "Todos",
+      "search": "Buscar",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "download": "Descargar"
+    },
+    "empty": {
+      "expenses": "Todavía no hay gastos registrados.",
+      "categories": "Aún no hay categorías. Cree una para empezar a presupuestar.",
+      "summary": "No hay presupuestos para este periodo."
+    },
+    "toasts": {
+      "created": "Gasto registrado",
+      "updated": "Gasto actualizado",
+      "deleted": "Gasto eliminado",
+      "error": "Algo salió mal",
+      "duplicate_budget": "Esta categoría ya tiene un presupuesto para ese periodo",
+      "duplicate_category": "Ya existe una categoría con ese nombre"
+    },
+    "delete_expense_title": "Eliminar gasto",
+    "delete_expense_description": "El gasto se quitará del registro. Esta acción no se puede deshacer.",
+    "delete_category_title": "Eliminar categoría",
+    "delete_category_description": "Los gastos registrados en ella conservan su historial pero pierden la categoría. Esta acción no se puede deshacer."
+  }
+}

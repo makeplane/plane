@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "결제",
+    "budgets": "예산",
+    "expenses": "지출",
+    "categories": "카테고리",
+    "summary": "예산 대비 지출",
+    "budgeted": "예산",
+    "spent": "지출",
+    "pending": "대기 중",
+    "remaining": "잔액",
+    "no_budget": "예산 없음",
+    "over_budget": "예산 초과",
+    "new_expense": "새 지출",
+    "edit_expense": "지출 편집",
+    "new_budget": "새 예산",
+    "manage_categories": "카테고리 관리",
+    "expense_count": "{count, plural, one {지출 #건} other {지출 #건}}",
+    "fields": {
+      "category": "카테고리",
+      "amount": "금액",
+      "currency": "통화",
+      "date": "날짜",
+      "vendor": "거래처",
+      "reference": "참조 번호",
+      "description": "설명",
+      "project": "프로젝트",
+      "status": "상태",
+      "period": "기간",
+      "period_start": "시작",
+      "period_end": "종료",
+      "notes": "메모",
+      "name": "이름",
+      "color": "색상",
+      "documents": "문서",
+      "add_files": "파일 추가"
+    },
+    "status": {
+      "pending": "대기 중",
+      "paid": "지급 완료",
+      "cancelled": "취소됨"
+    },
+    "filters": {
+      "all": "전체",
+      "search": "검색",
+      "from": "시작일",
+      "to": "종료일"
+    },
+    "actions": {
+      "save": "저장",
+      "cancel": "취소",
+      "delete": "삭제",
+      "download": "다운로드"
+    },
+    "empty": {
+      "expenses": "아직 등록된 지출이 없습니다.",
+      "categories": "카테고리가 없습니다. 하나를 만들어 예산 관리를 시작하십시오.",
+      "summary": "이 기간에 대한 예산이 없습니다."
+    },
+    "toasts": {
+      "created": "지출이 등록되었습니다",
+      "updated": "지출이 업데이트되었습니다",
+      "deleted": "지출이 삭제되었습니다",
+      "error": "문제가 발생했습니다",
+      "duplicate_budget": "이 카테고리에는 해당 기간의 예산이 이미 있습니다",
+      "duplicate_category": "같은 이름의 카테고리가 이미 있습니다"
+    },
+    "delete_expense_title": "지출 삭제",
+    "delete_expense_description": "지출이 장부에서 제거됩니다. 이 작업은 취소할 수 없습니다.",
+    "delete_category_title": "카테고리 삭제",
+    "delete_category_description": "해당 지출은 기록을 유지하지만 카테고리를 잃습니다. 이 작업은 취소할 수 없습니다."
+  }
+}

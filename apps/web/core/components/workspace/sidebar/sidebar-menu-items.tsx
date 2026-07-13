@@ -50,6 +50,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
   const { t } = useTranslation();
   // derived values
   const isFileLibraryEnabled = isWorkspaceFeatureEnabled(workspaceSlug?.toString() ?? "", "file_library");
+  const isPaymentsEnabled = isWorkspaceFeatureEnabled(workspaceSlug?.toString() ?? "", "payments");
 
   const toggleListDisclosure = (isOpen: boolean) => {
     toggleWorkspaceMenu(isOpen);
@@ -91,26 +92,26 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
   const sortedNavigationItems = useMemo(
     () =>
       WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS
-        // "file-library" and "contracts" are gated by a per-workspace feature
-        // flag rather than a role; hide them entirely (from sidebar and pin
-        // dialog alike) when the module is off for this workspace.
+        // "file-library", "contracts" and "payments" are gated by a per-workspace
+        // feature flag rather than a role; hide them entirely (from sidebar and
+        // pin dialog alike) when the module is off for this workspace.
         .filter((item) => (item.key !== "file-library" && item.key !== "contracts") || isFileLibraryEnabled)
+        .filter((item) => item.key !== "payments" || isPaymentsEnabled)
         .map((item) => {
           const preference = workspacePreferences.items[item.key];
-          return {
-            ...item,
+          return Object.assign({}, item, {
             sort_order: preference ? preference.sort_order : 0,
-          };
+          });
         })
         .sort((a, b) => a.sort_order - b.sort_order),
-    [workspacePreferences, isFileLibraryEnabled]
+    [workspacePreferences, isFileLibraryEnabled, isPaymentsEnabled]
   );
 
   return (
     <>
       <div className="flex flex-col gap-0.5">
-        {filteredStaticNavigationItems.map((item, _index) => (
-          <SidebarItem key={`static_${_index}`} item={item} />
+        {filteredStaticNavigationItems.map((item) => (
+          <SidebarItem key={item.key} item={item} />
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
@@ -160,11 +161,11 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           {isWorkspaceMenuOpen && (
             <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
               <>
-                {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
-                  <SidebarItem key={`static_${_index}`} item={item} />
+                {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item) => (
+                  <SidebarItem key={item.key} item={item} />
                 ))}
-                {sortedNavigationItems.map((item, _index) => (
-                  <SidebarItem key={`dynamic_${_index}`} item={item} />
+                {sortedNavigationItems.map((item) => (
+                  <SidebarItem key={item.key} item={item} />
                 ))}
                 <SidebarNavItem>
                   <button

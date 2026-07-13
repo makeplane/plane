@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Payments",
+    "budgets": "Budgets",
+    "expenses": "Expenses",
+    "categories": "Categories",
+    "summary": "Budget vs spent",
+    "budgeted": "Budgeted",
+    "spent": "Spent",
+    "pending": "Pending",
+    "remaining": "Remaining",
+    "no_budget": "No budget",
+    "over_budget": "Over budget",
+    "new_expense": "New expense",
+    "edit_expense": "Edit expense",
+    "new_budget": "New budget",
+    "manage_categories": "Manage categories",
+    "expense_count": "{count, plural, one {# expense} other {# expenses}}",
+    "fields": {
+      "category": "Category",
+      "amount": "Amount",
+      "currency": "Currency",
+      "date": "Date",
+      "vendor": "Vendor",
+      "reference": "Reference",
+      "description": "Description",
+      "project": "Project",
+      "status": "Status",
+      "period": "Period",
+      "period_start": "Start",
+      "period_end": "End",
+      "notes": "Notes",
+      "name": "Name",
+      "color": "Color",
+      "documents": "Documents",
+      "add_files": "Add files"
+    },
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "filters": {
+      "all": "All",
+      "search": "Search",
+      "from": "From",
+      "to": "To"
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "download": "Download"
+    },
+    "empty": {
+      "expenses": "No expenses recorded yet.",
+      "categories": "No categories yet. Create one to start budgeting.",
+      "summary": "No budgets for this period."
+    },
+    "toasts": {
+      "created": "Expense recorded",
+      "updated": "Expense updated",
+      "deleted": "Expense deleted",
+      "error": "Something went wrong",
+      "duplicate_budget": "This category already has a budget for that period",
+      "duplicate_category": "A category with this name already exists"
+    },
+    "delete_expense_title": "Delete expense",
+    "delete_expense_description": "This expense will be removed from the ledger. This cannot be undone.",
+    "delete_category_title": "Delete category",
+    "delete_category_description": "Expenses filed under it keep their history but lose the category. This cannot be undone."
+  }
+}

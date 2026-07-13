@@ -26,6 +26,7 @@ from .file_library import (
     FileTagLink,
     WorkspaceFeature,
 )
+from .finance import Budget, Expense, ExpenseCategory, ExpenseDocument
 from .contract import (
     Contract,
     ContractChat,

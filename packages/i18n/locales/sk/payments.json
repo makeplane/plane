@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Platby",
+    "budgets": "Rozpočty",
+    "expenses": "Výdavky",
+    "categories": "Kategórie",
+    "summary": "Rozpočet a výdavky",
+    "budgeted": "Rozpočtované",
+    "spent": "Minuté",
+    "pending": "Čakajúce",
+    "remaining": "Zostáva",
+    "no_budget": "Bez rozpočtu",
+    "over_budget": "Prekročené",
+    "new_expense": "Nový výdavok",
+    "edit_expense": "Upraviť výdavok",
+    "new_budget": "Nový rozpočet",
+    "manage_categories": "Spravovať kategórie",
+    "expense_count": "{count, plural, one {# výdavok} few {# výdavky} many {# výdavku} other {# výdavkov}}",
+    "fields": {
+      "category": "Kategória",
+      "amount": "Suma",
+      "currency": "Mena",
+      "date": "Dátum",
+      "vendor": "Dodávateľ",
+      "reference": "Referencia",
+      "description": "Popis",
+      "project": "Projekt",
+      "status": "Stav",
+      "period": "Obdobie",
+      "period_start": "Začiatok",
+      "period_end": "Koniec",
+      "notes": "Poznámky",
+      "name": "Názov",
+      "color": "Farba",
+      "documents": "Dokumenty",
+      "add_files": "Pridať súbory"
+    },
+    "status": {
+      "pending": "Čakajúci",
+      "paid": "Zaplatené",
+      "cancelled": "Zrušené"
+    },
+    "filters": {
+      "all": "Všetky",
+      "search": "Hľadať",
+      "from": "Od",
+      "to": "Do"
+    },
+    "actions": {
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "delete": "Odstrániť",
+      "download": "Stiahnuť"
+    },
+    "empty": {
+      "expenses": "Zatiaľ nie sú zaznamenané žiadne výdavky.",
+      "categories": "Zatiaľ žiadne kategórie. Vytvorte jednu a začnite rozpočtovať.",
+      "summary": "Pre toto obdobie nie sú žiadne rozpočty."
+    },
+    "toasts": {
+      "created": "Výdavok zaznamenaný",
+      "updated": "Výdavok aktualizovaný",
+      "deleted": "Výdavok odstránený",
+      "error": "Niečo sa pokazilo",
+      "duplicate_budget": "Táto kategória už má rozpočet na dané obdobie",
+      "duplicate_category": "Kategória s týmto názvom už existuje"
+    },
+    "delete_expense_title": "Odstrániť výdavok",
+    "delete_expense_description": "Výdavok bude odstránený z evidencie. Túto akciu nie je možné vrátiť späť.",
+    "delete_category_title": "Odstrániť kategóriu",
+    "delete_category_description": "Súvisiace výdavky si zachovajú históriu, ale stratia kategóriu. Túto akciu nie je možné vrátiť späť."
+  }
+}

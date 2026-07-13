@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Платежи",
+    "budgets": "Бюджеты",
+    "expenses": "Расходы",
+    "categories": "Категории",
+    "summary": "Бюджет и расходы",
+    "budgeted": "Заложено",
+    "spent": "Потрачено",
+    "pending": "В ожидании",
+    "remaining": "Остаток",
+    "no_budget": "Без бюджета",
+    "over_budget": "Превышен",
+    "new_expense": "Новый расход",
+    "edit_expense": "Изменить расход",
+    "new_budget": "Новый бюджет",
+    "manage_categories": "Управление категориями",
+    "expense_count": "{count, plural, one {# расход} few {# расхода} many {# расходов} other {# расхода}}",
+    "fields": {
+      "category": "Категория",
+      "amount": "Сумма",
+      "currency": "Валюта",
+      "date": "Дата",
+      "vendor": "Поставщик",
+      "reference": "Номер документа",
+      "description": "Описание",
+      "project": "Проект",
+      "status": "Статус",
+      "period": "Период",
+      "period_start": "Начало",
+      "period_end": "Окончание",
+      "notes": "Заметки",
+      "name": "Название",
+      "color": "Цвет",
+      "documents": "Документы",
+      "add_files": "Добавить файлы"
+    },
+    "status": {
+      "pending": "В ожидании",
+      "paid": "Оплачено",
+      "cancelled": "Отменено"
+    },
+    "filters": {
+      "all": "Все",
+      "search": "Поиск",
+      "from": "С",
+      "to": "По"
+    },
+    "actions": {
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "delete": "Удалить",
+      "download": "Скачать"
+    },
+    "empty": {
+      "expenses": "Расходы ещё не внесены.",
+      "categories": "Категорий пока нет. Создайте категорию, чтобы начать планировать бюджет.",
+      "summary": "На этот период бюджетов нет."
+    },
+    "toasts": {
+      "created": "Расход внесён",
+      "updated": "Расход обновлён",
+      "deleted": "Расход удалён",
+      "error": "Что-то пошло не так",
+      "duplicate_budget": "У этой категории уже есть бюджет на данный период",
+      "duplicate_category": "Категория с таким названием уже существует"
+    },
+    "delete_expense_title": "Удалить расход",
+    "delete_expense_description": "Расход будет удалён из реестра. Это действие необратимо.",
+    "delete_category_title": "Удалить категорию",
+    "delete_category_description": "Связанные расходы сохранят историю, но потеряют категорию. Это действие необратимо."
+  }
+}

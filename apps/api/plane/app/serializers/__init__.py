@@ -142,6 +142,11 @@ from .file_library import (
     FileLibraryAssetSerializer,
     FileTagSerializer,
 )
+from .finance import (
+    BudgetSerializer,
+    ExpenseCategorySerializer,
+    ExpenseSerializer,
+)
 from .contract import (
     ContractChatMessageSerializer,
     ContractChatSerializer,

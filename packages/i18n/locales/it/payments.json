@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Pagamenti",
+    "budgets": "Budget",
+    "expenses": "Spese",
+    "categories": "Categorie",
+    "summary": "Budget e spese",
+    "budgeted": "A budget",
+    "spent": "Speso",
+    "pending": "In sospeso",
+    "remaining": "Rimanente",
+    "no_budget": "Nessun budget",
+    "over_budget": "Superato",
+    "new_expense": "Nuova spesa",
+    "edit_expense": "Modifica spesa",
+    "new_budget": "Nuovo budget",
+    "manage_categories": "Gestisci categorie",
+    "expense_count": "{count, plural, one {# spesa} many {# spese} other {# spese}}",
+    "fields": {
+      "category": "Categoria",
+      "amount": "Importo",
+      "currency": "Valuta",
+      "date": "Data",
+      "vendor": "Fornitore",
+      "reference": "Riferimento",
+      "description": "Descrizione",
+      "project": "Progetto",
+      "status": "Stato",
+      "period": "Periodo",
+      "period_start": "Inizio",
+      "period_end": "Fine",
+      "notes": "Note",
+      "name": "Nome",
+      "color": "Colore",
+      "documents": "Documenti",
+      "add_files": "Aggiungi file"
+    },
+    "status": {
+      "pending": "In sospeso",
+      "paid": "Pagato",
+      "cancelled": "Annullato"
+    },
+    "filters": {
+      "all": "Tutti",
+      "search": "Cerca",
+      "from": "Dal",
+      "to": "Al"
+    },
+    "actions": {
+      "save": "Salva",
+      "cancel": "Annulla",
+      "delete": "Elimina",
+      "download": "Scarica"
+    },
+    "empty": {
+      "expenses": "Nessuna spesa registrata.",
+      "categories": "Nessuna categoria. Ne crei una per iniziare a definire il budget.",
+      "summary": "Nessun budget per questo periodo."
+    },
+    "toasts": {
+      "created": "Spesa registrata",
+      "updated": "Spesa aggiornata",
+      "deleted": "Spesa eliminata",
+      "error": "Si è verificato un errore",
+      "duplicate_budget": "Questa categoria ha già un budget per quel periodo",
+      "duplicate_category": "Esiste già una categoria con questo nome"
+    },
+    "delete_expense_title": "Elimina spesa",
+    "delete_expense_description": "La spesa verrà rimossa dal registro. L'operazione non è reversibile.",
+    "delete_category_title": "Elimina categoria",
+    "delete_category_description": "Le spese associate mantengono lo storico ma perdono la categoria. L'operazione non è reversibile."
+  }
+}

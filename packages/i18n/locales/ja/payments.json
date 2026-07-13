@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "支払い",
+    "budgets": "予算",
+    "expenses": "経費",
+    "categories": "カテゴリー",
+    "summary": "予算と支出",
+    "budgeted": "予算額",
+    "spent": "支出額",
+    "pending": "保留中",
+    "remaining": "残高",
+    "no_budget": "予算なし",
+    "over_budget": "予算超過",
+    "new_expense": "経費を追加",
+    "edit_expense": "経費を編集",
+    "new_budget": "予算を追加",
+    "manage_categories": "カテゴリーを管理",
+    "expense_count": "{count, plural, one {#件の経費} other {#件の経費}}",
+    "fields": {
+      "category": "カテゴリー",
+      "amount": "金額",
+      "currency": "通貨",
+      "date": "日付",
+      "vendor": "取引先",
+      "reference": "参照番号",
+      "description": "説明",
+      "project": "プロジェクト",
+      "status": "ステータス",
+      "period": "期間",
+      "period_start": "開始",
+      "period_end": "終了",
+      "notes": "メモ",
+      "name": "名前",
+      "color": "色",
+      "documents": "ドキュメント",
+      "add_files": "ファイルを追加"
+    },
+    "status": {
+      "pending": "保留中",
+      "paid": "支払い済み",
+      "cancelled": "キャンセル済み"
+    },
+    "filters": {
+      "all": "すべて",
+      "search": "検索",
+      "from": "開始日",
+      "to": "終了日"
+    },
+    "actions": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "download": "ダウンロード"
+    },
+    "empty": {
+      "expenses": "まだ経費が登録されていません。",
+      "categories": "カテゴリーがまだありません。作成すると予算管理を始められます。",
+      "summary": "この期間の予算はありません。"
+    },
+    "toasts": {
+      "created": "経費を登録しました",
+      "updated": "経費を更新しました",
+      "deleted": "経費を削除しました",
+      "error": "問題が発生しました",
+      "duplicate_budget": "このカテゴリーには既にその期間の予算があります",
+      "duplicate_category": "この名前のカテゴリーは既に存在します"
+    },
+    "delete_expense_title": "経費を削除",
+    "delete_expense_description": "経費が帳簿から削除されます。この操作は取り消せません。",
+    "delete_category_title": "カテゴリーを削除",
+    "delete_category_description": "関連する経費は履歴を保持しますが、カテゴリーは失われます。この操作は取り消せません。"
+  }
+}

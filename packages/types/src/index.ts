@@ -25,6 +25,7 @@ export * from "./favorite";
 export * from "./file";
 export * from "./contract";
 export * from "./file-library";
+export * from "./finance";
 export * from "./home";
 export * from "./importer";
 export * from "./inbox";

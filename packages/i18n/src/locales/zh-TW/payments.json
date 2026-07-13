@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "付款",
+    "budgets": "預算",
+    "expenses": "支出",
+    "categories": "類別",
+    "summary": "預算與支出",
+    "budgeted": "已編列",
+    "spent": "已支出",
+    "pending": "待處理",
+    "remaining": "剩餘",
+    "no_budget": "無預算",
+    "over_budget": "超出預算",
+    "new_expense": "新增支出",
+    "edit_expense": "編輯支出",
+    "new_budget": "新增預算",
+    "manage_categories": "管理類別",
+    "expense_count": "{count, plural, one {# 筆支出} other {# 筆支出}}",
+    "fields": {
+      "category": "類別",
+      "amount": "金額",
+      "currency": "幣別",
+      "date": "日期",
+      "vendor": "供應商",
+      "reference": "參考號",
+      "description": "描述",
+      "project": "專案",
+      "status": "狀態",
+      "period": "期間",
+      "period_start": "開始",
+      "period_end": "結束",
+      "notes": "備註",
+      "name": "名稱",
+      "color": "顏色",
+      "documents": "文件",
+      "add_files": "新增檔案"
+    },
+    "status": {
+      "pending": "待處理",
+      "paid": "已付款",
+      "cancelled": "已取消"
+    },
+    "filters": {
+      "all": "全部",
+      "search": "搜尋",
+      "from": "從",
+      "to": "至"
+    },
+    "actions": {
+      "save": "儲存",
+      "cancel": "取消",
+      "delete": "刪除",
+      "download": "下載"
+    },
+    "empty": {
+      "expenses": "尚未記錄任何支出。",
+      "categories": "尚無類別。請建立一個以開始編列預算。",
+      "summary": "此期間沒有預算。"
+    },
+    "toasts": {
+      "created": "支出已記錄",
+      "updated": "支出已更新",
+      "deleted": "支出已刪除",
+      "error": "發生問題",
+      "duplicate_budget": "該類別在此期間已有預算",
+      "duplicate_category": "同名類別已存在"
+    },
+    "delete_expense_title": "刪除支出",
+    "delete_expense_description": "該支出將從帳目中移除。此操作無法復原。",
+    "delete_category_title": "刪除類別",
+    "delete_category_description": "相關支出會保留歷史紀錄，但會失去類別。此操作無法復原。"
+  }
+}

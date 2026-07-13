@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Платежі",
+    "budgets": "Бюджети",
+    "expenses": "Витрати",
+    "categories": "Категорії",
+    "summary": "Бюджет і витрати",
+    "budgeted": "Заплановано",
+    "spent": "Витрачено",
+    "pending": "В очікуванні",
+    "remaining": "Залишок",
+    "no_budget": "Без бюджету",
+    "over_budget": "Перевищено",
+    "new_expense": "Нова витрата",
+    "edit_expense": "Редагувати витрату",
+    "new_budget": "Новий бюджет",
+    "manage_categories": "Керування категоріями",
+    "expense_count": "{count, plural, one {# витрата} few {# витрати} many {# витрат} other {# витрати}}",
+    "fields": {
+      "category": "Категорія",
+      "amount": "Сума",
+      "currency": "Валюта",
+      "date": "Дата",
+      "vendor": "Постачальник",
+      "reference": "Номер документа",
+      "description": "Опис",
+      "project": "Проєкт",
+      "status": "Статус",
+      "period": "Період",
+      "period_start": "Початок",
+      "period_end": "Кінець",
+      "notes": "Нотатки",
+      "name": "Назва",
+      "color": "Колір",
+      "documents": "Документи",
+      "add_files": "Додати файли"
+    },
+    "status": {
+      "pending": "В очікуванні",
+      "paid": "Оплачено",
+      "cancelled": "Скасовано"
+    },
+    "filters": {
+      "all": "Усі",
+      "search": "Пошук",
+      "from": "З",
+      "to": "По"
+    },
+    "actions": {
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "delete": "Видалити",
+      "download": "Завантажити"
+    },
+    "empty": {
+      "expenses": "Витрат ще не внесено.",
+      "categories": "Категорій поки немає. Створіть категорію, щоб почати планувати бюджет.",
+      "summary": "На цей період бюджетів немає."
+    },
+    "toasts": {
+      "created": "Витрату внесено",
+      "updated": "Витрату оновлено",
+      "deleted": "Витрату видалено",
+      "error": "Щось пішло не так",
+      "duplicate_budget": "Ця категорія вже має бюджет на цей період",
+      "duplicate_category": "Категорія з такою назвою вже існує"
+    },
+    "delete_expense_title": "Видалити витрату",
+    "delete_expense_description": "Витрату буде вилучено з реєстру. Цю дію не можна скасувати.",
+    "delete_category_title": "Видалити категорію",
+    "delete_category_description": "Пов'язані витрати збережуть історію, але втратять категорію. Цю дію не можна скасувати."
+  }
+}

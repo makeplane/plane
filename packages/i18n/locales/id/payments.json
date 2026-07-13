@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Pembayaran",
+    "budgets": "Anggaran",
+    "expenses": "Pengeluaran",
+    "categories": "Kategori",
+    "summary": "Anggaran dan pengeluaran",
+    "budgeted": "Dianggarkan",
+    "spent": "Terpakai",
+    "pending": "Tertunda",
+    "remaining": "Sisa",
+    "no_budget": "Tidak ada anggaran",
+    "over_budget": "Melebihi anggaran",
+    "new_expense": "Pengeluaran baru",
+    "edit_expense": "Edit pengeluaran",
+    "new_budget": "Anggaran baru",
+    "manage_categories": "Kelola kategori",
+    "expense_count": "{count, plural, one {# pengeluaran} other {# pengeluaran}}",
+    "fields": {
+      "category": "Kategori",
+      "amount": "Jumlah",
+      "currency": "Mata uang",
+      "date": "Tanggal",
+      "vendor": "Pemasok",
+      "reference": "Referensi",
+      "description": "Deskripsi",
+      "project": "Proyek",
+      "status": "Status",
+      "period": "Periode",
+      "period_start": "Mulai",
+      "period_end": "Selesai",
+      "notes": "Catatan",
+      "name": "Nama",
+      "color": "Warna",
+      "documents": "Dokumen",
+      "add_files": "Tambahkan file"
+    },
+    "status": {
+      "pending": "Tertunda",
+      "paid": "Dibayar",
+      "cancelled": "Dibatalkan"
+    },
+    "filters": {
+      "all": "Semua",
+      "search": "Cari",
+      "from": "Dari",
+      "to": "Sampai"
+    },
+    "actions": {
+      "save": "Simpan",
+      "cancel": "Batal",
+      "delete": "Hapus",
+      "download": "Unduh"
+    },
+    "empty": {
+      "expenses": "Belum ada pengeluaran yang dicatat.",
+      "categories": "Belum ada kategori. Buat satu untuk mulai menganggarkan.",
+      "summary": "Tidak ada anggaran untuk periode ini."
+    },
+    "toasts": {
+      "created": "Pengeluaran dicatat",
+      "updated": "Pengeluaran diperbarui",
+      "deleted": "Pengeluaran dihapus",
+      "error": "Terjadi kesalahan",
+      "duplicate_budget": "Kategori ini sudah memiliki anggaran untuk periode tersebut",
+      "duplicate_category": "Kategori dengan nama ini sudah ada"
+    },
+    "delete_expense_title": "Hapus pengeluaran",
+    "delete_expense_description": "Pengeluaran akan dihapus dari catatan. Tindakan ini tidak dapat dibatalkan.",
+    "delete_category_title": "Hapus kategori",
+    "delete_category_description": "Pengeluaran terkait tetap menyimpan riwayatnya tetapi kehilangan kategorinya. Tindakan ini tidak dapat dibatalkan."
+  }
+}

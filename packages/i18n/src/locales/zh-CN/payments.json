@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "付款",
+    "budgets": "预算",
+    "expenses": "支出",
+    "categories": "类别",
+    "summary": "预算与支出",
+    "budgeted": "已预算",
+    "spent": "已支出",
+    "pending": "待处理",
+    "remaining": "剩余",
+    "no_budget": "无预算",
+    "over_budget": "超出预算",
+    "new_expense": "新建支出",
+    "edit_expense": "编辑支出",
+    "new_budget": "新建预算",
+    "manage_categories": "管理类别",
+    "expense_count": "{count, plural, one {# 笔支出} other {# 笔支出}}",
+    "fields": {
+      "category": "类别",
+      "amount": "金额",
+      "currency": "币种",
+      "date": "日期",
+      "vendor": "供应商",
+      "reference": "参考号",
+      "description": "描述",
+      "project": "项目",
+      "status": "状态",
+      "period": "周期",
+      "period_start": "开始",
+      "period_end": "结束",
+      "notes": "备注",
+      "name": "名称",
+      "color": "颜色",
+      "documents": "文档",
+      "add_files": "添加文件"
+    },
+    "status": {
+      "pending": "待处理",
+      "paid": "已支付",
+      "cancelled": "已取消"
+    },
+    "filters": {
+      "all": "全部",
+      "search": "搜索",
+      "from": "从",
+      "to": "至"
+    },
+    "actions": {
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "download": "下载"
+    },
+    "empty": {
+      "expenses": "尚未记录任何支出。",
+      "categories": "尚无类别。请创建一个以开始编制预算。",
+      "summary": "此周期没有预算。"
+    },
+    "toasts": {
+      "created": "支出已记录",
+      "updated": "支出已更新",
+      "deleted": "支出已删除",
+      "error": "出现问题",
+      "duplicate_budget": "该类别在此周期已有预算",
+      "duplicate_category": "同名类别已存在"
+    },
+    "delete_expense_title": "删除支出",
+    "delete_expense_description": "该支出将从账目中移除。此操作无法撤销。",
+    "delete_category_title": "删除类别",
+    "delete_category_description": "相关支出会保留历史记录，但会失去类别。此操作无法撤销。"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "payments": {
+    "title": "Zahlungen",
+    "budgets": "Budgets",
+    "expenses": "Ausgaben",
+    "categories": "Kategorien",
+    "summary": "Budget und Ausgaben",
+    "budgeted": "Budgetiert",
+    "spent": "Ausgegeben",
+    "pending": "Ausstehend",
+    "remaining": "Verbleibend",
+    "no_budget": "Kein Budget",
+    "over_budget": "Überschritten",
+    "new_expense": "Neue Ausgabe",
+    "edit_expense": "Ausgabe bearbeiten",
+    "new_budget": "Neues Budget",
+    "manage_categories": "Kategorien verwalten",
+    "expense_count": "{count, plural, one {# Ausgabe} other {# Ausgaben}}",
+    "fields": {
+      "category": "Kategorie",
+      "amount": "Betrag",
+      "currency": "Währung",
+      "date": "Datum",
+      "vendor": "Lieferant",
+      "reference": "Referenz",
+      "description": "Beschreibung",
+      "project": "Projekt",
+      "status": "Status",
+      "period": "Zeitraum",
+      "period_start": "Beginn",
+      "period_end": "Ende",
+      "notes": "Notizen",
+      "name": "Name",
+      "color": "Farbe",
+      "documents": "Dokumente",
+      "add_files": "Dateien hinzufügen"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "paid": "Bezahlt",
+      "cancelled": "Storniert"
+    },
+    "filters": {
+      "all": "Alle",
+      "search": "Suchen",
+      "from": "Von",
+      "to": "Bis"
+    },
+    "actions": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "download": "Herunterladen"
+    },
+    "empty": {
+      "expenses": "Noch keine Ausgaben erfasst.",
+      "categories": "Noch keine Kategorien. Erstellen Sie eine, um mit der Budgetierung zu beginnen.",
+      "summary": "Keine Budgets für diesen Zeitraum."
+    },
+    "toasts": {
+      "created": "Ausgabe erfasst",
+      "updated": "Ausgabe aktualisiert",
+      "deleted": "Ausgabe gelöscht",
+      "error": "Es ist ein Fehler aufgetreten",
+      "duplicate_budget": "Diese Kategorie hat für diesen Zeitraum bereits ein Budget",
+      "duplicate_category": "Eine Kategorie mit diesem Namen existiert bereits"
+    },
+    "delete_expense_title": "Ausgabe löschen",
+    "delete_expense_description": "Die Ausgabe wird aus dem Register entfernt. Dies kann nicht rückgängig gemacht werden.",
+    "delete_category_title": "Kategorie löschen",
+    "delete_category_description": "Zugeordnete Ausgaben behalten ihren Verlauf, verlieren aber die Kategorie. Dies kann nicht rückgängig gemacht werden."
+  }
+}
