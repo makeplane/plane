@@ -12,7 +12,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 # Module imports
 from plane.authentication.provider.credentials.email import EmailProvider
 from plane.authentication.utils.login import user_login
-from plane.authentication.rate_limit import authentication_throttle_allows
+from plane.authentication.rate_limit import throttle_auth_redirect
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.db.models import User
@@ -24,22 +24,9 @@ from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 
 class SignInAuthSpaceEndpoint(View):
+    @throttle_auth_redirect(is_space=True)
     def post(self, request):
         next_path = request.POST.get("next_path")
-
-        # Rate-limit before any DB access.
-        if not authentication_throttle_allows(request):
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                error_message="RATE_LIMIT_EXCEEDED",
-            )
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=exc.get_error_dict(),
-            )
-            return HttpResponseRedirect(url)
-
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
@@ -123,22 +110,9 @@ class SignInAuthSpaceEndpoint(View):
 
 
 class SignUpAuthSpaceEndpoint(View):
+    @throttle_auth_redirect(is_space=True)
     def post(self, request):
         next_path = request.POST.get("next_path")
-
-        # Rate-limit before any DB access.
-        if not authentication_throttle_allows(request):
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                error_message="RATE_LIMIT_EXCEEDED",
-            )
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=exc.get_error_dict(),
-            )
-            return HttpResponseRedirect(url)
-
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
