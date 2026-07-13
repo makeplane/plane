@@ -60,7 +60,19 @@
     },
     "tags": {
       "title": "Tags",
-      "new_placeholder": "Nombre del nuevo tag"
+      "new_placeholder": "Nombre del nuevo tag",
+      "kinds": {
+        "artist": "Artistas",
+        "group": "Grupos / bandas",
+        "person": "Personas",
+        "custom": "Otras tags"
+      }
+    },
+    "downloads": {
+      "preparing": "Preparando exportación…",
+      "progress": "Descargando… {size}",
+      "done": "Descarga completada",
+      "error": "La descarga falló — inténtelo de nuevo"
     },
     "filters": {
       "all_categories": "Todas las categorías",

@@ -14,6 +14,8 @@ from plane.app.views import (
     FileLibraryAssetDownloadEndpoint,
     FileLibraryAssetEndpoint,
     FileLibraryBulkActionEndpoint,
+    FileLibraryExportEndpoint,
+    FileLibraryExportStatusEndpoint,
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
@@ -54,6 +56,16 @@ urlpatterns = [
         "workspaces/<str:slug>/file-library/files/",
         FileLibraryAssetEndpoint.as_view(),
         name="file-library-assets",
+    ),
+    path(
+        "workspaces/<str:slug>/file-library/export/",
+        FileLibraryExportEndpoint.as_view(),
+        name="file-library-export",
+    ),
+    path(
+        "workspaces/<str:slug>/file-library/export/status/<uuid:export_id>/",
+        FileLibraryExportStatusEndpoint.as_view(),
+        name="file-library-export-status",
     ),
     path(
         "workspaces/<str:slug>/file-library/files/bulk/",

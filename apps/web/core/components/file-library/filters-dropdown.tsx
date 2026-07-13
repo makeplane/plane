@@ -26,20 +26,43 @@ export const FiltersDropdown = observer(function FiltersDropdown() {
 
   const activeCount = (filters.categories?.length ?? 0) + (filters.tags?.length ?? 0);
 
+  // Tags render under kind subheaders (artists / groups / people / custom)
+  // so long AI-generated lists stay scannable
+  const TAG_KIND_ORDER: { kind: string; i18nKey: string }[] = [
+    { kind: "ARTIST", i18nKey: "file_library.tags.kinds.artist" },
+    { kind: "GROUP", i18nKey: "file_library.tags.kinds.group" },
+    { kind: "PERSON", i18nKey: "file_library.tags.kinds.person" },
+    { kind: "CUSTOM", i18nKey: "file_library.tags.kinds.custom" },
+  ];
+  const tagOptions = TAG_KIND_ORDER.flatMap(({ kind, i18nKey }) => {
+    const group = tagIds
+      .map((id) => getTagById(id))
+      .filter((tag): tag is NonNullable<typeof tag> => !!tag && (tag.kind ?? "CUSTOM") === kind);
+    return group.map((tag, index) => ({
+      id: tag.id,
+      name: tag.name,
+      groupLabel: index === 0 ? t(i18nKey) : undefined,
+    }));
+  });
+
   const sections = [
     {
       key: "categories" as const,
       label: t("file_library.categories.title"),
       icon: Layers,
       selected: filters.categories ?? [],
-      options: categoryIds.map((id) => ({ id, name: getCategoryById(id)?.name ?? "" })),
+      options: categoryIds.map((id) => ({
+        id,
+        name: getCategoryById(id)?.name ?? "",
+        groupLabel: undefined as string | undefined,
+      })),
     },
     {
       key: "tags" as const,
       label: t("file_library.tags.title"),
       icon: Tags,
       selected: filters.tags ?? [],
-      options: tagIds.map((id) => ({ id, name: getTagById(id)?.name ?? "" })),
+      options: tagOptions,
     },
   ];
 
@@ -83,22 +106,29 @@ export const FiltersDropdown = observer(function FiltersDropdown() {
                   {options.map((option) => {
                     const isChecked = section.selected.includes(option.id);
                     return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
-                        onClick={() => toggleFilterValue(section.key, option.id)}
-                      >
-                        <span
-                          className={cn(
-                            "flex size-4 shrink-0 items-center justify-center rounded-sm border",
-                            isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
-                          )}
+                      <div key={option.id}>
+                        {/* Kind subheader (hidden while searching — results mix groups) */}
+                        {option.groupLabel && !query && (
+                          <p className="px-2 pt-1.5 pb-0.5 text-10 font-semibold uppercase tracking-wide text-tertiary">
+                            {option.groupLabel}
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-13 hover:bg-layer-1-hover"
+                          onClick={() => toggleFilterValue(section.key, option.id)}
                         >
-                          {isChecked && <Check className="size-3" />}
-                        </span>
-                        <span className="truncate">{option.name}</span>
-                      </button>
+                          <span
+                            className={cn(
+                              "flex size-4 shrink-0 items-center justify-center rounded-sm border",
+                              isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
+                            )}
+                          >
+                            {isChecked && <Check className="size-3" />}
+                          </span>
+                          <span className="truncate">{option.name}</span>
+                        </button>
+                      </div>
                     );
                   })}
                 </div>

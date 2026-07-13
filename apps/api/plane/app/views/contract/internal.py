@@ -107,23 +107,43 @@ def apply_extracted_data(contract, data):
 
     contract.save()
 
-    # Auto-tag the file by artist so the library can filter "everything of X".
-    # Uses the structured array (never split the joined text — names may
-    # contain commas).
-    artists = data.get("artistas")
-    if isinstance(artists, list) and contract.file_asset_id:
-        for item in artists:
-            name = str(item.get("nombre", item) if isinstance(item, dict) else item).strip()
+    # Auto-tag the file so the library can filter "everything of X": one tag
+    # per artist (kind ARTIST, "nombre artístico - nombre real"), one for the
+    # group/band (kind GROUP) and one per person appearing in the contract
+    # (kind PERSON). Uses the structured arrays (never split the joined text —
+    # names may contain commas).
+    if contract.file_asset_id:
+
+        def link_tag(name, kind):
+            name = str(name).strip()
             if not name:
-                continue
+                return
             tag = FileTag.objects.filter(workspace_id=contract.workspace_id, name__iexact=name).first()
             if tag is None:
-                tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name)
+                tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name, kind=kind)
+            elif tag.kind == FileTag.Kind.CUSTOM and kind != FileTag.Kind.CUSTOM:
+                # Adopt the AI's classification for previously unclassified tags
+                tag.kind = kind
+                tag.save(update_fields=["kind"])
             FileTagLink.objects.get_or_create(
                 file_asset_id=contract.file_asset_id,
                 tag=tag,
                 defaults={"workspace_id": contract.workspace_id},
             )
+
+        def each_name(value):
+            if not isinstance(value, list):
+                return
+            for item in value:
+                yield str(item.get("nombre", item) if isinstance(item, dict) else item)
+
+        for name in each_name(data.get("artistas")):
+            link_tag(name, FileTag.Kind.ARTIST)
+        for name in each_name(data.get("involucrados")):
+            link_tag(name, FileTag.Kind.PERSON)
+        group_name = data.get("nombreGrupo")
+        if group_name and not isinstance(group_name, list):
+            link_tag(group_name, FileTag.Kind.GROUP)
 
 
 class InternalBaseView(BaseAPIView):
@@ -351,10 +371,16 @@ class InternalWorkspaceTagsEndpoint(InternalBaseView):
     """
 
     def get(self, request, workspace_id):
-        names = list(
-            FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values_list("name", flat=True)[:500]
+        rows = FileTag.objects.filter(workspace_id=workspace_id).order_by("name").values("name", "kind")[:500]
+        return Response(
+            {
+                # Names-only list kept for backward compatibility with older
+                # Worker deploys; `detailed` carries the kind grouping.
+                "tags": [row["name"] for row in rows],
+                "detailed": list(rows),
+            },
+            status=status.HTTP_200_OK,
         )
-        return Response({"tags": names}, status=status.HTTP_200_OK)
 
 
 class InternalChunkSearchEndpoint(InternalBaseView):

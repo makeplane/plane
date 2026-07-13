@@ -29,11 +29,14 @@ class ExporterHistory(BaseModel):
         choices=(
             ("issue_exports", "Issue Exports"),
             ("issue_worklogs", "Issue Worklogs"),
+            ("file_library", "File Library"),
         ),
     )
     workspace = models.ForeignKey("db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_exporters")
     project = ArrayField(models.UUIDField(default=uuid.uuid4), blank=True, null=True)
-    provider = models.CharField(max_length=50, choices=(("json", "json"), ("csv", "csv"), ("xlsx", "xlsx")))
+    provider = models.CharField(
+        max_length=50, choices=(("json", "json"), ("csv", "csv"), ("xlsx", "xlsx"), ("zip", "zip"))
+    )
     status = models.CharField(
         max_length=50,
         choices=(

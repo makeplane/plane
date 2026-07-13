@@ -4,22 +4,22 @@
  * See the LICENSE file for details.
  *
  * Shared download helper for Files and Contracts. A single file downloads
- * directly through the attachment endpoint; multiple files are fetched via
- * their presigned URLs (same CORS path the in-app viewers already use) and
- * bundled into one ZIP client-side (fflate).
+ * directly through the attachment endpoint; multiple files stream from the
+ * backend's ZIP export endpoint (zipped on the fly server-side) while the
+ * downloads panel shows live progress.
  */
 
-import { zip, type Zippable } from "fflate";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
 // services
 import { fileLibraryService } from "@/services/file-library.service";
+// local imports
+import { downloadManager } from "./download-manager";
 
 export type TDownloadTarget = {
   assetId: string;
   name: string;
 };
-
-/** Parallel presigned fetches, capped so large batches don't stampede */
-const FETCH_CONCURRENCY = 4;
 
 const triggerBlobDownload = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
@@ -33,21 +33,49 @@ const triggerBlobDownload = (blob: Blob, filename: string) => {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 };
 
-const uniqueName = (name: string, used: Set<string>) => {
-  let candidate = name || "archivo";
-  let counter = 2;
-  while (used.has(candidate)) {
-    const dot = name.lastIndexOf(".");
-    candidate = dot > 0 ? `${name.slice(0, dot)} (${counter})${name.slice(dot)}` : `${name} (${counter})`;
-    counter += 1;
-  }
-  used.add(candidate);
-  return candidate;
-};
+/** Streaming endpoint fast-path cap; larger batches run on the bg worker */
+const STREAMING_LIMIT = 300;
+const EXPORT_POLL_MS = 3000;
+const EXPORT_POLL_MAX_ATTEMPTS = 1200; // ~1 hour
 
 /**
- * Downloads the given assets. One file goes straight to the browser; more
- * than one is zipped into `<zipBaseName>-<date>.zip`.
+ * Large exports build on the background worker (issue-exporter pattern): the
+ * ZIP is assembled and uploaded to S3, then downloaded via presigned URL.
+ * The downloads panel tracks the whole lifecycle.
+ */
+async function downloadViaBackgroundExport(workspaceSlug: string, targets: TDownloadTarget[], filename: string) {
+  const downloadId = downloadManager.start(filename, targets.length);
+  try {
+    const { export_id } = await fileLibraryService.createBulkExport(
+      workspaceSlug,
+      targets.map((target) => target.assetId)
+    );
+    for (let attempt = 0; attempt < EXPORT_POLL_MAX_ATTEMPTS; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, EXPORT_POLL_MS));
+      const { status, url } = await fileLibraryService.getExportStatus(workspaceSlug, export_id);
+      if (status === "completed" && url) {
+        // Presigned S3 URL — the browser downloads straight from storage
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        downloadManager.update(downloadId, { status: "done" });
+        return;
+      }
+      if (status === "failed") throw new Error("export failed");
+    }
+    throw new Error("export timed out");
+  } catch (error) {
+    downloadManager.update(downloadId, { status: "error" });
+    throw error;
+  }
+}
+
+/**
+ * Downloads the given assets. One file goes straight to the browser; small
+ * batches stream from the export endpoint; anything larger builds on the
+ * background worker — no size limit either way.
  */
 export async function downloadAssets(workspaceSlug: string, targets: TDownloadTarget[], zipBaseName = "archivos") {
   if (targets.length === 0) return;
@@ -61,28 +89,46 @@ export async function downloadAssets(workspaceSlug: string, targets: TDownloadTa
     return;
   }
 
-  // Fetch every file (bounded concurrency), then zip
-  const usedNames = new Set<string>();
-  const entries: Zippable = {};
-  let cursor = 0;
-  const workers = Array.from({ length: Math.min(FETCH_CONCURRENCY, targets.length) }, async () => {
-    while (cursor < targets.length) {
-      const target = targets[cursor];
-      cursor += 1;
-      const url = await fileLibraryService.getPresignedViewUrl(workspaceSlug, target.assetId);
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`download failed for ${target.name}: ${response.status}`);
-      const buffer = new Uint8Array(await response.arrayBuffer());
-      // Files are mostly already-compressed formats (PDF/images) — store, don't deflate
-      entries[uniqueName(target.name, usedNames)] = [buffer, { level: 0 }];
-    }
-  });
-  await Promise.all(workers);
-
-  const zipped = await new Promise<Uint8Array>((resolve, reject) => {
-    zip(entries, (error, data) => (error ? reject(error) : resolve(data)));
-  });
+  if (targets.length > STREAMING_LIMIT) {
+    const date = new Date().toISOString().slice(0, 10);
+    await downloadViaBackgroundExport(workspaceSlug, targets, `${zipBaseName}-${date}.zip`);
+    return;
+  }
 
   const date = new Date().toISOString().slice(0, 10);
-  triggerBlobDownload(new Blob([zipped.buffer as ArrayBuffer], { type: "application/zip" }), `${zipBaseName}-${date}.zip`);
+  const filename = `${zipBaseName}-${date}.zip`;
+  const downloadId = downloadManager.start(filename, targets.length);
+
+  try {
+    const query = targets.map((target) => `asset_id=${encodeURIComponent(target.assetId)}`).join("&");
+    const response = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceSlug}/file-library/export/?${query}`, {
+      credentials: "include",
+    });
+    if (!response.ok || !response.body) {
+      throw new Error(`export failed: ${response.status}`);
+    }
+
+    downloadManager.update(downloadId, { status: "downloading" });
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let receivedBytes = 0;
+    let lastReported = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      receivedBytes += value.length;
+      // Throttle store updates to every 256KB so big files don't spam renders
+      if (receivedBytes - lastReported > 256 * 1024) {
+        lastReported = receivedBytes;
+        downloadManager.update(downloadId, { receivedBytes });
+      }
+    }
+
+    triggerBlobDownload(new Blob(chunks as BlobPart[], { type: "application/zip" }), filename);
+    downloadManager.update(downloadId, { status: "done", receivedBytes });
+  } catch (error) {
+    downloadManager.update(downloadId, { status: "error" });
+    throw error;
+  }
 }

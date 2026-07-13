@@ -8,6 +8,7 @@
 import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
+import { DownloadsPanel } from "@/components/file-library/downloads-panel";
 // local imports
 import { FileLibraryHeader } from "./header";
 
@@ -18,6 +19,8 @@ export default function FileLibraryLayout() {
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>
+      {/* Persistent ZIP-export progress (Files + Contracts) */}
+      <DownloadsPanel />
     </>
   );
 }
