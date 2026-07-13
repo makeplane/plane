@@ -87,3 +87,19 @@ LOGGING = {
         },
     },
 }
+
+# OpenTelemetry APM: only when OTEL_ENABLED=1 do we extend the JSON
+# formatter and attach TraceContextFilter to every handler. Attaching at
+# the handler level (rather than the root logger) is required because
+# most plane.* loggers have propagate=False; runtime mutation also wouldn't
+# survive Django's dictConfig. Off path leaves the log schema unchanged.
+if os.environ.get("OTEL_ENABLED", "0").lower() in ("1", "true", "yes"):
+    LOGGING["formatters"]["json"]["fmt"] = (
+        "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s "
+        "%(service_name)s %(trace_id)s %(span_id)s %(trace_flags)s"
+    )
+    LOGGING["filters"] = {
+        "trace_context": {"()": "plane.observability.logging.TraceContextFilter"},
+    }
+    for _handler in LOGGING["handlers"].values():
+        _handler["filters"] = ["trace_context"]
