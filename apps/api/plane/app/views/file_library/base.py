@@ -592,6 +592,41 @@ class FileTagDetailEndpoint(FileLibraryBaseView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class FileTagMergeEndpoint(FileLibraryBaseView):
+    """Merges a tag into another: every file tagged with the source ends up
+    tagged with the target instead, and the source tag is removed. Needed
+    because the AI pipeline can extract the same artist/group under slightly
+    different names across runs (e.g. "H.H" vs "Los H.H").
+    """
+
+    model = FileTag
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def post(self, request, slug, tag_id):
+        target_tag_id = request.data.get("into_tag_id")
+        if not target_tag_id:
+            return Response({"error": "into_tag_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if str(target_tag_id) == str(tag_id):
+            return Response({"error": "Cannot merge a tag into itself"}, status=status.HTTP_400_BAD_REQUEST)
+
+        source = FileTag.objects.get(id=tag_id, workspace__slug=slug)
+        target = FileTag.objects.get(id=target_tag_id, workspace__slug=slug)
+
+        # Files already tagged with the target would violate the
+        # (file_asset, tag) uniqueness if re-pointed — just drop those links
+        already_tagged_assets = set(FileTagLink.objects.filter(tag=target).values_list("file_asset_id", flat=True))
+        FileTagLink.objects.filter(tag=source).exclude(file_asset_id__in=already_tagged_assets).update(tag=target)
+        FileTagLink.objects.filter(tag=source).delete()
+
+        # The target adopts the source's classification if it had none
+        if target.kind == FileTag.Kind.CUSTOM and source.kind != FileTag.Kind.CUSTOM:
+            target.kind = source.kind
+            target.save(update_fields=["kind"])
+
+        source.delete()
+        return Response(FileTagSerializer(target).data, status=status.HTTP_200_OK)
+
+
 class FileTagLinkEndpoint(FileLibraryBaseView):
     model = FileTagLink
 

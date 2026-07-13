@@ -43,6 +43,7 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
     createTag,
     updateTag,
     deleteTag,
+    mergeTag,
     bulkAction,
   } = useFileLibrary();
   // states
@@ -219,6 +220,7 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
                       : await updateTag(workspaceSlug, id, { name }))
                   }
                   onDelete={(id) => (tab === "categories" ? deleteCategory(workspaceSlug, id) : deleteTag(workspaceSlug, id))}
+                  onMerge={tab === "tags" ? (id, targetId) => mergeTag(workspaceSlug, id, targetId) : undefined}
                   createPlaceholder={
                     tab === "categories"
                       ? t("file_library.categories.new_placeholder")

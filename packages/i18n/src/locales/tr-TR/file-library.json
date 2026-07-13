@@ -61,6 +61,8 @@
     "tags": {
       "title": "Tags",
       "new_placeholder": "New tag name",
+      "merge_button": "Merge into…",
+      "merge_into_hint": "Merge into",
       "kinds": {
         "artist": "Artists",
         "group": "Groups / bands",
@@ -81,7 +83,8 @@
       "add": "Add filter",
       "clear_all": "Clear all",
       "button": "Filters",
-      "search_placeholder": "Search filters"
+      "search_placeholder": "Search filters",
+      "no_results": "No matching tags"
     },
     "bulk": {
       "button": "Bulk actions",

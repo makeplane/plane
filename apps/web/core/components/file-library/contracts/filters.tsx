@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { Check, Filter, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Filter, Search, X } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -64,6 +65,10 @@ export function ContractFiltersDropdown(props: Props) {
   const { workspaceSlug, filters, onChange } = props;
   const { t } = useTranslation();
   const workspaceTags = useWorkspaceTags(workspaceSlug);
+  const [tagSearch, setTagSearch] = useState("");
+  const visibleTags = tagSearch.trim()
+    ? workspaceTags.filter((tag) => tag.name.toLowerCase().includes(tagSearch.trim().toLowerCase()))
+    : workspaceTags;
 
   const activeCount =
     (filters.estatus?.length ?? 0) +
@@ -145,9 +150,18 @@ export function ContractFiltersDropdown(props: Props) {
           {workspaceTags.length > 0 && (
             <div>
               <p className="px-1 py-0.5 text-11 font-medium text-tertiary">{t("file_library.tags.title")}</p>
+              <div className="relative mb-1 px-1">
+                <Search className="absolute top-1/2 left-2.5 size-3 -translate-y-1/2 text-tertiary" />
+                <input
+                  value={tagSearch}
+                  onChange={(e) => setTagSearch(e.target.value)}
+                  placeholder={t("file_library.filters.search_placeholder")}
+                  className="w-full rounded-sm border border-subtle bg-transparent py-1 pr-2 pl-6 text-12"
+                />
+              </div>
               <div className="max-h-56 overflow-y-auto">
                 {TAG_KIND_SECTIONS.map(({ kind, i18nKey }) => {
-                  const sectionTags = groupTagsByKind(workspaceTags).get(kind) ?? [];
+                  const sectionTags = groupTagsByKind(visibleTags).get(kind) ?? [];
                   if (sectionTags.length === 0) return null;
                   return (
                     <div key={kind}>
@@ -178,6 +192,9 @@ export function ContractFiltersDropdown(props: Props) {
                     </div>
                   );
                 })}
+                {visibleTags.length === 0 && (
+                  <p className="px-2 py-1.5 text-11 text-tertiary">{t("file_library.filters.no_results")}</p>
+                )}
               </div>
             </div>
           )}
