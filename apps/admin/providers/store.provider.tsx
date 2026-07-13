@@ -8,8 +8,7 @@
 import { StoreContext, rootStore } from "./store-context";
 
 function initializeStore(initialData = {}) {
-  // If your page has Next.js data fetching methods that use a Mobx store, it will
-  // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
+  // Hydrate the shared client-side store with any initial data before use.
   if (initialData) {
     rootStore.hydrate(initialData);
   }

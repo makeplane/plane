@@ -61,30 +61,28 @@ export const AdminHeader = observer(function AdminHeader() {
     <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <HamburgerToggle />
-        {breadcrumbItems.length >= 0 && (
-          <div>
-            <Breadcrumbs>
-              <Breadcrumbs.Item
-                component={
-                  <BreadcrumbLink
-                    href="/general/"
-                    label="Settings"
-                    icon={<Settings className="h-4 w-4 text-tertiary" />}
+        <div>
+          <Breadcrumbs>
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  href="/general/"
+                  label="Settings"
+                  icon={<Settings className="h-4 w-4 text-tertiary" />}
+                />
+              }
+            />
+            {breadcrumbItems.map(
+              (item) =>
+                item.title && (
+                  <Breadcrumbs.Item
+                    key={item.title}
+                    component={<BreadcrumbLink href={item.href} label={item.title} />}
                   />
-                }
-              />
-              {breadcrumbItems.map(
-                (item) =>
-                  item.title && (
-                    <Breadcrumbs.Item
-                      key={item.title}
-                      component={<BreadcrumbLink href={item.href} label={item.title} />}
-                    />
-                  )
-              )}
-            </Breadcrumbs>
-          </div>
-        )}
+                )
+            )}
+          </Breadcrumbs>
+        </div>
       </div>
     </div>
   );

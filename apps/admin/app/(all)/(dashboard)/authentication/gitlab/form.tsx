@@ -81,7 +81,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           Get this from your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -104,7 +103,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           The client secret is also found in your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -130,7 +128,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           We will auto-generate this. Paste this into the <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"

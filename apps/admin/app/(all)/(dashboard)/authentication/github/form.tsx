@@ -69,7 +69,6 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           You will get this from your{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -91,7 +90,6 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           Your client secret is also found in your{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -125,7 +123,6 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           We will auto-generate this. Paste this into the <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -149,7 +146,6 @@ export function InstanceGithubConfigForm(props: Props) {
           We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
           field{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"

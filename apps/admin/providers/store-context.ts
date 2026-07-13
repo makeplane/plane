@@ -10,4 +10,4 @@ import { RootStore } from "../store/root.store";
 
 export const rootStore = new RootStore();
 
-export const StoreContext = createContext(rootStore);
+export const StoreContext = createContext<RootStore | undefined>(undefined);
