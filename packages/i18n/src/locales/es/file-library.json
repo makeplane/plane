@@ -180,6 +180,8 @@
         "generate_embeddings": "Embeddings (vectorización)",
         "ai_analysis": "Análisis de IA",
         "extract_thumbnail": "Miniatura",
+        "tags": "Tags (artistas/grupo/personas)",
+        "tags_hint": "Instantáneo, sin usar IA — reconstruye las tags a partir de los datos ya extraídos",
         "modal_title": "¿Qué desea reintentar?",
         "modal_title_bulk": "Reintentar {count, plural, one {# contrato} other {# contratos}}",
         "modal_description": "Reejecutar solo la etapa fallida evita repetir trabajo que ya salió bien (p. ej., conservar el texto extraído y rehacer solo el análisis de IA).",

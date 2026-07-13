@@ -114,23 +114,6 @@ def apply_extracted_data(contract, data):
     # names may contain commas).
     if contract.file_asset_id:
 
-        def link_tag(name, kind):
-            name = str(name).strip()
-            if not name:
-                return
-            tag = FileTag.objects.filter(workspace_id=contract.workspace_id, name__iexact=name).first()
-            if tag is None:
-                tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name, kind=kind)
-            elif tag.kind == FileTag.Kind.CUSTOM and kind != FileTag.Kind.CUSTOM:
-                # Adopt the AI's classification for previously unclassified tags
-                tag.kind = kind
-                tag.save(update_fields=["kind"])
-            FileTagLink.objects.get_or_create(
-                file_asset_id=contract.file_asset_id,
-                tag=tag,
-                defaults={"workspace_id": contract.workspace_id},
-            )
-
         def each_name(value):
             if not isinstance(value, list):
                 return
@@ -138,12 +121,55 @@ def apply_extracted_data(contract, data):
                 yield str(item.get("nombre", item) if isinstance(item, dict) else item)
 
         for name in each_name(data.get("artistas")):
-            link_tag(name, FileTag.Kind.ARTIST)
+            link_contract_tag(contract, name, FileTag.Kind.ARTIST)
         for name in each_name(data.get("involucrados")):
-            link_tag(name, FileTag.Kind.PERSON)
+            link_contract_tag(contract, name, FileTag.Kind.PERSON)
         group_name = data.get("nombreGrupo")
         if group_name and not isinstance(group_name, list):
-            link_tag(group_name, FileTag.Kind.GROUP)
+            link_contract_tag(contract, group_name, FileTag.Kind.GROUP)
+
+
+def link_contract_tag(contract, name, kind):
+    """Get-or-create a FileTag by name (case-insensitive) and link it to the
+    contract's document. Adopts the given kind on previously-unclassified
+    (CUSTOM) tags so manually-created tags gain a grouping once the AI
+    recognizes them.
+    """
+    name = str(name).strip()
+    if not name or not contract.file_asset_id:
+        return
+    tag = FileTag.objects.filter(workspace_id=contract.workspace_id, name__iexact=name).first()
+    if tag is None:
+        tag = FileTag.objects.create(workspace_id=contract.workspace_id, name=name, kind=kind)
+    elif tag.kind == FileTag.Kind.CUSTOM and kind != FileTag.Kind.CUSTOM:
+        tag.kind = kind
+        tag.save(update_fields=["kind"])
+    FileTagLink.objects.get_or_create(
+        file_asset_id=contract.file_asset_id,
+        tag=tag,
+        defaults={"workspace_id": contract.workspace_id},
+    )
+
+
+def resync_contract_tags(contract):
+    """AI-free tag backfill: re-derives ARTIST/GROUP/PERSON tags from the
+    contract's already-stored fields, for contracts analyzed before tag kinds
+    (or the artist name format) existed. Instant and free — no Worker/AI call.
+
+    Trade-off: `artistas`/`involucrados` are stored as a single comma-joined
+    TextField (crm-new schema), so this splits on ", " instead of using the
+    AI's pre-join structured array. A name that itself contains a literal
+    comma will split incorrectly; use "Reanalizar" for full-fidelity tagging
+    in that case.
+    """
+    if not contract.file_asset_id:
+        return
+    for name in (contract.artistas or "").split(", "):
+        link_contract_tag(contract, name, FileTag.Kind.ARTIST)
+    for name in (contract.involucrados or "").split(", "):
+        link_contract_tag(contract, name, FileTag.Kind.PERSON)
+    if contract.nombre_grupo:
+        link_contract_tag(contract, contract.nombre_grupo, FileTag.Kind.GROUP)
 
 
 class InternalBaseView(BaseAPIView):
