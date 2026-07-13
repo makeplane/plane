@@ -25,6 +25,10 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
           placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
           {...register("name", {
             required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+            maxLength: {
+              value: 255,
+              message: t("title_should_be_less_than_255_characters"),
+            },
           })}
           className="w-full rounded-md bg-transparent py-3 text-13 leading-5 text-secondary outline-none"
         />

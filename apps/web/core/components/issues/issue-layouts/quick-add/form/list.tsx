@@ -26,6 +26,10 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
             placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
             {...register("name", {
               required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+              maxLength: {
+                value: 255,
+                message: t("title_should_be_less_than_255_characters"),
+              },
             })}
             className="w-full rounded-md bg-transparent px-2 py-3 text-13 leading-5 font-medium text-secondary outline-none"
           />

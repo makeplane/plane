@@ -126,7 +126,21 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
         error: {
           title: t("common.error.label"),
-          message: (err) => err?.message || t("common.error.message"),
+          message: (err) => {
+            // Issue service throws response.data (field errors), not Error instances
+            if (typeof err === "string") return err;
+            if (err?.message && typeof err.message === "string") return err.message;
+            if (err?.name) {
+              return Array.isArray(err.name) ? err.name[0] : err.name;
+            }
+            if (err && typeof err === "object") {
+              for (const value of Object.values(err)) {
+                if (typeof value === "string") return value;
+                if (Array.isArray(value) && typeof value[0] === "string") return value[0];
+              }
+            }
+            return t("common.error.message");
+          },
         },
       });
 
@@ -144,18 +158,23 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
       )}
     >
       {isOpen ? (
-        <QuickAddIssueFormRoot
-          isOpen={isOpen}
-          layout={layout}
-          prePopulatedData={prePopulatedData}
-          projectId={projectId?.toString()}
-          hasError={errors && errors?.name && errors?.name?.message ? true : false}
-          setFocus={setFocus}
-          register={register}
-          onSubmit={handleSubmit(onSubmitHandler)}
-          onClose={() => handleIsOpen(false)}
-          isEpic={isEpic}
-        />
+        <>
+          <QuickAddIssueFormRoot
+            isOpen={isOpen}
+            layout={layout}
+            prePopulatedData={prePopulatedData}
+            projectId={projectId?.toString()}
+            hasError={errors && errors?.name && errors?.name?.message ? true : false}
+            setFocus={setFocus}
+            register={register}
+            onSubmit={handleSubmit(onSubmitHandler)}
+            onClose={() => handleIsOpen(false)}
+            isEpic={isEpic}
+          />
+          {errors?.name?.message && (
+            <p className="px-3 py-1 text-11 text-danger-primary">{errors.name.message}</p>
+          )}
+        </>
       ) : (
         <>
           {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}
