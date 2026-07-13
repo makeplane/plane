@@ -46,6 +46,7 @@ class FileTagSerializer(BaseSerializer):
             "id",
             "name",
             "color",
+            "kind",
             "workspace_id",
             "file_count",
             "created_at",

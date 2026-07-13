@@ -33,10 +33,14 @@ export type TFileFolder = {
   updated_at: string;
 };
 
+export type TFileTagKind = "ARTIST" | "GROUP" | "PERSON" | "CUSTOM";
+
 export type TFileTag = {
   id: string;
   name: string;
   color: string;
+  /** Grouping for filter/management UIs; the AI pipeline sets it on auto-tags */
+  kind: TFileTagKind;
   workspace_id: string;
   file_count: number;
   created_at: string;

@@ -65,6 +65,7 @@ export const ARTISTS_KEYS = ["artistas"];
 export const artistsPrompt = (extractedText: string, existingTags: string[] = []) => `
 Extrae los artistas de este contrato y responde en json con la clave "artistas" (array de strings).
 El nombre de los artistas se identifica porque se les denomina como EL ARTISTA.
+FORMATO de cada artista: "Nombre Artístico - Nombre Real" cuando el contrato mencione ambos (p. ej. "Andrew - Andrés Felipe Arroyave Benjumea"); si solo se conoce uno de los dos, devuelve únicamente ese, sin guion.
 ${
   existingTags.length > 0
     ? `ETIQUETAS DE ARTISTAS YA EXISTENTES EN EL SISTEMA:

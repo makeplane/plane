@@ -80,9 +80,17 @@ class FileTag(BaseModel):
     an artist can be filtered in one step.
     """
 
+    class Kind(models.TextChoices):
+        # Grouping for filter/management UIs (and the AI pipeline's auto-tags)
+        ARTIST = "ARTIST", "Artist"
+        GROUP = "GROUP", "Group"
+        PERSON = "PERSON", "Person"
+        CUSTOM = "CUSTOM", "Custom"
+
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="file_tags")
     name = models.CharField(max_length=255)
     color = models.CharField(max_length=255, blank=True)
+    kind = models.CharField(max_length=20, choices=Kind.choices, default=Kind.CUSTOM)
 
     class Meta:
         constraints = [

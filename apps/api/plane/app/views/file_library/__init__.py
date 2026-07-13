@@ -12,6 +12,8 @@ from .base import (
     FileLibraryAssetDownloadEndpoint,
     FileLibraryAssetEndpoint,
     FileLibraryBulkActionEndpoint,
+    FileLibraryExportEndpoint,
+    FileLibraryExportStatusEndpoint,
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
