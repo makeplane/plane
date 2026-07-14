@@ -76,6 +76,27 @@ NOTIFICATION_ORDER_BY_ALLOWLIST = frozenset({
     "updated_at",
 })
 
+# ---------------------------------------------------------------------------
+# group_by / sub_group_by allowlist for Issue querysets — used by
+# GroupedOffsetPaginator / SubGroupedOffsetPaginator (plane/utils/paginator.py),
+# which pass the field name straight into F(), .values(), .order_by(), and
+# Window partition_by. Prevents unauthenticated ORM field-name injection via
+# user-supplied query params (GHSA-wwgj-929g-42cm).
+# ---------------------------------------------------------------------------
+ISSUE_GROUP_BY_ALLOWLIST = frozenset({
+    "state_id",
+    "state__group",
+    "priority",
+    "labels__id",
+    "assignees__id",
+    "issue_module__module_id",
+    "cycle_id",
+    "project_id",
+    "created_by",
+    "target_date",
+    "start_date",
+})
+
 # Cycle list queryset.
 CYCLE_ORDER_BY_ALLOWLIST = frozenset({
     "created_at",
@@ -96,7 +117,6 @@ MODULE_ORDER_BY_ALLOWLIST = frozenset({
     "status",
     "sort_order",
 })
-
 
 def sanitize_order_by(value, allowed_fields, default="-created_at"):
     """Return a safe ordering string derived from *value*.

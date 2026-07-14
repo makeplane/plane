@@ -153,7 +153,7 @@ export class UserStore implements IUserStore {
    * @returns {Promise<IUser>}
    */
   updateCurrentUser = async (data: Partial<IUser>): Promise<IUser> => {
-    const currentUserData = this.data;
+    const currentUserData = cloneDeep(this.data);
     try {
       if (currentUserData) {
         Object.keys(data).forEach((key: string) => {
@@ -162,6 +162,14 @@ export class UserStore implements IUserStore {
         });
       }
       const user = await this.userService.updateUser(data);
+      if (user && this.data) {
+        runInAction(() => {
+          Object.keys(user).forEach((key: string) => {
+            const userKey: keyof IUser = key as keyof IUser;
+            if (this.data) set(this.data, userKey, user[userKey]);
+          });
+        });
+      }
       return user;
     } catch (error) {
       if (currentUserData) {

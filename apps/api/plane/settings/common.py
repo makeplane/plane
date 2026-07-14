@@ -544,6 +544,21 @@ ATTACHMENT_MIME_TYPES = [
     "text/markdown",
 ]
 
+# MIME types that browsers can execute as scripts when served inline.
+# These must always be served with Content-Disposition: attachment, even if they
+# somehow end up stored (e.g. uploaded before this restriction was added).
+SCRIPT_CAPABLE_MIME_TYPES: frozenset[str] = frozenset(
+    [
+        "image/svg+xml",  # SVG with onload / embedded <script> tags
+        "text/javascript",
+        "application/javascript",
+        "text/html",
+        "application/xhtml+xml",
+        "text/xml",
+        "application/xml",
+    ]
+)
+
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
 
