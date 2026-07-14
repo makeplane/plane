@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -105,8 +105,10 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     resolvedTheme,
   });
 
-  // Update ref with latest authentication modes
-  authenticationModesRef.current = authenticationModes;
+  // Update ref with latest authentication modes (updateConfig reads it only from event handlers)
+  useEffect(() => {
+    authenticationModesRef.current = authenticationModes;
+  }, [authenticationModes]);
 
   return (
     <PageWrapper

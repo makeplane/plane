@@ -4,26 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { createContext } from "react";
 // plane admin store
-import { RootStore } from "../store/root.store";
-
-let rootStore = new RootStore();
-
-export const StoreContext = createContext(rootStore);
+import { StoreContext, rootStore } from "./store-context";
 
 function initializeStore(initialData = {}) {
-  const singletonRootStore = rootStore ?? new RootStore();
-  // If your page has Next.js data fetching methods that use a Mobx store, it will
-  // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
+  // Hydrate the shared client-side store with any initial data before use.
   if (initialData) {
-    singletonRootStore.hydrate(initialData);
+    rootStore.hydrate(initialData);
   }
-  // For SSG and SSR always create a new store
-  if (typeof window === "undefined") return singletonRootStore;
-  // Create the store once in the client
-  if (!rootStore) rootStore = singletonRootStore;
-  return singletonRootStore;
+  return rootStore;
 }
 
 export type StoreProviderProps = {

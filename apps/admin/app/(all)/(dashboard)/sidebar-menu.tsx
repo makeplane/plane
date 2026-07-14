@@ -30,10 +30,10 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
 
   return (
     <div className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-2.5 overflow-y-scroll px-4 py-4">
-      {sidebarMenu.map((item, index) => {
-        const isActive = item.href === pathName || pathName?.includes(item.href);
+      {sidebarMenu.map((item) => {
+        const isActive = item.href === pathName || pathName?.startsWith(item.href);
         return (
-          <Link key={index} href={item.href} onClick={handleItemClick}>
+          <Link key={item.href} href={item.href} onClick={handleItemClick}>
             <div>
               <Tooltip tooltipContent={item.name} position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <div

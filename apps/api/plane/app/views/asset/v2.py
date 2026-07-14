@@ -18,7 +18,7 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from ..base import BaseAPIView
-from plane.db.models import FileAsset, Workspace, Project, User, WorkspaceMember
+from plane.db.models import FileAsset, Workspace, Project, User, WorkspaceMember, ProjectMember
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
@@ -312,6 +312,30 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
+    def has_project_asset_access(self, request, asset):
+        """Return whether the user may access a workspace-scoped asset.
+
+        This endpoint is authorized at the WORKSPACE level, so a workspace
+        member/guest could otherwise reach an asset that belongs to a project
+        they are not a member of. For project-bound assets, require an active
+        ProjectMember of the asset's project. Workspace-level entity types
+        (WORKSPACE_LOGO, USER_AVATAR, USER_COVER) have project_id=None and are
+        always allowed.
+        """
+        if asset.project_id is None:
+            return True
+        # Scope the membership lookup to the asset's workspace as well as its
+        # project, mirroring allow_permission's PROJECT branch. This prevents a
+        # member of the same project in a different workspace from passing the
+        # check should an asset row ever be inconsistent (asset.workspace_id !=
+        # asset.project.workspace_id).
+        return ProjectMember.objects.filter(
+            member=request.user,
+            workspace_id=asset.workspace_id,
+            project_id=asset.project_id,
+            is_active=True,
+        ).exists()
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
@@ -393,6 +417,12 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        # enforce project-level access for project-bound assets
+        if not self.has_project_asset_access(request, asset):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -414,6 +444,12 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def delete(self, request, slug, asset_id):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        # enforce project-level access for project-bound assets
+        if not self.has_project_asset_access(request, asset):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
@@ -425,6 +461,12 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def get(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        # enforce project-level access for project-bound assets
+        if not self.has_project_asset_access(request, asset):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
