@@ -1,7 +1,21 @@
 "use client";
 
-import { useMemo } from "react";
-import { Clock3, Copy, Eye, Maximize2, Minus, Plus, RotateCcw, SkipBack, SkipForward } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  ChevronDown,
+  Clock3,
+  Copy,
+  Eye,
+  Maximize2,
+  Minus,
+  Plus,
+  RotateCcw,
+  Search,
+  SkipBack,
+  SkipForward,
+  Tags,
+  X,
+} from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "./constants";
@@ -43,11 +57,22 @@ type CategoryLaneDefinition = {
   tone: TimelineLaneTone;
 };
 
+type TimelineTagTypeOption = {
+  color: string;
+  group: string;
+  key: string;
+  label: string;
+  order: number;
+};
+
 const TOOL_BUTTON_CLASS =
   "inline-flex h-8 w-8 items-center justify-center rounded-md text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
+const TEXT_TOOL_BUTTON_CLASS =
+  "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-xs font-medium transition-colors";
 
 const MARKER_COLORS = ["#ef4444", "#22c55e", "#c084fc", "#fbbf24", "#f472b6", "#60a5fa", "#f59e0b", "#a3e635"];
 const PLAYHEAD_OVERFLOW_BUCKET_SECONDS = 300;
+const EMPTY_TIMELINE_VALUES = new Set(["", "--", "\u2014", "n/a", "na", "none", "null", "undefined"]);
 
 const LANE_TONE_CLASS: Record<TimelineLaneTone, string> = {
   offense: "border-l-[#2998d8] bg-[#b9defa] text-[#102d3f]",
@@ -58,6 +83,62 @@ const LANE_TONE_CLASS: Record<TimelineLaneTone, string> = {
 };
 
 const normalizeLabel = (value: string) => value.trim();
+
+const hasTimelineValue = (value: string | null | undefined) =>
+  !EMPTY_TIMELINE_VALUES.has(
+    String(value ?? "")
+      .trim()
+      .toLowerCase()
+  );
+
+const normalizeTagTypeKeyPart = (value: string | null | undefined) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+
+const getUniqueTagTypeParts = (values: readonly string[]) => {
+  const seen = new Set<string>();
+  const parts: string[] = [];
+
+  values.forEach((value) => {
+    const normalizedValue = normalizeTagTypeKeyPart(value);
+    if (!normalizedValue || seen.has(normalizedValue) || !hasTimelineValue(normalizedValue)) return;
+
+    seen.add(normalizedValue);
+    parts.push(normalizedValue);
+  });
+
+  return parts;
+};
+
+const getTimelineTagTypeParts = (row: SgTagRow) => {
+  const actionParts = getUniqueTagTypeParts([row.action, row.result]);
+  if (actionParts.length > 0) return actionParts;
+
+  const detailParts = getUniqueTagTypeParts([row.primaryDetail, row.secondaryDetail]);
+  if (detailParts.length > 0) return detailParts;
+
+  return getUniqueTagTypeParts([row.groupValue, row.team]);
+};
+
+const getTimelineTagTypeKey = (row: SgTagRow) => getTimelineTagTypeParts(row).join("|") || row.id;
+
+const formatTagTypeLabelPart = (value: string) =>
+  value
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+
+const getTimelineTagTypeLabel = (row: SgTagRow) => {
+  const label = getTimelineTagTypeParts(row).map(formatTagTypeLabelPart).join(" - ");
+  return label || "Tag";
+};
 
 const getJerseyNumberKeys = (value: string) => {
   const normalizedValue = value.trim().replace(/^#/, "").replace(/\s+/g, "");
@@ -236,6 +317,46 @@ const getCategoryLaneId = (row: SgTagRow, categoryLanes: CategoryLaneDefinition[
   return matchedLane?.id ?? categoryLanes[0]?.id ?? "actions";
 };
 
+const getCategoryLaneDefinitions = (sport: SportTableKind) =>
+  CATEGORY_LANES_BY_SPORT[sport] ?? CATEGORY_LANES_BY_SPORT.default;
+
+const hashString = (value: string) => {
+  let hash = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(index);
+    hash |= 0;
+  }
+
+  return Math.abs(hash);
+};
+
+const buildTimelineTagTypeOptions = (rows: SgTagRow[], sport: SportTableKind) => {
+  const categoryLanes = getCategoryLaneDefinitions(sport);
+  const categoryLaneById = new Map(categoryLanes.map((lane, index) => [lane.id, { ...lane, order: index }]));
+  const optionsByKey = new Map<string, TimelineTagTypeOption>();
+
+  rows.forEach((row) => {
+    const key = getTimelineTagTypeKey(row);
+    if (optionsByKey.has(key)) return;
+
+    const laneId = getCategoryLaneId(row, categoryLanes);
+    const categoryLane = categoryLaneById.get(laneId) ?? categoryLaneById.get(categoryLanes[0]?.id ?? "");
+
+    optionsByKey.set(key, {
+      color: MARKER_COLORS[hashString(key) % MARKER_COLORS.length],
+      group: categoryLane?.label ?? "Other",
+      key,
+      label: getTimelineTagTypeLabel(row),
+      order: categoryLane?.order ?? Number.MAX_SAFE_INTEGER,
+    });
+  });
+
+  return Array.from(optionsByKey.values()).sort(
+    (left, right) => left.order - right.order || left.label.localeCompare(right.label)
+  );
+};
+
 const getTimecodeStart = (timecode: string) => timecode.split(/\s*[-\u2013\u2014]\s*/)[0] ?? timecode;
 
 const isPlausibleTimelineSecond = (seconds: number, timelineDurationSeconds: number | null) =>
@@ -348,17 +469,6 @@ const buildLaneMarkerOffsets = (rows: SgTagRow[], rowPlacements: Record<string, 
       collisionCounts.set(secondBucket, currentCount + 1);
       return accumulator;
     }, {});
-};
-
-const hashString = (value: string) => {
-  let hash = 0;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash = (hash << 5) - hash + value.charCodeAt(index);
-    hash |= 0;
-  }
-
-  return Math.abs(hash);
 };
 
 const buildTickStepSeconds = (totalSeconds: number) => {
@@ -483,17 +593,63 @@ export const SgEventTimelinePanel = ({
   selectedTagIds,
   sport,
 }: SgEventTimelinePanelProps) => {
+  const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
+  const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
+  const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
+  const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
   const isTagClipActive = activePlaybackOverrideId?.startsWith("sg-tag-") ?? false;
   const timelineDurationSeconds = isTagClipActive ? null : playerDurationSeconds;
+  const tagTypeOptions = useMemo(() => buildTimelineTagTypeOptions(rows, sport), [rows, sport]);
+  const defaultVisibleTagTypeKeys = useMemo(() => tagTypeOptions.map((option) => option.key), [tagTypeOptions]);
+  const activeVisibleTagTypeKeys = visibleTagTypeKeys ?? defaultVisibleTagTypeKeys;
+  const activeVisibleTagTypeKeySet = useMemo(() => new Set(activeVisibleTagTypeKeys), [activeVisibleTagTypeKeys]);
+  const tagTypeOptionsByKey = useMemo(
+    () => new Map(tagTypeOptions.map((option) => [option.key, option])),
+    [tagTypeOptions]
+  );
+  const visibleTimelineRows = useMemo(
+    () => rows.filter((row) => activeVisibleTagTypeKeySet.has(getTimelineTagTypeKey(row))),
+    [activeVisibleTagTypeKeySet, rows]
+  );
   const timelineLanes = useMemo(
-    () => buildTimelineLanes(rows, sport, playerLabelByNumber),
-    [playerLabelByNumber, rows, sport]
+    () => buildTimelineLanes(visibleTimelineRows, sport, playerLabelByNumber),
+    [playerLabelByNumber, sport, visibleTimelineRows]
   );
   const rowPlacements = useMemo(
-    () => buildTimelinePlacements(rows, timelineDurationSeconds),
-    [timelineDurationSeconds, rows]
+    () => buildTimelinePlacements(visibleTimelineRows, timelineDurationSeconds),
+    [timelineDurationSeconds, visibleTimelineRows]
   );
-  const sortedTimelineRows = useMemo(() => buildSortedTimelineRows(rows, rowPlacements), [rowPlacements, rows]);
+  const sortedTimelineRows = useMemo(
+    () => buildSortedTimelineRows(visibleTimelineRows, rowPlacements),
+    [rowPlacements, visibleTimelineRows]
+  );
+  const normalizedTagTypeSearchQuery = tagTypeSearchQuery.trim().toLowerCase();
+  const tagTypeGroups = useMemo(() => {
+    const groupsByName = new Map<string, TimelineTagTypeOption[]>();
+
+    tagTypeOptions.forEach((option) => {
+      if (
+        normalizedTagTypeSearchQuery &&
+        !`${option.label} ${option.group} ${option.key}`.toLowerCase().includes(normalizedTagTypeSearchQuery)
+      ) {
+        return;
+      }
+
+      const currentOptions = groupsByName.get(option.group) ?? [];
+      currentOptions.push(option);
+      groupsByName.set(option.group, currentOptions);
+    });
+
+    return Array.from(groupsByName.entries())
+      .map(([name, options]) => ({
+        name,
+        options: options.sort((left, right) => left.label.localeCompare(right.label)),
+        order: Math.min(...options.map((option) => option.order)),
+      }))
+      .sort((left, right) => left.order - right.order || left.name.localeCompare(right.name));
+  }, [normalizedTagTypeSearchQuery, tagTypeOptions]);
+  const visibleTagTypeCount = tagTypeOptions.filter((option) => activeVisibleTagTypeKeySet.has(option.key)).length;
+  const totalTagTypeCount = tagTypeOptions.length;
   const activeTimelineRowIndex = sortedTimelineRows.findIndex(
     (row) => row.id === activeTagRowId || activePlaybackOverrideId === buildTagPlaybackOverrideId(row)
   );
@@ -557,6 +713,19 @@ export const SgEventTimelinePanel = ({
       void onPlayTagRow(nextRow);
     }
   };
+  const handleToggleTagType = (tagTypeKey: string) => {
+    setVisibleTagTypeKeys((currentValue) => {
+      const nextKeys = new Set(currentValue ?? defaultVisibleTagTypeKeys);
+
+      if (nextKeys.has(tagTypeKey)) {
+        nextKeys.delete(tagTypeKey);
+      } else {
+        nextKeys.add(tagTypeKey);
+      }
+
+      return Array.from(nextKeys);
+    });
+  };
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
@@ -591,6 +760,26 @@ export const SgEventTimelinePanel = ({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
+          <Tooltip tooltipContent="Tag types" isMobile={false}>
+            <button
+              type="button"
+              onClick={() => setIsTagTypesPanelOpen(true)}
+              disabled={totalTagTypeCount === 0}
+              className={cn(
+                TEXT_TOOL_BUTTON_CLASS,
+                isTagTypesPanelOpen
+                  ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
+                  : "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100",
+                totalTagTypeCount === 0 && "cursor-not-allowed opacity-40"
+              )}
+            >
+              <Tags className="h-3.5 w-3.5" />
+              <span>Tags</span>
+              <span className="text-custom-text-400">
+                {visibleTagTypeCount}/{totalTagTypeCount}
+              </span>
+            </button>
+          </Tooltip>
           <div className="inline-flex h-8 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100">
             <Tooltip tooltipContent="Timeline view" isMobile={false}>
               <button
@@ -659,6 +848,7 @@ export const SgEventTimelinePanel = ({
                     const startSeconds = placement.startSeconds;
                     const left = Math.min(Math.max((startSeconds * 100) / totalSeconds, 0), 99.3);
                     const markerColor =
+                      tagTypeOptionsByKey.get(getTimelineTagTypeKey(row))?.color ??
                       MARKER_COLORS[hashString(`${row.action}-${row.player}-${row.timecode}`) % MARKER_COLORS.length];
                     const isActive =
                       activeTagRowId === row.id || activePlaybackOverrideId === buildTagPlaybackOverrideId(row);
@@ -709,15 +899,139 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      {rows.length === 0 && (
+      {rows.length === 0 ? (
         <div className="border-t border-custom-border-200 px-5 py-10 text-center text-sm text-custom-text-400">
           No SG tags matched the current filter set.
         </div>
-      )}
+      ) : visibleTimelineRows.length === 0 ? (
+        <div className="border-t border-custom-border-200 px-5 py-10 text-center text-sm text-custom-text-400">
+          No SG tags match the visible tag types.
+        </div>
+      ) : null}
 
       {isMediaLoading && (
         <div className="border-t border-custom-border-200 px-4 py-2.5 text-xs text-custom-text-400">
           Syncing SG media package and playlist references for this event.
+        </div>
+      )}
+
+      {isTagTypesPanelOpen && (
+        <div
+          className="fixed inset-0 z-30 flex justify-end bg-black/50"
+          role="presentation"
+          onClick={() => setIsTagTypesPanelOpen(false)}
+        >
+          <aside
+            aria-label="Tag types"
+            aria-modal="true"
+            className="flex h-full w-full max-w-[340px] flex-col border-l border-custom-border-200 bg-custom-background-100 shadow-xl"
+            role="dialog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="border-b border-custom-border-200 px-4 py-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-custom-text-100">Tag types</h3>
+                  <p className="mt-0.5 text-xs text-custom-text-400">
+                    {visibleTagTypeCount} of {totalTagTypeCount} shown
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsTagTypesPanelOpen(false)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-3 text-sm text-custom-text-300">
+                <Search className="h-4 w-4" />
+                <input
+                  value={tagTypeSearchQuery}
+                  onChange={(event) => setTagTypeSearchQuery(event.target.value)}
+                  placeholder="Search tag types"
+                  className="min-w-0 flex-1 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400"
+                />
+              </label>
+            </div>
+
+            <div className="flex gap-3 border-b border-custom-border-200 px-4 py-2.5">
+              <button
+                type="button"
+                onClick={() => setVisibleTagTypeKeys(defaultVisibleTagTypeKeys)}
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Show all
+              </button>
+              <button
+                type="button"
+                onClick={() => setVisibleTagTypeKeys([])}
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Hide all
+              </button>
+              <button
+                type="button"
+                onClick={() => setVisibleTagTypeKeys(null)}
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Reset to default
+              </button>
+            </div>
+
+            <div className="vertical-scrollbar scrollbar-md min-h-0 flex-1 overflow-y-auto px-2 py-2">
+              {tagTypeGroups.length === 0 ? (
+                <div className="px-3 py-8 text-center text-sm text-custom-text-400">No matching tag types.</div>
+              ) : (
+                tagTypeGroups.map((group) => {
+                  const isCollapsed = Boolean(collapsedTagTypeGroups[group.name]);
+
+                  return (
+                    <div key={group.name} className="mb-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCollapsedTagTypeGroups((currentValue) => ({
+                            ...currentValue,
+                            [group.name]: !currentValue[group.name],
+                          }))
+                        }
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-custom-text-400 transition-colors hover:bg-custom-background-90"
+                      >
+                        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isCollapsed && "-rotate-90")} />
+                        <span>{group.name}</span>
+                      </button>
+                      {!isCollapsed && (
+                        <div className="flex flex-col">
+                          {group.options.map((option) => (
+                            <label
+                              key={option.key}
+                              className="flex cursor-pointer items-center gap-2 rounded-md px-7 py-1.5 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={activeVisibleTagTypeKeySet.has(option.key)}
+                                onChange={() => handleToggleTagType(option.key)}
+                                className="h-4 w-4 rounded border-custom-border-200 accent-custom-primary-100"
+                              />
+                              <span
+                                aria-hidden="true"
+                                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: option.color }}
+                              />
+                              <span className="min-w-0 flex-1 truncate" title={option.label}>
+                                {option.label}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </aside>
         </div>
       )}
     </section>
