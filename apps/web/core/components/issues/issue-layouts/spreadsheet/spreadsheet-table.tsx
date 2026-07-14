@@ -138,14 +138,15 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
             isScrolled={isScrolled}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            orderBy={displayFilters.order_by}
             isEpic={isEpic}
           />
         ))}
       </tbody>
       {canLoadMoreIssues && (
         <tfoot ref={setIntersectionElement}>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} />
+          {(["spreadsheet-loader-1", "spreadsheet-loader-2", "spreadsheet-loader-3"] as const).map((loaderKey) => (
+            <SpreadsheetIssueRowLoader key={loaderKey} columnCount={displayPropertiesCount} />
           ))}
         </tfoot>
       )}

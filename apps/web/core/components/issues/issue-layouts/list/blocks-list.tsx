@@ -6,7 +6,7 @@
 
 import type { MutableRefObject } from "react";
 // components
-import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues, TIssueOrderByOptions } from "@plane/types";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
@@ -25,6 +25,7 @@ interface Props {
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
   selectionHelpers: TSelectionHelper;
+  orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
 }
 
@@ -41,6 +42,7 @@ export function IssueBlocksList(props: Props) {
     selectionHelpers,
     isDragAllowed,
     canDropOverIssue,
+    orderBy,
     isEpic = false,
   } = props;
 
@@ -65,6 +67,7 @@ export function IssueBlocksList(props: Props) {
             isLastChild={index === issueIds.length - 1}
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}
+            orderBy={orderBy}
             isEpic={isEpic}
           />
         ))}
