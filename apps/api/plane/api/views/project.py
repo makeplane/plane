@@ -401,7 +401,7 @@ class ProjectListLiteAPIEndpoint(BaseAPIView):
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
                 {"error": "Provided workspace does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         projects = self.get_queryset()
@@ -413,7 +413,13 @@ class ProjectListLiteAPIEndpoint(BaseAPIView):
         if not include_archived:
             projects = projects.filter(archived_at__isnull=True)
 
-        projects = projects.order_by(request.GET.get("order_by", "-created_at"))
+        projects = projects.order_by(
+            sanitize_order_by(
+                request.GET.get("order_by", "-created_at"),
+                PROJECT_ORDER_BY_ALLOWLIST,
+                default="-created_at",
+            )
+        )
         return self.paginate(
             request=request,
             queryset=projects,

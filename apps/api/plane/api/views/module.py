@@ -43,7 +43,7 @@ from plane.db.models import (
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
-from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
@@ -311,7 +311,13 @@ class ModuleListLiteAPIEndpoint(BaseAPIView):
             .filter(archived_at__isnull=True)
             .select_related("project", "workspace", "lead")
             .prefetch_related("members")
-            .order_by(request.GET.get("order_by", "-created_at"))
+            .order_by(
+                sanitize_order_by(
+                    request.GET.get("order_by", "-created_at"),
+                    MODULE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                )
+            )
         )
         return self.paginate(
             request=request,

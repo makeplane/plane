@@ -19,7 +19,7 @@ from plane.api.serializers import (
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
-from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
+from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
@@ -264,7 +264,7 @@ class WorkspaceMemberLiteAPIEndpoint(BaseAPIView):
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
                 {"error": "Provided workspace does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         workspace_members = (
@@ -311,7 +311,13 @@ class ProjectMemberLiteAPIEndpoint(BaseAPIView):
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
                 {"error": "Provided workspace does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not Project.objects.filter(id=project_id, workspace__slug=slug).exists():
+            return Response(
+                {"error": "Provided project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         project_members = (

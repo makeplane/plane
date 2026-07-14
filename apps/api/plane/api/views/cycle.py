@@ -47,7 +47,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
-from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.order_queryset import CYCLE_ORDER_BY_ALLOWLIST, ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
@@ -389,7 +389,13 @@ class CycleListLiteAPIEndpoint(BaseAPIView):
             Cycle.objects.filter(workspace__slug=slug, project_id=project_id)
             .filter(archived_at__isnull=True)
             .select_related("project", "workspace", "owned_by")
-            .order_by(request.GET.get("order_by", "-created_at"))
+            .order_by(
+                sanitize_order_by(
+                    request.GET.get("order_by", "-created_at"),
+                    CYCLE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                )
+            )
             .distinct()
         )
         return self.paginate(
