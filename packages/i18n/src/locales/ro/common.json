@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Se poate încărca doar un fișier o dată.",
     "file_size_limit": "Fișierul trebuie să aibă {size}MB sau mai puțin.",
     "drag_and_drop": "Trage și plasează oriunde pentru a încărca",
-    "delete": "Șterge atașamentul"
+    "delete": "Șterge atașamentul",
+    "delete_confirmation": {
+      "prefix": "Sigur doriți să ștergeți atașamentul ",
+      "suffix": "? Acest atașament va fi eliminat definitiv. Această acțiune nu poate fi anulată."
+    }
   },
   "label": {
     "select": "Selectează eticheta",

@@ -764,7 +764,7 @@
     "drag_and_drop": "Drag and drop anywhere to upload",
     "delete": "Delete attachment",
     "delete_confirmation": {
-      "prefix": "Are you sure you want to delete attachment-",
+      "prefix": "Are you sure you want to delete attachment ",
       "suffix": "? This attachment will be permanently removed. This action cannot be undone."
     }
   },

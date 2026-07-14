@@ -762,7 +762,11 @@
     "only_one_file_allowed": "È possibile caricare un solo file alla volta.",
     "file_size_limit": "Il file deve essere di {size}MB o meno.",
     "drag_and_drop": "Trascina e rilascia ovunque per caricare",
-    "delete": "Elimina allegato"
+    "delete": "Elimina allegato",
+    "delete_confirmation": {
+      "prefix": "Vuoi davvero eliminare l'allegato ",
+      "suffix": "? Questo allegato verrà rimosso definitivamente. Questa azione non può essere annullata."
+    }
   },
   "label": {
     "select": "Seleziona etichetta",
