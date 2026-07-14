@@ -1,16 +1,11 @@
-import { Check, Filter, ListPlus, Plus, Search, SlidersHorizontal, Star, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Check, ChevronDown, Columns3, Filter, ListPlus, Plus, Search, Star, Trash2, X } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
-import {
-  FOOTBALL_TAG_TABLE_GRID_CLASS,
-  ICON_BUTTON_CLASS,
-  ROW_FILTER_LABELS,
-  SURFACE_CLASS,
-  TAG_TABLE_GRID_CLASS,
-} from "./constants";
+import { ICON_BUTTON_CLASS, ROW_FILTER_LABELS, SURFACE_CLASS } from "./constants";
 import type { RowFilterMode, SgTagRow, SportTableConfig } from "./types";
-import { parseTimecodeToSeconds } from "./utils";
+import { formatLooseLabel, parseTimecodeToSeconds } from "./utils";
 
 type SgEventTagsPanelProps = {
   activeFilterLabel: string;
@@ -40,6 +35,21 @@ type SgEventTagsPanelProps = {
 
 const TEXT_BUTTON_CLASS =
   "inline-flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-xs font-medium text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
+
+const CONTEXT_COLUMN_PREFIX = "context:";
+const DEFAULT_VISIBLE_COLUMN_KEYS = ["duration", "player", "groupValue", "action", "primaryDetail", "result"];
+const COLUMN_GROUP_ORDER = ["Core", "Sport", "Source", "Raw tag data"];
+
+type SgTagColumnGroup = (typeof COLUMN_GROUP_ORDER)[number];
+
+type SgTagColumn = {
+  getValue: (row: SgTagRow) => string;
+  group: SgTagColumnGroup;
+  isDefaultVisible?: boolean;
+  key: string;
+  label: string;
+  width: string;
+};
 
 const formatDuration = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.round(seconds));
@@ -74,6 +84,12 @@ const getClipDuration = (row: SgTagRow) => {
 
 const displayCellValue = (value: string) => (value && value !== "--" ? value : "--");
 
+const getContextColumnKey = (key: string) => `${CONTEXT_COLUMN_PREFIX}${key}`;
+
+const getContextKeyFromColumnKey = (key: string) => key.slice(CONTEXT_COLUMN_PREFIX.length);
+
+const formatColumnLabel = (key: string) => formatLooseLabel(key.replace(/_/g, " "));
+
 export const SgEventTagsPanel = ({
   activeFilterLabel,
   activePlaybackOverrideId,
@@ -100,10 +116,157 @@ export const SgEventTagsPanel = ({
   sportTableConfig,
 }: SgEventTagsPanelProps) => {
   const isCompactFootballTable = Boolean(sportTableConfig.isCompactFootballTable);
-  const tableGridClass = isCompactFootballTable ? FOOTBALL_TAG_TABLE_GRID_CLASS : TAG_TABLE_GRID_CLASS;
-  const tableSurfaceWidthClass = "min-w-[1160px]";
   const groupSelectLabel = effectiveGroupValue === "All tags" ? "Select group" : effectiveGroupValue;
   const detailColumnLabel = isCompactFootballTable ? "Down & Dist" : sportTableConfig.primaryDetailLabel;
+  const [isColumnsPanelOpen, setIsColumnsPanelOpen] = useState(false);
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<string[]>(DEFAULT_VISIBLE_COLUMN_KEYS);
+  const [columnSearchQuery, setColumnSearchQuery] = useState("");
+  const [collapsedColumnGroups, setCollapsedColumnGroups] = useState<Record<string, boolean>>({});
+
+  const baseColumnDefinitions = useMemo<SgTagColumn[]>(
+    () => [
+      {
+        getValue: getClipDuration,
+        group: "Core",
+        isDefaultVisible: true,
+        key: "duration",
+        label: "Duration (s)",
+        width: "minmax(104px, 0.7fr)",
+      },
+      {
+        getValue: (row) => row.player,
+        group: "Core",
+        isDefaultVisible: true,
+        key: "player",
+        label: sportTableConfig.playerLabel ?? "Player",
+        width: "minmax(150px, 1.15fr)",
+      },
+      {
+        getValue: (row) => row.groupValue,
+        group: "Sport",
+        isDefaultVisible: true,
+        key: "groupValue",
+        label: sportTableConfig.groupByLabel,
+        width: "minmax(110px, 0.8fr)",
+      },
+      {
+        getValue: (row) => row.action,
+        group: "Sport",
+        isDefaultVisible: true,
+        key: "action",
+        label: sportTableConfig.actionLabel,
+        width: "minmax(150px, 1fr)",
+      },
+      {
+        getValue: (row) => row.primaryDetail,
+        group: "Sport",
+        isDefaultVisible: true,
+        key: "primaryDetail",
+        label: detailColumnLabel,
+        width: "minmax(130px, 0.9fr)",
+      },
+      {
+        getValue: (row) => (isCompactFootballTable ? row.secondaryDetail : row.result),
+        group: "Sport",
+        isDefaultVisible: true,
+        key: "result",
+        label: "Result",
+        width: "minmax(120px, 0.8fr)",
+      },
+      {
+        getValue: (row) => row.team,
+        group: "Source",
+        key: "team",
+        label: "Team",
+        width: "minmax(120px, 0.8fr)",
+      },
+      {
+        getValue: (row) => row.timecode,
+        group: "Source",
+        key: "timecode",
+        label: "Timecode",
+        width: "minmax(140px, 0.9fr)",
+      },
+      {
+        getValue: (row) => row.clipId ?? "--",
+        group: "Source",
+        key: "clipId",
+        label: "Clip ID",
+        width: "minmax(160px, 1fr)",
+      },
+      {
+        getValue: (row) => row.sourceTagId ?? "--",
+        group: "Source",
+        key: "sourceTagId",
+        label: "Source tag ID",
+        width: "minmax(160px, 1fr)",
+      },
+      {
+        getValue: (row) => row.playlistTimestamp ?? "--",
+        group: "Source",
+        key: "playlistTimestamp",
+        label: "Playlist timestamp",
+        width: "minmax(190px, 1.2fr)",
+      },
+    ],
+    [
+      detailColumnLabel,
+      isCompactFootballTable,
+      sportTableConfig.actionLabel,
+      sportTableConfig.groupByLabel,
+      sportTableConfig.playerLabel,
+    ]
+  );
+  const contextColumnDefinitions = useMemo<SgTagColumn[]>(() => {
+    const contextKeys = new Set<string>();
+
+    rows.forEach((row) => {
+      Object.entries(row.context).forEach(([key, value]) => {
+        if (value && value !== "--") contextKeys.add(key);
+      });
+    });
+
+    return Array.from(contextKeys)
+      .sort((a, b) => formatColumnLabel(a).localeCompare(formatColumnLabel(b)))
+      .map((key) => {
+        const columnKey = getContextColumnKey(key);
+
+        return {
+          getValue: (row: SgTagRow) => row.context[getContextKeyFromColumnKey(columnKey)] ?? "--",
+          group: "Raw tag data",
+          key: columnKey,
+          label: formatColumnLabel(key),
+          width: "minmax(150px, 1fr)",
+        };
+      });
+  }, [rows]);
+  const columnDefinitions = useMemo(
+    () => [...baseColumnDefinitions, ...contextColumnDefinitions],
+    [baseColumnDefinitions, contextColumnDefinitions]
+  );
+  const visibleColumns = useMemo(() => {
+    const visibleColumnKeySet = new Set(visibleColumnKeys);
+    return columnDefinitions.filter((column) => visibleColumnKeySet.has(column.key));
+  }, [columnDefinitions, visibleColumnKeys]);
+  const tableGridTemplateColumns = `56px minmax(120px, 150px) ${visibleColumns
+    .map((column) => column.width)
+    .join(" ")} 96px`;
+  const normalizedColumnSearchQuery = columnSearchQuery.trim().toLowerCase();
+  const columnGroups = useMemo(
+    () =>
+      COLUMN_GROUP_ORDER.map((groupName) => ({
+        columns: columnDefinitions.filter((column) => {
+          if (column.group !== groupName) return false;
+          if (!normalizedColumnSearchQuery) return true;
+
+          return `${column.label} ${column.key}`.toLowerCase().includes(normalizedColumnSearchQuery);
+        }),
+        name: groupName,
+      })).filter((group) => group.columns.length > 0),
+    [columnDefinitions, normalizedColumnSearchQuery]
+  );
+  const selectedAvailableColumnCount = visibleColumns.length;
+  const totalColumnCount = columnDefinitions.length;
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
@@ -181,9 +344,22 @@ export const SgEventTagsPanel = ({
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
-          <Tooltip tooltipContent="Display options" isMobile={false}>
-            <button type="button" className={ICON_BUTTON_CLASS}>
-              <SlidersHorizontal className="h-4 w-4" />
+          <Tooltip tooltipContent="Columns" isMobile={false}>
+            <button
+              type="button"
+              onClick={() => setIsColumnsPanelOpen(true)}
+              className={cn(
+                "inline-flex h-9 items-center gap-2 rounded-md border px-3 text-xs font-medium transition-colors",
+                isColumnsPanelOpen
+                  ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
+                  : "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100"
+              )}
+            >
+              <Columns3 className="h-4 w-4" />
+              <span>Columns</span>
+              <span className="text-custom-text-400">
+                {selectedAvailableColumnCount}/{totalColumnCount}
+              </span>
             </button>
           </Tooltip>
           <button type="button" className={TEXT_BUTTON_CLASS}>
@@ -193,13 +369,11 @@ export const SgEventTagsPanel = ({
         </div>
       </div>
 
-      <div className="max-h-[520px] overflow-x-scroll overflow-y-auto">
-        <div className={cn("min-w-full", tableSurfaceWidthClass)}>
+      <div className="vertical-scrollbar horizontal-scrollbar scrollbar-lg max-h-[520px] min-h-52 overflow-auto">
+        <div className="min-w-full">
           <div
-            className={cn(
-              "sticky top-0 z-[2] grid min-w-full items-center gap-3 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-3 py-3 text-xs font-medium text-custom-text-300",
-              tableGridClass
-            )}
+            className="sticky top-0 z-[2] grid w-max min-w-full items-center gap-3 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-3 py-3 text-xs font-medium text-custom-text-300"
+            style={{ gridTemplateColumns: tableGridTemplateColumns }}
           >
             <button type="button" onClick={onSelectAll} className="flex items-center gap-2 text-left">
               <span
@@ -215,12 +389,11 @@ export const SgEventTagsPanel = ({
               <span>No.</span>
             </button>
             <div>Clip</div>
-            <div>Duration (s)</div>
-            <div>{sportTableConfig.playerLabel ?? "Player"}</div>
-            <div>{sportTableConfig.groupByLabel}</div>
-            <div>{sportTableConfig.actionLabel}</div>
-            <div>{detailColumnLabel}</div>
-            <div>Result</div>
+            {visibleColumns.map((column) => (
+              <div key={column.key} className="truncate" title={column.label}>
+                {column.label}
+              </div>
+            ))}
             <div>Action</div>
           </div>
 
@@ -232,17 +405,16 @@ export const SgEventTagsPanel = ({
             rows.map((row, index) => {
               const isSelected = selectedTagIds.includes(row.id);
               const isFavorited = favoriteTagIds.includes(row.id);
-              const resultValue = isCompactFootballTable ? row.secondaryDetail : row.result;
               const rowThumbnailUrl = row.thumbnailUrl || clipThumbnailUrl;
 
               return (
                 <div
                   key={row.id}
                   className={cn(
-                    "grid min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors hover:bg-custom-background-90",
-                    activePlaybackOverrideId === `sg-tag-${row.id}` && "bg-custom-background-90",
-                    tableGridClass
+                    "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors hover:bg-custom-background-90",
+                    activePlaybackOverrideId === `sg-tag-${row.id}` && "bg-custom-background-90"
                   )}
+                  style={{ gridTemplateColumns: tableGridTemplateColumns }}
                   role="button"
                   tabIndex={0}
                   onClick={() => {
@@ -282,22 +454,15 @@ export const SgEventTagsPanel = ({
                       <div className="h-full w-full bg-custom-background-90" />
                     )}
                   </div>
-                  <div>{getClipDuration(row)}</div>
-                  <div className="truncate" title={row.player}>
-                    {displayCellValue(row.player)}
-                  </div>
-                  <div className="truncate" title={row.groupValue}>
-                    {displayCellValue(row.groupValue)}
-                  </div>
-                  <div className="truncate" title={row.action}>
-                    {displayCellValue(row.action)}
-                  </div>
-                  <div className="truncate" title={row.primaryDetail}>
-                    {displayCellValue(row.primaryDetail)}
-                  </div>
-                  <div className="truncate" title={resultValue}>
-                    {displayCellValue(resultValue)}
-                  </div>
+                  {visibleColumns.map((column) => {
+                    const cellValue = column.getValue(row);
+
+                    return (
+                      <div key={column.key} className="truncate" title={cellValue}>
+                        {displayCellValue(cellValue)}
+                      </div>
+                    );
+                  })}
                   <div className="flex items-center gap-1.5">
                     <Tooltip tooltipContent={isFavorited ? "Remove favorite" : "Favorite"} isMobile={false}>
                       <button
@@ -335,9 +500,143 @@ export const SgEventTagsPanel = ({
         </div>
       </div>
 
+      <div className="flex flex-col gap-1 border-t border-custom-border-200 px-4 py-2.5 text-xs text-custom-text-400 sm:flex-row sm:items-center sm:justify-between">
+        <span>
+          {rows.length} clips · {selectedAvailableColumnCount} of {totalColumnCount} columns shown
+        </span>
+        {totalColumnCount > selectedAvailableColumnCount && (
+          <span className="hidden sm:inline">Use Columns to show more fields</span>
+        )}
+      </div>
+
       {isMediaLoading && (
         <div className="border-t border-custom-border-200 px-4 py-2.5 text-xs text-custom-text-400">
           Syncing SG media package and playlist references for this event.
+        </div>
+      )}
+
+      {isColumnsPanelOpen && (
+        <div
+          className="fixed inset-0 z-30 flex justify-end bg-black/50"
+          role="presentation"
+          onClick={() => setIsColumnsPanelOpen(false)}
+        >
+          <aside
+            aria-label="Columns"
+            aria-modal="true"
+            className="flex h-full w-full max-w-[340px] flex-col border-l border-custom-border-200 bg-custom-background-100 shadow-xl"
+            role="dialog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="border-b border-custom-border-200 px-4 py-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-custom-text-100">Columns</h3>
+                  <p className="mt-0.5 text-xs text-custom-text-400">
+                    {selectedAvailableColumnCount} of {totalColumnCount} shown
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsColumnsPanelOpen(false)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-3 text-sm text-custom-text-300">
+                <Search className="h-4 w-4" />
+                <input
+                  value={columnSearchQuery}
+                  onChange={(event) => setColumnSearchQuery(event.target.value)}
+                  placeholder="Search columns"
+                  className="min-w-0 flex-1 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400"
+                />
+              </label>
+            </div>
+
+            <div className="flex gap-3 border-b border-custom-border-200 px-4 py-2.5">
+              <button
+                type="button"
+                onClick={() => setVisibleColumnKeys(columnDefinitions.map((column) => column.key))}
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                onClick={() => setVisibleColumnKeys([])}
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Clear all
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleColumnKeys(
+                    columnDefinitions.filter((column) => column.isDefaultVisible).map((column) => column.key)
+                  )
+                }
+                className="text-xs font-medium text-custom-primary-100 hover:underline"
+              >
+                Reset
+              </button>
+            </div>
+
+            <div className="vertical-scrollbar scrollbar-md min-h-0 flex-1 overflow-y-auto px-2 py-2">
+              {columnGroups.length === 0 ? (
+                <div className="px-3 py-8 text-center text-sm text-custom-text-400">No matching columns.</div>
+              ) : (
+                columnGroups.map((group) => {
+                  const isCollapsed = Boolean(collapsedColumnGroups[group.name]);
+
+                  return (
+                    <div key={group.name} className="mb-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCollapsedColumnGroups((currentValue) => ({
+                            ...currentValue,
+                            [group.name]: !currentValue[group.name],
+                          }))
+                        }
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-custom-text-400 transition-colors hover:bg-custom-background-90"
+                      >
+                        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isCollapsed && "-rotate-90")} />
+                        <span>{group.name}</span>
+                      </button>
+                      {!isCollapsed && (
+                        <div className="flex flex-col">
+                          {group.columns.map((column) => (
+                            <label
+                              key={column.key}
+                              className="flex cursor-pointer items-center gap-2 rounded-md px-7 py-1.5 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={visibleColumnKeys.includes(column.key)}
+                                onChange={() =>
+                                  setVisibleColumnKeys((currentValue) =>
+                                    currentValue.includes(column.key)
+                                      ? currentValue.filter((key) => key !== column.key)
+                                      : [...currentValue, column.key]
+                                  )
+                                }
+                                className="h-4 w-4 rounded border-custom-border-200 accent-custom-primary-100"
+                              />
+                              <span className="min-w-0 flex-1 truncate" title={column.label}>
+                                {column.label}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </aside>
         </div>
       )}
     </section>
