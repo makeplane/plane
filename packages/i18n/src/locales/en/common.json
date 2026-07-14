@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Only one file can be uploaded at a time.",
     "file_size_limit": "File must be of {size}MB or less in size.",
     "drag_and_drop": "Drag and drop anywhere to upload",
-    "delete": "Delete attachment"
+    "delete": "Delete attachment",
+    "delete_confirmation": {
+      "prefix": "Are you sure you want to delete attachment-",
+      "suffix": "? This attachment will be permanently removed. This action cannot be undone."
+    }
   },
   "label": {
     "select": "Add labels",
