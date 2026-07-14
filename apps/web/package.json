@@ -11,6 +11,7 @@
     "check:lint": "eslint . --max-warnings 821",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "test:matrix": "node --experimental-strip-types --test --experimental-test-isolation=none core/components/issues/issue-detail/sg-event-detail-page/matrix-view/__tests__/matrix-model.test.ts",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },

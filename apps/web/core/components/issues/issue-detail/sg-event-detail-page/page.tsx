@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { API_BASE_URL } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IRosterPlayer, TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -14,6 +15,8 @@ import { getEventMediaDetails } from "ce/features/media-library/utils/media-even
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
 import { SgEventHeader, SgEventTitleBar } from "./header";
+import { MatrixView } from "./matrix-view";
+import { buildMatrixPlaylistItem, createMatrixPlaylist } from "./matrix-view/utils/create-matrix-playlist";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-panel";
 import { SgEventTimelinePanel } from "./timeline-panel";
@@ -303,6 +306,7 @@ const resolveTagRowArtifactThumbnail = (
 };
 
 export const SgEventDetailPage = ({
+  enableMatrixView = false,
   issue,
   mediaItem = null,
   projectId,
@@ -330,13 +334,18 @@ export const SgEventDetailPage = ({
   const [playheadBaseSeconds, setPlayheadBaseSeconds] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedViewId, setSelectedViewId] = useState<string>("");
-  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>("timeline");
+  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "list" : "timeline");
+  const [isCreatingMatrixPlaylist, setIsCreatingMatrixPlaylist] = useState(false);
 
   const mediaMeta = asRecord(mediaItem?.meta);
   const cpServerBaseUrl = useMemo(() => getCpServerBaseUrl(), []);
   const project = getProjectById(projectId);
   const resolvedWorkItemId = issue?.id || mediaItem?.workItemId || "";
-  const { data: sgMediaPayload, isLoading: isMediaLoading } = useSWR(
+  const {
+    data: sgMediaPayload,
+    error: sgMediaError,
+    isLoading: isMediaLoading,
+  } = useSWR(
     workspaceSlug && projectId && (resolvedWorkItemId || mediaItem?.id)
       ? `SG_EVENT_MEDIA_${workspaceSlug}_${projectId}_${resolvedWorkItemId || mediaItem?.id}`
       : null,
@@ -350,8 +359,13 @@ export const SgEventDetailPage = ({
   );
   const timelinePlayerLabelByNumber = useMemo(() => buildTimelinePlayerLabelMap(rosterPlayers), [rosterPlayers]);
 
-  const eventDetails = getEventMediaDetails(mediaItem) ?? sgMediaPayload?.eventDetails ?? null;
-  const sportTableConfig = getSportTableConfig(eventDetails?.sport ?? toText(mediaMeta.sport));
+  const eventDetails = useMemo(
+    () => getEventMediaDetails(mediaItem) ?? sgMediaPayload?.eventDetails ?? null,
+    [mediaItem, sgMediaPayload?.eventDetails]
+  );
+  const resolvedSport =
+    eventDetails?.sport || toText(mediaMeta.sport) || toText((project as { sport?: unknown } | undefined)?.sport);
+  const sportTableConfig = useMemo(() => getSportTableConfig(resolvedSport), [resolvedSport]);
   const sgEventMeta = asRecord(sgMediaPayload?.eventItem?.meta);
   const eventPayload = firstNonEmptyRecord(
     sgMediaPayload?.eventPayload,
@@ -418,7 +432,10 @@ export const SgEventDetailPage = ({
   const viewDevices = sgEventDevices && sgEventDevices.length > 0 ? sgEventDevices : payloadViewDevices;
   const primaryStreamName =
     pickText(payloadSources, ["primaryStreamName", "primary_stream_name"]) || eventDetails?.primaryStreamName || "";
-  const availableGroups = Array.from(new Set(tagRows.map((row) => row.groupValue)));
+  const availableGroups = useMemo(
+    () => Array.from(new Set(tagRowsWithThumbnails.map((row) => row.groupValue))),
+    [tagRowsWithThumbnails]
+  );
   const effectiveGroupValue =
     selectedGroupValue === "All tags" || availableGroups.includes(selectedGroupValue)
       ? selectedGroupValue
@@ -528,30 +545,41 @@ export const SgEventDetailPage = ({
     return null;
   }, [activePlaybackOverride, activeVideo, fullStreamPlaybackItem]);
   const hasPlayableVideo = Boolean(playbackItem);
-  const isTagClipActive = Boolean(activePlaybackOverride?.id?.startsWith("sg-tag-"));
-  const filteredRows = tagRowsWithThumbnails.filter((row) => {
-    if (removedTagIds.includes(row.id)) return false;
-    if (effectiveGroupValue !== "All tags" && row.groupValue !== effectiveGroupValue) return false;
-    if (rowFilterMode === "favorites" && !favoriteTagIds.includes(row.id)) return false;
-    if (rowFilterMode === "selected" && !selectedTagIds.includes(row.id)) return false;
-    if (!searchQuery.trim()) return true;
+  const isTagClipActive = Boolean(activePlaybackOverride);
+  const filteredRows = useMemo(
+    () =>
+      tagRowsWithThumbnails.filter((row) => {
+        if (removedTagIds.includes(row.id)) return false;
+        if (effectiveGroupValue !== "All tags" && row.groupValue !== effectiveGroupValue) return false;
+        if (rowFilterMode === "favorites" && !favoriteTagIds.includes(row.id)) return false;
+        if (rowFilterMode === "selected" && !selectedTagIds.includes(row.id)) return false;
+        if (!searchQuery.trim()) return true;
 
-    const haystack = [
-      row.player,
-      row.action,
-      row.groupValue,
-      row.result,
-      row.team,
-      row.timecode,
-      row.primaryDetail,
-      row.secondaryDetail,
+        const haystack = [
+          row.player,
+          row.action,
+          row.groupValue,
+          row.result,
+          row.team,
+          row.timecode,
+          row.primaryDetail,
+          row.secondaryDetail,
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        return haystack.includes(searchQuery.trim().toLowerCase());
+      }),
+    [
+      effectiveGroupValue,
+      favoriteTagIds,
+      removedTagIds,
+      rowFilterMode,
+      searchQuery,
+      selectedTagIds,
+      tagRowsWithThumbnails,
     ]
-      .join(" ")
-      .toLowerCase();
-
-    return haystack.includes(searchQuery.trim().toLowerCase());
-  });
-
+  );
   const allVisibleSelected = filteredRows.length > 0 && filteredRows.every((row) => selectedTagIds.includes(row.id));
   const projectName = toText((project as { name?: unknown } | undefined)?.name);
   const eventTitle = buildEventTitle({
@@ -751,6 +779,66 @@ export const SgEventDetailPage = ({
     ]
   );
 
+  const handleCreateMatrixPlaylist = useCallback(
+    async (rows: SgTagRow[]) => {
+      if (isCreatingMatrixPlaylist) return;
+      const streamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
+      setIsCreatingMatrixPlaylist(true);
+
+      try {
+        const result = await createMatrixPlaylist({ mediaLibraryService, rows, streamName });
+        const includedRowIds = new Set(result.rowIds);
+        const includedRows = rows.filter((row) => includedRowIds.has(row.id));
+        setPendingSeekSeconds(null);
+        setActivePlaybackOverride(
+          buildMatrixPlaylistItem({
+            result,
+            rows: includedRows,
+            workItemId: resolvedWorkItemId || null,
+          })
+        );
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Playlist created",
+          message: `${includedRows.length} selected tag${includedRows.length === 1 ? "" : "s"} are ready to play.`,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unable to create a playlist from the selected tags.";
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Playlist creation failed",
+          message,
+        });
+      } finally {
+        setIsCreatingMatrixPlaylist(false);
+      }
+    },
+    [
+      isCreatingMatrixPlaylist,
+      mediaLibraryService,
+      primaryStreamName,
+      resolvedWorkItemId,
+      selectedViewDevice?.streamName,
+    ]
+  );
+
+  const matrixRows = useMemo(
+    () => tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id)),
+    [removedTagIds, tagRowsWithThumbnails]
+  );
+  const matrixError =
+    matrixRows.length === 0 && sgMediaPayload?.eventPayloadStatus === "error"
+      ? (sgMediaPayload.eventPayloadErrorMessage ?? "Unable to load the completed event data for Matrix View.")
+      : matrixRows.length === 0 && sgMediaError instanceof Error
+        ? sgMediaError
+        : matrixRows.length === 0 && sgMediaError
+          ? "Unable to load the event media required for Matrix View."
+          : null;
+  const activeMatrixRowId = activePlaybackOverride?.id.startsWith("sg-tag-")
+    ? activePlaybackOverride.id.slice("sg-tag-".length)
+    : null;
+  const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
+
   return (
     <div className="h-full bg-custom-background-100 text-custom-text-100">
       <div className="h-full overflow-y-auto px-3 py-4 md:px-4 xl:px-5">
@@ -761,6 +849,7 @@ export const SgEventDetailPage = ({
             fullStreamPlaybackItem={fullStreamPlaybackItem}
             handleBack={handleBack}
             handleSwitchToFullStream={handleSwitchToFullStream}
+            isMatrixViewEnabled={enableMatrixView}
             isLoadingViews={isLoadingViews}
             isTagClipActive={isTagClipActive}
             selectedViewId={selectedViewId}
@@ -796,7 +885,20 @@ export const SgEventDetailPage = ({
                 venueName={venueName}
               />
 
-              {tagViewMode === "timeline" ? (
+              {enableMatrixView && tagViewMode === "matrix" ? (
+                <MatrixView
+                  activeRowId={activeMatrixRowId}
+                  canCreatePlaylist={Boolean(matrixStreamName)}
+                  error={matrixError}
+                  hasEvent={Boolean(mediaItem || issue || eventDetails || eventPayload)}
+                  isCreatingPlaylist={isCreatingMatrixPlaylist}
+                  isLoading={isMediaLoading}
+                  onCreatePlaylist={handleCreateMatrixPlaylist}
+                  onPlayTagRow={handlePlayTagRow}
+                  sport={resolvedSport || ""}
+                  tagRows={matrixRows}
+                />
+              ) : tagViewMode === "timeline" ? (
                 <SgEventTimelinePanel
                   activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
                   activeTagRowId={activeTimelineTagId}

@@ -162,8 +162,8 @@ export class IssueStore implements IIssueStore {
     const issuePayload: TIssue = {
       id: issue?.id,
       sequence_id: issue?.sequence_id,
-      name: issue?.name,
       sg_event_id: issue?.sg_event_id,
+      name: issue?.name,
       description_html: issue?.description_html,
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,

@@ -19,6 +19,7 @@ export type SportTableConfig = {
 export type SgIssue = TIssue & { sg_event_id?: string | number | null };
 
 export type SgEventDetailPageProps = {
+  enableMatrixView?: boolean;
   projectId: string;
   workspaceSlug: string;
   issue?: TIssue;
@@ -29,10 +30,14 @@ export type SgEventDetailPageProps = {
 
 export type SgTagRow = {
   action: string;
+  clipId: string | null;
   clipEndSeconds: number | null;
   clipStartSeconds: number | null;
+  context: Readonly<Record<string, string>>;
   groupValue: string;
   id: string;
+  matrixParticipant: string | null;
+  matrixPeriod: string | null;
   player: string;
   playlistFallbackTimestamp: string | null;
   playlistTimestamp: string | null;
@@ -53,9 +58,16 @@ export type SgEventDevice = {
   streamName: string;
 };
 
-export type SgMediaPayload = {
-  eventDetails: TEventMediaDetails | null;
+export type SgEventPayloadLoadStatus = "loaded" | "unavailable" | "error";
+
+export type SgEventPayloadLoadResult = {
   eventPayload: Record<string, unknown> | null;
+  eventPayloadErrorMessage: string | null;
+  eventPayloadStatus: SgEventPayloadLoadStatus;
+};
+
+export type SgMediaPayload = SgEventPayloadLoadResult & {
+  eventDetails: TEventMediaDetails | null;
   eventItem: TMediaItem | null;
   mediaItems: TMediaItem[];
   manifestArtifacts: TMediaArtifact[];
@@ -65,4 +77,4 @@ export type SgMediaPayload = {
 
 export type RowFilterMode = "all" | "selected" | "favorites";
 
-export type SgEventTagViewMode = "list" | "timeline";
+export type SgEventTagViewMode = "list" | "timeline" | "matrix";
