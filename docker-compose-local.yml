@@ -86,7 +86,7 @@ services:
       - plane-mq
       - plane-minio
     ports:
-      - "8000:8000"
+      - "8002:8000"
 
   worker:
     build:

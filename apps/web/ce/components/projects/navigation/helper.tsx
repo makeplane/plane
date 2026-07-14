@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { Clock } from "lucide-react";
 // plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -80,5 +81,15 @@ export const getProjectFeatureNavigation = (
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     shouldRender: project.inbox_view,
     sortOrder: 6,
+  },
+  {
+    i18n_key: "sidebar.reports",
+    key: EProjectFeatureKey.REPORTS,
+    name: "Reports",
+    href: `/${workspaceSlug}/projects/${projectId}/reports`,
+    icon: Clock,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    shouldRender: true,
+    sortOrder: 7,
   },
 ];

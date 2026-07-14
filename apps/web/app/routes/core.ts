@@ -72,6 +72,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/analytics/:tabId", "./(all)/[workspaceSlug]/(projects)/analytics/[tabId]/page.tsx"),
         ]),
 
+        // Reports
+        layout("./(all)/[workspaceSlug]/(projects)/reports/layout.tsx", [
+          route(":workspaceSlug/reports", "./(all)/[workspaceSlug]/(projects)/reports/page.tsx"),
+        ]),
+
         // Browse
         layout("./(all)/[workspaceSlug]/(projects)/browse/[workItem]/layout.tsx", [
           route(":workspaceSlug/browse/:workItem", "./(all)/[workspaceSlug]/(projects)/browse/[workItem]/page.tsx"),
@@ -214,6 +219,13 @@ export const coreRoutes: RouteConfigEntry[] = [
             route(
               ":workspaceSlug/projects/:projectId/intake",
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx"
+            ),
+          ]),
+          // Reports
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/reports/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/reports",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/reports/page.tsx"
             ),
           ]),
         ]),

@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Отчёты",
+    "page_label": "{workspace} — Отчёты",
+    "filters": {
+      "date_range": "Период",
+      "members": "Сотрудники",
+      "projects": "Проекты",
+      "preset_this_week": "Эта неделя",
+      "preset_last_week": "Прошлая неделя",
+      "preset_this_month": "Этот месяц",
+      "preset_last_30_days": "Последние 30 дней"
+    },
+    "grid": {
+      "member": "Сотрудник",
+      "work_item": "Задача",
+      "total": "Итого"
+    },
+    "export_csv": "Экспорт в CSV",
+    "empty_state": {
+      "title": "Время ещё не учтено",
+      "description": "Здесь появится время, затраченное на задачи за этот период."
+    },
+    "errors": {
+      "range_too_long": "Не удалось загрузить отчёт. Попробуйте более короткий период.",
+      "no_access": "У вас нет доступа к этому отчёту."
+    }
   }
 }
