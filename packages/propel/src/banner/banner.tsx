@@ -32,6 +32,8 @@ export interface BannerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   visible?: boolean;
   /** Animation duration for show/hide */
   animationDuration?: number;
+  /** Accessible label for the dismiss button */
+  dismissLabel?: string;
 }
 
 export const Banner = React.forwardRef(function Banner(
@@ -44,6 +46,7 @@ export const Banner = React.forwardRef(function Banner(
     onDismiss,
     visible = true,
     animationDuration = 200,
+    dismissLabel = "Dismiss banner",
     className,
     children,
     ...props
@@ -83,7 +86,7 @@ export const Banner = React.forwardRef(function Banner(
     if (!dismissible) return null;
 
     return (
-      <button onClick={handleDismiss} className={cn(dismissStyling)} aria-label="Dismiss banner">
+      <button type="button" onClick={handleDismiss} className={cn(dismissStyling)} aria-label={dismissLabel}>
         <svg
           width="16"
           height="16"

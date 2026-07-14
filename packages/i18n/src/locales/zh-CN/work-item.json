@@ -163,7 +163,7 @@
       "label": "同级工作项"
     },
     "archive": {
-      "description": "只有已完成或已取消的\n工作项可以归档",
+      "description": "只有已完成或已取消的工作项可以归档",
       "label": "归档工作项",
       "confirm_message": "您确定要归档此工作项吗？所有已归档的工作项稍后可以恢复。",
       "success": {
@@ -422,5 +422,35 @@
       "label": "史诗标题",
       "required": "史诗标题为必填项"
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "侧边预览",
+      "modal": "弹窗",
+      "full_screen": "全屏"
+    },
+    "public_board_not_found": "公开看板不存在。请检查 URL。",
+    "no_work_items_found": "未找到工作项",
+    "bot_name": "{name} 机器人",
+    "commented_time": "评论于 {time}",
+    "and_more": "还有 {count} 个",
+    "no_upvotes_yet": "暂无赞成票",
+    "no_downvotes_yet": "暂无反对票",
+    "view_less": "收起",
+    "view_all": "查看全部",
+    "no_matches_found": "未找到匹配项",
+    "no_date": "无日期",
+    "no_cycle": "无周期",
+    "no_modules": "无模块",
+    "modules_count": "{count} 个模块",
+    "no_assignees": "无负责人",
+    "labels_count": "{count} 个标签",
+    "no_labels": "无标签",
+    "sign_in_to_add_comment": "登录以添加评论",
+    "add_comment": "添加评论",
+    "link_copied": "链接已复制！",
+    "work_item_link_copied": "工作项链接已复制到剪贴板。",
+    "comment_post_error": "无法发表评论。请再试一次。",
+    "user": "用户"
   }
 }

@@ -111,7 +111,7 @@
         },
         "secret_key": {
           "title": "Chiave segreta",
-          "message": "Genera un token per accedere al payload del webhook"
+          "message": "Genera un token per firmare il payload del webhook"
         },
         "options": {
           "all": "Inviami tutto",

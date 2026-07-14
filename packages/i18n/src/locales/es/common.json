@@ -486,7 +486,7 @@
     "project_timezone": "Zona horaria del proyecto",
     "created_on": "Creado el",
     "updated_on": "Actualizado el",
-    "completed_on": "Completed on",
+    "completed_on": "Completado el",
     "update_project": "Actualizar proyecto",
     "identifier_already_exists": "El identificador ya existe",
     "add_more": "Agregar más",
@@ -693,7 +693,7 @@
     "deleting": "Eliminando",
     "pending": "Pendiente",
     "invite": "Invitar",
-    "view": "Ver",
+    "view": "Vista",
     "deactivated_user": "Usuario desactivado",
     "apply": "Aplicar",
     "applying": "Aplicando",
@@ -713,11 +713,11 @@
     "details": "Detalles",
     "project_structure": "Estructura del proyecto",
     "custom_properties": "Propiedades personalizadas",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Tu perfil",
+    "developer": "Desarrollador",
+    "work_structure": "Estructura de trabajo",
+    "execution": "Ejecución",
+    "administration": "Administración"
   },
   "chart": {
     "x_axis": "Eje X",
@@ -867,5 +867,20 @@
       "description": "Exporta elementos de trabajo a un archivo JSON.",
       "short_description": "Exportar como json"
     }
+  },
+  "space_public": {
+    "error_title": "¡Vaya! Esto no se ve bien.",
+    "error_description_prefix": "Plane se bloqueó. No te preocupes, nuestros ingenieros ya fueron notificados. Si tienes más detalles, escribe a",
+    "error_description_middle": "o en nuestro",
+    "forum": "Foro",
+    "refresh": "Actualizar",
+    "not_found_title": "Eso no funcionó",
+    "not_found_hint": "Comprueba la URL en la barra de direcciones del navegador e inténtalo de nuevo.",
+    "instance_failure_image_alt": "No se pudieron obtener los detalles de la instancia",
+    "instance_failure_title": "No se pudieron obtener los detalles de la instancia.",
+    "instance_failure_description": "No pudimos cargar los detalles de tu instancia.",
+    "instance_failure_hint": "Comprueba tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "powered_by": "Con tecnología de"
   }
 }

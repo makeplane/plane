@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Belum ada proyek",
+    "description": "Proyek adalah dasar kerja berbasis tujuan. Proyek membantu Anda mengelola tim, tugas, dan semua hal yang diperlukan untuk menyelesaikan pekerjaan.",
+    "learn_more": "Pelajari lebih lanjut tentang proyek",
+    "start_first_project": "Mulai proyek pertama Anda"
   }
 }

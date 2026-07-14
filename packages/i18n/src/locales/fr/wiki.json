@@ -43,7 +43,7 @@
     },
     "add_existing_page_modal": {
       "search_placeholder": "Rechercher des pages",
-      "success_message": "{count} pages ont été ajoutées à la collection.",
+      "success_message": "{count} {count, plural, one {page} other {pages}} ajoutée{count, plural, one {} other{s}} à la collection.",
       "error_message": "Les pages n'ont pas pu être déplacées. Veuillez réessayer.",
       "no_pages_found": "Aucune page ne correspond à votre recherche",
       "no_pages_available": "Aucune page disponible à déplacer",

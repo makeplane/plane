@@ -60,7 +60,7 @@
     "label": "Příjem",
     "page_label": "{workspace} - Příjem",
     "modal": {
-      "title": "Vytvořit přijatou pracovní položku"
+      "title": "Vytvořit pracovní položku z Intake"
     },
     "tabs": {
       "open": "Otevřené",
@@ -82,6 +82,58 @@
       "detail": {
         "title": "Vyberte pracovní položku pro zobrazení podrobností."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Nalezeno {count} duplicitních pracovních položek",
+    "description_versions": {
+      "intake_form_user": "Uživatel sběrného formuláře"
+    },
+    "errors": {
+      "asset_upload_failed": "Nahrání podkladu se nezdařilo. Zkuste to znovu později.",
+      "asset_duplication_failed": "Duplikace podkladů se nezdařila. Zkuste to znovu později.",
+      "permission_denied": "Přístup odepřen",
+      "mark_duplicate_permission": "Pouze správci projektu mohou označit pracovní položku jako duplicitní",
+      "mark_duplicate_permission_plural": "Pouze správci projektu mohou označit pracovní položky jako duplicitní"
+    },
+    "filters": {
+      "created_date": "Datum vytvoření",
+      "updated_date": "Datum aktualizace",
+      "last_updated_date": "Datum poslední aktualizace",
+      "status": "Stav",
+      "work_item_status": "Stav pracovní položky",
+      "view_all": "Zobrazit vše",
+      "view_less": "Zobrazit méně",
+      "date_options": {
+        "today": "Dnes",
+        "yesterday": "Včera",
+        "last_7_days": "Posledních 7 dní",
+        "custom": "Vlastní",
+        "last_30_days": "Posledních 30 dní"
+      },
+      "date_operators": {
+        "after": "Po",
+        "before": "Před"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Předchozí pracovní položka",
+      "next_work_item": "Další pracovní položka"
+    },
+    "properties": {
+      "duplicate_of": "Duplikát"
+    },
+    "select_duplicate": {
+      "select_work_item": "Vyberte pracovní položku"
+    },
+    "sidebar": {
+      "label_count": "{count} štítků"
+    },
+    "toasts": {
+      "editor_processing": "Editor stále zpracovává změny. Před pokračováním prosím počkejte.",
+      "create_success": "Pracovní položka byla úspěšně vytvořena.",
+      "delete_failed": "Smazání pracovní položky se nezdařilo",
+      "update_failed": "Aktualizace pracovní položky se nezdařila"
     }
   }
 }

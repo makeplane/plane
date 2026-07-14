@@ -43,7 +43,7 @@
     },
     "add_existing_page_modal": {
       "search_placeholder": "Pesquisar páginas",
-      "success_message": "{count} páginas adicionadas à coleção.",
+      "success_message": "{count} {count, plural, one {página adicionada} other {páginas adicionadas}} à coleção.",
       "error_message": "Não foi possível mover as páginas. Tente novamente.",
       "no_pages_found": "Nenhuma página encontrada para a sua busca",
       "no_pages_available": "Nenhuma página disponível para mover",

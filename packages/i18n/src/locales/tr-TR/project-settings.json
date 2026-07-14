@@ -121,11 +121,11 @@
         },
         "switch": {
           "success": {
-            "title": "Estimeyt sistemi oluşturuldu",
+            "title": "Tahmin sistemi oluşturuldu",
             "message": "Başarıyla oluşturuldu ve aktif edildi"
           },
           "error": {
-            "title": "Erır",
+            "title": "Hata",
             "message": "Bir şeyler yanlış gitti"
           }
         }

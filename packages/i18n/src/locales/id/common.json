@@ -420,7 +420,7 @@
     "no_items_in_this_group": "Tidak ada item dalam grup ini",
     "drop_here_to_move": "Letakkan di sini untuk memindahkan",
     "states": "Negara-negara",
-    "state": "Negara",
+    "state": "Status",
     "state_groups": "Kelompok negara",
     "state_group": "Kelompok negara",
     "priorities": "Prioritas",
@@ -437,7 +437,7 @@
     "users": "Pengguna",
     "guests": "Tamu",
     "assignees": "Penugas",
-    "assignee": "Penugas",
+    "assignee": "Yang ditugaskan",
     "created_by": "Dibuat oleh",
     "none": "Tidak ada",
     "link": "Tautan",
@@ -486,7 +486,7 @@
     "project_timezone": "Zona waktu proyek",
     "created_on": "Dibuat pada",
     "updated_on": "Diperbarui pada",
-    "completed_on": "Completed on",
+    "completed_on": "Diselesaikan pada",
     "update_project": "Perbarui proyek",
     "identifier_already_exists": "Pengidentifikasi sudah ada",
     "add_more": "Tambah lebih banyak",
@@ -540,7 +540,7 @@
     "no_links_added_yet": "Belum ada tautan yang ditambahkan",
     "add_link": "Tambah tautan",
     "links": "Tautan",
-    "go_to_workspace": "Pergi ke ruang kerja",
+    "go_to_workspace": "Buka ruang kerja",
     "progress": "Kemajuan",
     "optional": "Opsional",
     "join": "Bergabung",
@@ -589,7 +589,7 @@
     "completed": "Selesai",
     "in_progress": "Sedang berlangsung",
     "planned": "Direncanakan",
-    "paused": "Dijedaikan",
+    "paused": "Dijeda",
     "search": {
       "label": "Pencarian",
       "placeholder": "Ketik untuk mencari",
@@ -713,11 +713,11 @@
     "details": "Detail",
     "project_structure": "Struktur proyek",
     "custom_properties": "Properti kustom",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Profil Anda",
+    "developer": "Pengembang",
+    "work_structure": "Struktur pekerjaan",
+    "execution": "Pelaksanaan",
+    "administration": "Administrasi"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -812,7 +812,7 @@
     "all_issues": "Semua item kerja",
     "assigned": "Ditugaskan",
     "created": "Dibuat",
-    "subscribed": "Disubscribe"
+    "subscribed": "Berlangganan"
   },
   "description_versions": {
     "last_edited_by": "Terakhir disunting oleh",
@@ -832,7 +832,7 @@
   "pin": "Sematkan",
   "unpin": "Lepas sematan",
   "workspace_dashboards": "Dasbor",
-  "pi_chat": "Obrolan AI",
+  "pi_chat": "Plane AI",
   "in_app": "Dalam Aplikasi",
   "forms": "Formulir",
   "milestones": "Tonggak",
@@ -867,5 +867,20 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane mengalami crash. Teknisi kami telah diberi tahu. Jika Anda memiliki detail tambahan, silakan tulis ke",
+    "error_description_middle": "atau di",
+    "not_found_hint": "Periksa URL di bilah alamat browser lalu coba lagi.",
+    "instance_failure_image_alt": "Tidak dapat mengambil detail instans",
+    "instance_failure_title": "Tidak dapat mengambil detail instans.",
+    "instance_failure_description": "Kami tidak dapat memuat detail instans Anda.",
+    "instance_failure_hint": "Periksa koneksi Anda lalu coba lagi.",
+    "powered_by": "Didukung oleh",
+    "error_title": "Ups! Ini tidak terlihat baik.",
+    "refresh": "Muat ulang",
+    "forum": "Forum",
+    "not_found_title": "Itu tidak berhasil",
+    "retry": "Coba lagi"
   }
 }

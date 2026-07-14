@@ -280,7 +280,7 @@
     "base_url_title": "Базовая URL",
     "base_url_description": "Базовая URL вашей организации GitHub Enterprise.",
     "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
-    "base_url_error": "Базовая URL является обязательной",
+    "base_url_error": "Базовый URL обязателен",
     "invalid_base_url_error": "Неверная базовая URL",
     "client_id_title": "ID клиента",
     "client_id_description": "ID клиента приложения, которое вы создали в вашей организации GitHub Enterprise.",

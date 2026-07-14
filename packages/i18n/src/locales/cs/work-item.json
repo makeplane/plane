@@ -163,7 +163,7 @@
       "label": "Související pracovní položky"
     },
     "archive": {
-      "description": "Lze archivovat pouze dokončené nebo zrušené\npracovní položky",
+      "description": "Lze archivovat pouze dokončené nebo zrušené pracovní položky",
       "label": "Archivovat pracovní položku",
       "confirm_message": "Opravdu chcete archivovat tuto pracovní položku? Všechny archivované položky lze později obnovit.",
       "success": {
@@ -422,5 +422,35 @@
       "label": "Název epiku",
       "required": "Název epiku je povinný."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Boční náhled",
+      "modal": "Modální okno",
+      "full_screen": "Celá obrazovka"
+    },
+    "public_board_not_found": "Veřejná nástěnka neexistuje. Zkontrolujte URL.",
+    "no_work_items_found": "Nebyly nalezeny žádné pracovní položky",
+    "bot_name": "Bot {name}",
+    "commented_time": "komentováno {time}",
+    "and_more": "a dalších {count}",
+    "no_upvotes_yet": "Zatím žádné hlasy pro",
+    "no_downvotes_yet": "Zatím žádné hlasy proti",
+    "view_less": "Zobrazit méně",
+    "view_all": "Zobrazit vše",
+    "no_matches_found": "Nebyly nalezeny žádné shody",
+    "no_date": "Bez data",
+    "no_cycle": "Bez cyklu",
+    "no_modules": "Bez modulů",
+    "modules_count": "{count} modulů",
+    "no_assignees": "Bez přiřazených osob",
+    "labels_count": "{count} štítků",
+    "no_labels": "Žádné štítky",
+    "sign_in_to_add_comment": "Přihlaste se a přidejte komentář",
+    "add_comment": "Přidat komentář",
+    "link_copied": "Odkaz zkopírován!",
+    "work_item_link_copied": "Odkaz na pracovní položku byl zkopírován do schránky.",
+    "comment_post_error": "Komentář se nepodařilo odeslat. Zkuste to prosím znovu.",
+    "user": "Uživatel"
   }
 }

@@ -83,5 +83,57 @@
         "title": "Выберите рабочий элемент для просмотра деталей."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Найдено дубликатов рабочих элементов: {count}",
+    "description_versions": {
+      "intake_form_user": "Пользователь формы сбора"
+    },
+    "errors": {
+      "asset_upload_failed": "Не удалось загрузить вложение. Повторите попытку позже.",
+      "asset_duplication_failed": "Дублирование активов не удалось. Пожалуйста, повторите попытку позже.",
+      "permission_denied": "Доступ запрещен",
+      "mark_duplicate_permission": "Только администраторы проекта могут пометить рабочий элемент как дубликат",
+      "mark_duplicate_permission_plural": "Только администраторы проекта могут отмечать рабочие элементы как дубликаты"
+    },
+    "filters": {
+      "created_date": "Дата создания",
+      "updated_date": "Дата обновления",
+      "last_updated_date": "Дата последнего обновления",
+      "status": "Статус",
+      "work_item_status": "Статус рабочего элемента",
+      "view_all": "Посмотреть все",
+      "view_less": "Посмотреть меньше",
+      "date_options": {
+        "today": "Сегодня",
+        "yesterday": "Вчера",
+        "last_7_days": "Последние 7 дней",
+        "custom": "Свой срок",
+        "last_30_days": "Последние 30 дней"
+      },
+      "date_operators": {
+        "after": "После",
+        "before": "До"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Предыдущий рабочий элемент",
+      "next_work_item": "Следующий рабочий элемент"
+    },
+    "properties": {
+      "duplicate_of": "Дубликат элемента"
+    },
+    "select_duplicate": {
+      "select_work_item": "Выберите рабочий элемент"
+    },
+    "sidebar": {
+      "label_count": "{count} меток"
+    },
+    "toasts": {
+      "editor_processing": "Редактор все еще обрабатывает изменения. Пожалуйста, подождите, прежде чем продолжить.",
+      "create_success": "Рабочий элемент успешно создан.",
+      "delete_failed": "Удаление рабочего элемента не удалось",
+      "update_failed": "Обновление рабочего элемента не удалось"
+    }
   }
 }

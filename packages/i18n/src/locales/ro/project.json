@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Încă nu există proiecte",
+    "description": "Proiectele sunt baza muncii orientate spre obiective. Te ajută să gestionezi echipe, sarcini și tot ce ai nevoie pentru a duce lucrurile la bun sfârșit.",
+    "learn_more": "Află mai multe despre proiecte",
+    "start_first_project": "Începe primul proiect"
   }
 }

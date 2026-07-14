@@ -23,6 +23,12 @@
       "expand_sidebar": "Expandir barra lateral",
       "edition_badge": "Abrir modal de planos pagos"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Abrir menu do espaço de trabalho",
+      "close_workspace_menu": "Fechar menu do espaço de trabalho",
+      "open_extended_sidebar": "Abrir barra lateral estendida",
+      "close_extended_sidebar": "Fechar barra lateral estendida"
+    },
     "auth_forms": {
       "clear_email": "Limpar e-mail",
       "show_password": "Mostrar senha",

@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
@@ -21,10 +22,16 @@ type Props = {
 
 export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
+  const { t } = useTranslation();
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.includes(filter);
+
+  useEffect(() => {
+    searchInputRef.current?.focus();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -32,12 +39,12 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
         <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
           <SearchIcon className="text-placeholder" width={12} height={12} strokeWidth={2} />
           <input
+            ref={searchInputRef}
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

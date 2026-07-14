@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
       "content": "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden."
-    }
+    },
+    "page_title": "{workspaceName} - Alle Ansichten"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Einen Entwurf für ein Element erstellen",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Arbeitsbereich nicht gefunden",
+    "not_found_description": "Für diese URL wurde kein Arbeitsbereich gefunden. Er existiert möglicherweise nicht oder Sie haben keine Berechtigung, ihn anzusehen.",
+    "visit_profile": "Profil öffnen",
+    "not_authorized_title": "Nicht autorisiert!",
+    "not_authorized_description": "Sie sind kein Mitglied dieses Arbeitsbereichs. Wenden Sie sich an den Administrator des Arbeitsbereichs, um eine Einladung zu erhalten, oder prüfen Sie Ihre ausstehenden Einladungen.",
+    "check_pending_invites": "Ausstehende Einladungen prüfen"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Einladung nicht gefunden",
+    "invited_to_workspace": "Sie wurden zu {workspaceName} eingeladen",
+    "description": "In Ihrem Arbeitsbereich erstellen Sie Projekte, arbeiten gemeinsam an Ihren Arbeitselementen und organisieren verschiedene Arbeitsströme in Ihrem Plane-Konto.",
+    "accept": "Akzeptieren",
+    "ignore": "Ignorieren",
+    "already_member": "Sie sind bereits Mitglied von {workspaceName}",
+    "continue_to_home": "Weiter zur Startseite",
+    "inactive_title": "Dieser Einladungslink ist nicht mehr aktiv.",
+    "empty_project_link": "Oder beginnen Sie mit einem leeren Projekt",
+    "sign_in_to_continue": "Melden Sie sich an, um fortzufahren",
+    "star_on_github": "Geben Sie uns einen Stern auf GitHub",
+    "join_community": "Treten Sie unserer Community aktiver Ersteller bei"
+  },
+  "onboarding": {
+    "create_profile_title": "Erstellen Sie Ihr Profil.",
+    "create_profile_description": "So werden Sie in Plane angezeigt.",
+    "change_image": "Bild ändern",
+    "upload_image": "Bild hochladen",
+    "name": "Name",
+    "name_required": "Name ist erforderlich",
+    "name_within_50": "Der Name muss maximal 50 Zeichen lang sein.",
+    "enter_full_name": "Geben Sie Ihren vollständigen Namen ein",
+    "set_password": "Legen Sie ein Passwort fest",
+    "optional": "Optional",
+    "passwords_do_not_match": "Passwörter stimmen nicht überein",
+    "passwords_match": "Passwörter stimmen überein",
+    "continue": "Weiter",
+    "invite_team_title": "Laden Sie Ihre Teamkollegen ein",
+    "invite_team_description": "Die Arbeit in Plane gelingt am besten mit Ihrem Team. Laden Sie sie jetzt ein, Plane voll auszuschöpfen.",
+    "invalid_email": "Das sieht nicht nach einer E-Mail-Adresse aus.",
+    "success": "Erfolg!",
+    "invitations_sent": "Einladungen erfolgreich versendet.",
+    "error": "Fehler!",
+    "add_another": "Weitere hinzufügen",
+    "do_later": "Später erledigen",
+    "join_invites_title": "Nehmen Sie an Einladungen teil oder erstellen Sie einen Arbeitsbereich",
+    "unified_description": "Ihre gesamte Arbeit – einheitlich.",
+    "create_new_workspace": "Neuen Arbeitsbereich erstellen",
+    "no_invitations_found": "Keine Einladungen gefunden",
+    "you_are_invited": "Sie sind eingeladen!",
+    "accept_invites": "Nehmen Sie die Einladungen zur Zusammenarbeit mit Ihrem Team an.",
+    "continue_to_workspace": "Weiter zum Arbeitsbereich",
+    "or": "oder",
+    "create_own_workspace": "Erstellen Sie Ihren eigenen Arbeitsbereich",
+    "workspace_creation_disabled": "Sie haben offenbar keine Einladungen zu einem Arbeitsbereich und Ihr Instanzadministrator hat die Erstellung neuer Arbeitsbereiche eingeschränkt. Bitten Sie einen Inhaber oder Administrator eines Arbeitsbereichs, Sie zunächst zu einem Arbeitsbereich einzuladen, und kehren Sie dann zu diesem Bildschirm zurück, um beizutreten.",
+    "create_workspace_title": "Erstellen Sie Ihren Arbeitsbereich",
+    "enter_workspace_name": "Geben Sie den Namen des Arbeitsbereichs ein",
+    "join_existing_workspace": "Treten Sie einem vorhandenen Arbeitsbereich bei",
+    "profile_setup_completed": "Profileinrichtung abgeschlossen.",
+    "profile_setup_failed": "Die Profileinrichtung ist fehlgeschlagen.",
+    "usecase_title": "Wie planen Sie den Einsatz von Plane?",
+    "usecase_description": "Wählen Sie eine oder mehrere Optionen aus, damit wir Ihr Erlebnis personalisieren können.",
+    "select_one_or_more": "Wählen Sie eine oder mehrere aus",
+    "select_at_least_one": "Wählen Sie mindestens eine Option aus.",
+    "skip": "Überspringen"
   }
 }

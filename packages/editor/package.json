@@ -39,6 +39,7 @@
     "@hocuspocus/provider": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/i18n": "workspace:*",
     "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",

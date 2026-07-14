@@ -1,50 +1,50 @@
 {
   "issue": {
-    "label": "{count, plural, one {工作事項} other {工作事項}}",
-    "all": "所有工作事項",
-    "edit": "編輯工作事項",
+    "label": "{count, plural, one {工作項目} other {工作項目}}",
+    "all": "所有工作項目",
+    "edit": "編輯工作項目",
     "title": {
-      "label": "工作事項標題",
-      "required": "工作事項標題為必填。"
+      "label": "工作項目標題",
+      "required": "工作項目標題為必填。"
     },
     "add": {
-      "press_enter": "按 'Enter' 以新增另一個工作事項",
-      "label": "新增工作事項",
+      "press_enter": "按 'Enter' 以新增另一個工作項目",
+      "label": "新增工作項目",
       "cycle": {
-        "failed": "無法將工作事項新增到週期。請再試一次。",
-        "success": "{count, plural, one {工作事項} other {工作事項}} 已成功新增到週期。",
-        "loading": "正在將 {count, plural, one {工作事項} other {工作事項}} 新增到週期"
+        "failed": "無法將工作項目新增到週期。請再試一次。",
+        "success": "{count, plural, one {工作項目} other {工作項目}} 已成功新增到週期。",
+        "loading": "正在將 {count, plural, one {工作項目} other {工作項目}} 新增到週期"
       },
       "assignee": "新增指派對象",
       "start_date": "新增開始日期",
       "due_date": "新增截止日期",
-      "parent": "新增父工作事項",
-      "sub_issue": "新增子工作事項",
+      "parent": "新增父工作項目",
+      "sub_issue": "新增子工作項目",
       "dependency": "新增相依性",
       "relation": "新增關聯",
       "link": "新增連結",
-      "existing": "新增現有工作事項"
+      "existing": "新增現有工作項目"
     },
     "remove": {
-      "label": "移除工作事項",
+      "label": "移除工作項目",
       "cycle": {
-        "loading": "正在從週期移除工作事項",
-        "success": "已成功從週期移除工作事項。",
-        "failed": "無法從週期移除工作事項。請再試一次。"
+        "loading": "正在從週期移除工作項目",
+        "success": "已成功從週期移除工作項目。",
+        "failed": "無法從週期移除工作項目。請再試一次。"
       },
       "module": {
-        "loading": "正在從模組移除工作事項",
-        "success": "已成功從模組移除工作事項。",
-        "failed": "無法從模組移除工作事項。請再試一次。"
+        "loading": "正在從模組移除工作項目",
+        "success": "已成功從模組移除工作項目。",
+        "failed": "無法從模組移除工作項目。請再試一次。"
       },
       "parent": {
-        "label": "移除父工作事項"
+        "label": "移除父工作項目"
       }
     },
-    "new": "新工作事項",
-    "adding": "新增工作事項中",
+    "new": "新工作項目",
+    "adding": "新增工作項目中",
     "create": {
-      "success": "工作事項建立成功"
+      "success": "工作項目建立成功"
     },
     "priority": {
       "urgent": "緊急",
@@ -56,31 +56,31 @@
       "properties": {
         "label": "顯示屬性",
         "id": "ID",
-        "issue_type": "工作事項類型",
-        "sub_issue_count": "子工作事項數量",
+        "issue_type": "工作項目類型",
+        "sub_issue_count": "子工作項目數量",
         "attachment_count": "附件數量",
         "created_on": "建立於",
-        "sub_issue": "子工作事項",
-        "work_item_count": "工作事項數量"
+        "sub_issue": "子工作項目",
+        "work_item_count": "工作項目數量"
       },
       "extra": {
-        "show_sub_issues": "顯示子工作事項",
+        "show_sub_issues": "顯示子工作項目",
         "show_empty_groups": "顯示空群組"
       }
     },
     "layouts": {
-      "ordered_by_label": "此版面配置依據以下條件排序",
+      "ordered_by_label": "此版面設定依據以下條件排序",
       "list": "清單",
       "kanban": "看板",
       "calendar": "日曆",
       "spreadsheet": "試算表",
       "gantt": "甘特圖",
       "title": {
-        "list": "清單版面配置",
-        "kanban": "看板版面配置",
-        "calendar": "日曆版面配置",
-        "spreadsheet": "試算表版面配置",
-        "gantt": "甘特圖版面配置"
+        "list": "清單版面設定",
+        "kanban": "看板版面設定",
+        "calendar": "日曆版面設定",
+        "spreadsheet": "試算表版面設定",
+        "gantt": "甘特圖版面設定"
       }
     },
     "states": {
@@ -152,35 +152,35 @@
     },
     "empty_state": {
       "issue_detail": {
-        "title": "工作事項不存在",
-        "description": "您尋找的工作事項不存在、已封存或已刪除。",
+        "title": "工作項目不存在",
+        "description": "您尋找的工作項目不存在、已封存或已刪除。",
         "primary_button": {
-          "text": "檢視其他工作事項"
+          "text": "檢視其他工作項目"
         }
       }
     },
     "sibling": {
-      "label": "同層級工作事項"
+      "label": "同層級工作項目"
     },
     "archive": {
-      "description": "只有已完成或取消的\n工作事項可以封存",
-      "label": "封存工作事項",
-      "confirm_message": "您確定要封存工作事項嗎？所有已封存的工作事項稍後都可以還原。",
+      "description": "只有已完成或取消的工作項目可以封存",
+      "label": "封存工作項目",
+      "confirm_message": "您確定要封存工作項目嗎？所有已封存的工作項目稍後都可以還原。",
       "success": {
         "label": "封存成功",
         "message": "您的封存可以在專案封存中找到。"
       },
       "failed": {
-        "message": "無法封存工作事項。請再試一次。"
+        "message": "無法封存工作項目。請再試一次。"
       }
     },
     "restore": {
       "success": {
         "title": "還原成功",
-        "message": "您的工作事項可以在專案工作事項中找到。"
+        "message": "您的工作項目可以在專案工作項目中找到。"
       },
       "failed": {
-        "message": "無法還原工作事項。請再試一次。"
+        "message": "無法還原工作項目。請再試一次。"
       }
     },
     "relation": {
@@ -195,29 +195,29 @@
       "implements": "實現",
       "implemented_by": "實現者"
     },
-    "copy_link": "複製工作事項連結",
+    "copy_link": "複製工作項目連結",
     "delete": {
-      "label": "刪除工作事項",
-      "error": "刪除工作事項時發生錯誤"
+      "label": "刪除工作項目",
+      "error": "刪除工作項目時發生錯誤"
     },
     "subscription": {
       "actions": {
-        "subscribed": "已成功訂閱工作事項",
-        "unsubscribed": "已成功取消訂閱工作事項"
+        "subscribed": "已成功訂閱工作項目",
+        "unsubscribed": "已成功取消訂閱工作項目"
       }
     },
     "select": {
-      "error": "請至少選擇一個工作事項",
-      "empty": "未選擇工作事項",
-      "add_selected": "新增已選取的工作事項",
+      "error": "請至少選擇一個工作項目",
+      "empty": "未選擇工作項目",
+      "add_selected": "新增已選取的工作項目",
       "select_all": "全選",
       "deselect_all": "取消全選"
     },
-    "open_in_full_screen": "以全螢幕開啟工作事項",
+    "open_in_full_screen": "以全螢幕開啟工作項目",
     "duplicate": {
       "modal": {
         "title": "複製到另一個專案",
-        "description1": "此操作將建立此工作事項的副本。",
+        "description1": "此操作將建立此工作項目的副本。",
         "description2": "複製時所有屬性資料都將被移除。",
         "placeholder": "選擇專案"
       }
@@ -225,10 +225,10 @@
     "toast": {
       "duplicate": {
         "success": {
-          "message": "工作事項複製成功"
+          "message": "工作項目複製成功"
         },
         "error": {
-          "message": "工作事項複製失敗"
+          "message": "工作項目複製失敗"
         }
       }
     },
@@ -270,22 +270,22 @@
   },
   "sub_work_item": {
     "update": {
-      "success": "子工作事項更新成功",
-      "error": "更新子工作事項時發生錯誤"
+      "success": "子工作項目更新成功",
+      "error": "更新子工作項目時發生錯誤"
     },
     "remove": {
-      "success": "子工作事項移除成功",
-      "error": "移除子工作事項時發生錯誤"
+      "success": "子工作項目移除成功",
+      "error": "移除子工作項目時發生錯誤"
     },
     "empty_state": {
       "sub_list_filters": {
-        "title": "您沒有符合您應用過的過濾器的子工作事項。",
-        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "title": "您沒有符合您應用過的過濾器的子工作項目。",
+        "description": "要查看所有子工作項目，請清除所有應用過的過濾器。",
         "action": "清除過濾器"
       },
       "list_filters": {
-        "title": "您沒有符合您應用過的過濾器的工作事項。",
-        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "title": "您沒有符合您應用過的過濾器的工作項目。",
+        "description": "要查看所有工作項目，請清除所有應用過的過濾器。",
         "action": "清除過濾器"
       }
     }
@@ -293,10 +293,10 @@
   "issue_relation": {
     "empty_state": {
       "search": {
-        "title": "找不到符合的工作事項"
+        "title": "找不到符合的工作項目"
       },
       "no_issues": {
-        "title": "找不到工作事項"
+        "title": "找不到工作項目"
       }
     }
   },
@@ -304,7 +304,7 @@
     "empty_state": {
       "general": {
         "title": "尚無留言",
-        "description": "留言可用作工作事項的討論和後續追蹤空間"
+        "description": "留言可用作工作項目的討論和後續追蹤空間"
       }
     }
   },
@@ -422,5 +422,35 @@
       "label": "Epic 標題",
       "required": "Epic 標題為必填。"
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "側邊預覽",
+      "modal": "彈窗",
+      "full_screen": "全螢幕"
+    },
+    "public_board_not_found": "公開看板不存在。請檢查 URL。",
+    "no_work_items_found": "未找到工作項目",
+    "bot_name": "{name} 機器人",
+    "commented_time": "評論於 {time}",
+    "and_more": "還有 {count} 個",
+    "no_upvotes_yet": "暫無贊成票",
+    "no_downvotes_yet": "暫無反對票",
+    "view_less": "收起",
+    "view_all": "查看全部",
+    "no_matches_found": "未找到相符項目",
+    "no_date": "無日期",
+    "no_cycle": "無週期",
+    "no_modules": "無模組",
+    "modules_count": "{count} 個模組",
+    "no_assignees": "無負責人",
+    "labels_count": "{count} 個標籤",
+    "no_labels": "無標籤",
+    "sign_in_to_add_comment": "登入以新增評論",
+    "add_comment": "新增評論",
+    "link_copied": "連結已複製！",
+    "work_item_link_copied": "工作項目連結已複製到剪貼簿。",
+    "comment_post_error": "評論發布失敗。請再試一次。",
+    "user": "使用者"
   }
 }

@@ -7,6 +7,7 @@
 import type { MutableRefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import type {
   GroupByColumnTypes,
@@ -69,9 +70,33 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
   const cycle = useCycle();
   const modules = useModule();
   const state = useStates();
+  const { t } = useTranslation();
 
-  const groupByList = getGroupByColumns(groupBy as GroupByColumnTypes, cycle, modules, label, state, member);
-  const subGroupByList = getGroupByColumns(subGroupBy as GroupByColumnTypes, cycle, modules, label, state, member);
+  const localizedLabels = {
+    allWorkItems: `${t("common.all")} ${t("work_items")}`,
+    none: t("common.none"),
+  };
+
+  const groupByList = getGroupByColumns(
+    groupBy as GroupByColumnTypes,
+    cycle,
+    modules,
+    label,
+    state,
+    member,
+    false,
+    localizedLabels
+  );
+  const subGroupByList = getGroupByColumns(
+    subGroupBy as GroupByColumnTypes,
+    cycle,
+    modules,
+    label,
+    state,
+    member,
+    false,
+    localizedLabels
+  );
 
   if (!groupByList || !subGroupByList) return null;
 

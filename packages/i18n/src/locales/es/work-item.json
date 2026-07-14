@@ -163,7 +163,7 @@
       "label": "Elementos de trabajo hermanos"
     },
     "archive": {
-      "description": "Solo los elementos de trabajo completados\no cancelados pueden ser archivados",
+      "description": "Solo los elementos de trabajo completados o cancelados pueden ser archivados",
       "label": "Archivar elemento de trabajo",
       "confirm_message": "¿Estás seguro de que quieres archivar el elemento de trabajo? Todos tus elementos archivados pueden ser restaurados más tarde.",
       "success": {
@@ -409,7 +409,7 @@
   },
   "epic": {
     "new": "Nuevo Epic",
-    "label": "{count, plural, one {Epic} other {Epics}}",
+    "label": "{count, plural, one {Épica} other {Épicas}}",
     "adding": "Agregando epic",
     "create": {
       "success": "Epic creado correctamente"
@@ -422,5 +422,35 @@
       "label": "Título del Epic",
       "required": "El título del epic es obligatorio."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Vista lateral",
+      "modal": "Modal",
+      "full_screen": "Pantalla completa"
+    },
+    "public_board_not_found": "El tablero público no existe. Comprueba la URL.",
+    "no_work_items_found": "No se encontraron elementos de trabajo",
+    "bot_name": "Bot de {name}",
+    "commented_time": "comentó {time}",
+    "and_more": "y {count} más",
+    "no_upvotes_yet": "Aún no hay votos positivos",
+    "no_downvotes_yet": "Aún no hay votos negativos",
+    "view_less": "Ver menos",
+    "view_all": "Ver todo",
+    "no_matches_found": "No se encontraron coincidencias",
+    "no_date": "Sin fecha",
+    "no_cycle": "Sin ciclo",
+    "no_modules": "Sin módulos",
+    "modules_count": "{count} módulos",
+    "no_assignees": "Sin responsables",
+    "labels_count": "{count} etiquetas",
+    "no_labels": "Sin etiquetas",
+    "sign_in_to_add_comment": "Inicia sesión para añadir un comentario",
+    "add_comment": "Añadir comentario",
+    "link_copied": "¡Enlace copiado!",
+    "work_item_link_copied": "Enlace del elemento de trabajo copiado al portapapeles.",
+    "comment_post_error": "No se pudo publicar el comentario. Inténtalo de nuevo.",
+    "user": "Usuario"
   }
 }

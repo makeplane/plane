@@ -31,10 +31,10 @@
         "title": "Beobachten Sie hochprioritäre Arbeitsaufgaben, die\n im Zyklus auf einen Blick bearbeitet werden."
       },
       "assignee": {
-        "title": "Fügen Sie Arbeitsaufgaben Bearbeitern hinzu, um eine\n Aufschlüsselung der Arbeit nach Bearbeitern zu sehen."
+        "title": "Fügen Sie Verantwortliche zu Work Items hinzu, um die Aufschlüsselung nach Verantwortlichen zu sehen."
       },
       "label": {
-        "title": "Fügen Sie Arbeitsaufgaben Labels hinzu, um die\n Aufschlüsselung der Arbeit nach Labels zu sehen."
+        "title": "Fügen Sie Labels zu Work Items hinzu, um die Aufschlüsselung nach Labels zu erhalten."
       }
     }
   }

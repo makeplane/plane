@@ -8,10 +8,10 @@
         "title": "Tambahkan item kerja ke siklus untuk melihat grafik burndown."
       },
       "priority_issue": {
-        "title": "Amati item kerja prioritas yang ditangani dalam siklus pada pandangan pertama."
+        "title": "Lihat langsung item kerja prioritas tinggi yang sedang dikerjakan dalam siklus."
       },
       "assignee": {
-        "title": "Tambahkan penugasan ke item kerja untuk melihat pembagian kerja berdasarkan penugasan."
+        "title": "Tambahkan penanggung jawab ke item kerja untuk melihat pembagian kerja berdasarkan penanggung jawab."
       },
       "label": {
         "title": "Tambahkan label ke item kerja untuk melihat pembagian kerja berdasarkan label."

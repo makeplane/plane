@@ -2,7 +2,7 @@
   "aria_labels": {
     "projects_sidebar": {
       "workspace_logo": "Logo del espacio de trabajo",
-      "open_workspace_switcher": "Abrir cambiador de espacio de trabajo",
+      "open_workspace_switcher": "Abrir selector de espacios de trabajo",
       "open_user_menu": "Abrir menú de usuario",
       "open_command_palette": "Abrir paleta de comandos",
       "open_extended_sidebar": "Abrir barra lateral extendida",
@@ -22,6 +22,12 @@
       "collapse_sidebar": "Colapsar barra lateral",
       "expand_sidebar": "Expandir barra lateral",
       "edition_badge": "Abrir modal de planes de pago"
+    },
+    "app_sidebar": {
+      "open_workspace_menu": "Abrir menú del espacio de trabajo",
+      "close_workspace_menu": "Cerrar menú del espacio de trabajo",
+      "open_extended_sidebar": "Abrir barra lateral extendida",
+      "close_extended_sidebar": "Cerrar barra lateral extendida"
     },
     "auth_forms": {
       "clear_email": "Limpiar correo electrónico",

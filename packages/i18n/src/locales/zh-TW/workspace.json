@@ -54,7 +54,7 @@
     "empty_state": {
       "general": {
         "title": "您的專案、活動和指標概覽",
-        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
+        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作項目，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
         "primary_button": {
           "text": "建立您的第一個專案",
           "comic": {
@@ -70,26 +70,26 @@
     "page_label": "{workspace} - 分析",
     "open_tasks": "開啟任務總數",
     "error": "取得資料時發生錯誤。",
-    "work_items_closed_in": "已完成的工作事項數量在",
+    "work_items_closed_in": "已完成的工作項目數量在",
     "selected_projects": "已選取的專案",
     "total_members": "成員總數",
     "total_cycles": "週期總數",
     "total_modules": "模組總數",
     "pending_work_items": {
-      "title": "待處理工作事項",
-      "empty_state": "在此顯示同事待處理工作事項的分析。"
+      "title": "待處理工作項目",
+      "empty_state": "在此顯示同事待處理工作項目的分析。"
     },
     "work_items_closed_in_a_year": {
-      "title": "年度完成工作事項",
-      "empty_state": "完成工作事項以圖表形式檢視分析。"
+      "title": "年度完成工作項目",
+      "empty_state": "完成工作項目以圖表形式檢視分析。"
     },
     "most_work_items_created": {
-      "title": "最多工作事項建立者",
-      "empty_state": "在此顯示同事及其建立的工作事項數量。"
+      "title": "最多工作項目建立者",
+      "empty_state": "在此顯示同事及其建立的工作項目數量。"
     },
     "most_work_items_closed": {
-      "title": "最多工作事項完成者",
-      "empty_state": "在此顯示同事及其完成的工作事項數量。"
+      "title": "最多工作項目完成者",
+      "empty_state": "在此顯示同事及其完成的工作項目數量。"
     },
     "tabs": {
       "scope_and_demand": "範圍與需求",
@@ -122,7 +122,7 @@
       },
       "general": {
         "title": "追蹤進度、工作量和分配。發現趨勢，消除障礙，加速工作進展",
-        "description": "查看範圍與需求、估算和範圍蔓延。獲取團隊成員和團隊的績效，確保您的專案按時運行。",
+        "description": "查看範圍與需求、估算和範圍蔓延。取得團隊成員和團隊的績效，確保您的專案按時運行。",
         "primary_button": {
           "text": "開始您的第一個專案",
           "comic": {
@@ -148,7 +148,7 @@
     "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
     "projects_by_status": "按狀態分類的專案",
     "active_users": "活躍使用者",
-    "intake_trends": "入學趨勢"
+    "intake_trends": "需求收集趨勢"
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -170,7 +170,7 @@
       "permission": "您沒有執行此操作的權限。",
       "cycle_delete": "無法刪除週期",
       "module_delete": "無法刪除模組",
-      "issue_delete": "無法刪除工作事項"
+      "issue_delete": "無法刪除工作項目"
     },
     "state": {
       "backlog": "待辦事項",
@@ -207,7 +207,7 @@
       },
       "no_projects": {
         "title": "沒有專案",
-        "description": "若要建立工作事項或管理您的工作，您需要建立專案或成為專案的一部分。",
+        "description": "若要建立工作項目或管理您的工作，您需要建立專案或成為專案的一部分。",
         "primary_button": {
           "text": "開始您的第一個專案",
           "comic": {
@@ -229,45 +229,46 @@
     "add_view": "新增檢視",
     "empty_state": {
       "all-issues": {
-        "title": "專案中沒有工作事項",
-        "description": "第一個專案完成！現在，將您的工作分割成可追蹤的工作事項。讓我們開始吧！",
+        "title": "專案中沒有工作項目",
+        "description": "第一個專案完成！現在，將您的工作分割成可追蹤的工作項目。讓我們開始吧！",
         "primary_button": {
-          "text": "建立新工作事項"
+          "text": "建立新工作項目"
         }
       },
       "assigned": {
-        "title": "尚無工作事項",
-        "description": "從這裡可以追蹤指派給您的工作事項。",
+        "title": "尚無工作項目",
+        "description": "從這裡可以追蹤指派給您的工作項目。",
         "primary_button": {
-          "text": "建立新工作事項"
+          "text": "建立新工作項目"
         }
       },
       "created": {
-        "title": "尚無工作事項",
-        "description": "您建立的所有工作事項都會出現在這裡，直接在這裡追蹤它們。",
+        "title": "尚無工作項目",
+        "description": "您建立的所有工作項目都會出現在這裡，直接在這裡追蹤它們。",
         "primary_button": {
-          "text": "建立新工作事項"
+          "text": "建立新工作項目"
         }
       },
       "subscribed": {
-        "title": "尚無工作事項",
-        "description": "訂閱您感興趣的工作事項，在這裡追蹤它們。"
+        "title": "尚無工作項目",
+        "description": "訂閱您感興趣的工作項目，在這裡追蹤它們。"
       },
       "custom-view": {
-        "title": "尚無工作事項",
-        "description": "符合篩選條件的工作事項，在這裡追蹤它們。"
+        "title": "尚無工作項目",
+        "description": "符合篩選條件的工作項目，在這裡追蹤它們。"
       }
     },
     "delete_view": {
       "title": "您確定要刪除此視圖嗎？",
       "content": "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。"
-    }
+    },
+    "page_title": "{workspaceName} - 全部檢視"
   },
   "workspace_draft_issues": {
-    "draft_an_issue": "建立工作事項草稿",
+    "draft_an_issue": "建立工作項目草稿",
     "empty_state": {
-      "title": "寫到一半的工作事項，以及即將推出的留言會出現在這裡。",
-      "description": "若要試用此功能，請開始新增工作事項並中途離開，或在下方建立您的第一個草稿。😉",
+      "title": "寫到一半的工作項目，以及即將推出的留言會出現在這裡。",
+      "description": "若要試用此功能，請開始新增工作項目並中途離開，或在下方建立您的第一個草稿。😉",
       "primary_button": {
         "text": "建立您的第一個草稿"
       }
@@ -279,7 +280,7 @@
     "toasts": {
       "created": {
         "success": "草稿已建立",
-        "error": "無法建立工作事項。請再試一次。"
+        "error": "無法建立工作項目。請再試一次。"
       },
       "deleted": {
         "success": "草稿已刪除"
@@ -292,26 +293,26 @@
         "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
         "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "private": {
         "title": "還沒有私人頁面",
         "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點擊一下即可。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "public": {
-        "title": "還沒有工作空間頁面",
-        "description": "在這裡查看與工作空間中的每個人共享的頁面。",
+        "title": "還沒有工作區頁面",
+        "description": "在這裡查看與工作區中的每個人共享的頁面。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "archived": {
         "title": "還沒有歸檔的頁面",
-        "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
+        "description": "歸檔不在您雷達上的頁面。需要時在這裡存取它們。"
       },
       "shared": {
         "title": "尚無共享頁面",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "找不到工作區",
+    "not_found_description": "此 URL 對應的工作區不存在，或你沒有權限檢視。",
+    "visit_profile": "前往個人資料",
+    "not_authorized_title": "未授權！",
+    "not_authorized_description": "你不是此工作區的成員。請聯絡工作區管理員邀請你加入，或檢查待處理的邀請。",
+    "check_pending_invites": "查看待處理邀請"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "未找到邀請",
+    "invited_to_workspace": "您已被邀請加入 {workspaceName}",
+    "description": "您可以在工作區中建立專案、協作處理工作項目，並在 Plane 帳戶中組織不同的工作流程。",
+    "accept": "接受",
+    "ignore": "忽略",
+    "already_member": "您已經是 {workspaceName} 的成員",
+    "continue_to_home": "前往首頁",
+    "inactive_title": "此邀請連結不再有效。",
+    "empty_project_link": "或從空白專案開始",
+    "sign_in_to_continue": "登入以繼續",
+    "star_on_github": "在 GitHub 上為我們加上星號",
+    "join_community": "加入我們的活躍創作者社群"
+  },
+  "onboarding": {
+    "create_profile_title": "建立您的個人資料。",
+    "create_profile_description": "這就是您在 Plane 中的顯示方式。",
+    "change_image": "更改圖像",
+    "upload_image": "上傳圖片",
+    "name": "姓名",
+    "name_required": "姓名為必填項",
+    "name_within_50": "名稱必須在 50 個字元以內。",
+    "enter_full_name": "輸入您的全名",
+    "set_password": "設定密碼",
+    "optional": "選填",
+    "passwords_do_not_match": "密碼不相符",
+    "passwords_match": "密碼相符",
+    "continue": "繼續",
+    "invite_team_title": "邀請你的隊友",
+    "invite_team_description": "在 Plane 的工作最適合您的團隊。現在邀請他們充分發揮 Plane 的潛力。",
+    "invalid_email": "這看起來不像電子郵件地址。",
+    "success": "成功！",
+    "invitations_sent": "邀請已成功發送。",
+    "error": "錯誤！",
+    "add_another": "新增另一個",
+    "do_later": "我稍後會做",
+    "join_invites_title": "接受邀請或建立工作區",
+    "unified_description": "您的所有工作 — 統一。",
+    "create_new_workspace": "建立新工作區",
+    "no_invitations_found": "未找到邀請",
+    "you_are_invited": "誠摯邀請您！",
+    "accept_invites": "接受邀請與您的團隊合作。",
+    "continue_to_workspace": "繼續前往工作區",
+    "or": "或者",
+    "create_own_workspace": "建立您自己的工作區",
+    "workspace_creation_disabled": "您似乎沒有任何工作區邀請，且您的執行個體管理員限制了新工作區的建立。請先請工作區擁有者或管理員邀請您加入工作區，然後再回到此畫面加入。",
+    "create_workspace_title": "建立您的工作區",
+    "enter_workspace_name": "輸入工作區名稱",
+    "join_existing_workspace": "加入現有工作區",
+    "profile_setup_completed": "個人資料設定完成。",
+    "profile_setup_failed": "個人資料設定失敗。",
+    "usecase_title": "您打算如何使用 Plane？",
+    "usecase_description": "選擇一個或多個選項，以便我們為您提供個人化體驗。",
+    "select_one_or_more": "選擇一個或多個",
+    "select_at_least_one": "至少選擇一個選項。",
+    "skip": "跳過"
   }
 }

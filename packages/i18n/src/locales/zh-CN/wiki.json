@@ -2,7 +2,7 @@
   "wiki_collections": {
     "predefined": {
       "general": "常规",
-      "private": "私密",
+      "private": "私有",
       "shared": "共享",
       "archived": "已归档"
     },

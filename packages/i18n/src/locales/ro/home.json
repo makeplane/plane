@@ -48,8 +48,8 @@
       "filters": {
         "all": "Toate",
         "projects": "Proiecte",
-        "pages": "Documentație",
-        "issues": "Activități"
+        "pages": "Pagini",
+        "issues": "Elemente de lucru"
       }
     },
     "new_at_plane": {

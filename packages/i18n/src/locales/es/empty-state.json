@@ -92,7 +92,7 @@
       "cta_primary": "Crear solicitud de Entrada"
     },
     "intake_main": {
-      "title": "Selecciona un elemento de trabajo de Entrada para ver sus detalles"
+      "title": "Selecciona un elemento de trabajo de Intake para ver sus detalles"
     },
     "epics": {
       "title": "Convierte proyectos complejos en épicas estructuradas.",
@@ -266,5 +266,11 @@
         "description": "Selecciona los estados por los que avanza el elemento de trabajo."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Página no encontrada",
+    "title": "¡Ups! Algo salió mal.",
+    "description": "Lo sentimos, no se pudo encontrar la página que buscas. Puede que se haya eliminado, cambiado de nombre o no esté disponible temporalmente.",
+    "go_to_home": "Ir al inicio"
   }
 }

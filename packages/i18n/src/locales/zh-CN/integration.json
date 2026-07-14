@@ -176,10 +176,10 @@
   },
   "sentry_integration": {
     "name": "Sentry",
-    "description": "将您的Sentry工作空间连接到Plane。",
-    "connected_sentry_workspaces": "已连接的Sentry工作空间",
+    "description": "将您的Sentry工作区连接到Plane。",
+    "connected_sentry_workspaces": "已连接的Sentry工作区",
     "connected_on": "连接于{date}",
-    "disconnect_workspace": "断开{name}工作空间",
+    "disconnect_workspace": "断开{name}工作区",
     "state_mapping": {
       "title": "状态映射",
       "description": "将Sentry事件状态映射到您的项目状态。配置当Sentry事件已解决或未解决时使用哪些状态。",

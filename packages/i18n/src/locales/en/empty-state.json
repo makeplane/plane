@@ -266,5 +266,11 @@
         "description": "Select the states through which the work item progresses."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Page not found",
+    "title": "Oops! Something went wrong.",
+    "description": "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+    "go_to_home": "Go to Home"
   }
 }

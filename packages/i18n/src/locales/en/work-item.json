@@ -422,5 +422,35 @@
       "label": "Epic Title",
       "required": "Epic title is required."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Side Peek",
+      "modal": "Modal",
+      "full_screen": "Full Screen"
+    },
+    "public_board_not_found": "The public board does not exist. Please check the URL.",
+    "no_work_items_found": "No work items found",
+    "bot_name": "{name} Bot",
+    "commented_time": "commented {time}",
+    "and_more": "and {count} more",
+    "no_upvotes_yet": "No upvotes yet",
+    "no_downvotes_yet": "No downvotes yet",
+    "view_less": "View less",
+    "view_all": "View all",
+    "no_matches_found": "No matches found",
+    "no_date": "No Date",
+    "no_cycle": "No Cycle",
+    "no_modules": "No Modules",
+    "modules_count": "{count} Modules",
+    "no_assignees": "No Assignees",
+    "labels_count": "{count} Labels",
+    "no_labels": "No labels",
+    "sign_in_to_add_comment": "Sign in to add a comment",
+    "add_comment": "Add comment",
+    "link_copied": "Link copied!",
+    "work_item_link_copied": "Work item link copied to clipboard.",
+    "comment_post_error": "Failed to post comment. Please try again.",
+    "user": "User"
   }
 }

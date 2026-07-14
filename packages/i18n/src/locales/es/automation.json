@@ -85,7 +85,7 @@
           },
           "validation": {
             "property_name_required": "El nombre de la propiedad es requerido",
-            "change_type_required": "El tipo de cambio es requerido",
+            "change_type_required": "El tipo de modificación es obligatorio",
             "property_value_required": "El valor de la propiedad es requerido"
           }
         }

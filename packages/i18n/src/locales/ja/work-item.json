@@ -163,7 +163,7 @@
       "label": "兄弟作業項目"
     },
     "archive": {
-      "description": "完了またはキャンセルされた\n作業項目のみアーカイブできます",
+      "description": "完了またはキャンセルされた 作業項目のみアーカイブできます",
       "label": "作業項目をアーカイブ",
       "confirm_message": "作業項目をアーカイブしてもよろしいですか？アーカイブされた作業項目は後で復元できます。",
       "success": {
@@ -422,5 +422,35 @@
       "label": "エピックのタイトル",
       "required": "エピックのタイトルは必須です。"
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "サイドピーク",
+      "modal": "モーダル",
+      "full_screen": "全画面"
+    },
+    "public_board_not_found": "公開ボードが存在しません。URL を確認してください。",
+    "no_work_items_found": "作業項目が見つかりません",
+    "bot_name": "{name} ボット",
+    "commented_time": "{time}にコメント",
+    "and_more": "他 {count} 件",
+    "no_upvotes_yet": "賛成票はまだありません",
+    "no_downvotes_yet": "反対票はまだありません",
+    "view_less": "少なく表示",
+    "view_all": "すべて表示",
+    "no_matches_found": "一致するものが見つかりません",
+    "no_date": "日付なし",
+    "no_cycle": "サイクルなし",
+    "no_modules": "モジュールなし",
+    "modules_count": "{count} 個のモジュール",
+    "no_assignees": "担当者なし",
+    "labels_count": "{count} 個のラベル",
+    "no_labels": "ラベルなし",
+    "sign_in_to_add_comment": "コメントを追加するにはサインインしてください",
+    "add_comment": "コメントを追加",
+    "link_copied": "リンクをコピーしました。",
+    "work_item_link_copied": "作業項目のリンクをクリップボードにコピーしました。",
+    "comment_post_error": "コメントを投稿できませんでした。もう一度お試しください。",
+    "user": "ユーザー"
   }
 }

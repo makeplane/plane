@@ -6,6 +6,7 @@
 
 // Components
 export { TranslationProvider } from "./provider";
+export { Trans } from "react-i18next";
 
 // Hooks
 export { useTranslation } from "./hooks/use-translation";

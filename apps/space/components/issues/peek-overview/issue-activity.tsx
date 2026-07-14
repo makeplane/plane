@@ -9,6 +9,7 @@ import { Link } from "react-router";
 import { usePathname } from "next/navigation";
 import { Lock } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // components
 import { AddComment } from "@/components/issues/peek-overview/comment/add-comment";
@@ -28,6 +29,7 @@ type Props = {
 
 export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActivity(props: Props) {
   const { anchor } = props;
+  const { t } = useTranslation();
   // router
   const pathname = usePathname();
   // store hooks
@@ -40,7 +42,7 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
 
   return (
     <div className="pb-10">
-      <h4 className="font-medium">Comments</h4>
+      <h4 className="font-medium">{t("comments")}</h4>
       <div className="mt-4">
         <div className="space-y-4">
           {comments.map((comment) => (
@@ -60,10 +62,10 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
             <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
               <p className="flex items-center gap-2 overflow-hidden text-13 break-words text-secondary">
                 <Lock className="size-3 shrink-0" />
-                Sign in to add your comment
+                {t("space_public.sign_in_to_add_comment")}
               </p>
               <Link to={`/?next_path=${pathname}`}>
-                <Button variant="primary">Sign in</Button>
+                <Button variant="primary">{t("space_public.sign_in")}</Button>
               </Link>
             </div>
           ))}

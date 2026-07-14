@@ -43,7 +43,7 @@
     },
     "add_existing_page_modal": {
       "search_placeholder": "Шукати сторінки",
-      "success_message": "До колекції додано сторінок: {count}.",
+      "success_message": "{count} {count, plural, one {сторінка} few {сторінки} many {сторінок} other {сторінок}} додано до колекції.",
       "error_message": "Не вдалося перемістити сторінки. Спробуйте ще раз.",
       "no_pages_found": "Не знайдено сторінок, що відповідають вашому пошуку",
       "no_pages_available": "Немає сторінок, доступних для переміщення",

@@ -54,7 +54,7 @@ function ProfileActivityPage() {
 
   return (
     <>
-      <PageHead title="Profile - Activity" />
+      <PageHead title={t("profile_activity.page_title")} />
       <div className="flex h-full w-full flex-col overflow-hidden py-5">
         <div className="flex items-center justify-between gap-2 px-5 md:px-9">
           <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>

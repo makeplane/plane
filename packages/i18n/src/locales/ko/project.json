@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "아직 프로젝트가 없습니다",
+    "description": "프로젝트는 목표 중심 업무의 기반입니다. 팀, 작업, 업무 완료에 필요한 모든 것을 관리할 수 있습니다.",
+    "learn_more": "프로젝트 자세히 알아보기",
+    "start_first_project": "첫 프로젝트 시작"
   }
 }

@@ -1,12 +1,12 @@
 {
   "power_k": {
     "actions_commands": {
-      "bulk_delete_work_items": "Масове видалення робочих одиниць"
+      "bulk_delete_work_items": "Масове видалення робочих елементів"
     },
     "contextual_actions": {
       "work_item": {
-        "title": "Дії робочої одиниці",
-        "indicator": "Робоча одиниця",
+        "title": "Дії робочого елемента",
+        "indicator": "Робочий елемент",
         "change_state": "Змінити стан",
         "change_priority": "Змінити пріоритет",
         "change_assignees": "Призначити",
@@ -20,14 +20,14 @@
         "unsubscribe": "Скасувати підписку на сповіщення",
         "delete": "Видалити",
         "copy_id": "Скопіювати ID",
-        "copy_id_toast_success": "ID робочої одиниці скопійовано в буфер обміну.",
-        "copy_id_toast_error": "Під час копіювання ID робочої одиниці в буфер обміну сталася помилка.",
+        "copy_id_toast_success": "ID робочого елемента скопійовано в буфер обміну.",
+        "copy_id_toast_error": "Під час копіювання ID робочого елемента в буфер обміну сталася помилка.",
         "copy_title": "Скопіювати назву",
-        "copy_title_toast_success": "Назву робочої одиниці скопійовано в буфер обміну.",
-        "copy_title_toast_error": "Під час копіювання назви робочої одиниці в буфер обміну сталася помилка.",
+        "copy_title_toast_success": "Назву робочого елемента скопійовано в буфер обміну.",
+        "copy_title_toast_error": "Під час копіювання назви робочого елемента в буфер обміну сталася помилка.",
         "copy_url": "Скопіювати URL",
-        "copy_url_toast_success": "URL робочої одиниці скопійовано в буфер обміну.",
-        "copy_url_toast_error": "Під час копіювання URL робочої одиниці в буфер обміну сталася помилка."
+        "copy_url_toast_success": "URL робочого елемента скопійовано в буфер обміну.",
+        "copy_url_toast_error": "Під час копіювання URL робочого елемента в буфер обміну сталася помилка."
       },
       "cycle": {
         "title": "Дії циклу",
@@ -66,7 +66,7 @@
       }
     },
     "creation_actions": {
-      "create_work_item": "Нова робоча одиниця",
+      "create_work_item": "Новий робочий елемент",
       "create_page": "Нова сторінка",
       "create_view": "Нове подання",
       "create_cycle": "Новий цикл",
@@ -83,16 +83,16 @@
       "nav_account_settings": "Перейти до налаштувань облікового запису",
       "open_project": "Відкрити проєкт",
       "nav_projects_list": "Перейти до списку проєктів",
-      "nav_all_workspace_work_items": "Перейти до всіх робочих одиниць",
-      "nav_assigned_workspace_work_items": "Перейти до призначених робочих одиниць",
-      "nav_created_workspace_work_items": "Перейти до створених робочих одиниць",
-      "nav_subscribed_workspace_work_items": "Перейти до підписаних робочих одиниць",
+      "nav_all_workspace_work_items": "Перейти до всіх робочих елементів",
+      "nav_assigned_workspace_work_items": "Перейти до призначених робочих елементів",
+      "nav_created_workspace_work_items": "Перейти до створених робочих елементів",
+      "nav_subscribed_workspace_work_items": "Перейти до підписаних робочих елементів",
       "nav_workspace_analytics": "Перейти до аналітики робочого простору",
       "nav_workspace_drafts": "Перейти до чернеток робочого простору",
       "nav_workspace_archives": "Перейти до архівів робочого простору",
       "open_workspace_setting": "Відкрити налаштування робочого простору",
       "nav_workspace_settings": "Перейти до налаштувань робочого простору",
-      "nav_project_work_items": "Перейти до робочих одиниць",
+      "nav_project_work_items": "Перейти до робочих елементів",
       "open_project_cycle": "Відкрити цикл",
       "nav_project_cycles": "Перейти до циклів",
       "open_project_module": "Відкрити модуль",

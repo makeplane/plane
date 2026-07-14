@@ -111,5 +111,18 @@
       "success_message": "Página quitada de la colección.",
       "error_message": "No se pudo quitar la página de la colección. Inténtalo de nuevo."
     }
+  },
+  "page_access": {
+    "not_found_title": "Página no encontrada",
+    "not_found_description": "La página a la que intentas acceder no existe o no tienes permiso para verla.",
+    "view_other_pages": "Ver otras páginas"
+  },
+  "profile_activity": {
+    "page_title": "Perfil - Actividad"
+  },
+  "space_public": {
+    "page_not_found_alt": "Página no encontrada",
+    "page_not_found_description": "La página que buscas no existe o se ha movido.",
+    "something_went_wrong": "¡Ups! Algo salió mal."
   }
 }

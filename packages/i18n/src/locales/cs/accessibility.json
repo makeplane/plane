@@ -23,6 +23,12 @@
       "expand_sidebar": "Rozbalit postranní panel",
       "edition_badge": "Otevřít modal placených plánů"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Otevřít nabídku pracovního prostoru",
+      "close_workspace_menu": "Zavřít nabídku pracovního prostoru",
+      "open_extended_sidebar": "Otevřít rozšířený postranní panel",
+      "close_extended_sidebar": "Zavřít rozšířený postranní panel"
+    },
     "auth_forms": {
       "clear_email": "Vymazat e-mail",
       "show_password": "Zobrazit heslo",

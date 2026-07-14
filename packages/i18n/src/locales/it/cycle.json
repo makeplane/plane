@@ -8,7 +8,7 @@
         "title": "Aggiungi elementi di lavoro al ciclo per visualizzare il grafico di burndown."
       },
       "priority_issue": {
-        "title": "Visualizza in anteprima gli elementi di lavoro ad alta priorità del ciclo."
+        "title": "Visualizza a colpo d'occhio gli elementi di lavoro ad alta priorità attivi nel ciclo."
       },
       "assignee": {
         "title": "Aggiungi assegnatari agli elementi di lavoro per vedere la ripartizione per assegnatario."

@@ -111,5 +111,18 @@
       "success_message": "ページをコレクションから削除しました。",
       "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
     }
+  },
+  "page_access": {
+    "not_found_title": "ページが見つかりません",
+    "not_found_description": "アクセスしようとしているページは存在しないか、表示する権限がありません。",
+    "view_other_pages": "他のページを表示"
+  },
+  "profile_activity": {
+    "page_title": "プロフィール - アクティビティ"
+  },
+  "space_public": {
+    "page_not_found_alt": "ページが見つかりません",
+    "page_not_found_description": "お探しのページは存在しないか、移動されました。",
+    "something_went_wrong": "問題が発生しました。"
   }
 }

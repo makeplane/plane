@@ -111,5 +111,18 @@
       "success_message": "Pagina rimossa dalla raccolta.",
       "error_message": "Non è stato possibile rimuovere la pagina dalla raccolta. Riprova."
     }
+  },
+  "page_access": {
+    "not_found_title": "Pagina non trovata",
+    "not_found_description": "La pagina a cui stai tentando di accedere non esiste o non hai l’autorizzazione per visualizzarla.",
+    "view_other_pages": "Visualizza altre pagine"
+  },
+  "profile_activity": {
+    "page_title": "Profilo - Attività"
+  },
+  "space_public": {
+    "page_not_found_alt": "Pagina non trovata",
+    "page_not_found_description": "La pagina che stai cercando non esiste o è stata spostata.",
+    "something_went_wrong": "Ops! Qualcosa è andato storto."
   }
 }

@@ -92,7 +92,7 @@
       "cta_primary": "Buat permintaan Masuk"
     },
     "intake_main": {
-      "title": "Pilih item kerja Masuk untuk melihat detailnya"
+      "title": "Pilih item kerja Intake untuk melihat detailnya"
     },
     "epics": {
       "title": "Ubah proyek kompleks menjadi epik terstruktur.",
@@ -266,5 +266,11 @@
         "description": "Pilih status yang dilalui item kerja."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Halaman tidak ditemukan",
+    "title": "Ups! Terjadi kesalahan.",
+    "description": "Maaf, halaman yang Anda cari tidak dapat ditemukan. Halaman tersebut mungkin telah dihapus, diganti namanya, atau sementara tidak tersedia.",
+    "go_to_home": "Ke Beranda"
   }
 }

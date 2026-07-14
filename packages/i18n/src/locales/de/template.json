@@ -216,7 +216,7 @@
             }
           },
           "attach_screenshots": {
-            "label": "Dokumente und Bilder einfügen, die Sie denken, dass die Anzeigende dieser Vorlage hilfreich sein können.",
+            "label": "Fügen Sie Screenshots hinzu, die für Nutzer dieser Vorlage hilfreich sein könnten.",
             "validation": {
               "required": "Mindestens ein Screenshot ist erforderlich"
             }

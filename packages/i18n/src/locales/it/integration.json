@@ -149,7 +149,7 @@
       "add_new_project_update": "Aggiungi nuova notifica di aggiornamenti di progetto",
       "project_updates_empty_state": "I progetti connessi ai canali Slack appariranno qui.",
       "project_updates_form": {
-        "title": "Configura Aggiornamenti Progetto",
+        "title": "Configura canale Slack",
         "description": "Ricevi notifiche di aggiornamenti di progetto in Slack quando vengono creati elementi di lavoro",
         "failed_to_load_channels": "Impossibile caricare i canali da Slack",
         "project_dropdown": {
@@ -182,7 +182,7 @@
     "disconnect_workspace": "Disconnetti spazio di lavoro {name}",
     "state_mapping": {
       "title": "Mappatura degli stati",
-      "description": "Mappa gli stati degli incidenti Sentry ai tuoi stati di progetto. Configura quali stati usare quando un incidente Sentry è risolto o non risolto.",
+      "description": "Mappa gli stati dei problemi Sentry sui tuoi stati di progetto. Configura quali stati utilizzare quando un problema Sentry viene risolto o non ancora risolto.",
       "add_new_state_mapping": "Aggiungi nuova mappatura di stato",
       "empty_state": "Nessuna mappatura di stato configurata. Crea la tua prima mappatura per sincronizzare gli stati degli incidenti Sentry con i tuoi stati di progetto.",
       "failed_loading_state_mappings": "Non siamo riusciti a caricare le tue mappature di stato. Questo potrebbe essere dovuto a un problema di rete o un problema con l'integrazione.",

@@ -147,7 +147,7 @@
           },
           "category": {
             "label": "Categorie",
-            "placeholder": "Alege unde crezi că acest șablon încalcă cel mai bine. Poți alege mai multe.",
+            "placeholder": "Alege categoria în care crezi că se potrivește cel mai bine. Poți alege mai multe.",
             "validation": {
               "required": "Cel puțin o categorie este obligatorie"
             }

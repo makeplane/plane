@@ -57,7 +57,7 @@
       "updated_at": "Atualizado em",
       "id": "ID"
     },
-    "label": "Admissão",
+    "label": "Triagem",
     "page_label": "{workspace} - Admissão",
     "modal": {
       "title": "Criar item de trabalho de admissão"
@@ -82,6 +82,58 @@
       "detail": {
         "title": "Selecione um item de trabalho para visualizar seus detalhes."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} itens de trabalho duplicados encontrados",
+    "description_versions": {
+      "intake_form_user": "Usuário do formulário de admissão"
+    },
+    "errors": {
+      "asset_upload_failed": "Falha no upload do recurso. Por favor, tente novamente mais tarde.",
+      "asset_duplication_failed": "Falha na duplicação de recursos. Por favor, tente novamente mais tarde.",
+      "permission_denied": "Permissão negada",
+      "mark_duplicate_permission": "Somente administradores de projeto podem marcar o item de trabalho como duplicado",
+      "mark_duplicate_permission_plural": "Somente administradores de projeto podem marcar itens de trabalho como duplicados"
+    },
+    "filters": {
+      "created_date": "Data de criação",
+      "updated_date": "Data de atualização",
+      "last_updated_date": "Data da última atualização",
+      "status": "Status",
+      "work_item_status": "Status do item de trabalho",
+      "view_all": "Ver tudo",
+      "view_less": "Ver menos",
+      "date_options": {
+        "today": "Hoje",
+        "yesterday": "Ontem",
+        "last_7_days": "Últimos 7 dias",
+        "custom": "Personalizado",
+        "last_30_days": "Últimos 30 dias"
+      },
+      "date_operators": {
+        "after": "Depois",
+        "before": "Antes"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Item de trabalho anterior",
+      "next_work_item": "Próximo item de trabalho"
+    },
+    "properties": {
+      "duplicate_of": "Duplicado de"
+    },
+    "select_duplicate": {
+      "select_work_item": "Selecione o item de trabalho"
+    },
+    "sidebar": {
+      "label_count": "{count} etiquetas"
+    },
+    "toasts": {
+      "editor_processing": "O editor ainda está processando as alterações. Aguarde antes de continuar.",
+      "create_success": "Item de trabalho criado com sucesso.",
+      "delete_failed": "Falha na exclusão do item de trabalho",
+      "update_failed": "Falha na atualização do item de trabalho"
     }
   }
 }

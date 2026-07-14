@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "このビューを削除してもよろしいですか？",
       "content": "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。"
-    }
+    },
+    "page_title": "{workspaceName} - すべてのビュー"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "作業項目の下書き",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "ワークスペースが見つかりません",
+    "not_found_description": "この URL に対応するワークスペースが見つかりません。存在しないか、表示する権限がない可能性があります。",
+    "visit_profile": "プロフィールを表示",
+    "not_authorized_title": "権限がありません",
+    "not_authorized_description": "あなたはこのワークスペースのメンバーではありません。ワークスペース管理者に招待を依頼するか、保留中の招待を確認してください。",
+    "check_pending_invites": "保留中の招待を確認"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "招待が見つかりません",
+    "invited_to_workspace": "{workspaceName} に招待されました",
+    "description": "ワークスペースは、Plane アカウントでプロジェクトを作成し、作業項目で共同作業し、さまざまな作業ストリームを整理する場所です。",
+    "accept": "参加する",
+    "ignore": "無視する",
+    "already_member": "あなたはすでに {workspaceName} のメンバーです",
+    "continue_to_home": "ホームに進む",
+    "inactive_title": "この招待リンクはもう有効ではありません。",
+    "empty_project_link": "または空のプロジェクトから始める",
+    "sign_in_to_continue": "続行するにはサインイン",
+    "star_on_github": "GitHub でスターを付けてください",
+    "join_community": "アクティブなクリエイターのコミュニティに参加しましょう"
+  },
+  "onboarding": {
+    "create_profile_title": "プロフィールを作成します。",
+    "create_profile_description": "Plane でのあなたの表示名です。",
+    "change_image": "イメージを変更する",
+    "upload_image": "画像をアップロードする",
+    "name": "名前",
+    "name_required": "名前は必須です",
+    "name_within_50": "名前は50文字以内にしてください。",
+    "enter_full_name": "フルネームを入力してください",
+    "set_password": "パスワードを設定する",
+    "optional": "オプション",
+    "passwords_do_not_match": "パスワードが一致しません",
+    "passwords_match": "パスワードが一致する",
+    "continue": "続行",
+    "invite_team_title": "チームメイトを招待する",
+    "invite_team_description": "Plane での作業は、チームと一緒に行うのが最も効果的です。今すぐ招待して、Plane の可能性を最大限に活用しましょう。",
+    "invalid_email": "有効なメールアドレスの形式ではありません。",
+    "success": "成功！",
+    "invitations_sent": "招待状は正常に送信されました。",
+    "error": "エラー！",
+    "add_another": "さらに追加",
+    "do_later": "後でやります",
+    "join_invites_title": "招待に参加するか、ワークスペースを作成する",
+    "unified_description": "あなたのすべての作業 — 一元管理。",
+    "create_new_workspace": "新しいワークスペースを作成する",
+    "no_invitations_found": "招待状が見つかりませんでした",
+    "you_are_invited": "あなたは招待されています！",
+    "accept_invites": "チームと共同作業するための招待を受け入れます。",
+    "continue_to_workspace": "ワークスペースに進む",
+    "or": "または",
+    "create_own_workspace": "独自のワークスペースを作成する",
+    "workspace_creation_disabled": "ワークスペースへの招待がなく、インスタンス管理者によって新しいワークスペースの作成が制限されているようです。まずワークスペースの所有者または管理者に招待を依頼してから、この画面に戻って参加してください。",
+    "create_workspace_title": "ワークスペースを作成する",
+    "enter_workspace_name": "ワークスペース名を入力してください",
+    "join_existing_workspace": "既存のワークスペースに参加する",
+    "profile_setup_completed": "プロファイルの設定が完了しました。",
+    "profile_setup_failed": "プロファイルのセットアップに失敗しました。",
+    "usecase_title": "Planeをどのように使用する予定ですか?",
+    "usecase_description": "エクスペリエンスをパーソナライズできるように、1 つ以上のオプションを選択してください。",
+    "select_one_or_more": "1 つ以上を選択してください",
+    "select_at_least_one": "少なくとも 1 つのオプションを選択してください。",
+    "skip": "スキップ"
   }
 }

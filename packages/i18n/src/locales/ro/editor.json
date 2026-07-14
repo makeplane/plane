@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Trageți și plasați pentru a încărca fișiere externe"
+      "drag_and_drop": "Plasați fișierele aici sau faceți clic pentru a le încărca"
     },
     "errors": {
       "file_too_large": {
@@ -18,7 +18,7 @@
       }
     },
     "upgrade": {
-      "description": "Actualizați planul pentru a vizualiza această atașare."
+      "description": "Actualizați planul pentru a vizualiza acest atașament."
     },
     "aria": {
       "click_to_upload": "Faceți clic pentru a încărca atașamentul"
@@ -60,6 +60,80 @@
       "rewrite": "Rescrie",
       "use_this": "Folosește aceasta",
       "refine": "Rafinează"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Introduceți sau inserați adresa URL",
+    "text": "Text",
+    "enter_text_to_display": "Introduceți textul de afișat",
+    "remove_link": "Eliminați linkul",
+    "edit_link": "Editați linkul",
+    "color": "Culoare",
+    "text_colors": "Culorile textului",
+    "background_colors": "Culori de fundal",
+    "link": "Link",
+    "enter_or_paste_link": "Introduceți sau inserați linkul",
+    "please_enter_valid_url": "Vă rugăm să introduceți un URL valid",
+    "delete": "Şterge",
+    "duplicate": "Duplică",
+    "multiple": "Multiplu",
+    "loading": "Încărcare",
+    "no_results": "Niciun rezultat",
+    "copy_code": "Copiați codul",
+    "add_an_image": "Adăugați o imagine",
+    "error_loading_image": "Eroare la încărcarea imaginii",
+    "uploading": "Încărcare",
+    "drop_image_here": "Pune imaginea aici",
+    "retry_duplication": "Reîncercați duplicarea",
+    "retry": "Reîncercați",
+    "no_emojis_found": "Nu s-au găsit emoji",
+    "fullscreen_image_viewer": "Vizualizator de imagini pe ecran complet",
+    "close_image_viewer": "Închideți vizualizatorul de imagini",
+    "zoom_out": "Micșorați",
+    "zoom_in": "Măriți",
+    "download_image": "Descărcați imaginea",
+    "open_image_in_new_tab": "Deschide imaginea într-o filă nouă",
+    "view_in_full_screen": "Vizualizați pe ecran complet",
+    "view_image_in_full_screen": "Vizualizați imaginea pe tot ecranul",
+    "align": "Aliniere",
+    "download": "Descărcați",
+    "clear_contents": "Șterge conținutul",
+    "insert_above": "Inserați mai sus",
+    "insert_below": "Inserați mai jos",
+    "insert_left": "Inserați stânga",
+    "insert_right": "Inserați dreapta",
+    "header_row": "Rând antet",
+    "header_column": "Coloana antet",
+    "alignment": {
+      "left": "Stânga",
+      "center": "Centru",
+      "right": "Dreapta"
+    },
+    "menu_items": {
+      "text": "Text",
+      "h1": "Titlu 1",
+      "h2": "Titlul 2",
+      "h3": "Titlul 3",
+      "h4": "Titlul 4",
+      "h5": "Titlul 5",
+      "h6": "Titlul 6",
+      "bulleted-list": "Listă cu marcatori",
+      "numbered-list": "Listă numerotată",
+      "to-do-list": "Lista de lucruri de făcut",
+      "quote": "Citat",
+      "code": "Cod",
+      "table": "Tabel",
+      "image": "Imagine",
+      "divider": "Divizor",
+      "link": "Link",
+      "bold": "Aldin",
+      "italic": "Cursiv",
+      "underline": "Subliniat",
+      "strikethrough": "Tăiat",
+      "text-color": "Culoarea textului",
+      "background-color": "Culoare de fundal",
+      "text-align": "Alinierea textului"
     }
   }
 }

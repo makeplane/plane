@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "¿Estás seguro de que quieres eliminar esta vista?",
       "content": "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas."
-    }
+    },
+    "page_title": "{workspaceName} - Todas las vistas"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Borrador de elemento de trabajo",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Espacio de trabajo no encontrado",
+    "not_found_description": "No se encontró ningún espacio de trabajo para esta URL. Puede que no exista o que no tengas permiso para verlo.",
+    "visit_profile": "Visitar perfil",
+    "not_authorized_title": "¡No autorizado!",
+    "not_authorized_description": "No eres miembro de este espacio de trabajo. Contacta con el administrador para recibir una invitación o revisa tus invitaciones pendientes.",
+    "check_pending_invites": "Revisar invitaciones pendientes"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Invitación no encontrada",
+    "invited_to_workspace": "Has sido invitado a {workspaceName}",
+    "description": "Tu espacio de trabajo es donde crearás proyectos, colaborarás en tus elementos de trabajo y organizarás diferentes flujos de trabajo en tu cuenta Plane.",
+    "accept": "Aceptar",
+    "ignore": "Ignorar",
+    "already_member": "Ya eres miembro de {workspaceName}",
+    "continue_to_home": "Continuar al inicio",
+    "inactive_title": "Este enlace de invitación ya no está activo.",
+    "empty_project_link": "O empezar desde un proyecto vacío",
+    "sign_in_to_continue": "Inicia sesión para continuar",
+    "star_on_github": "Danos una estrella en GitHub",
+    "join_community": "Únete a nuestra comunidad de creadores activos"
+  },
+  "onboarding": {
+    "create_profile_title": "Crea tu perfil.",
+    "create_profile_description": "Así aparecerás en Plane.",
+    "change_image": "Cambiar imagen",
+    "upload_image": "Subir imagen",
+    "name": "Nombre",
+    "name_required": "El nombre es obligatorio",
+    "name_within_50": "El nombre debe tener 50 caracteres como máximo.",
+    "enter_full_name": "Introduce tu nombre completo",
+    "set_password": "Establecer una contraseña",
+    "optional": "Opcional",
+    "passwords_do_not_match": "Las contraseñas no coinciden",
+    "passwords_match": "Las contraseñas coinciden",
+    "continue": "Continuar",
+    "invite_team_title": "Invita a tus compañeros de equipo",
+    "invite_team_description": "El trabajo en Plane se desarrolla mejor con tu equipo. Invítalos ahora a utilizar Plane en todo su potencial.",
+    "invalid_email": "Eso no parece una dirección de correo electrónico.",
+    "success": "¡Éxito!",
+    "invitations_sent": "Invitaciones enviadas exitosamente.",
+    "error": "¡Error!",
+    "add_another": "Agregar otro",
+    "do_later": "Lo haré más tarde",
+    "join_invites_title": "Únete a invitaciones o crea un espacio de trabajo",
+    "unified_description": "Todo tu trabajo, unificado.",
+    "create_new_workspace": "Crear nuevo espacio de trabajo",
+    "no_invitations_found": "No se encontraron invitaciones",
+    "you_are_invited": "¡Estás invitado!",
+    "accept_invites": "Acepta las invitaciones para colaborar con tu equipo.",
+    "continue_to_workspace": "Continuar al espacio de trabajo",
+    "or": "o",
+    "create_own_workspace": "Crea tu propio espacio de trabajo",
+    "workspace_creation_disabled": "Parece que no tienes ninguna invitación a un espacio de trabajo y el administrador de tu instancia ha restringido la creación de nuevos espacios de trabajo. Pide al propietario o administrador del espacio de trabajo que te invite primero a un espacio de trabajo y vuelve a esta pantalla para unirte.",
+    "create_workspace_title": "Crea tu espacio de trabajo",
+    "enter_workspace_name": "Introduce el nombre del espacio de trabajo",
+    "join_existing_workspace": "Unirse al espacio de trabajo existente",
+    "profile_setup_completed": "Configuración del perfil completada.",
+    "profile_setup_failed": "Error en la configuración del perfil.",
+    "usecase_title": "¿Cómo planeas utilizar Plane?",
+    "usecase_description": "Selecciona una o más opciones para que podamos personalizar tu experiencia.",
+    "select_one_or_more": "Selecciona uno o más",
+    "select_at_least_one": "Selecciona al menos una opción.",
+    "skip": "Omitir"
   }
 }

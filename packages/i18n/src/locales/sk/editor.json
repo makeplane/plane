@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Pretiahni a pusť pre nahranie externých súborov"
+      "drag_and_drop": "Presuňte súbory sem alebo kliknite pre nahranie"
     },
     "errors": {
       "file_too_large": {
@@ -60,6 +60,80 @@
       "rewrite": "Prepísať",
       "use_this": "Použiť toto",
       "refine": "Upraviť"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Zadajte alebo prilepte adresu URL",
+    "text": "Text",
+    "enter_text_to_display": "Zadajte text, ktorý sa má zobraziť",
+    "remove_link": "Odstrániť odkaz",
+    "edit_link": "Upraviť odkaz",
+    "color": "Farba",
+    "text_colors": "Farby textu",
+    "background_colors": "Farby pozadia",
+    "link": "Odkaz",
+    "enter_or_paste_link": "Zadajte alebo prilepte odkaz",
+    "please_enter_valid_url": "Zadajte platnú URL",
+    "delete": "Odstrániť",
+    "duplicate": "Duplikovať",
+    "multiple": "Viacnásobné",
+    "loading": "Načítava sa",
+    "no_results": "Žiadne výsledky",
+    "copy_code": "Kopírovať kód",
+    "add_an_image": "Pridajte obrázok",
+    "error_loading_image": "Chyba pri načítavaní obrázka",
+    "uploading": "Nahráva sa",
+    "drop_image_here": "Sem presuňte obrázok",
+    "retry_duplication": "Opakovať duplikáciu",
+    "retry": "Skúste to znova",
+    "no_emojis_found": "Nenašli sa žiadne emotikony",
+    "fullscreen_image_viewer": "Prehliadač obrázkov na celú obrazovku",
+    "close_image_viewer": "Zatvorte prehliadač obrázkov",
+    "zoom_out": "Oddialiť",
+    "zoom_in": "Priblížiť",
+    "download_image": "Stiahnite si obrázok",
+    "open_image_in_new_tab": "Otvoriť obrázok na novej karte",
+    "view_in_full_screen": "Zobraziť na celej obrazovke",
+    "view_image_in_full_screen": "Zobraziť obrázok na celej obrazovke",
+    "align": "Zarovnať",
+    "download": "Stiahnuť",
+    "clear_contents": "Vymazať obsah",
+    "insert_above": "Vložiť nad",
+    "insert_below": "Vložiť pod",
+    "insert_left": "Vložte vľavo",
+    "insert_right": "Vložte vpravo",
+    "header_row": "Riadok hlavičky",
+    "header_column": "Hlavička stĺpca",
+    "alignment": {
+      "left": "Vľavo",
+      "center": "Stred",
+      "right": "Vpravo"
+    },
+    "menu_items": {
+      "text": "Text",
+      "h1": "Nadpis 1",
+      "h2": "Nadpis 2",
+      "h3": "Nadpis 3",
+      "h4": "Nadpis 4",
+      "h5": "Nadpis 5",
+      "h6": "Nadpis 6",
+      "bulleted-list": "Zoznam s odrážkami",
+      "numbered-list": "Číslovaný zoznam",
+      "to-do-list": "Zoznam úloh",
+      "quote": "Citát",
+      "code": "Kód",
+      "table": "Tabuľka",
+      "image": "Obrázok",
+      "divider": "Oddeľovač",
+      "link": "Odkaz",
+      "bold": "Tučné",
+      "italic": "Kurzíva",
+      "underline": "Podčiarknuté",
+      "strikethrough": "Prečiarknuté",
+      "text-color": "Farba textu",
+      "background-color": "Farba pozadia",
+      "text-align": "Zarovnanie textu"
     }
   }
 }

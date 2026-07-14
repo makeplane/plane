@@ -23,6 +23,12 @@
       "expand_sidebar": "Kenar çubuğunu genişlet",
       "edition_badge": "Ücretli planlar modalını aç"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Çalışma alanı menüsünü aç",
+      "close_workspace_menu": "Çalışma alanı menüsünü kapat",
+      "open_extended_sidebar": "Genişletilmiş kenar çubuğunu aç",
+      "close_extended_sidebar": "Genişletilmiş kenar çubuğunu kapat"
+    },
     "auth_forms": {
       "clear_email": "E-postayı temizle",
       "show_password": "Şifreyi göster",

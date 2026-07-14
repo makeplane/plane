@@ -13,15 +13,21 @@
       "open_favorites_menu": "Відкрити меню улюблених",
       "close_favorites_menu": "Закрити меню улюблених",
       "enter_folder_name": "Введіть назву папки",
-      "create_new_project": "Створити новий проект",
-      "open_projects_menu": "Відкрити меню проектів",
-      "close_projects_menu": "Закрити меню проектів",
+      "create_new_project": "Створити новий проєкт",
+      "open_projects_menu": "Відкрити меню проєктів",
+      "close_projects_menu": "Закрити меню проєктів",
       "toggle_quick_actions_menu": "Перемкнути меню швидких дій",
-      "open_project_menu": "Відкрити меню проекту",
-      "close_project_menu": "Закрити меню проекту",
+      "open_project_menu": "Відкрити меню проєкту",
+      "close_project_menu": "Закрити меню проєкту",
       "collapse_sidebar": "Згорнути бічну панель",
       "expand_sidebar": "Розгорнути бічну панель",
       "edition_badge": "Відкрити модал платних планів"
+    },
+    "app_sidebar": {
+      "open_workspace_menu": "Відкрити меню робочого простору",
+      "close_workspace_menu": "Закрити меню робочого простору",
+      "open_extended_sidebar": "Відкрити розширену бічну панель",
+      "close_extended_sidebar": "Закрити розширену бічну панель"
     },
     "auth_forms": {
       "clear_email": "Очистити email",

@@ -13,7 +13,7 @@
     "pages": "Stránky",
     "new_work_item": "Nová pracovná položka",
     "home": "Domov",
-    "inbox": "Doručená pošta",
+    "inbox": "Schránka",
     "workspace": "Pracovný priestor",
     "views": "Pohľady",
     "analytics": "Analytika",
@@ -27,8 +27,8 @@
     "upgrade": "Upgrade",
     "pi_chat": "AI Čet",
     "epics": "Epiky",
-    "upgrade_plan": "Apgrejd plán",
-    "plane_pro": "Plejn Pro",
+    "upgrade_plan": "Aktualizovať plán",
+    "plane_pro": "Plane Pro",
     "business": "Biznis"
   }
 }

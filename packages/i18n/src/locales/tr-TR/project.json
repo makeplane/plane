@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Henüz proje yok",
+    "description": "Projeler, hedef odaklı çalışmanın temelidir. Ekipleri, görevleri ve işi tamamlamak için gereken her şeyi yönetmenizi sağlar.",
+    "learn_more": "Projeler hakkında daha fazla bilgi edinin",
+    "start_first_project": "İlk projenizi başlatın"
   }
 }

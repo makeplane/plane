@@ -83,5 +83,57 @@
         "title": "Vyberte pracovnú položku pre zobrazenie detailov."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Našlo sa {count} duplicitných pracovných položiek",
+    "description_versions": {
+      "intake_form_user": "Používateľ zberného formulára"
+    },
+    "errors": {
+      "asset_upload_failed": "Nahranie súboru zlyhalo. Skúste to znova neskôr.",
+      "asset_duplication_failed": "Duplikácia súborov zlyhala. Skúste to znova neskôr.",
+      "permission_denied": "Prístup odmietnutý",
+      "mark_duplicate_permission": "Iba správcovia projektu môžu označiť pracovnú položku ako duplikát",
+      "mark_duplicate_permission_plural": "Iba správcovia projektu môžu označiť pracovné položky ako duplicitné"
+    },
+    "filters": {
+      "created_date": "Dátum vytvorenia",
+      "updated_date": "Dátum aktualizácie",
+      "last_updated_date": "Dátum poslednej aktualizácie",
+      "status": "Stav",
+      "work_item_status": "Stav pracovnej položky",
+      "view_all": "Zobraziť všetky",
+      "view_less": "Zobraziť menej",
+      "date_options": {
+        "today": "Dnes",
+        "yesterday": "Včera",
+        "last_7_days": "Posledných 7 dní",
+        "custom": "Vlastné",
+        "last_30_days": "Posledných 30 dní"
+      },
+      "date_operators": {
+        "after": "Po",
+        "before": "Pred"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Predchádzajúca pracovná položka",
+      "next_work_item": "Ďalšia pracovná položka"
+    },
+    "properties": {
+      "duplicate_of": "Duplikát položky"
+    },
+    "select_duplicate": {
+      "select_work_item": "Vyberte pracovnú položku"
+    },
+    "sidebar": {
+      "label_count": "{count} štítkov"
+    },
+    "toasts": {
+      "editor_processing": "Editor stále spracováva zmeny. Pred pokračovaním počkajte.",
+      "create_success": "Pracovná položka bola úspešne vytvorená.",
+      "delete_failed": "Odstránenie pracovnej položky zlyhalo",
+      "update_failed": "Aktualizácia pracovnej položky zlyhala"
+    }
   }
 }

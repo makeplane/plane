@@ -60,7 +60,7 @@
             }
           },
           "description": {
-            "placeholder": "Mô tả mục tiêu và mục tiêu của dự án này."
+            "placeholder": "Mô tả mục đích và mục tiêu của dự án này."
           },
           "button": {
             "create": "Tạo mẫu dự án",
@@ -264,7 +264,7 @@
         },
         "error": {
           "title": "Chúng tôi không thể tạo mẫu đó lần này.",
-          "message": "Thử lưu lại chi tiết của bạn hoặc sao chép chúng sang mẫu mới, nhất quán trong một tab khác."
+          "message": "Thử lưu lại thông tin của bạn hoặc sao chép sang mẫu mới, tốt nhất là ở một tab khác."
         }
       },
       "update": {

@@ -486,7 +486,7 @@
     "project_timezone": "Fus orar proiect",
     "created_on": "Creat la",
     "updated_on": "Actualizat la",
-    "completed_on": "Completed on",
+    "completed_on": "Finalizat la",
     "update_project": "Actualizează proiectul",
     "identifier_already_exists": "Identificatorul există deja",
     "add_more": "Adaugă mai mult",
@@ -713,11 +713,11 @@
     "details": "Detalii",
     "project_structure": "Structura proiectului",
     "custom_properties": "Proprietăți personalizate",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Profilul tău",
+    "developer": "Dezvoltator",
+    "work_structure": "Structura muncii",
+    "execution": "Execuție",
+    "administration": "Administrare"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -867,5 +867,20 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane s-a blocat. Inginerii noștri au fost anunțați. Dacă aveți mai multe detalii, scrieți la",
+    "error_description_middle": "sau pe",
+    "not_found_hint": "Verificați URL-ul din bara de adrese a browserului și încercați din nou.",
+    "instance_failure_image_alt": "Nu se pot obține detaliile instanței",
+    "instance_failure_title": "Nu se pot obține detaliile instanței.",
+    "instance_failure_description": "Nu am putut încărca detaliile instanței dvs.",
+    "instance_failure_hint": "Verificați conexiunea și încercați din nou.",
+    "powered_by": "Oferit de",
+    "error_title": "Ups! Nu arată bine.",
+    "refresh": "Reîmprospătează",
+    "forum": "Forum",
+    "not_found_title": "Nu a funcționat",
+    "retry": "Reîncearcă"
   }
 }

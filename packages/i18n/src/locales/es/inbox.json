@@ -83,5 +83,57 @@
         "title": "Selecciona un elemento de trabajo para ver sus detalles."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Se encontraron {count} elementos de trabajo duplicados",
+    "description_versions": {
+      "intake_form_user": "Usuario del formulario de recepción"
+    },
+    "errors": {
+      "asset_upload_failed": "Error al cargar el recurso. Inténtelo de nuevo más tarde.",
+      "asset_duplication_failed": "Falló la duplicación de activos. Inténtelo de nuevo más tarde.",
+      "permission_denied": "Permiso denegado",
+      "mark_duplicate_permission": "Solo los administradores del proyecto pueden marcar un elemento de trabajo como duplicado",
+      "mark_duplicate_permission_plural": "Solo los administradores del proyecto pueden marcar elementos de trabajo como duplicados"
+    },
+    "filters": {
+      "created_date": "Fecha de creación",
+      "updated_date": "Fecha de actualización",
+      "last_updated_date": "Fecha de última actualización",
+      "status": "Estado",
+      "work_item_status": "Estado del elemento de trabajo",
+      "view_all": "Ver todo",
+      "view_less": "Ver menos",
+      "date_options": {
+        "today": "Hoy",
+        "yesterday": "Ayer",
+        "last_7_days": "Últimos 7 días",
+        "custom": "Personalizado",
+        "last_30_days": "Últimos 30 días"
+      },
+      "date_operators": {
+        "after": "Después",
+        "before": "Antes"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Elemento de trabajo anterior",
+      "next_work_item": "Siguiente elemento de trabajo"
+    },
+    "properties": {
+      "duplicate_of": "Duplicado de"
+    },
+    "select_duplicate": {
+      "select_work_item": "Seleccionar elemento de trabajo"
+    },
+    "sidebar": {
+      "label_count": "{count} etiquetas"
+    },
+    "toasts": {
+      "editor_processing": "El editor todavía está procesando cambios. Espera antes de continuar.",
+      "create_success": "Elemento de trabajo creado correctamente.",
+      "delete_failed": "Error al eliminar el elemento de trabajo",
+      "update_failed": "Error al actualizar el elemento de trabajo"
+    }
   }
 }

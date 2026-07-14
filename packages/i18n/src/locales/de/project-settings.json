@@ -193,7 +193,7 @@
       },
       "auto-remind": {
         "title": "Automatische Erinnerungen",
-        "description": "Plane wird automatische Erinnerungen via E-Mail und in-App-Benachrichtigungen senden, um Ihr Team auf den Lauf der Dinge zu halten.",
+        "description": "Plane sendet automatisch Erinnerungen per E-Mail und In-App-Benachrichtigungen, um Ihr Team bei der Einhaltung von Fristen zu unterstützen.",
         "duration": "Erinnerung vor"
       }
     },

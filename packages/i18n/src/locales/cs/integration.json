@@ -247,7 +247,7 @@
       "audience_description": "Očekávané claim(y) aud v JWT, oddělené čárkami.",
       "user_claims_label": "Claim uživatele",
       "user_claims_placeholder": "email",
-      "user_claims_description": "JWT claim obsahující e-mailovou adresu uživatele",
+      "user_claims_description": "Čárkami oddělené claimy JWT pro porovnání s e-mailem v Plane (platí první shoda)",
       "user_claims_required": "Claim uživatele je povinný.",
       "allowed_algorithms_label": "Povolené podpisové algoritmy",
       "allowed_algorithms_description": "Asymetrické algoritmy pro ověření podpisu JWT",
@@ -314,7 +314,7 @@
     "invalid_app_installation_id": "Nepodařilo se nainstalovat aplikaci"
   },
   "import_status": {
-    "queued": "V pořádku",
+    "queued": "Ve frontě",
     "created": "Vytvořeno",
     "initiated": "Zahájeno",
     "pulling": "Stahování",

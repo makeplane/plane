@@ -111,5 +111,18 @@
       "success_message": "Sayfa koleksiyondan kaldırıldı.",
       "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
     }
+  },
+  "page_access": {
+    "not_found_title": "Sayfa bulunamadı",
+    "not_found_description": "Erişmeye çalıştığınız sayfa mevcut değil veya görüntüleme izniniz yok.",
+    "view_other_pages": "Diğer sayfaları görüntüle"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Etkinlik"
+  },
+  "space_public": {
+    "page_not_found_alt": "Sayfa bulunamadı",
+    "page_not_found_description": "Aradığınız sayfa yok veya taşınmış.",
+    "something_went_wrong": "Hata! Bir şeyler ters gitti."
   }
 }

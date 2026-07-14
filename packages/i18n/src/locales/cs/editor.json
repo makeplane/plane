@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Přetáhněte soubory pro nahrání externích souborů"
+      "drag_and_drop": "Přetáhněte soubory sem nebo klikněte pro nahrání"
     },
     "errors": {
       "file_too_large": {
@@ -60,6 +60,80 @@
       "rewrite": "Přepsat",
       "use_this": "Použít toto",
       "refine": "Upřesnit"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Zadejte nebo vložte adresu URL",
+    "text": "Text",
+    "enter_text_to_display": "Zadejte text, který chcete zobrazit",
+    "remove_link": "Odebrat odkaz",
+    "edit_link": "Upravit odkaz",
+    "color": "Barva",
+    "text_colors": "Barvy textu",
+    "background_colors": "Barvy pozadí",
+    "link": "Odkaz",
+    "enter_or_paste_link": "Zadejte nebo vložte odkaz",
+    "please_enter_valid_url": "Zadejte prosím platné URL",
+    "delete": "Vymazat",
+    "duplicate": "Duplikovat",
+    "multiple": "Více",
+    "loading": "Načítání",
+    "no_results": "Žádné výsledky",
+    "copy_code": "Kopírovat kód",
+    "add_an_image": "Přidejte obrázek",
+    "error_loading_image": "Chyba při načítání obrázku",
+    "uploading": "Nahrávání",
+    "drop_image_here": "Přetáhněte obrázek sem",
+    "retry_duplication": "Opakovat duplikaci",
+    "retry": "Zkuste to znovu",
+    "no_emojis_found": "Nebyly nalezeny žádné emotikony",
+    "fullscreen_image_viewer": "Prohlížeč obrázků na celou obrazovku",
+    "close_image_viewer": "Zavřete prohlížeč obrázků",
+    "zoom_out": "Oddálit",
+    "zoom_in": "Přiblížit",
+    "download_image": "Stáhnout obrázek",
+    "open_image_in_new_tab": "Otevřít obrázek na nové kartě",
+    "view_in_full_screen": "Zobrazit přes celou obrazovku",
+    "view_image_in_full_screen": "Zobrazit obrázek na celé obrazovce",
+    "align": "Zarovnat",
+    "download": "Stáhnout",
+    "clear_contents": "Vymazat obsah",
+    "insert_above": "Vložit nad",
+    "insert_below": "Vložit pod",
+    "insert_left": "Vložit vlevo",
+    "insert_right": "Vložit vpravo",
+    "header_row": "Řádek záhlaví",
+    "header_column": "Sloupec záhlaví",
+    "alignment": {
+      "left": "Vlevo",
+      "center": "Střed",
+      "right": "Vpravo"
+    },
+    "menu_items": {
+      "text": "Text",
+      "h1": "Nadpis 1",
+      "h2": "Nadpis 2",
+      "h3": "Nadpis 3",
+      "h4": "Nadpis 4",
+      "h5": "Nadpis 5",
+      "h6": "Nadpis 6",
+      "bulleted-list": "Seznam s odrážkami",
+      "numbered-list": "Číslovaný seznam",
+      "to-do-list": "Seznam úkolů",
+      "quote": "Citace",
+      "code": "Kód",
+      "table": "Tabulka",
+      "image": "Obrázek",
+      "divider": "Oddělovač",
+      "link": "Odkaz",
+      "bold": "Tučné",
+      "italic": "Kurzíva",
+      "underline": "Podtržení",
+      "strikethrough": "Přeškrtnutí",
+      "text-color": "Barva textu",
+      "background-color": "Barva pozadí",
+      "text-align": "Zarovnání textu"
     }
   }
 }

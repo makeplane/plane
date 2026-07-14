@@ -486,7 +486,7 @@
     "project_timezone": "Proje Saat Dilimi",
     "created_on": "Oluşturulma tarihi",
     "updated_on": "Güncellenme tarihi",
-    "completed_on": "Completed on",
+    "completed_on": "Tamamlanma tarihi",
     "update_project": "Projeyi güncelle",
     "identifier_already_exists": "Tanımlayıcı zaten var",
     "add_more": "Daha fazla ekle",
@@ -655,7 +655,7 @@
     "authenticated": "Kimliği doğrulandı",
     "select": "Seç",
     "upgrade": "Yükselt",
-    "add_seats": "Koltuk Ekle",
+    "add_seats": "Lisans Ekle",
     "projects": "Projeler",
     "workspace": "Çalışma Alanı",
     "workspaces": "Çalışma Alanları",
@@ -713,11 +713,11 @@
     "details": "Ayrıntılar",
     "project_structure": "Proje yapısı",
     "custom_properties": "Özel özellikler",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Profiliniz",
+    "developer": "Geliştirici",
+    "work_structure": "Çalışma yapısı",
+    "execution": "Yürütme",
+    "administration": "Yönetim"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -821,7 +821,7 @@
   },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
-    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs'u seçin."
   },
   "customize_navigation": "Gezinmeyi özelleştir",
   "personal": "Kişisel",
@@ -867,5 +867,20 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane çöktü. Mühendislerimiz bilgilendirildi. Daha fazla ayrıntınız varsa lütfen şuraya yazın",
+    "error_description_middle": "veya",
+    "not_found_hint": "Tarayıcı adres çubuğundaki URL'yi kontrol edip tekrar deneyin.",
+    "instance_failure_image_alt": "Sunucu ayrıntıları alınamadı",
+    "instance_failure_title": "Sunucu ayrıntıları alınamadı.",
+    "instance_failure_description": "Sunucu ayrıntılarınız yüklenemedi.",
+    "instance_failure_hint": "Bağlantınızı kontrol edip tekrar deneyin.",
+    "powered_by": "Destekleyen",
+    "error_title": "Eyvah! Bu iyi görünmüyor.",
+    "refresh": "Yenile",
+    "forum": "Forum",
+    "not_found_title": "Bu işe yaramadı",
+    "retry": "Tekrar dene"
   }
 }

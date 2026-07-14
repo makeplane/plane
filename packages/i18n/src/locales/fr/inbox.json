@@ -11,7 +11,7 @@
       },
       "snoozed": {
         "title": "Reporté",
-        "description": "{days, plural, one{# jour} other{# jours}} restant(s)"
+        "description": "{days, plural, one{# jour restant} other{# jours restants}}"
       },
       "accepted": {
         "title": "Accepté",
@@ -82,6 +82,58 @@
       "detail": {
         "title": "Sélectionnez un élément de travail pour voir ses détails."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} éléments de travail en double trouvés",
+    "description_versions": {
+      "intake_form_user": "Utilisateur du formulaire de réception"
+    },
+    "errors": {
+      "asset_upload_failed": "Échec de l'importation de l'élément. Veuillez réessayer plus tard.",
+      "asset_duplication_failed": "La duplication des actifs a échoué. Veuillez réessayer plus tard.",
+      "permission_denied": "Autorisation refusée",
+      "mark_duplicate_permission": "Seuls les administrateurs de projet peuvent marquer un élément de travail comme doublon",
+      "mark_duplicate_permission_plural": "Seuls les administrateurs de projet peuvent marquer les éléments de travail comme doublons"
+    },
+    "filters": {
+      "created_date": "Date de création",
+      "updated_date": "Date de mise à jour",
+      "last_updated_date": "Date de dernière mise à jour",
+      "status": "Statut",
+      "work_item_status": "Statut de l'élément de travail",
+      "view_all": "Voir tout",
+      "view_less": "Voir moins",
+      "date_options": {
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "last_7_days": "7 derniers jours",
+        "custom": "Personnalisé",
+        "last_30_days": "30 derniers jours"
+      },
+      "date_operators": {
+        "after": "Après",
+        "before": "Avant"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Élément de travail précédent",
+      "next_work_item": "Élément de travail suivant"
+    },
+    "properties": {
+      "duplicate_of": "Doublon de"
+    },
+    "select_duplicate": {
+      "select_work_item": "Sélectionner un élément de travail"
+    },
+    "sidebar": {
+      "label_count": "{count} étiquettes"
+    },
+    "toasts": {
+      "editor_processing": "L'éditeur est toujours en train de traiter les modifications. Veuillez patienter avant de continuer.",
+      "create_success": "Élément de travail créé avec succès.",
+      "delete_failed": "Échec de la suppression de l'élément de travail",
+      "update_failed": "Échec de la mise à jour de l'élément de travail"
     }
   }
 }

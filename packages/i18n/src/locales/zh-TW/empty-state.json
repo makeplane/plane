@@ -2,7 +2,7 @@
   "common_empty_state": {
     "progress": {
       "title": "暫無進度指標可顯示。",
-      "description": "開始在工作項中設定屬性值以在此查看進度指標。"
+      "description": "開始在工作項目中設定屬性值以在此查看進度指標。"
     },
     "updates": {
       "title": "暫無更新。",
@@ -36,9 +36,9 @@
       "description": "您所查找的專案不存在。"
     },
     "work_items": {
-      "title": "從您的第一個工作項開始。",
-      "description": "工作項是專案的建構模組 — 指派負責人、設定優先順序並輕鬆追蹤進度。",
-      "cta_primary": "建立您的第一個工作項"
+      "title": "從您的第一個工作項目開始。",
+      "description": "工作項目是專案的建構模組 — 指派負責人、設定優先順序並輕鬆追蹤進度。",
+      "cta_primary": "建立您的第一個工作項目"
     },
     "cycles": {
       "title": "在週期中分組和限時您的工作。",
@@ -46,21 +46,21 @@
       "cta_primary": "設定您的第一個週期"
     },
     "cycle_work_items": {
-      "title": "此週期中沒有要顯示的工作項",
-      "description": "建立工作項以開始監控團隊在此週期中的進度並按時實現目標。",
-      "cta_primary": "建立工作項",
-      "cta_secondary": "新增現有工作項"
+      "title": "此週期中沒有要顯示的工作項目",
+      "description": "建立工作項目以開始監控團隊在此週期中的進度並按時實現目標。",
+      "cta_primary": "建立工作項目",
+      "cta_secondary": "新增現有工作項目"
     },
     "modules": {
       "title": "將專案目標對應到模組並輕鬆追蹤。",
-      "description": "模組由相互關聯的工作項組成。它們有助於監控專案階段的進度,每個階段都有特定的截止日期和分析,以指示您離實現這些階段有多近。",
+      "description": "模組由相互關聯的工作項目組成。它們有助於監控專案階段的進度,每個階段都有特定的截止日期和分析,以指示您離實現這些階段有多近。",
       "cta_primary": "設定您的第一個模組"
     },
     "module_work_items": {
-      "title": "此模組中沒有要顯示的工作項",
-      "description": "建立工作項以開始監控此模組。",
-      "cta_primary": "建立工作項",
-      "cta_secondary": "新增現有工作項"
+      "title": "此模組中沒有要顯示的工作項目",
+      "description": "建立工作項目以開始監控此模組。",
+      "cta_primary": "建立工作項目",
+      "cta_secondary": "新增現有工作項目"
     },
     "views": {
       "title": "為專案儲存自訂檢視",
@@ -68,18 +68,18 @@
       "cta_primary": "建立檢視"
     },
     "no_work_items_in_project": {
-      "title": "專案中暫無工作項",
-      "description": "將工作項新增至專案中,並使用檢視將工作切分為可追蹤的部分。",
-      "cta_primary": "新增工作項"
+      "title": "專案中暫無工作項目",
+      "description": "將工作項目新增至專案中,並使用檢視將工作切分為可追蹤的部分。",
+      "cta_primary": "新增工作項目"
     },
     "work_item_filter": {
-      "title": "未找到工作項",
+      "title": "未找到工作項目",
       "description": "您目前的篩選器未傳回任何結果。請嘗試變更篩選器。",
-      "cta_primary": "新增工作項"
+      "cta_primary": "新增工作項目"
     },
     "pages": {
       "title": "記錄一切 — 從筆記到 PRD",
-      "description": "頁面讓您在一個地方擷取和組織資訊。撰寫會議筆記、專案文件和 PRD,嵌入工作項,並使用現成的元件進行結構化。",
+      "description": "頁面讓您在一個地方擷取和組織資訊。撰寫會議筆記、專案文件和 PRD,嵌入工作項目,並使用現成的元件進行結構化。",
       "cta_primary": "建立您的第一個頁面"
     },
     "archive_pages": {
@@ -92,7 +92,7 @@
       "cta_primary": "建立接收請求"
     },
     "intake_main": {
-      "title": "選擇一個接收工作項以查看其詳細資訊"
+      "title": "選擇一個接收工作項目以查看其詳細資訊"
     },
     "epics": {
       "title": "將複雜專案轉化為結構化史詩。",
@@ -101,9 +101,9 @@
       "cta_secondary": "文件"
     },
     "epic_work_items": {
-      "title": "您尚未向此史詩新增工作項。",
-      "description": "開始向此史詩新增一些工作項並在此處追蹤它們。",
-      "cta_secondary": "新增工作項"
+      "title": "您尚未向此史詩新增工作項目。",
+      "description": "開始向此史詩新增一些工作項目並在此處追蹤它們。",
+      "cta_secondary": "新增工作項目"
     }
   },
   "workspace_empty_state": {
@@ -112,8 +112,8 @@
       "description": "您可以封存已完成或已取消的史詩。封存後在此處尋找它們。"
     },
     "archive_work_items": {
-      "title": "暫無已封存工作項",
-      "description": "透過手動或自動化,您可以封存已完成或已取消的工作項。封存後在此處尋找它們。",
+      "title": "暫無已封存工作項目",
+      "description": "透過手動或自動化,您可以封存已完成或已取消的工作項目。封存後在此處尋找它們。",
       "cta_primary": "設定自動化"
     },
     "archive_cycles": {
@@ -128,26 +128,26 @@
       "title": "為您的工作保留重要的參考、資源或文件"
     },
     "inbox_sidebar_all": {
-      "title": "您訂閱的工作項的更新將顯示在此處"
+      "title": "您訂閱的工作項目的更新將顯示在此處"
     },
     "inbox_sidebar_mentions": {
-      "title": "您的工作項的提及將顯示在此處"
+      "title": "您的工作項目的提及將顯示在此處"
     },
     "your_work_by_priority": {
-      "title": "尚未分配工作項"
+      "title": "尚未分配工作項目"
     },
     "your_work_by_state": {
-      "title": "尚未分配工作項"
+      "title": "尚未分配工作項目"
     },
     "views": {
       "title": "暫無檢視",
-      "description": "將工作項新增至專案中並使用檢視輕鬆篩選、排序和監控進度。",
-      "cta_primary": "新增工作項"
+      "description": "將工作項目新增至專案中並使用檢視輕鬆篩選、排序和監控進度。",
+      "cta_primary": "新增工作項目"
     },
     "drafts": {
-      "title": "半成品工作項",
-      "description": "要試用此功能,請開始新增工作項並在中途離開,或在下方建立您的第一個草稿。😉",
-      "cta_primary": "建立草稿工作項"
+      "title": "半成品工作項目",
+      "description": "要試用此功能,請開始新增工作項目並在中途離開,或在下方建立您的第一個草稿。😉",
+      "cta_primary": "建立草稿工作項目"
     },
     "projects_archived": {
       "title": "沒有已封存專案",
@@ -157,7 +157,7 @@
       "title": "建立專案以在此處視覺化專案指標。"
     },
     "analytics_work_items": {
-      "title": "建立包含工作項和受託人的專案,以開始在此處追蹤績效、進度和團隊影響。"
+      "title": "建立包含工作項目和受託人的專案,以開始在此處追蹤績效、進度和團隊影響。"
     },
     "analytics_no_cycle": {
       "title": "建立週期以將工作組織成有時限的階段並追蹤衝刺進度。"
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "撰寫筆記、文件或完整的知識庫。",
-      "description": "頁面是 Plane 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項,使用元件庫進行配置,並將它們全部保留在專案上下文中。",
+      "description": "頁面是 Plane 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項目,使用元件庫進行設定,並將它們全部保留在專案上下文中。",
       "cta_primary": "建立您的頁面"
     },
     "project_overview_state_sidebar": {
@@ -199,12 +199,12 @@
   "settings_empty_state": {
     "estimates": {
       "title": "暫無估算",
-      "description": "定義團隊如何衡量工作量,並在所有工作項中一致地追蹤它。",
+      "description": "定義團隊如何衡量工作量,並在所有工作項目中一致地追蹤它。",
       "cta_primary": "新增估算系統"
     },
     "labels": {
       "title": "暫無標籤",
-      "description": "建立個人化標籤以有效分類和管理工作項。",
+      "description": "建立個人化標籤以有效分類和管理工作項目。",
       "cta_primary": "建立您的第一個標籤"
     },
     "exports": {
@@ -227,34 +227,34 @@
       "cta_primary": "新增 webhook"
     },
     "work_item_types": {
-      "title": "建立和自訂工作項類型",
-      "description": "為專案定義獨特的工作項類型。每種類型都可以有自己的屬性、工作流程和欄位 — 根據專案和團隊需求量身訂製。",
+      "title": "建立和自訂工作項目類型",
+      "description": "為專案定義獨特的工作項目類型。每種類型都可以有自己的屬性、工作流程和欄位 — 根據專案和團隊需求量身訂製。",
       "cta_primary": "啟用"
     },
     "work_item_type_properties": {
-      "title": "定義要為此工作項類型擷取的屬性和詳細資訊。自訂它以符合專案的工作流程。",
+      "title": "定義要為此工作項目類型擷取的屬性和詳細資訊。自訂它以符合專案的工作流程。",
       "cta_secondary": "新增屬性"
     },
     "templates": {
       "title": "暫無範本",
-      "description": "透過為工作項和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
+      "description": "透過為工作項目和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
       "cta_primary": "建立您的第一個範本"
     },
     "recurring_work_items": {
-      "title": "暫無循環工作項",
-      "description": "設定循環工作項以自動化重複任務並輕鬆保持計劃進度。",
-      "cta_primary": "建立循環工作項"
+      "title": "暫無循環工作項目",
+      "description": "設定循環工作項目以自動化重複任務並輕鬆保持計劃進度。",
+      "cta_primary": "建立循環工作項目"
     },
     "worklogs": {
       "title": "追蹤所有成員的工時表",
-      "description": "在工作項上記錄時間以檢視跨專案任何團隊成員的詳細工時表。"
+      "description": "在工作項目上記錄時間以檢視跨專案任何團隊成員的詳細工時表。"
     },
     "group_syncing": {
       "title": "尚無群組對應"
     },
     "template_setting": {
       "title": "暫無範本",
-      "description": "透過為專案、工作項和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
+      "description": "透過為專案、工作項目和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
       "cta_primary": "建立範本"
     },
     "workflows": {
@@ -266,5 +266,11 @@
         "description": "選擇工作項目經過的狀態。"
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - 找不到頁面",
+    "title": "糟糕！出了點問題。",
+    "description": "抱歉，找不到您要前往的頁面。它可能已被移除、重新命名，或暫時無法使用。",
+    "go_to_home": "返回首頁"
   }
 }
