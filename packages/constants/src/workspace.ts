@@ -241,12 +241,13 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
-  // Gated by the "payments" per-workspace flag, same as file-library above
+  // Gated by the "payments" per-workspace flag AND admin-only: salaries and the
+  // expense ledger are not for members to browse. The API enforces the same.
   payments: {
     key: "payments",
     labelTranslationKey: "payments.title",
     href: `/payments/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };

@@ -4,6 +4,9 @@
 
 """Workspace-level budgets and the expense ledger.
 
+Admin-only: every handler here is gated to ROLE.ADMIN. Members and guests get a
+403, and the sidebar entry is hidden from them.
+
 Internal bookkeeping only — nothing here moves money. Budgets allocate an amount
 to a category for a period; expenses record what was actually spent, with the
 invoice kept as a library FileAsset. "Spent" is always aggregated from the
@@ -58,14 +61,14 @@ class ExpenseCategoryEndpoint(FinanceBaseView):
     serializer_class = ExpenseCategorySerializer
     model = ExpenseCategory
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug):
         categories = ExpenseCategory.objects.filter(workspace__slug=slug).annotate(
             expense_count=Count("expenses", filter=Q(expenses__deleted_at__isnull=True))
         )
         return Response(ExpenseCategorySerializer(categories, many=True).data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ExpenseCategorySerializer(data=request.data)
@@ -83,7 +86,7 @@ class ExpenseCategoryDetailEndpoint(FinanceBaseView):
     serializer_class = ExpenseCategorySerializer
     model = ExpenseCategory
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def patch(self, request, slug, category_id):
         category = ExpenseCategory.objects.get(id=category_id, workspace__slug=slug)
         serializer = ExpenseCategorySerializer(category, data=request.data, partial=True)
@@ -105,7 +108,7 @@ class BudgetEndpoint(FinanceBaseView):
     serializer_class = BudgetSerializer
     model = Budget
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug):
         budgets = Budget.objects.filter(workspace__slug=slug)
         category_id = request.query_params.get("category")
@@ -122,7 +125,7 @@ class BudgetEndpoint(FinanceBaseView):
             budgets = budgets.filter(period_start__lte=active_on, period_end__gte=active_on)
         return Response(BudgetSerializer(budgets, many=True).data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = BudgetSerializer(data=request.data)
@@ -152,7 +155,7 @@ class BudgetDetailEndpoint(FinanceBaseView):
     serializer_class = BudgetSerializer
     model = Budget
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def patch(self, request, slug, budget_id):
         budget = Budget.objects.get(id=budget_id, workspace__slug=slug)
         serializer = BudgetSerializer(budget, data=request.data, partial=True)
@@ -161,7 +164,7 @@ class BudgetDetailEndpoint(FinanceBaseView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def delete(self, request, slug, budget_id):
         Budget.objects.get(id=budget_id, workspace__slug=slug).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -171,7 +174,7 @@ class ExpenseEndpoint(FinanceBaseView):
     serializer_class = ExpenseSerializer
     model = Expense
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug):
         # Documents are serialized inline; prefetching keeps the list one query
         # instead of one per expense
@@ -209,7 +212,7 @@ class ExpenseEndpoint(FinanceBaseView):
             )
         return Response(ExpenseSerializer(expenses, many=True).data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ExpenseSerializer(data=request.data)
@@ -223,7 +226,7 @@ class ExpenseDetailEndpoint(FinanceBaseView):
     serializer_class = ExpenseSerializer
     model = Expense
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, expense_id):
         expense = (
             Expense.objects.select_related("category")
@@ -232,7 +235,7 @@ class ExpenseDetailEndpoint(FinanceBaseView):
         )
         return Response(ExpenseSerializer(expense).data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def patch(self, request, slug, expense_id):
         expense = Expense.objects.get(id=expense_id, workspace__slug=slug)
         serializer = ExpenseSerializer(expense, data=request.data, partial=True)
@@ -241,7 +244,7 @@ class ExpenseDetailEndpoint(FinanceBaseView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def delete(self, request, slug, expense_id):
         Expense.objects.get(id=expense_id, workspace__slug=slug).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -258,7 +261,7 @@ class ExpenseDocumentEndpoint(FinanceBaseView):
 
     model = ExpenseDocument
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug, expense_id):
         expense = Expense.objects.get(id=expense_id, workspace__slug=slug)
         asset_ids = request.data.get("asset_ids") or []
@@ -283,7 +286,7 @@ class ExpenseDocumentEndpoint(FinanceBaseView):
         expense.refresh_from_db()
         return Response(ExpenseSerializer(expense).data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def delete(self, request, slug, expense_id, asset_id):
         # Detaches the document from the expense; the file itself stays in the
         # library, since it may be linked elsewhere or wanted on its own
@@ -305,7 +308,7 @@ class ExpenseDocumentViewEndpoint(FinanceBaseView):
 
     model = ExpenseDocument
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, expense_id, asset_id):
         document = (
             ExpenseDocument.objects.select_related("asset")
@@ -337,7 +340,7 @@ class BudgetSummaryEndpoint(FinanceBaseView):
 
     model = Budget
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug):
         date_from = request.query_params.get("from")
         date_to = request.query_params.get("to")

@@ -1,0 +1,127 @@
+{
+  "payroll": {
+    "title": "Paie",
+    "tabs": {
+      "expenses": "Dépenses",
+      "employees": "Employés",
+      "payments": "Paie",
+      "aguinaldo": "Aguinaldo",
+      "annual_cost": "Coût annuel"
+    },
+    "employees": {
+      "new": "Nouvel employé",
+      "edit": "Modifier l'employé",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "salaries": "Salaires",
+      "history": "Historique",
+      "new_salary": "Nouveau salaire",
+      "current": "En vigueur",
+      "adjustments": "Ajustements",
+      "new_adjustment": "Nouvel ajustement",
+      "empty": "Aucun employé pour le moment.",
+      "delete_title": "Delete employee",
+      "delete_description": "Their salary history, adjustments and payments go with them. This cannot be undone."
+    },
+    "offices": {
+      "title": "Bureaux",
+      "manage": "Gérer les bureaux",
+      "new": "Nouveau bureau",
+      "empty": "No offices yet. Create one to start paying people.",
+      "in_use": "This office still has salaries or payments; it cannot be deleted",
+      "delete_title": "Delete office",
+      "delete_description": "Only an office with no salaries or payments can be deleted."
+    },
+    "kinds": {
+      "bonus": "Prime",
+      "debt": "Dette",
+      "support": "Aide"
+    },
+    "periodicity": {
+      "monthly": "Mensuel",
+      "biweekly": "Bimensuel",
+      "weekly": "Hebdomadaire",
+      "daily": "Journalier"
+    },
+    "payments": {
+      "given": "Payés",
+      "upcoming": "À venir",
+      "new": "Nouveau paiement",
+      "mark_paid": "Marquer comme payé",
+      "empty": "No payments recorded yet.",
+      "empty_upcoming": "No payments due.",
+      "delete_title": "Delete payment",
+      "delete_description": "This payment will be removed from the ledger. This cannot be undone."
+    },
+    "concepts": {
+      "salary": "Salary",
+      "aguinaldo": "Aguinaldo",
+      "bonus": "Prime",
+      "other": "Other"
+    },
+    "status": {
+      "pending": "En attente",
+      "paid": "Payé",
+      "cancelled": "Annulé"
+    },
+    "aguinaldo": {
+      "title": "Aguinaldo",
+      "explainer": "Days of salary per office, prorated by days worked in the year.",
+      "days_worked": "Jours travaillés",
+      "daily_salary": "Salaire journalier",
+      "days": "Jours",
+      "amount": "Aguinaldo",
+      "empty": "Nothing to compute for this year."
+    },
+    "annual_cost": {
+      "title": "Coût annuel",
+      "restricted": "Restricted. Only people granted access see this.",
+      "headcount": "Effectif",
+      "salaries": "Salaires",
+      "aguinaldo": "Aguinaldo",
+      "bonuses": "Primes",
+      "support": "Aides",
+      "debts": "Dettes",
+      "total": "Total",
+      "empty": "No cost for this year."
+    },
+    "fields": {
+      "full_name": "Nom complet",
+      "email": "E-mail",
+      "national_id": "ID",
+      "position": "Poste",
+      "hire_date": "Date d'embauche",
+      "termination_date": "Date de fin",
+      "notes": "Notes",
+      "office": "Bureau",
+      "amount": "Montant",
+      "currency": "Devise",
+      "periodicity": "Périodicité",
+      "effective_from": "Du",
+      "effective_to": "Au",
+      "kind": "Type",
+      "description": "Description",
+      "concept": "Concept",
+      "period_start": "Period start",
+      "period_end": "Period end",
+      "scheduled_date": "Due date",
+      "status": "Statut",
+      "employee": "Employé",
+      "aguinaldo_days": "Aguinaldo days",
+      "name": "Nom",
+      "date": "Date"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "close": "Fermer"
+    },
+    "year": "Année",
+    "toasts": {
+      "saved": "Enregistré",
+      "deleted": "Supprimé",
+      "error": "Une erreur est survenue"
+    }
+  }
+}

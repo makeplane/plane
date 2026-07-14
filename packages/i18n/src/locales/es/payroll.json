@@ -1,0 +1,127 @@
+{
+  "payroll": {
+    "title": "Nómina",
+    "tabs": {
+      "expenses": "Gastos",
+      "employees": "Empleados",
+      "payments": "Nómina",
+      "aguinaldo": "Aguinaldo",
+      "annual_cost": "Costo anual"
+    },
+    "employees": {
+      "new": "Nuevo empleado",
+      "edit": "Editar empleado",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "salaries": "Sueldos",
+      "history": "Historial",
+      "new_salary": "Nuevo sueldo",
+      "current": "Vigente",
+      "adjustments": "Movimientos",
+      "new_adjustment": "Nuevo movimiento",
+      "empty": "Todavía no hay empleados.",
+      "delete_title": "Eliminar empleado",
+      "delete_description": "Se van con él su historial de sueldos, sus movimientos y sus pagos. Esta acción no se puede deshacer."
+    },
+    "offices": {
+      "title": "Oficinas",
+      "manage": "Administrar oficinas",
+      "new": "Nueva oficina",
+      "empty": "Aún no hay oficinas. Cree una para empezar a pagar.",
+      "in_use": "Esta oficina todavía tiene sueldos o pagos; no se puede eliminar",
+      "delete_title": "Eliminar oficina",
+      "delete_description": "Solo se puede eliminar una oficina sin sueldos ni pagos."
+    },
+    "kinds": {
+      "bonus": "Bono",
+      "debt": "Adeudo",
+      "support": "Apoyo"
+    },
+    "periodicity": {
+      "monthly": "Mensual",
+      "biweekly": "Quincenal",
+      "weekly": "Semanal",
+      "daily": "Diario"
+    },
+    "payments": {
+      "given": "Pagados",
+      "upcoming": "Próximos",
+      "new": "Nuevo pago",
+      "mark_paid": "Marcar como pagado",
+      "empty": "Todavía no hay pagos registrados.",
+      "empty_upcoming": "No hay pagos por realizar.",
+      "delete_title": "Eliminar pago",
+      "delete_description": "El pago se quitará del registro. Esta acción no se puede deshacer."
+    },
+    "concepts": {
+      "salary": "Sueldo",
+      "aguinaldo": "Aguinaldo",
+      "bonus": "Bono",
+      "other": "Otro"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "paid": "Pagado",
+      "cancelled": "Cancelado"
+    },
+    "aguinaldo": {
+      "title": "Aguinaldo",
+      "explainer": "Días de sueldo por oficina, proporcionales a los días trabajados en el año.",
+      "days_worked": "Días trabajados",
+      "daily_salary": "Sueldo diario",
+      "days": "Días",
+      "amount": "Aguinaldo",
+      "empty": "No hay nada que calcular para este año."
+    },
+    "annual_cost": {
+      "title": "Costo anual",
+      "restricted": "Restringido. Solo lo ven las personas con acceso concedido.",
+      "headcount": "Personas",
+      "salaries": "Sueldos",
+      "aguinaldo": "Aguinaldo",
+      "bonuses": "Bonos",
+      "support": "Apoyos",
+      "debts": "Adeudos",
+      "total": "Total",
+      "empty": "No hay costo para este año."
+    },
+    "fields": {
+      "full_name": "Nombre completo",
+      "email": "Correo",
+      "national_id": "RFC / CURP",
+      "position": "Puesto",
+      "hire_date": "Fecha de ingreso",
+      "termination_date": "Fecha de baja",
+      "notes": "Notas",
+      "office": "Oficina",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "periodicity": "Periodicidad",
+      "effective_from": "Desde",
+      "effective_to": "Hasta",
+      "kind": "Tipo",
+      "description": "Descripción",
+      "concept": "Concepto",
+      "period_start": "Inicio del periodo",
+      "period_end": "Fin del periodo",
+      "scheduled_date": "Fecha de pago",
+      "status": "Estado",
+      "employee": "Empleado",
+      "aguinaldo_days": "Días de aguinaldo",
+      "name": "Nombre",
+      "date": "Fecha"
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "close": "Cerrar"
+    },
+    "year": "Año",
+    "toasts": {
+      "saved": "Guardado",
+      "deleted": "Eliminado",
+      "error": "Algo salió mal"
+    }
+  }
+}

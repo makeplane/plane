@@ -27,6 +27,7 @@ from .file_library import (
     WorkspaceFeature,
 )
 from .finance import Budget, Expense, ExpenseCategory, ExpenseDocument
+from .payroll import Adjustment, Employee, Office, PayrollAccess, PayrollPayment, Salary
 from .contract import (
     Contract,
     ContractChat,

@@ -70,6 +70,7 @@ from .file_library import (
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
+    FileTagMergeEndpoint,
 )
 
 from .finance import (
@@ -82,6 +83,22 @@ from .finance import (
     ExpenseDocumentEndpoint,
     ExpenseDocumentViewEndpoint,
     ExpenseEndpoint,
+)
+
+from .payroll import (
+    AdjustmentDetailEndpoint,
+    AdjustmentEndpoint,
+    AguinaldoEndpoint,
+    AnnualCostEndpoint,
+    EmployeeDetailEndpoint,
+    EmployeeEndpoint,
+    OfficeDetailEndpoint,
+    OfficeEndpoint,
+    PayrollAccessEndpoint,
+    PayrollPaymentDetailEndpoint,
+    PayrollPaymentEndpoint,
+    SalaryDetailEndpoint,
+    SalaryEndpoint,
 )
 
 from .workspace.member import (

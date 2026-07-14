@@ -4,11 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Folder, Lock, Pencil, Plus, Trash2, X } from "lucide-react";
+import { Check, Combine, Folder, Lock, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Popover } from "@plane/propel/popover";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -31,12 +32,69 @@ type LabelChecklistProps = {
   onCreate: (name: string) => Promise<void>;
   onRename: (id: string, name: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  /** When provided, shows a "merge into…" action per item (tags only — folds
+   * duplicate AI-extracted names like "H.H" and "Los H.H" into one). */
+  onMerge?: (id: string, intoId: string) => Promise<void>;
   createPlaceholder: string;
 };
 
+/** Small "merge into…" picker popover, opened per row when onMerge is set. */
+function MergeIntoPicker(props: { currentId: string; items: TLabelItem[]; onPick: (targetId: string) => void }) {
+  const { currentId, items, onPick } = props;
+  const { t } = useTranslation();
+  const [query, setQuery] = useState("");
+  // Focused on open via a ref rather than autoFocus: the attribute yanks focus
+  // in ways screen readers can't announce, while this only fires once the
+  // popover is actually on screen.
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    searchRef.current?.focus();
+  }, []);
+  const candidates = items.filter(
+    (item) => item.id !== currentId && item.name.toLowerCase().includes(query.trim().toLowerCase())
+  );
+
+  return (
+    <Popover>
+      <Popover.Button className="p-0.5" title={t("file_library.tags.merge_button")}>
+        <Combine className="size-3" />
+      </Popover.Button>
+      <Popover.Panel side="right" align="start" positionerClassName="z-[30]">
+        <div className="w-52 rounded-md border border-subtle bg-layer-1 p-1.5 shadow-raised-200">
+          <p className="px-1 pb-1 text-11 font-medium text-tertiary">{t("file_library.tags.merge_into_hint")}</p>
+          <div className="relative mb-1">
+            <Search className="absolute top-1/2 left-2 size-3 -translate-y-1/2 text-tertiary" />
+            <input
+              ref={searchRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t("file_library.filters.search_placeholder")}
+              className="w-full rounded-sm border border-subtle bg-transparent py-1 pr-2 pl-6 text-12"
+            />
+          </div>
+          <div className="max-h-40 space-y-0.5 overflow-y-auto">
+            {candidates.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="w-full truncate rounded-sm px-1.5 py-1 text-left text-12 hover:bg-layer-1-hover"
+                onClick={() => onPick(item.id)}
+              >
+                {item.name}
+              </button>
+            ))}
+            {candidates.length === 0 && <p className="px-1.5 py-1 text-11 text-tertiary">—</p>}
+          </div>
+        </div>
+      </Popover.Panel>
+    </Popover>
+  );
+}
+
 /** Checklist with inline create / rename / delete (protected items excluded). */
 export const LabelChecklist = observer(function LabelChecklist(props: LabelChecklistProps) {
-  const { items, checkedIds, onToggle, disablePdfOnly, onCreate, onRename, onDelete, createPlaceholder } = props;
+  const { items, checkedIds, onToggle, disablePdfOnly, onCreate, onRename, onDelete, onMerge, createPlaceholder } =
+    props;
   const { t } = useTranslation();
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -90,7 +148,10 @@ export const LabelChecklist = observer(function LabelChecklist(props: LabelCheck
           const isDisabled = Boolean(item.pdfOnly && disablePdfOnly);
           const isEditing = editingId === item.id;
           return (
-            <div key={item.id} className="group flex items-center gap-1.5 rounded-sm px-1.5 py-1 hover:bg-layer-1-hover">
+            <div
+              key={item.id}
+              className="group flex items-center gap-1.5 rounded-sm px-1.5 py-1 hover:bg-layer-1-hover"
+            >
               {isEditing ? (
                 <>
                   <Input
@@ -145,6 +206,13 @@ export const LabelChecklist = observer(function LabelChecklist(props: LabelCheck
                     <Lock className="size-3 shrink-0 text-placeholder" />
                   ) : (
                     <span className="hidden shrink-0 items-center gap-0.5 group-hover:flex">
+                      {onMerge && (
+                        <MergeIntoPicker
+                          currentId={item.id}
+                          items={items}
+                          onPick={(targetId) => void run(() => onMerge(item.id, targetId))}
+                        />
+                      )}
                       <button
                         type="button"
                         className="p-0.5"

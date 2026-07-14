@@ -6,10 +6,13 @@
 
 import { observer } from "mobx-react";
 import { Navigate } from "react-router";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { PaymentsRoot } from "@/components/payments/root";
 // hooks
+import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import type { Route } from "./+types/page";
 
@@ -17,12 +20,15 @@ const PaymentsPage = observer(function PaymentsPage({ params }: Route.ComponentP
   const { workspaceSlug } = params;
   // store hooks
   const { isWorkspaceFeatureEnabled, featureFlagsMap } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const areFlagsLoaded = featureFlagsMap[workspaceSlug] !== undefined;
   const isPaymentsEnabled = isWorkspaceFeatureEnabled(workspaceSlug, "payments");
+  // Money is admin-only. The API enforces this too — this just avoids rendering
+  // a page whose every request would come back 403.
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  // Redirect home when the module is disabled for this workspace
-  if (areFlagsLoaded && !isPaymentsEnabled) return <Navigate to={`/${workspaceSlug}`} replace />;
+  if (areFlagsLoaded && (!isPaymentsEnabled || !isAdmin)) return <Navigate to={`/${workspaceSlug}`} replace />;
 
   return (
     <>

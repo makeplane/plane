@@ -135,6 +135,15 @@ export class FileLibraryService extends APIService {
       });
   }
 
+  /** Merges `tagId` into `intoTagId`: every file re-tagged, `tagId` is removed. */
+  async mergeTag(workspaceSlug: string, tagId: string, intoTagId: string): Promise<TFileTag> {
+    return this.post(`/api/workspaces/${workspaceSlug}/file-tags/${tagId}/merge/`, { into_tag_id: intoTagId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // tag links
 
   async addFileTags(workspaceSlug: string, assetId: string, tagIds: string[]): Promise<TLibraryFile> {
@@ -155,7 +164,10 @@ export class FileLibraryService extends APIService {
 
   // bulk
 
-  async bulkAction(workspaceSlug: string, payload: TLibraryBulkAction): Promise<{ status: string; skipped?: string[] }> {
+  async bulkAction(
+    workspaceSlug: string,
+    payload: TLibraryBulkAction
+  ): Promise<{ status: string; skipped?: string[] }> {
     return this.post(`/api/workspaces/${workspaceSlug}/file-library/files/bulk/`, payload)
       .then((response) => response?.data)
       .catch((error) => {

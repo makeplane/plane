@@ -65,6 +65,106 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 - **Analytics**
   Access real-time insights across all your Plane data. Visualize trends, remove blockers, and keep your projects moving forward.
 
+## 💰 Payments & Payroll (fork-specific)
+
+Two modules that live behind the per-workspace `payments` feature flag and are
+**admin-only**: members and guests get a 403 from the API and never see the
+sidebar entry. Enable the flag from the instance admin (god-mode).
+
+Everything lives under one **Payments** page, split into tabs.
+
+### Money rules that apply everywhere
+
+- **Amounts are `Decimal`, never float**, and they cross the wire as strings
+  (`"2500.50"`). A float loses cents on a large ledger, so the string stays the
+  source of truth until the moment it is formatted for display.
+- **Amounts in different currencies are never added together.** Every total is
+  grouped by currency — a single figure mixing MXN and USD is a wrong number,
+  not a rounding detail.
+- **Nothing here moves real money.** It is an internal ledger, not a payment
+  gateway.
+
+### Expenses & budgets
+
+A budget allocates an amount to a **category** (Oficina, Viajes…) for a period,
+optionally scoped to a project. Expenses record what was actually spent, and
+**"spent" is always aggregated from the ledger, never stored** — a stored counter
+drifts away from its own rows the first time someone edits an expense.
+
+Supporting documents (invoices, receipts) are uploaded to the same bucket as the
+file library and attached to an expense; one expense can carry several. They are
+ordinary library assets, so they keep their preview and can be viewed in place —
+PDF and images alike.
+
+```
+GET /api/workspaces/<slug>/budgets/summary/?from=2026-01-01&to=2026-03-31
+→ {"category_name": "Oficina", "currency": "MXN",
+   "budgeted": "50000.00", "spent": "12500.75",
+   "pending": "3200.00", "remaining": "37499.25"}
+```
+
+### Payroll
+
+An **Employee is not a Plane user**. The people on payroll are not necessarily
+the people with accounts, so tying the two would force a login for everyone paid
+and leak payroll into the member list.
+
+- **Offices** are the companies people are paid from (Seanalytics, Latin…). Each
+  office sets its own aguinaldo days.
+- **Salaries** belong to an (employee, office) pair, so someone working for two
+  companies holds **two salaries at once**.
+- **A raise never overwrites.** It closes the running row (`effective_to`) and
+  opens a new one, so "what did they earn last March" stays answerable and the
+  aguinaldo is computed on the rate that was actually in force.
+- **Adjustments** are bonuses, debts and support payments. The amount is always
+  positive; the _kind_ carries the direction, so a mistyped minus can't silently
+  flip a bonus into a debt.
+- **Payments** are disbursements. "Upcoming" is not a separate table — it is the
+  `PENDING` rows, so a scheduled payment and the payment it becomes are the same
+  record and cannot disagree.
+
+#### Aguinaldo
+
+Computed, never stored. Mexican LFT art. 87: at least 15 days of salary,
+proportional to time worked in the year.
+
+```
+daily_salary × office.aguinaldo_days × (days_worked_in_year / 365)
+```
+
+An employee hired in July gets ~184/365 of the full amount. Someone paid by two
+offices is owed aguinaldo by each, on that office's own terms — an office may
+grant more than the legal 15, never less.
+
+#### Annual cost — the restricted report
+
+What the workforce costs per year, per office. **Hidden even from workspace
+admins**, because the person it must be hidden from _is_ an admin.
+
+There is deliberately **no endpoint to grant it**: an in-app toggle any admin
+could flip would be decoration, not a restriction. The grant lives in the
+database, and the API answers **404 (not 403)** to anyone without it — a 403
+would confirm the report exists, which is itself the thing being kept quiet.
+
+Grant it from the instance shell:
+
+```bash
+docker compose -f docker-compose-local.yml exec api python manage.py shell
+```
+
+```python
+from plane.db.models import PayrollAccess, User, Workspace
+
+PayrollAccess.objects.update_or_create(
+    workspace=Workspace.objects.get(slug="your-workspace"),
+    user=User.objects.get(email="hr@yourcompany.com"),
+    defaults={"can_view_annual_cost": True},
+)
+```
+
+To revoke, set `can_view_annual_cost=False` (or delete the row). The tab
+disappears and the report 404s on the next request.
+
 ## 🛠️ Local development
 
 See [CONTRIBUTING](./CONTRIBUTING.md)

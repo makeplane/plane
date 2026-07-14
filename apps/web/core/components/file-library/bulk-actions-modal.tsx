@@ -43,6 +43,7 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
     createTag,
     updateTag,
     deleteTag,
+    mergeTag,
     bulkAction,
   } = useFileLibrary();
   // states
@@ -152,14 +153,19 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
               <button type="button" className="hover:text-primary" onClick={() => setSelectedFileIds([])}>
                 {t("file_library.upload.select_none")}
               </button>
-              <span className="ml-auto">{t("file_library.bulk.selected_count", { count: selectedFileIds.length })}</span>
+              <span className="ml-auto">
+                {t("file_library.bulk.selected_count", { count: selectedFileIds.length })}
+              </span>
             </div>
             <div className="max-h-72 space-y-0.5 overflow-y-auto rounded-sm border border-subtle p-1.5">
               {visibleFileIds.map((id) => {
                 const file = getFileById(id);
                 if (!file) return null;
                 return (
-                  <label key={id} className="flex cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1 text-12 hover:bg-layer-1-hover">
+                  <label
+                    key={id}
+                    className="flex cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1 text-12 hover:bg-layer-1-hover"
+                  >
                     <input type="checkbox" checked={selectedFileIds.includes(id)} onChange={() => toggleFile(id)} />
                     <FileText className="size-3.5 shrink-0 text-tertiary" />
                     <span className="truncate">{file.attributes.name}</span>
@@ -206,7 +212,9 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
                 <LabelChecklist
                   items={tab === "categories" ? categoryItems : tagItems}
                   checkedIds={labelIds}
-                  onToggle={(id) => setLabelIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))}
+                  onToggle={(id) =>
+                    setLabelIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+                  }
                   disablePdfOnly={tab === "categories" && !removeMode && hasNonPdf}
                   onCreate={async (name) =>
                     void (tab === "categories"
@@ -218,7 +226,10 @@ export const BulkActionsModal = observer(function BulkActionsModal(props: Props)
                       ? await updateCategory(workspaceSlug, id, { name })
                       : await updateTag(workspaceSlug, id, { name }))
                   }
-                  onDelete={(id) => (tab === "categories" ? deleteCategory(workspaceSlug, id) : deleteTag(workspaceSlug, id))}
+                  onDelete={(id) =>
+                    tab === "categories" ? deleteCategory(workspaceSlug, id) : deleteTag(workspaceSlug, id)
+                  }
+                  onMerge={tab === "tags" ? (id, targetId) => mergeTag(workspaceSlug, id, targetId) : undefined}
                   createPlaceholder={
                     tab === "categories"
                       ? t("file_library.categories.new_placeholder")

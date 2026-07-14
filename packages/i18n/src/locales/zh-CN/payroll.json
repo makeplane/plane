@@ -1,0 +1,127 @@
+{
+  "payroll": {
+    "title": "薪资",
+    "tabs": {
+      "expenses": "支出",
+      "employees": "员工",
+      "payments": "薪资",
+      "aguinaldo": "Aguinaldo",
+      "annual_cost": "年度成本"
+    },
+    "employees": {
+      "new": "New employee",
+      "edit": "Edit employee",
+      "active": "Active",
+      "inactive": "Inactive",
+      "salaries": "薪资",
+      "history": "历史",
+      "new_salary": "New salary",
+      "current": "Current",
+      "adjustments": "Adjustments",
+      "new_adjustment": "New adjustment",
+      "empty": "No employees yet.",
+      "delete_title": "Delete employee",
+      "delete_description": "Their salary history, adjustments and payments go with them. This cannot be undone."
+    },
+    "offices": {
+      "title": "Offices",
+      "manage": "Manage offices",
+      "new": "New office",
+      "empty": "No offices yet. Create one to start paying people.",
+      "in_use": "This office still has salaries or payments; it cannot be deleted",
+      "delete_title": "Delete office",
+      "delete_description": "Only an office with no salaries or payments can be deleted."
+    },
+    "kinds": {
+      "bonus": "奖金",
+      "debt": "欠款",
+      "support": "补助"
+    },
+    "periodicity": {
+      "monthly": "每月",
+      "biweekly": "每半月",
+      "weekly": "每周",
+      "daily": "每日"
+    },
+    "payments": {
+      "given": "已支付",
+      "upcoming": "待支付",
+      "new": "New payment",
+      "mark_paid": "Mark as paid",
+      "empty": "No payments recorded yet.",
+      "empty_upcoming": "No payments due.",
+      "delete_title": "Delete payment",
+      "delete_description": "This payment will be removed from the ledger. This cannot be undone."
+    },
+    "concepts": {
+      "salary": "Salary",
+      "aguinaldo": "Aguinaldo",
+      "bonus": "奖金",
+      "other": "Other"
+    },
+    "status": {
+      "pending": "待处理",
+      "paid": "已支付",
+      "cancelled": "已取消"
+    },
+    "aguinaldo": {
+      "title": "Aguinaldo",
+      "explainer": "Days of salary per office, prorated by days worked in the year.",
+      "days_worked": "Days worked",
+      "daily_salary": "Daily salary",
+      "days": "Days",
+      "amount": "Aguinaldo",
+      "empty": "Nothing to compute for this year."
+    },
+    "annual_cost": {
+      "title": "Annual cost",
+      "restricted": "Restricted. Only people granted access see this.",
+      "headcount": "Headcount",
+      "salaries": "Salaries",
+      "aguinaldo": "Aguinaldo",
+      "bonuses": "Bonuses",
+      "support": "Support",
+      "debts": "Debts",
+      "total": "Total",
+      "empty": "No cost for this year."
+    },
+    "fields": {
+      "full_name": "Full name",
+      "email": "Email",
+      "national_id": "ID",
+      "position": "Position",
+      "hire_date": "Hire date",
+      "termination_date": "End date",
+      "notes": "Notes",
+      "office": "Office",
+      "amount": "Amount",
+      "currency": "Currency",
+      "periodicity": "Periodicity",
+      "effective_from": "From",
+      "effective_to": "To",
+      "kind": "Kind",
+      "description": "Description",
+      "concept": "Concept",
+      "period_start": "Period start",
+      "period_end": "Period end",
+      "scheduled_date": "Due date",
+      "status": "Status",
+      "employee": "Employee",
+      "aguinaldo_days": "Aguinaldo days",
+      "name": "Name",
+      "date": "Date"
+    },
+    "actions": {
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "close": "关闭"
+    },
+    "year": "年份",
+    "toasts": {
+      "saved": "Saved",
+      "deleted": "Deleted",
+      "error": "出现问题"
+    }
+  }
+}

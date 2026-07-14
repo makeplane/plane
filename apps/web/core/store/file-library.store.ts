@@ -59,6 +59,7 @@ export interface IFileLibraryStore {
   createTag: (workspaceSlug: string, data: Partial<TFileTag>) => Promise<TFileTag>;
   updateTag: (workspaceSlug: string, tagId: string, data: Partial<TFileTag>) => Promise<TFileTag>;
   deleteTag: (workspaceSlug: string, tagId: string) => Promise<void>;
+  mergeTag: (workspaceSlug: string, tagId: string, intoTagId: string) => Promise<void>;
   fetchFiles: (workspaceSlug: string) => Promise<void>;
   uploadFile: (
     workspaceSlug: string,
@@ -121,6 +122,7 @@ export class FileLibraryStore implements IFileLibraryStore {
       createTag: action,
       updateTag: action,
       deleteTag: action,
+      mergeTag: action,
       fetchFiles: action,
       uploadFile: action,
       deleteFile: action,
@@ -371,6 +373,22 @@ export class FileLibraryStore implements IFileLibraryStore {
             [file.id, "tag_ids"],
             file.tag_ids.filter((id) => id !== tagId)
           );
+        }
+      });
+    });
+  };
+
+  mergeTag = async (workspaceSlug: string, tagId: string, intoTagId: string) => {
+    const merged = await this.fileLibraryService.mergeTag(workspaceSlug, tagId, intoTagId);
+    runInAction(() => {
+      unset(this.tagsMap, [tagId]);
+      set(this.tagsMap, [merged.id], merged);
+      // Re-point every file's tag_ids from the removed tag to the survivor
+      Object.values(this.filesMap).forEach((file) => {
+        if (file.tag_ids.includes(tagId)) {
+          const next = file.tag_ids.filter((id) => id !== tagId);
+          if (!next.includes(intoTagId)) next.push(intoTagId);
+          set(this.filesMap, [file.id, "tag_ids"], next);
         }
       });
     });

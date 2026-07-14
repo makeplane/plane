@@ -19,6 +19,7 @@ from plane.app.views import (
     FileTagDetailEndpoint,
     FileTagEndpoint,
     FileTagLinkEndpoint,
+    FileTagMergeEndpoint,
 )
 
 urlpatterns = [
@@ -51,6 +52,11 @@ urlpatterns = [
         "workspaces/<str:slug>/file-tags/<uuid:tag_id>/",
         FileTagDetailEndpoint.as_view(),
         name="file-tag-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/file-tags/<uuid:tag_id>/merge/",
+        FileTagMergeEndpoint.as_view(),
+        name="file-tag-merge",
     ),
     path(
         "workspaces/<str:slug>/file-library/files/",

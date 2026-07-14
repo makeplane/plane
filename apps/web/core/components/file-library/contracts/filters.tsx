@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { Check, Filter, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Filter, Search, X } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -50,7 +51,11 @@ export const groupTagsByKind = (tags: TFileTag[]) => {
 };
 
 const MULTI_SECTIONS = [
-  { key: "estatus" as const, i18nKey: "file_library.contracts.fields.estatus_contrato", options: CONTRACT_STATUS_OPTIONS },
+  {
+    key: "estatus" as const,
+    i18nKey: "file_library.contracts.fields.estatus_contrato",
+    options: CONTRACT_STATUS_OPTIONS,
+  },
   { key: "tipo" as const, i18nKey: "file_library.contracts.fields.tipo_contrato", options: CONTRACT_TYPE_OPTIONS },
   {
     key: "processing_status" as const,
@@ -64,6 +69,10 @@ export function ContractFiltersDropdown(props: Props) {
   const { workspaceSlug, filters, onChange } = props;
   const { t } = useTranslation();
   const workspaceTags = useWorkspaceTags(workspaceSlug);
+  const [tagSearch, setTagSearch] = useState("");
+  const visibleTags = tagSearch.trim()
+    ? workspaceTags.filter((tag) => tag.name.toLowerCase().includes(tagSearch.trim().toLowerCase()))
+    : workspaceTags;
 
   const activeCount =
     (filters.estatus?.length ?? 0) +
@@ -120,9 +129,7 @@ export function ContractFiltersDropdown(props: Props) {
 
           {/* Effective end date range (extension clauses included) */}
           <div className="space-y-1.5">
-            <p className="text-11 font-medium text-tertiary">
-              {t("file_library.contracts.fields.fecha_fin_efectiva")}
-            </p>
+            <p className="text-11 font-medium text-tertiary">{t("file_library.contracts.fields.fecha_fin_efectiva")}</p>
             <div className="flex items-center gap-1.5">
               <input
                 type="date"
@@ -145,13 +152,22 @@ export function ContractFiltersDropdown(props: Props) {
           {workspaceTags.length > 0 && (
             <div>
               <p className="px-1 py-0.5 text-11 font-medium text-tertiary">{t("file_library.tags.title")}</p>
+              <div className="relative mb-1 px-1">
+                <Search className="absolute top-1/2 left-2.5 size-3 -translate-y-1/2 text-tertiary" />
+                <input
+                  value={tagSearch}
+                  onChange={(e) => setTagSearch(e.target.value)}
+                  placeholder={t("file_library.filters.search_placeholder")}
+                  className="w-full rounded-sm border border-subtle bg-transparent py-1 pr-2 pl-6 text-12"
+                />
+              </div>
               <div className="max-h-56 overflow-y-auto">
                 {TAG_KIND_SECTIONS.map(({ kind, i18nKey }) => {
-                  const sectionTags = groupTagsByKind(workspaceTags).get(kind) ?? [];
+                  const sectionTags = groupTagsByKind(visibleTags).get(kind) ?? [];
                   if (sectionTags.length === 0) return null;
                   return (
                     <div key={kind}>
-                      <p className="px-2 pt-1.5 pb-0.5 text-10 font-semibold uppercase tracking-wide text-tertiary">
+                      <p className="px-2 pt-1.5 pb-0.5 text-10 font-semibold tracking-wide text-tertiary uppercase">
                         {t(i18nKey)}
                       </p>
                       {sectionTags.map((tag) => {
@@ -178,6 +194,9 @@ export function ContractFiltersDropdown(props: Props) {
                     </div>
                   );
                 })}
+                {visibleTags.length === 0 && (
+                  <p className="px-2 py-1.5 text-11 text-tertiary">{t("file_library.filters.no_results")}</p>
+                )}
               </div>
             </div>
           )}
@@ -224,10 +243,13 @@ export function AppliedContractFilters(props: Props & { onClearAll: () => void }
   const { t } = useTranslation();
   const workspaceTags = useWorkspaceTags(workspaceSlug);
 
-  const pills: { label: string; value: string; onRemove: () => void }[] = [];
+  // Each pill carries its own key. The array index won't do: pills come from
+  // loops, and two tags with the same name would collide on label+value alone.
+  const pills: { key: string; label: string; value: string; onRemove: () => void }[] = [];
 
   (filters.tags ?? []).forEach((tagId) => {
     pills.push({
+      key: `tag-${tagId}`,
       label: t("file_library.tags.title"),
       value: workspaceTags.find((tag) => tag.id === tagId)?.name ?? tagId,
       onRemove: () => {
@@ -241,6 +263,7 @@ export function AppliedContractFilters(props: Props & { onClearAll: () => void }
     ((filters[section.key] ?? []) as string[]).forEach((value) => {
       const option = section.options.find((o) => o.value === value);
       pills.push({
+        key: `${section.key}-${value}`,
         label: t(section.i18nKey),
         value: option ? t(option.i18nKey) : value,
         onRemove: () => {
@@ -252,30 +275,35 @@ export function AppliedContractFilters(props: Props & { onClearAll: () => void }
   });
   if (filters.person)
     pills.push({
+      key: "person",
       label: t("file_library.contracts.filters.person"),
       value: filters.person,
       onRemove: () => onChange({ person: undefined }),
     });
   if (filters.artist)
     pills.push({
+      key: "artist",
       label: t("file_library.contracts.filters.artist"),
       value: filters.artist,
       onRemove: () => onChange({ artist: undefined }),
     });
   if (filters.year)
     pills.push({
+      key: "year",
       label: t("file_library.contracts.filters.year"),
       value: filters.year,
       onRemove: () => onChange({ year: undefined }),
     });
   if (filters.fecha_fin_efectiva_after)
     pills.push({
+      key: "fecha_fin_efectiva_after",
       label: t("file_library.contracts.fields.fecha_fin_efectiva"),
       value: `≥ ${filters.fecha_fin_efectiva_after}`,
       onRemove: () => onChange({ fecha_fin_efectiva_after: undefined }),
     });
   if (filters.fecha_fin_efectiva_before)
     pills.push({
+      key: "fecha_fin_efectiva_before",
       label: t("file_library.contracts.fields.fecha_fin_efectiva"),
       value: `≤ ${filters.fecha_fin_efectiva_before}`,
       onRemove: () => onChange({ fecha_fin_efectiva_before: undefined }),
@@ -285,11 +313,8 @@ export function AppliedContractFilters(props: Props & { onClearAll: () => void }
 
   return (
     <div className="flex flex-wrap items-center gap-1.5 border-b border-subtle px-4 py-2">
-      {pills.map((pill, index) => (
-        <span
-          key={`${pill.label}-${pill.value}-${index}`}
-          className="flex items-center gap-1 rounded-full border border-subtle px-2 py-0.5 text-11"
-        >
+      {pills.map((pill) => (
+        <span key={pill.key} className="flex items-center gap-1 rounded-full border border-subtle px-2 py-0.5 text-11">
           <span className="text-tertiary">{pill.label}:</span>
           <span>{pill.value}</span>
           <button type="button" onClick={pill.onRemove} className="rounded-full p-0.5 hover:bg-layer-1-hover">

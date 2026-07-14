@@ -142,6 +142,13 @@ from .file_library import (
     FileLibraryAssetSerializer,
     FileTagSerializer,
 )
+from .payroll import (
+    AdjustmentSerializer,
+    EmployeeSerializer,
+    OfficeSerializer,
+    PayrollPaymentSerializer,
+    SalarySerializer,
+)
 from .finance import (
     BudgetSerializer,
     ExpenseCategorySerializer,
