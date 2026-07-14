@@ -32,6 +32,7 @@ export const addIssueToPersistanceLayer = async (issue: TIssue) => {
       "start_time",
       "target_date",
       "sequence_id",
+      "sg_event_id",
       "project_id",
       "parent_id",
       "created_at",

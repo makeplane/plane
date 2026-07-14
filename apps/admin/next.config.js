@@ -19,7 +19,6 @@ const nextConfig = {
       "@plane/propel",
       "@plane/services",
       "@plane/shared-state",
-      "@plane/types",
       "@plane/ui",
       "@plane/utils",
     ],

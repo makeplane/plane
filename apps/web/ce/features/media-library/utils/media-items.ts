@@ -30,7 +30,14 @@ const IMAGE_FORMATS = new Set([
   "heif",
   "thumbnail",
 ]);
-const GENERIC_FORMAT_VALUES = new Set(["application/octet-stream", "application", "video", "image", "binary", "octet-stream"]);
+const GENERIC_FORMAT_VALUES = new Set([
+  "application/octet-stream",
+  "application",
+  "video",
+  "image",
+  "binary",
+  "octet-stream",
+]);
 const FORMAT_OVERRIDES: Record<string, string> = {
   "application/vnd.apple.mpegurl": "m3u8",
   "application/x-mpegurl": "m3u8",
@@ -57,6 +64,8 @@ const DOCUMENT_THUMBNAILS: Record<string, string> = {
   html: "attachment/html-icon.png",
   css: "attachment/css-icon.png",
 };
+const ARTIFACT_NAME_PATTERN = /^[A-Za-z0-9_-]+$/;
+const THUMBNAIL_HINT_KEYS = ["thumbnail", "thumbnail_url", "thumbnailUrl", "poster", "poster_url", "posterUrl"];
 
 const resolveArtifactPath = (path: string) => {
   if (!path) return "";
@@ -281,10 +290,7 @@ export const resolveMediaItemActionHref = (item: TMediaItem) => {
   return null;
 };
 
-export const mapArtifactsToMediaItems = (
-  artifacts: TMediaArtifact[],
-  context?: TArtifactContext
-): TMediaItem[] => {
+export const mapArtifactsToMediaItems = (artifacts: TMediaArtifact[], context?: TArtifactContext): TMediaItem[] => {
   const formatDisplayTitle = (title: string, format: string, mediaType: TMediaItem["mediaType"]) => {
     const normalizedTitle = title.trim();
 
@@ -304,6 +310,26 @@ export const mapArtifactsToMediaItems = (
   const artifactByName = new Map<string, TMediaArtifact>();
 
   const normalizeKey = (value: string) => value.trim().toLowerCase();
+  const resolveArtifactNameSource = (value: string) => {
+    const linkedArtifact = artifactByName.get(normalizeKey(value));
+    return linkedArtifact ? resolveArtifactSource(linkedArtifact, context) : "";
+  };
+  const resolveThumbnailHint = (value: string) => {
+    const normalizedValue = value.trim();
+    if (!normalizedValue) return "";
+    const artifactSource = resolveArtifactNameSource(normalizedValue);
+    if (artifactSource) return artifactSource;
+    if (context && ARTIFACT_NAME_PATTERN.test(normalizedValue)) return buildArtifactFileUrl(context, normalizedValue);
+    return resolveArtifactPath(normalizedValue);
+  };
+  const getThumbnailHint = (artifact: TMediaArtifact, meta: Record<string, unknown>) => {
+    const artifactRecord = artifact as TMediaArtifact & Record<string, unknown>;
+    for (const key of THUMBNAIL_HINT_KEYS) {
+      const value = artifactRecord[key] ?? meta[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+    return "";
+  };
 
   for (const artifact of artifacts) {
     const rawFormat = artifact.format ?? "";
@@ -322,7 +348,7 @@ export const mapArtifactsToMediaItems = (
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
     if (isPreview) {
-      thumbnailByLink.set(artifact.link, resolveArtifactSource(artifact, context));
+      thumbnailByLink.set(normalizeKey(artifact.link), resolveArtifactSource(artifact, context));
     }
   }
 
@@ -380,10 +406,10 @@ export const mapArtifactsToMediaItems = (
     const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =
       normalizedAction === "play" ||
-        normalizedAction === "preview" ||
-        normalizedAction === "play_hls" ||
-        normalizedAction === "play_streaming" ||
-        normalizedAction === "open_mp4"
+      normalizedAction === "preview" ||
+      normalizedAction === "play_hls" ||
+      normalizedAction === "play_streaming" ||
+      normalizedAction === "open_mp4"
         ? "video"
         : normalizedAction === "view" || normalizedAction === "open_image"
           ? "image"
@@ -397,11 +423,10 @@ export const mapArtifactsToMediaItems = (
                   ? "image"
                   : "document";
     const linkedMediaType = linkTarget
-      ? mediaTypeByName.get(linkTarget) ?? (linkFormat ? getMediaType(linkFormat) : inferredLinkedMediaType)
+      ? (mediaTypeByName.get(linkTarget) ?? (linkFormat ? getMediaType(linkFormat) : inferredLinkedMediaType))
       : undefined;
     const secondaryTag =
-      getMetaString(meta, ["season", "level", "status", "coach"], "") ||
-      (eventDetails?.status ?? "Media");
+      getMetaString(meta, ["season", "level", "status", "coach"], "") || (eventDetails?.status ?? "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
     const docs = getMetaStringArray(meta, "docs");
@@ -413,14 +438,17 @@ export const mapArtifactsToMediaItems = (
     const preferredDownloadPath =
       mediaType === "video" ? downloadablePath || directDownloadPath : directDownloadPath || downloadablePath;
 
-    const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
+    const metaThumbnail = getThumbnailHint(artifact, meta);
+    const artifactThumbnail = artifact.name ? thumbnailByLink.get(normalizeKey(artifact.name)) : "";
     const planeCoachThumbnail =
       metaSource === "plane-coach" && mediaType === "document" ? metaThumbnail || getPlaneCoachThumbnailPath() : "";
     const fallbackThumbnail =
       mediaType === "image"
         ? resolvedPath
         : planeCoachThumbnail || (mediaType === "document" ? getDocumentThumbnailPath(format) : "");
-    const thumbnail = resolveArtifactPath(planeCoachThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail);
+    const thumbnail = resolveArtifactPath(
+      artifactThumbnail || resolveThumbnailHint(metaThumbnail) || planeCoachThumbnail || fallbackThumbnail
+    );
 
     return {
       id: artifact.name,
@@ -453,10 +481,7 @@ export const mapArtifactsToMediaItems = (
   });
 };
 
-export const groupMediaItemsByTag = (
-  items: TMediaItem[],
-  fallbackTitle = "Upload"
-): TMediaSection[] => {
+export const groupMediaItemsByTag = (items: TMediaItem[], fallbackTitle = "Upload"): TMediaSection[] => {
   const grouped = new Map<string, TMediaItem[]>();
   for (const item of items) {
     const key = item.primaryTag || fallbackTitle;
