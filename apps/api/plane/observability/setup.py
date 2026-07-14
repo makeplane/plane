@@ -24,6 +24,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
+from plane.observability.logging import is_otel_enabled
+
 logger = logging.getLogger(__name__)
 
 _CONFIGURED = False
@@ -32,10 +34,6 @@ _CONFIGURED = False
 # (prefork children exit via os._exit and skip atexit).
 _TRACER_PROVIDER: "TracerProvider | None" = None
 _METER_PROVIDER: "MeterProvider | None" = None
-
-# Accepted "on" tokens — kept in sync with the pi/node services so OTEL_ENABLED
-# behaves identically across every runtime.
-_TRUTHY_VALUES = ("1", "true", "yes", "on")
 
 _NOISY_OTEL_LOGGERS = (
     "opentelemetry",
@@ -47,10 +45,6 @@ _NOISY_OTEL_LOGGERS = (
 )
 
 _HTTP_PROTOCOLS = ("http/protobuf", "http")
-
-
-def _is_enabled() -> bool:
-    return os.environ.get("OTEL_ENABLED", "0").strip().lower() in _TRUTHY_VALUES
 
 
 def _has_endpoint() -> bool:
@@ -140,13 +134,24 @@ def _instrument_libraries() -> None:
     request that enqueues a task is linked to that task's execution span.
     The others add child spans so latency can be decomposed (SQL query,
     Redis op, outbound HTTP).
+
+    Each instrumentor is isolated: a single failure (version mismatch, missing
+    optional dependency) is logged and skipped so it neither blocks the other
+    instrumentors nor takes down application startup.
     """
-    DjangoInstrumentor().instrument()
-    CeleryInstrumentor().instrument()
-    PsycopgInstrumentor().instrument(enable_commenter=False)
-    RedisInstrumentor().instrument()
-    RequestsInstrumentor().instrument()
-    HTTPXClientInstrumentor().instrument()
+    instrumentors = (
+        (DjangoInstrumentor, {}),
+        (CeleryInstrumentor, {}),
+        (PsycopgInstrumentor, {"enable_commenter": False}),
+        (RedisInstrumentor, {}),
+        (RequestsInstrumentor, {}),
+        (HTTPXClientInstrumentor, {}),
+    )
+    for instrumentor_cls, kwargs in instrumentors:
+        try:
+            instrumentor_cls().instrument(**kwargs)
+        except Exception as exc:
+            logger.warning("Failed to instrument %s: %s", instrumentor_cls.__name__, exc)
 
 
 def _quiet_otel_loggers() -> None:
@@ -172,7 +177,7 @@ def configure_otel() -> None:
     global _CONFIGURED
     if _CONFIGURED:
         return
-    if not _is_enabled():
+    if not is_otel_enabled():
         return
     if not _has_endpoint():
         logger.warning("OTEL_ENABLED=1 but OTEL_EXPORTER_OTLP_ENDPOINT is not set; OpenTelemetry bootstrap skipped")

@@ -25,6 +25,8 @@ def isolate_otel_state(monkeypatch):
     from plane.observability import setup as otel_setup
 
     monkeypatch.setattr(otel_setup, "_CONFIGURED", False, raising=False)
+    monkeypatch.setattr(otel_setup, "_TRACER_PROVIDER", None, raising=False)
+    monkeypatch.setattr(otel_setup, "_METER_PROVIDER", None, raising=False)
 
     saved = {k: v for k, v in os.environ.items() if k.startswith("OTEL_")}
     for key in list(saved.keys()):

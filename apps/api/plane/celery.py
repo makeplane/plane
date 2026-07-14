@@ -26,14 +26,14 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 # Bootstrap OpenTelemetry before Celery wires up so CeleryInstrumentor can
 # patch task execution. No-op unless OTEL_ENABLED=1.
 from plane.observability.setup import configure_otel, flush_otel  # noqa: E402
-from plane.observability.logging import TraceContextFilter  # noqa: E402
+from plane.observability.logging import TraceContextFilter, is_otel_enabled  # noqa: E402
 
 configure_otel()
 
-# Whether to trace-correlate worker logs. Matches the Django LOGGING gate in
-# plane/settings/{local,production}.py; the bootstrap in configure_otel() uses
-# its own (superset) token check.
-_OTEL_LOG_ENABLED = os.environ.get("OTEL_ENABLED", "0").strip().lower() in ("1", "true", "yes")
+# Whether to trace-correlate worker logs. Uses the same shared is_otel_enabled()
+# gate as the bootstrap (setup.configure_otel) and the Django LOGGING gate, so
+# every documented OTEL_ENABLED token behaves identically across processes.
+_OTEL_LOG_ENABLED = is_otel_enabled()
 
 # Base JSON log fmt (unchanged off-path); the OTel variant appends the
 # trace-context fields that TraceContextFilter populates.
