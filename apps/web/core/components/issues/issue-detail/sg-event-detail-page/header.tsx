@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Aperture, ArrowLeft, ChevronDown } from "lucide-react";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { CustomSelect } from "@plane/ui";
@@ -17,6 +18,7 @@ type SgEventHeaderProps = {
   selectedViewId: string;
   selectedViewLabel: string;
   setSelectedViewId: (value: string) => void;
+  toolbar?: ReactNode;
   viewDevices: SgEventDevice[];
 };
 
@@ -29,6 +31,7 @@ export const SgEventHeader = ({
   selectedViewId,
   selectedViewLabel,
   setSelectedViewId,
+  toolbar,
   viewDevices,
 }: SgEventHeaderProps) => (
   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -41,38 +44,41 @@ export const SgEventHeader = ({
       <span>Back</span>
     </button>
 
-    <div className="hidden items-center gap-2 md:flex">
-      {viewDevices.length > 0 ? (
-        <CustomSelect
-          value={selectedViewId}
-          onChange={(value: string) => setSelectedViewId(value)}
-          label={<span className="truncate">{selectedViewLabel}</span>}
-          placement="bottom-end"
-          className="h-9"
-          buttonClassName="inline-flex h-9 min-w-[110px] items-center gap-2 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100 hover:bg-custom-background-90"
-          optionsClassName="min-w-[140px]"
-        >
-          {viewDevices.map((device, index) => (
-            <CustomSelect.Option key={device.id} value={String(device.id)}>
-              <div className="flex min-w-0 flex-col">
-                <span className="text-sm">{`View ${index + 1}`}</span>
-                <span className="truncate text-xs text-custom-text-400">{device.streamName}</span>
-              </div>
-            </CustomSelect.Option>
-          ))}
-        </CustomSelect>
-      ) : (
-        <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100">
-          <span>{isLoadingViews ? "Loading views" : "View 1"}</span>
-          <ChevronDown className="h-4 w-4 text-custom-text-400" />
-        </button>
-      )}
+    <div className="flex items-center gap-2">
+      <div className="hidden items-center md:flex">
+        {viewDevices.length > 0 ? (
+          <CustomSelect
+            value={selectedViewId}
+            onChange={(value: string) => setSelectedViewId(value)}
+            label={<span className="truncate">{selectedViewLabel}</span>}
+            placement="bottom-end"
+            className="h-9"
+            buttonClassName="inline-flex h-9 min-w-[110px] items-center gap-2 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100 hover:bg-custom-background-90"
+            optionsClassName="min-w-[140px]"
+          >
+            {viewDevices.map((device, index) => (
+              <CustomSelect.Option key={device.id} value={String(device.id)}>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-sm">{`View ${index + 1}`}</span>
+                  <span className="truncate text-xs text-custom-text-400">{device.streamName}</span>
+                </div>
+              </CustomSelect.Option>
+            ))}
+          </CustomSelect>
+        ) : (
+          <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100">
+            <span>{isLoadingViews ? "Loading views" : "View 1"}</span>
+            <ChevronDown className="h-4 w-4 text-custom-text-400" />
+          </button>
+        )}
+      </div>
+      {toolbar}
       <button
         type="button"
         onClick={handleSwitchToFullStream}
         disabled={!fullStreamPlaybackItem || !isTagClipActive}
         className={cn(
-          "inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors",
+          "hidden h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors md:inline-flex",
           fullStreamPlaybackItem && isTagClipActive
             ? "border-custom-border-200 bg-custom-background-100 text-custom-text-100 hover:bg-custom-background-90"
             : "border-custom-border-200 bg-custom-background-90 text-custom-text-400"

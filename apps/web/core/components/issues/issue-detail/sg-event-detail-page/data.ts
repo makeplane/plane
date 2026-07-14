@@ -2,7 +2,7 @@ import type { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { mapArtifactsToMediaItems } from "ce/features/media-library/utils/media-items";
-import type { SgEventDevice, SgMediaPayload } from "./types";
+import type { SgEventDevice, SgEventPayloadLoadResult, SgMediaPayload } from "./types";
 import {
   asArray,
   asRecord,
@@ -13,34 +13,69 @@ import {
   toText,
 } from "./utils";
 
-const fetchEventJsonPayload = async (item: TMediaItem | null): Promise<Record<string, unknown> | null> => {
+const fetchEventJsonPayload = async (item: TMediaItem | null): Promise<SgEventPayloadLoadResult> => {
   if (!isCoachCompletedEventJsonItem(item)) {
-    return null;
+    return {
+      eventPayload: null,
+      eventPayloadErrorMessage: null,
+      eventPayloadStatus: "unavailable",
+    };
   }
 
   const sourceUrl = item?.fileSrc || item?.downloadSrc || "";
   if (!sourceUrl) {
-    return null;
+    return {
+      eventPayload: null,
+      eventPayloadErrorMessage: null,
+      eventPayloadStatus: "unavailable",
+    };
   }
+
+  let errorMessage = "Unable to load the completed event JSON.";
 
   for (const credentials of ["include", "omit"] as const) {
     try {
       const response = await fetch(sourceUrl, { credentials });
       if (!response.ok) {
+        errorMessage = `Unable to load the completed event JSON (HTTP ${response.status}).`;
         continue;
       }
 
-      const payload = (await response.json().catch(() => null)) as unknown;
+      let payload: unknown;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        errorMessage =
+          error instanceof Error && error.message
+            ? `Unable to parse the completed event JSON: ${error.message}`
+            : "Unable to parse the completed event JSON.";
+        continue;
+      }
+
       const record = asRecord(payload);
       if (Object.keys(record).length > 0) {
-        return record;
+        return {
+          eventPayload: record,
+          eventPayloadErrorMessage: null,
+          eventPayloadStatus: "loaded",
+        };
       }
-    } catch {
+
+      errorMessage = "The completed event JSON payload is empty or invalid.";
+    } catch (error) {
+      errorMessage =
+        error instanceof Error && error.message
+          ? `Unable to load the completed event JSON: ${error.message}`
+          : "Unable to load the completed event JSON.";
       continue;
     }
   }
 
-  return null;
+  return {
+    eventPayload: null,
+    eventPayloadErrorMessage: errorMessage,
+    eventPayloadStatus: "error",
+  };
 };
 
 export const fetchSgEventDevices = async (cpServerBaseUrl: string, sgEventId: string): Promise<SgEventDevice[]> => {
@@ -131,6 +166,8 @@ export const loadSgMediaPayload = async (
     return {
       eventDetails: null,
       eventPayload: null,
+      eventPayloadErrorMessage: null,
+      eventPayloadStatus: "unavailable",
       eventItem: null,
       mediaItems: [],
       videoItems: [],
@@ -186,11 +223,11 @@ export const loadSgMediaPayload = async (
     mediaItem ??
     null;
   const videoItems = filteredItems.filter((candidate) => candidate.mediaType === "video");
-  const eventPayload = await fetchEventJsonPayload(eventItem);
+  const eventPayloadResult = await fetchEventJsonPayload(eventItem);
 
   return {
     eventDetails: eventItem ? getEventMediaDetails(eventItem) : null,
-    eventPayload,
+    ...eventPayloadResult,
     eventItem,
     mediaItems: filteredItems,
     videoItems,

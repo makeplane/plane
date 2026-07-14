@@ -4,6 +4,7 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { formatDateValue, formatTimeValue } from "ce/features/media-library/utils/media-detail-utils";
 import type { TEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { SPORT_TABLE_CONFIGS } from "./constants";
+import { findExactRawTagFieldValue } from "./raw-tag-fields";
 import type { SgTagRow, SportTableKind } from "./types";
 
 export const asArray = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
@@ -270,6 +271,56 @@ const findTagDataValue = (tag: Record<string, unknown>, names: string[]) => {
   return "";
 };
 
+const normalizeTagContextKey = (value: unknown) =>
+  toText(value)
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+const TAG_CONTEXT_IGNORED_KEYS = new Set([
+  "action",
+  "data",
+  "id",
+  "quarter",
+  "result",
+  "tag_id",
+  "tagid",
+  "team",
+  "thumbnail_url",
+  "thumbnailurl",
+  "time_range",
+  "timerange",
+  "timestamp",
+]);
+
+const buildTagContext = (tag: Record<string, unknown>): Readonly<Record<string, string>> => {
+  const context: Record<string, string> = {};
+
+  Object.entries(tag).forEach(([key, value]) => {
+    const normalizedKey = normalizeTagContextKey(key);
+    if (
+      TAG_CONTEXT_IGNORED_KEYS.has(normalizedKey) ||
+      (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean")
+    ) {
+      return;
+    }
+    const normalizedValue = toText(value);
+    if (normalizedKey && normalizedValue) context[normalizedKey] = normalizedValue;
+  });
+
+  asArray(tag.data).forEach((entry) => {
+    const record = asRecord(entry);
+    const key = normalizeTagContextKey(
+      record.tag ?? record.field ?? record.field_name ?? record.fieldName ?? record.name ?? record.key
+    );
+    const value = toText(record.value ?? record.field_value ?? record.fieldValue ?? record.val);
+    if (key && value) context[key] = value;
+  });
+
+  return context;
+};
+
 const formatYardValue = (value: string) => {
   if (!value) return "--";
   const numericValue = Number(value);
@@ -459,6 +510,11 @@ const getSourceTagId = (tag: Record<string, unknown>) =>
       tag._id
   );
 
+const getClipId = (tag: Record<string, unknown>) => findExactRawTagFieldValue(tag, ["clip_id"]);
+
+const getThumbnailUrl = (tag: Record<string, unknown>) =>
+  findExactRawTagFieldValue(tag, ["thumbnail_url"]);
+
 const normalizeComparableTagValue = (value: string) =>
   value
     .trim()
@@ -477,13 +533,26 @@ const splitTimecodeRange = (value: string) => {
 const buildSgTagRowDedupeKey = (
   row: Pick<
     SgTagRow,
-    "action" | "groupValue" | "player" | "primaryDetail" | "result" | "secondaryDetail" | "team" | "timecode"
+    | "action"
+    | "clipId"
+    | "context"
+    | "groupValue"
+    | "player"
+    | "primaryDetail"
+    | "result"
+    | "secondaryDetail"
+    | "team"
+    | "timecode"
   >
 ) => {
   const { start, end } = splitTimecodeRange(row.timecode);
 
   return JSON.stringify({
     action: normalizeComparableTagValue(row.action),
+    clipId: normalizeComparableTagValue(row.clipId ?? ""),
+    context: Object.entries(row.context)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => [key, normalizeComparableTagValue(value)]),
     end,
     groupValue: normalizeComparableTagValue(row.groupValue),
     player: normalizeComparableTagValue(row.player),
@@ -498,7 +567,16 @@ const buildSgTagRowDedupeKey = (
 const buildStableSgTagRowId = (
   row: Pick<
     SgTagRow,
-    "action" | "groupValue" | "player" | "primaryDetail" | "result" | "secondaryDetail" | "team" | "timecode"
+    | "action"
+    | "clipId"
+    | "context"
+    | "groupValue"
+    | "player"
+    | "primaryDetail"
+    | "result"
+    | "secondaryDetail"
+    | "team"
+    | "timecode"
   >,
   sourceTagId: string | null
 ) => sourceTagId || `sg-tag-${buildSgTagRowDedupeKey(row)}`;
@@ -506,15 +584,19 @@ const buildStableSgTagRowId = (
 const getTagRowCompletenessScore = (row: SgTagRow) =>
   [
     row.sourceTagId,
+    row.clipId,
     row.sourceUrl,
     row.playlistTimestamp,
     row.playlistFallbackTimestamp,
     row.clipStartSeconds !== null ? "clip-start" : "",
     row.clipEndSeconds !== null ? "clip-end" : "",
+    row.matrixParticipant,
+    row.matrixPeriod,
     row.player !== "--" ? row.player : "",
     row.result !== "--" ? row.result : "",
     row.primaryDetail !== "--" ? row.primaryDetail : "",
     row.secondaryDetail !== "--" ? row.secondaryDetail : "",
+    Object.keys(row.context).length > 0 ? "context" : "",
   ].filter(Boolean).length;
 
 const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
@@ -523,8 +605,12 @@ const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
   const fallbackRow = preferredRow === nextRow ? currentRow : nextRow;
   const mergedRow = {
     ...preferredRow,
+    clipId: preferredRow.clipId ?? fallbackRow.clipId,
     clipEndSeconds: preferredRow.clipEndSeconds ?? fallbackRow.clipEndSeconds,
     clipStartSeconds: preferredRow.clipStartSeconds ?? fallbackRow.clipStartSeconds,
+    context: { ...fallbackRow.context, ...preferredRow.context },
+    matrixParticipant: preferredRow.matrixParticipant ?? fallbackRow.matrixParticipant,
+    matrixPeriod: preferredRow.matrixPeriod ?? fallbackRow.matrixPeriod,
     player: preferredRow.player !== "--" ? preferredRow.player : fallbackRow.player,
     playlistFallbackTimestamp: preferredRow.playlistFallbackTimestamp ?? fallbackRow.playlistFallbackTimestamp,
     playlistTimestamp: preferredRow.playlistTimestamp ?? fallbackRow.playlistTimestamp,
@@ -534,6 +620,7 @@ const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
     sourceTagId: preferredRow.sourceTagId ?? fallbackRow.sourceTagId,
     sourceUrl: preferredRow.sourceUrl || fallbackRow.sourceUrl,
     team: preferredRow.team !== "--" ? preferredRow.team : fallbackRow.team,
+    thumbnailUrl: preferredRow.thumbnailUrl ?? fallbackRow.thumbnailUrl,
     timecode: preferredRow.timecode !== "--" ? preferredRow.timecode : fallbackRow.timecode,
   } satisfies SgTagRow;
 
@@ -586,6 +673,10 @@ const buildTagRowBySport = (
   sport: SportTableKind,
   baseEventDateTime?: string | null
 ): SgTagRow | null => {
+  const context = buildTagContext(tag);
+  const matrixParticipant =
+    findExactRawTagFieldValue(tag, ["player", "player_name", "athlete", "athlete_name", "primary_actor"]) ||
+    null;
   const player =
     findTagDataValue(tag, [
       "player",
@@ -611,9 +702,10 @@ const buildTagRowBySport = (
     findTagDataValue(tag, ["team", "unit", "side", "batting_team", "fielding_team", "possession_team"]) ||
     formatLooseLabel(toText(tag.team || tag.unit));
 
-  const groupQuarter = normalizeQuarter(
-    toText(tag.quarter || tag.period || tag.phase || tag.segment || tag.group || "Quarter 1")
-  );
+  const rawQuarterValue =
+    findTagDataValue(tag, ["quarter", "period", "phase", "segment", "group"]) ||
+    toText(tag.quarter || tag.period || tag.phase || tag.segment || tag.group);
+  const groupQuarter = normalizeQuarter(rawQuarterValue || "Quarter 1");
   const timecode = buildTimecode(tag);
   const rawPlaylistTimestamp =
     findTagDataValue(tag, [
@@ -629,6 +721,8 @@ const buildTagRowBySport = (
   const playlistFallbackTimestamp = buildClockOnlyPlaylistTimestampFallback(rawPlaylistTimestamp, baseEventDateTime);
   const sourceUrl = getTagSourceUrl(tag);
   const sourceTagId = getSourceTagId(tag) || null;
+  const clipId = getClipId(tag) || null;
+  const thumbnailUrl = getThumbnailUrl(tag) || null;
   const clipStartSeconds = parseTimecodeToSeconds(
     findTagDataValue(tag, ["clip_start", "start", "video_timecode_clip_start", "start_timecode"]) || timecode
   );
@@ -637,6 +731,7 @@ const buildTagRowBySport = (
   );
 
   let groupValue = SPORT_TABLE_CONFIGS.default.defaultGroupValue;
+  let matrixPeriod: string | null = null;
   let primaryDetail = "--";
   let secondaryDetail = "--";
 
@@ -648,6 +743,7 @@ const buildTagRowBySport = (
         findTagDataValue(tag, ["yard", "yards", "yards_gained", "gain_yards", "distance_gained"]) ||
         toText(tag.yard || tag.yards);
       groupValue = groupQuarter;
+      matrixPeriod = rawQuarterValue ? groupQuarter : null;
       primaryDetail = formatFootballDownDistance(down, distance);
       secondaryDetail = formatYardValue(yards);
       break;
@@ -660,6 +756,7 @@ const buildTagRowBySport = (
       const count = findTagDataValue(tag, ["count", "pitch_count"]);
       const inningDisplay = formatBaseballInning(halfInning, inningNumber);
       groupValue = inningDisplay !== "--" ? inningDisplay : SPORT_TABLE_CONFIGS.baseball.defaultGroupValue;
+      matrixPeriod = inningDisplay !== "--" ? inningDisplay : null;
       primaryDetail = inningDisplay;
       secondaryDetail = formatBaseballCount(balls, strikes, count);
       break;
@@ -673,6 +770,7 @@ const buildTagRowBySport = (
         "--";
       const zone = findTagDataValue(tag, ["zone", "shot_zone", "field_zone", "area", "field_position"]) || "--";
       groupValue = phase || SPORT_TABLE_CONFIGS.soccer.defaultGroupValue;
+      matrixPeriod = phase || null;
       primaryDetail = matchTime;
       secondaryDetail = zone !== "--" ? formatLooseLabel(zone) : zone;
       break;
@@ -687,11 +785,13 @@ const buildTagRowBySport = (
         findTagDataValue(tag, ["score_value"]);
       const quarterLabel = normalizeBasketballQuarter(periodValue || "Q1");
       groupValue = quarterLabel;
+      matrixPeriod = periodValue ? quarterLabel : null;
       primaryDetail = [quarterLabel, clockValue].filter(Boolean).join(" ") || quarterLabel;
       secondaryDetail = formatBasketballValue(points, result);
       break;
     }
     case "cricket": {
+      const inningsNumber = findTagDataValue(tag, ["innings_number", "inning"]);
       const overDisplay = findTagDataValue(tag, ["over_display"]);
       const overNumber = findTagDataValue(tag, ["over_number"]);
       const ballInOver = findTagDataValue(tag, ["ball_in_over"]);
@@ -705,6 +805,7 @@ const buildTagRowBySport = (
         "run_value",
       ]);
       groupValue = overGroupValue || SPORT_TABLE_CONFIGS.cricket.defaultGroupValue;
+      matrixPeriod = overGroupValue || (inningsNumber ? `Innings ${inningsNumber}` : null);
       primaryDetail = overValue || "--";
       secondaryDetail = formatCricketRuns(runs);
       break;
@@ -715,6 +816,7 @@ const buildTagRowBySport = (
         findTagDataValue(tag, ["value", "score_value", "points_or_runs_scored"]) ||
         findTagDataValue(tag, ["count", "zone", "yard", "yards"]);
       groupValue = phase || SPORT_TABLE_CONFIGS.default.defaultGroupValue;
+      matrixPeriod = phase || null;
       primaryDetail = phase || "--";
       secondaryDetail = value ? formatLooseLabel(value) : "--";
       break;
@@ -731,6 +833,8 @@ const buildTagRowBySport = (
   const stableId = buildStableSgTagRowId(
     {
       action: normalizedAction,
+      clipId,
+      context,
       groupValue,
       player: normalizedPlayer,
       primaryDetail,
@@ -744,10 +848,14 @@ const buildTagRowBySport = (
 
   return {
     action: normalizedAction,
+    clipId,
     clipEndSeconds,
     clipStartSeconds,
+    context,
     groupValue,
     id: stableId,
+    matrixParticipant,
+    matrixPeriod,
     player: normalizedPlayer,
     playlistFallbackTimestamp,
     playlistTimestamp,
@@ -757,6 +865,7 @@ const buildTagRowBySport = (
     sourceTagId,
     sourceUrl,
     team: team || "--",
+    thumbnailUrl,
     timecode,
   };
 };
@@ -795,12 +904,16 @@ export const normalizeTagRows = (
 
     return {
       action: tag.action ? formatLooseLabel(tag.action) : tag.label,
+      clipId: null,
       clipEndSeconds: null,
       clipStartSeconds: tag.timeRange ? parseTimecodeToSeconds(tag.timeRange) : null,
+      context: {},
       groupValue,
       id: buildStableSgTagRowId(
         {
           action: tag.action ? formatLooseLabel(tag.action) : tag.label,
+          clipId: null,
+          context: {},
           groupValue,
           player: "--",
           primaryDetail:
@@ -816,6 +929,8 @@ export const normalizeTagRows = (
         },
         null
       ),
+      matrixParticipant: null,
+      matrixPeriod: tag.quarter ? quarterValue : null,
       player: "--",
       playlistFallbackTimestamp: buildClockOnlyPlaylistTimestampFallback(tag.timestamp || "", baseEventDateTime),
       playlistTimestamp: normalizePlaylistTimestamp(tag.timestamp || "", baseEventDateTime),
@@ -830,6 +945,7 @@ export const normalizeTagRows = (
       sourceTagId: null,
       sourceUrl: "",
       team: tag.team ? formatLooseLabel(tag.team) : "--",
+      thumbnailUrl: null,
       timecode: tag.timeRange || tag.timestamp || "--",
     } satisfies SgTagRow;
   }));
