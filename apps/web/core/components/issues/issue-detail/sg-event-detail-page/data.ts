@@ -132,7 +132,9 @@ export const loadSgMediaPayload = async (
       eventDetails: null,
       eventPayload: null,
       eventItem: null,
+      manifestArtifacts,
       mediaItems: [],
+      packageId,
       videoItems: [],
     };
   }
@@ -178,7 +180,11 @@ export const loadSgMediaPayload = async (
   });
 
   const filteredItems =
-    scopedItems.length > 0 ? scopedItems : issueId ? mediaItems.filter((candidate) => candidate.workItemId === issueId) : mediaItems;
+    scopedItems.length > 0
+      ? scopedItems
+      : issueId
+        ? mediaItems.filter((candidate) => candidate.workItemId === issueId)
+        : mediaItems;
   const eventItem =
     filteredItems.find((candidate) => candidate.id === mediaItem?.id) ??
     filteredItems.find((candidate) => isCoachCompletedEventJsonItem(candidate)) ??
@@ -193,6 +199,8 @@ export const loadSgMediaPayload = async (
     eventPayload,
     eventItem,
     mediaItems: filteredItems,
+    manifestArtifacts,
+    packageId,
     videoItems,
   };
 };

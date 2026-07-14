@@ -1,4 +1,5 @@
 import type { TIssue } from "@plane/types";
+import type { TMediaArtifact } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import type { TEventMediaDetails } from "ce/features/media-library/utils/media-event";
 
@@ -41,6 +42,7 @@ export type SgTagRow = {
   sourceTagId: string | null;
   sourceUrl: string;
   team: string;
+  thumbnailUrl: string;
   timecode: string;
 };
 
@@ -56,7 +58,11 @@ export type SgMediaPayload = {
   eventPayload: Record<string, unknown> | null;
   eventItem: TMediaItem | null;
   mediaItems: TMediaItem[];
+  manifestArtifacts: TMediaArtifact[];
+  packageId: string;
   videoItems: TMediaItem[];
 };
 
 export type RowFilterMode = "all" | "selected" | "favorites";
+
+export type SgEventTagViewMode = "list" | "timeline";

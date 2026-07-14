@@ -11,6 +11,7 @@ import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./const
 type SgEventVideoPlayerProps = {
   item: TMediaItem | null;
   compactEmpty?: boolean;
+  onPlaybackTimeChange?: (seconds: number, durationSeconds: number | null) => void;
   seekToSeconds?: number | null;
 };
 
@@ -33,7 +34,12 @@ type TQualityOption = {
 
 const HLS_MIME_TYPES = ["application/x-mpegURL", "application/vnd.apple.mpegurl"] as const;
 
-export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds = null }: SgEventVideoPlayerProps) => {
+export const SgEventVideoPlayer = ({
+  item,
+  compactEmpty = false,
+  onPlaybackTimeChange,
+  seekToSeconds = null,
+}: SgEventVideoPlayerProps) => {
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = (item?.format ?? "").toLowerCase();
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
@@ -378,6 +384,33 @@ export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds =
 
   useEffect(() => {
     const player = playerRef.current;
+    if (!player || !onPlaybackTimeChange) return;
+
+    const handlePlaybackTimeChange = () => {
+      const currentTime = Number(player.currentTime?.() ?? 0);
+      const duration = Number(player.duration?.() ?? 0);
+      onPlaybackTimeChange(
+        Number.isFinite(currentTime) ? currentTime : 0,
+        Number.isFinite(duration) && duration > 0 ? duration : null
+      );
+    };
+
+    player.on("durationchange", handlePlaybackTimeChange);
+    player.on("loadedmetadata", handlePlaybackTimeChange);
+    player.on("seeked", handlePlaybackTimeChange);
+    player.on("timeupdate", handlePlaybackTimeChange);
+    handlePlaybackTimeChange();
+
+    return () => {
+      player.off("durationchange", handlePlaybackTimeChange);
+      player.off("loadedmetadata", handlePlaybackTimeChange);
+      player.off("seeked", handlePlaybackTimeChange);
+      player.off("timeupdate", handlePlaybackTimeChange);
+    };
+  }, [effectiveVideoSrc, item?.id, onPlaybackTimeChange]);
+
+  useEffect(() => {
+    const player = playerRef.current;
     if (!player || !isFiniteTagClip) return;
 
     const handleEnded = () => {
@@ -521,7 +554,7 @@ export const SgEventVideoPlayer = ({ item, compactEmpty = false, seekToSeconds =
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-xl border border-custom-border-200 bg-custom-background-90 p-2 shadow-sm sm:p-3",
+        "flex items-center justify-center overflow-hidden rounded-lg bg-custom-background-90",
         PLAYER_FRAME_CLASS
       )}
     >

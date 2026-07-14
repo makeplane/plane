@@ -68,7 +68,9 @@ type GatewayField = {
 };
 
 const isGatewayField = (value: unknown): value is GatewayField =>
-  Boolean(value) && typeof value === "object" && ("field" in (value as GatewayField) || "value" in (value as GatewayField));
+  Boolean(value) &&
+  typeof value === "object" &&
+  ("field" in (value as GatewayField) || "value" in (value as GatewayField));
 
 const demodulateGatewayValue = (value: unknown, type: unknown): unknown => {
   if (Number(type) === 6 && Array.isArray(value)) {
@@ -94,18 +96,14 @@ const demodulateGatewayEntry = (entry: unknown): Record<string, unknown> => {
 
 export const parseGatewayRows = (payload: unknown): Record<string, unknown>[] => {
   if (Array.isArray(payload)) {
-    return payload
-      .map((entry) => demodulateGatewayEntry(entry))
-      .filter((entry) => Object.keys(entry).length > 0);
+    return payload.map((entry) => demodulateGatewayEntry(entry)).filter((entry) => Object.keys(entry).length > 0);
   }
 
   const gatewayResponse = asRecord(payload)["Gateway Response"];
   const result = asRecord(gatewayResponse).result;
   const rows = Array.isArray(result) ? result : [];
 
-  return rows
-    .map((entry) => demodulateGatewayEntry(entry))
-    .filter((entry) => Object.keys(entry).length > 0);
+  return rows.map((entry) => demodulateGatewayEntry(entry)).filter((entry) => Object.keys(entry).length > 0);
 };
 
 export const buildArchivedStreamUrl = (streamName: string) => {
@@ -226,12 +224,7 @@ const normalizeBasketballQuarter = (value: string) => {
 
 const buildTimecode = (tag: Record<string, unknown>) => {
   const directTimecode = toText(
-    tag.timecode ??
-      tag.time_code ??
-      tag.timeRange ??
-      tag.time_range ??
-      tag.video_timecode ??
-      tag.videoTimecode
+    tag.timecode ?? tag.time_code ?? tag.timeRange ?? tag.time_range ?? tag.video_timecode ?? tag.videoTimecode
   );
   if (directTimecode) return directTimecode;
 
@@ -262,9 +255,7 @@ const findTagDataValue = (tag: Record<string, unknown>, names: string[]) => {
       .replace(/\s+/g, "_");
     const match = names.some((name) => tagName === name || tagName.includes(name));
     if (!match) continue;
-    const tagValue = toText(
-      entryRecord.value ?? entryRecord.field_value ?? entryRecord.fieldValue ?? entryRecord.val
-    );
+    const tagValue = toText(entryRecord.value ?? entryRecord.field_value ?? entryRecord.fieldValue ?? entryRecord.val);
     if (tagValue) return tagValue;
   }
 
@@ -343,7 +334,12 @@ const formatCricketOverGroup = (overNumber: string, overDisplay: string) => {
 export const parseTimecodeToSeconds = (value: string) => {
   const normalizedValue = value.trim();
   if (!normalizedValue || normalizedValue === "--") return null;
-  const firstPart = normalizedValue.split("-")[0].trim();
+  const directSeconds = Number(normalizedValue);
+  if (Number.isFinite(directSeconds) && directSeconds >= 0) {
+    return directSeconds;
+  }
+
+  const firstPart = normalizedValue.split(/\s*[-\u2013\u2014]\s*/)[0].trim();
   const parts = firstPart.split(":").map((part) => part.trim());
   if (parts.length < 2 || parts.length > 3) return null;
 
@@ -361,6 +357,7 @@ export const parseTimecodeToSeconds = (value: string) => {
 
 const PLAYLIST_TIMESTAMP_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(?:[+-]\d{2}:\d{2}|Z)$/;
 const CLOCK_ONLY_TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}$/;
+const TIMECODE_RANGE_SEPARATOR_REGEX = /\s*[-\u2013\u2014]\s*/;
 
 export const normalizePlaylistTimestamp = (value: string, baseEventDateTime?: string | null) => {
   const normalizedValue = value.trim();
@@ -412,6 +409,40 @@ export const buildClockOnlyPlaylistTimestampFallback = (value: string, baseEvent
   return adjustedCandidate.toISOString().replace(/Z$/, "+00:00");
 };
 
+const getTimestampOffsetSeconds = (value: string | null, baseEventDateTime?: string | null) => {
+  if (!value || !baseEventDateTime) return null;
+
+  const parsedValue = Date.parse(value);
+  const parsedBaseDate = Date.parse(baseEventDateTime);
+  if (Number.isNaN(parsedValue) || Number.isNaN(parsedBaseDate)) return null;
+
+  const offsetSeconds = (parsedValue - parsedBaseDate) / 1000;
+  if (!Number.isFinite(offsetSeconds) || offsetSeconds < 0 || offsetSeconds > 24 * 60 * 60) return null;
+
+  return offsetSeconds;
+};
+
+const getClockOnlyOffsetSeconds = (value: string, baseEventDateTime?: string | null) => {
+  const firstPart = value.trim().split(TIMECODE_RANGE_SEPARATOR_REGEX)[0]?.trim() ?? "";
+  if (!CLOCK_ONLY_TIMESTAMP_REGEX.test(firstPart)) return null;
+
+  return getTimestampOffsetSeconds(
+    buildClockOnlyPlaylistTimestampFallback(firstPart, baseEventDateTime) ??
+      normalizePlaylistTimestamp(firstPart, baseEventDateTime),
+    baseEventDateTime
+  );
+};
+
+const getExplicitTagOffsetSeconds = (value: string) => {
+  const normalizedValue = value.trim();
+  if (!normalizedValue) return null;
+
+  return parseTimecodeToSeconds(normalizedValue);
+};
+
+const getTimeRangeOffsetSeconds = (value: string, baseEventDateTime?: string | null) =>
+  getClockOnlyOffsetSeconds(value, baseEventDateTime) ?? parseTimecodeToSeconds(value);
+
 export const playlistHasMediaSegments = async (playlistUrl: string) => {
   try {
     const response = await fetch(playlistUrl, { cache: "no-store" });
@@ -420,12 +451,10 @@ export const playlistHasMediaSegments = async (playlistUrl: string) => {
     }
 
     const playlistText = await response.text();
-    return playlistText
-      .split(/\r?\n/)
-      .some((line) => {
-        const trimmedLine = line.trim();
-        return Boolean(trimmedLine) && !trimmedLine.startsWith("#");
-      });
+    return playlistText.split(/\r?\n/).some((line) => {
+      const trimmedLine = line.trim();
+      return Boolean(trimmedLine) && !trimmedLine.startsWith("#");
+    });
   } catch {
     return true;
   }
@@ -448,23 +477,30 @@ const getTagSourceUrl = (tag: Record<string, unknown>) =>
     "path",
   ]);
 
-const getSourceTagId = (tag: Record<string, unknown>) =>
-  toText(
-    tag.id ??
-      tag.tag_id ??
-      tag.tagId ??
-      tag.event_tag_id ??
-      tag.eventTagId ??
-      tag.uuid ??
-      tag.guid ??
-      tag._id
-  );
+const getTagThumbnailUrl = (tag: Record<string, unknown>) =>
+  findTagDataValue(tag, [
+    "thumbnail",
+    "thumbnail_url",
+    "thumbnailUrl",
+    "poster",
+    "poster_url",
+    "posterUrl",
+    "preview_url",
+    "previewUrl",
+    "image_url",
+    "imageUrl",
+    "frame_url",
+    "frameUrl",
+    "clip_thumbnail",
+    "clipThumbnail",
+    "clip_thumbnail_url",
+    "clipThumbnailUrl",
+  ]);
 
-const normalizeComparableTagValue = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+const getSourceTagId = (tag: Record<string, unknown>) =>
+  toText(tag.id ?? tag.tag_id ?? tag.tagId ?? tag.event_tag_id ?? tag.eventTagId ?? tag.uuid ?? tag.guid ?? tag._id);
+
+const normalizeComparableTagValue = (value: string) => value.trim().toLowerCase().replace(/\s+/g, " ");
 
 const splitTimecodeRange = (value: string) => {
   const [start = "", end = ""] = value.split("-").map((part) => part.trim());
@@ -516,6 +552,7 @@ const getTagRowCompletenessScore = (row: SgTagRow) =>
     row.result !== "--" ? row.result : "",
     row.primaryDetail !== "--" ? row.primaryDetail : "",
     row.secondaryDetail !== "--" ? row.secondaryDetail : "",
+    row.thumbnailUrl,
   ].filter(Boolean).length;
 
 const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
@@ -535,6 +572,7 @@ const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
     sourceTagId: preferredRow.sourceTagId ?? fallbackRow.sourceTagId,
     sourceUrl: preferredRow.sourceUrl || fallbackRow.sourceUrl,
     team: preferredRow.team !== "--" ? preferredRow.team : fallbackRow.team,
+    thumbnailUrl: preferredRow.thumbnailUrl || fallbackRow.thumbnailUrl,
     timecode: preferredRow.timecode !== "--" ? preferredRow.timecode : fallbackRow.timecode,
   } satisfies SgTagRow;
 
@@ -574,13 +612,67 @@ export const dedupeTagRows = (rows: SgTagRow[]) => {
   });
 
   if (duplicateCount > 0 && process.env.NODE_ENV !== "production") {
-    console.info(
-      `[sg-event-detail] Removed ${duplicateCount} duplicate tag row${duplicateCount === 1 ? "" : "s"}.`
-    );
+    console.info(`[sg-event-detail] Removed ${duplicateCount} duplicate tag row${duplicateCount === 1 ? "" : "s"}.`);
   }
 
   return Array.from(rowsByKey.values());
 };
+
+const preserveTagRowsWithUniqueIds = (rows: SgTagRow[]) => {
+  const idCounts = new Map<string, number>();
+
+  return rows.map((row) => {
+    const currentCount = idCounts.get(row.id) ?? 0;
+
+    idCounts.set(row.id, currentCount + 1);
+    if (currentCount === 0) return row;
+
+    return {
+      ...row,
+      id: `${row.id}__${currentCount + 1}`,
+    };
+  });
+};
+
+const buildExactTagRowKey = (row: SgTagRow) =>
+  JSON.stringify({
+    action: row.action,
+    clipEndSeconds: row.clipEndSeconds,
+    clipStartSeconds: row.clipStartSeconds,
+    groupValue: row.groupValue,
+    player: row.player,
+    playlistFallbackTimestamp: row.playlistFallbackTimestamp,
+    playlistTimestamp: row.playlistTimestamp,
+    primaryDetail: row.primaryDetail,
+    result: row.result,
+    secondaryDetail: row.secondaryDetail,
+    sourceUrl: row.sourceUrl,
+    team: row.team,
+    timecode: row.timecode,
+  });
+
+const removeExactDuplicateTagRows = (rows: SgTagRow[]) => {
+  const rowsByKey = new Map<string, SgTagRow>();
+
+  rows.forEach((row) => {
+    const rowKey = buildExactTagRowKey(row);
+    const existingRow = rowsByKey.get(rowKey);
+
+    if (!existingRow) {
+      rowsByKey.set(rowKey, row);
+      return;
+    }
+
+    if (!existingRow.thumbnailUrl && row.thumbnailUrl) {
+      rowsByKey.set(rowKey, { ...existingRow, thumbnailUrl: row.thumbnailUrl });
+    }
+  });
+
+  return Array.from(rowsByKey.values());
+};
+
+const normalizeTagRowsForDisplay = (rows: SgTagRow[]) =>
+  preserveTagRowsWithUniqueIds(removeExactDuplicateTagRows(rows));
 
 const buildTagRowBySport = (
   tag: Record<string, unknown>,
@@ -629,13 +721,42 @@ const buildTagRowBySport = (
   const playlistTimestamp = normalizePlaylistTimestamp(rawPlaylistTimestamp, baseEventDateTime);
   const playlistFallbackTimestamp = buildClockOnlyPlaylistTimestampFallback(rawPlaylistTimestamp, baseEventDateTime);
   const sourceUrl = getTagSourceUrl(tag);
+  const thumbnailUrl = getTagThumbnailUrl(tag);
   const sourceTagId = getSourceTagId(tag) || null;
-  const clipStartSeconds = parseTimecodeToSeconds(
-    findTagDataValue(tag, ["clip_start", "start", "video_timecode_clip_start", "start_timecode"]) || timecode
-  );
-  const clipEndSeconds = parseTimecodeToSeconds(
-    findTagDataValue(tag, ["clip_end", "end", "video_timecode_clip_end", "end_timecode"]) || ""
-  );
+  const rawClipStart = findTagDataValue(tag, [
+    "clip_start",
+    "clip_start_seconds",
+    "clip_start_second",
+    "start",
+    "start_seconds",
+    "start_second",
+    "start_timecode",
+    "video_offset",
+    "video_offset_seconds",
+    "video_start",
+    "video_start_seconds",
+    "video_time",
+    "video_time_seconds",
+    "video_timestamp_seconds",
+    "video_timecode_clip_start",
+  ]);
+  const rawClipEnd = findTagDataValue(tag, [
+    "clip_end",
+    "clip_end_seconds",
+    "clip_end_second",
+    "end",
+    "end_seconds",
+    "end_second",
+    "end_timecode",
+    "video_end",
+    "video_end_seconds",
+    "video_timecode_clip_end",
+  ]);
+  const clipStartSeconds =
+    getExplicitTagOffsetSeconds(rawClipStart) ?? getTimeRangeOffsetSeconds(timecode, baseEventDateTime);
+  const clipEndSeconds =
+    getExplicitTagOffsetSeconds(rawClipEnd) ??
+    getTimeRangeOffsetSeconds(timecode.split(TIMECODE_RANGE_SEPARATOR_REGEX)[1] ?? "", baseEventDateTime);
 
   let groupValue = SPORT_TABLE_CONFIGS.default.defaultGroupValue;
   let primaryDetail = "--";
@@ -698,13 +819,7 @@ const buildTagRowBySport = (
       const ballInOver = findTagDataValue(tag, ["ball_in_over"]);
       const overValue = formatCricketOver(overDisplay, overNumber, ballInOver);
       const overGroupValue = formatCricketOverGroup(overNumber, overDisplay);
-      const runs = findTagDataValue(tag, [
-        "score_home",
-        "runs_scored",
-        "points_or_runs_scored",
-        "runs",
-        "run_value",
-      ]);
+      const runs = findTagDataValue(tag, ["score_home", "runs_scored", "points_or_runs_scored", "runs", "run_value"]);
       groupValue = overGroupValue || SPORT_TABLE_CONFIGS.cricket.defaultGroupValue;
       primaryDetail = overValue || "--";
       secondaryDetail = formatCricketRuns(runs);
@@ -758,6 +873,7 @@ const buildTagRowBySport = (
     sourceTagId,
     sourceUrl,
     team: team || "--",
+    thumbnailUrl,
     timecode,
   };
 };
@@ -774,66 +890,73 @@ export const normalizeTagRows = (
   const rawTags = pickArray([root, nestedEvent, nestedRawEvent], ["tags", "event_tags", "eventTags"]);
 
   if (rawTags.length > 0) {
-    return dedupeTagRows(
+    return normalizeTagRowsForDisplay(
       rawTags
         .map((entry) => buildTagRowBySport(asRecord(entry), sport, baseEventDateTime))
         .filter((row): row is SgTagRow => Boolean(row))
     );
   }
 
-  return dedupeTagRows((eventDetails?.structuredTags ?? []).map((tag) => {
-    const defaultConfig = SPORT_TABLE_CONFIGS[sport] ?? SPORT_TABLE_CONFIGS.default;
-    const quarterValue =
-      sport === "basketball"
-        ? normalizeBasketballQuarter(tag.quarter || defaultConfig.defaultGroupValue)
-        : normalizeQuarter(tag.quarter || defaultConfig.defaultGroupValue);
-    const groupValue =
-      sport === "american-football"
-        ? quarterValue
-        : sport === "basketball"
+  return normalizeTagRowsForDisplay(
+    (eventDetails?.structuredTags ?? []).map((tag) => {
+      const defaultConfig = SPORT_TABLE_CONFIGS[sport] ?? SPORT_TABLE_CONFIGS.default;
+      const quarterValue =
+        sport === "basketball"
+          ? normalizeBasketballQuarter(tag.quarter || defaultConfig.defaultGroupValue)
+          : normalizeQuarter(tag.quarter || defaultConfig.defaultGroupValue);
+      const groupValue =
+        sport === "american-football"
           ? quarterValue
-          : defaultConfig.defaultGroupValue;
+          : sport === "basketball"
+            ? quarterValue
+            : defaultConfig.defaultGroupValue;
 
-    return {
-      action: tag.action ? formatLooseLabel(tag.action) : tag.label,
-      clipEndSeconds: null,
-      clipStartSeconds: tag.timeRange ? parseTimecodeToSeconds(tag.timeRange) : null,
-      groupValue,
-      id: buildStableSgTagRowId(
-        {
-          action: tag.action ? formatLooseLabel(tag.action) : tag.label,
-          groupValue,
-          player: "--",
-          primaryDetail:
-            sport === "american-football" || sport === "basketball"
-              ? quarterValue
-              : defaultConfig.primaryDetailLabel === "Match Time"
-                ? tag.timeRange || tag.timestamp || "--"
-                : "--",
-          result: tag.result ? formatLooseLabel(tag.result) : "--",
-          secondaryDetail: "--",
-          team: tag.team ? formatLooseLabel(tag.team) : "--",
-          timecode: tag.timeRange || tag.timestamp || "--",
-        },
-        null
-      ),
-      player: "--",
-      playlistFallbackTimestamp: buildClockOnlyPlaylistTimestampFallback(tag.timestamp || "", baseEventDateTime),
-      playlistTimestamp: normalizePlaylistTimestamp(tag.timestamp || "", baseEventDateTime),
-      primaryDetail:
-        sport === "american-football" || sport === "basketball"
-          ? quarterValue
-          : defaultConfig.primaryDetailLabel === "Match Time"
-            ? tag.timeRange || tag.timestamp || "--"
-          : "--",
-      result: tag.result ? formatLooseLabel(tag.result) : "--",
-      secondaryDetail: "--",
-      sourceTagId: null,
-      sourceUrl: "",
-      team: tag.team ? formatLooseLabel(tag.team) : "--",
-      timecode: tag.timeRange || tag.timestamp || "--",
-    } satisfies SgTagRow;
-  }));
+      return {
+        action: tag.action ? formatLooseLabel(tag.action) : tag.label,
+        clipEndSeconds: null,
+        clipStartSeconds: tag.timeRange
+          ? getTimeRangeOffsetSeconds(tag.timeRange, baseEventDateTime)
+          : tag.timestamp
+            ? getTimeRangeOffsetSeconds(tag.timestamp, baseEventDateTime)
+            : null,
+        groupValue,
+        id: buildStableSgTagRowId(
+          {
+            action: tag.action ? formatLooseLabel(tag.action) : tag.label,
+            groupValue,
+            player: "--",
+            primaryDetail:
+              sport === "american-football" || sport === "basketball"
+                ? quarterValue
+                : defaultConfig.primaryDetailLabel === "Match Time"
+                  ? tag.timeRange || tag.timestamp || "--"
+                  : "--",
+            result: tag.result ? formatLooseLabel(tag.result) : "--",
+            secondaryDetail: "--",
+            team: tag.team ? formatLooseLabel(tag.team) : "--",
+            timecode: tag.timeRange || tag.timestamp || "--",
+          },
+          null
+        ),
+        player: "--",
+        playlistFallbackTimestamp: buildClockOnlyPlaylistTimestampFallback(tag.timestamp || "", baseEventDateTime),
+        playlistTimestamp: normalizePlaylistTimestamp(tag.timestamp || "", baseEventDateTime),
+        primaryDetail:
+          sport === "american-football" || sport === "basketball"
+            ? quarterValue
+            : defaultConfig.primaryDetailLabel === "Match Time"
+              ? tag.timeRange || tag.timestamp || "--"
+              : "--",
+        result: tag.result ? formatLooseLabel(tag.result) : "--",
+        secondaryDetail: "--",
+        sourceTagId: null,
+        sourceUrl: "",
+        team: tag.team ? formatLooseLabel(tag.team) : "--",
+        thumbnailUrl: "",
+        timecode: tag.timeRange || tag.timestamp || "--",
+      } satisfies SgTagRow;
+    })
+  );
 };
 
 export const buildBaseEventDateTime = (dateValue: string, timeValue: string) => {
@@ -863,7 +986,11 @@ export const isCoachCompletedEventJsonItem = (item: TMediaItem | null) => {
   const format = item.format.toLowerCase();
   const source = toText(meta.source).toLowerCase();
 
-  return format === "json" && item.mediaType === "document" && (source === "plane-coach" || item.id.startsWith("coach-event-"));
+  return (
+    format === "json" &&
+    item.mediaType === "document" &&
+    (source === "plane-coach" || item.id.startsWith("coach-event-"))
+  );
 };
 
 export const formatLongDateTime = (dateValue: string, timeValue: string) => {

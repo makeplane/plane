@@ -215,20 +215,20 @@ export const SG_PLAYER_STYLE = `
   }
 `;
 
-export const SURFACE_CLASS = "rounded-xl border border-custom-border-200 ";
+export const SURFACE_CLASS = "rounded-lg border border-custom-border-200 bg-custom-background-100";
 
 export const ICON_BUTTON_CLASS =
   "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-custom-border-200 bg-custom-background-100 text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
 
-export const PLAYER_FRAME_CLASS = "h-[clamp(220px,38vh,420px)] sm:h-[clamp(260px,42vh,500px)] xl:h-[min(44vh,32rem)]";
+export const PLAYER_FRAME_CLASS = "h-[clamp(220px,42vh,480px)] w-full";
 
-export const PLAYER_STAGE_CLASS = "mx-auto h-full w-full max-w-full overflow-hidden rounded-xl";
+export const PLAYER_STAGE_CLASS = "mx-auto h-full w-full max-w-full overflow-hidden rounded-lg";
 
 export const TAG_TABLE_GRID_CLASS =
-  "grid-cols-[64px_minmax(110px,0.95fr)_minmax(130px,1.05fr)_minmax(90px,0.8fr)_minmax(145px,1.15fr)_minmax(120px,0.95fr)_minmax(130px,1fr)_minmax(100px,0.8fr)_104px]";
+  "grid-cols-[56px_minmax(120px,150px)_minmax(96px,0.7fr)_minmax(150px,1.15fr)_minmax(110px,0.8fr)_minmax(150px,1fr)_minmax(130px,0.9fr)_minmax(120px,0.8fr)_96px]";
 
 export const FOOTBALL_TAG_TABLE_GRID_CLASS =
-  "grid-cols-[64px_minmax(120px,1fr)_minmax(150px,1.15fr)_minmax(100px,0.85fr)_minmax(160px,1.2fr)_minmax(130px,1fr)_minmax(110px,0.8fr)_104px]";
+  "grid-cols-[56px_minmax(120px,150px)_minmax(96px,0.7fr)_minmax(150px,1.15fr)_minmax(110px,0.8fr)_minmax(150px,1fr)_minmax(130px,0.9fr)_minmax(120px,0.8fr)_96px]";
 
 export const SPORT_TABLE_CONFIGS: Record<SportTableKind, SportTableConfig> = {
   "american-football": {
