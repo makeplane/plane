@@ -219,6 +219,11 @@ from .analytic.project_analytics import (
     ProjectAdvanceAnalyticsChartEndpoint,
 )
 
+from .analytic.time_report import (
+    WorkspaceTimeLogReportEndpoint,
+    ProjectTimeLogReportEndpoint,
+)
+
 from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,

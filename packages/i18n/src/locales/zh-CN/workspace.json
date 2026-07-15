@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "报告",
+    "page_label": "{workspace} - 报告",
+    "filters": {
+      "date_range": "日期范围",
+      "members": "成员",
+      "projects": "项目",
+      "preset_this_week": "本周",
+      "preset_last_week": "上周",
+      "preset_this_month": "本月",
+      "preset_last_30_days": "最近30天"
+    },
+    "grid": {
+      "member": "成员",
+      "work_item": "工作项",
+      "total": "合计"
+    },
+    "export_csv": "导出 CSV",
+    "empty_state": {
+      "title": "尚未记录时间",
+      "description": "此期间在工作项上记录的时间将显示在此处。"
+    },
+    "errors": {
+      "range_too_long": "无法加载报告。请尝试更短的日期范围。",
+      "no_access": "您无权查看此报告。"
+    }
   }
 }

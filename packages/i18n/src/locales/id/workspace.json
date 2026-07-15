@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Laporan",
+    "page_label": "{workspace} - Laporan",
+    "filters": {
+      "date_range": "Rentang tanggal",
+      "members": "Anggota",
+      "projects": "Proyek",
+      "preset_this_week": "Minggu ini",
+      "preset_last_week": "Minggu lalu",
+      "preset_this_month": "Bulan ini",
+      "preset_last_30_days": "30 hari terakhir"
+    },
+    "grid": {
+      "member": "Anggota",
+      "work_item": "Item kerja",
+      "total": "Total"
+    },
+    "export_csv": "Ekspor CSV",
+    "empty_state": {
+      "title": "Belum ada waktu yang tercatat",
+      "description": "Waktu yang tercatat pada item kerja dalam periode ini akan muncul di sini."
+    },
+    "errors": {
+      "range_too_long": "Laporan tidak dapat dimuat. Coba gunakan rentang tanggal yang lebih pendek.",
+      "no_access": "Anda tidak memiliki akses untuk melihat laporan ini."
+    }
   }
 }

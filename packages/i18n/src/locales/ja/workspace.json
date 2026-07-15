@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "レポート",
+    "page_label": "{workspace} - レポート",
+    "filters": {
+      "date_range": "期間",
+      "members": "メンバー",
+      "projects": "プロジェクト",
+      "preset_this_week": "今週",
+      "preset_last_week": "先週",
+      "preset_this_month": "今月",
+      "preset_last_30_days": "過去30日間"
+    },
+    "grid": {
+      "member": "メンバー",
+      "work_item": "作業項目",
+      "total": "合計"
+    },
+    "export_csv": "CSVをエクスポート",
+    "empty_state": {
+      "title": "まだ時間が記録されていません",
+      "description": "この期間に作業項目で記録された時間がここに表示されます。"
+    },
+    "errors": {
+      "range_too_long": "レポートを読み込めませんでした。期間を短くしてお試しください。",
+      "no_access": "このレポートを表示する権限がありません。"
+    }
   }
 }

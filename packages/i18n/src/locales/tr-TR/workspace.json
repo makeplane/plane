@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Raporlar",
+    "page_label": "{workspace} - Raporlar",
+    "filters": {
+      "date_range": "Tarih aralığı",
+      "members": "Üyeler",
+      "projects": "Projeler",
+      "preset_this_week": "Bu hafta",
+      "preset_last_week": "Geçen hafta",
+      "preset_this_month": "Bu ay",
+      "preset_last_30_days": "Son 30 gün"
+    },
+    "grid": {
+      "member": "Üye",
+      "work_item": "İş öğesi",
+      "total": "Toplam"
+    },
+    "export_csv": "CSV olarak dışa aktar",
+    "empty_state": {
+      "title": "Henüz kaydedilmiş bir süre yok",
+      "description": "Bu dönemde iş öğelerine kaydedilen süre burada görünecek."
+    },
+    "errors": {
+      "range_too_long": "Rapor yüklenemedi. Daha kısa bir tarih aralığı deneyin.",
+      "no_access": "Bu raporu görüntüleme yetkiniz yok."
+    }
   }
 }

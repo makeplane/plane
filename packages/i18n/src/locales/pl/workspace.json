@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Raporty",
+    "page_label": "{workspace} – Raporty",
+    "filters": {
+      "date_range": "Zakres dat",
+      "members": "Członkowie",
+      "projects": "Projekty",
+      "preset_this_week": "Ten tydzień",
+      "preset_last_week": "Poprzedni tydzień",
+      "preset_this_month": "Ten miesiąc",
+      "preset_last_30_days": "Ostatnie 30 dni"
+    },
+    "grid": {
+      "member": "Członek",
+      "work_item": "Element pracy",
+      "total": "Suma"
+    },
+    "export_csv": "Eksportuj CSV",
+    "empty_state": {
+      "title": "Nie zarejestrowano jeszcze czasu",
+      "description": "Czas zarejestrowany dla elementów pracy w tym okresie pojawi się tutaj."
+    },
+    "errors": {
+      "range_too_long": "Nie udało się wczytać raportu. Spróbuj krótszego zakresu dat.",
+      "no_access": "Nie masz dostępu do wyświetlenia tego raportu."
+    }
   }
 }

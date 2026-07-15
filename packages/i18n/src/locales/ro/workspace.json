@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Rapoarte",
+    "page_label": "{workspace} - Rapoarte",
+    "filters": {
+      "date_range": "Interval de date",
+      "members": "Membri",
+      "projects": "Proiecte",
+      "preset_this_week": "Săptămâna aceasta",
+      "preset_last_week": "Săptămâna trecută",
+      "preset_this_month": "Luna aceasta",
+      "preset_last_30_days": "Ultimele 30 de zile"
+    },
+    "grid": {
+      "member": "Membru",
+      "work_item": "Activitate",
+      "total": "Total"
+    },
+    "export_csv": "Exportă CSV",
+    "empty_state": {
+      "title": "Niciun timp înregistrat încă",
+      "description": "Timpul înregistrat pe activități în această perioadă va apărea aici."
+    },
+    "errors": {
+      "range_too_long": "Raportul nu a putut fi încărcat. Încercați un interval de date mai scurt.",
+      "no_access": "Nu aveți acces pentru a vizualiza acest raport."
+    }
   }
 }

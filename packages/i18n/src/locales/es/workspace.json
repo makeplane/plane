@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Informes",
+    "page_label": "{workspace} - Informes",
+    "filters": {
+      "date_range": "Rango de fechas",
+      "members": "Miembros",
+      "projects": "Proyectos",
+      "preset_this_week": "Esta semana",
+      "preset_last_week": "Semana pasada",
+      "preset_this_month": "Este mes",
+      "preset_last_30_days": "Últimos 30 días"
+    },
+    "grid": {
+      "member": "Miembro",
+      "work_item": "Elemento de trabajo",
+      "total": "Total"
+    },
+    "export_csv": "Exportar CSV",
+    "empty_state": {
+      "title": "Aún no se ha registrado tiempo",
+      "description": "El tiempo registrado en los elementos de trabajo durante este período aparecerá aquí."
+    },
+    "errors": {
+      "range_too_long": "No se pudo cargar el informe. Intente con un rango de fechas más corto.",
+      "no_access": "No tiene permiso para ver este informe."
+    }
   }
 }

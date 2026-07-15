@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Zostavy",
+    "page_label": "{workspace} – Zostavy",
+    "filters": {
+      "date_range": "Rozsah dátumov",
+      "members": "Členovia",
+      "projects": "Projekty",
+      "preset_this_week": "Tento týždeň",
+      "preset_last_week": "Minulý týždeň",
+      "preset_this_month": "Tento mesiac",
+      "preset_last_30_days": "Posledných 30 dní"
+    },
+    "grid": {
+      "member": "Člen",
+      "work_item": "Pracovná položka",
+      "total": "Spolu"
+    },
+    "export_csv": "Exportovať CSV",
+    "empty_state": {
+      "title": "Zatiaľ nebol zaznamenaný žiadny čas",
+      "description": "Čas zaznamenaný na pracovných položkách v tomto období sa zobrazí tu."
+    },
+    "errors": {
+      "range_too_long": "Zostavu sa nepodarilo načítať. Skúste kratší rozsah dátumov.",
+      "no_access": "Nemáte prístup na zobrazenie tejto zostavy."
+    }
   }
 }

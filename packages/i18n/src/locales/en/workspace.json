@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Reports",
+    "page_label": "{workspace} - Reports",
+    "filters": {
+      "date_range": "Date range",
+      "members": "Members",
+      "projects": "Projects",
+      "preset_this_week": "This week",
+      "preset_last_week": "Last week",
+      "preset_this_month": "This month",
+      "preset_last_30_days": "Last 30 days"
+    },
+    "grid": {
+      "member": "Member",
+      "work_item": "Work item",
+      "total": "Total"
+    },
+    "export_csv": "Export CSV",
+    "empty_state": {
+      "title": "No time logged yet",
+      "description": "Time logged on work items in this period will show up here."
+    },
+    "errors": {
+      "range_too_long": "Couldn't load the report. Try a shorter date range.",
+      "no_access": "You don't have access to view this report."
+    }
   }
 }
