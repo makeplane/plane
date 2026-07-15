@@ -10,7 +10,7 @@ import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -86,7 +86,11 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
+    <CustomMenu
+      customButton={<MoreHorizontal className="size-3.5" />}
+      customButtonClassName={getIconButtonStyling("ghost", "sm")}
+      closeOnSelect
+    >
       {MENU_ITEMS.map((item) => (
         <CustomMenu.MenuItem
           key={item.key}
