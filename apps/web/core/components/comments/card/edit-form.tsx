@@ -11,9 +11,11 @@ import type { EditorRefApi } from "@plane/editor";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { cn, isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty, isCommentSubmissionValid } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+// hooks
+import { useUserProfile } from "@/hooks/store/user";
 
 type Props = {
   activityOperations: TCommentsOperations;
@@ -39,6 +41,10 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
   } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  // store hooks
+  const {
+    data: { comment_submit_shortcut },
+  } = useUserProfile();
   // form info
   const {
     formState: { isSubmitting },
@@ -77,7 +83,16 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
     <form className="flex flex-col gap-2">
       <div
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
+          if (
+            isCommentSubmissionValid({
+              e,
+              shortcut: comment_submit_shortcut,
+              isEmpty,
+              isSubmitting,
+              isEditorReadyToDiscard: !!editorRef.current?.isEditorReadyToDiscard(),
+            })
+          )
+            handleSubmit(onEnter)(e);
         }}
       >
         <LiteTextEditor

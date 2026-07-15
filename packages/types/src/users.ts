@@ -59,6 +59,8 @@ export interface IUserAccount {
   updated_at: Date;
 }
 
+export type CommentSubmitShortcut = "enter" | "mod_enter";
+
 export type TUserProfile = {
   id: string | undefined;
   user: string | undefined;
@@ -79,6 +81,7 @@ export type TUserProfile = {
   has_billing_address: boolean;
   has_marketing_email_consent: boolean;
   language: string;
+  comment_submit_shortcut: CommentSubmitShortcut;
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;

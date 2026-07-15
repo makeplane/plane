@@ -9,6 +9,7 @@ export * from "./attachment";
 export * from "./auth";
 export * from "./calendar";
 export * from "./color";
+export * from "./comment";
 export * from "./common";
 export * from "./cycle";
 export * from "./datetime";

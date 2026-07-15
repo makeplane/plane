@@ -13,6 +13,7 @@ import { cn, isCommentEmpty } from "@plane/utils";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
 import { useEditorFlagging } from "@/hooks/use-editor-flagging";
@@ -57,6 +58,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
+  const {
+    data: { comment_submit_shortcut },
+  } = useUserProfile();
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
   const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
   // parse content
@@ -80,6 +84,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
+        submitShortcut={comment_submit_shortcut}
         extendedEditorProps={{}}
         {...rest}
         // overriding the containerClassName to add relative class passed

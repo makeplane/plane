@@ -10,6 +10,7 @@ import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // plane imports
+import type { CommentSubmitShortcut } from "@plane/types";
 import type { TCustomComponentsMetaData } from "@plane/utils";
 // extension types
 import type { TTextAlign } from "@/extensions";
@@ -184,7 +185,9 @@ export type IEditorProps = {
   workItemIdentifier?: string | null;
 };
 
-export type ILiteTextEditorProps = IEditorProps;
+export type ILiteTextEditorProps = IEditorProps & {
+  submitShortcut?: CommentSubmitShortcut;
+};
 
 export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;

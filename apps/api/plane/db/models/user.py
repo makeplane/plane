@@ -210,6 +210,10 @@ class Profile(TimeAuditModel):
         FULL = "full", "Full"
         COMPACT = "compact", "Compact"
 
+    class CommentSubmitShortcut(models.TextChoices):
+        ENTER = "enter", "Enter"
+        MOD_ENTER = "mod_enter", "Mod+Enter"
+
     START_OF_THE_WEEK_CHOICES = (
         (SUNDAY, "Sunday"),
         (MONDAY, "Monday"),
@@ -243,6 +247,9 @@ class Profile(TimeAuditModel):
         max_length=255, choices=NotificationViewMode.choices, default=NotificationViewMode.FULL
     )
     is_smooth_cursor_enabled = models.BooleanField(default=False)
+    comment_submit_shortcut = models.CharField(
+        max_length=20, choices=CommentSubmitShortcut.choices, default=CommentSubmitShortcut.ENTER
+    )
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)
     mobile_onboarding_step = models.JSONField(default=get_mobile_default_onboarding)

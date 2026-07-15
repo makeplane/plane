@@ -1,0 +1,6 @@
+{
+  "comment_submit_shortcut": {
+    "label": "コメント送信のショートカット",
+    "description": "コメントを送信するキーボードショートカットを選択してください。"
+  }
+}
