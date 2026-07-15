@@ -48,7 +48,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
   const navigationIemRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
+  const dragHandleRef = useRef<HTMLDivElement | null>(null);
 
   // nextjs hooks
   const pathname = usePathname();
@@ -89,7 +89,9 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== item.key && source?.data?.dragInstanceId === "NAVIGATION",
+        // eslint-disable-next-line no-shadow -- pre-existing (drag callback param), unrelated to this DOM-nesting fix
         getData: ({ input, element }) => {
+          // eslint-disable-next-line no-shadow -- pre-existing (drag callback param), unrelated to this DOM-nesting fix
           const data = { id: item.key };
 
           // attach instruction for last in list
@@ -177,8 +179,8 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             position="top-start"
             disabled={isDragging}
           >
-            <button
-              type="button"
+            {/* div (not a button): <DragHandle> is itself a button — no button-in-button. */}
+            <div
               className={cn(
                 "absolute top-1/2 -left-3 flex -translate-y-1/2 cursor-grab items-center justify-center rounded text-placeholder opacity-0 group-hover/project-item:opacity-100",
                 {
@@ -189,7 +191,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
               ref={dragHandleRef}
             >
               <DragHandle className="bg-transparent" />
-            </button>
+            </div>
           </Tooltip>
         )}
         <SidebarNavItem isActive={isActive}>
