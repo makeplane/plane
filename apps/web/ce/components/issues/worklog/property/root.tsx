@@ -53,6 +53,10 @@ type TTimeLogFormValues = {
   userId: string;
 };
 
+const notifyTimeLogsChanged = (issueId: string) => {
+  window.dispatchEvent(new CustomEvent("plane:time-logs-changed", { detail: { issueId } }));
+};
+
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 const formatDuration = (seconds: number): string => {
@@ -128,6 +132,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
       setTimeLogs(response || []);
       const total = (response || []).reduce((acc: number, log: TimeLog) => acc + log.duration_seconds, 0);
       setTotalTime(total);
+      notifyTimeLogsChanged(issueId);
     } catch (err) {
       console.error("Failed to fetch time logs:", err);
     }

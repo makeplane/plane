@@ -465,6 +465,9 @@ export class IssueService extends APIService {
     Array<{
       id: string;
       user_id: string | null;
+      user_detail: { id: string; display_name: string } | null;
+      created_by_id: string | null;
+      created_by_detail: { id: string; display_name: string } | null;
       date: string;
       created_at: string;
       started_at: string;

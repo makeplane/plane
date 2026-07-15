@@ -9,6 +9,14 @@ from django.utils import timezone
 from plane.db.models import IssueTimeLog
 
 
+MINIMUM_TIME_LOG_DURATION_SECONDS = 60
+
+
+def normalize_time_log_duration(duration_seconds):
+    """Return a positive time-log duration rounded up to at least one minute."""
+    return max(MINIMUM_TIME_LOG_DURATION_SECONDS, int(duration_seconds))
+
+
 def ensure_actor_is_assignee(issue, actor):
     """Make sure `actor` is an assignee of `issue`.
 
@@ -137,7 +145,7 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
         from plane.utils.working_hours import compute_auto_stop_at
 
         ensure_actor_is_assignee(issue, actor)
-        IssueTimeLog.objects.create(
+        time_log = IssueTimeLog(
             issue=issue,
             user=actor,
             date=today,
@@ -149,6 +157,7 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
             project=issue.project,
             created_by=None,
         )
+        time_log.save(disable_auto_set_user=True)
     elif not new_is_started and old_is_started:
         # Transition OUT OF started: close any active time log
         active_logs = IssueTimeLog.objects.filter(
@@ -157,17 +166,22 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
         )
         for log in active_logs:
             log.stopped_at = now
-            log.duration_seconds = int((now - log.started_at).total_seconds())
+            log.created_by = None
+            log.duration_seconds = normalize_time_log_duration(
+                (now - log.started_at).total_seconds()
+            )
             log.stop_reason = IssueTimeLog.StopReason.STATE_CHANGE
             log.auto_stop_at = None
             log.save(
                 update_fields=[
                     "stopped_at",
                     "duration_seconds",
+                    "created_by",
                     "stop_reason",
                     "auto_stop_at",
                     "updated_at",
-                ]
+                ],
+                disable_auto_set_user=True,
             )
 
         # Update total_time_spent on the issue
@@ -183,8 +197,14 @@ def force_stop_active_logs(issue):
     )
     for log in active_logs:
         log.stopped_at = now
-        log.duration_seconds = int((now - log.started_at).total_seconds())
-        log.save(update_fields=["stopped_at", "duration_seconds", "updated_at"])
+        log.created_by = None
+        log.duration_seconds = normalize_time_log_duration(
+            (now - log.started_at).total_seconds()
+        )
+        log.save(
+            update_fields=["stopped_at", "duration_seconds", "created_by", "updated_at"],
+            disable_auto_set_user=True,
+        )
 
     recalculate_total_time_spent(issue)
 
@@ -206,6 +226,17 @@ def serialize_time_log(log):
     return {
         "id": str(log.id),
         "user_id": str(log.user_id) if log.user_id else None,
+        "user_detail": (
+            {"id": str(log.user_id), "display_name": log.user.display_name}
+            if log.user_id
+            else None
+        ),
+        "created_by_id": str(log.created_by_id) if log.created_by_id else None,
+        "created_by_detail": (
+            {"id": str(log.created_by_id), "display_name": log.created_by.display_name}
+            if log.created_by_id
+            else None
+        ),
         "date": log.date.isoformat(),
         "created_at": log.created_at.isoformat(),
         "started_at": log.started_at.isoformat(),
@@ -254,4 +285,4 @@ def parse_manual_time_log_payload(data, default_date=None, default_duration_seco
     if duration_seconds <= 0:
         return None, None, "duration must be greater than zero"
 
-    return log_date, duration_seconds, None
+    return log_date, normalize_time_log_duration(duration_seconds), None

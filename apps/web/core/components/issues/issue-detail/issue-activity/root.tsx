@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
 import type { TActivityFilters } from "@plane/constants";
-import { E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
+import { EActivityFilterType, E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -68,6 +68,12 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
+
+  useEffect(() => {
+    if (selectedFilters && !selectedFilters.includes(EActivityFilterType.WORKLOG)) {
+      setFilterValue([...selectedFilters, EActivityFilterType.WORKLOG]);
+    }
+  }, [selectedFilters, setFilterValue]);
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     if (!selectedFilters) return;
