@@ -599,6 +599,32 @@
         "heading": "Skripty",
         "new_script": "Nový skript",
         "description": "Automatizujte své pracovní postupy pomocí vlastních skriptů a pravidel automatizace."
+      },
+      "working_hours": {
+        "title": "Pracovní doba",
+        "description": "Nastavte pracovní rozvrh pracovního prostoru. Časovače lze spustit kdykoli; toto nastavení určuje pouze, kdy se běžící časovač automaticky zastaví.",
+        "admin_only": "Pracovní rozvrh mohou změnit pouze správci pracovního prostoru.",
+        "enable": "Povolit pracovní dobu",
+        "timezone_label": "Časové pásmo",
+        "global_hours": "Globální pracovní doba",
+        "holiday_calendar": "Kalendář svátků",
+        "select_country": "Vybrat zemi",
+        "select_region": "Vybrat oblast",
+        "mode_global": "Globální",
+        "mode_custom": "Vlastní",
+        "saved": "Pracovní doba byla aktualizována.",
+        "save_failed": "Pracovní dobu se nepodařilo aktualizovat.",
+        "timer_stopped_title": "Časovač zastaven",
+        "timer_stopped_message": "Časovač byl zastaven na konci pracovní doby.",
+        "days": {
+          "monday": "Pondělí",
+          "tuesday": "Úterý",
+          "wednesday": "Středa",
+          "thursday": "Čtvrtek",
+          "friday": "Pátek",
+          "saturday": "Sobota",
+          "sunday": "Neděle"
+        }
       }
     },
     "empty_state": {

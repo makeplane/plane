@@ -599,6 +599,32 @@
         "heading": "スクリプト",
         "new_script": "新しいスクリプト",
         "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"
+      },
+      "working_hours": {
+        "title": "勤務時間",
+        "description": "ワークスペースの勤務スケジュールを設定します。タイマーはいつでも開始できます。この設定は、実行中のタイマーを自動停止する時刻のみを制御します。",
+        "admin_only": "勤務スケジュールを変更できるのはワークスペース管理者のみです。",
+        "enable": "勤務時間を有効にする",
+        "timezone_label": "タイムゾーン",
+        "global_hours": "共通の時間",
+        "holiday_calendar": "祝日カレンダー",
+        "select_country": "国を選択",
+        "select_region": "地域を選択",
+        "mode_global": "共通",
+        "mode_custom": "カスタム",
+        "saved": "勤務時間を更新しました。",
+        "save_failed": "勤務時間を更新できませんでした。",
+        "timer_stopped_title": "タイマーを停止しました",
+        "timer_stopped_message": "勤務時間の終了時にタイマーが停止しました。",
+        "days": {
+          "monday": "月曜日",
+          "tuesday": "火曜日",
+          "wednesday": "水曜日",
+          "thursday": "木曜日",
+          "friday": "金曜日",
+          "saturday": "土曜日",
+          "sunday": "日曜日"
+        }
       }
     },
     "empty_state": {

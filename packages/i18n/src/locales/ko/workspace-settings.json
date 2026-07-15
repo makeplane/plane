@@ -599,6 +599,32 @@
         "heading": "스크립트",
         "new_script": "새 스크립트",
         "description": "커스텀 스크립트와 자동화 규칙으로 워크플로우를 자동화하세요."
+      },
+      "working_hours": {
+        "title": "근무 시간",
+        "description": "워크스페이스의 근무 일정을 설정합니다. 타이머는 언제든 시작할 수 있으며, 이 설정은 실행 중인 타이머가 자동으로 중지되는 시간만 제어합니다.",
+        "admin_only": "워크스페이스 관리자만 근무 일정을 변경할 수 있습니다.",
+        "enable": "근무 시간 사용",
+        "timezone_label": "시간대",
+        "global_hours": "공통 시간",
+        "holiday_calendar": "공휴일 캘린더",
+        "select_country": "국가 선택",
+        "select_region": "지역 선택",
+        "mode_global": "공통",
+        "mode_custom": "사용자 지정",
+        "saved": "근무 시간이 업데이트되었습니다.",
+        "save_failed": "근무 시간을 업데이트할 수 없습니다.",
+        "timer_stopped_title": "타이머가 중지됨",
+        "timer_stopped_message": "근무 시간이 끝나 타이머가 중지되었습니다.",
+        "days": {
+          "monday": "월요일",
+          "tuesday": "화요일",
+          "wednesday": "수요일",
+          "thursday": "목요일",
+          "friday": "금요일",
+          "saturday": "토요일",
+          "sunday": "일요일"
+        }
       }
     },
     "empty_state": {

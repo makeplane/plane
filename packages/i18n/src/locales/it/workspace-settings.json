@@ -599,6 +599,32 @@
         "heading": "Script",
         "new_script": "Nuovo script",
         "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
+      },
+      "working_hours": {
+        "title": "Orario di lavoro",
+        "description": "Imposta l’orario di lavoro dell’area di lavoro. I timer possono comunque essere avviati in qualsiasi momento; questa impostazione stabilisce solo quando un timer in esecuzione viene arrestato automaticamente.",
+        "admin_only": "Solo gli amministratori dell’area di lavoro possono modificare l’orario di lavoro.",
+        "enable": "Abilita orario di lavoro",
+        "timezone_label": "Fuso orario",
+        "global_hours": "Orario globale",
+        "holiday_calendar": "Calendario delle festività",
+        "select_country": "Seleziona paese",
+        "select_region": "Seleziona regione",
+        "mode_global": "Globale",
+        "mode_custom": "Personalizzato",
+        "saved": "Orario di lavoro aggiornato.",
+        "save_failed": "Impossibile aggiornare l’orario di lavoro.",
+        "timer_stopped_title": "Timer arrestato",
+        "timer_stopped_message": "Il timer è stato arrestato alla fine dell’orario di lavoro.",
+        "days": {
+          "monday": "Lunedì",
+          "tuesday": "Martedì",
+          "wednesday": "Mercoledì",
+          "thursday": "Giovedì",
+          "friday": "Venerdì",
+          "saturday": "Sabato",
+          "sunday": "Domenica"
+        }
       }
     },
     "empty_state": {

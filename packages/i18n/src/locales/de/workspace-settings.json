@@ -599,6 +599,32 @@
         "heading": "Skripte",
         "new_script": "Neues Skript",
         "description": "Automatisieren Sie Ihre Workflows mit benutzerdefinierten Skripten und Automatisierungsregeln."
+      },
+      "working_hours": {
+        "title": "Arbeitszeiten",
+        "description": "Legen Sie den Arbeitszeitplan des Arbeitsbereichs fest. Timer können jederzeit gestartet werden; dies bestimmt nur, wann ein laufender Timer automatisch beendet wird.",
+        "admin_only": "Nur Arbeitsbereichsadministratoren können den Arbeitszeitplan ändern.",
+        "enable": "Arbeitszeiten aktivieren",
+        "timezone_label": "Zeitzone",
+        "global_hours": "Globale Arbeitszeiten",
+        "holiday_calendar": "Feiertagskalender",
+        "select_country": "Land auswählen",
+        "select_region": "Region auswählen",
+        "mode_global": "Global",
+        "mode_custom": "Benutzerdefiniert",
+        "saved": "Arbeitszeiten wurden aktualisiert.",
+        "save_failed": "Arbeitszeiten konnten nicht aktualisiert werden.",
+        "timer_stopped_title": "Timer beendet",
+        "timer_stopped_message": "Ihr Timer wurde am Ende der Arbeitszeit beendet.",
+        "days": {
+          "monday": "Montag",
+          "tuesday": "Dienstag",
+          "wednesday": "Mittwoch",
+          "thursday": "Donnerstag",
+          "friday": "Freitag",
+          "saturday": "Samstag",
+          "sunday": "Sonntag"
+        }
       }
     },
     "empty_state": {

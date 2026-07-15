@@ -599,6 +599,32 @@
         "heading": "Komut Dosyaları",
         "new_script": "Yeni Komut Dosyası",
         "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
+      },
+      "working_hours": {
+        "title": "Çalışma saatleri",
+        "description": "Çalışma alanının çalışma programını ayarlayın. Zamanlayıcılar her zaman başlatılabilir; bu ayar yalnızca çalışan bir zamanlayıcının ne zaman otomatik durdurulacağını belirler.",
+        "admin_only": "Çalışma programını yalnızca çalışma alanı yöneticileri değiştirebilir.",
+        "enable": "Çalışma saatlerini etkinleştir",
+        "timezone_label": "Saat dilimi",
+        "global_hours": "Genel saatler",
+        "holiday_calendar": "Tatil takvimi",
+        "select_country": "Ülke seçin",
+        "select_region": "Bölge seçin",
+        "mode_global": "Genel",
+        "mode_custom": "Özel",
+        "saved": "Çalışma saatleri güncellendi.",
+        "save_failed": "Çalışma saatleri güncellenemedi.",
+        "timer_stopped_title": "Zamanlayıcı durduruldu",
+        "timer_stopped_message": "Zamanlayıcınız çalışma saatlerinin sonunda durduruldu.",
+        "days": {
+          "monday": "Pazartesi",
+          "tuesday": "Salı",
+          "wednesday": "Çarşamba",
+          "thursday": "Perşembe",
+          "friday": "Cuma",
+          "saturday": "Cumartesi",
+          "sunday": "Pazar"
+        }
       }
     },
     "empty_state": {

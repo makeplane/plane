@@ -599,6 +599,32 @@
         "heading": "脚本",
         "new_script": "新建脚本",
         "description": "使用自定义脚本和自动化规则自动化您的工作流程。"
+      },
+      "working_hours": {
+        "title": "工作时间",
+        "description": "设置工作空间的工作日程。计时器仍可随时启动；此设置仅控制运行中的计时器何时自动停止。",
+        "admin_only": "只有工作空间管理员可以更改工作日程。",
+        "enable": "启用工作时间",
+        "timezone_label": "时区",
+        "global_hours": "全局时间",
+        "holiday_calendar": "节假日历",
+        "select_country": "选择国家",
+        "select_region": "选择地区",
+        "mode_global": "全局",
+        "mode_custom": "自定义",
+        "saved": "工作时间已更新。",
+        "save_failed": "无法更新工作时间。",
+        "timer_stopped_title": "计时器已停止",
+        "timer_stopped_message": "您的计时器已在工作时间结束时停止。",
+        "days": {
+          "monday": "星期一",
+          "tuesday": "星期二",
+          "wednesday": "星期三",
+          "thursday": "星期四",
+          "friday": "星期五",
+          "saturday": "星期六",
+          "sunday": "星期日"
+        }
       }
     },
     "empty_state": {

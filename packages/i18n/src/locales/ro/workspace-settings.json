@@ -599,6 +599,32 @@
         "heading": "Script-uri",
         "new_script": "Script nou",
         "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
+      },
+      "working_hours": {
+        "title": "Program de lucru",
+        "description": "Setați programul de lucru al spațiului de lucru. Cronometrele pot porni oricând; această setare stabilește doar când un cronometru activ este oprit automat.",
+        "admin_only": "Doar administratorii spațiului de lucru pot modifica programul de lucru.",
+        "enable": "Activează programul de lucru",
+        "timezone_label": "Fus orar",
+        "global_hours": "Program global",
+        "holiday_calendar": "Calendar de sărbători",
+        "select_country": "Selectați țara",
+        "select_region": "Selectați regiunea",
+        "mode_global": "Global",
+        "mode_custom": "Personalizat",
+        "saved": "Programul de lucru a fost actualizat.",
+        "save_failed": "Programul de lucru nu a putut fi actualizat.",
+        "timer_stopped_title": "Cronometru oprit",
+        "timer_stopped_message": "Cronometrul a fost oprit la finalul programului de lucru.",
+        "days": {
+          "monday": "Luni",
+          "tuesday": "Marți",
+          "wednesday": "Miercuri",
+          "thursday": "Joi",
+          "friday": "Vineri",
+          "saturday": "Sâmbătă",
+          "sunday": "Duminică"
+        }
       }
     },
     "empty_state": {

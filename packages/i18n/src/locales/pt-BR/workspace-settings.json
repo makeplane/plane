@@ -599,6 +599,32 @@
         "heading": "Scripts",
         "new_script": "Novo Script",
         "description": "Automatize seus fluxos de trabalho com scripts personalizados e regras de automação."
+      },
+      "working_hours": {
+        "title": "Horário de trabalho",
+        "description": "Defina o horário de trabalho do espaço de trabalho. Os cronômetros ainda podem ser iniciados a qualquer momento; isto apenas controla quando um cronômetro em execução é interrompido automaticamente.",
+        "admin_only": "Somente administradores do espaço de trabalho podem alterar o horário de trabalho.",
+        "enable": "Ativar horário de trabalho",
+        "timezone_label": "Fuso horário",
+        "global_hours": "Horário global",
+        "holiday_calendar": "Calendário de feriados",
+        "select_country": "Selecionar país",
+        "select_region": "Selecionar região",
+        "mode_global": "Global",
+        "mode_custom": "Personalizado",
+        "saved": "Horário de trabalho atualizado.",
+        "save_failed": "Não foi possível atualizar o horário de trabalho.",
+        "timer_stopped_title": "Cronômetro interrompido",
+        "timer_stopped_message": "Seu cronômetro foi interrompido ao fim do horário de trabalho.",
+        "days": {
+          "monday": "Segunda-feira",
+          "tuesday": "Terça-feira",
+          "wednesday": "Quarta-feira",
+          "thursday": "Quinta-feira",
+          "friday": "Sexta-feira",
+          "saturday": "Sábado",
+          "sunday": "Domingo"
+        }
       }
     },
     "empty_state": {

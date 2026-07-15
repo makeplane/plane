@@ -599,6 +599,32 @@
         "heading": "Scripts",
         "new_script": "Nouveau script",
         "description": "Automatisez vos flux de travail avec des scripts personnalisés et des règles d’automatisation."
+      },
+      "working_hours": {
+        "title": "Heures de travail",
+        "description": "Définissez les horaires de travail de l’espace de travail. Les minuteurs peuvent toujours démarrer à tout moment ; ce réglage définit uniquement quand un minuteur en cours est arrêté automatiquement.",
+        "admin_only": "Seuls les administrateurs de l’espace de travail peuvent modifier les horaires de travail.",
+        "enable": "Activer les heures de travail",
+        "timezone_label": "Fuseau horaire",
+        "global_hours": "Horaires globaux",
+        "holiday_calendar": "Calendrier des jours fériés",
+        "select_country": "Sélectionner un pays",
+        "select_region": "Sélectionner une région",
+        "mode_global": "Global",
+        "mode_custom": "Personnalisé",
+        "saved": "Les heures de travail ont été mises à jour.",
+        "save_failed": "Impossible de mettre à jour les heures de travail.",
+        "timer_stopped_title": "Minuteur arrêté",
+        "timer_stopped_message": "Votre minuteur a été arrêté à la fin des heures de travail.",
+        "days": {
+          "monday": "Lundi",
+          "tuesday": "Mardi",
+          "wednesday": "Mercredi",
+          "thursday": "Jeudi",
+          "friday": "Vendredi",
+          "saturday": "Samedi",
+          "sunday": "Dimanche"
+        }
       }
     },
     "empty_state": {

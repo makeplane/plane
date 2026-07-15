@@ -599,6 +599,32 @@
         "heading": "Skrypty",
         "new_script": "Nowy skrypt",
         "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
+      },
+      "working_hours": {
+        "title": "Godziny pracy",
+        "description": "Ustaw harmonogram pracy obszaru roboczego. Liczniki można uruchamiać w dowolnym momencie; to ustawienie określa tylko, kiedy działający licznik zostanie automatycznie zatrzymany.",
+        "admin_only": "Tylko administratorzy obszaru roboczego mogą zmieniać harmonogram pracy.",
+        "enable": "Włącz godziny pracy",
+        "timezone_label": "Strefa czasowa",
+        "global_hours": "Globalne godziny",
+        "holiday_calendar": "Kalendarz świąt",
+        "select_country": "Wybierz kraj",
+        "select_region": "Wybierz region",
+        "mode_global": "Globalne",
+        "mode_custom": "Niestandardowe",
+        "saved": "Godziny pracy zostały zaktualizowane.",
+        "save_failed": "Nie udało się zaktualizować godzin pracy.",
+        "timer_stopped_title": "Licznik zatrzymany",
+        "timer_stopped_message": "Licznik został zatrzymany po zakończeniu godzin pracy.",
+        "days": {
+          "monday": "Poniedziałek",
+          "tuesday": "Wtorek",
+          "wednesday": "Środa",
+          "thursday": "Czwartek",
+          "friday": "Piątek",
+          "saturday": "Sobota",
+          "sunday": "Niedziela"
+        }
       }
     },
     "empty_state": {

@@ -599,6 +599,32 @@
         "heading": "Skrip",
         "new_script": "Skrip Baru",
         "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
+      },
+      "working_hours": {
+        "title": "Jam kerja",
+        "description": "Atur jadwal kerja ruang kerja. Timer tetap dapat dimulai kapan saja; pengaturan ini hanya menentukan kapan timer yang sedang berjalan dihentikan secara otomatis.",
+        "admin_only": "Hanya administrator ruang kerja yang dapat mengubah jadwal kerja.",
+        "enable": "Aktifkan jam kerja",
+        "timezone_label": "Zona waktu",
+        "global_hours": "Jam global",
+        "holiday_calendar": "Kalender hari libur",
+        "select_country": "Pilih negara",
+        "select_region": "Pilih wilayah",
+        "mode_global": "Global",
+        "mode_custom": "Kustom",
+        "saved": "Jam kerja diperbarui.",
+        "save_failed": "Jam kerja tidak dapat diperbarui.",
+        "timer_stopped_title": "Timer dihentikan",
+        "timer_stopped_message": "Timer Anda dihentikan pada akhir jam kerja.",
+        "days": {
+          "monday": "Senin",
+          "tuesday": "Selasa",
+          "wednesday": "Rabu",
+          "thursday": "Kamis",
+          "friday": "Jumat",
+          "saturday": "Sabtu",
+          "sunday": "Minggu"
+        }
       }
     },
     "empty_state": {
