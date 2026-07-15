@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Báo cáo",
+    "page_label": "{workspace} - Báo cáo",
+    "filters": {
+      "date_range": "Khoảng thời gian",
+      "members": "Thành viên",
+      "projects": "Dự án",
+      "preset_this_week": "Tuần này",
+      "preset_last_week": "Tuần trước",
+      "preset_this_month": "Tháng này",
+      "preset_last_30_days": "30 ngày qua"
+    },
+    "grid": {
+      "member": "Thành viên",
+      "work_item": "Mục công việc",
+      "total": "Tổng"
+    },
+    "export_csv": "Xuất CSV",
+    "empty_state": {
+      "title": "Chưa có thời gian nào được ghi nhận",
+      "description": "Thời gian được ghi nhận trên các mục công việc trong khoảng thời gian này sẽ hiển thị ở đây."
+    },
+    "errors": {
+      "range_too_long": "Không thể tải báo cáo. Hãy thử một khoảng thời gian ngắn hơn.",
+      "no_access": "Bạn không có quyền xem báo cáo này."
+    }
   }
 }

@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "Berichte",
+    "page_label": "{workspace} – Berichte",
+    "filters": {
+      "date_range": "Zeitraum",
+      "members": "Mitglieder",
+      "projects": "Projekte",
+      "preset_this_week": "Diese Woche",
+      "preset_last_week": "Letzte Woche",
+      "preset_this_month": "Dieser Monat",
+      "preset_last_30_days": "Letzte 30 Tage"
+    },
+    "grid": {
+      "member": "Mitglied",
+      "work_item": "Arbeitselement",
+      "total": "Gesamt"
+    },
+    "export_csv": "CSV exportieren",
+    "empty_state": {
+      "title": "Noch keine Zeit erfasst",
+      "description": "Auf Arbeitselemente in diesem Zeitraum erfasste Zeit wird hier angezeigt."
+    },
+    "errors": {
+      "range_too_long": "Der Bericht konnte nicht geladen werden. Versuchen Sie einen kürzeren Zeitraum.",
+      "no_access": "Sie haben keine Berechtigung, diesen Bericht anzuzeigen."
+    }
   }
 }

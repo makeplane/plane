@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "報告",
+    "page_label": "{workspace} - 報告",
+    "filters": {
+      "date_range": "日期範圍",
+      "members": "成員",
+      "projects": "專案",
+      "preset_this_week": "本週",
+      "preset_last_week": "上週",
+      "preset_this_month": "本月",
+      "preset_last_30_days": "最近30天"
+    },
+    "grid": {
+      "member": "成員",
+      "work_item": "工作項目",
+      "total": "合計"
+    },
+    "export_csv": "匯出 CSV",
+    "empty_state": {
+      "title": "尚未記錄時間",
+      "description": "此期間在工作項目上記錄的時間將顯示在此處。"
+    },
+    "errors": {
+      "range_too_long": "無法載入報告。請嘗試更短的日期範圍。",
+      "no_access": "您無權查看此報告。"
+    }
   }
 }

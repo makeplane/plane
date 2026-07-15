@@ -374,5 +374,32 @@
         }
       }
     }
+  },
+  "time_reports": {
+    "label": "리포트",
+    "page_label": "{workspace} - 리포트",
+    "filters": {
+      "date_range": "날짜 범위",
+      "members": "멤버",
+      "projects": "프로젝트",
+      "preset_this_week": "이번 주",
+      "preset_last_week": "지난주",
+      "preset_this_month": "이번 달",
+      "preset_last_30_days": "최근 30일"
+    },
+    "grid": {
+      "member": "멤버",
+      "work_item": "작업 항목",
+      "total": "합계"
+    },
+    "export_csv": "CSV 내보내기",
+    "empty_state": {
+      "title": "아직 기록된 시간이 없습니다",
+      "description": "이 기간에 작업 항목에 기록된 시간이 여기에 표시됩니다."
+    },
+    "errors": {
+      "range_too_long": "리포트를 불러올 수 없습니다. 더 짧은 기간을 선택해 주세요.",
+      "no_access": "이 리포트를 볼 수 있는 권한이 없습니다."
+    }
   }
 }

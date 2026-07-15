@@ -82,7 +82,8 @@ export const buildTimesheetData = (response: TTimeReportResponse | undefined): T
     if (!userRow) {
       userRow = {
         userId: entry.user_id,
-        displayName: userMeta?.display_name || [userMeta?.first_name, userMeta?.last_name].filter(Boolean).join(" ") || "Unknown",
+        displayName:
+          userMeta?.display_name || [userMeta?.first_name, userMeta?.last_name].filter(Boolean).join(" ") || "Unknown",
         avatarUrl: userMeta?.avatar_url ?? null,
         total: 0,
         perDay: Object.fromEntries(days.map((day) => [day.date, 0])),
