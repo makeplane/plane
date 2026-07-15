@@ -64,6 +64,39 @@ def resolve_time_log_user(data, project_id, default_user):
     return user, None
 
 
+def is_time_log_admin(user, project_id, workspace_slug):
+    """Return whether a user can manage every time log in a project."""
+    from plane.db.models import ProjectMember, WorkspaceMember
+    from plane.db.models.project import ROLE
+
+    project_membership = ProjectMember.objects.filter(
+        member=user,
+        workspace__slug=workspace_slug,
+        project_id=project_id,
+        is_active=True,
+    )
+
+    return project_membership.filter(role=ROLE.ADMIN.value).exists() or (
+        project_membership.exists()
+        and WorkspaceMember.objects.filter(
+            member=user,
+            workspace__slug=workspace_slug,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists()
+    )
+
+
+def can_manage_time_log(user, time_log, project_id, workspace_slug):
+    """Return whether a user can edit or delete a specific time log."""
+    return is_time_log_admin(user, project_id, workspace_slug) or time_log.user_id == user.id
+
+
+def can_assign_time_log_user(requested_user_id, actor, is_admin):
+    """Prevent non-admins from attributing time to another project member."""
+    return is_admin or not requested_user_id or str(requested_user_id) == str(actor.id)
+
+
 def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
     """Handle time tracking when an issue's state changes.
 

@@ -87,7 +87,10 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.utils.time_tracking import (
+    can_assign_time_log_user,
+    can_manage_time_log,
     handle_issue_state_change,
+    is_time_log_admin,
     recalculate_total_time_spent,
     serialize_time_log,
     parse_manual_time_log_payload,
@@ -914,6 +917,13 @@ class IssueTimeLogsAPIEndpoint(BaseAPIView):
         if error:
             return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
 
+        is_admin = is_time_log_admin(request.user, project_id, slug)
+        if not can_assign_time_log_user(request.data.get("user_id"), request.user, is_admin):
+            return Response(
+                {"error": "Only admins can record time for other project members"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         log_user, error = resolve_time_log_user(request.data, project_id, default_user=request.user)
         if error:
             return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
@@ -962,6 +972,18 @@ class IssueTimeLogDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
         time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
 
+        is_admin = is_time_log_admin(request.user, project_id, slug)
+        if not can_manage_time_log(request.user, time_log, project_id, slug):
+            return Response(
+                {"error": "You can only edit your own time logs"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not can_assign_time_log_user(request.data.get("user_id"), request.user, is_admin):
+            return Response(
+                {"error": "Only admins can reassign time logs"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         log_date, duration_seconds, error = parse_manual_time_log_payload(
             request.data,
             default_date=time_log.date,
@@ -1005,6 +1027,11 @@ class IssueTimeLogDetailAPIEndpoint(BaseAPIView):
 
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
         time_log = IssueTimeLog.objects.get(issue=issue, pk=pk)
+        if not can_manage_time_log(request.user, time_log, project_id, slug):
+            return Response(
+                {"error": "You can only delete your own time logs"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         time_log.delete()
         recalculate_total_time_spent(issue)
 

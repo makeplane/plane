@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { EUserPermissions } from "@plane/constants";
 // icons
 import { Clock, Pencil, Plus, Trash2, X } from "lucide-react";
 // ui
@@ -14,7 +15,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUser } from "@/hooks/store/user/user-user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -96,7 +97,9 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
   const { workspaceSlug, projectId, issueId, disabled, stateId, updatedAt } = props;
   const { project: projectMember, getUserDetails } = useMember();
   const { data: currentUser } = useUser();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const currentUserId = currentUser?.id ?? "";
+  const isAdmin = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.ADMIN;
 
   const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
   const [totalTime, setTotalTime] = useState(0);
@@ -149,7 +152,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
 
   const handleCreate = async () => {
     setError(null);
-    const payload = formToPayload(addForm);
+    const payload = formToPayload(isAdmin ? addForm : { ...addForm, userId: currentUserId });
     if (payload.duration_seconds <= 0) {
       setError("Duration must be greater than zero");
       return;
@@ -165,8 +168,10 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
 
   const handleUpdate = async (logId: string) => {
     if (!editForm) return;
+    const timeLog = timeLogs.find((log) => log.id === logId);
+    if (!timeLog || (!isAdmin && timeLog.user_id !== currentUserId)) return;
     setError(null);
-    const payload = formToPayload(editForm);
+    const payload = formToPayload(isAdmin ? editForm : { ...editForm, userId: currentUserId });
     if (payload.duration_seconds <= 0) {
       setError("Duration must be greater than zero");
       return;
@@ -181,6 +186,8 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
   };
 
   const handleDelete = async (logId: string) => {
+    const timeLog = timeLogs.find((log) => log.id === logId);
+    if (!timeLog || (!isAdmin && timeLog.user_id !== currentUserId)) return;
     setError(null);
     try {
       await issueService.deleteTimeLog(workspaceSlug, projectId, issueId, logId);
@@ -262,7 +269,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
             onChange={(e) => setAddForm((f) => ({ ...f, minutes: e.target.value }))}
           />
           <span className="text-xs text-secondary">m</span>
-          {renderUserSelect(addForm.userId, (userId) => setAddForm((f) => ({ ...f, userId })))}
+          {isAdmin && renderUserSelect(addForm.userId, (userId) => setAddForm((f) => ({ ...f, userId })))}
           <button type="button" className="text-xs text-custom-primary-100 ml-auto" onClick={handleCreate}>
             Save
           </button>
@@ -317,7 +324,8 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
                           onChange={(e) => setEditForm((f) => (f ? { ...f, minutes: e.target.value } : f))}
                         />
                         <span className="text-xs text-secondary">m</span>
-                        {renderUserSelect(editForm.userId, (userId) => setEditForm((f) => (f ? { ...f, userId } : f)))}
+                        {isAdmin &&
+                          renderUserSelect(editForm.userId, (userId) => setEditForm((f) => (f ? { ...f, userId } : f)))}
                         <button
                           type="button"
                           className="text-xs text-custom-primary-100 ml-auto"
@@ -334,11 +342,11 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
                         <div className="flex items-center gap-1.5">
                           <span className="text-secondary">{formatTime(log.created_at)}</span>
                           <ButtonAvatars showTooltip userIds={log.user_id ? [log.user_id] : []} size="sm" />
-                          <span>{log.user_id ? getUserDetails(log.user_id)?.display_name : "Someone"} added</span>
+                          <span>{log.user_id ? getUserDetails(log.user_id)?.display_name : "Someone"}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{formatDuration(log.duration_seconds)}</span>
-                          {!disabled && (
+                          {!disabled && (isAdmin || log.user_id === currentUserId) && (
                             <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
