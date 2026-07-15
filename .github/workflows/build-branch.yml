@@ -30,10 +30,11 @@ on:
         required: false
         default: false
         type: boolean
-  push:
-    branches:
-      - preview
-      - canary
+  # NOTE: the automatic `push` trigger (preview/canary) was removed for this fork.
+  # It builds and pushes images to the upstream `makeplane` DockerHub namespace using
+  # DOCKERHUB_USERNAME/DOCKERHUB_TOKEN secrets that aren't configured here, so it always
+  # failed on every push to preview. This repo deploys to its own prod server manually
+  # instead. Trigger manually via workflow_dispatch if a real makeplane-owned release is needed.
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
