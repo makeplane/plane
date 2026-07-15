@@ -614,6 +614,8 @@
         "mode_custom": "Custom",
         "saved": "Working hours updated.",
         "save_failed": "Could not update working hours.",
+        "timer_stopped_title": "Timer stopped",
+        "timer_stopped_message": "Your timer was stopped at the end of working hours.",
         "days": {
           "monday": "Monday",
           "tuesday": "Tuesday",

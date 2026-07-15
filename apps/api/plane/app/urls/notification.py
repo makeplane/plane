@@ -10,6 +10,7 @@ from plane.app.views import (
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
     UserNotificationPreferenceEndpoint,
+    WorkingHoursNotificationsEndpoint,
 )
 
 
@@ -18,6 +19,11 @@ urlpatterns = [
         "workspaces/<str:slug>/users/notifications/",
         NotificationViewSet.as_view({"get": "list"}),
         name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/working-hours-notifications/",
+        WorkingHoursNotificationsEndpoint.as_view(),
+        name="working-hours-notifications",
     ),
     path(
         "workspaces/<str:slug>/users/notifications/<uuid:pk>/",

@@ -229,6 +229,7 @@ from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
+    WorkingHoursNotificationsEndpoint,
 )
 
 from .exporter.base import ExportIssuesEndpoint

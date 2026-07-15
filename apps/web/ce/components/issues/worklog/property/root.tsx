@@ -16,6 +16,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+// components
+import { WORKING_HOURS_TIMER_STOPPED_EVENT } from "@/components/workspace/working-hours-notifications-poller";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -149,6 +151,23 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
     // only restart the interval when the active log itself changes, not on every render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeLog?.id, activeLog?.started_at]);
+
+  // Safety net for working-hours auto-stop: while a timer is running, poll every
+  // 30s and also refetch immediately when the workspace poller signals a stop, so
+  // the "Time Running" display clears once the backend closes the timer.
+  useEffect(() => {
+    if (!activeLog) return undefined;
+    const poll = setInterval(() => {
+      fetchTimeLogs();
+    }, 30_000);
+    const onStopped = () => fetchTimeLogs();
+    window.addEventListener(WORKING_HOURS_TIMER_STOPPED_EVENT, onStopped);
+    return () => {
+      clearInterval(poll);
+      window.removeEventListener(WORKING_HOURS_TIMER_STOPPED_EVENT, onStopped);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLog?.id]);
 
   const handleCreate = async () => {
     setError(null);

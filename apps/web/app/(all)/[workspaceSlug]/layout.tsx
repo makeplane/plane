@@ -10,6 +10,7 @@ import { WorkspaceContentWrapper } from "@/plane-web/components/workspace/conten
 import { AppRailVisibilityProvider } from "@/lib/app-rail";
 import { GlobalModals } from "@/plane-web/components/common/modal/global";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
+import { WorkingHoursNotificationsPoller } from "@/components/workspace/working-hours-notifications-poller";
 import type { Route } from "./+types/layout";
 
 export default function WorkspaceLayout(props: Route.ComponentProps) {
@@ -21,6 +22,7 @@ export default function WorkspaceLayout(props: Route.ComponentProps) {
         <AppRailVisibilityProvider>
           <WorkspaceContentWrapper>
             <GlobalModals workspaceSlug={workspaceSlug} />
+            <WorkingHoursNotificationsPoller workspaceSlug={workspaceSlug} />
             <Outlet />
           </WorkspaceContentWrapper>
         </AppRailVisibilityProvider>
