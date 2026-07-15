@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plane Doc Consistency Review"
+  short_description: "Review Plane code and docs drift."
+  default_prompt: "Use $plane-doc-consistency-review to inspect this Plane diff for code, docs, tests, and semantic-model drift."
+
+policy:
+  allow_implicit_invocation: true

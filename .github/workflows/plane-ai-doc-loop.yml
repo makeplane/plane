@@ -1,0 +1,115 @@
+name: Plane AI Documentation Loop
+
+on:
+  pull_request:
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "docs/**"
+      - ".agents/**"
+      - ".plane-ai-doc-loop/**"
+      - ".github/workflows/plane-ai-doc-loop.yml"
+      - "pnpm-workspace.yaml"
+      - "package.json"
+  workflow_dispatch:
+    inputs:
+      run_frontend_checks:
+        description: Run Plane frontend checks even without a frontend diff
+        required: false
+        default: false
+        type: boolean
+      run_backend_tests:
+        description: Run Plane API Docker unit tests on the Ubuntu runner
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  semantic-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      backend_changed: ${{ steps.changes.outputs.backend_changed }}
+      frontend_changed: ${{ steps.changes.outputs.frontend_changed }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Resolve diff base and source changes
+        id: changes
+        shell: bash
+        run: |
+          if [[ -n "${{ github.base_ref }}" ]]; then
+            diff_base="origin/${{ github.base_ref }}..."
+          else
+            diff_base="HEAD^..."
+          fi
+          echo "DIFF_BASE=$diff_base" >> "$GITHUB_ENV"
+          changed_paths="$(git diff --name-only "$diff_base" --)"
+          if [[ "${{ inputs.run_backend_tests }}" == "true" ]] || grep -q '^apps/api/' <<< "$changed_paths"; then
+            echo "backend_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ "${{ inputs.run_frontend_checks }}" == "true" ]] || awk '/^packages\// || (/^apps\// && $0 !~ /^apps\/(api|proxy)\//) { found=1 } END { exit !found }' <<< "$changed_paths"; then
+            echo "frontend_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "frontend_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Validate project skills
+        run: python .plane-ai-doc-loop/runtime/validate_skills.py
+      - name: Validate workflow invariants
+        run: python .plane-ai-doc-loop/runtime/validate_workflow.py
+      - name: Validate semantic model
+        run: python .plane-ai-doc-loop/runtime/validate_semantic.py --strict-paths --require-baseline
+      - name: Generate local snapshot
+        run: python .plane-ai-doc-loop/runtime/plane_repo_snapshot.py
+      - name: Generate change impact
+        run: python .plane-ai-doc-loop/runtime/impact_from_git_diff.py --base "$DIFF_BASE"
+      - name: Revalidate generated semantic model
+        run: python .plane-ai-doc-loop/runtime/validate_semantic.py --strict-paths --require-baseline --require-generated
+      - name: Enforce code, docs, and test consistency
+        run: python .plane-ai-doc-loop/runtime/check_doc_gate.py --base "$DIFF_BASE"
+
+  frontend-checks:
+    needs: semantic-docs
+    if: needs.semantic-docs.outputs.frontend_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Enable project pnpm
+        run: corepack enable pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run Plane frontend checks
+        run: pnpm check
+
+  backend-tests:
+    needs: semantic-docs
+    if: needs.semantic-docs.outputs.backend_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: Prepare API test environment
+        run: |
+          cp apps/api/.env.example apps/api/.env
+          echo 'SECRET_KEY=plane-ci-test-secret-key' >> apps/api/.env
+      - name: Run Plane API unit tests
+        run: docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
+      - name: Tear down API test stack
+        if: always()
+        run: docker compose -f docker-compose-test.yml down -v

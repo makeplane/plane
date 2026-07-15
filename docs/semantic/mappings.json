@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "mappings": [
+    {
+      "id": "map.work_items.core",
+      "domain": "work_items",
+      "frontend_paths": [
+        "apps/web/core/services/issue/issue.service.ts",
+        "apps/web/core/store/issue/issue.store.ts",
+        "apps/web/core/store/issue/project/issue.store.ts",
+        "packages/types/src/issues/issue.ts"
+      ],
+      "backend_paths": [
+        "apps/api/plane/api/views/issue.py",
+        "apps/api/plane/api/serializers/issue.py"
+      ],
+      "database_paths": [
+        "apps/api/plane/db/models/issue.py",
+        "apps/api/plane/db/migrations/0120_issueview_archived_at.py"
+      ],
+      "api_paths": [
+        "apps/api/plane/api/urls/work_item.py"
+      ],
+      "test_paths": [
+        "apps/api/plane/tests/contract/api/test_issues.py",
+        "apps/api/plane/tests/unit/serializers/test_issue_recent_visit.py"
+      ],
+      "status": "active",
+      "confidence": 0.9,
+      "source_evidence": [
+        "apps/api/plane/api/urls/work_item.py",
+        "apps/api/plane/api/views/issue.py",
+        "apps/api/plane/api/serializers/issue.py",
+        "apps/api/plane/db/models/issue.py",
+        "apps/web/core/services/issue/issue.service.ts",
+        "apps/web/core/store/issue/issue.store.ts",
+        "packages/types/src/issues/issue.ts",
+        "apps/api/plane/tests/contract/api/test_issues.py"
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule.mapping.requires_evidence",
+      "description": "Every mapping promoted from needs_scan to active must include at least one real source path that exists in the Plane repository."
+    },
+    {
+      "id": "rule.mapping.requires_tests",
+      "description": "Every generated code change must update or cite frontend/package checks and backend pytest coverage as applicable."
+    }
+  ]
+}

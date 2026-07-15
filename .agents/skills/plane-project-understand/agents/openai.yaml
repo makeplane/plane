@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plane Project Understand"
+  short_description: "Build Plane source-backed semantic docs."
+  default_prompt: "Use $plane-project-understand to scan this Plane checkout and update docs/semantic with source-backed mappings."
+
+policy:
+  allow_implicit_invocation: true

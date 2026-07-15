@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "questions": [
+    {
+      "id": "oq.work_items.api_surface",
+      "domain": "work_items",
+      "question": "Which Django URL/viewset/serializer/model paths define the canonical Work Items API?",
+      "status": "resolved",
+      "blocking": false,
+      "resolution": "The canonical API is routed through work_item.py and implemented by issue views, serializers, and the Issue database model.",
+      "resolution_evidence": [
+        "apps/api/plane/api/urls/work_item.py",
+        "apps/api/plane/api/views/issue.py",
+        "apps/api/plane/api/serializers/issue.py",
+        "apps/api/plane/db/models/issue.py",
+        "apps/api/plane/tests/contract/api/test_issues.py"
+      ]
+    },
+    {
+      "id": "oq.work_items.frontend_boundaries",
+      "domain": "work_items",
+      "question": "Which apps/packages own Work Items routes, stores, and UI components?",
+      "status": "resolved",
+      "blocking": false,
+      "resolution": "The web app owns the primary service and stores while shared issue types live in packages/types.",
+      "resolution_evidence": [
+        "apps/web/core/services/issue/issue.service.ts",
+        "apps/web/core/store/issue/issue.store.ts",
+        "apps/web/core/store/issue/project/issue.store.ts",
+        "packages/types/src/issues/issue.ts"
+      ]
+    },
+    {
+      "id": "oq.cycles.model_mapping",
+      "domain": "cycles",
+      "question": "Which backend models and frontend modules implement cycle planning and burn-down behavior?",
+      "status": "open",
+      "blocking": false
+    },
+    {
+      "id": "oq.modules.model_mapping",
+      "domain": "modules",
+      "question": "Which backend models and frontend modules implement modules?",
+      "status": "open",
+      "blocking": false
+    },
+    {
+      "id": "oq.views.filter_contract",
+      "domain": "views",
+      "question": "Where are saved view filter schemas represented in backend and frontend code?",
+      "status": "open",
+      "blocking": false
+    },
+    {
+      "id": "oq.pages.editor_packages",
+      "domain": "pages",
+      "question": "Which editor packages and collaboration services are required for Pages?",
+      "status": "open",
+      "blocking": false
+    },
+    {
+      "id": "oq.analytics.data_sources",
+      "domain": "analytics",
+      "question": "Which data sources feed analytics and where are aggregation rules implemented?",
+      "status": "open",
+      "blocking": false
+    },
+    {
+      "id": "oq.identity.auth_flow",
+      "domain": "identity_admin",
+      "question": "Which routes and backend services implement login, workspace membership, and God mode instance admin?",
+      "status": "open",
+      "blocking": false
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "domains": [
+    {
+      "id": "work_items",
+      "name": "Work Items",
+      "description": "Issue/task creation, hierarchy, properties, status, labels, relations, attachments, comments, and activity.",
+      "status": "active",
+      "confidence": 0.9,
+      "source_evidence": [
+        "apps/api/plane/api/urls/work_item.py",
+        "apps/api/plane/api/views/issue.py",
+        "apps/api/plane/api/serializers/issue.py",
+        "apps/api/plane/db/models/issue.py",
+        "apps/web/core/services/issue/issue.service.ts",
+        "apps/web/core/store/issue/issue.store.ts",
+        "packages/types/src/issues/issue.ts",
+        "apps/api/plane/tests/contract/api/test_issues.py"
+      ],
+      "primary_contracts": [
+        "apps/api/plane/api/urls/work_item.py",
+        "apps/api/plane/tests/contract/api/test_issues.py"
+      ],
+      "open_questions": [
+        "oq.work_items.api_surface",
+        "oq.work_items.frontend_boundaries"
+      ]
+    },
+    {
+      "id": "cycles",
+      "name": "Cycles",
+      "description": "Sprint-like planning, burn-down tracking, and cycle progress views.",
+      "status": "seed",
+      "confidence": 0.45,
+      "source_evidence": [
+        "README.md"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.cycles.model_mapping"
+      ]
+    },
+    {
+      "id": "modules",
+      "name": "Modules",
+      "description": "Project decomposition into smaller delivery units and related work item grouping.",
+      "status": "seed",
+      "confidence": 0.45,
+      "source_evidence": [
+        "README.md"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.modules.model_mapping"
+      ]
+    },
+    {
+      "id": "views",
+      "name": "Views",
+      "description": "Saved filters and custom workflow views over Plane data.",
+      "status": "seed",
+      "confidence": 0.45,
+      "source_evidence": [
+        "README.md"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.views.filter_contract"
+      ]
+    },
+    {
+      "id": "pages",
+      "name": "Pages",
+      "description": "Rich text notes, AI-assisted pages, and conversion of content into actionable work.",
+      "status": "seed",
+      "confidence": 0.45,
+      "source_evidence": [
+        "README.md",
+        "pnpm-workspace.yaml"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.pages.editor_packages"
+      ]
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "description": "Trends, blockers, and visualization over work management data.",
+      "status": "seed",
+      "confidence": 0.4,
+      "source_evidence": [
+        "README.md"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.analytics.data_sources"
+      ]
+    },
+    {
+      "id": "identity_admin",
+      "name": "Identity and Instance Admin",
+      "description": "Authentication, workspace membership, instance admin, and God mode setup.",
+      "status": "seed",
+      "confidence": 0.5,
+      "source_evidence": [
+        "CONTRIBUTING.md",
+        ".env.example"
+      ],
+      "primary_contracts": [],
+      "open_questions": [
+        "oq.identity.auth_flow"
+      ]
+    }
+  ]
+}

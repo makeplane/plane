@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "name": "Plane",
+    "repository": "https://github.com/makeplane/plane",
+    "default_branch": "preview",
+    "license": "AGPL-3.0",
+    "checked_at": "2026-07-14"
+  },
+  "source_facts": {
+    "monorepo": true,
+    "frontend_workspace": {
+      "package_manager": "pnpm",
+      "package_manager_version": "11.3.0",
+      "node_engine": ">=22.18.0",
+      "workspace_file": "pnpm-workspace.yaml",
+      "included": [
+        "apps/*",
+        "packages/*"
+      ],
+      "excluded": [
+        "apps/api",
+        "apps/proxy"
+      ]
+    },
+    "backend": {
+      "framework": "Django",
+      "path": "apps/api",
+      "test_stack": "docker-compose-test.yml"
+    },
+    "local_stack": {
+      "compose_file": "docker-compose-local.yml",
+      "minimum_ram_gb": 12,
+      "services": [
+        "Postgres 15.7",
+        "Valkey 7.2.11",
+        "RabbitMQ 3.13.6",
+        "MinIO",
+        "API",
+        "worker",
+        "beat",
+        "web/admin apps"
+      ]
+    },
+    "agent_guidance": {
+      "file": "AGENTS.md",
+      "commands": [
+        "pnpm dev",
+        "pnpm build",
+        "pnpm check",
+        "pnpm check:lint",
+        "pnpm check:types",
+        "docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests"
+      ]
+    }
+  },
+  "scan_targets": [
+    {
+      "id": "plane.api",
+      "kind": "backend",
+      "paths": [
+        "apps/api"
+      ],
+      "facts_to_extract": [
+        "Django apps",
+        "models",
+        "serializers",
+        "views/viewsets",
+        "urls",
+        "permissions",
+        "tasks",
+        "migrations",
+        "tests"
+      ]
+    },
+    {
+      "id": "plane.frontend.apps",
+      "kind": "frontend",
+      "paths": [
+        "apps/*"
+      ],
+      "facts_to_extract": [
+        "routes",
+        "loaders/actions",
+        "API clients",
+        "stores",
+        "feature modules",
+        "i18n keys"
+      ]
+    },
+    {
+      "id": "plane.packages",
+      "kind": "shared",
+      "paths": [
+        "packages/*"
+      ],
+      "facts_to_extract": [
+        "shared UI components",
+        "shared state",
+        "types",
+        "i18n resources",
+        "editor packages",
+        "utils"
+      ]
+    }
+  ],
+  "generated_outputs": [
+    "docs/semantic/domains.json",
+    "docs/semantic/mappings.json",
+    "docs/semantic/open_questions.json",
+    "docs/semantic/docs_index.json",
+    "docs/ai/architecture.md",
+    "docs/ai/change-impact.md"
+  ]
+}

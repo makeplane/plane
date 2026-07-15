@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "change_id": "baseline.work_items",
+  "intent": "Establish the initial source-backed Work Items semantic baseline.",
+  "documentation_impact": "updated",
+  "test_impact": "covered",
+  "affected_domains": [
+    "work_items"
+  ],
+  "mapping_ids": [
+    "map.work_items.core"
+  ],
+  "test_paths": [
+    "apps/api/plane/tests/contract/api/test_issues.py",
+    "apps/api/plane/tests/unit/serializers/test_issue_recent_visit.py"
+  ],
+  "evidence_paths": [
+    "apps/api/plane/api/urls/work_item.py",
+    "apps/api/plane/api/views/issue.py",
+    "apps/api/plane/api/serializers/issue.py",
+    "apps/api/plane/db/models/issue.py",
+    "apps/web/core/services/issue/issue.service.ts",
+    "apps/web/core/store/issue/issue.store.ts",
+    "packages/types/src/issues/issue.ts"
+  ],
+  "rationale": "The baseline records existing behavior only and does not modify Plane business source."
+}

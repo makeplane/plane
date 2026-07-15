@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plane Doc Code Loop"
+  short_description: "Generate Plane code from validated docs."
+  default_prompt: "Use $plane-doc-code-loop to implement this Plane change from the semantic docs and keep tests and docs synchronized."
+
+policy:
+  allow_implicit_invocation: true

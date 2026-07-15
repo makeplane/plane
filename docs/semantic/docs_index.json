@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "documents": [
+    {
+      "id": "doc.architecture",
+      "path": "docs/ai/architecture.md",
+      "kind": "generated_markdown",
+      "source_models": [
+        "docs/semantic/reverse_index.json",
+        "docs/semantic/domains.json",
+        "docs/semantic/mappings.json"
+      ],
+      "status": "generated"
+    },
+    {
+      "id": "doc.change_impact",
+      "path": "docs/ai/change-impact.md",
+      "kind": "generated_markdown",
+      "source_models": [
+        "docs/semantic/mappings.json"
+      ],
+      "status": "generated"
+    }
+  ]
+}
