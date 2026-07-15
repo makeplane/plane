@@ -311,3 +311,45 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WorkingHoursNotificationsEndpoint(BaseAPIView):
+    """Lightweight poll for working-hours auto-stop notifications.
+
+    Returns the current user's unread `working_hours_timer_stopped` notifications
+    so the web app can toast them without going through the full inbox; POST marks
+    the given ids read so they are not toasted again.
+    """
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        notifications = Notification.objects.filter(
+            workspace__slug=slug,
+            receiver_id=request.user.id,
+            sender="in_app:working_hours:timer_stopped",
+            read_at__isnull=True,
+            archived_at__isnull=True,
+        ).order_by("-created_at")[:20]
+        return Response(
+            [
+                {
+                    "id": str(item.id),
+                    "data": item.data,
+                    "message": item.message,
+                    "created_at": item.created_at.isoformat(),
+                }
+                for item in notifications
+            ],
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug):
+        notification_ids = request.data.get("notification_ids", [])
+        if notification_ids:
+            Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                id__in=notification_ids,
+            ).update(read_at=timezone.now())
+        return Response(status=status.HTTP_204_NO_CONTENT)

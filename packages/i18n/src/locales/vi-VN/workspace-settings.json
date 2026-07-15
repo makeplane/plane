@@ -599,6 +599,32 @@
         "heading": "Script",
         "new_script": "Script mới",
         "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
+      },
+      "working_hours": {
+        "title": "Giờ làm việc",
+        "description": "Thiết lập lịch làm việc của không gian làm việc. Bộ hẹn giờ vẫn có thể bắt đầu bất cứ lúc nào; thiết lập này chỉ xác định thời điểm bộ hẹn giờ đang chạy tự động dừng.",
+        "admin_only": "Chỉ quản trị viên không gian làm việc mới có thể thay đổi lịch làm việc.",
+        "enable": "Bật giờ làm việc",
+        "timezone_label": "Múi giờ",
+        "global_hours": "Giờ chung",
+        "holiday_calendar": "Lịch ngày lễ",
+        "select_country": "Chọn quốc gia",
+        "select_region": "Chọn khu vực",
+        "mode_global": "Chung",
+        "mode_custom": "Tùy chỉnh",
+        "saved": "Đã cập nhật giờ làm việc.",
+        "save_failed": "Không thể cập nhật giờ làm việc.",
+        "timer_stopped_title": "Đã dừng bộ hẹn giờ",
+        "timer_stopped_message": "Bộ hẹn giờ của bạn đã dừng khi kết thúc giờ làm việc.",
+        "days": {
+          "monday": "Thứ Hai",
+          "tuesday": "Thứ Ba",
+          "wednesday": "Thứ Tư",
+          "thursday": "Thứ Năm",
+          "friday": "Thứ Sáu",
+          "saturday": "Thứ Bảy",
+          "sunday": "Chủ Nhật"
+        }
       }
     },
     "empty_state": {

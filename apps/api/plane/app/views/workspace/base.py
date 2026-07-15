@@ -171,7 +171,16 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        response = super().partial_update(request, *args, **kwargs)
+        # If the working-hours schedule or timezone changed, immediately recompute
+        # the auto-stop boundary of every running timer in this workspace.
+        if response.status_code == status.HTTP_200_OK and (
+            "working_hours" in request.data or "timezone" in request.data
+        ):
+            from plane.utils.working_hours import recompute_active_auto_stops
+
+            recompute_active_auto_stops(self.get_object())
+        return response
 
     def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
         """
@@ -418,3 +427,19 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="workspace-user-activity.csv"'
         return response
+
+
+class WorkspaceHolidayCountriesEndpoint(BaseAPIView):
+    """List ISO countries (and their subdivisions) supported by the offline
+    holiday calendar, for the working-hours settings form."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        import holidays
+
+        supported = holidays.list_supported_countries()
+        countries = [
+            {"code": code, "subdivisions": subdivisions}
+            for code, subdivisions in sorted(supported.items())
+        ]
+        return Response({"countries": countries}, status=status.HTTP_200_OK)

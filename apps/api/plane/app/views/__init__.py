@@ -41,6 +41,7 @@ from .workspace.base import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
+    WorkspaceHolidayCountriesEndpoint,
 )
 
 from .workspace.draft import WorkspaceDraftIssueViewSet
@@ -228,6 +229,7 @@ from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
+    WorkingHoursNotificationsEndpoint,
 )
 
 from .exporter.base import ExportIssuesEndpoint

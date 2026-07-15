@@ -599,6 +599,32 @@
         "heading": "Scripts",
         "new_script": "Nuevo script",
         "description": "Automatiza tus flujos de trabajo con scripts personalizados y reglas de automatización."
+      },
+      "working_hours": {
+        "title": "Horario laboral",
+        "description": "Configure el horario laboral del espacio de trabajo. Los temporizadores pueden iniciarse en cualquier momento; esto solo determina cuándo se detiene automáticamente un temporizador en curso.",
+        "admin_only": "Solo los administradores del espacio de trabajo pueden cambiar el horario laboral.",
+        "enable": "Activar horario laboral",
+        "timezone_label": "Zona horaria",
+        "global_hours": "Horario global",
+        "holiday_calendar": "Calendario de festivos",
+        "select_country": "Seleccionar país",
+        "select_region": "Seleccionar región",
+        "mode_global": "Global",
+        "mode_custom": "Personalizado",
+        "saved": "El horario laboral se actualizó.",
+        "save_failed": "No se pudo actualizar el horario laboral.",
+        "timer_stopped_title": "Temporizador detenido",
+        "timer_stopped_message": "Su temporizador se detuvo al finalizar el horario laboral.",
+        "days": {
+          "monday": "Lunes",
+          "tuesday": "Martes",
+          "wednesday": "Miércoles",
+          "thursday": "Jueves",
+          "friday": "Viernes",
+          "saturday": "Sábado",
+          "sunday": "Domingo"
+        }
       }
     },
     "empty_state": {

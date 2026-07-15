@@ -17,6 +17,25 @@ import type {
 // services
 import { APIService } from "@/services/api.service";
 
+export type TWorkingHoursNotification = {
+  id: string;
+  created_at: string;
+  message: { text?: string } | null;
+  data: {
+    type?: string;
+    issue?: {
+      id: string;
+      name: string;
+      identifier: string;
+      sequence_id: number;
+      project_id: string;
+      workspace_slug: string;
+      state_id: string | null;
+      state_name: string | null;
+    };
+  } | null;
+};
+
 export class WorkspaceNotificationService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -26,6 +45,25 @@ export class WorkspaceNotificationService extends APIService {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/unread/`);
       return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchWorkingHoursNotifications(workspaceSlug: string): Promise<TWorkingHoursNotification[]> {
+    try {
+      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/working-hours-notifications/`);
+      return data || [];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async markWorkingHoursNotificationsRead(workspaceSlug: string, notificationIds: string[]): Promise<void> {
+    try {
+      await this.post(`/api/workspaces/${workspaceSlug}/working-hours-notifications/`, {
+        notification_ids: notificationIds,
+      });
     } catch (error) {
       throw error;
     }

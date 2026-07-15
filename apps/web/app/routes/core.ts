@@ -298,6 +298,10 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/working-hours",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/working-hours/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------

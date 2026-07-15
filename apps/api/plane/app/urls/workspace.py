@@ -8,6 +8,7 @@ from django.urls import path
 from plane.app.views import (
     UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
+    WorkspaceHolidayCountriesEndpoint,
     WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     WorkspaceInvitationsViewset,
@@ -61,6 +62,11 @@ urlpatterns = [
             }
         ),
         name="workspace",
+    ),
+    path(
+        "workspaces/<str:slug>/holiday-countries/",
+        WorkspaceHolidayCountriesEndpoint.as_view(),
+        name="workspace-holiday-countries",
     ),
     path(
         "workspaces/<str:slug>/invitations/",

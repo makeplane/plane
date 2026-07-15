@@ -599,6 +599,32 @@
         "heading": "指令碼",
         "new_script": "新指令碼",
         "description": "使用自訂指令碼和自動化規則，自動化您的工作流程。"
+      },
+      "working_hours": {
+        "title": "工作時間",
+        "description": "設定工作空間的工作排程。計時器仍可隨時啟動；此設定僅控制執行中的計時器何時自動停止。",
+        "admin_only": "只有工作空間管理員可以變更工作排程。",
+        "enable": "啟用工作時間",
+        "timezone_label": "時區",
+        "global_hours": "全域時間",
+        "holiday_calendar": "假日日曆",
+        "select_country": "選擇國家",
+        "select_region": "選擇地區",
+        "mode_global": "全域",
+        "mode_custom": "自訂",
+        "saved": "工作時間已更新。",
+        "save_failed": "無法更新工作時間。",
+        "timer_stopped_title": "計時器已停止",
+        "timer_stopped_message": "您的計時器已在工作時間結束時停止。",
+        "days": {
+          "monday": "星期一",
+          "tuesday": "星期二",
+          "wednesday": "星期三",
+          "thursday": "星期四",
+          "friday": "星期五",
+          "saturday": "星期六",
+          "sunday": "星期日"
+        }
       }
     },
     "empty_state": {

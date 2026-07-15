@@ -599,6 +599,32 @@
         "heading": "Skripty",
         "new_script": "Nový skript",
         "description": "Automatizujte svoje pracovné postupy pomocou vlastných skriptov a automatizačných pravidiel."
+      },
+      "working_hours": {
+        "title": "Pracovný čas",
+        "description": "Nastavte pracovný harmonogram pracovného priestoru. Časovače možno spustiť kedykoľvek; toto nastavenie určuje iba to, kedy sa bežiaci časovač automaticky zastaví.",
+        "admin_only": "Pracovný harmonogram môžu zmeniť iba správcovia pracovného priestoru.",
+        "enable": "Povoliť pracovný čas",
+        "timezone_label": "Časové pásmo",
+        "global_hours": "Globálny pracovný čas",
+        "holiday_calendar": "Kalendár sviatkov",
+        "select_country": "Vybrať krajinu",
+        "select_region": "Vybrať región",
+        "mode_global": "Globálny",
+        "mode_custom": "Vlastný",
+        "saved": "Pracovný čas bol aktualizovaný.",
+        "save_failed": "Pracovný čas sa nepodarilo aktualizovať.",
+        "timer_stopped_title": "Časovač zastavený",
+        "timer_stopped_message": "Časovač bol zastavený na konci pracovného času.",
+        "days": {
+          "monday": "Pondelok",
+          "tuesday": "Utorok",
+          "wednesday": "Streda",
+          "thursday": "Štvrtok",
+          "friday": "Piatok",
+          "saturday": "Sobota",
+          "sunday": "Nedeľa"
+        }
       }
     },
     "empty_state": {

@@ -69,6 +69,14 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             )
         return value
 
+    def validate_working_hours(self, value):
+        from plane.utils.working_hours import validate_working_hours_config
+
+        errors = validate_working_hours_config(value)
+        if errors:
+            raise serializers.ValidationError(errors)
+        return value
+
     class Meta:
         model = Workspace
         fields = "__all__"
