@@ -307,6 +307,7 @@ const resolveTagRowArtifactThumbnail = (
 
 export const SgEventDetailPage = ({
   enableMatrixView = false,
+  showTagListActions = true,
   issue,
   mediaItem = null,
   projectId,
@@ -942,6 +943,7 @@ export const SgEventDetailPage = ({
                   rows={filteredRows}
                   searchQuery={searchQuery}
                   selectedTagIds={selectedTagIds}
+                  showCreateActions={showTagListActions}
                   sportTableConfig={sportTableConfig}
                 />
               )}

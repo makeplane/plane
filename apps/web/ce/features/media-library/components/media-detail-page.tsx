@@ -767,6 +767,7 @@ const MediaDetailPage = () => {
     return (
       <SgEventDetailPage
         enableMatrixView
+        showTagListActions={false}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         mediaItem={item}
