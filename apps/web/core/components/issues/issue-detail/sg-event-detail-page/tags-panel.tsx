@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, ChevronDown, Columns3, Filter, ListPlus, Plus, Search, Star, Trash2, X } from "lucide-react";
+import { Check, ChevronDown, Columns3, ListPlus, Plus, Search, Star, Trash2, X } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -30,6 +30,7 @@ type SgEventTagsPanelProps = {
   rows: SgTagRow[];
   searchQuery: string;
   selectedTagIds: string[];
+  showCreateActions?: boolean;
   sportTableConfig: SportTableConfig;
 };
 
@@ -39,6 +40,17 @@ const TEXT_BUTTON_CLASS =
 const CONTEXT_COLUMN_PREFIX = "context:";
 const DEFAULT_VISIBLE_COLUMN_KEYS = ["duration", "player", "groupValue", "action", "primaryDetail", "result"];
 const COLUMN_GROUP_ORDER = ["Core", "Sport", "Source", "Raw tag data"];
+
+const TagsFilterIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none" className={className}>
+    <path
+      d="M11.5 5.49971H4.15378M1.56076 5.49971H0.5M1.56076 5.49971C1.56076 5.17074 1.69732 4.85524 1.94041 4.62262C2.1835 4.39 2.5132 4.25932 2.85697 4.25932C3.20075 4.25932 3.53045 4.39 3.77354 4.62262C4.01662 4.85524 4.15319 5.17074 4.15319 5.49971C4.15319 5.82869 4.01662 6.14419 3.77354 6.37681C3.53045 6.60943 3.20075 6.74011 2.85697 6.74011C2.5132 6.74011 2.1835 6.60943 1.94041 6.37681C1.69732 6.14419 1.56076 5.82869 1.56076 5.49971ZM11.5 9.25903H8.08227M8.08227 9.25903C8.08227 9.58808 7.94538 9.90394 7.70223 10.1366C7.45909 10.3693 7.12932 10.5 6.78546 10.5C6.44168 10.5 6.11198 10.3687 5.8689 10.1361C5.62581 9.90351 5.48924 9.58801 5.48924 9.25903M8.08227 9.25903C8.08227 8.92998 7.94538 8.61469 7.70223 8.38202C7.45909 8.14935 7.12932 8.01863 6.78546 8.01863C6.44168 8.01863 6.11198 8.14932 5.8689 8.38194C5.62581 8.61456 5.48924 8.93006 5.48924 9.25903M5.48924 9.25903H0.5M11.5 1.7404H9.65378M7.06076 1.7404H0.5M7.06076 1.7404C7.06076 1.41142 7.19732 1.09592 7.44041 0.863304C7.6835 0.630684 8.01319 0.5 8.35697 0.5C8.52719 0.5 8.69575 0.532084 8.85301 0.59442C9.01028 0.656756 9.15317 0.748123 9.27354 0.863304C9.3939 0.978486 9.48938 1.11523 9.55452 1.26572C9.61966 1.41621 9.65319 1.57751 9.65319 1.7404C9.65319 1.90329 9.61966 2.06459 9.55452 2.21508C9.48938 2.36557 9.3939 2.50231 9.27354 2.61749C9.15317 2.73267 9.01028 2.82404 8.85301 2.88638C8.69575 2.94871 8.52719 2.9808 8.35697 2.9808C8.01319 2.9808 7.6835 2.85011 7.44041 2.61749C7.19732 2.38487 7.06076 2.06937 7.06076 1.7404Z"
+      stroke="currentColor"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
 type SgTagColumnGroup = (typeof COLUMN_GROUP_ORDER)[number];
 
@@ -113,6 +125,7 @@ export const SgEventTagsPanel = ({
   rows,
   searchQuery,
   selectedTagIds,
+  showCreateActions = true,
   sportTableConfig,
 }: SgEventTagsPanelProps) => {
   const isCompactFootballTable = Boolean(sportTableConfig.isCompactFootballTable);
@@ -294,10 +307,12 @@ export const SgEventTagsPanel = ({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <button type="button" className={TEXT_BUTTON_CLASS}>
-            <Plus className="h-3.5 w-3.5" />
-            <span>Create Card</span>
-          </button>
+          {showCreateActions && (
+            <button type="button" className={TEXT_BUTTON_CLASS}>
+              <Plus className="h-3.5 w-3.5" />
+              <span>Create Card</span>
+            </button>
+          )}
           {isSearchOpen && (
             <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-300">
               <Search className="h-4 w-4" />
@@ -328,7 +343,7 @@ export const SgEventTagsPanel = ({
                       : "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100"
                   )}
                 >
-                  <Filter className="h-4 w-4" />
+                  <TagsFilterIcon className="h-4 w-4" />
                 </button>
               </Tooltip>
             }
@@ -362,10 +377,12 @@ export const SgEventTagsPanel = ({
               </span>
             </button>
           </Tooltip>
-          <button type="button" className={TEXT_BUTTON_CLASS}>
-            <ListPlus className="h-3.5 w-3.5" />
-            <span>Create Playlist</span>
-          </button>
+          {showCreateActions && (
+            <button type="button" className={TEXT_BUTTON_CLASS}>
+              <ListPlus className="h-3.5 w-3.5" />
+              <span>Create Playlist</span>
+            </button>
+          )}
         </div>
       </div>
 
