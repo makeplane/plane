@@ -645,26 +645,35 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   async issueQuickAdd(workspaceSlug: string, projectId: string, data: TIssue) {
     // Add issue to store with a temporary Id
     this.addIssue(data);
-    // call Create issue method
-    const response = await this.createIssue(workspaceSlug, projectId, data);
-    runInAction(() => {
-      this.removeIssueFromList(data.id);
-      this.rootIssueStore.issues.removeIssue(data.id);
-    });
-    const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
-    const currentModuleIds =
-      data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
-    const promiseRequests = [];
-    if (currentCycleId) {
-      promiseRequests.push(this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id));
+    try {
+      // call Create issue method
+      const response = await this.createIssue(workspaceSlug, projectId, data);
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
+      const currentModuleIds =
+        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
+      const promiseRequests = [];
+      if (currentCycleId) {
+        promiseRequests.push(this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id));
+      }
+      if (currentModuleIds.length > 0) {
+        promiseRequests.push(this.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, []));
+      }
+      if (promiseRequests && promiseRequests.length > 0) {
+        await Promise.all(promiseRequests);
+      }
+      return response;
+    } catch (error) {
+      // Roll back optimistic temp issue so the list does not keep a failed entry
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+      throw error;
     }
-    if (currentModuleIds.length > 0) {
-      promiseRequests.push(this.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, []));
-    }
-    if (promiseRequests && promiseRequests.length > 0) {
-      await Promise.all(promiseRequests);
-    }
-    return response;
   }
 
   /**

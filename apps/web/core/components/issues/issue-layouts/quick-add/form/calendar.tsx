@@ -5,10 +5,12 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;
+  const { t } = useTranslation();
 
   return (
     <div
@@ -28,6 +30,10 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
           placeholder={isEpic ? "Epic Title" : "Work item Title"}
           {...register("name", {
             required: `${isEpic ? "Epic" : "Work item"} title is required.`,
+            maxLength: {
+              value: 255,
+              message: t("title_should_be_less_than_255_characters"),
+            },
           })}
           className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 leading-5 font-medium text-secondary outline-none md:text-11"
         />
