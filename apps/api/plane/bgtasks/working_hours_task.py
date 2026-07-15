@@ -17,7 +17,10 @@ from django.utils import timezone
 
 from plane.db.models import Issue, IssueActivity, IssueTimeLog, Notification, State
 from plane.utils.exception_logger import log_exception
-from plane.utils.time_tracking import recalculate_total_time_spent
+from plane.utils.time_tracking import (
+    normalize_time_log_duration,
+    recalculate_total_time_spent,
+)
 
 # Cap per run so a backlog can't blow up a single task; the next tick picks up the rest.
 _BATCH_SIZE = 500
@@ -100,17 +103,22 @@ def _close_one(log_id):
 
         # Close the log strictly at its boundary.
         log.stopped_at = boundary
-        log.duration_seconds = max(0, int((boundary - log.started_at).total_seconds()))
+        log.created_by = None
+        log.duration_seconds = normalize_time_log_duration(
+            (boundary - log.started_at).total_seconds()
+        )
         log.stop_reason = IssueTimeLog.StopReason.WORKING_HOURS
         log.auto_stop_at = None
         log.save(
             update_fields=[
                 "stopped_at",
                 "duration_seconds",
+                "created_by",
                 "stop_reason",
                 "auto_stop_at",
                 "updated_at",
-            ]
+            ],
+            disable_auto_set_user=True,
         )
         recalculate_total_time_spent(issue)
 
