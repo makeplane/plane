@@ -20,7 +20,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
-from plane.db.models import FileAsset, Workspace
+from plane.db.models import FileAsset, Issue, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
@@ -154,6 +154,10 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
+
+        # Soft-deleting the asset does not trip the cover FK's on_delete, so any
+        # work item using it as its cover would keep a dangling reference. Clear it.
+        Issue.objects.filter(cover_image_attachment_id=pk).update(cover_image_attachment=None)
 
         issue_activity.delay(
             type="attachment.activity.deleted",

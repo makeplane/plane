@@ -32,6 +32,7 @@ import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
 import { PeekOverviewProperties } from "../peek-overview/properties";
 import { IssueTitleInput } from "../title-input";
+import { IssueDetailCoverImage } from "./cover-image";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
@@ -94,6 +95,12 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
 
   return (
     <>
+      <IssueDetailCoverImage
+        issueId={issueId}
+        projectId={issue.project_id}
+        coverImageAttachmentId={issue.cover_image_attachment_id}
+        layoutClassName="-mx-9 w-[calc(100%+4.5rem)]"
+      />
       <div className="space-y-4 rounded-lg">
         {issue.parent_id && (
           <IssueParentDetail

@@ -185,6 +185,8 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) => {
+    const wasCoverImage = this.rootIssueStore.issues.getIssueById(issueId)?.cover_image_attachment_id === attachmentId;
+
     const response = await this.issueAttachmentService.deleteIssueAttachment(
       workspaceSlug,
       projectId,
@@ -198,8 +200,11 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         return attachmentIds;
       });
       delete this.attachmentMap[attachmentId];
+      // The backend clears cover_image_attachment_id when the asset is deleted,
+      // so just mirror that locally to avoid leaving a dangling cover reference.
       this.rootIssueStore.issues.updateIssue(issueId, {
         attachment_count: this.getAttachmentsCountByIssueId(issueId),
+        ...(wasCoverImage ? { cover_image_attachment_id: null } : {}),
       });
     });
 

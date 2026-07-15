@@ -30,6 +30,7 @@ import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-iss
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
+import { IssueDetailCoverImage } from "../issue-detail/cover-image";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -97,101 +98,104 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       : undefined;
 
   return (
-    <div className="space-y-2">
-      {issue.parent_id && (
-        <IssueParentDetail
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-        />
-      )}
-      <div className="flex items-center justify-between gap-2">
-        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
-        {duplicateIssues?.length > 0 && (
-          <DeDupeIssuePopoverRoot
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            rootIssueId={issueId}
-            issues={duplicateIssues}
-            issueOperations={issueOperations}
-          />
-        )}
-      </div>
-      <IssueTitleInput
-        workspaceSlug={workspaceSlug}
+    <>
+      <IssueDetailCoverImage
+        issueId={issueId}
         projectId={issue.project_id}
-        issueId={issue.id}
-        isSubmitting={isSubmitting}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        issueOperations={issueOperations}
-        disabled={disabled || isArchived}
-        value={issue.name}
-        containerClassName="-ml-3"
+        coverImageAttachmentId={issue.cover_image_attachment_id}
       />
-
-      <DescriptionInput
-        issueSequenceId={issue.sequence_id}
-        containerClassName="-ml-3 border-none"
-        disabled={disabled || isArchived}
-        editorRef={editorRef}
-        entityId={issue.id}
-        fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-        initialValue={issueDescription}
-        key={issue.id}
-        onSubmit={async (value, isMigrationUpdate) => {
-          if (!issue.id || !issue.project_id) return;
-          await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-            description_html: value.description_html,
-            ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-          });
-        }}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        projectId={issue.project_id}
-        workspaceSlug={workspaceSlug}
-      />
-
-      <div className="flex items-center justify-between gap-2">
-        {currentUser && (
-          <IssueReaction
+      <div className="space-y-2">
+        {issue.parent_id && (
+          <IssueParentDetail
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issueId}
-            currentUser={currentUser}
-            disabled={isArchived}
+            issue={issue}
+            issueOperations={issueOperations}
           />
         )}
-        {!disabled && (
-          <DescriptionVersionsRoot
-            className="flex-shrink-0"
-            entityInformation={{
-              createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
-              createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
-              id: issueId,
-              isRestoreDisabled: disabled || isArchived,
-            }}
-            fetchHandlers={{
-              listDescriptionVersions: (issueId) =>
-                workItemVersionService.listDescriptionVersions(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId
-                ),
-              retrieveDescriptionVersion: (issueId, versionId) =>
-                workItemVersionService.retrieveDescriptionVersion(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId,
-                  versionId
-                ),
-            }}
-            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-            projectId={issue.project_id}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
+        <div className="flex items-center justify-between gap-2">
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+          {duplicateIssues?.length > 0 && (
+            <DeDupeIssuePopoverRoot
+              workspaceSlug={workspaceSlug}
+              projectId={issue.project_id}
+              rootIssueId={issueId}
+              issues={duplicateIssues}
+              issueOperations={issueOperations}
+            />
+          )}
+        </div>
+        <IssueTitleInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          isSubmitting={isSubmitting}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          issueOperations={issueOperations}
+          disabled={disabled || isArchived}
+          value={issue.name}
+          containerClassName="-ml-3"
+        />
+
+        <DescriptionInput
+          issueSequenceId={issue.sequence_id}
+          containerClassName="-ml-3 border-none"
+          disabled={disabled || isArchived}
+          editorRef={editorRef}
+          entityId={issue.id}
+          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+          initialValue={issueDescription}
+          key={issue.id}
+          onSubmit={async (value, isMigrationUpdate) => {
+            if (!issue.id || !issue.project_id) return;
+            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+              description_html: value.description_html,
+              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+            });
+          }}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          projectId={issue.project_id}
+          workspaceSlug={workspaceSlug}
+        />
+
+        <div className="flex items-center justify-between gap-2">
+          {currentUser && (
+            <IssueReaction
+              workspaceSlug={workspaceSlug}
+              projectId={issue.project_id}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={isArchived}
+            />
+          )}
+          {!disabled && (
+            <DescriptionVersionsRoot
+              className="flex-shrink-0"
+              entityInformation={{
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
+                id: issueId,
+                isRestoreDisabled: disabled || isArchived,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (id) =>
+                  workItemVersionService.listDescriptionVersions(workspaceSlug, issue.project_id?.toString() ?? "", id),
+                retrieveDescriptionVersion: (id, versionId) =>
+                  workItemVersionService.retrieveDescriptionVersion(
+                    workspaceSlug,
+                    issue.project_id?.toString() ?? "",
+                    id,
+                    versionId
+                  ),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={issue.project_id}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 });
