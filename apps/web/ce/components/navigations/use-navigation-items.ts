@@ -119,7 +119,8 @@ export const useNavigationItems = ({
     });
 
     // Sort by sortOrder
-    return filteredItems.toSorted((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    // eslint-disable-next-line unicorn/no-array-sort -- toSorted() is ES2023, unsupported by this app's tsconfig lib target
+    return filteredItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   }, [workspaceSlug, projectId, baseNavigation, allowPermissions, project?.id]);
 
   return navigationItems;

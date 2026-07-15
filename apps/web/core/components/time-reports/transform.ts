@@ -117,7 +117,8 @@ export const buildTimesheetData = (response: TTimeReportResponse | undefined): T
     grandTotal += entry.duration_seconds;
   }
 
-  const users = Array.from(userMap.values()).toSorted((a, b) => b.total - a.total);
+  // eslint-disable-next-line unicorn/no-array-sort -- toSorted() is ES2023, unsupported by this app's tsconfig lib target
+  const users = Array.from(userMap.values()).sort((a, b) => b.total - a.total);
   for (const user of users) {
     user.issues.sort((a, b) => b.total - a.total);
   }
