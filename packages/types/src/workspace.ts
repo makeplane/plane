@@ -18,6 +18,25 @@ export enum EUserWorkspaceRoles {
   GUEST = 5,
 }
 
+export type TWorkingHoursDayKey = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+
+export interface IWorkingHoursDay {
+  enabled: boolean;
+  hours_mode: "global" | "custom";
+  start?: string;
+  end?: string;
+}
+
+export interface IWorkingHours {
+  enabled: boolean;
+  global_hours: { start: string; end: string };
+  days: Record<TWorkingHoursDayKey, IWorkingHoursDay>;
+  holiday_calendar: {
+    country_code: string | null;
+    subdivision_code: string | null;
+  };
+}
+
 export interface IWorkspace {
   readonly id: string;
   readonly owner: IUser;
@@ -34,6 +53,7 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  working_hours: IWorkingHours;
 }
 
 export interface IWorkspaceLite {

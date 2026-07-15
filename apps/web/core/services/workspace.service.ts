@@ -67,6 +67,14 @@ export class WorkspaceService extends APIService {
       });
   }
 
+  async getHolidayCountries(workspaceSlug: string): Promise<{ countries: { code: string; subdivisions: string[] }[] }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/holiday-countries/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteWorkspace(workspaceSlug: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => response?.data)

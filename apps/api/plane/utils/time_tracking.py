@@ -134,6 +134,8 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
 
     if new_is_started and not old_is_started:
         # Transition INTO started: the actor becomes the assignee, then start a new time log
+        from plane.utils.working_hours import compute_auto_stop_at
+
         ensure_actor_is_assignee(issue, actor)
         IssueTimeLog.objects.create(
             issue=issue,
@@ -142,6 +144,7 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
             started_at=now,
             stopped_at=None,
             duration_seconds=0,
+            auto_stop_at=compute_auto_stop_at(issue.workspace, now),
             workspace=issue.workspace,
             project=issue.project,
             created_by=None,
@@ -155,7 +158,17 @@ def handle_issue_state_change(issue, old_state_id, new_state_id, actor=None):
         for log in active_logs:
             log.stopped_at = now
             log.duration_seconds = int((now - log.started_at).total_seconds())
-            log.save(update_fields=["stopped_at", "duration_seconds", "updated_at"])
+            log.stop_reason = IssueTimeLog.StopReason.STATE_CHANGE
+            log.auto_stop_at = None
+            log.save(
+                update_fields=[
+                    "stopped_at",
+                    "duration_seconds",
+                    "stop_reason",
+                    "auto_stop_at",
+                    "updated_at",
+                ]
+            )
 
         # Update total_time_spent on the issue
         recalculate_total_time_spent(issue)
@@ -199,6 +212,8 @@ def serialize_time_log(log):
         "stopped_at": log.stopped_at.isoformat() if log.stopped_at else None,
         "duration_seconds": log.duration_seconds,
         "duration_formatted": f"{hours:02d}:{minutes:02d}",
+        "auto_stop_at": log.auto_stop_at.isoformat() if log.auto_stop_at else None,
+        "stop_reason": log.stop_reason,
     }
 
 

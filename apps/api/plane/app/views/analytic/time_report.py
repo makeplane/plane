@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime, time, timedelta
+from typing import Any, Dict, List, Optional, Tuple
 
-from django.db.models import Case, Q, QuerySet, Sum, Value, When, CharField
+import pytz
+from django.db.models import Case, Q, QuerySet, Value, When, CharField
 from django.db.models.functions import Concat
 from django.http import HttpRequest
 from rest_framework import status
@@ -13,7 +14,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import IssueTimeLog, ProjectMember, User, WorkspaceMember
+from plane.db.models import IssueTimeLog, ProjectMember, User, Workspace, WorkspaceMember
 
 MAX_REPORT_RANGE_DAYS = 92
 
@@ -25,6 +26,42 @@ def _parse_date(value: Optional[str]):
         return datetime.strptime(value, "%Y-%m-%d").date()
     except ValueError:
         return None
+
+
+def _local_midnight_utc(tz, local_date):
+    """Return the UTC datetime for 00:00 of `local_date` in timezone `tz`."""
+    naive = datetime.combine(local_date, time.min)
+    try:
+        aware = tz.localize(naive, is_dst=None)
+    except (pytz.exceptions.AmbiguousTimeError, pytz.exceptions.NonExistentTimeError):
+        aware = tz.localize(naive, is_dst=False)
+    return aware.astimezone(pytz.utc)
+
+
+def _split_seconds_by_local_date(started_at, stopped_at, tz, window_start, window_end):
+    """Split a [started_at, stopped_at) interval across workspace-local dates.
+
+    Returns {local_date_iso: seconds}, clamped to [window_start, window_end).
+    The full duration (including nights, weekends and holidays) is preserved and
+    apportioned to the local calendar date each slice falls on.
+    """
+    result: Dict[str, int] = {}
+    segment_start = max(started_at, window_start)
+    segment_end = min(stopped_at, window_end)
+    if segment_start >= segment_end:
+        return result
+
+    cursor = segment_start
+    while cursor < segment_end:
+        local_date = cursor.astimezone(tz).date()
+        next_midnight = _local_midnight_utc(tz, local_date + timedelta(days=1))
+        piece_end = min(segment_end, next_midnight)
+        seconds = int((piece_end - cursor).total_seconds())
+        if seconds > 0:
+            key = local_date.isoformat()
+            result[key] = result.get(key, 0) + seconds
+        cursor = piece_end
+    return result
 
 
 def _split_ids(value: Optional[str]) -> Optional[List[str]]:
@@ -96,53 +133,72 @@ def build_time_log_report(
         Q(project_id__in=member_only_project_ids) & Q(user_id=user.id)
     )
 
-    qs: QuerySet = IssueTimeLog.objects.filter(
-        workspace__slug=slug,
-        date__gte=start_date,
-        date__lte=end_date,
-        stopped_at__isnull=False,
-        project_id__in=scoped_project_ids,
-    ).filter(visibility_q)
+    # Convert the requested local date range to a UTC window in the workspace
+    # timezone, then select every closed log whose [started_at, stopped_at)
+    # interval overlaps it — not just logs whose stored `date` falls inside.
+    ws_timezone = (
+        Workspace.objects.filter(slug=slug).values_list("timezone", flat=True).first()
+        or "UTC"
+    )
+    tz = pytz.timezone(ws_timezone)
+    window_start = _local_midnight_utc(tz, start_date)
+    window_end = _local_midnight_utc(tz, end_date + timedelta(days=1))
+
+    qs: QuerySet = (
+        IssueTimeLog.objects.filter(
+            workspace__slug=slug,
+            stopped_at__isnull=False,
+            started_at__lt=window_end,
+            stopped_at__gt=window_start,
+            project_id__in=scoped_project_ids,
+        )
+        .filter(visibility_q)
+        .select_related("issue", "issue__project")
+    )
 
     if user_ids:
         qs = qs.filter(user_id__in=user_ids)
 
-    entries_qs = (
-        qs.values(
-            "user_id",
-            "issue_id",
-            "project_id",
-            "date",
-            "issue__name",
-            "issue__sequence_id",
-            "issue__project__identifier",
-        )
-        .annotate(duration_seconds=Sum("duration_seconds"))
-        .order_by("user_id", "issue_id", "date")
-    )
-
-    entries = []
+    # Aggregate per (user, issue, project, workspace-local date), splitting each
+    # log across the local calendar dates its interval spans.
+    aggregated: Dict[Tuple[Optional[str], str, str, str], int] = {}
     issues: Dict[str, Dict[str, Any]] = {}
     user_ids_seen = set()
 
-    for row in entries_qs:
-        entries.append(
-            {
-                "user_id": str(row["user_id"]) if row["user_id"] else None,
-                "issue_id": str(row["issue_id"]),
-                "project_id": str(row["project_id"]),
-                "date": row["date"].isoformat(),
-                "duration_seconds": row["duration_seconds"] or 0,
-            }
+    for log in qs:
+        pieces = _split_seconds_by_local_date(
+            log.started_at, log.stopped_at, tz, window_start, window_end
         )
-        if row["user_id"]:
-            user_ids_seen.add(row["user_id"])
-        issues[str(row["issue_id"])] = {
-            "name": row["issue__name"],
-            "sequence_id": row["issue__sequence_id"],
-            "project_id": str(row["project_id"]),
-            "project_identifier": row["issue__project__identifier"],
+        if not pieces:
+            continue
+        user_key = str(log.user_id) if log.user_id else None
+        issue_key = str(log.issue_id)
+        project_key = str(log.project_id)
+        for local_date_iso, seconds in pieces.items():
+            key = (user_key, issue_key, project_key, local_date_iso)
+            aggregated[key] = aggregated.get(key, 0) + seconds
+        if log.user_id:
+            user_ids_seen.add(log.user_id)
+        issues[issue_key] = {
+            "name": log.issue.name,
+            "sequence_id": log.issue.sequence_id,
+            "project_id": project_key,
+            "project_identifier": log.issue.project.identifier,
         }
+
+    entries = [
+        {
+            "user_id": user_key,
+            "issue_id": issue_key,
+            "project_id": project_key,
+            "date": local_date_iso,
+            "duration_seconds": seconds,
+        }
+        for (user_key, issue_key, project_key, local_date_iso), seconds in sorted(
+            aggregated.items(),
+            key=lambda item: (item[0][0] or "", item[0][1], item[0][3]),
+        )
+    ]
 
     users_qs = (
         User.objects.filter(pk__in=user_ids_seen)

@@ -111,6 +111,34 @@ def get_issue_props():
     return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
 
 
+WORKING_HOURS_WEEKDAYS = (
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+)
+
+
+def get_default_working_hours():
+    """Default workspace working-hours schedule.
+
+    Disabled by default so existing workspaces are unaffected until an admin
+    explicitly turns it on. Mon–Fri 09:00–18:00, no holiday calendar selected.
+    """
+    return {
+        "enabled": False,
+        "global_hours": {"start": "09:00", "end": "18:00"},
+        "days": {
+            day: {"enabled": day not in ("saturday", "sunday"), "hours_mode": "global"}
+            for day in WORKING_HOURS_WEEKDAYS
+        },
+        "holiday_calendar": {"country_code": None, "subdivision_code": None},
+    }
+
+
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
@@ -137,6 +165,7 @@ class Workspace(BaseModel):
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
+    working_hours = models.JSONField(default=get_default_working_hours)
 
     def __str__(self):
         """Return name of the Workspace"""

@@ -43,6 +43,10 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.conf.beat_schedule = {
     # Intra day recurring jobs
+    "check-every-minute-to-auto-stop-working-hours-timers": {
+        "task": "plane.bgtasks.working_hours_task.auto_stop_working_hours_timers",
+        "schedule": crontab(minute="*"),  # Every minute
+    },
     "check-every-five-minutes-to-send-email-notifications": {
         "task": "plane.bgtasks.email_notification_task.stack_email_notification",
         "schedule": crontab(minute="*/5"),  # Every 5 minutes

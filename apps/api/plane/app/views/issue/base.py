@@ -1412,6 +1412,7 @@ class IssueTimeLogsEndpoint(BaseAPIView):
             started_at=started_at,
             stopped_at=started_at + timedelta(seconds=duration_seconds),
             duration_seconds=duration_seconds,
+            stop_reason=IssueTimeLog.StopReason.MANUAL_ENTRY,
             workspace=issue.workspace,
             project=issue.project,
             created_by=request.user,

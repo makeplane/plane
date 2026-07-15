@@ -41,6 +41,7 @@ from .workspace.base import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
+    WorkspaceHolidayCountriesEndpoint,
 )
 
 from .workspace.draft import WorkspaceDraftIssueViewSet

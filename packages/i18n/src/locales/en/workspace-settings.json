@@ -599,6 +599,30 @@
         "heading": "Scripts",
         "new_script": "New Script",
         "description": "Automate your workflows with custom scripts and automation rules."
+      },
+      "working_hours": {
+        "title": "Working hours",
+        "description": "Set the workspace working schedule. Timers still start any time; this only controls when a running timer is automatically stopped.",
+        "admin_only": "Only workspace admins can change the working schedule.",
+        "enable": "Enable working hours",
+        "timezone_label": "Timezone",
+        "global_hours": "Global hours",
+        "holiday_calendar": "Holiday calendar",
+        "select_country": "Select country",
+        "select_region": "Select region",
+        "mode_global": "Global",
+        "mode_custom": "Custom",
+        "saved": "Working hours updated.",
+        "save_failed": "Could not update working hours.",
+        "days": {
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday",
+          "saturday": "Saturday",
+          "sunday": "Sunday"
+        }
       }
     },
     "empty_state": {
