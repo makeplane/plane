@@ -33,6 +33,7 @@ export function MultipleSelectGroupAction(props: Props) {
       checked={groupSelectionStatus === "complete"}
       indeterminate={groupSelectionStatus === "partial"}
       disabled={disabled}
+      readOnly
     />
   );
 }
