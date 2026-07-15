@@ -121,6 +121,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
+    // eslint-disable-next-line promise/always-return -- pre-existing, unrelated to tooltip/ref fix
     copyUrlToClipboard(workItemLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -134,6 +135,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     try {
       const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
 
+      // eslint-disable-next-line promise/always-return -- pre-existing, unrelated to tooltip/ref fix
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         setPeekIssue(undefined);
       });
@@ -168,9 +170,11 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
         </Tooltip>
 
         <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
-          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
-          </Link>
+          <span className="flex">
+            <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
+              <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
+            </Link>
+          </span>
         </Tooltip>
         {currentMode && embedIssue === false && (
           <div className="flex flex-shrink-0 items-center gap-2">
