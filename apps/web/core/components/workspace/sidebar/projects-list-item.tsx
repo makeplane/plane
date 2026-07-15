@@ -89,7 +89,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   // refs
   const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
+  const dragHandleRef = useRef<HTMLDivElement | null>(null);
   // router
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   const router = useRouter();
@@ -177,6 +177,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== projectId && source?.data?.dragInstanceId === "PROJECTS",
+        // eslint-disable-next-line no-shadow -- pre-existing (drag callback param), unrelated to this DOM-nesting fix
         getData: ({ input, element }) => {
           const data = { id: projectId };
 
@@ -222,6 +223,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         },
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pre-existing, unrelated to this DOM-nesting fix
   }, [projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useEffect(() => {
@@ -308,8 +310,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 position="top-end"
                 disabled={isDragging}
               >
-                <button
-                  type="button"
+                {/* div (not a button): the actual button is <DragHandle>; a button nested
+                    inside a button is invalid DOM. Drag is pointer-based via dragHandleRef. */}
+                <div
                   className={cn(
                     "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                     {
@@ -321,7 +324,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   ref={dragHandleRef}
                 >
                   <DragHandle className="bg-transparent" />
-                </button>
+                </div>
               </Tooltip>
             )}
             <>

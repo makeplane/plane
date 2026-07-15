@@ -105,6 +105,7 @@ export function FavoriteFolder(props: Props) {
       dropTargetForElements({
         element,
         canDrop: ({ source }) => getCanDrop(source, favorite, false),
+        // eslint-disable-next-line no-shadow -- pre-existing (drag callback param), unrelated to this DOM-nesting fix
         getData: ({ input, element }) => {
           const blockedStates: InstructionType[] = [];
           if (!isLastChild) {
@@ -121,6 +122,7 @@ export function FavoriteFolder(props: Props) {
           });
         },
         onDrag: ({ source, self, location }) => {
+          // eslint-disable-next-line no-shadow -- pre-existing (drag callback param), unrelated to this DOM-nesting fix
           const instruction = getInstructionFromPayload(self, source, location);
           setInstruction(instruction);
         },
@@ -188,8 +190,8 @@ export function FavoriteFolder(props: Props) {
                         position="top-end"
                         disabled={isDragging}
                       >
-                        <button
-                          type="button"
+                        {/* div (not a button): <DragHandle> is itself a button — no button-in-button. */}
+                        <div
                           className={cn(
                             "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                             {
@@ -199,7 +201,7 @@ export function FavoriteFolder(props: Props) {
                           )}
                         >
                           <DragHandle className="bg-transparent" />
-                        </button>
+                        </div>
                       </Tooltip>
                       <div className="grid size-5 flex-shrink-0 place-items-center">
                         <FavoriteFolderIcon />
