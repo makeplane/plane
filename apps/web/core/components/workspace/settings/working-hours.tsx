@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -39,6 +39,50 @@ const DEFAULT_WORKING_HOURS: IWorkingHours = {
 
 const cloneConfig = (value: IWorkingHours | undefined): IWorkingHours =>
   value ? JSON.parse(JSON.stringify(value)) : JSON.parse(JSON.stringify(DEFAULT_WORKING_HOURS));
+
+// Always-24h time field. Native <input type="time"> renders in the browser's
+// locale (12h with AM/PM under en-US), which we don't want, so this is a plain
+// text field normalized to "HH:MM" on blur.
+function Time24Input({
+  value,
+  onChange,
+  className,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+}) {
+  const [text, setText] = useState(value);
+  useEffect(() => setText(value), [value]);
+
+  const commit = (raw: string) => {
+    const digits = raw.replace(/\D/g, "").slice(0, 4);
+    if (digits.length < 3) {
+      setText(value);
+      return;
+    }
+    const hoursPart = digits.length === 3 ? digits.slice(0, 1) : digits.slice(0, 2);
+    const minutesPart = digits.length === 3 ? digits.slice(1) : digits.slice(2);
+    const hours = String(Math.min(23, Number(hoursPart))).padStart(2, "0");
+    const minutes = String(Math.min(59, Number(minutesPart))).padStart(2, "0");
+    const normalized = `${hours}:${minutes}`;
+    setText(normalized);
+    onChange(normalized);
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      placeholder="HH:MM"
+      maxLength={5}
+      className={className}
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={(e) => commit(e.target.value)}
+    />
+  );
+}
 
 export const WorkspaceWorkingHours = observer(function WorkspaceWorkingHours() {
   const { t } = useTranslation();
@@ -118,22 +162,16 @@ export const WorkspaceWorkingHours = observer(function WorkspaceWorkingHours() {
       {/* Global hours */}
       <div className="flex items-center gap-3">
         <span className="text-sm w-40 font-medium">{t("workspace_settings.settings.working_hours.global_hours")}</span>
-        <input
-          type="time"
-          className="border-custom-border-200 text-sm rounded border bg-transparent px-2 py-1"
+        <Time24Input
+          className="border-custom-border-200 text-sm w-20 rounded border bg-transparent px-2 py-1 text-center"
           value={config.global_hours.start}
-          onChange={(e) =>
-            setConfig((prev) => ({ ...prev, global_hours: { ...prev.global_hours, start: e.target.value } }))
-          }
+          onChange={(val) => setConfig((prev) => ({ ...prev, global_hours: { ...prev.global_hours, start: val } }))}
         />
         <span className="text-secondary">–</span>
-        <input
-          type="time"
-          className="border-custom-border-200 text-sm rounded border bg-transparent px-2 py-1"
+        <Time24Input
+          className="border-custom-border-200 text-sm w-20 rounded border bg-transparent px-2 py-1 text-center"
           value={config.global_hours.end}
-          onChange={(e) =>
-            setConfig((prev) => ({ ...prev, global_hours: { ...prev.global_hours, end: e.target.value } }))
-          }
+          onChange={(val) => setConfig((prev) => ({ ...prev, global_hours: { ...prev.global_hours, end: val } }))}
         />
       </div>
 
@@ -159,18 +197,16 @@ export const WorkspaceWorkingHours = observer(function WorkspaceWorkingHours() {
                   </select>
                   {dayConfig.hours_mode === "custom" && (
                     <>
-                      <input
-                        type="time"
-                        className="border-custom-border-200 text-sm rounded border bg-transparent px-2 py-1"
+                      <Time24Input
+                        className="border-custom-border-200 text-sm w-20 rounded border bg-transparent px-2 py-1 text-center"
                         value={dayConfig.start ?? config.global_hours.start}
-                        onChange={(e) => patchDay(day, { start: e.target.value })}
+                        onChange={(val) => patchDay(day, { start: val })}
                       />
                       <span className="text-secondary">–</span>
-                      <input
-                        type="time"
-                        className="border-custom-border-200 text-sm rounded border bg-transparent px-2 py-1"
+                      <Time24Input
+                        className="border-custom-border-200 text-sm w-20 rounded border bg-transparent px-2 py-1 text-center"
                         value={dayConfig.end ?? config.global_hours.end}
-                        onChange={(e) => patchDay(day, { end: e.target.value })}
+                        onChange={(val) => patchDay(day, { end: val })}
                       />
                     </>
                   )}
