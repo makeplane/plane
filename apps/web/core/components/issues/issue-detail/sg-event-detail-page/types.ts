@@ -52,6 +52,11 @@ export type SgTagRow = {
   timecode: string;
 };
 
+export type SgTagRowEditPayload = Pick<
+  SgTagRow,
+  "action" | "groupValue" | "player" | "primaryDetail" | "result" | "secondaryDetail" | "team" | "timecode"
+>;
+
 export type SgEventDevice = {
   hlsUrl: string | null;
   id: number;

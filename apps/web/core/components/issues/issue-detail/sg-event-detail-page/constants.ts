@@ -261,7 +261,7 @@ export const SPORT_TABLE_CONFIGS: Record<SportTableKind, SportTableConfig> = {
     actionLabel: "Action",
     defaultGroupValue: "Q1",
     groupByLabel: "Quarter",
-    primaryDetailLabel: "Quarter",
+    primaryDetailLabel: "Game Clock",
     secondaryDetailLabel: "Value",
     sport: "basketball",
   },

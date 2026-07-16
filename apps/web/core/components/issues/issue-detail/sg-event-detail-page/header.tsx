@@ -167,8 +167,8 @@ export const SgEventTitleBar = ({
     <Pill
       variant={eventStatus.toLowerCase().includes("complete") ? EPillVariant.SUCCESS : EPillVariant.PRIMARY}
       size={EPillSize.SM}
-      className={cn("w-fit border-none", {
-        "bg-red-50 text-red-700": eventStatus.toLowerCase().includes("cancel"),
+      className={cn("w-fit border border-[#178c4d] bg-[#062f1d] px-3 py-1 text-[#22c55e]", {
+        "border-red-700 bg-red-950/40 text-red-500": eventStatus.toLowerCase().includes("cancel"),
       })}
     >
       Status: {formatLooseLabel(eventStatus)}

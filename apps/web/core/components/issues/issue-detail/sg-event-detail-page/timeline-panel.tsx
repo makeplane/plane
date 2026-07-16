@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
   Clock3,
@@ -493,6 +493,57 @@ const formatTickLabel = (seconds: number) => {
   return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 };
 
+const useSmoothedPlayheadSeconds = (playheadSeconds: number) => {
+  const [smoothedPlayheadSeconds, setSmoothedPlayheadSeconds] = useState(playheadSeconds);
+  const smoothedPlayheadSecondsRef = useRef(playheadSeconds);
+  const frameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const targetSeconds = Number.isFinite(playheadSeconds) ? playheadSeconds : 0;
+    const startSeconds = smoothedPlayheadSecondsRef.current;
+    const deltaSeconds = targetSeconds - startSeconds;
+    const absoluteDeltaSeconds = Math.abs(deltaSeconds);
+
+    if (frameRef.current !== null) {
+      window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+
+    if (absoluteDeltaSeconds < 0.08 || absoluteDeltaSeconds > 2.5) {
+      smoothedPlayheadSecondsRef.current = targetSeconds;
+      setSmoothedPlayheadSeconds(targetSeconds);
+      return;
+    }
+
+    const startedAtMs = performance.now();
+    const durationMs = Math.min(1000, Math.max(120, absoluteDeltaSeconds * 1000));
+
+    const animate = (timestampMs: number) => {
+      const progress = Math.min(1, (timestampMs - startedAtMs) / durationMs);
+      const nextSeconds = startSeconds + deltaSeconds * progress;
+
+      smoothedPlayheadSecondsRef.current = nextSeconds;
+      setSmoothedPlayheadSeconds(nextSeconds);
+
+      if (progress < 1) {
+        frameRef.current = window.requestAnimationFrame(animate);
+      } else {
+        frameRef.current = null;
+      }
+    };
+
+    frameRef.current = window.requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current === null) return;
+      window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    };
+  }, [playheadSeconds]);
+
+  return smoothedPlayheadSeconds;
+};
+
 const formatTooltipText = (value: string, transform: "title" | "upper") => {
   const normalizedValue = value.trim().replace(/[_-]+/g, " ");
   if (!normalizedValue || normalizedValue === "--") return "";
@@ -593,12 +644,15 @@ export const SgEventTimelinePanel = ({
   selectedTagIds,
   sport,
 }: SgEventTimelinePanelProps) => {
+  const timelineTrackRef = useRef<HTMLDivElement | null>(null);
+  const [timelineTrackWidth, setTimelineTrackWidth] = useState(0);
   const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
   const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
   const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
   const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
   const isTagClipActive = activePlaybackOverrideId?.startsWith("sg-tag-") ?? false;
   const timelineDurationSeconds = isTagClipActive ? null : playerDurationSeconds;
+  const smoothedPlayheadSeconds = useSmoothedPlayheadSeconds(playheadSeconds);
   const tagTypeOptions = useMemo(() => buildTimelineTagTypeOptions(rows, sport), [rows, sport]);
   const defaultVisibleTagTypeKeys = useMemo(() => tagTypeOptions.map((option) => option.key), [tagTypeOptions]);
   const activeVisibleTagTypeKeys = visibleTagTypeKeys ?? defaultVisibleTagTypeKeys;
@@ -664,7 +718,12 @@ export const SgEventTimelinePanel = ({
       : knownTimelineExtentSeconds;
   const timelineExtentSeconds = Math.max(knownTimelineExtentSeconds, overflowTimelineExtentSeconds);
   const totalSeconds = Math.max(1, Math.ceil(timelineExtentSeconds || 0));
-  const playheadPosition = Math.min(Math.max((playheadSeconds * 100) / totalSeconds, 0), 100);
+  const playheadPosition = Math.min(Math.max((smoothedPlayheadSeconds * 100) / totalSeconds, 0), 100);
+  const playheadOffsetPx = timelineTrackWidth > 0 ? (playheadPosition / 100) * timelineTrackWidth : 0;
+  const playheadStyle =
+    timelineTrackWidth > 0
+      ? { transform: `translate3d(${playheadOffsetPx}px, 0, 0) translateX(-50%)` }
+      : { left: `${playheadPosition}%` };
   const tickStepSeconds = buildTickStepSeconds(totalSeconds);
   const ticks = Array.from({ length: Math.floor(totalSeconds / tickStepSeconds) + 1 }, (_, index) => {
     const tickSeconds = index * tickStepSeconds;
@@ -726,6 +785,31 @@ export const SgEventTimelinePanel = ({
       return Array.from(nextKeys);
     });
   };
+
+  useEffect(() => {
+    const trackElement = timelineTrackRef.current;
+    if (!trackElement) return;
+
+    const updateTrackWidth = () => {
+      setTimelineTrackWidth(trackElement.getBoundingClientRect().width);
+    };
+
+    updateTrackWidth();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateTrackWidth);
+      return () => {
+        window.removeEventListener("resize", updateTrackWidth);
+      };
+    }
+
+    const resizeObserver = new ResizeObserver(updateTrackWidth);
+    resizeObserver.observe(trackElement);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
@@ -833,10 +917,10 @@ export const SgEventTimelinePanel = ({
         </div>
 
         <div className="min-w-0 flex-1 overflow-x-auto">
-          <div className="relative min-w-[1400px]">
+          <div ref={timelineTrackRef} className="relative min-w-[1400px]">
             <div
-              className="absolute top-0 z-[3] h-[calc(100%-2.5rem)] w-1 -translate-x-1/2 rounded-full bg-red-500 transition-[left] duration-150 ease-linear"
-              style={{ left: `${playheadPosition}%` }}
+              className="absolute left-0 top-0 z-[3] h-[calc(100%-2.5rem)] w-1 rounded-full bg-red-500 will-change-transform"
+              style={playheadStyle}
             />
             {timelineLanes.map((lane) => {
               const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
