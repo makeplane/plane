@@ -766,8 +766,11 @@ export const SgEventTagsPanel = ({
                 <div
                   key={row.id}
                   className={cn(
-                    "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors hover:bg-custom-background-90",
-                    activePlaybackOverrideId === `sg-tag-${row.id}` && "bg-custom-background-90"
+                    "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors",
+                    isSelected
+                      ? "bg-[#0f2638] text-custom-text-100 shadow-[inset_3px_0_0_#1780d5] hover:bg-[#123047]"
+                      : "hover:bg-custom-background-90",
+                    activePlaybackOverrideId === `sg-tag-${row.id}` && !isSelected && "bg-custom-background-90"
                   )}
                   style={{ gridTemplateColumns: tableGridTemplateColumns }}
                   role="button"
@@ -794,13 +797,15 @@ export const SgEventTagsPanel = ({
                       className={cn(
                         "flex h-4 w-4 items-center justify-center rounded border",
                         isSelected
-                          ? "border-custom-primary-100 bg-custom-primary-100 text-white"
+                          ? "border-[#1780d5] bg-[#1780d5] text-white"
                           : "border-custom-border-200 text-transparent"
                       )}
                     >
                       <Check className="h-3 w-3" />
                     </span>
-                    <span className="text-custom-text-400">{index + 1}</span>
+                    <span className={cn("text-custom-text-400", isSelected && "text-custom-text-100")}>
+                      {index + 1}
+                    </span>
                   </button>
                   <div className="h-10 w-[74px] overflow-hidden rounded bg-custom-background-80">
                     {rowThumbnailUrl ? (
