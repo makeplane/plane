@@ -14,7 +14,6 @@
     "noUnusedLocals": false,
     "noImplicitReturns": false,
     "noImplicitOverride": false,
-    "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "types": ["vite/client"]
   },
   "extends": "@plane/typescript-config/react-router.json",
