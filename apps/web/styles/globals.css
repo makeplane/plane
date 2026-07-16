@@ -892,6 +892,29 @@ div.web-view-spinner div.bar12 {
 .horizontal-scrollbar::-webkit-scrollbar-corner {
   background-color: transparent;
 }
+
+.sg-event-tags-list-scrollbar {
+  scrollbar-color: #1780d5 transparent;
+  scrollbar-width: thin;
+}
+.sg-event-tags-list-scrollbar:hover,
+.sg-event-tags-list-scrollbar:active {
+  scrollbar-color: #1780d5 transparent;
+}
+.sg-event-tags-list-scrollbar.scrollbar-lg::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.sg-event-tags-list-scrollbar::-webkit-scrollbar-thumb,
+.sg-event-tags-list-scrollbar:hover::-webkit-scrollbar-thumb,
+.sg-event-tags-list-scrollbar::-webkit-scrollbar-thumb:hover,
+.sg-event-tags-list-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: #1780d5;
+}
+.sg-event-tags-list-scrollbar.scrollbar-lg::-webkit-scrollbar-thumb {
+  border: 1px solid rgba(0, 0, 0, 0);
+}
+
 .vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
   margin-top: 44px;
 }
