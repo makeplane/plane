@@ -108,7 +108,8 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
     .filter((item) => item.shouldRender)
-    .toSorted((a: TNavigationItem, b: TNavigationItem) => a.sortOrder - b.sortOrder);
+    // oxlint-disable-next-line unicorn/no-array-sort
+    .sort((a: TNavigationItem, b: TNavigationItem) => a.sortOrder - b.sortOrder);
 
   // Split items into two categories:
   // 1. visibleNavigationItems: Items NOT user-hidden (may still overflow due to space)
