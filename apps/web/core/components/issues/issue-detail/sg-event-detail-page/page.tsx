@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
+import { ChevronLeft, ChevronRight, ListPlus, Play, Plus, Video } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IRosterPlayer, TIssue } from "@plane/types";
@@ -16,12 +17,14 @@ import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } fro
 import { SgEventDetailsCard } from "./details-card";
 import { SgEventHeader, SgEventTitleBar } from "./header";
 import { MatrixView } from "./matrix-view";
+import { AMERICAN_FOOTBALL_SAMPLE_TAGS } from "./matrix-view/config/matrix-mock-data";
 import { buildMatrixPlaylistItem, createMatrixPlaylist } from "./matrix-view/utils/create-matrix-playlist";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-panel";
 import { SgEventTimelinePanel } from "./timeline-panel";
 import type { RowFilterMode, SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
 import {
+  asArray,
   asRecord,
   buildArchivedPlaylistUrl,
   buildBaseEventDateTime,
@@ -31,6 +34,7 @@ import {
   getCpServerBaseUrl,
   getSportTableConfig,
   normalizeTagRows,
+  parseGatewayRows,
   parseTimecodeToSeconds,
   pickText,
   playlistHasMediaSegments,
@@ -192,6 +196,11 @@ const resolveCoachTagThumbnailUrl = (value: string | null | undefined, cpServerB
     }
   }
 
+  if (!normalizedValue.includes("/") && !normalizedValue.includes("?") && !normalizedValue.includes("#")) {
+    const thumbnailName = normalizedValue.replace(/\.jpg$/i, "");
+    return `${normalizedCpServerBaseUrl}/blobs/thumbnails/${encodeURIComponent(thumbnailName)}.jpg`;
+  }
+
   return "";
 };
 
@@ -305,6 +314,290 @@ const resolveTagRowArtifactThumbnail = (
   return "";
 };
 
+const readApiErrorMessage = async (response: Response, fallbackMessage: string) => {
+  const responseText = await response.text();
+
+  try {
+    const data = JSON.parse(responseText) as {
+      detail?: string;
+      error?: string;
+      errorMessage?: string;
+      error_message?: string;
+      message?: string;
+    };
+
+    return data.error || data.detail || data.message || data.errorMessage || data.error_message || fallbackMessage;
+  } catch {
+    return responseText || fallbackMessage;
+  }
+};
+
+const fetchKanavioTagRowsPayload = async (cpServerBaseUrl: string, sgEventId: string) => {
+  const normalizedCpServerBaseUrl = cpServerBaseUrl.trim();
+  const eventId = Number(sgEventId.trim());
+
+  if (!normalizedCpServerBaseUrl) {
+    throw new Error("NEXT_PUBLIC_CP_SERVER_URL is required to fetch tags.");
+  }
+
+  if (!Number.isFinite(eventId)) {
+    throw new Error("A numeric SG event id is required to fetch tags.");
+  }
+
+  const response = await fetch(joinApiPath(normalizedCpServerBaseUrl, "/tagging-session/fetch-tags"), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ event_id: eventId }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(await readApiErrorMessage(response, "Unable to fetch event tags."));
+  }
+
+  return response.json() as Promise<unknown>;
+};
+
+const isFetchedTagRecord = (record: Record<string, unknown>) =>
+  Boolean(
+    toText(
+      record.tag ??
+        record.action ??
+        record.event_code ??
+        record.play ??
+        record.timestamp ??
+        record.video_time ??
+        record.original_stream_name ??
+        record.stream_name ??
+        record.thumbnail
+    )
+  );
+
+const extractFetchedTagRows = (value: unknown): unknown[] => {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((entry): unknown[] => {
+    if (Array.isArray(entry)) return extractFetchedTagRows(entry);
+
+    const record = asRecord(entry);
+    if (Object.keys(record).length === 0) return [];
+    if (isFetchedTagRecord(record)) return [record];
+
+    const dataRows = asArray(record.data);
+    if (dataRows.length > 0) return extractFetchedTagRows(dataRows);
+
+    return [record];
+  });
+};
+
+const normalizeFetchedTagPayload = (payload: unknown): Record<string, unknown> | null => {
+  if (Array.isArray(payload)) {
+    const rows = extractFetchedTagRows(payload);
+    return rows.length > 0 ? { tags: rows } : null;
+  }
+
+  const record = asRecord(payload);
+  if (Object.keys(record).length === 0) return null;
+
+  const resultRows = [
+    ...extractFetchedTagRows(asRecord(record["Gateway Response"]).result),
+    ...extractFetchedTagRows(record.result),
+  ];
+  if (resultRows.length > 0) return { ...record, tags: resultRows };
+
+  const gatewayRows = parseGatewayRows(payload);
+  if (gatewayRows.length > 0) return { tags: gatewayRows };
+
+  const tags = record.tags ?? record.tagRows ?? record.tag_rows ?? record.records ?? record.data ?? record.result;
+  if (Array.isArray(tags)) {
+    const rows = extractFetchedTagRows(tags);
+    return rows.length > 0 ? { ...record, tags: rows } : tags.length > 0 ? { ...record, tags } : record;
+  }
+
+  const nestedRecord = firstNonEmptyRecord(record.data, record.result, record.response);
+  if (!nestedRecord) return record;
+
+  const nestedResultRows = extractFetchedTagRows(nestedRecord.result);
+  if (nestedResultRows.length > 0) return { ...record, tags: nestedResultRows };
+
+  const nestedRows = parseGatewayRows(nestedRecord);
+  if (nestedRows.length > 0) return { ...record, tags: nestedRows };
+
+  const nestedTags =
+    nestedRecord.tags ??
+    nestedRecord.tagRows ??
+    nestedRecord.tag_rows ??
+    nestedRecord.records ??
+    nestedRecord.data ??
+    nestedRecord.result;
+
+  if (Array.isArray(nestedTags)) {
+    const rows = extractFetchedTagRows(nestedTags);
+    return rows.length > 0 ? { ...record, tags: rows } : { ...record, tags: nestedTags };
+  }
+
+  return record;
+};
+
+const isNumericEventId = (value: string) => Number.isFinite(Number(value.trim()));
+
+const buildMockFootballRows = (): SgTagRow[] =>
+  AMERICAN_FOOTBALL_SAMPLE_TAGS.map((tag, index) => {
+    const startSeconds = (index + 1) * 126;
+    const endSeconds = startSeconds + 8;
+    const formatTimestamp = (seconds: number) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+    };
+
+    return {
+      action: tag.action,
+      clipId: tag.clipId ?? `mock-clip-${index + 1}`,
+      clipEndSeconds: endSeconds,
+      clipStartSeconds: startSeconds,
+      context: tag.context ?? {},
+      groupValue: tag.groupValue ?? "Quarter 1",
+      id: tag.id,
+      matrixParticipant: tag.player ?? null,
+      matrixPeriod: tag.groupValue ?? null,
+      player: tag.player ?? "--",
+      playlistFallbackTimestamp: tag.playlistFallbackTimestamp ?? formatTimestamp(startSeconds),
+      playlistTimestamp: tag.playlistTimestamp ?? formatTimestamp(startSeconds),
+      primaryDetail: tag.team ?? "--",
+      result: tag.result ?? "--",
+      secondaryDetail: tag.groupValue ?? "--",
+      sourceTagId: tag.sourceTagId ?? tag.id,
+      sourceUrl: tag.sourceUrl ?? "",
+      team: tag.team ?? "--",
+      thumbnailUrl: tag.thumbnailUrl ?? "",
+      timecode: `${formatTimestamp(startSeconds)} - ${formatTimestamp(endSeconds)}`,
+    };
+  });
+
+const SgMatrixPlaylistPanel = ({
+  activeRowId,
+  isCreatingPlaylist,
+  onCreateCard,
+  onCreatePlaylist,
+  onPlayTagRow,
+  rows,
+}: {
+  activeRowId?: string | null;
+  isCreatingPlaylist: boolean;
+  onCreateCard: () => void;
+  onCreatePlaylist: () => void;
+  onPlayTagRow: (row: SgTagRow) => void | Promise<void>;
+  rows: SgTagRow[];
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  if (isCollapsed) {
+    return (
+      <aside className="flex min-h-[240px] w-full flex-col items-center gap-3 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel-secondary)] p-2 xl:w-12">
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(false)}
+          className="inline-flex h-8 w-8 items-center justify-center rounded text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
+          aria-label="Expand playlist workspace"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <Video aria-hidden="true" className="h-4 w-4 text-[var(--sg-matrix-text-muted)]" />
+        {rows.length > 0 ? (
+          <span className="text-xs tabular-nums text-[var(--sg-matrix-text-muted)]">{rows.length}</span>
+        ) : null}
+      </aside>
+    );
+  }
+
+  return (
+    <aside className="flex min-h-[240px] flex-col overflow-hidden rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel-secondary)]">
+      <div className="flex h-[34px] items-center justify-between gap-3 border-b border-[var(--sg-matrix-border)] px-2.5">
+        <div className="min-w-0">
+          <div className="truncate text-[13px] font-normal text-[var(--sg-matrix-text-secondary)]">
+            Playlist Workspace
+          </div>
+          <div className="hidden text-[10px] text-[var(--sg-matrix-text-muted)]">
+            {rows.length > 0 ? `${rows.length} selected tag${rows.length === 1 ? "" : "s"}` : "No clips selected"}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(true)}
+          className="inline-flex h-7 w-7 items-center justify-center rounded text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
+          aria-label="Collapse playlist workspace"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="flex gap-2 border-b border-[var(--sg-matrix-border)] px-2 py-2">
+        <button
+          type="button"
+          disabled={rows.length === 0}
+          onClick={onCreateCard}
+          className="inline-flex h-7 flex-1 items-center justify-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] px-2 text-[11px] font-normal text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:text-[var(--sg-matrix-text-disabled)] disabled:opacity-45"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          <span>Create Card</span>
+        </button>
+        <button
+          type="button"
+          disabled={rows.length === 0 || isCreatingPlaylist}
+          onClick={onCreatePlaylist}
+          className="inline-flex h-7 flex-1 items-center justify-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] px-2 text-[11px] font-normal text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:text-[var(--sg-matrix-text-disabled)] disabled:opacity-45"
+        >
+          <ListPlus className="h-3.5 w-3.5" />
+          <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
+        </button>
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="flex min-h-0 flex-1 items-start px-3 py-3 text-left text-xs leading-5 text-[var(--sg-matrix-text-muted)]">
+          Select populated cells in the matrix to build a playlist.
+        </div>
+      ) : (
+        <ul className="vertical-scrollbar scrollbar-md min-h-0 flex-1 space-y-1.5 overflow-y-auto p-1.5">
+          {rows.map((row) => {
+            const isActive = activeRowId === row.id;
+
+            return (
+              <li key={row.id}>
+                <button
+                  type="button"
+                  onClick={() => void onPlayTagRow(row)}
+                  className={`group flex w-full items-center gap-2 rounded border px-2 py-2 text-left transition-colors ${
+                    isActive
+                      ? "border-[var(--sg-matrix-selected-card-border)] bg-[var(--sg-matrix-selected-nav)]"
+                      : "border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-selected-nav)] hover:bg-[var(--sg-matrix-hover)]"
+                  }`}
+                >
+                  <span className="flex h-9 w-16 shrink-0 items-center justify-center overflow-hidden rounded bg-[var(--sg-matrix-cell-empty)] text-[var(--sg-matrix-text-muted)]">
+                    {row.thumbnailUrl ? (
+                      <img src={row.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <Play className="h-3.5 w-3.5" />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[11px] font-normal text-[var(--sg-matrix-text-secondary)]">
+                      {row.action}
+                    </span>
+                    <span className="block truncate text-[10px] text-[var(--sg-matrix-text-muted)]">
+                      {[row.timecode, row.player].filter(Boolean).join(" · ")}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </aside>
+  );
+};
+
 export const SgEventDetailPage = ({
   enableMatrixView = false,
   showTagListActions = true,
@@ -335,8 +628,9 @@ export const SgEventDetailPage = ({
   const [playheadBaseSeconds, setPlayheadBaseSeconds] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedViewId, setSelectedViewId] = useState<string>("");
-  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "list" : "timeline");
+  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
   const [isCreatingMatrixPlaylist, setIsCreatingMatrixPlaylist] = useState(false);
+  const [focusedMatrixRows, setFocusedMatrixRows] = useState<SgTagRow[]>([]);
 
   const mediaMeta = asRecord(mediaItem?.meta);
   const cpServerBaseUrl = useMemo(() => getCpServerBaseUrl(), []);
@@ -382,12 +676,32 @@ export const SgEventDetailPage = ({
     asRecord(asRecord(eventPayload).event),
     asRecord(asRecord(eventPayload).rawEvent),
   ];
+  const sgEventItemRecord = asRecord(sgMediaPayload?.eventItem);
   const resolvedSgEventId =
     (sgIssue?.sg_event_id != null ? String(sgIssue.sg_event_id).trim() : "") ||
     pickText(
-      [...payloadSources, mediaMeta, asRecord(mediaItem)],
-      ["sg_event_id", "eventId", "event_id", "preview_event_id", "plane_event_id", "planeEventId"]
+      [...payloadSources, sgEventMeta, sgEventItemRecord, mediaMeta, asRecord(mediaItem)],
+      [
+        "sg_event_id",
+        "sgEventId",
+        "sgEventID",
+        "eventId",
+        "event_id",
+        "preview_event_id",
+        "plane_event_id",
+        "planeEventId",
+      ]
     );
+  const shouldUseKanavioTagApi = Boolean(resolvedSgEventId && isNumericEventId(resolvedSgEventId));
+  const {
+    data: kanavioTagsPayload,
+    error: kanavioTagsError,
+    isLoading: isKanavioTagsLoading,
+  } = useSWR(
+    shouldUseKanavioTagApi ? `KANAVIO_FETCH_TAGS_${cpServerBaseUrl}_${resolvedSgEventId}` : null,
+    () => fetchKanavioTagRowsPayload(cpServerBaseUrl, resolvedSgEventId),
+    { revalidateOnFocus: false }
+  );
   const { data: sgEventDevices, isLoading: isLoadingViews } = useSWR(
     cpServerBaseUrl && resolvedSgEventId ? `SG_EVENT_DEVICES_${cpServerBaseUrl}_${resolvedSgEventId}` : null,
     () => fetchSgEventDevices(cpServerBaseUrl, resolvedSgEventId),
@@ -407,9 +721,17 @@ export const SgEventDetailPage = ({
     issue?.start_time ||
     "";
   const baseEventDateTime = buildBaseEventDateTime(dateValue, timeValue);
-  const tagSourcePayload = firstNonEmptyRecord(eventPayload, sgEventMeta, mediaMeta);
+  const apiTagSourcePayload = useMemo(() => normalizeFetchedTagPayload(kanavioTagsPayload), [kanavioTagsPayload]);
+  const fallbackTagSourcePayload = useMemo(
+    () => firstNonEmptyRecord(eventPayload, sgEventMeta, mediaMeta),
+    [eventPayload, mediaMeta, sgEventMeta]
+  );
+  const tagSourcePayload = shouldUseKanavioTagApi ? apiTagSourcePayload : fallbackTagSourcePayload;
   const tagRows = useMemo(
-    () => normalizeTagRows(tagSourcePayload, eventDetails, sportTableConfig.sport, baseEventDateTime),
+    () =>
+      tagSourcePayload
+        ? normalizeTagRows(tagSourcePayload, eventDetails, sportTableConfig.sport, baseEventDateTime)
+        : [],
     [baseEventDateTime, eventDetails, sportTableConfig.sport, tagSourcePayload]
   );
   const mediaThumbnailLookup = useMemo(
@@ -823,27 +1145,51 @@ export const SgEventDetailPage = ({
     ]
   );
 
-  const matrixRows = useMemo(
-    () => tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id)),
-    [removedTagIds, tagRowsWithThumbnails]
-  );
+  const handleCreateMatrixCard = useCallback((rows: SgTagRow[]) => {
+    setSelectedTagIds(rows.map((row) => row.id));
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Card selection ready",
+      message: `${rows.length} tag${rows.length === 1 ? "" : "s"} selected for card creation.`,
+    });
+  }, []);
+
+  const matrixRows = useMemo(() => {
+    const realRows = tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id));
+    if (realRows.length > 0 || sportTableConfig.sport !== "american-football") return realRows;
+    return buildMockFootballRows();
+  }, [removedTagIds, sportTableConfig.sport, tagRowsWithThumbnails]);
+  const kanavioTagsErrorMessage =
+    kanavioTagsError instanceof Error
+      ? kanavioTagsError.message
+      : kanavioTagsError
+        ? "Unable to fetch event tags."
+        : null;
   const matrixError =
-    matrixRows.length === 0 && sgMediaPayload?.eventPayloadStatus === "error"
-      ? (sgMediaPayload.eventPayloadErrorMessage ?? "Unable to load the completed event data for Matrix View.")
-      : matrixRows.length === 0 && sgMediaError instanceof Error
-        ? sgMediaError
-        : matrixRows.length === 0 && sgMediaError
-          ? "Unable to load the event media required for Matrix View."
-          : null;
+    matrixRows.length === 0 && shouldUseKanavioTagApi && kanavioTagsErrorMessage
+      ? kanavioTagsErrorMessage
+      : matrixRows.length === 0 && sgMediaPayload?.eventPayloadStatus === "error"
+        ? (sgMediaPayload.eventPayloadErrorMessage ?? "Unable to load the completed event data for Matrix View.")
+        : matrixRows.length === 0 && sgMediaError instanceof Error
+          ? sgMediaError
+          : matrixRows.length === 0 && sgMediaError
+            ? "Unable to load the event media required for Matrix View."
+            : null;
   const activeMatrixRowId = activePlaybackOverride?.id.startsWith("sg-tag-")
     ? activePlaybackOverride.id.slice("sg-tag-".length)
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
+  const playlistPanelRows = focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id));
+  const isMatrixWorkspaceMode = enableMatrixView && tagViewMode === "matrix";
+  const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
+  const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
+    resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
+  }:${sportTableConfig.sport}`;
 
   return (
-    <div className="h-full bg-custom-background-100 text-custom-text-100">
-      <div className="h-full overflow-y-auto px-3 py-4 md:px-4 xl:px-5">
-        <div className="flex w-full flex-col gap-4">
+    <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
+      <div className="h-full overflow-y-auto px-3 py-3">
+        <div className="flex w-full flex-col gap-3">
           <SgEventHeader
             eventStatus={eventStatus}
             eventTitle={eventTitle}
@@ -861,94 +1207,125 @@ export const SgEventDetailPage = ({
             viewDevices={viewDevices}
           />
 
-          <div className="min-w-0">
-            <SgEventVideoPlayer
-              item={playbackItem}
-              compactEmpty={!hasPlayableVideo}
-              onPlaybackTimeChange={handlePlaybackTimeChange}
-              seekToSeconds={pendingSeekSeconds}
-            />
-          </div>
+          {isMatrixWorkspaceMode ? (
+            <>
+              <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+                <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+                  <SgEventVideoPlayer
+                    item={playbackItem}
+                    compactEmpty={!hasPlayableVideo}
+                    onPlaybackTimeChange={handlePlaybackTimeChange}
+                    seekToSeconds={pendingSeekSeconds}
+                  />
+                </div>
+                <SgMatrixPlaylistPanel
+                  activeRowId={activeMatrixRowId}
+                  isCreatingPlaylist={isCreatingMatrixPlaylist}
+                  onCreateCard={() => handleCreateMatrixCard(playlistPanelRows)}
+                  onCreatePlaylist={() => void handleCreateMatrixPlaylist(playlistPanelRows)}
+                  onPlayTagRow={handlePlayTagRow}
+                  rows={playlistPanelRows}
+                />
+              </div>
 
-          <div className="min-w-0">
-            <div className="flex flex-col gap-3">
-              <SgEventTitleBar
-                eventStatus={eventStatus}
-                eventTitle={eventTitle}
-                handleSwitchToFullStream={handleSwitchToFullStream}
-                isTagClipActive={isTagClipActive}
-              />
-
-              <SgEventDetailsCard
-                eventDateTimeLabel={eventDateTimeLabel}
-                levelLabel={levelLabel}
-                venueAddress={venueAddress}
-                venueName={venueName}
-              />
-
-              {enableMatrixView && tagViewMode === "matrix" ? (
+              <div className="flex flex-col gap-2">
                 <MatrixView
                   activeRowId={activeMatrixRowId}
+                  className="min-h-0"
                   canCreatePlaylist={Boolean(matrixStreamName)}
                   error={matrixError}
                   hasEvent={Boolean(mediaItem || issue || eventDetails || eventPayload)}
                   isCreatingPlaylist={isCreatingMatrixPlaylist}
-                  isLoading={isMediaLoading}
+                  isLoading={isTagRowsLoading}
+                  layout="workspace"
+                  onCreateCard={handleCreateMatrixCard}
                   onCreatePlaylist={handleCreateMatrixPlaylist}
+                  onFocusedRowsChange={setFocusedMatrixRows}
                   onPlayTagRow={handlePlayTagRow}
+                  preferenceKey={matrixPreferenceKey}
                   sport={resolvedSport || ""}
                   tagRows={matrixRows}
                 />
-              ) : tagViewMode === "timeline" ? (
-                <SgEventTimelinePanel
-                  activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
-                  activeTagRowId={activeTimelineTagId}
-                  isMediaLoading={isMediaLoading}
-                  onPlayTagRow={handlePlayTagRow}
-                  onResetPlayback={handleResetTimelinePlayback}
-                  playerDurationSeconds={playerDurationSeconds}
-                  playheadSeconds={playheadBaseSeconds + playerLocalSeconds}
-                  rows={filteredRows}
-                  selectedTagIds={selectedTagIds}
-                  sport={sportTableConfig.sport}
-                  playerLabelByNumber={timelinePlayerLabelByNumber}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="min-w-0">
+                <SgEventVideoPlayer
+                  item={playbackItem}
+                  compactEmpty={!hasPlayableVideo}
+                  onPlaybackTimeChange={handlePlaybackTimeChange}
+                  seekToSeconds={pendingSeekSeconds}
                 />
-              ) : (
-                <SgEventTagsPanel
-                  activeFilterLabel={
-                    rowFilterMode === "all"
-                      ? "All rows"
-                      : rowFilterMode === "favorites"
-                        ? "Favorites only"
-                        : "Selected rows"
-                  }
-                  activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
-                  allVisibleSelected={allVisibleSelected}
-                  availableGroups={availableGroups}
-                  clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
-                  effectiveGroupValue={effectiveGroupValue}
-                  favoriteTagIds={favoriteTagIds}
-                  isMediaLoading={isMediaLoading}
-                  isSearchOpen={isSearchOpen}
-                  onPlayTagRow={handlePlayTagRow}
-                  onRemoveTag={handleRemoveTag}
-                  onRowFilterModeChange={setRowFilterMode}
-                  onSearchQueryChange={setSearchQuery}
-                  onSelectAll={handleSelectAll}
-                  onSelectedGroupValueChange={setSelectedGroupValue}
-                  onToggleFavorite={handleToggleFavorite}
-                  onToggleSearch={handleToggleSearch}
-                  onToggleTagSelection={handleToggleTagSelection}
-                  rowFilterMode={rowFilterMode}
-                  rows={filteredRows}
-                  searchQuery={searchQuery}
-                  selectedTagIds={selectedTagIds}
-                  showCreateActions={showTagListActions}
-                  sportTableConfig={sportTableConfig}
-                />
-              )}
-            </div>
-          </div>
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex flex-col gap-3">
+                  <SgEventTitleBar
+                    eventStatus={eventStatus}
+                    eventTitle={eventTitle}
+                    handleSwitchToFullStream={handleSwitchToFullStream}
+                    isTagClipActive={isTagClipActive}
+                  />
+
+                  <SgEventDetailsCard
+                    eventDateTimeLabel={eventDateTimeLabel}
+                    levelLabel={levelLabel}
+                    venueAddress={venueAddress}
+                    venueName={venueName}
+                  />
+
+                  {tagViewMode === "timeline" ? (
+                    <SgEventTimelinePanel
+                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      activeTagRowId={activeTimelineTagId}
+                      isMediaLoading={isTagRowsLoading}
+                      onPlayTagRow={handlePlayTagRow}
+                      onResetPlayback={handleResetTimelinePlayback}
+                      playerDurationSeconds={playerDurationSeconds}
+                      playheadSeconds={playheadBaseSeconds + playerLocalSeconds}
+                      rows={filteredRows}
+                      selectedTagIds={selectedTagIds}
+                      sport={sportTableConfig.sport}
+                      playerLabelByNumber={timelinePlayerLabelByNumber}
+                    />
+                  ) : (
+                    <SgEventTagsPanel
+                      activeFilterLabel={
+                        rowFilterMode === "all"
+                          ? "All rows"
+                          : rowFilterMode === "favorites"
+                            ? "Favorites only"
+                            : "Selected rows"
+                      }
+                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      allVisibleSelected={allVisibleSelected}
+                      availableGroups={availableGroups}
+                      clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
+                      effectiveGroupValue={effectiveGroupValue}
+                      favoriteTagIds={favoriteTagIds}
+                      isMediaLoading={isTagRowsLoading}
+                      isSearchOpen={isSearchOpen}
+                      onPlayTagRow={handlePlayTagRow}
+                      onRemoveTag={handleRemoveTag}
+                      onRowFilterModeChange={setRowFilterMode}
+                      onSearchQueryChange={setSearchQuery}
+                      onSelectAll={handleSelectAll}
+                      onSelectedGroupValueChange={setSelectedGroupValue}
+                      onToggleFavorite={handleToggleFavorite}
+                      onToggleSearch={handleToggleSearch}
+                      onToggleTagSelection={handleToggleTagSelection}
+                      rowFilterMode={rowFilterMode}
+                      rows={filteredRows}
+                      searchQuery={searchQuery}
+                      selectedTagIds={selectedTagIds}
+                      sportTableConfig={sportTableConfig}
+                    />
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

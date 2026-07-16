@@ -30,8 +30,8 @@ const toMatrixSourceTag = (row: SgTagRow): MatrixSourceTag => ({
 });
 
 export const useMatrixData = ({ orientation, sport, tagRows }: UseMatrixDataArgs) => {
-  const sourceTags = useMemo(() => tagRows.map(toMatrixSourceTag), [tagRows]);
   const sportResolution = useMemo(() => resolveSportMatrixConfig(sport), [sport]);
+  const sourceTags = useMemo(() => tagRows.map(toMatrixSourceTag), [tagRows]);
   const filterState = useMatrixFilters({ config: sportResolution.config, sourceTags });
   const canonicalMatrix = useMemo(
     () =>

@@ -5,7 +5,7 @@ export const SG_PLAYER_STYLE = `
     width: 100%;
     height: 100%;
     background: #0f1014;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
   }
   .sg-event-player .video-js .vjs-tech {
@@ -21,7 +21,7 @@ export const SG_PLAYER_STYLE = `
     gap: 4px;
     height: 78px;
     padding: 34px 12px 8px;
-    background: linear-gradient(180deg, rgba(12, 13, 17, 0) 0%, rgba(12, 13, 17, 0.66) 34%, rgba(12, 13, 17, 0.9) 100%);
+    background: rgba(12, 12, 12, 0.78);
     inset-inline: 0;
     bottom: 0;
   }
@@ -220,9 +220,9 @@ export const SURFACE_CLASS = "rounded-lg border border-custom-border-200 bg-cust
 export const ICON_BUTTON_CLASS =
   "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-custom-border-200 bg-custom-background-100 text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
 
-export const PLAYER_FRAME_CLASS = "h-[clamp(220px,42vh,480px)] w-full";
+export const PLAYER_FRAME_CLASS = "h-[clamp(260px,42vw,505px)] w-full";
 
-export const PLAYER_STAGE_CLASS = "mx-auto h-full w-full max-w-full overflow-hidden rounded-lg";
+export const PLAYER_STAGE_CLASS = "mx-auto h-full w-full max-w-full overflow-hidden rounded-[5px]";
 
 export const TAG_TABLE_GRID_CLASS =
   "grid-cols-[56px_minmax(120px,150px)_minmax(96px,0.7fr)_minmax(150px,1.15fr)_minmax(110px,0.8fr)_minmax(150px,1fr)_minmax(130px,0.9fr)_minmax(120px,0.8fr)_96px]";

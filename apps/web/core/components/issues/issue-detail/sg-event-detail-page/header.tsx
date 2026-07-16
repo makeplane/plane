@@ -27,13 +27,14 @@ type SgEventHeaderProps = {
 const getViewModeButtonClass = (isActive: boolean, hasBorder = true) =>
   cn(
     "inline-flex h-8 w-8 items-center justify-center transition-colors",
-    hasBorder && "border-l border-custom-border-200",
+    hasBorder && "border-l border-[var(--sg-matrix-border)]",
     isActive
-      ? "bg-custom-background-80 text-custom-text-100"
-      : "text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100"
+      ? "bg-[var(--sg-matrix-selected-nav)] text-[var(--sg-matrix-text)]"
+      : "text-[var(--sg-matrix-text-muted)] hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
   );
 
 export const SgEventHeader = ({
+  eventTitle,
   fullStreamPlaybackItem,
   handleBack,
   handleSwitchToFullStream,
@@ -47,18 +48,27 @@ export const SgEventHeader = ({
   tagViewMode,
   viewDevices,
 }: SgEventHeaderProps) => (
-  <div className="flex flex-wrap items-center justify-between gap-3">
-    <button
-      type="button"
-      onClick={handleBack}
-      className="inline-flex h-8 items-center gap-2 rounded-md px-2.5 text-sm text-custom-text-300 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100"
-    >
-      <ArrowLeft className="h-4 w-4" />
-      <span>Back</span>
-    </button>
+  <div className="flex min-h-11 flex-wrap items-center justify-between gap-3">
+    <div className="flex min-w-0 items-center gap-2">
+      <button
+        type="button"
+        onClick={handleBack}
+        className="inline-flex h-8 items-center gap-2 rounded-[5px] px-2 text-[12px] text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span>Back</span>
+      </button>
+      <div className="min-w-0 border-l border-[var(--sg-matrix-border)] pl-3">
+        <h1 className="truncate text-[13px] font-medium text-[var(--sg-matrix-text)]">{eventTitle}</h1>
+      </div>
+    </div>
 
     <div className="flex items-center gap-2">
-      <div className="hidden items-center gap-2 md:flex">
+      <div className="flex items-center gap-2">
+        <button className="hidden h-8 items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] px-3 text-[12px] text-[var(--sg-matrix-text-secondary)] md:inline-flex">
+          <span>Default view</span>
+          <ChevronDown className="h-4 w-4 text-[var(--sg-matrix-text-muted)]" />
+        </button>
         {viewDevices.length > 0 ? (
           <CustomSelect
             value={selectedViewId}
@@ -66,7 +76,7 @@ export const SgEventHeader = ({
             label={<span className="truncate">{selectedViewLabel}</span>}
             placement="bottom-end"
             className="h-9"
-            buttonClassName="inline-flex h-8 min-w-[92px] items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100 hover:bg-custom-background-90"
+            buttonClassName="inline-flex h-8 min-w-[92px] items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] px-3 text-[12px] text-[var(--sg-matrix-text-secondary)] hover:bg-[var(--sg-matrix-hover)]"
             optionsClassName="min-w-[140px]"
           >
             {viewDevices.map((device, index) => (
@@ -79,9 +89,9 @@ export const SgEventHeader = ({
             ))}
           </CustomSelect>
         ) : (
-          <button className="inline-flex h-8 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100">
+          <button className="inline-flex h-8 items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] px-3 text-[12px] text-[var(--sg-matrix-text-secondary)]">
             <span>{isLoadingViews ? "Loading views" : "View 1"}</span>
-            <ChevronDown className="h-4 w-4 text-custom-text-400" />
+            <ChevronDown className="h-4 w-4 text-[var(--sg-matrix-text-muted)]" />
           </button>
         )}
         {fullStreamPlaybackItem && isTagClipActive && (
@@ -89,13 +99,13 @@ export const SgEventHeader = ({
             <button
               type="button"
               onClick={handleSwitchToFullStream}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-custom-border-200 bg-custom-background-100 text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
             >
               <Aperture className="h-4 w-4" />
             </button>
           </Tooltip>
         )}
-        <div className="inline-flex h-8 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100">
+        <div className="inline-flex h-8 overflow-hidden rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)]">
           <Tooltip tooltipContent="List view" isMobile={false}>
             <button
               type="button"
@@ -103,6 +113,15 @@ export const SgEventHeader = ({
               className={getViewModeButtonClass(tagViewMode === "list", false)}
             >
               <List className="h-4 w-4" />
+            </button>
+          </Tooltip>
+          <Tooltip tooltipContent="Timeline view" isMobile={false}>
+            <button
+              type="button"
+              onClick={() => setTagViewMode("timeline")}
+              className={getViewModeButtonClass(tagViewMode === "timeline")}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
           {isMatrixViewEnabled && (
@@ -116,15 +135,6 @@ export const SgEventHeader = ({
               </button>
             </Tooltip>
           )}
-          <Tooltip tooltipContent="Timeline view" isMobile={false}>
-            <button
-              type="button"
-              onClick={() => setTagViewMode("timeline")}
-              className={getViewModeButtonClass(tagViewMode === "timeline")}
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-            </button>
-          </Tooltip>
         </div>
       </div>
     </div>

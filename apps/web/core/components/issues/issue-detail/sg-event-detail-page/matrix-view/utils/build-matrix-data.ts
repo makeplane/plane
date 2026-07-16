@@ -238,6 +238,7 @@ const buildEntities = (
       (left, right) =>
         (dimensionOrder.get(left.dimension ?? "unassigned") ?? Number.MAX_SAFE_INTEGER) -
           (dimensionOrder.get(right.dimension ?? "unassigned") ?? Number.MAX_SAFE_INTEGER) ||
+        left.order - right.order ||
         left.label.localeCompare(right.label, undefined, { numeric: true, sensitivity: "base" })
     )
     .map((entity, order) => ({ ...entity, order }));

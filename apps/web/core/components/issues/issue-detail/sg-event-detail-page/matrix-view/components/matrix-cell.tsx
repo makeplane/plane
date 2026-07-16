@@ -1,10 +1,8 @@
 import { memo } from "react";
-import { Check, Play } from "lucide-react";
 import { cn } from "@plane/utils";
 import type { MatrixCell as MatrixCellData } from "../types/matrix.types";
 
 type MatrixCellProps = {
-  accentColor?: string;
   ariaColumnIndex?: number;
   cell?: MatrixCellData;
   columnLabel: string;
@@ -13,12 +11,17 @@ type MatrixCellProps = {
   isPanelOpen: boolean;
   isRowGroupStart?: boolean;
   isSelected: boolean;
-  onActivate: (cell: MatrixCellData, trigger: HTMLButtonElement) => void;
+  maxVisibleCount: number;
+  onActivate: (
+    cell: MatrixCellData,
+    trigger: HTMLButtonElement,
+    options?: { additive?: boolean; range?: boolean }
+  ) => void;
+  onDoubleClick?: (cell: MatrixCellData) => void;
   rowLabel: string;
 };
 
 export const MatrixCell = memo(function MatrixCell({
-  accentColor,
   ariaColumnIndex,
   cell,
   columnLabel,
@@ -27,19 +30,33 @@ export const MatrixCell = memo(function MatrixCell({
   isPanelOpen,
   isRowGroupStart = false,
   isSelected,
+  maxVisibleCount,
   onActivate,
+  onDoubleClick,
   rowLabel,
 }: MatrixCellProps) {
   const count = cell?.count ?? 0;
   const isInteractive = Boolean(cell && count > 0 && cell.sourceRowIds.length > 0);
+  const intensityLevel = maxVisibleCount > 0 ? Math.max(1, Math.ceil((count / maxVisibleCount) * 4)) : 0;
+  const cellBackground =
+    intensityLevel >= 4
+      ? "var(--sg-matrix-cell-l4)"
+      : intensityLevel === 3
+        ? "var(--sg-matrix-cell-l3)"
+        : intensityLevel === 2
+          ? "var(--sg-matrix-cell-l2)"
+          : intensityLevel === 1
+            ? "var(--sg-matrix-cell-l1)"
+            : "var(--sg-matrix-cell-empty)";
+  const isHighlighted = isSelected || isPanelOpen;
 
   return (
     <td
       aria-colindex={ariaColumnIndex}
       className={cn(
-        "h-11 w-[72px] min-w-[72px] border-b border-r border-custom-border-100 bg-custom-background-100 p-0 text-center",
-        isGroupStart && "border-l-2 border-l-custom-border-300",
-        isRowGroupStart && "border-t-2 border-t-custom-border-300"
+        "h-11 w-[var(--sg-matrix-column-width)] min-w-[var(--sg-matrix-column-width)] border-b border-r border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-cell-empty)] p-0 text-center",
+        isGroupStart && "border-l border-l-[var(--sg-matrix-grid-border)]",
+        isRowGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]"
       )}
     >
       {isInteractive && cell ? (
@@ -51,26 +68,26 @@ export const MatrixCell = memo(function MatrixCell({
           aria-label={`${count} ${count === 1 ? "tag" : "tags"} for ${rowLabel} and ${columnLabel}`}
           aria-pressed={isSelected}
           className={cn(
-            "group relative flex h-full w-full items-center justify-center gap-1 text-xs font-medium text-custom-text-200 transition-colors",
-            "hover:bg-custom-background-80 hover:text-custom-text-100",
-            "focus-visible:z-[1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-custom-primary-100",
-            isSelected &&
-              "bg-custom-primary-100/15 text-custom-primary-100 ring-1 ring-inset ring-custom-primary-100/70",
-            isActive && "bg-custom-background-80 text-custom-text-100 ring-1 ring-inset ring-custom-text-300"
+            "group relative flex h-full w-full items-center justify-center gap-1 text-[14px] font-medium text-[var(--sg-matrix-cell-text)] transition-[background-color,border-color,color,box-shadow] duration-150",
+            "hover:brightness-110 focus-visible:z-[1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--sg-matrix-active-border)]",
+            isHighlighted &&
+              "text-[var(--sg-matrix-selected-cell-text)] ring-2 ring-inset ring-[var(--sg-matrix-selected-cell)] after:absolute after:inset-[2px] after:border after:border-[var(--sg-matrix-selected-cell-inner)] after:content-['']"
           )}
           data-matrix-cell-id={cell.id}
-          onClick={(event) => onActivate(cell, event.currentTarget)}
-          style={accentColor && !isSelected && !isActive ? { boxShadow: `inset 0 2px 0 ${accentColor}` } : undefined}
+          onClick={(event) =>
+            onActivate(cell, event.currentTarget, {
+              additive: event.ctrlKey || event.metaKey,
+              range: event.shiftKey,
+            })
+          }
+          onDoubleClick={() => onDoubleClick?.(cell)}
+          style={{ backgroundColor: cellBackground }}
         >
-          {isActive ? <Play aria-hidden="true" className="h-3 w-3 fill-current" /> : null}
-          <span>{count}</span>
-          {isSelected ? (
-            <Check aria-hidden="true" className="absolute right-1 top-1 h-2.5 w-2.5" strokeWidth={2.5} />
-          ) : null}
+          <span className="relative z-[1]">{String(count).padStart(2, "0")}</span>
         </button>
       ) : (
-        <span aria-label={`No tags for ${rowLabel} and ${columnLabel}`} className="text-xs text-custom-text-400">
-          &mdash;
+        <span aria-label={`No tags for ${rowLabel} and ${columnLabel}`} className="sr-only">
+          No tags
         </span>
       )}
     </td>

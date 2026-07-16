@@ -11,7 +11,13 @@ type MatrixRowProps = {
   columns: MatrixColumn[];
   isGroupStart?: boolean;
   leadingSpacerWidth?: number;
-  onCellActivate: (cell: MatrixCellData, trigger: HTMLButtonElement) => void;
+  maxVisibleCount: number;
+  onCellActivate: (
+    cell: MatrixCellData,
+    trigger: HTMLButtonElement,
+    options?: { additive?: boolean; range?: boolean }
+  ) => void;
+  onCellDoubleClick?: (cell: MatrixCellData) => void;
   openCellId?: string | null;
   previousColumnGroup?: string;
   row: MatrixRowData;
@@ -35,7 +41,9 @@ export const MatrixRow = memo(function MatrixRow({
   columns,
   isGroupStart = false,
   leadingSpacerWidth = 0,
+  maxVisibleCount,
   onCellActivate,
+  onCellDoubleClick,
   openCellId,
   previousColumnGroup = "",
   row,
@@ -52,16 +60,17 @@ export const MatrixRow = memo(function MatrixRow({
         aria-colindex={1}
         scope="row"
         className={cn(
-          "sticky left-0 z-10 h-11 w-56 min-w-56 border-b border-r border-custom-border-200 bg-custom-background-100 px-4 text-left align-middle",
-          isGroupStart && "border-t-2 border-t-custom-border-300"
+          "sticky left-0 z-10 h-11 w-[140px] min-w-[140px] border-b border-r border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-row-label-bg)] px-2 text-left align-middle",
+          isGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]"
         )}
-        style={row.color ? { boxShadow: `inset 3px 0 0 ${row.color}` } : undefined}
       >
         <Tooltip tooltipContent={rowGroup ? `${row.label} · ${rowGroup}` : row.label} position="right">
           <span className="flex min-w-0 flex-col">
-            <span className="truncate text-xs font-medium text-custom-text-100">{row.label}</span>
+            <span className="truncate text-[13px] font-normal text-[var(--sg-matrix-row-label-text)]">{row.label}</span>
             {rowGroup ? (
-              <span className="truncate text-[10px] font-normal text-custom-text-400">{rowGroup}</span>
+              <span className="hidden truncate text-[10px] font-normal text-[var(--sg-matrix-text-muted)]">
+                {rowGroup}
+              </span>
             ) : null}
           </span>
         </Tooltip>
@@ -70,8 +79,8 @@ export const MatrixRow = memo(function MatrixRow({
         <td
           aria-hidden="true"
           className={cn(
-            "h-11 border-b border-custom-border-100 bg-custom-background-100 p-0",
-            isGroupStart && "border-t-2 border-t-custom-border-300"
+            "h-11 border-b border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-cell-empty)] p-0",
+            isGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]"
           )}
           style={{ minWidth: leadingSpacerWidth, width: leadingSpacerWidth }}
         />
@@ -86,7 +95,6 @@ export const MatrixRow = memo(function MatrixRow({
         return (
           <MatrixCell
             key={`${row.id}-${column.id}`}
-            accentColor={column.color ?? row.color}
             ariaColumnIndex={columnStartIndex + columnIndex + 2}
             cell={cell}
             columnLabel={column.label}
@@ -95,7 +103,9 @@ export const MatrixRow = memo(function MatrixRow({
             isPanelOpen={cell?.id === openCellId}
             isRowGroupStart={isGroupStart}
             isSelected={Boolean(cell && selectedCellIds.has(cell.id))}
+            maxVisibleCount={maxVisibleCount}
             onActivate={onCellActivate}
+            onDoubleClick={onCellDoubleClick}
             rowLabel={row.label}
           />
         );
@@ -104,8 +114,8 @@ export const MatrixRow = memo(function MatrixRow({
         <td
           aria-hidden="true"
           className={cn(
-            "h-11 border-b border-custom-border-100 bg-custom-background-100 p-0",
-            isGroupStart && "border-t-2 border-t-custom-border-300"
+            "h-11 border-b border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-cell-empty)] p-0",
+            isGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]"
           )}
           style={{ minWidth: trailingSpacerWidth, width: trailingSpacerWidth }}
         />
@@ -113,9 +123,9 @@ export const MatrixRow = memo(function MatrixRow({
       <td
         aria-colindex={totalColumnCount + 2}
         className={cn(
-          "h-11 w-[72px] min-w-[72px] border-b border-r border-l-2 border-custom-border-200 border-l-custom-border-300 bg-custom-background-90 px-2 text-center text-xs font-semibold text-custom-text-100",
-          isGroupStart && "border-t-2 border-t-custom-border-300",
-          stickySummaries && "lg:sticky lg:right-[72px] lg:z-10"
+          "h-11 w-[44px] min-w-[44px] border-b border-r border-l border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-panel-secondary)] px-1 text-center text-[12px] font-medium text-[var(--sg-matrix-text-secondary)]",
+          isGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]",
+          stickySummaries && "lg:sticky lg:right-[44px] lg:z-10"
         )}
       >
         {row.total || "—"}
@@ -123,8 +133,8 @@ export const MatrixRow = memo(function MatrixRow({
       <td
         aria-colindex={totalColumnCount + 3}
         className={cn(
-          "h-11 w-[72px] min-w-[72px] border-b border-custom-border-200 bg-custom-background-90 px-2 text-center text-xs text-custom-text-300",
-          isGroupStart && "border-t-2 border-t-custom-border-300",
+          "h-11 w-[44px] min-w-[44px] border-b border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-panel-secondary)] px-1 text-center text-[12px] text-[var(--sg-matrix-text-muted)]",
+          isGroupStart && "border-t border-t-[var(--sg-matrix-grid-border)]",
           stickySummaries && "lg:sticky lg:right-0 lg:z-10"
         )}
       >

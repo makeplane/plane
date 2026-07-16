@@ -554,7 +554,7 @@ export const SgEventVideoPlayer = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-lg bg-custom-background-90",
+        "flex items-center justify-center overflow-hidden rounded-[5px] bg-[var(--sg-matrix-video-bg)]",
         PLAYER_FRAME_CLASS
       )}
     >

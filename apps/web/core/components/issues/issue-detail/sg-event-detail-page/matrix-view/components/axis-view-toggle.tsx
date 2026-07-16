@@ -19,12 +19,12 @@ export const AxisViewToggle = ({ className, disabled = false, isSwitched, onChan
       value={isSwitched}
       onChange={onChange}
       label="Switch axis view"
-      size="lg"
+      size="sm"
       disabled={disabled}
-      className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100 focus-visible:ring-offset-1 focus-visible:ring-offset-custom-background-100"
+      className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sg-matrix-active-border)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--sg-matrix-panel-secondary)]"
     />
-    <div className="flex min-w-0 items-center gap-1.5 text-xs text-custom-text-300">
-      <ArrowRightLeft aria-hidden="true" className="h-3.5 w-3.5 flex-shrink-0" />
+    <div className="flex min-w-0 items-center gap-1.5 text-[11px] text-[var(--sg-matrix-text-secondary)]">
+      <ArrowRightLeft aria-hidden="true" className="hidden h-3.5 w-3.5 flex-shrink-0" />
       <span className="whitespace-nowrap">Switch Axis View</span>
       <span className="sr-only">{isSwitched ? "Actions are rows" : "Event entities are rows"}</span>
     </div>

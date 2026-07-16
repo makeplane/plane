@@ -15,7 +15,7 @@ import * as matrixFilters from "../utils/matrix-filters.ts";
 // @ts-expect-error See comment above.
 import * as matrixSelection from "../utils/matrix-selection.ts";
 // @ts-expect-error See comment above.
-import { getMatrixColumnVirtualRange } from "../utils/matrix-virtualization.ts";
+import { getMatrixColumnVirtualRange, MATRIX_COLUMN_WIDTH } from "../utils/matrix-virtualization.ts";
 
 const {
   SPORT_MATRIX_CONFIGS,
@@ -54,20 +54,20 @@ test("matrix column virtualization preserves small tables and windows wide horiz
     viewportWidth: 1024,
     virtualize: true,
   });
-  assert.deepEqual(initialRange, { end: 14, start: 0 });
+  assert.deepEqual(initialRange, { end: 23, start: 0 });
 
   const middleRange = getMatrixColumnVirtualRange({
     columnCount: 300,
-    scrollLeft: 72 * 140,
+    scrollLeft: MATRIX_COLUMN_WIDTH * 140,
     viewportWidth: 1024,
     virtualize: true,
   });
-  assert.deepEqual(middleRange, { end: 154, start: 137 });
-  assert.ok(middleRange.end - middleRange.start < 20, "wide matrices should render a bounded column window");
+  assert.deepEqual(middleRange, { end: 163, start: 137 });
+  assert.ok(middleRange.end - middleRange.start < 30, "wide matrices should render a bounded column window");
 
   const finalRange = getMatrixColumnVirtualRange({
     columnCount: 300,
-    scrollLeft: 72 * 299,
+    scrollLeft: MATRIX_COLUMN_WIDTH * 299,
     viewportWidth: 1024,
     virtualize: true,
   });
