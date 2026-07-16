@@ -94,3 +94,50 @@ class TestIssueListOrderByInjection:
             assert response.status_code == status.HTTP_200_OK, (
                 f"order_by={value!r} got {response.status_code}: {response.data!r}"
             )
+
+
+@pytest.mark.contract
+class TestIssueListPerPageValidation:
+    """Regression tests for the work-item list endpoint's ``per_page`` handling:
+    GET /api/v1/workspaces/{slug}/projects/{project_id}/issues/.
+
+    Non-numeric and oversized values already returned a clear 400, but zero and
+    negative values fell through validation and crashed downstream with a 500.
+    They should return a 400 like the other invalid cases.
+    """
+
+    def get_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/"
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("per_page", ["0", "-5"])
+    def test_non_positive_per_page_returns_400(self, api_key_client, workspace, project, issue, per_page):
+        """``per_page=0`` and negative values used to raise a 500; now a 400."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"per_page": per_page})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"per_page={per_page!r} got {response.status_code}: {response.data!r}"
+        )
+        assert "positive integer" in str(response.data).lower()
+
+    @pytest.mark.django_db
+    def test_non_numeric_per_page_returns_400(self, api_key_client, workspace, project, issue):
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"per_page": "abc"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_oversized_per_page_returns_400(self, api_key_client, workspace, project, issue):
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"per_page": "100000"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_valid_per_page_still_works(self, api_key_client, workspace, project, issue):
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"per_page": "50"})
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
