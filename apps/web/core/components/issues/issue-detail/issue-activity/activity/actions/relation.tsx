@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import type { TIssueRelationTypes } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// components 
+// components
 import { useTimeLineRelationOptions } from "@/components/relations";
 // local helpers
 import { IssueActivityBlockComponent } from "./";
