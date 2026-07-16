@@ -105,8 +105,9 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
               const projectDetails = projectDetailsMap.get(projectId);
               if (!projectDetails) return null;
               return (
-                <div
+                <button
                   key={projectDetails.id}
+                  type="button"
                   className="group flex cursor-pointer items-center gap-1.5 rounded-sm bg-surface-2 px-2 py-1"
                   onClick={() => {
                     handleSelectedProjectChange(selectedProjectIds.filter((id) => id !== projectDetails.id));
@@ -117,7 +118,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                     {projectDetails.identifier}
                   </p>
                   <CloseIcon className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
-                </div>
+                </button>
               );
             })}
           </div>
@@ -160,7 +161,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   >
                     <div className="flex items-center gap-2 truncate">
                       <span className="flex flex-shrink-0 items-center gap-2.5">
-                        <Checkbox checked={isProjectSelected} />
+                        <Checkbox checked={isProjectSelected} readOnly />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
                       <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>
