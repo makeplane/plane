@@ -1,8 +1,8 @@
-import type { TIssue } from "@plane/types";
-import { parseOppositionTeam } from "@/helpers/opposition-team";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { formatDateValue, formatTimeValue } from "ce/features/media-library/utils/media-detail-utils";
 import type { TEventMediaDetails } from "ce/features/media-library/utils/media-event";
+import type { TIssue } from "@plane/types";
+import { parseOppositionTeam } from "@/helpers/opposition-team";
 import { SPORT_TABLE_CONFIGS } from "./constants";
 import { findExactRawTagFieldValue } from "./raw-tag-fields";
 import type { SgTagRow, SportTableKind } from "./types";
@@ -531,6 +531,10 @@ const getTagSourceUrl = (tag: Record<string, unknown>) =>
 const getTagThumbnailUrl = (tag: Record<string, unknown>) =>
   findTagDataValue(tag, [
     "thumbnail",
+    "thumbnail_name",
+    "thumbnailName",
+    "thumbnail_file",
+    "thumbnailFile",
     "thumbnail_url",
     "thumbnailUrl",
     "poster",
@@ -787,8 +791,8 @@ const buildTagRowBySport = (
       "jersey",
     ]) || "--";
   const action =
-    findTagDataValue(tag, ["primary_action", "action", "event_code", "event", "play"]) ||
-    formatLooseLabel(toText(tag.action || tag.event_code || tag.play));
+    findTagDataValue(tag, ["primary_action", "action", "event_code", "event", "play", "tag"]) ||
+    formatLooseLabel(toText(tag.action || tag.event_code || tag.play || tag.tag));
   const result =
     findTagDataValue(tag, ["result", "outcome", "gain", "play_result", "shot_result", "delivery_result"]) ||
     formatLooseLabel(toText(tag.result || tag.outcome));

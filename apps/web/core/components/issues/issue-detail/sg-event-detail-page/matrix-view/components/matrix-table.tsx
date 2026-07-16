@@ -1,12 +1,15 @@
 "use client";
 
-import type { UIEvent } from "react";
+import type { CSSProperties, UIEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cn } from "@plane/utils";
 import type { MatrixCell, MatrixData, MatrixRow } from "../types/matrix.types";
 import {
   getMatrixColumnVirtualRange,
   MATRIX_COLUMN_VIRTUALIZATION_THRESHOLD,
   MATRIX_COLUMN_WIDTH,
+  MATRIX_FIRST_COLUMN_WIDTH,
+  MATRIX_SUMMARY_COLUMNS_WIDTH,
 } from "../utils/matrix-virtualization";
 import { MatrixHeader } from "./matrix-header";
 import { MatrixRow as MatrixTableRow } from "./matrix-row";
@@ -14,7 +17,13 @@ import { MatrixRow as MatrixTableRow } from "./matrix-row";
 type MatrixTableProps = {
   activeRowId?: string | null;
   data: MatrixData;
-  onCellActivate: (cell: MatrixCell, trigger: HTMLButtonElement) => void;
+  maxHeightClassName?: string;
+  onCellActivate: (
+    cell: MatrixCell,
+    trigger: HTMLButtonElement,
+    options?: { additive?: boolean; range?: boolean }
+  ) => void;
+  onCellDoubleClick?: (cell: MatrixCell) => void;
   openCellId?: string | null;
   selectedCellIds: ReadonlySet<string>;
   stickySummaries?: boolean;
@@ -22,7 +31,7 @@ type MatrixTableProps = {
 
 const getRowGroup = (row: MatrixRow) => row.group ?? row.category ?? row.dimension ?? "";
 
-const HEADER_HEIGHT = 128;
+const HEADER_HEIGHT = 180;
 const ROW_HEIGHT = 44;
 const ROW_OVERSCAN = 4;
 const ROW_VIRTUALIZATION_THRESHOLD = 40;
@@ -33,7 +42,9 @@ const getColumnGroup = (column: MatrixData["columns"][number]) =>
 export const MatrixTable = ({
   activeRowId,
   data,
+  maxHeightClassName,
   onCellActivate,
+  onCellDoubleClick,
   openCellId,
   selectedCellIds,
   stickySummaries = true,
@@ -43,6 +54,7 @@ export const MatrixTable = ({
   const visibleRows = useMemo(() => data.rows.filter((row) => row.visible), [data.rows]);
   const shouldVirtualizeRows = visibleRows.length > ROW_VIRTUALIZATION_THRESHOLD;
   const shouldVirtualizeColumns = visibleColumns.length > MATRIX_COLUMN_VIRTUALIZATION_THRESHOLD;
+  const [columnWidth, setColumnWidth] = useState(MATRIX_COLUMN_WIDTH);
   const [rowVirtualRange, setRowVirtualRange] = useState({ end: 20, start: 0 });
   const [columnVirtualRange, setColumnVirtualRange] = useState({ end: 20, start: 0 });
   const entityAxisLabel = useMemo(() => {
@@ -56,10 +68,19 @@ export const MatrixTable = ({
     );
     return groups.length === 1 ? groups[0] : "Participants";
   }, [data.entities]);
-  const firstColumnLabel = data.orientation === "entities-by-actions" ? (entityAxisLabel ?? "Entities") : "Actions";
+  const firstColumnLabel = data.orientation === "entities-by-actions" ? "Actions" : (entityAxisLabel ?? "Participants");
 
   const updateVirtualRanges = useCallback(
     (scrollTop: number, scrollLeft: number, viewportHeight: number, viewportWidth: number) => {
+      const availableColumnWidth =
+        visibleColumns.length > 0
+          ? Math.floor(
+              (viewportWidth - MATRIX_FIRST_COLUMN_WIDTH - MATRIX_SUMMARY_COLUMNS_WIDTH) / visibleColumns.length
+            )
+          : MATRIX_COLUMN_WIDTH;
+      const nextColumnWidth = Math.max(MATRIX_COLUMN_WIDTH, availableColumnWidth);
+      setColumnWidth((currentWidth) => (currentWidth === nextColumnWidth ? currentWidth : nextColumnWidth));
+
       const nextRowRange = shouldVirtualizeRows
         ? {
             start: Math.max(0, Math.floor(Math.max(0, scrollTop - HEADER_HEIGHT) / ROW_HEIGHT) - ROW_OVERSCAN),
@@ -75,6 +96,7 @@ export const MatrixTable = ({
       );
 
       const nextColumnRange = getMatrixColumnVirtualRange({
+        columnWidth: nextColumnWidth,
         columnCount: visibleColumns.length,
         scrollLeft,
         viewportWidth,
@@ -126,25 +148,38 @@ export const MatrixTable = ({
     : visibleColumns.length;
   const renderedRows = visibleRows.slice(rowStart, rowEnd);
   const renderedColumns = visibleColumns.slice(columnStart, columnEnd);
+  const maxVisibleCount = useMemo(
+    () =>
+      visibleRows.reduce(
+        (maxCount, row) => Math.max(maxCount, ...visibleColumns.map((column) => row.cells[column.id]?.count ?? 0)),
+        0
+      ),
+    [visibleColumns, visibleRows]
+  );
   const leadingColumnCount = columnStart;
   const trailingColumnCount = visibleColumns.length - columnEnd;
   const previousColumnGroup = columnStart > 0 ? getColumnGroup(visibleColumns[columnStart - 1]) : "";
   const physicalColumnCount =
     renderedColumns.length + (leadingColumnCount > 0 ? 1 : 0) + (trailingColumnCount > 0 ? 1 : 0) + 3;
+  const matrixStyle = { "--sg-matrix-column-width": `${columnWidth}px` } as CSSProperties;
 
   return (
     <div
       ref={scrollContainerRef}
       aria-label={`${data.sport} tag matrix`}
-      className="vertical-scrollbar horizontal-scrollbar scrollbar-lg max-h-[520px] min-h-52 w-full overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-custom-primary-100"
+      className={cn(
+        "vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 w-full overflow-auto border-t border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-cell-empty)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--sg-matrix-active-border)]",
+        maxHeightClassName ?? "max-h-[520px]"
+      )}
       onScroll={handleScroll}
       role="region"
+      style={matrixStyle}
       tabIndex={0}
     >
       <table
         aria-colcount={visibleColumns.length + 3}
         aria-rowcount={visibleRows.length + 1}
-        className="min-w-max border-separate border-spacing-0 bg-custom-background-100"
+        className="min-w-max border-separate border-spacing-0 bg-[var(--sg-matrix-cell-empty)]"
       >
         <caption className="sr-only">
           {data.sport} tag matrix. Select a populated cell to open its tags and include it in a playlist.
@@ -153,11 +188,11 @@ export const MatrixTable = ({
           columnStartIndex={columnStart}
           columns={renderedColumns}
           firstColumnLabel={firstColumnLabel}
-          leadingSpacerWidth={leadingColumnCount * MATRIX_COLUMN_WIDTH}
+          leadingSpacerWidth={leadingColumnCount * columnWidth}
           previousColumnGroup={previousColumnGroup}
           stickySummaries={stickySummaries}
           totalColumnCount={visibleColumns.length}
-          trailingSpacerWidth={trailingColumnCount * MATRIX_COLUMN_WIDTH}
+          trailingSpacerWidth={trailingColumnCount * columnWidth}
         />
         <tbody>
           {rowStart > 0 ? (
@@ -178,15 +213,17 @@ export const MatrixTable = ({
                 columnStartIndex={columnStart}
                 columns={renderedColumns}
                 isGroupStart={absoluteRowIndex > 0 && group !== previousGroup}
-                leadingSpacerWidth={leadingColumnCount * MATRIX_COLUMN_WIDTH}
+                leadingSpacerWidth={leadingColumnCount * columnWidth}
+                maxVisibleCount={maxVisibleCount}
                 onCellActivate={onCellActivate}
+                onCellDoubleClick={onCellDoubleClick}
                 openCellId={openCellId}
                 previousColumnGroup={previousColumnGroup}
                 row={row}
                 selectedCellIds={selectedCellIds}
                 stickySummaries={stickySummaries}
                 totalColumnCount={visibleColumns.length}
-                trailingSpacerWidth={trailingColumnCount * MATRIX_COLUMN_WIDTH}
+                trailingSpacerWidth={trailingColumnCount * columnWidth}
               />
             );
           })}

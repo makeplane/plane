@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Columns3, ListPlus, X } from "lucide-react";
-import { Button } from "@plane/propel/button";
+import { Columns3, ListPlus, Plus, X } from "lucide-react";
 import { cn } from "@plane/utils";
 import type { MatrixColumn, MatrixFilterOptions, MatrixFilterState } from "../types/matrix.types";
 import { AxisViewToggle } from "./axis-view-toggle";
@@ -10,9 +9,10 @@ import { MatrixColumnsPanel } from "./matrix-columns-panel";
 import { MatrixFilters } from "./matrix-filters";
 
 type MatrixToolbarProps = {
-  actionColumns: MatrixColumn[];
+  columns: MatrixColumn[];
+  canCreateCard?: boolean;
   canCreatePlaylist: boolean;
-  defaultVisibleActionColumnIds: readonly string[];
+  defaultVisibleColumnIds: readonly string[];
   disabled?: boolean;
   filters: MatrixFilterState;
   filterOptions: MatrixFilterOptions;
@@ -22,19 +22,21 @@ type MatrixToolbarProps = {
   onAxisChange: (isSwitched: boolean) => void;
   onClearFilters: () => void;
   onClearSelection: () => void;
+  onCreateCard?: () => void;
   onCreatePlaylist: () => void;
   onFiltersChange: (filters: MatrixFilterState) => void;
-  onVisibleActionColumnIdsChange: (visibleColumnIds: string[]) => void;
+  onVisibleColumnIdsChange: (visibleColumnIds: string[]) => void;
   selectedCellCount: number;
   selectedPlayableRowCount: number;
   showFilters: boolean;
-  visibleActionColumnIds: readonly string[];
+  visibleColumnIds: readonly string[];
 };
 
 export const MatrixToolbar = ({
-  actionColumns,
+  columns,
+  canCreateCard = false,
   canCreatePlaylist,
-  defaultVisibleActionColumnIds,
+  defaultVisibleColumnIds,
   disabled = false,
   filters,
   filterOptions,
@@ -44,92 +46,103 @@ export const MatrixToolbar = ({
   onAxisChange,
   onClearFilters,
   onClearSelection,
+  onCreateCard,
   onCreatePlaylist,
   onFiltersChange,
-  onVisibleActionColumnIdsChange,
+  onVisibleColumnIdsChange,
   selectedCellCount,
   selectedPlayableRowCount,
   showFilters,
-  visibleActionColumnIds,
+  visibleColumnIds,
 }: MatrixToolbarProps) => {
   const [isColumnsPanelOpen, setIsColumnsPanelOpen] = useState(false);
-  const visibleActionColumnIdSet = new Set(visibleActionColumnIds);
-  const visibleActionColumnCount = actionColumns.filter((column) => visibleActionColumnIdSet.has(column.id)).length;
+  const visibleColumnIdSet = new Set(visibleColumnIds);
+  const visibleColumnCount = columns.filter((column) => visibleColumnIdSet.has(column.id)).length;
 
   return (
-    <div className="flex flex-col gap-2 border-b border-custom-border-200 bg-custom-background-90 px-3 py-2">
+    <div className="flex min-h-11 flex-col justify-center rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel-secondary)] px-3 py-1.5">
       <div className="flex min-h-8 flex-wrap items-center justify-between gap-2">
         <AxisViewToggle disabled={disabled} isSwitched={isSwitched} onChange={onAxisChange} />
         <div className="flex items-center gap-1.5">
           {selectedCellCount > 0 ? (
             <>
-              <span aria-live="polite" className="whitespace-nowrap text-xs text-custom-text-300">
+              <span aria-live="polite" className="whitespace-nowrap text-[11px] text-[var(--sg-matrix-text-muted)]">
                 {selectedCellCount} {selectedCellCount === 1 ? "cell" : "cells"} selected
               </span>
-              <Button
+              <button
+                type="button"
                 aria-label="Clear selected matrix cells"
                 disabled={disabled || isCreatingPlaylist}
                 onClick={onClearSelection}
-                prependIcon={<X />}
-                size="sm"
-                variant="link-neutral"
+                className="inline-flex h-7 items-center gap-1.5 rounded-[5px] px-2 text-[11px] text-[var(--sg-matrix-text-muted)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:opacity-45"
               >
+                <X className="h-3.5 w-3.5" />
                 Clear
-              </Button>
+              </button>
             </>
           ) : null}
           <button
             type="button"
             onClick={() => setIsColumnsPanelOpen(true)}
-            disabled={disabled || actionColumns.length === 0}
+            disabled={disabled || columns.length === 0}
             className={cn(
-              "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-xs font-medium transition-colors",
+              "inline-flex h-7 items-center gap-2 rounded-[5px] border px-2.5 text-[11px] font-normal transition-colors",
               isColumnsPanelOpen
-                ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
-                : "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100",
-              (disabled || actionColumns.length === 0) && "cursor-not-allowed opacity-40"
+                ? "border-[var(--sg-matrix-active-border)] bg-[var(--sg-matrix-selected-nav)] text-[var(--sg-matrix-text)]"
+                : "border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] text-[var(--sg-matrix-text-secondary)] hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]",
+              (disabled || columns.length === 0) && "cursor-not-allowed opacity-40"
             )}
           >
             <Columns3 className="h-3.5 w-3.5" />
             <span>Columns</span>
-            <span className="text-custom-text-400">
-              {visibleActionColumnCount}/{actionColumns.length}
+            <span className="text-[var(--sg-matrix-text-muted)]">
+              {visibleColumnCount}/{columns.length}
             </span>
           </button>
-          <Button
+          <button
+            type="button"
+            disabled={disabled || !canCreateCard}
+            onClick={onCreateCard}
+            className="inline-flex h-7 items-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] px-2.5 text-[11px] font-normal text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:text-[var(--sg-matrix-text-disabled)] disabled:opacity-45"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Create Card
+          </button>
+          <button
+            type="button"
             disabled={disabled || !canCreatePlaylist || selectedPlayableRowCount === 0}
-            loading={isCreatingPlaylist}
             onClick={onCreatePlaylist}
-            prependIcon={<ListPlus />}
-            size="sm"
             title={
               selectedCellCount > 0 && selectedPlayableRowCount === 0
                 ? "Selected tags do not contain playable timestamps"
                 : undefined
             }
-            variant="neutral-primary"
+            className="inline-flex h-7 items-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] px-2.5 text-[11px] font-normal text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:text-[var(--sg-matrix-text-disabled)] disabled:opacity-45"
           >
-            Create Playlist
-          </Button>
+            <ListPlus className="h-3.5 w-3.5" />
+            {isCreatingPlaylist ? "Creating" : "Create Playlist"}
+          </button>
         </div>
       </div>
       {showFilters ? (
-        <MatrixFilters
-          disabled={disabled}
-          filters={filters}
-          hasActiveFilters={hasActiveFilters}
-          onChange={onFiltersChange}
-          onClear={onClearFilters}
-          options={filterOptions}
-        />
+        <div className="hidden">
+          <MatrixFilters
+            disabled={disabled}
+            filters={filters}
+            hasActiveFilters={hasActiveFilters}
+            onChange={onFiltersChange}
+            onClear={onClearFilters}
+            options={filterOptions}
+          />
+        </div>
       ) : null}
       {isColumnsPanelOpen ? (
         <MatrixColumnsPanel
-          columns={actionColumns}
-          defaultVisibleColumnIds={defaultVisibleActionColumnIds}
-          onChange={onVisibleActionColumnIdsChange}
+          columns={columns}
+          defaultVisibleColumnIds={defaultVisibleColumnIds}
+          onChange={onVisibleColumnIdsChange}
           onClose={() => setIsColumnsPanelOpen(false)}
-          visibleColumnIds={visibleActionColumnIds}
+          visibleColumnIds={visibleColumnIds}
         />
       ) : null}
     </div>

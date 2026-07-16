@@ -22,8 +22,12 @@ export type MatrixViewProps = {
   hasEvent?: boolean;
   isCreatingPlaylist?: boolean;
   isLoading?: boolean;
+  layout?: "standard" | "workspace";
+  onCreateCard?: (rows: SgTagRow[]) => void | Promise<void>;
   onCreatePlaylist?: (rows: SgTagRow[]) => void | Promise<void>;
+  onFocusedRowsChange?: (rows: SgTagRow[]) => void;
   onPlayTagRow?: (row: SgTagRow) => void | Promise<void>;
+  preferenceKey?: string;
   sport: SportTableKind | string;
   tagRows: readonly SgTagRow[];
 };
@@ -36,15 +40,19 @@ export const MatrixView = ({
   hasEvent = true,
   isCreatingPlaylist = false,
   isLoading = false,
+  layout = "standard",
+  onCreateCard,
   onCreatePlaylist,
+  onFocusedRowsChange,
   onPlayTagRow,
+  preferenceKey,
   sport,
   tagRows,
 }: MatrixViewProps) => {
   const [isSwitched, setIsSwitched] = useState(false);
   const [activeCellId, setActiveCellId] = useState<string | null>(null);
   const activeCellTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const orientation: MatrixOrientation = isSwitched ? "actions-by-entities" : "entities-by-actions";
+  const orientation: MatrixOrientation = isSwitched ? "entities-by-actions" : "actions-by-entities";
   const {
     clearFilters,
     filteredSourceTags,
@@ -56,31 +64,36 @@ export const MatrixView = ({
     sportResolution,
     setFilters,
   } = useMatrixData({ orientation, sport, tagRows });
-  const [visibleActionColumnIds, setVisibleActionColumnIds] = useState<string[] | null>(null);
-  const actionColumns = useMemo(() => matrix?.actions ?? [], [matrix?.actions]);
-  const actionColumnIds = useMemo(() => actionColumns.map((column) => column.id), [actionColumns]);
-  const defaultVisibleActionColumnIds = useMemo(
-    () => actionColumns.filter((column) => column.visible).map((column) => column.id),
-    [actionColumns]
-  );
-  const activeVisibleActionColumnIds = visibleActionColumnIds ?? defaultVisibleActionColumnIds;
+  const [visibleColumnIdsByOrientation, setVisibleColumnIdsByOrientation] = useState<
+    Partial<Record<MatrixOrientation, string[]>>
+  >({});
+  const displayedColumns = useMemo(() => matrix?.columns ?? [], [matrix?.columns]);
+  const displayedColumnIds = useMemo(() => displayedColumns.map((column) => column.id), [displayedColumns]);
+  const defaultVisibleColumnIds = useMemo(() => {
+    const visibleColumns = displayedColumns.filter((column) => column.visible);
+    const preferredColumns = visibleColumns.length > 0 ? visibleColumns : displayedColumns;
+    return preferredColumns.slice(0, 14).map((column) => column.id);
+  }, [displayedColumns]);
+  const activeVisibleColumnIds = visibleColumnIdsByOrientation[orientation] ?? defaultVisibleColumnIds;
   const displayedMatrix = useMemo(() => {
     if (!matrix) return null;
 
-    const visibleActionColumnIdSet = new Set(activeVisibleActionColumnIds);
+    const visibleColumnIdSet = new Set(activeVisibleColumnIds);
+    const markVisible = (column: (typeof matrix.actions)[number]) => ({
+      ...column,
+      visible: visibleColumnIdSet.has(column.id),
+    });
 
     return orientMatrixData(
       {
         ...matrix,
-        actions: matrix.actions.map((action) => ({
-          ...action,
-          visible: visibleActionColumnIdSet.has(action.id),
-        })),
+        actions: orientation === "entities-by-actions" ? matrix.actions.map(markVisible) : matrix.actions,
+        entities: orientation === "actions-by-entities" ? matrix.entities.map(markVisible) : matrix.entities,
       },
       orientation
     );
-  }, [activeVisibleActionColumnIds, matrix, orientation]);
-  const { clearSelection, selectedCellIds, selectedSourceRowIds, selection, toggleCell } =
+  }, [activeVisibleColumnIds, matrix, orientation]);
+  const { clearSelection, selectedCellIds, selectedSourceRowIds, selection, selectCell } =
     useMatrixSelection(displayedMatrix);
 
   const tagRowsById = useMemo(() => new Map(tagRows.map((row) => [row.id, row])), [tagRows]);
@@ -97,6 +110,7 @@ export const MatrixView = ({
         .filter((row): row is SgTagRow => Boolean(row)),
     [activeCell?.sourceRowIds, tagRowsById]
   );
+  const focusedRows = activeCellRows.length > 0 ? activeCellRows : selectedRows;
   const activeCellContext = useMemo(() => {
     if (!activeCell || !displayedMatrix) return "Selected matrix cell";
     const actionLabel = displayedMatrix.actions.find((action) => action.id === activeCell.columnId)?.label;
@@ -105,23 +119,44 @@ export const MatrixView = ({
   }, [activeCell, displayedMatrix]);
 
   useEffect(() => {
-    const actionColumnIdSet = new Set(actionColumnIds);
+    const columnIdSet = new Set(displayedColumnIds);
 
-    setVisibleActionColumnIds((currentValue) => {
-      if (currentValue === null) return null;
+    setVisibleColumnIdsByOrientation((currentValue) => {
+      const currentColumnIds = currentValue[orientation];
+      if (!currentColumnIds) return currentValue;
 
-      const nextValue = currentValue.filter((columnId) => actionColumnIdSet.has(columnId));
-      return nextValue.length === currentValue.length ? currentValue : nextValue;
+      const nextValue = currentColumnIds.filter((columnId) => columnIdSet.has(columnId));
+      if (nextValue.length === currentColumnIds.length) return currentValue;
+      return { ...currentValue, [orientation]: nextValue };
     });
-  }, [actionColumnIds]);
+  }, [displayedColumnIds, orientation]);
+
+  useEffect(() => {
+    if (!preferenceKey || typeof window === "undefined") return;
+    try {
+      const storedValue = window.localStorage.getItem(preferenceKey);
+      if (!storedValue) return;
+      const parsedValue = JSON.parse(storedValue) as Partial<Record<MatrixOrientation, string[]>>;
+      setVisibleColumnIdsByOrientation({
+        "actions-by-entities": Array.isArray(parsedValue["actions-by-entities"])
+          ? parsedValue["actions-by-entities"]
+          : undefined,
+        "entities-by-actions": Array.isArray(parsedValue["entities-by-actions"])
+          ? parsedValue["entities-by-actions"]
+          : undefined,
+      });
+    } catch {
+      setVisibleColumnIdsByOrientation({});
+    }
+  }, [preferenceKey]);
 
   const handleCellActivate = useCallback(
-    (cell: MatrixCell, trigger: HTMLButtonElement) => {
+    (cell: MatrixCell, trigger: HTMLButtonElement, options?: { additive?: boolean; range?: boolean }) => {
       activeCellTriggerRef.current = trigger;
-      toggleCell(cell);
+      selectCell(cell, options?.range ? "range" : options?.additive ? "toggle" : "replace");
       setActiveCellId(cell.id);
     },
-    [toggleCell]
+    [selectCell]
   );
   const handleCloseTagsPanel = useCallback(() => {
     const trigger = activeCellTriggerRef.current;
@@ -133,51 +168,68 @@ export const MatrixView = ({
   const handleCreatePlaylist = useCallback(() => {
     if (selectedPlayableRows.length > 0) void onCreatePlaylist?.(selectedPlayableRows);
   }, [onCreatePlaylist, selectedPlayableRows]);
-  const handleVisibleActionColumnIdsChange = useCallback(
-    (nextVisibleActionColumnIds: string[]) => {
-      setVisibleActionColumnIds(nextVisibleActionColumnIds);
+  const handleCreateCard = useCallback(() => {
+    if (focusedRows.length > 0) void onCreateCard?.(focusedRows);
+  }, [focusedRows, onCreateCard]);
+  const handleVisibleColumnIdsChange = useCallback(
+    (nextVisibleColumnIds: string[]) => {
+      const nextValue = {
+        ...visibleColumnIdsByOrientation,
+        [orientation]: nextVisibleColumnIds,
+      };
+      setVisibleColumnIdsByOrientation(nextValue);
+      if (preferenceKey && typeof window !== "undefined") {
+        window.localStorage.setItem(preferenceKey, JSON.stringify(nextValue));
+      }
       setActiveCellId(null);
       clearSelection();
     },
-    [clearSelection]
+    [clearSelection, orientation, preferenceKey, visibleColumnIdsByOrientation]
   );
 
   const hasError = error !== null && error !== undefined;
   const errorMessage = typeof error === "string" ? error : error?.message;
   const showFilters = hasEvent && !hasError && sportResolution.isSupported && sourceTags.length > 0;
+  const isWorkspaceLayout = layout === "workspace";
   const playlistCapability = canCreatePlaylist ?? Boolean(onCreatePlaylist);
-  const visibleActionColumnIdSet = new Set(activeVisibleActionColumnIds);
-  const visibleActionColumnCount = actionColumns.filter((column) => visibleActionColumnIdSet.has(column.id)).length;
+  const selectedTagRowsForCard = activeCellRows.length > 0 ? activeCellRows : selectedRows;
+
+  useEffect(() => {
+    onFocusedRowsChange?.(focusedRows);
+  }, [focusedRows, onFocusedRowsChange]);
 
   return (
     <section
       aria-busy={isLoading}
       aria-label="Event tag matrix"
       className={cn(
-        "min-w-0 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100",
+        "flex min-w-0 flex-col gap-2 overflow-hidden rounded-[5px] bg-transparent",
+        isWorkspaceLayout && "border-0 bg-transparent",
         className
       )}
     >
       <MatrixToolbar
-        actionColumns={actionColumns}
+        columns={displayedColumns}
         canCreatePlaylist={playlistCapability}
-        defaultVisibleActionColumnIds={defaultVisibleActionColumnIds}
+        defaultVisibleColumnIds={defaultVisibleColumnIds}
         disabled={isLoading || hasError || !hasEvent || !sportResolution.isSupported}
         filterOptions={filterOptions}
         filters={filters}
         hasActiveFilters={hasActiveFilters}
         isCreatingPlaylist={isCreatingPlaylist}
         isSwitched={isSwitched}
+        canCreateCard={Boolean(onCreateCard) && selectedTagRowsForCard.length > 0}
         onAxisChange={setIsSwitched}
+        onCreateCard={handleCreateCard}
         onClearFilters={clearFilters}
         onClearSelection={clearSelection}
         onCreatePlaylist={handleCreatePlaylist}
         onFiltersChange={setFilters}
-        onVisibleActionColumnIdsChange={handleVisibleActionColumnIdsChange}
+        onVisibleColumnIdsChange={handleVisibleColumnIdsChange}
         selectedCellCount={selection.length}
         selectedPlayableRowCount={selectedPlayableRows.length}
         showFilters={showFilters}
-        visibleActionColumnIds={activeVisibleActionColumnIds}
+        visibleColumnIds={activeVisibleColumnIds}
       />
       {isLoading ? (
         <MatrixLoadingState />
@@ -196,15 +248,50 @@ export const MatrixView = ({
         <MatrixEmptyState kind="no-filter-results" />
       ) : displayedMatrix && displayedMatrix.rows.length > 0 ? (
         <>
-          <div className="relative isolate min-h-52">
-            <MatrixTable
-              activeRowId={activeRowId}
-              data={displayedMatrix}
-              onCellActivate={handleCellActivate}
-              openCellId={activeCell?.id}
-              selectedCellIds={selectedCellIds}
-            />
-            {activeCell && activeCellRows.length > 0 ? (
+          <div
+            className={cn(
+              "relative isolate min-h-52 overflow-hidden rounded-[5px]",
+              isWorkspaceLayout && "xl:grid xl:grid-cols-[minmax(0,1fr)_260px]"
+            )}
+          >
+            <div className="min-w-0">
+              <MatrixTable
+                activeRowId={activeRowId}
+                data={displayedMatrix}
+                maxHeightClassName={isWorkspaceLayout ? "max-h-[calc(100vh-31rem)] min-h-[300px]" : undefined}
+                onCellActivate={handleCellActivate}
+                onCellDoubleClick={(cell) => {
+                  const firstRow = cell.sourceRowIds.map((rowId) => tagRowsById.get(rowId)).find(Boolean);
+                  if (firstRow) void onPlayTagRow?.(firstRow);
+                }}
+                openCellId={activeCell?.id}
+                selectedCellIds={selectedCellIds}
+                stickySummaries={!isWorkspaceLayout}
+              />
+            </div>
+            {isWorkspaceLayout ? (
+              <>
+                <MatrixTagsPanel
+                  activeRowId={activeRowId}
+                  className="hidden w-[260px] shrink-0 xl:flex"
+                  contextLabel={activeCell ? activeCellContext : "Select a matrix cell"}
+                  isDocked
+                  onClose={handleCloseTagsPanel}
+                  onPlayRow={onPlayTagRow}
+                  rows={activeCellRows}
+                />
+                {activeCell ? (
+                  <MatrixTagsPanel
+                    activeRowId={activeRowId}
+                    className="xl:hidden"
+                    contextLabel={activeCellContext}
+                    onClose={handleCloseTagsPanel}
+                    onPlayRow={onPlayTagRow}
+                    rows={activeCellRows}
+                  />
+                ) : null}
+              </>
+            ) : activeCell && activeCellRows.length > 0 ? (
               <MatrixTagsPanel
                 activeRowId={activeRowId}
                 contextLabel={activeCellContext}
@@ -213,11 +300,6 @@ export const MatrixView = ({
                 rows={activeCellRows}
               />
             ) : null}
-          </div>
-          <div className="border-t border-custom-border-200 px-4 py-2.5 text-xs text-custom-text-400">
-            <span>
-              {visibleActionColumnCount} of {actionColumns.length} stat columns shown
-            </span>
           </div>
         </>
       ) : (

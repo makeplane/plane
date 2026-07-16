@@ -6,8 +6,12 @@ import {
   clearMatrixCellSelection,
   getSelectedMatrixSourceRowIds,
   pruneMatrixCellSelection,
+  rangeMatrixCellSelection,
+  replaceMatrixCellSelection,
   toggleMatrixCellSelection,
 } from "../utils/matrix-selection";
+
+type MatrixSelectionMode = "replace" | "toggle" | "range";
 
 const selectionsMatch = (left: MatrixCellSelection, right: MatrixCellSelection) =>
   left.length === right.length && left.every((cellId, index) => cellId === right[index]);
@@ -23,9 +27,14 @@ export const useMatrixSelection = (matrix: MatrixData | null) => {
     if (!selectionsMatch(selection, validSelection)) setSelection(validSelection);
   }, [selection, validSelection]);
 
-  const toggleCell = useCallback(
-    (cell: MatrixCell) => setSelection((current) => toggleMatrixCellSelection(current, cell)),
-    []
+  const selectCell = useCallback(
+    (cell: MatrixCell, mode: MatrixSelectionMode = "replace") =>
+      setSelection((current) => {
+        if (mode === "toggle") return toggleMatrixCellSelection(current, cell);
+        if (mode === "range" && matrix) return rangeMatrixCellSelection(current, matrix, cell);
+        return replaceMatrixCellSelection(cell);
+      }),
+    [matrix]
   );
   const clearSelection = useCallback(() => setSelection(clearMatrixCellSelection()), []);
   const selectedCellIds = useMemo(() => new Set(validSelection), [validSelection]);
@@ -39,6 +48,6 @@ export const useMatrixSelection = (matrix: MatrixData | null) => {
     selectedCellIds,
     selectedSourceRowIds,
     selection: validSelection,
-    toggleCell,
+    selectCell,
   };
 };

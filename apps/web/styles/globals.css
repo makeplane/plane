@@ -17,7 +17,7 @@
 
 /* Country dropdown list */
 .react-tel-input .country-list {
-  background-color: rgba(var(--color-background-90), 1)  !important;
+  background-color: rgba(var(--color-background-90), 1) !important;
 }
 
 .react-tel-input .country-list .country.highlight {
@@ -28,7 +28,6 @@
 /* Selected country (after clicking) */
 .react-tel-input .country-list .country.active {
   background: rgb(var(--color-background-80)) !important;
-  
 }
 
 /* Hover state */
@@ -45,6 +44,74 @@
   .text-2\.5xl {
     font-size: 1.75rem;
     line-height: 2.25rem;
+  }
+
+  .sg-matrix-workspace {
+    --sg-matrix-page: #171717;
+    --sg-matrix-sidebar: #181818;
+    --sg-matrix-panel: #1d1d1d;
+    --sg-matrix-panel-secondary: #202020;
+    --sg-matrix-video-bg: #111111;
+    --sg-matrix-hover: #272727;
+    --sg-matrix-selected-nav: #242424;
+    --sg-matrix-popover: #222222;
+    --sg-matrix-border: #2c2c2c;
+    --sg-matrix-grid-border: #303030;
+    --sg-matrix-active-border: #4ea1ff;
+    --sg-matrix-selected-card-border: #8b8b8b;
+    --sg-matrix-text: #e5e5e5;
+    --sg-matrix-text-secondary: #a6a6a6;
+    --sg-matrix-tag-title: #b8b8b8;
+    --sg-matrix-text-muted: #737373;
+    --sg-matrix-text-disabled: #5f5f5f;
+    --sg-matrix-header-text: #121212;
+    --sg-matrix-primary-blue: #3b9af8;
+    --sg-matrix-blue-hover: #5aacff;
+    --sg-matrix-toggle-active: #45a5f5;
+    --sg-matrix-cell-empty: #1f1f1f;
+    --sg-matrix-cell-empty-hover: #292929;
+    --sg-matrix-row-label-bg: #232323;
+    --sg-matrix-row-label-text: #afafaf;
+    --sg-matrix-cell-l1: #3e8de3;
+    --sg-matrix-cell-l2: #2879d3;
+    --sg-matrix-cell-l3: #1665bc;
+    --sg-matrix-cell-l4: #0d53a7;
+    --sg-matrix-selected-cell: #ffc107;
+    --sg-matrix-selected-cell-inner: #ffe082;
+    --sg-matrix-cell-text: #b9d8ff;
+    --sg-matrix-selected-cell-text: #101010;
+    --sg-matrix-offense-bg: #9cc7f5;
+    --sg-matrix-offense-accent: #3698f5;
+    --sg-matrix-defense-bg: #ffb8ba;
+    --sg-matrix-defense-accent: #ff5257;
+    --sg-matrix-special-bg: #aef0e2;
+    --sg-matrix-special-accent: #24cda9;
+    --sg-matrix-period-bg: #f2adf3;
+    --sg-matrix-period-accent: #ee42ef;
+    --sg-matrix-neutral-bg: #aef0e2;
+    --sg-matrix-neutral-accent: #24cda9;
+  }
+
+  [data-theme="light"] .sg-matrix-workspace,
+  [data-theme="light-contrast"] .sg-matrix-workspace {
+    --sg-matrix-page: #f4f4f5;
+    --sg-matrix-sidebar: #f7f7f8;
+    --sg-matrix-panel: #ffffff;
+    --sg-matrix-panel-secondary: #f1f1f2;
+    --sg-matrix-video-bg: #111111;
+    --sg-matrix-hover: #e8e8ea;
+    --sg-matrix-selected-nav: #e4e4e7;
+    --sg-matrix-popover: #ffffff;
+    --sg-matrix-border: #d4d4d8;
+    --sg-matrix-grid-border: #d8d8dc;
+    --sg-matrix-text: #171717;
+    --sg-matrix-text-secondary: #525252;
+    --sg-matrix-tag-title: #3f3f46;
+    --sg-matrix-text-muted: #737373;
+    --sg-matrix-cell-empty: #f2f2f3;
+    --sg-matrix-cell-empty-hover: #e8e8ea;
+    --sg-matrix-row-label-bg: #f7f7f8;
+    --sg-matrix-row-label-text: #525252;
   }
 }
 
