@@ -600,6 +600,7 @@ const SgMatrixPlaylistPanel = ({
 
 export const SgEventDetailPage = ({
   enableMatrixView = false,
+  showTagListActions = true,
   issue,
   mediaItem = null,
   projectId,
