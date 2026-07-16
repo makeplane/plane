@@ -18,7 +18,6 @@ import type {
   TIssueServiceType,
 } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-// plane web constants
 // services
 import { IssueActivityService } from "@/services/issue";
 // store
@@ -160,6 +159,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       const activityIds = activities.map((activity) => activity.id);
 
       runInAction(() => {
+        // oxlint-disable-next-line no-shadow
         update(this.activities, issueId, (currentActivityIds) => {
           if (!currentActivityIds) return activityIds;
           return uniq(concat(currentActivityIds, activityIds));

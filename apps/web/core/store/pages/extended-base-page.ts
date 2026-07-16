@@ -5,7 +5,7 @@
  */
 
 import type { TPage, TPageExtended } from "@plane/types";
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 import type { TBasePageServices } from "@/store/pages/base-page";
 
 export type TExtendedPageInstance = TPageExtended & {
@@ -13,8 +13,8 @@ export type TExtendedPageInstance = TPageExtended & {
 };
 
 export class ExtendedBasePage implements TExtendedPageInstance {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(store: RootStore, page: TPage, services: TBasePageServices) {}
+  // oxlint-disable-next-line no-useless-constructor, no-unused-vars
+  constructor(store: CoreRootStore, page: TPage, services: TBasePageServices) {}
 
   get asJSONExtended(): TExtendedPageInstance["asJSONExtended"] {
     return {};

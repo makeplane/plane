@@ -14,8 +14,9 @@ import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
+// components
 import { useTimeLineRelationOptions } from "@/components/relations";
+// types
 import type { TIssueRelationTypes } from "@plane/types";
 
 type Props = {

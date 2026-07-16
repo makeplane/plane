@@ -12,7 +12,7 @@ import { EIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
+// components
 import { useTimeLineRelationOptions } from "@/components/relations";
 // local imports
 import { RelationActionButton } from "./quick-action-button";

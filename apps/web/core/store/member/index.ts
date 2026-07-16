@@ -9,9 +9,9 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { IUserLite } from "@plane/types";
 // plane web imports
-import type { IProjectMemberStore } from "@/plane-web/store/member/project-member.store";
-import { ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { IProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import { ProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import type { RootStore } from "@/store/root.store";
 // local imports
 import type { IWorkspaceMemberStore } from "./workspace/workspace-member.store";
 import { WorkspaceMemberStore } from "./workspace/workspace-member.store";

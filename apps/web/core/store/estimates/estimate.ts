@@ -135,13 +135,6 @@ export class Estimate implements IEstimate {
   });
 
   // actions
-  /**
-   * @description create an estimate point
-   * @param { string } workspaceSlug
-   * @param { string } projectId
-   * @param { Partial<IEstimatePointType> } payload
-   * @returns { IEstimatePointType | undefined }
-   */
   creteEstimatePoint = async (
     workspaceSlug: string,
     projectId: string,

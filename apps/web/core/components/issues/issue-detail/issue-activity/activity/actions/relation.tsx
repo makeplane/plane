@@ -5,11 +5,12 @@
  */
 
 import { observer } from "mobx-react";
+// types
+import type { TIssueRelationTypes } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
+// components 
 import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@plane/types";
 // local helpers
 import { IssueActivityBlockComponent } from "./";
 import { getRelationActivityContent } from "./helpers/activity";

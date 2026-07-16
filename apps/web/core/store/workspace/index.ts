@@ -70,7 +70,7 @@ export interface IWorkspaceRootStore {
   home: IHomeStore;
 }
 
-export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
+export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
@@ -383,8 +383,13 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   };
 
   /**
-   * Mutate workspace members activity
+   * Mutate workspace members activity — no-op in CE
    * @param workspaceSlug
    */
-  abstract mutateWorkspaceMembersActivity(workspaceSlug: string): Promise<void>;
+  mutateWorkspaceMembersActivity = async (_workspaceSlug: string): Promise<void> => {
+    // No-op in default/CE version
+  };
 }
+
+// Alias so consumers can keep using WorkspaceRootStore
+export { BaseWorkspaceRootStore as WorkspaceRootStore };

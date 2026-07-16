@@ -28,6 +28,7 @@ import type {
 import { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
+// components
 import {
   highlightIssueOnDrop,
   getSourceFromDropPayload,
@@ -35,13 +36,12 @@ import {
   getIssueBlockId,
 } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
+import { useWorkFlowFDragNDrop } from "@/components/workflow";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-// Plane-web
-import { useWorkFlowFDragNDrop } from "@/components/workflow";
-//
+// local imports
 import { GroupDragOverlay } from "../group-drag-overlay";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
