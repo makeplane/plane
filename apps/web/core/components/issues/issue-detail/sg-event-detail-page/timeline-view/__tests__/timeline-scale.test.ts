@@ -3,7 +3,7 @@ import test from "node:test";
 
 // Node's type-stripping test runner requires explicit TypeScript extensions.
 // @ts-expect-error See comment above.
-import * as timelineScale from "../timeline-scale.ts";
+import * as timelineScale from "../utils/timeline-scale.ts";
 
 const {
   DEFAULT_TIMELINE_SCALE_INDEX,
