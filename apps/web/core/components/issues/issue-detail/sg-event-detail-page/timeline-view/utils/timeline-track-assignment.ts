@@ -1,4 +1,4 @@
-import type { SgTagRow } from "./types";
+import type { SgTagRow } from "../../types";
 
 type TimelineCategoryDefinition = {
   id: string;
