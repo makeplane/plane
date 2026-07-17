@@ -62,9 +62,7 @@ export const MatrixCell = memo(function MatrixCell({
       {isInteractive && cell ? (
         <button
           type="button"
-          aria-controls={isPanelOpen ? "matrix-matching-tags-panel" : undefined}
           aria-current={isActive ? "true" : undefined}
-          aria-expanded={isPanelOpen}
           aria-label={`${count} ${count === 1 ? "tag" : "tags"} for ${rowLabel} and ${columnLabel}`}
           aria-pressed={isSelected}
           className={cn(

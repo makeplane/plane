@@ -28,10 +28,12 @@ type SgEventTagsPanelProps = {
   clipThumbnailUrl: string;
   effectiveGroupValue: string;
   favoriteTagIds: string[];
+  isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
   isExpanded?: boolean;
   isSearchOpen: boolean;
   onToggleExpanded?: () => void;
+  onCreatePlaylist?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onRemoveTag: (tagId: string) => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
@@ -371,10 +373,12 @@ export const SgEventTagsPanel = ({
   clipThumbnailUrl,
   effectiveGroupValue,
   favoriteTagIds,
+  isCreatingPlaylist = false,
   isMediaLoading,
   isExpanded = false,
   isSearchOpen,
   onToggleExpanded,
+  onCreatePlaylist,
   onPlayTagRow,
   onRemoveTag,
   onRowFilterModeChange,
@@ -724,9 +728,17 @@ export const SgEventTagsPanel = ({
             </button>
           </Tooltip>
           {showCreateActions && (
-            <button type="button" className={TEXT_BUTTON_CLASS}>
+            <button
+              type="button"
+              disabled={!onCreatePlaylist || selectedTagIds.length === 0 || isCreatingPlaylist}
+              onClick={onCreatePlaylist}
+              className={cn(
+                TEXT_BUTTON_CLASS,
+                "disabled:cursor-not-allowed disabled:text-custom-text-400 disabled:opacity-50"
+              )}
+            >
               <ListPlus className="h-3.5 w-3.5" />
-              <span>Create Playlist</span>
+              <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
             </button>
           )}
         </div>

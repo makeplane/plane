@@ -50,6 +50,7 @@ type SgEventTimelinePanelProps = {
   isMediaLoading: boolean;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onResetPlayback: () => void;
+  onToggleTagSelection: (tagId: string) => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
   playerLabelByNumber: Map<string, string>;
@@ -579,6 +580,7 @@ export const SgEventTimelinePanel = ({
   isMediaLoading,
   onPlayTagRow,
   onResetPlayback,
+  onToggleTagSelection,
   playerDurationSeconds,
   playheadSeconds,
   playerLabelByNumber,
@@ -1000,6 +1002,11 @@ export const SgEventTimelinePanel = ({
                           type="button"
                           onClick={() => {
                             handlePlayTimelineRow(row);
+                          }}
+                          onDoubleClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            onToggleTagSelection(row.id);
                           }}
                           className={cn(
                             "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",

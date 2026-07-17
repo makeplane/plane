@@ -182,7 +182,7 @@ export const MatrixTable = ({
         className="min-w-max border-separate border-spacing-0 bg-[var(--sg-matrix-cell-empty)]"
       >
         <caption className="sr-only">
-          {data.sport} tag matrix. Select a populated cell to open its tags and include it in a playlist.
+          {data.sport} tag matrix. Select populated cells to include tags in a playlist.
         </caption>
         <MatrixHeader
           columnStartIndex={columnStart}
