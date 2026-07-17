@@ -555,7 +555,7 @@ const SgMatrixPlaylistPanel = ({
 
       {rows.length === 0 ? (
         <div className="flex min-h-0 flex-1 items-start px-3 py-3 text-left text-xs leading-5 text-[var(--sg-matrix-text-muted)]">
-          Select populated cells in the matrix to build a playlist.
+          Select tags or populated matrix cells to build a playlist.
         </div>
       ) : (
         <ul className="vertical-scrollbar scrollbar-md min-h-0 flex-1 space-y-1.5 overflow-y-auto p-1.5">
@@ -600,7 +600,6 @@ const SgMatrixPlaylistPanel = ({
 
 export const SgEventDetailPage = ({
   enableMatrixView = false,
-  showTagListActions = true,
   issue,
   mediaItem = null,
   projectId,
@@ -1105,6 +1104,14 @@ export const SgEventDetailPage = ({
   const handleCreateMatrixPlaylist = useCallback(
     async (rows: SgTagRow[]) => {
       if (isCreatingMatrixPlaylist) return;
+      if (rows.length === 0) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "No tags selected",
+          message: "Select one or more tags before creating a playlist.",
+        });
+        return;
+      }
       const streamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
       setIsCreatingMatrixPlaylist(true);
 
@@ -1179,7 +1186,15 @@ export const SgEventDetailPage = ({
     ? activePlaybackOverride.id.slice("sg-tag-".length)
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
-  const playlistPanelRows = focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id));
+  const selectedPlaylistRows = useMemo(() => {
+    const selectedIdSet = new Set(selectedTagIds);
+    return tagRowsWithThumbnails.filter((row) => selectedIdSet.has(row.id) && !removedTagIds.includes(row.id));
+  }, [removedTagIds, selectedTagIds, tagRowsWithThumbnails]);
+  const focusedPlaylistRows = useMemo(
+    () => focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id)),
+    [focusedMatrixRows, removedTagIds]
+  );
+  const playlistPanelRows = selectedPlaylistRows.length > 0 ? selectedPlaylistRows : focusedPlaylistRows;
   const isMatrixWorkspaceMode = enableMatrixView && tagViewMode === "matrix";
   const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
@@ -1207,27 +1222,27 @@ export const SgEventDetailPage = ({
             viewDevices={viewDevices}
           />
 
+          <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+            <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+              <SgEventVideoPlayer
+                item={playbackItem}
+                compactEmpty={!hasPlayableVideo}
+                onPlaybackTimeChange={handlePlaybackTimeChange}
+                seekToSeconds={pendingSeekSeconds}
+              />
+            </div>
+            <SgMatrixPlaylistPanel
+              activeRowId={activeMatrixRowId}
+              isCreatingPlaylist={isCreatingMatrixPlaylist}
+              onCreateCard={() => handleCreateMatrixCard(playlistPanelRows)}
+              onCreatePlaylist={() => void handleCreateMatrixPlaylist(playlistPanelRows)}
+              onPlayTagRow={handlePlayTagRow}
+              rows={playlistPanelRows}
+            />
+          </div>
+
           {isMatrixWorkspaceMode ? (
             <>
-              <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
-                <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
-                  <SgEventVideoPlayer
-                    item={playbackItem}
-                    compactEmpty={!hasPlayableVideo}
-                    onPlaybackTimeChange={handlePlaybackTimeChange}
-                    seekToSeconds={pendingSeekSeconds}
-                  />
-                </div>
-                <SgMatrixPlaylistPanel
-                  activeRowId={activeMatrixRowId}
-                  isCreatingPlaylist={isCreatingMatrixPlaylist}
-                  onCreateCard={() => handleCreateMatrixCard(playlistPanelRows)}
-                  onCreatePlaylist={() => void handleCreateMatrixPlaylist(playlistPanelRows)}
-                  onPlayTagRow={handlePlayTagRow}
-                  rows={playlistPanelRows}
-                />
-              </div>
-
               <div className="flex flex-col gap-2">
                 <MatrixView
                   activeRowId={activeMatrixRowId}
@@ -1250,15 +1265,6 @@ export const SgEventDetailPage = ({
             </>
           ) : (
             <>
-              <div className="min-w-0">
-                <SgEventVideoPlayer
-                  item={playbackItem}
-                  compactEmpty={!hasPlayableVideo}
-                  onPlaybackTimeChange={handlePlaybackTimeChange}
-                  seekToSeconds={pendingSeekSeconds}
-                />
-              </div>
-
               <div className="min-w-0">
                 <div className="flex flex-col gap-3">
                   <SgEventTitleBar
