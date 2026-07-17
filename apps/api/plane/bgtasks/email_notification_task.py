@@ -166,10 +166,16 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
 
             # Fall back to the configured web URL if the cached origin is missing
             if not base_api:
-                logging.getLogger("plane.worker").warning(
-                    f"Redis origin key missing for issue {issue_id}; falling back to WEB_URL for email notification links"
-                )
                 base_api = settings.WEB_URL
+                if not base_api:
+                    logging.getLogger("plane.worker").error(
+                        f"Redis origin key missing for issue {issue_id} and settings.WEB_URL is also unset; "
+                        "email notification links may be malformed"
+                    )
+                else:
+                    logging.getLogger("plane.worker").warning(
+                        f"Redis origin key missing for issue {issue_id}; falling back to WEB_URL for email notification links"
+                    )
 
             data = create_payload(notification_data=notification_data)
 
