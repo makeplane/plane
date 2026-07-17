@@ -3,7 +3,7 @@ import test from "node:test";
 
 // Node's type-stripping test runner requires explicit TypeScript extensions.
 // @ts-expect-error See comment above.
-import { getTimelineCategoryLaneId, getTimelineRowLaneIds } from "../timeline-track-assignment.ts";
+import { getTimelineCategoryLaneId, getTimelineRowLaneIds } from "../utils/timeline-track-assignment.ts";
 
 const footballCategoryLanes = [
   {
