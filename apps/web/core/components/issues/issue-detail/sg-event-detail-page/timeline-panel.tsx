@@ -32,6 +32,7 @@ import {
   getTimelineScaleLabel,
   getTimelineTagEndSeconds,
   getTimelineTimePixel,
+  isTimelineTagPlaybackOverrideId,
 } from "./timeline-scale";
 import {
   buildTimelinePlayerLaneId,
@@ -529,7 +530,7 @@ const buildSortedTimelineRows = (rows: SgTagRow[], rowPlacements: Record<string,
 const buildTagPlaybackOverrideId = (row: SgTagRow) => `sg-tag-${row.id}`;
 
 const getPlaybackOverrideRowId = (playbackOverrideId: string | null) =>
-  playbackOverrideId?.startsWith("sg-tag-") ? playbackOverrideId.slice("sg-tag-".length) : null;
+  isTimelineTagPlaybackOverrideId(playbackOverrideId) ? playbackOverrideId?.slice("sg-tag-".length) ?? null : null;
 
 const buildPlayerLanes = (rows: SgTagRow[], playerLabelByNumber: Map<string, string>) => {
   const playerCounts = rows.reduce<Map<string, number>>((accumulator, row) => {
@@ -594,7 +595,7 @@ export const SgEventTimelinePanel = ({
   const playheadElementRef = useRef<HTMLDivElement | null>(null);
   const previousPlayheadSecondsRef = useRef(playheadSeconds);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
-  const isTagClipActive = activePlaybackOverrideId?.startsWith("sg-tag-") ?? false;
+  const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
   const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
   const timelineDurationSeconds = isTagClipActive ? fullStreamDurationSecondsRef.current : playerDurationSeconds;
   const tagTypeOptions = useMemo(() => buildTimelineTagTypeOptions(rows, sport), [rows, sport]);

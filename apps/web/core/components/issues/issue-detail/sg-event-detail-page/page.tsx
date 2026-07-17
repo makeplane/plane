@@ -22,7 +22,15 @@ import { buildMatrixPlaylistItem, createMatrixPlaylist } from "./matrix-view/uti
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-panel";
 import { SgEventTimelinePanel } from "./timeline-panel";
-import type { RowFilterMode, SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
+import { getTimelinePanelInputPlayheadSeconds, isTimelineTagPlaybackOverrideId } from "./timeline-scale";
+import type {
+  RowFilterMode,
+  SgEventDetailPageProps,
+  SgEventTagViewMode,
+  SgIssue,
+  SgTagRow,
+  SgTagRowEditPayload,
+} from "./types";
 import {
   asArray,
   asRecord,
@@ -631,8 +639,10 @@ export const SgEventDetailPage = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedViewId, setSelectedViewId] = useState<string>("");
   const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
-  const [isCreatingMatrixPlaylist, setIsCreatingMatrixPlaylist] = useState(false);
+  const [isListExpanded, setIsListExpanded] = useState(false);
   const [focusedMatrixRows, setFocusedMatrixRows] = useState<SgTagRow[]>([]);
+  const [isCreatingMatrixPlaylist, setIsCreatingMatrixPlaylist] = useState(false);
+  const [editedTagRowsById, setEditedTagRowsById] = useState<Record<string, Partial<SgTagRow>>>({});
 
   const mediaMeta = asRecord(mediaItem?.meta);
   const cpServerBaseUrl = useMemo(() => getCpServerBaseUrl(), []);
@@ -748,10 +758,12 @@ export const SgEventDetailPage = ({
   const tagRowsWithThumbnails = useMemo(
     () =>
       tagRows.map((row) => {
-        const thumbnailUrl = resolveTagRowArtifactThumbnail(row, mediaThumbnailLookup, cpServerBaseUrl);
-        return thumbnailUrl && thumbnailUrl !== row.thumbnailUrl ? { ...row, thumbnailUrl } : row;
+        const editedRow = editedTagRowsById[row.id];
+        const mergedRow = editedRow ? { ...row, ...editedRow } : row;
+        const thumbnailUrl = resolveTagRowArtifactThumbnail(mergedRow, mediaThumbnailLookup, cpServerBaseUrl);
+        return thumbnailUrl && thumbnailUrl !== mergedRow.thumbnailUrl ? { ...mergedRow, thumbnailUrl } : mergedRow;
       }),
-    [cpServerBaseUrl, mediaThumbnailLookup, tagRows]
+    [cpServerBaseUrl, editedTagRowsById, mediaThumbnailLookup, tagRows]
   );
   const payloadViewDevices = useMemo(() => buildEventPayloadDevices(eventPayload), [eventPayload]);
   const viewDevices = sgEventDevices && sgEventDevices.length > 0 ? sgEventDevices : payloadViewDevices;
@@ -773,6 +785,12 @@ export const SgEventDetailPage = ({
       setSelectedGroupValue(availableGroups[0]);
     }
   }, [availableGroups, selectedGroupValue]);
+
+  useEffect(() => {
+    if (tagViewMode !== "list" && isListExpanded) {
+      setIsListExpanded(false);
+    }
+  }, [isListExpanded, tagViewMode]);
 
   useEffect(() => {
     const primaryVideo = sgMediaPayload?.videoItems?.[0];
@@ -870,7 +888,8 @@ export const SgEventDetailPage = ({
     return null;
   }, [activePlaybackOverride, activeVideo, fullStreamPlaybackItem]);
   const hasPlayableVideo = Boolean(playbackItem);
-  const isTagClipActive = Boolean(activePlaybackOverride);
+  const activePlaybackOverrideId = activePlaybackOverride?.id ?? null;
+  const isPlaybackOverrideActive = Boolean(activePlaybackOverride);
   const filteredRows = useMemo(
     () =>
       tagRowsWithThumbnails.filter((row) => {
@@ -986,6 +1005,21 @@ export const SgEventDetailPage = ({
     setActiveTimelineTagId((currentValue) => (currentValue === tagId ? null : currentValue));
     setSelectedTagIds((currentValue) => currentValue.filter((id) => id !== tagId));
     setFavoriteTagIds((currentValue) => currentValue.filter((id) => id !== tagId));
+  };
+
+  const handleUpdateTag = (tagId: string, updates: SgTagRowEditPayload) => {
+    setEditedTagRowsById((currentValue) => ({
+      ...currentValue,
+      [tagId]: {
+        ...(currentValue[tagId] ?? {}),
+        ...updates,
+      },
+    }));
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Tag updated",
+      message: "The list row has been updated.",
+    });
   };
 
   const handleSwitchToFullStream = useCallback(() => {
@@ -1178,8 +1212,8 @@ export const SgEventDetailPage = ({
           : matrixRows.length === 0 && sgMediaError
             ? "Unable to load the event media required for Matrix View."
             : null;
-  const activeMatrixRowId = activePlaybackOverride?.id.startsWith("sg-tag-")
-    ? activePlaybackOverride.id.slice("sg-tag-".length)
+  const activeMatrixRowId = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId)
+    ? activePlaybackOverrideId?.slice("sg-tag-".length) ?? null
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
   const playlistPanelRows = focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id));
@@ -1188,6 +1222,12 @@ export const SgEventDetailPage = ({
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
+  const isExpandedListView = tagViewMode === "list" && isListExpanded;
+  const timelinePanelPlayheadSeconds = getTimelinePanelInputPlayheadSeconds({
+    playbackOverrideId: activePlaybackOverrideId,
+    playheadBaseSeconds,
+    playerLocalSeconds,
+  });
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
@@ -1201,7 +1241,7 @@ export const SgEventDetailPage = ({
             handleSwitchToFullStream={handleSwitchToFullStream}
             isMatrixViewEnabled={enableMatrixView}
             isLoadingViews={isLoadingViews}
-            isTagClipActive={isTagClipActive}
+            isTagClipActive={isPlaybackOverrideActive}
             selectedViewId={selectedViewId}
             selectedViewLabel={selectedViewLabel}
             setSelectedViewId={setSelectedViewId}
@@ -1253,40 +1293,46 @@ export const SgEventDetailPage = ({
             </>
           ) : (
             <>
-              <div className="min-w-0">
-                <SgEventVideoPlayer
-                  item={playbackItem}
-                  compactEmpty={!hasPlayableVideo}
-                  onPlaybackTimeChange={handlePlaybackTimeChange}
-                  seekToSeconds={pendingSeekSeconds}
-                />
-              </div>
+              {!isExpandedListView && (
+                <div className="min-w-0">
+                  <SgEventVideoPlayer
+                    item={playbackItem}
+                    compactEmpty={!hasPlayableVideo}
+                    onPlaybackTimeChange={handlePlaybackTimeChange}
+                    seekToSeconds={pendingSeekSeconds}
+                  />
+                </div>
+              )}
 
               <div className="min-w-0">
                 <div className="flex flex-col gap-3">
-                  <SgEventTitleBar
-                    eventStatus={eventStatus}
-                    eventTitle={eventTitle}
-                    handleSwitchToFullStream={handleSwitchToFullStream}
-                    isTagClipActive={isTagClipActive}
-                  />
+                  {!isExpandedListView && (
+                    <>
+                      <SgEventTitleBar
+                        eventStatus={eventStatus}
+                        eventTitle={eventTitle}
+                        handleSwitchToFullStream={handleSwitchToFullStream}
+                        isTagClipActive={isPlaybackOverrideActive}
+                      />
 
-                  <SgEventDetailsCard
-                    eventDateTimeLabel={eventDateTimeLabel}
-                    levelLabel={levelLabel}
-                    venueAddress={venueAddress}
-                    venueName={venueName}
-                  />
+                      <SgEventDetailsCard
+                        eventDateTimeLabel={eventDateTimeLabel}
+                        levelLabel={levelLabel}
+                        venueAddress={venueAddress}
+                        venueName={venueName}
+                      />
+                    </>
+                  )}
 
                   {tagViewMode === "timeline" ? (
                     <SgEventTimelinePanel
-                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      activePlaybackOverrideId={activePlaybackOverrideId}
                       activeTagRowId={activeTimelineTagId}
                       isMediaLoading={isTagRowsLoading}
                       onPlayTagRow={handlePlayTagRow}
                       onResetPlayback={handleResetTimelinePlayback}
                       playerDurationSeconds={playerDurationSeconds}
-                      playheadSeconds={playheadBaseSeconds + playerLocalSeconds}
+                      playheadSeconds={timelinePanelPlayheadSeconds}
                       rows={filteredRows}
                       selectedTagIds={selectedTagIds}
                       sport={sportTableConfig.sport}
@@ -1301,14 +1347,16 @@ export const SgEventDetailPage = ({
                             ? "Favorites only"
                             : "Selected rows"
                       }
-                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      activePlaybackOverrideId={activePlaybackOverrideId}
                       allVisibleSelected={allVisibleSelected}
                       availableGroups={availableGroups}
                       clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
                       effectiveGroupValue={effectiveGroupValue}
                       favoriteTagIds={favoriteTagIds}
                       isMediaLoading={isTagRowsLoading}
+                      isExpanded={isExpandedListView}
                       isSearchOpen={isSearchOpen}
+                      onToggleExpanded={() => setIsListExpanded((currentValue) => !currentValue)}
                       onPlayTagRow={handlePlayTagRow}
                       onRemoveTag={handleRemoveTag}
                       onRowFilterModeChange={setRowFilterMode}
@@ -1318,10 +1366,12 @@ export const SgEventDetailPage = ({
                       onToggleFavorite={handleToggleFavorite}
                       onToggleSearch={handleToggleSearch}
                       onToggleTagSelection={handleToggleTagSelection}
+                      onUpdateTag={handleUpdateTag}
                       rowFilterMode={rowFilterMode}
                       rows={filteredRows}
                       searchQuery={searchQuery}
                       selectedTagIds={selectedTagIds}
+                      showCreateActions={showTagListActions}
                       sportTableConfig={sportTableConfig}
                     />
                   )}

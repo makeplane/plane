@@ -1,10 +1,23 @@
-import { useMemo, useState } from "react";
-import { Check, ChevronDown, Columns3, ListPlus, Plus, Search, Star, Trash2, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Check,
+  ChevronDown,
+  Columns3,
+  ListPlus,
+  Maximize2,
+  Minimize2,
+  Pencil,
+  Plus,
+  Search,
+  Star,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
-import { CustomMenu, CustomSelect } from "@plane/ui";
+import { CustomMenu, CustomSelect, EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ICON_BUTTON_CLASS, ROW_FILTER_LABELS, SURFACE_CLASS } from "./constants";
-import type { RowFilterMode, SgTagRow, SportTableConfig } from "./types";
+import type { RowFilterMode, SgTagRow, SgTagRowEditPayload, SportTableConfig, SportTableKind } from "./types";
 import { formatLooseLabel, parseTimecodeToSeconds } from "./utils";
 
 type SgEventTagsPanelProps = {
@@ -16,7 +29,9 @@ type SgEventTagsPanelProps = {
   effectiveGroupValue: string;
   favoriteTagIds: string[];
   isMediaLoading: boolean;
+  isExpanded?: boolean;
   isSearchOpen: boolean;
+  onToggleExpanded?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onRemoveTag: (tagId: string) => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
@@ -26,6 +41,7 @@ type SgEventTagsPanelProps = {
   onToggleFavorite: (tagId: string) => void;
   onToggleSearch: () => void;
   onToggleTagSelection: (tagId: string) => void;
+  onUpdateTag: (tagId: string, updates: SgTagRowEditPayload) => void;
   rowFilterMode: RowFilterMode;
   rows: SgTagRow[];
   searchQuery: string;
@@ -38,8 +54,65 @@ const TEXT_BUTTON_CLASS =
   "inline-flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-xs font-medium text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
 
 const CONTEXT_COLUMN_PREFIX = "context:";
-const DEFAULT_VISIBLE_COLUMN_KEYS = ["duration", "player", "groupValue", "action", "primaryDetail", "result"];
-const COLUMN_GROUP_ORDER = ["Core", "Sport", "Source", "Raw tag data"];
+const getContextColumnKey = (key: string) => `${CONTEXT_COLUMN_PREFIX}${key}`;
+
+const STANDARD_RAW_TAG_COLUMNS = [
+  { key: "sport", label: "Sport", width: "minmax(130px, 0.85fr)" },
+  { key: "quarter", label: "Quarter", width: "minmax(120px, 0.8fr)" },
+  { key: "distance", label: "Distance", width: "minmax(110px, 0.75fr)" },
+  { key: "down", label: "Down", width: "minmax(96px, 0.65fr)" },
+  { key: "drive_number", label: "Drive Number", width: "minmax(140px, 0.9fr)" },
+  { key: "game_clock_seconds", label: "Game Clock Seconds", width: "minmax(170px, 1.05fr)" },
+  { key: "period", label: "Period", width: "minmax(110px, 0.75fr)" },
+  { key: "play_number", label: "Play Number", width: "minmax(130px, 0.85fr)" },
+  { key: "possession_team", label: "Possession Team", width: "minmax(165px, 1fr)" },
+  { key: "primary_actor_number", label: "Primary Actor Number", width: "minmax(185px, 1.1fr)" },
+  { key: "qb", label: "Qb", width: "minmax(120px, 0.8fr)" },
+  { key: "rosters", label: "Rosters", width: "minmax(130px, 0.85fr)" },
+  { key: "score_away", label: "Score Away", width: "minmax(130px, 0.85fr)" },
+  { key: "score_home", label: "Score Home", width: "minmax(130px, 0.85fr)" },
+  { key: "yard_line", label: "Yard Line", width: "minmax(125px, 0.8fr)" },
+  { key: "yards_gained", label: "Yards Gained", width: "minmax(140px, 0.9fr)" },
+  { key: "home_team", label: "Home Team", width: "minmax(140px, 0.9fr)" },
+  { key: "away_team", label: "Away Team", width: "minmax(140px, 0.9fr)" },
+  { key: "field_position", label: "Field Position", width: "minmax(150px, 0.95fr)" },
+  { key: "play_type", label: "Play Type", width: "minmax(135px, 0.9fr)" },
+  { key: "formation", label: "Formation", width: "minmax(130px, 0.85fr)" },
+  { key: "personnel", label: "Personnel", width: "minmax(130px, 0.85fr)" },
+  { key: "coverage", label: "Coverage", width: "minmax(130px, 0.85fr)" },
+  { key: "blitz", label: "Blitz", width: "minmax(96px, 0.65fr)" },
+  { key: "penalty", label: "Penalty", width: "minmax(130px, 0.85fr)" },
+  { key: "penalty_yards", label: "Penalty Yards", width: "minmax(145px, 0.9fr)" },
+] as const;
+const STANDARD_RAW_TAG_CONTEXT_KEYS: ReadonlySet<string> = new Set(
+  STANDARD_RAW_TAG_COLUMNS.map((column) => column.key)
+);
+const DEFAULT_VISIBLE_COLUMN_KEYS = [
+  "duration",
+  "player",
+  "groupValue",
+  "action",
+  "primaryDetail",
+  "result",
+  "team",
+  "timecode",
+  "clipId",
+  "sourceTagId",
+  "playlistTimestamp",
+  ...STANDARD_RAW_TAG_COLUMNS.map((column) => getContextColumnKey(column.key)),
+];
+const COLUMN_GROUP_ORDER = ["Core", "Sport", "Source", "Raw tag data"] as const;
+
+const EDITABLE_TAG_FIELDS: Array<{ key: keyof SgTagRowEditPayload; label: string; placeholder: string }> = [
+  { key: "player", label: "Player", placeholder: "Player" },
+  { key: "groupValue", label: "Group", placeholder: "Group" },
+  { key: "action", label: "Action", placeholder: "Action" },
+  { key: "primaryDetail", label: "Primary detail", placeholder: "Primary detail" },
+  { key: "secondaryDetail", label: "Secondary detail", placeholder: "Secondary detail" },
+  { key: "result", label: "Result", placeholder: "Result" },
+  { key: "team", label: "Team", placeholder: "Team" },
+  { key: "timecode", label: "Timecode", placeholder: "00:00-00:05" },
+];
 
 const TagsFilterIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none" className={className}>
@@ -63,6 +136,8 @@ type SgTagColumn = {
   width: string;
 };
 
+const BASKETBALL_FALLBACK_DURATION_SECONDS = 5;
+
 const formatDuration = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.round(seconds));
   const hours = Math.floor(safeSeconds / 3600);
@@ -76,7 +151,7 @@ const formatDuration = (seconds: number) => {
   return [minutes, remainingSeconds].map((value) => String(value).padStart(2, "0")).join(":");
 };
 
-const getClipDuration = (row: SgTagRow) => {
+const getClipDuration = (row: SgTagRow, sport: SportTableKind) => {
   if (
     typeof row.clipDurationSeconds === "number" &&
     Number.isFinite(row.clipDurationSeconds) &&
@@ -104,16 +179,189 @@ const getClipDuration = (row: SgTagRow) => {
     }
   }
 
+  if (sport === "basketball") {
+    return formatDuration(BASKETBALL_FALLBACK_DURATION_SECONDS);
+  }
+
+  return "--";
+};
+
+const getDisplayTimecode = (row: SgTagRow, sport: SportTableKind) => {
+  if (row.timecode && row.timecode !== "--") return row.timecode;
+  if (sport === "basketball" && row.primaryDetail && row.primaryDetail !== "--") {
+    return `Game ${row.primaryDetail}`;
+  }
+
   return "--";
 };
 
 const displayCellValue = (value: string) => (value && value !== "--" ? value : "--");
 
-const getContextColumnKey = (key: string) => `${CONTEXT_COLUMN_PREFIX}${key}`;
-
 const getContextKeyFromColumnKey = (key: string) => key.slice(CONTEXT_COLUMN_PREFIX.length);
 
 const formatColumnLabel = (key: string) => formatLooseLabel(key.replace(/_/g, " "));
+
+const getStableRawColumnNumber = (row: SgTagRow, key: string) => {
+  const seed = [row.sourceTagId, row.clipId, row.id, row.timecode, row.action, key].filter(Boolean).join("|");
+  let hash = 0;
+
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash << 5) - hash + seed.charCodeAt(index);
+    hash |= 0;
+  }
+
+  return Math.abs(hash);
+};
+
+const getRealCellValue = (value: string | null | undefined) => (value && value !== "--" ? value : "");
+
+const getFallbackTeamValue = (row: SgTagRow, hash: number) => getRealCellValue(row.team) || `Team ${(hash % 2) + 1}`;
+
+const getSportLabel = (sport: SportTableConfig["sport"]) =>
+  sport === "american-football" ? "American Football" : formatColumnLabel(sport);
+
+const buildFakeRawTagValue = (row: SgTagRow, key: string, label: string, sportLabel: string) => {
+  const hash = getStableRawColumnNumber(row, key);
+  const teamValue = getFallbackTeamValue(row, hash);
+
+  switch (key) {
+    case "sport":
+      return sportLabel;
+    case "quarter":
+      return getRealCellValue(row.groupValue) || `Quarter ${(hash % 4) + 1}`;
+    case "distance":
+      return String((hash % 20) + 1);
+    case "down":
+      return String((hash % 4) + 1);
+    case "drive_number":
+      return String((hash % 16) + 1);
+    case "game_clock_seconds":
+      return String((hash % 900) + 1);
+    case "period":
+      return getRealCellValue(row.matrixPeriod) || getRealCellValue(row.groupValue) || String((hash % 4) + 1);
+    case "play_number":
+      return String((hash % 160) + 1);
+    case "possession_team":
+      return teamValue;
+    case "primary_actor_number":
+      return String((hash % 99) + 1);
+    case "qb":
+      return getRealCellValue(row.player) || `QB ${(hash % 99) + 1}`;
+    case "rosters":
+      return `Roster ${(hash % 6) + 1}`;
+    case "score_away":
+    case "score_home":
+      return String(hash % 45);
+    case "yard_line":
+      return String((hash % 50) + 1);
+    case "yards_gained":
+      return String((hash % 31) - 10);
+    case "home_team":
+      return `Home ${teamValue}`;
+    case "away_team":
+      return `Away Team ${(hash % 2) + 1}`;
+    case "field_position":
+      return `${teamValue} ${(hash % 50) + 1}`;
+    case "play_type":
+      return getRealCellValue(row.action) || `Play Type ${(hash % 12) + 1}`;
+    case "formation":
+      return `Formation ${(hash % 8) + 1}`;
+    case "personnel":
+      return `${(hash % 3) + 1}${(hash % 4) + 1} personnel`;
+    case "coverage":
+      return `Coverage ${(hash % 6) + 1}`;
+    case "blitz":
+      return hash % 2 === 0 ? "Yes" : "No";
+    case "penalty":
+      return hash % 3 === 0 ? "Holding" : "None";
+    case "penalty_yards":
+      return hash % 3 === 0 ? "5" : "0";
+    default:
+      return `${label} ${(hash % 100) + 1}`;
+  }
+};
+
+const getRawTagColumnValue = (row: SgTagRow, key: string, label: string, sportLabel: string) =>
+  getRealCellValue(row.context[key]) || buildFakeRawTagValue(row, key, label, sportLabel);
+
+const buildEditDraft = (row: SgTagRow): SgTagRowEditPayload => ({
+  action: row.action,
+  groupValue: row.groupValue,
+  player: row.player,
+  primaryDetail: row.primaryDetail,
+  result: row.result,
+  secondaryDetail: row.secondaryDetail,
+  team: row.team,
+  timecode: row.timecode,
+});
+
+type EditTagRowModalProps = {
+  draft: SgTagRowEditPayload;
+  isOpen: boolean;
+  onChange: (key: keyof SgTagRowEditPayload, value: string) => void;
+  onClose: () => void;
+  onSubmit: () => void;
+  row: SgTagRow | null;
+};
+
+const EditTagRowModal = ({ draft, isOpen, onChange, onClose, onSubmit, row }: EditTagRowModalProps) => (
+  <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <div className="border-b border-custom-border-200 px-5 py-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h3 className="text-lg font-semibold text-custom-text-100">Edit tag row</h3>
+          <p className="mt-1 truncate text-sm text-custom-text-300">
+            {row ? `${row.action || "Tag"} · ${row.timecode || "No timecode"}` : "Update row details"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md p-1.5 text-custom-text-400 transition-colors hover:bg-custom-background-90 hover:text-custom-text-200"
+          aria-label="Close edit tag row modal"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
+      <div className="grid gap-4 p-5 md:grid-cols-2">
+        {EDITABLE_TAG_FIELDS.map((field) => (
+          <div key={field.key} className="space-y-2">
+            <label className="text-xs font-medium uppercase tracking-wide text-custom-text-400">{field.label}</label>
+            <Input
+              value={draft[field.key]}
+              onChange={(event) => onChange(field.key, event.target.value)}
+              placeholder={field.placeholder}
+              className="w-full border-custom-border-200 bg-custom-background-100"
+              autoFocus={field.key === "player"}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-end gap-2 border-t border-custom-border-200 px-5 py-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-8 items-center rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm font-medium text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="inline-flex h-8 items-center rounded-md bg-custom-primary-100 px-3 text-sm font-medium text-white transition-colors hover:bg-custom-primary-200"
+        >
+          Save changes
+        </button>
+      </div>
+    </form>
+  </ModalCore>
+);
 
 export const SgEventTagsPanel = ({
   activeFilterLabel,
@@ -124,7 +372,9 @@ export const SgEventTagsPanel = ({
   effectiveGroupValue,
   favoriteTagIds,
   isMediaLoading,
+  isExpanded = false,
   isSearchOpen,
+  onToggleExpanded,
   onPlayTagRow,
   onRemoveTag,
   onRowFilterModeChange,
@@ -134,6 +384,7 @@ export const SgEventTagsPanel = ({
   onToggleFavorite,
   onToggleSearch,
   onToggleTagSelection,
+  onUpdateTag,
   rowFilterMode,
   rows,
   searchQuery,
@@ -148,11 +399,22 @@ export const SgEventTagsPanel = ({
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<string[]>(DEFAULT_VISIBLE_COLUMN_KEYS);
   const [columnSearchQuery, setColumnSearchQuery] = useState("");
   const [collapsedColumnGroups, setCollapsedColumnGroups] = useState<Record<string, boolean>>({});
+  const [editingRow, setEditingRow] = useState<SgTagRow | null>(null);
+  const [editDraft, setEditDraft] = useState<SgTagRowEditPayload>(() => ({
+    action: "",
+    groupValue: "",
+    player: "",
+    primaryDetail: "",
+    result: "",
+    secondaryDetail: "",
+    team: "",
+    timecode: "",
+  }));
 
   const baseColumnDefinitions = useMemo<SgTagColumn[]>(
     () => [
       {
-        getValue: getClipDuration,
+        getValue: (row) => getClipDuration(row, sportTableConfig.sport),
         group: "Core",
         isDefaultVisible: true,
         key: "duration",
@@ -202,13 +464,15 @@ export const SgEventTagsPanel = ({
       {
         getValue: (row) => row.team,
         group: "Source",
+        isDefaultVisible: true,
         key: "team",
         label: "Team",
         width: "minmax(120px, 0.8fr)",
       },
       {
-        getValue: (row) => row.timecode,
+        getValue: (row) => getDisplayTimecode(row, sportTableConfig.sport),
         group: "Source",
+        isDefaultVisible: true,
         key: "timecode",
         label: "Timecode",
         width: "minmax(140px, 0.9fr)",
@@ -216,6 +480,7 @@ export const SgEventTagsPanel = ({
       {
         getValue: (row) => row.clipId ?? "--",
         group: "Source",
+        isDefaultVisible: true,
         key: "clipId",
         label: "Clip ID",
         width: "minmax(160px, 1fr)",
@@ -223,6 +488,7 @@ export const SgEventTagsPanel = ({
       {
         getValue: (row) => row.sourceTagId ?? "--",
         group: "Source",
+        isDefaultVisible: true,
         key: "sourceTagId",
         label: "Source tag ID",
         width: "minmax(160px, 1fr)",
@@ -230,6 +496,7 @@ export const SgEventTagsPanel = ({
       {
         getValue: (row) => row.playlistTimestamp ?? "--",
         group: "Source",
+        isDefaultVisible: true,
         key: "playlistTimestamp",
         label: "Playlist timestamp",
         width: "minmax(190px, 1.2fr)",
@@ -241,13 +508,27 @@ export const SgEventTagsPanel = ({
       sportTableConfig.actionLabel,
       sportTableConfig.groupByLabel,
       sportTableConfig.playerLabel,
+      sportTableConfig.sport,
     ]
   );
+  const standardRawTagColumnDefinitions = useMemo<SgTagColumn[]>(() => {
+    const sportLabel = getSportLabel(sportTableConfig.sport);
+
+    return STANDARD_RAW_TAG_COLUMNS.map((column) => ({
+      getValue: (row: SgTagRow) => getRawTagColumnValue(row, column.key, column.label, sportLabel),
+      group: "Raw tag data",
+      isDefaultVisible: true,
+      key: getContextColumnKey(column.key),
+      label: column.label,
+      width: column.width,
+    }));
+  }, [sportTableConfig.sport]);
   const contextColumnDefinitions = useMemo<SgTagColumn[]>(() => {
     const contextKeys = new Set<string>();
 
     rows.forEach((row) => {
       Object.entries(row.context).forEach(([key, value]) => {
+        if (STANDARD_RAW_TAG_CONTEXT_KEYS.has(key)) return;
         if (value && value !== "--") contextKeys.add(key);
       });
     });
@@ -267,8 +548,8 @@ export const SgEventTagsPanel = ({
       });
   }, [rows]);
   const columnDefinitions = useMemo(
-    () => [...baseColumnDefinitions, ...contextColumnDefinitions],
-    [baseColumnDefinitions, contextColumnDefinitions]
+    () => [...baseColumnDefinitions, ...standardRawTagColumnDefinitions, ...contextColumnDefinitions],
+    [baseColumnDefinitions, contextColumnDefinitions, standardRawTagColumnDefinitions]
   );
   const visibleColumns = useMemo(() => {
     const visibleColumnKeySet = new Set(visibleColumnKeys);
@@ -293,9 +574,48 @@ export const SgEventTagsPanel = ({
   );
   const selectedAvailableColumnCount = visibleColumns.length;
   const totalColumnCount = columnDefinitions.length;
+  const isEditModalOpen = Boolean(editingRow);
+  const editingRowId = editingRow?.id;
+
+  useEffect(() => {
+    if (!editingRowId) return;
+    const latestRow = rows.find((row) => row.id === editingRowId);
+    if (latestRow) {
+      setEditingRow(latestRow);
+      setEditDraft(buildEditDraft(latestRow));
+    }
+  }, [editingRowId, rows]);
+
+  const openEditModal = (row: SgTagRow) => {
+    setEditingRow(row);
+    setEditDraft(buildEditDraft(row));
+  };
+
+  const closeEditModal = () => {
+    setEditingRow(null);
+  };
+
+  const updateEditDraft = (key: keyof SgTagRowEditPayload, value: string) => {
+    setEditDraft((currentValue) => ({ ...currentValue, [key]: value }));
+  };
+
+  const submitEditDraft = () => {
+    if (!editingRow) return;
+    onUpdateTag(editingRow.id, editDraft);
+    closeEditModal();
+  };
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
+      <EditTagRowModal
+        draft={editDraft}
+        isOpen={isEditModalOpen}
+        onChange={updateEditDraft}
+        onClose={closeEditModal}
+        onSubmit={submitEditDraft}
+        row={editingRow}
+      />
+
       <div className="flex flex-col gap-3 border-b border-custom-border-200 px-3 py-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-sm font-medium text-custom-text-100">Group by :</span>
@@ -325,6 +645,19 @@ export const SgEventTagsPanel = ({
               <Plus className="h-3.5 w-3.5" />
               <span>Create Card</span>
             </button>
+          )}
+          {onToggleExpanded && (
+            <Tooltip tooltipContent={isExpanded ? "Collapse list" : "Expand list"} isMobile={false}>
+              <button
+                type="button"
+                onClick={onToggleExpanded}
+                className={ICON_BUTTON_CLASS}
+                aria-label={isExpanded ? "Collapse list" : "Expand list"}
+                aria-pressed={isExpanded}
+              >
+                {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </button>
+            </Tooltip>
           )}
           {isSearchOpen && (
             <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-300">
@@ -399,7 +732,12 @@ export const SgEventTagsPanel = ({
         </div>
       </div>
 
-      <div className="vertical-scrollbar horizontal-scrollbar scrollbar-lg max-h-[520px] min-h-52 overflow-auto">
+      <div
+        className={cn(
+          "sg-event-tags-list-scrollbar vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 overflow-auto",
+          isExpanded ? "max-h-[calc(100vh-220px)]" : "max-h-[520px]"
+        )}
+      >
         <div className="min-w-full">
           <div
             className="sticky top-0 z-[2] grid w-max min-w-full items-center gap-3 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-3 py-3 text-xs font-medium text-custom-text-300"
@@ -441,8 +779,11 @@ export const SgEventTagsPanel = ({
                 <div
                   key={row.id}
                   className={cn(
-                    "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors hover:bg-custom-background-90",
-                    activePlaybackOverrideId === `sg-tag-${row.id}` && "bg-custom-background-90"
+                    "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors",
+                    isSelected
+                      ? "bg-[#0f2638] text-custom-text-100 shadow-[inset_3px_0_0_#1780d5] hover:bg-[#123047]"
+                      : "hover:bg-custom-background-90",
+                    activePlaybackOverrideId === `sg-tag-${row.id}` && !isSelected && "bg-custom-background-90"
                   )}
                   style={{ gridTemplateColumns: tableGridTemplateColumns }}
                   role="button"
@@ -469,13 +810,15 @@ export const SgEventTagsPanel = ({
                       className={cn(
                         "flex h-4 w-4 items-center justify-center rounded border",
                         isSelected
-                          ? "border-custom-primary-100 bg-custom-primary-100 text-white"
+                          ? "border-[#1780d5] bg-[#1780d5] text-white"
                           : "border-custom-border-200 text-transparent"
                       )}
                     >
                       <Check className="h-3 w-3" />
                     </span>
-                    <span className="text-custom-text-400">{index + 1}</span>
+                    <span className={cn("text-custom-text-400", isSelected && "text-custom-text-100")}>
+                      {index + 1}
+                    </span>
                   </button>
                   <div className="h-10 w-[74px] overflow-hidden rounded bg-custom-background-80">
                     {rowThumbnailUrl ? (
@@ -494,6 +837,18 @@ export const SgEventTagsPanel = ({
                     );
                   })}
                   <div className="flex items-center gap-1.5">
+                    <Tooltip tooltipContent="Edit row" isMobile={false}>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          openEditModal(row);
+                        }}
+                        className="rounded-md p-1.5 text-custom-text-300 transition-colors hover:bg-custom-background-100 hover:text-custom-text-100"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </Tooltip>
                     <Tooltip tooltipContent={isFavorited ? "Remove favorite" : "Favorite"} isMobile={false}>
                       <button
                         type="button"

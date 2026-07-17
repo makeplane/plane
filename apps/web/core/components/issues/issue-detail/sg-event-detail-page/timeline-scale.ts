@@ -126,6 +126,19 @@ export const getTimelinePlaybackSeconds = ({
 }) =>
   Math.max(0, (isClipPlaybackActive && activeClipStartSeconds !== null ? activeClipStartSeconds : 0) + playheadSeconds);
 
+export const isTimelineTagPlaybackOverrideId = (playbackOverrideId: string | null) =>
+  playbackOverrideId?.startsWith("sg-tag-") ?? false;
+
+export const getTimelinePanelInputPlayheadSeconds = ({
+  playbackOverrideId,
+  playheadBaseSeconds,
+  playerLocalSeconds,
+}: {
+  playbackOverrideId: string | null;
+  playheadBaseSeconds: number;
+  playerLocalSeconds: number;
+}) => Math.max(0, (playbackOverrideId === null ? playheadBaseSeconds : 0) + playerLocalSeconds);
+
 const buildTickStepSeconds = (totalSeconds: number) => {
   if (totalSeconds <= 60) return 5;
   if (totalSeconds <= 180) return 10;

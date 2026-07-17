@@ -11,12 +11,14 @@ const {
   TIMELINE_SCALE_LEVELS,
   buildScaledTimelineTicks,
   getTimelineTagEndSeconds,
+  getTimelinePanelInputPlayheadSeconds,
   getTimelinePlaybackSeconds,
   getNextTimelineScaleIndex,
   getTimelineRangePixels,
   getTimelinePositionPercent,
   getTimelineContentWidth,
   getTimelineScaleLabel,
+  isTimelineTagPlaybackOverrideId,
 } = timelineScale;
 
 test("timeline scale controls clamp at supported zoom bounds", () => {
@@ -154,5 +156,36 @@ test("clip-relative playback maps back onto the full stream timeline", () => {
       playheadSeconds: 3,
     }),
     3
+  );
+});
+
+test("timeline panel receives clip-local playhead seconds only for tag playback overrides", () => {
+  assert.equal(isTimelineTagPlaybackOverrideId("sg-tag-row-1"), true);
+  assert.equal(isTimelineTagPlaybackOverrideId("sg-matrix-playlist-generated"), false);
+  assert.equal(isTimelineTagPlaybackOverrideId(null), false);
+
+  assert.equal(
+    getTimelinePanelInputPlayheadSeconds({
+      playbackOverrideId: "sg-tag-row-1",
+      playheadBaseSeconds: 100,
+      playerLocalSeconds: 3,
+    }),
+    3
+  );
+  assert.equal(
+    getTimelinePanelInputPlayheadSeconds({
+      playbackOverrideId: "sg-matrix-playlist-generated",
+      playheadBaseSeconds: 100,
+      playerLocalSeconds: 3,
+    }),
+    3
+  );
+  assert.equal(
+    getTimelinePanelInputPlayheadSeconds({
+      playbackOverrideId: null,
+      playheadBaseSeconds: 100,
+      playerLocalSeconds: 3,
+    }),
+    103
   );
 });
