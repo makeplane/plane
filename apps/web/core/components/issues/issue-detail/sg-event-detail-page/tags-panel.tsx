@@ -152,7 +152,20 @@ const formatDuration = (seconds: number) => {
 };
 
 const getClipDuration = (row: SgTagRow, sport: SportTableKind) => {
-  if (row.clipStartSeconds !== null && row.clipEndSeconds !== null && row.clipEndSeconds > row.clipStartSeconds) {
+  if (
+    typeof row.clipDurationSeconds === "number" &&
+    Number.isFinite(row.clipDurationSeconds) &&
+    row.clipDurationSeconds > 0
+  ) {
+    return formatDuration(row.clipDurationSeconds);
+  }
+
+  if (
+    row.clipRangeSource !== "timecode" &&
+    row.clipStartSeconds !== null &&
+    row.clipEndSeconds !== null &&
+    row.clipEndSeconds > row.clipStartSeconds
+  ) {
     return formatDuration(row.clipEndSeconds - row.clipStartSeconds);
   }
 

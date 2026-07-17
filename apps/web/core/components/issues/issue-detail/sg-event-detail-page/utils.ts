@@ -515,8 +515,9 @@ const getExplicitTagDurationSeconds = (value: string) => {
 
   const unitlessValue =
     normalizedValue.match(/^(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds)$/i)?.[1] ?? normalizedValue;
+  const durationSeconds = parseTimecodeToSeconds(unitlessValue);
 
-  return parseTimecodeToSeconds(unitlessValue);
+  return durationSeconds !== null && durationSeconds > 0 ? durationSeconds : null;
 };
 
 const formatTagOffsetTimecode = (value: string) => {
@@ -720,6 +721,7 @@ const getTagRowCompletenessScore = (row: SgTagRow) =>
     row.sourceUrl,
     row.playlistTimestamp,
     row.playlistFallbackTimestamp,
+    row.clipDurationSeconds !== null && row.clipDurationSeconds !== undefined ? "clip-duration" : "",
     row.clipStartSeconds !== null ? "clip-start" : "",
     row.clipEndSeconds !== null ? "clip-end" : "",
     row.matrixParticipant,
@@ -739,7 +741,9 @@ const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
   const mergedRow = {
     ...preferredRow,
     clipId: preferredRow.clipId ?? fallbackRow.clipId,
+    clipDurationSeconds: preferredRow.clipDurationSeconds ?? fallbackRow.clipDurationSeconds ?? null,
     clipEndSeconds: preferredRow.clipEndSeconds ?? fallbackRow.clipEndSeconds,
+    clipRangeSource: preferredRow.clipRangeSource ?? fallbackRow.clipRangeSource ?? null,
     clipStartSeconds: preferredRow.clipStartSeconds ?? fallbackRow.clipStartSeconds,
     context: { ...fallbackRow.context, ...preferredRow.context },
     matrixParticipant: preferredRow.matrixParticipant ?? fallbackRow.matrixParticipant,
@@ -819,7 +823,9 @@ const buildExactTagRowKey = (row: SgTagRow) =>
   JSON.stringify({
     action: row.action,
     clipId: row.clipId,
+    clipDurationSeconds: row.clipDurationSeconds,
     clipEndSeconds: row.clipEndSeconds,
+    clipRangeSource: row.clipRangeSource,
     clipStartSeconds: row.clipStartSeconds,
     context: Object.entries(row.context)
       .sort(([left], [right]) => left.localeCompare(right))
@@ -961,6 +967,8 @@ const buildTagRowBySport = (
     "duration_sec",
     "duration_seconds",
     "duration_second",
+    "playlist_duration",
+    "playlist_duration_seconds",
     "videoDuration",
     "videoDurationSeconds",
     "video_duration",
@@ -1078,15 +1086,33 @@ const buildTagRowBySport = (
     playlistTimestamp ?? playlistFallbackTimestamp,
     baseEventDateTime
   );
+  const explicitClipStartSeconds = getExplicitTagOffsetSeconds(rawClipStart);
+  const explicitClipEndSeconds = getExplicitTagOffsetSeconds(rawClipEnd);
+  const explicitClipDurationSeconds = getExplicitTagDurationSeconds(rawClipDuration);
+  const timecodeStartSeconds = getTimeRangeOffsetSeconds(timecode, baseEventDateTime);
+  const timecodeEndSeconds = getTimeRangeOffsetSeconds(
+    timecode.split(TIMECODE_RANGE_SEPARATOR_REGEX)[1] ?? "",
+    baseEventDateTime
+  );
+  const clipDurationSeconds =
+    explicitClipDurationSeconds ??
+    (explicitClipStartSeconds !== null &&
+    explicitClipEndSeconds !== null &&
+    explicitClipEndSeconds > explicitClipStartSeconds
+      ? explicitClipEndSeconds - explicitClipStartSeconds
+      : null);
   const clipStartSeconds =
-    getExplicitTagOffsetSeconds(rawClipStart) ??
-    getTimeRangeOffsetSeconds(timecode, baseEventDateTime) ??
-    timestampOffsetSeconds;
-  const clipDurationSeconds = getExplicitTagDurationSeconds(rawClipDuration);
+    explicitClipStartSeconds ?? timecodeStartSeconds ?? timestampOffsetSeconds;
   const clipEndSeconds =
-    getExplicitTagOffsetSeconds(rawClipEnd) ??
-    getTimeRangeOffsetSeconds(timecode.split(TIMECODE_RANGE_SEPARATOR_REGEX)[1] ?? "", baseEventDateTime) ??
+    explicitClipEndSeconds ??
+    timecodeEndSeconds ??
     (clipStartSeconds !== null && clipDurationSeconds !== null ? clipStartSeconds + clipDurationSeconds : null);
+  const clipRangeSource =
+    explicitClipStartSeconds !== null || explicitClipEndSeconds !== null || explicitClipDurationSeconds !== null
+      ? "explicit"
+      : timecodeStartSeconds !== null || timecodeEndSeconds !== null
+        ? "timecode"
+        : null;
 
   const normalizedAction = action || "--";
   const normalizedPlayer = player || "--";
@@ -1115,7 +1141,9 @@ const buildTagRowBySport = (
   return {
     action: normalizedAction,
     clipId,
+    clipDurationSeconds,
     clipEndSeconds,
+    clipRangeSource,
     clipStartSeconds,
     context,
     groupValue,
@@ -1199,7 +1227,9 @@ export const normalizeTagRows = (
       return {
         action,
         clipId,
+        clipDurationSeconds: null,
         clipEndSeconds: null,
+        clipRangeSource: tag.timeRange || tag.timestamp ? "timecode" : null,
         clipStartSeconds: tag.timeRange
           ? getTimeRangeOffsetSeconds(tag.timeRange, baseEventDateTime)
           : tag.timestamp

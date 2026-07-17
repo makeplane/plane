@@ -22,6 +22,7 @@ import { buildMatrixPlaylistItem, createMatrixPlaylist } from "./matrix-view/uti
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-panel";
 import { SgEventTimelinePanel } from "./timeline-panel";
+import { getTimelinePanelInputPlayheadSeconds, isTimelineTagPlaybackOverrideId } from "./timeline-scale";
 import type {
   RowFilterMode,
   SgEventDetailPageProps,
@@ -461,7 +462,9 @@ const buildMockFootballRows = (): SgTagRow[] =>
     return {
       action: tag.action,
       clipId: tag.clipId ?? `mock-clip-${index + 1}`,
+      clipDurationSeconds: endSeconds - startSeconds,
       clipEndSeconds: endSeconds,
+      clipRangeSource: "explicit",
       clipStartSeconds: startSeconds,
       context: tag.context ?? {},
       groupValue: tag.groupValue ?? "Quarter 1",
@@ -885,7 +888,8 @@ export const SgEventDetailPage = ({
     return null;
   }, [activePlaybackOverride, activeVideo, fullStreamPlaybackItem]);
   const hasPlayableVideo = Boolean(playbackItem);
-  const isTagClipActive = Boolean(activePlaybackOverride);
+  const activePlaybackOverrideId = activePlaybackOverride?.id ?? null;
+  const isPlaybackOverrideActive = Boolean(activePlaybackOverride);
   const filteredRows = useMemo(
     () =>
       tagRowsWithThumbnails.filter((row) => {
@@ -1078,6 +1082,7 @@ export const SgEventDetailPage = ({
 
           setPendingSeekSeconds(null);
           setPlayerLocalSeconds(0);
+          setPlayerDurationSeconds(null);
           setPlayheadBaseSeconds(fallbackSeekSeconds);
           setActivePlaybackOverride({
             action: "play_streaming",
@@ -1207,8 +1212,8 @@ export const SgEventDetailPage = ({
           : matrixRows.length === 0 && sgMediaError
             ? "Unable to load the event media required for Matrix View."
             : null;
-  const activeMatrixRowId = activePlaybackOverride?.id.startsWith("sg-tag-")
-    ? activePlaybackOverride.id.slice("sg-tag-".length)
+  const activeMatrixRowId = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId)
+    ? activePlaybackOverrideId?.slice("sg-tag-".length) ?? null
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
   const playlistPanelRows = focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id));
@@ -1218,6 +1223,11 @@ export const SgEventDetailPage = ({
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
   const isExpandedListView = tagViewMode === "list" && isListExpanded;
+  const timelinePanelPlayheadSeconds = getTimelinePanelInputPlayheadSeconds({
+    playbackOverrideId: activePlaybackOverrideId,
+    playheadBaseSeconds,
+    playerLocalSeconds,
+  });
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
@@ -1231,7 +1241,7 @@ export const SgEventDetailPage = ({
             handleSwitchToFullStream={handleSwitchToFullStream}
             isMatrixViewEnabled={enableMatrixView}
             isLoadingViews={isLoadingViews}
-            isTagClipActive={isTagClipActive}
+            isTagClipActive={isPlaybackOverrideActive}
             selectedViewId={selectedViewId}
             selectedViewLabel={selectedViewLabel}
             setSelectedViewId={setSelectedViewId}
@@ -1302,7 +1312,7 @@ export const SgEventDetailPage = ({
                         eventStatus={eventStatus}
                         eventTitle={eventTitle}
                         handleSwitchToFullStream={handleSwitchToFullStream}
-                        isTagClipActive={isTagClipActive}
+                        isTagClipActive={isPlaybackOverrideActive}
                       />
 
                       <SgEventDetailsCard
@@ -1316,13 +1326,13 @@ export const SgEventDetailPage = ({
 
                   {tagViewMode === "timeline" ? (
                     <SgEventTimelinePanel
-                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      activePlaybackOverrideId={activePlaybackOverrideId}
                       activeTagRowId={activeTimelineTagId}
                       isMediaLoading={isTagRowsLoading}
                       onPlayTagRow={handlePlayTagRow}
                       onResetPlayback={handleResetTimelinePlayback}
                       playerDurationSeconds={playerDurationSeconds}
-                      playheadSeconds={playheadBaseSeconds + playerLocalSeconds}
+                      playheadSeconds={timelinePanelPlayheadSeconds}
                       rows={filteredRows}
                       selectedTagIds={selectedTagIds}
                       sport={sportTableConfig.sport}
@@ -1337,7 +1347,7 @@ export const SgEventDetailPage = ({
                             ? "Favorites only"
                             : "Selected rows"
                       }
-                      activePlaybackOverrideId={activePlaybackOverride?.id ?? null}
+                      activePlaybackOverrideId={activePlaybackOverrideId}
                       allVisibleSelected={allVisibleSelected}
                       availableGroups={availableGroups}
                       clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}

@@ -31,8 +31,10 @@ export type SgEventDetailPageProps = {
 
 export type SgTagRow = {
   action: string;
+  clipDurationSeconds?: number | null;
   clipId: string | null;
   clipEndSeconds: number | null;
+  clipRangeSource?: "explicit" | "timecode" | null;
   clipStartSeconds: number | null;
   context: Readonly<Record<string, string>>;
   groupValue: string;

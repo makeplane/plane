@@ -19,6 +19,28 @@ import {
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "./constants";
+import {
+  DEFAULT_TIMELINE_TAG_DURATION_SECONDS,
+  DEFAULT_TIMELINE_SCALE_INDEX,
+  TIMELINE_SCALE_LEVELS,
+  buildScaledTimelineTicks,
+  formatTimelineTickLabel,
+  getNextTimelineScaleIndex,
+  getTimelineContentWidth,
+  getTimelinePlaybackSeconds,
+  getTimelineRangePixels,
+  getTimelineScaleLabel,
+  getTimelineTagEndSeconds,
+  getTimelineTimePixel,
+  isTimelineTagPlaybackOverrideId,
+} from "./timeline-scale";
+import {
+  buildTimelinePlayerLaneId,
+  getTimelineCategoryLaneId,
+  getTimelineJerseyNumberKeys,
+  getTimelinePlayerLaneKey,
+  getTimelineRowLaneIds,
+} from "./timeline-track-assignment";
 import type { SgTagRow, SportTableKind } from "./types";
 import { parseTimecodeToSeconds } from "./utils";
 
@@ -72,6 +94,7 @@ const TEXT_TOOL_BUTTON_CLASS =
 
 const MARKER_COLORS = ["#ef4444", "#22c55e", "#c084fc", "#fbbf24", "#f472b6", "#60a5fa", "#f59e0b", "#a3e635"];
 const PLAYHEAD_OVERFLOW_BUCKET_SECONDS = 300;
+const PLAYHEAD_SMOOTHING_MAX_SECONDS = 1.25;
 const EMPTY_TIMELINE_VALUES = new Set(["", "--", "\u2014", "n/a", "na", "none", "null", "undefined"]);
 
 const LANE_TONE_CLASS: Record<TimelineLaneTone, string> = {
@@ -140,24 +163,8 @@ const getTimelineTagTypeLabel = (row: SgTagRow) => {
   return label || "Tag";
 };
 
-const getJerseyNumberKeys = (value: string) => {
-  const normalizedValue = value.trim().replace(/^#/, "").replace(/\s+/g, "");
-  const numberMatch = normalizedValue.match(/^\d+$/)
-    ? normalizedValue
-    : (value.match(/#\s*([A-Za-z0-9-]+)/)?.[1] ?? value.match(/\b(\d{1,3})\b/)?.[1] ?? "");
-
-  if (!numberMatch) return [];
-
-  const normalizedNumber = numberMatch.replace(/^#/, "").replace(/\s+/g, "");
-  const withoutLeadingZeros = normalizedNumber.replace(/^0+(?=\d)/, "");
-
-  return Array.from(new Set([normalizedNumber.toLowerCase(), withoutLeadingZeros.toLowerCase()].filter(Boolean)));
-};
-
-const getPlayerLaneKey = (player: string) => getJerseyNumberKeys(player)[0] ?? normalizeLabel(player);
-
 const formatPlayerLaneLabel = (player: string, playerLabelByNumber: Map<string, string>) => {
-  const rosterLabel = getJerseyNumberKeys(player)
+  const rosterLabel = getTimelineJerseyNumberKeys(player)
     .map((key) => playerLabelByNumber.get(key))
     .find((label): label is string => Boolean(label));
 
@@ -304,19 +311,6 @@ const CATEGORY_LANES_BY_SPORT: Record<SportTableKind, CategoryLaneDefinition[]> 
   ],
 };
 
-const getComparableText = (row: SgTagRow) =>
-  [row.action, row.result, row.primaryDetail, row.secondaryDetail, row.team, row.groupValue]
-    .join(" ")
-    .toLowerCase()
-    .replace(/[_-]+/g, " ");
-
-const getCategoryLaneId = (row: SgTagRow, categoryLanes: CategoryLaneDefinition[]) => {
-  const text = getComparableText(row);
-  const matchedLane = categoryLanes.find((lane) => lane.keywords.some((keyword) => text.includes(keyword)));
-
-  return matchedLane?.id ?? categoryLanes[0]?.id ?? "actions";
-};
-
 const getCategoryLaneDefinitions = (sport: SportTableKind) =>
   CATEGORY_LANES_BY_SPORT[sport] ?? CATEGORY_LANES_BY_SPORT.default;
 
@@ -340,7 +334,7 @@ const buildTimelineTagTypeOptions = (rows: SgTagRow[], sport: SportTableKind) =>
     const key = getTimelineTagTypeKey(row);
     if (optionsByKey.has(key)) return;
 
-    const laneId = getCategoryLaneId(row, categoryLanes);
+    const laneId = getTimelineCategoryLaneId(row, categoryLanes);
     const categoryLane = categoryLaneById.get(laneId) ?? categoryLaneById.get(categoryLanes[0]?.id ?? "");
 
     optionsByKey.set(key, {
@@ -362,6 +356,9 @@ const getTimecodeStart = (timecode: string) => timecode.split(/\s*[-\u2013\u2014
 const isPlausibleTimelineSecond = (seconds: number, timelineDurationSeconds: number | null) =>
   timelineDurationSeconds === null || timelineDurationSeconds <= 0 || seconds <= timelineDurationSeconds + 60;
 
+const getPositiveDurationSeconds = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) && value > 0 ? value : null;
+
 const getRowTimecodeStartSeconds = (row: SgTagRow, timelineDurationSeconds: number | null) => {
   const seconds = row.clipStartSeconds ?? parseTimecodeToSeconds(getTimecodeStart(row.timecode));
 
@@ -370,17 +367,16 @@ const getRowTimecodeStartSeconds = (row: SgTagRow, timelineDurationSeconds: numb
   return seconds;
 };
 
-const getRowEndSeconds = (row: SgTagRow, timelineDurationSeconds: number | null) => {
-  if (row.clipEndSeconds !== null && isPlausibleTimelineSecond(row.clipEndSeconds, timelineDurationSeconds)) {
+const getRowExplicitEndSeconds = (row: SgTagRow, timelineDurationSeconds: number | null) => {
+  if (
+    row.clipEndSeconds !== null &&
+    row.clipRangeSource !== "timecode" &&
+    isPlausibleTimelineSecond(row.clipEndSeconds, timelineDurationSeconds)
+  ) {
     return row.clipEndSeconds;
   }
 
-  const rangeEnd = row.timecode.split(/\s*[-\u2013\u2014]\s*/)[1];
-  const rangeEndSeconds = rangeEnd ? parseTimecodeToSeconds(rangeEnd) : null;
-
-  if (rangeEndSeconds === null || !isPlausibleTimelineSecond(rangeEndSeconds, timelineDurationSeconds)) return null;
-
-  return rangeEndSeconds;
+  return null;
 };
 
 const getTimestampMs = (value: string | null) => {
@@ -393,18 +389,23 @@ const getTimestampMs = (value: string | null) => {
 const getRowTimestampMs = (row: SgTagRow) =>
   getTimestampMs(row.playlistTimestamp) ?? getTimestampMs(row.playlistFallbackTimestamp);
 
-const getRowDurationSeconds = (row: SgTagRow, timelineDurationSeconds: number | null) => {
-  const startSeconds = getRowTimecodeStartSeconds(row, timelineDurationSeconds);
-  const endSeconds = getRowEndSeconds(row, timelineDurationSeconds);
+const getRowDurationSeconds = (
+  row: SgTagRow,
+  timelineDurationSeconds: number | null,
+  startSeconds: number,
+  activeClipDurationSeconds: number | null
+) =>
+  getTimelineTagEndSeconds({
+    clipDurationSeconds: activeClipDurationSeconds ?? getPositiveDurationSeconds(row.clipDurationSeconds),
+    explicitEndSeconds: getRowExplicitEndSeconds(row, timelineDurationSeconds),
+    startSeconds,
+  }) - startSeconds;
 
-  if (startSeconds !== null && endSeconds !== null && endSeconds > startSeconds) {
-    return endSeconds - startSeconds;
-  }
-
-  return 12;
-};
-
-const buildTimelinePlacements = (rows: SgTagRow[], timelineDurationSeconds: number | null) => {
+const buildTimelinePlacements = (
+  rows: SgTagRow[],
+  timelineDurationSeconds: number | null,
+  activeClipDurationByRowId: ReadonlyMap<string, number> = new Map()
+) => {
   const timestampValues = rows.map(getRowTimestampMs).filter((value): value is number => value !== null);
   const firstTimestampMs = timestampValues.length > 0 ? Math.min(...timestampValues) : null;
   const timelineStartMs = firstTimestampMs;
@@ -423,7 +424,16 @@ const buildTimelinePlacements = (rows: SgTagRow[], timelineDurationSeconds: numb
   const maxKnownSeconds = directPlacements.reduce((maxSeconds, placement) => {
     if (placement.startSeconds === null) return maxSeconds;
 
-    return Math.max(maxSeconds, placement.startSeconds + getRowDurationSeconds(placement.row, timelineDurationSeconds));
+    return Math.max(
+      maxSeconds,
+      placement.startSeconds +
+        getRowDurationSeconds(
+          placement.row,
+          timelineDurationSeconds,
+          placement.startSeconds,
+          activeClipDurationByRowId.get(placement.row.id) ?? null
+        )
+    );
   }, 0);
   const fallbackRows = directPlacements.filter((placement) => placement.startSeconds === null);
   const fallbackWindowSeconds =
@@ -433,17 +443,23 @@ const buildTimelinePlacements = (rows: SgTagRow[], timelineDurationSeconds: numb
   let fallbackIndex = 0;
 
   return directPlacements.reduce<Record<string, TimelineRowPlacement>>((accumulator, placement) => {
-    const durationSeconds = getRowDurationSeconds(placement.row, timelineDurationSeconds);
     const fallbackStartSeconds =
       fallbackRows.length > 0 ? ((fallbackIndex + 1) * fallbackWindowSeconds) / (fallbackRows.length + 1) : 0;
     const startSeconds = placement.startSeconds ?? fallbackStartSeconds;
+    const endSeconds = getTimelineTagEndSeconds({
+      clipDurationSeconds:
+        activeClipDurationByRowId.get(placement.row.id) ??
+        getPositiveDurationSeconds(placement.row.clipDurationSeconds),
+      explicitEndSeconds: getRowExplicitEndSeconds(placement.row, timelineDurationSeconds),
+      startSeconds,
+    });
 
     if (placement.startSeconds === null) {
       fallbackIndex += 1;
     }
 
     accumulator[placement.row.id] = {
-      endSeconds: startSeconds + durationSeconds,
+      endSeconds,
       startSeconds,
     };
     return accumulator;
@@ -471,79 +487,6 @@ const buildLaneMarkerOffsets = (rows: SgTagRow[], rowPlacements: Record<string, 
     }, {});
 };
 
-const buildTickStepSeconds = (totalSeconds: number) => {
-  if (totalSeconds <= 60) return 5;
-  if (totalSeconds <= 180) return 10;
-  if (totalSeconds <= 600) return 30;
-  if (totalSeconds <= 1800) return 60;
-  if (totalSeconds <= 5400) return 300;
-  return 600;
-};
-
-const formatTickLabel = (seconds: number) => {
-  const safeSeconds = Math.max(0, Math.round(seconds));
-  const hours = Math.floor(safeSeconds / 3600);
-  const minutes = Math.floor((safeSeconds % 3600) / 60);
-  const remainingSeconds = safeSeconds % 60;
-
-  if (hours > 0) {
-    return `${hours}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
-  }
-
-  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
-};
-
-const useSmoothedPlayheadSeconds = (playheadSeconds: number) => {
-  const [smoothedPlayheadSeconds, setSmoothedPlayheadSeconds] = useState(playheadSeconds);
-  const smoothedPlayheadSecondsRef = useRef(playheadSeconds);
-  const frameRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const targetSeconds = Number.isFinite(playheadSeconds) ? playheadSeconds : 0;
-    const startSeconds = smoothedPlayheadSecondsRef.current;
-    const deltaSeconds = targetSeconds - startSeconds;
-    const absoluteDeltaSeconds = Math.abs(deltaSeconds);
-
-    if (frameRef.current !== null) {
-      window.cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
-    }
-
-    if (absoluteDeltaSeconds < 0.08 || absoluteDeltaSeconds > 2.5) {
-      smoothedPlayheadSecondsRef.current = targetSeconds;
-      setSmoothedPlayheadSeconds(targetSeconds);
-      return;
-    }
-
-    const startedAtMs = performance.now();
-    const durationMs = Math.min(1000, Math.max(120, absoluteDeltaSeconds * 1000));
-
-    const animate = (timestampMs: number) => {
-      const progress = Math.min(1, (timestampMs - startedAtMs) / durationMs);
-      const nextSeconds = startSeconds + deltaSeconds * progress;
-
-      smoothedPlayheadSecondsRef.current = nextSeconds;
-      setSmoothedPlayheadSeconds(nextSeconds);
-
-      if (progress < 1) {
-        frameRef.current = window.requestAnimationFrame(animate);
-      } else {
-        frameRef.current = null;
-      }
-    };
-
-    frameRef.current = window.requestAnimationFrame(animate);
-
-    return () => {
-      if (frameRef.current === null) return;
-      window.cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
-    };
-  }, [playheadSeconds]);
-
-  return smoothedPlayheadSeconds;
-};
-
 const formatTooltipText = (value: string, transform: "title" | "upper") => {
   const normalizedValue = value.trim().replace(/[_-]+/g, " ");
   if (!normalizedValue || normalizedValue === "--") return "";
@@ -558,10 +501,10 @@ const formatTooltipText = (value: string, transform: "title" | "upper") => {
 };
 
 const TimelineTagTooltip = ({ placement, row }: { placement: TimelineRowPlacement; row: SgTagRow }) => {
-  const startLabel = formatTickLabel(placement.startSeconds);
+  const startLabel = formatTimelineTickLabel(placement.startSeconds);
   const endLabel =
     placement.endSeconds !== null && placement.endSeconds > placement.startSeconds
-      ? formatTickLabel(placement.endSeconds)
+      ? formatTimelineTickLabel(placement.endSeconds)
       : "";
   const timeLabel = endLabel ? `${startLabel}-${endLabel}` : startLabel;
   const actionLabel = formatTooltipText(row.action, "upper");
@@ -586,14 +529,15 @@ const buildSortedTimelineRows = (rows: SgTagRow[], rowPlacements: Record<string,
 
 const buildTagPlaybackOverrideId = (row: SgTagRow) => `sg-tag-${row.id}`;
 
-const buildPlayerLaneId = (player: string) => `player-${player}`;
+const getPlaybackOverrideRowId = (playbackOverrideId: string | null) =>
+  isTimelineTagPlaybackOverrideId(playbackOverrideId) ? playbackOverrideId?.slice("sg-tag-".length) ?? null : null;
 
 const buildPlayerLanes = (rows: SgTagRow[], playerLabelByNumber: Map<string, string>) => {
   const playerCounts = rows.reduce<Map<string, number>>((accumulator, row) => {
     const player = normalizeLabel(row.player);
     if (!player || player === "--") return accumulator;
 
-    const playerKey = getPlayerLaneKey(player);
+    const playerKey = getTimelinePlayerLaneKey(player);
     accumulator.set(playerKey, (accumulator.get(playerKey) ?? 0) + 1);
     return accumulator;
   }, new Map<string, number>());
@@ -601,7 +545,7 @@ const buildPlayerLanes = (rows: SgTagRow[], playerLabelByNumber: Map<string, str
   return Array.from(playerCounts.entries())
     .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
     .map(([playerKey], index) => ({
-      id: buildPlayerLaneId(playerKey),
+      id: buildTimelinePlayerLaneId(playerKey),
       label: formatPlayerLaneLabel(playerKey, playerLabelByNumber),
       rows: [],
       tone: index % 2 === 0 ? "playerA" : "playerB",
@@ -620,12 +564,10 @@ const buildTimelineLanes = (rows: SgTagRow[], sport: SportTableKind, playerLabel
   const lanesById = new Map([...coreLanes, ...playerLanes].map((lane) => [lane.id, lane]));
 
   rows.forEach((row) => {
-    const player = normalizeLabel(row.player);
-    const categoryLaneId = getCategoryLaneId(row, categoryLaneDefinitions);
-    const laneId = player && player !== "--" ? buildPlayerLaneId(getPlayerLaneKey(player)) : categoryLaneId;
-    const lane = lanesById.get(laneId) ?? lanesById.get(categoryLaneId) ?? coreLanes[0];
-
-    lane.rows.push(row);
+    getTimelineRowLaneIds(row, categoryLaneDefinitions).forEach((laneId) => {
+      const lane = lanesById.get(laneId) ?? coreLanes[0];
+      lane?.rows.push(row);
+    });
   });
 
   return [...coreLanes, ...playerLanes];
@@ -644,15 +586,18 @@ export const SgEventTimelinePanel = ({
   selectedTagIds,
   sport,
 }: SgEventTimelinePanelProps) => {
-  const timelineTrackRef = useRef<HTMLDivElement | null>(null);
-  const [timelineTrackWidth, setTimelineTrackWidth] = useState(0);
   const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
   const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
   const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
   const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
-  const isTagClipActive = activePlaybackOverrideId?.startsWith("sg-tag-") ?? false;
-  const timelineDurationSeconds = isTagClipActive ? null : playerDurationSeconds;
-  const smoothedPlayheadSeconds = useSmoothedPlayheadSeconds(playheadSeconds);
+  const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
+  const timelineScrollRef = useRef<HTMLDivElement | null>(null);
+  const playheadElementRef = useRef<HTMLDivElement | null>(null);
+  const previousPlayheadSecondsRef = useRef(playheadSeconds);
+  const fullStreamDurationSecondsRef = useRef<number | null>(null);
+  const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
+  const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
+  const timelineDurationSeconds = isTagClipActive ? fullStreamDurationSecondsRef.current : playerDurationSeconds;
   const tagTypeOptions = useMemo(() => buildTimelineTagTypeOptions(rows, sport), [rows, sport]);
   const defaultVisibleTagTypeKeys = useMemo(() => tagTypeOptions.map((option) => option.key), [tagTypeOptions]);
   const activeVisibleTagTypeKeys = visibleTagTypeKeys ?? defaultVisibleTagTypeKeys;
@@ -669,9 +614,17 @@ export const SgEventTimelinePanel = ({
     () => buildTimelineLanes(visibleTimelineRows, sport, playerLabelByNumber),
     [playerLabelByNumber, sport, visibleTimelineRows]
   );
+  const activeClipDurationByRowId = useMemo(() => {
+    const activeClipDurationSeconds =
+      isTagClipActive && activePlaybackRowId ? getPositiveDurationSeconds(playerDurationSeconds) : null;
+
+    return activeClipDurationSeconds !== null && activePlaybackRowId
+      ? new Map([[activePlaybackRowId, activeClipDurationSeconds]])
+      : new Map<string, number>();
+  }, [activePlaybackRowId, isTagClipActive, playerDurationSeconds]);
   const rowPlacements = useMemo(
-    () => buildTimelinePlacements(visibleTimelineRows, timelineDurationSeconds),
-    [timelineDurationSeconds, visibleTimelineRows]
+    () => buildTimelinePlacements(visibleTimelineRows, timelineDurationSeconds, activeClipDurationByRowId),
+    [activeClipDurationByRowId, timelineDurationSeconds, visibleTimelineRows]
   );
   const sortedTimelineRows = useMemo(
     () => buildSortedTimelineRows(visibleTimelineRows, rowPlacements),
@@ -705,45 +658,125 @@ export const SgEventTimelinePanel = ({
   const visibleTagTypeCount = tagTypeOptions.filter((option) => activeVisibleTagTypeKeySet.has(option.key)).length;
   const totalTagTypeCount = tagTypeOptions.length;
   const activeTimelineRowIndex = sortedTimelineRows.findIndex(
-    (row) => row.id === activeTagRowId || activePlaybackOverrideId === buildTagPlaybackOverrideId(row)
+    (row) => row.id === activeTagRowId || row.id === activePlaybackRowId
   );
+  const activeTimelineRow = activeTimelineRowIndex >= 0 ? sortedTimelineRows[activeTimelineRowIndex] : null;
+  const activeTimelinePlacement = activeTimelineRow ? rowPlacements[activeTimelineRow.id] : null;
+  const timelinePlayheadSecondsRaw = getTimelinePlaybackSeconds({
+    activeClipStartSeconds: isTagClipActive ? (activeTimelinePlacement?.startSeconds ?? null) : null,
+    isClipPlaybackActive: isTagClipActive,
+    playheadSeconds,
+  });
   const maxRowSeconds = Object.values(rowPlacements).reduce(
     (maxSeconds, placement) => Math.max(maxSeconds, placement.endSeconds ?? placement.startSeconds),
     0
   );
   const knownTimelineExtentSeconds = Math.max(maxRowSeconds, timelineDurationSeconds ?? 0, 60);
   const overflowTimelineExtentSeconds =
-    playheadSeconds > knownTimelineExtentSeconds
-      ? Math.ceil(playheadSeconds / PLAYHEAD_OVERFLOW_BUCKET_SECONDS) * PLAYHEAD_OVERFLOW_BUCKET_SECONDS
+    timelinePlayheadSecondsRaw > knownTimelineExtentSeconds
+      ? Math.ceil(timelinePlayheadSecondsRaw / PLAYHEAD_OVERFLOW_BUCKET_SECONDS) * PLAYHEAD_OVERFLOW_BUCKET_SECONDS
       : knownTimelineExtentSeconds;
   const timelineExtentSeconds = Math.max(knownTimelineExtentSeconds, overflowTimelineExtentSeconds);
   const totalSeconds = Math.max(1, Math.ceil(timelineExtentSeconds || 0));
-  const playheadPosition = Math.min(Math.max((smoothedPlayheadSeconds * 100) / totalSeconds, 0), 100);
-  const playheadOffsetPx = timelineTrackWidth > 0 ? (playheadPosition / 100) * timelineTrackWidth : 0;
-  const playheadStyle =
-    timelineTrackWidth > 0
-      ? { transform: `translate3d(${playheadOffsetPx}px, 0, 0) translateX(-50%)` }
-      : { left: `${playheadPosition}%` };
-  const tickStepSeconds = buildTickStepSeconds(totalSeconds);
-  const ticks = Array.from({ length: Math.floor(totalSeconds / tickStepSeconds) + 1 }, (_, index) => {
-    const tickSeconds = index * tickStepSeconds;
-
-    return {
-      label: formatTickLabel(tickSeconds),
-      position: (tickSeconds * 100) / totalSeconds,
-    };
-  });
-  const visibleTicks =
-    ticks.at(-1)?.position === 100
-      ? ticks
-      : [
-          ...ticks,
-          {
-            label: formatTickLabel(totalSeconds),
-            position: 100,
-          },
-        ];
+  const timelineScale =
+    TIMELINE_SCALE_LEVELS[timelineScaleIndex] ?? TIMELINE_SCALE_LEVELS[DEFAULT_TIMELINE_SCALE_INDEX];
+  const timelineContentWidth = getTimelineContentWidth(timelineScale, totalSeconds);
+  const timelinePlayheadSeconds = Math.min(timelinePlayheadSecondsRaw, totalSeconds);
+  const playheadPositionPx = getTimelineTimePixel(timelinePlayheadSeconds, totalSeconds, timelineContentWidth);
+  const visibleTicks = buildScaledTimelineTicks(totalSeconds, timelineScale);
+  const canZoomOut = timelineScaleIndex > 0;
+  const canZoomIn = timelineScaleIndex < TIMELINE_SCALE_LEVELS.length - 1;
   const hasTimelineRows = sortedTimelineRows.length > 0;
+
+  useEffect(() => {
+    if (isTagClipActive || playerDurationSeconds === null || playerDurationSeconds <= 0) return;
+
+    fullStreamDurationSecondsRef.current = playerDurationSeconds;
+  }, [isTagClipActive, playerDurationSeconds]);
+
+  useEffect(() => {
+    const playheadElement = playheadElementRef.current;
+    if (!playheadElement) return;
+
+    const previousPlayheadSeconds = previousPlayheadSecondsRef.current;
+    previousPlayheadSecondsRef.current = timelinePlayheadSeconds;
+    const setPlayheadPosition = (seconds: number) => {
+      playheadElement.style.left = `${getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth)}px`;
+    };
+
+    setPlayheadPosition(timelinePlayheadSeconds);
+
+    if (timelinePlayheadSeconds <= previousPlayheadSeconds || timelinePlayheadSeconds >= totalSeconds) return;
+
+    const animationStartedAtMs = window.performance.now();
+    let animationFrameId = 0;
+    const animatePlayhead = () => {
+      const elapsedSeconds = Math.min(
+        (window.performance.now() - animationStartedAtMs) / 1000,
+        PLAYHEAD_SMOOTHING_MAX_SECONDS
+      );
+      const interpolatedSeconds = Math.min(timelinePlayheadSeconds + elapsedSeconds, totalSeconds);
+
+      setPlayheadPosition(interpolatedSeconds);
+
+      if (elapsedSeconds < PLAYHEAD_SMOOTHING_MAX_SECONDS && interpolatedSeconds < totalSeconds) {
+        animationFrameId = window.requestAnimationFrame(animatePlayhead);
+      }
+    };
+
+    animationFrameId = window.requestAnimationFrame(animatePlayhead);
+
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
+
+  const scrollTimelineRangeIntoView = (
+    range: { leftPx: number; widthPx: number },
+    behavior: "auto" | "smooth" = "smooth"
+  ) => {
+    const scrollElement = timelineScrollRef.current;
+    if (!scrollElement) return;
+
+    const rangeLeft = range.leftPx;
+    const rangeRight = range.leftPx + range.widthPx;
+    const viewportLeft = scrollElement.scrollLeft;
+    const viewportRight = viewportLeft + scrollElement.clientWidth;
+    const padding = 80;
+
+    if (rangeLeft < viewportLeft + padding) {
+      scrollElement.scrollTo({ behavior, left: Math.max(0, rangeLeft - padding) });
+      return;
+    }
+
+    if (rangeRight > viewportRight - padding) {
+      scrollElement.scrollTo({ behavior, left: Math.max(0, rangeRight - scrollElement.clientWidth + padding) });
+    }
+  };
+
+  const getPlacementRange = (placement: TimelineRowPlacement) =>
+    getTimelineRangePixels({
+      contentWidthPx: timelineContentWidth,
+      endSeconds: placement.endSeconds,
+      startSeconds: placement.startSeconds,
+      totalSeconds,
+    });
+
+  const handlePlayTimelineRow = (row: SgTagRow) => {
+    const placement = rowPlacements[row.id];
+    if (placement) {
+      scrollTimelineRangeIntoView(getPlacementRange(placement));
+    }
+
+    void onPlayTagRow(row);
+  };
+
+  useEffect(() => {
+    if (!activeTimelinePlacement) return;
+
+    scrollTimelineRangeIntoView(getPlacementRange(activeTimelinePlacement), "auto");
+    // The active placement identity intentionally drives scroll restoration on tag selection and zoom changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePlaybackOverrideId, activeTagRowId, activeTimelinePlacement, timelineContentWidth, totalSeconds]);
+
   const jumpToPreviousTag = () => {
     if (!hasTimelineRows) return;
 
@@ -752,11 +785,11 @@ export const SgEventTimelinePanel = ({
         ? sortedTimelineRows[(activeTimelineRowIndex - 1 + sortedTimelineRows.length) % sortedTimelineRows.length]
         : ([...sortedTimelineRows]
             .reverse()
-            .find((row) => (rowPlacements[row.id]?.startSeconds ?? 0) < Math.max(0, playheadSeconds - 0.5)) ??
+            .find((row) => (rowPlacements[row.id]?.startSeconds ?? 0) < Math.max(0, timelinePlayheadSeconds - 0.5)) ??
           sortedTimelineRows.at(-1));
 
     if (previousRow) {
-      void onPlayTagRow(previousRow);
+      handlePlayTimelineRow(previousRow);
     }
   };
   const jumpToNextTag = () => {
@@ -765,11 +798,12 @@ export const SgEventTimelinePanel = ({
     const nextRow =
       activeTimelineRowIndex >= 0
         ? sortedTimelineRows[(activeTimelineRowIndex + 1) % sortedTimelineRows.length]
-        : (sortedTimelineRows.find((row) => (rowPlacements[row.id]?.startSeconds ?? 0) > playheadSeconds + 0.5) ??
-          sortedTimelineRows[0]);
+        : (sortedTimelineRows.find(
+            (row) => (rowPlacements[row.id]?.startSeconds ?? 0) > timelinePlayheadSeconds + 0.5
+          ) ?? sortedTimelineRows[0]);
 
     if (nextRow) {
-      void onPlayTagRow(nextRow);
+      handlePlayTimelineRow(nextRow);
     }
   };
   const handleToggleTagType = (tagTypeKey: string) => {
@@ -785,31 +819,9 @@ export const SgEventTimelinePanel = ({
       return Array.from(nextKeys);
     });
   };
-
-  useEffect(() => {
-    const trackElement = timelineTrackRef.current;
-    if (!trackElement) return;
-
-    const updateTrackWidth = () => {
-      setTimelineTrackWidth(trackElement.getBoundingClientRect().width);
-    };
-
-    updateTrackWidth();
-
-    if (typeof ResizeObserver === "undefined") {
-      window.addEventListener("resize", updateTrackWidth);
-      return () => {
-        window.removeEventListener("resize", updateTrackWidth);
-      };
-    }
-
-    const resizeObserver = new ResizeObserver(updateTrackWidth);
-    resizeObserver.observe(trackElement);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
+  const handleTimelineScaleChange = (direction: "in" | "out") => {
+    setTimelineScaleIndex((currentIndex) => getNextTimelineScaleIndex(currentIndex, direction));
+  };
 
   return (
     <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
@@ -893,7 +905,7 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      <div className="flex min-h-[360px] overflow-hidden">
+      <div className="flex overflow-hidden">
         <div className="w-[220px] shrink-0 border-r border-custom-border-200">
           {timelineLanes.map((lane) => (
             <div
@@ -909,18 +921,52 @@ export const SgEventTimelinePanel = ({
           ))}
           <div className="flex h-10 items-center justify-between border-t border-custom-border-200 px-3 text-[11px] text-custom-text-400">
             <span>Scale Size</span>
-            <span className="inline-flex items-center gap-3">
-              <Minus className="h-3.5 w-3.5" />
-              <Plus className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-2">
+              <Tooltip tooltipContent="Zoom out timeline" isMobile={false}>
+                <button
+                  type="button"
+                  aria-label="Zoom out timeline"
+                  onClick={() => handleTimelineScaleChange("out")}
+                  disabled={!canZoomOut}
+                  className={cn(
+                    "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
+                    !canZoomOut && "cursor-not-allowed opacity-40"
+                  )}
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </button>
+              </Tooltip>
+              <span className="min-w-9 text-center tabular-nums">{getTimelineScaleLabel(timelineScale)}</span>
+              <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
+                <button
+                  type="button"
+                  aria-label="Zoom in timeline"
+                  onClick={() => handleTimelineScaleChange("in")}
+                  disabled={!canZoomIn}
+                  className={cn(
+                    "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
+                    !canZoomIn && "cursor-not-allowed opacity-40"
+                  )}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </Tooltip>
             </span>
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 overflow-x-auto">
-          <div ref={timelineTrackRef} className="relative min-w-[1400px]">
+        <div
+          ref={timelineScrollRef}
+          className="horizontal-scrollbar scrollbar-sm min-w-0 flex-1 overflow-x-auto overflow-y-hidden pb-2"
+        >
+          <div
+            className="relative transition-[width] duration-150 ease-out"
+            style={{ minWidth: "100%", width: timelineContentWidth }}
+          >
             <div
-              className="absolute left-0 top-0 z-[3] h-[calc(100%-2.5rem)] w-1 rounded-full bg-red-500 will-change-transform"
-              style={playheadStyle}
+              ref={playheadElementRef}
+              className="absolute top-0 z-[3] h-[calc(100%-2.5rem)] w-1 -translate-x-1/2 rounded-full bg-red-500 will-change-[left]"
+              style={{ left: playheadPositionPx }}
             />
             {timelineLanes.map((lane) => {
               const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
@@ -928,16 +974,18 @@ export const SgEventTimelinePanel = ({
               return (
                 <div key={lane.id} className="relative h-10 border-b border-custom-border-200 bg-custom-background-90">
                   {lane.rows.map((row) => {
-                    const placement = rowPlacements[row.id] ?? { endSeconds: 12, startSeconds: 0 };
-                    const startSeconds = placement.startSeconds;
-                    const left = Math.min(Math.max((startSeconds * 100) / totalSeconds, 0), 99.3);
+                    const placement = rowPlacements[row.id] ?? {
+                      endSeconds: DEFAULT_TIMELINE_TAG_DURATION_SECONDS,
+                      startSeconds: 0,
+                    };
+                    const range = getPlacementRange(placement);
                     const markerColor =
                       tagTypeOptionsByKey.get(getTimelineTagTypeKey(row))?.color ??
                       MARKER_COLORS[hashString(`${row.action}-${row.player}-${row.timecode}`) % MARKER_COLORS.length];
                     const isActive =
                       activeTagRowId === row.id || activePlaybackOverrideId === buildTagPlaybackOverrideId(row);
                     const isSelected = selectedTagIds.includes(row.id);
-                    const markerOffset = (laneMarkerOffsets[row.id] ?? 0) * 5;
+                    const markerOffset = (laneMarkerOffsets[row.id] ?? 0) % 3;
 
                     return (
                       <Tooltip
@@ -951,15 +999,25 @@ export const SgEventTimelinePanel = ({
                         <button
                           type="button"
                           onClick={() => {
-                            void onPlayTagRow(row);
+                            handlePlayTimelineRow(row);
                           }}
                           className={cn(
-                            "absolute top-1/2 h-9 w-1.5 -translate-y-1/2 rounded-full border border-transparent transition-transform hover:scale-125",
+                            "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",
                             isActive && "ring-2 ring-custom-primary-100",
                             isSelected && "border-white/80"
                           )}
-                          style={{ backgroundColor: markerColor, left: `calc(${left}% + ${markerOffset}px)` }}
-                        />
+                          style={{
+                            backgroundColor: markerColor,
+                            left: range.leftPx,
+                            top: 6 + markerOffset * 3,
+                            width: range.widthPx,
+                          }}
+                          aria-pressed={isActive || isSelected}
+                        >
+                          <span className="pointer-events-none block truncate px-1.5">
+                            {formatTooltipText(row.action, "title") || "Tag"}
+                          </span>
+                        </button>
                       </Tooltip>
                     );
                   })}
