@@ -454,7 +454,9 @@ const buildMockFootballRows = (): SgTagRow[] =>
     return {
       action: tag.action,
       clipId: tag.clipId ?? `mock-clip-${index + 1}`,
+      clipDurationSeconds: endSeconds - startSeconds,
       clipEndSeconds: endSeconds,
+      clipRangeSource: "explicit",
       clipStartSeconds: startSeconds,
       context: tag.context ?? {},
       groupValue: tag.groupValue ?? "Quarter 1",
@@ -1046,6 +1048,7 @@ export const SgEventDetailPage = ({
 
           setPendingSeekSeconds(null);
           setPlayerLocalSeconds(0);
+          setPlayerDurationSeconds(null);
           setPlayheadBaseSeconds(fallbackSeekSeconds);
           setActivePlaybackOverride({
             action: "play_streaming",
