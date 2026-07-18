@@ -29,6 +29,16 @@
       "hide_password": "Masquer le mot de passe",
       "close_alert": "Fermer l’alerte",
       "close_popover": "Fermer la fenêtre contextuelle"
+    },
+    "quick_actions": {
+      "module": "Actions rapides du module",
+      "cycle": "Actions rapides du cycle",
+      "view": "Actions rapides de la vue",
+      "comment": "Actions rapides du commentaire",
+      "work_item": "Actions rapides de l'élément de travail",
+      "epic": "Actions rapides de l'epic",
+      "work_item_list": "Actions rapides de la liste des éléments de travail",
+      "epic_list": "Actions rapides de la liste des epics"
     }
   }
 }

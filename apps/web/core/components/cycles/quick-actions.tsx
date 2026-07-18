@@ -142,6 +142,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.cycle")}
         customButton={<MoreHorizontal className="size-4" />}
         customButtonClassName={getIconButtonStyling("tertiary", "lg")}
         placement="bottom-end"

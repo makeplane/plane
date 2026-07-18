@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -43,6 +44,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
     placements = "bottom-start",
     parentRef,
   } = props;
+  const { t } = useTranslation();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -150,6 +152,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.work_item")}
         ellipsis
         placement={placements}
         customButton={customActionButton}

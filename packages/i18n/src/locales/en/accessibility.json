@@ -29,6 +29,16 @@
       "hide_password": "Hide password",
       "close_alert": "Close alert",
       "close_popover": "Close popover"
+    },
+    "quick_actions": {
+      "module": "Module quick actions",
+      "cycle": "Cycle quick actions",
+      "view": "View quick actions",
+      "comment": "Comment quick actions",
+      "work_item": "Work item quick actions",
+      "epic": "Epic quick actions",
+      "work_item_list": "Work item list quick actions",
+      "epic_list": "Epic list quick actions"
     }
   }
 }

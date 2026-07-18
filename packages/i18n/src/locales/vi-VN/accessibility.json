@@ -29,6 +29,16 @@
       "hide_password": "Ẩn mật khẩu",
       "close_alert": "Đóng cảnh báo",
       "close_popover": "Đóng popover"
+    },
+    "quick_actions": {
+      "module": "Thao tác nhanh cho mô-đun",
+      "cycle": "Thao tác nhanh cho chu kỳ",
+      "view": "Thao tác nhanh cho chế độ xem",
+      "comment": "Thao tác nhanh cho bình luận",
+      "work_item": "Thao tác nhanh cho mục công việc",
+      "epic": "Thao tác nhanh cho epic",
+      "work_item_list": "Thao tác nhanh cho danh sách mục công việc",
+      "epic_list": "Thao tác nhanh cho danh sách epic"
     }
   }
 }

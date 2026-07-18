@@ -87,6 +87,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
 
   return (
     <CustomMenu
+      ariaLabel={t("aria_labels.quick_actions.comment")}
       customButton={<MoreHorizontal className="size-3.5" />}
       customButtonClassName={getIconButtonStyling("ghost", "sm")}
       closeOnSelect

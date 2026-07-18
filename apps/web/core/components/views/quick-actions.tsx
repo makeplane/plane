@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { MoreHorizontal } from "lucide-react";
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -35,6 +36,7 @@ type Props = {
 
 export const ViewQuickActions = observer(function ViewQuickActions(props: Props) {
   const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
+  const { t } = useTranslation();
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -102,6 +104,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
       {additionalModals}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.view")}
         customButton={<MoreHorizontal className="size-4" />}
         customButtonClassName={getIconButtonStyling("tertiary", "lg")}
         placement="bottom-end"

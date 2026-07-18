@@ -29,6 +29,16 @@
       "hide_password": "Passwort verbergen",
       "close_alert": "Warnung schließen",
       "close_popover": "Popover schließen"
+    },
+    "quick_actions": {
+      "module": "Schnellaktionen für Modul",
+      "cycle": "Schnellaktionen für Zyklus",
+      "view": "Schnellaktionen für Ansicht",
+      "comment": "Schnellaktionen für Kommentar",
+      "work_item": "Schnellaktionen für Arbeitselement",
+      "epic": "Schnellaktionen für Epic",
+      "work_item_list": "Schnellaktionen für Arbeitselementliste",
+      "epic_list": "Schnellaktionen für Epic-Liste"
     }
   }
 }

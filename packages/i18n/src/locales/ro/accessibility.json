@@ -29,6 +29,16 @@
       "hide_password": "Ascunde parola",
       "close_alert": "Închide alerta",
       "close_popover": "Închide popover-ul"
+    },
+    "quick_actions": {
+      "module": "Acțiuni rapide pentru modul",
+      "cycle": "Acțiuni rapide pentru ciclu",
+      "view": "Acțiuni rapide pentru vizualizare",
+      "comment": "Acțiuni rapide pentru comentariu",
+      "work_item": "Acțiuni rapide pentru elementul de lucru",
+      "epic": "Acțiuni rapide pentru epic",
+      "work_item_list": "Acțiuni rapide pentru lista de elemente de lucru",
+      "epic_list": "Acțiuni rapide pentru lista de epicuri"
     }
   }
 }

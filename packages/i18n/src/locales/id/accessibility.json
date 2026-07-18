@@ -29,6 +29,16 @@
       "hide_password": "Sembunyikan kata sandi",
       "close_alert": "Tutup peringatan",
       "close_popover": "Tutup popover"
+    },
+    "quick_actions": {
+      "module": "Tindakan cepat modul",
+      "cycle": "Tindakan cepat siklus",
+      "view": "Tindakan cepat tampilan",
+      "comment": "Tindakan cepat komentar",
+      "work_item": "Tindakan cepat item kerja",
+      "epic": "Tindakan cepat epik",
+      "work_item_list": "Tindakan cepat daftar item kerja",
+      "epic_list": "Tindakan cepat daftar epik"
     }
   }
 }
