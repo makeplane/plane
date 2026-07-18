@@ -70,9 +70,7 @@ export const isWorkspaceLevel = (type: EIssuesStoreType) =>
     EIssuesStoreType.TEAM_VIEW,
     EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
     EIssuesStoreType.WORKSPACE_DRAFT,
-  ].includes(type)
-    ? true
-    : false;
+  ].includes(type);
 
 type TGetGroupByColumns = {
   groupBy: GroupByColumnTypes | null;
@@ -88,6 +86,7 @@ type TGetGroupByColumns = {
 export const getGroupByColumns = ({
   groupBy,
   includeNone,
+  // eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
   isWorkspaceLevel,
   isEpic = false,
   projectId,
@@ -251,6 +250,7 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   }));
 };
 
+// eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
 const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] => {
   const { workspaceLabels, projectLabels } = store.label;
   // map labels to group by columns
@@ -269,6 +269,7 @@ const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] =
   }));
 };
 
+// eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
 const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGroupByColumn[] | undefined => {
   // store values
   const { getUserDetails } = store.memberRoot;
@@ -452,6 +453,7 @@ const handleSortOrder = (
 
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
+      // eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
       const destinationIssueId = destinationIssues[0];
       const destinationIssue = getIssueById(destinationIssueId);
       if (!destinationIssue) return currentIssueState;
@@ -461,6 +463,7 @@ const handleSortOrder = (
         sort_order: destinationIssue.sort_order - sortOrderDefaultValue,
       };
     } else if (destinationIndex === destinationIssues.length) {
+      // eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
       const destinationIssueId = destinationIssues[destinationIssues.length - 1];
       const destinationIssue = getIssueById(destinationIssueId);
       if (!destinationIssue) return currentIssueState;
@@ -715,10 +718,10 @@ export const getBlockViewDetails = (
  * @param iconKey
  */
 export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
-  const { iconKey } = props;
+  const { iconKey, ...rest } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;
-  return <Icon {...props} />;
+  return <Icon {...rest} />;
 }
 
 /**
@@ -731,6 +734,7 @@ export const isDisplayFiltersApplied = (filters: Partial<IIssueFilters>): boolea
     (key) => !filters.displayProperties?.[key as keyof IIssueDisplayProperties]
   );
 
+  // eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
   const isDisplayFiltersApplied = Object.keys(filters.displayFilters ?? {}).some((key) => {
     const value = filters.displayFilters?.[key as keyof IIssueDisplayFilterOptions];
     if (!value) return false;
