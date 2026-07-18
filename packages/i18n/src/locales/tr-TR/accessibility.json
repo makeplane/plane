@@ -29,6 +29,16 @@
       "hide_password": "Şifreyi gizle",
       "close_alert": "Uyarıyı kapat",
       "close_popover": "Açılır pencereyi kapat"
+    },
+    "quick_actions": {
+      "module": "Modül hızlı işlemleri",
+      "cycle": "Döngü hızlı işlemleri",
+      "view": "Görünüm hızlı işlemleri",
+      "comment": "Yorum hızlı işlemleri",
+      "work_item": "İş öğesi hızlı işlemleri",
+      "epic": "Epic hızlı işlemleri",
+      "work_item_list": "İş öğesi listesi hızlı işlemleri",
+      "epic_list": "Epic listesi hızlı işlemleri"
     }
   }
 }

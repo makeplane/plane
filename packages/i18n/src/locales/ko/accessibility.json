@@ -29,6 +29,16 @@
       "hide_password": "비밀번호 숨기기",
       "close_alert": "알림 닫기",
       "close_popover": "팝오버 닫기"
+    },
+    "quick_actions": {
+      "module": "모듈 빠른 작업",
+      "cycle": "사이클 빠른 작업",
+      "view": "뷰 빠른 작업",
+      "comment": "댓글 빠른 작업",
+      "work_item": "작업 항목 빠른 작업",
+      "epic": "에픽 빠른 작업",
+      "work_item_list": "작업 항목 목록 빠른 작업",
+      "epic_list": "에픽 목록 빠른 작업"
     }
   }
 }

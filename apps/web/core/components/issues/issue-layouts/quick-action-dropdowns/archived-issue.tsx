@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -32,6 +33,7 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
     placements = "bottom-end",
     parentRef,
   } = props;
+  const { t } = useTranslation();
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // router
@@ -86,6 +88,7 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.work_item")}
         ellipsis
         customButton={customActionButton}
         portalElement={portalElement}

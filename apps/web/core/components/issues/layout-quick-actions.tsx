@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -21,6 +22,7 @@ type Props = {
 
 export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
+  const { t } = useTranslation();
 
   const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
 
@@ -52,6 +54,9 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
       {additionalModals}
       <CustomMenu
         ellipsis
+        ariaLabel={t(
+          storeType === "EPIC" ? "aria_labels.quick_actions.epic_list" : "aria_labels.quick_actions.work_item_list"
+        )}
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"

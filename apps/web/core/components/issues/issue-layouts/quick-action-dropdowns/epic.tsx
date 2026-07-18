@@ -7,6 +7,7 @@
 import { useMemo, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -43,6 +44,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: IQuick
     placements = "bottom-end",
     parentRef,
   } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -138,6 +140,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: IQuick
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.epic")}
         ellipsis
         placement={placements}
         customButton={customActionButton}

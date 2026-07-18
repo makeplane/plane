@@ -29,6 +29,16 @@
       "hide_password": "Skrýt heslo",
       "close_alert": "Zavřít upozornění",
       "close_popover": "Zavřít vyskakovací okno"
+    },
+    "quick_actions": {
+      "module": "Rychlé akce modulu",
+      "cycle": "Rychlé akce cyklu",
+      "view": "Rychlé akce zobrazení",
+      "comment": "Rychlé akce komentáře",
+      "work_item": "Rychlé akce pracovní položky",
+      "epic": "Rychlé akce epicu",
+      "work_item_list": "Rychlé akce seznamu pracovních položek",
+      "epic_list": "Rychlé akce seznamu epiců"
     }
   }
 }

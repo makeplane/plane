@@ -29,6 +29,16 @@
       "hide_password": "隐藏密码",
       "close_alert": "关闭警告",
       "close_popover": "关闭弹出框"
+    },
+    "quick_actions": {
+      "module": "模块快捷操作",
+      "cycle": "周期快捷操作",
+      "view": "视图快捷操作",
+      "comment": "评论快捷操作",
+      "work_item": "工作项快捷操作",
+      "epic": "史诗快捷操作",
+      "work_item_list": "工作项列表快捷操作",
+      "epic_list": "史诗列表快捷操作"
     }
   }
 }

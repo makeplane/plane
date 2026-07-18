@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -32,6 +33,7 @@ type Props = {
 
 export const ModuleQuickActions = observer(function ModuleQuickActions(props: Props) {
   const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // states
@@ -136,6 +138,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.module")}
         customButton={<MoreHorizontal className="size-4" />}
         customButtonClassName={getIconButtonStyling("tertiary", "lg")}
         placement="bottom-end"
