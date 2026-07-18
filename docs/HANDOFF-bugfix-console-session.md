@@ -331,6 +331,7 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 | #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant) | fusionnée |
 | #62 | `fix(web)` — 2 sites `customButton` de plus (élément interactif enterré d'un niveau)                | fusionnée |
 | #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                  | fusionnée |
+| #64 | `fix(web)` — prop `iconKey` fuitant sur le `<svg>` des en-têtes de colonne du spreadsheet           | fusionnée |
 
 **Résultat mesuré** : page d'accueil et liste des work items sont passées de 1 et 4 imbrications de boutons à **zéro**, et plus aucune clé i18n brute n'est annoncée par un lecteur d'écran dans la sidebar.
 
@@ -358,6 +359,10 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
    ```
 7. **`CustomMenu` ne s'ouvre pas à la touche Entrée.** Écart a11y **global et pré-existant** — reproduit sur un menu non modifié (menu utilisateur de la sidebar). Les 59 usages sont concernés. Sujet à part entière.
 8. **Gain a11y systématique** de ces correctifs : deux boutons imbriqués sont **tous deux focusables** (`tabIndex` 0 chacun), donc chaque pastille coûtait **deux tabulations**. Mesurable en tabulant depuis le déclencheur extérieur.
+9. **Famille de bug DISTINCTE — props qui fuient jusqu'au DOM** (`React does not recognize the X prop on a DOM element`). Motif : un composant déstructure une prop de contrôle pour s'en servir, puis étale `props` **entier** au lieu du reste. Vu sur `SpreadSheetPropertyIcon` (`issue-layouts/utils.tsx`) avec `iconKey`, corrigé en #64. **Où chercher** : tout composant qui fait `const { X } = props` puis `<Autre {...props} />` — le correctif est toujours `const { X, ...rest } = props` puis `{...rest}`. **Ne pas corriger dans le composant de bas niveau** (`IconWrapper` ici) : son contrat est typé `ISvgIcons` et il ne peut pas distinguer un attribut légitime d'un attribut fuité. Contrôle en direct :
+   ```js
+   document.querySelectorAll("[iconkey]").length; // 0 attendu
+   ```
 
 ### 9.4 Travail restant — précisé et vérifié
 
