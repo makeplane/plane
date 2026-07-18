@@ -13,6 +13,7 @@ import { Collapsible } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { RelationsCollapsibleContent } from "./content";
+import { RelationActionButton } from "./quick-action-button";
 import { RelationsCollapsibleTitle } from "./title";
 
 type Props = {
@@ -34,12 +35,10 @@ export const RelationsCollapsible = observer(function RelationsCollapsible(props
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleOpenWidget("relations")}
       title={
-        <RelationsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
+        <RelationsCollapsibleTitle isOpen={isCollapsibleOpen} issueId={issueId} issueServiceType={issueServiceType} />
+      }
+      actionElement={
+        !disabled && <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
       }
       buttonClassName="w-full"
     >

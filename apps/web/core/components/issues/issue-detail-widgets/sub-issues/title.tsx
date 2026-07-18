@@ -12,19 +12,15 @@ import { EIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {
   isOpen: boolean;
   parentIssueId: string;
-  disabled: boolean;
   issueServiceType?: TIssueServiceType;
-  projectId: string;
-  workspaceSlug: string;
 };
 
 export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
-  const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES, projectId } = props;
+  const { isOpen, parentIssueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   // translation
   const { t } = useTranslation();
   // store hooks
@@ -53,14 +49,6 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
             {completedCount}/{totalCount} {t("common.done")}
           </span>
         </div>
-      }
-      actionItemElement={
-        <SubWorkItemTitleActions
-          projectId={projectId}
-          parentId={parentIssueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
       }
     />
   );

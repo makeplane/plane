@@ -13,6 +13,7 @@ import { Collapsible } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueLinksCollapsibleContent } from "./content";
+import { IssueLinksActionButton } from "./quick-action-button";
 import { IssueLinksCollapsibleTitle } from "./title";
 
 type Props = {
@@ -35,13 +36,9 @@ export const LinksCollapsible = observer(function LinksCollapsible(props: Props)
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleOpenWidget("links")}
       title={
-        <IssueLinksCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
+        <IssueLinksCollapsibleTitle isOpen={isCollapsibleOpen} issueId={issueId} issueServiceType={issueServiceType} />
       }
+      actionElement={!disabled && <IssueLinksActionButton issueServiceType={issueServiceType} disabled={disabled} />}
       buttonClassName="w-full"
     >
       <IssueLinksCollapsibleContent

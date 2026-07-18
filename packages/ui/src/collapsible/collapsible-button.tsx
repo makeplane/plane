@@ -9,12 +9,19 @@ import type { ISvgIcons } from "@plane/propel/icons";
 import { DropdownIcon } from "@plane/propel/icons";
 import { cn } from "../utils";
 
+/**
+ * Header content for a `Collapsible`. It renders *inside* `<Disclosure.Button>`, so
+ * everything it takes has to be inert markup.
+ *
+ * There is deliberately no action slot here: an action rendered from this component would
+ * be a button inside a button, and clicking it would collapse the section too. Pass it to
+ * `Collapsible`'s `actionElement` instead, which renders it as a sibling of the button.
+ */
 type Props = {
   isOpen: boolean;
   title: React.ReactNode;
   hideChevron?: boolean;
   indicatorElement?: React.ReactNode;
-  actionItemElement?: React.ReactNode;
   className?: string;
   titleClassName?: string;
   ChevronIcon?: React.FC<ISvgIcons>;
@@ -26,7 +33,6 @@ export function CollapsibleButton(props: Props) {
     title,
     hideChevron = false,
     indicatorElement,
-    actionItemElement,
     className = "",
     titleClassName = "",
     ChevronIcon = DropdownIcon,
@@ -44,9 +50,9 @@ export function CollapsibleButton(props: Props) {
           )}
           <span className={cn("text-14 font-medium text-primary", titleClassName)}>{title}</span>
         </div>
+        {/* eslint-disable-next-line oxc/const-comparisons -- pre-existing, unrelated to this fix */}
         {indicatorElement && indicatorElement}
       </div>
-      {actionItemElement && isOpen && actionItemElement}
     </div>
   );
 }

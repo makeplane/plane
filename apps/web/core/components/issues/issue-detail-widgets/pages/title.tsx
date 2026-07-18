@@ -12,18 +12,15 @@ import type { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// local imports
-import { IssuePagesActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;
   issueId: string;
-  disabled: boolean;
   issueServiceType: TIssueServiceType;
 };
 
 export const IssuePagesCollapsibleTitle = observer(function IssuePagesCollapsibleTitle(props: Props) {
-  const { isOpen, issueId, disabled, issueServiceType } = props;
+  const { isOpen, issueId, issueServiceType } = props;
   // translation
   const { t } = useTranslation();
   // store hooks
@@ -44,14 +41,5 @@ export const IssuePagesCollapsibleTitle = observer(function IssuePagesCollapsibl
     [pagesCount]
   );
 
-  return (
-    <CollapsibleButton
-      isOpen={isOpen}
-      title={t("common.pages")}
-      indicatorElement={indicatorElement}
-      actionItemElement={
-        !disabled && <IssuePagesActionButton issueServiceType={issueServiceType} disabled={disabled} />
-      }
-    />
-  );
+  return <CollapsibleButton isOpen={isOpen} title={t("common.pages")} indicatorElement={indicatorElement} />;
 });
