@@ -178,3 +178,138 @@ cd C:\Stage\2026-zelian-insider\packages\auth && pnpm dev               # next d
 
 - La mémoire projet de Claude Code (`~/.claude/projects/C--Stage-plane/memory/`) est **locale à la machine** : sur un nouveau poste, elle sera vide. **Ce document est le relais** — le tenir à jour en fin de chantier.
 - Les worktrees `.claude/worktrees/*` sont des artefacts locaux de sessions parallèles ; leur contenu est poussé, ils n'ont pas besoin d'être transférés.
+
+---
+
+## 8. Session du 2026-07-18 (nouveau poste) — résultats et reprise
+
+> Rédigé en fin de session pour que la suivante reparte sans rien redécouvrir.
+> **Repo déplacé** : le code vit maintenant dans WSL (`~/dev/plane`), plus dans `C:\Stage\plane`.
+> Raccourcis Windows vers les projets : `C:\Stage\*.lnk`.
+
+### 8.1 ⚠️ Le §4.1 est FAUX — le navigateur intégré fonctionne
+
+**Corrigé par l'expérience.** Le navigateur intégré (`mcp__Claude_Browser__*`) **peut** piloter Plane dès lors qu'une session existe déjà dans son profil. Vérifié le 2026-07-18 : navigation dans le workspace `zelian`, ouverture du projet `Plane test`, inspection du DOM (`document.querySelectorAll('button button')`) et lecture de la console — tout fonctionne.
+
+Ce qui échoue, c'est uniquement la **chaîne SSO complète** (redirections cross-origin vers `:3102`). Une fois connecté, tout est pilotable.
+
+→ **La vérification live n'est plus un point bloquant.** Une session Claude peut désormais reproduire, corriger et vérifier elle-même.
+
+L'extension « Claude in Chrome » (qui piloterait le vrai Edge du dev) n'est **pas** installée sur ce poste — `list_connected_browsers` renvoie `[]`.
+
+### 8.2 §3 NON-bugs — test décisif enfin réalisé ✅
+
+Les deux erreurs `Uncaught (in promise) undefined` et `Uncaught SyntaxError: Function statements require a function name (at issues/:1:1)` étaient marquées « test décisif jamais réalisé ».
+
+**C'est fait.** Même URL (`/zelian/projects/710e3358-d6a3-4f92-bc2f-857ea0da2960/issues/`), même navigation par clic, dans le navigateur intégré qui n'a **aucune extension** :
+
+| Erreur                                                              | Occurrences |
+| ------------------------------------------------------------------- | ----------- |
+| `Uncaught (in promise) undefined`                                   | **0**       |
+| `Uncaught SyntaxError: Function statements require a function name` | **0**       |
+
+→ **Ce sont bien des scripts injectés par une extension du navigateur du dev.** Rien à corriger dans Plane. Sujet clos, ne plus y revenir.
+
+### 8.3 Travail RESTANT — 3 bugs d'imbrication, chemins de composants exacts
+
+Relevés par la console du navigateur intégré sur `/zelian/projects/<id>/issues/` et la page d'accueil. Chacun mérite sa branche `fix/`.
+
+#### A. `FiltersDropdown` — 8 occurrences sur 12, le plus rentable
+
+```
+Re < Me < CustomMenu < FiltersDropdown < ContentOverflowWrapper < RecentActivityWidget < DashboardWidgets
+```
+
+**Fichier** : `apps/web/core/components/issues/issue-layouts/filters/header/helpers/dropdown.tsx`
+**Ligne fautive : 53**
+
+```tsx
+<Popover.Button as={React.Fragment}>
+  {menuButton ? (
+    <button type="button" ref={setReferenceElement}>   // ← ajoute un <button>
+      {menuButton}                                      // ← qui en contient déjà un
+    </button>
+  ) : (
+    <div ref={setReferenceElement}> ... </div>          // ← la branche sans menuButton, elle, utilise bien un <div>
+```
+
+Quand un appelant passe un `menuButton` déjà interactif (un `CustomMenu`, qui rend son propre `<button>`), l'imbrication se produit. **La branche `else` fait déjà la bonne chose** (`<div ref>`) — c'est le modèle à suivre.
+
+⚠️ **Piège** : `Popover.Button as={React.Fragment}` transmet `onClick`/`aria` à son enfant. Passer à un `<div>` conserve l'ouverture au clic (le `CustomMenu` interne fournit la sémantique bouton et l'accès clavier), mais **à vérifier au clavier** avant de merger. Composant partagé par tous les en-têtes → blast radius élevé.
+
+#### B. `ProjectCard` — liens imbriqués, famille NOUVELLE
+
+```
+<a> cannot appear as a descendant of <a>
+LinkWithRef < Link < ProjectCard < Row < ContentWrapper < ProjectCardList < ProjectRoot
+```
+
+Ce n'est **pas** un bouton dans un bouton — ce sont deux `<a>` imbriqués, sur la page Projets. Jamais mentionné dans ce handoff auparavant. Chercher le `<Link>` interne dans `ProjectCard` (probablement le lien vers les settings du projet, `/zelian/settings/projects/<id>/`, rendu à l'intérieur de la carte qui est elle-même un lien).
+
+#### C. `MobileLayoutSelection` — 2 occurrences
+
+```
+Button < Re < Me < CustomMenu < MobileLayoutSelection < HeaderFilters < RightItem
+```
+
+**Fichier** : `apps/web/core/components/issues/issue-layouts/filters/header/mobile-layout-selection.tsx` (l. 29 et 39, `customButtonClassName="flex flex-grow justify-center text-secondary text-13"`).
+Motif #46 exactement : un `Button` de `@plane/propel` passé en `customButton`. Fix connu : passer l'icône brute + `customButtonClassName={getIconButtonStyling(...)}`.
+
+#### D. Pastilles de propriétés des work items — repérées par inspection DOM
+
+N'ont pas déclenché d'avertissement dans la capture (React déduplique par type de composant), mais l'imbrication est bien présente dans le DOM :
+
+```tsx
+<button className="clickable block h-full ... outline-none">   // conteneur
+  <Button variant="transparent" ... />                          // @plane/propel → <button>
+</button>
+```
+
+Fichiers, tous dans `apps/web/core/components/dropdowns/` : `state/base.tsx` (l.145), `member/base.tsx` (l.117, 129), `cycle/index.tsx` (l.92, 104), `intake-state/base.tsx` (l.144, 157), `date-range.tsx` (l.164).
+
+#### E. Clés i18n manquantes — trouvé au passage
+
+L'arbre d'accessibilité affiche des **clés brutes non traduites** comme libellés de boutons :
+
+```
+button "aria_labels.app_sidebar.close_workspace_menu"
+button "aria_labels.app_sidebar.open_extended_sidebar"
+```
+
+Le groupe `aria_labels.app_sidebar` **n'existe pas** dans `packages/i18n/src/locales/*/accessibility.json` (qui ne contient que `projects_sidebar`, `auth_forms` et, depuis la PR #55, `quick_actions`). Un lecteur d'écran annonce donc littéralement « aria_labels point app_sidebar point close workspace menu ». Petit et net à corriger.
+
+#### F. Listener non-passif — gain de perf réel, en prod aussi
+
+```
+packages/editor/src/core/extensions/side-menu.ts:160
+mousewheel: () => hideSideMenu(),
+```
+
+Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif**. Ce handler n'appelle jamais `preventDefault()` — il peut donc être passif. Fix : le sortir de `handleDOMEvents` et l'enregistrer soi-même avec `{ passive: true }` dans le cycle `view()` du plugin.
+⚠️ Ne PAS toucher à `custom-image/.../modal.tsx:188`, dont le `{ passive: false }` est délibéré (zoom plein écran, a besoin de `preventDefault`).
+
+#### G. `pnpm start` de l'app web est cassé
+
+`serve-handler@6.1.6` appelle `pathToRegExp.compile`, absent de la version de `path-to-regexp` résolue → crash au premier `GET /`. Contournement utilisé pour tester le build de prod : un petit serveur statique Python avec repli SPA.
+
+### 8.4 Ce qui a été FUSIONNÉ cette session
+
+| PR  | Objet                                                                                                                                        |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| #53 | `fix(sso-zelian)` — rejet des emails non vérifiés (ATO, GHSA-7j95-vh8g-f365) + réalignement des codes d'erreur (bloc `59xx` réservé au fork) |
+| #54 | `feat(sso-zelian)` — `IS_ZELIAN_ENABLED` devient la bascule unique interne/externe (+ `MODE-INTERNE-OU-EXTERNE.md`)                          |
+| #55 | `fix(web)` — nom accessible sur les 12 menus quick-actions (groupe i18n `aria_labels.quick_actions`, 19 locales)                             |
+| #56 | `docs(handoff)` — triage de la pile `postMessage` react-router en non-bug                                                                    |
+| #57 | `fix(ui)` — fin de l'imbrication `<button>` dans les 2 dropdowns de fil d'Ariane (vérifié navigateur)                                        |
+
+**Recensement `ariaLabel`** : 59 menus icon-only sans nom accessible au total, **12 traités** (PR #55), **46 restants** hors famille quick-actions.
+
+### 8.5 Contexte machine (nouveau poste)
+
+- Code dans **WSL** : `~/dev/plane`, `~/dev/2026-zelian-insider`, `~/dev/2026-zelian-insider-docs`, mire SSO en worktree `~/dev/zelian-mire`
+- **Trois services** : Docker API `:8000`, `pnpm dev` `:3000`, mire `@zelian/auth` `:3102`
+- ⚠️ `.bashrc` s'arrête avant `mise activate` en shell **non interactif** → toujours `export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"` en tête de script (c'est ce qui fait échouer `setup.sh` sur `pnpm install`)
+- ⚠️ Un serveur lancé en `nohup ... &` meurt à la fermeture de la session WSL → utiliser `setsid nohup ... < /dev/null &`
+- ⚠️ `docker restart` ne relit **pas** `apps/api/.env` → `docker compose -f docker-compose-local.yml up -d --force-recreate api` puis vider le cache Django
+- Le service `live` de Plane écoute sur `:3100`, **en collision** avec l'app onboarding d'Insider
+- Tests backend : `docker compose -f docker-compose-test.yml run --rm api-tests pytest <chemin>`
