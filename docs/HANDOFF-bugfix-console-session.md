@@ -2,13 +2,17 @@
 
 > Document de reprise **autonome** pour une nouvelle session Claude Code — y compris **depuis un autre poste** : la mémoire projet de Claude Code vit dans `~/.claude/projects/…/memory/` et **ne suit pas la machine**. Ce fichier est donc le seul relais fiable.
 >
-> Repo : `C:\Stage\plane`. Branche de travail : `preview` (fork `userLinpy/plane`, upstream `makeplane/plane`). **Mis à jour le 2026-07-18.**
+> **Repo : `~/dev/plane` DANS WSL** (`\\wsl.localhost\Ubuntu-24.04\home\lucie\dev\plane` depuis Windows). ⚠️ `C:\Stage\Plane` est un dossier **vide** — ce n'est pas le dépôt. Branche de travail : `preview` (fork `userLinpy/plane`, upstream `makeplane/plane`). **Mis à jour le 2026-07-18.**
+>
+> **➡️ Commencer par le §6, puis le §10.** Les §1 à §5 datent des premières vagues et contiennent des affirmations corrigées depuis — le §9.2 liste lesquelles.
 
 ## 0. Objectif global
 
 Corriger les erreurs de la console navigateur de l'app **web** de Plane, **une branche `fix/<nom-du-problème>` par problème distinct**, chacune : fix → vérif navigateur → commit (hook lint) → entrée CHANGELOG → PR (base `preview`, repo `userLinpy/plane`) → **review** → merge → `@update-writer-after-implement`.
 
-## 1. Ce qui est DÉJÀ fait — 11 PRs mergées dans `preview`
+## 1. Historique des 2 premières vagues — #41 → #51
+
+> Total à ce jour : **#41 → #69**. Les vagues suivantes sont aux §8.4 (#53-#57), §9.1 (#59-#67) et §10.
 
 ### 1ʳᵉ vague (2026-07-15) — #41 → #45
 
@@ -166,13 +170,19 @@ cd C:\Stage\2026-zelian-insider\packages\auth && pnpm dev               # next d
 - WIP bug F sur `origin/fix/work-item-filters-setstate-in-render` (non mergé, volontairement).
 - Seuls fichiers non suivis restants : `.claude/.doc-injected.json` et `.claude/.update-check.json` (caches locaux, à ignorer).
 
-## 6. Étapes pour reprendre
+## 6. Étapes pour reprendre — À LIRE EN PREMIER
 
 1. `git checkout preview && git pull origin preview`.
 2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login.
-3. Se connecter dans un **vrai navigateur** (Edge), workspace `zelian` (§4.1).
-4. Choisir le sujet : **bug F** (§2.1 — repartir de la branche WIP poussée, puis **vérifier tous les layouts filtrés** avant merge) ou **aria-labels** (§2.2).
-5. Fix → vérif (§4.1) → commit (hook lint §4.2) → CHANGELOG (§4.5) → PR + review + merge (§4.6) → `@update-writer` (§4.4).
+3. **Le navigateur intégré (`mcp__Claude_Browser__*`) suffit** : `preview_start` sur `http://localhost:3000`, la session SSO se résout seule. Le §4.1 qui prétend le contraire est **faux** — voir §8.1.
+4. Choisir un sujet **dans le §10** (les deux chantiers structurels) ou dans le §9.4 (le reste). **Ne PAS partir du §2 ni du §8.3 sans avoir lu le §9.2** : plusieurs de leurs entrées sont résolues ou mal attribuées.
+5. Boucle par sujet : fix → **vérif navigateur avant/après** (§4.1 + §9.3) → commit (hook lint §4.2) → CHANGELOG (§4.5) → PR + review + merge (§4.6). Le hook `@update-writer` du §4.4 **n'est pas actif** sur ce poste (§9.5).
+
+### Les 3 réflexes qui ont fait toute la différence
+
+- **Nommer le composant fautif par l'arbre de fibres React** (§10.1), pas par grep. Le grep a échoué 3 fois de suite ; la fibre donne le composant en une requête.
+- **Mesurer avant/après dans le navigateur**, y compris les dimensions (`getBoundingClientRect`). Technique : `git stash` → recharger → mesurer → `git stash pop`. C'est ce qui a attrapé la seule vraie régression de la série, invisible au lint et au typecheck (§9.3 point 3).
+- **Le relevé DOM MINORE toujours le problème** : il ne voit que ce que les données affichent. « 1 imbrication » s'est révélé être 6 widgets (§10.2), « 2 » se révélera proportionnel au nombre de réactions (§10.3). Toujours remonter du DOM au composant, puis **recenser les appelants du composant**.
 
 ## 7. Notes
 
