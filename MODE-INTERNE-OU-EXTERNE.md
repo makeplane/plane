@@ -51,13 +51,29 @@ Nécessite en plus la mire `@zelian/auth` (page `/oauth/consent`), qui vit dans 
 ## Basculer
 
 ```bash
-# éditer apps/api/.env, puis :
-docker restart plane-api-1
+# 1. éditer apps/api/.env
+# 2. RECRÉER le conteneur (pas seulement le redémarrer) :
+docker compose -f docker-compose-local.yml up -d --force-recreate api
+# 3. vider le cache de /api/instances/ :
+docker exec plane-api-1 python manage.py shell -c "from django.core.cache import cache; cache.clear()"
 ```
 
-⚠️ La réponse de `/api/instances/` est **cachée 2 heures** (`@cache_response`). Après
-la bascule, vider le cache ou attendre — sinon le bouton met jusqu'à 2 h à apparaître
-ou disparaître côté navigateur.
+⚠️ **`docker restart plane-api-1` ne suffit pas.** Les variables d'environnement d'un
+conteneur sont fixées à sa **création** : un redémarrage relit le code, pas le fichier
+`.env`. Le flag garderait son ancienne valeur sans le moindre message d'erreur —
+`/api/instances/` continuerait simplement d'annoncer `is_zelian_enabled: false`.
+Constaté en conditions réelles le 2026-07-18.
+
+⚠️ La réponse de `/api/instances/` est en plus **cachée 2 heures** (`@cache_response`).
+Sans le `cache.clear()` de l'étape 3, le bouton met jusqu'à 2 h à apparaître ou
+disparaître côté navigateur, même une fois le conteneur recréé.
+
+Pour vérifier que la bascule a bien pris :
+
+```bash
+docker exec plane-api-1 printenv IS_ZELIAN_ENABLED   # la valeur vue par le conteneur
+curl -s localhost:8000/api/instances/ | grep -o '"is_zelian_enabled":[a-z]*'
+```
 
 ## Ce qui reste en place dans les deux modes
 
@@ -72,12 +88,12 @@ mode externe, seulement pour alléger le fork.
 
 ## Où la bascule est implémentée
 
-| Fichier | Rôle |
-| --- | --- |
-| `apps/api/plane/license/api/views/instance.py` | expose `is_zelian_enabled` sur `/api/instances/` |
+| Fichier                                                  | Rôle                                               |
+| -------------------------------------------------------- | -------------------------------------------------- |
+| `apps/api/plane/license/api/views/instance.py`           | expose `is_zelian_enabled` sur `/api/instances/`   |
 | `apps/api/plane/authentication/provider/oauth/zelian.py` | refuse l'initialisation si le flag n'est pas `"1"` |
-| `apps/web/core/hooks/oauth/extended.tsx` | affiche ou masque le bouton (web) |
-| `apps/space/hooks/oauth/extended.tsx` | idem (space) |
+| `apps/web/core/hooks/oauth/extended.tsx`                 | affiche ou masque le bouton (web)                  |
+| `apps/space/hooks/oauth/extended.tsx`                    | idem (space)                                       |
 
 Seule la valeur littérale `"1"` active le mode interne — `"true"`, `"yes"` ou `1` (entier)
 ne l'activent pas, conformément à la convention des autres flags de Plane
