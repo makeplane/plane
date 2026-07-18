@@ -13,6 +13,7 @@ import { Collapsible } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { SubIssuesCollapsibleContent } from "./content";
+import { SubWorkItemTitleActions } from "./title-actions";
 import { SubIssuesCollapsibleTitle } from "./title";
 
 type Props = {
@@ -26,22 +27,30 @@ type Props = {
 export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    subIssues: { subIssuesByIssueId },
+  } = useIssueDetail(issueServiceType);
   // derived values
   const isCollapsibleOpen = openWidgets.includes("sub-work-items");
+  // the title renders nothing until the sub-issues are loaded; keep the action in step with it
+  const hasSubIssues = !!subIssuesByIssueId(issueId);
 
   return (
     <Collapsible
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleOpenWidget("sub-work-items")}
-      title={
-        <SubIssuesCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          parentIssueId={issueId}
-          disabled={disabled}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-        />
+      title={<SubIssuesCollapsibleTitle isOpen={isCollapsibleOpen} parentIssueId={issueId} />}
+      actionElement={
+        hasSubIssues && (
+          <SubWorkItemTitleActions
+            projectId={projectId}
+            parentId={issueId}
+            disabled={disabled}
+            issueServiceType={issueServiceType}
+          />
+        )
       }
       buttonClassName="w-full"
     >

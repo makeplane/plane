@@ -78,23 +78,19 @@ export const MilestonesSection = observer(function MilestonesSection(props: Prop
                 <p className="text-14 !leading-3 text-tertiary">{milestones.length}</p>
               </span>
             }
-            actionItemElement={
-              isEditable && (
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded px-2 py-1 text-12 font-medium text-tertiary hover:bg-layer-transparent-hover hover:text-secondary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsCreateModalOpen(true);
-                  }}
-                >
-                  <PlusIcon className="size-3.5" />
-                  {t("milestone_new")}
-                </button>
-              )
-            }
           />
+        }
+        actionElement={
+          isEditable && (
+            <button
+              type="button"
+              className="flex items-center gap-1 rounded px-2 py-1 text-12 font-medium text-tertiary hover:bg-layer-transparent-hover hover:text-secondary"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              <PlusIcon className="size-3.5" />
+              {t("milestone_new")}
+            </button>
+          )
         }
         buttonClassName="w-full"
       >

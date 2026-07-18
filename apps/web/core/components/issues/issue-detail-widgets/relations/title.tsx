@@ -14,18 +14,15 @@ import { CollapsibleButton } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-// local imports
-import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;
   issueId: string;
-  disabled: boolean;
   issueServiceType?: TIssueServiceType;
 };
 
 export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleTitle(props: Props) {
-  const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { isOpen, issueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hook
   const {
@@ -46,14 +43,5 @@ export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleT
     [relationsCount]
   );
 
-  return (
-    <CollapsibleButton
-      isOpen={isOpen}
-      title={t("common.relations")}
-      indicatorElement={indicatorElement}
-      actionItemElement={
-        !disabled && <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
-      }
-    />
-  );
+  return <CollapsibleButton isOpen={isOpen} title={t("common.relations")} indicatorElement={indicatorElement} />;
 });

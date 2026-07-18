@@ -12,20 +12,15 @@ import { EIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// local imports
-import { IssueAttachmentActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;
-  workspaceSlug: string;
-  projectId: string;
   issueId: string;
-  disabled: boolean;
   issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAttachmentsCollapsibleTitle = observer(function IssueAttachmentsCollapsibleTitle(props: Props) {
-  const { isOpen, workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { isOpen, issueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hooks
   const {
@@ -46,22 +41,5 @@ export const IssueAttachmentsCollapsibleTitle = observer(function IssueAttachmen
     [attachmentCount]
   );
 
-  return (
-    <CollapsibleButton
-      isOpen={isOpen}
-      title={t("common.attachments")}
-      indicatorElement={indicatorElement}
-      actionItemElement={
-        !disabled && (
-          <IssueAttachmentActionButton
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            disabled={disabled}
-            issueServiceType={issueServiceType}
-          />
-        )
-      }
-    />
-  );
+  return <CollapsibleButton isOpen={isOpen} title={t("common.attachments")} indicatorElement={indicatorElement} />;
 });

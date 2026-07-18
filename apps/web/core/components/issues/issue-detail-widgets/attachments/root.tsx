@@ -13,6 +13,7 @@ import { Collapsible } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueAttachmentsCollapsibleContent } from "./content";
+import { IssueAttachmentActionButton } from "./quick-action-button";
 import { IssueAttachmentsCollapsibleTitle } from "./title";
 
 type Props = {
@@ -38,12 +39,20 @@ export const AttachmentsCollapsible = observer(function AttachmentsCollapsible(p
       title={
         <IssueAttachmentsCollapsibleTitle
           isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
           issueServiceType={issueServiceType}
         />
+      }
+      actionElement={
+        !disabled && (
+          <IssueAttachmentActionButton
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+            issueServiceType={issueServiceType}
+          />
+        )
       }
       buttonClassName="w-full"
     >
