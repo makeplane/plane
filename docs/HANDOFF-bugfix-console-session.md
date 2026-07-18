@@ -220,6 +220,8 @@ Les deux erreurs `Uncaught (in promise) undefined` et `Uncaught SyntaxError: Fun
 
 → **Ce sont bien des scripts injectés par une extension du navigateur du dev.** Rien à corriger dans Plane. Sujet clos, ne plus y revenir.
 
+**Reconfirmé le 2026-07-18** : le dev les a resignalées depuis son navigateur, avec un indice supplémentaire décisif — le préfixe **`VM67026`** dans `VM67026 issues:1 Uncaught SyntaxError`. C'est la notation Chrome pour un script **évalué dynamiquement** (`eval`/injection), jamais pour un fichier du projet. Si elles réapparaissent : répondre « extension », ne pas réinvestiguer.
+
 ### 8.3 Travail RESTANT — 3 bugs d'imbrication, chemins de composants exacts
 
 > ⚠️ **Section partiellement périmée — lire le §9.2 AVANT d'agir.** A, C, D et E sont **résolus** ; A et D y étaient de surcroît **mal attribués** (mauvais fichier pour A, mauvaise granularité pour D).
@@ -485,7 +487,18 @@ Sortie type : `["plane-ui-icon-button", "TooltipTrigger", …, "EmojiReactionBut
 
 **Piste de correctif** : donner au `Collapsible` un emplacement d'action rendu **frère** du `Disclosure.Button`, ou appliquer le motif de superposition du §9.3 point 10 (le `Disclosure.Button` en `absolute inset-0`, l'action au-dessus). Vérifier **les 6 widgets** — chacun a un état plié/déplié et l'action n'apparaît que déplié (`actionItemElement && isOpen`).
 
-### 10.3 Chantier B — `EmojiReactionPicker`
+### 10.3 Chantier B — `EmojiReactionPicker` — **CONFIRMÉ par la console du dev**
+
+> Trace relevée le 2026-07-18 sur `/zelian/projects/<id>/issues/` avec la vue peek ouverte, qui valide le diagnostic ci-dessous **et** le point de montage exact :
+>
+> ```
+> button < IconButton$1 < TooltipTrigger < … < EmojiReactionButton$1
+>        < div < EmojiReactionGroup$1
+>        < button < PopoverTrigger < … < EmojiReactionPicker
+>        < div < IssueReaction < PeekOverviewIssueDetails
+> ```
+>
+> Le `<button>` extérieur est bien le `PopoverTrigger`, l'intérieur l'`IconButton` du bouton « ajouter une réaction », et **`EmojiReactionGroup` est entre les deux** — c'est-à-dire dans le déclencheur.
 
 `packages/propel/src/emoji-reaction/emoji-reaction-picker.tsx` a la même forme qu'`EmojiPicker` : `label` placé dans un `Popover.Button`. Mais l'appelant (`issues/issue-detail/reactions/issue.tsx` l.132) lui passe un **`EmojiReactionGroup` entier** — c'est-à-dire **toutes les pastilles de réaction, elles-mêmes cliquables**, plus le bouton « ajouter une réaction ».
 
