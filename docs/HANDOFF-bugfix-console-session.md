@@ -324,16 +324,17 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 
 ### 9.1 PRs
 
-| PR  | Objet                                                                                               | État      |
-| --- | --------------------------------------------------------------------------------------------------- | --------- |
-| #59 | `fix(web)` — 5 déclencheurs `customButton` imbriquant un bouton                                     | fusionnée |
-| #60 | `fix(web)` — **tous** les dropdowns, via un seul fichier `dropdowns/buttons.tsx`                    | fusionnée |
-| #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant) | fusionnée |
-| #62 | `fix(web)` — 2 sites `customButton` de plus (élément interactif enterré d'un niveau)                | fusionnée |
-| #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                  | fusionnée |
-| #64 | `fix(web)` — prop `iconKey` fuitant sur le `<svg>` des en-têtes de colonne du spreadsheet           | fusionnée |
-| #65 | `fix(web)` — lien de réglages imbriqué dans le lien de la carte projet (bug B)                      | fusionnée |
-| #66 | `fix(web)` — bouton imbriqué dans le sélecteur d'icône de l'en-tête de page (`EmojiPicker`)         | fusionnée |
+| PR  | Objet                                                                                                | État      |
+| --- | ---------------------------------------------------------------------------------------------------- | --------- |
+| #59 | `fix(web)` — 5 déclencheurs `customButton` imbriquant un bouton                                      | fusionnée |
+| #60 | `fix(web)` — **tous** les dropdowns, via un seul fichier `dropdowns/buttons.tsx`                     | fusionnée |
+| #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant)  | fusionnée |
+| #62 | `fix(web)` — 2 sites `customButton` de plus (élément interactif enterré d'un niveau)                 | fusionnée |
+| #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                   | fusionnée |
+| #64 | `fix(web)` — prop `iconKey` fuitant sur le `<svg>` des en-têtes de colonne du spreadsheet            | fusionnée |
+| #65 | `fix(web)` — lien de réglages imbriqué dans le lien de la carte projet (bug B)                       | fusionnée |
+| #66 | `fix(web)` — bouton imbriqué dans le sélecteur d'icône de l'en-tête de page (`EmojiPicker`)          | fusionnée |
+| #67 | `fix(web)` — 5 boutons imbriqués dans la rangée d'actions d'un work item (`IssueDetailWidgetButton`) | fusionnée |
 
 **Résultat mesuré** : page d'accueil et liste des work items sont passées de 1 et 4 imbrications de boutons à **zéro**, et plus aucune clé i18n brute n'est annoncée par un lecteur d'écran dans la sidebar.
 
@@ -358,9 +359,22 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
    La prop ne s'appelle donc **pas toujours `customButton`** : chercher aussi `label={`. ⚠️ **Plane n'utilise PAS Radix** — toute suggestion d'`asChild` (fréquente dans les réponses d'IA sur ce message d'erreur) est hors sujet. L'équivalent base-ui est la prop `render`, mais le bon réflexe reste de **ne pas fournir un second bouton** au conteneur qui en possède déjà un.
 
 2. **Chercher l'élément interactif en PROFONDEUR.** Le premier recensement exigeait qu'il soit le premier enfant de `customButton` et a manqué 2 sites où il est enveloppé dans un `<div>` ou un `<Tooltip>`. Motif correct :
+
    ```
    customButton=\{[\s\S]{0,500}?<(Button|IconButton|button)\b
    ```
+
+   ⚠️ **Ce grep reste insuffisant face aux INDIRECTIONS**, et c'est ainsi que la famille de la #67 a survécu à trois recensements. `action-buttons.tsx` écrit `customButton={<IssueDetailWidgetButton …/>}` — aucun `<Button>` en vue — et c'est `IssueDetailWidgetButton` qui en rend un ; pire, `SubIssuesActionButton` & co. **relaient** encore leur propre prop `customButton` vers `CustomMenu`. **Le seul recensement fiable est le DOM**, pas le code :
+
+   ```js
+   [...document.querySelectorAll("button button")].map((b) => ({
+     interne: b.className.slice(0, 40),
+     parent: b.parentElement.closest("button")?.getAttribute("data-slot") ?? b.parentElement.closest("button")?.id,
+   }));
+   ```
+
+   Le `data-slot` / l'`id` du parent nomme directement le conteneur fautif (`popover-trigger`, `headlessui-menu-button-*`, `headlessui-disclosure-button-*`), ce qui mène au composant bien plus vite qu'un grep.
+
 3. **⚠️ Piège géométrique — le vrai risque de ces correctifs.** Déplacer les classes du bouton interne vers `customButtonClassName` est trivial ; ce qui casse, c'est qu'une classe de **croissance** du wrapper (`flex-grow`, `w-full`) pilote désormais l'élément qui porte aussi la bordure → la pastille s'étale sur toute la largeur. Arrivé sur `mobile-layout-selection`. Remède : garder la croissance sur le bouton et poser le style visuel sur un **`<span>` interne non interactif**. **Ni le lint ni le typecheck ne le voient.**
 4. **Technique de comparaison avant/après** (celle qui a attrapé le point 3) : `git stash` → recharger la page → mesurer (`getBoundingClientRect`) → `git stash pop`. À utiliser systématiquement dès qu'on fusionne des listes de classes.
 5. **`Tooltip`** : son enfant doit rester un **élément DOM**. Remplacer un `<button>` par `<span className="flex">`, jamais le supprimer — sinon la ref retombe sur un composant fonction et l'on troque un avertissement contre « Function components cannot be given refs ».
@@ -385,7 +399,16 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 ### 9.4 Travail restant — précisé et vérifié
 
 - ~~**B — `<a>` dans `<a>` (page Projets)**~~ → **RÉSOLU en #65**, par un lien en superposition plutôt que par le modèle « frères » de la PR #57 qui aurait amputé la surface cliquable (cf. §9.3 point 10).
-- **⚠️ Vue peek : 9 imbrications d'une famille NOUVELLE**, jamais recensée. La rangée « Add sub-work item » / « Add relation » / « Add link » / « Attach » / « Link pages » plus 3 boutons-icônes, tous des `Button` propel dans un bouton extérieur. Se voit en ouvrant un work item depuis la liste.
+- **Vue peek : 9 imbrications → 4 restantes.** Les 5 de la rangée d'actions sont **résolues en #67** (`IssueDetailWidgetButton`, un seul fichier). Les **4 restantes** sont deux familles distinctes, chacune à traiter séparément — s'obtiennent en ouvrant un work item depuis la liste, puis :
+  ```js
+  [...document.querySelectorAll("button button")].map((b) => {
+    const p = b.parentElement.closest("button");
+    return p.getAttribute("data-slot") ?? p.id;
+  });
+  ```
+
+  - **×3 autour de l'éditeur de commentaire** : deux `data-slot="popover-trigger"` (base-ui, `className="outline-none"`) et un `headlessui-popover-button`, contenant chacun un `IconButton` propel (`inline-flex aspect-square`).
+  - **×1 dans le widget Pages** : un `headlessui-disclosure-button` (`className="w-full"`) contenant un bouton sans classe.
 - **46 menus icon-only sans `ariaLabel`** hors famille quick-actions (recensement de la PR #55 : 59 au total, 12 traités).
 - **F — listener non passif** : `packages/editor/src/core/extensions/side-menu.ts` l.160, confirmé présent.
 - **G — `pnpm start` cassé** : inchangé.
