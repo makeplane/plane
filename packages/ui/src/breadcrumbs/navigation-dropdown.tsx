@@ -37,15 +37,12 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
     return (
       <Tooltip tooltipContent={selectedItem?.title} position="bottom" disabled={isOpen}>
         <button
-          onClick={(e) => {
-            if (!isLast) {
-              e.preventDefault();
-              e.stopPropagation();
-              handleOnClick?.();
-            }
+          type="button"
+          onClick={() => {
+            if (!isLast) handleOnClick?.();
           }}
           className={cn(
-            "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
+            "flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
             {
               "hover:bg-layer-1 hover:text-primary": !isLast,
             }
@@ -65,11 +62,18 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
     return <NavigationButton />;
   }
 
+  // Siblings, never nested: CustomMenu always wraps `customButton` in a <button>, so
+  // passing NavigationButton in there produced `<button> cannot appear as a descendant
+  // of <button>`. Side by side, each action also keeps its own keyboard-reachable control.
   return (
-    <CustomMenu
-      customButton={
-        <>
-          <NavigationButton />
+    <div
+      className={cn("group flex h-full items-center gap-0.5 rounded-sm hover:bg-surface-2", {
+        "bg-surface-2": isOpen,
+      })}
+    >
+      <NavigationButton />
+      <CustomMenu
+        customButton={
           <Breadcrumbs.Separator
             className={cn("rounded-r-sm", {
               "bg-layer-1": isOpen && !isLast,
@@ -82,61 +86,56 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             })}
             showDivider={!isLast}
           />
-        </>
-      }
-      placement="bottom-start"
-      className="h-full rounded-sm"
-      customButtonClassName={cn(
-        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
-        {
-          "bg-surface-2": isOpen,
         }
-      )}
-      closeOnSelect
-      menuButtonOnClick={() => {
-        setIsOpen(!isOpen);
-      }}
-      onMenuClose={() => {
-        setIsOpen(false);
-      }}
-    >
-      {navigationItems.map((item) => {
-        if (item.shouldRender === false) return null;
-        return (
-          <CustomMenu.MenuItem
-            key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (item.key === selectedItemKey) return;
-              item.action();
-            }}
-            className={cn(
-              "flex items-center gap-2",
-              {
-                "text-placeholder": item.disabled,
-              },
-              item.className
-            )}
-            disabled={item.disabled}
-          >
-            {item.icon && <item.icon className={cn("size-4 flex-shrink-0", item.iconClassName)} />}
-            <div className="w-full">
-              <h5>{item.title}</h5>
-              {item.description && (
-                <p
-                  className={cn("whitespace-pre-line text-tertiary", {
-                    "text-placeholder": item.disabled,
-                  })}
-                >
-                  {item.description}
-                </p>
+        placement="bottom-start"
+        className="h-full rounded-sm"
+        customButtonClassName="flex h-full w-auto cursor-pointer items-center rounded-sm rounded-l-none outline-none"
+        closeOnSelect
+        menuButtonOnClick={() => {
+          setIsOpen(!isOpen);
+        }}
+        onMenuClose={() => {
+          setIsOpen(false);
+        }}
+      >
+        {navigationItems.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (item.key === selectedItemKey) return;
+                item.action();
+              }}
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-placeholder": item.disabled,
+                },
+                item.className
               )}
-            </div>
-            {item.key === selectedItemKey && <CheckIcon className="size-3.5 flex-shrink-0" />}
-          </CustomMenu.MenuItem>
-        );
-      })}
-    </CustomMenu>
+              disabled={item.disabled}
+            >
+              {item.icon && <item.icon className={cn("size-4 flex-shrink-0", item.iconClassName)} />}
+              <div className="w-full">
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("whitespace-pre-line text-tertiary", {
+                      "text-placeholder": item.disabled,
+                    })}
+                  >
+                    {item.description}
+                  </p>
+                )}
+              </div>
+              {item.key === selectedItemKey && <CheckIcon className="size-3.5 flex-shrink-0" />}
+            </CustomMenu.MenuItem>
+          );
+        })}
+      </CustomMenu>
+    </div>
   );
 }

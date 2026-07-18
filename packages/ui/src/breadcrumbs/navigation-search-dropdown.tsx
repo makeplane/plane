@@ -40,50 +40,55 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
   // state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // The navigation button and the dropdown trigger are SIBLINGS, never nested:
+  // CustomSearchSelect always wraps `customButton` in a <button>, so passing another
+  // <button> in there produced `<button> cannot appear as a descendant of <button>`.
+  // Keeping them side by side also gives each action its own keyboard-reachable control.
   return (
-    <CustomSearchSelect
-      onOpen={() => {
-        setIsDropdownOpen(true);
-      }}
-      onClose={() => {
-        setIsDropdownOpen(false);
-      }}
-      options={navigationItems}
-      value={selectedItem}
-      onChange={(value: string) => {
-        if (value !== selectedItem) {
-          onChange?.(value);
-        }
-      }}
-      customButton={
-        <>
-          <Tooltip tooltipContent={title} position="bottom">
-            <button
-              onClick={(e) => {
-                if (!isLast) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleOnClick?.();
-                }
-              }}
-              className={cn(
-                "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
-                {
-                  "hover:bg-layer-1 hover:text-primary": !isLast,
-                }
-              )}
-            >
-              {shouldTruncate && <div className="flex text-tertiary @4xl:hidden">...</div>}
-              <div
-                className={cn("flex gap-2", {
-                  "hidden items-center gap-2 @4xl:flex": shouldTruncate,
-                })}
-              >
-                {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
-                <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
-              </div>
-            </button>
-          </Tooltip>
+    <div
+      className={cn("group flex h-full items-center gap-0.5 rounded-sm hover:bg-surface-2", {
+        "bg-surface-2": isDropdownOpen,
+      })}
+    >
+      <Tooltip tooltipContent={title} position="bottom">
+        <button
+          type="button"
+          onClick={() => {
+            if (!isLast) handleOnClick?.();
+          }}
+          className={cn(
+            "flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
+            {
+              "hover:bg-layer-1 hover:text-primary": !isLast,
+            }
+          )}
+        >
+          {shouldTruncate && <div className="flex text-tertiary @4xl:hidden">...</div>}
+          <div
+            className={cn("flex gap-2", {
+              "hidden items-center gap-2 @4xl:flex": shouldTruncate,
+            })}
+          >
+            {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
+            <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
+          </div>
+        </button>
+      </Tooltip>
+      <CustomSearchSelect
+        onOpen={() => {
+          setIsDropdownOpen(true);
+        }}
+        onClose={() => {
+          setIsDropdownOpen(false);
+        }}
+        options={navigationItems}
+        value={selectedItem}
+        onChange={(value: string) => {
+          if (value !== selectedItem) {
+            onChange?.(value);
+          }
+        }}
+        customButton={
           <Breadcrumbs.Separator
             className={cn("rounded-r-sm", {
               "bg-layer-1": isDropdownOpen && !isLast,
@@ -96,16 +101,11 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
             })}
             showDivider={!isLast}
           />
-        </>
-      }
-      disabled={navigationDisabled}
-      className="h-full rounded-sm"
-      customButtonClassName={cn(
-        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
-        {
-          "bg-surface-2": isDropdownOpen,
         }
-      )}
-    />
+        disabled={navigationDisabled}
+        className="h-full rounded-sm"
+        customButtonClassName="flex h-full w-auto cursor-pointer items-center rounded-sm rounded-l-none outline-none"
+      />
+    </div>
   );
 }
