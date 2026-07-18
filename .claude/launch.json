@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "plane-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["turbo", "run", "dev", "--filter=web", "--filter=live"],
+      "port": 3000
+    }
+  ]
+}
