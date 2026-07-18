@@ -6,7 +6,7 @@
 
 import React from "react";
 // helpers
-import { Button } from "@plane/propel/button";
+import { getButtonStyling } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
@@ -78,10 +78,9 @@ function BorderButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <span
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "flex h-full w-full items-center justify-start gap-1.5 border-[0.5px] border-strong",
           {
             "bg-layer-transparent-active": isActive,
@@ -90,7 +89,7 @@ function BorderButton(props: ButtonProps) {
         )}
       >
         {children}
-      </Button>
+      </span>
     </Tooltip>
   );
 }
@@ -106,16 +105,15 @@ function BackgroundButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <span
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "flex h-full w-full items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
           className
         )}
       >
         {children}
-      </Button>
+      </span>
     </Tooltip>
   );
 }
@@ -131,10 +129,9 @@ function TransparentButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <span
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "flex h-full w-full items-center justify-between gap-1.5",
           {
             "bg-layer-transparent-active": isActive,
@@ -143,7 +140,7 @@ function TransparentButton(props: ButtonProps) {
         )}
       >
         {children}
-      </Button>
+      </span>
     </Tooltip>
   );
 }
