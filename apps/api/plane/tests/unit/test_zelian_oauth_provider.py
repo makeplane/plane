@@ -142,6 +142,7 @@ class TestUserinfoMapping:
         userinfo = {
             "sub": "supabase-uid-1",
             "email": "jane.doe@zelian.fr",
+            "email_verified": True,
             "name": "Jane Doe",
             "picture": "https://cdn/avatar.png",
         }
@@ -162,8 +163,55 @@ class TestUserinfoMapping:
         with patch.dict("os.environ", ENV, clear=False):
             provider = ZelianOAuthProvider(request=secure_request(), code="c")
 
-        with patch.object(provider, "get_user_response", return_value={"sub": "s", "email": "bob@zelian.fr"}):
+        userinfo = {"sub": "s", "email": "bob@zelian.fr", "email_verified": True}
+        with patch.object(provider, "get_user_response", return_value=userinfo):
             provider.set_user_data()
 
         assert provider.user_data["user"]["first_name"] == "bob"
         assert provider.user_data["user"]["last_name"] == ""
+
+
+class TestUnverifiedEmailRejected:
+    """An unconfirmed address must never be matched to an existing Plane account.
+
+    See GHSA-7j95-vh8g-f365 — upstream closed the same hole on the gitea provider
+    this one was modelled on.
+    """
+
+    def _provider(self):
+        from plane.authentication.provider.oauth.zelian import ZelianOAuthProvider
+
+        with patch.dict("os.environ", ENV, clear=False):
+            return ZelianOAuthProvider(request=secure_request(), code="c")
+
+    def test_rejects_email_verified_false(self):
+        provider = self._provider()
+        userinfo = {"sub": "s", "email": "mallory@zelian.fr", "email_verified": False}
+
+        with patch.object(provider, "get_user_response", return_value=userinfo):
+            with pytest.raises(AuthenticationException) as exc:
+                provider.set_user_data()
+
+        assert exc.value.error_code == 5124  # OAUTH_PROVIDER_UNVERIFIED_EMAIL
+
+    def test_fails_closed_when_claim_absent(self):
+        """A provider that simply omits the claim must not be trusted."""
+        provider = self._provider()
+        userinfo = {"sub": "s", "email": "mallory@zelian.fr"}
+
+        with patch.object(provider, "get_user_response", return_value=userinfo):
+            with pytest.raises(AuthenticationException) as exc:
+                provider.set_user_data()
+
+        assert exc.value.error_code == 5124
+
+    def test_rejects_truthy_non_boolean_claim(self):
+        """`"false"` is a truthy string — only a real boolean True may pass."""
+        provider = self._provider()
+        userinfo = {"sub": "s", "email": "mallory@zelian.fr", "email_verified": "false"}
+
+        with patch.object(provider, "get_user_response", return_value=userinfo):
+            with pytest.raises(AuthenticationException) as exc:
+                provider.set_user_data()
+
+        assert exc.value.error_code == 5124

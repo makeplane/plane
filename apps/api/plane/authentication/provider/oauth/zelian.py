@@ -128,6 +128,15 @@ class ZelianOAuthProvider(OauthAdapter):
         # Supabase userinfo by scope: sub (openid) · email, email_verified (email)
         # · name, picture (profile)
         user_info_response = self.get_user_response()
+        # Reject unverified emails — an account whose address was never confirmed could
+        # otherwise be matched to an existing Plane account, bypassing authentication
+        # (GHSA-7j95-vh8g-f365). Fail closed: an absent email_verified claim is treated
+        # the same as email_verified=false.
+        if user_info_response.get("email_verified") is not True:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OAUTH_PROVIDER_UNVERIFIED_EMAIL"],
+                error_message="OAUTH_PROVIDER_UNVERIFIED_EMAIL",
+            )
         email = user_info_response.get("email")
         name = (user_info_response.get("name") or "").strip()
         first_name, _, last_name = name.partition(" ")
