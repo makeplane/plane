@@ -333,6 +333,7 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 | #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                  | fusionnée |
 | #64 | `fix(web)` — prop `iconKey` fuitant sur le `<svg>` des en-têtes de colonne du spreadsheet           | fusionnée |
 | #65 | `fix(web)` — lien de réglages imbriqué dans le lien de la carte projet (bug B)                      | fusionnée |
+| #66 | `fix(web)` — bouton imbriqué dans le sélecteur d'icône de l'en-tête de page (`EmojiPicker`)         | fusionnée |
 
 **Résultat mesuré** : page d'accueil et liste des work items sont passées de 1 et 4 imbrications de boutons à **zéro**, et plus aucune clé i18n brute n'est annoncée par un lecteur d'écran dans la sidebar.
 
@@ -346,7 +347,16 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 
 ### 9.3 Enseignements techniques (nouveaux)
 
-1. **Trois composants**, pas deux, enveloppent `customButton` dans un `<button>` : `CustomMenu` (l.251), `CustomSearchSelect` (l.104) et **`CustomSelect`** (l.86).
+1. **Recensement des conteneurs qui enveloppent SYSTÉMATIQUEMENT leur contenu dans un `<button>`.** Ne jamais leur passer un élément interactif :
+   | Composant | Prop concernée | Où |
+   | --- | --- | --- |
+   | `CustomMenu` | `customButton` | `packages/ui/…/custom-menu.tsx` l.251 |
+   | `CustomSearchSelect` | `customButton` | `custom-search-select.tsx` l.104 |
+   | `CustomSelect` | `customButton` | `custom-select.tsx` l.86 |
+   | **`EmojiPicker`** | **`label`** | `propel/…/emoji-picker.tsx` → `Popover.Button` → `BasePopover.Trigger` |
+
+   La prop ne s'appelle donc **pas toujours `customButton`** : chercher aussi `label={`. ⚠️ **Plane n'utilise PAS Radix** — toute suggestion d'`asChild` (fréquente dans les réponses d'IA sur ce message d'erreur) est hors sujet. L'équivalent base-ui est la prop `render`, mais le bon réflexe reste de **ne pas fournir un second bouton** au conteneur qui en possède déjà un.
+
 2. **Chercher l'élément interactif en PROFONDEUR.** Le premier recensement exigeait qu'il soit le premier enfant de `customButton` et a manqué 2 sites où il est enveloppé dans un `<div>` ou un `<Tooltip>`. Motif correct :
    ```
    customButton=\{[\s\S]{0,500}?<(Button|IconButton|button)\b
