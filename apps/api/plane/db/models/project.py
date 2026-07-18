@@ -109,6 +109,7 @@ class Project(BaseModel):
     estimate = models.ForeignKey("db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True)
     archive_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     close_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
+    cascade_state_on_close = models.BooleanField(default=False)
     logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey("db.State", on_delete=models.SET_NULL, null=True, related_name="default_state")
     archived_at = models.DateTimeField(null=True)
