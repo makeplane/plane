@@ -16,6 +16,8 @@
       "create_new_project": "新しいプロジェクトを作成",
       "open_projects_menu": "プロジェクトメニューを開く",
       "close_projects_menu": "プロジェクトメニューを閉じる",
+      "open_workspace_menu": "ワークスペースメニューを開く",
+      "close_workspace_menu": "ワークスペースメニューを閉じる",
       "toggle_quick_actions_menu": "クイックアクションメニューの切り替え",
       "open_project_menu": "プロジェクトメニューを開く",
       "close_project_menu": "プロジェクトメニューを閉じる",

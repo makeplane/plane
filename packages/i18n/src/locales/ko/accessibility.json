@@ -16,6 +16,8 @@
       "create_new_project": "새 프로젝트 생성",
       "open_projects_menu": "프로젝트 메뉴 열기",
       "close_projects_menu": "프로젝트 메뉴 닫기",
+      "open_workspace_menu": "작업 공간 메뉴 열기",
+      "close_workspace_menu": "작업 공간 메뉴 닫기",
       "toggle_quick_actions_menu": "빠른 작업 메뉴 토글",
       "open_project_menu": "프로젝트 메뉴 열기",
       "close_project_menu": "프로젝트 메뉴 닫기",
