@@ -332,6 +332,7 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 | #62 | `fix(web)` — 2 sites `customButton` de plus (élément interactif enterré d'un niveau)                | fusionnée |
 | #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                  | fusionnée |
 | #64 | `fix(web)` — prop `iconKey` fuitant sur le `<svg>` des en-têtes de colonne du spreadsheet           | fusionnée |
+| #65 | `fix(web)` — lien de réglages imbriqué dans le lien de la carte projet (bug B)                      | fusionnée |
 
 **Résultat mesuré** : page d'accueil et liste des work items sont passées de 1 et 4 imbrications de boutons à **zéro**, et plus aucune clé i18n brute n'est annoncée par un lecteur d'écran dans la sidebar.
 
@@ -363,10 +364,17 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
    ```js
    document.querySelectorAll("[iconkey]").length; // 0 attendu
    ```
+10. **Motif « lien en superposition » — pour toute carte entièrement cliquable contenant un autre contrôle.** Appliqué en #65 à la carte projet. La carte devient un `<div class="relative">`, un `<Link>` **vide** en `absolute inset-0 z-[2]` la recouvre, et chaque contrôle interne devient son **frère**. Préférable au modèle « frères » de la PR #57 (fils d'Ariane) dès que la surface cliquable compte : celui-ci l'ampute, celui-là la conserve à l'identique.
+    - ⚠️ **Le piège est l'empilement CSS, pas le HTML.** Un enfant **ne peut pas** passer au-dessus d'un frère de son ancêtre porteur du contexte d'empilement. Donner `z-[3]` au bouton ne suffit donc pas s'il vit dans une rangée en `z-[1]` : il faut **remonter la rangée** au-dessus de la surcouche, lui poser `pointer-events-none`, et mettre `pointer-events-auto` sur les seuls contrôles. Attention aussi à `opacity < 1` (ici `opacity-90` en archivé), qui crée un contexte d'empilement sans z-index visible.
+    - **Contrôle décisif** — `elementFromPoint` dit ce que le navigateur cible réellement zone par zone, y compris pour le clic milieu et le menu contextuel que `stopPropagation` ne couvre jamais :
+      ```js
+      const el = document.elementFromPoint(x, y);
+      el.closest("a")?.getAttribute("href") ?? el.closest("button");
+      ```
 
 ### 9.4 Travail restant — précisé et vérifié
 
-- **B — `<a>` dans `<a>` (page Projets), localisé.** `project/card.tsx` l.197 ouvre un `<Link>` sur **toute la carte** (`/projects/:id/issues`) et contient l.339-347 un second `<Link>` (icône engrenage → `/settings/projects/:id`). Correctif = les rendre **frères**, modèle de la PR #57 (fils d'Ariane).
+- ~~**B — `<a>` dans `<a>` (page Projets)**~~ → **RÉSOLU en #65**, par un lien en superposition plutôt que par le modèle « frères » de la PR #57 qui aurait amputé la surface cliquable (cf. §9.3 point 10).
 - **⚠️ Vue peek : 9 imbrications d'une famille NOUVELLE**, jamais recensée. La rangée « Add sub-work item » / « Add relation » / « Add link » / « Attach » / « Link pages » plus 3 boutons-icônes, tous des `Button` propel dans un bouton extérieur. Se voit en ouvrant un work item depuis la liste.
 - **46 menus icon-only sans `ariaLabel`** hors famille quick-actions (recensement de la PR #55 : 59 au total, 12 traités).
 - **F — listener non passif** : `packages/editor/src/core/extensions/side-menu.ts` l.160, confirmé présent.
