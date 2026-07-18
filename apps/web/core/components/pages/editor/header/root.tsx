@@ -42,20 +42,17 @@ export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props
               isOpen={isLogoPickerOpen}
               handleToggle={(val) => setIsLogoPickerOpen(val)}
               className="flex items-center justify-center"
-              buttonClassName="flex items-center justify-center"
+              buttonClassName={cn(
+                "flex items-center justify-center gap-1 rounded-sm p-1 text-13 font-medium text-tertiary transition-colors hover:bg-layer-1",
+                {
+                  "bg-layer-1": isLogoPickerOpen,
+                }
+              )}
               label={
-                <button
-                  type="button"
-                  className={cn(
-                    "flex items-center gap-1 rounded-sm p-1 text-13 font-medium text-tertiary transition-colors outline-none hover:bg-layer-1",
-                    {
-                      "bg-layer-1": isLogoPickerOpen,
-                    }
-                  )}
-                >
+                <>
                   <SmilePlus className="size-4 flex-shrink-0" />
                   Icon
-                </button>
+                </>
               }
               onChange={updatePageLogo}
               defaultIconColor={
