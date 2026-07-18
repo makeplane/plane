@@ -83,6 +83,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     const payload = { ...formData };
 
     await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
+      // eslint-disable-next-line promise/always-return -- pre-existing, unrelated to this fix
       .then(() => {
         if (onSuccess) onSuccess();
         onClose();
@@ -196,7 +197,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                         <CustomSearchSelect
                           value={value}
                           customButton={
-                            <button className="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                            <>
                               {value && value !== "" ? (
                                 <div className="flex items-center gap-2">
                                   <Avatar
@@ -209,8 +210,9 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                 <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                               )}
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                            </button>
+                            </>
                           }
+                          customButtonClassName="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none"
                           onChange={(val: string) => {
                             onChange(val);
                             // Update the role to the workspace role when member ID changes
@@ -241,6 +243,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                       name={`members.${index}.role`}
                       control={control}
                       rules={{ required: "Select Role" }}
+                      // eslint-disable-next-line no-shadow -- pre-existing, unrelated to this fix
                       render={({ field }) => (
                         <CustomSelect
                           {...field}
