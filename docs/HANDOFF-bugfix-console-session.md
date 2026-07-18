@@ -399,7 +399,9 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 ### 9.4 Travail restant — précisé et vérifié
 
 - ~~**B — `<a>` dans `<a>` (page Projets)**~~ → **RÉSOLU en #65**, par un lien en superposition plutôt que par le modèle « frères » de la PR #57 qui aurait amputé la surface cliquable (cf. §9.3 point 10).
+- **⚠️ Deux chantiers STRUCTURELS restants, chacun à faire à froid** (voir §9.6) : la famille `actionItemElement` du `Collapsible` (**6 widgets**) et `EmojiReactionPicker`. Ce ne sont plus des déplacements de classes : les deux demandent de changer l'API d'un composant partagé.
 - **Vue peek : 9 imbrications → 4 restantes.** Les 5 de la rangée d'actions sont **résolues en #67** (`IssueDetailWidgetButton`, un seul fichier). Les **4 restantes** sont deux familles distinctes, chacune à traiter séparément — s'obtiennent en ouvrant un work item depuis la liste, puis :
+
   ```js
   [...document.querySelectorAll("button button")].map((b) => {
     const p = b.parentElement.closest("button");
@@ -409,6 +411,7 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 
   - **×3 autour de l'éditeur de commentaire** : deux `data-slot="popover-trigger"` (base-ui, `className="outline-none"`) et un `headlessui-popover-button`, contenant chacun un `IconButton` propel (`inline-flex aspect-square`).
   - **×1 dans le widget Pages** : un `headlessui-disclosure-button` (`className="w-full"`) contenant un bouton sans classe.
+
 - **46 menus icon-only sans `ariaLabel`** hors famille quick-actions (recensement de la PR #55 : 59 au total, 12 traités).
 - **F — listener non passif** : `packages/editor/src/core/extensions/side-menu.ts` l.160, confirmé présent.
 - **G — `pnpm start` cassé** : inchangé.
@@ -421,3 +424,63 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 - **`C:\Stage\Plane` est un dossier VIDE**, pas un raccourci vers le dépôt. Le code vit dans WSL (`~/dev/plane`).
 - **Quoting `wsl.exe -- bash -lc '…'` : peu fiable.** Les variables shell d'une boucle (`$f`, `$p`) sont parfois mangées, et certaines commandes pourtant valides échouent sur `unexpected EOF while looking for matching \`'\``. Dès que ce n'est pas trivial : **écrire un script dans `/tmp`et l'exécuter**, et utiliser`git commit -F <fichier>`plutôt que des`-m` enchaînés.
 - Le `pnpm dev` du poste lance **trois** apps sous turbo (web `:3000`, admin `:3001`, space `:3002`) en processus détaché — le tuer coupe les trois.
+
+---
+
+## 10. Imbrications restantes — deux chantiers STRUCTURELS
+
+> Les 11 PRs des §8-9 étaient toutes des correctifs **mécaniques** : déplacer un style vers la prop de classe du conteneur. **Les deux qui suivent ne le sont pas.** Ils exigent de modifier l'API d'un composant partagé, donc une passe dédiée avec vérification de chaque appelant. Ne pas les commencer en fin de session.
+
+### 10.1 L'OUTIL qui a débloqué le diagnostic — marche dans l'arbre de fibres React
+
+Ni le grep ni le DOM seul ne suffisaient à nommer les composants fautifs. **Remonter l'arbre de fibres depuis le nœud DOM les nomme directement** — c'est la technique à employer d'emblée la prochaine fois :
+
+```js
+const nom = (f) => {
+  const t = f.type;
+  if (!t || typeof t === "string") return null;
+  return t.displayName || t.name || (t.render && (t.render.displayName || t.render.name)) || null;
+};
+[...document.querySelectorAll("button button")].map((b) => {
+  const key = Object.keys(b).find((k) => k.startsWith("__reactFiber$"));
+  let f = b[key];
+  const chaine = [];
+  for (let i = 0; i < 40 && f; i++) {
+    const n = nom(f);
+    if (n && !chaine.includes(n)) chaine.push(n);
+    f = f.return;
+  }
+  return { conteneur: b.parentElement.closest("button")?.getAttribute("data-slot"), composants: chaine.slice(0, 9) };
+});
+```
+
+Sortie type : `["plane-ui-icon-button", "TooltipTrigger", …, "EmojiReactionButton", "PopoverTrigger"]` — le composant fautif et son conteneur, sans aucune recherche dans le code.
+
+### 10.2 Chantier A — `actionItemElement` du `Collapsible` (**6 widgets**)
+
+`Collapsible` (`packages/ui/src/collapsible/collapsible.tsx`) rend `<Disclosure.Button className={buttonClassName}>{title}</Disclosure.Button>`. Le `title` est un `CollapsibleButton`, qui affiche son `actionItemElement` **à l'intérieur** — donc le bouton d'action de chaque widget vit dans le bouton qui replie la section.
+
+**Conséquence au-delà du HTML** : cliquer le « + » d'un widget **replie aussi la section**.
+
+**Six appelants**, tous atteints — mon relevé DOM n'en voyait qu'un seul parce qu'un seul widget était présent sur le work item de test :
+
+| Fichier                                           |
+| ------------------------------------------------- |
+| `issue-detail-widgets/pages/title.tsx` l.52       |
+| `issue-detail-widgets/links/title.tsx` l.54       |
+| `issue-detail-widgets/attachments/title.tsx` l.54 |
+| `issue-detail-widgets/relations/title.tsx` l.54   |
+| `issue-detail-widgets/sub-issues/title.tsx` l.57  |
+| `milestones/milestones-section.tsx` l.81          |
+
+**Piste de correctif** : donner au `Collapsible` un emplacement d'action rendu **frère** du `Disclosure.Button`, ou appliquer le motif de superposition du §9.3 point 10 (le `Disclosure.Button` en `absolute inset-0`, l'action au-dessus). Vérifier **les 6 widgets** — chacun a un état plié/déplié et l'action n'apparaît que déplié (`actionItemElement && isOpen`).
+
+### 10.3 Chantier B — `EmojiReactionPicker`
+
+`packages/propel/src/emoji-reaction/emoji-reaction-picker.tsx` a la même forme qu'`EmojiPicker` : `label` placé dans un `Popover.Button`. Mais l'appelant (`issues/issue-detail/reactions/issue.tsx` l.132) lui passe un **`EmojiReactionGroup` entier** — c'est-à-dire **toutes les pastilles de réaction, elles-mêmes cliquables**, plus le bouton « ajouter une réaction ».
+
+Donc : autant de boutons imbriqués **que de réactions posées**. Le work item de test n'en ayant aucune, le relevé n'en montrait que 2 (les boutons « ajouter »).
+
+**Ce n'est pas qu'un problème de balisage** : chaque pastille de réaction déclenche aussi l'ouverture du sélecteur en remontant l'événement.
+
+**Piste de correctif** : sortir le groupe du déclencheur — seul le bouton « ajouter » doit l'être. `EmojiReactionButton` est déjà un `forwardRef` qui spread ses props, donc il satisfait le contrat de la prop **`render` de base-ui** (l'équivalent d'`asChild` — cf. §9.3 point 1) : `<Popover.Button render={<EmojiReactionButton …/>} />` ferait du déclencheur l'`IconButton` lui-même, sans wrapper. ⚠️ Vérifier que `disabled` ne fuit pas sur un élément non-bouton si l'on tente `render={<span/>}`.
