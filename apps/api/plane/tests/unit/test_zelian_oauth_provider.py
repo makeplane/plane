@@ -27,6 +27,7 @@ pytestmark = pytest.mark.django_db
 
 
 ENV = {
+    "IS_ZELIAN_ENABLED": "1",
     "ZELIAN_AUTH_BASE_URL": "https://abcdefgh.supabase.co/auth/v1",
     "ZELIAN_CLIENT_ID": "client-123",
     "ZELIAN_CLIENT_SECRET": "secret-456",
@@ -71,6 +72,39 @@ class TestProviderConfig:
             with pytest.raises(AuthenticationException) as exc:
                 ZelianOAuthProvider(request=secure_request(), state="s")
         assert exc.value.error_code == 5113
+
+
+class TestZelianModeSwitch:
+    """IS_ZELIAN_ENABLED is the switch between "Plane as a Zelian app" and
+    "Plane as an external tool". Off means the SSO route is closed server-side,
+    not merely hidden in the UI.
+    """
+
+    def _expect_refused(self, env):
+        from plane.authentication.provider.oauth.zelian import ZelianOAuthProvider
+
+        with patch.dict("os.environ", env, clear=False):
+            with pytest.raises(AuthenticationException) as exc:
+                ZelianOAuthProvider(request=secure_request(), state="s")
+        assert exc.value.error_code == 5113  # ZELIAN_NOT_CONFIGURED
+
+    def test_refuses_when_disabled_even_with_credentials(self):
+        """External mode: credentials may stay in the environment, the route stays shut."""
+        self._expect_refused(dict(ENV, IS_ZELIAN_ENABLED="0"))
+
+    def test_refuses_when_flag_absent(self):
+        env = {k: v for k, v in ENV.items() if k != "IS_ZELIAN_ENABLED"}
+        with patch.dict("os.environ", env, clear=False):
+            with patch("os.environ.get", side_effect=lambda k, d=None: env.get(k, d)):
+                from plane.authentication.provider.oauth.zelian import ZelianOAuthProvider
+
+                with pytest.raises(AuthenticationException) as exc:
+                    ZelianOAuthProvider(request=secure_request(), state="s")
+        assert exc.value.error_code == 5113
+
+    def test_refuses_on_truthy_non_one_value(self):
+        """Only the literal "1" enables internal mode — "true" must not."""
+        self._expect_refused(dict(ENV, IS_ZELIAN_ENABLED="true"))
 
 
 class TestAuthorizationUrl:
