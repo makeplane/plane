@@ -12,6 +12,7 @@ import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
@@ -46,6 +47,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const [restoreProject, setRestoreProject] = useState(false);
   // refs
   const projectCardRef = useRef(null);
+  // i18n
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -194,22 +197,29 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           archive={false}
         />
       )}
-      <Link
+      <div
         ref={projectCardRef}
-        href={`/${workspaceSlug}/projects/${project.id}/issues`}
-        onClick={(e) => {
-          if (!isMemberOfProject || isArchived) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!isArchived) setJoinProjectModal(true);
-          }
-        }}
-        data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn(
-          "group/project-card flex w-full flex-col justify-between overflow-hidden rounded-lg border border-subtle bg-layer-2 transition-all duration-300 hover:border-strong hover:shadow-raised-200"
+          "group/project-card relative flex w-full flex-col justify-between overflow-hidden rounded-lg border border-subtle bg-layer-2 transition-all duration-300 hover:border-strong hover:shadow-raised-200"
         )}
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
+        {/* Stretched link: covers the whole card so the click surface is unchanged, while staying a
+            sibling of the other controls rather than their ancestor. Anything interactive sits above
+            it via z-index; everything else lets clicks fall through to it. */}
+        <Link
+          href={`/${workspaceSlug}/projects/${project.id}/issues`}
+          onClick={(e) => {
+            if (!isMemberOfProject || isArchived) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!isArchived) setJoinProjectModal(true);
+            }
+          }}
+          data-prevent-progress={!isMemberOfProject || isArchived}
+          aria-label={project.name}
+          className="absolute inset-0 z-[2] rounded-lg"
+        />
         <div className="relative h-[118px] w-full rounded-t">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
@@ -219,7 +229,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             className="absolute top-0 left-0 h-full w-full rounded-t"
           />
 
-          <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
+          <div className="pointer-events-none absolute bottom-4 z-[3] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
               <div className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
@@ -235,7 +245,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             </div>
 
             {!isArchived && (
-              <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-progress className="pointer-events-auto flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
@@ -267,9 +277,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         </div>
 
         <div
-          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
-            "opacity-90": isArchived,
-          })}
+          className={cn(
+            "pointer-events-none relative z-[3] flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4",
+            {
+              "opacity-90": isArchived,
+            }
+          )}
         >
           <p className="line-clamp-2 text-13 break-words text-tertiary">
             {project.description && project.description.trim() !== ""
@@ -287,7 +300,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 position="top"
               >
                 {projectMembersIds && projectMembersIds.length > 0 ? (
-                  <div className="flex cursor-pointer items-center gap-2 text-secondary">
+                  <div className="pointer-events-auto flex cursor-pointer items-center gap-2 text-secondary">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
                         const member = getUserDetails(memberId);
@@ -299,37 +312,32 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 text-placeholder italic">No Member Yet</span>
+                  <span className="pointer-events-auto text-13 text-placeholder italic">No Member Yet</span>
                 )}
               </Tooltip>
               {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
-                <div className="flex items-center justify-center gap-2">
-                  <div
+                <div className="pointer-events-auto flex items-center justify-center gap-2">
+                  <button
+                    type="button"
                     className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setRestoreProject(true);
-                    }}
+                    onClick={() => setRestoreProject(true)}
                   >
-                    <div className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5">
                       <ArchiveRestoreIcon className="h-3.5 w-3.5" />
                       Restore
-                    </div>
-                  </div>
-                  <div
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={t("common.delete")}
                     className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDeleteProjectModal(true);
-                    }}
+                    onClick={() => setDeleteProjectModal(true)}
                   >
                     <TrashIcon className="h-3.5 w-3.5" />
-                  </div>
+                  </button>
                 </div>
               )
             ) : (
@@ -337,10 +345,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
-                      className="flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
+                      className="pointer-events-auto flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
                       href={`/${workspaceSlug}/settings/projects/${project.id}`}
                     >
                       <Settings className="h-3.5 w-3.5" />
@@ -352,7 +357,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </span>
                   ))}
                 {!isMemberOfProject && (
-                  <div className="flex items-center">
+                  <div className="pointer-events-auto flex items-center">
                     <Button
                       variant="link"
                       className="!p-0 font-semibold"
@@ -370,7 +375,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             )}
           </div>
         </div>
-      </Link>
+      </div>
     </>
   );
 });
