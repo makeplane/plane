@@ -324,12 +324,15 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 
 ### 9.1 PRs
 
-| PR  | Objet                                                                                               | État                                   |
-| --- | --------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| #59 | `fix(web)` — 5 déclencheurs `customButton` imbriquant un bouton                                     | fusionnée                              |
-| #60 | `fix(web)` — **tous** les dropdowns, via un seul fichier `dropdowns/buttons.tsx`                    | fusionnée                              |
-| #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant) | ouverte, vérif partielle               |
-| —   | `fix/custom-menu-nested-button-round2` — 2 sites `customButton` de plus                             | branche poussée, PR à ouvrir après #61 |
+| PR  | Objet                                                                                               | État      |
+| --- | --------------------------------------------------------------------------------------------------- | --------- |
+| #59 | `fix(web)` — 5 déclencheurs `customButton` imbriquant un bouton                                     | fusionnée |
+| #60 | `fix(web)` — **tous** les dropdowns, via un seul fichier `dropdowns/buttons.tsx`                    | fusionnée |
+| #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant) | fusionnée |
+| #62 | `fix(web)` — 2 sites `customButton` de plus (élément interactif enterré d'un niveau)                | fusionnée |
+| #63 | `docs(handoff)` — ce §9 et les corrections du §8.3                                                  | fusionnée |
+
+**Résultat mesuré** : page d'accueil et liste des work items sont passées de 1 et 4 imbrications de boutons à **zéro**, et plus aucune clé i18n brute n'est annoncée par un lecteur d'écran dans la sidebar.
 
 ### 9.2 Corrections au §8.3
 
