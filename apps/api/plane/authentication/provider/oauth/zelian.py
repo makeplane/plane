@@ -28,8 +28,17 @@ class ZelianOAuthProvider(OauthAdapter):
     scope = "openid email profile"
 
     def __init__(self, request, code=None, state=None, callback=None, code_challenge=None, code_verifier=None):
-        (ZELIAN_AUTH_BASE_URL, ZELIAN_CLIENT_ID, ZELIAN_CLIENT_SECRET) = get_configuration_value(
+        (
+            IS_ZELIAN_ENABLED,
+            ZELIAN_AUTH_BASE_URL,
+            ZELIAN_CLIENT_ID,
+            ZELIAN_CLIENT_SECRET,
+        ) = get_configuration_value(
             [
+                {
+                    "key": "IS_ZELIAN_ENABLED",
+                    "default": os.environ.get("IS_ZELIAN_ENABLED", "0"),
+                },
                 {
                     "key": "ZELIAN_AUTH_BASE_URL",
                     "default": os.environ.get("ZELIAN_AUTH_BASE_URL"),
@@ -44,6 +53,16 @@ class ZelianOAuthProvider(OauthAdapter):
                 },
             ]
         )
+
+        # IS_ZELIAN_ENABLED is the single switch between "Plane as a Zelian app" (SSO on)
+        # and "Plane as an external tool" (SSO off, standard Plane auth). The frontend
+        # already hides the button when it is off; refuse here too so the route cannot be
+        # reached directly while credentials happen to be present in the environment.
+        if IS_ZELIAN_ENABLED != "1":
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ZELIAN_NOT_CONFIGURED"],
+                error_message="ZELIAN_NOT_CONFIGURED",
+            )
 
         if not (ZELIAN_AUTH_BASE_URL and ZELIAN_CLIENT_ID and ZELIAN_CLIENT_SECRET):
             raise AuthenticationException(
