@@ -9,11 +9,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import type { IIntakeState, IState } from "@plane/types";
+import type { IIntakeState, IState, TStateTransitionMap, TStateTransitionPayload } from "@plane/types";
 // helpers
 import { sortStates } from "@plane/utils";
 // plane web
 import { ProjectStateService } from "@/services/project/project-state.service";
+import { ProjectStateTransitionService } from "@/services/project/project-state-transition.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IStateStore {
@@ -57,31 +58,55 @@ export interface IStateStore {
   ) => Promise<void>;
 
   getStatePercentageInGroup: (stateId: string | null | undefined) => number | undefined;
+  // workflow: state transitions
+  transitionMap: Record<string, TStateTransitionMap>;
+  transitionsFetchedMap: Record<string, boolean>;
+  getAllowedTransitionIds: (
+    projectId: string | null | undefined,
+    fromStateId: string | null | undefined
+  ) => string[] | undefined;
+  getIsTransitionAllowed: (
+    projectId: string | null | undefined,
+    fromStateId: string | null | undefined,
+    toStateId: string | null | undefined
+  ) => boolean;
+  fetchStateTransitions: (workspaceSlug: string, projectId: string) => Promise<TStateTransitionMap>;
+  updateStateTransitions: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TStateTransitionPayload
+  ) => Promise<TStateTransitionMap>;
 }
 
 export class StateStore implements IStateStore {
   stateMap: Record<string, IState> = {};
   intakeStateMap: Record<string, IIntakeState> = {};
+  transitionMap: Record<string, TStateTransitionMap> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
   fetchedIntakeMap: Record<string, boolean> = {};
+  transitionsFetchedMap: Record<string, boolean> = {};
   rootStore: RootStore;
   router;
   stateService: ProjectStateService;
+  stateTransitionService: ProjectStateTransitionService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       stateMap: observable,
       intakeStateMap: observable,
+      transitionMap: observable,
       fetchedMap: observable,
       fetchedIntakeMap: observable,
+      transitionsFetchedMap: observable,
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
       // fetch action
       fetchProjectStates: action,
       fetchProjectIntakeState: action,
+      fetchStateTransitions: action,
       // CRUD actions
       createState: action,
       updateState: action,
@@ -89,8 +114,10 @@ export class StateStore implements IStateStore {
       // state actions
       markStateAsDefault: action,
       moveStatePosition: action,
+      updateStateTransitions: action,
     });
     this.stateService = new ProjectStateService();
+    this.stateTransitionService = new ProjectStateTransitionService();
     this.router = _rootStore.router;
     this.rootStore = _rootStore;
   }
@@ -124,13 +151,10 @@ export class StateStore implements IStateStore {
     const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
 
     // Ensure all STATE_GROUPS are present
-    const allGroups = Object.keys(STATE_GROUPS).reduce(
-      (acc, group) => ({
-        ...acc,
-        [group]: groupedStates[group] || [],
-      }),
-      {} as Record<string, IState[]>
-    );
+    const allGroups: Record<string, IState[]> = {};
+    Object.keys(STATE_GROUPS).forEach((group) => {
+      allGroups[group] = groupedStates[group] || [];
+    });
 
     return allGroups;
   }
@@ -307,10 +331,9 @@ export class StateStore implements IStateStore {
    */
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     if (!this.stateMap?.[stateId]) return;
-    await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
-      runInAction(() => {
-        delete this.stateMap[stateId];
-      });
+    await this.stateService.deleteState(workspaceSlug, projectId, stateId);
+    runInAction(() => {
+      delete this.stateMap[stateId];
     });
   };
 
@@ -371,6 +394,77 @@ export class StateStore implements IStateStore {
    * @param stateId The ID of the state to find the percentage for
    * @returns The percentage position of the state in its group (0-100), or -1 if not found
    */
+  /**
+   * Workflow: returns allowed target state ids for a source state, or undefined when unrestricted
+   * (no config for the state, transitions not fetched, or source state unknown).
+   */
+  getAllowedTransitionIds = computedFn(
+    (projectId: string | null | undefined, fromStateId: string | null | undefined) => {
+      if (!projectId || !fromStateId || !this.transitionsFetchedMap[projectId]) return undefined;
+      const outgoing = this.transitionMap[projectId]?.[fromStateId];
+      if (!outgoing || outgoing.length === 0) return undefined;
+      return outgoing;
+    }
+  );
+
+  /**
+   * Workflow: whether moving a work item between two states is allowed. Targets with
+   * allow_any_transition set are always allowed, as is staying in the same state.
+   */
+  getIsTransitionAllowed = computedFn(
+    (
+      projectId: string | null | undefined,
+      fromStateId: string | null | undefined,
+      toStateId: string | null | undefined
+    ) => {
+      if (!projectId || !fromStateId || !toStateId) return true;
+      if (fromStateId === toStateId) return true;
+      if (this.getStateById(toStateId)?.allow_any_transition) return true;
+      const allowed = this.getAllowedTransitionIds(projectId, fromStateId);
+      if (allowed === undefined) return true;
+      return allowed.includes(toStateId);
+    }
+  );
+
+  /**
+   * Workflow: fetches the transition map of a project
+   */
+  fetchStateTransitions = async (workspaceSlug: string, projectId: string) => {
+    const response = await this.stateTransitionService.getStateTransitions(workspaceSlug, projectId);
+    runInAction(() => {
+      set(this.transitionMap, [projectId], response ?? {});
+      set(this.transitionsFetchedMap, projectId, true);
+    });
+    return response;
+  };
+
+  /**
+   * Workflow: bulk-replaces transitions for the submitted source states, in case of failure reverts
+   */
+  updateStateTransitions = async (workspaceSlug: string, projectId: string, payload: TStateTransitionPayload) => {
+    const originalMap = this.transitionMap[projectId];
+    try {
+      runInAction(() => {
+        const next: TStateTransitionMap = { ...this.transitionMap[projectId] };
+        Object.entries(payload.transitions).forEach(([fromStateId, toStateIds]) => {
+          if (toStateIds.length === 0) delete next[fromStateId];
+          else next[fromStateId] = toStateIds;
+        });
+        set(this.transitionMap, [projectId], next);
+      });
+      const response = await this.stateTransitionService.updateStateTransitions(workspaceSlug, projectId, payload);
+      runInAction(() => {
+        set(this.transitionMap, [projectId], response ?? {});
+      });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        set(this.transitionMap, [projectId], originalMap ?? {});
+      });
+      throw error;
+    }
+  };
+
   getStatePercentageInGroup = computedFn((stateId: string | null | undefined) => {
     if (!stateId || !this.stateMap[stateId]) return -1;
 

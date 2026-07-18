@@ -74,6 +74,10 @@ from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.utils.state_transition import (
+    STATE_TRANSITION_NOT_ALLOWED,
+    is_state_transition_allowed,
+)
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.time_tracking import (
     can_assign_time_log_user,
@@ -680,6 +684,21 @@ class IssueViewSet(BaseViewSet):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         old_state_id = issue.state_id
+
+        requested_state_id = request.data.get("state_id")
+        if (
+            requested_state_id is not None
+            and str(requested_state_id) != str(old_state_id)
+            and not is_state_transition_allowed(project_id, old_state_id, requested_state_id)
+        ):
+            return Response(
+                {
+                    "error": "This state transition is not allowed by the project workflow",
+                    "error_code": STATE_TRANSITION_NOT_ALLOWED,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()

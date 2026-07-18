@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Fluxuri de lucru",
       "toggle": {
         "title": "Activează fluxurile de lucru",
         "description": "Setează fluxuri de lucru pentru a controla mișcarea activităților",

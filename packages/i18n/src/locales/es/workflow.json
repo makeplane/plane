@@ -95,6 +95,26 @@
           "message": "Los revisores de la regla de cambio de estado no pudieron ser modificados. Por favor, inténtalo de nuevo."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "El flujo de trabajo del proyecto no permite esta transición",
+      "drop_not_allowed": "Movimiento no permitido",
+      "moving_from": "Moviendo desde",
+      "is_restricted": "está restringido",
+      "allowed_transitions": "Transiciones permitidas",
+      "allow_any_transition": "Permitir desde cualquier estado",
+      "allow_any_transition_tooltip": "Cualquier estado puede pasar a este, incluso si el estado de origen está restringido",
+      "unrestricted_outgoing": "Puede pasar a cualquier estado",
+      "all_states_allowed": "Todos los estados",
+      "add_transition": "Agregar transición",
+      "view": {
+        "graph": "Gráfico",
+        "list": "Lista"
+      },
+      "reset_all": "Restablecer todo",
+      "reset_success_title": "Flujo de trabajo restablecido",
+      "reset_success_message": "Se han eliminado todas las transiciones de estado de este proyecto",
+      "update_error": "No se pudo actualizar el flujo de trabajo. Inténtelo de nuevo."
     }
   }
 }

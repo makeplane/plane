@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Workflows",
       "toggle": {
         "title": "Workflows aktivieren",
         "description": "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",

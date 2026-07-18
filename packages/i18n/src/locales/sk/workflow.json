@@ -95,6 +95,26 @@
           "message": "Recenzenti pravidla zmeny stavu nemohli byť upravení. Skúste to znova."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Pracovný postup projektu tento prechod nepovoľuje",
+      "drop_not_allowed": "Presun nie je povolený",
+      "moving_from": "Presun zo stavu",
+      "is_restricted": "je obmedzený",
+      "allowed_transitions": "Povolené prechody",
+      "allow_any_transition": "Povoliť z ľubovoľného stavu",
+      "allow_any_transition_tooltip": "Do tohto stavu môže prejsť ktorýkoľvek stav, aj keď je zdrojový stav obmedzený",
+      "unrestricted_outgoing": "Môže prejsť do ľubovoľného stavu",
+      "all_states_allowed": "Všetky stavy",
+      "add_transition": "Pridať prechod",
+      "view": {
+        "graph": "Graf",
+        "list": "Zoznam"
+      },
+      "reset_all": "Obnoviť všetko",
+      "reset_success_title": "Pracovný postup obnovený",
+      "reset_success_message": "Všetky prechody medzi stavmi boli pre tento projekt odstránené",
+      "update_error": "Pracovný postup sa nepodarilo aktualizovať. Skúste to znova."
     }
   }
 }

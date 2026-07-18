@@ -95,6 +95,26 @@
           "message": "State change rule reviewers could not be modified. Please try again."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "This transition isn't allowed by the project workflow",
+      "drop_not_allowed": "Move not allowed",
+      "moving_from": "Moving from",
+      "is_restricted": "is restricted",
+      "allowed_transitions": "Allowed transitions",
+      "allow_any_transition": "Allow from any state",
+      "allow_any_transition_tooltip": "Any state can transition into this one, even when the source state is restricted",
+      "unrestricted_outgoing": "Can move to any state",
+      "all_states_allowed": "All states",
+      "add_transition": "Add transition",
+      "view": {
+        "graph": "Graph",
+        "list": "List"
+      },
+      "reset_all": "Reset all",
+      "reset_success_title": "Workflow reset",
+      "reset_success_message": "All state transitions have been cleared for this project",
+      "update_error": "Couldn't update the workflow. Please try again."
     }
   }
 }

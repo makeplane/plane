@@ -95,6 +95,26 @@
           "message": "Revisori cambiamento stato non può essere modificato. Per favore riprova."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Il flusso di lavoro del progetto non consente questa transizione",
+      "drop_not_allowed": "Spostamento non consentito",
+      "moving_from": "Spostamento da",
+      "is_restricted": "è limitato",
+      "allowed_transitions": "Transizioni consentite",
+      "allow_any_transition": "Consenti da qualsiasi stato",
+      "allow_any_transition_tooltip": "Qualsiasi stato può passare a questo, anche quando lo stato di origine è limitato",
+      "unrestricted_outgoing": "Può passare a qualsiasi stato",
+      "all_states_allowed": "Tutti gli stati",
+      "add_transition": "Aggiungi transizione",
+      "view": {
+        "graph": "Grafico",
+        "list": "Elenco"
+      },
+      "reset_all": "Reimposta tutto",
+      "reset_success_title": "Flusso di lavoro reimpostato",
+      "reset_success_message": "Tutte le transizioni di stato sono state rimosse per questo progetto",
+      "update_error": "Impossibile aggiornare il flusso di lavoro. Riprovare."
     }
   }
 }

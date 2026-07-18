@@ -95,6 +95,26 @@
           "message": "状态更改规则移交人不能被修改。请重试。"
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "项目工作流不允许此转换",
+      "drop_not_allowed": "不允许移动",
+      "moving_from": "从以下状态移动",
+      "is_restricted": "受到限制",
+      "allowed_transitions": "允许的转换",
+      "allow_any_transition": "允许从任意状态转入",
+      "allow_any_transition_tooltip": "即使源状态受限，任意状态也可以转换到此状态",
+      "unrestricted_outgoing": "可转换到任意状态",
+      "all_states_allowed": "所有状态",
+      "add_transition": "添加转换",
+      "view": {
+        "graph": "图形",
+        "list": "列表"
+      },
+      "reset_all": "全部重置",
+      "reset_success_title": "工作流已重置",
+      "reset_success_message": "已清除此项目的所有状态转换",
+      "update_error": "无法更新工作流，请重试。"
     }
   }
 }

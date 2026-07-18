@@ -95,6 +95,26 @@
           "message": "Les réviseurs de la règle de changement d'état ne pouvaient pas être modifiés. Veuillez réessayer."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Le flux de travail du projet n'autorise pas cette transition",
+      "drop_not_allowed": "Déplacement non autorisé",
+      "moving_from": "Déplacement depuis",
+      "is_restricted": "est restreint",
+      "allowed_transitions": "Transitions autorisées",
+      "allow_any_transition": "Autoriser depuis n'importe quel état",
+      "allow_any_transition_tooltip": "N'importe quel état peut passer à celui-ci, même si l'état source est restreint",
+      "unrestricted_outgoing": "Peut passer à n'importe quel état",
+      "all_states_allowed": "Tous les états",
+      "add_transition": "Ajouter une transition",
+      "view": {
+        "graph": "Graphe",
+        "list": "Liste"
+      },
+      "reset_all": "Tout réinitialiser",
+      "reset_success_title": "Flux de travail réinitialisé",
+      "reset_success_message": "Toutes les transitions d'état ont été supprimées pour ce projet",
+      "update_error": "Impossible de mettre à jour le flux de travail. Veuillez réessayer."
     }
   }
 }

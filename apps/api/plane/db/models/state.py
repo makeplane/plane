@@ -89,6 +89,9 @@ class State(ProjectBaseModel):
     )
     is_triage = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
+    # Workflow: when True, any state may transition into this one regardless of
+    # the source state's configured outgoing transitions.
+    allow_any_transition = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
@@ -124,3 +127,39 @@ class State(ProjectBaseModel):
                 self.sequence = last_id + 15000
 
         return super().save(*args, **kwargs)
+
+
+class StateTransition(ProjectBaseModel):
+    """An allowed workflow transition between two states of the same project.
+
+    Semantics: a state with no outgoing StateTransition rows allows transitions
+    to every state; a state with one or more rows allows only the listed targets.
+    """
+
+    from_state = models.ForeignKey(
+        State,
+        on_delete=models.CASCADE,
+        related_name="transitions_from",
+    )
+    to_state = models.ForeignKey(
+        State,
+        on_delete=models.CASCADE,
+        related_name="transitions_to",
+    )
+
+    def __str__(self):
+        return f"{self.from_state.name} -> {self.to_state.name} <{self.project.name}>"
+
+    class Meta:
+        unique_together = ["from_state", "to_state", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["from_state", "to_state"],
+                condition=Q(deleted_at__isnull=True),
+                name="state_transition_unique_from_to_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "State Transition"
+        verbose_name_plural = "State Transitions"
+        db_table = "state_transitions"
+        ordering = ("created_at",)

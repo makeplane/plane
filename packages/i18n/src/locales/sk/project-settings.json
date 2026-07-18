@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Pracovné postupy",
       "toggle": {
         "title": "Povoliť pracovné postupy",
         "description": "Nastavte pracovné postupy na riadenie pohybu pracovných položiek",

@@ -95,6 +95,26 @@
           "message": "Prüfer der Statusänderungsregel konnten nicht geändert werden. Bitte versuchen Sie es erneut."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Der Workflow des Projekts lässt diesen Übergang nicht zu",
+      "drop_not_allowed": "Verschieben nicht zulässig",
+      "moving_from": "Verschieben von",
+      "is_restricted": "ist eingeschränkt",
+      "allowed_transitions": "Zulässige Übergänge",
+      "allow_any_transition": "Von jedem Status zulassen",
+      "allow_any_transition_tooltip": "Jeder Status kann in diesen übergehen, auch wenn der Ausgangsstatus eingeschränkt ist",
+      "unrestricted_outgoing": "Kann in jeden Status wechseln",
+      "all_states_allowed": "Alle Status",
+      "add_transition": "Übergang hinzufügen",
+      "view": {
+        "graph": "Diagramm",
+        "list": "Liste"
+      },
+      "reset_all": "Alle zurücksetzen",
+      "reset_success_title": "Workflow zurückgesetzt",
+      "reset_success_message": "Alle Statusübergänge wurden für dieses Projekt gelöscht",
+      "update_error": "Workflow konnte nicht aktualisiert werden. Bitte erneut versuchen."
     }
   }
 }

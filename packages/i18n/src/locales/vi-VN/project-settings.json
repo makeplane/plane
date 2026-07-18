@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Quy trình làm việc",
       "toggle": {
         "title": "Bật quy trình làm việc",
         "description": "Thiết lập quy trình làm việc để kiểm soát việc di chuyển mục công việc",
