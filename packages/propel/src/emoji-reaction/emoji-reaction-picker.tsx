@@ -19,7 +19,18 @@ export interface EmojiReactionPickerProps {
   closeOnSelect?: boolean;
   disabled?: boolean;
   dropdownClassName?: string;
-  label: React.ReactNode;
+  /**
+   * Content rendered *inside* the trigger. The trigger already is a `<button>`, so this
+   * must stay inert markup -- handing it an interactive element nests a button in a button.
+   * When the trigger itself should be an existing button, use `render` instead.
+   */
+  label?: React.ReactNode;
+  /**
+   * base-ui escape hatch (the equivalent of Radix's `asChild`, which Plane does not use):
+   * the given element *becomes* the trigger rather than being wrapped in one. Pass a
+   * component that forwards its ref and spreads its props, e.g. `EmojiReactionButton`.
+   */
+  render?: React.ComponentProps<typeof Popover.Button>["render"];
   onChange: (emoji: string) => void;
   placement?: TPlacement;
   searchDisabled?: boolean;
@@ -37,6 +48,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     disabled = false,
     dropdownClassName,
     label,
+    render,
     onChange,
     placement = "bottom-start",
     searchDisabled = false,
@@ -63,11 +75,14 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     [onChange, closeOnSelect, handleToggle]
   );
 
+  // `label` fills the trigger, `render` replaces it -- never both: base-ui merges the
+  // component's props into the rendered element, so a `children` of `undefined` would
+  // clobber the children that element renders for itself.
+  const triggerProps = render ? { render } : { children: label };
+
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
-        {label}
-      </Popover.Button>
+      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled} {...triggerProps} />
       <Popover.Panel
         positionerClassName="z-50"
         className={cn("w-80 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1", dropdownClassName)}

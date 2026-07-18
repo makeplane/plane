@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import { EmojiReactionButton, EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
 import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 // helpers
@@ -73,20 +73,20 @@ export const CommentReactions = observer(function CommentReactions(props: TProps
 
   return (
     <div className="relative">
-      <EmojiReactionPicker
-        isOpen={isPickerOpen}
-        handleToggle={setIsPickerOpen}
-        onChange={handleEmojiSelect}
-        disabled={disabled}
-        label={
-          <EmojiReactionGroup
-            reactions={reactions}
-            onReactionClick={handleReactionClick}
-            showAddButton={showAddButton}
-            onAddReaction={() => setIsPickerOpen(true)}
-          />
+      <EmojiReactionGroup
+        reactions={reactions}
+        onReactionClick={handleReactionClick}
+        addButton={
+          showAddButton && (
+            <EmojiReactionPicker
+              isOpen={isPickerOpen}
+              handleToggle={setIsPickerOpen}
+              onChange={handleEmojiSelect}
+              render={<EmojiReactionButton />}
+              placement="bottom-start"
+            />
+          )
         }
-        placement="bottom-start"
       />
     </div>
   );

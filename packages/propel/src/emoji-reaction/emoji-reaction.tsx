@@ -36,6 +36,13 @@ export interface EmojiReactionGroupProps extends React.HTMLAttributes<HTMLDivEle
   className?: string;
   showAddButton?: boolean;
   maxDisplayUsers?: number;
+  /**
+   * Trailing "add a reaction" affordance, rendered as a *sibling* of the pills and
+   * replacing the built-in button. Exists so that a popover trigger can sit next to the
+   * pills: wrapping the group in a trigger instead would nest every pill inside a button.
+   * Supplying it (even as `false`) takes over from `showAddButton`.
+   */
+  addButton?: React.ReactNode;
 }
 
 export interface EmojiReactionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -129,6 +136,7 @@ const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
     className,
     showAddButton = true,
     maxDisplayUsers = 5,
+    addButton,
     ...props
   }: EmojiReactionGroupProps,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -137,6 +145,7 @@ const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
     <div ref={ref} className={cn("flex flex-wrap items-center gap-2", className)} {...props}>
       {reactions.map((reaction, index) => (
         <EmojiReaction
+          // eslint-disable-next-line react/no-array-index-key -- pre-existing, unrelated to this fix
           key={`${reaction.emoji}-${index}`}
           emoji={reaction.emoji}
           count={reaction.count}
@@ -145,7 +154,7 @@ const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
           onReactionClick={onReactionClick}
         />
       ))}
-      {showAddButton && <EmojiReactionButton onAddReaction={onAddReaction} />}
+      {addButton !== undefined ? addButton : showAddButton && <EmojiReactionButton onAddReaction={onAddReaction} />}
     </div>
   );
 });

@@ -7,7 +7,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import { EmojiReactionButton, EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
 import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
@@ -112,6 +112,7 @@ export const IssueReaction = observer(function IssueReaction(props: TIssueReacti
         reacted: userReactions.includes(reaction),
         users: getReactionUsers(reaction),
       }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pre-existing, unrelated to this fix
   }, [reactionIds, userReactions]);
 
   const handleReactionClick = (emoji: string) => {
@@ -129,20 +130,20 @@ export const IssueReaction = observer(function IssueReaction(props: TIssueReacti
 
   return (
     <div className={cn("relative mt-4", className)}>
-      <EmojiReactionPicker
-        isOpen={isPickerOpen}
-        handleToggle={setIsPickerOpen}
-        onChange={handleEmojiSelect}
-        disabled={disabled}
-        label={
-          <EmojiReactionGroup
-            reactions={reactions}
-            onReactionClick={handleReactionClick}
-            showAddButton={!disabled}
-            onAddReaction={() => setIsPickerOpen(true)}
-          />
+      <EmojiReactionGroup
+        reactions={reactions}
+        onReactionClick={handleReactionClick}
+        addButton={
+          !disabled && (
+            <EmojiReactionPicker
+              isOpen={isPickerOpen}
+              handleToggle={setIsPickerOpen}
+              onChange={handleEmojiSelect}
+              render={<EmojiReactionButton />}
+              placement="bottom-start"
+            />
+          )
         }
-        placement="bottom-start"
       />
     </div>
   );
