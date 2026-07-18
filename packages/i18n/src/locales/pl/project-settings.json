@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Przepływy pracy",
       "toggle": {
         "title": "Włącz przepływy pracy",
         "description": "Ustaw przepływy pracy, aby kontrolować przemieszczanie się elementów pracy",

@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Workflow",
       "toggle": {
         "title": "Povolit workflow",
         "description": "Nastavte workflow pro řízení pohybu pracovních položek",

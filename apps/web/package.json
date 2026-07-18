@@ -39,6 +39,7 @@
     "@react-pdf/renderer": "catalog:",
     "@react-router/node": "catalog:",
     "@tanstack/react-table": "catalog:",
+    "@xyflow/react": "^12.11.2",
     "axios": "catalog:",
     "clsx": "catalog:",
     "cmdk": "catalog:",

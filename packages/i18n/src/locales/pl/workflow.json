@@ -95,6 +95,26 @@
           "message": "Recenzenci reguły zmiany stanu nie mogli zostać zmodyfikowani. Spróbuj ponownie."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Przepływ pracy projektu nie zezwala na to przejście",
+      "drop_not_allowed": "Przenoszenie niedozwolone",
+      "moving_from": "Przenoszenie ze stanu",
+      "is_restricted": "jest ograniczone",
+      "allowed_transitions": "Dozwolone przejścia",
+      "allow_any_transition": "Zezwól z dowolnego stanu",
+      "allow_any_transition_tooltip": "Każdy stan może przejść do tego, nawet gdy stan źródłowy jest ograniczony",
+      "unrestricted_outgoing": "Może przejść do dowolnego stanu",
+      "all_states_allowed": "Wszystkie stany",
+      "add_transition": "Dodaj przejście",
+      "view": {
+        "graph": "Graf",
+        "list": "Lista"
+      },
+      "reset_all": "Zresetuj wszystko",
+      "reset_success_title": "Przepływ pracy zresetowany",
+      "reset_success_message": "Wszystkie przejścia między stanami zostały usunięte dla tego projektu",
+      "update_error": "Nie można zaktualizować przepływu pracy. Spróbuj ponownie."
     }
   }
 }

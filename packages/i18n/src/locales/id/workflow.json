@@ -95,6 +95,26 @@
           "message": "Reviewer aturan perubahan status tidak dapat dimodifikasi. Silakan coba lagi."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Alur kerja proyek tidak mengizinkan transisi ini",
+      "drop_not_allowed": "Pemindahan tidak diizinkan",
+      "moving_from": "Memindahkan dari",
+      "is_restricted": "dibatasi",
+      "allowed_transitions": "Transisi yang diizinkan",
+      "allow_any_transition": "Izinkan dari status mana pun",
+      "allow_any_transition_tooltip": "Status mana pun dapat bertransisi ke status ini, meskipun status sumber dibatasi",
+      "unrestricted_outgoing": "Dapat berpindah ke status mana pun",
+      "all_states_allowed": "Semua status",
+      "add_transition": "Tambah transisi",
+      "view": {
+        "graph": "Grafik",
+        "list": "Daftar"
+      },
+      "reset_all": "Atur ulang semua",
+      "reset_success_title": "Alur kerja diatur ulang",
+      "reset_success_message": "Semua transisi status telah dihapus untuk proyek ini",
+      "update_error": "Tidak dapat memperbarui alur kerja. Silakan coba lagi."
     }
   }
 }

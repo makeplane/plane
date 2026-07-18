@@ -86,6 +86,10 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.state_transition import (
+    STATE_TRANSITION_NOT_ALLOWED,
+    is_state_transition_allowed,
+)
 from plane.utils.time_tracking import (
     can_assign_time_log_user,
     can_manage_time_log,
@@ -761,6 +765,20 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
         # Capture old state_id before save for time tracking
         old_state_id = issue.state_id
+
+        requested_state_id = request.data.get("state_id")
+        if (
+            requested_state_id is not None
+            and str(requested_state_id) != str(old_state_id)
+            and not is_state_transition_allowed(project_id, old_state_id, requested_state_id)
+        ):
+            return Response(
+                {
+                    "error": "This state transition is not allowed by the project workflow",
+                    "error_code": STATE_TRANSITION_NOT_ALLOWED,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = IssueSerializer(
             issue,

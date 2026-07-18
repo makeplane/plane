@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Workflows",
       "toggle": {
         "title": "Enable workflows",
         "description": "Set workflows to control work item movement",

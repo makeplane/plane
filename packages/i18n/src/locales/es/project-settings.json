@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Flujos de trabajo",
       "toggle": {
         "title": "Habilitar flujos de trabajo",
         "description": "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",

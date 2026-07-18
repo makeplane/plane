@@ -95,6 +95,26 @@
           "message": "Durum değişikliği kuralı inceleyicileri değiştirilemedi. Lütfen tekrar deneyin."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Bu geçişe proje iş akışı izin vermiyor",
+      "drop_not_allowed": "Taşımaya izin verilmiyor",
+      "moving_from": "Şu durumdan:",
+      "is_restricted": "taşıma kısıtlı",
+      "allowed_transitions": "İzin verilen geçişler",
+      "allow_any_transition": "Herhangi bir durumdan izin ver",
+      "allow_any_transition_tooltip": "Kaynak durum kısıtlı olsa bile herhangi bir durum bu duruma geçebilir",
+      "unrestricted_outgoing": "Herhangi bir duruma geçebilir",
+      "all_states_allowed": "Tüm durumlar",
+      "add_transition": "Geçiş ekle",
+      "view": {
+        "graph": "Grafik",
+        "list": "Liste"
+      },
+      "reset_all": "Tümünü sıfırla",
+      "reset_success_title": "İş akışı sıfırlandı",
+      "reset_success_message": "Bu proje için tüm durum geçişleri temizlendi",
+      "update_error": "İş akışı güncellenemedi. Lütfen tekrar deneyin."
     }
   }
 }

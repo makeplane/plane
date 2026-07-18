@@ -95,6 +95,26 @@
           "message": "스테이트 변경 규칙 리뷰어를 수정할 수 없습니다. 다시 시도하세요."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "이 전환은 프로젝트 워크플로우에서 허용되지 않습니다",
+      "drop_not_allowed": "이동할 수 없습니다",
+      "moving_from": "다음 상태에서 이동:",
+      "is_restricted": "제한됨",
+      "allowed_transitions": "허용된 전환",
+      "allow_any_transition": "모든 상태에서 허용",
+      "allow_any_transition_tooltip": "출발 상태가 제한되어 있어도 모든 상태에서 이 상태로 전환할 수 있습니다",
+      "unrestricted_outgoing": "모든 상태로 이동할 수 있습니다",
+      "all_states_allowed": "모든 상태",
+      "add_transition": "전환 추가",
+      "view": {
+        "graph": "그래프",
+        "list": "목록"
+      },
+      "reset_all": "모두 초기화",
+      "reset_success_title": "워크플로우 초기화됨",
+      "reset_success_message": "이 프로젝트의 모든 상태 전환이 삭제되었습니다",
+      "update_error": "워크플로우를 업데이트할 수 없습니다. 다시 시도해 주세요."
     }
   }
 }

@@ -95,6 +95,26 @@
           "message": "Не вдалося змінити рев'юерів правила зміни стану. Будь ласка, спробуйте ще раз."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Воркфлоу проєкту не дозволяє цей перехід",
+      "drop_not_allowed": "Переміщення заборонено",
+      "moving_from": "Переміщення зі стану",
+      "is_restricted": "обмежено",
+      "allowed_transitions": "Дозволені переходи",
+      "allow_any_transition": "Дозволити з будь-якого стану",
+      "allow_any_transition_tooltip": "Будь-який стан може перейти в цей, навіть якщо вихідний стан обмежено",
+      "unrestricted_outgoing": "Можна перейти в будь-який стан",
+      "all_states_allowed": "Усі стани",
+      "add_transition": "Додати перехід",
+      "view": {
+        "graph": "Граф",
+        "list": "Список"
+      },
+      "reset_all": "Скинути все",
+      "reset_success_title": "Воркфлоу скинуто",
+      "reset_success_message": "Усі переходи між станами видалено для цього проєкту",
+      "update_error": "Не вдалося оновити воркфлоу. Спробуйте ще раз."
     }
   }
 }

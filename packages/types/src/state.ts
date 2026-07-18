@@ -17,7 +17,15 @@ export interface IState {
   sequence: number;
   workspace_id: string;
   order: number;
+  allow_any_transition?: boolean;
 }
+
+/** Workflow: allowed transitions keyed by source state id. A state absent from the map allows every target. */
+export type TStateTransitionMap = Record<string, string[]>;
+
+export type TStateTransitionPayload = {
+  transitions: TStateTransitionMap;
+};
 
 export interface IStateLite {
   color: string;

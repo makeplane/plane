@@ -95,6 +95,26 @@
           "message": "Recenzenti pravidla změny stavu nemohli být upraveni. Zkuste to prosím znovu."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Workflow projektu tento přechod nepovoluje",
+      "drop_not_allowed": "Přesun není povolen",
+      "moving_from": "Přesun ze stavu",
+      "is_restricted": "je omezen",
+      "allowed_transitions": "Povolené přechody",
+      "allow_any_transition": "Povolit z libovolného stavu",
+      "allow_any_transition_tooltip": "Do tohoto stavu může přejít jakýkoli stav, i když je zdrojový stav omezen",
+      "unrestricted_outgoing": "Může přejít do libovolného stavu",
+      "all_states_allowed": "Všechny stavy",
+      "add_transition": "Přidat přechod",
+      "view": {
+        "graph": "Graf",
+        "list": "Seznam"
+      },
+      "reset_all": "Obnovit vše",
+      "reset_success_title": "Workflow obnoven",
+      "reset_success_message": "Všechny přechody mezi stavy byly pro tento projekt odstraněny",
+      "update_error": "Workflow se nepodařilo aktualizovat. Zkuste to znovu."
     }
   }
 }

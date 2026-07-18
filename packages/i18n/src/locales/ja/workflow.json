@@ -95,6 +95,26 @@
           "message": "状態変更ルールのレビューアが変更できませんでした。もう一度お試しください。"
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "この遷移はプロジェクトのワークフローで許可されていません",
+      "drop_not_allowed": "移動できません",
+      "moving_from": "移動元",
+      "is_restricted": "は制限されています",
+      "allowed_transitions": "許可された遷移",
+      "allow_any_transition": "任意のステータスから許可",
+      "allow_any_transition_tooltip": "移動元のステータスが制限されていても、任意のステータスからこのステータスへ遷移できます",
+      "unrestricted_outgoing": "任意のステータスへ移動できます",
+      "all_states_allowed": "すべてのステータス",
+      "add_transition": "遷移を追加",
+      "view": {
+        "graph": "グラフ",
+        "list": "リスト"
+      },
+      "reset_all": "すべてリセット",
+      "reset_success_title": "ワークフローをリセットしました",
+      "reset_success_message": "このプロジェクトのすべてのステータス遷移が削除されました",
+      "update_error": "ワークフローを更新できませんでした。もう一度お試しください。"
     }
   }
 }

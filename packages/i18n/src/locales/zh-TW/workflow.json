@@ -95,6 +95,26 @@
           "message": "無法修改狀態變更規則審核者。請再試一次。"
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "專案工作流程不允許此轉換",
+      "drop_not_allowed": "不允許移動",
+      "moving_from": "從以下狀態移動",
+      "is_restricted": "受到限制",
+      "allowed_transitions": "允許的轉換",
+      "allow_any_transition": "允許從任意狀態轉入",
+      "allow_any_transition_tooltip": "即使來源狀態受限，任意狀態也可以轉換到此狀態",
+      "unrestricted_outgoing": "可轉換到任意狀態",
+      "all_states_allowed": "所有狀態",
+      "add_transition": "新增轉換",
+      "view": {
+        "graph": "圖形",
+        "list": "清單"
+      },
+      "reset_all": "全部重設",
+      "reset_success_title": "工作流程已重設",
+      "reset_success_message": "已清除此專案的所有狀態轉換",
+      "update_error": "無法更新工作流程，請重試。"
     }
   }
 }

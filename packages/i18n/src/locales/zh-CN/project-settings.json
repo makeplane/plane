@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "工作流",
       "toggle": {
         "title": "启用工作流",
         "description": "设置工作流以控制工作项的流转",

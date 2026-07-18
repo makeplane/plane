@@ -95,6 +95,26 @@
           "message": "Evaluatorii regulii de schimbare a stării nu au putut fi modificați. Te rugăm să încerci din nou."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Fluxul de lucru al proiectului nu permite această tranziție",
+      "drop_not_allowed": "Mutare nepermisă",
+      "moving_from": "Mutare din starea",
+      "is_restricted": "este restricționată",
+      "allowed_transitions": "Tranziții permise",
+      "allow_any_transition": "Permite din orice stare",
+      "allow_any_transition_tooltip": "Orice stare poate trece în aceasta, chiar dacă starea sursă este restricționată",
+      "unrestricted_outgoing": "Poate trece în orice stare",
+      "all_states_allowed": "Toate stările",
+      "add_transition": "Adaugă tranziție",
+      "view": {
+        "graph": "Grafic",
+        "list": "Listă"
+      },
+      "reset_all": "Resetează tot",
+      "reset_success_title": "Flux de lucru resetat",
+      "reset_success_message": "Toate tranzițiile de stare au fost eliminate pentru acest proiect",
+      "update_error": "Fluxul de lucru nu a putut fi actualizat. Încercați din nou."
     }
   }
 }

@@ -95,6 +95,26 @@
           "message": "Người xem xét quy tắc thay đổi trạng thái không thể sửa đổi. Vui lòng thử lại."
         }
       }
+    },
+    "status_workflow": {
+      "transition_not_allowed": "Quy trình làm việc của dự án không cho phép chuyển đổi này",
+      "drop_not_allowed": "Không cho phép di chuyển",
+      "moving_from": "Di chuyển từ",
+      "is_restricted": "bị hạn chế",
+      "allowed_transitions": "Các chuyển đổi được phép",
+      "allow_any_transition": "Cho phép từ bất kỳ trạng thái nào",
+      "allow_any_transition_tooltip": "Bất kỳ trạng thái nào cũng có thể chuyển sang trạng thái này, ngay cả khi trạng thái nguồn bị hạn chế",
+      "unrestricted_outgoing": "Có thể chuyển sang bất kỳ trạng thái nào",
+      "all_states_allowed": "Tất cả trạng thái",
+      "add_transition": "Thêm chuyển đổi",
+      "view": {
+        "graph": "Sơ đồ",
+        "list": "Danh sách"
+      },
+      "reset_all": "Đặt lại tất cả",
+      "reset_success_title": "Đã đặt lại quy trình làm việc",
+      "reset_success_message": "Tất cả chuyển đổi trạng thái đã được xóa cho dự án này",
+      "update_error": "Không thể cập nhật quy trình làm việc. Vui lòng thử lại."
     }
   }
 }

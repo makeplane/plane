@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { WorkFlowDisabledMessage } from "./workflow-disabled-message";
 
 export type TWorkflowDisabledOverlayProps = {
   messageContainerRef: React.RefObject<HTMLDivElement>;
@@ -12,7 +13,14 @@ export type TWorkflowDisabledOverlayProps = {
   shouldOverlayBeVisible: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay(props: TWorkflowDisabledOverlayProps) {
-  return <></>;
+  const { workflowDisabledSource, shouldOverlayBeVisible } = props;
+
+  if (!shouldOverlayBeVisible) return <></>;
+
+  return (
+    <div className="my-8 flex w-full justify-center">
+      <WorkFlowDisabledMessage parentStateId={workflowDisabledSource} />
+    </div>
+  );
 });

@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "İş Akışları",
       "toggle": {
         "title": "İş akışlarını etkinleştir",
         "description": "İş öğesi hareketini kontrol etmek için iş akışları ayarlayın",

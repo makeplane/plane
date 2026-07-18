@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "Alur Kerja",
       "toggle": {
         "title": "Aktifkan alur kerja",
         "description": "Atur alur kerja untuk mengontrol pergerakan item kerja",

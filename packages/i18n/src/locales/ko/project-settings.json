@@ -213,6 +213,7 @@
       }
     },
     "workflows": {
+      "label": "워크플로우",
       "toggle": {
         "title": "워크플로우 활성화",
         "description": "작업 항목 이동을 제어할 워크플로우를 설정하세요",
