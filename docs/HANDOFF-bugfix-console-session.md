@@ -212,6 +212,8 @@ Les deux erreurs `Uncaught (in promise) undefined` et `Uncaught SyntaxError: Fun
 
 ### 8.3 Travail RESTANT — 3 bugs d'imbrication, chemins de composants exacts
 
+> ⚠️ **Section partiellement périmée — lire le §9.2 AVANT d'agir.** A, C, D et E sont **résolus** ; A et D y étaient de surcroît **mal attribués** (mauvais fichier pour A, mauvaise granularité pour D).
+
 Relevés par la console du navigateur intégré sur `/zelian/projects/<id>/issues/` et la page d'accueil. Chacun mérite sa branche `fix/`.
 
 #### A. `FiltersDropdown` — 8 occurrences sur 12, le plus rentable
@@ -313,3 +315,60 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 - ⚠️ `docker restart` ne relit **pas** `apps/api/.env` → `docker compose -f docker-compose-local.yml up -d --force-recreate api` puis vider le cache Django
 - Le service `live` de Plane écoute sur `:3100`, **en collision** avec l'app onboarding d'Insider
 - Tests backend : `docker compose -f docker-compose-test.yml run --rm api-tests pytest <chemin>`
+
+---
+
+## 9. Seconde session du 2026-07-18 — imbrications de boutons, a11y
+
+> Session menée entièrement depuis le navigateur intégré (session SSO active — le §8.1 se confirme).
+
+### 9.1 PRs
+
+| PR  | Objet                                                                                               | État                                   |
+| --- | --------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| #59 | `fix(web)` — 5 déclencheurs `customButton` imbriquant un bouton                                     | fusionnée                              |
+| #60 | `fix(web)` — **tous** les dropdowns, via un seul fichier `dropdowns/buttons.tsx`                    | fusionnée                              |
+| #61 | `fix(web)` — nom accessible réel sur les bascules de sidebar (`aria_labels.app_sidebar` inexistant) | ouverte, vérif partielle               |
+| —   | `fix/custom-menu-nested-button-round2` — 2 sites `customButton` de plus                             | branche poussée, PR à ouvrir après #61 |
+
+### 9.2 Corrections au §8.3
+
+- **A — mauvais fichier.** Il existe **deux composants nommés `FiltersDropdown`**. La pile `… < CustomMenu < FiltersDropdown < ContentOverflowWrapper < RecentActivityWidget` vient du composant **local au widget Recents** (`home/widgets/recents/filters.tsx`), pas de son homonyme d'`issue-layouts`. Résolu en #59.
+- **`issue-layouts/filters/header/helpers/dropdown.tsx` l.53 = danger LATENT, pas un bug actif. NE PAS refactorer.** Sa branche `menuButton` rend bien `<button>{menuButton}</button>`, mais **aucun** des 10 appelants ne lui passe un élément interactif : tous passent `<div>`/`<span>`/`<Row>`/icône lucide, et `filterMenuButton` (`project/filters.tsx`) est **déclaré mais jamais passé** par personne. Aucune imbrication ne se produit aujourd'hui. Le passer en `<div>` comme sa branche `else` **priverait au contraire de sémantique bouton** les ~8 appelants qui lui passent du balisage inerte.
+- **C** — résolu en #59 (voir le piège géométrique, §9.3).
+- **D — mauvaise granularité.** Le §8.3.D listait 5 fichiers d'appel à corriger un par un. La cause est **unique et centralisée** : `dropdowns/buttons.tsx`, dont les 3 variantes (`BorderButton`, `BackgroundButton`, `TransparentButton`) rendaient un `<Button>` propel à l'intérieur du `<button className="clickable …">` de chaque dropdown. **Un seul fichier corrige les 10 dropdowns.** Résolu en #60.
+- **E** — résolu en #61. Nuance : **2 des 4 clés existaient déjà** sous `aria_labels.projects_sidebar` ; seul le nom du groupe était faux.
+
+### 9.3 Enseignements techniques (nouveaux)
+
+1. **Trois composants**, pas deux, enveloppent `customButton` dans un `<button>` : `CustomMenu` (l.251), `CustomSearchSelect` (l.104) et **`CustomSelect`** (l.86).
+2. **Chercher l'élément interactif en PROFONDEUR.** Le premier recensement exigeait qu'il soit le premier enfant de `customButton` et a manqué 2 sites où il est enveloppé dans un `<div>` ou un `<Tooltip>`. Motif correct :
+   ```
+   customButton=\{[\s\S]{0,500}?<(Button|IconButton|button)\b
+   ```
+3. **⚠️ Piège géométrique — le vrai risque de ces correctifs.** Déplacer les classes du bouton interne vers `customButtonClassName` est trivial ; ce qui casse, c'est qu'une classe de **croissance** du wrapper (`flex-grow`, `w-full`) pilote désormais l'élément qui porte aussi la bordure → la pastille s'étale sur toute la largeur. Arrivé sur `mobile-layout-selection`. Remède : garder la croissance sur le bouton et poser le style visuel sur un **`<span>` interne non interactif**. **Ni le lint ni le typecheck ne le voient.**
+4. **Technique de comparaison avant/après** (celle qui a attrapé le point 3) : `git stash` → recharger la page → mesurer (`getBoundingClientRect`) → `git stash pop`. À utiliser systématiquement dès qu'on fusionne des listes de classes.
+5. **`Tooltip`** : son enfant doit rester un **élément DOM**. Remplacer un `<button>` par `<span className="flex">`, jamais le supprimer — sinon la ref retombe sur un composant fonction et l'on troque un avertissement contre « Function components cannot be given refs ».
+6. **⚠️ i18n : éditer un JSON de locale n'a AUCUN effet sans redémarrer le dev server.** `@plane/i18n` charge ses locales par `import()` dynamique (`src/core/instance.ts` l.21) que Vite met en cache **hors du périmètre surveillé** par l'app web. Ni `touch`, ni un rebuild du package (`pnpm --filter @plane/i18n build`) ne suffisent. Contrôle décisif :
+   ```bash
+   curl -s 'http://localhost:3000/@fs/<chemin-absolu>/locales/en/<ns>.json?import' | grep <cle>
+   ```
+7. **`CustomMenu` ne s'ouvre pas à la touche Entrée.** Écart a11y **global et pré-existant** — reproduit sur un menu non modifié (menu utilisateur de la sidebar). Les 59 usages sont concernés. Sujet à part entière.
+8. **Gain a11y systématique** de ces correctifs : deux boutons imbriqués sont **tous deux focusables** (`tabIndex` 0 chacun), donc chaque pastille coûtait **deux tabulations**. Mesurable en tabulant depuis le déclencheur extérieur.
+
+### 9.4 Travail restant — précisé et vérifié
+
+- **B — `<a>` dans `<a>` (page Projets), localisé.** `project/card.tsx` l.197 ouvre un `<Link>` sur **toute la carte** (`/projects/:id/issues`) et contient l.339-347 un second `<Link>` (icône engrenage → `/settings/projects/:id`). Correctif = les rendre **frères**, modèle de la PR #57 (fils d'Ariane).
+- **⚠️ Vue peek : 9 imbrications d'une famille NOUVELLE**, jamais recensée. La rangée « Add sub-work item » / « Add relation » / « Add link » / « Attach » / « Link pages » plus 3 boutons-icônes, tous des `Button` propel dans un bouton extérieur. Se voit en ouvrant un work item depuis la liste.
+- **46 menus icon-only sans `ariaLabel`** hors famille quick-actions (recensement de la PR #55 : 59 au total, 12 traités).
+- **F — listener non passif** : `packages/editor/src/core/extensions/side-menu.ts` l.160, confirmé présent.
+- **G — `pnpm start` cassé** : inchangé.
+- **§2.1 bug F (setState pendant le render)** : la branche WIP `fix/work-item-filters-setstate-in-render` (`41ff0382a`) **existe bien** sur `origin` — vérifié via `git ls-remote`. Voir §9.5 sur le clone.
+
+### 9.5 Environnement — corrections importantes
+
+- **Le clone local est `--single-branch`.** `git branch -r` paraît **vide** alors que 47 branches existent sur `origin`. Ne pas en conclure qu'une branche a disparu : utiliser `git ls-remote --heads origin`.
+- **Le hook `Stop` du §4.4 n'est PAS actif** quand la session Claude Code n'est pas rootée dans le repo. Sur ce poste : **aucun `settings.json`** (ni `~/.claude/`, ni `.claude/` du dépôt — qui ne contient que `launch.json`, `rules/`, `skills/`, `zelian-apps.json`), et le subagent `zelian-framework:update-writer-after-implement` **n'est pas exposé**. Le CHANGELOG doit donc être écrit à la main — ce qui est de toute façon la consigne du §4.5.
+- **`C:\Stage\Plane` est un dossier VIDE**, pas un raccourci vers le dépôt. Le code vit dans WSL (`~/dev/plane`).
+- **Quoting `wsl.exe -- bash -lc '…'` : peu fiable.** Les variables shell d'une boucle (`$f`, `$p`) sont parfois mangées, et certaines commandes pourtant valides échouent sur `unexpected EOF while looking for matching \`'\``. Dès que ce n'est pas trivial : **écrire un script dans `/tmp`et l'exécuter**, et utiliser`git commit -F <fichier>`plutôt que des`-m` enchaînés.
+- Le `pnpm dev` du poste lance **trois** apps sous turbo (web `:3000`, admin `:3001`, space `:3002`) en processus détaché — le tuer coupe les trois.
