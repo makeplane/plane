@@ -191,6 +191,10 @@
         "duration": "Uzatvoriť položky neaktívne dlhšie ako",
         "auto_close_status": "Stav pre automatické uzatvorenie"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Automatické upozornenia",
         "description": "Plane automaticky bude poslať upozornenia cez email a notifikácie v aplikácii, aby vaša ekipa zostala na ceste s termínmi.",

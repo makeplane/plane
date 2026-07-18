@@ -191,6 +191,10 @@
         "duration": "Tutup otomatis item kerja yang tidak aktif selama",
         "auto_close_status": "Status penutupan otomatis"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Pengingat otomatis",
         "description": "Plane akan mengirim pengingat otomatis via email dan notifikasi dalam aplikasi untuk memantau kemajuan proyek Anda.",

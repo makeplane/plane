@@ -191,6 +191,10 @@
         "duration": "非アクティブな作業項目を自動的に閉じる",
         "auto_close_status": "自動クローズステータス"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "自動リマインダー",
         "description": "Planeはメールとアプリ内通知を通じて、チームが期限に沿って進めるように自動的にリマインダーを送信します。",

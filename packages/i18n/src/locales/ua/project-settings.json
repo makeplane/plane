@@ -191,6 +191,10 @@
         "duration": "Закривати одиниці, що неактивні понад",
         "auto_close_status": "Стан для автоматичного закриття"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Автоматичні сповіщення",
         "description": "Plane автоматично буде надсилати сповіщення через email та в додатку, щоб ваша команда залишалася на шляху до термінів.",

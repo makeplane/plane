@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pytest
 from django.utils import timezone
 
+import plane.bgtasks.issue_cascade_task as cascade_module
 from plane.bgtasks.issue_cascade_task import cascade_state_to_sub_issues
 from plane.db.models import Issue, Project, ProjectMember, State
 
@@ -156,3 +157,54 @@ class TestCascadeStateToSubIssues:
         child.refresh_from_db()
         assert child.state_id == states["started"].id
         mock_activity.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_state_from_another_project_is_ignored(self, mock_activity, workspace, project, states, create_user):
+        # The target state must belong to the same project as the cascade.
+        other_project = Project.objects.create(
+            name="Other", identifier="OTH", workspace=workspace, created_by=create_user
+        )
+        foreign_state = State.objects.create(name="Done", project=other_project, workspace=workspace, group="completed")
+        parent = _make_issue("Parent", workspace, project, states["started"], create_user)
+        child = _make_issue("Child", workspace, project, states["started"], create_user, parent=parent)
+
+        _run(parent, foreign_state, project, create_user)
+
+        child.refresh_from_db()
+        assert child.state_id == states["started"].id
+        mock_activity.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_total_descendants_are_capped(self, mock_activity, workspace, project, states, create_user, monkeypatch):
+        """A wide tree must stop at MAX_DESCENDANTS instead of fanning out unbounded.
+
+        MAX_DEPTH only bounds the tree's height; without a total cap a single
+        close can schedule one activity task per descendant.
+        """
+        monkeypatch.setattr(cascade_module, "MAX_DESCENDANTS", 3)
+
+        parent = _make_issue("Parent", workspace, project, states["started"], create_user)
+        children = [
+            _make_issue(f"Child {i}", workspace, project, states["started"], create_user, parent=parent)
+            for i in range(6)
+        ]
+
+        _run(parent, states["completed"], project, create_user)
+
+        moved = [c for c in children if Issue.objects.get(id=c.id).state_id == states["completed"].id]
+        assert len(moved) == 3, f"expected the cap to stop at 3, got {len(moved)}"
+        assert mock_activity.call_count == 3
+
+    @pytest.mark.django_db
+    def test_cap_is_logged_when_reached(self, mock_activity, workspace, project, states, create_user, monkeypatch):
+        # Hitting the cap must not fail silently.
+        monkeypatch.setattr(cascade_module, "MAX_DESCENDANTS", 1)
+        parent = _make_issue("Parent", workspace, project, states["started"], create_user)
+        for i in range(3):
+            _make_issue(f"Child {i}", workspace, project, states["started"], create_user, parent=parent)
+
+        with patch.object(cascade_module.logger, "warning") as mock_warning:
+            _run(parent, states["completed"], project, create_user)
+
+        mock_warning.assert_called_once()
+        assert "MAX_DESCENDANTS" in mock_warning.call_args.args[0]

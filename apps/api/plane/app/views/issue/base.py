@@ -719,15 +719,13 @@ class IssueViewSet(BaseViewSet):
             # enters a completed/cancelled group and the project has opted in.
             new_state_id = issue.state_id
             if new_state_id and new_state_id != previous_state_id:
-                state_groups = dict(
-                    State.objects.filter(id__in=[previous_state_id, new_state_id]).values_list("id", "group")
-                )
-                new_group = state_groups.get(new_state_id)
-                previous_group = state_groups.get(previous_state_id)
+                new_group = State.objects.filter(id=new_state_id).values_list("group", flat=True).first()
                 terminal_groups = [StateGroup.COMPLETED.value, StateGroup.CANCELLED.value]
+                # Note: a terminal -> terminal move (e.g. completed -> cancelled)
+                # must cascade too, so the previous group is deliberately not
+                # gated on here.
                 if (
                     new_group in terminal_groups
-                    and previous_group not in terminal_groups
                     and Project.objects.filter(id=project_id, cascade_state_on_close=True).exists()
                 ):
                     cascade_state_to_sub_issues.delay(

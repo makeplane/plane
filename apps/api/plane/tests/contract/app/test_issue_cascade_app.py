@@ -14,6 +14,7 @@ from unittest.mock import patch
 import pytest
 from rest_framework import status
 
+from plane.bgtasks.issue_cascade_task import cascade_state_to_sub_issues
 from plane.db.models import Issue, Project, ProjectMember, State
 
 
@@ -108,3 +109,56 @@ class TestCascadeOptInGate:
 
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
         mock_cascade.delay.assert_not_called()
+
+    @pytest.mark.django_db
+    @patch("plane.bgtasks.issue_cascade_task.issue_activity.delay")
+    @patch("plane.app.views.issue.base.cascade_state_to_sub_issues")
+    @patch("plane.app.views.issue.base.issue_description_version_task")
+    @patch("plane.app.views.issue.base.model_activity")
+    @patch("plane.app.views.issue.base.issue_activity")
+    def test_terminal_to_terminal_transition_still_cascades(
+        self,
+        mock_issue_activity,
+        mock_model_activity,
+        mock_desc_version,
+        mock_cascade,
+        mock_task_activity,
+        session_client,
+        workspace,
+        create_user,
+    ):
+        """Regression: completed -> cancelled must cascade to still-open descendants.
+
+        The parent is already terminal, so an earlier ``previous_group not in
+        terminal_groups`` guard suppressed the cascade entirely and left open
+        sub-issues stranded in their old state.
+        """
+        project = _project(workspace, create_user, cascade=True)
+        started, completed = _states(project, workspace)
+        cancelled = State.objects.create(name="Cancelled", project=project, workspace=workspace, group="cancelled")
+
+        # Parent is already in a terminal (completed) group.
+        parent = _issue("Parent", workspace, project, completed, create_user)
+        # ...but a descendant is still open at the moment of the re-close.
+        child = _issue("Child", workspace, project, started, create_user, parent=parent)
+        grandchild = _issue("Grandchild", workspace, project, started, create_user, parent=child)
+
+        response = session_client.patch(
+            _url(workspace.slug, project.id, parent.id),
+            {"state_id": str(cancelled.id)},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+        mock_cascade.delay.assert_called_once()
+        kwargs = mock_cascade.delay.call_args.kwargs
+        assert kwargs["new_state_id"] == str(cancelled.id)
+
+        # Run the task the view enqueued and confirm the open descendants moved.
+        cascade_state_to_sub_issues(**kwargs)
+
+        child.refresh_from_db()
+        grandchild.refresh_from_db()
+        assert child.state_id == cancelled.id
+        assert grandchild.state_id == cancelled.id
+        assert child.completed_at is None

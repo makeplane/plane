@@ -191,6 +191,10 @@
         "duration": "Автоматическое закрытие рабочих элементов, которые неактивны в течение",
         "auto_close_status": "Статус автоматического закрытия"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Автоматические напоминания",
         "description": "Plane автоматически будет отправлять напоминания через email и в приложении, чтобы ваша команда оставалась на пути к срокам.",

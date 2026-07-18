@@ -191,6 +191,10 @@
         "duration": "自动关闭不活跃",
         "auto_close_status": "自动关闭状态"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "自动提醒",
         "description": "Plane 将自动通过电子邮件和应用程序通知来提醒您的团队保持进度。",
