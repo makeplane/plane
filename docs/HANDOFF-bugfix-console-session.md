@@ -1,62 +1,86 @@
 # HANDOFF — Bug-fixing des erreurs console Plane (web)
 
-> Document de reprise pour une nouvelle session Claude Code. Repo : `C:\Stage\plane`. Branche de travail : `preview` (fork `userLinpy/plane`, upstream `makeplane/plane`). Rédigé le 2026-07-15.
+> Document de reprise **autonome** pour une nouvelle session Claude Code — y compris **depuis un autre poste** : la mémoire projet de Claude Code vit dans `~/.claude/projects/…/memory/` et **ne suit pas la machine**. Ce fichier est donc le seul relais fiable.
+>
+> Repo : `C:\Stage\plane`. Branche de travail : `preview` (fork `userLinpy/plane`, upstream `makeplane/plane`). **Mis à jour le 2026-07-18.**
 
 ## 0. Objectif global
 
 Corriger les erreurs de la console navigateur de l'app **web** de Plane, **une branche `fix/<nom-du-problème>` par problème distinct**, chacune : fix → vérif navigateur → commit (hook lint) → entrée CHANGELOG → PR (base `preview`, repo `userLinpy/plane`) → **review** → merge → `@update-writer-after-implement`.
 
-## 1. Ce qui est DÉJÀ fait (5 PRs mergées dans `preview`)
+## 1. Ce qui est DÉJÀ fait — 11 PRs mergées dans `preview`
 
-| PR  | Problème console                                               | Cause racine & fix                                                                                                                                                                                                                                            | Fichiers                                                                                                                      |
-| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| #41 | `Hydration failed…` + `TypeError: Component is not a function` | **La vraie racine, pas la sidebar** : `HydrateFallback` (next-themes) rendait `<div/>` vide côté serveur mais `<div><LogoSpinner/></div>` côté client (theme résolu synchronement) → mismatch. Fix : gate sur un état `mounted` (false au 1er render client). | `apps/web/app/root.tsx`                                                                                                       |
-| #42 | `<button>` dans `<button>` (menus)                             | `CustomMenu` enveloppe son `customButton` dans un `<button>` ; les menus passaient `<AppSidebarItem variant="button">` (un `<button>`). Fix : rendu via `AppSidebarItem.Icon` (`<div>`) + styles `base` sur `customButtonClassName`.                          | `help-section/root.tsx`, `user-menu-root.tsx`, `workspace-menu-root.tsx` (sous `apps/web/core/components/workspace/sidebar/`) |
-| #43 | `Function components cannot be given refs` (Inbox)             | `Tooltip` (propel) posait une ref sur `<AppSidebarItem>` (composant fonction). Fix : wrapper `<span className="flex">` ref-able.                                                                                                                              | `apps/web/ce/components/navigations/top-navigation-root.tsx`                                                                  |
-| #44 | `refs` / `` `ref` is not a prop `` (widgets home)              | `RecentPage/Issue/Project` déclaraient `ref` comme **prop de donnée** (réservé React). Fix : renommé `parentRef`.                                                                                                                                             | `apps/web/core/components/home/widgets/recents/{page,issue,project,index}.tsx`                                                |
-| #45 | `<button>` dans `<button>` (poignée drag)                      | `@plane/ui` `DragHandle` est déjà un `<button>`, enveloppé dans un `<button>` wrapper. Fix : wrapper `<button>`→`<div>`, ref type `HTMLButtonElement`→`HTMLDivElement`.                                                                                       | `projects-list-item.tsx`, `extended-sidebar-item.tsx`, `favorites/favorite-folder.tsx` (sidebar)                              |
+### 1ʳᵉ vague (2026-07-15) — #41 → #45
 
-Vérif combinée finale (instrumentée) sur `preview` : hydratation 0, not-a-function 0, nested-button menus 0, forwardRef widgets 0, tooltip Inbox 0, DragHandle 0.
+| PR  | Problème console                                    | Cause racine & fix                                                                                                                                                                                  |
+| --- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #41 | `Hydration failed…` + `Component is not a function` | **La vraie racine, pas la sidebar** : `HydrateFallback` (next-themes) rendait `<div/>` vide côté serveur mais `<div><LogoSpinner/></div>` côté client → mismatch. Fix : gate sur un état `mounted`. |
+| #42 | `<button>` dans `<button>` (menus sidebar)          | `CustomMenu` enveloppe son `customButton` dans un `<button>` ; on lui passait un `<AppSidebarItem variant="button">`. Fix : rendu via `AppSidebarItem.Icon` (`<div>`) + `customButtonClassName`.    |
+| #43 | `Function components cannot be given refs` (Inbox)  | `Tooltip` posait une ref sur `<AppSidebarItem>` (composant fonction). Fix : wrapper `<span className="flex">`.                                                                                      |
+| #44 | `` `ref` is not a prop `` (widgets home)            | `RecentPage/Issue/Project` déclaraient `ref` comme **prop de donnée** (nom réservé React). Fix : renommé `parentRef`.                                                                               |
+| #45 | `<button>` dans `<button>` (poignée drag)           | `@plane/ui` `DragHandle` est déjà un `<button>`, enveloppé dans un `<button>`. Fix : wrapper `<button>`→`<div>`, ref `HTMLDivElement`.                                                              |
 
-**IMPORTANT — ne PAS refaire :** une tentative de rendre `AppSidebarItem`/le shim `apps/web/app/compat/next/link.tsx` en `forwardRef` a été un **cul-de-sac** (le shim `next/link` cassait le rendu). `sidebar-item.tsx` est resté SANS forwardRef — c'est voulu. Le tooltip Inbox a été réglé par le wrapper `<span>` (#43), pas par forwardRef.
+### 2ᵉ vague (2026-07-16) — #46 → #50, puis #51 (docs)
 
-## 2. LE PROCHAIN travail : 6ᵉ problème (le « 5ᵉ » découvert) — `IconButton` dans `CustomMenu`
+| PR  | Problème console                                       | Cause racine & fix                                                                                                                                                                                                                                                                                                                    |
+| --- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #46 | `<button>` dans `<button>` (menus « … »)               | `customButton={<IconButton/>}` : `IconButton` rend lui aussi un `<button>`. Fix sur **7 points d'appel** : passer l'**icône lucide brute** en `customButton` + style via `customButtonClassName={getIconButtonStyling(variant, size)}`. Sidebar projets : `onClick`→`menuButtonOnClick`, suppression de `actionSectionRef` redondant. |
+| #47 | `Function components cannot be given refs` (peek)      | `Tooltip` autour d'un `<Link>` (shim `next/link`, composant fonction). Fix : wrapper `<span className="flex">` dans `issues/peek-overview/header.tsx`.                                                                                                                                                                                |
+| #48 | `checked` sans `onChange` (sélection de groupe)        | `Checkbox` contrôlée pilotée par `onClick`. Fix : ajout de `readOnly` (cf. le frère `entity-select-action.tsx` qui le faisait déjà).                                                                                                                                                                                                  |
+| #49 | `Function components cannot be given refs` (CountChip) | `Tooltip` autour de `CountChip` (composant fonction). Fix : `CountChip` passé en `React.forwardRef` + spread `...rest`.                                                                                                                                                                                                               |
+| #50 | idem #48 sur 3 autres fichiers + dette a11y            | `readOnly` sur onboarding `invitations`/`join-invites` + `project/multi-select-modal`, **et** les lignes `<div onClick>` converties en vrais `<button type="button">` (+ `tabIndex={-1}` sur la Checkbox interne, `no-shadow` corrigé).                                                                                               |
+| #51 | —                                                      | Docs : versionne ce HANDOFF, les plans SSO et `.claude/launch.json`.                                                                                                                                                                                                                                                                  |
 
-**Symptôme console :** `validateDOMNesting: <button> cannot appear as a descendant of <button>`, stack `IconButton$1 (propel) → button → TooltipTrigger/Re$2 (headless Menu.Button) → CustomMenu (@plane/ui)`, aria-label `Toggle quick actions menu`.
+### Enseignement clé — `Tooltip` (propel/base-ui) + composant fonction
 
-**Cause :** `CustomMenu` enveloppe son `customButton` dans un `<button>` (cf. `packages/ui/src/dropdowns/custom-menu.tsx` ~l.250 : `<Menu.Button as={React.Fragment}><button ref=… >{customButton}</button></Menu.Button>`). Or `customButton={<IconButton .../>}` et `IconButton` (`packages/propel/src/icon-button/`) rend un `<button>` (`React.ButtonHTMLAttributes<HTMLButtonElement>`). → `<button><button>`.
+Le `Tooltip` rend `<BaseTooltip.Trigger render={children}/>` → il pose **ref + handlers + aria** sur son enfant. Deux correctifs valides, à choisir selon le cas :
 
-**Fichiers concernés (à corriger tous — même problème) :**
+- l'enfant est un composant **qu'on possède**, avec **une seule racine DOM** → le passer en **`React.forwardRef` + spread `...rest`** (contrat de `IconButton` ; appliqué en #49). C'est le correctif de fond : il règle **tous** les usages d'un coup.
+- l'enfant est un **shim / non modifiable** (`next/link`) → l'**envelopper dans `<span className="flex">`** (#43, #47).
 
-- `apps/web/core/components/workspace/sidebar/projects-list-item.tsx` (~l.358-368) — **cas confirmé en console**.
-- `apps/web/core/components/workspace/sidebar/favorites/favorites-menu.tsx`
-- `apps/web/core/components/workspace/sidebar/projects-list.tsx`
-- `apps/web/core/components/navigation/project-actions-menu.tsx`
-- `apps/web/core/components/workspace/sidebar/favorites/favorite-items/common/favorite-item-quick-action.tsx`
-- (Grep pour être exhaustif : `grep -rln "customButton" apps/web | xargs grep -l "IconButton"`, puis vérifier chaque `customButton={<IconButton…/>}`.)
+> **NE PAS REFAIRE :** forwardRef sur `AppSidebarItem` ou sur le shim `apps/web/app/compat/next/link.tsx` = **cul-de-sac** (cassait le rendu). Ces deux fichiers restent SANS forwardRef — c'est voulu.
 
-**Subtilité (≠ #42) :** l'`IconButton` porte `ref={actionSectionRef}` **et** `onClick={() => setIsMenuActive(!isMenuActive)}`. Il ne suffit pas de le remplacer par un `<div>` : il faut re-câbler.
+## 2. Travail restant
 
-- **Approche recommandée :** passer à `CustomMenu` l'**icône seule** en `customButton` (pas un `<IconButton>`), déplacer le style sur `customButtonClassName`, et utiliser les props de `CustomMenu` pour l'onclick : `menuButtonOnClick={() => setIsMenuActive(...)}` (vérifier le nom exact de la prop dans `custom-menu.tsx`).
-  - Piste : `customButton={<MoreHorizontal className="… text-placeholder" />}` (l'icône lucide directement), ou un `<span>`/`<div>` contenant l'icône.
-- **`ref={actionSectionRef}` :** VÉRIFIER où `actionSectionRef` est utilisé dans le fichier (`grep -n actionSectionRef …`). Souvent pour l'outside-click ou le focus. `CustomMenu` gère déjà `useCaptureForOutsideClick`. Si la ref n'est plus nécessaire → la retirer ; sinon → la mettre sur le bouton de `CustomMenu` (voir si `custom-menu.tsx` accepte une ref forwardée) ou sur un wrapper. **Ne pas casser le comportement du menu.**
-- Type de `actionSectionRef` : actuellement `useRef<HTMLButtonElement>` — ajuster si on change l'élément.
+### 2.1 Bug F — setState pendant le render (store de filtres partagé) — **WIP déjà poussé**
 
-**Template :** s'inspirer du fix #42 (rendu de l'icône via un non-`<button>` + `customButtonClassName`), en gérant en plus l'onClick et la ref.
+**Symptôme :** `Cannot update a component (WorkItemFiltersToggle) while rendering a different component (WorkItemFilterRoot)`, sur la liste des work items.
 
-**Branche suggérée :** `fix/sidebar-quickactions-iconbutton-nested-button`.
+**Cause racine (tracée) :** `WorkItemFilterRoot` (`apps/web/core/components/work-item-filters/filters-hoc/base.tsx`) appelait `getOrCreateFilter(...)` dans un `useMemo` — donc **pendant le render**. Cette action MobX fait `this.filters.set(...)` (`packages/shared-state/src/store/work-item-filters/filter.store.ts` ~l.103), mutant la Map observable. Or `WorkItemFiltersToggle` (`filters-toggle.tsx`) est un `observer` qui lit `getFilter(...)` sur ce même store → re-render planifié pendant le render du Root → warning React.
 
-## 3. Autre problème connu (NON un bug de code — ne pas « corriger »)
+**État : un WIP existe et est poussé** sur `origin/fix/work-item-filters-setstate-in-render` (commit `41ff0382a`, message « UNVERIFIED / DO NOT MERGE AS-IS »). Il déplace la création/synchro dans un `useEffect` (après commit) et lit l'instance réactivement via `getFilter`. Analyse déjà faite : **le changement de type ne casse aucun call-site** (`shared.ts` typait déjà `filter: IWorkItemFilterInstance | undefined`, et **aucun** consommateur n'utilise le render-prop `({ filter })` — le filtre circule par le store).
 
-- **WebSocket live** `ws://localhost:3100/live/collaboration … ERR_CONNECTION_REFUSED` : **environnemental** — le serveur live n'écoute pas sur `:3100` (config `VITE_LIVE_BASE_URL`). C'est un serveur non démarré, pas un bug. Ne pas créer de branche code.
+**Ce qui reste :** la **vérification live**. Après le montage, le filtre est `undefined` pendant un render — il faut confirmer qu'il n'y a ni flash ni filtrage tardif, sur **tous** les layouts filtrés : liste work items projet, cycle, module, vue projet, workspace-views, profil, archives. C'est de l'**infra partagée (~14 fichiers utilisent les HOC)** → ne merger qu'après cette vérif.
 
-## 4. GOTCHAS DE WORKFLOW (les leçons durement apprises — À LIRE)
+### 2.2 aria-labels sur les menus quick-actions icon-only (petit, a11y)
 
-### 4.1 Vérification navigateur — méthode FIABLE (l'instrumentation)
+Plusieurs `CustomMenu` icon-only ne passent pas d'`ariaLabel` → le `<button>` du trigger n'a **aucun nom accessible** (`custom-menu.tsx` fait `aria-label={ariaLabel}`). Concernés : `modules/quick-actions.tsx`, `cycles/`, `views/`, `comments/`, `issues/layout-quick-actions.tsx`, `issues/issue-layouts/quick-action-dropdowns/issue-detail.tsx`. Modèle à suivre : `workspace/sidebar/projects-list-item.tsx` (`ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}`). **Utiliser de vraies clés i18n** (19 locales — cf. skill `translate`), pas des littéraux anglais. Gap **pré-existant**, pas une régression.
 
-Le buffer console MCP (`read_console_messages`) est **peu fiable** : il **persiste entre les reloads** (warnings périmés), a des **faux négatifs de timing**, et le hash `?v=xxxx` est celui de l'**optimisation des deps** (node_modules), PAS un hash par-recompilation → **inutilisable comme discriminant stale/courant**.
+## 3. NON-bugs — ne pas « corriger »
 
-**Méthode fiable :** instrumentation temporaire dans `apps/web/app/root.tsx`, juste AVANT `const APP_TITLE = …` :
+- **WebSocket live** `ws://localhost:3100/live/collaboration … ERR_CONNECTION_REFUSED` : le serveur live n'est pas démarré. Environnemental.
+- **`GET /api/users/me/ 401`** : signifie simplement **pas de session** (pas connecté). Voir §4.7.
+- **`Uncaught SyntaxError: Function statements require a function name (at issues/:1:1)`** + **`Uncaught (in promise) undefined`** : **intermittents**, ancrés sur le **document de la route** (`issues/:1`) et non sur un module Plane (toutes les vraies erreurs Plane citent un fichier précis, ex. `use-yjs-setup.ts:62`). Pistes : script injecté par une **extension navigateur**, ou race de chargement de chunk Vite dev. **Test décisif jamais réalisé** : rouvrir la page en **fenêtre InPrivate** (extensions désactivées) — si ça disparaît, c'est une extension, rien à corriger. Sinon : cliquer le lien `issues/:1` dans la console pour voir la ligne 1 fautive + regarder l'onglet Network (Status/Type du document `issues/`).
+
+## 4. GOTCHAS DE WORKFLOW (leçons durement apprises — À LIRE)
+
+### 4.1 Vérification navigateur — CONTRAINTE MAJEURE
+
+**Le navigateur intégré (MCP `Claude_Browser` / preview) ne peut PAS s'authentifier** : le SSO « Sign in with Zelian » échoue dans ce contexte sandboxé (chaîne de redirections + cookies cross-origin vers `:3102` bloquée), alors qu'il **fonctionne dans un vrai navigateur (Edge)**. Conséquence : **la vérification live passe par le navigateur du dev**, qui colle la console.
+
+Le dev lance son propre `pnpm dev` sur `:3000` : ce serveur sert **le working tree que Claude édite** (peu importe la branche checkoutée), donc ses reloads reflètent bien les modifs en cours.
+
+**Signal de fraîcheur (crucial)** — une console collée peut être **périmée** (onglet Edge non rechargé, HMR partiel). Avant d'en conclure quoi que ce soit, vérifier qu'elle ne contient plus un marqueur déjà supprimé (ex. un warning déjà corrigé, ou une ancienne instrumentation `root.tsx:53`). Si périmée : **hard reload** (`Ctrl+Shift+R`) ou onglet neuf, puis **vider la console** avant de reproduire.
+
+**Confirmer côté serveur** (indépendant du navigateur, très fiable) :
+
+```bash
+curl -s http://localhost:3000/<chemin/du/module>.tsx | grep <marqueur-du-fix>
+```
+
+Ça prouve que le dev server sert bien le code corrigé.
+
+**Instrumentation** (si on a besoin d'un comptage fiable) — temporaire dans `apps/web/app/root.tsx`, juste AVANT `const APP_TITLE = …` :
 
 ```ts
 // TEMP DEBUG
@@ -68,7 +92,8 @@ if (typeof window !== "undefined" && !(window as unknown as { __capsInstalled?: 
   console.error = (...args: unknown[]) => {
     try {
       const s = args.map((x) => (typeof x === "string" ? x : (x as Error)?.stack || "")).join("\n");
-      if (s.includes("is not a function") || s.includes("\n    at ")) w.__caps?.push(s.slice(0, 3000));
+      if (s.includes("is not a function") || s.includes("cannot appear as a descendant") || s.includes("\n    at "))
+        w.__caps?.push(s.slice(0, 3000));
     } catch {
       /* noop */
     }
@@ -77,69 +102,78 @@ if (typeof window !== "undefined" && !(window as unknown as { __capsInstalled?: 
 }
 ```
 
-Puis : `location.reload()` (via javascript_tool), attendre ~12-14 s, puis lire `window.__caps` (compter par pattern, ex. `caps.filter(s => s.includes('IconButton') && s.includes('cannot appear as a descendant')).length`). `__caps` se **remet à zéro à chaque reload** (garde `__capsInstalled` fraîche par contexte de page). **RETIRER l'instrumentation avant de committer** (vérifier `git diff apps/web/app/root.tsx` = vide).
+Puis recharger, attendre ~12-14 s, lire `window.__caps` et compter par motif. **RETIRER l'instrumentation avant de committer** (`git diff apps/web/app/root.tsx` doit être vide). Le buffer `read_console_messages` du MCP est **peu fiable** (persiste entre reloads, faux négatifs de timing) ; le hash `?v=xxxx` est celui de l'optimisation des deps, **pas** un hash de recompilation → inutilisable comme discriminant.
 
 ### 4.2 Pre-commit hook (lint-staged) — le plus gros piège
 
-`.husky/pre-commit` → `pnpm lint-staged` → sur les fichiers stagés `.{js,ts,tsx…}` : `pnpm exec oxlint --fix --deny-warnings`. **`--deny-warnings` fait échouer le commit sur N'IMPORTE QUEL warning pré-existant du fichier touché** (le lint global, lui, tolère via `--max-warnings=11957`).
+`.husky/pre-commit` → `pnpm lint-staged` → sur les fichiers stagés : `pnpm exec oxfmt` puis `pnpm exec oxlint --fix --deny-warnings`. **`--deny-warnings` fait échouer le commit sur N'IMPORTE QUEL warning pré-existant du fichier touché** (le lint global, lui, tolère via `--max-warnings=11957`).
 
-Pour débloquer (SANS `--no-verify`, non autorisé) : ajouter des disables **ciblés** :
+Pour débloquer (SANS `--no-verify`, non autorisé) : ajouter des disables **ciblés**.
 
-- Format qui marche : `// eslint-disable-next-line <rule>` (style ESLint). `// oxlint-disable-next-line <rule>` marche aussi pour les règles à plugin.
-- **PLACEMENT CRITIQUE** : le disable va sur la ligne **immédiatement avant la déclaration SHADOWANTE**, PAS avant l'originale « shadowed ». Pour `no-shadow` dans les callbacks drag, la déclaration shadowante est le **param** (`getData: ({ input, element }) => {`) ou un `const` interne (`const data = {…}`, `const instruction = …`), PAS le `const element = ref.current` du useEffect (que oxlint affiche comme « shadowed declaration is here »).
-- Noms de règles : `no-shadow`, `react-hooks/exhaustive-deps`, `import/no-unassigned-import`.
-- Toujours re-lancer `cd apps/web && npx oxlint --deny-warnings <fichiers>` jusqu'à « Found 0 warnings » avant de committer.
-- Justifier chaque disable (`-- pre-existing, unrelated to this fix`). Ne PAS renommer les variables shadow (risque de casser le drag `@atlaskit/pragmatic-drag-and-drop`).
+- Format : `// eslint-disable-next-line <rule>` (marche aussi pour les règles oxc, ex. `no-map-spread`). `// oxlint-disable-next-line <rule>` fonctionne également.
+- **PLACEMENT** : le disable va sur la ligne **immédiatement avant la ligne où le diagnostic démarre**. Pour `no-shadow`, c'est la déclaration **shadowante** (le param du callback), PAS l'originale « shadowed ». Pour `promise/always-return`, c'est la ligne du `.then(`, quitte à insérer le commentaire entre `=>` et le corps (valide en JS).
+- Règles déjà rencontrées : `no-shadow`, `promise/always-return`, `no-map-spread`, `react-hooks/exhaustive-deps`, `import/no-unassigned-import`, `jsx-a11y/click-events-have-key-events`, `jsx-a11y/no-static-element-interactions`.
+- Toujours re-lancer `cd apps/web && npx oxlint --deny-warnings <fichiers>` jusqu'à « Found 0 warnings » **avant** de committer.
+- Justifier chaque disable (`-- pre-existing, unrelated to this fix`).
+- **Nuance a11y** : pour `jsx-a11y/*` sur des lignes interactives, **préférer corriger** (vrai `<button>`, `role`/`tabIndex`/`onKeyDown`) plutôt que suppresser — c'est ce qu'a fait #50. Si le fix a11y sort du scope, sortir ces fichiers de la PR et en faire une tâche dédiée.
 
 ### 4.3 Vite HMR — instable
 
-Après un changement de branche, une modif de lib, ou un changement de type d'export (fonction↔forwardRef) d'un module très importé (ex. shim `next/link`), Vite peut : servir des chunks périmés, OU produire un **`TypeError: Component is not a function` fantôme**. **Piège vécu** : ce `Component is not a function` n'était PAS causé par un changement forwardRef — c'était le **bug d'hydratation pré-existant** (#41). Ne pas mal-attribuer. En cas de doute : `preview_stop` + `preview_start {name:"plane-web"}`, voire `rm -rf apps/web/node_modules/.vite` avant restart.
+Après un changement de branche, une modif de lib, ou un changement de type d'export (fonction↔forwardRef) d'un module très importé, Vite peut servir des **chunks périmés**. **Piège vécu** : un `TypeError: Component is not a function` attribué à tort à un changement forwardRef — c'était en fait le bug d'hydratation #41. Ne pas mal-attribuer. En cas de doute : redémarrer le dev server, voire `rm -rf apps/web/node_modules/.vite`.
 
-### 4.4 Stop hook Zelian (obligatoire en fin de session)
+### 4.4 Stop hook Zelian (obligatoire après toute modif source)
 
-Après toute modif de fichier source, le hook `Stop` bloque tant que `@update-writer-after-implement` n'a pas tourné. Invoquer le subagent `zelian-framework:update-writer-after-implement` (Agent tool, `run_in_background:false`) avec le contexte des fichiers modifiés. Pour des **bugs UI** : il confirme le CHANGELOG, ne trouve pas de module `docs/specs/` correspondant (sidebar/nav/widgets ne sont pas documentés), pas de changement BDD, **aucun ADR** (bugs ≠ décisions d'archi, cf. `.claude/rules/06-adr-policy.md`). Il écrit `.claude/.update-writer-ran` → débloque.
+Le hook `Stop` bloque tant que `@update-writer-after-implement` n'a pas tourné. Invoquer le subagent `zelian-framework:update-writer-after-implement` (Agent tool, `run_in_background:false`) avec le contexte des fichiers modifiés, en lui précisant : CHANGELOG **déjà** écrit (ne pas dupliquer), pas de changement BDD, **aucun ADR** (un bugfix échoue la whitelist de `.claude/rules/06-adr-policy.md`), pas de module `docs/specs/` correspondant (les composants UI core ne sont pas documentés), et **ne rien committer/pousser**. Il écrit `.claude/.update-writer-ran` → débloque. Astuce : le lancer **proactivement** en fin de tâche évite de se faire bloquer au moment de rendre la main.
 
 ### 4.5 CHANGELOG & merge
 
-- Chaque fix → une entrée sous `## [Unreleased]` › `### Fixed` (français, style des entrées existantes). Insertion via **python en utf-8** (attention : la console Windows est cp1252 → un `print` avec `→`/accents plante ; écrire le fichier en `encoding="utf-8"` et ne pas print les caractères spéciaux).
-- Merger 2 branches touchant le CHANGELOG → **conflit** ; résoudre en **gardant les DEUX entrées** (retirer `<<<<<<<`/`=======`/`>>>>>>>`), puis `git merge origin/preview` dans la branche avant de re-pousser.
+- Chaque fix → une entrée sous `## [Unreleased]` › `### Fixed` (français, style des entrées existantes), dans un commit séparé `docs(changelog): …` (convention du repo : un commit `fix(web): …` puis un commit changelog).
+- Merger 2 branches touchant le CHANGELOG → **conflit** ; résoudre en **gardant les DEUX entrées**, puis `git merge origin/preview` dans la branche avant de re-pousser.
 
 ### 4.6 Flux PR / gh
 
-- Les PRs sont sur le **fork** `userLinpy/plane`, base **`preview`**. `gh pr view N` **pointe par défaut sur l'upstream `makeplane/plane`** → TOUJOURS `--repo userLinpy/plane`.
-- Les PRs arrivent souvent en **draft** → `gh pr ready N --repo userLinpy/plane` d'abord.
-- Merge : `gh pr merge N --repo userLinpy/plane --merge` (**merge-commit**, conforme à la pratique du dev).
-- Le **classifier auto-mode bloque un merge sans review** : faire une **review** (le dev veut une review avant merge « s'il n'y a pas de problèmes ») ET avoir l'accord du dev, sinon `gh pr merge` est refusé.
+- PRs sur le **fork** `userLinpy/plane`, base **`preview`**. `gh pr view N` pointe par défaut sur l'upstream → **TOUJOURS `--repo userLinpy/plane`**.
+- Si draft : `gh pr ready N --repo userLinpy/plane`.
+- Merge : `gh pr merge N --repo userLinpy/plane --merge` (**merge-commit**).
+- **Une review est requise avant merge** (et l'accord du dev). `gh pr review N --repo userLinpy/plane --comment --body …` fonctionne sur sa propre PR (l'approve, non).
+- Aucune CI ne tourne sur ces PRs fork→preview (`gh pr checks` : « no checks reported ») — ne pas l'attendre.
 
-### 4.7 Environnement
+### 4.7 Environnement — démarrage complet
 
-- Front : `preview_start {name:"plane-web"}` (`.claude/launch.json` : `turbo dev --filter=web --filter=live`, port **3000**). NE PAS lancer de serveur via Bash.
-- API : docker `docker-compose-local.yml` (déjà up : api/worker/db/redis/mq/minio). API sur `:8000`.
-- Login test : `dev@zelian.local` (SSO Zelian, workspace **zelian**, routes `/zelian/…`). Le home affiche les widgets « Recent activity » (widgets #44) et la sidebar projets (DragHandle #45, quick-actions #6ᵉ).
-- OS Windows / Git-bash ; MCP `plane` = Docker local (`PLANE_BASE_URL=localhost:8000`).
+Trois services, **tous nécessaires** pour tester en étant connecté :
 
-## 5. État repo au moment du handoff
+```bash
+# 1) Backend (Docker Desktop doit tourner)
+cd C:\Stage\plane && docker compose -f docker-compose-local.yml up -d   # api :8000, db, redis, mq, minio
 
-- Branche `preview`, SHA `ab6539ff` (Merge #45), **working tree propre**, synchronisé avec `origin/preview`.
-- Les 5 fixes + leurs entrées CHANGELOG sont dans `preview`.
-- `apps/web/app/compat/next/link.tsx` et `apps/web/core/components/sidebar/sidebar-item.tsx` sont à l'état d'origine (forwardRef reverté — voir §1).
+# 2) Front web
+pnpm dev                                                                # react-router dev --port 3000
 
-## 6. Étapes concrètes pour reprendre (6ᵉ problème)
+# 3) SSO Zelian — SANS LUI, IMPOSSIBLE DE SE CONNECTER
+cd C:\Stage\2026-zelian-insider\packages\auth && pnpm dev               # next dev --port 3102
+```
+
+- Login de test : `dev@zelian.local` (SSO Zelian), workspace **zelian**, routes `/zelian/…`.
+- Si `:3102` est éteint → la page de consent renvoie une erreur de connexion, le login boucle sur l'écran de login et l'API répond `401`. **C'est la panne la plus fréquente.**
+- `:3100` (live) est optionnel : ne sert qu'à faire taire les erreurs WebSocket.
+- OS Windows / Git-bash.
+
+## 5. État du repo (2026-07-18)
+
+- Branche `preview` synchronisée avec `origin/preview` — HEAD `faa2d31d3` (Merge #51).
+- **Aucun** commit local non poussé (vérifié via `git log --branches --not --remotes` = vide), **aucun** stash, **aucune** PR ouverte.
+- WIP bug F sur `origin/fix/work-item-filters-setstate-in-render` (non mergé, volontairement).
+- Seuls fichiers non suivis restants : `.claude/.doc-injected.json` et `.claude/.update-check.json` (caches locaux, à ignorer).
+
+## 6. Étapes pour reprendre
 
 1. `git checkout preview && git pull origin preview`.
-2. `git checkout -b fix/sidebar-quickactions-iconbutton-nested-button`.
-3. `preview_start {name:"plane-web"}` (attendre `:3000` HTTP 200), naviguer `http://localhost:3000/zelian/`.
-4. Corriger le pattern `CustomMenu customButton={<IconButton…/>}` dans tous les fichiers du §2 (icône seule en customButton + `menuButtonOnClick` + gérer `actionSectionRef`).
-5. Vérifier avec l'instrumentation (§4.1) : compteur `IconButton` nested-button → **0**, et aucun nouveau warning/`not a function`. Retirer l'instrumentation.
-6. `git add …` + commit (gérer le hook lint §4.2 : disables ciblés si warnings pré-existants).
-7. Entrée CHANGELOG (§4.5) + commit.
-8. Push + `gh pr create --repo userLinpy/plane --base preview`.
-9. `gh pr ready` + **review** (§4.6) + `gh pr merge --merge`.
-10. `@update-writer-after-implement` (§4.4).
-11. Ré-vérif combinée sur `preview` (instrumentation) : tous les compteurs à 0.
+2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login.
+3. Se connecter dans un **vrai navigateur** (Edge), workspace `zelian` (§4.1).
+4. Choisir le sujet : **bug F** (§2.1 — repartir de la branche WIP poussée, puis **vérifier tous les layouts filtrés** avant merge) ou **aria-labels** (§2.2).
+5. Fix → vérif (§4.1) → commit (hook lint §4.2) → CHANGELOG (§4.5) → PR + review + merge (§4.6) → `@update-writer` (§4.4).
 
-## 7. Mémoire projet pertinente
+## 7. Notes
 
-- `verification-env-plane` : Redis partagé pollue la suite contract ; turbo check:types ≠ tsc nu ; Vite HMR à redémarrer.
-- `merge-policy-permissions` : merge = merge-commit + résolution CHANGELOG en cascade ; autorisation dev requise.
-- `git-fix-branch-workflow` : corrections = branche `fix/` + commits descriptifs + PR.
+- La mémoire projet de Claude Code (`~/.claude/projects/C--Stage-plane/memory/`) est **locale à la machine** : sur un nouveau poste, elle sera vide. **Ce document est le relais** — le tenir à jour en fin de chantier.
+- Les worktrees `.claude/worktrees/*` sont des artefacts locaux de sessions parallèles ; leur contenu est poussé, ils n'ont pas besoin d'être transférés.
