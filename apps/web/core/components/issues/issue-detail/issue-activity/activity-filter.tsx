@@ -9,7 +9,7 @@ import { ListFilter } from "lucide-react";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 import { CheckIcon } from "@plane/propel/icons";
 import { PopoverMenu } from "@plane/ui";
 // helper
@@ -29,10 +29,10 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
 
   return (
     <PopoverMenu
-      buttonClassName="outline-none"
+      buttonClassName={cn(getIconButtonStyling("tertiary", "base"), "outline-none")}
       button={
         <>
-          <IconButton variant="tertiary" icon={ListFilter} />
+          <ListFilter className="size-4" />
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
           )}
@@ -42,12 +42,14 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
       data={filterOptions}
       keyExtractor={(item) => item.key}
       render={(item) => (
-        <div
+        <button
           key={item.key}
-          className="flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 text-13 transition-all hover:bg-layer-1"
+          type="button"
+          aria-pressed={item.isSelected}
+          className="flex w-full cursor-pointer items-center gap-2 rounded-xs p-1 px-2 text-13 transition-all hover:bg-layer-1"
           onClick={item.onClick}
         >
-          <div
+          <span
             className={cn(
               "flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-xs bg-surface-2 transition-all",
               {
@@ -58,11 +60,11 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
             )}
           >
             {item.isSelected && <CheckIcon className="h-2.5 w-2.5" />}
-          </div>
-          <div className={cn("whitespace-nowrap", item.isSelected ? "text-primary" : "text-secondary")}>
+          </span>
+          <span className={cn("whitespace-nowrap", item.isSelected ? "text-primary" : "text-secondary")}>
             {t(item.labelTranslationKey)}
-          </div>
-        </div>
+          </span>
+        </button>
       )}
     />
   );
