@@ -173,9 +173,9 @@ cd C:\Stage\2026-zelian-insider\packages\auth && pnpm dev               # next d
 ## 6. Étapes pour reprendre — À LIRE EN PREMIER
 
 1. `git checkout preview && git pull origin preview`.
-2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login.
+2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login. ⚠️ Lire le **§11.5** avant de lancer la moindre commande `pnpm` : node/pnpm passent par `mise` et le PATH Windows fuit dans WSL.
 3. **Le navigateur intégré (`mcp__Claude_Browser__*`) suffit** : `preview_start` sur `http://localhost:3000`, la session SSO se résout seule. Le §4.1 qui prétend le contraire est **faux** — voir §8.1.
-4. Choisir un sujet **dans le §10** (les deux chantiers structurels) ou dans le §9.4 (le reste). **Ne PAS partir du §2 ni du §8.3 sans avoir lu le §9.2** : plusieurs de leurs entrées sont résolues ou mal attribuées.
+4. Choisir un sujet **dans le §11.6** — c'est la liste du travail restant **à jour**. ⚠️ **Le §10 est FAIT** (chantiers A et B fusionnés, PR #72 et #73). **Ne PAS partir du §2, du §8.3 ni du §9.4 sans avoir lu le §9.2 puis le §11.6** : plusieurs de leurs entrées sont résolues ou mal attribuées.
 5. Boucle par sujet : fix → **vérif navigateur avant/après** (§4.1 + §9.3) → commit (hook lint §4.2) → CHANGELOG (§4.5) → PR + review + merge (§4.6). Le hook `@update-writer` du §4.4 **n'est pas actif** sur ce poste (§9.5).
 
 ### Les 3 réflexes qui ont fait toute la différence
@@ -441,6 +441,8 @@ Passé via `handleDOMEvents` de ProseMirror, qui enregistre tout en **non-passif
 
 ## 10. Imbrications restantes — deux chantiers STRUCTURELS
 
+> ✅ **LES DEUX SONT FAITS** (PR #72 pour le chantier B, PR #73 pour le chantier A). Cette section reste comme trace du diagnostic ; **les résultats, les écarts par rapport à ce qui était prévu et les nouveaux pièges sont au §11**.
+
 > Les 11 PRs des §8-9 étaient toutes des correctifs **mécaniques** : déplacer un style vers la prop de classe du conteneur. **Les deux qui suivent ne le sont pas.** Ils exigent de modifier l'API d'un composant partagé, donc une passe dédiée avec vérification de chaque appelant. Ne pas les commencer en fin de session.
 
 ### 10.1 L'OUTIL qui a débloqué le diagnostic — marche dans l'arbre de fibres React
@@ -507,3 +509,107 @@ Donc : autant de boutons imbriqués **que de réactions posées**. Le work item 
 **Ce n'est pas qu'un problème de balisage** : chaque pastille de réaction déclenche aussi l'ouverture du sélecteur en remontant l'événement.
 
 **Piste de correctif** : sortir le groupe du déclencheur — seul le bouton « ajouter » doit l'être. `EmojiReactionButton` est déjà un `forwardRef` qui spread ses props, donc il satisfait le contrat de la prop **`render` de base-ui** (l'équivalent d'`asChild` — cf. §9.3 point 1) : `<Popover.Button render={<EmojiReactionButton …/>} />` ferait du déclencheur l'`IconButton` lui-même, sans wrapper. ⚠️ Vérifier que `disabled` ne fuit pas sur un élément non-bouton si l'on tente `render={<span/>}`.
+
+---
+
+## 11. Troisième session du 2026-07-18 — les deux chantiers structurels sont FAITS
+
+> Les deux chantiers du §10 sont fusionnés. **Plus aucune imbrication `button > button` ni `a > a` sur la vue peek d'un work item** — mesuré sur `preview` après fusion, avec 2 réactions posées et 3 widgets ouverts.
+
+### 11.1 PRs
+
+| PR  | Objet                                                                                         | État      |
+| --- | --------------------------------------------------------------------------------------------- | --------- |
+| #72 | `fix(reactions)` — chantier B : les pastilles de réaction sortent du déclencheur du sélecteur | fusionnée |
+| #73 | `fix(collapsible)` — chantier A : l'action des widgets sort du bouton de repli                | fusionnée |
+
+**Résultat mesuré** (work item ouvert depuis la liste, 2 réactions, widgets sub-work items + links + pages ouverts) : imbrications de boutons **5 → 0**, imbrications de liens **0 → 0**.
+
+### 11.2 Chantier B — ce qui différait du §10.3
+
+- **Six appelants, pas un.** Le §10.3 ne citait qu'`issue-detail/reactions/issue.tsx`. Il y en a **six**, et tous passaient un élément interactif : les 3 de `web` (issue, issue-comment, comment-reaction), `comments/card/display.tsx` (un `EmojiReactionButton` seul), et **2 dans `apps/space`** (pages publiques). Le réflexe « recenser les appelants du composant » du §6 a encore payé.
+- **Le §10.3 avait raison sur la croissance** : 0 réaction → 2 imbrications, 2 réactions → 5. Toujours poser 1-2 réactions **avant** de mesurer.
+- **Le second symptôme est réel** : cliquer une pastille pour retirer la réaction la retirait **et** ouvrait le sélecteur. Reproduit avant, disparu après.
+- **`render` seul ne suffisait pas.** Le §10.3 proposait `<Popover.Button render={<EmojiReactionButton/>} />` : ça règle le cas `display.tsx` mais **pas** celui du groupe, où `render` ferait du déclencheur le `<div>` du groupe, pastilles toujours dedans. Il a fallu **en plus** un emplacement `addButton` sur `EmojiReactionGroup`, rendu **frère** des pastilles. Le déclencheur y atterrit en enfant flex direct parce qu'`EmojiReactionPicker` **n'émet aucun DOM propre** (le `Root` de base-ui est contextuel, le `Panel` est porté ailleurs) — d'où une rangée pixel-identique.
+- ⚠️ **Ne jamais passer `label` ET `render`.** base-ui fusionne les props du composant dans l'élément rendu : un `children` à `undefined` écraserait les enfants propres de cet élément. Le code les rend mutuellement exclusifs.
+
+### 11.3 Chantier A — le recensement complet (le point laissé ouvert)
+
+Le §10.2 ne couvrait qu'`apps/`. Refait sur `apps/` + `packages/` + `plane-web` :
+
+| Piste                                        | Verdict                                                                                                                                                                       |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/propel/src/collapsible/`           | ⚠️ **Un SECOND `Collapsible`** (compound base-ui : `CollapsibleRoot`/`Trigger`/`Content`). **Zéro appelant applicatif** — seulement ses stories. Le piège du §9.2 à nouveau.  |
+| `plane-web` (= **`apps/web/ce/`**)           | `WorkItemAdditionalWidgetCollapsibles` est un **stub renvoyant `null`** en CE. Rien à corriger.                                                                               |
+| `actionItemElement`                          | Exactement les **6** du §10.2. Confirmé.                                                                                                                                      |
+| Autres appelants d'`@plane/ui` `Collapsible` | **3 de plus**, non listés : `workspace/settings/members-list`, `sub-issues/issues-list/list-group`, `relations/content`. Tous du balisage **inerte** → **latent, pas actif**. |
+
+→ **`plane-web` se résout en `apps/web/ce/`** (`apps/web/tsconfig.json` : `"@/plane-web/*": ["./ce/*"]`). À savoir pour tout recensement futur.
+
+**Le correctif.** `CollapsibleButton` ne peut pas se corriger lui-même : il est rendu **entièrement dans** le `Disclosure.Button`, il ne peut donc pas rendre un enfant frère de son propre ancêtre. L'action remonte à `Collapsible` via un emplacement **`actionElement`**, frère de la bascule et superposé à son extrémité droite. `actionItemElement` **est supprimé** de `CollapsibleButton` — une prop qui produisait une imbrication à chaque usage n'est pas une prop, c'est un piège.
+
+- Le conteneur `relative` n'apparaît **que** s'il y a une action → les 3 appelants inertes gardent leur DOM à l'octet près.
+- `milestones-section.tsx` avait un `preventDefault` + `stopPropagation` qui **masquait exactement ce bug** ; devenu inutile, supprimé. Un contournement de ce genre est un **indice** qu'un élément est au mauvais endroit dans l'arbre.
+- ⚠️ `sub-issues` : son `title` renvoie `null` tant que les sous-work-items ne sont pas chargés, ce qui masquait aussi l'action. `root.tsx` dérive désormais la même condition.
+
+### 11.4 Enseignements techniques (nouveaux)
+
+1. **⚠️ Mesurer la géométrie RELATIVEMENT à la rangée de l'élément, jamais en coordonnées absolues.** Une première mesure absolue annonçait un décalage d'1 px sur le widget des sous-work-items : c'était de l'**arrondi** sur un décalage de page de 0,5 px entre deux chargements. J'ai failli « corriger » un problème inexistant (un `py-3` compensatoire, ajouté puis retiré). Motif correct :
+
+   ```js
+   const row = toggle.getBoundingClientRect();
+   const r = action.getBoundingClientRect();
+   ({ dTop: +(r.top - row.top).toFixed(2), dRight: +(row.right - r.right).toFixed(2) });
+   ```
+
+   Et **garder les décimales** : `Math.round` fabrique de faux écarts d'1 px.
+
+2. **Un padding symétrique ne déplace pas un centre.** Inutile de reproduire le `py-3` d'une rangée pour recentrer une superposition. Seule l'**asymétrie** compte : ici la bordure basse de 1 px, intérieure au `h-12` (`box-sizing: border-box`), d'où le `bottom-px` sur la superposition — sans lui, l'action descend d'un demi-pixel.
+3. **Vite sert un module intermédiaire cassé si l'on édite le JSX avant l'import.** Un `ReferenceError: X is not defined` est apparu alors que le fichier source était correct. **Ne pas mal-attribuer** (§4.3) : contrôler ce que le serveur sert vraiment, puis recharger.
+
+   ```bash
+   curl -s http://localhost:3000/core/components/<chemin>.tsx | grep -nE '^import|<marqueur>'
+   ```
+
+4. **`aria-expanded` du `Disclosure.Button` de `Collapsible` est FAUX.** L'état interne de headlessui et le `localIsOpen` du composant sont **découplés** : le `Disclosure.Panel` est `static` et sa visibilité vient de `Transition show={localIsOpen}`. Constaté : `aria-expanded="false"` sur une section ouverte. **Préexistant, non corrigé** — vrai écart a11y sur tous les widgets, même famille que la #61. **Sujet à part entière.**
+5. **Les packages sont consommés en `dist/`, reconstruits par `tsdown --watch`.** Une modif dans `packages/propel` ou `packages/ui` n'atteint l'app qu'après reconstruction (~6-15 s). Contrôle **indispensable autour d'un `git stash`**, sinon on mesure l'ancien code :
+
+   ```bash
+   grep -c '<marqueur>' packages/ui/dist/index.js   # 0 = stashé, >0 = correctif en place
+   ```
+
+### 11.5 Environnement — corrections au §4.7 et au §9.5
+
+- **⚠️ node/pnpm sont gérés par `mise`**, pas par nvm : `~/.local/share/mise/installs/node/22.18.0/bin`. Ils ne sont **pas** dans le PATH d'un `bash -lc` non interactif.
+- **⚠️ Le PATH Windows fuit dans `wsl.exe -- bash -lc`** et casse tout `export PATH=…` (`export: 'Files/Git/…' not a valid identifier`). Remède fiable : **un script avec un PATH explicite**, appelé **depuis PowerShell** — Git-bash réécrit `/tmp/x.sh` en chemin Windows (`C:/Users/…`), pas PowerShell.
+
+  ```bash
+  #!/bin/bash
+  export PATH="$HOME/.local/share/mise/installs/node/22.18.0/bin:/usr/local/bin:/usr/bin:/bin"
+  cd "$HOME/dev/plane" || exit 1
+  exec "$@"
+  ```
+
+  ```powershell
+  wsl.exe -d Ubuntu-24.04 -- bash /tmp/plane-check.sh pnpm --filter web check:types
+  ```
+
+- **Les heredocs `<< 'EOF'` via Git-bash vers WSL cassent** sur les backticks du Markdown (« unexpected EOF while looking for matching `'` »). Écrire le fichier puis l'ajouter — confirme le §9.5.
+- **PowerShell 5.1 emballe la stderr d'un exe dans une `NativeCommandError`** même à code de sortie 0 : un `check:types` qui réussit **paraît** échouer. Lire la sortie, pas le statut.
+- **⚠️ Un `serve -s build/client -l 3000` traîne dans les processus** (build statique périmé). Il **n'a jamais réussi à se lier** au port — c'est bien le dev server Vite qui tient `:3000`. Ne pas s'y fier, vérifier :
+
+  ```bash
+  ss -ltnp | grep ':3000'   # doit pointer sur @react-router/dev/bin.js
+  ```
+
+- `pnpm dev` lance web `:3000`, admin `:3001`, space `:3002`, plus les `tsdown --watch` de tous les packages.
+
+### 11.6 Travail restant
+
+- **Vue peek : 0 imbrication.** Les deux familles du §9.4 (« ×3 autour de l'éditeur de commentaire », « ×1 dans le widget Pages ») sont couvertes par #72 et #73.
+- **`aria-expanded` mensonger de `Collapsible`** (§11.4 point 4) — nouveau, non traité, a11y.
+- **Stories d'`emoji-reaction-picker.stories.tsx`** : 4 endroits passent encore un `<button>` en `label`. Même anti-motif, confiné à Storybook, non expédié — mais c'est ce que le prochain lecteur copiera.
+- **`apps/space` non vérifié en direct** (#72) : transformation mécaniquement identique à `web`, `check:types` vert, mais aucun rendu navigateur — il aurait fallu publier une page, donc basculer un réglage de projet en « public ».
+- **3 widgets sur 6 non exercés en direct** (#73) : Attachments (demande un envoi de fichier), Relations (une relation), Milestones (**la fonctionnalité n'est pas activée sur le projet de test** — « Milestones is not enabled for this project »). **Milestones est le plus à surveiller** : seul dont l'action n'est pas un bouton de widget standard, et seul dont le `onClick` a changé.
+- **Liste des sous-work-items vide** malgré « 0/1 Done » : **vérifié par `git stash`, identique sur `preview` non modifié** → préexistant, pas une régression. Personne n'a encore regardé.
+- Reste du §9.4 : **46 menus icon-only sans `ariaLabel`**, **F** (listener non passif, `packages/editor/src/core/extensions/side-menu.ts` l.160), **G** (`pnpm start` cassé), **§2.1 bug F** (branche WIP `fix/work-item-filters-setstate-in-render`). Le warning `setState pendant le render` de `WorkItemFiltersToggle` **est toujours dans la console** de la liste des work items.
