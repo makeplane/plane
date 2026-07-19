@@ -40,7 +40,15 @@
       "work_item": "Azioni rapide dell'elemento di lavoro",
       "epic": "Azioni rapide dell'epic",
       "work_item_list": "Azioni rapide dell'elenco di elementi di lavoro",
-      "epic_list": "Azioni rapide dell'elenco di epic"
+      "epic_list": "Azioni rapide dell'elenco di epic",
+      "attachment": "Azioni rapide dell'allegato",
+      "label": "Azioni rapide dell'etichetta",
+      "milestone": "Azioni rapide della milestone",
+      "page": "Azioni rapide della pagina",
+      "parent_work_item": "Azioni rapide dell'elemento di lavoro principale",
+      "draft_work_item": "Azioni rapide della bozza",
+      "invitation": "Azioni rapide dell'invito",
+      "worklog": "Azioni rapide del registro di lavoro"
     }
   }
 }

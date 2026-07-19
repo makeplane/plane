@@ -40,7 +40,15 @@
       "work_item": "Work item quick actions",
       "epic": "Epic quick actions",
       "work_item_list": "Work item list quick actions",
-      "epic_list": "Epic list quick actions"
+      "epic_list": "Epic list quick actions",
+      "attachment": "Attachment quick actions",
+      "label": "Label quick actions",
+      "milestone": "Milestone quick actions",
+      "page": "Page quick actions",
+      "parent_work_item": "Parent work item quick actions",
+      "draft_work_item": "Draft work item quick actions",
+      "invitation": "Invitation quick actions",
+      "worklog": "Worklog quick actions"
     }
   }
 }

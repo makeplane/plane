@@ -40,7 +40,15 @@
       "work_item": "Schnellaktionen für Arbeitselement",
       "epic": "Schnellaktionen für Epic",
       "work_item_list": "Schnellaktionen für Arbeitselementliste",
-      "epic_list": "Schnellaktionen für Epic-Liste"
+      "epic_list": "Schnellaktionen für Epic-Liste",
+      "attachment": "Schnellaktionen für Anhang",
+      "label": "Schnellaktionen für Label",
+      "milestone": "Schnellaktionen für Meilenstein",
+      "page": "Schnellaktionen für Seite",
+      "parent_work_item": "Schnellaktionen für übergeordnetes Arbeitselement",
+      "draft_work_item": "Schnellaktionen für Entwurf",
+      "invitation": "Schnellaktionen für Einladung",
+      "worklog": "Schnellaktionen für Arbeitszeiteintrag"
     }
   }
 }

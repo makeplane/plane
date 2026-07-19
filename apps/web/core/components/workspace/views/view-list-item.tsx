@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
@@ -22,6 +23,8 @@ type Props = { viewId: string };
 
 export const GlobalViewListItem = observer(function GlobalViewListItem(props: Props) {
   const { viewId } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -50,7 +53,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <CustomMenu ellipsis>
+                  <CustomMenu ariaLabel={t("aria_labels.quick_actions.view")} ellipsis>
                     <CustomMenu.MenuItem
                       onClick={() => {
                         setUpdateViewModal(true);
