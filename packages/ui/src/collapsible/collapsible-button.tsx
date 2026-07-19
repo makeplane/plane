@@ -10,8 +10,8 @@ import { DropdownIcon } from "@plane/propel/icons";
 import { cn } from "../utils";
 
 /**
- * Header content for a `Collapsible`. It renders *inside* `<Disclosure.Button>`, so
- * everything it takes has to be inert markup.
+ * Header content for a `Collapsible`. It renders *inside* the toggle button, so everything
+ * it takes has to be inert markup.
  *
  * There is deliberately no action slot here: an action rendered from this component would
  * be a button inside a button, and clicking it would collapse the section too. Pass it to
