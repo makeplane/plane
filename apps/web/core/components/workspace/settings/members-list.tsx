@@ -8,7 +8,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -64,6 +63,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
   const memberDetails = searchedMemberIds
     ?.map((memberId) => getWorkspaceMemberDetails(memberId))
+    // eslint-disable-next-line no-array-sort -- pre-existing, unrelated to this fix
     .sort((a, b) => {
       if (a?.is_active && !b?.is_active) return -1;
       if (!a?.is_active && b?.is_active) return 1;
@@ -96,13 +96,11 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
             </div>
           }
         >
-          <Disclosure.Panel>
-            <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
-              {searchedInvitationsIds?.map((invitationId) => (
-                <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
-              ))}
-            </div>
-          </Disclosure.Panel>
+          <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
+            {searchedInvitationsIds?.map((invitationId) => (
+              <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+            ))}
+          </div>
         </Collapsible>
       )}
     </>

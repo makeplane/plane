@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { Disclosure, Transition } from "@headlessui/react";
-import React, { useState, useEffect, useCallback } from "react";
+import { Transition } from "@headlessui/react";
+import React, { useState, useEffect, useCallback, useId } from "react";
 
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
@@ -21,9 +21,9 @@ export type TCollapsibleProps = {
    * "+" of a work item widget.
    *
    * It is rendered as a *sibling* of the toggle button, overlaying its right end, and that
-   * is the whole point: anything interactive placed inside `title` ends up inside
-   * `<Disclosure.Button>`, which is invalid HTML and makes a click on the action collapse
-   * the section as well. Pass the action here rather than to `CollapsibleButton`.
+   * is the whole point: anything interactive placed inside `title` ends up inside the toggle
+   * button, which is invalid HTML and makes a click on the action collapse the section as
+   * well. Pass the action here rather than to `CollapsibleButton`.
    */
   actionElement?: React.ReactNode;
 };
@@ -50,14 +50,37 @@ export function Collapsible(props: TCollapsibleProps) {
     }
   }, [isOpen, onToggle]);
 
+  const panelId = useId();
+
+  // Deliberately a plain button rather than headlessui's `Disclosure.Button`.
+  //
+  // `Disclosure` in headlessui v1 is uncontrolled: it keeps its own open state and derives
+  // `aria-expanded` from it. This component does not use that state -- the panel is rendered
+  // `static` and its visibility comes from `Transition show={localIsOpen}` -- so the two drift
+  // apart, and `aria-expanded` ends up describing a section other than the one on screen. It
+  // starts wrong (a section open on mount reports `false`, because headlessui always starts
+  // closed) and then *inverts* on every click. Screen readers were told "collapsed" about an
+  // open section, and "expanded" about one the user had just closed.
+  //
+  // v1 offers no `open` prop to fix that from the outside, and everything else `Disclosure`
+  // provides here is already bypassed, so driving the ARIA from `localIsOpen` directly is both
+  // simpler and the only way to make it truthful.
   const toggle = (
-    <Disclosure.Button ref={buttonRef} className={buttonClassName} onClick={handleOnClick}>
+    <button
+      ref={buttonRef}
+      type="button"
+      className={buttonClassName}
+      onClick={handleOnClick}
+      aria-expanded={localIsOpen}
+      // The panel is unmounted while closed, so only claim to control it while it exists.
+      aria-controls={localIsOpen ? panelId : undefined}
+    >
       {title}
-    </Disclosure.Button>
+    </button>
   );
 
   return (
-    <Disclosure as="div" className={className}>
+    <div className={className}>
       {actionElement ? (
         // Only wrap when there is an action to place: callers without one keep their exact DOM.
         <div className="relative">
@@ -83,10 +106,10 @@ export function Collapsible(props: TCollapsibleProps) {
         leaveTo="grid-rows-[0fr] opacity-0"
         className="grid overflow-hidden"
       >
-        <Disclosure.Panel static className="min-h-0">
+        <div id={panelId} className="min-h-0">
           {children}
-        </Disclosure.Panel>
+        </div>
       </Transition>
-    </Disclosure>
+    </div>
   );
 }
