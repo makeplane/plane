@@ -173,7 +173,7 @@ cd C:\Stage\2026-zelian-insider\packages\auth && pnpm dev               # next d
 ## 6. Étapes pour reprendre — À LIRE EN PREMIER
 
 1. `git checkout preview && git pull origin preview`.
-2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login. ⚠️ Lire le **§11.5** avant de lancer la moindre commande `pnpm` : node/pnpm passent par `mise` et le PATH Windows fuit dans WSL.
+2. Démarrer les 3 services (§4.7) — **ne pas oublier `:3102`**, sinon pas de login. ⚠️ Lire le **§11.5** avant de lancer la moindre commande `pnpm` : node/pnpm passent par `mise` et le PATH Windows fuit dans WSL. **Si Docker « ne démarre pas » : ne pas attendre, aller au §11.5.1** — il a probablement déjà crashé.
 3. **Le navigateur intégré (`mcp__Claude_Browser__*`) suffit** : `preview_start` sur `http://localhost:3000`, la session SSO se résout seule. Le §4.1 qui prétend le contraire est **faux** — voir §8.1.
 4. Choisir un sujet **dans le §11.6** — c'est la liste du travail restant **à jour**. ⚠️ **Le §10 est FAIT** (chantiers A et B fusionnés, PR #72 et #73). **Ne PAS partir du §2, du §8.3 ni du §9.4 sans avoir lu le §9.2 puis le §11.6** : plusieurs de leurs entrées sont résolues ou mal attribuées.
 5. Boucle par sujet : fix → **vérif navigateur avant/après** (§4.1 + §9.3) → commit (hook lint §4.2) → CHANGELOG (§4.5) → PR + review + merge (§4.6). Le hook `@update-writer` du §4.4 **n'est pas actif** sur ce poste (§9.5).
@@ -603,6 +603,56 @@ Le §10.2 ne couvrait qu'`apps/`. Refait sur `apps/` + `packages/` + `plane-web`
   ```
 
 - `pnpm dev` lance web `:3000`, admin `:3001`, space `:3002`, plus les `tsdown --watch` de tous les packages.
+- **⚠️ WSL vide `/tmp` à chaque redémarrage du distro.** Les scripts d'aide doivent vivre dans `$HOME`, pas dans `/tmp`, sinon ils disparaissent entre deux sessions. Deux sont en place : `~/plane-start-web.sh` et `~/plane-start-sso.sh`.
+- **Lancer un serveur en fond** : `Start-Process wsl.exe … -WindowStyle Hidden` **ne tient pas** — le processus meurt aussitôt. Passer par l'exécution en tâche de fond du harnais.
+
+### 11.5.1 ⚠️ Docker Desktop — sockets périmés qui bloquent le démarrage (RÉCURRENT)
+
+> **Symptôme trompeur : Docker a l'air de démarrer indéfiniment.** Il n'en est rien — il **crashe ~10 s après le lancement** et reste derrière une boîte d'erreur (« An unexpected error occurred », boutons _Quit_ / _Reset to factory defaults_) qui peut passer inaperçue derrière les autres fenêtres. Vu le 2026-07-19 : 40 min d'attente pour un processus mort depuis 40 min.
+
+**Diagnostic — ne pas attendre, lire le log** :
+
+```powershell
+Get-Content "$env:LOCALAPPDATA\Docker\log\host\com.docker.backend.exe.log" -Tail 40
+```
+
+La ligne qui compte :
+
+```
+backend crashed, dumping error to file and reporting to user: starting services:
+initializing Inference manager: listening on unix://…/Docker/run/dockerInference:
+remove …/Docker/run/dockerInference: The file cannot be accessed by the system.
+```
+
+**Cause.** Des fichiers socket AF_UNIX (des points d'analyse NTFS) restent derrière un arrêt non propre et deviennent **inaccessibles au système** — erreur 1920, y compris pour `fsutil reparsepoint query` et pour toute suppression. Docker essaie de les effacer avant de s'y lier, échoue, et abandonne. **Deux emplacements** sont touchés, et Docker ne signale que le premier : il faut traiter les deux, sinon le démarrage suivant échoue sur l'autre.
+
+| Emplacement                             | Fichiers                                                               |
+| --------------------------------------- | ---------------------------------------------------------------------- |
+| `%LOCALAPPDATA%\Docker\run\`            | `dockerInference`, `dockerEthernetVfkit`, `userAnalyticsOtlpHttp.sock` |
+| `%LOCALAPPDATA%\docker-secrets-engine\` | `engine.sock`                                                          |
+
+**Correctif.** La suppression échoue (le système ne peut pas ouvrir les fichiers) : **renommer les dossiers parents**, ce qui est une opération sur l'entrée de répertoire et fonctionne. Docker les recrée vides. C'est aussi réversible, contrairement à une suppression.
+
+```powershell
+Get-Process 'Docker Desktop','com.docker.backend' -EA SilentlyContinue | Stop-Process -Force
+$s = Get-Date -Format 'yyyyMMdd-HHmmss'
+foreach ($d in @("$env:LOCALAPPDATA\Docker\run", "$env:LOCALAPPDATA\docker-secrets-engine")) {
+  if (Test-Path $d) { Move-Item -LiteralPath $d -Destination "$d.broken-$s" -Force }
+}
+Start-Process "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+```
+
+Puis attendre le moteur, et **relancer la pile Plane** — les conteneurs existent déjà, `start` suffit et évite les soucis de chemin WSL/Windows de `compose -f` :
+
+```bash
+docker.exe compose -p plane start    # db, redis, mq, minio, migrator, api, worker, beat-worker
+```
+
+⚠️ **`docker` n'existe pas dans le distro Ubuntu-24.04** (intégration WSL désactivée) : utiliser `docker.exe`, ou passer par PowerShell.
+
+**C'est récurrent, et le cycle s'auto-entretient.** Au moment du correctif, `%LOCALAPPDATA%\Docker\` contenait déjà `run.stale`, `run.stale2` et `run.stale-20260718-122138`, plus les `docker-secrets-engine.stale*` correspondants — **trois contournements identiques déjà appliqués les 17-18/07**. La mécanique : Docker démarre, crée ses sockets, crashe sur un socket périmé plus loin, **laisse les siens derrière lui**, et ceux-là bloqueront le démarrage suivant. Renommer débloque une fois ; ça revient.
+
+**Levier probable** : un arrêt non propre de Docker (machine éteinte ou mise en veille avec Docker actif — le jour du constat, WSL n'avait qu'une minute d'uptime). Quitter Docker Desktop explicitement avant d'éteindre devrait éviter la récidive. Si le problème persiste malgré ça, la piste suivante est un antivirus/EDR qui interfère avec ces points d'analyse. **Non élucidé à ce jour.**
 
 ### 11.6 Travail restant
 
