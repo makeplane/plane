@@ -40,7 +40,15 @@
       "work_item": "Acțiuni rapide pentru elementul de lucru",
       "epic": "Acțiuni rapide pentru epic",
       "work_item_list": "Acțiuni rapide pentru lista de elemente de lucru",
-      "epic_list": "Acțiuni rapide pentru lista de epicuri"
+      "epic_list": "Acțiuni rapide pentru lista de epicuri",
+      "attachment": "Acțiuni rapide pentru atașament",
+      "label": "Acțiuni rapide pentru etichetă",
+      "milestone": "Acțiuni rapide pentru jalon",
+      "page": "Acțiuni rapide pentru document",
+      "parent_work_item": "Acțiuni rapide pentru activitatea părinte",
+      "draft_work_item": "Acțiuni rapide pentru schiță",
+      "invitation": "Acțiuni rapide pentru invitație",
+      "worklog": "Acțiuni rapide pentru jurnalul de lucru"
     }
   }
 }

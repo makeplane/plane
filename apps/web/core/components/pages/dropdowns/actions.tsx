@@ -10,6 +10,8 @@ import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, FileOutput, FilePlus, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
 import { EPageAccess } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // plane editor
 import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
@@ -56,6 +58,8 @@ type Props = {
 
 export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -231,7 +235,13 @@ export const PageActions = observer(function PageActions(props: Props) {
         storeType={storeType}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
-      <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
+      <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.page")}
+        placement="bottom-end"
+        optionsClassName="max-h-[90vh]"
+        ellipsis
+        closeOnSelect
+      >
         {arrangedOptions.map((item) => {
           if (item.shouldRender === false) return null;
           return (

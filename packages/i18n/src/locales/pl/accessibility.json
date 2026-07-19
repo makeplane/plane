@@ -40,7 +40,15 @@
       "work_item": "Szybkie akcje elementu pracy",
       "epic": "Szybkie akcje epiku",
       "work_item_list": "Szybkie akcje listy elementów pracy",
-      "epic_list": "Szybkie akcje listy epików"
+      "epic_list": "Szybkie akcje listy epików",
+      "attachment": "Szybkie akcje załącznika",
+      "label": "Szybkie akcje etykiety",
+      "milestone": "Szybkie akcje kamienia milowego",
+      "page": "Szybkie akcje strony",
+      "parent_work_item": "Szybkie akcje nadrzędnego elementu pracy",
+      "draft_work_item": "Szybkie akcje szkicu",
+      "invitation": "Szybkie akcje zaproszenia",
+      "worklog": "Szybkie akcje wpisu pracy"
     }
   }
 }

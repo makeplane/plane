@@ -63,6 +63,7 @@ export const IssuePageItem = observer(function IssuePageItem(props: Props) {
       </div>
       <div className="flex flex-shrink-0 items-center gap-1">
         <CustomMenu
+          ariaLabel={t("aria_labels.quick_actions.page")}
           ellipsis
           buttonClassName="text-placeholder group-hover:text-secondary"
           placement="bottom-end"
