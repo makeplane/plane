@@ -568,7 +568,8 @@ overrides:
   picomatch: 2.3.2
   yaml@1: 1.10.3
   yaml@2: 2.8.3
-  path-to-regexp: 0.1.13
+  path-to-regexp@0.1: 0.1.13
+  path-to-regexp@3: 3.3.0
   defu: 6.1.5
   postcss: 8.5.15
   axios: 1.16.0
@@ -8193,6 +8194,9 @@ packages:
 
   path-to-regexp@0.1.13:
     resolution: {integrity: sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA==}
+
+  path-to-regexp@3.3.0:
+    resolution: {integrity: sha512-qyCH421YQPS2WFDxDjftfc1ZR5WKQzVzqsp4n9M2kQhVOo/ByahFoUNJfl58kOcEGfQ//7weFTDhm+ss8Ecxgw==}
 
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
@@ -16188,6 +16192,8 @@ snapshots:
 
   path-to-regexp@0.1.13: {}
 
+  path-to-regexp@3.3.0: {}
+
   path-type@4.0.0: {}
 
   pathe@1.1.2: {}
@@ -17087,7 +17093,7 @@ snapshots:
       mime-types: 2.1.18
       minimatch: 3.1.4
       path-is-inside: 1.0.2
-      path-to-regexp: 0.1.13
+      path-to-regexp: 3.3.0
       range-parser: 1.2.0
 
   serve-static@1.16.2:

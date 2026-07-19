@@ -228,7 +228,12 @@ overrides:
   picomatch: 2.3.2
   "yaml@1": 1.10.3
   "yaml@2": 2.8.3
-  path-to-regexp: 0.1.13
+  # Scoped per major line: express wants ~0.1.12, serve-handler wants 3.3.0.
+  # Unscoped, this forced 0.1.13 on serve-handler too, which has no `.compile`
+  # export -- that is what broke `pnpm start` on the web app. Both pins are the
+  # patched release of their line (CVE-2024-45296).
+  "path-to-regexp@0.1": 0.1.13
+  "path-to-regexp@3": 3.3.0
   defu: 6.1.5
   postcss: 8.5.15
   axios: "catalog:"
