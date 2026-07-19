@@ -40,7 +40,15 @@
       "work_item": "Rychlé akce pracovní položky",
       "epic": "Rychlé akce epicu",
       "work_item_list": "Rychlé akce seznamu pracovních položek",
-      "epic_list": "Rychlé akce seznamu epiců"
+      "epic_list": "Rychlé akce seznamu epiců",
+      "attachment": "Rychlé akce přílohy",
+      "label": "Rychlé akce štítku",
+      "milestone": "Rychlé akce milníku",
+      "page": "Rychlé akce stránky",
+      "parent_work_item": "Rychlé akce nadřazené pracovní položky",
+      "draft_work_item": "Rychlé akce konceptu",
+      "invitation": "Rychlé akce pozvánky",
+      "worklog": "Rychlé akce záznamu práce"
     }
   }
 }

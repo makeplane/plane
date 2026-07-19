@@ -74,11 +74,12 @@ export const WithCustomLabel: Story = {
           handleToggle={setIsOpen}
           onChange={setSelectedEmoji}
           closeOnSelect
+          buttonClassName="flex items-center gap-2 rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2"
           label={
-            <button className="flex items-center gap-2 rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
+            <>
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-4 w-4" />}
               <span className="text-13">Add Reaction</span>
-            </button>
+            </>
           }
         />
         {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
@@ -139,11 +140,8 @@ export const InlineReactions: Story = {
           handleToggle={setIsOpen}
           onChange={handleReactionAdd}
           closeOnSelect
-          label={
-            <button className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary">
-              <SmilePlus className="h-3.5 w-3.5" />
-            </button>
-          }
+          buttonClassName="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary"
+          label={<SmilePlus className="h-3.5 w-3.5" />}
         />
       </div>
     );
@@ -229,11 +227,8 @@ export const SearchDisabled: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           searchDisabled
-          label={
-            <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
-              No Search
-            </button>
-          }
+          buttonClassName="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2"
+          label="No Search"
         />
         {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
@@ -260,11 +255,8 @@ export const CustomSearchPlaceholder: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           searchPlaceholder="Find your emoji..."
-          label={
-            <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
-              Custom Search
-            </button>
-          }
+          buttonClassName="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2"
+          label="Custom Search"
         />
         {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
@@ -295,11 +287,8 @@ export const CloseOnSelectDisabled: Story = {
             handleToggle={setIsOpen}
             onChange={handleChange}
             closeOnSelect={false}
-            label={
-              <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
-                Select Multiple (Stays Open)
-              </button>
-            }
+            buttonClassName="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2"
+            label="Select Multiple (Stays Open)"
           />
           <button
             className="rounded-sm bg-layer-1 px-3 py-1.5 text-13 hover:bg-surface-2"
@@ -313,6 +302,7 @@ export const CloseOnSelectDisabled: Story = {
             <div className="mb-2 font-medium">Selected ({selectedEmojis.length}):</div>
             <div className="flex flex-wrap gap-2">
               {selectedEmojis.map((emoji, idx) => (
+                // eslint-disable-next-line react/no-array-index-key -- pre-existing; the list is append-only and may hold the same emoji twice, so the index is the only stable key
                 <span key={idx} className="text-18">
                   {emoji}
                 </span>
@@ -383,11 +373,8 @@ export const InMessageContext: Story = {
             handleToggle={setIsOpen}
             onChange={handleReactionAdd}
             closeOnSelect
-            label={
-              <button className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary">
-                <SmilePlus className="h-3.5 w-3.5" />
-              </button>
-            }
+            buttonClassName="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary"
+            label={<SmilePlus className="h-3.5 w-3.5" />}
           />
         </div>
       </div>

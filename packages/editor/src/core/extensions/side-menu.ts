@@ -94,8 +94,17 @@ const SideMenu = (options: SideMenuPluginProps) => {
         dragHandleView(view, editorSideMenu);
       }
 
+      // Registered here rather than through `handleDOMEvents` so it can be passive:
+      // ProseMirror attaches those listeners without options, which makes every wheel
+      // event scroll-blocking. This handler only hides the menu and never calls
+      // preventDefault, so it has no reason to hold up the scroll.
+      view.dom.addEventListener("wheel", hideSideMenu, { passive: true });
+
       return {
-        destroy: () => hideSideMenu(),
+        destroy: () => {
+          view.dom.removeEventListener("wheel", hideSideMenu);
+          hideSideMenu();
+        },
       };
     },
     props: {
@@ -157,7 +166,6 @@ const SideMenu = (options: SideMenuPluginProps) => {
           }
         },
         // keydown: () => hideSideMenu(),
-        mousewheel: () => hideSideMenu(),
         dragenter: (view) => {
           if (handlesConfig.dragDrop) {
             dragHandleDOMEvents?.dragenter?.(view);
