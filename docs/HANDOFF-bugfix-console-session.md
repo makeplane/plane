@@ -658,15 +658,43 @@ docker.exe compose -p plane start    # db, redis, mq, minio, migrator, api, work
 
 **Levier probable** : un arrêt non propre de Docker (machine éteinte ou mise en veille avec Docker actif — le jour du constat, WSL n'avait qu'une minute d'uptime). Quitter Docker Desktop explicitement avant d'éteindre devrait éviter la récidive. Si le problème persiste malgré ça, la piste suivante est un antivirus/EDR qui interfère avec ces points d'analyse. **Non élucidé à ce jour.**
 
-### 11.6 Travail restant
+### 11.6 Travail restant — À JOUR au 2026-07-19
 
-- **Vue peek : 0 imbrication.** Les deux familles du §9.4 (« ×3 autour de l'éditeur de commentaire », « ×1 dans le widget Pages ») sont couvertes par #72 et #73.
-- **`aria-expanded` mensonger de `Collapsible`** (§11.4 point 4) — nouveau, non traité, a11y.
-- **Stories d'`emoji-reaction-picker.stories.tsx`** : 4 endroits passent encore un `<button>` en `label`. Même anti-motif, confiné à Storybook, non expédié — mais c'est ce que le prochain lecteur copiera.
-- **`apps/space` non vérifié en direct** (#72) : transformation mécaniquement identique à `web`, `check:types` vert, mais aucun rendu navigateur — il aurait fallu publier une page, donc basculer un réglage de projet en « public ».
-- **3 widgets sur 6 non exercés en direct** (#73) : Attachments (demande un envoi de fichier), Relations (une relation), Milestones (**la fonctionnalité n'est pas activée sur le projet de test** — « Milestones is not enabled for this project »). **Milestones est le plus à surveiller** : seul dont l'action n'est pas un bouton de widget standard, et seul dont le `onClick` a changé.
-- **Liste des sous-work-items vide** malgré « 0/1 Done » : **vérifié par `git stash`, identique sur `preview` non modifié** → préexistant, pas une régression. Personne n'a encore regardé.
-- Reste du §9.4 : **46 menus icon-only sans `ariaLabel`**, **F** (listener non passif, `packages/editor/src/core/extensions/side-menu.ts` l.160), **G** (`pnpm start` cassé), **§2.1 bug F** (branche WIP `fix/work-item-filters-setstate-in-render`). Le warning `setState pendant le render` de `WorkItemFiltersToggle` **est toujours dans la console** de la liste des work items.
+> **État de la vue peek : 0 imbrication `button > button`, 0 `a > a`, 0 avertissement `setState`** — mesuré sur `preview` fusionné (`200d80d`), tous widgets dépliés avec leurs données. Les PR #72 → #78 sont toutes fusionnées, `preview` est propre, aucune PR ouverte.
+
+**Priorité affichée par le dev (2026-07-19), dans l'ordre :**
+
+1. ✅ `aria-expanded` mensonger de `Collapsible` → **fait**, PR #76.
+2. ✅ Vérifier les 3 widgets non exercés → **Relations et Attachments faits** ; **Milestones reste bloqué**, voir ci-dessous.
+3. ✅ `setState` pendant le render de `WorkItemFiltersToggle` → **fait**, PR #77 (§11.7).
+4. ⬜ **À FAIRE — le reste** : 46 menus icon-only sans `ariaLabel` ; stories `emoji-reaction-picker` ; listener non passif ; `pnpm start` cassé. Détail ci-dessous.
+
+#### Priorité 4 — non commencée
+
+- **46 menus quick-actions icon-only sans `ariaLabel`** (a11y). Le §9.4 les avait recensés. `CustomMenu` accepte déjà une prop `ariaLabel` (utilisée sur le chemin `ellipsis`, cf. `packages/ui/src/dropdowns/custom-menu.tsx` ~l.276) — c'est donc du remplissage de prop, pas un changement de structure. Vérifier au passage que le compte de 46 est toujours juste : il date d'avant les PR #72-#78.
+- **Stories `packages/propel/src/emoji-reaction/emoji-reaction-picker.stories.tsx`** : 4 endroits passent encore un `<button>` en `label`. Même anti-motif que la #72, confiné à Storybook donc non expédié — mais c'est ce que le prochain lecteur copiera. Le correctif est le même qu'en #72 : soit `render={…}`, soit passer du contenu inerte et déporter le style sur `buttonClassName`.
+- **Listener non passif** — `packages/editor/src/core/extensions/side-menu.ts` l.160. Gain de perf réel, y compris en prod.
+- **`pnpm start` de l'app web cassé** (§8.3 G).
+
+#### Trouvé pendant la session du 2026-07-19, non traité
+
+- **⚠️ « Manage features » mène à une 404.** Sur `/<ws>/projects/<id>/milestones/` quand la fonctionnalité est désactivée, le bouton pointe sur `/<ws>/settings/projects/<id>/features/` — **cette route n'a pas de page à son propre niveau** (`apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/` ne contient que des sous-dossiers `cycles`, `intake`, `modules`, `pages`, `views`). Et `ProjectFeaturesList`, qui porte le basculeur `is_milestone_enabled`, n'est référencé **que depuis la modale de création de projet** (`project-feature-update.tsx` ← `create-project-modal.tsx`). Conséquence : **aucun moyen d'activer une fonctionnalité sur un projet existant depuis l'UI**. C'est probablement le bug le plus utile de cette liste.
+- **`FilterDisplayProperties` — `Each child in a list should have a unique "key" prop`.** Visible dans la console via `SubIssueDisplayFilters` → `SubWorkItemTitleActions` → `FiltersDropdown`. Préexistant.
+- **Incohérence de validation des pièces jointes** : l'API refuse un `text/plain` avec « Invalid file type » alors que `ATTACHMENT_MIME_TYPES` (`apps/api/plane/settings/common.py` ~l.461) le contient. Le message d'erreur vient d'un autre contrôle (`apps/api/plane/app/views/asset/v2.py` l.138/352, « Only JPEG, PNG, WebP, JPG and GIF »). À démêler.
+- **Liste des sous-work-items vide** malgré « 0/1 Done ». **Vérifié par `git stash` : identique sur `preview` non modifié** → préexistant, pas une régression.
+
+#### Réserves de vérification assumées (ne pas les relire comme « vérifié »)
+
+- **Milestones (#73) toujours non exercé en direct.** La fonctionnalité n'est pas activée sur le projet de test, et **il n'existe pas d'UI pour l'activer** (voir la 404 ci-dessus). Les deux seules voies sont : créer un projet en cochant la fonctionnalité à la création, ou écrire `is_milestone_enabled` en base. **Demander au dev avant** — les deux ont un impact. C'est le widget le plus à surveiller : seul dont l'action n'est pas un bouton d'icône standard, et seul dont le `onClick` a changé (retrait d'un `stopPropagation`).
+- **`members-list` (#76)** : la branche `Collapsible` ne s'affiche qu'avec des **invitations en attente**, il n'y en a pas. Envoyer une invitation est une action sortante → demander avant.
+- **`apps/space` (#72)** : jamais rendu en navigateur, il faudrait publier une page (bascule un projet en « public »).
+- **5 layouts filtrés sur 7 (#77)** : cycle, module, vue projet, profil, archives — pas de données sur le projet de test. Même HOC, même contrat, 11 points d'appel audités statiquement.
+
+#### Jeu de données de test — NE PAS NETTOYER
+
+Le work item **PLANETEST-1 « bug fixing »** porte volontairement : **2 réactions**, **1 sous-work-item**, **1 relation** vers PLANETEST-2, **1 lien**, **1 pièce jointe** (`verif-widget.png`), **1 page**, **1 commentaire avec réaction**. Sans ces données, **les widgets et les pastilles n'existent pas dans le DOM et les défauts redeviennent invisibles** — c'est précisément l'angle mort qui a fait manquer trois bugs (pastilles de réaction, widgets, ligne de pièce jointe). Les recréer avant toute mesure si elles disparaissent.
+
+**Leçon transverse :** un relevé DOM ne vaut que ce que vaut le jeu de données affiché. Trois défauts de cette série n'apparaissent qu'avec la donnée : le nombre d'imbrications des réactions **croît avec le nombre de réactions**, les widgets n'existent pas sans sous-tâche/lien/pièce jointe, et la ligne de pièce jointe n'existe pas sans pièce jointe. Toujours peupler avant de conclure « 0 ».
 
 ### 11.7 Bug F résolu — `setState` pendant le render (`WorkItemFilterRoot`)
 
@@ -698,3 +726,50 @@ console.error(
 **Résultat** : avant → l'avertissement se déclenche au chargement ; après → **0 occurrence réelle** sur un cycle complet démontage/remontage, sonde auto-testée, sur **deux types d'entité** (`project` via la liste des work items, `workspace` via `workspace-views/all-issues`). Filtrage exercé de bout en bout : Priority = Urgent → 0 item affiché, « Clear all » → les 2 items reviennent. L'instance parvient bien au `FiltersToggle` (`filterType: "FilterInstance"` relevé dans l'arbre de fibres).
 
 **Non exercés en direct** : cycle, module, vue projet, profil, archives — pas de données pour ces layouts sur le projet de test. Ils passent par le **même** HOC avec le même contrat, et les 11 appelants ont été audités statiquement (tous gardés).
+
+---
+
+## 12. Reprise — à lire avant de toucher au code (2026-07-19)
+
+### 12.1 Framework Zelian — il est DANS ce dépôt, il n'avait pas été lu
+
+`.claude/rules/` et `.claude/skills/` existent à la racine de `plane` et **n'avaient été consultés par aucune des sessions précédentes** — les PR #41 à #76 ont été faites sans. À lire d'emblée :
+
+| Fichier                                       | Ce qu'il impose ici                                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `.claude/rules/00-global.md`                  | CHANGELOG obligatoire par feature ; `@update-writer-after-implement` après chaque implémentation ; politique ADR |
+| `.claude/rules/05-git-workflow.md`            | Conventional Commits, PR obligatoire, 1 review minimum, MCP GitHub                                               |
+| `.claude/rules/04-testing.md`                 | « TDD obligatoire », RTL pour les composants UI                                                                  |
+| `.claude/skills/create-pull-request/SKILL.md` | Base `preview` ; titre `[WORK-ITEM-ID] <type>: …` ; corps suivant `.github/pull_request_template.md`             |
+| `.claude/skills/branch-name/SKILL.md`         | `<type>/<work-item-id>-<description>`                                                                            |
+
+**Trois écarts constatés, à trancher plutôt qu'à ignorer :**
+
+1. **Le template de PR** (`.github/pull_request_template.md`) existe et n'était pas utilisé. **Adopté depuis la #77** (Description / Type of Change / Screenshots / Test Scenarios / References) — continuer.
+2. **`@update-writer-after-implement` est déclaré obligatoire mais n'est pas invocable** : il n'y a **aucun `.claude/settings.json` ni hook `Stop`** dans ce dépôt, et l'agent n'était pas disponible dans la session. Si la nouvelle session y a accès (plugin `zelian-framework` chargé), **l'invoquer après chaque implémentation**, en lui précisant : CHANGELOG déjà écrit (ne pas dupliquer), pas de changement BDD, **aucun ADR** (un bugfix échoue la whitelist de `06-adr-policy.md`), pas de module `docs/specs/` correspondant, et **ne rien committer ni pousser**.
+3. **« TDD obligatoire » est inapplicable en l'état sur le front** : ni script `test`, ni config vitest/jest, ni un seul `*.test.tsx` dans `packages/ui` ou `apps/web` — seule l'API a une suite (`apps/api/plane/tests/`). La vérification navigateur en tient lieu de fait. **Monter l'infra de test front serait un chantier à part entière** : ne pas l'improviser au détour d'un bugfix, en parler au dev.
+
+**Question ouverte pour le dev :** le skill `create-pull-request` veut un `[WORK-ITEM-ID]` en préfixe de titre, mais **aucune PR du dépôt (#41 → #78) n'en porte**. La pratique établie a été suivie (`fix(scope): …`). À arbitrer.
+
+### 12.2 Les trois réflexes qui ont payé sur cette série
+
+1. **Recenser TOUS les appelants avant de toucher un composant partagé** — et couvrir `apps/` **plus** `packages/` **plus** `plane-web` (= `apps/web/ce/`). Ça a changé la nature du correctif trois fois : 6 appelants au lieu d'1 (#72), un **second `Collapsible`** homonyme dans `packages/propel` sans appelant (#73), et un `<Disclosure.Panel>` orphelin qui aurait planté (#76).
+2. **Mesurer avant/après par `git stash`** — et **relativement à la rangée de l'élément**, jamais en coordonnées absolues, en gardant les décimales. Une mesure absolue a fabriqué un faux écart d'1 px que j'ai failli « corriger » (§11.4 point 1).
+3. **Un `stopPropagation` est un indice de diagnostic.** Trois fois dans cette série il masquait un élément mal placé dans l'arbre : `milestones-section`, la carte projet, la ligne de pièce jointe. Quand on en trouve un, chercher l'imbrication qu'il compense.
+
+### 12.3 Piège de vérification à ne pas répéter
+
+**`read_console_messages` (MCP) persiste entre les rechargements.** Après une comparaison par `git stash`, il renvoyait encore les avertissements du build pré-correctif et m'a fait croire à un échec. Protocole fiable, sans toucher au code source — détaillé au §11.7 :
+
+1. installer une sonde `console.error` dans la page ;
+2. forcer un démontage/remontage par **navigation client** (un `reload` tuerait la sonde) ;
+3. **auto-tester la sonde** en émettant un faux message — sans ça, un zéro peut simplement signifier que l'instrument est cassé.
+
+### 12.4 Environnement — l'essentiel en un coup d'œil
+
+- **Dépôt dans WSL** : `~/dev/plane` (`\\wsl.localhost\Ubuntu-24.04\home\lucie\dev\plane`). `C:\Stage\Plane` est **vide**.
+- **node/pnpm via `mise`** : `~/.local/share/mise/installs/node/22.18.0/bin`, absents d'un `bash -lc` non interactif. Scripts prêts, **dans `$HOME` car WSL vide `/tmp` à chaque redémarrage** : `~/plane-check.sh` (exécute une commande avec le bon PATH), `~/plane-start-web.sh`, `~/plane-start-sso.sh`.
+- **Appeler WSL depuis PowerShell**, pas depuis Git-bash (qui réécrit `/tmp/x.sh` en chemin Windows). PowerShell 5.1 emballe la stderr d'un exe dans une `NativeCommandError` même à code 0 : **lire la sortie, pas le statut**.
+- **Services** : `:8000` API (Docker), `:3000` web, `:3102` SSO — **sans `:3102`, pas de login**. `docker` n'existe pas dans le distro Ubuntu → utiliser `docker.exe`, et `docker.exe compose -p plane start` pour relancer la pile.
+- **⚠️ Si Docker « ne démarre pas » : ne pas attendre, aller au §11.5.1.** Il crashe ~10 s après le lancement sur des sockets périmés et reste derrière une boîte d'erreur. C'est **récurrent**.
+- **Le SSO demande un mot de passe** : c'est au dev de se connecter, pas à l'assistant.
