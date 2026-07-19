@@ -649,10 +649,10 @@ Start-Process "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 Puis attendre le moteur, et **relancer la pile Plane** — les conteneurs existent déjà, `start` suffit et évite les soucis de chemin WSL/Windows de `compose -f` :
 
 ```bash
-docker.exe compose -p plane start    # db, redis, mq, minio, migrator, api, worker, beat-worker
+docker compose -p plane start    # db, redis, mq, minio, migrator, api, worker, beat-worker
 ```
 
-⚠️ **`docker` n'existe pas dans le distro Ubuntu-24.04** (intégration WSL désactivée) : utiliser `docker.exe`, ou passer par PowerShell.
+⚠️ ~~**`docker` n'existe pas dans le distro Ubuntu-24.04** (intégration WSL désactivée) : utiliser `docker.exe`.~~ **FAUX — corrigé le 2026-07-19.** `/usr/bin/docker` **existe**, `/var/run/docker.sock` est monté, l'intégration WSL est **active**. Utiliser le client natif `docker`. Détail et conséquences au **§13.9** : avec `docker.exe`, les 4 services dont le contexte de build est la racine (`web`, `admin`, `space`, `live`) sont **inconstructibles** — blocage indéfini sur `load build context`.
 
 **C'est récurrent, et le cycle s'auto-entretient.** Au moment du correctif, `%LOCALAPPDATA%\Docker\` contenait déjà `run.stale`, `run.stale2` et `run.stale-20260718-122138`, plus les `docker-secrets-engine.stale*` correspondants — **trois contournements identiques déjà appliqués les 17-18/07**. La mécanique : Docker démarre, crée ses sockets, crashe sur un socket périmé plus loin, **laisse les siens derrière lui**, et ceux-là bloqueront le démarrage suivant. Renommer débloque une fois ; ça revient.
 
@@ -770,8 +770,11 @@ console.error(
 - **Dépôt dans WSL** : `~/dev/plane` (`\\wsl.localhost\Ubuntu-24.04\home\lucie\dev\plane`). `C:\Stage\Plane` est **vide**.
 - **node/pnpm via `mise`** : `~/.local/share/mise/installs/node/22.18.0/bin`, absents d'un `bash -lc` non interactif. Scripts prêts, **dans `$HOME` car WSL vide `/tmp` à chaque redémarrage** : `~/plane-check.sh` (exécute une commande avec le bon PATH), `~/plane-start-web.sh`, `~/plane-start-sso.sh`.
 - **Appeler WSL depuis PowerShell**, pas depuis Git-bash (qui réécrit `/tmp/x.sh` en chemin Windows). PowerShell 5.1 emballe la stderr d'un exe dans une `NativeCommandError` même à code 0 : **lire la sortie, pas le statut**.
-- **Services** : `:8000` API (Docker), `:3000` web, `:3102` SSO — **sans `:3102`, pas de login**. `docker` n'existe pas dans le distro Ubuntu → utiliser `docker.exe`, et `docker.exe compose -p plane start` pour relancer la pile.
+- **Services** : `:8000` API (Docker), `:3000` web, `:3102` SSO — **sans `:3102`, pas de login**. Relancer la pile : `docker compose -p plane start`.
+- **⚠️ Utiliser `docker`, JAMAIS `docker.exe`.** Les versions antérieures de ce §12.4 affirmaient l'inverse — c'était **faux** : `/usr/bin/docker` existe, `/var/run/docker.sock` est monté, l'intégration WSL est active. Avec `docker.exe`, les 4 services dont le contexte de build est la racine (`web`, `admin`, `space`, `live`) restent **bloqués indéfiniment** sur `load build context` — 96 779 fichiers à parcourir à travers le pont Windows↔WSL. Avec le client natif, le même contexte passe en **1,8 s**. Cette erreur a coûté 30 minutes le 2026-07-19 ; détail au **§13.9**.
 - **⚠️ Si Docker « ne démarre pas » : ne pas attendre, aller au §11.5.1.** Il crashe ~10 s après le lancement sur des sockets périmés et reste derrière une boîte d'erreur. C'est **récurrent**.
+- **⚠️ Les deux compose partagent leurs noms d'images.** Construire `docker-compose.yml` (production) écrase l'image `plane-api` de `docker-compose-local.yml` (dev), qui perd alors `django-debug-toolbar` et **plante au démarrage**. Passer de l'une à l'autre impose `docker compose -f <fichier> build api worker beat-worker migrator`.
+- **Trois autres pièges de mesure au §13.9** (ils ont chacun produit une conclusion fausse) : `Test-NetConnection` annonce un port ouvert alors que rien n'écoute ; `serve` bascule silencieusement sur un port aléatoire si le sien est pris ; ajouter une route dans `routes/core.ts` ne prend effet qu'après `rm -rf apps/web/.react-router`.
 - **Le SSO demande un mot de passe** : c'est au dev de se connecter, pas à l'assistant.
 
 ---
