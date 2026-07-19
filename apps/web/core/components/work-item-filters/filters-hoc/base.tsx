@@ -43,7 +43,7 @@ export const WorkItemFiltersHOC = observer(function WorkItemFiltersHOC(props: TW
 type TWorkItemFilterProps = TSharedWorkItemFiltersProps &
   TAdditionalWorkItemFiltersProps & {
     initialWorkItemFilters: IIssueFilters;
-    children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance }) => React.ReactNode);
+    children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance | undefined }) => React.ReactNode);
   };
 
 const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItemFilterProps) {
@@ -61,7 +61,7 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     ...entityConfigProps
   } = props;
   // store hooks
-  const { getOrCreateFilter, deleteFilter } = useWorkItemFilters();
+  const { getFilter, getOrCreateFilter, deleteFilter } = useWorkItemFilters();
   // derived values
   const workItemEntityID = useMemo(
     () => (isTemporary ? `TEMP-${entityId ?? uuidv4()}` : entityId),
@@ -73,9 +73,17 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     allowedFilters: filtersToShowByLayout ? filtersToShowByLayout : [],
     ...entityConfigProps,
   });
-  // get or create filter instance
-  const workItemLayoutFilter = useMemo(
-    () =>
+  // Read the filter instance reactively from the store.
+  // The instance is created/registered/synced in an effect (below) — never during render — so that
+  // mutating the observable `filters` store does not synchronously schedule a re-render of an
+  // already-mounted observer (e.g. WorkItemFiltersToggle, which reads the same store). Mutating an
+  // observed value during render triggers React's
+  // "Cannot update a component while rendering a different component" warning.
+  const workItemLayoutFilter = getFilter(entityType, workItemEntityID);
+
+  // create or sync the filter instance after commit (never during render)
+  useEffect(
+    () => {
       getOrCreateFilter({
         entityType,
         entityId: workItemEntityID,
@@ -86,7 +94,8 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
           updateViewOptions,
         },
         showOnMount,
-      }),
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [entityType, workItemEntityID, saveViewOptions, updateViewOptions, updateFilters]
   );
@@ -100,13 +109,10 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
   );
 
   useEffect(() => {
+    if (!workItemLayoutFilter) return;
     workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
     workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
-  }, [
-    workItemFiltersConfig.areAllConfigsInitialized,
-    workItemFiltersConfig.configs,
-    workItemLayoutFilter.configManager,
-  ]);
+  }, [workItemFiltersConfig.areAllConfigsInitialized, workItemFiltersConfig.configs, workItemLayoutFilter]);
 
   return <>{typeof children === "function" ? children({ filter: workItemLayoutFilter }) : children}</>;
 });

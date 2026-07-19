@@ -52,9 +52,13 @@ Le `Tooltip` rend `<BaseTooltip.Trigger render={children}/>` → il pose **ref +
 
 **Cause racine (tracée) :** `WorkItemFilterRoot` (`apps/web/core/components/work-item-filters/filters-hoc/base.tsx`) appelait `getOrCreateFilter(...)` dans un `useMemo` — donc **pendant le render**. Cette action MobX fait `this.filters.set(...)` (`packages/shared-state/src/store/work-item-filters/filter.store.ts` ~l.103), mutant la Map observable. Or `WorkItemFiltersToggle` (`filters-toggle.tsx`) est un `observer` qui lit `getFilter(...)` sur ce même store → re-render planifié pendant le render du Root → warning React.
 
-**État : un WIP existe et est poussé** sur `origin/fix/work-item-filters-setstate-in-render` (commit `41ff0382a`, message « UNVERIFIED / DO NOT MERGE AS-IS »). Il déplace la création/synchro dans un `useEffect` (après commit) et lit l'instance réactivement via `getFilter`. Analyse déjà faite : **le changement de type ne casse aucun call-site** (`shared.ts` typait déjà `filter: IWorkItemFilterInstance | undefined`, et **aucun** consommateur n'utilise le render-prop `({ filter })` — le filtre circule par le store).
+> ✅ **RÉSOLU** — vérifié et fusionné, voir le **§11.7**. Le reste de cette entrée est conservé pour la trace du diagnostic, mais **une de ses affirmations était fausse** : voir la correction ci-dessous.
 
-**Ce qui reste :** la **vérification live**. Après le montage, le filtre est `undefined` pendant un render — il faut confirmer qu'il n'y a ni flash ni filtrage tardif, sur **tous** les layouts filtrés : liste work items projet, cycle, module, vue projet, workspace-views, profil, archives. C'est de l'**infra partagée (~14 fichiers utilisent les HOC)** → ne merger qu'après cette vérif.
+**État : un WIP existe et est poussé** sur `origin/fix/work-item-filters-setstate-in-render` (commit `41ff0382a`, message « UNVERIFIED / DO NOT MERGE AS-IS »). Il déplace la création/synchro dans un `useEffect` (après commit) et lit l'instance réactivement via `getFilter`.
+
+⚠️ **Correction (2026-07-19).** L'analyse affirmait qu'**aucun** consommateur n'utilise le render-prop `({ filter })` et que « le filtre circule par le store ». **C'est faux** : les **11** consommateurs l'utilisent tous (`project-layout-root`, `cycle-layout-root`, `module-layout-root`, `project-view-layout-root`, `all-issue-layout-root`, `archived-issue-layout-root`, `project-epics-layout-root`, `profile-issues`, `views/form`, `workspace/views/form`, `exporter/export-form`). La conclusion « aucun call-site ne casse » tenait quand même, mais **pour une autre raison** : tous gardent déjà le filtre par `{filter && …}`. Ne pas se fier à la prémisse d'origine.
+
+**Le vrai risque n'était pas aux points d'appel mais _dans_ le HOC** : `base.tsx` lisait `workItemLayoutFilter.configManager` **dans un tableau de dépendances**, donc évalué pendant le render — aucune garde d'appelant n'aurait pu l'éviter. Le WIP le traitait déjà.
 
 ### 2.2 aria-labels sur les menus quick-actions icon-only (petit, a11y)
 
@@ -663,3 +667,34 @@ docker.exe compose -p plane start    # db, redis, mq, minio, migrator, api, work
 - **3 widgets sur 6 non exercés en direct** (#73) : Attachments (demande un envoi de fichier), Relations (une relation), Milestones (**la fonctionnalité n'est pas activée sur le projet de test** — « Milestones is not enabled for this project »). **Milestones est le plus à surveiller** : seul dont l'action n'est pas un bouton de widget standard, et seul dont le `onClick` a changé.
 - **Liste des sous-work-items vide** malgré « 0/1 Done » : **vérifié par `git stash`, identique sur `preview` non modifié** → préexistant, pas une régression. Personne n'a encore regardé.
 - Reste du §9.4 : **46 menus icon-only sans `ariaLabel`**, **F** (listener non passif, `packages/editor/src/core/extensions/side-menu.ts` l.160), **G** (`pnpm start` cassé), **§2.1 bug F** (branche WIP `fix/work-item-filters-setstate-in-render`). Le warning `setState pendant le render` de `WorkItemFiltersToggle` **est toujours dans la console** de la liste des work items.
+
+### 11.7 Bug F résolu — `setState` pendant le render (`WorkItemFilterRoot`)
+
+Le WIP `41ff0382a` du §2.1 était **correct sur le fond** ; il ne manquait que la vérification live qu'il réclamait lui-même. Repris tel quel sur `fix/work-item-filters-setstate-in-render-verified`, vérifié, fusionné.
+
+**Ce que l'audit des 11 appelants a changé.** Le §2.1 affirmait qu'aucun consommateur n'utilise le render-prop `({ filter })`. **Faux — les 11 l'utilisent.** La conclusion « aucun call-site ne casse » tenait quand même, mais pour une autre raison : **tous gardent déjà** par `{filter && …}`. Et surtout, le vrai risque n'était pas aux points d'appel : `base.tsx` lisait `workItemLayoutFilter.configManager` **dans un tableau de dépendances** — évalué pendant le render, donc aucune garde d'appelant n'aurait protégé. Le WIP le traitait déjà (`if (!workItemLayoutFilter) return;` + dépendance sur l'instance, pas sur `.configManager`).
+
+**Point non documenté par le WIP** : `updateFilters` est un `.bind()` recréé à chaque render (`project-layout-root.tsx` l.75), donc l'effet de création/synchro se relance **à chaque rendu**. Pas de boucle infinie — les mutations internes de l'instance ne renotifient pas le root, qui n'observe que la clé de la Map — et le comportement est inchangé, l'ancien `useMemo` ayant exactement les mêmes dépendances instables.
+
+**⚠️ Méthode : ne pas conclure depuis `read_console_messages`.** Le buffer MCP **persiste entre les rechargements** (§4.1) : après la comparaison par `git stash`, il contenait encore les avertissements du chargement « stashé » et faisait croire à un échec du correctif. Protocole fiable, sans toucher au code source :
+
+```js
+// 1) installer la sonde
+window.__probe = { total: 0 };
+const orig = console.error.bind(console);
+console.error = (...a) => {
+  if (a.map(String).join(" ").includes("while rendering a different component")) window.__probe.total++;
+  orig(...a);
+};
+// 2) forcer un démontage/remontage par navigation CLIENT (pas de reload, qui tuerait la sonde)
+// 3) auto-tester la sonde, sinon un zéro ne prouve rien
+console.error(
+  "Warning: Cannot update a component (%s) while rendering a different component (%s).",
+  "SYNTH",
+  "SELFTEST"
+);
+```
+
+**Résultat** : avant → l'avertissement se déclenche au chargement ; après → **0 occurrence réelle** sur un cycle complet démontage/remontage, sonde auto-testée, sur **deux types d'entité** (`project` via la liste des work items, `workspace` via `workspace-views/all-issues`). Filtrage exercé de bout en bout : Priority = Urgent → 0 item affiché, « Clear all » → les 2 items reviennent. L'instance parvient bien au `FiltersToggle` (`filterType: "FilterInstance"` relevé dans l'arbre de fibres).
+
+**Non exercés en direct** : cycle, module, vue projet, profil, archives — pas de données pour ces layouts sur le projet de test. Ils passent par le **même** HOC avec le même contrat, et les 11 appelants ont été audités statiquement (tous gardés).
