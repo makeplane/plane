@@ -26,6 +26,7 @@ export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftI
     <>
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.draft_work_item")}
         ellipsis
         placement="bottom-end"
         menuItemsClassName="z-[14]"

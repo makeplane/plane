@@ -89,7 +89,13 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
             </Tooltip>
           )}
 
-          <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
+          <CustomMenu
+            ariaLabel={t("aria_labels.quick_actions.attachment")}
+            ellipsis
+            closeOnSelect
+            placement="bottom-end"
+            disabled={disabled}
+          >
             <CustomMenu.MenuItem
               onClick={() => {
                 toggleDeleteAttachmentModal(attachmentId);

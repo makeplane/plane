@@ -773,3 +773,93 @@ console.error(
 - **Services** : `:8000` API (Docker), `:3000` web, `:3102` SSO — **sans `:3102`, pas de login**. `docker` n'existe pas dans le distro Ubuntu → utiliser `docker.exe`, et `docker.exe compose -p plane start` pour relancer la pile.
 - **⚠️ Si Docker « ne démarre pas » : ne pas attendre, aller au §11.5.1.** Il crashe ~10 s après le lancement sur des sockets périmés et reste derrière une boîte d'erreur. C'est **récurrent**.
 - **Le SSO demande un mot de passe** : c'est au dev de se connecter, pas à l'assistant.
+
+---
+
+## 13. Session du 2026-07-19 (soir) — la priorité 4 du §11.6 est FAITE
+
+> Les 4 sujets de la priorité 4 sont traités, chacun sur sa branche, chacun avec sa PR. **Aucune n'est fusionnée** : le §4.6 demande l'accord du dev avant merge.
+
+### 13.1 PRs
+
+| PR  | Objet                                                                              | État    |
+| --- | ---------------------------------------------------------------------------------- | ------- |
+| #80 | `fix(quick-actions)` — nom accessible sur 12 menus icon-only + 8 clés × 19 locales | ouverte |
+| #81 | `fix(propel)` — 6 `<button>` passés en `label` dans les stories du sélecteur       | ouverte |
+| #82 | `perf(editor)` — écouteur de défilement du menu latéral rendu passif               | ouverte |
+| #83 | `fix(deps)` — override `path-to-regexp` scopé, `pnpm start` réparé                 | ouverte |
+
+### 13.2 ⚠️ Les DEUX comptes annoncés par le §11.6 étaient faux
+
+- **« 46 menus quick-actions icon-only »** → le vrai compte est **17**. Le 46 datait d'avant les PR #72-#78 et **mélangeait deux familles**. Recensement refait en parsant chaque balise ouvrante `<CustomMenu>` avec suivi des accolades et des guillemets (un regex simple tronque dès qu'une prop contient du JSX) : 25 menus `ellipsis`/`verticalEllipsis` au total, dont **8 déjà traités par la PR #55** — le §9.4 disait 12, mais 4 de ces 12 sont des menus `customButton`, pas `ellipsis`. La #80 en traite 12, il en reste **5** (voir §13.3).
+- **« stories emoji-reaction-picker : 4 `<button>` en label »** → il y en a **6** : `WithCustomLabel`, `InlineReactions`, `SearchDisabled`, `CustomSearchPlaceholder`, `CloseOnSelectDisabled`, `InMessageContext`.
+- **Famille distincte, non traitée** : ~8 déclencheurs `customButton` **icon-only** sans `ariaLabel` — aide de la sidebar (`workspace/sidebar/help-section/root.tsx`, confirmé sans nom dans le DOM de l'accueil), en-têtes d'inbox (`inbox-issue-header.tsx` l.381, `inbox-issue-mobile-header.tsx` l.137), « + » des en-têtes de groupe kanban et liste, `mobile-layout-selection.tsx`, et le tri d'inbox sous 1280 px (`inbox-filter/sorting/order-by.tsx`, icône seule sur petit écran). **Ne pas les confondre avec la famille quick-actions** : ils ne relèvent pas du namespace i18n `quick_actions.*`.
+
+### 13.3 Pourquoi 5 sites sont volontairement restés hors de la #80
+
+Leurs fichiers portent des avertissements **`jsx-a11y` préexistants** sur un `<div onClick>` voisin, que le `--deny-warnings` du hook fait remonter dès qu'on stage le fichier. Le §4.2 demande de **corriger** ces cas plutôt que de les suppresser, et **aucun précédent de suppression de ces deux règles n'existe dans le dépôt** (les seuls `eslint-disable jsx-a11y` sont des `no-autofocus` venus de l'upstream). Supprimer des avertissements d'accessibilité à l'intérieur d'une PR d'accessibilité aurait été contradictoire.
+
+Les 5 sites, avec la clé i18n qui les attend (les 4 clés `link`, `sub_work_item`, `related_work_item`, `project_member` ont été **retirées** de la #80 pour ne pas livrer de clés mortes — elles partiront avec ce lot) :
+
+| Fichier                                                                                | Clé                 | Ce qu'il faut corriger d'abord                                                                              |
+| -------------------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `issues/issue-detail-widgets/sub-issues/issues-list/list-item.tsx`                     | `sub_work_item`     | l.128 `<div onClick>` qui bascule l'aperçu → vrai `<button>` ; l.173 pur avaleur d'événement                |
+| `issues/issue-detail/links/link-item.tsx`                                              | `link`              | l.85 `<span onClick>` qui copie le lien → vrai `<button>`                                                   |
+| `issues/relations/issue-list-item.tsx`                                                 | `related_work_item` | l.151 pur avaleur d'événement                                                                               |
+| `project/settings/member-columns.tsx`                                                  | `project_member`    | l.83 `<div onClick>` **dans** un `CustomMenu.MenuItem` — le `onClick` doit remonter sur la prop du MenuItem |
+| `packages/ui/src/link/block.tsx` (+ son appelant `home/widgets/links/link-detail.tsx`) | `link`              | l.30 carte entièrement cliquable → motif « lien en superposition » du §9.3 pt 10                            |
+
+⚠️ `LinkItemBlock` a **exactement un appelant** (le widget « Quick links » de l'accueil) — vérifié par `git grep` sur `apps/` + `packages/`. Et **`packages/ui` n'a aucune dépendance i18n** : le libellé doit y arriver **par une prop** depuis l'appelant, pas par un `useTranslation` dans le paquet.
+
+### 13.4 Deux points d'entrée d'outillage cassés, trouvés en chemin
+
+- **⚠️ Storybook ne démarre pas du tout.** `pnpm storybook` dans `packages/propel` sert bien sur `:6006`, mais **les 396 stories** échouent au rendu sur `ReferenceError: process is not defined`, levé depuis `packages/constants/dist`. Vérifié global et **préexistant** : `components-accordion--default`, sans aucun rapport avec les stories emoji, échoue à l'identique. C'est ce qui a empêché de vérifier la #81 au navigateur. Même famille que le `pnpm start` cassé — mérite sa propre branche.
+- **`apps/live` ne tourne pas** (service de collaboration Yjs). Conséquence : une page projet reste bloquée sur « Syncing… » avec des squelettes, et **l'éditeur de page ne finit jamais de monter**. Ce n'est pas une régression, c'est un service à démarrer. À ajouter à la liste du §12.4 si on veut vérifier quoi que ce soit dans l'éditeur de pages. L'éditeur **rich-text** (description d'un work item) n'en dépend pas, lui.
+
+### 13.5 Trois faux positifs de mesure rencontrés — tous auraient fait conclure à tort
+
+Le §12.3 avertissait sur `read_console_messages`. Cette session en a produit **trois autres**, de la même nature : l'instrument ment, pas le code.
+
+1. **`Test-NetConnection localhost -Port 3000` renvoie `True` alors que RIEN n'écoute.** Au démarrage, PowerShell annonçait les ports 3000 et 3102 ouverts ; `curl` depuis WSL renvoyait `000`, et `Get-NetTCPConnection -State Listen` ne trouvait aucun processus. **Contrôle fiable : `curl` depuis WSL**, pas `Test-NetConnection`.
+2. **`serve` bascule silencieusement sur un port aléatoire si le sien est pris.** Le premier test de `pnpm start` a renvoyé un `HTTP 200` réconfortant **avant** tout correctif : le dev server tenait le port 3000, `serve` s'était rabattu sur `:38143`, et c'est le dev server qui répondait. **Libérer le port avant de conclure sur `pnpm start`.**
+3. **Une sonde `addEventListener` posée deux fois double ses captures.** Entre deux mesures, le wrapper de la passe précédente était resté en place ; comme il référence `window.__probe` dynamiquement, les deux wrappers écrivaient dans le même tableau. **L'auto-test l'a attrapé** (2 captures attendues, 4 obtenues) — sans lui, la mesure aurait été fausse d'un facteur 2 en silence. Remède : recharger vraiment le document (`location.href = …`, pas la navigation client du MCP qui garde le document) et **refuser d'installer la sonde si `window.__probe` existe déjà**.
+
+**Leçon transverse, à mettre à côté de celle du §11.6** : un instrument non auto-testé peut rendre un zéro parfaitement propre parce qu'il est mort — et un instrument mal ciblé peut rendre un 200 parfaitement propre parce qu'il interroge le mauvais processus.
+
+### 13.6 Framework Zelian — l'agent EXISTE, contrairement au §12.1
+
+Le §12.1 notait que `@update-writer-after-implement` « n'est pas invocable ». **Il l'était cette session** (plugin `zelian-framework` chargé). Invoqué après chacune des 4 implémentations, avec le contexte imposé (CHANGELOG déjà écrit, pas de BDD, aucun ADR, pas de `docs/specs/`, ne rien committer). **Les 4 fois, conclusion « rien à synchroniser »** — motivée : aucun module `docs/specs/` ne correspond aux composants UI core, à `packages/propel`, à `packages/editor` ni à un fichier de dépendances, et un bugfix échoue la whitelist des 7 catégories du `06-adr-policy.md`. Le seul fichier qu'il touche est `.claude/.update-writer-ran`, qui est **gitignoré** (`.gitignore:127`) — aucun risque de le committer par accident.
+
+**Reste vrai** : « TDD obligatoire » (`04-testing.md`) est toujours inapplicable — le front n'a toujours aucune infra de test. À arbitrer avec le dev, hors bugfix.
+
+### 13.7 Travail restant — à jour au 2026-07-19 (soir)
+
+1. ⬜ **Les 5 menus icon-only reportés** (§13.3) — nécessite d'abord de transformer les `<div onClick>` voisins en vrais contrôles. C'est le prolongement direct de la #80, avec ses 4 clés i18n déjà rédigées mais retirées.
+2. ⬜ **La famille `customButton` icon-only** (§13.2, ~8 sites) — namespace i18n à choisir, ce ne sont pas des quick-actions.
+3. ⬜ **Storybook cassé** (§13.4) — bloque toute vérification visuelle de composant.
+4. ✅ **« Manage features » mène à une 404** → **FAIT, PR #85** — voir §13.8, qui corrige aussi le diagnostic du §11.6. **Milestones est désormais ACTIVÉ sur PLANETEST** : la vérification de la #73, bloquée depuis trois sessions, est enfin possible.
+5. ⬜ **`FilterDisplayProperties` — clé React manquante** (§11.6), préexistant.
+6. ⬜ **Incohérence de validation des pièces jointes** (§11.6), préexistant.
+7. ⬜ **`custom-image/components/block.tsx` l.185** — `touchmove` non passif pendant le redimensionnement d'image. Éligible (le handler n'appelle pas `preventDefault`), mais le rendre passif tranche une question d'UX : le redimensionnement tactile doit-il empêcher la page de défiler ? À décider avant de toucher. ⚠️ Le `{ passive: false }` de `full-screen/modal.tsx` l.188 est **délibéré et correct**, ne pas y toucher (§8.3 F le disait déjà, c'est confirmé : `handleWheel` appelle bien `preventDefault` l.158).
+
+**Réserves de vérification du §11.6** : `members-list` (pas d'invitation en attente) et `apps/space` (jamais rendu) restent valables. **Milestones ne l'est plus** — la fonctionnalité est activée sur PLANETEST depuis la PR #85. Le **jeu de données PLANETEST-1 est intact** et a de nouveau servi : sans sa pièce jointe et sa page liée, la #80 n'aurait été vérifiable sur aucun site.
+
+### 13.8 « Manage features » — le §11.6 se trompait de diagnostic
+
+Le §11.6 concluait « **aucun moyen d'activer une fonctionnalité sur un projet existant depuis l'UI** ». C'est vrai pour **deux** fonctionnalités seulement, pas pour toutes : `cycles`, `modules`, `views`, `pages` et `intake` ont chacune leur page de réglages **depuis le fork**, atteignable par la nav latérale. L'archéologie git a tranché trois points que l'inspection du code seule laissait ambigus :
+
+1. **`features/page.tsx` n'a JAMAIS existé**, à aucun chemin, dans tout l'historique — aucune suppression. L'hypothèse « un index découpé en sous-pages » est fausse. Il n'y avait rien à restaurer, et en créer un aurait **inventé** une IA plutôt que d'en réparer une.
+2. **Le 404 est hérité d'upstream** : les 5 sous-pages et 5 des 6 boutons sont présents dès le **commit racine** `64da8dc` (sans parent, 5404 fichiers). Le 6ᵉ bouton, ajouté avec les jalons le 2026-07-12, a recopié le motif cassé.
+3. **La lacune propre au projet** : `time_tracking` (2026-07-08) et `milestones` (2026-07-12) ont été ajoutés à `PROJECT_FEATURES_LIST` **sans page de réglages ni entrée de nav** — leurs bascules n'existaient que dans la modale de création. Leurs clés i18n étaient pourtant **déjà écrites dans les 19 locales**, en attente de pages jamais construites.
+
+Correctif (PR #85) : compléter le motif appliqué 5 fois — 2 sous-pages, 2 entrées `PROJECT_SETTINGS`, 2 membres de `TProjectSettingsTabs`, 2 icônes, 2 routes — et faire pointer chaque bouton vers **sa propre** fonctionnalité. **Zéro nouvelle chaîne i18n.** La route `/features` nue reste volontairement non déclarée : plus rien ne la référence.
+
+**Astuce de typage à réutiliser** : `PROJECT_SETTINGS`, `PROJECT_SETTINGS_ICONS` et la nav groupée sont tous des `Record<TProjectSettingsTabs, …>`. Étendre l'union **force le compilateur** à réclamer le libellé, l'icône et le placement — impossible d'ajouter un onglet à moitié.
+
+### 13.9 ⚠️ Trois pièges d'environnement supplémentaires (ils ont coûté cher)
+
+1. **Ajouter une route dans `routes/core.ts` ne suffit pas.** Le manifeste est mis en cache dans **`apps/web/.react-router`** ; un simple redémarrage du dev server continue de servir l'ancien et la nouvelle route reste en 404. Il faut `rm -rf apps/web/.react-router`.
+2. **`curl` ne peut PAS dire si une route existe.** Le dev server react-router renvoie **200 pour n'importe quel chemin** — le 404 est rendu **côté client** par la route attrape-tout. Un `curl … && echo 200` est donc un faux positif systématique. Contrôle fiable : lire **`window.__reactRouterManifest`** dans la page.
+3. **`pkill -f "serve -s build/client"` ne tue rien.** La vraie ligne de commande est `node …/serve/build/main.js -s build/client -l 3000` : le motif ne matche jamais. Deux `serve` résiduels du test de `pnpm start` ont gardé le port 3000, le dev server a basculé sur un port de repli (`Port 3000 is in use, trying another one...` dans son log) et **tout ce qui était mesuré sur :3000 était le build de production statique**, avec les anciennes routes. Motif correct : `pkill -f "serve/build/main.js"`. **Indice qui trahit la confusion : le build statique sert 6414 octets, le dev server 23745.**
+
+**Et un service à connaître** : `apps/live` (collaboration Yjs) fait partie de `pnpm dev` mais **échoue au démarrage** avec `EADDRINUSE :3100` — le port est tenu par l'autre projet du poste (`~/dev/2026-zelian-insider`, onboarding Next). Conséquence : **l'éditeur de pages ne finit jamais de monter** et reste sur « Syncing… ». L'éditeur **rich-text** (description d'un work item) n'en dépend pas.

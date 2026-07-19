@@ -137,7 +137,12 @@ export const MilestoneListItem = observer(function MilestoneListItem(props: Prop
                 <Paperclip className="size-3" />
                 {t("milestone_attach_work_items")}
               </button>
-              <CustomMenu ellipsis closeOnSelect placement="bottom-end">
+              <CustomMenu
+                ariaLabel={t("aria_labels.quick_actions.milestone")}
+                ellipsis
+                closeOnSelect
+                placement="bottom-end"
+              >
                 <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => setIsEditModalOpen(true)}>
                   <EditIcon className="size-3 shrink-0" />
                   {t("edit")}

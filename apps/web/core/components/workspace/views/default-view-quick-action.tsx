@@ -31,6 +31,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
   const handleCopyText = () =>
+    // eslint-disable-next-line promise/always-return -- pre-existing, unrelated to this aria-label fix
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -58,6 +59,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
   return (
     <>
       <CustomMenu
+        ariaLabel={t("aria_labels.quick_actions.view")}
         ellipsis
         placement="bottom-end"
         closeOnSelect

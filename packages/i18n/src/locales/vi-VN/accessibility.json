@@ -40,7 +40,15 @@
       "work_item": "Thao tác nhanh cho mục công việc",
       "epic": "Thao tác nhanh cho epic",
       "work_item_list": "Thao tác nhanh cho danh sách mục công việc",
-      "epic_list": "Thao tác nhanh cho danh sách epic"
+      "epic_list": "Thao tác nhanh cho danh sách epic",
+      "attachment": "Thao tác nhanh cho tệp đính kèm",
+      "label": "Thao tác nhanh cho nhãn",
+      "milestone": "Thao tác nhanh cho cột mốc",
+      "page": "Thao tác nhanh cho trang",
+      "parent_work_item": "Thao tác nhanh cho mục công việc cha",
+      "draft_work_item": "Thao tác nhanh cho bản nháp",
+      "invitation": "Thao tác nhanh cho lời mời",
+      "worklog": "Thao tác nhanh cho nhật ký công việc"
     }
   }
 }
