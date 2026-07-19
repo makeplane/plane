@@ -43,7 +43,7 @@ function ProjectMilestonesPage({ params }: Route.ComponentProps) {
           <Button
             variant="primary"
             onClick={() => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features/milestones`);
             }}
           >
             {t("disabled_project.empty_state.milestone.primary_button.text")}

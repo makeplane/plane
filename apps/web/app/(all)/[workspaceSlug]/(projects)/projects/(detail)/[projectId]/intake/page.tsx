@@ -53,7 +53,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
           primaryButton={{
             text: t("disabled_project.empty_state.inbox.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features/intake`);
             },
             disabled: !canPerformEmptyStateActions,
           }}
