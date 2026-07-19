@@ -837,9 +837,29 @@ Le §12.1 notait que `@update-writer-after-implement` « n'est pas invocable ».
 1. ⬜ **Les 5 menus icon-only reportés** (§13.3) — nécessite d'abord de transformer les `<div onClick>` voisins en vrais contrôles. C'est le prolongement direct de la #80, avec ses 4 clés i18n déjà rédigées mais retirées.
 2. ⬜ **La famille `customButton` icon-only** (§13.2, ~8 sites) — namespace i18n à choisir, ce ne sont pas des quick-actions.
 3. ⬜ **Storybook cassé** (§13.4) — bloque toute vérification visuelle de composant.
-4. ⬜ **« Manage features » mène à une 404** (§11.6) — toujours non traité, et **toujours le plus utile de la liste** : il n'existe aucun moyen d'activer une fonctionnalité sur un projet existant depuis l'UI. C'est aussi ce qui bloque la vérification de Milestones (#73).
+4. ✅ **« Manage features » mène à une 404** → **FAIT, PR #85** — voir §13.8, qui corrige aussi le diagnostic du §11.6. **Milestones est désormais ACTIVÉ sur PLANETEST** : la vérification de la #73, bloquée depuis trois sessions, est enfin possible.
 5. ⬜ **`FilterDisplayProperties` — clé React manquante** (§11.6), préexistant.
 6. ⬜ **Incohérence de validation des pièces jointes** (§11.6), préexistant.
 7. ⬜ **`custom-image/components/block.tsx` l.185** — `touchmove` non passif pendant le redimensionnement d'image. Éligible (le handler n'appelle pas `preventDefault`), mais le rendre passif tranche une question d'UX : le redimensionnement tactile doit-il empêcher la page de défiler ? À décider avant de toucher. ⚠️ Le `{ passive: false }` de `full-screen/modal.tsx` l.188 est **délibéré et correct**, ne pas y toucher (§8.3 F le disait déjà, c'est confirmé : `handleWheel` appelle bien `preventDefault` l.158).
 
-**Les réserves de vérification du §11.6 restent valables telles quelles** (Milestones jamais exercé, `members-list` sans invitation en attente, `apps/space` jamais rendu). Le **jeu de données PLANETEST-1 est intact** et a de nouveau servi : sans sa pièce jointe et sa page liée, la #80 n'aurait été vérifiable sur aucun site.
+**Réserves de vérification du §11.6** : `members-list` (pas d'invitation en attente) et `apps/space` (jamais rendu) restent valables. **Milestones ne l'est plus** — la fonctionnalité est activée sur PLANETEST depuis la PR #85. Le **jeu de données PLANETEST-1 est intact** et a de nouveau servi : sans sa pièce jointe et sa page liée, la #80 n'aurait été vérifiable sur aucun site.
+
+### 13.8 « Manage features » — le §11.6 se trompait de diagnostic
+
+Le §11.6 concluait « **aucun moyen d'activer une fonctionnalité sur un projet existant depuis l'UI** ». C'est vrai pour **deux** fonctionnalités seulement, pas pour toutes : `cycles`, `modules`, `views`, `pages` et `intake` ont chacune leur page de réglages **depuis le fork**, atteignable par la nav latérale. L'archéologie git a tranché trois points que l'inspection du code seule laissait ambigus :
+
+1. **`features/page.tsx` n'a JAMAIS existé**, à aucun chemin, dans tout l'historique — aucune suppression. L'hypothèse « un index découpé en sous-pages » est fausse. Il n'y avait rien à restaurer, et en créer un aurait **inventé** une IA plutôt que d'en réparer une.
+2. **Le 404 est hérité d'upstream** : les 5 sous-pages et 5 des 6 boutons sont présents dès le **commit racine** `64da8dc` (sans parent, 5404 fichiers). Le 6ᵉ bouton, ajouté avec les jalons le 2026-07-12, a recopié le motif cassé.
+3. **La lacune propre au projet** : `time_tracking` (2026-07-08) et `milestones` (2026-07-12) ont été ajoutés à `PROJECT_FEATURES_LIST` **sans page de réglages ni entrée de nav** — leurs bascules n'existaient que dans la modale de création. Leurs clés i18n étaient pourtant **déjà écrites dans les 19 locales**, en attente de pages jamais construites.
+
+Correctif (PR #85) : compléter le motif appliqué 5 fois — 2 sous-pages, 2 entrées `PROJECT_SETTINGS`, 2 membres de `TProjectSettingsTabs`, 2 icônes, 2 routes — et faire pointer chaque bouton vers **sa propre** fonctionnalité. **Zéro nouvelle chaîne i18n.** La route `/features` nue reste volontairement non déclarée : plus rien ne la référence.
+
+**Astuce de typage à réutiliser** : `PROJECT_SETTINGS`, `PROJECT_SETTINGS_ICONS` et la nav groupée sont tous des `Record<TProjectSettingsTabs, …>`. Étendre l'union **force le compilateur** à réclamer le libellé, l'icône et le placement — impossible d'ajouter un onglet à moitié.
+
+### 13.9 ⚠️ Trois pièges d'environnement supplémentaires (ils ont coûté cher)
+
+1. **Ajouter une route dans `routes/core.ts` ne suffit pas.** Le manifeste est mis en cache dans **`apps/web/.react-router`** ; un simple redémarrage du dev server continue de servir l'ancien et la nouvelle route reste en 404. Il faut `rm -rf apps/web/.react-router`.
+2. **`curl` ne peut PAS dire si une route existe.** Le dev server react-router renvoie **200 pour n'importe quel chemin** — le 404 est rendu **côté client** par la route attrape-tout. Un `curl … && echo 200` est donc un faux positif systématique. Contrôle fiable : lire **`window.__reactRouterManifest`** dans la page.
+3. **`pkill -f "serve -s build/client"` ne tue rien.** La vraie ligne de commande est `node …/serve/build/main.js -s build/client -l 3000` : le motif ne matche jamais. Deux `serve` résiduels du test de `pnpm start` ont gardé le port 3000, le dev server a basculé sur un port de repli (`Port 3000 is in use, trying another one...` dans son log) et **tout ce qui était mesuré sur :3000 était le build de production statique**, avec les anciennes routes. Motif correct : `pkill -f "serve/build/main.js"`. **Indice qui trahit la confusion : le build statique sert 6414 octets, le dev server 23745.**
+
+**Et un service à connaître** : `apps/live` (collaboration Yjs) fait partie de `pnpm dev` mais **échoue au démarrage** avec `EADDRINUSE :3100` — le port est tenu par l'autre projet du poste (`~/dev/2026-zelian-insider`, onboarding Next). Conséquence : **l'éditeur de pages ne finit jamais de monter** et reste sur « Syncing… ». L'éditeur **rich-text** (description d'un work item) n'en dépend pas.
