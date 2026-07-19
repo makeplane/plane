@@ -82,7 +82,8 @@ const detectMimeTypeFromSignature = async (file: File): Promise<string> => {
 };
 
 /**
- * @description Validate and detect the MIME type of a file using signature detection
+ * @description Validate and detect the MIME type of a file, preferring the file
+ * signature and falling back to the type the browser derived from the extension
  * Also performs basic security checks on filename
  * @param {File} file
  * @returns {Promise<string>} validated and detected MIME type
@@ -103,8 +104,13 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // fallback for unknown files
-  return "";
+  // Signature detection only recognises formats that carry magic bytes, so text-based
+  // formats never match — .txt, .md, .csv, .json, .svg and friends all come back unknown
+  // even though the server allows them. Returning an empty type here made the server
+  // reject every one of them with "Invalid file type". Fall back to the type the browser
+  // derived from the extension; the server still validates it against its own allowlist,
+  // and a signature that *is* recognised still wins over the extension.
+  return file.type || "";
 };
 
 /**
