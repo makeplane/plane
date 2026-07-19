@@ -104,6 +104,20 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    # apps/live/src/env.ts requires API_BASE_URL and LIVE_SERVER_SECRET_KEY with no
+    # defaults, and the service shipped without either -- it crash-looped on startup.
+    # Values are service names, not localhost: apps/live/.env holds host-network values
+    # for `pnpm dev` and cannot be reused here.
+    environment:
+      - API_BASE_URL=http://api:8000
+      - LIVE_SERVER_SECRET_KEY=${LIVE_SERVER_SECRET_KEY}
+      - PORT=3000
+      - LIVE_BASE_PATH=/live
+      - REDIS_HOST=plane-redis
+      - REDIS_PORT=6379
+    depends_on:
+      - api
+      - plane-redis
 
   plane-db:
     container_name: plane-db
@@ -164,6 +178,14 @@ services:
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      # The Caddyfile reads all of these. Only the two above were passed, so
+      # {$SITE_ADDRESS} expanded to nothing and left a server block with no key --
+      # which is what Caddy was rejecting on every boot.
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CERT_EMAIL: ${CERT_EMAIL:-}
+      CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      CERT_ACME_DNS: ${CERT_ACME_DNS:-}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
     depends_on:
       - web
       - api
