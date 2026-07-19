@@ -40,7 +40,15 @@
       "work_item": "İş öğesi hızlı işlemleri",
       "epic": "Epic hızlı işlemleri",
       "work_item_list": "İş öğesi listesi hızlı işlemleri",
-      "epic_list": "Epic listesi hızlı işlemleri"
+      "epic_list": "Epic listesi hızlı işlemleri",
+      "attachment": "Ek hızlı işlemleri",
+      "label": "Etiket hızlı işlemleri",
+      "milestone": "Kilometre taşı hızlı işlemleri",
+      "page": "Sayfa hızlı işlemleri",
+      "parent_work_item": "Üst iş öğesi hızlı işlemleri",
+      "draft_work_item": "Taslak hızlı işlemleri",
+      "invitation": "Davet hızlı işlemleri",
+      "worklog": "İş kaydı hızlı işlemleri"
     }
   }
 }

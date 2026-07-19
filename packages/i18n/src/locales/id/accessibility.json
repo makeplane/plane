@@ -40,7 +40,15 @@
       "work_item": "Tindakan cepat item kerja",
       "epic": "Tindakan cepat epik",
       "work_item_list": "Tindakan cepat daftar item kerja",
-      "epic_list": "Tindakan cepat daftar epik"
+      "epic_list": "Tindakan cepat daftar epik",
+      "attachment": "Tindakan cepat lampiran",
+      "label": "Tindakan cepat label",
+      "milestone": "Tindakan cepat tonggak",
+      "page": "Tindakan cepat halaman",
+      "parent_work_item": "Tindakan cepat item kerja induk",
+      "draft_work_item": "Tindakan cepat draf",
+      "invitation": "Tindakan cepat undangan",
+      "worklog": "Tindakan cepat catatan kerja"
     }
   }
 }

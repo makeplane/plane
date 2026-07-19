@@ -40,7 +40,15 @@
       "work_item": "工作項目快捷操作",
       "epic": "史詩快捷操作",
       "work_item_list": "工作項目清單快捷操作",
-      "epic_list": "史詩清單快捷操作"
+      "epic_list": "史詩清單快捷操作",
+      "attachment": "附件快捷操作",
+      "label": "標籤快捷操作",
+      "milestone": "里程碑快捷操作",
+      "page": "頁面快捷操作",
+      "parent_work_item": "上層工作事項快捷操作",
+      "draft_work_item": "草稿快捷操作",
+      "invitation": "邀請快捷操作",
+      "worklog": "工作紀錄快捷操作"
     }
   }
 }
