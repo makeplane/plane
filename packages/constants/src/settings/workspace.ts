@@ -72,7 +72,10 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
   [WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION]: [
     WORKSPACE_SETTINGS["general"],
     WORKSPACE_SETTINGS["members"],
-    WORKSPACE_SETTINGS["billing-and-plans"],
+    // "billing-and-plans" is dropped from the nav: it only ever rendered a plan
+    // comparison and checkout links for plans this instance does not sell. The
+    // entry itself is kept so the tab type, the route and the permission map stay
+    // intact -- put the line back to restore the page.
     WORKSPACE_SETTINGS["export"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [],

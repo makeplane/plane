@@ -4,32 +4,17 @@
  * See the LICENSE file for details.
  */
 
-// helpers
-import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
-
 type TUpgradeBadge = {
   className?: string;
   size?: "sm" | "md";
 };
 
-export function UpgradeBadge(props: TUpgradeBadge) {
-  const { className, size = "sm" } = props;
-
-  const { t } = useTranslation();
-
-  return (
-    <div
-      className={cn(
-        "w-fit cursor-pointer rounded-2xl bg-accent-primary/20 text-center font-medium text-accent-secondary outline-none",
-        {
-          "px-3 text-13": size === "md",
-          "px-2 text-11": size === "sm",
-        },
-        className
-      )}
-    >
-      {t("sidebar.pro")}
-    </div>
-  );
+/**
+ * Renders nothing on this instance. The "Pro" pill advertised plans that are not
+ * for sale here, and several of the features it labelled have since been
+ * reimplemented, so it had also become wrong. The signature is left untouched so
+ * call sites keep compiling and the badge can be restored in a single edit.
+ */
+export function UpgradeBadge(_props: TUpgradeBadge) {
+  return null;
 }

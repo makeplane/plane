@@ -4,43 +4,27 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
+import { getButtonStyling } from "@plane/propel/button";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
-// local components
-import { PaidPlanUpgradeModal } from "../license";
-import { Button } from "@plane/propel/button";
 
+/**
+ * The edition name, and the version on hover. It used to be a button that opened
+ * the paid-plans modal; on this instance there is nothing to buy, so it is plain
+ * text now. It stays a DOM element rather than disappearing because Tooltip puts
+ * its ref on the child -- a component would trade the badge for a ref warning.
+ */
 export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
-  // states
-  const [isPaidPlanPurchaseModalOpen, setIsPaidPlanPurchaseModalOpen] = useState(false);
-  // translation
-  const { t } = useTranslation();
   // platform
   const { isMobile } = usePlatformOS();
 
   return (
-    <>
-      <PaidPlanUpgradeModal
-        isOpen={isPaidPlanPurchaseModalOpen}
-        handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
-      />
-      <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-        <Button
-          variant="tertiary"
-          size="lg"
-          onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
-          aria-haspopup="dialog"
-          aria-label={t("aria_labels.projects_sidebar.edition_badge")}
-        >
-          Community
-        </Button>
-      </Tooltip>
-    </>
+    <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
+      <span className={getButtonStyling("tertiary", "lg")}>Community</span>
+    </Tooltip>
   );
 });
