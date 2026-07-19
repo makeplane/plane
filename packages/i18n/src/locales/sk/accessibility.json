@@ -40,7 +40,15 @@
       "work_item": "Rýchle akcie pracovnej položky",
       "epic": "Rýchle akcie epicu",
       "work_item_list": "Rýchle akcie zoznamu pracovných položiek",
-      "epic_list": "Rýchle akcie zoznamu epicov"
+      "epic_list": "Rýchle akcie zoznamu epicov",
+      "attachment": "Rýchle akcie prílohy",
+      "label": "Rýchle akcie štítku",
+      "milestone": "Rýchle akcie míľnika",
+      "page": "Rýchle akcie stránky",
+      "parent_work_item": "Rýchle akcie nadradenej pracovnej položky",
+      "draft_work_item": "Rýchle akcie konceptu",
+      "invitation": "Rýchle akcie pozvánky",
+      "worklog": "Rýchle akcie záznamu práce"
     }
   }
 }

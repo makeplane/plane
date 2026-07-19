@@ -40,7 +40,15 @@
       "work_item": "작업 항목 빠른 작업",
       "epic": "에픽 빠른 작업",
       "work_item_list": "작업 항목 목록 빠른 작업",
-      "epic_list": "에픽 목록 빠른 작업"
+      "epic_list": "에픽 목록 빠른 작업",
+      "attachment": "첨부 파일 빠른 작업",
+      "label": "레이블 빠른 작업",
+      "milestone": "마일스톤 빠른 작업",
+      "page": "페이지 빠른 작업",
+      "parent_work_item": "상위 작업 항목 빠른 작업",
+      "draft_work_item": "초안 빠른 작업",
+      "invitation": "초대 빠른 작업",
+      "worklog": "작업 기록 빠른 작업"
     }
   }
 }

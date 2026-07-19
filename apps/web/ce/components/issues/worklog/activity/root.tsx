@@ -126,7 +126,12 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
             </Tooltip>
           </div>
           {canModify && (
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end">
+            <CustomMenu
+              ariaLabel={t("aria_labels.quick_actions.worklog")}
+              ellipsis
+              closeOnSelect
+              placement="bottom-end"
+            >
               <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => setIsEditModalOpen(true)}>
                 <EditIcon className="size-3 shrink-0" />
                 {t("worklog.edit_work")}
