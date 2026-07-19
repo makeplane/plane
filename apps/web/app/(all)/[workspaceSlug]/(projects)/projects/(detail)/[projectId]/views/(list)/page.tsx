@@ -79,7 +79,7 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
           primaryButton={{
             text: t("disabled_project.empty_state.view.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features/views`);
             },
             disabled: !canPerformEmptyStateActions,
           }}

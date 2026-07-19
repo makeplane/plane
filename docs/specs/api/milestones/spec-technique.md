@@ -1,11 +1,11 @@
 # Spec Technique — Milestones (jalons projet)
 
-| Champ      | Valeur              |
-|------------|----------------------|
-| Module     | api/milestones      |
-| Version    | 0.1.0               |
-| Date       | 2026-07-12          |
-| Statut     | IMPLÉMENTÉ v0.1.0 (2026-07-12) |
+| Champ   | Valeur                         |
+| ------- | ------------------------------ |
+| Module  | api/milestones                 |
+| Version | 0.1.1                          |
+| Date    | 2026-07-19                     |
+| Statut  | IMPLÉMENTÉ v0.1.1 (2026-07-19) |
 
 ---
 
@@ -21,11 +21,11 @@ Double couche backend sur modèles greenfield (calque cycles) : `plane/api` (v1 
 
 ## API v1 (SDK/MCP — `plane/api/{serializers,views,urls}/milestone.py`)
 
-| Route (slash final) | Méthodes | Notes |
-|---|---|---|
-| `…/milestones/` | GET, POST | GET cursor-paginé (enveloppe BasePaginator) ; POST `{title req, target_date?, external_source?, external_id?}` → 201 ; 409 si dedup externe ; 400 si toggle off |
-| `…/milestones/{id}/` | GET, PATCH, DELETE | PATCH partiel (title optionnel) → 200 ; DELETE → 204 ; 409 dedup externe au PATCH |
-| `…/milestones/{id}/work-items/` | GET, POST, DELETE | GET cursor-paginé de `{id, issue, milestone}` ; POST `{issues:[uuid]}` AJOUTE (UUID + même-projet validés 400, déjà-liés ignorés, 201 = liens créés seulement) ; **DELETE avec body** `{issues:[uuid]}` → 204 |
+| Route (slash final)             | Méthodes           | Notes                                                                                                                                                                                                         |
+| ------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `…/milestones/`                 | GET, POST          | GET cursor-paginé (enveloppe BasePaginator) ; POST `{title req, target_date?, external_source?, external_id?}` → 201 ; 409 si dedup externe ; 400 si toggle off                                               |
+| `…/milestones/{id}/`            | GET, PATCH, DELETE | PATCH partiel (title optionnel) → 200 ; DELETE → 204 ; 409 dedup externe au PATCH                                                                                                                             |
+| `…/milestones/{id}/work-items/` | GET, POST, DELETE  | GET cursor-paginé de `{id, issue, milestone}` ; POST `{issues:[uuid]}` AJOUTE (UUID + même-projet validés 400, déjà-liés ignorés, 201 = liens créés seulement) ; **DELETE avec body** `{issues:[uuid]}` → 204 |
 
 - **`title` exposé via `serializers.CharField(source="name")`** en lecture ET écriture — LE point dur du contrat (le SDK Pydantic `Milestone.model_validate` exige `title`).
 - Permission `ProjectEntityPermission` + scoping queryset `project__project_projectmember__member/is_active` ; `use_read_replica`.
@@ -41,7 +41,8 @@ Double couche backend sur modèles greenfield (calque cycles) : `plane/api` (v1 
 
 - `packages/types/src/milestone.ts` (`TMilestone`, champs annotés optionnels — code défensif), `is_milestone_enabled` sur le type projet partiel.
 - `core/services/milestone.service.ts` (CRUD + issues), store MobX (`core/store/milestone.store.ts` + résolution CE, getters scopés projet), hook `use-milestone`.
-- Page `app/(all)/…/projects/(detail)/[projectId]/milestones/` (route enregistrée, nav projet gatée `is_milestone_enabled`, état disabled avec CTA Manage features), toggle dans `project/settings/features-list.tsx`, composants `core/components/milestones/` (section, list-item, modal RHF, delete-modal, issues-list, attach via `ExistingIssuesListModal`).
+- Page `app/(all)/…/projects/(detail)/[projectId]/milestones/` (route enregistrée, nav projet gatée `is_milestone_enabled`, état disabled avec CTA « Manage features »), toggle dans `project/settings/features-list.tsx` — **toujours en place**, c'est ce que rend la modale de création de projet —, composants `core/components/milestones/` (section, list-item, modal RHF, delete-modal, issues-list, attach via `ExistingIssuesListModal`).
+- **Page de réglages dédiée** (v0.1.1) : `settings/projects/[projectId]/features/milestones/` — `FeaturesMilestonesProjectSettingsHeader` + `ProjectSettingsFeatureControlItem` pour le toggle `is_milestone_enabled`. Route enregistrée dans `apps/web/app/routes/core.ts`. Entrée sidebar `PROJECT_SETTINGS["features_milestones"]` dans le groupe Features (`packages/constants/src/settings/project.ts`). `TProjectSettingsTabs` étendu avec `"features_milestones"` (`packages/types/src/settings.ts`). Le CTA « Manage features » de l'état disabled pointe désormais sur `/features/milestones` au lieu de `/features` (route qui n'a jamais existé → 404 corrigée).
 - i18n : clés existantes réutilisées + 4 clés plates (`milestone_new`, `milestone_attach_work_items`, `milestone_empty_state`, `milestone_work_items_empty_state`) et bloc `disabled_project.empty_state.milestone` × 19 locales (`primary_button.text` réutilise la traduction locale existante de « Manage features »). Toasts/titres de modal en anglais dur = parité upstream (cycles/modules font pareil).
 
 ## Tests

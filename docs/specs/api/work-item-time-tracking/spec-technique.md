@@ -1,11 +1,11 @@
 # Spec Technique — Time tracking / worklogs
 
-| Champ   | Valeur                        |
-|---------|-------------------------------|
-| Module  | api/work-item-time-tracking   |
-| Version | 1.0.0                         |
-| Date    | 2026-07-08                    |
-| Statut  | IMPLÉMENTÉ                    |
+| Champ   | Valeur                                                                             |
+| ------- | ---------------------------------------------------------------------------------- |
+| Module  | api/work-item-time-tracking                                                        |
+| Version | 1.0.2                                                                              |
+| Date    | 2026-07-19                                                                         |
+| Statut  | IMPLÉMENTÉ                                                                         |
 | Source  | Cadrage 2026-07-08 (code CE + doc développeurs + SDK plane-python-sdk/MCP publics) |
 
 > ⚠️ Garde ADR-001 bypassée (décision dev). Réimplémentation CE (AGPL, sans code plane-ee) du **time tracking** (feature Pro). V1 = saisie/CRUD de worklogs + cumul. Les **approbations** (Business) sont hors V1.
@@ -43,6 +43,7 @@ class IssueWorkLog(ProjectBaseModel):
 ## API
 
 ### Interne (app, session) — modelé sur les vues issue_property (plane/app/views/issue_property/base.py)
+
 - `GET/POST /api/workspaces/:slug/projects/:project_id/issues/:issue_id/worklogs/`
 - `PATCH/DELETE .../worklogs/:pk/`
 - `GET /api/workspaces/:slug/projects/:project_id/total-worklogs/` — agrégat `[{issue_id, duration}]` (somme minutes par work item).
@@ -51,6 +52,7 @@ class IssueWorkLog(ProjectBaseModel):
 - **Gate intake** : POST rejeté en 400 si le work item est en intake **non accepté** (IntakeIssue avec status ≠ 1).
 
 ### Externe (api v1, token — cible du serveur MCP officiel via plane-python-sdk 0.2.19)
+
 - `POST/GET /api/v1/workspaces/:slug/projects/:project_id/work-items/:issue_id/worklogs/`
 - `PATCH/DELETE .../work-items/:issue_id/worklogs/:pk/`
 - `GET /api/v1/workspaces/:slug/projects/:project_id/total-worklogs/` → `[{"issue_id": uuid, "duration": int}]`
@@ -61,12 +63,15 @@ class IssueWorkLog(ProjectBaseModel):
 - Vues héritant de `plane/api/views/base.py::BaseAPIView` (X-Api-Key, throttle api_key, handle_exception maison) + mêmes gates/permissions que l'interne (via `ProjectEntityPermission` + gardes explicites).
 
 ### Activité — décision
+
 **Pas de lignes `IssueActivity`** pour les worklogs (≠ plan 0.1.0). Le seam web attend des items de feed `{id, activity_type: "WORKLOG", created_at}` construits par le store d'activité CE (`buildActivityAndCommentItems`, méthode `protected` prévue pour ça) à partir du **store worklog** — le worklog EST l'entrée du feed, rendue par `IssueActivityWorklog`. Émettre en plus des `IssueActivity` doublerait les entrées de l'onglet « All ». (Contraste assumé avec work-item-properties qui a une tâche d'activité dédiée : les property values n'ont pas d'entrée de feed propre.)
 
 ### Webhooks
+
 Hors V1 (le modèle `Webhook` n'a pas de flag worklog ; cohérent avec les property values non webhookées).
 
 ### Décisions issues de la revue sécurité adversariale (2026-07-08)
+
 - **Lectures non gatées par le toggle** (décision assumée, BK-1) : désactiver `is_time_tracking_enabled` bloque les écritures (400) mais laisse les lectures/agrégats accessibles aux membres du projet — les données restent scopées membres, aucune fuite cross-tenant ; c'est un soft-gate produit, pas une frontière de sécurité.
 - **Identité externe create-only + contrainte DB** (BK-2, corrigé) : `external_source`/`external_id` sont ignorés en PATCH (serializers), la dédup 409 s'applique aux deux surfaces de création, et une `UniqueConstraint` partielle `(project, external_source, external_id) WHERE deleted_at IS NULL` (migration `0126`) garantit l'idempotence d'import contre les races.
 - **Listes non paginées non bornées** (décision assumée, BK-3) : le contrat SDK/MCP impose un tableau simple ; pas de cap serveur en V1 (tailles pratiques bornées par le rythme de saisie humaine). À réévaluer si un usage machine massif apparaît.
@@ -86,9 +91,11 @@ Hors V1 (le modèle `Webhook` n'a pas de flag worklog ; cohérent avec les prope
   - `worklog/activity/filter-root.tsx` — **étendre** (pas remplacer : c'est un composant fonctionnel) : option Worklogs si toggle projet actif.
   - `worklog/property/root.tsx` — ligne « Tracked time » complète (icône+label+valeur) : rendu NU dans sidebar.tsx:262 et peek-overview/properties.tsx:256 (non enveloppé dans SidebarPropertyListItem).
 - **Toggle** : entrée Time Tracking dans `PROJECT_FEATURES_LIST` (`project/settings/features-list.tsx`, pattern toggle simple réversible — pas le pattern modal irréversible de work-item-types) ; clés i18n `project_settings.features.time_tracking.*` déjà livrées. L'activité projet affiche déjà « enabled/disabled time tracking » (`common/activity/helper.tsx:280`).
+- **Page de réglages dédiée** (v1.0.2) : `settings/projects/[projectId]/features/time-tracking/` — `FeaturesTimeTrackingProjectSettingsHeader` + `ProjectSettingsFeatureControlItem` pour le toggle `is_time_tracking_enabled`. Route enregistrée dans `apps/web/app/routes/core.ts`. Entrée sidebar `PROJECT_SETTINGS["features_time_tracking"]` dans le groupe Features (`packages/constants/src/settings/project.ts`). `TProjectSettingsTabs` étendu avec `"features_time_tracking"` (`packages/types/src/settings.ts`). Les boutons « Manage features » des états disabled (cycles, modules, views, pages, intake) pointaient sur `/features` → 404 ; ils ciblent désormais la page de leur propre fonctionnalité (fix global de la branche, pas limité à ce module).
 - **i18n** : toute nouvelle clé (formulaire Log time, validations) à ajouter aux **19 locales** (CI i18n-sync-check ; skill translate).
 
 ## Tests (pytest, exécutés dans le conteneur Docker plane-api-1)
+
 - Modèle + migration (makemigrations --check).
 - CRUD interne + externe v1 (chemins SDK exacts, shape de réponse `project_id`/`workspace_id`).
 - Gate `is_time_tracking_enabled` (400 en écriture, lecture OK) ; gate intake.
@@ -97,4 +104,5 @@ Hors V1 (le modèle `Webhook` n'a pas de flag worklog ; cohérent avec les prope
 - Isolation cross-projet/workspace (worklog_id d'un autre projet → 404).
 
 ## Hors V1
+
 - Approbations de worklogs (Business), timesheet workspace + export (seam ExporterHistory), rollups cycle/module, estimé vs loggé, roll-up sous-items, timer live, webhooks, alias externe `/issues/:id/worklogs/` (vieux MCP npm).
