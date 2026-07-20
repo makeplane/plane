@@ -996,3 +996,122 @@ Même leçon qu'au §11.6 : **un relevé DOM ne vaut que ce que vaut le jeu de d
 8. ⬜ **`docs/specs/web/work-item-page-embed`** — `spec-fonctionnel.md` manquant (§14.7).
 
 **Réserves de vérification encore valables** : `members-list` (#76, pas d'invitation en attente), `apps/space` (#72, jamais rendu), et les 5 layouts filtrés du §11.6. **Milestones n'en fait plus partie** (§14.4).
+
+> ⚠️ **Le §14 s'arrête aux PR #89 → #93.** La suite de la même journée — PR **#94 à #98** — est au **§15**, qui **corrige aussi le point 3 et le point 7 de la liste ci-dessus**.
+
+---
+
+## 15. Suite du 2026-07-20 — le framework rendu utilisable, et un vrai bug de rendu corrigé
+
+> Cinq PR de plus le même jour, toutes fusionnées. Le §14 racontait la matinée ; celle-ci part de la demande du dev : « il faut que le framework soit opérationnel, fonctionnel, et appliqué partout ».
+
+### 15.1 PRs
+
+| PR  | Objet                                                                                       | État      |
+| --- | ------------------------------------------------------------------------------------------- | --------- |
+| #94 | `docs(adr)` — les 3 ADR fondateurs de la Phase 2, jamais écrits                             | fusionnée |
+| #95 | `chore(gitignore)` — 4 fichiers d'exécution des hooks qui échappaient au `.gitignore`       | fusionnée |
+| #96 | `chore(zelian)` — `CLAUDE.md` partagé à l'équipe **sans toucher au `.gitignore`**           | fusionnée |
+| #97 | `fix(sub-work-items)` — la liste s'affiche de nouveau (+ correction de la commande Compass) | fusionnée |
+| #98 | `fix(rules)` — la commande Compass de la règle 07 ne trouvait jamais le binaire             | fusionnée |
+
+`preview` = `8a7a847`. **Neuf PR fusionnées sur la journée** (#90 → #98).
+
+### 15.2 ⚠️ Les « 18 ADR stale » étaient un FAUX POSITIF — ne pas repartir en chasse
+
+`session-context.js` avertit « ADRs stale (18) » à chaque démarrage. **Aucune référence n'était cassée.** `findStaleAdrs` applique un regex `(?:ADR|RETRO)-\d{3}` sur **tout le texte** d'une spec, puis cherche un fichier correspondant. Il matchait donc le mot « ADR-001 » **dans la phrase qui nomme la garde** :
+
+> ⚠️ Garde ADR-001 bypassée sur décision du dev (Phase 2 non faite).
+
+Cette phrase est présente dans **24 specs** (18 `spec-fonctionnel.md` — le compte exact du hook — et 6 `spec-technique.md`). **Toutes les vraies références résolvaient** : `RETRO-031` ×13, `RETRO-101` ×11, `RETRO-041` ×10, `RETRO-032` ×10… **zéro orpheline**. L'intégrité documentaire était saine.
+
+**Ce que cette phrase révélait de plus important** : les sessions précédentes avaient buté sur **la même garde** et le dev avait déjà tranché — bypasser et consigner. Le précédent existait 24 fois. Mon premier arbitrage (« la garde bloque, la dette reste sans domicile ») était donc mal posé : le projet ne fabriquait pas d'ADR, il passait outre en le documentant.
+
+### 15.3 Les 3 ADR fondateurs (PR #94) — et le 4ᵉ candidat écarté
+
+La Phase 2 n'avait jamais été faite : le projet est arrivé par `/zelian:retro`, qui produit des `RETRO-XXX` — le constat de ce qu'**upstream** avait décidé — et non les décisions que **Zelian** a prises.
+
+| ADR | Catégorie   | Décision                                                                                          |
+| --- | ----------- | ------------------------------------------------------------------------------------------------- |
+| 001 | STACK       | Réimplémentation **clean-room** dans le seam CE `apps/web/ce/`, interdiction de copier `plane-ee` |
+| 002 | DB-STRATEGY | Chercher le **schéma dormant** avant d'écrire une migration                                       |
+| 003 | AUTH        | `IS_ZELIAN_ENABLED`, bascule **unique** interne/externe, comparée strictement à `"1"`             |
+
+Chacun est ancré sur des faits mesurés : 265 stubs dans `ce/`, 212 fichiers important `@/plane-web`, **5 migrations ajoutées sur 129**, 20 fichiers de specs revendiquant « zéro migration ».
+
+⚠️ **Un 4ᵉ candidat a été écarté** : l'alignement du contrat v1/MCP sur le SDK officiel. Il ressemble à une décision d'architecture mais tombe sous **AP-6** (« Style ou convention API ») — sa place est en `spec-technique.md`. La politique ADR sert exactement à ça.
+
+**Effet de bord recherché** : `ADR-001` existant, les 24 références se résolvent, **les 18 avertissements disparaissent**, et la garde de `/zelian:new-spec` est levée.
+
+⚠️ **Les trois sont fusionnés en `Statut: Proposé`**, auteur « brouillon assisté ». **Le dev ne se les est pas encore appropriés** : tant que c'est le cas, ce sont des contraintes que personne n'a formellement endossées. La section « Ce qu'on s'interdit désormais » de chacun est la partie qui contraindra réellement le travail futur — c'est là qu'il faut être en désaccord.
+
+### 15.4 `CLAUDE.md` partagé sans créer de conflit permanent (PR #96)
+
+Le fichier n'existait **pas du tout** : `session-context.js` avertissait « projet non initialisé ? » et l'étape 5 de `/zelian:migrate` veut y écrire `framework_version`. Écrit d'après le template, en **index court** — 90 lignes à ce jour, pour une cible template de 80 : les 33 modules n'y sont volontairement **pas** listés, Compass étant la source de vérité.
+
+⚠️ **`.gitignore:104` ignore `CLAUDE.md`, et cette ligne vient du commit racine upstream** — c'est une décision de Plane, pas de Zelian. Retirer la ligne aurait produit **un conflit à chaque synchronisation upstream**, et un conflit résolu de travers aurait re-départagé le fichier en silence. Solution retenue : **`git add -f` en laissant la ligne en place** — `.gitignore` ne gouverne que les fichiers non suivis, donc elle devient sans effet sur lui. Une note dans l'en-tête explique la contradiction apparente pour que personne ne la « corrige ».
+
+**Deux inconvénients assumés** : un dev ne peut plus garder une version perso sans salir `git status`, et un fichier partagé qui vieillit trompe toute l'équipe (d'où le format index de 80 lignes).
+
+⚠️ **Le dépôt `userLinpy/plane` est PUBLIC** (vérifié). Le `CLAUDE.md` n'y ajoute aucune exposition — aucun secret — mais **le handoff (113 Ko), `MODE-INTERNE-OU-EXTERNE.md` et `NOTE-features-payantes` y sont déjà**. Un inventaire de ce qui est exposé n'a jamais été fait ; c'est la tâche la plus prioritaire hors code.
+
+### 15.5 Sujet du §14.10 pt 3 — RÉSOLU : la liste des sous-work-items se masquait elle-même (PR #97)
+
+Le widget annonçait « 0/1 Done » et ne rendait **rien** — **pas même son état vide**, et c'est ce détail qui a mis sur la piste : une liste réellement vide aurait affiché son propre message. Défaut signalé au §11.6, reconfirmé « préexistant » deux fois, jamais expliqué.
+
+**Cause.** `setSubIssueHelpers` **bascule** une valeur (l'ajoute, ou la **retire** si présente) — sémantique correcte pour le chevron de dépliage, mais l'effet de montage de `content.tsx` doit **poser** le drapeau `issue_visibility`. Or il le lisait **avant son `await`** : toutes les exécutions concurrentes franchissaient la garde. `StrictMode` invoque l'effet **deux fois** au montage — **trois requêtes** `sub-issues` mesurées sur une seule ouverture — et chacune basculait. L'affichage dépendait de la **parité** des exécutions.
+
+**Correctif** : chaque appel est gardé par une lecture prise **dans le même bloc synchrone** (donc atomique en JS). ⚠️ **Le `finally` ne faisait rien non plus** : il « effaçait » `preview_loader` en passant `""`, or `setSubIssueHelpers` sort tôt sur une valeur falsy.
+
+Vérifié sur PLANETEST-1 : **avant** → 0 caractère, 0 bouton ; **après** → `PLANETEST-2 · lin · Jul 16, 2026` et ses 8 contrôles. **Solde la réserve n°1 du §14.5** : le menu du site sous-work-items a enfin pu être vérifié à l'écran.
+
+### 15.6 ⚠️ La commande Compass de la doc du framework ne marche PAS ici (PR #97 + #98)
+
+Un `@update-writer-after-implement` a suivi la règle 07 à la lettre et **a conclu que Compass n'était pas installé**. Il l'est ; la recette ne le trouve jamais. **Deux causes cumulées, toutes deux héritées du template du plugin** :
+
+1. le motif oublie le **dossier de version** — chemin réel `.../zelian-framework/`**`3.0.0`**`/hooks/lib/compass.js`, alors que le glob dit `*/zelian-framework/hooks/lib/*` ;
+2. depuis WSL, `$HOME/.claude/plugins` **existe mais est vide** — le plugin vit côté Windows.
+
+**Forme qui marche** (corrigée dans `CLAUDE.md` par la #97 et dans la règle 07 par la #98) :
+
+```bash
+COMPASS="$(find ~/.claude/plugins /mnt/c/Users/*/.claude/plugins \
+  -name "compass.js" -path "*/zelian-framework/*/hooks/lib/*" 2>/dev/null | tail -1)"
+```
+
+⚠️ **La correction de `.claude/rules/07-context-discipline.md` sera ÉCRASÉE** au prochain `/zelian:migrate` ou `/zelian:retro` : le fichier est géré par le plugin et marqué « ne pas modifier au projet ». La divergence est déclarée dans son en-tête. **Le correctif durable est en amont**, dans `templates/rules/07-context-discipline.md` — à faire remonter à l'équipe du framework, sinon le bug revient à chaque migration et la session suivante repart sur la fausse piste.
+
+### 15.7 ⚠️ Pièges de mesure — un dev server périmé a failli faire corriger une PR saine
+
+1. **Un dev server Vite resté allumé depuis la veille sert des traductions périmées.** Deux clés i18n ajoutées le jour même s'affichaient **en brut** (`aria_labels.quick_actions.sub_work_item`) alors que les clés préexistantes se traduisaient normalement. **J'ai failli conclure que la PR #90 avait livré des libellés cassés.** Le fichier sur disque était juste, et le serveur le servait juste — vérifié par `fetch` simple, anti-caché **et** `cache: "reload"` : 2474 octets, clés présentes les trois fois. Seul le **module transformé** était périmé en mémoire. Remède : `rm -rf apps/web/node_modules/.vite apps/web/.react-router` puis redémarrage → **zéro clé brute**. La #90 n'avait rien cassé.
+2. **Purger `.vite` impose une ré-optimisation à froid** : la page reste blanche ~1 minute, avec des `Pre-transform error` transitoires dans le log. C'est normal, attendre.
+3. **Relancer les serveurs depuis PowerShell** : un simple `&` meurt avec la session WSL. Forme qui tient : `setsid nohup bash ~/plane-start-web.sh > ~/web-restart.log 2>&1 < /dev/null &`.
+4. **Lire un état React juste après `.click()`** rend l'état d'**avant** le re-render — attendre un tick. Cela avait fait conclure à tort que la bascule d'un `Collapsible` ne fonctionnait pas (§14.4).
+5. **Une sonde qui cherche au mauvais endroit dans un JSON** rend « undefined » : `is_zelian_enabled` vit sous `config.`, pas à la racine de `/api/instances/`. Failli faire croire que le SSO n'exposait plus son flag.
+
+### 15.8 État du framework Zelian — ce qui marche, ce qui reste manuel
+
+**Opérationnel** : `.zelian/compass.json` (**33 entrées**, 0 glob mort), règle 07 de lecture ciblée, `CLAUDE.md`, ADR-001/002/003, `.gitignore` couvrant les 4 fichiers d'exécution des hooks (`.doc-injected.json`, `.update-check.json`, `.adr-injected.json`, `.design-injected.json` — les deux derniers par anticipation, ils n'apparaissent qu'une fois leurs hooks exécutés).
+
+⚠️ **Nuance sur le chiffre de couverture, pour éviter la confusion** : `--coverage` annonce `total: 32, anchored: 32, percent: 100`, alors que le fichier contient **33 entrées**. L'écart n'est pas une erreur — `coverage` **exclut** l'entrée dont le `spec_dir` n'a pas de `spec-fonctionnel.md`, en l'occurrence `web/work-item-page-embed` (module incomplet, cf. §15.9 pt 9). C'est aussi ce que signale `--check` sous `missingSpecDirs`.
+
+**Reste manuel** — ⚠️ **les hooks du plugin ne s'exécutent pas dans les sessions.** Ils sont déclarés (`hooks/hooks.json`) et le plugin est activé, mais la bannière de `session-context.js` n'apparaît **jamais** au démarrage. Invoqués à la main ils fonctionnent parfaitement. **Conséquence pratique** : appeler `@update-writer-after-implement` de mémoire après chaque implémentation, et **résoudre Compass soi-même avant d'éditer**.
+
+⚠️ `stop-update-writer.js` **consomme** le marker `.claude/.update-writer-ran` dès qu'on l'exécute, même en simulation.
+
+**Toujours non résolu** : `api.enabled: false` dans `~/.zelian/config.json` → le score qualité n'est jamais envoyé au dashboard (opt-in du dev).
+
+### 15.9 Travail restant — à jour au 2026-07-20 (fin de journée)
+
+Remplace la liste du §14.10, dont **le point 3 est fait** (§15.5) et **le point 7 largement traité** (§15.3, §15.8).
+
+1. ⬜ **Inventaire de l'exposition publique du dépôt** — le plus prioritaire hors code (§15.4).
+2. ⬜ **La famille `customButton` icon-only** — ⚠️ le §13.2 annonce « ~8 sites », le recensement en trouve **30 `customButton` sans `ariaLabel`** ; le sous-ensemble réellement icon-only reste à établir. Namespace i18n à choisir.
+3. ⬜ **Storybook cassé** — `ReferenceError: process is not defined` depuis `packages/constants/dist`, 396 stories inutilisables.
+4. ⬜ **`FilterDisplayProperties` — clé React manquante** (§11.6), préexistant.
+5. ⬜ **`custom-image/components/block.tsx` l.185** — `touchmove` non passif ; tranche une question d'UX.
+6. ⬜ **Pages collaboratives** — toujours bloqué : `:3100` tenu par `~/dev/2026-zelian-insider`.
+7. ⬜ **Faire remonter le correctif de la règle 07 en amont** (§15.6), sinon il est perdu à la prochaine migration.
+8. ⬜ **Le dev s'approprie les ADR-001/002/003** — passage de `Proposé` à `Accepté` à son nom (§15.3).
+9. ⬜ **`docs/specs/web/work-item-page-embed`** — `spec-fonctionnel.md` manquant.
+10. ⬜ **Aucune spec ne couvre les composants web du détail de work item ni `packages/ui`** — Compass y répond honnêtement « aucun module ». La garde `new-spec` étant levée (§15.3), le scaffold est désormais possible.
