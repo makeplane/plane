@@ -37,6 +37,32 @@ import {
   toText,
 } from "./utils";
 
+const normalizeNumericEventId = (value: unknown) => {
+  const normalizedValue = toText(value).trim();
+  return /^\d+$/.test(normalizedValue) ? normalizedValue : "";
+};
+
+const pickNumericSgEventId = (sources: Array<Record<string, unknown> | null | undefined>) => {
+  const keyGroups = [
+    ["sg_event_id", "sgEventId", "sgEventID"],
+    ["event_id", "eventId", "preview_event_id", "previewEventId"],
+    ["plane_event_id", "planeEventId"],
+  ];
+
+  for (const keys of keyGroups) {
+    for (const source of sources) {
+      if (!source) continue;
+
+      for (const key of keys) {
+        const eventId = normalizeNumericEventId(source[key]);
+        if (eventId) return eventId;
+      }
+    }
+  }
+
+  return "";
+};
+
 export const SgEventDetailPage = ({
   enableMatrixView = false,
   showTagListActions = true,
@@ -102,25 +128,19 @@ export const SgEventDetailPage = ({
   ];
   const sgEventItemRecord = asRecord(sgMediaPayload?.eventItem);
   const resolvedSgEventId =
-    (sgIssue?.sg_event_id != null ? String(sgIssue.sg_event_id).trim() : "") ||
-    pickText(
-      [...payloadSources, sgEventMeta, sgEventItemRecord, mediaMeta, asRecord(mediaItem)],
-      [
-        "sg_event_id",
-        "sgEventId",
-        "sgEventID",
-        "eventId",
-        "event_id",
-        "preview_event_id",
-        "plane_event_id",
-        "planeEventId",
-      ]
-    );
+    normalizeNumericEventId(sgIssue?.sg_event_id) ||
+    pickNumericSgEventId([...payloadSources, sgEventMeta, sgEventItemRecord, mediaMeta, asRecord(mediaItem)]);
   const shouldUseKanavioTagApi = Boolean(resolvedSgEventId && isNumericEventId(resolvedSgEventId));
   const resolvedCustomPlaylistEventId = shouldUseKanavioTagApi ? Number(resolvedSgEventId) : null;
   const { data: customPlaylists = [], mutate: mutateCustomPlaylists } = useSWR(
-    resolvedCustomPlaylistEventId ? `CUSTOM_PLAYLISTS_${resolvedCustomPlaylistEventId}` : null,
-    () => mediaLibraryService.getCustomPlaylists(String(resolvedCustomPlaylistEventId)),
+    resolvedCustomPlaylistEventId
+      ? `CUSTOM_PLAYLISTS_${workspaceSlug}_${projectId}_${resolvedCustomPlaylistEventId}`
+      : null,
+    () =>
+      mediaLibraryService.getCustomPlaylists(String(resolvedCustomPlaylistEventId), {
+        projectId,
+        workspaceSlug,
+      }),
     { revalidateOnFocus: false }
   );
   const {
@@ -322,6 +342,8 @@ export const SgEventDetailPage = ({
           url: result.fileName || getLastPathSegment(result.url),
           thumbnail: getLastPathSegment(thumbnail),
           clip: includedRows.length,
+          project_id: projectId,
+          workspace_slug: workspaceSlug,
         });
         playPlaybackOverride(
           buildMatrixPlaylistItem({
@@ -358,9 +380,11 @@ export const SgEventDetailPage = ({
       mutateCustomPlaylists,
       playPlaybackOverride,
       primaryStreamName,
+      projectId,
       resolvedCustomPlaylistEventId,
       resolvedWorkItemId,
       selectedViewDevice?.streamName,
+      workspaceSlug,
     ]
   );
   const kanavioTagsErrorMessage =
