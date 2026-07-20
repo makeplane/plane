@@ -11,6 +11,7 @@ import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
 import { CustomMenu, CustomSelect } from "@plane/ui";
@@ -40,12 +41,14 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
 
   return (
     <Disclosure>
-      {({}) => (
+      {() => (
         <div className="group relative">
           <div className="flex w-72 items-center gap-2">
             <div className="flex flex-1 items-center gap-x-2 gap-y-2">
@@ -70,16 +73,18 @@ export function NameColumn(props: NameProps) {
             </div>
             {(isAdmin || id === currentUser?.id) && (
               <CustomMenu
+                ariaLabel={t("aria_labels.quick_actions.project_member")}
                 ellipsis
                 buttonClassName="p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                 optionsClassName="p-1.5"
                 placement="bottom-end"
               >
-                <CustomMenu.MenuItem>
+                {/* The click belongs on the menu item itself: a <div onClick> nested inside it
+                    was unreachable by keyboard, since only the item is focusable. */}
+                <CustomMenu.MenuItem onClick={() => setRemoveMemberModal(rowData)}>
                   <div
-                    className="flex cursor-pointer items-center gap-x-1 font-medium text-danger-primary"
+                    className="flex items-center gap-x-1 font-medium text-danger-primary"
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.PROJECT_MEMBER_TABLE_CONTEXT_MENU}
-                    onClick={() => setRemoveMemberModal(rowData)}
                   >
                     <CircleMinus className="size-3.5 flex-shrink-0" />
                     {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
@@ -111,18 +116,20 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   // derived values
   const roleLabel = ROLE[rowData.original_role ?? EUserPermissions.GUEST];
   const isCurrentUser = currentUser?.id === rowData.member.id;
+  // The `?? GUEST` fallbacks sit inside `Number(...)`: applied outside they were dead code,
+  // since `Number(undefined)` is `NaN` rather than nullish, so `??` never fired.
   const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
-    Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
+    Number(getWorkspaceMemberDetails(rowData.member.id)?.role ?? EUserPermissions.GUEST)
   );
   const isCurrentUserWorkspaceAdmin = currentUser
     ? [EUserPermissions.ADMIN].includes(
-        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+        Number(getWorkspaceMemberDetails(currentUser.id)?.role ?? EUserPermissions.GUEST)
       )
     : false;
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
   const isCurrentUserProjectAdmin = currentProjectRole
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole ?? EUserPermissions.GUEST))
     : false;
 
   // logic
