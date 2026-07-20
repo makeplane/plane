@@ -88,7 +88,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
   const displayProperties = subIssueFilters?.displayProperties ?? {};
 
   //
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
+  const handleIssuePeekOverview = (peekIssue: TIssue) => handleRedirection(workspaceSlug, peekIssue, isMobile);
 
   if (!issue) return <></>;
 
@@ -125,7 +125,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                       <Loader width={14} strokeWidth={2} className="animate-spin" />
                     </div>
                   ) : (
-                    <div
+                    <button
+                      type="button"
+                      aria-label={t("aria_labels.work_item_detail.toggle_sub_work_items")}
+                      aria-expanded={subIssueHelpers.issue_visibility.includes(issue.id)}
                       className="flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary"
                       onClick={async (e) => {
                         e.preventDefault();
@@ -144,7 +147,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                         })}
                         strokeWidth={2.5}
                       />
-                    </div>
+                    </button>
                   )}
                 </>
               )}
@@ -170,7 +173,13 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               </Tooltip>
             </div>
 
+            {/*
+             * Purely an event boundary: the whole row is a link, and the property dropdowns
+             * inside must not navigate it. It carries no semantics of its own, hence
+             * `role="presentation"` -- it is not a control and must not be announced as one.
+             */}
             <div
+              role="presentation"
               className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
@@ -189,7 +198,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
             </div>
 
             <div className="flex-shrink-0 text-13">
-              <CustomMenu placement="bottom-end" ellipsis>
+              <CustomMenu ariaLabel={t("aria_labels.quick_actions.sub_work_item")} placement="bottom-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={() => {

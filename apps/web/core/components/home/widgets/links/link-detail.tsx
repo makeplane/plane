@@ -45,14 +45,13 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
     [linkDetail, setLinkData, toggleLinkModal]
   );
 
-  const handleCopyText = useCallback(() => {
+  const handleCopyText = useCallback(async () => {
     if (!linkUrl) return;
-    copyTextToClipboard(linkUrl).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("link_copied"),
-        message: t("view_link_copied_to_clipboard"),
-      });
+    await copyTextToClipboard(linkUrl);
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("link_copied"),
+      message: t("view_link_copied_to_clipboard"),
     });
   }, [linkUrl, t]);
 
@@ -103,7 +102,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
       url={linkDetail.url}
       createdAt={linkDetail.created_at}
       menuItems={menuItems}
-      onClick={handleOpenInNewTab}
+      menuAriaLabel={t("aria_labels.quick_actions.link")}
     />
   );
 });

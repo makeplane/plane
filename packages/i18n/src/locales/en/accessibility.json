@@ -48,7 +48,14 @@
       "parent_work_item": "Parent work item quick actions",
       "draft_work_item": "Draft work item quick actions",
       "invitation": "Invitation quick actions",
-      "worklog": "Worklog quick actions"
+      "worklog": "Worklog quick actions",
+      "link": "Link quick actions",
+      "sub_work_item": "Sub-work item quick actions",
+      "related_work_item": "Related work item quick actions",
+      "project_member": "Project member quick actions"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Toggle sub-work items"
     }
   }
 }

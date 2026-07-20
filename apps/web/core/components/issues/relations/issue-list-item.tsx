@@ -83,13 +83,13 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
   });
 
   // handlers
-  const handleIssuePeekOverview = (issue: TIssue) => {
-    if (issue.is_epic) {
+  const handleIssuePeekOverview = (peekIssue: TIssue) => {
+    if (peekIssue.is_epic) {
       // open epics in new tab
       window.open(workItemLink, "_blank");
       return;
     }
-    handleRedirection(workspaceSlug, issue, isMobile);
+    handleRedirection(workspaceSlug, peekIssue, isMobile);
   };
 
   const handleEditIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -148,7 +148,13 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
+            {/*
+             * Purely an event boundary: the whole row is a link, and the property dropdowns
+             * inside must not navigate it. It carries no semantics of its own, hence
+             * `role="presentation"` -- it is not a control and must not be announced as one.
+             */}
             <div
+              role="presentation"
               className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
@@ -164,7 +170,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
               />
             </div>
             <div className="flex-shrink-0 pl-2 text-13">
-              <CustomMenu placement="bottom-end" ellipsis>
+              <CustomMenu ariaLabel={t("aria_labels.quick_actions.related_work_item")} placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">

@@ -48,7 +48,14 @@
       "parent_work_item": "父工作项快捷操作",
       "draft_work_item": "草稿快捷操作",
       "invitation": "邀请快捷操作",
-      "worklog": "工作日志快捷操作"
+      "worklog": "工作日志快捷操作",
+      "link": "链接快捷操作",
+      "sub_work_item": "子工作项快捷操作",
+      "related_work_item": "相关工作项快捷操作",
+      "project_member": "项目成员快捷操作"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "展开或收起子工作项"
     }
   }
 }

@@ -48,7 +48,14 @@
       "parent_work_item": "Actions rapides de l'élément de travail parent",
       "draft_work_item": "Actions rapides du brouillon",
       "invitation": "Actions rapides de l'invitation",
-      "worklog": "Actions rapides du temps de travail"
+      "worklog": "Actions rapides du temps de travail",
+      "link": "Actions rapides du lien",
+      "sub_work_item": "Actions rapides du sous-élément de travail",
+      "related_work_item": "Actions rapides de l'élément de travail lié",
+      "project_member": "Actions rapides du membre du projet"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Afficher ou masquer les sous-éléments de travail"
     }
   }
 }

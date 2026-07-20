@@ -48,7 +48,14 @@
       "parent_work_item": "Ações rápidas do item de trabalho pai",
       "draft_work_item": "Ações rápidas do rascunho",
       "invitation": "Ações rápidas do convite",
-      "worklog": "Ações rápidas do registro de trabalho"
+      "worklog": "Ações rápidas do registro de trabalho",
+      "link": "Ações rápidas do link",
+      "sub_work_item": "Ações rápidas do subitem de trabalho",
+      "related_work_item": "Ações rápidas do item de trabalho relacionado",
+      "project_member": "Ações rápidas do membro do projeto"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Mostrar ou ocultar os subitens de trabalho"
     }
   }
 }
