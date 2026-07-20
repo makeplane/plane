@@ -15,7 +15,7 @@ import {
 } from "@/components/pages/navigation-pane";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useQueryParams } from "@/hooks/use-query-params";
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/components/pages/navigation-pane/tab-panels";
 import type { INavigationPaneExtension } from "@/components/pages/navigation-pane";
 import type { TPageInstance } from "@/store/pages/base-page";
 

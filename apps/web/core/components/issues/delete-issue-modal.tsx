@@ -14,12 +14,10 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane-web
 
 type Props = {
   isOpen: boolean;

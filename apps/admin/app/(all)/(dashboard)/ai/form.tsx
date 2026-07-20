@@ -50,6 +50,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="OpenAI models documentation"
           >
             Learn more
           </a>
@@ -71,6 +72,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="OpenAI API keys page"
           >
             here.
           </a>

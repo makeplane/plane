@@ -25,12 +25,14 @@ export function AuthBanner(props: TAuthBanner) {
         <Info size={16} className="text-accent-primary" />
       </div>
       <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
-      <div
+      <button
+        type="button"
+        aria-label="Dismiss banner"
         className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary transition-all hover:bg-accent-primary/20"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
         <CloseIcon className="h-4 w-4 flex-shrink-0" />
-      </div>
+      </button>
     </div>
   );
 }

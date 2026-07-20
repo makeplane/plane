@@ -93,6 +93,18 @@ class IssueListEndpoint(BaseAPIView):
         # Base queryset with basic filters
         queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
 
+        # Restrict guests without full feature access to issues they created,
+        # mirroring IssueViewSet.list.
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+            project__guest_view_all_features=False,
+        ).exists():
+            queryset = queryset.filter(created_by=request.user)
+
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
 

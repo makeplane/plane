@@ -10,8 +10,8 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
 // plane web components
-import { ProductUpdatesChangelog } from "@/plane-web/components/global/product-updates/changelog";
-import { ProductUpdatesHeader } from "@/plane-web/components/global/product-updates/header";
+import { ProductUpdatesChangelog } from "@/components/global/product-updates/changelog";
+import { ProductUpdatesHeader } from "@/components/global/product-updates/header";
 
 export type ProductUpdatesModalProps = {
   isOpen: boolean;

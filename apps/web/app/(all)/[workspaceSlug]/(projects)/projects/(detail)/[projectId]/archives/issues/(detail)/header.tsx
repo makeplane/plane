@@ -18,7 +18,7 @@ import { ISSUE_DETAILS } from "@plane/constants";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
+import { ProjectBreadcrumb } from "@/components/breadcrumbs/project";
 // services
 import { IssueService } from "@/services/issue";
 

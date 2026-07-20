@@ -9,9 +9,7 @@ import { observer } from "mobx-react";
 import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web components
-import { IssueTypeActivity, AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 // local components
 import {
   IssueDefaultActivity,
@@ -44,6 +42,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
   // hooks
   const {
     activity: { getActivityById },
+    // oxlint-disable-next-line no-empty-pattern
     comment: {},
   } = useIssueDetail();
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
@@ -92,9 +91,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
-    case "type":
-      return <IssueTypeActivity {...componentDefaultProps} />;
     default:
-      return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
+      return null;
   }
 });

@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { ExtendedAppHeader } from "@/plane-web/components/common/extended-app-header";
+import { ExtendedAppHeader } from "@/components/common/extended-app-header";
 
 export interface AppHeaderProps {
   header: ReactNode;
@@ -27,6 +27,7 @@ export const AppHeader = observer(function AppHeader(props: AppHeaderProps) {
       <Row className={cn("flex h-11 w-full items-center gap-2 border-b border-subtle bg-surface-1", rowClassName)}>
         <ExtendedAppHeader header={header} />
       </Row>
+      {/* eslint-disable-next-line oxc/const-comparisons */}
       {mobileHeader && mobileHeader}
     </div>
   );

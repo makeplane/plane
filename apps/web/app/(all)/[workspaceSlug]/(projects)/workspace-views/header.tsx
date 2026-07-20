@@ -32,7 +32,6 @@ import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-ac
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states
@@ -71,20 +70,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !globalViewId) return;
       updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
-    },
-    [workspaceSlug, updateFilters, globalViewId]
-  );
-
-  const handleLayoutChange = useCallback(
-    (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        globalViewId
-      );
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -151,13 +136,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
         </Header.LeftItem>
 
         <Header.RightItem className="items-center">
-          {!isLocked && (
-            <GlobalViewLayoutSelection
-              onChange={handleLayoutChange}
-              selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-              workspaceSlug={workspaceSlug.toString()}
-            />
-          )}
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
           {!isLocked && (
             <FiltersDropdown title={t("common.display")} placement="bottom-end">

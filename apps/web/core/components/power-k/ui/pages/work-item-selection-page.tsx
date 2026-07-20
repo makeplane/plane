@@ -71,6 +71,7 @@ export function WorkItemSelectionPage(props: Props) {
         query_type: ["issue"],
         ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
       })
+      // oxlint-disable-next-line promise/always-return
       .then((res) => {
         setIssueResults(res.issue || []);
       })

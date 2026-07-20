@@ -20,8 +20,6 @@ import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
-// plane-web imports
-import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
 import { IdentifierText } from "../issue-detail/identifier-text";
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
@@ -148,7 +146,6 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                 <div className="flex-shrink-0">
                   {issue.project_id && (
                     <div className="flex items-center space-x-2">
-                      {issue?.type_id && <IssueTypeIdentifier issueTypeId={issue.type_id} />}
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier

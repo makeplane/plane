@@ -17,9 +17,7 @@ import type {
 import { generateWorkItemLink } from "@plane/utils";
 // components
 import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
-// plane web imports
-import { SEARCH_RESULTS_GROUPS_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/search/search-results-map";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
@@ -113,5 +111,4 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",
   },
-  ...SEARCH_RESULTS_GROUPS_MAP_EXTENDED,
 };
