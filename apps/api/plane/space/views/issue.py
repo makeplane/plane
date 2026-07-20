@@ -70,6 +70,33 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 
+# GHSA-vqr2-wx56-gmq4: public Spaces board writes must bind caller-supplied
+# object ids to the board's project + workspace. Shared by every create() so the
+# check can't drift between endpoints or be forgotten on a new one.
+def _issue_in_board_scope(issue_id, project_deploy_board):
+    """A board-visible issue in the board's project + workspace.
+
+    Uses ``issue_objects`` (excludes draft/archived/triage) to match exactly
+    what the public board displays via ProjectIssuesPublicEndpoint /
+    IssueRetrievePublicEndpoint — you can only write on what the board shows.
+    """
+    return Issue.issue_objects.filter(
+        id=issue_id,
+        project_id=project_deploy_board.project_id,
+        workspace_id=project_deploy_board.workspace_id,
+    ).exists()
+
+
+def _comment_in_board_scope(comment_id, project_deploy_board):
+    """A public (EXTERNAL) comment in the board's project + workspace."""
+    return IssueComment.objects.filter(
+        id=comment_id,
+        project_id=project_deploy_board.project_id,
+        workspace_id=project_deploy_board.workspace_id,
+        access="EXTERNAL",
+    ).exists()
+
+
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
@@ -264,13 +291,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Ensure the issue belongs to this board's project before writing
-        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
-        if not Issue.issue_objects.filter(
-            id=issue_id,
-            project_id=project_deploy_board.project_id,
-            workspace_id=project_deploy_board.workspace_id,
-        ).exists():
+        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = IssueCommentSerializer(data=request.data)
@@ -382,13 +404,8 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Ensure the issue belongs to this board's project before writing
-        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
-        if not Issue.issue_objects.filter(
-            id=issue_id,
-            project_id=project_deploy_board.project_id,
-            workspace_id=project_deploy_board.workspace_id,
-        ).exists():
+        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = IssueReactionSerializer(data=request.data)
@@ -476,14 +493,8 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Ensure the comment belongs to this board's project before writing
-        # (GHSA-vqr2-wx56-gmq4: caller-supplied comment_id must be bound to the anchor).
-        if not IssueComment.objects.filter(
-            id=comment_id,
-            project_id=project_deploy_board.project_id,
-            workspace_id=project_deploy_board.workspace_id,
-            access="EXTERNAL",
-        ).exists():
+        # Bind the caller-supplied comment_id to this board (GHSA-vqr2-wx56-gmq4).
+        if not _comment_in_board_scope(comment_id, project_deploy_board):
             return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CommentReactionSerializer(data=request.data)
@@ -578,13 +589,8 @@ class IssueVotePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Ensure the issue belongs to this board's project before writing
-        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
-        if not Issue.issue_objects.filter(
-            id=issue_id,
-            project_id=project_deploy_board.project_id,
-            workspace_id=project_deploy_board.workspace_id,
-        ).exists():
+        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         issue_vote, _ = IssueVote.objects.get_or_create(
