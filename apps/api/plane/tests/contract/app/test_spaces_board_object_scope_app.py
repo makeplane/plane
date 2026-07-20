@@ -34,6 +34,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    Workspace,
     WorkspaceMember,
 )
 
@@ -147,6 +148,56 @@ def victim(db, workspace, create_user):
 
 
 @pytest.fixture
+def victim_other_ws(db, create_user):
+    """A project in a DIFFERENT workspace — exercises the workspace_id binding
+    (true cross-tenant, matching the advisory's stated impact)."""
+    uid = uuid4().hex[:8]
+    owner = User.objects.create(email=f"victim-owner-{uid}@plane.so", username=f"victim_owner_{uid}")
+    owner.set_password("test-password")
+    owner.save()
+    other_ws = Workspace.objects.create(name="Other WS", owner=owner, slug=f"other-ws-{uid}")
+    WorkspaceMember.objects.create(workspace=other_ws, member=owner, role=20)
+    project = Project.objects.create(
+        name="Other WS Project", identifier="OWP", workspace=other_ws, created_by=owner
+    )
+    state = State.objects.create(
+        name="Todo", project=project, workspace=other_ws, group="backlog", default=True
+    )
+    issue = Issue.objects.create(
+        name="Other WS Issue", workspace=other_ws, project=project, state=state, created_by=owner
+    )
+    return {"workspace": other_ws, "project": project, "issue": issue}
+
+
+@pytest.fixture
+def board_votes_disabled(db, workspace, create_user):
+    """A published board with voting DISABLED, for the is_votes_enabled gate."""
+    project = Project.objects.create(
+        name="No-Vote Project", identifier="NVP", workspace=workspace, created_by=create_user
+    )
+    ProjectMember.objects.create(
+        project=project, member=create_user, workspace=workspace, role=20, is_active=True
+    )
+    state = State.objects.create(
+        name="Todo", project=project, workspace=workspace, group="backlog", default=True
+    )
+    issue = Issue.objects.create(
+        name="No-Vote Issue", workspace=workspace, project=project, state=state, created_by=create_user
+    )
+    deploy_board = DeployBoard.objects.create(
+        entity_name="project",
+        entity_identifier=project.id,
+        project=project,
+        workspace=workspace,
+        is_comments_enabled=True,
+        is_reactions_enabled=True,
+        is_votes_enabled=False,
+        intake=None,
+    )
+    return {"project": project, "issue": issue, "anchor": deploy_board.anchor}
+
+
+@pytest.fixture
 def attacker_client(db, workspace):
     """An authenticated user who is NOT a member of the victim project."""
     uid = uuid4().hex[:8]
@@ -160,7 +211,8 @@ def attacker_client(db, workspace):
 
 
 # --------------------------------------------------------------------------- #
-# Cross-tenant WRITE — must be rejected (404)
+# Cross-tenant WRITE — must be rejected (404 for issue/comment binding,
+# 400 for the intake binding mismatch, per each endpoint's contract below)
 # --------------------------------------------------------------------------- #
 @pytest.mark.contract
 class TestSpacesBoardObjectScope:
@@ -216,6 +268,36 @@ class TestSpacesBoardObjectScope:
         response = attacker_client.post(
             intake_issues_url(board["anchor"], victim["intake"].id),
             {"issue": {"name": "injected intake"}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_cannot_comment_on_issue_in_other_workspace(self, attacker_client, board, victim_other_ws):
+        """The guard binds on workspace_id too — a board's anchor cannot reach an
+        issue in a different workspace (true cross-tenant vector)."""
+        response = attacker_client.post(
+            comments_url(board["anchor"], victim_other_ws["issue"].id),
+            {"comment_html": "<p>injected cross-ws</p>"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert not IssueComment.objects.filter(
+            issue_id=victim_other_ws["issue"].id, comment_html="<p>injected cross-ws</p>"
+        ).exists()
+
+    # ----------------------------------------------------------------------- #
+    # Feature gate — vote create must honor is_votes_enabled (parity fix)
+    # ----------------------------------------------------------------------- #
+    @pytest.mark.django_db
+    def test_cannot_vote_when_votes_disabled(self, session_client, board_votes_disabled):
+        response = session_client.post(
+            votes_url(board_votes_disabled["anchor"], board_votes_disabled["issue"].id),
+            {"vote": 1},
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
