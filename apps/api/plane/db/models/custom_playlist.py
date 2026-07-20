@@ -9,6 +9,7 @@ class CustomPlaylist(BaseModel):
     url = models.CharField(max_length=255)
     thumbnail = models.CharField(max_length=255, null=True, blank=True)
     clip = models.PositiveIntegerField(default=0)
+    clips = models.JSONField(default=list, blank=True)
 
     class Meta:
         verbose_name = "Custom Playlist"

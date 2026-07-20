@@ -59,16 +59,29 @@ def user_can_access_custom_playlist_event(user, event_id, project_id=None, works
     raise NotFound("Event does not exist.")
 
 
+CUSTOM_PLAYLIST_CLIP_EXCLUDED_KEYS = {"durationSeconds", "fallbackTimestamp", "timecode"}
+
+
+def strip_custom_playlist_clip_fields(clips):
+    return [
+        {key: value for key, value in clip.items() if key not in CUSTOM_PLAYLIST_CLIP_EXCLUDED_KEYS}
+        if isinstance(clip, dict)
+        else clip
+        for clip in clips
+    ]
+
+
 class CustomPlaylistSerializer(BaseSerializer):
     url = serializers.CharField(required=True, max_length=2048)
     thumbnail = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=2048)
     clip = serializers.IntegerField(required=False, min_value=0, default=0)
+    clips = serializers.ListField(child=serializers.JSONField(), required=False)
     project_id = serializers.UUIDField(required=False, write_only=True)
     workspace_slug = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = CustomPlaylist
-        fields = ["id", "event_id", "name", "url", "thumbnail", "clip", "project_id", "workspace_slug"]
+        fields = ["id", "event_id", "name", "url", "thumbnail", "clip", "clips", "project_id", "workspace_slug"]
         read_only_fields = ["id"]
 
     def validate_name(self, value):
@@ -104,6 +117,9 @@ class CustomPlaylistSerializer(BaseSerializer):
             return None
         return self._normalize_file_name(value) or None
 
+    def validate_clips(self, value):
+        return strip_custom_playlist_clip_fields(value)
+
     def validate_event_id(self, value):
         request = self.context["request"]
         user_can_access_custom_playlist_event(
@@ -120,3 +136,9 @@ class CustomPlaylistSerializer(BaseSerializer):
         attrs.pop("project_id", None)
         attrs.pop("workspace_slug", None)
         return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if isinstance(data.get("clips"), list):
+            data["clips"] = strip_custom_playlist_clip_fields(data["clips"])
+        return data

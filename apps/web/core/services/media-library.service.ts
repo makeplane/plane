@@ -94,6 +94,22 @@ export type TCustomPlaylist = {
   url: string;
   thumbnail: string | null;
   clip: number;
+  clips?: TCustomPlaylistClip[];
+};
+
+export type TCustomPlaylistClip = {
+  groupValue?: string;
+  id: string;
+  player?: string;
+  primaryDetail?: string;
+  result?: string;
+  sourceTagId?: string | null;
+  subtitle?: string;
+  tags?: string[];
+  team?: string;
+  thumbnail?: string | null;
+  timestamp?: string | null;
+  title: string;
 };
 
 type TCustomPlaylistPayload = {
@@ -102,6 +118,7 @@ type TCustomPlaylistPayload = {
   url: string;
   thumbnail?: string | null;
   clip?: number;
+  clips?: TCustomPlaylistClip[];
   project_id?: string;
   workspace_slug?: string;
 };
@@ -316,6 +333,14 @@ export class MediaLibraryService extends APIService {
       },
     })
       .then((response) => (Array.isArray(response?.data) ? (response.data as TCustomPlaylist[]) : []))
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async deleteCustomPlaylist(playlistId: string): Promise<void> {
+    return this.delete(`/api/custom-playlists/${playlistId}/`)
+      .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });
