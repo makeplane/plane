@@ -29,6 +29,17 @@ class TestCustomPlaylistBase:
             "clip": 12,
         }
 
+    def project_playlist_payload(self, project, event_id=1313):
+        return {
+            "event_id": event_id,
+            "project_id": str(project.id),
+            "workspace_slug": project.workspace.slug,
+            "name": "Media Library Event Playlist",
+            "url": "https://sports.kanavio.com/hls/media-library-event/master.m3u8",
+            "thumbnail": "https://sports.kanavio.com/thumbnails/media-library-event.jpg",
+            "clip": 7,
+        }
+
 
 @pytest.mark.contract
 class TestCustomPlaylistAPI(TestCustomPlaylistBase):
@@ -96,6 +107,54 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert len(data) == 1
         assert data[0]["id"] == str(playlist.id)
         assert data[0]["event_id"] == event.sg_event_id
+
+    @pytest.mark.django_db
+    def test_create_playlist_with_project_context_when_event_issue_is_missing(
+        self, session_client, workspace, create_user
+    ):
+        project = Project.objects.create(name="Media Library Project", identifier="MLIB", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+
+        response = session_client.post(self.get_playlist_url(), self.project_playlist_payload(project), format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        data = response.json()
+        assert data["event_id"] == 1313
+        assert data["name"] == "Media Library Event Playlist"
+        assert data["url"] == "master.m3u8"
+        assert data["thumbnail"] == "media-library-event.jpg"
+        assert data["clip"] == 7
+        assert "project_id" not in data
+        assert "workspace_slug" not in data
+
+    @pytest.mark.django_db
+    def test_filter_playlists_by_event_with_project_context_when_event_issue_is_missing(
+        self, session_client, workspace, create_user
+    ):
+        project = Project.objects.create(name="Media Library Project", identifier="MLIB", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+        playlist = CustomPlaylist.objects.create(
+            event_id=1313,
+            name="Media Library Event Playlist",
+            url="master.m3u8",
+            thumbnail="media-library-event.jpg",
+            clip=7,
+        )
+
+        response = session_client.get(
+            self.get_playlist_url(),
+            {
+                "event_id": 1313,
+                "project_id": str(project.id),
+                "workspace_slug": project.workspace.slug,
+            },
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["id"] == str(playlist.id)
+        assert data[0]["event_id"] == 1313
 
     @pytest.mark.django_db
     def test_retrieve_playlist_successfully(self, session_client, workspace, create_user):

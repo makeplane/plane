@@ -102,6 +102,13 @@ type TCustomPlaylistPayload = {
   url: string;
   thumbnail?: string | null;
   clip?: number;
+  project_id?: string;
+  workspace_slug?: string;
+};
+
+type TCustomPlaylistListParams = {
+  projectId?: string;
+  workspaceSlug?: string;
 };
 
 const sanitizePlaylistFileName = (value: string) => {
@@ -300,8 +307,14 @@ export class MediaLibraryService extends APIService {
       });
   }
 
-  async getCustomPlaylists(eventId: string): Promise<TCustomPlaylist[]> {
-    return this.get("/api/custom-playlists/", { params: { event_id: eventId } })
+  async getCustomPlaylists(eventId: string, params: TCustomPlaylistListParams = {}): Promise<TCustomPlaylist[]> {
+    return this.get("/api/custom-playlists/", {
+      params: {
+        event_id: eventId,
+        project_id: params.projectId,
+        workspace_slug: params.workspaceSlug,
+      },
+    })
       .then((response) => (Array.isArray(response?.data) ? (response.data as TCustomPlaylist[]) : []))
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;

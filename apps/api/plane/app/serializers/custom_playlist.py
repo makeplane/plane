@@ -1,9 +1,10 @@
 from urllib.parse import unquote, urlparse
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, PermissionDenied
 
-from plane.db.models import CustomPlaylist, Issue, ProjectMember
+from plane.db.models import CustomPlaylist, Issue, Project, ProjectMember
 
 from .base import BaseSerializer
 
@@ -20,14 +21,54 @@ def user_can_access_event(user, event):
     ).exists()
 
 
+def user_can_access_project(user, project_id, workspace_slug=None):
+    if user.is_anonymous or not project_id:
+        return False
+
+    try:
+        projects = Project.objects.filter(pk=project_id)
+    except (DjangoValidationError, TypeError, ValueError):
+        return False
+
+    if workspace_slug:
+        projects = projects.filter(workspace__slug=workspace_slug)
+
+    project = projects.select_related("workspace").first()
+    if not project:
+        return False
+
+    return ProjectMember.objects.filter(
+        project_id=project.id,
+        workspace_id=project.workspace_id,
+        member=user,
+        is_active=True,
+    ).exists()
+
+
+def user_can_access_custom_playlist_event(user, event_id, project_id=None, workspace_slug=None):
+    events = Issue.issue_objects.filter(sg_event_id=event_id).select_related("project", "workspace")
+
+    if events.exists():
+        if any(user_can_access_event(user, event) for event in events):
+            return True
+        raise PermissionDenied("You do not have access to this event.")
+
+    if user_can_access_project(user, project_id, workspace_slug):
+        return True
+
+    raise NotFound("Event does not exist.")
+
+
 class CustomPlaylistSerializer(BaseSerializer):
     url = serializers.CharField(required=True, max_length=2048)
     thumbnail = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=2048)
     clip = serializers.IntegerField(required=False, min_value=0, default=0)
+    project_id = serializers.UUIDField(required=False, write_only=True)
+    workspace_slug = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = CustomPlaylist
-        fields = ["id", "event_id", "name", "url", "thumbnail", "clip"]
+        fields = ["id", "event_id", "name", "url", "thumbnail", "clip", "project_id", "workspace_slug"]
         read_only_fields = ["id"]
 
     def validate_name(self, value):
@@ -65,17 +106,17 @@ class CustomPlaylistSerializer(BaseSerializer):
 
     def validate_event_id(self, value):
         request = self.context["request"]
-        events = Issue.issue_objects.filter(sg_event_id=value).select_related("project", "workspace")
-
-        if not events.exists():
-            raise NotFound("Event does not exist.")
-
-        if not any(user_can_access_event(request.user, event) for event in events):
-            raise PermissionDenied("You do not have access to this event.")
-
+        user_can_access_custom_playlist_event(
+            request.user,
+            value,
+            self.initial_data.get("project_id"),
+            self.initial_data.get("workspace_slug"),
+        )
         return value
 
     def validate(self, attrs):
         if self.instance is None and "event_id" not in attrs:
             raise serializers.ValidationError({"event_id": "This field is required."})
+        attrs.pop("project_id", None)
+        attrs.pop("workspace_slug", None)
         return attrs

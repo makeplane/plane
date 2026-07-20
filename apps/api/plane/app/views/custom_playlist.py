@@ -1,11 +1,10 @@
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from plane.app.serializers import CustomPlaylistSerializer
-from plane.app.serializers.custom_playlist import user_can_access_event
+from plane.app.serializers.custom_playlist import user_can_access_custom_playlist_event
 from plane.db.models import CustomPlaylist, Issue, ProjectMember
 
 from .base import BaseViewSet
@@ -19,17 +18,6 @@ class CustomPlaylistViewSet(BaseViewSet):
         project_ids = ProjectMember.objects.filter(member=self.request.user, is_active=True).values("project_id")
         return Issue.issue_objects.filter(project_id__in=project_ids, sg_event_id__isnull=False).values("sg_event_id")
 
-    def _get_event_or_error(self, event_id):
-        events = Issue.issue_objects.filter(sg_event_id=event_id).select_related("project", "workspace")
-
-        if not events.exists():
-            raise Http404
-
-        if not any(user_can_access_event(self.request.user, event) for event in events):
-            raise PermissionDenied("You do not have access to this event.")
-
-        return events.first()
-
     def _parse_event_id(self, event_id):
         try:
             parsed_event_id = int(str(event_id))
@@ -41,22 +29,30 @@ class CustomPlaylistViewSet(BaseViewSet):
 
         return parsed_event_id
 
+    def _authorize_event(self, event_id):
+        return user_can_access_custom_playlist_event(
+            self.request.user,
+            event_id,
+            self.request.query_params.get("project_id") or self.request.data.get("project_id"),
+            self.request.query_params.get("workspace_slug") or self.request.data.get("workspace_slug"),
+        )
+
     def get_queryset(self):
         return CustomPlaylist.objects.filter(event_id__in=self._accessible_event_ids()).order_by("-created_at")
 
     def get_object(self):
         playlist = get_object_or_404(CustomPlaylist.objects.all(), pk=self.kwargs.get("pk"))
-        self._get_event_or_error(playlist.event_id)
+        self._authorize_event(playlist.event_id)
         return playlist
 
     def list(self, request):
-        queryset = self.get_queryset()
-
         event_id = request.GET.get("event_id")
         if event_id:
             parsed_event_id = self._parse_event_id(event_id)
-            self._get_event_or_error(parsed_event_id)
-            queryset = queryset.filter(event_id=parsed_event_id)
+            self._authorize_event(parsed_event_id)
+            queryset = CustomPlaylist.objects.filter(event_id=parsed_event_id).order_by("-created_at")
+        else:
+            queryset = self.get_queryset()
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
