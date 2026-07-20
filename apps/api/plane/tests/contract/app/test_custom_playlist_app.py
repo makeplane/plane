@@ -42,8 +42,8 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         data = response.json()
         assert data["event_id"] == event.sg_event_id
         assert data["name"] == "Football Final Match"
-        assert data["url"] == "https://sports.kanavio.com/hls/final-match/master.m3u8"
-        assert data["thumbnail"] == "https://sports.kanavio.com/thumbnails/final-match.jpg"
+        assert data["url"] == "master.m3u8"
+        assert data["thumbnail"] == "final-match.jpg"
         assert data["clip"] == 12
         assert CustomPlaylist.objects.filter(pk=data["id"], event_id=event.sg_event_id).exists()
 
@@ -157,8 +157,8 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
             {
                 "event_id": event.sg_event_id,
                 "name": " ",
-                "url": "not-a-url",
-                "thumbnail": "also-not-a-url",
+                "url": "",
+                "thumbnail": f"{'a' * 256}.jpg",
                 "clip": -1,
             },
             format="json",
@@ -170,6 +170,27 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert "url" in data
         assert "thumbnail" in data
         assert "clip" in data
+
+    @pytest.mark.django_db
+    def test_create_playlist_accepts_file_names(self, session_client, workspace, create_user):
+        _, event = self.create_project_event(workspace, create_user)
+
+        response = session_client.post(
+            self.get_playlist_url(),
+            {
+                "event_id": event.sg_event_id,
+                "name": "Filename Playlist",
+                "url": "990ef30c.m3u8",
+                "thumbnail": "gYOMnVLyxdWHQWFG.jpg",
+                "clip": 1,
+            },
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        data = response.json()
+        assert data["url"] == "990ef30c.m3u8"
+        assert data["thumbnail"] == "gYOMnVLyxdWHQWFG.jpg"
 
     @pytest.mark.django_db
     def test_create_playlist_returns_404_for_missing_event(self, session_client):

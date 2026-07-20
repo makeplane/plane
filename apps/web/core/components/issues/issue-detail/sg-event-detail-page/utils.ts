@@ -121,6 +121,35 @@ export const buildArchivedPlaylistUrl = (playlistFileName: string) => {
   return `${getArchivedHlsBaseUrl()}/${normalizedFileName}`;
 };
 
+export const getLastPathSegment = (value: string | null | undefined) => {
+  const normalizedValue = (value ?? "").trim();
+  if (!normalizedValue) return "";
+
+  try {
+    const url = new URL(normalizedValue, typeof window !== "undefined" ? window.location.origin : "http://localhost");
+    return decodeURIComponent(url.pathname.replace(/\/+$/, "").split("/").pop() ?? "").trim();
+  } catch {
+    return decodeURIComponent(normalizedValue.replace(/\\/g, "/").replace(/\/+$/, "").split("/").pop() ?? "").trim();
+  }
+};
+
+export const buildCustomPlaylistUrl = (value: string | null | undefined) => {
+  const normalizedValue = (value ?? "").trim();
+  if (!normalizedValue) return "";
+  if (/^https?:\/\//i.test(normalizedValue)) return normalizedValue;
+
+  return buildArchivedPlaylistUrl(normalizedValue) ?? "";
+};
+
+export const buildCustomPlaylistThumbnailUrl = (value: string | null | undefined) => {
+  const normalizedValue = (value ?? "").trim();
+  if (!normalizedValue) return "";
+  if (/^https?:\/\//i.test(normalizedValue)) return normalizedValue;
+
+  const cpServerBaseUrl = getCpServerBaseUrl();
+  return cpServerBaseUrl ? `${cpServerBaseUrl}/blobs/thumbnails/${encodeURIComponent(normalizedValue)}` : normalizedValue;
+};
+
 export const formatLooseLabel = (value: string) =>
   value
     .replace(/[_-]+/g, " ")

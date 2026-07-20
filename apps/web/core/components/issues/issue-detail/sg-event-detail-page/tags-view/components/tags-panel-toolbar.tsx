@@ -175,10 +175,10 @@ export const TagsPanelToolbar = ({
           </span>
         </button>
       </Tooltip>
-      {showCreateActions && (
+      {onCreatePlaylist && (
         <button
           type="button"
-          disabled={!onCreatePlaylist || selectedCount === 0 || isCreatingPlaylist}
+          disabled={selectedCount === 0 || isCreatingPlaylist}
           onClick={onCreatePlaylist}
           className={`${TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
         >

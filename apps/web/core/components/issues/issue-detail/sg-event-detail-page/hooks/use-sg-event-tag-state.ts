@@ -104,6 +104,10 @@ export const useSgEventTagState = ({
     ]
   );
   const allVisibleSelected = filteredRows.length > 0 && filteredRows.every((row) => selectedTagIds.includes(row.id));
+  const selectedRows = useMemo(
+    () => tagRowsWithThumbnails.filter((row) => selectedTagIds.includes(row.id) && !removedTagIds.includes(row.id)),
+    [removedTagIds, selectedTagIds, tagRowsWithThumbnails]
+  );
   const matrixRows = useMemo(() => {
     const realRows = tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id));
     if (realRows.length > 0 || sport !== "american-football") return realRows;
@@ -198,6 +202,7 @@ export const useSgEventTagState = ({
     playlistPanelRows,
     rowFilterMode,
     searchQuery,
+    selectedRows,
     selectedTagIds,
     setFocusedMatrixRows,
     setRowFilterMode,

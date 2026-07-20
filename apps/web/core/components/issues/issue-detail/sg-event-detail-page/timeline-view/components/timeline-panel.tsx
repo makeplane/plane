@@ -5,6 +5,7 @@ import {
   Clock3,
   Copy,
   Eye,
+  ListPlus,
   Maximize2,
   Minus,
   Plus,
@@ -53,7 +54,9 @@ import { TimelineTagTypesPanel } from "./timeline-tag-types-panel";
 type SgEventTimelinePanelProps = {
   activePlaybackOverrideId: string | null;
   activeTagRowId: string | null;
+  isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
+  onCreatePlaylist?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onResetPlayback: () => void;
   onToggleTagSelection: (tagId: string) => void;
@@ -73,7 +76,9 @@ const TEXT_TOOL_BUTTON_CLASS =
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
+  isCreatingPlaylist = false,
   isMediaLoading,
+  onCreatePlaylist,
   onPlayTagRow,
   onResetPlayback,
   onToggleTagSelection,
@@ -354,6 +359,18 @@ export const SgEventTimelinePanel = ({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
+            disabled={!onCreatePlaylist || selectedTagIds.length === 0 || isCreatingPlaylist}
+            onClick={onCreatePlaylist}
+            className={cn(
+              TEXT_TOOL_BUTTON_CLASS,
+              "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100 disabled:cursor-not-allowed disabled:opacity-40"
+            )}
+          >
+            <ListPlus className="h-3.5 w-3.5" />
+            <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
+          </button>
           <Tooltip tooltipContent="Tag types" isMobile={false}>
             <button
               type="button"

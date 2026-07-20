@@ -65,10 +65,6 @@ export const SgEventHeader = ({
 
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
-        <button className="hidden h-8 items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] px-3 text-[12px] text-[var(--sg-matrix-text-secondary)] md:inline-flex">
-          <span>Default view</span>
-          <ChevronDown className="h-4 w-4 text-[var(--sg-matrix-text-muted)]" />
-        </button>
         {viewDevices.length > 0 ? (
           <CustomSelect
             value={selectedViewId}

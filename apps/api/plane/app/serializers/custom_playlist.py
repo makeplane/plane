@@ -1,3 +1,5 @@
+from urllib.parse import unquote, urlparse
+
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, PermissionDenied
 
@@ -19,7 +21,8 @@ def user_can_access_event(user, event):
 
 
 class CustomPlaylistSerializer(BaseSerializer):
-    thumbnail = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+    url = serializers.CharField(required=True, max_length=2048)
+    thumbnail = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=2048)
     clip = serializers.IntegerField(required=False, min_value=0, default=0)
 
     class Meta:
@@ -32,11 +35,33 @@ class CustomPlaylistSerializer(BaseSerializer):
             raise serializers.ValidationError("Name is required.")
         return value.strip()
 
+    def _normalize_file_name(self, value):
+        normalized_value = (value or "").strip()
+        if not normalized_value:
+            return ""
+
+        parsed_value = urlparse(normalized_value)
+        path_value = parsed_value.path if parsed_value.scheme or parsed_value.netloc else normalized_value
+        file_name = unquote(path_value.replace("\\", "/").rstrip("/").split("/")[-1]).strip()
+
+        if not file_name or "/" in file_name or "\\" in file_name:
+            raise serializers.ValidationError("Enter a valid file name.")
+
+        if len(file_name) > 255:
+            raise serializers.ValidationError("File name must be 255 characters or fewer.")
+
+        return file_name
+
+    def validate_url(self, value):
+        file_name = self._normalize_file_name(value)
+        if not file_name:
+            raise serializers.ValidationError("URL is required.")
+        return file_name
+
     def validate_thumbnail(self, value):
         if value is None:
             return None
-        value = value.strip()
-        return value or None
+        return self._normalize_file_name(value) or None
 
     def validate_event_id(self, value):
         request = self.context["request"]
