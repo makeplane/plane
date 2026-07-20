@@ -11,11 +11,11 @@ import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { ActiveCycleRoot } from "@/plane-web/components/cycles";
 // local imports
 import { CyclePeekOverview } from "../cycle-peek-overview";
 import { CycleListGroupHeader } from "./cycle-list-group-header";
 import { CyclesListMap } from "./cycles-list-map";
+import { ActiveCycleRoot } from "../active-cycle/root";
 
 export interface ICyclesList {
   completedCycleIds: string[];

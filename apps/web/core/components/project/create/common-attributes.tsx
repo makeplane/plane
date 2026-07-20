@@ -11,14 +11,11 @@ import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import type { TProject } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import { Input, TextArea } from "@plane/ui";
 import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
-// plane utils
-// helpers
-// plane-web types
-import type { TProject } from "@plane/types";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;

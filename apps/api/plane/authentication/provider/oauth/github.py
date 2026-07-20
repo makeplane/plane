@@ -117,12 +117,17 @@ class GitHubOAuthProvider(OauthAdapter):
                     error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                     error_message="GITHUB_OAUTH_PROVIDER_ERROR",
                 )
-            email = next((email["email"] for email in emails_response if email["primary"]), None)
+            # Require both primary AND verified — an unverified primary email can be
+            # exploited to take over an existing account (GHSA-7j95-vh8g-f365).
+            email = next(
+                (e["email"] for e in emails_response if e.get("primary") and e.get("verified")),
+                None,
+            )
             if not email:
-                self.logger.error("No primary email found for user")
+                self.logger.error("No primary verified email found for GitHub user")
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
-                    error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                    error_code=AUTHENTICATION_ERROR_CODES["OAUTH_PROVIDER_UNVERIFIED_EMAIL"],
+                    error_message="OAUTH_PROVIDER_UNVERIFIED_EMAIL",
                 )
             return email
         except requests.RequestException:

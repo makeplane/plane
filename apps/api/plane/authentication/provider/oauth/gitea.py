@@ -19,7 +19,7 @@ from plane.authentication.adapter.error import (
 
 class GiteaOAuthProvider(OauthAdapter):
     provider = "gitea"
-    scope = "openid email profile"
+    scope = "openid email profile read:user"
 
     def __init__(self, request, code=None, state=None, callback=None):
         (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
@@ -130,15 +130,17 @@ class GiteaOAuthProvider(OauthAdapter):
                     error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
                     error_message="GITEA_OAUTH_PROVIDER_ERROR: No emails found",
                 )
-            # Prefer primary+verified, then any verified, then primary, else first
+            # Prefer primary+verified, then any verified. Never fall back to an unverified
+            # email — an attacker with a self-hosted Gitea instance could assert any address
+            # to take over an existing account (GHSA-7j95-vh8g-f365).
             email = next((e.get("email") for e in emails_response if e.get("primary") and e.get("verified")), None)
             if not email:
                 email = next((e.get("email") for e in emails_response if e.get("verified")), None)
             if not email:
-                email = next((e.get("email") for e in emails_response if e.get("primary")), None)
-            if not email and emails_response:
-                # If no primary email, use the first one
-                email = emails_response[0].get("email")
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["OAUTH_PROVIDER_UNVERIFIED_EMAIL"],
+                    error_message="OAUTH_PROVIDER_UNVERIFIED_EMAIL",
+                )
             return email
         except requests.RequestException:
             raise AuthenticationException(
@@ -153,10 +155,10 @@ class GiteaOAuthProvider(OauthAdapter):
             "Accept": "application/json",
         }
 
-        # Get email if not provided in user info
-        email = user_info_response.get("email")
-        if not email:
-            email = self.__get_email(headers=headers)
+        # Always use __get_email() which enforces the verified-email requirement.
+        # The user object's .email field carries no verification flag, so it cannot
+        # be trusted directly (GHSA-7j95-vh8g-f365).
+        email = self.__get_email(headers=headers)
 
         super().set_user_data(
             {

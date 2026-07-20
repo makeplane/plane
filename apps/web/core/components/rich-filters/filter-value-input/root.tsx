@@ -20,8 +20,6 @@ import type {
   TFilterConditionNodeForDisplay,
 } from "@plane/types";
 import { FILTER_FIELD_TYPE } from "@plane/types";
-// local imports
-import { AdditionalFilterValueInput } from "@/plane-web/components/rich-filters/filter-value-input/root";
 import type { TFilterValueInputProps } from "../shared";
 import { DateRangeFilterValueInput } from "./date/range";
 import { SingleDateFilterValueInput } from "./date/single";
@@ -82,4 +80,16 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
   }
 
   return <AdditionalFilterValueInput {...props} />;
+});
+
+export const AdditionalFilterValueInput = observer(function AdditionalFilterValueInput<
+  P extends TFilterProperty,
+  V extends TFilterValue,
+>(_props: TFilterValueInputProps<P, V>) {
+  return (
+    // Fallback
+    <div className="flex h-full cursor-not-allowed items-center px-4 text-11 text-placeholder transition-opacity duration-200">
+      Filter type not supported
+    </div>
+  );
 });

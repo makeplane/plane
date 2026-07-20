@@ -15,8 +15,6 @@ import { useTranslation } from "@plane/i18n";
 import { CheckIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
-// plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
 type TProps = {
   workspace: IWorkspace;
@@ -84,9 +82,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             <span className="flex-shrink-0 p-1">
               <CheckIcon className="h-5 w-5 text-primary" />
             </span>
-          ) : (
-            <SubscriptionPill workspace={workspace} />
-          )}
+          ) : null}
         </div>
         {workspace.id === activeWorkspace?.id && (
           <>

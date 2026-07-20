@@ -12,7 +12,6 @@ import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
-import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
@@ -25,13 +24,9 @@ import { IssueTitleInput } from "@/components/issues/title-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
-import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// store types
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
-import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-issues";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
@@ -58,7 +53,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   const { loader } = useProjectInbox();
-  const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -76,20 +70,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   // derived values
   const issue = inboxIssue.issue;
-  const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
   const isIntakeAccepted = inboxIssue.status === EInboxIssueStatus.ACCEPTED;
-
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug,
-    projectDetails?.workspace.toString(),
-    projectId,
-    {
-      name: issue?.name,
-      description_html: getTextContent(issue?.description_html),
-      issueId: issue?.id,
-    }
-  );
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -125,6 +106,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
@@ -133,6 +115,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         }
       },
     }),
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
     [inboxIssue]
   );
 
@@ -143,16 +126,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   return (
     <>
       <div className="space-y-4 pb-4">
-        {duplicateIssues.length > 0 && (
-          <DeDupeIssuePopoverRoot
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            rootIssueId={issue.id}
-            issues={duplicateIssues}
-            issueOperations={issueOperations}
-            isIntakeIssue
-          />
-        )}
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}

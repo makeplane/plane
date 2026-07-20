@@ -10,7 +10,6 @@ import { computedFn } from "mobx-utils";
 // types
 import type { EUserPermissions } from "@plane/constants";
 import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
-// plane-web constants
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
@@ -20,7 +19,7 @@ import type { IUserStore } from "@/store/user";
 import type { IMemberRootStore } from "../index.ts";
 import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -282,6 +281,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   removeMemberFromWorkspace = async (workspaceSlug: string, userId: string) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
+    // oxlint-disable-next-line promise/always-return
     await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id).then(() => {
       runInAction(() => {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
@@ -323,7 +323,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     invitationId: string,
     data: Partial<IWorkspaceMemberInvitation>
   ) => {
-    const originalMemberInvitations = [...this.workspaceMemberInvitations?.[workspaceSlug]]; // in case of error, we will revert back to original members
+    const originalMemberInvitations = [...(this.workspaceMemberInvitations?.[workspaceSlug] ?? [])]; // in case of error, we will revert back to original members
     try {
       const memberInvitations = originalMemberInvitations?.map((invitation) => ({
         ...invitation,
@@ -349,6 +349,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param memberId
    */
   deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) =>
+    // oxlint-disable-next-line promise/always-return
     await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId).then(() => {
       runInAction(() => {
         this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(

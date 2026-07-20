@@ -22,7 +22,6 @@ import {
   FilterStateGroup,
 } from "@/components/issues/issue-layouts/filters";
 import { isFiltersApplied } from "@/components/issues/issue-layouts/utils";
-import { FilterIssueTypes } from "@/plane-web/components/issues/filters/issue-types";
 type TSubIssueFiltersProps = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   filters: IIssueFilterOptions;
@@ -117,17 +116,6 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
                 <FilterProjects
                   appliedFilters={filters.project ?? null}
                   handleUpdate={(val) => handleFiltersUpdate("project", val)}
-                  searchQuery={filtersSearchQuery}
-                />
-              </div>
-            )}
-
-            {/* work item types */}
-            {isFilterEnabled("issue_type") && (
-              <div className="py-2">
-                <FilterIssueTypes
-                  appliedFilters={filters.issue_type ?? null}
-                  handleUpdate={(val) => handleFiltersUpdate("issue_type", val)}
                   searchQuery={filtersSearchQuery}
                 />
               </div>

@@ -20,8 +20,6 @@ import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
-// plane web components
-import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
 import type { EPageStoreType } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
@@ -180,7 +178,6 @@ export const PageActions = observer(function PageActions(props: Props) {
 
   return (
     <>
-      <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} page={page} />
       <DeletePageModal
         isOpen={deletePageModal}
         onClose={() => setDeletePageModal(false)}

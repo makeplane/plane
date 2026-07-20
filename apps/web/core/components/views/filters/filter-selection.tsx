@@ -14,11 +14,8 @@ import { EViewAccess } from "@plane/types";
 import { FilterCreatedDate } from "@/components/common/filters/created-at";
 import { FilterCreatedBy } from "@/components/common/filters/created-by";
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
-// constants
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { FilterByAccess } from "@/plane-web/components/views/filters/access-filter";
 
 type Props = {
   filters: TViewFilters;
@@ -68,6 +65,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
+            // oxlint-disable-next-line jsx_a11y/no-autofocus
             autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
@@ -90,17 +88,6 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
             title="Favorites"
           />
         </div>
-
-        {/* access / view type */}
-        <FilterByAccess
-          appliedFilters={filters.filters?.view_type}
-          handleUpdate={(val: string | string[]) => handleFilters("view_type", val)}
-          searchQuery={filtersSearchQuery}
-          accessFilters={[
-            { key: EViewAccess.PRIVATE, value: "Private" },
-            { key: EViewAccess.PUBLIC, value: "Public" },
-          ]}
-        />
 
         {/* created date */}
         <div className="py-2">

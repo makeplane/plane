@@ -13,11 +13,10 @@ import { EIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { useTimeLineRelationOptions } from "@/components/relations";
+import { CreateUpdateEpicModal } from "@/components/epic-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { RelationIssueList } from "../../relations/issue-list";

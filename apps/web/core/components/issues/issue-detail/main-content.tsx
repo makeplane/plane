@@ -1,3 +1,4 @@
+// oxlint-disable no-shadow
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -10,21 +11,16 @@ import { observer } from "mobx-react";
 import type { EditorRefApi } from "@plane/editor";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
-import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
-import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
-// plane web components
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
-import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
-import { useDebouncedDuplicateIssues } from "@/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local imports
@@ -62,22 +58,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
     issue: { getIssueById },
     peekIssue,
   } = useIssueDetail();
-  const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   // derived values
-  const projectDetails = getProjectById(projectId);
   const issue = issueId ? getIssueById(issueId) : undefined;
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug,
-    projectDetails?.workspace.toString(),
-    projectDetails?.id,
-    {
-      name: issue?.name,
-      description_html: getTextContent(issue?.description_html),
-      issueId: issue?.id,
-    }
-  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -109,16 +92,6 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
           <div className="flex items-center gap-3">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-            {duplicateIssues?.length > 0 && (
-              <DeDupeIssuePopoverRoot
-                workspaceSlug={workspaceSlug}
-                projectId={issue.project_id}
-                rootIssueId={issueId}
-                issues={duplicateIssues}
-                issueOperations={issueOperations}
-                renderDeDupeActionModals={!isPeekModeActive}
-              />
-            )}
           </div>
         </div>
 

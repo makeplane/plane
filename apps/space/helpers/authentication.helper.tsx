@@ -42,6 +42,7 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL_MAGIC_SIGN_UP = "5050",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5055",
   // Sign In
+  BOT_USER_LOGIN_FORBIDDEN = "5017",
   USER_ACCOUNT_DEACTIVATED = "5019",
   USER_DOES_NOT_EXIST = "5060",
   AUTHENTICATION_FAILED_SIGN_IN = "5065",
@@ -160,6 +161,10 @@ const errorCodeMessages: {
   },
 
   // sign in
+  [EAuthenticationErrorCodes.BOT_USER_LOGIN_FORBIDDEN]: {
+    title: `Sign in not allowed`,
+    message: () => `This account cannot be used to sign in. Please use a personal account.`,
+  },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
     message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
@@ -384,6 +389,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
+    EAuthenticationErrorCodes.BOT_USER_LOGIN_FORBIDDEN,
     EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 

@@ -12,8 +12,8 @@ import type { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys
 // plane web services
 import estimateService from "@/services/estimate.service";
 // plane web store
-import type { IEstimate } from "@/plane-web/store/estimates/estimate";
-import { Estimate } from "@/plane-web/store/estimates/estimate";
+import type { IEstimate } from "@/store/estimates/estimate";
+import { Estimate } from "@/store/estimates/estimate";
 // store
 import type { CoreRootStore } from "../root.store";
 

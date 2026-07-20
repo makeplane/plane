@@ -10,16 +10,17 @@ import { FALLBACK_LANGUAGE, setLanguage } from "@plane/i18n";
 import type { IWorkItemFilterStore } from "@plane/shared-state";
 import { WorkItemFilterStore } from "@plane/shared-state";
 // plane web store
-import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
-import { AnalyticsStore } from "@/plane-web/store/analytics.store";
-import type { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
-import { CommandPaletteStore } from "@/plane-web/store/command-palette.store";
-import { PowerKStore } from "@/plane-web/store/power-k.store";
-import type { IPowerKStore } from "@/plane-web/store/power-k.store";
-import type { RootStore } from "@/plane-web/store/root.store";
-import type { IStateStore } from "@/plane-web/store/state.store";
-import { StateStore } from "@/plane-web/store/state.store";
-import { WorkspaceRootStore } from "@/plane-web/store/workspace";
+import type { IBaseAnalyticsStore as IAnalyticsStore } from "@/store/analytics.store";
+import { BaseAnalyticsStore as AnalyticsStore } from "@/store/analytics.store";
+import type { IBasePowerKStore as IPowerKStore } from "@/store/base-power-k.store";
+import { BasePowerKStore as PowerKStore } from "@/store/base-power-k.store";
+import type { IStateStore } from "@/store/state.store";
+import { StateStore } from "@/store/state.store";
+import type { ICommandPaletteStore } from "@/store/base-command-palette.store";
+import { CommandPaletteStore } from "@/store/base-command-palette.store";
+import { WorkspaceRootStore } from "@/store/workspace";
+import type { ITimelineStore } from "./timeline/timeline.store";
+import { TimeLineStore } from "./timeline/timeline.store";
 // stores
 import type { ICycleStore } from "./cycle.store";
 import { CycleStore } from "./cycle.store";
@@ -101,29 +102,30 @@ export class CoreRootStore {
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
+  timelineStore: ITimelineStore;
 
   constructor() {
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
-    this.user = new UserStore(this as unknown as RootStore);
+    this.user = new UserStore(this);
     this.theme = new ThemeStore();
-    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
+    this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.memberRoot = new MemberRootStore(this as unknown as RootStore);
+    this.memberRoot = new MemberRootStore(this);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this as unknown as RootStore);
-    this.state = new StateStore(this as unknown as RootStore);
+    this.issue = new IssueRootStore(this);
+    this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
+    this.projectPages = new ProjectPageStore(this);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
@@ -132,6 +134,7 @@ export class CoreRootStore {
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.timelineStore = new TimeLineStore(this);
   }
 
   resetOnSignOut() {
@@ -141,22 +144,22 @@ export class CoreRootStore {
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
-    this.user = new UserStore(this as unknown as RootStore);
-    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
+    this.user = new UserStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.memberRoot = new MemberRootStore(this as unknown as RootStore);
+    this.memberRoot = new MemberRootStore(this);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this as unknown as RootStore);
-    this.state = new StateStore(this as unknown as RootStore);
+    this.issue = new IssueRootStore(this);
+    this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
+    this.projectPages = new ProjectPageStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
@@ -165,5 +168,8 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.timelineStore = new TimeLineStore(this);
   }
 }
+
+export { CoreRootStore as RootStore };

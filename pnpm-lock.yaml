@@ -135,12 +135,6 @@ catalogs:
     '@tanstack/react-table':
       specifier: ^8.21.3
       version: 8.21.3
-    '@tanstack/react-virtual':
-      specifier: ^3.13.12
-      version: 3.13.12
-    '@tanstack/virtual-core':
-      specifier: ^3.13.12
-      version: 3.13.12
     '@tiptap/core':
       specifier: ^2.22.3
       version: 2.26.3
@@ -647,15 +641,6 @@ importers:
       '@react-router/node':
         specifier: 'catalog:'
         version: 7.15.0(react-router@7.15.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
-      '@tanstack/react-virtual':
-        specifier: 'catalog:'
-        version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/virtual-core':
-        specifier: 'catalog:'
-        version: 3.13.12
-      axios:
-        specifier: 1.16.0
-        version: 1.16.0
       isbot:
         specifier: 'catalog:'
         version: 5.1.31

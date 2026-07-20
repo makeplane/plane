@@ -18,7 +18,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 
 export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   // router
