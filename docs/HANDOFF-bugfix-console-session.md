@@ -961,9 +961,11 @@ node "$C" --resolve apps/api/plane/db/models/issue_type.py
 node "$C" --resolve-prompt "wiki workspace"
 ```
 
-### 14.7bis `CLAUDE.md` créé — le fichier manquait depuis le début
+### 14.7bis `CLAUDE.md` créé — mais il est gitignoré par upstream, donc **local uniquement**
 
-`session-context.js` avertissait « **Pas de CLAUDE.md trouvé — projet non initialisé ?** » : le dépôt n'en avait **aucun**, alors que c'est le fichier que Claude Code lit à chaque session et que l'**étape 5 de `/zelian:migrate`** demande d'y mettre à jour `framework_version`. Créé d'après le template du plugin, en **index court** comme il l'exige (les 33 modules ne sont pas listés : Compass est la source de vérité, la table Modules n'en serait qu'une vue humaine). Il porte `framework_version: 3.0.0`, les 6 apps, les commandes utiles, les 8 rules actives et les écarts framework connus.
+`session-context.js` avertissait « **Pas de CLAUDE.md trouvé — projet non initialisé ?** » : le dépôt n'en avait **aucun**, alors que c'est le fichier que Claude Code lit à chaque session et que l'**étape 5 de `/zelian:migrate`** demande d'y mettre à jour `framework_version`. Créé d'après le template du plugin, en **index court** comme il l'exige (les 33 modules ne sont pas listés : Compass est la source de vérité, la table Modules n'en serait qu'une vue humaine). Il porte `framework_version: 3.0.0`, les 6 apps, les commandes utiles, les 8 rules actives et les écarts framework connus. L'avertissement a disparu.
+
+⚠️ **Il n'est PAS versionné et ne peut pas l'être en l'état** : `.gitignore:104` ignore `CLAUDE.md`, et cette règle **vient du commit racine upstream** `64da8dc` — c'est une décision de Plane (fichier d'assistant local, propre à chaque dev), pas de Zelian. Aucun `git add -f` n'a été fait pour passer outre. **Conséquence** : le fichier n'existe que sur ce poste ; tout nouveau clone repartira sans, et l'avertissement reviendra. À trancher par le dev — soit chacun régénère le sien depuis le template, soit on retire la ligne 104 pour le partager à l'équipe, en assumant la divergence avec upstream. À noter que `.claude/rules/` **est**, lui, versionné.
 
 ### 14.8 Jeu de données — trois fixtures AJOUTÉES, ne pas nettoyer
 
