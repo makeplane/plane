@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { UIEvent } from "react";
 import {
   Clock3,
   Copy,
@@ -18,6 +19,16 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "../../constants";
 import type { SgTagRow, SportTableKind } from "../../types";
+import {
+  TIMELINE_FIXED_FOOTER_CLASS,
+  TIMELINE_HORIZONTAL_SCROLL_CLASS,
+  TIMELINE_LANE_LABEL_COLUMN_CLASS,
+  TIMELINE_PANEL_ROOT_CLASS,
+  TIMELINE_RULER_SCROLL_CLASS,
+  TIMELINE_TRACKS_ROW_CLASS,
+  TIMELINE_TRACKS_SCROLL_CLASS,
+  getTimelinePanelMaxHeightPx,
+} from "../utils/timeline-layout";
 import {
   buildLaneMarkerOffsets,
   buildSortedTimelineRows,
@@ -99,7 +110,11 @@ export const SgEventTimelinePanel = ({
   const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
   const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
+  const [timelinePanelMaxHeightPx, setTimelinePanelMaxHeightPx] = useState<number | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
+  const timelineRulerScrollRef = useRef<HTMLDivElement | null>(null);
+  const isSyncingTimelineHorizontalScrollRef = useRef(false);
   const playheadElementRef = useRef<HTMLDivElement | null>(null);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
@@ -202,13 +217,52 @@ export const SgEventTimelinePanel = ({
   }, [isTagClipActive, playerDurationSeconds]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let animationFrameId = 0;
+    const updatePanelMaxHeight = () => {
+      window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = window.requestAnimationFrame(() => {
+        const panelTopPx = panelRef.current?.getBoundingClientRect().top ?? 0;
+        const nextMaxHeightPx = getTimelinePanelMaxHeightPx({
+          panelTopPx,
+          viewportHeightPx: window.innerHeight,
+        });
+
+        setTimelinePanelMaxHeightPx((currentMaxHeightPx) =>
+          currentMaxHeightPx === nextMaxHeightPx ? currentMaxHeightPx : nextMaxHeightPx
+        );
+      });
+    };
+
+    updatePanelMaxHeight();
+
+    window.addEventListener("orientationchange", updatePanelMaxHeight);
+    window.addEventListener("resize", updatePanelMaxHeight);
+
+    const resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updatePanelMaxHeight) : null;
+    const panelParentElement = panelRef.current?.parentElement;
+
+    if (resizeObserver) {
+      if (panelParentElement) resizeObserver.observe(panelParentElement);
+      resizeObserver.observe(document.documentElement);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("orientationchange", updatePanelMaxHeight);
+      window.removeEventListener("resize", updatePanelMaxHeight);
+      resizeObserver?.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     const playheadElement = playheadElementRef.current;
     if (!playheadElement) return;
 
     const anchorSeconds = timelinePlayheadSeconds;
     const anchorTimeMs = window.performance.now();
-    const activePlaybackRate =
-      Number.isFinite(playerPlaybackRate) && playerPlaybackRate > 0 ? playerPlaybackRate : 1;
+    const activePlaybackRate = Number.isFinite(playerPlaybackRate) && playerPlaybackRate > 0 ? playerPlaybackRate : 1;
     const setPlayheadPosition = (seconds: number) => {
       playheadElement.style.transform = getPlayheadTransform(
         getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth)
@@ -236,6 +290,39 @@ export const SgEventTimelinePanel = ({
     return () => window.cancelAnimationFrame(animationFrameId);
   }, [isPlayerPlaying, playerPlaybackRate, timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
 
+  useEffect(() => {
+    const trackScrollElement = timelineScrollRef.current;
+    const rulerScrollElement = timelineRulerScrollRef.current;
+    if (!trackScrollElement || !rulerScrollElement) return;
+
+    rulerScrollElement.scrollLeft = trackScrollElement.scrollLeft;
+  }, [timelineContentWidth]);
+
+  const syncTimelineHorizontalScroll = (sourceElement: HTMLDivElement, targetElement: HTMLDivElement | null) => {
+    if (!targetElement) return;
+
+    const nextScrollLeft = sourceElement.scrollLeft;
+    if (Math.abs(targetElement.scrollLeft - nextScrollLeft) < 1) return;
+
+    isSyncingTimelineHorizontalScrollRef.current = true;
+    targetElement.scrollLeft = nextScrollLeft;
+    window.requestAnimationFrame(() => {
+      isSyncingTimelineHorizontalScrollRef.current = false;
+    });
+  };
+
+  const handleTimelineTrackScroll = (event: UIEvent<HTMLDivElement>) => {
+    if (isSyncingTimelineHorizontalScrollRef.current) return;
+
+    syncTimelineHorizontalScroll(event.currentTarget, timelineRulerScrollRef.current);
+  };
+
+  const handleTimelineRulerScroll = (event: UIEvent<HTMLDivElement>) => {
+    if (isSyncingTimelineHorizontalScrollRef.current) return;
+
+    syncTimelineHorizontalScroll(event.currentTarget, timelineScrollRef.current);
+  };
+
   const scrollTimelineRangeIntoView = (
     range: { leftPx: number; widthPx: number },
     behavior: "auto" | "smooth" = "smooth"
@@ -250,12 +337,20 @@ export const SgEventTimelinePanel = ({
     const padding = 80;
 
     if (rangeLeft < viewportLeft + padding) {
-      scrollElement.scrollTo({ behavior, left: Math.max(0, rangeLeft - padding) });
+      const nextScrollLeft = Math.max(0, rangeLeft - padding);
+      scrollElement.scrollTo({ behavior, left: nextScrollLeft });
+      if (behavior === "auto" && timelineRulerScrollRef.current) {
+        timelineRulerScrollRef.current.scrollLeft = nextScrollLeft;
+      }
       return;
     }
 
     if (rangeRight > viewportRight - padding) {
-      scrollElement.scrollTo({ behavior, left: Math.max(0, rangeRight - scrollElement.clientWidth + padding) });
+      const nextScrollLeft = Math.max(0, rangeRight - scrollElement.clientWidth + padding);
+      scrollElement.scrollTo({ behavior, left: nextScrollLeft });
+      if (behavior === "auto" && timelineRulerScrollRef.current) {
+        timelineRulerScrollRef.current.scrollLeft = nextScrollLeft;
+      }
     }
   };
 
@@ -331,7 +426,11 @@ export const SgEventTimelinePanel = ({
   };
 
   return (
-    <section className={cn(SURFACE_CLASS, "overflow-hidden")}>
+    <section
+      ref={panelRef}
+      className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)}
+      style={{ maxHeight: timelinePanelMaxHeightPx ? `${timelinePanelMaxHeightPx}px` : "calc(100dvh - 12px)" }}
+    >
       <div className="flex flex-col gap-3 border-b border-custom-border-200 px-3 py-2.5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1">
           <Tooltip tooltipContent="Jump to previous tag" isMobile={false}>
@@ -424,143 +523,162 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      <div className="flex overflow-hidden">
-        <div className="w-[220px] shrink-0 border-r border-custom-border-200">
-          {timelineLanes.map((lane) => (
-            <div
-              key={lane.id}
-              className={cn(
-                "flex h-10 items-center justify-between border-l-2 px-2 text-xs",
-                LANE_TONE_CLASS[lane.tone]
-              )}
-            >
-              <span className="min-w-0 truncate">{lane.label}</span>
-              <Eye className="h-3 w-3 shrink-0 opacity-70" />
-            </div>
-          ))}
-          <div className="flex h-10 items-center justify-between border-t border-custom-border-200 px-3 text-[11px] text-custom-text-400">
-            <span>Scale Size</span>
-            <span className="inline-flex items-center gap-2">
-              <Tooltip tooltipContent="Zoom out timeline" isMobile={false}>
-                <button
-                  type="button"
-                  aria-label="Zoom out timeline"
-                  onClick={() => handleTimelineScaleChange("out")}
-                  disabled={!canZoomOut}
-                  className={cn(
-                    "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
-                    !canZoomOut && "cursor-not-allowed opacity-40"
-                  )}
-                >
-                  <Minus className="h-3.5 w-3.5" />
-                </button>
-              </Tooltip>
-              <span className="min-w-9 text-center tabular-nums">{getTimelineScaleLabel(timelineScale)}</span>
-              <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
-                <button
-                  type="button"
-                  aria-label="Zoom in timeline"
-                  onClick={() => handleTimelineScaleChange("in")}
-                  disabled={!canZoomIn}
-                  className={cn(
-                    "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
-                    !canZoomIn && "cursor-not-allowed opacity-40"
-                  )}
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              </Tooltip>
-            </span>
+      <div className={TIMELINE_TRACKS_SCROLL_CLASS}>
+        <div className={TIMELINE_TRACKS_ROW_CLASS}>
+          <div className={TIMELINE_LANE_LABEL_COLUMN_CLASS}>
+            {timelineLanes.map((lane) => (
+              <div
+                key={lane.id}
+                className={cn(
+                  "flex h-10 items-center justify-between border-l-2 px-2 text-xs",
+                  LANE_TONE_CLASS[lane.tone]
+                )}
+              >
+                <span className="min-w-0 truncate">{lane.label}</span>
+                <Eye className="h-3 w-3 shrink-0 opacity-70" />
+              </div>
+            ))}
           </div>
-        </div>
 
-        <div
-          ref={timelineScrollRef}
-          className="horizontal-scrollbar scrollbar-sm min-w-0 flex-1 overflow-x-auto overflow-y-hidden pb-2"
-        >
           <div
-            className="relative transition-[width] duration-150 ease-out"
-            style={{ minWidth: "100%", width: timelineContentWidth }}
+            ref={timelineScrollRef}
+            onScroll={handleTimelineTrackScroll}
+            className={TIMELINE_HORIZONTAL_SCROLL_CLASS}
           >
             <div
-              ref={playheadElementRef}
-              className="absolute left-0 top-0 z-[3] h-[calc(100%-2.5rem)] w-1 rounded-full bg-red-500 will-change-transform"
-              style={{ transform: getPlayheadTransform(playheadPositionPx) }}
-            />
-            {timelineLanes.map((lane) => {
-              const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
+              className="relative transition-[width] duration-150 ease-out"
+              style={{ minWidth: "100%", width: timelineContentWidth }}
+            >
+              <div
+                ref={playheadElementRef}
+                className="absolute left-0 top-0 z-[3] h-full w-1 rounded-full bg-red-500 will-change-transform"
+                style={{ transform: getPlayheadTransform(playheadPositionPx) }}
+              />
+              {timelineLanes.map((lane) => {
+                const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
 
-              return (
-                <div key={lane.id} className="relative h-10 border-b border-custom-border-200 bg-custom-background-90">
-                  {lane.rows.map((row) => {
-                    const placement = rowPlacements[row.id] ?? {
-                      endSeconds: DEFAULT_TIMELINE_TAG_DURATION_SECONDS,
-                      startSeconds: 0,
-                    };
-                    const range = getPlacementRange(placement);
-                    const markerColor =
-                      tagTypeOptionsByKey.get(getTimelineTagTypeKey(row))?.color ??
-                      MARKER_COLORS[hashString(`${row.action}-${row.player}-${row.timecode}`) % MARKER_COLORS.length];
-                    const isActive =
-                      activeTagRowId === row.id || activePlaybackOverrideId === buildTagPlaybackOverrideId(row);
-                    const isSelected = selectedTagIds.includes(row.id);
-                    const markerOffset = (laneMarkerOffsets[row.id] ?? 0) % 3;
+                return (
+                  <div
+                    key={lane.id}
+                    className="relative h-10 border-b border-custom-border-200 bg-custom-background-90"
+                  >
+                    {lane.rows.map((row) => {
+                      const placement = rowPlacements[row.id] ?? {
+                        endSeconds: DEFAULT_TIMELINE_TAG_DURATION_SECONDS,
+                        startSeconds: 0,
+                      };
+                      const range = getPlacementRange(placement);
+                      const markerColor =
+                        tagTypeOptionsByKey.get(getTimelineTagTypeKey(row))?.color ??
+                        MARKER_COLORS[hashString(`${row.action}-${row.player}-${row.timecode}`) % MARKER_COLORS.length];
+                      const isActive =
+                        activeTagRowId === row.id || activePlaybackOverrideId === buildTagPlaybackOverrideId(row);
+                      const isSelected = selectedTagIds.includes(row.id);
+                      const markerOffset = (laneMarkerOffsets[row.id] ?? 0) % 3;
 
-                    return (
-                      <Tooltip
-                        key={`${lane.id}-${row.id}`}
-                        tooltipContent={<TimelineTagTooltip placement={placement} row={row} />}
-                        className="rounded-md border border-[#b8dcb5] bg-[#dff6dc] px-2 py-1 shadow-lg"
-                        openDelay={80}
-                        isMobile={false}
-                        position="top"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handlePlayTimelineRow(row);
-                          }}
-                          onDoubleClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            onToggleTagSelection(row.id);
-                          }}
-                          className={cn(
-                            "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",
-                            isActive && "ring-2 ring-custom-primary-100",
-                            isSelected && "border-white/80"
-                          )}
-                          style={{
-                            backgroundColor: markerColor,
-                            left: range.leftPx,
-                            top: 6 + markerOffset * 3,
-                            width: range.widthPx,
-                          }}
-                          aria-pressed={isActive || isSelected}
+                      return (
+                        <Tooltip
+                          key={`${lane.id}-${row.id}`}
+                          tooltipContent={<TimelineTagTooltip placement={placement} row={row} />}
+                          className="rounded-md border border-[#b8dcb5] bg-[#dff6dc] px-2 py-1 shadow-lg"
+                          openDelay={80}
+                          isMobile={false}
+                          position="top"
                         >
-                          <span className="pointer-events-none block truncate px-1.5">
-                            {formatTooltipText(row.action, "title") || "Tag"}
-                          </span>
-                        </button>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              );
-            })}
-
-            <div className="relative h-10 border-t border-custom-border-200 bg-custom-background-100">
-              {visibleTicks.map((tick) => (
-                <div
-                  key={`tick-${tick.label}`}
-                  className="absolute top-0 flex h-full -translate-x-1/2 items-center text-[11px] text-custom-text-400"
-                  style={{ left: `${tick.position}%` }}
-                >
-                  {tick.label}
-                </div>
-              ))}
-              <Plus className="absolute bottom-0 right-1 h-4 w-4 text-custom-text-400" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handlePlayTimelineRow(row);
+                            }}
+                            onDoubleClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              onToggleTagSelection(row.id);
+                            }}
+                            className={cn(
+                              "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",
+                              isActive && "ring-2 ring-custom-primary-100",
+                              isSelected && "border-white/80"
+                            )}
+                            style={{
+                              backgroundColor: markerColor,
+                              left: range.leftPx,
+                              top: 6 + markerOffset * 3,
+                              width: range.widthPx,
+                            }}
+                            aria-pressed={isActive || isSelected}
+                          >
+                            <span className="pointer-events-none block truncate px-1.5">
+                              {formatTooltipText(row.action, "title") || "Tag"}
+                            </span>
+                          </button>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={cn(TIMELINE_FIXED_FOOTER_CLASS, "flex border-t border-custom-border-200")}>
+        <div
+          className={cn(
+            TIMELINE_LANE_LABEL_COLUMN_CLASS,
+            "flex h-10 items-center justify-between px-3 text-[11px] text-custom-text-400"
+          )}
+        >
+          <span>Scale Size</span>
+          <span className="inline-flex items-center gap-2">
+            <Tooltip tooltipContent="Zoom out timeline" isMobile={false}>
+              <button
+                type="button"
+                aria-label="Zoom out timeline"
+                onClick={() => handleTimelineScaleChange("out")}
+                disabled={!canZoomOut}
+                className={cn(
+                  "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
+                  !canZoomOut && "cursor-not-allowed opacity-40"
+                )}
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+            </Tooltip>
+            <span className="min-w-9 text-center tabular-nums">{getTimelineScaleLabel(timelineScale)}</span>
+            <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
+              <button
+                type="button"
+                aria-label="Zoom in timeline"
+                onClick={() => handleTimelineScaleChange("in")}
+                disabled={!canZoomIn}
+                className={cn(
+                  "inline-flex h-6 w-6 items-center justify-center rounded text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100",
+                  !canZoomIn && "cursor-not-allowed opacity-40"
+                )}
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </Tooltip>
+          </span>
+        </div>
+
+        <div ref={timelineRulerScrollRef} onScroll={handleTimelineRulerScroll} className={TIMELINE_RULER_SCROLL_CLASS}>
+          <div
+            className="relative h-10 transition-[width] duration-150 ease-out"
+            style={{ minWidth: "100%", width: timelineContentWidth }}
+          >
+            {visibleTicks.map((tick) => (
+              <div
+                key={`tick-${tick.label}`}
+                className="absolute top-0 flex h-full -translate-x-1/2 items-center text-[11px] text-custom-text-400"
+                style={{ left: `${tick.position}%` }}
+              >
+                {tick.label}
+              </div>
+            ))}
+            <Plus className="absolute bottom-0 right-1 h-4 w-4 text-custom-text-400" />
           </div>
         </div>
       </div>
