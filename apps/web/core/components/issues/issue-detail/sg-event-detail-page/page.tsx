@@ -6,7 +6,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { MediaLibraryService } from "@/services/media-library.service";
+import { MediaLibraryService, type TCustomPlaylist, type TCustomPlaylistClip } from "@/services/media-library.service";
 import { RosterService } from "@/services/roster.service";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
@@ -65,6 +65,28 @@ const pickNumericSgEventId = (sources: Array<Record<string, unknown> | null | un
 
   return "";
 };
+
+const buildCustomPlaylistClips = (rows: SgTagRow[]): TCustomPlaylistClip[] =>
+  rows.map((row, index) => {
+    const title = row.action || row.primaryDetail || `Clip ${index + 1}`;
+    const subtitle = [row.player, row.team, row.groupValue].filter(Boolean).join(" / ");
+    const tags = [row.result, row.primaryDetail, row.secondaryDetail].filter(Boolean);
+
+    return {
+      groupValue: row.groupValue,
+      id: row.id,
+      player: row.player,
+      primaryDetail: row.primaryDetail,
+      result: row.result,
+      sourceTagId: row.sourceTagId,
+      subtitle,
+      tags,
+      team: row.team,
+      thumbnail: getLastPathSegment(row.thumbnailUrl) || row.thumbnailUrl || null,
+      timestamp: row.playlistTimestamp,
+      title,
+    };
+  });
 
 export const SgEventDetailPage = ({
   enableMatrixView = false,
@@ -345,6 +367,7 @@ export const SgEventDetailPage = ({
           url: result.fileName || getLastPathSegment(result.url),
           thumbnail: getLastPathSegment(thumbnail),
           clip: includedRows.length,
+          clips: buildCustomPlaylistClips(includedRows),
           project_id: projectId,
           workspace_slug: workspaceSlug,
         });
@@ -389,6 +412,17 @@ export const SgEventDetailPage = ({
       selectedViewDevice?.streamName,
       workspaceSlug,
     ]
+  );
+
+  const handleDeleteCustomPlaylist = useCallback(
+    async (playlist: TCustomPlaylist) => {
+      await mediaLibraryService.deleteCustomPlaylist(playlist.id);
+      void mutateCustomPlaylists(
+        (currentPlaylists = []) => currentPlaylists.filter((currentPlaylist) => currentPlaylist.id !== playlist.id),
+        { revalidate: false }
+      );
+    },
+    [mediaLibraryService, mutateCustomPlaylists]
   );
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
@@ -456,6 +490,7 @@ export const SgEventDetailPage = ({
                   onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
                   onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
                   rows={activePlaylistRows}
+                  onDeletePlaylist={handleDeleteCustomPlaylist}
                 />
               </div>
 
@@ -497,6 +532,7 @@ export const SgEventDetailPage = ({
                     onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
                     onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
                     rows={activePlaylistRows}
+                    onDeletePlaylist={handleDeleteCustomPlaylist}
                   />
                 </div>
               )}

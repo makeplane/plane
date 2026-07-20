@@ -8,11 +8,12 @@ type THlsVideoProps = {
   src: string;
   poster?: string;
   className?: string;
+  autoPlay?: boolean;
   controls?: boolean;
   videoRef?: RefObject<HTMLVideoElement>;
 };
 
-export const HlsVideo = ({ src, poster, className, controls = true, videoRef }: THlsVideoProps) => {
+export const HlsVideo = ({ src, poster, className, autoPlay = false, controls = true, videoRef }: THlsVideoProps) => {
   const fallbackRef = useRef<HTMLVideoElement | null>(null);
   const targetRef = videoRef ?? fallbackRef;
 
@@ -43,6 +44,7 @@ export const HlsVideo = ({ src, poster, className, controls = true, videoRef }: 
     <video
       ref={targetRef}
       poster={poster}
+      autoPlay={autoPlay}
       controls={controls}
       playsInline
       preload="metadata"
