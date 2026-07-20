@@ -48,7 +48,14 @@
       "parent_work_item": "Szybkie akcje nadrzędnego elementu pracy",
       "draft_work_item": "Szybkie akcje szkicu",
       "invitation": "Szybkie akcje zaproszenia",
-      "worklog": "Szybkie akcje wpisu pracy"
+      "worklog": "Szybkie akcje wpisu pracy",
+      "link": "Szybkie akcje linku",
+      "sub_work_item": "Szybkie akcje podrzędnego elementu pracy",
+      "related_work_item": "Szybkie akcje powiązanego elementu pracy",
+      "project_member": "Szybkie akcje członka projektu"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Pokaż lub ukryj podrzędne elementy pracy"
     }
   }
 }

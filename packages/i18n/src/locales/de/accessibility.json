@@ -48,7 +48,14 @@
       "parent_work_item": "Schnellaktionen für übergeordnetes Arbeitselement",
       "draft_work_item": "Schnellaktionen für Entwurf",
       "invitation": "Schnellaktionen für Einladung",
-      "worklog": "Schnellaktionen für Arbeitszeiteintrag"
+      "worklog": "Schnellaktionen für Arbeitszeiteintrag",
+      "link": "Schnellaktionen für Link",
+      "sub_work_item": "Schnellaktionen für untergeordnetes Arbeitselement",
+      "related_work_item": "Schnellaktionen für verknüpftes Arbeitselement",
+      "project_member": "Schnellaktionen für Projektmitglied"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Untergeordnete Arbeitselemente ein- oder ausblenden"
     }
   }
 }

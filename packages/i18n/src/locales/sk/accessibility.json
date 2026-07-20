@@ -48,7 +48,14 @@
       "parent_work_item": "Rýchle akcie nadradenej pracovnej položky",
       "draft_work_item": "Rýchle akcie konceptu",
       "invitation": "Rýchle akcie pozvánky",
-      "worklog": "Rýchle akcie záznamu práce"
+      "worklog": "Rýchle akcie záznamu práce",
+      "link": "Rýchle akcie odkazu",
+      "sub_work_item": "Rýchle akcie podradenej pracovnej položky",
+      "related_work_item": "Rýchle akcie súvisiacej pracovnej položky",
+      "project_member": "Rýchle akcie člena projektu"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Zobraziť alebo skryť podradené pracovné položky"
     }
   }
 }

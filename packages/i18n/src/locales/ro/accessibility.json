@@ -48,7 +48,14 @@
       "parent_work_item": "Acțiuni rapide pentru activitatea părinte",
       "draft_work_item": "Acțiuni rapide pentru schiță",
       "invitation": "Acțiuni rapide pentru invitație",
-      "worklog": "Acțiuni rapide pentru jurnalul de lucru"
+      "worklog": "Acțiuni rapide pentru jurnalul de lucru",
+      "link": "Acțiuni rapide pentru link",
+      "sub_work_item": "Acțiuni rapide pentru elementul de lucru subordonat",
+      "related_work_item": "Acțiuni rapide pentru elementul de lucru asociat",
+      "project_member": "Acțiuni rapide pentru membrul proiectului"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Afișează sau ascunde elementele de lucru subordonate"
     }
   }
 }

@@ -48,7 +48,14 @@
       "parent_work_item": "상위 작업 항목 빠른 작업",
       "draft_work_item": "초안 빠른 작업",
       "invitation": "초대 빠른 작업",
-      "worklog": "작업 기록 빠른 작업"
+      "worklog": "작업 기록 빠른 작업",
+      "link": "링크 빠른 작업",
+      "sub_work_item": "하위 작업 항목 빠른 작업",
+      "related_work_item": "관련 작업 항목 빠른 작업",
+      "project_member": "프로젝트 멤버 빠른 작업"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "하위 작업 항목 표시 전환"
     }
   }
 }

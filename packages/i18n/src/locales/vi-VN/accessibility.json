@@ -48,7 +48,14 @@
       "parent_work_item": "Thao tác nhanh cho mục công việc cha",
       "draft_work_item": "Thao tác nhanh cho bản nháp",
       "invitation": "Thao tác nhanh cho lời mời",
-      "worklog": "Thao tác nhanh cho nhật ký công việc"
+      "worklog": "Thao tác nhanh cho nhật ký công việc",
+      "link": "Thao tác nhanh cho liên kết",
+      "sub_work_item": "Thao tác nhanh cho mục công việc con",
+      "related_work_item": "Thao tác nhanh cho mục công việc liên quan",
+      "project_member": "Thao tác nhanh cho thành viên dự án"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Hiện hoặc ẩn các mục công việc con"
     }
   }
 }

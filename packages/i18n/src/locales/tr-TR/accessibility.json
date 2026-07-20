@@ -48,7 +48,14 @@
       "parent_work_item": "Üst iş öğesi hızlı işlemleri",
       "draft_work_item": "Taslak hızlı işlemleri",
       "invitation": "Davet hızlı işlemleri",
-      "worklog": "İş kaydı hızlı işlemleri"
+      "worklog": "İş kaydı hızlı işlemleri",
+      "link": "Bağlantı hızlı işlemleri",
+      "sub_work_item": "Alt iş öğesi hızlı işlemleri",
+      "related_work_item": "İlgili iş öğesi hızlı işlemleri",
+      "project_member": "Proje üyesi hızlı işlemleri"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "Alt iş öğelerini göster veya gizle"
     }
   }
 }

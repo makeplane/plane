@@ -48,7 +48,14 @@
       "parent_work_item": "親作業項目のクイックアクション",
       "draft_work_item": "下書きのクイックアクション",
       "invitation": "招待のクイックアクション",
-      "worklog": "作業ログのクイックアクション"
+      "worklog": "作業ログのクイックアクション",
+      "link": "リンクのクイックアクション",
+      "sub_work_item": "サブ作業アイテムのクイックアクション",
+      "related_work_item": "関連作業アイテムのクイックアクション",
+      "project_member": "プロジェクトメンバーのクイックアクション"
+    },
+    "work_item_detail": {
+      "toggle_sub_work_items": "サブ作業アイテムの表示を切り替え"
     }
   }
 }
