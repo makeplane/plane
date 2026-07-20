@@ -53,28 +53,28 @@ def _no_activity(db):
 @pytest.fixture
 def owned_draft(db, workspace, create_user):
     """A draft owned by ``create_user`` (session_client), with a project + asset."""
-    project = Project.objects.create(
-        name="Draft Project", identifier="DRP", workspace=workspace, created_by=create_user
-    )
+    # BaseModel.save auto-sets created_by from the request user (None under
+    # tests), overwriting a created_by= kwarg — pass created_by_id to save so the
+    # fixtures' ownership is real rather than silently nulled.
+    project = Project(name="Draft Project", identifier="DRP", workspace=workspace)
+    project.save(created_by_id=create_user.id)
     ProjectMember.objects.create(
         project=project, member=create_user, workspace=workspace, role=20, is_active=True
     )
-    # BaseModel.save auto-sets created_by from the request user (None under
-    # tests), overwriting a created_by= kwarg — pass created_by_id to save.
     draft = DraftIssue(name="Private draft", workspace=workspace, project=project)
     draft.save(created_by_id=create_user.id)
-    asset = FileAsset.objects.create(
+    asset = FileAsset(
         attributes={"name": "secret.pdf", "type": "application/pdf", "size": 1024},
         asset=f"{workspace.id}/secret.pdf",
         size=1024,
         workspace=workspace,
         project=project,
         draft_issue=draft,
-        created_by=create_user,
         entity_type=FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
         is_uploaded=True,
         storage_metadata={"size": 1024},
     )
+    asset.save(created_by_id=create_user.id)
     return {"project": project, "draft": draft, "asset": asset}
 
 
