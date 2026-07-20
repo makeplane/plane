@@ -28,7 +28,6 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     ProjectMemberInvite,
-    User,
     WorkspaceMember,
     Project,
     ProjectUserProperty,
@@ -52,6 +51,23 @@ class ProjectInvitationsViewset(BaseViewSet):
             .select_related("project")
             .select_related("workspace", "workspace__owner")
         )
+
+    # GHSA-r68c-48rr-m67f: project invitations expose invitee email + raw token
+    # and allow deletion, so every action must be restricted to project admins
+    # (mirroring create). Without these, the default list/retrieve/destroy
+    # inherited only IsAuthenticated, letting any workspace user read/delete
+    # another project's invitations.
+    @allow_permission([ROLE.ADMIN])
+    def list(self, request, slug, project_id):
+        return super().list(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def retrieve(self, request, slug, project_id, pk):
+        return super().retrieve(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, slug, project_id, pk):
+        return super().destroy(request)
 
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
