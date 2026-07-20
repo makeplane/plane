@@ -49,7 +49,6 @@ export const MARKER_COLORS = [
   "#a3e635",
 ];
 export const PLAYHEAD_OVERFLOW_BUCKET_SECONDS = 300;
-export const PLAYHEAD_SMOOTHING_MAX_SECONDS = 1.25;
 
 const EMPTY_TIMELINE_VALUES = new Set(["", "--", "\u2014", "n/a", "na", "none", "null", "undefined"]);
 

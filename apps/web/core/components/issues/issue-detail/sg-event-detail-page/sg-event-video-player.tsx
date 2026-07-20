@@ -11,7 +11,14 @@ import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./const
 type SgEventVideoPlayerProps = {
   item: TMediaItem | null;
   compactEmpty?: boolean;
-  onPlaybackTimeChange?: (seconds: number, durationSeconds: number | null) => void;
+  onPlaybackTimeChange?: (
+    seconds: number,
+    durationSeconds: number | null,
+    playbackState?: {
+      isPlaying: boolean;
+      playbackRate: number;
+    }
+  ) => void;
   seekToSeconds?: number | null;
 };
 
@@ -386,26 +393,56 @@ export const SgEventVideoPlayer = ({
     const player = playerRef.current;
     if (!player || !onPlaybackTimeChange) return;
 
-    const handlePlaybackTimeChange = () => {
+    const emitPlaybackTimeChange = (isPlayingOverride?: boolean) => {
       const currentTime = Number(player.currentTime?.() ?? 0);
       const duration = Number(player.duration?.() ?? 0);
+      const playbackRate = Number(player.playbackRate?.() ?? 1);
+      const explicitIsPlaying = typeof isPlayingOverride === "boolean" ? isPlayingOverride : undefined;
+      const isPlaying =
+        explicitIsPlaying ??
+        (!Boolean(player.paused?.()) && !Boolean(player.ended?.()) && Number(player.readyState?.() ?? 0) > 0);
+
       onPlaybackTimeChange(
         Number.isFinite(currentTime) ? currentTime : 0,
-        Number.isFinite(duration) && duration > 0 ? duration : null
+        Number.isFinite(duration) && duration > 0 ? duration : null,
+        {
+          isPlaying,
+          playbackRate: Number.isFinite(playbackRate) && playbackRate > 0 ? playbackRate : 1,
+        }
       );
     };
+    const handlePlaybackTimeChange = () => emitPlaybackTimeChange();
+    const handlePlaybackActive = () => emitPlaybackTimeChange(true);
+    const handlePlaybackInactive = () => emitPlaybackTimeChange(false);
+    const handleSeeked = () => emitPlaybackTimeChange(!Boolean(player.paused?.()) && !Boolean(player.ended?.()));
 
     player.on("durationchange", handlePlaybackTimeChange);
+    player.on("ended", handlePlaybackInactive);
     player.on("loadedmetadata", handlePlaybackTimeChange);
-    player.on("seeked", handlePlaybackTimeChange);
+    player.on("pause", handlePlaybackInactive);
+    player.on("play", handlePlaybackActive);
+    player.on("playing", handlePlaybackActive);
+    player.on("ratechange", handlePlaybackTimeChange);
+    player.on("seeked", handleSeeked);
+    player.on("seeking", handlePlaybackInactive);
+    player.on("stalled", handlePlaybackInactive);
     player.on("timeupdate", handlePlaybackTimeChange);
+    player.on("waiting", handlePlaybackInactive);
     handlePlaybackTimeChange();
 
     return () => {
       player.off("durationchange", handlePlaybackTimeChange);
+      player.off("ended", handlePlaybackInactive);
       player.off("loadedmetadata", handlePlaybackTimeChange);
-      player.off("seeked", handlePlaybackTimeChange);
+      player.off("pause", handlePlaybackInactive);
+      player.off("play", handlePlaybackActive);
+      player.off("playing", handlePlaybackActive);
+      player.off("ratechange", handlePlaybackTimeChange);
+      player.off("seeked", handleSeeked);
+      player.off("seeking", handlePlaybackInactive);
+      player.off("stalled", handlePlaybackInactive);
       player.off("timeupdate", handlePlaybackTimeChange);
+      player.off("waiting", handlePlaybackInactive);
     };
   }, [effectiveVideoSrc, item?.id, onPlaybackTimeChange]);
 

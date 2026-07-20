@@ -177,11 +177,13 @@ export const SgEventDetailPage = ({
     handleResetTimelinePlayback,
     handleSwitchToFullStream,
     hasPlayableVideo,
+    isPlayerPlaying,
     isPlaybackOverrideActive,
     pendingSeekSeconds,
     playbackItem,
     playPlaybackOverride,
     playerDurationSeconds,
+    playerPlaybackRate,
     selectedViewDevice,
     selectedViewId,
     selectedViewLabel,
@@ -449,9 +451,11 @@ export const SgEventDetailPage = ({
                       activePlaybackOverrideId={activePlaybackOverrideId}
                       activeTagRowId={activeTimelineTagId}
                       isMediaLoading={isTagRowsLoading}
+                      isPlayerPlaying={isPlayerPlaying}
                       onPlayTagRow={handlePlayTagRow}
                       onResetPlayback={handleResetTimelinePlayback}
                       playerDurationSeconds={playerDurationSeconds}
+                      playerPlaybackRate={playerPlaybackRate}
                       playheadSeconds={timelinePanelPlayheadSeconds}
                       rows={filteredRows}
                       selectedTagIds={selectedTagIds}

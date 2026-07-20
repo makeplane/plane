@@ -31,7 +31,6 @@ import {
   LANE_TONE_CLASS,
   MARKER_COLORS,
   PLAYHEAD_OVERFLOW_BUCKET_SECONDS,
-  PLAYHEAD_SMOOTHING_MAX_SECONDS,
 } from "../utils/timeline-model";
 import type { TimelineRowPlacement, TimelineTagTypeOption } from "../utils/timeline-model";
 import {
@@ -54,10 +53,12 @@ type SgEventTimelinePanelProps = {
   activePlaybackOverrideId: string | null;
   activeTagRowId: string | null;
   isMediaLoading: boolean;
+  isPlayerPlaying: boolean;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onResetPlayback: () => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
+  playerPlaybackRate: number;
   playerLabelByNumber: Map<string, string>;
   rows: SgTagRow[];
   selectedTagIds: string[];
@@ -69,14 +70,18 @@ const TOOL_BUTTON_CLASS =
 const TEXT_TOOL_BUTTON_CLASS =
   "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-xs font-medium transition-colors";
 
+const getPlayheadTransform = (positionPx: number) => `translate3d(${positionPx}px, 0, 0) translateX(-50%)`;
+
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
   isMediaLoading,
+  isPlayerPlaying,
   onPlayTagRow,
   onResetPlayback,
   playerDurationSeconds,
   playheadSeconds,
+  playerPlaybackRate,
   playerLabelByNumber,
   rows,
   selectedTagIds,
@@ -89,7 +94,6 @@ export const SgEventTimelinePanel = ({
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
   const playheadElementRef = useRef<HTMLDivElement | null>(null);
-  const previousPlayheadSecondsRef = useRef(playheadSeconds);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
   const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
@@ -194,28 +198,28 @@ export const SgEventTimelinePanel = ({
     const playheadElement = playheadElementRef.current;
     if (!playheadElement) return;
 
-    const previousPlayheadSeconds = previousPlayheadSecondsRef.current;
-    previousPlayheadSecondsRef.current = timelinePlayheadSeconds;
+    const anchorSeconds = timelinePlayheadSeconds;
+    const anchorTimeMs = window.performance.now();
+    const activePlaybackRate =
+      Number.isFinite(playerPlaybackRate) && playerPlaybackRate > 0 ? playerPlaybackRate : 1;
     const setPlayheadPosition = (seconds: number) => {
-      playheadElement.style.left = `${getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth)}px`;
+      playheadElement.style.transform = getPlayheadTransform(
+        getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth)
+      );
     };
 
-    setPlayheadPosition(timelinePlayheadSeconds);
+    setPlayheadPosition(anchorSeconds);
 
-    if (timelinePlayheadSeconds <= previousPlayheadSeconds || timelinePlayheadSeconds >= totalSeconds) return;
+    if (!isPlayerPlaying || anchorSeconds >= totalSeconds) return;
 
-    const animationStartedAtMs = window.performance.now();
     let animationFrameId = 0;
-    const animatePlayhead = () => {
-      const elapsedSeconds = Math.min(
-        (window.performance.now() - animationStartedAtMs) / 1000,
-        PLAYHEAD_SMOOTHING_MAX_SECONDS
-      );
-      const interpolatedSeconds = Math.min(timelinePlayheadSeconds + elapsedSeconds, totalSeconds);
+    const animatePlayhead = (currentTimeMs: number) => {
+      const elapsedSeconds = Math.max(0, (currentTimeMs - anchorTimeMs) / 1000) * activePlaybackRate;
+      const interpolatedSeconds = Math.min(anchorSeconds + elapsedSeconds, totalSeconds);
 
       setPlayheadPosition(interpolatedSeconds);
 
-      if (elapsedSeconds < PLAYHEAD_SMOOTHING_MAX_SECONDS && interpolatedSeconds < totalSeconds) {
+      if (interpolatedSeconds < totalSeconds) {
         animationFrameId = window.requestAnimationFrame(animatePlayhead);
       }
     };
@@ -223,7 +227,7 @@ export const SgEventTimelinePanel = ({
     animationFrameId = window.requestAnimationFrame(animatePlayhead);
 
     return () => window.cancelAnimationFrame(animationFrameId);
-  }, [timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
+  }, [isPlayerPlaying, playerPlaybackRate, timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
 
   const scrollTimelineRangeIntoView = (
     range: { leftPx: number; widthPx: number },
@@ -461,8 +465,8 @@ export const SgEventTimelinePanel = ({
           >
             <div
               ref={playheadElementRef}
-              className="absolute top-0 z-[3] h-[calc(100%-2.5rem)] w-1 -translate-x-1/2 rounded-full bg-red-500 will-change-[left]"
-              style={{ left: playheadPositionPx }}
+              className="absolute left-0 top-0 z-[3] h-[calc(100%-2.5rem)] w-1 rounded-full bg-red-500 will-change-transform"
+              style={{ transform: getPlayheadTransform(playheadPositionPx) }}
             />
             {timelineLanes.map((lane) => {
               const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
