@@ -5,6 +5,7 @@ import {
   Clock3,
   Copy,
   Eye,
+  ListPlus,
   Maximize2,
   Minus,
   Plus,
@@ -52,10 +53,13 @@ import { TimelineTagTypesPanel } from "./timeline-tag-types-panel";
 type SgEventTimelinePanelProps = {
   activePlaybackOverrideId: string | null;
   activeTagRowId: string | null;
+  isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
+  onCreatePlaylist?: () => void;
   isPlayerPlaying: boolean;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onResetPlayback: () => void;
+  onToggleTagSelection: (tagId: string) => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
   playerPlaybackRate: number;
@@ -75,10 +79,13 @@ const getPlayheadTransform = (positionPx: number) => `translate3d(${positionPx}p
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
+  isCreatingPlaylist = false,
   isMediaLoading,
+  onCreatePlaylist,
   isPlayerPlaying,
   onPlayTagRow,
   onResetPlayback,
+  onToggleTagSelection,
   playerDurationSeconds,
   playheadSeconds,
   playerPlaybackRate,
@@ -356,6 +363,18 @@ export const SgEventTimelinePanel = ({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
+            disabled={!onCreatePlaylist || selectedTagIds.length === 0 || isCreatingPlaylist}
+            onClick={onCreatePlaylist}
+            className={cn(
+              TEXT_TOOL_BUTTON_CLASS,
+              "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100 disabled:cursor-not-allowed disabled:opacity-40"
+            )}
+          >
+            <ListPlus className="h-3.5 w-3.5" />
+            <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
+          </button>
           <Tooltip tooltipContent="Tag types" isMobile={false}>
             <button
               type="button"
@@ -500,6 +519,11 @@ export const SgEventTimelinePanel = ({
                           type="button"
                           onClick={() => {
                             handlePlayTimelineRow(row);
+                          }}
+                          onDoubleClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            onToggleTagSelection(row.id);
                           }}
                           className={cn(
                             "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",

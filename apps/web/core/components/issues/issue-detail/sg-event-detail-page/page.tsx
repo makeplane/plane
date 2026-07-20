@@ -22,12 +22,7 @@ import { buildTimelinePlayerLabelMap } from "./media-thumbnail-lookup";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-view";
 import { SgEventTimelinePanel, isTimelineTagPlaybackOverrideId } from "./timeline-view";
-import type {
-  SgEventDetailPageProps,
-  SgEventTagViewMode,
-  SgIssue,
-  SgTagRow,
-} from "./types";
+import type { SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
 import {
   asRecord,
   buildBaseEventDateTime,
@@ -35,6 +30,7 @@ import {
   firstNonEmptyRecord,
   formatLongDateTime,
   getCpServerBaseUrl,
+  getLastPathSegment,
   getSportTableConfig,
   normalizeTagRows,
   pickText,
@@ -121,6 +117,12 @@ export const SgEventDetailPage = ({
       ]
     );
   const shouldUseKanavioTagApi = Boolean(resolvedSgEventId && isNumericEventId(resolvedSgEventId));
+  const resolvedCustomPlaylistEventId = shouldUseKanavioTagApi ? Number(resolvedSgEventId) : null;
+  const { data: customPlaylists = [], mutate: mutateCustomPlaylists } = useSWR(
+    resolvedCustomPlaylistEventId ? `CUSTOM_PLAYLISTS_${resolvedCustomPlaylistEventId}` : null,
+    () => mediaLibraryService.getCustomPlaylists(String(resolvedCustomPlaylistEventId)),
+    { revalidateOnFocus: false }
+  );
   const {
     data: kanavioTagsPayload,
     error: kanavioTagsError,
@@ -215,6 +217,7 @@ export const SgEventDetailPage = ({
     playlistPanelRows,
     rowFilterMode,
     searchQuery,
+    selectedRows,
     selectedTagIds,
     setFocusedMatrixRows,
     setRowFilterMode,
@@ -285,6 +288,22 @@ export const SgEventDetailPage = ({
   const handleCreateMatrixPlaylist = useCallback(
     async (rows: SgTagRow[]) => {
       if (isCreatingMatrixPlaylist) return;
+      if (rows.length === 0) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "No clips selected",
+          message: "Select at least one tag before creating a playlist.",
+        });
+        return;
+      }
+      if (!resolvedCustomPlaylistEventId) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Missing event",
+          message: "A service gateway event id is required before creating a playlist.",
+        });
+        return;
+      }
       const streamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
       setIsCreatingMatrixPlaylist(true);
 
@@ -292,6 +311,18 @@ export const SgEventDetailPage = ({
         const result = await createMatrixPlaylist({ mediaLibraryService, rows, streamName });
         const includedRowIds = new Set(result.rowIds);
         const includedRows = rows.filter((row) => includedRowIds.has(row.id));
+        const thumbnail =
+          includedRows.find((row) => row.thumbnailUrl)?.thumbnailUrl ||
+          activeVideo?.thumbnail ||
+          mediaItem?.thumbnail ||
+          null;
+        const customPlaylist = await mediaLibraryService.createCustomPlaylist({
+          event_id: resolvedCustomPlaylistEventId,
+          name: `${eventTitle} (${includedRows.length} clip${includedRows.length === 1 ? "" : "s"})`,
+          url: result.fileName || getLastPathSegment(result.url),
+          thumbnail: getLastPathSegment(thumbnail),
+          clip: includedRows.length,
+        });
         playPlaybackOverride(
           buildMatrixPlaylistItem({
             result,
@@ -299,6 +330,9 @@ export const SgEventDetailPage = ({
             workItemId: resolvedWorkItemId || null,
           })
         );
+        void mutateCustomPlaylists((currentPlaylists = []) => [customPlaylist, ...currentPlaylists], {
+          revalidate: false,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Playlist created",
@@ -316,10 +350,15 @@ export const SgEventDetailPage = ({
       }
     },
     [
+      activeVideo?.thumbnail,
+      eventTitle,
       isCreatingMatrixPlaylist,
       mediaLibraryService,
+      mediaItem?.thumbnail,
+      mutateCustomPlaylists,
       playPlaybackOverride,
       primaryStreamName,
+      resolvedCustomPlaylistEventId,
       resolvedWorkItemId,
       selectedViewDevice?.streamName,
     ]
@@ -341,10 +380,11 @@ export const SgEventDetailPage = ({
             ? "Unable to load the event media required for Matrix View."
             : null;
   const activeMatrixRowId = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId)
-    ? activePlaybackOverrideId?.slice("sg-tag-".length) ?? null
+    ? (activePlaybackOverrideId?.slice("sg-tag-".length) ?? null)
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
   const isMatrixWorkspaceMode = enableMatrixView && tagViewMode === "matrix";
+  const activePlaylistRows = isMatrixWorkspaceMode ? playlistPanelRows : selectedRows;
   const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
@@ -384,12 +424,11 @@ export const SgEventDetailPage = ({
                   />
                 </div>
                 <SgMatrixPlaylistPanel
-                  activeRowId={activeMatrixRowId}
+                  customPlaylists={customPlaylists}
                   isCreatingPlaylist={isCreatingMatrixPlaylist}
-                  onCreateCard={() => handleCreateMatrixCard(playlistPanelRows)}
-                  onCreatePlaylist={() => void handleCreateMatrixPlaylist(playlistPanelRows)}
-                  onPlayTagRow={handlePlayTagRow}
-                  rows={playlistPanelRows}
+                  onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
+                  onCreatePlaylist={() => void handleCreateMatrixPlaylist(activePlaylistRows)}
+                  rows={activePlaylistRows}
                 />
               </div>
 
@@ -416,12 +455,21 @@ export const SgEventDetailPage = ({
           ) : (
             <>
               {!isExpandedListView && (
-                <div className="min-w-0">
-                  <SgEventVideoPlayer
-                    item={playbackItem}
-                    compactEmpty={!hasPlayableVideo}
-                    onPlaybackTimeChange={handlePlaybackTimeChange}
-                    seekToSeconds={pendingSeekSeconds}
+                <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+                  <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+                    <SgEventVideoPlayer
+                      item={playbackItem}
+                      compactEmpty={!hasPlayableVideo}
+                      onPlaybackTimeChange={handlePlaybackTimeChange}
+                      seekToSeconds={pendingSeekSeconds}
+                    />
+                  </div>
+                  <SgMatrixPlaylistPanel
+                    customPlaylists={customPlaylists}
+                    isCreatingPlaylist={isCreatingMatrixPlaylist}
+                    onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
+                    onCreatePlaylist={() => void handleCreateMatrixPlaylist(activePlaylistRows)}
+                    rows={activePlaylistRows}
                   />
                 </div>
               )}
@@ -450,10 +498,13 @@ export const SgEventDetailPage = ({
                     <SgEventTimelinePanel
                       activePlaybackOverrideId={activePlaybackOverrideId}
                       activeTagRowId={activeTimelineTagId}
+                      isCreatingPlaylist={isCreatingMatrixPlaylist}
                       isMediaLoading={isTagRowsLoading}
+                      onCreatePlaylist={() => void handleCreateMatrixPlaylist(activePlaylistRows)}
                       isPlayerPlaying={isPlayerPlaying}
                       onPlayTagRow={handlePlayTagRow}
                       onResetPlayback={handleResetTimelinePlayback}
+                      onToggleTagSelection={handleToggleTagSelection}
                       playerDurationSeconds={playerDurationSeconds}
                       playerPlaybackRate={playerPlaybackRate}
                       playheadSeconds={timelinePanelPlayheadSeconds}
@@ -481,6 +532,7 @@ export const SgEventDetailPage = ({
                       isExpanded={isExpandedListView}
                       isSearchOpen={isSearchOpen}
                       onToggleExpanded={() => setIsListExpanded((currentValue) => !currentValue)}
+                      onCreatePlaylist={() => void handleCreateMatrixPlaylist(activePlaylistRows)}
                       onPlayTagRow={handlePlayTagRow}
                       onRemoveTag={handleRemoveTag}
                       onRowFilterModeChange={setRowFilterMode}

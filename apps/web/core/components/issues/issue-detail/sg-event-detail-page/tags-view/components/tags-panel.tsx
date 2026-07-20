@@ -32,10 +32,12 @@ type SgEventTagsPanelProps = {
   clipThumbnailUrl: string;
   effectiveGroupValue: string;
   favoriteTagIds: string[];
+  isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
   isExpanded?: boolean;
   isSearchOpen: boolean;
   onToggleExpanded?: () => void;
+  onCreatePlaylist?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onRemoveTag: (tagId: string) => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
@@ -62,10 +64,12 @@ export const SgEventTagsPanel = ({
   clipThumbnailUrl,
   effectiveGroupValue,
   favoriteTagIds,
+  isCreatingPlaylist = false,
   isMediaLoading,
   isExpanded = false,
   isSearchOpen,
   onToggleExpanded,
+  onCreatePlaylist,
   onPlayTagRow,
   onRemoveTag,
   onRowFilterModeChange,
@@ -314,9 +318,11 @@ export const SgEventTagsPanel = ({
         effectiveGroupValue={effectiveGroupValue}
         groupSelectLabel={groupSelectLabel}
         isColumnsPanelOpen={isColumnsPanelOpen}
+        isCreatingPlaylist={isCreatingPlaylist}
         isExpanded={isExpanded}
         isSearchOpen={isSearchOpen}
         onColumnsPanelOpen={() => setIsColumnsPanelOpen(true)}
+        onCreatePlaylist={onCreatePlaylist}
         onRowFilterModeChange={onRowFilterModeChange}
         onSearchQueryChange={onSearchQueryChange}
         onSelectedGroupValueChange={onSelectedGroupValueChange}
@@ -324,6 +330,7 @@ export const SgEventTagsPanel = ({
         onToggleSearch={onToggleSearch}
         rowFilterMode={rowFilterMode}
         searchQuery={searchQuery}
+        selectedCount={selectedTagIds.length}
         selectedAvailableColumnCount={selectedAvailableColumnCount}
         showCreateActions={showCreateActions}
         totalColumnCount={totalColumnCount}

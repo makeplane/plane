@@ -87,6 +87,23 @@ type TCreatePlaylistPayload = {
   timestamp: string;
 };
 
+export type TCustomPlaylist = {
+  id: string;
+  event_id: number;
+  name: string;
+  url: string;
+  thumbnail: string | null;
+  clip: number;
+};
+
+type TCustomPlaylistPayload = {
+  event_id: number;
+  name: string;
+  url: string;
+  thumbnail?: string | null;
+  clip?: number;
+};
+
 const sanitizePlaylistFileName = (value: string) => {
   const normalizedValue = value.trim();
   return /^[A-Za-z0-9_-]+\.m3u8$/i.test(normalizedValue) ? normalizedValue : "";
@@ -270,6 +287,22 @@ export class MediaLibraryService extends APIService {
 
     return this.post(`${cpServerBaseUrl}/query-engine/create-playlist`, payload, { withCredentials: false })
       .then((response) => readPlaylistFileName(response?.data))
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async createCustomPlaylist(payload: TCustomPlaylistPayload): Promise<TCustomPlaylist> {
+    return this.post("/api/custom-playlists/", payload)
+      .then((response) => response?.data as TCustomPlaylist)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async getCustomPlaylists(eventId: string): Promise<TCustomPlaylist[]> {
+    return this.get("/api/custom-playlists/", { params: { event_id: eventId } })
+      .then((response) => (Array.isArray(response?.data) ? (response.data as TCustomPlaylist[]) : []))
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });

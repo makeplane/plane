@@ -26,9 +26,11 @@ type TagsPanelToolbarProps = {
   effectiveGroupValue: string;
   groupSelectLabel: string;
   isColumnsPanelOpen: boolean;
+  isCreatingPlaylist: boolean;
   isExpanded: boolean;
   isSearchOpen: boolean;
   onColumnsPanelOpen: () => void;
+  onCreatePlaylist?: () => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
   onSearchQueryChange: (value: string) => void;
   onSelectedGroupValueChange: (value: string) => void;
@@ -36,6 +38,7 @@ type TagsPanelToolbarProps = {
   onToggleSearch: () => void;
   rowFilterMode: RowFilterMode;
   searchQuery: string;
+  selectedCount: number;
   selectedAvailableColumnCount: number;
   showCreateActions: boolean;
   totalColumnCount: number;
@@ -48,9 +51,11 @@ export const TagsPanelToolbar = ({
   effectiveGroupValue,
   groupSelectLabel,
   isColumnsPanelOpen,
+  isCreatingPlaylist,
   isExpanded,
   isSearchOpen,
   onColumnsPanelOpen,
+  onCreatePlaylist,
   onRowFilterModeChange,
   onSearchQueryChange,
   onSelectedGroupValueChange,
@@ -58,6 +63,7 @@ export const TagsPanelToolbar = ({
   onToggleSearch,
   rowFilterMode,
   searchQuery,
+  selectedCount,
   selectedAvailableColumnCount,
   showCreateActions,
   totalColumnCount,
@@ -169,10 +175,15 @@ export const TagsPanelToolbar = ({
           </span>
         </button>
       </Tooltip>
-      {showCreateActions && (
-        <button type="button" className={TEXT_BUTTON_CLASS}>
+      {onCreatePlaylist && (
+        <button
+          type="button"
+          disabled={selectedCount === 0 || isCreatingPlaylist}
+          onClick={onCreatePlaylist}
+          className={`${TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
+        >
           <ListPlus className="h-3.5 w-3.5" />
-          <span>Create Playlist</span>
+          <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
         </button>
       )}
     </div>

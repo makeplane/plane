@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@plane/utils";
 import type { SportTableKind, SgTagRow } from "../../types";
 import { useMatrixData } from "../hooks/use-matrix-data";
@@ -11,7 +11,6 @@ import { getMatrixPlaylistRows } from "../utils/create-matrix-playlist";
 import { MatrixEmptyState } from "./matrix-empty-state";
 import { MatrixLoadingState } from "./matrix-loading-state";
 import { MatrixTable } from "./matrix-table";
-import { MatrixTagsPanel } from "./matrix-tags-panel";
 import { MatrixToolbar } from "./matrix-toolbar";
 
 export type MatrixViewProps = {
@@ -51,7 +50,6 @@ export const MatrixView = ({
 }: MatrixViewProps) => {
   const [isSwitched, setIsSwitched] = useState(false);
   const [activeCellId, setActiveCellId] = useState<string | null>(null);
-  const activeCellTriggerRef = useRef<HTMLButtonElement | null>(null);
   const orientation: MatrixOrientation = isSwitched ? "entities-by-actions" : "actions-by-entities";
   const {
     clearFilters,
@@ -111,12 +109,6 @@ export const MatrixView = ({
     [activeCell?.sourceRowIds, tagRowsById]
   );
   const focusedRows = activeCellRows.length > 0 ? activeCellRows : selectedRows;
-  const activeCellContext = useMemo(() => {
-    if (!activeCell || !displayedMatrix) return "Selected matrix cell";
-    const actionLabel = displayedMatrix.actions.find((action) => action.id === activeCell.columnId)?.label;
-    const entityLabel = displayedMatrix.entities.find((entity) => entity.id === activeCell.rowId)?.label;
-    return [actionLabel, entityLabel].filter(Boolean).join(" · ") || "Selected matrix cell";
-  }, [activeCell, displayedMatrix]);
 
   useEffect(() => {
     const columnIdSet = new Set(displayedColumnIds);
@@ -151,20 +143,12 @@ export const MatrixView = ({
   }, [preferenceKey]);
 
   const handleCellActivate = useCallback(
-    (cell: MatrixCell, trigger: HTMLButtonElement, options?: { additive?: boolean; range?: boolean }) => {
-      activeCellTriggerRef.current = trigger;
+    (cell: MatrixCell, _trigger: HTMLButtonElement, options?: { additive?: boolean; range?: boolean }) => {
       selectCell(cell, options?.range ? "range" : options?.additive ? "toggle" : "replace");
       setActiveCellId(cell.id);
     },
     [selectCell]
   );
-  const handleCloseTagsPanel = useCallback(() => {
-    const trigger = activeCellTriggerRef.current;
-    setActiveCellId(null);
-    window.requestAnimationFrame(() => {
-      if (trigger?.isConnected) trigger.focus();
-    });
-  }, []);
   const handleCreatePlaylist = useCallback(() => {
     if (selectedPlayableRows.length > 0) void onCreatePlaylist?.(selectedPlayableRows);
   }, [onCreatePlaylist, selectedPlayableRows]);
@@ -249,10 +233,7 @@ export const MatrixView = ({
       ) : displayedMatrix && displayedMatrix.rows.length > 0 ? (
         <>
           <div
-            className={cn(
-              "relative isolate min-h-52 overflow-hidden rounded-[5px]",
-              isWorkspaceLayout && "xl:grid xl:grid-cols-[minmax(0,1fr)_260px]"
-            )}
+            className="relative isolate min-h-52 overflow-hidden rounded-[5px]"
           >
             <div className="min-w-0">
               <MatrixTable
@@ -269,37 +250,6 @@ export const MatrixView = ({
                 stickySummaries={!isWorkspaceLayout}
               />
             </div>
-            {isWorkspaceLayout ? (
-              <>
-                <MatrixTagsPanel
-                  activeRowId={activeRowId}
-                  className="hidden w-[260px] shrink-0 xl:flex"
-                  contextLabel={activeCell ? activeCellContext : "Select a matrix cell"}
-                  isDocked
-                  onClose={handleCloseTagsPanel}
-                  onPlayRow={onPlayTagRow}
-                  rows={activeCellRows}
-                />
-                {activeCell ? (
-                  <MatrixTagsPanel
-                    activeRowId={activeRowId}
-                    className="xl:hidden"
-                    contextLabel={activeCellContext}
-                    onClose={handleCloseTagsPanel}
-                    onPlayRow={onPlayTagRow}
-                    rows={activeCellRows}
-                  />
-                ) : null}
-              </>
-            ) : activeCell && activeCellRows.length > 0 ? (
-              <MatrixTagsPanel
-                activeRowId={activeRowId}
-                contextLabel={activeCellContext}
-                onClose={handleCloseTagsPanel}
-                onPlayRow={onPlayTagRow}
-                rows={activeCellRows}
-              />
-            ) : null}
           </div>
         </>
       ) : (
