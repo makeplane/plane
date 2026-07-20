@@ -1,6 +1,13 @@
 # Discipline de contexte — lecture ciblée (Zelian Compass, v3.0.0)
 
 > Livré par **Zelian Builder** (projets neufs) ou copié depuis le plugin `zelian-framework` par `/zelian:retro` / `/zelian:migrate` — ne pas modifier au projet.
+>
+> ⚠️ **UNE divergence assumée par rapport au fichier du plugin**, dans la commande de la règle 2 : celle
+> d'origine ne trouve **jamais** `compass.js` sur ce poste, donc tout agent qui applique la règle à la
+> lettre échoue et conclut à tort que Compass n'est pas installé (c'est arrivé). Deux causes cumulées,
+> détaillées à la règle 2. **Cette correction sera écrasée au prochain `/zelian:migrate` ou
+> `/zelian:retro`** — la reposer alors, et si possible faire corriger le template en amont
+> (`templates/rules/07-context-discipline.md` du plugin), pour que le correctif devienne permanent.
 
 ## Le principe
 
@@ -16,11 +23,21 @@ code ↔ documentation est **`.zelian/compass.json`** (Zelian Compass).
    ancré ou quand le prompt nomme la feature — suis-les.
 2. **Ne JAMAIS lire l'ensemble de `docs/`** pour « se mettre en contexte ». Si tu ne sais pas quel module
    est concerné, résous d'abord :
+
    ```bash
-   COMPASS="$(find "$HOME/.claude/plugins" -name "compass.js" -path "*/zelian-framework/hooks/lib/*" 2>/dev/null | tail -1)"
+   # ⚠️ Corrigé par rapport au fichier du plugin, dont la commande ne trouve jamais compass.js ici :
+   #   1. le motif oublie le dossier de VERSION du plugin
+   #      (chemin réel : .../zelian-framework/3.0.0/hooks/lib/compass.js) ;
+   #   2. depuis WSL, $HOME/.claude/plugins existe mais est vide — le plugin vit côté Windows.
+   COMPASS="$(find ~/.claude/plugins /mnt/c/Users/*/.claude/plugins \
+     -name "compass.js" -path "*/zelian-framework/*/hooks/lib/*" 2>/dev/null | tail -1)"
    node "$COMPASS" --resolve <chemin/du/fichier>          # fichier → module + docs
    node "$COMPASS" --resolve-prompt "<la demande du dev>" # texte → features candidates
    ```
+
+   Si `$COMPASS` est vide, c'est que le plugin est ailleurs — le chercher avant de conclure qu'il
+   manque : `find / -name compass.js -path '*zelian-framework*' 2>/dev/null | head`.
+
 3. **Aucune conception avant lecture** : pas de brainstorm, pas de plan, pas d'édition de code d'un module
    documenté sans avoir lu sa spec fonctionnelle. Si la demande contredit la spec, le signaler au dev —
    ne pas improviser.
