@@ -866,3 +866,112 @@ Correctif (PR #85) : compléter le motif appliqué 5 fois — 2 sous-pages, 2 en
 3. **`pkill -f "serve -s build/client"` ne tue rien.** La vraie ligne de commande est `node …/serve/build/main.js -s build/client -l 3000` : le motif ne matche jamais. Deux `serve` résiduels du test de `pnpm start` ont gardé le port 3000, le dev server a basculé sur un port de repli (`Port 3000 is in use, trying another one...` dans son log) et **tout ce qui était mesuré sur :3000 était le build de production statique**, avec les anciennes routes. Motif correct : `pkill -f "serve/build/main.js"`. **Indice qui trahit la confusion : le build statique sert 6414 octets, le dev server 23745.**
 
 **Et un service à connaître** : `apps/live` (collaboration Yjs) fait partie de `pnpm dev` mais **échoue au démarrage** avec `EADDRINUSE :3100` — le port est tenu par l'autre projet du poste (`~/dev/2026-zelian-insider`, onboarding Next). Conséquence : **l'éditeur de pages ne finit jamais de monter** et reste sur « Syncing… ». L'éditeur **rich-text** (description d'un work item) n'en dépend pas.
+
+---
+
+## 14. Session du 2026-07-20 — F, A et C faits, et le framework Zelian remis d'aplomb
+
+> Trois sujets traités et le framework migré en v3. **Une seule PR fusionnée** (#89, par le dev lui-même) ; les deux autres attendent son accord, conformément au §4.6.
+
+### 14.1 PRs
+
+| PR  | Objet                                                                                        | État          |
+| --- | -------------------------------------------------------------------------------------------- | ------------- |
+| #89 | `fix(attachments)` — le type MIME du navigateur est conservé quand la signature est inconnue | **fusionnée** |
+| #90 | `fix(a11y)` — nom accessible sur les 5 derniers menus icon-only + 5 clés × 19 locales        | ouverte       |
+| #91 | `chore(zelian)` — migration framework v3 + index Compass (33 modules)                        | ouverte       |
+
+`preview` = `f86bea2` après la #89.
+
+### 14.2 ⚠️ Quatre affirmations du §13 démenties par la mesure
+
+Le §13 avait déjà corrigé quatre chiffres du §11.6. À son tour il en portait quatre faux — **le taux ne baisse pas, continuer à tout vérifier** :
+
+1. **« `apps/live` fonctionne maintenant, les Pages collaboratives sont vérifiables »** (§13.7) → **faux**. Le `.env` de `live` fixe `PORT=3100`, et `:3100` est tenu par le `next-server` de `~/dev/2026-zelian-insider`. L'`EADDRINUSE` du §13.9 **n'est pas résolu** : la #86 a réparé le service `live` de la pile **docker de production**, qui n'est pas démarrée (aucun conteneur `web`/`live`/`proxy`). **Le sujet « vérifier les Pages collaboratives » reste bloqué.**
+2. **« Les 4 clés i18n sont déjà rédigées »** (§13.3) → **elles n'existaient dans aucune des 19 locales.** « Rédigées » voulait dire « connues » : elles avaient été retirées de la #80 pour ne pas livrer de clés mortes. Et il en fallait **une 5ᵉ**, le chevron des sous-work-items étant lui aussi icon-only.
+3. **« Les 5 sites portent des avertissements `jsx-a11y` préexistants »** (§13.3) → vrai mais **incomplet : 18 avertissements au total, pas 12.** S'y ajoutaient 6 non-a11y que le hook bloque tout autant (deux `no-shadow`, un `no-empty-pattern`, un `promise/always-return`, trois `no-constant-binary-expression`).
+4. **« Le §11.6 annonce une incohérence de validation des pièces jointes… soit il n'y a pas de bug »** (sujet F du brief) → **il y avait bien un bug**, mais pas là où on le cherchait : entièrement côté front (§14.3).
+
+### 14.3 Sujet F — le bug était dans le client, pas dans l'API
+
+`validateAndDetectFileType` (`packages/services/src/file/helper.ts`) déduisait le type MIME de la **seule signature du fichier** (octets magiques, lib `file-type`) et renvoyait `""` en cas d'échec. Or `file-type` ne reconnaît **aucun format textuel** — le texte n'a pas de signature. Le front postait donc `{"name":"note.txt","size":34,"type":""}` et l'API rejetait sur `if not type`.
+
+⚠️ **Le message d'erreur exact départageait déjà les deux hypothèses** : l'API renvoie « Invalid file type. » (`app/views/issue/attachment.py` l.105), **pas** « Only JPEG, PNG, WebP, JPG and GIF » (`app/views/asset/v2.py`, qui sert avatars, logo d'espace et images de l'éditeur — endpoints d'**images par conception**). Les deux contrôles étaient corrects ; `ATTACHMENT_MIME_TYPES` contient bien `text/plain`, `text/markdown`, `text/csv`, `application/json`, `image/svg+xml` et 68 autres.
+
+Correctif : repli sur `file.type` quand la signature est inconnue. Une signature **reconnue prime toujours** (un exécutable renommé `.txt` garde sa signature `MZ` et reste refusé), et la liste blanche serveur reste le seul contrôle qui compte — la détection client **n'est pas une barrière de sécurité**. Portée : les 5 appelants de `getFileMetaDataForUpload`, recensés sur `apps/` **et** `packages/`.
+
+Vérifié avant/après, sonde réseau **auto-testée** sur `XMLHttpRequest`, document réellement rechargé entre les passes : **avant** → POST `type:""` → **400** ; **après** → `type:"text/plain"` → **200**, `Content-Type` de l'URL signée suivant, PATCH **204**, ligne en base `note-reunion.txt`/`text/plain`/`is_uploaded=t`.
+
+### 14.4 Sujet A — Milestones (#73) enfin vérifié, réserve de trois sessions soldée
+
+`is_milestone_enabled = t` sur PLANETEST (confirmé en base). **En-tête de section** : 0 `button > button`, 0 `a > a`, le « + New milestone » est un **frère** du toggle et non un enfant, le cliquer ouvre le modal **sans** basculer la section (le `stopPropagation` retiré par la #73 ne manque pas), et `aria-expanded`/`aria-controls` sont **fidèles** (ouvert → fermé → rouvert).
+
+⚠️ **Piège de mesure** : les premières lectures d'`aria-expanded` étaient prises **synchroniquement après `.click()`**, avant le re-render React — elles montraient un état figé et faisaient conclure à tort que la bascule ne marchait pas. Il faut attendre un tick entre le clic et la lecture.
+
+`MilestoneListItem` **n'avait jamais été rendu** (0 jalon en base). Un jalon a été créé pour l'exercer : rangée propre, 0 imbrication, menu portant `aria-label="Milestone quick actions"`.
+
+### 14.5 Sujet C — les 5 menus reportés, et surtout les contrôles voisins
+
+Quatre contrôles qu'aucun utilisateur au clavier ne pouvait atteindre sont devenus réels : le bouton de copie d'une ligne de lien (`<span onClick>` → `<button>` nommé) ; le chevron des sous-work-items (`<div onClick>` → `<button>` + `aria-expanded`) ; la carte « Quick links » (`<div onClick>` appelant `window.open` → motif **« lien en superposition »**, ancre réelle dont le `::after` couvre la carte, menu remonté en `z-10`) ; et le « Remove » d'une ligne de membre, qui vivait dans un `<div onClick>` **imbriqué dans un `CustomMenu.MenuItem`** où seul l'item est focusable.
+
+Les deux `<div onClick>` qui ne font qu'empêcher le lien de la rangée de naviguer sont des **frontières d'événements**, pas des contrôles : `role="presentation"` — **vérifié empiriquement** comme éteignant les deux règles avant d'être répliqué.
+
+⚠️ **`packages/ui` n'a aucune dépendance i18n et ne doit pas en acquérir** : `LinkItemBlock` reçoit le nom de son menu **par une prop**. Sa prop `onClick` a été **supprimée** (l'ancre fait nativement ce que le handler faisait ; un seul appelant, vérifié).
+
+⚠️ **Trois `Number(x) ?? EUserPermissions.GUEST` étaient du code mort** dans `member-columns.tsx` : `Number()` rend `NaN`, jamais une valeur nullish, donc le `??` ne se déclenchait jamais. Les replis passent **à l'intérieur** de `Number()` ; chaque site conserve son résultat exact, vérifié cas par cas.
+
+**Réserves assumées** : le site **sous-work-items n'a pas pu être vérifié à l'écran** — le panneau se rend **vide** malgré « 0/1 Done », défaut **préexistant** du §11.6 que la passe « avant » a reconfirmé vide ; et le **test de survol** (`elementFromPoint`) est **indisponible**, le panneau navigateur rendant un viewport **0×0** (l'auto-test de la sonde s'est déclaré mort) — les faits d'empilement ont été lus dans le **CSSOM** plutôt que par pointage.
+
+### 14.6 ⚠️ Le framework Zelian — trois décalages entre les règles et la réalité
+
+Le `00-global.md` décrit un dispositif qui, **dans ce dépôt, n'existe qu'en partie**. À arbitrer avec le dev :
+
+1. **Le hook `Stop` n'existe pas.** `.claude/` ne contient que `launch.json` et `zelian-apps.json` — **aucun `settings.json`**. La règle 5 affirme que `@update-writer-after-implement` est « forcé via `decision: block` » : ici rien ne l'impose, il ne tient qu'à la mémoire de l'assistant de l'appeler. (Il l'a été après chaque implémentation de cette session.)
+2. **`/zelian:new-spec` est bloqué sur ce projet.** Sa garde exige `ADR-001` (« Terminez la Phase 2 d'abord ») ; or le projet a été initialisé **par `retro`** (`initialized_via: "retro"`) et possède des `RETRO-XXX`, pas d'`ADR-001`. **Aucun ADR n'a été fabriqué pour contourner la garde** — ce serait précisément l'anti-pattern que `06-adr-policy.md` existe pour empêcher. **Conséquence concrète** : la dette documentaire signalée deux fois par `@update-writer-after-implement` (contrat de `validateAndDetectFileType`, changement d'API de `LinkItemBlock`, convention « les libellés accessibles arrivent dans `packages/ui` par une prop ») **reste sans module d'accueil**.
+3. **Le score qualité n'est jamais envoyé.** `~/.zelian/config.json` porte `api.enabled: false`, `endpoint: null`, `token: null` — la dernière étape du workflow imposé n'a jamais eu lieu. C'est un opt-in du dev (`/zelian:config set`).
+
+Reste vrai du §13.6 : **« TDD obligatoire » (`04-testing.md`) est toujours inapplicable** — le front n'a aucune infra de test. Et les skills `superpowers:*` du workflow imposé **ne sont pas installés**.
+
+### 14.7 Migration v3 + Compass — ce que ça change concrètement (PR #91)
+
+Le marker déclarait `framework_version: 2.6.1` alors que le plugin chargé est en **3.0.0** : l'index code ↔ doc **n'existait pas** et les hooks d'injection retombaient sur les heuristiques v2. C'est la cause directe du manquement à la **règle 1** (« lire les specs AVANT de toucher au code ») constaté deux fois cette session : rien ne pointait la spec concernée au moment d'éditer.
+
+`--rebuild` seul ne suffisait pas — d'où la validation humaine qu'impose la skill : **3 modules sans aucun ancrage** (`api/bulk-operations`, `api/epics`, `api/workspace-pages`), **1 absent de l'index** (`web/work-item-page-embed`), **3 ancrés sur 1–2 fichiers**, et **8 globs ratissant une app entière** sur 7 modules. Le pire, `api/issues → apps/web/**`, résolvait **tout** fichier web vers la spec issues : du bruit, pas un pointeur.
+
+Après correction : **33 entrées, 100 % ancrées, 0 glob mort**, résolution testée sur 10 fichiers et 3 prompts. Signe que c'est juste : `link-item.tsx` et `packages/ui/block.tsx` résolvent désormais vers **(aucun)** — la lacune est rendue visible au lieu d'être masquée.
+
+⚠️ **`--register` ne fait qu'unir** : il n'existe **aucun verbe CLI pour retirer un glob**. Les 8 retraits ont été faits en éditant `.zelian/compass.json`.
+
+⚠️ **Le hook `oxfmt` reformate `.zelian/compass.json`** et son style diffère de ce qu'écrit `compass.js` (`JSON.stringify(…, 2)`). L'index reste valide (vérifié après réécriture : 100 %, résolution intacte), mais **le prochain write de l'outil produira un diff d'environ 180 lignes purement cosmétique**. Exclure `.zelian/` du formateur si la gêne se confirme.
+
+**Dette révélée par l'outil** : `--check` signale que `docs/specs/web/work-item-page-embed` n'a **pas de `spec-fonctionnel.md`** (2 des 4 fichiers Zelian). Préexistant.
+
+### 14.8 Jeu de données — trois fixtures AJOUTÉES, ne pas nettoyer
+
+Au §11.6 (PLANETEST-1 : 2 réactions, 1 sous-work-item, 1 relation, 1 lien, 1 pièce jointe, 1 page, 1 commentaire) s'ajoutent :
+
+- **`note-reunion.txt`** sur PLANETEST-1 — la preuve du correctif F (un `text/plain` accepté).
+- **Jalon « Jalon de vérification #73 »** (`f3393c11-b0e2-4f4a-86a1-c7ea29350553`) — sans lui `MilestoneListItem` n'existe pas dans le DOM.
+- **Quick link « Documentation Plane »** (`https://docs.plane.so/`) sur l'accueil — sans lui `LinkItemBlock` n'est pas rendu.
+
+Même leçon qu'au §11.6 : **un relevé DOM ne vaut que ce que vaut le jeu de données affiché.**
+
+### 14.9 ⚠️ Pièges d'environnement supplémentaires
+
+1. **`git stash -u` échoue à mi-chemin dans ce dépôt.** Il bute sur `apps/api/plane/static-assets/collected-static` (créé par Docker, non supprimable : « Permission denied »), **crée l'entrée de stash sans nettoyer l'arbre** — on se retrouve avec le travail en double, dans le stash _et_ dans l'arbre. **Sans `-u`, tout se passe bien.**
+2. **Grepper `packages/i18n/dist/` fait croire que les nouvelles clés manquent.** Les locales n'y sont pas bundlées : elles sont chargées par **import dynamique** (`import('../locales/${language}/${namespace}.json')`) depuis `packages/i18n/locales`, qui est un **symlink** vers `src/locales`. Contrôle fiable : lire la valeur rendue dans la page.
+3. **Le canal d'exécution `wsl.exe` peut se coincer** (`Wsl/Service/0x8007274c`) alors que **l'invité est parfaitement sain** : `wsl --list --running` répond, le partage 9P `\\wsl.localhost\…` répond, et l'app sert toujours `:3000`. **Ne pas faire `wsl --shutdown` par réflexe** — cela tuerait dev server, `live`, Storybook et les watchers. Attendre, ou faire faire au dev ce qui doit passer par `gh`.
+4. **Le panneau navigateur peut rendre un viewport 0×0** : `elementFromPoint` renvoie alors `null` partout et les screenshots expirent. **Auto-tester l'instrument** (un point au centre du viewport doit toucher quelque chose) avant de conclure d'un test de survol.
+
+### 14.10 Travail restant — à jour au 2026-07-20
+
+1. ⬜ **La famille `customButton` icon-only** (§13.2). ⚠️ Le §13.2 annonce « ~8 sites » ; le recensement en trouve **30 `customButton` sans `ariaLabel`** au total — le sous-ensemble réellement icon-only reste à établir. Namespace i18n à choisir, ce ne sont pas des quick-actions.
+2. ⬜ **Storybook cassé** (§13.4) — `ReferenceError: process is not defined` depuis `packages/constants/dist`, 396 stories inutilisables.
+3. ⬜ **Liste des sous-work-items vide** malgré « 0/1 Done » — préexistant, reconfirmé cette session par la passe « avant ». Empêche toute vérification visuelle de ce widget.
+4. ⬜ **`FilterDisplayProperties` — clé React manquante** (§11.6), préexistant.
+5. ⬜ **`custom-image/components/block.tsx` l.185** — `touchmove` non passif (§13.7 pt 7) ; tranche une question d'UX, à décider avant de toucher.
+6. ⬜ **Pages collaboratives** — toujours bloqué : `:3100` est pris (§14.2 pt 1). Libérer le port ou démarrer la pile docker de production.
+7. ⬜ **Décisions framework** (§14.6) : hook `Stop` à installer ? garde ADR-001 sur projet `retro` ? dashboard à activer ?
+8. ⬜ **`docs/specs/web/work-item-page-embed`** — `spec-fonctionnel.md` manquant (§14.7).
+
+**Réserves de vérification encore valables** : `members-list` (#76, pas d'invitation en attente), `apps/space` (#72, jamais rendu), et les 5 layouts filtrés du §11.6. **Milestones n'en fait plus partie** (§14.4).
