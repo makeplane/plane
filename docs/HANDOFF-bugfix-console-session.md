@@ -926,7 +926,7 @@ Les deux `<div onClick>` qui ne font qu'empêcher le lien de la rangée de navig
 
 Le `00-global.md` décrit un dispositif qui, **dans ce dépôt, n'existe qu'en partie**. À arbitrer avec le dev :
 
-1. **Le hook `Stop` n'existe pas.** `.claude/` ne contient que `launch.json` et `zelian-apps.json` — **aucun `settings.json`**. La règle 5 affirme que `@update-writer-after-implement` est « forcé via `decision: block` » : ici rien ne l'impose, il ne tient qu'à la mémoire de l'assistant de l'appeler. (Il l'a été après chaque implémentation de cette session.)
+1. **Les hooks existent et fonctionnent, mais ne s'exécutent pas.** ⚠️ **Correction de la première rédaction de ce paragraphe, qui affirmait « le hook `Stop` n'existe pas » — c'est faux, et c'est la 5ᵉ affirmation démentie de cette session.** Le plugin embarque une **suite complète** : `hooks/hooks.json` déclare `SessionStart`, `UserPromptSubmit`, `PreToolUse` (Bash et Edit|Write), `PostToolUse` et `Stop`, et le plugin **est activé** (`~/.claude/settings.json` › `enabledPlugins`). Invoqués à la main, ils marchent parfaitement — voir §14.7. **Ce qui manque, c'est leur exécution dans la session** : `session-context.js` produit une bannière substantielle (branche, SHA, 5 derniers commits, CHANGELOG `[Unreleased]`, spec active, « ⚠ ADRs stale (18) ») **qui n'est jamais apparue** en début de session. La conséquence pratique est inchangée : `@update-writer-after-implement` n'est jamais forcé, il ne tient qu'à la mémoire de l'assistant de l'appeler — il l'a été après chaque implémentation de cette session. ⚠️ **Effet de bord à connaître** : `stop-update-writer.js` **consomme** le marker `.claude/.update-writer-ran` quand on l'exécute (même en simulation).
 2. **`/zelian:new-spec` est bloqué sur ce projet.** Sa garde exige `ADR-001` (« Terminez la Phase 2 d'abord ») ; or le projet a été initialisé **par `retro`** (`initialized_via: "retro"`) et possède des `RETRO-XXX`, pas d'`ADR-001`. **Aucun ADR n'a été fabriqué pour contourner la garde** — ce serait précisément l'anti-pattern que `06-adr-policy.md` existe pour empêcher. **Conséquence concrète** : la dette documentaire signalée deux fois par `@update-writer-after-implement` (contrat de `validateAndDetectFileType`, changement d'API de `LinkItemBlock`, convention « les libellés accessibles arrivent dans `packages/ui` par une prop ») **reste sans module d'accueil**.
 3. **Le score qualité n'est jamais envoyé.** `~/.zelian/config.json` porte `api.enabled: false`, `endpoint: null`, `token: null` — la dernière étape du workflow imposé n'a jamais eu lieu. C'est un opt-in du dev (`/zelian:config set`).
 
@@ -945,6 +945,25 @@ Après correction : **33 entrées, 100 % ancrées, 0 glob mort**, résolution te
 ⚠️ **Le hook `oxfmt` reformate `.zelian/compass.json`** et son style diffère de ce qu'écrit `compass.js` (`JSON.stringify(…, 2)`). L'index reste valide (vérifié après réécriture : 100 %, résolution intacte), mais **le prochain write de l'outil produira un diff d'environ 180 lignes purement cosmétique**. Exclure `.zelian/` du formateur si la gêne se confirme.
 
 **Dette révélée par l'outil** : `--check` signale que `docs/specs/web/work-item-page-embed` n'a **pas de `spec-fonctionnel.md`** (2 des 4 fichiers Zelian). Préexistant.
+
+**Preuve que l'index sert — les hooks consomment bien Compass** (testés en les invoquant à la main, puisqu'ils ne s'exécutent pas seuls, cf. §14.6 pt 1) :
+
+| Hook                      | Entrée                                              | Ce qu'il injecte                                                   |
+| ------------------------- | --------------------------------------------------- | ------------------------------------------------------------------ |
+| `user-prompt-dispatch.js` | prompt « corriger les jalons du projet »            | les 3 documents de **`api/milestones`**                            |
+| `pre-tool-dispatch.js`    | édition de `apps/api/plane/db/models/issue_type.py` | les 3 documents de **`api/work-item-types`** + le résumé du module |
+
+Recette pour en profiter dans une session où les hooks ne tournent pas — `--resolve` sur un fichier, `--resolve-prompt` sur une demande :
+
+```bash
+C="$(find ~/.claude/plugins -name compass.js -path '*/zelian-framework/hooks/lib/*' | tail -1)"
+node "$C" --resolve apps/api/plane/db/models/issue_type.py
+node "$C" --resolve-prompt "wiki workspace"
+```
+
+### 14.7bis `CLAUDE.md` créé — le fichier manquait depuis le début
+
+`session-context.js` avertissait « **Pas de CLAUDE.md trouvé — projet non initialisé ?** » : le dépôt n'en avait **aucun**, alors que c'est le fichier que Claude Code lit à chaque session et que l'**étape 5 de `/zelian:migrate`** demande d'y mettre à jour `framework_version`. Créé d'après le template du plugin, en **index court** comme il l'exige (les 33 modules ne sont pas listés : Compass est la source de vérité, la table Modules n'en serait qu'une vue humaine). Il porte `framework_version: 3.0.0`, les 6 apps, les commandes utiles, les 8 rules actives et les écarts framework connus.
 
 ### 14.8 Jeu de données — trois fixtures AJOUTÉES, ne pas nettoyer
 
