@@ -1,0 +1,658 @@
+{
+  "schema_version": 1,
+  "generated_by": "zelian-framework@3.0.0",
+  "updated_at": "2026-07-20T10:20:49.068Z",
+  "entries": [
+    {
+      "id": "api/active-cycles-workspace",
+      "app": "api",
+      "module": "active-cycles-workspace",
+      "label": "Active Cycles (vue workspace)",
+      "spec_dir": "docs/specs/api/active-cycles-workspace",
+      "code": [
+        "apps/api/plane/app/views/workspace/cycle.py",
+        "apps/api/plane/app/urls/workspace.py",
+        "apps/api/plane/app/views/__init__.py",
+        "apps/web/ce/components/active-cycles/root.tsx",
+        "apps/web/app/(all)/[workspaceSlug]/(projects)/active-cycles/header.tsx",
+        "apps/web/ce/components/workspace/sidebar/extended-sidebar-item.tsx"
+      ],
+      "keywords": ["active-cycles-workspace", "active", "cycles", "workspace"],
+      "updated_at": "2026-07-20T10:14:26.477Z"
+    },
+    {
+      "id": "api/analytics",
+      "app": "api",
+      "module": "analytics",
+      "label": "analytics",
+      "spec_dir": "docs/specs/api/analytics",
+      "code": [
+        "apps/api/plane/db/models/analytic.py",
+        "apps/api/plane/app/views/analytic/base.py",
+        "apps/api/plane/app/views/analytic/advance.py",
+        "apps/api/plane/app/views/analytic/project_analytics.py",
+        "apps/api/plane/bgtasks/analytic_plot_export.py",
+        "apps/api/plane/utils/analytics_plot.py",
+        "apps/api/plane/utils/build_chart.py",
+        "apps/api/plane/utils/date_utils.py",
+        "apps/api/plane/app/urls/analytic.py"
+      ],
+      "keywords": ["analytics"],
+      "updated_at": "2026-07-20T10:14:26.479Z"
+    },
+    {
+      "id": "api/auth",
+      "app": "api",
+      "module": "auth",
+      "label": "auth",
+      "spec_dir": "docs/specs/api/auth",
+      "code": [
+        "apps/api/plane/authentication/adapter/base.py",
+        "apps/api/plane/authentication/adapter/oauth.py",
+        "apps/api/plane/authentication/adapter/credential.py",
+        "apps/api/plane/authentication/adapter/error.py",
+        "apps/api/plane/authentication/provider/credentials/email.py",
+        "apps/api/plane/authentication/provider/credentials/magic_code.py",
+        "apps/api/plane/authentication/provider/oauth/github.py",
+        "apps/api/plane/authentication/provider/oauth/google.py",
+        "apps/api/plane/authentication/provider/oauth/gitlab.py",
+        "apps/api/plane/authentication/provider/oauth/gitea.py",
+        "apps/api/plane/authentication/middleware/session.py",
+        "apps/api/plane/authentication/session.py",
+        "apps/api/plane/authentication/rate_limit.py",
+        "apps/api/plane/authentication/views/app/email.py",
+        "apps/api/plane/authentication/views/app/magic.py",
+        "apps/api/plane/authentication/views/app/check.py",
+        "apps/api/plane/authentication/views/app/password_management.py",
+        "apps/api/plane/authentication/views/app/github.py",
+        "apps/api/plane/authentication/views/app/google.py",
+        "apps/api/plane/authentication/views/app/gitlab.py",
+        "apps/api/plane/authentication/views/app/gitea.py",
+        "apps/api/plane/authentication/views/app/signout.py",
+        "apps/api/plane/authentication/views/space/**",
+        "apps/api/plane/authentication/urls.py",
+        "apps/api/plane/authentication/utils/login.py",
+        "apps/api/plane/authentication/utils/user_auth_workflow.py",
+        "apps/api/plane/authentication/utils/workspace_project_join.py"
+      ],
+      "keywords": ["auth"],
+      "updated_at": "2026-07-20T10:14:26.481Z"
+    },
+    {
+      "id": "api/bulk-operations",
+      "app": "api",
+      "module": "bulk-operations",
+      "label": "Bulk operations",
+      "spec_dir": "docs/specs/api/bulk-operations",
+      "code": [
+        "apps/api/plane/utils/bulk_issue.py",
+        "apps/api/plane/tests/contract/api/test_bulk_operation_v1.py",
+        "apps/api/plane/tests/contract/app/test_bulk_operation_app.py",
+        "apps/web/ce/components/issues/bulk-operations/**",
+        "apps/web/core/hooks/use-bulk-operation-status.ts"
+      ],
+      "keywords": ["bulk-operations", "bulk", "operations"],
+      "updated_at": "2026-07-20T10:20:48.154Z"
+    },
+    {
+      "id": "api/cycles",
+      "app": "api",
+      "module": "cycles",
+      "label": "Cycles",
+      "spec_dir": "docs/specs/api/cycles",
+      "code": [
+        "apps/api/plane/db/models/cycle.py",
+        "apps/api/plane/app/views/cycle/base.py",
+        "apps/api/plane/app/views/cycle/issue.py",
+        "apps/api/plane/app/views/cycle/archive.py",
+        "apps/api/plane/app/views/workspace/cycle.py",
+        "apps/api/plane/app/serializers/cycle.py",
+        "apps/api/plane/app/urls/cycle.py",
+        "apps/api/plane/utils/cycle_transfer_issues.py",
+        "apps/api/plane/utils/analytics_plot.py",
+        "apps/api/plane/utils/timezone_converter.py"
+      ],
+      "keywords": ["cycles"],
+      "updated_at": "2026-07-20T10:14:26.484Z"
+    },
+    {
+      "id": "api/epics",
+      "app": "api",
+      "module": "epics",
+      "label": "Epics",
+      "spec_dir": "docs/specs/api/epics",
+      "code": [
+        "apps/api/plane/app/views/epic/**",
+        "apps/api/plane/app/urls/epic.py",
+        "apps/api/plane/tests/contract/api/test_epic_v1.py",
+        "apps/api/plane/tests/contract/app/test_epic.py",
+        "apps/web/ce/components/epics/**",
+        "apps/web/ce/store/issue/epic/**",
+        "apps/web/core/components/issues/issue-layouts/roots/project-epics-layout-root.tsx",
+        "apps/web/core/components/issues/issue-layouts/quick-action-dropdowns/epic.tsx"
+      ],
+      "keywords": ["epics"],
+      "updated_at": "2026-07-20T10:20:48.291Z"
+    },
+    {
+      "id": "api/intake",
+      "app": "api",
+      "module": "intake",
+      "label": "api/intake",
+      "spec_dir": "docs/specs/api/intake",
+      "code": [
+        "apps/api/plane/db/models/intake.py",
+        "apps/api/plane/db/models/deploy_board.py",
+        "apps/api/plane/app/views/intake/base.py",
+        "apps/api/plane/space/views/intake.py",
+        "apps/api/plane/app/serializers/intake.py",
+        "apps/api/plane/app/urls/intake.py",
+        "apps/api/plane/space/urls/intake.py",
+        "apps/api/plane/utils/content_validator.py",
+        "apps/api/tests/**"
+      ],
+      "keywords": ["intake"],
+      "updated_at": "2026-07-20T10:14:26.488Z"
+    },
+    {
+      "id": "api/intake-email",
+      "app": "api",
+      "module": "intake-email",
+      "label": "Intake par email",
+      "spec_dir": "docs/specs/api/intake-email",
+      "code": [
+        "apps/web/ce/components/inbox/source-pill.tsx",
+        "apps/web/ce/components/projects/settings/intake/header.tsx",
+        "packages/types/src/inbox.ts"
+      ],
+      "keywords": ["intake-email", "intake", "email"],
+      "updated_at": "2026-07-20T10:14:26.489Z"
+    },
+    {
+      "id": "api/issues",
+      "app": "api",
+      "module": "issues",
+      "label": "api/issues",
+      "spec_dir": "docs/specs/api/issues",
+      "code": [
+        "apps/api/plane/db/models/issue.py",
+        "apps/api/plane/db/models/description.py",
+        "apps/api/plane/db/models/base.py",
+        "apps/api/plane/db/mixins.py",
+        "apps/api/plane/app/views/issue/base.py",
+        "apps/api/plane/app/views/issue/comment.py",
+        "apps/api/plane/app/views/issue/relation.py",
+        "apps/api/plane/app/views/issue/activity.py",
+        "apps/api/plane/bgtasks/issue_activities_task.py",
+        "apps/api/plane/bgtasks/issue_description_version_task.py",
+        "apps/api/plane/bgtasks/issue_version_sync.py",
+        "apps/api/plane/bgtasks/issue_description_version_sync.py",
+        "apps/api/plane/bgtasks/issue_automation_task.py",
+        "apps/api/plane/utils/issue_relation_mapper.py",
+        "apps/api/plane/utils/grouper.py",
+        "apps/api/plane/utils/order_queryset.py",
+        "apps/api/plane/utils/paginator.py",
+        "apps/api/tests/**"
+      ],
+      "keywords": ["issues"],
+      "updated_at": "2026-07-20T10:14:26.491Z"
+    },
+    {
+      "id": "api/milestones",
+      "app": "api",
+      "module": "milestones",
+      "label": "Milestones (jalons projet)",
+      "spec_dir": "docs/specs/api/milestones",
+      "code": [
+        "packages/types/src/milestone.ts",
+        "apps/web/app/routes/core.ts",
+        "packages/constants/src/settings/project.ts",
+        "packages/types/src/settings.ts"
+      ],
+      "keywords": ["milestones", "jalons", "projet"],
+      "updated_at": "2026-07-20T10:14:26.492Z"
+    },
+    {
+      "id": "api/modules",
+      "app": "api",
+      "module": "modules",
+      "label": "Modules",
+      "spec_dir": "docs/specs/api/modules",
+      "code": [
+        "apps/api/plane/db/models/module.py",
+        "apps/api/plane/app/views/module/base.py",
+        "apps/api/plane/app/views/module/issue.py",
+        "apps/api/plane/app/views/module/archive.py",
+        "apps/api/plane/tests/**"
+      ],
+      "keywords": ["modules"],
+      "updated_at": "2026-07-20T10:14:26.494Z"
+    },
+    {
+      "id": "api/notifications",
+      "app": "api",
+      "module": "notifications",
+      "label": "notifications",
+      "spec_dir": "docs/specs/api/notifications",
+      "code": [
+        "apps/api/plane/db/models/notification.py",
+        "apps/api/plane/app/views/notification/base.py",
+        "apps/api/plane/app/urls/notification.py",
+        "apps/api/plane/app/serializers/notification.py",
+        "apps/api/plane/bgtasks/notification_task.py",
+        "apps/api/plane/bgtasks/email_notification_task.py",
+        "apps/api/plane/bgtasks/cleanup_task.py",
+        "apps/api/plane/celery.py",
+        "apps/api/plane/db/migrations/0056_usernotificationpreference_emailnotificationlog.py",
+        "apps/api/plane/db/migrations/0111_notification_notif_receiver_status_idx_and_more.py",
+        "apps/api/plane/tests/unit/bg_tasks/test_cleanup_task.py"
+      ],
+      "keywords": ["notifications"],
+      "updated_at": "2026-07-20T10:14:26.495Z"
+    },
+    {
+      "id": "api/pages",
+      "app": "api",
+      "module": "pages",
+      "label": "pages",
+      "spec_dir": "docs/specs/api/pages",
+      "code": [
+        "apps/api/plane/db/models/page.py",
+        "apps/api/plane/db/models/description.py",
+        "apps/api/plane/app/views/page/base.py",
+        "apps/api/plane/app/views/page/version.py",
+        "apps/api/plane/app/permissions/page.py",
+        "apps/api/plane/app/serializers/page.py",
+        "apps/api/plane/app/urls/page.py",
+        "apps/api/plane/bgtasks/page_transaction_task.py",
+        "apps/api/plane/bgtasks/page_version_task.py",
+        "apps/live/src/controllers/collaboration.controller.ts",
+        "apps/live/src/extensions/database.ts",
+        "apps/live/src/extensions/title-sync.ts",
+        "apps/live/src/hocuspocus.ts",
+        "apps/api/plane/tests/**"
+      ],
+      "keywords": ["pages"],
+      "updated_at": "2026-07-20T10:14:26.496Z"
+    },
+    {
+      "id": "api/pages-nested",
+      "app": "api",
+      "module": "pages-nested",
+      "label": "Pages imbriquées (nested pages)",
+      "spec_dir": "docs/specs/api/pages-nested",
+      "code": [
+        "apps/web/ce/components/pages/**",
+        "apps/web/ce/store/pages/extended-base-page.ts",
+        "apps/web/core/components/pages/**",
+        "packages/types/src/page/extended.ts"
+      ],
+      "keywords": ["pages-nested", "pages", "nested", "imbriquees"],
+      "updated_at": "2026-07-20T10:14:26.498Z"
+    },
+    {
+      "id": "api/projects",
+      "app": "api",
+      "module": "projects",
+      "label": "api/projects",
+      "spec_dir": "docs/specs/api/projects",
+      "code": [
+        "apps/api/plane/db/models/project.py",
+        "apps/api/plane/db/models/state.py",
+        "apps/api/plane/app/views/project/base.py",
+        "apps/api/plane/app/views/project/member.py",
+        "apps/api/plane/app/views/state/base.py",
+        "apps/api/plane/app/permissions/base.py",
+        "apps/api/plane/db/models/base.py",
+        "apps/api/tests/**"
+      ],
+      "keywords": ["projects"],
+      "updated_at": "2026-07-20T10:14:26.500Z"
+    },
+    {
+      "id": "api/sso-zelian",
+      "app": "api",
+      "module": "sso-zelian",
+      "label": "SSO Zelian (Supabase OAuth 2.1 / OIDC)",
+      "spec_dir": "docs/specs/api/sso-zelian",
+      "code": [
+        "apps/api/plane/authentication/provider/oauth/zelian.py",
+        "apps/api/plane/authentication/views/app/zelian.py",
+        "apps/api/plane/authentication/views/space/zelian.py",
+        "apps/web/core/hooks/oauth/extended.tsx",
+        "apps/space/hooks/oauth/extended.tsx",
+        "apps/api/plane/tests/unit/test_zelian_oauth_provider.py",
+        "apps/api/plane/authentication/adapter/error.py",
+        "apps/api/plane/authentication/adapter/oauth.py",
+        "apps/api/plane/authentication/views/__init__.py",
+        "apps/api/plane/authentication/urls.py",
+        "apps/api/plane/license/api/views/instance.py",
+        "packages/types/src/instance/auth-ee.ts",
+        "packages/types/src/instance/base.ts",
+        "packages/constants/src/auth/extended.ts"
+      ],
+      "keywords": ["sso-zelian", "sso", "zelian", "supabase", "oauth", "oidc"],
+      "updated_at": "2026-07-20T10:14:26.501Z"
+    },
+    {
+      "id": "api/views",
+      "app": "api",
+      "module": "views",
+      "label": "views",
+      "spec_dir": "docs/specs/api/views",
+      "code": [
+        "apps/api/plane/db/models/view.py",
+        "apps/api/plane/app/views/view/base.py",
+        "apps/api/plane/app/urls/views.py",
+        "apps/api/plane/app/serializers/view.py",
+        "apps/api/plane/utils/issue_filters.py",
+        "apps/api/plane/utils/filters/converters.py",
+        "apps/api/plane/utils/filters/filterset.py",
+        "apps/api/plane/utils/filters/filter_backend.py"
+      ],
+      "keywords": ["views"],
+      "updated_at": "2026-07-20T10:14:26.503Z"
+    },
+    {
+      "id": "api/views-access",
+      "app": "api",
+      "module": "views-access",
+      "label": "Vues publiques/privées (views-access)",
+      "spec_dir": "docs/specs/api/views-access",
+      "code": [
+        "apps/api/plane/app/serializers/view.py",
+        "apps/web/ce/components/views/access-controller.tsx",
+        "apps/web/ce/components/views/filters/access-filter.tsx",
+        "apps/api/plane/tests/contract/app/test_views_access_app.py"
+      ],
+      "keywords": ["views-access", "views", "access", "vues", "publiques", "privees"],
+      "updated_at": "2026-07-20T10:14:26.504Z"
+    },
+    {
+      "id": "api/views-publish",
+      "app": "api",
+      "module": "views-publish",
+      "label": "Publication de vues (public views)",
+      "spec_dir": "docs/specs/api/views-publish",
+      "code": [
+        "apps/web/ce/components/views/publish/modal.tsx",
+        "apps/web/ce/components/views/publish/use-view-publish.tsx",
+        "apps/space/app/routes.ts",
+        "packages/types/src/publish.ts",
+        "apps/web/core/services/view.service.ts"
+      ],
+      "keywords": ["views-publish", "views", "publish", "publication", "vues", "public"],
+      "updated_at": "2026-07-20T10:14:26.506Z"
+    },
+    {
+      "id": "api/webhooks",
+      "app": "api",
+      "module": "webhooks",
+      "label": "Webhooks sortants",
+      "spec_dir": "docs/specs/api/webhooks",
+      "code": [
+        "apps/api/plane/db/models/webhook.py",
+        "apps/api/plane/app/views/webhook/base.py",
+        "apps/api/plane/app/urls/webhook.py",
+        "apps/api/plane/app/serializers/webhook.py",
+        "apps/api/plane/bgtasks/webhook_task.py",
+        "apps/api/plane/utils/url_security.py",
+        "apps/api/plane/utils/ip_address.py"
+      ],
+      "keywords": ["webhooks", "sortants"],
+      "updated_at": "2026-07-20T10:14:26.509Z"
+    },
+    {
+      "id": "api/work-item-pages",
+      "app": "api",
+      "module": "work-item-pages",
+      "label": "Relation work item ↔ pages (« Link pages »)",
+      "spec_dir": "docs/specs/api/work-item-pages",
+      "code": [
+        "apps/api/plane/db/models/__init__.py",
+        "apps/api/plane/app/views/issue/page.py",
+        "apps/api/plane/app/urls/issue.py",
+        "apps/api/plane/api/views/page_link.py",
+        "apps/api/plane/api/urls/page_link.py",
+        "apps/api/plane/api/urls/__init__.py",
+        "apps/api/plane/utils/page_access.py",
+        "apps/api/plane/app/serializers/page.py",
+        "apps/api/plane/bgtasks/issue_activities_task.py",
+        "apps/web/core/components/issues/issue-detail-widgets/pages/**",
+        "apps/web/core/store/issue/issue-details/issue-page.store.ts",
+        "apps/web/core/services/issue/issue.service.ts",
+        "packages/types/src/issues/issue.ts"
+      ],
+      "keywords": ["work-item-pages", "work", "item", "pages", "relation", "link"],
+      "updated_at": "2026-07-20T10:14:26.510Z"
+    },
+    {
+      "id": "api/work-item-properties",
+      "app": "api",
+      "module": "work-item-properties",
+      "label": "Custom properties (propriétés de work item types)",
+      "spec_dir": "docs/specs/api/work-item-properties",
+      "code": [
+        "apps/api/plane/api/urls/issue_property.py",
+        "apps/api/plane/db/models/issue_property.py",
+        "apps/api/plane/app/views/issue_property/**",
+        "apps/api/plane/app/serializers/issue_property.py",
+        "apps/api/plane/app/urls/issue_property.py",
+        "apps/api/plane/api/views/issue_property.py",
+        "apps/api/plane/api/serializers/issue_property.py",
+        "apps/api/plane/utils/issue_property.py",
+        "apps/web/ce/store/issue-property.store.ts",
+        "apps/web/ce/store/issue-property-value.store.ts"
+      ],
+      "keywords": ["work-item-properties", "work", "item", "properties", "custom", "proprietes", "types"],
+      "updated_at": "2026-07-20T10:20:48.735Z"
+    },
+    {
+      "id": "api/work-item-time-tracking",
+      "app": "api",
+      "module": "work-item-time-tracking",
+      "label": "Time tracking / worklogs",
+      "spec_dir": "docs/specs/api/work-item-time-tracking",
+      "code": [
+        "packages/types/src/project/projects.ts",
+        "packages/constants/src/issue/filter.ts",
+        "apps/web/core/services/worklog.service.ts",
+        "apps/web/app/routes/core.ts",
+        "packages/constants/src/settings/project.ts",
+        "packages/types/src/settings.ts"
+      ],
+      "keywords": ["work-item-time-tracking", "work", "item", "time", "tracking", "worklogs"],
+      "updated_at": "2026-07-20T10:14:26.513Z"
+    },
+    {
+      "id": "api/work-item-types",
+      "app": "api",
+      "module": "work-item-types",
+      "label": "Work item types",
+      "spec_dir": "docs/specs/api/work-item-types",
+      "code": [
+        "apps/api/plane/api/urls/work_item.py",
+        "apps/api/plane/db/models/issue_type.py",
+        "apps/api/plane/app/views/issue_type/**",
+        "apps/api/plane/app/serializers/issue_type.py",
+        "apps/api/plane/app/urls/issue_type.py",
+        "apps/api/plane/api/views/issue_type.py",
+        "apps/api/plane/api/serializers/issue_type.py",
+        "apps/api/plane/utils/issue_type.py",
+        "apps/web/ce/store/issue-type.store.ts",
+        "apps/web/core/store/issue-type.store.ts",
+        "apps/web/core/services/issue-type.service.ts"
+      ],
+      "keywords": ["work-item-types", "work", "item", "types"],
+      "updated_at": "2026-07-20T10:20:48.881Z"
+    },
+    {
+      "id": "api/workspace-activity-log",
+      "app": "api",
+      "module": "workspace-activity-log",
+      "label": "Workspace Activity Log",
+      "spec_dir": "docs/specs/api/workspace-activity-log",
+      "code": [
+        "packages/constants/src/fetch-keys.ts",
+        "packages/types/src/users.ts",
+        "apps/api/plane/utils/activity_filters.py",
+        "apps/api/plane/api/views/activity.py",
+        "apps/api/plane/api/urls/activity.py",
+        "apps/api/plane/tests/contract/api/test_workspace_activity.py",
+        "apps/api/plane/tests/contract/app/test_workspace_activity_app.py",
+        "apps/web/ce/components/workspace/members/activity/**"
+      ],
+      "keywords": ["workspace-activity-log", "workspace", "activity", "log"],
+      "updated_at": "2026-07-20T10:20:49.026Z"
+    },
+    {
+      "id": "api/workspace-pages",
+      "app": "api",
+      "module": "workspace-pages",
+      "label": "Wiki workspace pages",
+      "spec_dir": "docs/specs/api/workspace-pages",
+      "code": [
+        "apps/api/plane/app/views/page/workspace.py",
+        "apps/api/plane/app/urls/workspace_page.py",
+        "apps/api/plane/tests/contract/app/test_workspace_page.py",
+        "apps/live/src/services/page/workspace-page.service.ts",
+        "apps/web/app/(all)/[workspaceSlug]/(projects)/wiki/**"
+      ],
+      "keywords": ["workspace-pages", "workspace", "pages", "wiki"],
+      "updated_at": "2026-07-20T10:20:48.432Z"
+    },
+    {
+      "id": "api/workspaces",
+      "app": "api",
+      "module": "workspaces",
+      "label": "api/workspaces",
+      "spec_dir": "docs/specs/api/workspaces",
+      "code": [
+        "apps/api/plane/db/models/workspace.py",
+        "apps/api/plane/app/views/workspace/base.py",
+        "apps/api/plane/app/views/workspace/member.py",
+        "apps/api/plane/app/views/workspace/invite.py",
+        "apps/api/plane/app/views/workspace/home.py",
+        "apps/api/plane/app/serializers/workspace.py",
+        "apps/api/plane/app/urls/workspace.py",
+        "apps/api/plane/app/permissions/workspace.py",
+        "apps/api/plane/app/permissions/base.py",
+        "apps/api/plane/bgtasks/workspace_seed_task.py",
+        "apps/api/plane/utils/constants.py"
+      ],
+      "keywords": ["workspaces"],
+      "updated_at": "2026-07-20T10:14:26.519Z"
+    },
+    {
+      "id": "live/realtime-collaboration",
+      "app": "live",
+      "module": "realtime-collaboration",
+      "label": "live/realtime-collaboration",
+      "spec_dir": "docs/specs/live/realtime-collaboration",
+      "code": [
+        "apps/live/src/hocuspocus.ts",
+        "apps/live/src/server.ts",
+        "apps/live/src/env.ts",
+        "apps/live/src/controllers/collaboration.controller.ts",
+        "apps/live/src/controllers/pdf-export.controller.ts",
+        "apps/live/src/extensions/database.ts",
+        "apps/live/src/extensions/redis.ts",
+        "apps/live/src/extensions/title-sync.ts",
+        "apps/live/src/extensions/title-update/title-update-manager.ts",
+        "apps/live/src/extensions/title-update/debounce.ts",
+        "apps/live/src/extensions/force-close-handler.ts",
+        "apps/live/src/lib/auth.ts",
+        "apps/live/src/lib/auth-middleware.ts",
+        "apps/live/src/lib/stateless.ts",
+        "apps/live/src/services/page/core.service.ts",
+        "apps/live/src/services/page/extended.service.ts",
+        "apps/live/src/services/page/project-page.service.ts",
+        "apps/live/src/services/page/handler.ts",
+        "apps/live/src/types/index.ts",
+        "apps/live/src/types/admin-commands.ts"
+      ],
+      "keywords": ["realtime-collaboration", "realtime", "collaboration", "live"],
+      "updated_at": "2026-07-20T10:14:26.520Z"
+    },
+    {
+      "id": "web/cycles-end-transfer",
+      "app": "web",
+      "module": "cycles-end-transfer",
+      "label": "Fin de cycle & auto-transfert",
+      "spec_dir": "docs/specs/web/cycles-end-transfer",
+      "code": [
+        "apps/web/ce/components/cycles/end-cycle/modal.tsx",
+        "apps/web/ce/components/cycles/additional-actions.tsx",
+        "apps/web/ce/components/issues/issue-details/sidebar/transfer-hop-info.tsx"
+      ],
+      "keywords": ["cycles-end-transfer", "cycles", "end", "transfer", "cycle", "auto-transfert"],
+      "updated_at": "2026-07-20T10:14:26.520Z"
+    },
+    {
+      "id": "web/estimates-edit",
+      "app": "web",
+      "module": "estimates-edit",
+      "label": "Édition des estimations (points & système TIME)",
+      "spec_dir": "docs/specs/web/estimates-edit",
+      "code": [
+        "apps/web/ce/components/estimates/update/modal.tsx",
+        "apps/web/ce/components/estimates/points/delete.tsx",
+        "apps/web/ce/components/estimates/inputs/time-input.tsx",
+        "apps/web/ce/components/estimates/helper.tsx",
+        "apps/web/ce/store/estimates/**"
+      ],
+      "keywords": ["estimates-edit", "estimates", "edit", "edition", "estimations", "points", "systeme", "time"],
+      "updated_at": "2026-07-20T10:14:26.521Z"
+    },
+    {
+      "id": "web/estimates-time",
+      "app": "web",
+      "module": "estimates-time",
+      "label": "Estimations TIME (heures/minutes)",
+      "spec_dir": "docs/specs/web/estimates-time",
+      "code": [
+        "apps/web/ce/components/estimates/helper.tsx",
+        "apps/web/ce/components/estimates/inputs/time-input.tsx",
+        "packages/constants/src/estimates.ts",
+        "apps/web/core/components/issues/issue-detail/issue-activity/activity/activity-list.tsx",
+        "apps/web/core/components/issues/issue-detail/issue-activity/activity/actions/estimate.tsx",
+        "apps/web/core/components/dropdowns/estimate.tsx",
+        "apps/api/plane/db/models/estimate.py",
+        "apps/api/plane/db/migrations/0127_alter_estimate_type_time.py",
+        "apps/api/plane/app/views/estimate/base.py",
+        "apps/api/plane/api/urls/__init__.py",
+        "apps/api/plane/tests/contract/app/test_estimate_type_app.py",
+        "apps/api/plane/tests/contract/api/test_estimates_v1.py",
+        "packages/utils/src/datetime.ts"
+      ],
+      "keywords": ["estimates-time", "estimates", "time", "estimations", "heures", "minutes"],
+      "updated_at": "2026-07-20T10:14:26.522Z"
+    },
+    {
+      "id": "web/work-item-duplicate",
+      "app": "web",
+      "module": "work-item-duplicate",
+      "label": "Duplication de work item",
+      "spec_dir": "docs/specs/web/work-item-duplicate",
+      "code": [
+        "apps/web/ce/components/issues/issue-layouts/quick-action-dropdowns/copy-menu-helper.tsx",
+        "apps/web/ce/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal.tsx"
+      ],
+      "keywords": ["work-item-duplicate", "work", "item", "duplicate", "duplication"],
+      "updated_at": "2026-07-20T10:14:26.523Z"
+    },
+    {
+      "id": "web/work-item-page-embed",
+      "app": "web",
+      "module": "work-item-page-embed",
+      "label": "Embed de page dans un work item",
+      "spec_dir": "docs/specs/web/work-item-page-embed",
+      "code": [
+        "packages/editor/src/core/extensions/page-embed/**",
+        "apps/web/core/components/editor/embeds/page-embed/**"
+      ],
+      "keywords": ["page-embed", "embed", "page", "work-item", "slash", "tiptap"],
+      "updated_at": "2026-07-20T10:20:48.580Z"
+    }
+  ]
+}
