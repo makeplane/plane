@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { format } from "date-fns";
+// plane imports
 import type { TTimeReportResponse } from "@/services/time-report.service";
 
 export type TDayColumn = {
@@ -47,7 +49,7 @@ export const getDayColumns = (startDate: string, endDate: string): TDayColumn[] 
     const cursor = new Date(start);
     cursor.setDate(cursor.getDate() + offset);
     days.push({
-      date: cursor.toISOString().slice(0, 10),
+      date: format(cursor, "yyyy-MM-dd"),
       label: cursor.toLocaleDateString(undefined, { weekday: "short", day: "numeric" }),
     });
   }
