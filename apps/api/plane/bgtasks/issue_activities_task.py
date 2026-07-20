@@ -578,7 +578,7 @@ def create_issue_activity(
     issue_activity.actor_id = issue.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data.get("assignee_ids") is not None:
+    if requested_data.get("assignee_ids") is not None or requested_data.get("assignees") is not None:
         track_assignees(
             requested_data,
             current_instance,
