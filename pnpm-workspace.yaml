@@ -91,7 +91,7 @@ catalog:
   "@vitest/coverage-v8": "^4.1.8"
   "ast-types": "0.14.2"
   "autoprefixer": "^10.4.19"
-  "axios": "1.16.0"
+  "axios": "1.18.0"
   "buffer": "^6.0.3"
   "chroma-js": "^3.2.0"
   "class-variance-authority": "0.7.1"
