@@ -68,7 +68,12 @@ docker compose -f docker-compose-local.yml up -d   # API :8000 + infra
 code ↔ doc est **`.zelian/compass.json`** (Zelian Compass v3) :
 
 ```bash
-node "$(find ~/.claude/plugins -name compass.js -path '*/zelian-framework/hooks/lib/*' | tail -1)" --resolve <fichier>
+# ⚠️ Ne pas recopier le motif des docs du framework (`*/zelian-framework/hooks/lib/*`) :
+# il oublie le dossier de version, et depuis WSL le plugin vit côté Windows.
+COMPASS=$(find ~/.claude/plugins /mnt/c/Users/*/.claude/plugins \
+  -name compass.js -path '*/zelian-framework/*/hooks/lib/*' 2>/dev/null | tail -1)
+node "$COMPASS" --resolve <fichier>          # fichier  -> module + ses docs
+node "$COMPASS" --resolve-prompt "<demande>" # demande  -> features candidates
 ```
 
 Lecture **ciblée** obligatoire : voir `.claude/rules/07-context-discipline.md`.
