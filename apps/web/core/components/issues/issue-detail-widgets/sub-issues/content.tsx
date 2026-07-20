@@ -84,16 +84,33 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
   );
 
   const handleFetchSubIssues = useCallback(async () => {
-    const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
-    if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
-      try {
-        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-        setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-      } catch (error) {
-        console.error("Error fetching sub-work items:", error);
-      } finally {
-        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
+    const helpersKey = `${parentIssueId}_root`;
+
+    /**
+     * `setSubIssueHelpers` *toggles* a value in and out of its list -- the semantics the
+     * expand/collapse chevron needs. Here the flag has to be *set*, so every call is guarded by a
+     * read taken in the same synchronous block. Without those guards the flag flips back off:
+     * several runs of this effect are in flight at once (React StrictMode invokes it twice on
+     * mount), they all pass the check below before the first `await` resolves, and each one then
+     * toggles. Whether the list shows up ends up depending on the parity of the runs.
+     */
+    if (subIssueHelpersByIssueId(helpersKey).issue_visibility.includes(parentIssueId)) return;
+
+    try {
+      if (!subIssueHelpersByIssueId(helpersKey).preview_loader.includes(parentIssueId)) {
+        setSubIssueHelpers(helpersKey, "preview_loader", parentIssueId);
+      }
+      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      if (!subIssueHelpersByIssueId(helpersKey).issue_visibility.includes(parentIssueId)) {
+        setSubIssueHelpers(helpersKey, "issue_visibility", parentIssueId);
+      }
+    } catch (error) {
+      console.error("Error fetching sub-work items:", error);
+    } finally {
+      // Toggling the value off is what clears it. The previous `""` never cleared anything:
+      // `setSubIssueHelpers` returns early on a falsy value, so the loader stayed set for good.
+      if (subIssueHelpersByIssueId(helpersKey).preview_loader.includes(parentIssueId)) {
+        setSubIssueHelpers(helpersKey, "preview_loader", parentIssueId);
       }
     }
   }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
