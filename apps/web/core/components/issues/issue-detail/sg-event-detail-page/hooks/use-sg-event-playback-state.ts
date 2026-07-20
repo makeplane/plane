@@ -32,6 +32,8 @@ export const useSgEventPlaybackState = ({
   const [pendingSeekSeconds, setPendingSeekSeconds] = useState<number | null>(null);
   const [playerLocalSeconds, setPlayerLocalSeconds] = useState(0);
   const [playerDurationSeconds, setPlayerDurationSeconds] = useState<number | null>(null);
+  const [isPlayerPlaying, setIsPlayerPlaying] = useState(false);
+  const [playerPlaybackRate, setPlayerPlaybackRate] = useState(1);
   const [playheadBaseSeconds, setPlayheadBaseSeconds] = useState(0);
   const [selectedViewId, setSelectedViewId] = useState<string>("");
 
@@ -138,9 +140,14 @@ export const useSgEventPlaybackState = ({
     playerLocalSeconds,
   });
 
+  useEffect(() => {
+    setIsPlayerPlaying(false);
+  }, [playbackItem?.id]);
+
   const handleSwitchToFullStream = useCallback(() => {
     setActivePlaybackOverride(null);
     setActiveTimelineTagId(null);
+    setIsPlayerPlaying(false);
     setPlayheadBaseSeconds(0);
     setPendingSeekSeconds(null);
   }, []);
@@ -148,16 +155,39 @@ export const useSgEventPlaybackState = ({
   const handleResetTimelinePlayback = useCallback(() => {
     setActivePlaybackOverride(null);
     setActiveTimelineTagId(null);
+    setIsPlayerPlaying(false);
     setPlayheadBaseSeconds(0);
     setPlayerLocalSeconds(0);
     setPendingSeekSeconds(null);
     window.setTimeout(() => setPendingSeekSeconds(0), 0);
   }, []);
 
-  const handlePlaybackTimeChange = useCallback((seconds: number, durationSeconds: number | null) => {
-    setPlayerLocalSeconds(seconds);
-    setPlayerDurationSeconds(durationSeconds);
-  }, []);
+  const handlePlaybackTimeChange = useCallback(
+    (
+      seconds: number,
+      durationSeconds: number | null,
+      playbackState?: {
+        isPlaying?: boolean;
+        playbackRate?: number;
+      }
+    ) => {
+      setPlayerLocalSeconds(seconds);
+      setPlayerDurationSeconds(durationSeconds);
+
+      if (typeof playbackState?.isPlaying === "boolean") {
+        setIsPlayerPlaying(playbackState.isPlaying);
+      }
+
+      if (
+        typeof playbackState?.playbackRate === "number" &&
+        Number.isFinite(playbackState.playbackRate) &&
+        playbackState.playbackRate > 0
+      ) {
+        setPlayerPlaybackRate(playbackState.playbackRate);
+      }
+    },
+    []
+  );
 
   const handlePlayTagRow = useCallback(
     async (row: SgTagRow) => {
@@ -261,6 +291,7 @@ export const useSgEventPlaybackState = ({
 
   const playPlaybackOverride = useCallback((item: TMediaItem) => {
     setPendingSeekSeconds(null);
+    setIsPlayerPlaying(false);
     setActivePlaybackOverride(item);
   }, []);
 
@@ -275,11 +306,13 @@ export const useSgEventPlaybackState = ({
     handleResetTimelinePlayback,
     handleSwitchToFullStream,
     hasPlayableVideo,
+    isPlayerPlaying,
     isPlaybackOverrideActive,
     pendingSeekSeconds,
     playbackItem,
     playPlaybackOverride,
     playerDurationSeconds,
+    playerPlaybackRate,
     selectedViewDevice,
     selectedViewId,
     selectedViewLabel,
