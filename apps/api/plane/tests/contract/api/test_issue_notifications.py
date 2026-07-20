@@ -133,3 +133,141 @@ class TestIssueNotificationContract:
         kwargs = mock_issue_activity.delay.call_args.kwargs
         assert kwargs["type"] == "issue.activity.updated"
         assert kwargs["notification"] is True
+
+
+@pytest.fixture
+def create_comment(db, project, workspace, create_user, create_issue):
+    """Create an existing comment to update/delete in tests."""
+    from plane.db.models import IssueComment
+
+    return IssueComment.objects.create(
+        comment_html="<p>Existing comment</p>",
+        issue=create_issue,
+        project=project,
+        workspace=workspace,
+        actor=create_user,
+        created_by=create_user,
+    )
+
+
+@pytest.fixture
+def create_link(db, project, workspace, create_user, create_issue):
+    """Create an existing link to update/delete in tests."""
+    from plane.db.models import IssueLink
+
+    return IssueLink.objects.create(
+        url="https://example.com/existing",
+        issue=create_issue,
+        project=project,
+        workspace=workspace,
+        created_by=create_user,
+    )
+
+
+@pytest.mark.contract
+class TestCommentLinkDeleteNotificationContract:
+    """
+    Contract: comment create/update/delete, link create/update/delete, and work
+    item delete through the external REST API (``/api/v1/...``) must trigger
+    notifications, i.e. ``issue_activity`` is dispatched with ``notification=True``
+    the same way the web app views do. Complements makeplane/plane#9306 (which
+    covered issue create/update) and covers makeplane/plane#7846.
+    """
+
+    def get_issue_url(self, workspace_slug, project_id, issue_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/"
+
+    def get_comments_url(self, workspace_slug, project_id, issue_id, pk=None):
+        base = f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/comments/"
+        return f"{base}{pk}/" if pk else base
+
+    def get_links_url(self, workspace_slug, project_id, issue_id, pk=None):
+        base = f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/links/"
+        return f"{base}{pk}/" if pk else base
+
+    def assert_notifying_activity(self, mock_issue_activity, activity_type):
+        mock_issue_activity.delay.assert_called_once()
+        kwargs = mock_issue_activity.delay.call_args.kwargs
+        assert kwargs["type"] == activity_type
+        assert kwargs["notification"] is True
+
+    @pytest.mark.django_db
+    def test_create_comment_triggers_notification(self, api_key_client, workspace, project, create_issue):
+        """Creating a comment via the external API dispatches a notifying activity."""
+        url = self.get_comments_url(workspace.slug, project.id, create_issue.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.post(url, {"comment_html": "<p>New comment</p>"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        self.assert_notifying_activity(mock_issue_activity, "comment.activity.created")
+
+    @pytest.mark.django_db
+    def test_update_comment_triggers_notification(
+        self, api_key_client, workspace, project, create_issue, create_comment
+    ):
+        """Updating a comment via the external API dispatches a notifying activity."""
+        url = self.get_comments_url(workspace.slug, project.id, create_issue.id, create_comment.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.patch(url, {"comment_html": "<p>Edited comment</p>"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        self.assert_notifying_activity(mock_issue_activity, "comment.activity.updated")
+
+    @pytest.mark.django_db
+    def test_delete_comment_triggers_notification(
+        self, api_key_client, workspace, project, create_issue, create_comment
+    ):
+        """Deleting a comment via the external API dispatches a notifying activity."""
+        url = self.get_comments_url(workspace.slug, project.id, create_issue.id, create_comment.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        self.assert_notifying_activity(mock_issue_activity, "comment.activity.deleted")
+
+    @pytest.mark.django_db
+    def test_create_link_triggers_notification(self, api_key_client, workspace, project, create_issue):
+        """Creating a link via the external API dispatches a notifying activity."""
+        url = self.get_links_url(workspace.slug, project.id, create_issue.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.post(url, {"url": "https://example.com/new"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        self.assert_notifying_activity(mock_issue_activity, "link.activity.created")
+
+    @pytest.mark.django_db
+    def test_update_link_triggers_notification(self, api_key_client, workspace, project, create_issue, create_link):
+        """Updating a link via the external API dispatches a notifying activity."""
+        url = self.get_links_url(workspace.slug, project.id, create_issue.id, create_link.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.patch(url, {"url": "https://example.com/edited"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        self.assert_notifying_activity(mock_issue_activity, "link.activity.updated")
+
+    @pytest.mark.django_db
+    def test_delete_link_triggers_notification(self, api_key_client, workspace, project, create_issue, create_link):
+        """Deleting a link via the external API dispatches a notifying activity."""
+        url = self.get_links_url(workspace.slug, project.id, create_issue.id, create_link.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        self.assert_notifying_activity(mock_issue_activity, "link.activity.deleted")
+
+    @pytest.mark.django_db
+    def test_delete_issue_triggers_notification(self, api_key_client, workspace, project, create_issue):
+        """Deleting a work item via the external API dispatches a notifying activity."""
+        url = self.get_issue_url(workspace.slug, project.id, create_issue.id)
+
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        self.assert_notifying_activity(mock_issue_activity, "issue.activity.deleted")
