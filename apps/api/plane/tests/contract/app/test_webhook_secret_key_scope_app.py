@@ -80,8 +80,10 @@ class TestWebhookSecretKeyScope:
 
     @pytest.mark.django_db
     def test_create_reveals_secret_key(self, session_client, workspace, monkeypatch):
-        # Bypass the network-dependent SSRF URL validation for this unit.
-        monkeypatch.setattr(WebhookSerializer, "_validate_webhook_url", lambda self, url: None)
+        # Bypass only the network boundary (DNS/IP SSRF resolution); the domain and
+        # schema checks in _validate_webhook_url still run for example.com, and the
+        # test survives a rename of the private method.
+        monkeypatch.setattr("plane.app.serializers.webhook.validate_url", lambda *a, **k: None)
 
         response = session_client.post(
             _webhooks_url(workspace.slug), {"url": "https://example.com/hook"}, format="json"
@@ -95,5 +97,10 @@ class TestWebhookSecretKeyScope:
         webhook = _make_webhook(workspace)
 
         assert "secret_key" not in WebhookSerializer(webhook).data
+        # An explicit fields= request must not re-open the leak either: enforcement
+        # lives in to_representation, not the (currently no-op) DynamicBaseSerializer
+        # field allowlist. Pins the enforcement point so a future _filter_fields fix
+        # can't silently re-expose the key.
+        assert "secret_key" not in WebhookSerializer(webhook, fields=("secret_key",)).data
         revealed = WebhookSerializer(webhook, context={"show_secret_key": True}).data
         assert revealed["secret_key"] == webhook.secret_key
