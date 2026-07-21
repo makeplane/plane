@@ -47,6 +47,9 @@ export function LooperCollaborationPanel(props: Props) {
   const [confirmDispatch, setConfirmDispatch] = useState(false);
   const [showRelease, setShowRelease] = useState(false);
   const [releaseReason, setReleaseReason] = useState("");
+  const [answeringRequest, setAnsweringRequest] = useState<string | null>(null);
+  const [answerText, setAnswerText] = useState("");
+  const [pendingAnswer, setPendingAnswer] = useState(false);
   const { data: summary, mutate } = useLooperSummary(workspaceSlug, projectId, issueId);
 
   if (!summary || summary.visibility !== "visible") return null;
@@ -83,6 +86,26 @@ export function LooperCollaborationPanel(props: Props) {
       });
     } finally {
       setPendingAction(null);
+    }
+  };
+
+  const submitAnswer = async () => {
+    if (!answeringRequest || !answerText.trim()) return;
+    setPendingAnswer(true);
+    try {
+      await looperCollaborationService.answerRoleRequest(workspaceSlug, projectId, answeringRequest, answerText.trim());
+      setAnsweringRequest(null);
+      setAnswerText("");
+      await mutate();
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("toast.success"), message: t("issue.looper.answer_success") });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("common.error.label"),
+        message: t("issue.looper.action_failed"),
+      });
+    } finally {
+      setPendingAnswer(false);
     }
   };
 
@@ -258,19 +281,61 @@ export function LooperCollaborationPanel(props: Props) {
           </div>
           <div className="divide-y divide-subtle overflow-hidden rounded-md border border-subtle">
             {summary.roles?.map((role) => (
-              <div key={role.role} className="flex min-h-9 flex-wrap items-center gap-2 px-2.5 py-1.5">
-                <span className={cn("h-4 w-0.5 rounded-full", ROLE_ACCENT[role.role])} />
-                <span className="min-w-24 text-body-xs-medium text-primary">{t(`issue.looper.role.${role.role}`)}</span>
-                <span className="min-w-0 grow truncate text-caption-md-regular text-tertiary">
-                  {role.member?.display_name ?? t("issue.looper.unassigned")}
-                </span>
-                <Badge variant={roleBadgeVariant(role.status)} size="sm">
-                  {role.status === "completed"
-                    ? t("issue.looper.answered_count", { answered: role.answered_count, total: role.total_count })
-                    : role.status === "waiting"
-                      ? t("issue.looper.waiting_count", { count: role.open_count })
-                      : t("issue.looper.pending")}
-                </Badge>
+              <div key={role.role} className="px-2.5 py-1.5">
+                <div className="flex min-h-9 flex-wrap items-center gap-2">
+                  <span className={cn("h-4 w-0.5 rounded-full", ROLE_ACCENT[role.role])} />
+                  <span className="min-w-24 text-body-xs-medium text-primary">
+                    {t(`issue.looper.role.${role.role}`)}
+                  </span>
+                  <span className="min-w-0 grow truncate text-caption-md-regular text-tertiary">
+                    {role.member?.display_name ?? t("issue.looper.unassigned")}
+                  </span>
+                  <Badge variant={roleBadgeVariant(role.status)} size="sm">
+                    {role.status === "completed"
+                      ? t("issue.looper.answered_count", { answered: role.answered_count, total: role.total_count })
+                      : role.status === "waiting"
+                        ? t("issue.looper.waiting_count", { count: role.open_count })
+                        : t("issue.looper.pending")}
+                  </Badge>
+                  {role.can_answer && role.open_request_id && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        setAnsweringRequest(role.open_request_id);
+                        setAnswerText("");
+                      }}
+                    >
+                      {t("issue.looper.answer")}
+                    </Button>
+                  )}
+                </div>
+                {answeringRequest === role.open_request_id && (
+                  <div className="mt-2 rounded-md border border-accent-subtle bg-accent-subtle p-2.5">
+                    <p className="mb-2 text-caption-md-regular text-secondary">{role.current_question}</p>
+                    <textarea
+                      value={answerText}
+                      onChange={(event) => setAnswerText(event.target.value)}
+                      placeholder={t("issue.looper.answer_placeholder")}
+                      rows={3}
+                      className="focus:border-accent-primary w-full resize-y rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-body-xs-regular text-primary outline-none"
+                    />
+                    <div className="mt-2 flex justify-end gap-2">
+                      <Button variant="secondary" size="sm" onClick={() => setAnsweringRequest(null)}>
+                        {t("common.cancel")}
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        disabled={!answerText.trim()}
+                        loading={pendingAnswer}
+                        onClick={() => void submitAnswer()}
+                      >
+                        {t("issue.looper.submit_answer")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

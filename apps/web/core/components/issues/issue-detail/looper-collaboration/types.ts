@@ -24,6 +24,7 @@ export type TLooperSummary = {
     can_dispatch: boolean;
     can_stop: boolean;
     can_release: boolean;
+    can_answer?: boolean;
   };
   empty_reason?:
     | "integration_not_active"
@@ -73,6 +74,9 @@ export type TLooperSummary = {
     total_count: number;
     status: "waiting" | "completed" | "pending";
     current_question: string | null;
+    open_request_id: string | null;
+    can_answer: boolean;
+    answer_mode: "quick_decision" | "formal_product_spec";
   }>;
   artifacts?: Array<{
     id: string;

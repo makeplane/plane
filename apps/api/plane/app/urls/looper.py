@@ -7,6 +7,8 @@ from plane.app.views.looper import (
     LooperDispatchOwnerActionEndpoint,
     LooperDispatchTransitionEndpoint,
     LooperNodeSessionEndpoint,
+    LooperRoleRequestAnswerEndpoint,
+    LooperRoleRequestCreateEndpoint,
     LooperNodeBindingApprovalEndpoint,
     LooperNodeBindingLinkEndpoint,
     LooperProjectIntegrationEndpoint,
@@ -40,6 +42,16 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/transition/",
         LooperDispatchTransitionEndpoint.as_view(),
         name="looper-dispatch-transition",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/role-requests/",
+        LooperRoleRequestCreateEndpoint.as_view(),
+        name="looper-role-request-create",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/role-requests/<uuid:role_request_id>/answer/",
+        LooperRoleRequestAnswerEndpoint.as_view(),
+        name="looper-role-request-answer",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/<str:action>/",

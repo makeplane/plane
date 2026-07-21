@@ -48,4 +48,15 @@ export class LooperCollaborationService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async answerRoleRequest(workspaceSlug: string, projectId: string, roleRequestId: string, answer: string) {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/role-requests/${roleRequestId}/answer/`,
+      { answer }
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

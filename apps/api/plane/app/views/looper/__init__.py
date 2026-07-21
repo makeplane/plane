@@ -13,6 +13,7 @@ from .dispatch import (
     LooperDispatchTransitionEndpoint,
     LooperNodeSessionEndpoint,
 )
+from .collaboration import LooperRoleRequestAnswerEndpoint, LooperRoleRequestCreateEndpoint
 
 __all__ = (
     "LooperNodeBindingApprovalEndpoint",
@@ -26,4 +27,6 @@ __all__ = (
     "LooperDispatchOwnerActionEndpoint",
     "LooperDispatchTransitionEndpoint",
     "LooperNodeSessionEndpoint",
+    "LooperRoleRequestAnswerEndpoint",
+    "LooperRoleRequestCreateEndpoint",
 )

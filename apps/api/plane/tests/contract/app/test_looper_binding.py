@@ -1,7 +1,7 @@
 import base64
 import hashlib
 import json
-from datetime import datetime, timezone as datetime_timezone
+from datetime import datetime, timedelta, timezone as datetime_timezone
 from pathlib import Path
 from unittest.mock import patch
 from types import SimpleNamespace
@@ -15,9 +15,11 @@ from rest_framework import status
 from plane.db.models import (
     LooperNodeBinding,
     LooperNodeKey,
+    LooperNodeSession,
     LooperDispatch,
     LooperProjectIntegration,
     LooperProjectRolePolicy,
+    LooperRoleRequest,
     LooperWorkItemProtocol,
     Issue,
     Project,
@@ -801,3 +803,124 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
         HTTP_LOOPER_SIGNATURE=transition_header,
     )
     assert stale.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+def test_strict_role_request_routes_to_plane_policy_owner_and_answer_resumes_visibility(
+    api_client, binding_context, binding_vectors
+):
+    owner, product, workspace, project, binding, private_key, issue = strict_dispatch_context(
+        binding_context, binding_vectors
+    )
+    attempt_id = uuid4()
+    dispatch = LooperDispatch.objects.create(
+        workspace=workspace,
+        project=project,
+        issue=issue,
+        node_binding=binding,
+        requested_mode="auto",
+        active_role="planner",
+        owner_member=owner,
+        dispatched_by_member=owner,
+        node_id=binding.node_id,
+        node_name_snapshot=binding.node_name_snapshot,
+        product_member_snapshot=product,
+        design_member_snapshot=product,
+        qa_member_snapshot=product,
+        state="running",
+        state_version=3,
+        execution_attempt_id=attempt_id,
+        fencing_token=1,
+        idempotency_key=uuid4(),
+    )
+    session_id = uuid4()
+    instance_nonce_b64 = b64url_encode(uuid4().bytes)
+    LooperNodeSession.objects.create(
+        workspace=workspace,
+        project=project,
+        binding=binding,
+        session_id=session_id,
+        instance_nonce=base64.urlsafe_b64decode(instance_nonce_b64 + "=="),
+        lease_expires_at=timezone.now() + timedelta(seconds=90),
+        last_renewed_at=timezone.now(),
+    )
+    path = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
+        f"{dispatch.id}/role-requests/"
+    )
+    body_value = {
+        "expected_state_version": dispatch.state_version,
+        "execution_attempt_id": str(attempt_id),
+        "fencing_token": 1,
+        "session_id": str(session_id),
+        "instance_nonce": instance_nonce_b64,
+        "loop_id": "loop-role-routing",
+        "decision_revision": 1,
+        "role": "product",
+        "brief_summary": "用户需要明确导出失败后的产品行为。",
+        "questions": [
+            {
+                "id": "PROD-001",
+                "question": "失败重试是自动执行还是由用户触发？",
+                "context": "当前导出会直接失败，新增重试会影响等待时间和错误反馈。",
+                "options": [
+                    {"id": "PROD-001-A", "label": "自动重试", "impact": "用户无需操作"},
+                    {"id": "PROD-001-B", "label": "手动重试", "impact": "用户可控"},
+                ],
+                "recommended_option": "PROD-001-A",
+                "recommendation_reason": "减少中断",
+            }
+        ],
+    }
+    body = json.dumps(body_value, separators=(",", ":")).encode()
+    header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=path,
+        body=body,
+        dispatch=dispatch,
+        state_version=dispatch.state_version,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    api_client.force_authenticate(user=None)
+    created = api_client.generic(
+        "POST",
+        path,
+        data=body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=header,
+    )
+    assert created.status_code == status.HTTP_201_CREATED
+    role_request = LooperRoleRequest.objects.get(id=created.data["role_request"]["id"])
+    assert role_request.eligible_member_id == product.id
+    dispatch.refresh_from_db()
+    assert (dispatch.state, dispatch.wait_kind, dispatch.state_version) == (
+        "awaiting_human",
+        "role_decision",
+        4,
+    )
+
+    summary_url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/looper/"
+    api_client.force_authenticate(owner)
+    owner_summary = api_client.get(summary_url)
+    product_role = next(role for role in owner_summary.data["roles"] if role["role"] == "product")
+    assert product_role["can_answer"] is False
+
+    answer_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/role-requests/"
+        f"{role_request.id}/answer/"
+    )
+    denied = api_client.post(answer_url, {"answer": "PROD-001: PROD-001-A"}, format="json")
+    assert denied.status_code == status.HTTP_403_FORBIDDEN
+    api_client.force_authenticate(product)
+    product_summary = api_client.get(summary_url)
+    product_role = next(role for role in product_summary.data["roles"] if role["role"] == "product")
+    assert product_role["can_answer"] is True
+    answered = api_client.post(answer_url, {"answer": "PROD-001: PROD-001-A"}, format="json")
+    assert answered.status_code == status.HTTP_200_OK
+    role_request.refresh_from_db()
+    assert role_request.status == "answered"
+    assert role_request.answer_comment.actor_id == product.id

@@ -90,6 +90,10 @@ def build_looper_summary(dispatch, *, actor=None):
         role_requests = [request for request in requests if request.role == role]
         open_requests = [request for request in role_requests if request.status == "open"]
         answered_requests = [request for request in role_requests if request.status == "answered"]
+        current_request = open_requests[0] if open_requests else None
+        requires_formal_spec = bool(
+            current_request and current_request.question_summary.startswith("PROD-000 ·")
+        )
         roles.append(
             {
                 "role": role,
@@ -98,7 +102,15 @@ def build_looper_summary(dispatch, *, actor=None):
                 "answered_count": len(answered_requests),
                 "total_count": len(role_requests),
                 "status": "waiting" if open_requests else "completed" if role_requests else "pending",
-                "current_question": open_requests[0].question_summary if open_requests else None,
+                "current_question": current_request.question_summary if current_request else None,
+                "open_request_id": str(current_request.id) if current_request else None,
+                "can_answer": bool(
+                    current_request
+                    and not requires_formal_spec
+                    and actor is not None
+                    and current_request.eligible_member_id == actor.id
+                ),
+                "answer_mode": "formal_product_spec" if requires_formal_spec else "quick_decision",
             }
         )
 
@@ -146,6 +158,7 @@ def build_looper_summary(dispatch, *, actor=None):
         "stop_requested",
     }
     can_release = is_owner and dispatch.state in {"queued", "confirmed_stopped"}
+    can_answer = any(role["can_answer"] for role in roles)
     available_actions = []
     if can_stop:
         available_actions.append("stop")
@@ -154,12 +167,13 @@ def build_looper_summary(dispatch, *, actor=None):
     return {
         "visibility": "visible",
         "protocol": "strict_v1",
-        "read_only": not (can_stop or can_release),
+        "read_only": not (can_stop or can_release or can_answer),
         "permissions": {
             "can_view": True,
             "can_dispatch": False,
             "can_stop": can_stop,
             "can_release": can_release,
+            "can_answer": can_answer,
         },
         "dispatch": {
             "id": str(dispatch.id),
@@ -232,6 +246,7 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                             "can_dispatch": False,
                             "can_stop": False,
                             "can_release": False,
+                            "can_answer": False,
                         },
                     },
                     status=status.HTTP_200_OK,
@@ -262,6 +277,7 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                         "can_dispatch": can_dispatch,
                         "can_stop": False,
                         "can_release": False,
+                        "can_answer": False,
                     },
                     "empty_reason": (
                         None
