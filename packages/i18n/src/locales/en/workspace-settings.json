@@ -203,6 +203,63 @@
           }
         }
       },
+      "crm_sync": {
+        "title": "CRM Sync",
+        "heading": "CRM Sync",
+        "description": "Automatically push each month's logged hours to your CRM so client billing stays in sync.",
+        "form": {
+          "crm_url": "CRM base URL",
+          "crm_url_placeholder": "https://crm.example.com",
+          "crm_url_required": "CRM base URL is required.",
+          "api_key": "API key",
+          "api_key_placeholder": "Bearer token from the CRM Plane API module",
+          "api_key_set": "A key is configured. Leave blank to keep it.",
+          "api_key_required": "API key is required.",
+          "project_id_field": "Plane custom field for CRM project id",
+          "project_id_field_help": "A project custom field whose value holds the matching CRM project id.",
+          "project_id_field_none": "Select a custom field",
+          "invoice_hours_field": "CRM invoice-hours field id",
+          "invoice_hours_field_help": "Numeric id of the \"Invoice hours\" custom field in the CRM.",
+          "fetch_fields": "Fetch from CRM",
+          "active": "Active",
+          "active_help": "When off, the monthly sync is skipped for this workspace.",
+          "save": "Save changes",
+          "test_connection": "Test connection",
+          "sync_now": "Sync now"
+        },
+        "logs": {
+          "title": "Recent syncs",
+          "empty": "No syncs have run yet.",
+          "month": "Month",
+          "status": "Status",
+          "synced": "Synced",
+          "skipped": "Skipped",
+          "processed": "Processed",
+          "ran_at": "Ran at"
+        },
+        "toasts": {
+          "saved": {
+            "title": "Saved",
+            "message": "CRM integration settings have been saved."
+          },
+          "connection_ok": {
+            "title": "Connection successful",
+            "message": "Reached the CRM and found {count} project(s)."
+          },
+          "connection_failed": {
+            "title": "Connection failed",
+            "message": "Could not reach the CRM. Check the URL and API key."
+          },
+          "sync_started": {
+            "title": "Sync started",
+            "message": "The sync is running in the background. Check the recent syncs shortly."
+          },
+          "error": {
+            "title": "Something went wrong",
+            "message": "Please try again."
+          }
+        }
+      },
       "webhooks": {
         "heading": "Webhooks",
         "description": "Automate notifications to external services when project events occur.",

@@ -129,6 +129,8 @@ from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .custom_field import CustomFieldSerializer, CustomFieldValueSerializer
 
+from .crm_integration import CrmIntegrationSerializer, CrmSyncLogSerializer
+
 from .favorite import UserFavoriteSerializer
 
 from .draft import (

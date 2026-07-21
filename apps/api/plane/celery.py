@@ -92,6 +92,12 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    # Occurs once every month
+    "monthly-crm-sync": {
+        "task": "plane.bgtasks.crm_sync_task.monthly_crm_sync",
+        # First of the month at UTC 04:00 — processes the previous month.
+        "schedule": crontab(hour=4, minute=0, day_of_month=1),
+    },
 }
 
 

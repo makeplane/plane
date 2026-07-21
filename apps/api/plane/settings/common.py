@@ -343,6 +343,11 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+# CRM integration: verify the CRM server's TLS certificate. Keep this ON in
+# production. Only set CRM_VERIFY_SSL=0 for local testing against a CRM that
+# serves a self-signed certificate (e.g. a Laragon/XAMPP vhost).
+CRM_VERIFY_SSL = int(os.environ.get("CRM_VERIFY_SSL", "1")) == 1
+
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)

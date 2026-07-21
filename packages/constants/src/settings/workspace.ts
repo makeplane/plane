@@ -12,6 +12,7 @@ export enum WORKSPACE_SETTINGS_CATEGORY {
   ADMINISTRATION = "administration",
   FEATURES = "features",
   CUSTOM_FIELDS = "custom_fields",
+  INTEGRATIONS = "integrations",
   DEVELOPER = "developer",
 }
 
@@ -19,6 +20,7 @@ export const WORKSPACE_SETTINGS_CATEGORIES: WORKSPACE_SETTINGS_CATEGORY[] = [
   WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION,
   WORKSPACE_SETTINGS_CATEGORY.FEATURES,
   WORKSPACE_SETTINGS_CATEGORY.CUSTOM_FIELDS,
+  WORKSPACE_SETTINGS_CATEGORY.INTEGRATIONS,
   WORKSPACE_SETTINGS_CATEGORY.DEVELOPER,
 ];
 
@@ -26,6 +28,7 @@ export const WORKSPACE_SETTINGS_CATEGORY_LABELS: Record<WORKSPACE_SETTINGS_CATEG
   [WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION]: "common.administration",
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: "common.features",
   [WORKSPACE_SETTINGS_CATEGORY.CUSTOM_FIELDS]: "common.custom_fields",
+  [WORKSPACE_SETTINGS_CATEGORY.INTEGRATIONS]: "common.integrations",
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: "common.developer",
 };
 
@@ -79,6 +82,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/custom-fields/work-items/`,
   },
+  "crm-sync": {
+    key: "crm-sync",
+    i18n_label: "workspace_settings.settings.crm_sync.title",
+    href: `/settings/crm-sync`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/crm-sync/`,
+  },
 };
 
 export const WORKSPACE_SETTINGS_ACCESS: Record<string, EUserWorkspaceRoles[]> = {
@@ -101,5 +111,6 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["custom-fields-projects"],
     WORKSPACE_SETTINGS["custom-fields-work-items"],
   ],
+  [WORKSPACE_SETTINGS_CATEGORY.INTEGRATIONS]: [WORKSPACE_SETTINGS["crm-sync"]],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
 };

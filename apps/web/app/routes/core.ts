@@ -290,6 +290,10 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/custom-fields/work-items",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/custom-fields/work-items/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/crm-sync",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/crm-sync/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------

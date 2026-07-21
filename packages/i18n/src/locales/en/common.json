@@ -742,7 +742,8 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
-    "custom_fields": "Custom Fields"
+    "custom_fields": "Custom Fields",
+    "integrations": "Integrations"
   },
   "chart": {
     "x_axis": "X-axis",

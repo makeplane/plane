@@ -247,6 +247,14 @@ from .custom_field.base import (
     WorkspaceActiveCustomFieldsEndpoint,
 )
 
+from .crm_integration.base import (
+    CrmIntegrationEndpoint,
+    CrmIntegrationTestEndpoint,
+    CrmIntegrationSyncEndpoint,
+    CrmIntegrationCrmFieldsEndpoint,
+    CrmSyncLogEndpoint,
+)
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
