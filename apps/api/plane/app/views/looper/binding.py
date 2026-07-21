@@ -19,7 +19,7 @@ from plane.db.models import (
 )
 from plane.integrations.looper.binding import (
     binding_payload,
-    create_pending_binding,
+    create_active_binding,
     verify_link_request,
 )
 from plane.integrations.looper.directory import DirectoryUnavailable, get_directory_snapshot
@@ -67,7 +67,13 @@ class LooperNodeBindingLinkEndpoint(BaseAPIView):
                 project_id=project.id,
                 member_id=request.user.id,
             )
-            binding = create_pending_binding(project=project, member=request.user, verified=verified, now=current_time)
+            binding = create_active_binding(
+                project=project,
+                member=request.user,
+                verified=verified,
+                node_name=request.headers.get("X-Looper-Node-Name", ""),
+                now=current_time,
+            )
         except IntegrityError:
             return Response(
                 {"error": "binding_conflict", "detail": "This member or Node already has a current binding."},

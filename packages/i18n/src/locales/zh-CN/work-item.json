@@ -92,6 +92,82 @@
         "owner_binding_required": "尚未绑定你的 Looper",
         "node_role_not_allowed": "你的 Looper 尚未获准执行规划任务",
         "work_item_not_open": "已完成或归档的任务不能派发"
+      },
+      "connect": {
+        "cta": "连接我的 Looper",
+        "cta_hint": "把你电脑上运行的 Looper 关联进来，之后就能把这条工作项交给它。",
+        "title": "连接我的 Looper",
+        "step_label": "第 {current} 步，共 {total} 步",
+        "steps": {
+          "command": "获取命令",
+          "verify": "在电脑上确认",
+          "done": "可以使用"
+        },
+        "one_device_note": "目前每个人在一个项目里只能连接一台电脑。",
+        "copied": "已复制",
+        "copy_failed": "复制没有成功，请手动选中命令后复制。",
+        "load_failed": "状态获取暂时中断，正在重试。",
+        "details": "技术细节",
+        "device": "{node} · 由 {owner} 连接",
+        "command": {
+          "heading": "在你的电脑上运行这条命令",
+          "description": "在运行 Looper 的那台电脑上打开终端，粘贴这条命令并回车。它会让 Looper 以你的身份连接到当前项目。",
+          "copy": "复制命令",
+          "expires_in": "这条命令还能用 {minutes} 分 {seconds} 秒。",
+          "expires_soon": "这条命令将在 1 分钟内失效。",
+          "creating": "正在为你准备连接…"
+        },
+        "verify": {
+          "heading": "正在检查你的电脑",
+          "description": "保持终端打开，本页面会自动更新；连接自己的电脑不需要管理员审批。",
+          "waiting": "正在等待你的电脑响应…",
+          "finishing": "就快好了，正在你的电脑上完成配置。"
+        },
+        "check": {
+          "identity_verified": "确认是你本人",
+          "cli_connected": "你电脑上的 Looper 已响应",
+          "key_verified": "安全密钥已校验",
+          "node_online": "你的电脑可以联系上",
+          "strict_dispatch": "已可以接收工作项",
+          "inbox_verified": "Plane 已能联系上你的 Looper"
+        },
+        "check_status": {
+          "pending": "检查中",
+          "passed": "通过",
+          "failed": "需要处理"
+        },
+        "done": {
+          "heading": "你的 Looper 已连接",
+          "description": "现在可以把这条工作项交给你自己的电脑了。",
+          "finish": "完成"
+        },
+        "existing": {
+          "heading": "你已经连接了一台电脑",
+          "description": "目前每个人在一个项目里只能连接一台电脑。请先在那台电脑上断开 {node}；任务可能还在运行，我们不会在这里直接替换。",
+          "unknown_device": "你当前的电脑",
+          "understood": "知道了"
+        },
+        "expired": {
+          "heading": "这次连接请求已过期",
+          "description": "连接请求的有效期是 10 分钟，重新开始即可拿到新命令。",
+          "retry": "重新开始"
+        },
+        "failed": {
+          "heading": "连接没有成功",
+          "retry": "重试"
+        },
+        "cancelled": {
+          "heading": "这次连接已取消",
+          "description": "你取消了这次连接请求，可以随时重新开始。"
+        },
+        "error": {
+          "connection_expired": "请求在你的电脑响应前就超时了。",
+          "active_device_exists": "你在这个项目里已经连接了一台电脑。",
+          "invalid_connection_code": "这条命令已经失效，请重新开始获取新的命令。",
+          "invalid_link_request": "你的电脑没能证明自己的身份，请重新开始。",
+          "not_project_member": "你没有这个项目的访问权限。",
+          "unknown": "出了点问题，请重新开始。"
+        }
       }
     },
     "add": {

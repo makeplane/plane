@@ -22,6 +22,7 @@ export type TLooperSummary = {
   permissions: {
     can_view: boolean;
     can_dispatch: boolean;
+    can_connect?: boolean;
     can_stop: boolean;
     can_release: boolean;
     can_answer?: boolean;
@@ -96,4 +97,56 @@ export type TLooperSummary = {
   }>;
   snapshot_version?: number;
   available_actions?: string[];
+};
+
+export type TLooperConnectionStatus =
+  | "created"
+  | "cli_connected"
+  | "binding_created"
+  | "completed"
+  | "expired"
+  | "cancelled"
+  | "failed"
+  /** The member already has an active computer on this project; V1 keeps it at one. */
+  | "device_exists";
+
+export type TLooperConnectionCheckKey =
+  | "identity_verified"
+  | "cli_connected"
+  | "key_verified"
+  | "node_online"
+  | "strict_dispatch"
+  | "inbox_verified";
+
+export type TLooperConnectionCheckStatus = "pending" | "passed" | "failed";
+
+export type TLooperConnectionChecks = Partial<Record<TLooperConnectionCheckKey, boolean>>;
+
+export type TLooperConnectionErrorCode =
+  | "connection_expired"
+  | "active_device_exists"
+  | "invalid_connection_code"
+  | "invalid_link_request"
+  | "not_project_member"
+  | "unknown";
+
+export type TLooperConnection = {
+  id: string;
+  status: TLooperConnectionStatus;
+  /** Ready-to-paste CLI command built by the API; empty once the session leaves the code window. */
+  command: string;
+  expires_at: string;
+  owner: TLooperMember | null;
+  node: {
+    id: string;
+    name: string;
+    binding_id: string | null;
+  } | null;
+  checks: TLooperConnectionChecks;
+  error_code: TLooperConnectionErrorCode | null;
+  error_detail: string | null;
+};
+
+export type TLooperConnectionResponse = {
+  connection: TLooperConnection;
 };

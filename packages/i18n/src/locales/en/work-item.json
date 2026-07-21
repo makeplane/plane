@@ -92,6 +92,82 @@
         "owner_binding_required": "Your Looper is not linked yet",
         "node_role_not_allowed": "Your Looper is not approved for planning work",
         "work_item_not_open": "Completed or archived work items cannot be dispatched"
+      },
+      "connect": {
+        "cta": "Connect my Looper",
+        "cta_hint": "Link the Looper running on your own computer, so this work item can be sent there.",
+        "title": "Connect my Looper",
+        "step_label": "Step {current} of {total}",
+        "steps": {
+          "command": "Get your command",
+          "verify": "Confirm on your computer",
+          "done": "Ready to use"
+        },
+        "one_device_note": "For now, each person can connect one computer per project.",
+        "copied": "Copied",
+        "copy_failed": "Copy did not work. Select the command and copy it manually.",
+        "load_failed": "We lost the status for a moment. Still trying.",
+        "details": "Technical details",
+        "device": "{node} · connected by {owner}",
+        "command": {
+          "heading": "Run this command on your computer",
+          "description": "Open a terminal on the computer where Looper runs, paste the command, and press Enter. It tells Looper to connect to this project as you.",
+          "copy": "Copy command",
+          "expires_in": "This command works for another {minutes} min {seconds} s.",
+          "expires_soon": "This command expires in less than a minute.",
+          "creating": "Setting up your connection…"
+        },
+        "verify": {
+          "heading": "Checking your computer",
+          "description": "Keep the terminal open. This page updates by itself; connecting your own computer does not need administrator approval.",
+          "waiting": "Waiting for your computer to answer…",
+          "finishing": "Almost there. Finishing the setup on your computer."
+        },
+        "check": {
+          "identity_verified": "It is really you",
+          "cli_connected": "Looper answered from your computer",
+          "key_verified": "Security key verified",
+          "node_online": "Your computer is reachable",
+          "strict_dispatch": "Ready to receive work items",
+          "inbox_verified": "Plane can reach your Looper"
+        },
+        "check_status": {
+          "pending": "Checking",
+          "passed": "Done",
+          "failed": "Needs attention"
+        },
+        "done": {
+          "heading": "Your Looper is connected",
+          "description": "You can now send this work item to your own computer.",
+          "finish": "Done"
+        },
+        "existing": {
+          "heading": "You already have a connected computer",
+          "description": "For now, each person can connect one computer per project. Disconnect {node} from that computer first — we will not switch it here while work may still be running.",
+          "unknown_device": "your current computer",
+          "understood": "Got it"
+        },
+        "expired": {
+          "heading": "This request expired",
+          "description": "A connection request is good for 10 minutes. Start again to get a fresh command.",
+          "retry": "Start again"
+        },
+        "failed": {
+          "heading": "The connection did not go through",
+          "retry": "Try again"
+        },
+        "cancelled": {
+          "heading": "This connection was cancelled",
+          "description": "You cancelled this connection request. You can start again any time."
+        },
+        "error": {
+          "connection_expired": "The request ran out of time before your computer answered.",
+          "active_device_exists": "You already have a connected computer for this project.",
+          "invalid_connection_code": "That command is no longer valid. Start again to get a fresh one.",
+          "invalid_link_request": "Your computer could not prove who it is. Please start again.",
+          "not_project_member": "You do not have access to this project.",
+          "unknown": "Something went wrong. Please start again."
+        }
       }
     },
     "add": {

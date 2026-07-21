@@ -59,6 +59,46 @@ class LooperNodeBinding(ProjectBaseModel):
         indexes = [models.Index(fields=["project", "state"], name="looper_binding_state_idx")]
 
 
+class LooperConnectionSession(ProjectBaseModel):
+    STATUS_CHOICES = (
+        ("created", "Created"),
+        ("cli_connected", "CLI connected"),
+        ("binding_created", "Binding created"),
+        ("completed", "Completed"),
+        ("cancelled", "Cancelled"),
+        ("expired", "Expired"),
+        ("failed", "Failed"),
+        ("device_exists", "Device exists"),
+    )
+
+    member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="looper_connection_sessions",
+    )
+    connect_code = models.CharField(max_length=64, unique=True)
+    status = models.CharField(max_length=24, choices=STATUS_CHOICES, default="created")
+    expires_at = models.DateTimeField()
+    binding = models.ForeignKey(
+        LooperNodeBinding,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="connection_sessions",
+    )
+    node_id = models.CharField(max_length=128, blank=True, default="")
+    node_name = models.CharField(max_length=255, blank=True, default="")
+    error_code = models.CharField(max_length=64, blank=True, default="")
+    error_detail = models.TextField(blank=True, default="")
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "looper_connection_sessions"
+        indexes = [
+            models.Index(fields=["project", "member", "status"], name="looper_connect_owner_idx"),
+        ]
+
+
 class LooperNodeKey(ProjectBaseModel):
     STATE_CHOICES = (
         ("active", "Active"),

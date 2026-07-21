@@ -100,6 +100,7 @@ from .looper import (
     LooperRoleRequest,
 )
 from .looper_binding import (
+    LooperConnectionSession,
     LooperNodeBinding,
     LooperNodeKey,
     LooperNodeSession,

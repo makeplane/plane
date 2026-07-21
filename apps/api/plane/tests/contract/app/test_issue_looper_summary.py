@@ -60,23 +60,28 @@ def _summary_url(workspace, project, issue):
 
 @pytest.mark.contract
 @pytest.mark.django_db
-def test_looper_summary_is_hidden_without_a_durable_dispatch(session_client, workspace, looper_issue):
+def test_looper_summary_offers_self_service_connection_without_a_binding(
+    session_client, workspace, looper_issue
+):
     project, issue = looper_issue
 
     response = session_client.get(_summary_url(workspace, project, issue))
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data == {
-        "visibility": "hidden",
+        "visibility": "visible",
         "protocol": None,
-        "read_only": True,
+        "read_only": False,
         "permissions": {
             "can_view": True,
             "can_dispatch": False,
+            "can_connect": True,
             "can_stop": False,
             "can_release": False,
             "can_answer": False,
         },
+        "empty_reason": "owner_binding_required",
+        "available_actions": ["connect"],
     }
 
 

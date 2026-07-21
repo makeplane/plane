@@ -13,6 +13,7 @@ from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import (
+    LooperConnectionSession,
     LooperNodeBinding,
     LooperNodeKey,
     LooperNodeSession,
@@ -162,7 +163,7 @@ def link_binding(api_client, owner, workspace, project, binding_vectors):
 
 @pytest.mark.contract
 @pytest.mark.django_db(transaction=True)
-def test_owner_links_node_admin_approves_and_owner_sees_only_own_target(
+def test_owner_links_node_without_admin_approval_and_sees_only_own_target(
     api_client,
     binding_context,
     binding_vectors,
@@ -175,21 +176,20 @@ def test_owner_links_node_admin_approves_and_owner_sees_only_own_target(
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["member_id"] == str(owner.id)
     assert response.data["node_id"] == binding_vectors["challenge"]["node_id"]
-    assert response.data["state"] == "pending"
+    assert response.data["state"] == "active"
+    assert response.data["allowed_roles"] == ["planner", "worker"]
     binding = LooperNodeBinding.objects.get(id=response.data["id"])
     key = LooperNodeKey.objects.get(binding=binding)
     assert bytes(key.public_key) == base64.b64decode(binding_vectors["node"]["public_key_b64"])
 
     api_client.force_authenticate(admin)
-    approval = api_client.post(
+    obsolete_approval = api_client.post(
         f"{binding_base_url(workspace, project)}/bindings/{binding.id}/approve/",
         {"allowed_roles": ["worker", "planner"], "allow_offline_queue": True},
         format="json",
     )
-    assert approval.status_code == status.HTTP_200_OK
-    assert approval.data["state"] == "active"
-    assert approval.data["allowed_roles"] == ["planner", "worker"]
-    assert approval.data["allow_offline_queue"] is True
+    assert obsolete_approval.status_code == status.HTTP_409_CONFLICT
+    assert obsolete_approval.data["error"] == "binding_not_pending"
 
     api_client.force_authenticate(owner)
     targets = api_client.get(f"{binding_base_url(workspace, project)}/targets/")
@@ -200,6 +200,138 @@ def test_owner_links_node_admin_approves_and_owner_sees_only_own_target(
     admin_targets = api_client.get(f"{binding_base_url(workspace, project)}/targets/")
     assert admin_targets.status_code == status.HTTP_200_OK
     assert admin_targets.data["targets"] == []
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+def test_plane_first_connection_creates_active_binding_and_waits_for_signed_inbox(
+    api_client,
+    binding_context,
+    binding_vectors,
+    trust_settings,
+):
+    owner, admin, workspace, project = binding_context
+    collection_url = f"{binding_base_url(workspace, project)}/connections/"
+    api_client.force_authenticate(owner)
+
+    created = api_client.post(collection_url, {}, format="json", secure=True)
+
+    assert created.status_code == status.HTTP_201_CREATED
+    connection_payload = created.data["connection"]
+    assert connection_payload["status"] == "created"
+    assert connection_payload["owner"]["id"] == str(owner.id)
+    assert connection_payload["command"].startswith("looper plane connect https://testserver --code ")
+    connect_code = connection_payload["command"].rsplit(" ", 1)[-1]
+    connection = LooperConnectionSession.objects.get(id=connection_payload["id"])
+    assert connection.connect_code == connect_code
+
+    api_client.force_authenticate(user=None)
+    exchanged = api_client.post(
+        "/api/looper/connections/exchange/",
+        {"code": connect_code},
+        format="json",
+    )
+    assert exchanged.status_code == status.HTTP_200_OK
+    assert exchanged.data["status"] == "cli_connected"
+    assert exchanged.data["workspace"] == workspace.slug
+    assert exchanged.data["project_id"] == str(project.id)
+    assert exchanged.data["member_id"] == str(owner.id)
+
+    raw = base64.b64decode(binding_vectors["link_request_cbor_b64"])
+    with patch("plane.app.views.looper.connection.timezone.now", return_value=challenge_time(binding_vectors)):
+        linked = api_client.post(
+            "/api/looper/connections/link/",
+            data=raw,
+            content_type=LINK_CONTENT_TYPE,
+            HTTP_X_LOOPER_CONNECT_CODE=connect_code,
+            HTTP_X_LOOPER_NODE_NAME="杨瑾龙的 MacBook",
+        )
+    assert linked.status_code == status.HTTP_201_CREATED
+    assert linked.data["binding"]["state"] == "active"
+    assert linked.data["binding"]["allowed_roles"] == ["planner", "worker"]
+    binding = LooperNodeBinding.objects.get(id=linked.data["binding"]["id"])
+    assert binding.member == owner
+    assert binding.node_name_snapshot == "杨瑾龙的 MacBook"
+
+    not_ready = api_client.post(
+        "/api/looper/connections/complete/",
+        {"code": connect_code},
+        format="json",
+    )
+    assert not_ready.status_code == status.HTTP_409_CONFLICT
+    assert not_ready.data["error"] == "node_not_ready"
+
+    now = timezone.now()
+    LooperNodeSession.objects.create(
+        project=project,
+        binding=binding,
+        session_id=uuid4(),
+        instance_nonce=b"1" * 16,
+        lease_expires_at=now + timedelta(seconds=90),
+        last_renewed_at=now,
+    )
+    completed = api_client.post(
+        "/api/looper/connections/complete/",
+        {"code": connect_code},
+        format="json",
+    )
+    assert completed.status_code == status.HTTP_200_OK
+    assert completed.data["status"] == "completed"
+
+    api_client.force_authenticate(owner)
+    detail_url = f"{collection_url}{connection.id}/"
+    detail = api_client.get(detail_url)
+    assert detail.status_code == status.HTTP_200_OK
+    assert detail.data["connection"]["status"] == "completed"
+    assert detail.data["connection"]["checks"]["inbox_verified"] is True
+    assert detail.data["connection"]["command"] == ""
+
+    api_client.force_authenticate(admin)
+    assert api_client.get(detail_url).status_code == status.HTTP_404_NOT_FOUND
+
+    api_client.force_authenticate(owner)
+    existing = api_client.post(collection_url, {}, format="json")
+    assert existing.status_code == status.HTTP_200_OK
+    assert existing.data["connection"]["status"] == "device_exists"
+    assert existing.data["connection"]["node"]["name"] == "杨瑾龙的 MacBook"
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+def test_connection_codes_are_single_session_cancellable_and_expire(
+    api_client,
+    binding_context,
+):
+    owner, _, workspace, project = binding_context
+    collection_url = f"{binding_base_url(workspace, project)}/connections/"
+    api_client.force_authenticate(owner)
+
+    first = api_client.post(collection_url, {}, format="json")
+    second = api_client.post(collection_url, {}, format="json")
+    first_connection = LooperConnectionSession.objects.get(id=first.data["connection"]["id"])
+    second_connection = LooperConnectionSession.objects.get(id=second.data["connection"]["id"])
+    assert first_connection.status == "cancelled"
+    assert second_connection.status == "created"
+
+    cancelled = api_client.delete(f"{collection_url}{second_connection.id}/")
+    assert cancelled.status_code == status.HTTP_204_NO_CONTENT
+    second_connection.refresh_from_db()
+    assert second_connection.status == "cancelled"
+
+    third = api_client.post(collection_url, {}, format="json")
+    third_connection = LooperConnectionSession.objects.get(id=third.data["connection"]["id"])
+    third_connection.expires_at = timezone.now() - timedelta(seconds=1)
+    third_connection.save(update_fields=("expires_at", "updated_at"))
+    api_client.force_authenticate(user=None)
+    expired = api_client.post(
+        "/api/looper/connections/exchange/",
+        {"code": third_connection.connect_code},
+        format="json",
+    )
+    assert expired.status_code == status.HTTP_400_BAD_REQUEST
+    assert expired.data["error"] == "invalid_connection_code"
+    third_connection.refresh_from_db()
+    assert third_connection.status == "expired"
 
 
 @pytest.mark.contract

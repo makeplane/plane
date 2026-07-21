@@ -87,6 +87,26 @@ def verify_link_request(
 
 @transaction.atomic
 def create_pending_binding(*, project, member, verified: VerifiedLinkRequest, now=None) -> LooperNodeBinding:
+    return create_binding(project=project, member=member, verified=verified, state="pending", now=now)
+
+
+@transaction.atomic
+def create_active_binding(
+    *, project, member, verified: VerifiedLinkRequest, node_name="", now=None
+) -> LooperNodeBinding:
+    return create_binding(
+        project=project,
+        member=member,
+        verified=verified,
+        state="active",
+        node_name=node_name,
+        now=now,
+    )
+
+
+def create_binding(
+    *, project, member, verified: VerifiedLinkRequest, state, node_name="", now=None
+) -> LooperNodeBinding:
     if not ProjectMember.objects.select_for_update().filter(project=project, member=member, is_active=True).exists():
         raise ProtocolError("binding owner is not an active project member")
     expires_at = datetime.fromtimestamp(verified.expires_at_ms / 1000, tz=datetime_timezone.utc)
@@ -100,8 +120,9 @@ def create_pending_binding(*, project, member, verified: VerifiedLinkRequest, no
         project=project,
         member=member,
         node_id=verified.node_id,
-        node_name_snapshot=verified.node_id,
-        state="pending",
+        node_name_snapshot=node_name.strip()[:255] or verified.node_id,
+        allowed_roles=["planner", "worker"] if state == "active" else [],
+        state=state,
     )
     LooperNodeKey.objects.create(
         project=project,

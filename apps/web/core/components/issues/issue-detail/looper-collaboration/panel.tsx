@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Check, Circle, ExternalLink, TriangleAlert } from "lucide-react";
+import { Bot, Check, Circle, ExternalLink, Laptop, TriangleAlert } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { LooperCollaborationService } from "@/services/issue";
 
+import { ConnectLooperModal } from "./connect-looper-modal";
 import type { TLooperRole, TLooperSummary } from "./types";
 import { useLooperSummary } from "./use-looper-summary";
 
@@ -50,6 +51,7 @@ export function LooperCollaborationPanel(props: Props) {
   const [answeringRequest, setAnsweringRequest] = useState<string | null>(null);
   const [answerText, setAnswerText] = useState("");
   const [pendingAnswer, setPendingAnswer] = useState(false);
+  const [isConnectOpen, setIsConnectOpen] = useState(false);
   const { data: summary, mutate } = useLooperSummary(workspaceSlug, projectId, issueId);
 
   if (!summary || summary.visibility !== "visible") return null;
@@ -164,12 +166,31 @@ export function LooperCollaborationPanel(props: Props) {
             <Button variant="primary" size="sm" onClick={() => setConfirmDispatch(true)}>
               {t("issue.looper.dispatch_to_mine")}
             </Button>
+          ) : summary.empty_reason === "owner_binding_required" ? (
+            <div className="rounded-md border border-subtle bg-layer-1 px-3 py-3">
+              <div className="text-body-xs-medium text-primary">
+                {t("issue.looper.empty_reason.owner_binding_required")}
+              </div>
+              <p className="mt-1 text-caption-md-regular text-secondary">{t("issue.looper.connect.cta_hint")}</p>
+              <Button className="mt-3" variant="primary" size="sm" onClick={() => setIsConnectOpen(true)}>
+                <Laptop className="size-3.5" aria-hidden="true" />
+                {t("issue.looper.connect.cta")}
+              </Button>
+            </div>
           ) : summary.empty_reason ? (
             <p className="text-caption-md-regular text-tertiary">
               {t(`issue.looper.empty_reason.${summary.empty_reason}`)}
             </p>
           ) : null}
         </div>
+
+        <ConnectLooperModal
+          isOpen={isConnectOpen}
+          onClose={() => setIsConnectOpen(false)}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          onConnected={() => void mutate()}
+        />
       </div>
     );
   }

@@ -5,7 +5,11 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TLooperSummary } from "@/components/issues/issue-detail/looper-collaboration/types";
+import type {
+  TLooperConnection,
+  TLooperConnectionResponse,
+  TLooperSummary,
+} from "@/components/issues/issue-detail/looper-collaboration/types";
 import { APIService } from "@/services/api.service";
 
 export class LooperCollaborationService extends APIService {
@@ -43,6 +47,30 @@ export class LooperCollaborationService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/dispatch/${dispatchId}/${action}/`,
       reason ? { reason } : {}
     )
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createConnection(workspaceSlug: string, projectId: string): Promise<TLooperConnection> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/connections/`, {})
+      .then((response) => (response.data as TLooperConnectionResponse).connection)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getConnection(workspaceSlug: string, projectId: string, connectionId: string): Promise<TLooperConnection> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/connections/${connectionId}/`)
+      .then((response) => (response.data as TLooperConnectionResponse).connection)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async cancelConnection(workspaceSlug: string, projectId: string, connectionId: string) {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/connections/${connectionId}/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

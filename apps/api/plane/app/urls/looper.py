@@ -1,6 +1,11 @@
 from django.urls import path
 
 from plane.app.views.looper import (
+    LooperConnectionCollectionEndpoint,
+    LooperConnectionCompleteEndpoint,
+    LooperConnectionDetailEndpoint,
+    LooperConnectionExchangeEndpoint,
+    LooperConnectionLinkEndpoint,
     IssueLooperDispatchEndpoint,
     LooperDispatchClaimEndpoint,
     LooperDispatchHandoffEndpoint,
@@ -19,6 +24,31 @@ from plane.app.views.looper import (
 
 
 urlpatterns = [
+    path(
+        "looper/connections/exchange/",
+        LooperConnectionExchangeEndpoint.as_view(),
+        name="looper-connection-exchange",
+    ),
+    path(
+        "looper/connections/link/",
+        LooperConnectionLinkEndpoint.as_view(),
+        name="looper-connection-link",
+    ),
+    path(
+        "looper/connections/complete/",
+        LooperConnectionCompleteEndpoint.as_view(),
+        name="looper-connection-complete",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/connections/",
+        LooperConnectionCollectionEndpoint.as_view(),
+        name="looper-connection-create",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/connections/<uuid:connection_id>/",
+        LooperConnectionDetailEndpoint.as_view(),
+        name="looper-connection-detail",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/nodes/session/",
         LooperNodeSessionEndpoint.as_view(),

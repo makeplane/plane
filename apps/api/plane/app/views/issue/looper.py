@@ -181,6 +181,7 @@ def build_looper_summary(dispatch, *, actor=None, live_status="unavailable"):
         "permissions": {
             "can_view": True,
             "can_dispatch": False,
+            "can_connect": False,
             "can_stop": can_stop,
             "can_release": can_release,
             "can_answer": can_answer,
@@ -250,28 +251,41 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
             pass
         if dispatch is None:
             integration = LooperProjectIntegration.objects.filter(project=issue.project).first()
-            if integration is None:
-                return Response(
-                    {
-                        "visibility": "hidden",
-                        "protocol": None,
-                        "read_only": True,
-                        "permissions": {
-                            "can_view": True,
-                            "can_dispatch": False,
-                            "can_stop": False,
-                            "can_release": False,
-                            "can_answer": False,
-                        },
-                    },
-                    status=status.HTTP_200_OK,
-                )
-            protocol = LooperWorkItemProtocol.objects.filter(issue=issue).first()
+            membership = issue.project.project_projectmember.filter(
+                member=request.user, is_active=True
+            ).first()
+            can_manage_own_looper = bool(
+                membership
+                and membership.role >= ROLE.MEMBER.value
+                and issue.archived_at is None
+                and issue.state.group not in {"completed", "cancelled"}
+            )
             binding = LooperNodeBinding.objects.filter(
                 project=issue.project,
                 member=request.user,
                 state="active",
             ).first()
+            can_connect = can_manage_own_looper and binding is None
+            if integration is None:
+                return Response(
+                    {
+                        "visibility": "visible" if can_manage_own_looper else "hidden",
+                        "protocol": None,
+                        "read_only": not can_connect,
+                        "permissions": {
+                            "can_view": True,
+                            "can_dispatch": False,
+                            "can_connect": can_connect,
+                            "can_stop": False,
+                            "can_release": False,
+                            "can_answer": False,
+                        },
+                        "empty_reason": "owner_binding_required" if can_connect else "integration_not_active",
+                        "available_actions": ["connect"] if can_connect else [],
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            protocol = LooperWorkItemProtocol.objects.filter(issue=issue).first()
             is_open = issue.archived_at is None and issue.state.group not in {"completed", "cancelled"}
             can_dispatch = bool(
                 integration
@@ -290,6 +304,7 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                     "permissions": {
                         "can_view": True,
                         "can_dispatch": can_dispatch,
+                        "can_connect": can_connect and binding is None,
                         "can_stop": False,
                         "can_release": False,
                         "can_answer": False,
@@ -321,7 +336,9 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                         if binding
                         else None
                     ),
-                    "available_actions": ["dispatch"] if can_dispatch else [],
+                    "available_actions": (
+                        ["dispatch"] if can_dispatch else ["connect"] if can_connect and binding is None else []
+                    ),
                 },
                 status=status.HTTP_200_OK,
             )
