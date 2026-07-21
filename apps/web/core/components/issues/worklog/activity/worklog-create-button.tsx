@@ -8,7 +8,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Play, Square } from "lucide-react";
+import { Clock, Play, Square } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -83,12 +83,22 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
   };
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="relative flex shrink-0 items-center gap-2">
+      {/* Labels collapse to icon-only on narrow screens so these stay reachable next to
+          the tab strip; the accessible name is kept on the button itself. */}
       {/* timer button — only for assignees, and only when the state allows starting a timer */}
       {isAssigned && !activeTimer && timerAllowed && (
-        <Button variant="secondary" size="sm" disabled={disabled} onClick={handleStartTimer}>
-          <Play className="h-3.5 w-3.5" />
-          {t("common.start_timer")}
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={disabled}
+          onClick={handleStartTimer}
+          className="shrink-0"
+          aria-label={t("common.start_timer")}
+          title={t("common.start_timer")}
+        >
+          <Play className="h-3.5 w-3.5 shrink-0" />
+          <span className="hidden whitespace-nowrap sm:inline">{t("common.start_timer")}</span>
         </Button>
       )}
 
@@ -98,17 +108,28 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
           size="sm"
           disabled={disabled}
           onClick={() => setShowStopPopup((v) => !v)}
-          className="gap-1.5"
+          className="shrink-0 gap-1.5"
+          aria-label={t("common.stop_timer")}
+          title={t("common.stop_timer")}
         >
           <span className="font-mono text-xs text-success-primary">{elapsed}</span>
-          <Square className="h-3.5 w-3.5 fill-current text-danger-primary" />
-          {t("common.stop_timer")}
+          <Square className="h-3.5 w-3.5 shrink-0 fill-current text-danger-primary" />
+          <span className="hidden whitespace-nowrap sm:inline">{t("common.stop_timer")}</span>
         </Button>
       )}
 
       {/* log work button */}
-      <Button variant="secondary" size="sm" disabled={disabled} onClick={() => setIsLogWorkOpen(true)}>
-        {t("common.log_work")}
+      <Button
+        variant="secondary"
+        size="sm"
+        disabled={disabled}
+        onClick={() => setIsLogWorkOpen(true)}
+        className="shrink-0"
+        aria-label={t("common.log_work")}
+        title={t("common.log_work")}
+      >
+        <Clock className="h-3.5 w-3.5 shrink-0" />
+        <span className="hidden whitespace-nowrap sm:inline">{t("common.log_work")}</span>
       </Button>
 
       {/* stop popup */}

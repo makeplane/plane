@@ -149,6 +149,16 @@
           "step": "Step",
           "min_date": "Earliest date",
           "max_date": "Latest date",
+          "fixed": "Fixed date",
+          "relative": "Relative to today",
+          "today": "Today",
+          "relative_offset": "Offset from today",
+          "relative_unit": {
+            "d": "days",
+            "w": "weeks",
+            "m": "months",
+            "y": "years"
+          },
           "checkbox_label": "Checkbox label",
           "default_value": "Default value",
           "width": "Width (columns)",

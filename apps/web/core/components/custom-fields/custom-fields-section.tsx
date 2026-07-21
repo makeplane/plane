@@ -11,6 +11,7 @@ import type { TCustomField, TCustomFieldRawValue, TCustomFieldValuePayload } fro
 import { cn } from "@plane/utils";
 // local imports
 import { CustomFieldInput } from "./custom-field-input";
+import { resolveDefaultValue } from "./relative-date";
 
 type Props = {
   fields: TCustomField[];
@@ -26,7 +27,10 @@ export const seedCustomFieldValues = (
   fields: Array<TCustomField & { value?: TCustomFieldRawValue }>
 ): Record<string, TCustomFieldRawValue> =>
   fields.reduce<Record<string, TCustomFieldRawValue>>((acc, field) => {
-    acc[field.id] = field.value !== undefined && field.value !== null ? field.value : (field.default_value ?? null);
+    acc[field.id] =
+      field.value !== undefined && field.value !== null
+        ? field.value
+        : (resolveDefaultValue(field.field_type, field.default_value) ?? null);
     return acc;
   }, {});
 

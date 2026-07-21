@@ -149,6 +149,16 @@
           "step": "Schritt",
           "min_date": "Frühestes Datum",
           "max_date": "Spätestes Datum",
+          "fixed": "Festes Datum",
+          "relative": "Relativ zu heute",
+          "today": "Heute",
+          "relative_offset": "Abstand von heute",
+          "relative_unit": {
+            "d": "Tage",
+            "w": "Wochen",
+            "m": "Monate",
+            "y": "Jahre"
+          },
           "checkbox_label": "Kontrollkästchen-Bezeichnung",
           "default_value": "Standardwert",
           "width": "Breite (Spalten)",

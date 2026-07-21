@@ -16,6 +16,7 @@ import { Input, TextArea, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { CustomFieldInput } from "./custom-field-input";
+import { DateSettingInput } from "./date-setting-input";
 import { FieldTypeIcon } from "./field-type-icon";
 import { OptionsEditor } from "./options-editor";
 
@@ -59,6 +60,8 @@ export function FieldForm(props: Props) {
   const settings = watch("settings") ?? {};
   const config = CUSTOM_FIELD_TYPE_CONFIG_MAP[fieldType];
   const supports = config?.supports;
+  const isDateField = fieldType === ECustomFieldType.DATE || fieldType === ECustomFieldType.DATETIME;
+  const dateVariant = fieldType === ECustomFieldType.DATETIME ? "datetime" : "date";
 
   const updateSetting = (key: string, value: unknown) =>
     setValue("settings", { ...watch("settings"), [key]: value }, { shouldDirty: true });
@@ -286,22 +289,20 @@ export function FieldForm(props: Props) {
               <label className="text-body-sm-medium text-secondary">
                 {t("workspace_settings.settings.custom_fields.form.min_date")}
               </label>
-              <input
-                type="date"
-                value={(settings.min as string) ?? ""}
-                onChange={(e) => updateSetting("min", e.target.value || undefined)}
-                className="w-full rounded-md border border-strong bg-surface-1 px-2.5 py-1.5 text-body-sm-regular text-primary outline-none focus:border-accent-strong"
+              <DateSettingInput
+                value={settings.min as string | undefined}
+                onChange={(next) => updateSetting("min", next)}
+                variant={dateVariant}
               />
             </div>
             <div className="space-y-1">
               <label className="text-body-sm-medium text-secondary">
                 {t("workspace_settings.settings.custom_fields.form.max_date")}
               </label>
-              <input
-                type="date"
-                value={(settings.max as string) ?? ""}
-                onChange={(e) => updateSetting("max", e.target.value || undefined)}
-                className="w-full rounded-md border border-strong bg-surface-1 px-2.5 py-1.5 text-body-sm-regular text-primary outline-none focus:border-accent-strong"
+              <DateSettingInput
+                value={settings.max as string | undefined}
+                onChange={(next) => updateSetting("max", next)}
+                variant={dateVariant}
               />
             </div>
           </div>
@@ -329,9 +330,23 @@ export function FieldForm(props: Props) {
           <Controller
             control={control}
             name="default_value"
-            render={({ field: { value, onChange } }) => (
-              <CustomFieldInput field={{ field_type: fieldType, settings }} value={value ?? null} onChange={onChange} />
-            )}
+            render={({ field: { value, onChange } }) =>
+              // date defaults get the same fixed/relative choice as the bounds, so a field can
+              // default to e.g. "today + 7 days" instead of a date that goes stale
+              isDateField ? (
+                <DateSettingInput
+                  value={value as string | undefined}
+                  onChange={(next) => onChange(next ?? null)}
+                  variant={dateVariant}
+                />
+              ) : (
+                <CustomFieldInput
+                  field={{ field_type: fieldType, settings }}
+                  value={value ?? null}
+                  onChange={onChange}
+                />
+              )
+            }
           />
         </div>
 

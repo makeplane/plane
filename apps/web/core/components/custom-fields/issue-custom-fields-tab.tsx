@@ -16,6 +16,7 @@ import { Loader } from "@plane/ui";
 import { useIssueCustomFields } from "@/hooks/use-issue-custom-fields";
 // local imports
 import { CustomFieldInput } from "./custom-field-input";
+import { resolveDefaultValue } from "./relative-date";
 
 // discrete pickers commit on change; free-text commits on blur
 const COMMIT_ON_CHANGE = new Set<ECustomFieldType>([
@@ -28,7 +29,9 @@ const COMMIT_ON_CHANGE = new Set<ECustomFieldType>([
 ]);
 
 const seedValue = (field: TCustomFieldWithValue): TCustomFieldRawValue =>
-  field.value !== undefined && field.value !== null ? field.value : (field.default_value ?? null);
+  field.value !== undefined && field.value !== null
+    ? field.value
+    : (resolveDefaultValue(field.field_type, field.default_value) ?? null);
 
 type RowProps = {
   field: TCustomFieldWithValue;

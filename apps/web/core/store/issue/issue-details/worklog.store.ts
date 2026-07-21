@@ -213,6 +213,9 @@ export class IssueWorkLogStore implements IIssueWorkLogStore {
       set(this.activeTimerMap, issueId, response);
       this.activeTimerIssueId = issueId;
       this.userActiveTimer = response;
+      // Keep the per-issue running-timer list (the overview's live rows and admin stop button)
+      // in sync straight away, so it doesn't stay stale until the next mount.
+      this.upsertIssueActiveTimer(issueId, response);
     });
     return response;
   };
@@ -234,6 +237,9 @@ export class IssueWorkLogStore implements IIssueWorkLogStore {
         if (!ids) return [response.id];
         return ids.includes(response.id) ? ids : [response.id, ...ids];
       });
+      // Drop it from the per-issue running-timer list too, so the overview's stop button
+      // disappears immediately instead of on the next mount.
+      this.removeIssueActiveTimer(issueId, response.id);
     });
     return response;
   };
@@ -273,6 +279,26 @@ export class IssueWorkLogStore implements IIssueWorkLogStore {
       }
     });
     return timer;
+  };
+
+  // Add/replace one running timer in the per-issue list. Must be called inside runInAction.
+  private upsertIssueActiveTimer = (issueId: string, timer: TIssueWorkLog) => {
+    const current = this.issueActiveTimers[issueId];
+    // Not loaded yet: leave it alone so the next fetch is still treated as the first load.
+    if (!current) return;
+    const next = current.filter((t) => t.id !== timer.id && t.logged_by !== timer.logged_by);
+    set(this.issueActiveTimers, issueId, [...next, timer]);
+  };
+
+  // Remove one running timer from the per-issue list. Must be called inside runInAction.
+  private removeIssueActiveTimer = (issueId: string, timerId: string) => {
+    const current = this.issueActiveTimers[issueId];
+    if (!current) return;
+    set(
+      this.issueActiveTimers,
+      issueId,
+      current.filter((t) => t.id !== timerId)
+    );
   };
 
   // all running timers for an issue (any user) — powers the alert banner and the overview admin controls

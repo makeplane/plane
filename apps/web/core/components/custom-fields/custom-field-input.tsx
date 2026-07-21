@@ -9,6 +9,8 @@ import { ECustomFieldType } from "@plane/types";
 import type { TCustomField, TCustomFieldRawValue, TCustomFieldUrlValue } from "@plane/types";
 import { CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
+// local imports
+import { resolveDateSetting } from "./relative-date";
 
 type Props = {
   field: Pick<TCustomField, "field_type" | "settings">;
@@ -140,14 +142,15 @@ export function CustomFieldInput(props: Props) {
       );
     }
 
+    // min/max may be a fixed date or a relative token ("today+30d"), resolved on every render
     case ECustomFieldType.DATE:
       return (
         <input
           type="date"
           value={(value as string) ?? ""}
           onChange={(e) => onChange(e.target.value || null)}
-          min={settings?.min as string | undefined}
-          max={settings?.max as string | undefined}
+          min={resolveDateSetting(settings?.min, "date")}
+          max={resolveDateSetting(settings?.max, "date")}
           disabled={disabled}
           className={cn(NATIVE_INPUT_CLASS, { "border-danger-strong": hasError })}
         />
@@ -159,6 +162,8 @@ export function CustomFieldInput(props: Props) {
           type="datetime-local"
           value={(value as string) ?? ""}
           onChange={(e) => onChange(e.target.value || null)}
+          min={resolveDateSetting(settings?.min, "datetime")}
+          max={resolveDateSetting(settings?.max, "datetime")}
           disabled={disabled}
           className={cn(NATIVE_INPUT_CLASS, { "border-danger-strong": hasError })}
         />

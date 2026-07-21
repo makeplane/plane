@@ -117,9 +117,7 @@ export const IssueWorklogList = observer(function IssueWorklogList(props: TIssue
 
   if (allIds.length === 0 && summaries.length === 0)
     return (
-      <p className="py-6 text-center text-body-sm-regular text-tertiary">
-        {t("common.activity_empty_state.no_worklogs")}
-      </p>
+      <p className="py-6 text-center text-body-sm-regular text-tertiary">{t("activity_empty_state.no_worklogs")}</p>
     );
 
   const visibleIds = selectedUser

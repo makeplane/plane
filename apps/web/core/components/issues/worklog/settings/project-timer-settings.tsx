@@ -39,7 +39,7 @@ export const ProjectTimerSettings = observer(function ProjectTimerSettings(props
       await updateProject(workspaceSlug, projectId, { worklog_timer_state_groups: groups });
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("common.success"), message: t("common.time_tracking") });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: t("common.error") });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("common.error.label") });
     } finally {
       setSubmitting(false);
     }

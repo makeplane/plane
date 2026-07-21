@@ -32,20 +32,23 @@ export const ActivityTabBar = observer(function ActivityTabBar(props: TActivityT
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-1 border-b border-subtle">
+    // the tab strip scrolls on its own once it outgrows the header, so the actions
+    // next to it stay reachable without scrolling the page
+    <div className="horizontal-scrollbar flex scrollbar-xs min-w-0 items-center gap-1 border-b border-subtle">
       {tabs.map((tab) => (
         <button
           key={tab}
           type="button"
           onClick={() => setActiveTab(tab)}
           className={cn(
-            "relative px-3 py-2 text-body-sm-medium transition-colors outline-none",
+            "relative shrink-0 px-3 py-2 text-body-sm-medium whitespace-nowrap transition-colors outline-none",
             activeTab === tab ? "text-primary" : "text-tertiary hover:text-secondary"
           )}
         >
           {t(TAB_LABEL_KEYS[tab])}
+          {/* sits at bottom-0 rather than -bottom-px so it can't overflow the scroll container */}
           {activeTab === tab && (
-            <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-accent-primary" aria-hidden />
+            <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-accent-primary" aria-hidden />
           )}
         </button>
       ))}

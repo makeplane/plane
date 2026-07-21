@@ -85,7 +85,7 @@ export const LogWorkPanel = observer(function LogWorkPanel(props: TLogWorkPanel)
       });
       onClose();
     } catch {
-      setError(t("common.error"));
+      setError(t("common.error.label"));
       setSubmitting(false);
     }
   };

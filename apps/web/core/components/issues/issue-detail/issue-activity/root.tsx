@@ -110,10 +110,11 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
 
   return (
     <div className="space-y-4">
-      {/* header: tab bar + actions */}
+      {/* header: tab bar + actions — the tab strip absorbs the narrow-screen squeeze
+          (it scrolls internally) so the actions stay put and reachable */}
       <div className="flex items-end justify-between gap-2">
         <ActivityTabBar activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
-        <div className="flex items-center gap-2 pb-1">
+        <div className="flex shrink-0 items-center gap-2 pb-1">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton
               workspaceSlug={workspaceSlug}
