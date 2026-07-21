@@ -31,6 +31,7 @@ from plane.integrations.looper.dispatch import (
     request_stop,
     transition_dispatch,
 )
+from plane.integrations.looper.directory import DirectoryUnavailable, get_directory_snapshot
 from plane.integrations.looper.protocol import ProtocolError
 from plane.integrations.looper.replay import consume_request_nonce
 from plane.integrations.looper.security import verify_node_request
@@ -208,6 +209,17 @@ class IssueLooperDispatchEndpoint(BaseAPIView):
             return Response({"error": "node_role_not_allowed"}, status=status.HTTP_409_CONFLICT)
         if not _active_membership(binding):
             return Response({"error": "binding_owner_not_member"}, status=status.HTTP_409_CONFLICT)
+        try:
+            presence = get_directory_snapshot().node(binding.node_id)
+        except DirectoryUnavailable:
+            return Response(
+                {"error": "node_directory_unavailable"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        if presence is not None and not presence.strict_dispatch_v1:
+            return Response({"error": "node_protocol_incompatible"}, status=status.HTTP_409_CONFLICT)
+        if (presence is None or not presence.online) and not binding.allow_offline_queue:
+            return Response({"error": "node_offline"}, status=status.HTTP_409_CONFLICT)
         role_policy = LooperProjectRolePolicy.objects.filter(project_id=project_id).first()
         if role_policy is None:
             return Response({"error": "role_policy_required"}, status=status.HTTP_409_CONFLICT)

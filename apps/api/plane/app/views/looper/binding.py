@@ -22,6 +22,7 @@ from plane.integrations.looper.binding import (
     create_pending_binding,
     verify_link_request,
 )
+from plane.integrations.looper.directory import DirectoryUnavailable, get_directory_snapshot
 from plane.integrations.looper.protocol import ProtocolError
 from plane.integrations.looper.security import TrustKeyRing
 
@@ -115,7 +116,10 @@ class LooperNodeBindingApprovalEndpoint(BaseAPIView):
         binding.approved_at = timezone.now()
         binding.revision += 1
         try:
-            binding.save()
+            # Keep an IntegrityError from poisoning the endpoint's outer
+            # transaction so the conflict response can still be rendered.
+            with transaction.atomic():
+                binding.save()
         except IntegrityError:
             return Response({"error": "binding_conflict"}, status=status.HTTP_409_CONFLICT)
         return Response(binding_payload(binding), status=status.HTTP_200_OK)
@@ -230,12 +234,10 @@ class LooperProjectIntegrationEndpoint(BaseAPIView):
             integration = LooperProjectIntegration(project=project)
         if action == "activate":
             checklist_revision = request.data.get("activation_checklist_revision")
-            capability_revisions = request.data.get("node_capability_revisions")
             legacy_label_ids = request.data.get("effective_legacy_trigger_label_ids", [])
             if (
                 type(checklist_revision) is not int
                 or checklist_revision <= 0
-                or not isinstance(capability_revisions, dict)
                 or not isinstance(legacy_label_ids, list)
             ):
                 return Response({"error": "invalid_activation_checklist"}, status=status.HTTP_400_BAD_REQUEST)
@@ -245,10 +247,22 @@ class LooperProjectIntegrationEndpoint(BaseAPIView):
             if not bindings:
                 return Response({"error": "active_binding_required"}, status=status.HTTP_409_CONFLICT)
             node_ids = {binding.node_id for binding in bindings}
-            if set(capability_revisions) != node_ids or any(
-                type(revision) is not int or revision <= 0 for revision in capability_revisions.values()
-            ):
-                return Response({"error": "node_capability_attestation_incomplete"}, status=status.HTTP_409_CONFLICT)
+            try:
+                directory = get_directory_snapshot()
+            except DirectoryUnavailable:
+                return Response({"error": "node_directory_unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            incompatible = sorted(
+                node_id
+                for node_id in node_ids
+                if directory.node(node_id) is None
+                or not directory.node(node_id).online
+                or not directory.node(node_id).strict_dispatch_v1
+            )
+            if incompatible:
+                return Response(
+                    {"error": "node_capability_attestation_incomplete", "node_ids": incompatible},
+                    status=status.HTTP_409_CONFLICT,
+                )
             if not {"planner", "worker"}.issubset({role for binding in bindings for role in binding.allowed_roles}):
                 return Response({"error": "planner_and_worker_bindings_required"}, status=status.HTTP_409_CONFLICT)
             now = timezone.now()
@@ -274,7 +288,10 @@ class LooperProjectIntegrationEndpoint(BaseAPIView):
                 )
             integration.state = "active"
             integration.activation_checklist_revision = checklist_revision
-            integration.node_capability_revisions = capability_revisions
+            integration.node_capability_revisions = {
+                node_id: int(directory.node(node_id).last_heartbeat_at.timestamp() * 1000)
+                for node_id in node_ids
+            }
             integration.effective_legacy_trigger_label_ids = legacy_label_ids
             integration.paused_reason = ""
         elif action in {"pause", "read_only"}:

@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timezone as datetime_timezone
 from pathlib import Path
 from unittest.mock import patch
+from types import SimpleNamespace
 from uuid import UUID, uuid4
 
 import pytest
@@ -32,6 +33,7 @@ from plane.integrations.looper.protocol import (
     domain_digest,
     encode_node_request,
 )
+from plane.integrations.looper.directory import DirectoryUnavailable
 
 
 FIXTURE_PATH = Path(__file__).parents[2] / "fixtures" / "looper" / "strict_protocol_v1.json"
@@ -286,16 +288,23 @@ def test_project_activation_classifies_old_items_legacy_and_new_items_strict(api
     )
     api_client.force_authenticate(admin)
 
-    response = api_client.put(
-        f"{binding_base_url(workspace, project)}/integration/",
-        {
-            "action": "activate",
-            "activation_checklist_revision": 1,
-            "node_capability_revisions": {"node-owner": 1},
-            "effective_legacy_trigger_label_ids": [],
-        },
-        format="json",
+    directory = SimpleNamespace(
+        node=lambda node_id: SimpleNamespace(
+            online=True,
+            strict_dispatch_v1=True,
+            last_heartbeat_at=timezone.now(),
+        )
     )
+    with patch("plane.app.views.looper.binding.get_directory_snapshot", return_value=directory):
+        response = api_client.put(
+            f"{binding_base_url(workspace, project)}/integration/",
+            {
+                "action": "activate",
+                "activation_checklist_revision": 1,
+                "effective_legacy_trigger_label_ids": [],
+            },
+            format="json",
+        )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["integration"]["state"] == "active"
@@ -330,6 +339,7 @@ def test_member_removal_suspends_binding_dispatch_and_project_integration(bindin
         allowed_roles=["planner", "worker"],
         state="active",
         approved_by=admin,
+        allow_offline_queue=True,
     )
     integration = LooperProjectIntegration.objects.create(project=project, state="active")
     dispatch = LooperDispatch.objects.create(
@@ -371,6 +381,7 @@ def strict_dispatch_context(binding_context, binding_vectors):
         allowed_roles=["planner", "worker"],
         state="active",
         approved_by=admin,
+        allow_offline_queue=True,
     )
     LooperNodeKey.objects.create(
         project=project,
@@ -415,19 +426,23 @@ def test_owner_only_dispatch_is_idempotent_and_other_owner_cannot_override(
     idempotency_key = uuid4()
 
     api_client.force_authenticate(owner)
-    first = api_client.post(
-        url,
-        {"requested_mode": "auto", "idempotency_key": str(idempotency_key)},
-        format="json",
-    )
+    presence = SimpleNamespace(online=False, strict_dispatch_v1=True)
+    directory = SimpleNamespace(node=lambda node_id: presence)
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        first = api_client.post(
+            url,
+            {"requested_mode": "auto", "idempotency_key": str(idempotency_key)},
+            format="json",
+        )
     assert first.status_code == status.HTTP_201_CREATED
     assert first.data["dispatch"]["owner_member_id"] == str(owner.id)
     assert first.data["dispatch"]["node_binding_id"] == str(binding.id)
-    replay = api_client.post(
-        url,
-        {"requested_mode": "auto", "idempotency_key": str(idempotency_key)},
-        format="json",
-    )
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        replay = api_client.post(
+            url,
+            {"requested_mode": "auto", "idempotency_key": str(idempotency_key)},
+            format="json",
+        )
     assert replay.status_code == status.HTTP_200_OK
     assert replay.data["created"] is False
     assert LooperDispatch.objects.filter(issue=issue).count() == 1
@@ -450,6 +465,180 @@ def test_owner_only_dispatch_is_idempotent_and_other_owner_cannot_override(
 
 @pytest.mark.contract
 @pytest.mark.django_db(transaction=True)
+def test_dispatch_presence_gate_fails_closed_and_only_allows_known_offline_queue(
+    api_client, binding_context, binding_vectors
+):
+    owner, _admin, workspace, project, binding, _private_key, issue = strict_dispatch_context(
+        binding_context, binding_vectors
+    )
+    binding.allow_offline_queue = False
+    binding.save(update_fields=("allow_offline_queue", "updated_at"))
+    url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/work-items/{issue.id}/looper/dispatch/"
+    payload = {"requested_mode": "auto", "idempotency_key": str(uuid4())}
+    api_client.force_authenticate(owner)
+
+    with patch(
+        "plane.app.views.looper.dispatch.get_directory_snapshot",
+        side_effect=DirectoryUnavailable("down"),
+    ):
+        unavailable = api_client.post(url, payload, format="json")
+    assert unavailable.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+    assert unavailable.data["error"] == "node_directory_unavailable"
+
+    offline = SimpleNamespace(online=False, strict_dispatch_v1=True)
+    directory = SimpleNamespace(node=lambda node_id: offline)
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        denied = api_client.post(url, payload, format="json")
+    assert denied.status_code == status.HTTP_409_CONFLICT
+    assert denied.data["error"] == "node_offline"
+
+    binding.allow_offline_queue = True
+    binding.save(update_fields=("allow_offline_queue", "updated_at"))
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        queued = api_client.post(url, payload, format="json")
+    assert queued.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
+    api_client, binding_context, binding_vectors
+):
+    owner_a, admin, workspace, project, _binding_a, _key_a, issue = strict_dispatch_context(
+        binding_context, binding_vectors
+    )
+    owner_b = User.objects.create(
+        email="second-owner@plane.so", username="second-owner", display_name="第二位研发"
+    )
+    WorkspaceMember.objects.create(workspace=workspace, member=owner_b, role=15)
+    ProjectMember.objects.create(project=project, member=owner_b, role=15, is_active=True)
+    key_a = Ed25519PrivateKey.generate()
+    binding_a = LooperNodeBinding.objects.get(project=project, member=owner_a)
+    LooperNodeKey.objects.filter(binding=binding_a).update(
+        public_key=key_a.public_key().public_bytes_raw()
+    )
+    key_b = Ed25519PrivateKey.generate()
+    binding_b = LooperNodeBinding.objects.create(
+        project=project,
+        member=owner_b,
+        node_id="node-second-owner",
+        node_name_snapshot="第二位研发的 MacBook",
+        allowed_roles=["planner", "worker"],
+        allow_offline_queue=True,
+        state="active",
+        approved_by=admin,
+    )
+    LooperNodeKey.objects.create(
+        project=project,
+        binding=binding_b,
+        key_revision=1,
+        public_key=key_b.public_key().public_bytes_raw(),
+        state="active",
+    )
+    online = SimpleNamespace(online=True, strict_dispatch_v1=True)
+    directory = SimpleNamespace(node=lambda node_id: online)
+    dispatch_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/work-items/{issue.id}/looper/dispatch/"
+    )
+    api_client.force_authenticate(owner_b)
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        response = api_client.post(
+            dispatch_url,
+            {"requested_mode": "auto", "idempotency_key": str(uuid4())},
+            format="json",
+        )
+    assert response.status_code == status.HTTP_201_CREATED
+    dispatch = LooperDispatch.objects.get(id=response.data["dispatch"]["id"])
+    api_client.force_authenticate(user=None)
+
+    sessions = {}
+    session_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/nodes/session/"
+    inbox_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/inbox/"
+    for name, binding, private_key in (
+        ("a", binding_a, key_a),
+        ("b", binding_b, key_b),
+    ):
+        session_id = uuid4()
+        instance_nonce_b64 = b64url_encode(uuid4().bytes)
+        body = json.dumps(
+            {"session_id": str(session_id), "instance_nonce": instance_nonce_b64},
+            separators=(",", ":"),
+        ).encode()
+        header = signed_node_header(
+            private_key=private_key,
+            binding=binding,
+            method="POST",
+            path=session_path,
+            body=body,
+        )
+        opened = api_client.generic(
+            "POST",
+            session_path,
+            data=body,
+            content_type="application/json",
+            HTTP_LOOPER_SIGNATURE=header,
+        )
+        assert opened.status_code == status.HTTP_200_OK
+        query = (
+            f"node_id={binding.node_id}&cursor=&session_id={session_id}"
+            f"&instance_nonce={instance_nonce_b64}"
+        )
+        inbox_header = signed_node_header(
+            private_key=private_key,
+            binding=binding,
+            method="GET",
+            path=inbox_path,
+            query=query,
+        )
+        inbox = api_client.get(f"{inbox_path}?{query}", HTTP_LOOPER_SIGNATURE=inbox_header)
+        assert inbox.status_code == status.HTTP_200_OK
+        sessions[name] = (session_id, instance_nonce_b64)
+        expected = [] if name == "a" else [str(dispatch.id)]
+        assert [item["id"] for item in inbox.data["dispatches"]] == expected
+
+    claim_path = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/claim/"
+    )
+    for name, binding, private_key, expected_status in (
+        ("a", binding_a, key_a, status.HTTP_409_CONFLICT),
+        ("b", binding_b, key_b, status.HTTP_200_OK),
+    ):
+        session_id, instance_nonce_b64 = sessions[name]
+        body = json.dumps(
+            {
+                "expected_state_version": dispatch.state_version,
+                "claim_idempotency_key": str(uuid4()),
+                "session_id": str(session_id),
+                "instance_nonce": instance_nonce_b64,
+            },
+            separators=(",", ":"),
+        ).encode()
+        header = signed_node_header(
+            private_key=private_key,
+            binding=binding,
+            method="POST",
+            path=claim_path,
+            body=body,
+            dispatch=dispatch,
+            state_version=dispatch.state_version,
+        )
+        claimed = api_client.generic(
+            "POST",
+            claim_path,
+            data=body,
+            content_type="application/json",
+            HTTP_LOOPER_SIGNATURE=header,
+        )
+        assert claimed.status_code == expected_status
+        if name == "a":
+            assert claimed.data["error"] == "wrong_node"
+    dispatch.refresh_from_db()
+    assert dispatch.state == "claimed"
+    assert dispatch.node_binding_id == binding_b.id
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
 def test_signed_inbox_claim_and_fenced_transition_reject_replay(
     api_client, binding_context, binding_vectors
 ):
@@ -458,11 +647,14 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
     )
     api_client.force_authenticate(owner)
     create_url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/work-items/{issue.id}/looper/dispatch/"
-    created = api_client.post(
-        create_url,
-        {"requested_mode": "auto", "idempotency_key": str(uuid4())},
-        format="json",
-    )
+    presence = SimpleNamespace(online=False, strict_dispatch_v1=True)
+    directory = SimpleNamespace(node=lambda node_id: presence)
+    with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
+        created = api_client.post(
+            create_url,
+            {"requested_mode": "auto", "idempotency_key": str(uuid4())},
+            format="json",
+        )
     dispatch = LooperDispatch.objects.get(id=created.data["dispatch"]["id"])
     api_client.force_authenticate(user=None)
 
