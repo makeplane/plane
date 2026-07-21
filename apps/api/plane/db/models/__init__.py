@@ -72,6 +72,7 @@ from .custom_field import (
     CustomFieldType,
     CustomFieldEntityType,
 )
+from .crm_integration import CrmIntegration, CrmSyncLog
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,

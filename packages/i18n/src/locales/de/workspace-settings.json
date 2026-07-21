@@ -203,6 +203,63 @@
           }
         }
       },
+      "crm_sync": {
+        "title": "CRM-Synchronisierung",
+        "heading": "CRM-Synchronisierung",
+        "description": "Übertragen Sie die monatlich erfassten Stunden automatisch an Ihr CRM, damit die Kundenabrechnung synchron bleibt.",
+        "form": {
+          "crm_url": "CRM-Basis-URL",
+          "crm_url_placeholder": "https://crm.example.com",
+          "crm_url_required": "CRM-Basis-URL ist erforderlich.",
+          "api_key": "API-Schlüssel",
+          "api_key_placeholder": "Bearer-Token aus dem CRM-Modul „Plane API“",
+          "api_key_set": "Ein Schlüssel ist konfiguriert. Leer lassen, um ihn beizubehalten.",
+          "api_key_required": "API-Schlüssel ist erforderlich.",
+          "project_id_field": "Plane-Benutzerfeld für die CRM-Projekt-ID",
+          "project_id_field_help": "Ein Projekt-Benutzerfeld, dessen Wert die zugehörige CRM-Projekt-ID enthält.",
+          "project_id_field_none": "Benutzerfeld auswählen",
+          "invoice_hours_field": "CRM-Feld-ID für Rechnungsstunden",
+          "invoice_hours_field_help": "Numerische ID des Benutzerfelds „Invoice hours“ im CRM.",
+          "fetch_fields": "Aus CRM abrufen",
+          "active": "Aktiv",
+          "active_help": "Wenn deaktiviert, wird die monatliche Synchronisierung für diesen Arbeitsbereich übersprungen.",
+          "save": "Änderungen speichern",
+          "test_connection": "Verbindung testen",
+          "sync_now": "Jetzt synchronisieren"
+        },
+        "logs": {
+          "title": "Letzte Synchronisierungen",
+          "empty": "Es wurden noch keine Synchronisierungen ausgeführt.",
+          "month": "Monat",
+          "status": "Status",
+          "synced": "Synchronisiert",
+          "skipped": "Übersprungen",
+          "processed": "Verarbeitet",
+          "ran_at": "Ausgeführt am"
+        },
+        "toasts": {
+          "saved": {
+            "title": "Gespeichert",
+            "message": "Die CRM-Integrationseinstellungen wurden gespeichert."
+          },
+          "connection_ok": {
+            "title": "Verbindung erfolgreich",
+            "message": "Das CRM wurde erreicht und {count} Projekt(e) gefunden."
+          },
+          "connection_failed": {
+            "title": "Verbindung fehlgeschlagen",
+            "message": "Das CRM konnte nicht erreicht werden. Bitte überprüfen Sie URL und API-Schlüssel."
+          },
+          "sync_started": {
+            "title": "Synchronisierung gestartet",
+            "message": "Die Synchronisierung läuft im Hintergrund. Sehen Sie in Kürze unter den letzten Synchronisierungen nach."
+          },
+          "error": {
+            "title": "Etwas ist schiefgelaufen",
+            "message": "Bitte versuchen Sie es erneut."
+          }
+        }
+      },
       "webhooks": {
         "heading": "Webhooks",
         "description": "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",

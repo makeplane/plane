@@ -75,6 +75,10 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    # Local-dev only: let the container reach a CRM vhost served on the host
+    # (e.g. Laragon's https://crm.test). Harmless in other setups.
+    extra_hosts:
+      - "crm.test:host-gateway"
     depends_on:
       - plane-db
       - plane-redis
@@ -96,6 +100,9 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    # Local-dev only: reach a CRM vhost served on the host (see api service).
+    extra_hosts:
+      - "crm.test:host-gateway"
     depends_on:
       - api
       - plane-db
@@ -115,6 +122,9 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    # Local-dev only: reach a CRM vhost served on the host (see api service).
+    extra_hosts:
+      - "crm.test:host-gateway"
     depends_on:
       - api
       - plane-db

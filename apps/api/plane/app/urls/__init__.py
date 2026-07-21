@@ -20,6 +20,7 @@ from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .webhook import urlpatterns as webhook_urls
 from .custom_field import urlpatterns as custom_field_urls
+from .crm_integration import urlpatterns as crm_integration_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
@@ -44,6 +45,7 @@ urlpatterns = [
     *api_urls,
     *webhook_urls,
     *custom_field_urls,
+    *crm_integration_urls,
     *timezone_urls,
     *exporter_urls,
 ]

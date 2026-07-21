@@ -741,7 +741,8 @@
     "work_structure": "Arbeitsstruktur",
     "execution": "Ausführung",
     "administration": "Administration",
-    "custom_fields": "Benutzerdefinierte Felder"
+    "custom_fields": "Benutzerdefinierte Felder",
+    "integrations": "Integrationen"
   },
   "chart": {
     "x_axis": "X-Achse",
