@@ -4,12 +4,14 @@
 
 import base64
 import hashlib
+from functools import lru_cache
 from django.conf import settings
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 
 from plane.utils.exception_logger import log_exception
 
 
+@lru_cache(maxsize=1)
 def _derive_key_legacy(secret_key):
     # Legacy key derivation using static salt – retained for backward compatibility
     # so that ciphertext created before the salt fix can still be decrypted.
@@ -17,6 +19,7 @@ def _derive_key_legacy(secret_key):
     return base64.urlsafe_b64encode(dk)
 
 
+@lru_cache(maxsize=1)
 def derive_key(secret_key):
     # Use a key derivation function to get a suitable encryption key
     salt = hashlib.sha256(secret_key.encode()).digest()
@@ -47,7 +50,7 @@ def decrypt_data(encrypted_data):
                 cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
                 decrypted_data = cipher_suite.decrypt(encrypted_data.encode())
                 return decrypted_data.decode()
-            except Exception:
+            except InvalidToken:
                 # Fall back to the legacy static-salt derivation for ciphertext
                 # that was created before the salt fix was applied.
                 cipher_suite = Fernet(_derive_key_legacy(settings.SECRET_KEY))
