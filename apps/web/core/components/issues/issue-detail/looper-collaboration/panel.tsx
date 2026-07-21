@@ -3,8 +3,11 @@ import { Bot, Check, Circle, ExternalLink, TriangleAlert } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { LooperCollaborationService } from "@/services/issue";
 
 import type { TLooperRole, TLooperSummary } from "./types";
 import { useLooperSummary } from "./use-looper-summary";
@@ -14,6 +17,8 @@ type Props = {
   projectId: string;
   issueId: string;
 };
+
+const looperCollaborationService = new LooperCollaborationService();
 
 const ROLE_ACCENT: Record<TLooperRole, string> = {
   product: "bg-accent-primary",
@@ -38,9 +43,113 @@ export function LooperCollaborationPanel(props: Props) {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
-  const { data: summary } = useLooperSummary(workspaceSlug, projectId, issueId);
+  const [pendingAction, setPendingAction] = useState<"dispatch" | "stop" | "release" | null>(null);
+  const [confirmDispatch, setConfirmDispatch] = useState(false);
+  const [showRelease, setShowRelease] = useState(false);
+  const [releaseReason, setReleaseReason] = useState("");
+  const { data: summary, mutate } = useLooperSummary(workspaceSlug, projectId, issueId);
 
-  if (!summary || summary.visibility !== "visible" || !summary.dispatch) return null;
+  if (!summary || summary.visibility !== "visible") return null;
+
+  const runAction = async (action: "dispatch" | "stop" | "release") => {
+    if (action === "release" && !releaseReason.trim()) return;
+    setPendingAction(action);
+    try {
+      if (action === "dispatch") {
+        await looperCollaborationService.dispatch(workspaceSlug, projectId, issueId, crypto.randomUUID());
+        setConfirmDispatch(false);
+      } else if (summary.dispatch) {
+        await looperCollaborationService.ownerAction(
+          workspaceSlug,
+          projectId,
+          summary.dispatch.id,
+          action,
+          releaseReason.trim()
+        );
+        setShowRelease(false);
+        setReleaseReason("");
+      }
+      await mutate();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: action === "dispatch" ? t("issue.looper.dispatch_success") : t(`issue.looper.${action}`),
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("common.error.label"),
+        message: t("issue.looper.action_failed"),
+      });
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
+  if (!summary.dispatch) {
+    const targetOwner = summary.target?.owner.display_name ?? t("issue.looper.unknown_owner");
+    const targetNode = summary.target?.node.name ?? "Looper";
+    return (
+      <div className="overflow-hidden rounded-md border border-subtle bg-surface-1">
+        <div className="flex min-h-11 items-center gap-2 border-b border-subtle px-3">
+          <Bot className="size-4 text-accent-primary" />
+          <span className="text-body-sm-medium text-primary">{t("issue.looper.title")}</span>
+          <span className="ml-auto">
+            <Badge variant={summary.permissions.can_dispatch ? "brand" : "neutral"}>
+              {summary.permissions.can_dispatch ? t("issue.looper.pending") : t("issue.looper.read_only")}
+            </Badge>
+          </span>
+        </div>
+        <div className="space-y-3 px-3 py-4">
+          {summary.target && (
+            <div className="flex items-center gap-2 rounded-md border border-subtle bg-layer-1 px-3 py-2.5">
+              <span className="grid size-7 place-items-center rounded-full bg-accent-primary text-caption-sm-medium text-on-color">
+                {targetOwner.slice(0, 1)}
+              </span>
+              <div className="min-w-0 grow">
+                <div className="truncate text-body-xs-medium text-primary">
+                  {t("issue.looper.source", { owner: targetOwner })}
+                </div>
+                <div className="truncate text-caption-sm-regular text-tertiary">
+                  {targetNode} · {t(`issue.looper.live_status.${summary.target.node.live_status}`)}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {confirmDispatch && summary.target ? (
+            <div className="rounded-md border border-accent-subtle bg-accent-subtle px-3 py-3">
+              <div className="text-body-xs-medium text-primary">{t("issue.looper.dispatch_confirm_title")}</div>
+              <p className="mt-1 text-caption-md-regular text-secondary">
+                {t("issue.looper.dispatch_confirm_body", { owner: targetOwner, node: targetNode })}
+              </p>
+              <div className="mt-3 flex justify-end gap-2">
+                <Button variant="secondary" size="sm" onClick={() => setConfirmDispatch(false)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  loading={pendingAction === "dispatch"}
+                  onClick={() => void runAction("dispatch")}
+                >
+                  {t("common.confirm")}
+                </Button>
+              </div>
+            </div>
+          ) : summary.permissions.can_dispatch ? (
+            <Button variant="primary" size="sm" onClick={() => setConfirmDispatch(true)}>
+              {t("issue.looper.dispatch_to_mine")}
+            </Button>
+          ) : summary.empty_reason ? (
+            <p className="text-caption-md-regular text-tertiary">
+              {t(`issue.looper.empty_reason.${summary.empty_reason}`)}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   const ownerName = summary.dispatch.owner?.display_name ?? t("issue.looper.unknown_owner");
   const waitingRole = summary.waiting_role ? t(`issue.looper.role.${summary.waiting_role}`) : null;
@@ -184,6 +293,52 @@ export function LooperCollaborationPanel(props: Props) {
                 </a>
               ))}
             </div>
+          </div>
+        )}
+
+        {(summary.permissions.can_stop || summary.permissions.can_release) && (
+          <div className="space-y-2 border-t border-subtle pt-3">
+            <div className="flex justify-end gap-2">
+              {summary.permissions.can_stop && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={pendingAction === "stop"}
+                  onClick={() => void runAction("stop")}
+                >
+                  {t("issue.looper.stop")}
+                </Button>
+              )}
+              {summary.permissions.can_release && (
+                <Button variant="secondary" size="sm" onClick={() => setShowRelease((value) => !value)}>
+                  {t("issue.looper.release")}
+                </Button>
+              )}
+            </div>
+            {showRelease && (
+              <div className="rounded-md border border-subtle bg-layer-1 p-2.5">
+                <input
+                  value={releaseReason}
+                  onChange={(event) => setReleaseReason(event.target.value)}
+                  placeholder={t("issue.looper.release_reason")}
+                  className="focus:border-accent-primary h-8 w-full rounded-md border border-subtle bg-surface-1 px-2 text-body-xs-regular text-primary outline-none"
+                />
+                <div className="mt-2 flex justify-end gap-2">
+                  <Button variant="secondary" size="sm" onClick={() => setShowRelease(false)}>
+                    {t("common.cancel")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={!releaseReason.trim()}
+                    loading={pendingAction === "release"}
+                    onClick={() => void runAction("release")}
+                  >
+                    {t("issue.looper.release")}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

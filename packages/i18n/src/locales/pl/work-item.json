@@ -266,6 +266,89 @@
       "click_to_downvote": "Kliknij, aby zagłosować przeciw",
       "click_to_view_upvotes": "Kliknij, aby zobaczyć głosy za",
       "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw"
+    },
+    "looper": {
+      "title": "Looper collaboration",
+      "read_only": "Read-only rollout",
+      "source": "From {owner}'s Looper",
+      "unknown_owner": "Unknown owner",
+      "unassigned": "Unassigned",
+      "pending": "Not started",
+      "phases": "Looper delivery phases",
+      "phase_label": "Phase",
+      "phase": {
+        "research": "Research",
+        "role_decisions": "Role decisions",
+        "technical_spec": "Technical spec",
+        "implementation": "Implementation",
+        "pull_request": "PR",
+        "qa": "QA",
+        "complete": "Complete"
+      },
+      "phase_status": {
+        "completed": "Completed",
+        "current": "Current",
+        "pending": "Pending",
+        "skipped": "Skipped"
+      },
+      "role": {
+        "product": "Product decision",
+        "design": "Design decision",
+        "engineering": "Engineering decision",
+        "qa": "QA acceptance"
+      },
+      "state": {
+        "queued": "Queued",
+        "claimed": "Claimed",
+        "running": "In progress",
+        "awaiting_human": "Waiting for decision",
+        "stop_requested": "Stop requested",
+        "confirmed_stopped": "Stopped",
+        "released": "Released",
+        "completed": "Completed",
+        "failed": "Failed"
+      },
+      "health": {
+        "ok": "Healthy",
+        "projection_drift": "Display fields drifted",
+        "role_drift": "Role mapping drifted",
+        "binding_suspended": "Looper binding suspended",
+        "node_unreachable": "Waiting for Looper to recover"
+      },
+      "live_status": {
+        "online": "Online",
+        "offline": "Offline",
+        "stale": "Status may be stale",
+        "unavailable": "Live status unavailable"
+      },
+      "waiting_for": "Waiting for {role}",
+      "authority": "Authority rev {revision} · state {stateVersion}",
+      "current_action": "Current action",
+      "health_action": "Execution ownership is retained. Resolve the health issue before continuing.",
+      "role_collaboration": "Role collaboration",
+      "role_policy": "Role policy revision {revision}",
+      "answered_count": "Answered {answered}/{total}",
+      "waiting_count": "Waiting {count}",
+      "artifacts": "Artifacts",
+      "updated_at": "Updated {time}",
+      "plane_is_authority": "Plane is the execution authority",
+      "executor": "Executor",
+      "owner_looper": "{owner}'s Looper",
+      "dispatch_to_mine": "Send to my Looper",
+      "dispatch_confirm_title": "Confirm dispatch to your Looper",
+      "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
+      "dispatch_success": "Dispatched. Looper will claim it when connected.",
+      "action_failed": "The action failed. Refresh the panel state and try again.",
+      "stop": "Stop",
+      "release": "Release ownership",
+      "release_reason": "Describe why this ownership is being released",
+      "empty_reason": {
+        "integration_not_active": "Strict Looper dispatch is not active for this project",
+        "strict_protocol_required": "This pre-upgrade work item continues on the legacy workflow",
+        "owner_binding_required": "Your Looper is not linked yet",
+        "node_role_not_allowed": "Your Looper is not approved for planning work",
+        "work_item_not_open": "Completed or archived work items cannot be dispatched"
+      }
     }
   },
   "sub_work_item": {

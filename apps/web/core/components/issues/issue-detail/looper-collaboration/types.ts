@@ -25,6 +25,23 @@ export type TLooperSummary = {
     can_stop: boolean;
     can_release: boolean;
   };
+  empty_reason?:
+    | "integration_not_active"
+    | "strict_protocol_required"
+    | "owner_binding_required"
+    | "node_role_not_allowed"
+    | "work_item_not_open"
+    | null;
+  target?: {
+    binding_id: string;
+    owner: TLooperMember;
+    node: {
+      id: string;
+      name: string;
+      live_status: "online" | "offline" | "stale" | "unavailable";
+    };
+    allow_offline_queue: boolean;
+  } | null;
   dispatch?: {
     id: string;
     revision: number;

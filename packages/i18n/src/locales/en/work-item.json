@@ -73,7 +73,22 @@
       "updated_at": "Updated {time}",
       "plane_is_authority": "Plane is the execution authority",
       "executor": "Executor",
-      "owner_looper": "{owner}'s Looper"
+      "owner_looper": "{owner}'s Looper",
+      "dispatch_to_mine": "Send to my Looper",
+      "dispatch_confirm_title": "Confirm dispatch to your Looper",
+      "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
+      "dispatch_success": "Dispatched. Looper will claim it when connected.",
+      "action_failed": "The action failed. Refresh the panel state and try again.",
+      "stop": "Stop",
+      "release": "Release ownership",
+      "release_reason": "Describe why this ownership is being released",
+      "empty_reason": {
+        "integration_not_active": "Strict Looper dispatch is not active for this project",
+        "strict_protocol_required": "This pre-upgrade work item continues on the legacy workflow",
+        "owner_binding_required": "Your Looper is not linked yet",
+        "node_role_not_allowed": "Your Looper is not approved for planning work",
+        "work_item_not_open": "Completed or archived work items cannot be dispatched"
+      }
     },
     "add": {
       "press_enter": "Press 'Enter' to add another work item",

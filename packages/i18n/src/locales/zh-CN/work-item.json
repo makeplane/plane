@@ -73,7 +73,22 @@
       "updated_at": "更新于 {time}",
       "plane_is_authority": "Plane 是执行归属事实源",
       "executor": "执行者",
-      "owner_looper": "{owner} 的 Looper"
+      "owner_looper": "{owner} 的 Looper",
+      "dispatch_to_mine": "交给我的 Looper",
+      "dispatch_confirm_title": "确认派发给本机 Looper",
+      "dispatch_confirm_body": "{owner} 的 {node} 将先调研需求并按角色收集决策，再产出技术方案。Plane 会保留唯一执行归属。",
+      "dispatch_success": "已派发，Looper 联网后会自动领取",
+      "action_failed": "操作失败，请根据面板状态重试",
+      "stop": "停止",
+      "release": "释放归属",
+      "release_reason": "填写释放原因",
+      "empty_reason": {
+        "integration_not_active": "项目尚未开启 Looper 严格派发",
+        "strict_protocol_required": "这是升级前的旧任务，继续使用原有流程",
+        "owner_binding_required": "尚未绑定你的 Looper",
+        "node_role_not_allowed": "你的 Looper 尚未获准执行规划任务",
+        "work_item_not_open": "已完成或归档的任务不能派发"
+      }
     },
     "add": {
       "press_enter": "按'Enter'添加另一个工作项",

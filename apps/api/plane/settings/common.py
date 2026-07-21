@@ -421,6 +421,13 @@ LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 
+# Strict Plane ↔ Looper integration. Secrets remain server-side; the web app
+# never receives loopernet credentials or trust roots.
+LOOPERNET_BASE_URL = os.environ.get("LOOPERNET_BASE_URL", "")
+LOOPERNET_NETWORK_ID = os.environ.get("LOOPERNET_NETWORK_ID", "")
+LOOPERNET_SERVICE_CREDENTIAL_FILE = os.environ.get("LOOPERNET_SERVICE_CREDENTIAL_FILE", "")
+LOOPERNET_TRUST_ROOTS_FILE = os.environ.get("LOOPERNET_TRUST_ROOTS_FILE", "")
+
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
 

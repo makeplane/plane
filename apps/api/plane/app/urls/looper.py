@@ -1,0 +1,68 @@
+from django.urls import path
+
+from plane.app.views.looper import (
+    IssueLooperDispatchEndpoint,
+    LooperDispatchClaimEndpoint,
+    LooperDispatchInboxEndpoint,
+    LooperDispatchOwnerActionEndpoint,
+    LooperDispatchTransitionEndpoint,
+    LooperNodeBindingApprovalEndpoint,
+    LooperNodeBindingLinkEndpoint,
+    LooperProjectIntegrationEndpoint,
+    LooperProjectRolePolicyEndpoint,
+    LooperTargetsEndpoint,
+)
+
+
+urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/looper/dispatch/",
+        IssueLooperDispatchEndpoint.as_view(),
+        name="looper-dispatch-create",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/inbox/",
+        LooperDispatchInboxEndpoint.as_view(),
+        name="looper-dispatch-inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/claim/",
+        LooperDispatchClaimEndpoint.as_view(),
+        name="looper-dispatch-claim",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/transition/",
+        LooperDispatchTransitionEndpoint.as_view(),
+        name="looper-dispatch-transition",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/<str:action>/",
+        LooperDispatchOwnerActionEndpoint.as_view(),
+        name="looper-dispatch-owner-action",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/bindings/link/",
+        LooperNodeBindingLinkEndpoint.as_view(),
+        name="looper-binding-link",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/bindings/<uuid:binding_id>/approve/",
+        LooperNodeBindingApprovalEndpoint.as_view(),
+        name="looper-binding-approve",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/targets/",
+        LooperTargetsEndpoint.as_view(),
+        name="looper-targets",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/role-policy/",
+        LooperProjectRolePolicyEndpoint.as_view(),
+        name="looper-role-policy",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/integration/",
+        LooperProjectIntegrationEndpoint.as_view(),
+        name="looper-project-integration",
+    ),
+]

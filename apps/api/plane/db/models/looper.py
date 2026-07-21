@@ -49,6 +49,13 @@ class LooperDispatch(ProjectBaseModel):
     )
 
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="looper_dispatches")
+    node_binding = models.ForeignKey(
+        "db.LooperNodeBinding",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="dispatches",
+    )
     revision = models.PositiveBigIntegerField(default=1)
     state_version = models.PositiveBigIntegerField(default=1)
     requested_mode = models.CharField(max_length=16, choices=MODE_CHOICES)

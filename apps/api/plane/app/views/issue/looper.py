@@ -8,7 +8,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission, ROLE, allow_permission
-from plane.db.models import Issue, LooperDispatch
+from plane.db.models import (
+    Issue,
+    LooperDispatch,
+    LooperNodeBinding,
+    LooperProjectIntegration,
+    LooperWorkItemProtocol,
+)
 
 from .. import BaseAPIView
 
@@ -65,7 +71,7 @@ def _phase_payload(current_phase, dispatch_state):
     return phases
 
 
-def build_looper_summary(dispatch):
+def build_looper_summary(dispatch, *, actor=None):
     try:
         snapshot = dispatch.collaboration_snapshot
     except ObjectDoesNotExist:
@@ -131,15 +137,29 @@ def build_looper_summary(dispatch):
         None,
     )
 
+    is_owner = actor is not None and dispatch.owner_member_id == actor.id
+    can_stop = is_owner and dispatch.state in {
+        "queued",
+        "claimed",
+        "running",
+        "awaiting_human",
+        "stop_requested",
+    }
+    can_release = is_owner and dispatch.state in {"queued", "confirmed_stopped"}
+    available_actions = []
+    if can_stop:
+        available_actions.append("stop")
+    if can_release:
+        available_actions.append("release")
     return {
         "visibility": "visible",
         "protocol": "strict_v1",
-        "read_only": True,
+        "read_only": not (can_stop or can_release),
         "permissions": {
             "can_view": True,
             "can_dispatch": False,
-            "can_stop": False,
-            "can_release": False,
+            "can_stop": can_stop,
+            "can_release": can_release,
         },
         "dispatch": {
             "id": str(dispatch.id),
@@ -168,7 +188,7 @@ def build_looper_summary(dispatch):
         "artifacts": artifacts,
         "recent_events": recent_events,
         "snapshot_version": snapshot.snapshot_version if snapshot else 0,
-        "available_actions": [],
+        "available_actions": available_actions,
     }
 
 
@@ -200,19 +220,79 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
             .first()
         )
         if dispatch is None:
+            integration = LooperProjectIntegration.objects.filter(project=issue.project).first()
+            if integration is None:
+                return Response(
+                    {
+                        "visibility": "hidden",
+                        "protocol": None,
+                        "read_only": True,
+                        "permissions": {
+                            "can_view": True,
+                            "can_dispatch": False,
+                            "can_stop": False,
+                            "can_release": False,
+                        },
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            protocol = LooperWorkItemProtocol.objects.filter(issue=issue).first()
+            binding = LooperNodeBinding.objects.filter(
+                project=issue.project,
+                member=request.user,
+                state="active",
+            ).first()
+            is_open = issue.archived_at is None and issue.state.group not in {"completed", "cancelled"}
+            can_dispatch = bool(
+                integration
+                and integration.state == "active"
+                and protocol
+                and protocol.protocol == "strict_v1"
+                and binding
+                and "planner" in binding.allowed_roles
+                and is_open
+            )
             return Response(
                 {
-                    "visibility": "hidden",
-                    "protocol": None,
-                    "read_only": True,
+                    "visibility": "visible",
+                    "protocol": protocol.protocol if protocol else None,
+                    "read_only": not can_dispatch,
                     "permissions": {
                         "can_view": True,
-                        "can_dispatch": False,
+                        "can_dispatch": can_dispatch,
                         "can_stop": False,
                         "can_release": False,
                     },
+                    "empty_reason": (
+                        None
+                        if can_dispatch
+                        else "integration_not_active"
+                        if integration.state != "active"
+                        else "strict_protocol_required"
+                        if not protocol or protocol.protocol != "strict_v1"
+                        else "owner_binding_required"
+                        if not binding
+                        else "node_role_not_allowed"
+                        if "planner" not in binding.allowed_roles
+                        else "work_item_not_open"
+                    ),
+                    "target": (
+                        {
+                            "binding_id": str(binding.id),
+                            "owner": _member_payload(request.user),
+                            "node": {
+                                "id": binding.node_id,
+                                "name": binding.node_name_snapshot,
+                                "live_status": "unavailable",
+                            },
+                            "allow_offline_queue": binding.allow_offline_queue,
+                        }
+                        if binding
+                        else None
+                    ),
+                    "available_actions": ["dispatch"] if can_dispatch else [],
                 },
                 status=status.HTTP_200_OK,
             )
 
-        return Response(build_looper_summary(dispatch), status=status.HTTP_200_OK)
+        return Response(build_looper_summary(dispatch, actor=request.user), status=status.HTTP_200_OK)

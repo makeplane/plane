@@ -147,7 +147,8 @@ def test_looper_summary_projects_collaboration_state(session_client, workspace, 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["visibility"] == "visible"
     assert response.data["protocol"] == "strict_v1"
-    assert response.data["read_only"] is True
+    assert response.data["read_only"] is False
+    assert response.data["permissions"]["can_stop"] is True
     assert response.data["dispatch"]["id"] == str(dispatch.id)
     assert response.data["dispatch"]["role_policy_revision"] == 3
     assert response.data["dispatch"]["owner"]["id"] == str(create_user.id)
@@ -162,7 +163,7 @@ def test_looper_summary_projects_collaboration_state(session_client, workspace, 
     assert response.data["artifacts"][0]["url"] == "https://plane.example.test/pages/spec-1"
     assert response.data["recent_events"][0]["type"] == "role_request_opened"
     assert response.data["snapshot_version"] == 1
-    assert response.data["available_actions"] == []
+    assert response.data["available_actions"] == ["stop"]
 
 
 @pytest.mark.contract
