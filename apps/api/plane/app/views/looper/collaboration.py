@@ -15,7 +15,7 @@ from plane.db.models import (
     LooperDispatch,
     LooperRoleRequest,
 )
-from plane.integrations.looper.dispatch import append_dispatch_event
+from plane.integrations.looper.dispatch import append_dispatch_event, valid_termination_summary
 from plane.integrations.looper.protocol import ProtocolError
 from plane.integrations.looper.replay import consume_request_nonce
 
@@ -183,6 +183,10 @@ class LooperRoleRequestCreateEndpoint(BaseAPIView):
                 raise ProtocolError("dispatch is not accepting role requests")
             if dispatch.state_version != expected_state_version:
                 raise ProtocolError("dispatch state version is stale")
+            if dispatch.state == "running" and not valid_termination_summary(
+                body.get("termination_summary")
+            ):
+                raise ProtocolError("termination_summary is required before waiting for a role decision")
             member = _eligible_member(dispatch, role)
             if member is None:
                 raise ProtocolError("role has no eligible member in this dispatch revision")

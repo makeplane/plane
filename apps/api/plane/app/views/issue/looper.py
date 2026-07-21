@@ -44,6 +44,15 @@ def _member_payload(member):
     }
 
 
+def _node_live_status(directory, node_id):
+    if directory is None:
+        return "unavailable"
+    presence = directory.node(node_id)
+    if presence is None:
+        return "offline"
+    return "online" if presence.online else "offline"
+
+
 def _derived_phase(dispatch):
     if dispatch.state == "completed":
         return "complete"
@@ -305,13 +314,7 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                             "node": {
                                 "id": binding.node_id,
                                 "name": binding.node_name_snapshot,
-                                "live_status": (
-                                    "online"
-                                    if directory and directory.node(binding.node_id).online
-                                    else "offline"
-                                    if directory and directory.node(binding.node_id)
-                                    else "unavailable"
-                                ),
+                                "live_status": _node_live_status(directory, binding.node_id),
                             },
                             "allow_offline_queue": binding.allow_offline_queue,
                         }
@@ -323,9 +326,11 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        presence = directory.node(dispatch.node_id) if directory else None
-        live_status = "online" if presence and presence.online else "offline" if presence else "unavailable"
         return Response(
-            build_looper_summary(dispatch, actor=request.user, live_status=live_status),
+            build_looper_summary(
+                dispatch,
+                actor=request.user,
+                live_status=_node_live_status(directory, dispatch.node_id),
+            ),
             status=status.HTTP_200_OK,
         )

@@ -804,6 +804,78 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
     )
     assert stale.status_code == status.HTTP_401_UNAUTHORIZED
 
+    missing_summary_body = json.dumps(
+        {
+            "expected_state_version": 3,
+            "execution_attempt_id": str(dispatch.execution_attempt_id),
+            "fencing_token": dispatch.fencing_token,
+            "session_id": str(session_id),
+            "instance_nonce": instance_nonce_b64,
+            "state": "awaiting_human",
+            "wait_kind": "technical_spec_approval",
+        },
+        separators=(",", ":"),
+    ).encode()
+    missing_summary_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=transition_path,
+        body=missing_summary_body,
+        dispatch=dispatch,
+        state_version=3,
+        attempt_id=dispatch.execution_attempt_id,
+        fencing_token=dispatch.fencing_token,
+    )
+    missing_summary = api_client.generic(
+        "POST",
+        transition_path,
+        data=missing_summary_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=missing_summary_header,
+    )
+    assert missing_summary.status_code == status.HTTP_409_CONFLICT
+    assert missing_summary.data["error"] == "termination_summary_required"
+
+    awaiting_value = json.loads(missing_summary_body)
+    awaiting_value["termination_summary"] = {
+        "exit_status": 0,
+        "exited_at": timezone.now().isoformat(),
+        "process_group_empty": True,
+        "evidence": "looper-runner-wait",
+    }
+    awaiting_body = json.dumps(awaiting_value, separators=(",", ":")).encode()
+    awaiting_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=transition_path,
+        body=awaiting_body,
+        dispatch=dispatch,
+        state_version=3,
+        attempt_id=dispatch.execution_attempt_id,
+        fencing_token=dispatch.fencing_token,
+    )
+    awaiting = api_client.generic(
+        "POST",
+        transition_path,
+        data=awaiting_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=awaiting_header,
+    )
+    assert awaiting.status_code == status.HTTP_200_OK
+    dispatch.refresh_from_db()
+    assert (dispatch.state, dispatch.wait_kind) == ("awaiting_human", "technical_spec_approval")
+
+    api_client.force_authenticate(owner)
+    stopped = api_client.post(
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/stop/",
+        format="json",
+    )
+    assert stopped.status_code == status.HTTP_200_OK
+    dispatch.refresh_from_db()
+    assert dispatch.state == "confirmed_stopped"
+
 
 @pytest.mark.contract
 @pytest.mark.django_db(transaction=True)
@@ -859,6 +931,12 @@ def test_strict_role_request_routes_to_plane_policy_owner_and_answer_resumes_vis
         "decision_revision": 1,
         "role": "product",
         "brief_summary": "用户需要明确导出失败后的产品行为。",
+        "termination_summary": {
+            "exit_status": 0,
+            "exited_at": timezone.now().isoformat(),
+            "process_group_empty": True,
+            "evidence": "looper-runner-wait",
+        },
         "questions": [
             {
                 "id": "PROD-001",

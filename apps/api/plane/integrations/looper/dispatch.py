@@ -183,9 +183,27 @@ NODE_TRANSITIONS = {
 }
 
 
+def valid_termination_summary(value):
+    return (
+        isinstance(value, dict)
+        and type(value.get("exit_status")) is int
+        and isinstance(value.get("exited_at"), str)
+        and bool(value.get("exited_at"))
+        and value.get("process_group_empty") is True
+    )
+
+
 @transaction.atomic
 def transition_dispatch(
-    *, dispatch, expected_revision, expected_state_version, execution_attempt_id, fencing_token, new_state, wait_kind
+    *,
+    dispatch,
+    expected_revision,
+    expected_state_version,
+    execution_attempt_id,
+    fencing_token,
+    new_state,
+    wait_kind,
+    termination_summary=None,
 ):
     dispatch = LooperDispatch.objects.select_for_update().get(id=dispatch.id)
     if dispatch.revision != expected_revision or dispatch.state_version != expected_state_version:
@@ -197,6 +215,13 @@ def transition_dispatch(
     allowed_wait_kinds = {None, "role_decision", "technical_spec_approval", "qa"}
     if wait_kind not in allowed_wait_kinds or (new_state != "awaiting_human" and wait_kind is not None):
         raise DispatchConflict("invalid_wait_kind", "wait_kind is invalid for this state.")
+    process_finished_states = {"awaiting_human", "completed", "failed", "confirmed_stopped"}
+    if new_state in process_finished_states:
+        if not valid_termination_summary(termination_summary):
+            raise DispatchConflict(
+                "termination_summary_required",
+                "A verified empty process group and exit result are required for this transition.",
+            )
     dispatch.state = new_state
     dispatch.wait_kind = wait_kind
     dispatch.state_version += 1
@@ -206,7 +231,10 @@ def transition_dispatch(
         dispatch,
         event_type=f"dispatch_{new_state}",
         phase=dispatch_phase(dispatch),
-        payload={"wait_kind": wait_kind} if wait_kind else {},
+        payload={
+            **({"wait_kind": wait_kind} if wait_kind else {}),
+            **({"termination_summary": termination_summary} if termination_summary else {}),
+        },
     )
     return dispatch
 
@@ -285,14 +313,19 @@ def request_stop(*, dispatch, actor):
         raise DispatchConflict("not_dispatch_owner", "Only the dispatch owner can stop it.")
     if dispatch.state == "queued":
         dispatch.state = "confirmed_stopped"
-    elif dispatch.state in {"claimed", "running", "awaiting_human"}:
+    elif dispatch.state == "awaiting_human":
+        # Entering awaiting_human already required a termination summary, so there
+        # is no local process left to acknowledge a second time.
+        dispatch.state = "confirmed_stopped"
+        dispatch.wait_kind = None
+    elif dispatch.state in {"claimed", "running"}:
         dispatch.state = "stop_requested"
     elif dispatch.state not in {"stop_requested", "confirmed_stopped"}:
         raise DispatchConflict("invalid_transition", f"Cannot stop a dispatch in {dispatch.state}.")
     else:
         return dispatch, False
     dispatch.state_version += 1
-    dispatch.save(update_fields=("state", "state_version", "updated_at"))
+    dispatch.save(update_fields=("state", "wait_kind", "state_version", "updated_at"))
     append_dispatch_event(dispatch, event_type="stop_requested", phase=dispatch_phase(dispatch), actor=actor)
     return dispatch, True
 

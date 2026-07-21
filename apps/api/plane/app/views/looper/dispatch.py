@@ -398,6 +398,7 @@ class LooperDispatchTransitionEndpoint(BaseAPIView):
                 fencing_token=fencing_token,
                 new_state=body.get("state"),
                 wait_kind=body.get("wait_kind"),
+                termination_summary=body.get("termination_summary"),
             )
         except (KeyError, ValueError, TypeError, ProtocolError) as exc:
             if isinstance(exc, DispatchConflict):
