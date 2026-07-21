@@ -22,19 +22,28 @@ class GiteaOAuthProvider(OauthAdapter):
     scope = "openid email profile read:user"
 
     def __init__(self, request, code=None, state=None, callback=None):
-        (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
+        # The client secret is read separately from the non-secret settings on
+        # purpose. Batching them into one call returns them in a single tuple,
+        # which makes the secret indistinguishable from the values around it for
+        # anything tracking where it flows - GITEA_HOST builds `userinfo_url`, so
+        # a shared tuple marks every response fetched with that URL as secret.
+        (GITEA_CLIENT_ID, GITEA_HOST) = get_configuration_value(
             [
                 {
                     "key": "GITEA_CLIENT_ID",
                     "default": os.environ.get("GITEA_CLIENT_ID"),
                 },
                 {
-                    "key": "GITEA_CLIENT_SECRET",
-                    "default": os.environ.get("GITEA_CLIENT_SECRET"),
-                },
-                {
                     "key": "GITEA_HOST",
                     "default": os.environ.get("GITEA_HOST"),
+                },
+            ]
+        )
+        (GITEA_CLIENT_SECRET,) = get_configuration_value(
+            [
+                {
+                    "key": "GITEA_CLIENT_SECRET",
+                    "default": os.environ.get("GITEA_CLIENT_SECRET"),
                 },
             ]
         )

@@ -89,11 +89,15 @@ class OauthAdapter(Adapter):
             response = requests.get(self.get_user_info_url(), headers=headers)
             response.raise_for_status()
             return response.json()
-        except requests.RequestException:
+        except requests.RequestException as e:
+            # Never log `headers` - it carries the provider access token as a
+            # bearer credential. The provider and status code are the useful
+            # signals and carry nothing sensitive.
             self.logger.warning(
                 "Error getting user response",
                 extra={
-                    "headers": headers,
+                    "provider": self.provider,
+                    "status_code": getattr(e.response, "status_code", None),
                 },
             )
             code = self.authentication_error_code()

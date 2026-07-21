@@ -31,18 +31,24 @@ class GitHubOAuthProvider(OauthAdapter):
     organization_scope = "read:org"
 
     def __init__(self, request, code=None, state=None, callback=None):
-        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = get_configuration_value([
+        # The client secret is read separately from the non-secret settings on
+        # purpose. Batching them into one call returns them in a single tuple,
+        # which makes the secret indistinguishable from the values around it for
+        # anything tracking where it flows.
+        GITHUB_CLIENT_ID, GITHUB_ORGANIZATION_ID = get_configuration_value([
             {
                 "key": "GITHUB_CLIENT_ID",
                 "default": os.environ.get("GITHUB_CLIENT_ID"),
             },
             {
-                "key": "GITHUB_CLIENT_SECRET",
-                "default": os.environ.get("GITHUB_CLIENT_SECRET"),
-            },
-            {
                 "key": "GITHUB_ORGANIZATION_ID",
                 "default": os.environ.get("GITHUB_ORGANIZATION_ID"),
+            },
+        ])
+        (GITHUB_CLIENT_SECRET,) = get_configuration_value([
+            {
+                "key": "GITHUB_CLIENT_SECRET",
+                "default": os.environ.get("GITHUB_CLIENT_SECRET"),
             },
         ])
 
@@ -159,7 +165,6 @@ class GitHubOAuthProvider(OauthAdapter):
                 self.logger.warning(
                     "User is not in organization",
                     extra={
-                        "organization_id": self.organization_id,
                         "user_login": user_info_response.get("login"),
                     },
                 )
@@ -169,12 +174,6 @@ class GitHubOAuthProvider(OauthAdapter):
                 )
 
         email = self.__get_email(headers=headers)
-        self.logger.debug(
-            "Email found",
-            extra={
-                "email": email,
-            },
-        )
         super().set_user_data({
             "email": email,
             "user": {
