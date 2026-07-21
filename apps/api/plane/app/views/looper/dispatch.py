@@ -1,4 +1,6 @@
 import json
+import base64
+from datetime import timedelta
 from uuid import UUID
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -14,6 +16,7 @@ from plane.db.models import (
     LooperDispatch,
     LooperNodeBinding,
     LooperNodeKey,
+    LooperNodeSession,
     LooperProjectIntegration,
     LooperProjectRolePolicy,
     LooperWorkItemProtocol,
@@ -83,6 +86,31 @@ def _active_membership(binding):
     ).exists() and WorkspaceMember.objects.filter(
         workspace_id=binding.workspace_id, member_id=binding.member_id, is_active=True
     ).exists()
+
+
+def _decode_instance_nonce(value):
+    if not isinstance(value, str) or not value or "=" in value:
+        raise ProtocolError("instance_nonce must be unpadded base64url")
+    try:
+        decoded = base64.b64decode(value + "=" * (-len(value) % 4), altchars=b"-_", validate=True)
+    except (ValueError, TypeError) as exc:
+        raise ProtocolError("instance_nonce is invalid") from exc
+    if len(decoded) != 16:
+        raise ProtocolError("instance_nonce must contain 16 bytes")
+    return decoded
+
+
+def _require_active_session(binding, session_id, instance_nonce):
+    session = LooperNodeSession.objects.filter(
+        binding=binding,
+        session_id=session_id,
+        instance_nonce=instance_nonce,
+        state="active",
+        lease_expires_at__gte=timezone.now(),
+    ).first()
+    if session is None:
+        raise ProtocolError("Node session is missing, expired, or belongs to another instance")
+    return session
 
 
 def _verify_signed_node_request(
@@ -232,6 +260,11 @@ class LooperDispatchInboxEndpoint(BaseAPIView):
     @transaction.atomic
     def get(self, request, slug, project_id):
         node_id = request.query_params.get("node_id", "")
+        try:
+            session_id = UUID(str(request.query_params.get("session_id", "")))
+            instance_nonce = _decode_instance_nonce(request.query_params.get("instance_nonce", ""))
+        except (ValueError, TypeError, AttributeError, ProtocolError) as exc:
+            return Response({"error": "invalid_session", "detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         if not node_id:
             return Response({"error": "node_id_required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -240,6 +273,7 @@ class LooperDispatchInboxEndpoint(BaseAPIView):
             )
             if binding.node_id != node_id:
                 raise ProtocolError("signed binding does not own the requested Node inbox")
+            _require_active_session(binding, session_id, instance_nonce)
             consume_request_nonce(
                 binding_id=verified.binding_id,
                 key_revision=verified.key_revision,
@@ -278,6 +312,8 @@ class LooperDispatchClaimEndpoint(BaseAPIView):
             raw_body, body = _json_body(request)
             expected_state_version = int(body["expected_state_version"])
             idempotency_key = UUID(str(body["claim_idempotency_key"]))
+            session_id = UUID(str(body["session_id"]))
+            instance_nonce = _decode_instance_nonce(body["instance_nonce"])
             binding, verified = _verify_signed_node_request(
                 request,
                 project_id=project_id,
@@ -285,6 +321,7 @@ class LooperDispatchClaimEndpoint(BaseAPIView):
                 dispatch=dispatch,
                 expected_state_version=expected_state_version,
             )
+            _require_active_session(binding, session_id, instance_nonce)
             consume_request_nonce(
                 binding_id=verified.binding_id,
                 key_revision=verified.key_revision,
@@ -320,6 +357,8 @@ class LooperDispatchTransitionEndpoint(BaseAPIView):
             expected_state_version = int(body["expected_state_version"])
             execution_attempt_id = UUID(str(body["execution_attempt_id"]))
             fencing_token = int(body["fencing_token"])
+            session_id = UUID(str(body["session_id"]))
+            instance_nonce = _decode_instance_nonce(body["instance_nonce"])
             binding, verified = _verify_signed_node_request(
                 request,
                 project_id=project_id,
@@ -332,6 +371,7 @@ class LooperDispatchTransitionEndpoint(BaseAPIView):
             )
             if dispatch.node_binding_id != binding.id:
                 raise ProtocolError("dispatch belongs to another Node binding")
+            _require_active_session(binding, session_id, instance_nonce)
             consume_request_nonce(
                 binding_id=verified.binding_id,
                 key_revision=verified.key_revision,
@@ -354,3 +394,76 @@ class LooperDispatchTransitionEndpoint(BaseAPIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         return Response({"dispatch": dispatch_payload(transitioned)})
+
+
+class LooperNodeSessionEndpoint(BaseAPIView):
+    authentication_classes = []
+    permission_classes = []
+    throttle_classes = []
+
+    @transaction.atomic
+    def post(self, request, slug, project_id):
+        try:
+            raw_body, body = _json_body(request)
+            session_id = UUID(str(body["session_id"]))
+            instance_nonce = _decode_instance_nonce(body["instance_nonce"])
+            binding, verified = _verify_signed_node_request(
+                request, project_id=project_id, raw_body=raw_body
+            )
+            consume_request_nonce(
+                binding_id=verified.binding_id,
+                key_revision=verified.key_revision,
+                nonce=verified.nonce,
+            )
+            current = (
+                LooperNodeSession.objects.select_for_update()
+                .filter(binding=binding, state="active")
+                .first()
+            )
+            now = timezone.now()
+            if current is not None:
+                same_instance = current.session_id == session_id and bytes(current.instance_nonce) == instance_nonce
+                holding = LooperDispatch.objects.filter(
+                    node_binding=binding, state__in=LooperDispatch.HOLDING_STATES
+                ).exists()
+                if not same_instance and (current.lease_expires_at >= now or holding):
+                    raise ProtocolError("another Node instance owns this binding session")
+                if same_instance:
+                    current.lease_expires_at = now + timedelta(seconds=90)
+                    current.last_renewed_at = now
+                    current.save(update_fields=("lease_expires_at", "last_renewed_at", "updated_at"))
+                    session = current
+                else:
+                    current.state = "closed"
+                    current.save(update_fields=("state", "updated_at"))
+                    session = LooperNodeSession.objects.create(
+                        project_id=binding.project_id,
+                        workspace_id=binding.workspace_id,
+                        binding=binding,
+                        session_id=session_id,
+                        instance_nonce=instance_nonce,
+                        lease_expires_at=now + timedelta(seconds=90),
+                        last_renewed_at=now,
+                    )
+            else:
+                session = LooperNodeSession.objects.create(
+                    project_id=binding.project_id,
+                    workspace_id=binding.workspace_id,
+                    binding=binding,
+                    session_id=session_id,
+                    instance_nonce=instance_nonce,
+                    lease_expires_at=now + timedelta(seconds=90),
+                    last_renewed_at=now,
+                )
+        except (KeyError, ValueError, TypeError, ProtocolError) as exc:
+            return Response(
+                {"error": "invalid_node_session", "detail": str(exc)},
+                status=status.HTTP_409_CONFLICT,
+            )
+        return Response(
+            {
+                "session_id": str(session.session_id),
+                "lease_expires_at": session.lease_expires_at,
+                "state": session.state,
+            }
+        )

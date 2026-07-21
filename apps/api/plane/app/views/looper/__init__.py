@@ -11,6 +11,7 @@ from .dispatch import (
     LooperDispatchInboxEndpoint,
     LooperDispatchOwnerActionEndpoint,
     LooperDispatchTransitionEndpoint,
+    LooperNodeSessionEndpoint,
 )
 
 __all__ = (
@@ -24,4 +25,5 @@ __all__ = (
     "LooperDispatchInboxEndpoint",
     "LooperDispatchOwnerActionEndpoint",
     "LooperDispatchTransitionEndpoint",
+    "LooperNodeSessionEndpoint",
 )

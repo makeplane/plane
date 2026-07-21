@@ -466,8 +466,57 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
     dispatch = LooperDispatch.objects.get(id=created.data["dispatch"]["id"])
     api_client.force_authenticate(user=None)
 
+    session_id = uuid4()
+    instance_nonce = uuid4().bytes
+    instance_nonce_b64 = b64url_encode(instance_nonce)
+    session_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/nodes/session/"
+    session_body = json.dumps(
+        {"session_id": str(session_id), "instance_nonce": instance_nonce_b64},
+        separators=(",", ":"),
+    ).encode()
+    session_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=session_path,
+        body=session_body,
+    )
+    opened = api_client.generic(
+        "POST",
+        session_path,
+        data=session_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=session_header,
+    )
+    assert opened.status_code == status.HTTP_200_OK
+    assert opened.data["session_id"] == str(session_id)
+
+    competing_body = json.dumps(
+        {"session_id": str(uuid4()), "instance_nonce": b64url_encode(uuid4().bytes)},
+        separators=(",", ":"),
+    ).encode()
+    competing_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=session_path,
+        body=competing_body,
+    )
+    competing = api_client.generic(
+        "POST",
+        session_path,
+        data=competing_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=competing_header,
+    )
+    assert competing.status_code == status.HTTP_409_CONFLICT
+    assert "another Node instance" in competing.data["detail"]
+
     inbox_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/inbox/"
-    query = f"node_id={binding.node_id}&cursor="
+    query = (
+        f"node_id={binding.node_id}&cursor=&session_id={session_id}"
+        f"&instance_nonce={instance_nonce_b64}"
+    )
     inbox_header = signed_node_header(
         private_key=private_key,
         binding=binding,
@@ -484,7 +533,12 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
 
     claim_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/claim/"
     claim_body = json.dumps(
-        {"expected_state_version": 1, "claim_idempotency_key": str(uuid4())},
+        {
+            "expected_state_version": 1,
+            "claim_idempotency_key": str(uuid4()),
+            "session_id": str(session_id),
+            "instance_nonce": instance_nonce_b64,
+        },
         separators=(",", ":"),
     ).encode()
     claim_header = signed_node_header(
@@ -517,6 +571,8 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
             "expected_state_version": dispatch.state_version,
             "execution_attempt_id": str(dispatch.execution_attempt_id),
             "fencing_token": dispatch.fencing_token,
+            "session_id": str(session_id),
+            "instance_nonce": instance_nonce_b64,
             "state": "running",
             "wait_kind": None,
         },

@@ -6,6 +6,7 @@ from plane.app.views.looper import (
     LooperDispatchInboxEndpoint,
     LooperDispatchOwnerActionEndpoint,
     LooperDispatchTransitionEndpoint,
+    LooperNodeSessionEndpoint,
     LooperNodeBindingApprovalEndpoint,
     LooperNodeBindingLinkEndpoint,
     LooperProjectIntegrationEndpoint,
@@ -15,6 +16,11 @@ from plane.app.views.looper import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/nodes/session/",
+        LooperNodeSessionEndpoint.as_view(),
+        name="looper-node-session",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/looper/dispatch/",
         IssueLooperDispatchEndpoint.as_view(),
