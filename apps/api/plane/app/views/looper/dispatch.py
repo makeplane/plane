@@ -27,6 +27,7 @@ from plane.integrations.looper.dispatch import (
     DispatchConflict,
     claim_dispatch,
     create_dispatch,
+    handoff_dispatch,
     release_dispatch,
     request_stop,
     transition_dispatch,
@@ -397,6 +398,63 @@ class LooperDispatchTransitionEndpoint(BaseAPIView):
                 fencing_token=fencing_token,
                 new_state=body.get("state"),
                 wait_kind=body.get("wait_kind"),
+            )
+        except (KeyError, ValueError, TypeError, ProtocolError) as exc:
+            if isinstance(exc, DispatchConflict):
+                return _conflict_response(exc)
+            return Response(
+                {"error": "invalid_node_request", "detail": str(exc)},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        return Response({"dispatch": dispatch_payload(transitioned)})
+
+
+class LooperDispatchHandoffEndpoint(BaseAPIView):
+    authentication_classes = []
+    permission_classes = []
+    throttle_classes = []
+
+    @transaction.atomic
+    def post(self, request, slug, project_id, dispatch_id):
+        dispatch = get_object_or_404(LooperDispatch, id=dispatch_id, project_id=project_id)
+        try:
+            raw_body, body = _json_body(request)
+            expected_state_version = int(body["expected_state_version"])
+            execution_attempt_id = UUID(str(body["execution_attempt_id"]))
+            fencing_token = int(body["fencing_token"])
+            session_id = UUID(str(body["session_id"]))
+            instance_nonce = _decode_instance_nonce(body["instance_nonce"])
+            approval_actor_member_id = UUID(str(body["approval_actor_member_id"]))
+            approval_comment_id = UUID(str(body["approval_comment_id"]))
+            spec_content_hash = str(body["spec_content_hash"]).strip().lower()
+            spec_revision = int(body["spec_revision"])
+            binding, verified = _verify_signed_node_request(
+                request,
+                project_id=project_id,
+                raw_body=raw_body,
+                dispatch=dispatch,
+                expected_state_version=expected_state_version,
+                expected_attempt_id=execution_attempt_id,
+                expected_fencing_token=fencing_token,
+            )
+            if dispatch.node_binding_id != binding.id:
+                raise ProtocolError("dispatch belongs to another Node binding")
+            _require_active_session(binding, session_id, instance_nonce)
+            consume_request_nonce(
+                binding_id=verified.binding_id,
+                key_revision=verified.key_revision,
+                nonce=verified.nonce,
+            )
+            transitioned = handoff_dispatch(
+                dispatch=dispatch,
+                expected_revision=dispatch.revision,
+                expected_state_version=expected_state_version,
+                execution_attempt_id=execution_attempt_id,
+                fencing_token=fencing_token,
+                approval_actor_member_id=approval_actor_member_id,
+                approval_comment_id=approval_comment_id,
+                spec_content_hash=spec_content_hash,
+                spec_revision=spec_revision,
             )
         except (KeyError, ValueError, TypeError, ProtocolError) as exc:
             if isinstance(exc, DispatchConflict):

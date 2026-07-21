@@ -3,6 +3,7 @@ from django.urls import path
 from plane.app.views.looper import (
     IssueLooperDispatchEndpoint,
     LooperDispatchClaimEndpoint,
+    LooperDispatchHandoffEndpoint,
     LooperDispatchInboxEndpoint,
     LooperDispatchOwnerActionEndpoint,
     LooperDispatchTransitionEndpoint,
@@ -42,6 +43,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/transition/",
         LooperDispatchTransitionEndpoint.as_view(),
         name="looper-dispatch-transition",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/handoff/",
+        LooperDispatchHandoffEndpoint.as_view(),
+        name="looper-dispatch-handoff",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/role-requests/",

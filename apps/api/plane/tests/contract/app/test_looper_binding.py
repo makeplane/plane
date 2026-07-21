@@ -924,3 +924,119 @@ def test_strict_role_request_routes_to_plane_policy_owner_and_answer_resumes_vis
     role_request.refresh_from_db()
     assert role_request.status == "answered"
     assert role_request.answer_comment.actor_id == product.id
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+def test_signed_spec_approval_handoff_requeues_same_dispatch_for_worker(
+    api_client, binding_context, binding_vectors
+):
+    owner, _admin, workspace, project, binding, private_key, issue = strict_dispatch_context(
+        binding_context, binding_vectors
+    )
+    attempt_id = uuid4()
+    dispatch = LooperDispatch.objects.create(
+        workspace=workspace,
+        project=project,
+        issue=issue,
+        node_binding=binding,
+        requested_mode="auto",
+        active_role="planner",
+        owner_member=owner,
+        dispatched_by_member=owner,
+        node_id=binding.node_id,
+        node_name_snapshot=binding.node_name_snapshot,
+        state="awaiting_human",
+        wait_kind="technical_spec_approval",
+        state_version=4,
+        execution_attempt_id=attempt_id,
+        fencing_token=1,
+        idempotency_key=uuid4(),
+    )
+    session_id = uuid4()
+    instance_nonce_b64 = b64url_encode(uuid4().bytes)
+    LooperNodeSession.objects.create(
+        workspace=workspace,
+        project=project,
+        binding=binding,
+        session_id=session_id,
+        instance_nonce=base64.urlsafe_b64decode(instance_nonce_b64 + "=="),
+        lease_expires_at=timezone.now() + timedelta(seconds=90),
+        last_renewed_at=timezone.now(),
+    )
+    path = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
+        f"{dispatch.id}/handoff/"
+    )
+    approval_comment_id = uuid4()
+    body_value = {
+        "expected_state_version": dispatch.state_version,
+        "execution_attempt_id": str(attempt_id),
+        "fencing_token": 1,
+        "session_id": str(session_id),
+        "instance_nonce": instance_nonce_b64,
+        "approval_actor_member_id": str(owner.id),
+        "approval_comment_id": str(approval_comment_id),
+        "spec_content_hash": "a" * 64,
+        "spec_revision": 2,
+    }
+    body = json.dumps(body_value, separators=(",", ":")).encode()
+    header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=path,
+        body=body,
+        dispatch=dispatch,
+        state_version=dispatch.state_version,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    api_client.force_authenticate(user=None)
+    response = api_client.generic(
+        "POST", path, data=body, content_type="application/json", HTTP_LOOPER_SIGNATURE=header
+    )
+    assert response.status_code == status.HTTP_200_OK
+    dispatch.refresh_from_db()
+    assert (dispatch.active_role, dispatch.state, dispatch.wait_kind) == ("worker", "queued", None)
+    assert dispatch.active_role_revision == 2
+    assert dispatch.state_version == 5
+    assert dispatch.execution_attempt_id is None
+    assert dispatch.claim_idempotency_key is None
+    assert dispatch.claim_lease_expires_at is None
+
+    stale_body = json.dumps(
+        {
+            "expected_state_version": 4,
+            "execution_attempt_id": str(attempt_id),
+            "fencing_token": 1,
+            "session_id": str(session_id),
+            "instance_nonce": instance_nonce_b64,
+            "state": "completed",
+            "wait_kind": None,
+        },
+        separators=(",", ":"),
+    ).encode()
+    transition_path = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
+        f"{dispatch.id}/transition/"
+    )
+    stale_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=transition_path,
+        body=stale_body,
+        dispatch=dispatch,
+        state_version=4,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    stale = api_client.generic(
+        "POST",
+        transition_path,
+        data=stale_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=stale_header,
+    )
+    assert stale.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_409_CONFLICT)

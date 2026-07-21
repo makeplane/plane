@@ -15,6 +15,7 @@ from plane.db.models import (
     LooperProjectIntegration,
     LooperWorkItemProtocol,
 )
+from plane.integrations.looper.directory import DirectoryUnavailable, get_directory_snapshot
 
 from .. import BaseAPIView
 
@@ -71,7 +72,7 @@ def _phase_payload(current_phase, dispatch_state):
     return phases
 
 
-def build_looper_summary(dispatch, *, actor=None):
+def build_looper_summary(dispatch, *, actor=None, live_status="unavailable"):
     try:
         snapshot = dispatch.collaboration_snapshot
     except ObjectDoesNotExist:
@@ -188,7 +189,7 @@ def build_looper_summary(dispatch, *, actor=None):
             "node": {
                 "id": dispatch.node_id,
                 "name": dispatch.node_name_snapshot,
-                "live_status": "unavailable",
+                "live_status": live_status,
                 "last_ack_at": dispatch.last_node_ack_at,
             },
             "created_at": dispatch.created_at,
@@ -233,6 +234,11 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
             .order_by("-created_at")
             .first()
         )
+        directory = None
+        try:
+            directory = get_directory_snapshot()
+        except DirectoryUnavailable:
+            pass
         if dispatch is None:
             integration = LooperProjectIntegration.objects.filter(project=issue.project).first()
             if integration is None:
@@ -299,7 +305,13 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                             "node": {
                                 "id": binding.node_id,
                                 "name": binding.node_name_snapshot,
-                                "live_status": "unavailable",
+                                "live_status": (
+                                    "online"
+                                    if directory and directory.node(binding.node_id).online
+                                    else "offline"
+                                    if directory and directory.node(binding.node_id)
+                                    else "unavailable"
+                                ),
                             },
                             "allow_offline_queue": binding.allow_offline_queue,
                         }
@@ -311,4 +323,9 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        return Response(build_looper_summary(dispatch, actor=request.user), status=status.HTTP_200_OK)
+        presence = directory.node(dispatch.node_id) if directory else None
+        live_status = "online" if presence and presence.online else "offline" if presence else "unavailable"
+        return Response(
+            build_looper_summary(dispatch, actor=request.user, live_status=live_status),
+            status=status.HTTP_200_OK,
+        )

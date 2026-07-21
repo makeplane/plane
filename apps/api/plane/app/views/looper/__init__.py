@@ -8,6 +8,7 @@ from .binding import (
 from .dispatch import (
     IssueLooperDispatchEndpoint,
     LooperDispatchClaimEndpoint,
+    LooperDispatchHandoffEndpoint,
     LooperDispatchInboxEndpoint,
     LooperDispatchOwnerActionEndpoint,
     LooperDispatchTransitionEndpoint,
@@ -23,6 +24,7 @@ __all__ = (
     "LooperTargetsEndpoint",
     "IssueLooperDispatchEndpoint",
     "LooperDispatchClaimEndpoint",
+    "LooperDispatchHandoffEndpoint",
     "LooperDispatchInboxEndpoint",
     "LooperDispatchOwnerActionEndpoint",
     "LooperDispatchTransitionEndpoint",

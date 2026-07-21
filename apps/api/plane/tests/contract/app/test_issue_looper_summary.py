@@ -75,6 +75,7 @@ def test_looper_summary_is_hidden_without_a_durable_dispatch(session_client, wor
             "can_dispatch": False,
             "can_stop": False,
             "can_release": False,
+            "can_answer": False,
         },
     }
 

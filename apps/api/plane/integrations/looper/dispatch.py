@@ -212,6 +212,73 @@ def transition_dispatch(
 
 
 @transaction.atomic
+def handoff_dispatch(
+    *,
+    dispatch,
+    expected_revision,
+    expected_state_version,
+    execution_attempt_id,
+    fencing_token,
+    approval_actor_member_id,
+    approval_comment_id,
+    spec_content_hash,
+    spec_revision,
+):
+    """Atomically transfer an approved planner dispatch to the worker inbox."""
+
+    dispatch = LooperDispatch.objects.select_for_update().get(id=dispatch.id)
+    if dispatch.revision != expected_revision or dispatch.state_version != expected_state_version:
+        raise DispatchConflict("stale_state", "Dispatch state changed before handoff.", dispatch=dispatch)
+    if dispatch.execution_attempt_id != execution_attempt_id or dispatch.fencing_token != fencing_token:
+        raise DispatchConflict("stale_fence", "Execution attempt or fencing token is stale.", dispatch=dispatch)
+    if dispatch.owner_member_id != approval_actor_member_id:
+        raise DispatchConflict("wrong_approval_actor", "Only the dispatch owner may approve the technical spec.")
+    if dispatch.state != "awaiting_human" or dispatch.wait_kind != "technical_spec_approval":
+        raise DispatchConflict("invalid_transition", "Dispatch is not awaiting technical spec approval.")
+    if dispatch.active_role != "planner":
+        raise DispatchConflict("invalid_active_role", "Only a planner dispatch can be handed to a worker.")
+    if not approval_comment_id or len(spec_content_hash) != 64 or spec_revision < 1:
+        raise DispatchConflict("invalid_approval_evidence", "Complete revision-bound approval evidence is required.")
+
+    dispatch.active_role = "worker"
+    dispatch.active_role_revision += 1
+    dispatch.state = "queued"
+    dispatch.wait_kind = None
+    dispatch.state_version += 1
+    dispatch.execution_attempt_id = None
+    dispatch.claim_idempotency_key = None
+    dispatch.claim_lease_expires_at = None
+    dispatch.last_node_ack_at = timezone.now()
+    dispatch.save(
+        update_fields=(
+            "active_role",
+            "active_role_revision",
+            "state",
+            "wait_kind",
+            "state_version",
+            "execution_attempt_id",
+            "claim_idempotency_key",
+            "claim_lease_expires_at",
+            "last_node_ack_at",
+            "updated_at",
+        )
+    )
+    append_dispatch_event(
+        dispatch,
+        event_type="technical_spec_approved",
+        phase=dispatch_phase(dispatch),
+        payload={
+            "approval_actor_member_id": str(approval_actor_member_id),
+            "approval_comment_id": str(approval_comment_id),
+            "spec_content_hash": spec_content_hash,
+            "spec_revision": spec_revision,
+            "active_role_revision": dispatch.active_role_revision,
+        },
+    )
+    return dispatch
+
+
+@transaction.atomic
 def request_stop(*, dispatch, actor):
     dispatch = LooperDispatch.objects.select_for_update().get(id=dispatch.id)
     if dispatch.owner_member_id != actor.id:
