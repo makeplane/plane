@@ -5,8 +5,9 @@
  */
 
 // components
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@plane/utils";
 import { TopNavPowerK } from "@/components/navigation";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
@@ -21,10 +22,14 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { StarUsOnGitHubLink } from "@/app/(all)/[workspaceSlug]/(projects)/star-us-link";
 
+const NOTIFICATIONS_PATH_SEGMENT = "/notifications/";
+
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   // store hooks
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
@@ -37,6 +42,25 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
     workspaceSlug ? "WORKSPACE_UNREAD_NOTIFICATION_COUNT" : null,
     workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug.toString()) : null
   );
+
+  const isOnNotifications = pathname?.includes(NOTIFICATIONS_PATH_SEGMENT) ?? false;
+
+  // Remembers the last page visited outside Notifications/Inbox, so a second
+  // click on the Inbox icon can return there in one step instead of just
+  // sitting on the current page (clicking a Link to the same URL is a no-op).
+  const lastNonNotificationsPathRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isOnNotifications && pathname) {
+      const query = searchParams.toString();
+      lastNonNotificationsPathRef.current = query ? `${pathname}?${query}` : pathname;
+    }
+  }, [pathname, searchParams, isOnNotifications]);
+
+  const handleInboxClick = (e?: React.MouseEvent) => {
+    if (!isOnNotifications) return;
+    e?.preventDefault();
+    router.push(lastNonNotificationsPathRef.current ?? `/${workspaceSlug?.toString()}/`);
+  };
 
   // Calculate notification count
   const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0;
@@ -73,7 +97,8 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                   )}
                 </div>
               ),
-              isActive: pathname?.includes("/notifications/"),
+              isActive: isOnNotifications,
+              onClick: handleInboxClick,
             }}
           />
         </Tooltip>

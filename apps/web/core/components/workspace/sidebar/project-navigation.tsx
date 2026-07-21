@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Clock } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -52,12 +52,26 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   } = useIssueDetail();
   // pathname
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   // derived values
   const workItemId = workItemIdentifierFromRoute
     ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
     : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getPartialProjectById(projectId);
+  const intakeHref = `/${workspaceSlug}/projects/${projectId}/intake`;
+  // Remembers the last non-Intake page visited, so a second click on the
+  // Intake nav item can return there in one step — Intake itself pushes a
+  // new history entry per selected issue (see InboxSidebar), so plain
+  // router.back() would only step through those instead of leaving Intake.
+  const lastNonIntakePathRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!pathname.startsWith(intakeHref)) {
+      const query = searchParams.toString();
+      lastNonIntakePathRef.current = query ? `${pathname}?${query}` : pathname;
+    }
+  }, [pathname, searchParams, intakeHref]);
   // handlers
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
@@ -183,6 +197,18 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     [pathname, workItem, workItemId, projectId]
   );
 
+  const handleNavItemClick = useCallback(
+    (e: React.MouseEvent, item: TNavigationItem) => {
+      handleProjectClick();
+      if (item.key === "intake" && isActive(item)) {
+        e.preventDefault();
+        router.push(lastNonIntakePathRef.current ?? `/${workspaceSlug}/projects/${projectId}/issues`);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleProjectClick is a stable inline fn, redefined every render
+    [isActive, router, workspaceSlug, projectId]
+  );
+
   if (!project) return null;
 
   return (
@@ -196,7 +222,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
 
         return (
-          <Link key={item.key} href={item.href} onClick={handleProjectClick}>
+          <Link key={item.key} href={item.href} onClick={(e) => handleNavItemClick(e, item)}>
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
                 <div className="flex items-center gap-1.5">
