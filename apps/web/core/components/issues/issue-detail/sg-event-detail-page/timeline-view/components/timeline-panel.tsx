@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { UIEvent } from "react";
 import {
+  Check,
   Clock3,
   Copy,
   Eye,
   ListPlus,
   Maximize2,
   Minus,
+  MousePointer2,
   Plus,
   RotateCcw,
   SkipBack,
   SkipForward,
   Tags,
+  X,
 } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -28,6 +31,7 @@ import {
   TIMELINE_TRACKS_ROW_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
   getTimelinePanelMaxHeightPx,
+  getTimelineSplitWheelUpdate,
 } from "../utils/timeline-layout";
 import {
   buildLaneMarkerOffsets,
@@ -66,10 +70,15 @@ type SgEventTimelinePanelProps = {
   activeTagRowId: string | null;
   isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
+  isPlaylistSelectionMode?: boolean;
+  maxTimelineExpansionPx?: number;
+  onClearTagSelection?: () => void;
   onCreatePlaylist?: () => void;
   isPlayerPlaying: boolean;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
+  onPlaylistSelectionModeChange?: (nextValue: boolean) => void;
   onResetPlayback: () => void;
+  onTimelineExpansionChange?: (nextExpansionPx: number) => void;
   onToggleTagSelection: (tagId: string) => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
@@ -78,6 +87,7 @@ type SgEventTimelinePanelProps = {
   rows: SgTagRow[];
   selectedTagIds: string[];
   sport: SportTableKind;
+  timelineExpansionPx?: number;
 };
 
 const TOOL_BUTTON_CLASS =
@@ -87,15 +97,27 @@ const TEXT_TOOL_BUTTON_CLASS =
 
 const getPlayheadTransform = (positionPx: number) => `translate3d(${positionPx}px, 0, 0) translateX(-50%)`;
 
+type TimelineWheelEventLike = {
+  deltaX: number;
+  deltaY: number;
+  preventDefault: () => void;
+  stopPropagation: () => void;
+};
+
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
   isCreatingPlaylist = false,
   isMediaLoading,
+  isPlaylistSelectionMode = false,
+  maxTimelineExpansionPx = 0,
+  onClearTagSelection,
   onCreatePlaylist,
   isPlayerPlaying,
   onPlayTagRow,
+  onPlaylistSelectionModeChange,
   onResetPlayback,
+  onTimelineExpansionChange,
   onToggleTagSelection,
   playerDurationSeconds,
   playheadSeconds,
@@ -104,6 +126,7 @@ export const SgEventTimelinePanel = ({
   rows,
   selectedTagIds,
   sport,
+  timelineExpansionPx = 0,
 }: SgEventTimelinePanelProps) => {
   const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
   const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
@@ -112,8 +135,10 @@ export const SgEventTimelinePanel = ({
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
   const [timelinePanelMaxHeightPx, setTimelinePanelMaxHeightPx] = useState<number | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
+  const timelineTracksScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineRulerScrollRef = useRef<HTMLDivElement | null>(null);
+  const timelineExpansionValueRef = useRef(timelineExpansionPx);
   const isSyncingTimelineHorizontalScrollRef = useRef(false);
   const playheadElementRef = useRef<HTMLDivElement | null>(null);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
@@ -209,6 +234,12 @@ export const SgEventTimelinePanel = ({
   const canZoomOut = timelineScaleIndex > 0;
   const canZoomIn = timelineScaleIndex < TIMELINE_SCALE_LEVELS.length - 1;
   const hasTimelineRows = sortedTimelineRows.length > 0;
+  const selectedTagCount = selectedTagIds.length;
+  const canCreatePlaylist = Boolean(onCreatePlaylist) && selectedTagCount > 0 && !isCreatingPlaylist;
+
+  useEffect(() => {
+    timelineExpansionValueRef.current = timelineExpansionPx;
+  }, [timelineExpansionPx]);
 
   useEffect(() => {
     if (isTagClipActive || playerDurationSeconds === null || playerDurationSeconds <= 0) return;
@@ -254,7 +285,7 @@ export const SgEventTimelinePanel = ({
       window.removeEventListener("resize", updatePanelMaxHeight);
       resizeObserver?.disconnect();
     };
-  }, []);
+  }, [timelineExpansionPx]);
 
   useEffect(() => {
     const playheadElement = playheadElementRef.current;
@@ -322,6 +353,78 @@ export const SgEventTimelinePanel = ({
 
     syncTimelineHorizontalScroll(event.currentTarget, timelineScrollRef.current);
   };
+
+  const handleTimelineWheel = useCallback(
+    (event: TimelineWheelEventLike) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+        const rulerScrollElement = timelineRulerScrollRef.current;
+        if (!rulerScrollElement || event.deltaX === 0) return;
+
+        const trackScrollElement = timelineScrollRef.current;
+        const maxScrollLeft = Math.max(0, rulerScrollElement.scrollWidth - rulerScrollElement.clientWidth);
+        const nextScrollLeft = Math.min(Math.max(rulerScrollElement.scrollLeft + event.deltaX, 0), maxScrollLeft);
+
+        if (Math.abs(rulerScrollElement.scrollLeft - nextScrollLeft) < 1) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        rulerScrollElement.scrollLeft = nextScrollLeft;
+
+        if (trackScrollElement && Math.abs(trackScrollElement.scrollLeft - nextScrollLeft) >= 1) {
+          isSyncingTimelineHorizontalScrollRef.current = true;
+          trackScrollElement.scrollLeft = nextScrollLeft;
+          window.requestAnimationFrame(() => {
+            isSyncingTimelineHorizontalScrollRef.current = false;
+          });
+        }
+
+        return;
+      }
+
+      const trackScrollElement = timelineTracksScrollRef.current;
+      if (!trackScrollElement) return;
+
+      const maxTrackScrollTopPx = Math.max(0, trackScrollElement.scrollHeight - trackScrollElement.clientHeight);
+      const wheelUpdate = getTimelineSplitWheelUpdate({
+        currentExpansionPx: timelineExpansionValueRef.current,
+        deltaY: event.deltaY,
+        maxExpansionPx: maxTimelineExpansionPx,
+        maxTrackScrollTopPx,
+        trackScrollTopPx: trackScrollElement.scrollTop,
+      });
+
+      if (!wheelUpdate.shouldPreventDefault) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (trackScrollElement.scrollTop !== wheelUpdate.nextTrackScrollTopPx) {
+        trackScrollElement.scrollTop = wheelUpdate.nextTrackScrollTopPx;
+      }
+
+      if (timelineExpansionValueRef.current !== wheelUpdate.nextExpansionPx) {
+        timelineExpansionValueRef.current = wheelUpdate.nextExpansionPx;
+        onTimelineExpansionChange?.(wheelUpdate.nextExpansionPx);
+      }
+    },
+    [maxTimelineExpansionPx, onTimelineExpansionChange]
+  );
+
+  useEffect(() => {
+    const panelElement = panelRef.current;
+    if (!panelElement) return;
+
+    const handleNativeWheel = (event: Event) => {
+      handleTimelineWheel(event as unknown as TimelineWheelEventLike);
+    };
+
+    panelElement.addEventListener("wheel", handleNativeWheel, { passive: false });
+
+    return () => {
+      panelElement.removeEventListener("wheel", handleNativeWheel);
+    };
+  }, [handleTimelineWheel]);
 
   const scrollTimelineRangeIntoView = (
     range: { leftPx: number; widthPx: number },
@@ -464,7 +567,41 @@ export const SgEventTimelinePanel = ({
         <div className="flex flex-wrap items-center justify-end gap-2">
           <button
             type="button"
-            disabled={!onCreatePlaylist || selectedTagIds.length === 0 || isCreatingPlaylist}
+            disabled={!onPlaylistSelectionModeChange || !hasTimelineRows}
+            onClick={() => onPlaylistSelectionModeChange?.(!isPlaylistSelectionMode)}
+            className={cn(
+              TEXT_TOOL_BUTTON_CLASS,
+              isPlaylistSelectionMode
+                ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
+                : "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100",
+              (!onPlaylistSelectionModeChange || !hasTimelineRows) && "cursor-not-allowed opacity-40"
+            )}
+          >
+            <MousePointer2 className="h-3.5 w-3.5" />
+            <span>{isPlaylistSelectionMode ? "Selecting Clips" : "Select Clips"}</span>
+          </button>
+          {selectedTagCount > 0 && (
+            <>
+              <span className="inline-flex h-8 items-center rounded-md border border-custom-border-200 bg-custom-background-100 px-2 text-xs text-custom-text-300">
+                {selectedTagCount} selected
+              </span>
+              <button
+                type="button"
+                disabled={!onClearTagSelection}
+                onClick={onClearTagSelection}
+                className={cn(
+                  TEXT_TOOL_BUTTON_CLASS,
+                  "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100 disabled:cursor-not-allowed disabled:opacity-40"
+                )}
+              >
+                <X className="h-3.5 w-3.5" />
+                <span>Clear</span>
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            disabled={!canCreatePlaylist}
             onClick={onCreatePlaylist}
             className={cn(
               TEXT_TOOL_BUTTON_CLASS,
@@ -523,7 +660,7 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      <div className={TIMELINE_TRACKS_SCROLL_CLASS}>
+      <div ref={timelineTracksScrollRef} className={TIMELINE_TRACKS_SCROLL_CLASS}>
         <div className={TIMELINE_TRACKS_ROW_CLASS}>
           <div className={TIMELINE_LANE_LABEL_COLUMN_CLASS}>
             {timelineLanes.map((lane) => (
@@ -587,18 +724,30 @@ export const SgEventTimelinePanel = ({
                         >
                           <button
                             type="button"
-                            onClick={() => {
+                            onClick={(event) => {
+                              if (isPlaylistSelectionMode) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                onToggleTagSelection(row.id);
+                                return;
+                              }
+
                               handlePlayTimelineRow(row);
                             }}
                             onDoubleClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
-                              onToggleTagSelection(row.id);
+
+                              if (!isPlaylistSelectionMode) {
+                                onPlaylistSelectionModeChange?.(true);
+                                onToggleTagSelection(row.id);
+                              }
                             }}
                             className={cn(
                               "absolute h-7 min-w-1.5 overflow-hidden rounded-md border border-transparent text-left text-[10px] font-medium leading-7 text-white/95 shadow-sm transition-[box-shadow,filter] hover:brightness-110",
+                              isPlaylistSelectionMode && "cursor-pointer hover:ring-2 hover:ring-white/40",
                               isActive && "ring-2 ring-custom-primary-100",
-                              isSelected && "border-white/80"
+                              isSelected && "border-white/90 ring-2 ring-white/80"
                             )}
                             style={{
                               backgroundColor: markerColor,
@@ -608,6 +757,11 @@ export const SgEventTimelinePanel = ({
                             }}
                             aria-pressed={isActive || isSelected}
                           >
+                            {isSelected && (
+                              <span className="pointer-events-none absolute right-0.5 top-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white text-custom-background-100 shadow">
+                                <Check className="h-2.5 w-2.5" />
+                              </span>
+                            )}
                             <span className="pointer-events-none block truncate px-1.5">
                               {formatTooltipText(row.action, "title") || "Tag"}
                             </span>
