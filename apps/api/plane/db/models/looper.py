@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
+from .base import BaseModel
 from .project import ProjectBaseModel
 
 
@@ -271,3 +272,38 @@ class LooperCollaborationSnapshot(ProjectBaseModel):
 
     class Meta:
         db_table = "looper_collaboration_snapshots"
+
+
+class LooperRequestNonce(BaseModel):
+    """One-time nonce consumed by a signed Node request.
+
+    This intentionally lives in PostgreSQL so replay consumption can commit in
+    the same transaction as the protected dispatch mutation.
+    """
+
+    binding_id = models.UUIDField()
+    key_revision = models.PositiveBigIntegerField()
+    nonce = models.BinaryField(max_length=16)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "looper_request_nonces"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["binding_id", "key_revision", "nonce"],
+                name="looper_request_nonce_unique",
+            )
+        ]
+        indexes = [models.Index(fields=["expires_at"], name="looper_nonce_expiry_idx")]
+
+
+class LooperLinkChallengeReplay(BaseModel):
+    """Single-use record for a loopernet-signed link challenge."""
+
+    challenge_id = models.UUIDField(unique=True)
+    nonce = models.BinaryField(max_length=16)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "looper_link_challenge_replays"
+        indexes = [models.Index(fields=["expires_at"], name="looper_link_expiry_idx")]

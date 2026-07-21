@@ -95,5 +95,7 @@ from .looper import (
     LooperCollaborationEvent,
     LooperCollaborationSnapshot,
     LooperDispatch,
+    LooperLinkChallengeReplay,
+    LooperRequestNonce,
     LooperRoleRequest,
 )
