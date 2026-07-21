@@ -7,6 +7,74 @@
       "label": "Work item title",
       "required": "Work item title is required."
     },
+    "looper": {
+      "title": "Looper collaboration",
+      "read_only": "Read-only rollout",
+      "source": "From {owner}'s Looper",
+      "unknown_owner": "Unknown owner",
+      "unassigned": "Unassigned",
+      "pending": "Not started",
+      "phases": "Looper delivery phases",
+      "phase_label": "Phase",
+      "phase": {
+        "research": "Research",
+        "role_decisions": "Role decisions",
+        "technical_spec": "Technical spec",
+        "implementation": "Implementation",
+        "pull_request": "PR",
+        "qa": "QA",
+        "complete": "Complete"
+      },
+      "phase_status": {
+        "completed": "Completed",
+        "current": "Current",
+        "pending": "Pending",
+        "skipped": "Skipped"
+      },
+      "role": {
+        "product": "Product decision",
+        "design": "Design decision",
+        "engineering": "Engineering decision",
+        "qa": "QA acceptance"
+      },
+      "state": {
+        "queued": "Queued",
+        "claimed": "Claimed",
+        "running": "In progress",
+        "awaiting_human": "Waiting for decision",
+        "stop_requested": "Stop requested",
+        "confirmed_stopped": "Stopped",
+        "released": "Released",
+        "completed": "Completed",
+        "failed": "Failed"
+      },
+      "health": {
+        "ok": "Healthy",
+        "projection_drift": "Display fields drifted",
+        "role_drift": "Role mapping drifted",
+        "binding_suspended": "Looper binding suspended",
+        "node_unreachable": "Waiting for Looper to recover"
+      },
+      "live_status": {
+        "online": "Online",
+        "offline": "Offline",
+        "stale": "Status may be stale",
+        "unavailable": "Live status unavailable"
+      },
+      "waiting_for": "Waiting for {role}",
+      "authority": "Authority rev {revision} · state {stateVersion}",
+      "current_action": "Current action",
+      "health_action": "Execution ownership is retained. Resolve the health issue before continuing.",
+      "role_collaboration": "Role collaboration",
+      "role_policy": "Role policy revision {revision}",
+      "answered_count": "Answered {answered}/{total}",
+      "waiting_count": "Waiting {count}",
+      "artifacts": "Artifacts",
+      "updated_at": "Updated {time}",
+      "plane_is_authority": "Plane is the execution authority",
+      "executor": "Executor",
+      "owner_looper": "{owner}'s Looper"
+    },
     "add": {
       "press_enter": "Press 'Enter' to add another work item",
       "label": "Add work item",

@@ -153,6 +153,7 @@ from .issue.sub_issue import SubIssuesEndpoint
 from .issue.subscriber import IssueSubscriberViewSet
 
 from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
+from .issue.looper import IssueLooperSummaryEndpoint
 
 from .module.base import (
     ModuleViewSet,

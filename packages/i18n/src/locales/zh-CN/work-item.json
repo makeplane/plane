@@ -7,6 +7,74 @@
       "label": "工作项标题",
       "required": "工作项标题为必填项"
     },
+    "looper": {
+      "title": "Looper 协作",
+      "read_only": "只读灰度",
+      "source": "来自 {owner} 的 Looper",
+      "unknown_owner": "未知负责人",
+      "unassigned": "未配置",
+      "pending": "未开始",
+      "phases": "Looper 交付阶段",
+      "phase_label": "阶段",
+      "phase": {
+        "research": "需求调研",
+        "role_decisions": "多角色决策",
+        "technical_spec": "技术方案",
+        "implementation": "实现",
+        "pull_request": "PR",
+        "qa": "QA 验收",
+        "complete": "完成"
+      },
+      "phase_status": {
+        "completed": "已完成",
+        "current": "当前",
+        "pending": "未开始",
+        "skipped": "已跳过"
+      },
+      "role": {
+        "product": "产品决策",
+        "design": "设计决策",
+        "engineering": "研发决策",
+        "qa": "QA 验收"
+      },
+      "state": {
+        "queued": "等待领取",
+        "claimed": "已领取",
+        "running": "处理中",
+        "awaiting_human": "等待决策",
+        "stop_requested": "已请求停止",
+        "confirmed_stopped": "已停止",
+        "released": "已释放",
+        "completed": "已完成",
+        "failed": "失败"
+      },
+      "health": {
+        "ok": "正常",
+        "projection_drift": "显示字段已漂移",
+        "role_drift": "角色映射已漂移",
+        "binding_suspended": "Looper 绑定已暂停",
+        "node_unreachable": "等待 Looper 恢复"
+      },
+      "live_status": {
+        "online": "在线",
+        "offline": "离线",
+        "stale": "状态可能过期",
+        "unavailable": "实时状态暂不可用"
+      },
+      "waiting_for": "等待{role}",
+      "authority": "Authority rev {revision} · state {stateVersion}",
+      "current_action": "当前需要处理",
+      "health_action": "执行归属仍被保留；请先恢复健康状态再继续。",
+      "role_collaboration": "角色协作",
+      "role_policy": "角色策略版本 {revision}",
+      "answered_count": "已回答 {answered}/{total}",
+      "waiting_count": "待回答 {count}",
+      "artifacts": "产物",
+      "updated_at": "更新于 {time}",
+      "plane_is_authority": "Plane 是执行归属事实源",
+      "executor": "执行者",
+      "owner_looper": "{owner} 的 Looper"
+    },
     "add": {
       "press_enter": "按'Enter'添加另一个工作项",
       "label": "添加工作项",
