@@ -15,15 +15,12 @@ import type {
   TIssueReaction,
   TIssueRelationTypes,
   TIssueServiceType,
+  TIssueWorkLog,
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
-import { IssueActivityStore } from "@/plane-web/store/issue/issue-details/activity.store";
-import type {
-  IIssueActivityStore,
-  IIssueActivityStoreActions,
-  TActivityLoader,
-} from "@/plane-web/store/issue/issue-details/activity.store";
+import { IssueActivityStore } from "./activity.store";
+import type { IIssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
 import type { IIssueRootStore } from "../root.store";
 import { IssueAttachmentStore } from "./attachment.store";
 import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
@@ -43,6 +40,8 @@ import { IssueSubIssuesStore } from "./sub_issues.store";
 import type { IIssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
 import { IssueSubscriptionStore } from "./subscription.store";
 import type { IIssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
+import { IssueWorkLogStore } from "./worklog.store";
+import type { IIssueWorkLogStore } from "./worklog.store";
 
 export type TPeekIssue = {
   workspaceSlug: string;
@@ -112,6 +111,31 @@ export interface IIssueDetail
   toggleOpenWidget: (state: TWorkItemWidgets) => void;
   setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
+  // worklog actions
+  fetchWorklogs: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueWorkLog[]>;
+  createWorklog: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssueWorkLog>
+  ) => Promise<TIssueWorkLog>;
+  updateWorklog: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    data: Partial<TIssueWorkLog>
+  ) => Promise<TIssueWorkLog>;
+  deleteWorklog: (workspaceSlug: string, projectId: string, issueId: string, worklogId: string) => Promise<void>;
+  startTimer: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueWorkLog>;
+  stopTimer: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data?: { description?: string }
+  ) => Promise<TIssueWorkLog>;
+  fetchActiveTimer: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueWorkLog | null>;
+  fetchUserActiveTimer: (workspaceSlug: string, force?: boolean) => Promise<TIssueWorkLog | null>;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -124,9 +148,10 @@ export interface IIssueDetail
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
+  worklog: IIssueWorkLogStore;
 }
 
-export abstract class IssueDetail implements IIssueDetail {
+export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
   relationKey: TIssueRelationTypes | null = null;
@@ -167,10 +192,12 @@ export abstract class IssueDetail implements IIssueDetail {
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
+  worklog: IssueWorkLogStore;
 
   constructor(rootStore: IIssueRootStore, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
+      worklog: observable,
       peekIssue: observable,
       relationKey: observable,
       issueLinkData: observable,
@@ -219,7 +246,31 @@ export abstract class IssueDetail implements IIssueDetail {
     this.link = new IssueLinkStore(this, serviceType);
     this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
+    this.worklog = new IssueWorkLogStore();
   }
+
+  // worklogs
+  fetchWorklogs = (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.worklog.fetchWorklogs(workspaceSlug, projectId, issueId);
+  createWorklog = (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueWorkLog>) =>
+    this.worklog.createWorklog(workspaceSlug, projectId, issueId, data);
+  updateWorklog = (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    data: Partial<TIssueWorkLog>
+  ) => this.worklog.updateWorklog(workspaceSlug, projectId, issueId, worklogId, data);
+  deleteWorklog = (workspaceSlug: string, projectId: string, issueId: string, worklogId: string) =>
+    this.worklog.deleteWorklog(workspaceSlug, projectId, issueId, worklogId);
+  startTimer = (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.worklog.startTimer(workspaceSlug, projectId, issueId);
+  stopTimer = (workspaceSlug: string, projectId: string, issueId: string, data?: { description?: string }) =>
+    this.worklog.stopTimer(workspaceSlug, projectId, issueId, data);
+  fetchActiveTimer = (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.worklog.fetchActiveTimer(workspaceSlug, projectId, issueId);
+  fetchUserActiveTimer = (workspaceSlug: string, force?: boolean) =>
+    this.worklog.fetchUserActiveTimer(workspaceSlug, force);
 
   // computed
   get isAnyModalOpen() {

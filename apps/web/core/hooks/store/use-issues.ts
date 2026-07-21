@@ -9,14 +9,8 @@ import { merge } from "lodash-es";
 import type { TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
-// plane web types
-import type { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-// types
-import type { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
-import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project";
-import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
-import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
+import type { IWorkspaceIssues } from "@/store/issue/workspace/issue.store";
 import type { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
@@ -44,8 +38,8 @@ export type TStoreIssues = {
     issuesFilter: IProfileIssuesFilter;
   };
   [EIssuesStoreType.TEAM]: defaultIssueStore & {
-    issues: ITeamIssues;
-    issuesFilter: ITeamIssuesFilter;
+    issues: IProjectIssues;
+    issuesFilter: IProjectIssuesFilter;
   };
   [EIssuesStoreType.PROJECT]: defaultIssueStore & {
     issues: IProjectIssues;
@@ -60,8 +54,8 @@ export type TStoreIssues = {
     issuesFilter: IModuleIssuesFilter;
   };
   [EIssuesStoreType.TEAM_VIEW]: defaultIssueStore & {
-    issues: ITeamViewIssues;
-    issuesFilter: ITeamViewIssuesFilter;
+    issues: IProjectViewIssues;
+    issuesFilter: IProjectViewIssuesFilter;
   };
   [EIssuesStoreType.PROJECT_VIEW]: defaultIssueStore & {
     issues: IProjectViewIssues;
@@ -76,12 +70,12 @@ export type TStoreIssues = {
     issuesFilter: IProjectIssuesFilter;
   };
   [EIssuesStoreType.EPIC]: defaultIssueStore & {
-    issues: IProjectEpics;
-    issuesFilter: IProjectEpicsFilter;
+    issues: IProjectIssues;
+    issuesFilter: IProjectIssuesFilter;
   };
   [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: defaultIssueStore & {
-    issues: ITeamProjectWorkItems;
-    issuesFilter: ITeamProjectWorkItemsFilter;
+    issues: IProjectIssues;
+    issuesFilter: IProjectIssuesFilter;
   };
 };
 

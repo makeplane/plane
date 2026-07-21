@@ -108,6 +108,13 @@ class GitLabOAuthProvider(OauthAdapter):
 
     def set_user_data(self):
         user_info_response = self.get_user_response()
+        # confirmed_at is null/absent for unverified GitLab accounts. Reject them to
+        # prevent ATO via self-hosted GitLab with unverified emails (GHSA-7j95-vh8g-f365).
+        if not user_info_response.get("confirmed_at"):
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OAUTH_PROVIDER_UNVERIFIED_EMAIL"],
+                error_message="OAUTH_PROVIDER_UNVERIFIED_EMAIL",
+            )
         email = user_info_response.get("email")
         super().set_user_data(
             {

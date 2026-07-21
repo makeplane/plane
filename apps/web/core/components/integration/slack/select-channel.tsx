@@ -13,7 +13,7 @@ import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // fetch-keys
-import { SLACK_CHANNEL_INFO } from "@/constants/fetch-keys";
+import { SLACK_CHANNEL_INFO } from "@plane/constants";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import useIntegrationPopup from "@/hooks/use-integration-popup";

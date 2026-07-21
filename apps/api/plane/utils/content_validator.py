@@ -241,3 +241,21 @@ def validate_html_content(html_content: str):
     except Exception as e:
         log_exception(e)
         return False, "Failed to sanitize HTML", None
+
+
+def has_alphanumeric(value):
+    """
+    Check whether a string contains at least one alphanumeric character.
+
+    `str.isalnum()` is Unicode-aware, so letters and digits from any script
+    (Latin, CJK, Arabic, Cyrillic, etc.) all count. This mirrors the frontend
+    HAS_ALPHANUMERIC_REGEX (/[\\p{L}\\p{N}]/u) check and is used to reject
+    symbol-only names such as "-_________-".
+
+    Args:
+        value (str): The string to check.
+
+    Returns:
+        bool: True if the value contains at least one letter or digit.
+    """
+    return any(char.isalnum() for char in (value or ""))

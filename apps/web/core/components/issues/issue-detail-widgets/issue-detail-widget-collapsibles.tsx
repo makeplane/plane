@@ -10,9 +10,7 @@ import { observer } from "mobx-react";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
-import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
@@ -89,14 +87,6 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           issueServiceType={issueServiceType}
         />
       )}
-      <WorkItemAdditionalWidgetCollapsibles
-        disabled={disabled}
-        hideWidgets={hideWidgets ?? []}
-        issueServiceType={issueServiceType}
-        projectId={projectId}
-        workItemId={issueId}
-        workspaceSlug={workspaceSlug}
-      />
     </div>
   );
 });

@@ -25,8 +25,27 @@ from plane.utils.url import is_valid_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Secret Key
-SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+_logger = logging.getLogger("plane")
+
+# Secret Key — use `or` so an explicitly empty env var is treated the same as unset,
+# falling back to a random key rather than passing "" to Django (GHSA-cmwv-pjmw-8483).
+SECRET_KEY = os.environ.get("SECRET_KEY") or get_random_secret_key()
+# Refuse to run silently with a publicly-known or placeholder SECRET_KEY
+# (GHSA-cmwv-pjmw-8483). Emit a critical log so operators notice immediately.
+# The `or get_random_secret_key()` above means the only way to reach this branch
+# is if the environment explicitly passes one of the flagged values.
+_INSECURE_SECRET_KEYS = {
+    "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5",  # old publicly-known default
+    "change-this-key-on-deployment",  # placeholder shipped in community templates
+}
+if SECRET_KEY in _INSECURE_SECRET_KEYS:
+    _logger.critical(
+        "SECURITY: SECRET_KEY is set to a known insecure or placeholder value. "
+        "This makes your installation vulnerable to session forgery, CSRF bypass, and "
+        "password-reset token forging. Set a unique SECRET_KEY before deploying to production. "
+        "Generate one with: "
+        "python3 -c \"from django.utils.crypto import get_random_secret_key; print(get_random_secret_key())\""
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
@@ -39,7 +58,6 @@ IS_SELF_MANAGED = True
 # Example: "10.0.0.0/8,192.168.1.0/24,172.16.0.5"
 _webhook_allowed_ips_raw = os.environ.get("WEBHOOK_ALLOWED_IPS", "")
 WEBHOOK_ALLOWED_IPS = []
-_logger = logging.getLogger("plane")
 for _cidr in _webhook_allowed_ips_raw.split(","):
     _cidr = _cidr.strip()
     if not _cidr:
@@ -530,6 +548,21 @@ ATTACHMENT_MIME_TYPES = [
     # Markdown
     "text/markdown",
 ]
+
+# MIME types that browsers can execute as scripts when served inline.
+# These must always be served with Content-Disposition: attachment, even if they
+# somehow end up stored (e.g. uploaded before this restriction was added).
+SCRIPT_CAPABLE_MIME_TYPES: frozenset[str] = frozenset(
+    [
+        "image/svg+xml",  # SVG with onload / embedded <script> tags
+        "text/javascript",
+        "application/javascript",
+        "text/html",
+        "application/xhtml+xml",
+        "text/xml",
+        "application/xml",
+    ]
+)
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")

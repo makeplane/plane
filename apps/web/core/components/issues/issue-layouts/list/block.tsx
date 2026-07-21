@@ -22,18 +22,13 @@ import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
-// helpers
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
-// types
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
 
@@ -284,15 +279,6 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             >
               <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
-            {isEpic && displayProperties && (
-              <WithDisplayPropertiesHOC
-                displayProperties={displayProperties}
-                displayPropertyKey="sub_issue_count"
-                shouldRenderProperty={(properties) => !!properties.sub_issue_count}
-              >
-                <IssueStats issueId={issue.id} className="ml-2 text-body-xs-medium text-tertiary" />
-              </WithDisplayPropertiesHOC>
-            )}
           </div>
           {!issue?.tempId && (
             <div
@@ -320,6 +306,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                 activeLayout="List"
                 isEpic={isEpic}
               />
+              {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
               <div
                 className={cn("hidden", {
                   "md:flex": isSidebarCollapsed,

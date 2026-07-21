@@ -15,7 +15,7 @@ import { Row } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
+import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 
 type Props = {
   workspaceSlug: string;
@@ -45,6 +45,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
+          {/* eslint-disable-next-line jsx-a11y/tabindex-no-positive */}
           <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
             {t("close")}
           </Button>
@@ -52,6 +53,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
             className={getButtonStyling("primary", "lg")}
+            // oxlint-disable-next-line jsx-a11y/tabindex-no-positive
             tabIndex={2}
           >
             {t("open_project")}

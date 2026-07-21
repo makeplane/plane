@@ -21,7 +21,7 @@ import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
-import { CALENDAR_LAYOUTS } from "@/constants/calendar";
+import { CALENDAR_LAYOUTS } from "@plane/constants";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";

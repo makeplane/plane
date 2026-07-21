@@ -11,7 +11,7 @@ import { computedFn } from "mobx-utils";
 import type { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue, TIssueRelationTypes } from "@plane/types";
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
-import { REVERSE_RELATIONS } from "@/constants/gantt-chart";
+import { REVERSE_RELATIONS } from "@plane/constants";
 // services
 import { IssueRelationService } from "@/services/issue";
 // types

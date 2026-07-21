@@ -11,7 +11,7 @@ import useSWR from "swr";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import { EIssuesStoreType } from "@plane/types";
 // constants
-import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@plane/constants";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";

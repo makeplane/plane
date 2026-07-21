@@ -1,3 +1,4 @@
+// oxlint-disable no-shadow
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -11,21 +12,16 @@ import type { EditorRefApi } from "@plane/editor";
 import { EFileAssetType } from "@plane/types";
 import type { TNameDescriptionLoader } from "@plane/types";
 // components
-import { getTextContent } from "@plane/utils";
-// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
-import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
-import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
+import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 // plane web hooks
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local components
@@ -56,36 +52,24 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { getProjectById } = useProject();
+
   const { getUserDetails } = useMember();
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
+      timer = setTimeout(() => setIsSubmitting("saved"), 2000);
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
+    return () => clearTimeout(timer);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
-  const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug,
-    projectDetails?.workspace.toString(),
-    projectDetails?.id,
-    {
-      name: issue?.name,
-      description_html: getTextContent(issue?.description_html),
-      issueId: issue?.id,
-    }
-  );
 
   if (!issue || !issue.project_id) return <></>;
 
@@ -109,15 +93,6 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       )}
       <div className="flex items-center justify-between gap-2">
         <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
-        {duplicateIssues?.length > 0 && (
-          <DeDupeIssuePopoverRoot
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            rootIssueId={issueId}
-            issues={duplicateIssues}
-            issueOperations={issueOperations}
-          />
-        )}
       </div>
       <IssueTitleInput
         workspaceSlug={workspaceSlug}

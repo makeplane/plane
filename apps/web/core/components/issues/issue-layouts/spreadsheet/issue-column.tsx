@@ -8,8 +8,9 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
+// constants
+import { SPREADSHEET_COLUMNS } from "../utils";
 // components
-import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { shouldRenderColumn } from "@/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 

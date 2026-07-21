@@ -13,11 +13,10 @@ import { cn } from "@plane/utils";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import useDebounce from "@/hooks/use-debounce";
-// plane web imports
-import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
 import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
+import { PowerKModalNoSearchResultsCommand } from "./no-results-command";
 import { PowerKModalSearchResults } from "./search-results";
 // services init
 const workspaceService = new WorkspaceService();
@@ -54,6 +53,7 @@ export function PowerKModalSearchMenu(props: Props) {
           search: debouncedSearchTerm,
           workspace_search: !projectId ? true : isWorkspaceLevel,
         })
+        // oxlint-disable-next-line no-shadow oxlint-disable-next-line promise/always-return
         .then((results) => {
           setResults(results);
           const count = Object.keys(results.results).reduce(

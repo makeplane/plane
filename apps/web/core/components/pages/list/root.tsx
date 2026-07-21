@@ -10,8 +10,8 @@ import type { TPageNavigationTabs } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
 // plane web hooks
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 // local imports
 import { PageListBlock } from "./block";
 

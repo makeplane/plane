@@ -12,7 +12,7 @@ import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // plane web components
-import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
+import { CreateProjectForm } from "@/components/projects/create/root";
 // plane web types
 import type { TProject } from "@plane/types";
 // services

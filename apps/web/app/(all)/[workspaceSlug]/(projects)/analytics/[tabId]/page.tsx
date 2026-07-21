@@ -21,7 +21,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
+import { useAnalyticsTabs } from "@/components/analytics/use-analytics-tabs";
 import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {

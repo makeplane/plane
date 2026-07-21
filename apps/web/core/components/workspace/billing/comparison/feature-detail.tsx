@@ -8,7 +8,7 @@ import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 // constants
-import type { TPlanFeatureData } from "@/constants/plans";
+import type { TPlanFeatureData } from "@/components/workspace/billing/comparison/plans";
 
 type TPlanFeatureDetailProps = {
   subscriptionType: EProductSubscriptionEnum;

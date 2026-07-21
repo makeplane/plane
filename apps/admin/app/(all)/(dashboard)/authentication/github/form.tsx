@@ -32,6 +32,11 @@ type Props = {
 
 type GithubConfigFormValues = Record<TInstanceGithubAuthenticationConfigurationKeys, string>;
 
+const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValues> = {
+  name: "ENABLE_GITHUB_SYNC",
+  label: "GitHub",
+};
+
 export function InstanceGithubConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -64,7 +69,6 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           You will get this from your{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -86,7 +90,6 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           Your client secret is also found in your{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -111,11 +114,6 @@ export function InstanceGithubConfigForm(props: Props) {
     },
   ];
 
-  const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValues> = {
-    name: "ENABLE_GITHUB_SYNC",
-    label: "GitHub",
-  };
-
   const GITHUB_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
@@ -125,11 +123,11 @@ export function InstanceGithubConfigForm(props: Props) {
         <>
           We will auto-generate this. Paste this into the <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="GitHub OAuth application settings"
           >
             here.
           </a>
@@ -148,11 +146,11 @@ export function InstanceGithubConfigForm(props: Props) {
           We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
           field{" "}
           <a
-            tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="GitHub OAuth application settings"
           >
             here.
           </a>

@@ -14,8 +14,8 @@ import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 // store hooks
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
-import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
-import { useWorkItemFiltersConfig } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import type { TWorkItemFiltersEntityProps } from "@/hooks/work-item-filters/use-work-item-filters-config";
+import { useWorkItemFiltersConfig } from "@/hooks/work-item-filters/use-work-item-filters-config";
 // local imports
 import type { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
 

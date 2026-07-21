@@ -19,7 +19,10 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
-from plane.app.serializers import ProjectMemberInviteSerializer
+from plane.app.serializers import (
+    ProjectMemberInviteSerializer,
+    ProjectMemberInvitePublicSerializer,
+)
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import (
     ProjectMember,
@@ -145,10 +148,16 @@ class UserProjectInvitationsViewset(BaseViewSet):
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
 
+        # Use the workspace-scoped, network-validated project IDs only.
+        # Raw project_ids may contain UUIDs from other workspaces; those are
+        # absent from the `projects` queryset and therefore bypass the SECRET
+        # network check above (GHSA-45hc-q4mw-jhxm).
+        validated_project_ids = [str(p.id) for p in projects]
+
         # If the user was already part of workspace
-        _ = ProjectMember.objects.filter(workspace__slug=slug, project_id__in=project_ids, member=request.user).update(
-            is_active=True
-        )
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user
+        ).update(is_active=True)
 
         ProjectMember.objects.bulk_create(
             [
@@ -159,7 +168,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                     workspace=workspace,
                     created_by=request.user,
                 )
-                for project_id in project_ids
+                for project_id in validated_project_ids
             ],
             ignore_conflicts=True,
         )
@@ -172,7 +181,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                     workspace=workspace,
                     created_by=request.user,
                 )
-                for project_id in project_ids
+                for project_id in validated_project_ids
             ],
             ignore_conflicts=True,
         )
@@ -186,22 +195,45 @@ class ProjectJoinEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, pk):
         project_invite = ProjectMemberInvite.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
 
-        email = request.data.get("email", "")
+        token = request.data.get("token", "")
 
-        if email == "" or project_invite.email != email:
+        # Validate the token to verify the user received the invitation email
+        if not token or project_invite.token != token:
             return Response(
                 {"error": "You do not have permission to join the project"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # Require an authenticated session — the accepting user must be the
+        # person who was invited.  Without this check an attacker who knows the
+        # invitee email and obtains the token can hijack the project membership
+        # (GHSA-g36h-p63v-g9c7).
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Authentication required to accept project invitation"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        if request.user.email.lower() != project_invite.email.lower():
+            return Response(
+                {"error": "You do not have permission to accept this invitation"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if project_invite.responded_at is None:
-            project_invite.accepted = request.data.get("accepted", False)
+            accepted = request.data.get("accepted", False)
+            if not isinstance(accepted, bool):
+                return Response(
+                    {"error": "`accepted` must be a boolean"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            project_invite.accepted = accepted
             project_invite.responded_at = timezone.now()
             project_invite.save()
 
             if project_invite.accepted:
-                # Check if the user account exists
-                user = User.objects.filter(email=email).first()
+                # Use the authenticated user directly — they've already been
+                # validated as the invite recipient above.
+                user = request.user
 
                 # Check if user is a part of workspace
                 workspace_member = WorkspaceMember.objects.filter(workspace__slug=slug, member=user).first()
@@ -250,5 +282,5 @@ class ProjectJoinEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, pk):
         project_invitation = ProjectMemberInvite.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        serializer = ProjectMemberInviteSerializer(project_invitation)
+        serializer = ProjectMemberInvitePublicSerializer(project_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)

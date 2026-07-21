@@ -19,13 +19,35 @@ class PageVersionEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided
         if pk:
-            # Return a single page version
-            page_version = PageVersion.objects.get(workspace__slug=slug, page_id=page_id, pk=pk)
+            # Return a single page version. Scope to an *active* ProjectPage link
+            # for the URL project so a page belonging to (or removed from)
+            # another project cannot be read via this endpoint (GHSA-g49r /
+            # GHSA-ghcr). The active-link partial-unique constraint keeps the
+            # join to a single row; distinct() is a defensive guard so the
+            # page__project_pages join can never make get() raise
+            # MultipleObjectsReturned (a 500).
+            page_version = (
+                PageVersion.objects.filter(
+                    workspace__slug=slug,
+                    page__project_pages__project_id=project_id,
+                    page__project_pages__deleted_at__isnull=True,
+                    page_id=page_id,
+                    pk=pk,
+                )
+                .distinct()
+                .get()
+            )
             # Serialize the page version
             serializer = PageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        # Return all page versions
-        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
+        # Return all page versions scoped to an active ProjectPage link for the
+        # URL project (defense in depth).
+        page_versions = PageVersion.objects.filter(
+            workspace__slug=slug,
+            page__project_pages__project_id=project_id,
+            page__project_pages__deleted_at__isnull=True,
+            page_id=page_id,
+        )
         # Serialize the page versions
         serializer = PageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

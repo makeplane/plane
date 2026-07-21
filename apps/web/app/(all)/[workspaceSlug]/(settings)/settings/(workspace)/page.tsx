@@ -14,7 +14,7 @@ import { WorkspaceDetails } from "@/components/workspace/settings/workspace-deta
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
-import { WorkspaceTimerSettings } from "@/plane-web/components/issues/worklog/settings/workspace-timer-settings";
+import { WorkspaceTimerSettings } from "@/components/issues/worklog/settings/workspace-timer-settings";
 // local imports
 import { GeneralWorkspaceSettingsHeader } from "./header";
 

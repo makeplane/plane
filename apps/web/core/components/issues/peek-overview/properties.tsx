@@ -36,12 +36,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web components
-import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
-import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
-import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
+import { IssueWorklogProperty } from "@/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
@@ -186,7 +182,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               hideIcon
               clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
             />
-            {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
           </div>
         </SidebarPropertyListItem>
 
@@ -223,11 +218,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
 
         {projectDetails?.cycle_view && (
-          <SidebarPropertyListItem
-            icon={CycleIcon}
-            label={t("common.cycle")}
-            appendElement={<TransferHopInfo workItem={issue} />}
-          >
+          <SidebarPropertyListItem icon={CycleIcon} label={t("common.cycle")} appendElement={null}>
             <IssueCycleSelect
               className="h-7.5 w-full grow"
               workspaceSlug={workspaceSlug}
@@ -266,15 +257,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
-        />
-
-        <WorkItemAdditionalSidebarProperties
-          workItemId={issue.id}
-          workItemTypeId={issue.type_id}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-          isEditable={!disabled}
-          isPeekView
         />
       </div>
     </div>

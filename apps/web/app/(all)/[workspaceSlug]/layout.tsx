@@ -6,10 +6,10 @@
 
 import { Outlet } from "react-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
-import { WorkspaceContentWrapper } from "@/plane-web/components/workspace/content-wrapper";
-import { AppRailVisibilityProvider } from "@/plane-web/hooks/app-rail";
-import { GlobalModals } from "@/plane-web/components/common/modal/global";
-import { TimerTitleSync } from "@/plane-web/components/issues/worklog/timer-title-sync";
+import { WorkspaceContentWrapper } from "@/components/workspace/content-wrapper";
+import { AppRailVisibilityProvider } from "@/lib/app-rail";
+import { GlobalModals } from "@/components/common/modal/global";
+import { TimerTitleSync } from "@/components/issues/worklog/timer-title-sync";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
 import type { Route } from "./+types/layout";
 

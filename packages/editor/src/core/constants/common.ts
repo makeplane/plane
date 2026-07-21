@@ -28,9 +28,10 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
-import type { TCommandExtraProps, TEditorCommands } from "@/types/editor";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@/types";
 
-export type TEditorTypes = "lite" | "document";
+export type TEditorTypes = "lite" | "document" | "sticky";
 
 // Utility type to enforce the necessary extra props or make extraProps optional
 export type ExtraPropsForCommand<T extends TEditorCommands> = T extends keyof TCommandExtraProps
@@ -165,6 +166,8 @@ export const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
   { itemKey: "image", renderKey: "image", name: "Image", icon: Image, editors: ["lite", "document"] },
 ];
 
+export const IMAGE_ITEM = COMPLEX_ITEMS.find((item): item is ToolbarMenuItem<"image"> => item.itemKey === "image")!;
+
 export const TOOLBAR_ITEMS: {
   [editorType in TEditorTypes]: {
     [key: string]: ToolbarMenuItem[];
@@ -183,6 +186,10 @@ export const TOOLBAR_ITEMS: {
     list: LIST_ITEMS.filter((item) => item.editors.includes("document")),
     userAction: USER_ACTION_ITEMS.filter((item) => item.editors.includes("document")),
     complex: COMPLEX_ITEMS.filter((item) => item.editors.includes("document")),
+  },
+  sticky: {
+    basic: BASIC_MARK_ITEMS.filter((item) => ["bold", "italic"].includes(item.itemKey)),
+    list: LIST_ITEMS.filter((item) => ["to-do-list"].includes(item.itemKey)),
   },
 };
 
@@ -246,4 +253,14 @@ export const COLORS_LIST: {
   //   textColor: "var(--editor-colors-pink-blue-gradient-text)",
   //   backgroundColor: "var(--editor-colors-pink-blue-gradient-background)",
   // },
+];
+
+export const EDITOR_FONT_STYLES: {
+  key: TEditorFontStyle;
+  label: string;
+  icon: React.FC;
+}[] = [
+  { key: "sans-serif", label: "Sans serif", icon: SansSerifIcon },
+  { key: "serif", label: "Serif", icon: SerifIcon },
+  { key: "monospace", label: "Mono", icon: MonospaceIcon },
 ];

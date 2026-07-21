@@ -33,13 +33,12 @@ import userImage from "@/app/assets/user.png?url";
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 

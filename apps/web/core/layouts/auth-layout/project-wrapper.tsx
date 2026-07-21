@@ -25,7 +25,7 @@ import {
   PROJECT_MODULES,
   PROJECT_VIEWS,
   PROJECT_INTAKE_STATE,
-} from "@/constants/fetch-keys";
+} from "@plane/constants";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";

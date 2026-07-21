@@ -18,7 +18,7 @@ import { ProfileStateDistribution } from "@/components/profile/overview/state-di
 import { ProfileStats } from "@/components/profile/overview/stats";
 import { ProfileWorkload } from "@/components/profile/overview/workload";
 // constants
-import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
+import { USER_PROFILE_DATA } from "@plane/constants";
 // services
 import { UserService } from "@/services/user.service";
 import type { Route } from "./+types/page";

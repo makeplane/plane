@@ -15,8 +15,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web imports
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { TPageNavigationPaneTab } from "@/components/pages/navigation-pane/tab-panels";
+import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports

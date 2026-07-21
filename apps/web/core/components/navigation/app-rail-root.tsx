@@ -16,8 +16,6 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
-// plane web imports
-import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
 
@@ -50,7 +48,6 @@ export const AppRailRoot = observer(() => {
                 "gap-3": !showLabel,
               })}
             >
-              <DesktopSidebarWorkspaceMenu />
               <AppSidebarItemsRoot showLabel={showLabel} />
               <div className="mx-2 border-t border-strong" />
               <AppSidebarItem

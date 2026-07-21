@@ -44,7 +44,7 @@ x-mq-env: &mq-env # RabbitMQ Settings
 
 x-live-env: &live-env
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
-  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
 
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
@@ -53,11 +53,11 @@ x-app-env: &app-env
   GUNICORN_WORKERS: 1
   USE_MINIO: ${USE_MINIO:-1}
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
-  SECRET_KEY: ${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+  SECRET_KEY: ${SECRET_KEY}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
-  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
   WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
   WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
 

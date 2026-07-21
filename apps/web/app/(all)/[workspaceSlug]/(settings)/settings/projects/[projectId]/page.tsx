@@ -20,7 +20,7 @@ import type { Route } from "./+types/page";
 import { GeneralProjectSettingsHeader } from "./header";
 import { GeneralProjectSettingsControlSection } from "@/components/project/settings/control-section";
 import { ProjectCustomFieldsSettings } from "@/components/project/settings/custom-fields";
-import { ProjectTimerSettings } from "@/plane-web/components/issues/worklog/settings/project-timer-settings";
+import { ProjectTimerSettings } from "@/components/issues/worklog/settings/project-timer-settings";
 
 function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // router

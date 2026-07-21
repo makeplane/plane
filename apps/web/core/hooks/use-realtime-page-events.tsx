@@ -15,8 +15,8 @@ import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body"
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

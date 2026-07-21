@@ -24,7 +24,7 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
 // constants
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST } from "@plane/constants";
 // helpers
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";

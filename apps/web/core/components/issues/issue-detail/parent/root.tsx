@@ -10,6 +10,7 @@ import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // component
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // ui
 import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
@@ -20,8 +21,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // types
 import type { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";

@@ -18,7 +18,7 @@ import { ApiTokenListItem } from "@/components/api-token/token-list-item";
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 // constants
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST } from "@plane/constants";
 
 const apiTokenService = new APITokenService();
 

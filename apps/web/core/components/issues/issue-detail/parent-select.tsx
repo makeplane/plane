@@ -17,8 +17,8 @@ import { cn } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local imports
 import { ParentIssuesListModal } from "../parent-issues-list-modal";
 

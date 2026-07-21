@@ -14,8 +14,6 @@ import { cn } from "@plane/utils";
 import { PageToolbar } from "@/components/pages/editor/toolbar";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
-import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -58,7 +56,6 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
           <div className="flex w-full max-w-full items-center justify-between">
             <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
-              <PageCollaboratorsList page={page} />
               {!isNavigationPaneOpen && (
                 <button
                   type="button"

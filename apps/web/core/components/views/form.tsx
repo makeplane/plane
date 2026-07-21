@@ -29,8 +29,6 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { AccessController } from "@/plane-web/components/views/access-controller";
 // local imports
 import { LayoutDropDown } from "../dropdowns/layout";
 import { ProjectLevelWorkItemFiltersHOC } from "../work-item-filters/filters-hoc/project-level";
@@ -130,6 +128,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               }
               // TODO: fix types
               onChange={(val: any) => {
+                // oxlint-disable-next-line no-shadow
                 let logoValue = {};
 
                 if (val?.type === "emoji")
@@ -173,6 +172,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     placeholder={t("common.title")}
                     className="w-full text-14"
                     tabIndex={getIndex("name")}
+                    // oxlint-disable-next-line jsx_a11y/no-autofocus
                     autoFocus
                   />
                 )}
@@ -199,7 +199,6 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
             />
           </div>
           <div className="flex gap-2">
-            <AccessController control={control} />
             <Controller
               control={control}
               name="display_filters"
