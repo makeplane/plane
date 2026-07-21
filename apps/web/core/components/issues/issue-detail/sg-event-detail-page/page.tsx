@@ -6,7 +6,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { MediaLibraryService, type TCustomPlaylist, type TCustomPlaylistClip } from "@/services/media-library.service";
+import type {
+  TCustomPlaylist,
+  TCustomPlaylistClip,
+  TCustomPlaylistUpdatePayload,
+} from "@/services/media-library.service";
+import { MediaLibraryService } from "@/services/media-library.service";
 import { RosterService } from "@/services/roster.service";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
@@ -424,6 +429,21 @@ export const SgEventDetailPage = ({
     },
     [mediaLibraryService, mutateCustomPlaylists]
   );
+
+  const handleUpdateCustomPlaylist = useCallback(
+    async (playlist: TCustomPlaylist, payload: TCustomPlaylistUpdatePayload) => {
+      const updatedPlaylist = await mediaLibraryService.updateCustomPlaylist(playlist.id, payload);
+      void mutateCustomPlaylists(
+        (currentPlaylists = []) =>
+          currentPlaylists.map((currentPlaylist) =>
+            currentPlaylist.id === updatedPlaylist.id ? updatedPlaylist : currentPlaylist
+          ),
+        { revalidate: false }
+      );
+      return updatedPlaylist;
+    },
+    [mediaLibraryService, mutateCustomPlaylists]
+  );
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
       ? kanavioTagsError.message
@@ -486,11 +506,8 @@ export const SgEventDetailPage = ({
                 </div>
                 <SgMatrixPlaylistPanel
                   customPlaylists={customPlaylists}
-                  isCreatingPlaylist={isCreatingCustomPlaylist}
-                  onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
-                  onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                  rows={activePlaylistRows}
                   onDeletePlaylist={handleDeleteCustomPlaylist}
+                  onUpdatePlaylist={handleUpdateCustomPlaylist}
                 />
               </div>
 
@@ -528,11 +545,8 @@ export const SgEventDetailPage = ({
                   </div>
                   <SgMatrixPlaylistPanel
                     customPlaylists={customPlaylists}
-                    isCreatingPlaylist={isCreatingCustomPlaylist}
-                    onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
-                    onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                    rows={activePlaylistRows}
                     onDeletePlaylist={handleDeleteCustomPlaylist}
+                    onUpdatePlaylist={handleUpdateCustomPlaylist}
                   />
                 </div>
               )}
