@@ -91,6 +91,7 @@ export type TCustomPlaylist = {
   id: string;
   event_id: number;
   name: string;
+  subtitle?: string | null;
   url: string;
   thumbnail: string | null;
   clip: number;
@@ -115,12 +116,21 @@ export type TCustomPlaylistClip = {
 type TCustomPlaylistPayload = {
   event_id: number;
   name: string;
+  subtitle?: string | null;
   url: string;
   thumbnail?: string | null;
   clip?: number;
   clips?: TCustomPlaylistClip[];
   project_id?: string;
   workspace_slug?: string;
+};
+
+export type TCustomPlaylistUpdatePayload = {
+  name?: string;
+  subtitle?: string | null;
+  thumbnail?: string | null;
+  clip?: number;
+  clips?: TCustomPlaylistClip[];
 };
 
 type TCustomPlaylistListParams = {
@@ -333,6 +343,14 @@ export class MediaLibraryService extends APIService {
       },
     })
       .then((response) => (Array.isArray(response?.data) ? (response.data as TCustomPlaylist[]) : []))
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async updateCustomPlaylist(playlistId: string, payload: TCustomPlaylistUpdatePayload): Promise<TCustomPlaylist> {
+    return this.patch(`/api/custom-playlists/${playlistId}/`, payload)
+      .then((response) => response?.data as TCustomPlaylist)
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });

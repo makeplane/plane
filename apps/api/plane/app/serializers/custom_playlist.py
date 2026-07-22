@@ -72,6 +72,7 @@ def strip_custom_playlist_clip_fields(clips):
 
 
 class CustomPlaylistSerializer(BaseSerializer):
+    subtitle = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=255)
     url = serializers.CharField(required=True, max_length=2048)
     thumbnail = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=2048)
     clip = serializers.IntegerField(required=False, min_value=0, default=0)
@@ -81,13 +82,29 @@ class CustomPlaylistSerializer(BaseSerializer):
 
     class Meta:
         model = CustomPlaylist
-        fields = ["id", "event_id", "name", "url", "thumbnail", "clip", "clips", "project_id", "workspace_slug"]
+        fields = [
+            "id",
+            "event_id",
+            "name",
+            "subtitle",
+            "url",
+            "thumbnail",
+            "clip",
+            "clips",
+            "project_id",
+            "workspace_slug",
+        ]
         read_only_fields = ["id"]
 
     def validate_name(self, value):
         if not value or not value.strip():
             raise serializers.ValidationError("Name is required.")
         return value.strip()
+
+    def validate_subtitle(self, value):
+        if value is None:
+            return None
+        return value.strip() or None
 
     def _normalize_file_name(self, value):
         normalized_value = (value or "").strip()

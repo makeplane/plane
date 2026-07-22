@@ -1,4 +1,4 @@
-import { Check, Columns3, ListPlus, Maximize2, Minimize2, Plus, Search } from "lucide-react";
+import { Check, Columns3, ListPlus, Plus, Search } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -7,6 +7,8 @@ import type { RowFilterMode } from "../../types";
 
 const TEXT_BUTTON_CLASS =
   "inline-flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-xs font-medium text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
+const PRIMARY_TEXT_BUTTON_CLASS =
+  "inline-flex h-9 items-center gap-2 rounded-md border border-custom-primary-100 bg-custom-primary-100 px-3 text-xs font-medium text-white transition-colors hover:border-custom-primary-200 hover:bg-custom-primary-200";
 
 const TagsFilterIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none" className={className}>
@@ -27,14 +29,12 @@ type TagsPanelToolbarProps = {
   groupSelectLabel: string;
   isColumnsPanelOpen: boolean;
   isCreatingPlaylist: boolean;
-  isExpanded: boolean;
   isSearchOpen: boolean;
   onColumnsPanelOpen: () => void;
   onCreatePlaylist?: () => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
   onSearchQueryChange: (value: string) => void;
   onSelectedGroupValueChange: (value: string) => void;
-  onToggleExpanded?: () => void;
   onToggleSearch: () => void;
   rowFilterMode: RowFilterMode;
   searchQuery: string;
@@ -52,14 +52,12 @@ export const TagsPanelToolbar = ({
   groupSelectLabel,
   isColumnsPanelOpen,
   isCreatingPlaylist,
-  isExpanded,
   isSearchOpen,
   onColumnsPanelOpen,
   onCreatePlaylist,
   onRowFilterModeChange,
   onSearchQueryChange,
   onSelectedGroupValueChange,
-  onToggleExpanded,
   onToggleSearch,
   rowFilterMode,
   searchQuery,
@@ -97,19 +95,6 @@ export const TagsPanelToolbar = ({
           <Plus className="h-3.5 w-3.5" />
           <span>Create Card</span>
         </button>
-      )}
-      {onToggleExpanded && (
-        <Tooltip tooltipContent={isExpanded ? "Collapse list" : "Expand list"} isMobile={false}>
-          <button
-            type="button"
-            onClick={onToggleExpanded}
-            className={ICON_BUTTON_CLASS}
-            aria-label={isExpanded ? "Collapse list" : "Expand list"}
-            aria-pressed={isExpanded}
-          >
-            {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          </button>
-        </Tooltip>
       )}
       {isSearchOpen && (
         <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-300">
@@ -180,7 +165,7 @@ export const TagsPanelToolbar = ({
           type="button"
           disabled={selectedCount === 0 || isCreatingPlaylist}
           onClick={onCreatePlaylist}
-          className={`${TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
+          className={`${PRIMARY_TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
         >
           <ListPlus className="h-3.5 w-3.5" />
           <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>

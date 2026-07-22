@@ -1,15 +1,22 @@
-import { type MouseEvent as ReactMouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Download, Maximize2, MoreVertical, Share2, Trash2, Video, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
+import { Maximize2, MoreVertical, Share2, Trash2, Video, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import type { TCustomPlaylist } from "@/services/media-library.service";
+import type { TCustomPlaylist, TCustomPlaylistUpdatePayload } from "@/services/media-library.service";
 import { HlsVideo } from "ce/features/media-library/components/hls-video";
 import { PLAYER_FRAME_CLASS } from "../../constants";
+import type { SgTagRow } from "../../types";
 import { buildCustomPlaylistThumbnailUrl, buildCustomPlaylistUrl } from "../../utils";
 
 type SgMatrixPlaylistPanelProps = {
   customPlaylists: TCustomPlaylist[];
+  isCreatingPlaylist?: boolean;
+  onCreateCard?: () => void;
+  onCreatePlaylist?: () => void;
   onDeletePlaylist: (playlist: TCustomPlaylist) => Promise<void>;
+  onUpdatePlaylist: (playlist: TCustomPlaylist, payload: TCustomPlaylistUpdatePayload) => Promise<TCustomPlaylist>;
+  rows?: SgTagRow[];
 };
 
 type SgPlaylistVideoModalProps = {
@@ -37,6 +44,16 @@ type PlaylistClipCard = {
 };
 
 const EMPTY_CARD_VALUES = new Set(["", "-", "--", "n/a", "na", "null", "undefined"]);
+const DEFAULT_MULTI_CLIP_SUBTITLE = "All Plays";
+const GENERATED_PLAYLIST_NAME_SUFFIX = /\s*\(\d+\s+clips?\)\s*$/i;
+
+type PlaylistTextEditField = "name" | "subtitle";
+
+type PlaylistTextEditState = {
+  field: PlaylistTextEditField;
+  playlistId: string;
+  value: string;
+};
 
 const normalizeCardText = (value: string | null | undefined) => {
   const normalizedValue = (value ?? "").trim();
@@ -81,18 +98,24 @@ const formatPlaylistCardClipCount = (count: number) =>
   `${String(Math.max(count, 0)).padStart(2, "0")} Clip${count === 1 ? "" : "s"}`;
 
 const getPlaylistCardTitle = (playlist: TCustomPlaylist) => {
+  const savedName = normalizeCardText(playlist.name);
+  if (savedName && !GENERATED_PLAYLIST_NAME_SUFFIX.test(savedName)) return savedName;
+
   const savedClips = Array.isArray(playlist.clips) ? playlist.clips : [];
   const groupValues = Array.from(new Set(savedClips.map((clip) => normalizeCardText(clip.groupValue)).filter(Boolean)));
   if (groupValues.length === 1) return groupValues[0];
 
-  const cleanedName = normalizeCardText(playlist.name).replace(/\s*\(\d+\s+clips?\)\s*$/i, "");
+  const cleanedName = savedName.replace(GENERATED_PLAYLIST_NAME_SUFFIX, "");
   return normalizeCardText(cleanedName) || normalizeCardText(savedClips[0]?.title) || "Playlist";
 };
 
 const getPlaylistCardSubtitle = (playlist: TCustomPlaylist) => {
+  const savedSubtitle = normalizeCardText(playlist.subtitle);
+  if (savedSubtitle) return savedSubtitle;
+
   const savedClips = Array.isArray(playlist.clips) ? playlist.clips : [];
   const clipCount = getPlaylistCardClipCount(playlist);
-  if (clipCount > 1) return "All Plays";
+  if (clipCount > 1) return DEFAULT_MULTI_CLIP_SUBTITLE;
 
   return normalizeCardText(savedClips[0]?.subtitle) || "Ready";
 };
@@ -325,7 +348,7 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
               </a>
             ) : null} */}
 
-            <button
+            {/* <button
               type="button"
               onClick={handleOpenFullscreen}
               className="inline-flex h-8 items-center gap-2 rounded-[5px] px-2.5 text-[12px] font-medium text-white/88 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 sm:h-9 sm:px-3"
@@ -333,7 +356,7 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
             >
               <Maximize2 className="h-4 w-4" />
               <span className="hidden sm:inline">Fullscreen</span>
-            </button>
+            </button> */}
 
             <button
               type="button"
@@ -461,12 +484,64 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
   );
 };
 
-export const SgMatrixPlaylistPanel = ({ customPlaylists, onDeletePlaylist }: SgMatrixPlaylistPanelProps) => {
+export const SgMatrixPlaylistPanel = ({
+  customPlaylists,
+  onDeletePlaylist,
+  onUpdatePlaylist,
+}: SgMatrixPlaylistPanelProps) => {
   const [activePlaylist, setActivePlaylist] = useState<TCustomPlaylist | null>(null);
   const [menuPlaylistId, setMenuPlaylistId] = useState<string | null>(null);
+  const [editingPlaylistText, setEditingPlaylistText] = useState<PlaylistTextEditState | null>(null);
+  const [savingPlaylistText, setSavingPlaylistText] = useState<Pick<
+    PlaylistTextEditState,
+    "field" | "playlistId"
+  > | null>(null);
   const [playlistPendingDelete, setPlaylistPendingDelete] = useState<TCustomPlaylist | null>(null);
   const [isDeletingPlaylist, setIsDeletingPlaylist] = useState(false);
   const activeMenuRef = useRef<HTMLDivElement | null>(null);
+  const textEditInputRef = useRef<HTMLInputElement | null>(null);
+  const isSubmittingTextEditRef = useRef(false);
+  const playlistOpenTimeoutRef = useRef<number | null>(null);
+  const skipNextTextEditBlurRef = useRef(false);
+  const editingPlaylistTextField = editingPlaylistText?.field ?? null;
+  const editingPlaylistTextPlaylistId = editingPlaylistText?.playlistId ?? null;
+
+  const clearPendingPlaylistOpen = useCallback(() => {
+    if (!playlistOpenTimeoutRef.current) return;
+    window.clearTimeout(playlistOpenTimeoutRef.current);
+    playlistOpenTimeoutRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (!activePlaylist) return;
+
+    const updatedActivePlaylist = customPlaylists.find((playlist) => playlist.id === activePlaylist.id);
+    if (!updatedActivePlaylist) {
+      setActivePlaylist(null);
+      return;
+    }
+
+    if (updatedActivePlaylist !== activePlaylist) {
+      setActivePlaylist(updatedActivePlaylist);
+    }
+  }, [activePlaylist, customPlaylists]);
+
+  useEffect(() => {
+    if (!editingPlaylistTextField || !editingPlaylistTextPlaylistId) return;
+    const input = textEditInputRef.current;
+    if (!input) return;
+
+    input.focus();
+    if (editingPlaylistTextField === "name") {
+      input.select();
+      return;
+    }
+
+    const cursorPosition = input.value.length;
+    input.setSelectionRange(cursorPosition, cursorPosition);
+  }, [editingPlaylistTextField, editingPlaylistTextPlaylistId]);
+
+  useEffect(() => clearPendingPlaylistOpen, [clearPendingPlaylistOpen]);
 
   useEffect(() => {
     if (!menuPlaylistId) return;
@@ -488,9 +563,96 @@ export const SgMatrixPlaylistPanel = ({ customPlaylists, onDeletePlaylist }: SgM
     };
   }, [menuPlaylistId]);
 
+  const getPlaylistTextUpdatePayload = (
+    playlist: TCustomPlaylist,
+    field: PlaylistTextEditField,
+    currentValue: string,
+    nextValue: string
+  ): TCustomPlaylistUpdatePayload | null => {
+    if (field === "name") {
+      if (!nextValue || nextValue === currentValue) return null;
+      return { name: nextValue };
+    }
+
+    const savedSubtitle = normalizeCardText(playlist.subtitle);
+    if (!nextValue) return savedSubtitle ? { subtitle: null } : null;
+    if (nextValue === savedSubtitle || (!savedSubtitle && nextValue === currentValue)) return null;
+
+    return { subtitle: nextValue };
+  };
+
+  const handleStartTextEdit = (
+    event: ReactMouseEvent<HTMLElement>,
+    playlist: TCustomPlaylist,
+    field: PlaylistTextEditField,
+    currentValue: string
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    clearPendingPlaylistOpen();
+    setMenuPlaylistId(null);
+    setEditingPlaylistText({ field, playlistId: playlist.id, value: currentValue });
+  };
+
+  const handleCancelTextEdit = (skipBlurCommit = false) => {
+    if (skipBlurCommit) {
+      skipNextTextEditBlurRef.current = true;
+    }
+    setEditingPlaylistText(null);
+  };
+
+  const handleSubmitTextEdit = async (playlist: TCustomPlaylist, currentValue: string) => {
+    if (isSubmittingTextEditRef.current || !editingPlaylistText) return;
+
+    const { field, playlistId, value } = editingPlaylistText;
+    if (playlistId !== playlist.id) return;
+
+    const payload = getPlaylistTextUpdatePayload(playlist, field, currentValue, value.trim());
+    if (!payload) {
+      handleCancelTextEdit();
+      return;
+    }
+
+    isSubmittingTextEditRef.current = true;
+    setSavingPlaylistText({ field, playlistId: playlist.id });
+    try {
+      const updatedPlaylist = await onUpdatePlaylist(playlist, payload);
+      if (activePlaylist?.id === updatedPlaylist.id) {
+        setActivePlaylist(updatedPlaylist);
+      }
+      setEditingPlaylistText(null);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: field === "name" ? "Playlist renamed" : "Playlist subtitle updated",
+        message: field === "name" ? "The playlist title was updated." : "The playlist subtitle was updated.",
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: field === "name" ? "Rename failed" : "Subtitle update failed",
+        message:
+          field === "name"
+            ? "Unable to rename this playlist. Please try again."
+            : "Unable to update this playlist subtitle. Please try again.",
+      });
+    } finally {
+      isSubmittingTextEditRef.current = false;
+      setSavingPlaylistText(null);
+    }
+  };
+
   const handleToggleMenu = (event: ReactMouseEvent<HTMLButtonElement>, playlistId: string) => {
     event.stopPropagation();
+    clearPendingPlaylistOpen();
     setMenuPlaylistId((currentPlaylistId) => (currentPlaylistId === playlistId ? null : playlistId));
+  };
+
+  const handleOpenPlaylist = (playlist: TCustomPlaylist) => {
+    clearPendingPlaylistOpen();
+    playlistOpenTimeoutRef.current = window.setTimeout(() => {
+      setActivePlaylist(playlist);
+      playlistOpenTimeoutRef.current = null;
+    }, 260);
   };
 
   const handleSharePlaylist = async (playlist: TCustomPlaylist) => {
@@ -579,6 +741,57 @@ export const SgMatrixPlaylistPanel = ({ customPlaylists, onDeletePlaylist }: SgM
                 const clipCount = getPlaylistCardClipCount(playlist);
                 const cardTitle = getPlaylistCardTitle(playlist);
                 const cardSubtitle = getPlaylistCardSubtitle(playlist);
+                const activeTextEdit = editingPlaylistText?.playlistId === playlist.id ? editingPlaylistText : null;
+                const isEditingTitle = activeTextEdit?.field === "name";
+                const isEditingSubtitle = activeTextEdit?.field === "subtitle";
+                const isEditing = Boolean(activeTextEdit);
+                const isSavingText = savingPlaylistText?.playlistId === playlist.id;
+                const thumbnailPreview = (
+                  <span className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[4px] bg-[var(--sg-matrix-cell-empty)] text-[var(--sg-matrix-text-muted)]">
+                    {thumbnailUrl ? (
+                      <img src={thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <Video className="h-3.5 w-3.5" />
+                    )}
+                  </span>
+                );
+                const renderTextEditInput = (currentValue: string, ariaLabel: string, className: string) => (
+                  <form
+                    className="min-w-0 flex-1"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      void handleSubmitTextEdit(playlist, currentValue);
+                    }}
+                  >
+                    <input
+                      ref={textEditInputRef}
+                      type="text"
+                      value={activeTextEdit?.value ?? ""}
+                      disabled={isSavingText}
+                      onChange={(event) =>
+                        setEditingPlaylistText((currentState) =>
+                          currentState ? { ...currentState, value: event.target.value } : currentState
+                        )
+                      }
+                      onBlur={() => {
+                        if (skipNextTextEditBlurRef.current) {
+                          skipNextTextEditBlurRef.current = false;
+                          return;
+                        }
+                        void handleSubmitTextEdit(playlist, currentValue);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Escape") return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleCancelTextEdit(true);
+                      }}
+                      className={className}
+                      aria-label={ariaLabel}
+                    />
+                  </form>
+                );
 
                 return (
                   <li key={playlist.id}>
@@ -586,42 +799,81 @@ export const SgMatrixPlaylistPanel = ({ customPlaylists, onDeletePlaylist }: SgM
                       className="group relative rounded-[5px]"
                       ref={menuPlaylistId === playlist.id ? activeMenuRef : null}
                     >
-                      <button
-                        type="button"
-                        onClick={() => setActivePlaylist(playlist)}
-                        className="flex w-full min-w-0 items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-selected-nav)] px-2 py-1.5 pr-7 text-left transition-colors hover:bg-[var(--sg-matrix-hover)]"
-                      >
-                        <span className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[4px] bg-[var(--sg-matrix-cell-empty)] text-[var(--sg-matrix-text-muted)]">
-                          {thumbnailUrl ? (
-                            <img src={thumbnailUrl} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <Video className="h-3.5 w-3.5" />
-                          )}
-                        </span>
-                        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                          <span className="flex min-w-0 items-center gap-1.5">
-                            <span className="truncate text-[11px] font-medium text-[var(--sg-matrix-text-secondary)]">
-                              {cardTitle}
+                      {isEditing ? (
+                        <div className="flex w-full min-w-0 items-center gap-2 rounded-[5px] border border-[#338fdc]/50 bg-[var(--sg-matrix-selected-nav)] px-2 py-1.5 text-left shadow-[0_0_0_1px_rgba(51,143,220,0.18)]">
+                          {thumbnailPreview}
+                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <span className="flex min-w-0 items-center gap-1.5">
+                              {isEditingTitle ? (
+                                renderTextEditInput(
+                                  cardTitle,
+                                  "Playlist title",
+                                  "h-[19px] w-full min-w-0 rounded-[4px] border border-[#338fdc]/45 bg-black/25 px-1.5 text-[11px] font-medium leading-none text-[var(--sg-matrix-text)] outline-none transition-colors placeholder:text-[var(--sg-matrix-text-muted)] focus:border-[#7cc6ff]/80"
+                                )
+                              ) : (
+                                <span className="truncate text-[11px] font-medium text-[var(--sg-matrix-text-secondary)]">
+                                  {cardTitle}
+                                </span>
+                              )}
+                              <span className="shrink-0 rounded-[4px] border border-[#338fdc]/25 bg-[#338fdc]/10 px-1.5 py-0.5 text-[9px] font-medium leading-none text-[#7cc6ff]">
+                                {formatPlaylistCardClipCount(clipCount)}
+                              </span>
                             </span>
-                            <span className="shrink-0 rounded-[4px] border border-[#338fdc]/25 bg-[#338fdc]/10 px-1.5 py-0.5 text-[9px] font-medium leading-none text-[#7cc6ff]">
-                              {formatPlaylistCardClipCount(clipCount)}
+                            {isEditingSubtitle ? (
+                              renderTextEditInput(
+                                cardSubtitle,
+                                "Playlist subtitle",
+                                "h-[18px] w-full min-w-0 rounded-[4px] border border-[#338fdc]/40 bg-black/25 px-1.5 text-[10px] leading-none text-[var(--sg-matrix-text)] outline-none transition-colors placeholder:text-[var(--sg-matrix-text-muted)] focus:border-[#7cc6ff]/75"
+                              )
+                            ) : (
+                              <span className="truncate text-[10px] text-[var(--sg-matrix-text-muted)]">
+                                {isSavingText ? "Saving" : cardSubtitle}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenPlaylist(playlist)}
+                          className="flex w-full min-w-0 items-center gap-2 rounded-[5px] border border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-selected-nav)] px-2 py-1.5 pr-7 text-left transition-colors hover:bg-[var(--sg-matrix-hover)]"
+                        >
+                          {thumbnailPreview}
+                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <span className="flex min-w-0 items-center gap-1.5">
+                              <span
+                                className="truncate text-[11px] font-medium text-[var(--sg-matrix-text-secondary)]"
+                                title="Double-click to rename"
+                                onDoubleClick={(event) => handleStartTextEdit(event, playlist, "name", cardTitle)}
+                              >
+                                {cardTitle}
+                              </span>
+                              <span className="shrink-0 rounded-[4px] border border-[#338fdc]/25 bg-[#338fdc]/10 px-1.5 py-0.5 text-[9px] font-medium leading-none text-[#7cc6ff]">
+                                {formatPlaylistCardClipCount(clipCount)}
+                              </span>
+                            </span>
+                            <span
+                              className="truncate text-[10px] text-[var(--sg-matrix-text-muted)]"
+                              title="Double-click to edit subtitle"
+                              onDoubleClick={(event) => handleStartTextEdit(event, playlist, "subtitle", cardSubtitle)}
+                            >
+                              {cardSubtitle}
                             </span>
                           </span>
-                          <span className="truncate text-[10px] text-[var(--sg-matrix-text-muted)]">
-                            {cardSubtitle}
-                          </span>
-                        </span>
-                      </button>
+                        </button>
+                      )}
 
-                      <button
-                        type="button"
-                        onClick={(event) => handleToggleMenu(event, playlist.id)}
-                        className="absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded text-[var(--sg-matrix-text-muted)] opacity-70 transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] group-hover:opacity-100"
-                        aria-label={`Open ${cardTitle} playlist actions`}
-                        aria-expanded={menuPlaylistId === playlist.id}
-                      >
-                        <MoreVertical className="h-3.5 w-3.5" />
-                      </button>
+                      {!isEditing ? (
+                        <button
+                          type="button"
+                          onClick={(event) => handleToggleMenu(event, playlist.id)}
+                          className="absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded text-[var(--sg-matrix-text-muted)] opacity-70 transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] group-hover:opacity-100"
+                          aria-label={`Open ${cardTitle} playlist actions`}
+                          aria-expanded={menuPlaylistId === playlist.id}
+                        >
+                          <MoreVertical className="h-3.5 w-3.5" />
+                        </button>
+                      ) : null}
 
                       {menuPlaylistId === playlist.id ? (
                         <div className="absolute right-1.5 top-8 z-30 w-[86px] overflow-hidden rounded-[5px] border border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-panel-secondary)] py-1 shadow-[0_12px_34px_rgba(0,0,0,0.45)]">

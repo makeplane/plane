@@ -117,7 +117,7 @@ export const MatrixToolbar = ({
                 ? "Selected tags do not contain playable timestamps"
                 : undefined
             }
-            className="inline-flex h-7 items-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-selected-nav)] px-2.5 text-[11px] font-normal text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)] disabled:cursor-not-allowed disabled:text-[var(--sg-matrix-text-disabled)] disabled:opacity-45"
+            className="inline-flex h-7 items-center gap-1.5 rounded-[5px] border border-custom-primary-100 bg-custom-primary-100 px-2.5 text-[11px] font-normal text-white transition-colors hover:border-custom-primary-200 hover:bg-custom-primary-200 disabled:cursor-not-allowed disabled:opacity-45"
           >
             <ListPlus className="h-3.5 w-3.5" />
             {isCreatingPlaylist ? "Creating" : "Create Playlist"}

@@ -483,7 +483,7 @@ export const SgEventTimelinePanel = ({
             onClick={onCreatePlaylist}
             className={cn(
               TEXT_TOOL_BUTTON_CLASS,
-              "border-custom-border-200 bg-custom-background-100 text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-100 disabled:cursor-not-allowed disabled:opacity-40"
+              "border-custom-primary-100 bg-custom-primary-100 text-white hover:border-custom-primary-200 hover:bg-custom-primary-200 disabled:cursor-not-allowed disabled:opacity-40"
             )}
           >
             <ListPlus className="h-3.5 w-3.5" />
