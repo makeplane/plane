@@ -6,8 +6,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type {
+  TCustomPlaylist,
+  TCustomPlaylistClip,
+  TCustomPlaylistUpdatePayload,
+} from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
-import type { TCustomPlaylist, TCustomPlaylistClip } from "@/services/media-library.service";
 import { RosterService } from "@/services/roster.service";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
@@ -443,6 +447,13 @@ export const SgEventDetailPage = ({
     setIsTimelinePlaylistSelectionMode(false);
   }, [clearSelectedTagIds, handleCreateCustomPlaylist, timelinePlaylistRows]);
 
+  const handleCreateMatrixPlaylist = useCallback(
+    async (rows: SgTagRow[]) => {
+      await handleCreateCustomPlaylist(rows);
+    },
+    [handleCreateCustomPlaylist]
+  );
+
   const handleDeleteCustomPlaylist = useCallback(
     async (playlist: TCustomPlaylist) => {
       await mediaLibraryService.deleteCustomPlaylist(playlist.id);
@@ -454,6 +465,20 @@ export const SgEventDetailPage = ({
     [mediaLibraryService, mutateCustomPlaylists]
   );
 
+  const handleUpdateCustomPlaylist = useCallback(
+    async (playlist: TCustomPlaylist, payload: TCustomPlaylistUpdatePayload) => {
+      const updatedPlaylist = await mediaLibraryService.updateCustomPlaylist(playlist.id, payload);
+      void mutateCustomPlaylists(
+        (currentPlaylists = []) =>
+          currentPlaylists.map((currentPlaylist) =>
+            currentPlaylist.id === updatedPlaylist.id ? updatedPlaylist : currentPlaylist
+          ),
+        { revalidate: false }
+      );
+      return updatedPlaylist;
+    },
+    [mediaLibraryService, mutateCustomPlaylists]
+  );
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
       ? kanavioTagsError.message
@@ -604,6 +629,7 @@ export const SgEventDetailPage = ({
                 <SgMatrixPlaylistPanel
                   customPlaylists={customPlaylists}
                   onDeletePlaylist={handleDeleteCustomPlaylist}
+                  onUpdatePlaylist={handleUpdateCustomPlaylist}
                 />
               </div>
 
@@ -651,6 +677,7 @@ export const SgEventDetailPage = ({
                         <SgMatrixPlaylistPanel
                           customPlaylists={customPlaylists}
                           onDeletePlaylist={handleDeleteCustomPlaylist}
+                          onUpdatePlaylist={handleUpdateCustomPlaylist}
                         />
                       </div>
 
