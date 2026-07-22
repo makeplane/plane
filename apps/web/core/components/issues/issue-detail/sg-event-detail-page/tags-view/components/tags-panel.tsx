@@ -149,7 +149,10 @@ export const SgEventTagsPanel = ({
         width: "minmax(130px, 0.9fr)",
       },
       {
-        getValue: (row) => (isCompactFootballTable ? row.secondaryDetail : row.result),
+        getValue: (row) => {
+          if (!isCompactFootballTable) return row.result;
+          return row.result && row.result !== "--" ? row.result : row.secondaryDetail;
+        },
         group: "Sport",
         isDefaultVisible: true,
         key: "result",

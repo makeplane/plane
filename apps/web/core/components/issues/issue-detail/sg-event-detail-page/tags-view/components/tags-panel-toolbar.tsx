@@ -7,6 +7,8 @@ import type { RowFilterMode } from "../../types";
 
 const TEXT_BUTTON_CLASS =
   "inline-flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-xs font-medium text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
+const PRIMARY_TEXT_BUTTON_CLASS =
+  "inline-flex h-9 items-center gap-2 rounded-md border border-custom-primary-100 bg-custom-primary-100 px-3 text-xs font-medium text-white transition-colors hover:border-custom-primary-200 hover:bg-custom-primary-200";
 
 const TagsFilterIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none" className={className}>
@@ -180,7 +182,7 @@ export const TagsPanelToolbar = ({
           type="button"
           disabled={selectedCount === 0 || isCreatingPlaylist}
           onClick={onCreatePlaylist}
-          className={`${TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
+          className={`${PRIMARY_TEXT_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-45`}
         >
           <ListPlus className="h-3.5 w-3.5" />
           <span>{isCreatingPlaylist ? "Creating" : "Create Playlist"}</span>
