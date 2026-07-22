@@ -34,9 +34,7 @@ type SgEventTagsPanelProps = {
   favoriteTagIds: string[];
   isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
-  isExpanded?: boolean;
   isSearchOpen: boolean;
-  onToggleExpanded?: () => void;
   onCreatePlaylist?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onRemoveTag: (tagId: string) => void;
@@ -66,9 +64,7 @@ export const SgEventTagsPanel = ({
   favoriteTagIds,
   isCreatingPlaylist = false,
   isMediaLoading,
-  isExpanded = false,
   isSearchOpen,
-  onToggleExpanded,
   onCreatePlaylist,
   onPlayTagRow,
   onRemoveTag,
@@ -322,14 +318,12 @@ export const SgEventTagsPanel = ({
         groupSelectLabel={groupSelectLabel}
         isColumnsPanelOpen={isColumnsPanelOpen}
         isCreatingPlaylist={isCreatingPlaylist}
-        isExpanded={isExpanded}
         isSearchOpen={isSearchOpen}
         onColumnsPanelOpen={() => setIsColumnsPanelOpen(true)}
         onCreatePlaylist={onCreatePlaylist}
         onRowFilterModeChange={onRowFilterModeChange}
         onSearchQueryChange={onSearchQueryChange}
         onSelectedGroupValueChange={onSelectedGroupValueChange}
-        onToggleExpanded={onToggleExpanded}
         onToggleSearch={onToggleSearch}
         rowFilterMode={rowFilterMode}
         searchQuery={searchQuery}
@@ -340,10 +334,7 @@ export const SgEventTagsPanel = ({
       />
 
       <div
-        className={cn(
-          "sg-event-tags-list-scrollbar vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 overflow-auto",
-          isExpanded ? "max-h-[calc(100vh-220px)]" : "max-h-[520px]"
-        )}
+        className="sg-event-tags-list-scrollbar vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 max-h-[520px] overflow-auto"
       >
         <div className="min-w-full">
           <div
