@@ -35,6 +35,7 @@ type SgEventTagsPanelProps = {
   isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
   isSearchOpen: boolean;
+  onListScrollStateChange?: (isScrolled: boolean) => void;
   onCreatePlaylist?: () => void;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onRemoveTag: (tagId: string) => void;
@@ -65,6 +66,7 @@ export const SgEventTagsPanel = ({
   isCreatingPlaylist = false,
   isMediaLoading,
   isSearchOpen,
+  onListScrollStateChange,
   onCreatePlaylist,
   onPlayTagRow,
   onRemoveTag,
@@ -334,7 +336,8 @@ export const SgEventTagsPanel = ({
       />
 
       <div
-        className="sg-event-tags-list-scrollbar vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 max-h-[520px] overflow-auto"
+        className="sg-event-tags-list-scrollbar vertical-scrollbar horizontal-scrollbar scrollbar-lg min-h-52 max-h-[640px] overflow-auto"
+        onScroll={(event) => onListScrollStateChange?.(event.currentTarget.scrollTop > 8)}
       >
         <div className="min-w-full">
           <div

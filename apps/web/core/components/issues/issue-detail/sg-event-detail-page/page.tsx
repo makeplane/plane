@@ -1,5 +1,6 @@
 "use client";
 
+import type { UIEvent } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -111,6 +112,8 @@ export const SgEventDetailPage = ({
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const rosterService = useMemo(() => new RosterService(), []);
   const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
+  const [isTagListBodyScrolled, setIsTagListBodyScrolled] = useState(false);
+  const [isListPageScrolled, setIsListPageScrolled] = useState(false);
   const [isCreatingCustomPlaylist, setIsCreatingCustomPlaylist] = useState(false);
   const [isTimelinePlaylistSelectionMode, setIsTimelinePlaylistSelectionMode] = useState(false);
 
@@ -287,6 +290,12 @@ export const SgEventDetailPage = ({
     tagRows,
     workspaceSlug,
   });
+
+  useEffect(() => {
+    if (tagViewMode === "list") return;
+    setIsTagListBodyScrolled(false);
+    setIsListPageScrolled(false);
+  }, [tagViewMode]);
 
   useEffect(() => {
     if (tagViewMode !== "timeline" && isTimelinePlaylistSelectionMode) {
@@ -498,10 +507,19 @@ export const SgEventDetailPage = ({
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
+  const isTagListScrolled = isTagListBodyScrolled || isListPageScrolled;
+  const shouldShowEventDetailsCard = tagViewMode !== "list" || !isTagListScrolled;
+  const handlePageScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
+      if (tagViewMode !== "list") return;
+      setIsListPageScrolled(event.currentTarget.scrollTop > 8);
+    },
+    [tagViewMode]
+  );
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
-      <div className={TIMELINE_PAGE_SCROLL_CLASS}>
+      <div className={TIMELINE_PAGE_SCROLL_CLASS} onScroll={handlePageScroll}>
         <div className={TIMELINE_PAGE_CONTENT_CLASS}>
           <SgEventHeader
             eventStatus={eventStatus}
@@ -585,12 +603,14 @@ export const SgEventDetailPage = ({
                     isTagClipActive={isPlaybackOverrideActive}
                   />
 
-                  <SgEventDetailsCard
-                    eventDateTimeLabel={eventDateTimeLabel}
-                    levelLabel={levelLabel}
-                    venueAddress={venueAddress}
-                    venueName={venueName}
-                  />
+                  {shouldShowEventDetailsCard && (
+                    <SgEventDetailsCard
+                      eventDateTimeLabel={eventDateTimeLabel}
+                      levelLabel={levelLabel}
+                      venueAddress={venueAddress}
+                      venueName={venueName}
+                    />
+                  )}
                 </div>
 
                 {tagViewMode === "timeline" ? (
@@ -633,6 +653,7 @@ export const SgEventDetailPage = ({
                     isCreatingPlaylist={isCreatingCustomPlaylist}
                     isMediaLoading={isTagRowsLoading}
                     isSearchOpen={isSearchOpen}
+                    onListScrollStateChange={setIsTagListBodyScrolled}
                     onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
                     onPlayTagRow={handlePlayTagRow}
                     onRemoveTag={handleRemoveTag}
