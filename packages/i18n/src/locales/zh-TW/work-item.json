@@ -298,8 +298,8 @@
         "qa": "QA acceptance"
       },
       "state": {
-        "queued": "Queued",
-        "claimed": "Claimed",
+        "queued": "等待本機 Looper 接收",
+        "claimed": "本機排隊中",
         "running": "In progress",
         "awaiting_human": "Waiting for decision",
         "stop_requested": "Stop requested",

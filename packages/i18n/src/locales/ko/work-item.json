@@ -298,8 +298,8 @@
         "qa": "QA acceptance"
       },
       "state": {
-        "queued": "Queued",
-        "claimed": "Claimed",
+        "queued": "Looper 수신 대기 중",
+        "claimed": "이 컴퓨터에서 대기열에 있음",
         "running": "In progress",
         "awaiting_human": "Waiting for decision",
         "stop_requested": "Stop requested",

@@ -298,8 +298,8 @@
         "qa": "QA acceptance"
       },
       "state": {
-        "queued": "Queued",
-        "claimed": "Claimed",
+        "queued": "Oczekiwanie na Looper",
+        "claimed": "W kolejce na Twoim komputerze",
         "running": "In progress",
         "awaiting_human": "Waiting for decision",
         "stop_requested": "Stop requested",

@@ -38,8 +38,8 @@
         "qa": "QA 验收"
       },
       "state": {
-        "queued": "等待领取",
-        "claimed": "已领取",
+        "queued": "等待本机 Looper 接收",
+        "claimed": "本机排队中",
         "running": "处理中",
         "awaiting_human": "等待决策",
         "stop_requested": "已请求停止",
