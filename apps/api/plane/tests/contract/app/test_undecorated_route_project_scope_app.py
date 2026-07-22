@@ -66,7 +66,12 @@ def _make_user(email):
 
 @pytest.fixture
 def project_b(db, workspace, create_user):
-    """The victim project. ``create_user`` (workspace owner) is an active ADMIN member."""
+    """The victim project. ``create_user`` is an active project MEMBER (role 15).
+
+    Deliberately MEMBER, not ADMIN, so the positive-control tests exercise the
+    ROLE.MEMBER branch of @allow_permission on the newly-guarded handlers (admin
+    behavior is covered elsewhere). All the fixed decorators allow [ADMIN, MEMBER].
+    """
     project = Project.objects.create(
         name="Project B",
         identifier="PB",
@@ -74,7 +79,7 @@ def project_b(db, workspace, create_user):
         created_by=create_user,
     )
     ProjectMember.objects.create(
-        workspace=workspace, project=project, member=create_user, role=20, is_active=True
+        workspace=workspace, project=project, member=create_user, role=15, is_active=True
     )
     return project
 
