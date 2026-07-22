@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { MediaLibraryService, type TCustomPlaylist, type TCustomPlaylistClip } from "@/services/media-library.service";
+import { MediaLibraryService } from "@/services/media-library.service";
+import type { TCustomPlaylist, TCustomPlaylistClip } from "@/services/media-library.service";
 import { RosterService } from "@/services/roster.service";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
@@ -25,6 +26,11 @@ import { buildTimelinePlayerLabelMap } from "./media-thumbnail-lookup";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-view";
 import { SgEventTimelinePanel, isTimelineTagPlaybackOverrideId } from "./timeline-view";
+import {
+  TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX,
+  getTimelineSplitBoundsUpdate,
+} from "./timeline-view/utils/timeline-layout";
+import { getTimelinePlaylistRows } from "./timeline-view/utils/timeline-playlist-selection";
 import type { SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
 import {
   asRecord,
@@ -106,6 +112,15 @@ export const SgEventDetailPage = ({
   const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [isCreatingCustomPlaylist, setIsCreatingCustomPlaylist] = useState(false);
+  const [isTimelinePlaylistSelectionMode, setIsTimelinePlaylistSelectionMode] = useState(false);
+  const [timelineExpansionPx, setTimelineExpansionPx] = useState(0);
+  const [timelineMaxExpansionPx, setTimelineMaxExpansionPx] = useState(0);
+  const [timelineUpperDefaultHeightPx, setTimelineUpperDefaultHeightPx] = useState<number | null>(null);
+  const timelineUpperLayoutRef = useRef<HTMLDivElement | null>(null);
+  const timelineUpperContentRef = useRef<HTMLDivElement | null>(null);
+  const timelineExpansionRef = useRef(0);
+  const timelineMaxExpansionRef = useRef(0);
+  const timelineUpperDefaultHeightRef = useRef<number | null>(null);
 
   const mediaMeta = asRecord(mediaItem?.meta);
   const cpServerBaseUrl = useMemo(() => getCpServerBaseUrl(), []);
@@ -247,6 +262,7 @@ export const SgEventDetailPage = ({
   const {
     allVisibleSelected,
     availableGroups,
+    clearSelectedTagIds,
     effectiveGroupValue,
     favoriteTagIds,
     filteredRows,
@@ -285,6 +301,12 @@ export const SgEventDetailPage = ({
       setIsListExpanded(false);
     }
   }, [isListExpanded, tagViewMode]);
+
+  useEffect(() => {
+    if (tagViewMode !== "timeline" && isTimelinePlaylistSelectionMode) {
+      setIsTimelinePlaylistSelectionMode(false);
+    }
+  }, [isTimelinePlaylistSelectionMode, tagViewMode]);
   const projectName = toText((project as { name?: unknown } | undefined)?.name);
   const eventTitle = buildEventTitle({
     eventDetails,
@@ -332,14 +354,14 @@ export const SgEventDetailPage = ({
 
   const handleCreateCustomPlaylist = useCallback(
     async (rows: SgTagRow[]) => {
-      if (isCreatingCustomPlaylist) return;
+      if (isCreatingCustomPlaylist) return false;
       if (rows.length === 0) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "No clips selected",
           message: "Select at least one tag before creating a playlist.",
         });
-        return;
+        return false;
       }
       if (!resolvedCustomPlaylistEventId) {
         setToast({
@@ -347,7 +369,7 @@ export const SgEventDetailPage = ({
           title: "Missing event",
           message: "A service gateway event id is required before creating a playlist.",
         });
-        return;
+        return false;
       }
       const streamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
       setIsCreatingCustomPlaylist(true);
@@ -386,6 +408,7 @@ export const SgEventDetailPage = ({
           title: "Playlist created",
           message: `${includedRows.length} selected tag${includedRows.length === 1 ? "" : "s"} are ready to play.`,
         });
+        return true;
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to create a playlist from the selected tags.";
         setToast({
@@ -393,6 +416,7 @@ export const SgEventDetailPage = ({
           title: "Playlist creation failed",
           message,
         });
+        return false;
       } finally {
         setIsCreatingCustomPlaylist(false);
       }
@@ -413,6 +437,18 @@ export const SgEventDetailPage = ({
       workspaceSlug,
     ]
   );
+  const timelinePlaylistRows = useMemo(
+    () => getTimelinePlaylistRows(filteredRows, selectedTagIds),
+    [filteredRows, selectedTagIds]
+  );
+
+  const handleCreateTimelinePlaylist = useCallback(async () => {
+    const wasCreated = await handleCreateCustomPlaylist(timelinePlaylistRows);
+    if (!wasCreated) return;
+
+    clearSelectedTagIds();
+    setIsTimelinePlaylistSelectionMode(false);
+  }, [clearSelectedTagIds, handleCreateCustomPlaylist, timelinePlaylistRows]);
 
   const handleDeleteCustomPlaylist = useCallback(
     async (playlist: TCustomPlaylist) => {
@@ -424,6 +460,7 @@ export const SgEventDetailPage = ({
     },
     [mediaLibraryService, mutateCustomPlaylists]
   );
+
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
       ? kanavioTagsError.message
@@ -445,12 +482,100 @@ export const SgEventDetailPage = ({
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
   const isMatrixWorkspaceMode = enableMatrixView && tagViewMode === "matrix";
-  const activePlaylistRows = isMatrixWorkspaceMode ? playlistPanelRows : selectedRows;
+  const activePlaylistRows = isMatrixWorkspaceMode
+    ? playlistPanelRows
+    : tagViewMode === "timeline"
+      ? timelinePlaylistRows
+      : selectedRows;
   const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
   const isExpandedListView = tagViewMode === "list" && isListExpanded;
+  const shouldUseTimelineSplitLayout = tagViewMode === "timeline" && !isExpandedListView && !isMatrixWorkspaceMode;
+
+  useEffect(() => {
+    timelineExpansionRef.current = timelineExpansionPx;
+  }, [timelineExpansionPx]);
+
+  useEffect(() => {
+    timelineMaxExpansionRef.current = timelineMaxExpansionPx;
+  }, [timelineMaxExpansionPx]);
+
+  useEffect(() => {
+    timelineUpperDefaultHeightRef.current = timelineUpperDefaultHeightPx;
+  }, [timelineUpperDefaultHeightPx]);
+
+  useEffect(() => {
+    if (!shouldUseTimelineSplitLayout) {
+      timelineExpansionRef.current = 0;
+      timelineMaxExpansionRef.current = 0;
+      timelineUpperDefaultHeightRef.current = null;
+      setTimelineExpansionPx(0);
+      setTimelineMaxExpansionPx(0);
+      setTimelineUpperDefaultHeightPx(null);
+      return;
+    }
+    if (typeof window === "undefined") return;
+
+    let animationFrameId = 0;
+    const updateTimelineSplitBounds = ({ force = false }: { force?: boolean } = {}) => {
+      window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = window.requestAnimationFrame(() => {
+        const upperContentElement = timelineUpperContentRef.current;
+        if (!upperContentElement) return;
+
+        const measuredHeightPx = upperContentElement.scrollHeight || upperContentElement.getBoundingClientRect().height;
+        const boundsUpdate = getTimelineSplitBoundsUpdate({
+          currentExpansionPx: timelineExpansionRef.current,
+          currentMaxExpansionPx: timelineMaxExpansionRef.current,
+          currentUpperDefaultHeightPx: timelineUpperDefaultHeightRef.current,
+          force,
+          measuredUpperHeightPx: measuredHeightPx,
+        });
+        if (!boundsUpdate.shouldUpdateBounds) return;
+
+        timelineUpperDefaultHeightRef.current = boundsUpdate.nextUpperDefaultHeightPx;
+        timelineMaxExpansionRef.current = boundsUpdate.nextMaxExpansionPx;
+        timelineExpansionRef.current = boundsUpdate.nextExpansionPx;
+        setTimelineUpperDefaultHeightPx(boundsUpdate.nextUpperDefaultHeightPx);
+        setTimelineMaxExpansionPx(boundsUpdate.nextMaxExpansionPx);
+        setTimelineExpansionPx(boundsUpdate.nextExpansionPx);
+      });
+    };
+
+    updateTimelineSplitBounds({ force: true });
+
+    const forceTimelineSplitBoundsUpdate = () => updateTimelineSplitBounds({ force: true });
+
+    window.addEventListener("orientationchange", forceTimelineSplitBoundsUpdate);
+    window.addEventListener("resize", forceTimelineSplitBoundsUpdate);
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => updateTimelineSplitBounds()) : null;
+    const upperLayoutElement = timelineUpperContentRef.current;
+
+    if (resizeObserver && upperLayoutElement) {
+      resizeObserver.observe(upperLayoutElement);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("orientationchange", forceTimelineSplitBoundsUpdate);
+      window.removeEventListener("resize", forceTimelineSplitBoundsUpdate);
+      resizeObserver?.disconnect();
+    };
+  }, [shouldUseTimelineSplitLayout]);
+
+  const handleTimelineExpansionChange = useCallback((nextExpansionPx: number) => {
+    timelineExpansionRef.current = nextExpansionPx;
+    setTimelineExpansionPx(nextExpansionPx);
+  }, []);
+
+  const timelineUpperLayoutHeightPx =
+    shouldUseTimelineSplitLayout && timelineUpperDefaultHeightPx !== null
+      ? Math.max(TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX, timelineUpperDefaultHeightPx - timelineExpansionPx)
+      : null;
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
@@ -486,10 +611,6 @@ export const SgEventDetailPage = ({
                 </div>
                 <SgMatrixPlaylistPanel
                   customPlaylists={customPlaylists}
-                  isCreatingPlaylist={isCreatingCustomPlaylist}
-                  onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
-                  onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                  rows={activePlaylistRows}
                   onDeletePlaylist={handleDeleteCustomPlaylist}
                 />
               </div>
@@ -515,109 +636,117 @@ export const SgEventDetailPage = ({
               </div>
             </>
           ) : (
-            <>
-              {!isExpandedListView && (
-                <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
-                  <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
-                    <SgEventVideoPlayer
-                      item={playbackItem}
-                      compactEmpty={!hasPlayableVideo}
-                      onPlaybackTimeChange={handlePlaybackTimeChange}
-                      seekToSeconds={pendingSeekSeconds}
-                    />
+            <div className="min-w-0">
+              <div className="flex min-h-0 flex-col gap-3">
+                {!isExpandedListView && (
+                  <div
+                    ref={timelineUpperLayoutRef}
+                    className="min-w-0 overflow-hidden"
+                    style={
+                      timelineUpperLayoutHeightPx !== null ? { height: `${timelineUpperLayoutHeightPx}px` } : undefined
+                    }
+                  >
+                    <div ref={timelineUpperContentRef} className="min-w-0">
+                      <div className="flex min-h-0 flex-col gap-3">
+                        <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+                          <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+                            <SgEventVideoPlayer
+                              item={playbackItem}
+                              compactEmpty={!hasPlayableVideo}
+                              onPlaybackTimeChange={handlePlaybackTimeChange}
+                              seekToSeconds={pendingSeekSeconds}
+                            />
+                          </div>
+                          <SgMatrixPlaylistPanel
+                            customPlaylists={customPlaylists}
+                            onDeletePlaylist={handleDeleteCustomPlaylist}
+                          />
+                        </div>
+
+                        <SgEventTitleBar
+                          eventStatus={eventStatus}
+                          eventTitle={eventTitle}
+                          handleSwitchToFullStream={handleSwitchToFullStream}
+                          isTagClipActive={isPlaybackOverrideActive}
+                        />
+
+                        <SgEventDetailsCard
+                          eventDateTimeLabel={eventDateTimeLabel}
+                          levelLabel={levelLabel}
+                          venueAddress={venueAddress}
+                          venueName={venueName}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <SgMatrixPlaylistPanel
-                    customPlaylists={customPlaylists}
+                )}
+
+                {tagViewMode === "timeline" ? (
+                  <SgEventTimelinePanel
+                    activePlaybackOverrideId={activePlaybackOverrideId}
+                    activeTagRowId={activeTimelineTagId}
                     isCreatingPlaylist={isCreatingCustomPlaylist}
-                    onCreateCard={() => handleCreateMatrixCard(activePlaylistRows)}
-                    onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                    rows={activePlaylistRows}
-                    onDeletePlaylist={handleDeleteCustomPlaylist}
+                    isPlaylistSelectionMode={isTimelinePlaylistSelectionMode}
+                    isMediaLoading={isTagRowsLoading}
+                    onClearTagSelection={clearSelectedTagIds}
+                    onCreatePlaylist={() => void handleCreateTimelinePlaylist()}
+                    isPlayerPlaying={isPlayerPlaying}
+                    onPlayTagRow={handlePlayTagRow}
+                    onPlaylistSelectionModeChange={setIsTimelinePlaylistSelectionMode}
+                    onResetPlayback={handleResetTimelinePlayback}
+                    onToggleTagSelection={handleToggleTagSelection}
+                    playerDurationSeconds={playerDurationSeconds}
+                    playerPlaybackRate={playerPlaybackRate}
+                    playheadSeconds={timelinePanelPlayheadSeconds}
+                    maxTimelineExpansionPx={timelineMaxExpansionPx}
+                    onTimelineExpansionChange={handleTimelineExpansionChange}
+                    rows={filteredRows}
+                    selectedTagIds={selectedTagIds}
+                    sport={sportTableConfig.sport}
+                    timelineExpansionPx={timelineExpansionPx}
+                    playerLabelByNumber={timelinePlayerLabelByNumber}
                   />
-                </div>
-              )}
-
-              <div className="min-w-0">
-                <div className="flex flex-col gap-3">
-                  {!isExpandedListView && (
-                    <>
-                      <SgEventTitleBar
-                        eventStatus={eventStatus}
-                        eventTitle={eventTitle}
-                        handleSwitchToFullStream={handleSwitchToFullStream}
-                        isTagClipActive={isPlaybackOverrideActive}
-                      />
-
-                      <SgEventDetailsCard
-                        eventDateTimeLabel={eventDateTimeLabel}
-                        levelLabel={levelLabel}
-                        venueAddress={venueAddress}
-                        venueName={venueName}
-                      />
-                    </>
-                  )}
-
-                  {tagViewMode === "timeline" ? (
-                    <SgEventTimelinePanel
-                      activePlaybackOverrideId={activePlaybackOverrideId}
-                      activeTagRowId={activeTimelineTagId}
-                      isCreatingPlaylist={isCreatingCustomPlaylist}
-                      isMediaLoading={isTagRowsLoading}
-                      onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                      isPlayerPlaying={isPlayerPlaying}
-                      onPlayTagRow={handlePlayTagRow}
-                      onResetPlayback={handleResetTimelinePlayback}
-                      onToggleTagSelection={handleToggleTagSelection}
-                      playerDurationSeconds={playerDurationSeconds}
-                      playerPlaybackRate={playerPlaybackRate}
-                      playheadSeconds={timelinePanelPlayheadSeconds}
-                      rows={filteredRows}
-                      selectedTagIds={selectedTagIds}
-                      sport={sportTableConfig.sport}
-                      playerLabelByNumber={timelinePlayerLabelByNumber}
-                    />
-                  ) : (
-                    <SgEventTagsPanel
-                      activeFilterLabel={
-                        rowFilterMode === "all"
-                          ? "All rows"
-                          : rowFilterMode === "favorites"
-                            ? "Favorites only"
-                            : "Selected rows"
-                      }
-                      activePlaybackOverrideId={activePlaybackOverrideId}
-                      allVisibleSelected={allVisibleSelected}
-                      availableGroups={availableGroups}
-                      clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
-                      effectiveGroupValue={effectiveGroupValue}
-                      favoriteTagIds={favoriteTagIds}
-                      isCreatingPlaylist={isCreatingCustomPlaylist}
-                      isMediaLoading={isTagRowsLoading}
-                      isExpanded={isExpandedListView}
-                      isSearchOpen={isSearchOpen}
-                      // onToggleExpanded={() => setIsListExpanded((currentValue) => !currentValue)}
-                      onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
-                      onPlayTagRow={handlePlayTagRow}
-                      onRemoveTag={handleRemoveTag}
-                      onRowFilterModeChange={setRowFilterMode}
-                      onSearchQueryChange={setSearchQuery}
-                      onSelectAll={handleSelectAll}
-                      onSelectedGroupValueChange={setSelectedGroupValue}
-                      onToggleFavorite={handleToggleFavorite}
-                      onToggleSearch={handleToggleSearch}
-                      onToggleTagSelection={handleToggleTagSelection}
-                      onUpdateTag={handleUpdateTag}
-                      rowFilterMode={rowFilterMode}
-                      rows={filteredRows}
-                      searchQuery={searchQuery}
-                      selectedTagIds={selectedTagIds}
-                      showCreateActions={showTagListActions}
-                      sportTableConfig={sportTableConfig}
-                    />
-                  )}
-                </div>
+                ) : (
+                  <SgEventTagsPanel
+                    activeFilterLabel={
+                      rowFilterMode === "all"
+                        ? "All rows"
+                        : rowFilterMode === "favorites"
+                          ? "Favorites only"
+                          : "Selected rows"
+                    }
+                    activePlaybackOverrideId={activePlaybackOverrideId}
+                    allVisibleSelected={allVisibleSelected}
+                    availableGroups={availableGroups}
+                    clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
+                    effectiveGroupValue={effectiveGroupValue}
+                    favoriteTagIds={favoriteTagIds}
+                    isCreatingPlaylist={isCreatingCustomPlaylist}
+                    isMediaLoading={isTagRowsLoading}
+                    isExpanded={isExpandedListView}
+                    isSearchOpen={isSearchOpen}
+                    onToggleExpanded={() => setIsListExpanded((currentValue) => !currentValue)}
+                    onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
+                    onPlayTagRow={handlePlayTagRow}
+                    onRemoveTag={handleRemoveTag}
+                    onRowFilterModeChange={setRowFilterMode}
+                    onSearchQueryChange={setSearchQuery}
+                    onSelectAll={handleSelectAll}
+                    onSelectedGroupValueChange={setSelectedGroupValue}
+                    onToggleFavorite={handleToggleFavorite}
+                    onToggleSearch={handleToggleSearch}
+                    onToggleTagSelection={handleToggleTagSelection}
+                    onUpdateTag={handleUpdateTag}
+                    rowFilterMode={rowFilterMode}
+                    rows={filteredRows}
+                    searchQuery={searchQuery}
+                    selectedTagIds={selectedTagIds}
+                    showCreateActions={showTagListActions}
+                    sportTableConfig={sportTableConfig}
+                  />
+                )}
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -915,6 +915,33 @@ div.web-view-spinner div.bar12 {
   border: 1px solid rgba(0, 0, 0, 0);
 }
 
+.sg-event-timeline-scrollbar {
+  scrollbar-color: rgba(59, 130, 246, 0.85) rgba(15, 23, 42, 0.72);
+  scrollbar-width: thin;
+}
+.sg-event-timeline-scrollbar:hover,
+.sg-event-timeline-scrollbar:active {
+  scrollbar-color: rgba(96, 165, 250, 0.95) rgba(15, 23, 42, 0.86);
+}
+.sg-event-timeline-scrollbar::-webkit-scrollbar-track {
+  background-color: rgba(15, 23, 42, 0.72);
+  border-radius: 9999px;
+}
+.sg-event-timeline-scrollbar::-webkit-scrollbar-track:hover {
+  background-color: rgba(15, 23, 42, 0.9);
+}
+.sg-event-timeline-scrollbar::-webkit-scrollbar-thumb,
+.sg-event-timeline-scrollbar:hover::-webkit-scrollbar-thumb,
+.sg-event-timeline-scrollbar::-webkit-scrollbar-thumb:hover,
+.sg-event-timeline-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(59, 130, 246, 0.88);
+  border-color: rgba(15, 23, 42, 0.72);
+}
+.sg-event-timeline-scrollbar:hover::-webkit-scrollbar-thumb,
+.sg-event-timeline-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(96, 165, 250, 0.98);
+}
+
 .vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
   margin-top: 44px;
 }

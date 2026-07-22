@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TMediaArtifact } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
-import {
-  buildMediaThumbnailLookup,
-  resolveTagRowArtifactThumbnail,
-} from "../media-thumbnail-lookup";
+import { buildMediaThumbnailLookup, resolveTagRowArtifactThumbnail } from "../media-thumbnail-lookup";
 import { buildMockFootballRows } from "../mock-football-rows";
 import type { RowFilterMode, SgTagRow, SgTagRowEditPayload, SportTableKind } from "../types";
 
@@ -184,9 +181,14 @@ export const useSgEventTagState = ({
     });
   };
 
+  const clearSelectedTagIds = () => {
+    setSelectedTagIds([]);
+  };
+
   return {
     allVisibleSelected,
     availableGroups,
+    clearSelectedTagIds,
     effectiveGroupValue,
     favoriteTagIds,
     filteredRows,
