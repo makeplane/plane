@@ -147,7 +147,9 @@ export const buildCustomPlaylistThumbnailUrl = (value: string | null | undefined
   if (/^https?:\/\//i.test(normalizedValue)) return normalizedValue;
 
   const cpServerBaseUrl = getCpServerBaseUrl();
-  return cpServerBaseUrl ? `${cpServerBaseUrl}/blobs/thumbnails/${encodeURIComponent(normalizedValue)}` : normalizedValue;
+  return cpServerBaseUrl
+    ? `${cpServerBaseUrl}/blobs/thumbnails/${encodeURIComponent(normalizedValue)}`
+    : normalizedValue;
 };
 
 export const formatLooseLabel = (value: string) =>
@@ -264,40 +266,60 @@ const buildTimecode = (tag: Record<string, unknown>) => {
   return start || end || "--";
 };
 
-const findTagDataValue = (tag: Record<string, unknown>, names: string[]) => {
+const normalizeTagLookupKey = (value: unknown) =>
+  toText(value)
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+const isTagDataKeyMatch = (normalizedKey: string, normalizedNames: ReadonlySet<string>) => {
+  if (!normalizedKey || normalizedNames.has(normalizedKey)) return normalizedNames.has(normalizedKey);
+
+  return Array.from(normalizedNames).some(
+    (name) => name.length >= 8 && (normalizedKey.startsWith(`${name}_`) || normalizedKey.endsWith(`_${name}`))
+  );
+};
+
+const findTagDataMatch = (tag: Record<string, unknown>, names: string[]) => {
+  const normalizedNames = new Set(names.map((name) => normalizeTagLookupKey(name)).filter(Boolean));
+
   for (const name of names) {
     const directValue = toText(tag[name]);
-    if (directValue) return directValue;
+    if (directValue) return { key: name, value: directValue };
+  }
+
+  for (const [key, value] of Object.entries(tag)) {
+    const normalizedKey = normalizeTagLookupKey(key);
+    if (!isTagDataKeyMatch(normalizedKey, normalizedNames)) continue;
+
+    const directValue = toText(value);
+    if (directValue) return { key, value: directValue };
   }
 
   const dataEntries = asArray(tag.data);
   for (const entry of dataEntries) {
     const entryRecord = asRecord(entry);
-    const tagName = toText(
+    const tagName = normalizeTagLookupKey(
       entryRecord.tag ??
         entryRecord.field ??
         entryRecord.field_name ??
         entryRecord.fieldName ??
         entryRecord.name ??
         entryRecord.key
-    )
-      .toLowerCase()
-      .replace(/\s+/g, "_");
-    const match = names.some((name) => tagName === name || tagName.includes(name));
-    if (!match) continue;
+    );
+    if (!isTagDataKeyMatch(tagName, normalizedNames)) continue;
+
     const tagValue = toText(entryRecord.value ?? entryRecord.field_value ?? entryRecord.fieldValue ?? entryRecord.val);
-    if (tagValue) return tagValue;
+    if (tagValue) return { key: tagName, value: tagValue };
   }
 
-  return "";
+  return null;
 };
 
-const normalizeTagContextKey = (value: unknown) =>
-  toText(value)
-    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
+const findTagDataValue = (tag: Record<string, unknown>, names: string[]) => findTagDataMatch(tag, names)?.value ?? "";
+
+const normalizeTagContextKey = normalizeTagLookupKey;
 
 const TAG_CONTEXT_IGNORED_KEYS = new Set([
   "action",
@@ -359,6 +381,35 @@ const formatFootballDownDistance = (down: string, distance: string) => {
   return normalizedDown || normalizedDistance || "--";
 };
 
+const DEFAULT_SG_TAG_DURATION_SECONDS = 8;
+
+const isDisplayValue = (value: string | null | undefined) => {
+  const normalizedValue = (value ?? "").trim().toLowerCase();
+  return Boolean(normalizedValue && normalizedValue !== "--" && normalizedValue !== "-" && normalizedValue !== "n/a");
+};
+
+const formatFootballActionResult = (action: string) => {
+  const normalizedAction = action.trim().toLowerCase();
+  if (!normalizedAction || normalizedAction === "--") return "--";
+
+  if (/pass[_\s-]?complete/.test(normalizedAction)) return "Complete";
+  if (/pass[_\s-]?incomplete/.test(normalizedAction)) return "Incomplete";
+  if (/touchdown|td/.test(normalizedAction)) return "Touchdown";
+  if (/interception|intercepted/.test(normalizedAction)) return "Interception";
+  if (/fumble/.test(normalizedAction)) return "Fumble";
+  if (/sack/.test(normalizedAction)) return "Sack";
+  if (/turnover/.test(normalizedAction)) return "Turnover";
+  if (/penalty/.test(normalizedAction)) return "Penalty";
+  if (/punt/.test(normalizedAction)) return "Punt";
+  if (/kickoff/.test(normalizedAction)) return "Kickoff";
+  if (/field[_\s-]?goal/.test(normalizedAction)) return "Field Goal";
+  if (/extra[_\s-]?point/.test(normalizedAction)) return "Extra Point";
+  if (/end[_\s-]?period|period[_\s-]?end/.test(normalizedAction)) return "End Period";
+  if (/run|rush/.test(normalizedAction)) return "Run";
+
+  return formatLooseLabel(action);
+};
+
 const formatBaseballInning = (half: string, inning: string) => {
   const normalizedHalf = half ? formatLooseLabel(half) : "";
   const normalizedInning = inning ? toOrdinal(inning) : "";
@@ -411,6 +462,28 @@ const formatCricketRuns = (value: string) => {
     return String(numericValue);
   }
   return formatLooseLabel(value);
+};
+
+const formatCricketActionResult = (action: string) => {
+  const normalizedAction = normalizeTagLookupKey(action);
+  if (!normalizedAction) return "--";
+
+  if (/boundary_six|six|six_runs|6_run/.test(normalizedAction)) return "6";
+  if (/boundary_four|four|four_runs|4_run/.test(normalizedAction)) return "4";
+  if (/three_runs|3_runs/.test(normalizedAction)) return "3";
+  if (/two_runs|2_runs/.test(normalizedAction)) return "2";
+  if (/single|one_run|1_run/.test(normalizedAction)) return "1";
+  if (/dot_ball|dot/.test(normalizedAction)) return "0";
+  if (/run_out|runout/.test(normalizedAction)) return "Run Out";
+  if (/wicket|dismissal|bowled|caught|stumped|lbw|out/.test(normalizedAction)) return "Wicket";
+  if (/no_ball|noball/.test(normalizedAction)) return "No Ball";
+  if (/wide/.test(normalizedAction)) return "Wide";
+  if (/leg_bye|legbye/.test(normalizedAction)) return "Leg Bye";
+  if (/bye/.test(normalizedAction)) return "Bye";
+  if (/end_over|over_end/.test(normalizedAction)) return "End Over";
+  if (/end_innings|innings_end/.test(normalizedAction)) return "End Innings";
+
+  return formatLooseLabel(action);
 };
 
 const formatCricketOver = (displayValue: string, overNumber: string, ballInOver: string) => {
@@ -531,40 +604,75 @@ const getClockOnlyOffsetSeconds = (value: string, baseEventDateTime?: string | n
   );
 };
 
-const getExplicitTagOffsetSeconds = (value: string) => {
+const isMillisecondTagKey = (value: string | null | undefined) => {
+  const normalizedKey = normalizeTagLookupKey(value);
+  return normalizedKey.endsWith("_ms") || normalizedKey.includes("millisecond");
+};
+
+const getExplicitTagOffsetSeconds = (value: string, sourceKey?: string | null) => {
   const normalizedValue = value.trim();
   if (!normalizedValue) return null;
+
+  const millisecondUnitValue = normalizedValue.match(
+    /^(\d+(?:\.\d+)?)\s*(?:ms|msec|msecs|millisecond|milliseconds)$/i
+  )?.[1];
+  if (millisecondUnitValue) {
+    const parsedMilliseconds = Number(millisecondUnitValue);
+    return Number.isFinite(parsedMilliseconds) && parsedMilliseconds >= 0 ? parsedMilliseconds / 1000 : null;
+  }
+
+  const numericOffset = Number(normalizedValue);
+  if (Number.isFinite(numericOffset) && isMillisecondTagKey(sourceKey)) return numericOffset / 1000;
 
   return parseTimecodeToSeconds(normalizedValue);
 };
 
-const getExplicitTagDurationSeconds = (value: string) => {
+const getExplicitTagDurationSeconds = (value: string, sourceKey?: string | null) => {
   const normalizedValue = value.trim();
   if (!normalizedValue) return null;
 
+  const millisecondUnitValue = normalizedValue.match(
+    /^(\d+(?:\.\d+)?)\s*(?:ms|msec|msecs|millisecond|milliseconds)$/i
+  )?.[1];
+  if (millisecondUnitValue) {
+    const parsedMilliseconds = Number(millisecondUnitValue);
+    return Number.isFinite(parsedMilliseconds) && parsedMilliseconds > 0 ? parsedMilliseconds / 1000 : null;
+  }
+
   const unitlessValue =
     normalizedValue.match(/^(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds)$/i)?.[1] ?? normalizedValue;
-  const durationSeconds = parseTimecodeToSeconds(unitlessValue);
+  const numericDuration = Number(unitlessValue);
+  const durationSeconds =
+    Number.isFinite(numericDuration) && isMillisecondTagKey(sourceKey)
+      ? numericDuration / 1000
+      : parseTimecodeToSeconds(unitlessValue);
 
   return durationSeconds !== null && durationSeconds > 0 ? durationSeconds : null;
 };
 
-const formatTagOffsetTimecode = (value: string) => {
+const formatTagOffsetTimecode = (value: string, sourceKey?: string | null) => {
   const normalizedValue = value.trim();
   if (!normalizedValue) return "";
 
-  const offsetSeconds = getExplicitTagOffsetSeconds(normalizedValue);
+  const offsetSeconds = getExplicitTagOffsetSeconds(normalizedValue, sourceKey);
   return offsetSeconds !== null ? formatClockFromSeconds(String(offsetSeconds)) : normalizedValue;
 };
 
-const buildOffsetTimecode = (start: string, end: string, duration: string) => {
-  const formattedStart = formatTagOffsetTimecode(start);
-  const formattedEnd = formatTagOffsetTimecode(end);
+const buildOffsetTimecode = (
+  start: string,
+  end: string,
+  duration: string,
+  durationSourceKey?: string | null,
+  startSourceKey?: string | null,
+  endSourceKey?: string | null
+) => {
+  const formattedStart = formatTagOffsetTimecode(start, startSourceKey);
+  const formattedEnd = formatTagOffsetTimecode(end, endSourceKey);
 
   if (formattedStart && formattedEnd) return `${formattedStart}-${formattedEnd}`;
   if (formattedStart && duration) {
-    const startSeconds = getExplicitTagOffsetSeconds(start);
-    const durationSeconds = getExplicitTagDurationSeconds(duration);
+    const startSeconds = getExplicitTagOffsetSeconds(start, startSourceKey);
+    const durationSeconds = getExplicitTagDurationSeconds(duration, durationSourceKey);
 
     if (startSeconds !== null && durationSeconds !== null) {
       return `${formatClockFromSeconds(String(startSeconds))}-${formatClockFromSeconds(String(startSeconds + durationSeconds))}`;
@@ -572,6 +680,36 @@ const buildOffsetTimecode = (start: string, end: string, duration: string) => {
   }
 
   return formattedStart || formattedEnd;
+};
+
+const formatClipRangeTimecode = (startSeconds: number | null, endSeconds: number | null) => {
+  if (startSeconds === null) return "";
+
+  const formattedStart = formatClockFromSeconds(String(startSeconds));
+  if (!formattedStart) return "";
+
+  if (endSeconds !== null && endSeconds > startSeconds) {
+    const formattedEnd = formatClockFromSeconds(String(endSeconds));
+    if (formattedEnd) return `${formattedStart}-${formattedEnd}`;
+  }
+
+  return formattedStart;
+};
+
+const formatRawTimestampTimecode = (value: string) => {
+  const normalizedValue = value.trim();
+  if (!normalizedValue) return "";
+
+  const offsetTimecode = formatTagOffsetTimecode(normalizedValue);
+  if (offsetTimecode && offsetTimecode !== normalizedValue) return offsetTimecode;
+
+  const isoTimeMatch = normalizedValue.match(/^\d{4}-\d{2}-\d{2}[T\s](\d{1,2}:\d{2}(?::\d{2})?)/);
+  if (isoTimeMatch?.[1]) return isoTimeMatch[1];
+
+  const clockMatch = normalizedValue.match(/^(\d{1,2}:\d{2}(?::\d{2})?)(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/);
+  if (clockMatch?.[1]) return clockMatch[1];
+
+  return normalizedValue;
 };
 
 const getTimeRangeOffsetSeconds = (value: string, baseEventDateTime?: string | null) =>
@@ -923,8 +1061,35 @@ const buildTagRowBySport = (
     findTagDataValue(tag, ["primary_action", "action", "event_code", "event", "play", "tag"]) ||
     formatLooseLabel(toText(tag.action || tag.event_code || tag.play || tag.tag));
   const result =
-    findTagDataValue(tag, ["result", "outcome", "gain", "play_result", "shot_result", "delivery_result"]) ||
-    formatLooseLabel(toText(tag.result || tag.outcome));
+    findTagDataValue(tag, [
+      "result",
+      "outcome",
+      "play_outcome",
+      "playOutcome",
+      "action_result",
+      "actionResult",
+      "ball_result",
+      "ballResult",
+      "batting_result",
+      "battingResult",
+      "bowling_result",
+      "bowlingResult",
+      "delivery_outcome",
+      "deliveryOutcome",
+      "primary_result",
+      "primaryResult",
+      "tag_result",
+      "tagResult",
+      "gain",
+      "yards_gained",
+      "yardsGained",
+      "play_result",
+      "playResult",
+      "event_result",
+      "eventResult",
+      "shot_result",
+      "delivery_result",
+    ]) || formatLooseLabel(toText(tag.result || tag.outcome));
   const team =
     findTagDataValue(tag, ["team", "unit", "side", "batting_team", "fielding_team", "possession_team"]) ||
     formatLooseLabel(toText(tag.team || tag.unit));
@@ -937,9 +1102,15 @@ const buildTagRowBySport = (
   const rawPlaylistTimestamp =
     findTagDataValue(tag, [
       "timestamp",
+      "tag_timestamp",
+      "tagTimestamp",
       "event_timestamp",
       "absolute_timestamp",
       "video_timestamp",
+      "clip_timestamp",
+      "clipTimestamp",
+      "clip_time",
+      "clipTime",
       "program_date_time",
       "program_datetime",
       "prog_date_time",
@@ -950,72 +1121,142 @@ const buildTagRowBySport = (
   const thumbnailUrl = getTagThumbnailUrl(tag);
   const explicitSourceTagId = getSourceTagId(tag);
   const explicitClipId = getClipId(tag);
-  const rawClipStart = findTagDataValue(tag, [
+  const rawClipStartMatch = findTagDataMatch(tag, [
     "clipStart",
     "clip_start",
     "clip_start_seconds",
     "clip_start_second",
     "start",
+    "start_time",
+    "startTime",
+    "start_timestamp",
+    "startTimestamp",
+    "start_offset",
+    "startOffset",
+    "offset",
+    "offset_seconds",
+    "offsetSeconds",
     "start_seconds",
     "start_second",
+    "start_ms",
+    "startMs",
     "start_timecode",
     "video_offset",
     "video_offset_seconds",
+    "video_offset_ms",
+    "videoOffsetMs",
     "videoStart",
     "video_start",
+    "video_start_ms",
+    "videoStartMs",
     "video_start_seconds",
     "videoTime",
     "video_time",
+    "video_time_ms",
+    "videoTimeMs",
     "video_time_seconds",
     "video_timestamp_seconds",
+    "video_timestamp_ms",
     "video_timecode_clip_start",
   ]);
-  const rawClipEnd = findTagDataValue(tag, [
+  const rawClipStart = rawClipStartMatch?.value ?? "";
+  const rawClipEndMatch = findTagDataMatch(tag, [
     "clipEnd",
     "clip_end",
+    "clip_end_ms",
+    "clipEndMs",
     "clip_end_seconds",
     "clip_end_second",
     "end",
+    "end_time",
+    "endTime",
+    "end_timestamp",
+    "endTimestamp",
+    "end_offset",
+    "endOffset",
     "end_seconds",
     "end_second",
+    "end_ms",
+    "endMs",
     "end_timecode",
     "videoEnd",
     "video_end",
+    "video_end_ms",
+    "videoEndMs",
     "video_end_seconds",
     "video_timecode_clip_end",
   ]);
-  const rawClipDuration = findTagDataValue(tag, [
+  const rawClipEnd = rawClipEndMatch?.value ?? "";
+  const rawClipDurationMatch = findTagDataMatch(tag, [
     "clipDuration",
     "clipDurationSeconds",
     "clip_duration",
+    "clip_duration_ms",
+    "clipDurationMs",
+    "clip_duration_milliseconds",
+    "clipDurationMilliseconds",
     "clip_duration_seconds",
     "clip_duration_second",
+    "clip_length",
+    "clipLength",
+    "clip_length_ms",
+    "clipLengthMs",
+    "clip_length_seconds",
+    "clipLengthSeconds",
     "duration",
+    "duration_ms",
+    "durationMs",
+    "duration_milliseconds",
+    "durationMilliseconds",
     "durationSec",
     "durationSeconds",
     "duration_sec",
     "duration_seconds",
     "duration_second",
+    "length",
+    "length_ms",
+    "length_seconds",
     "playlist_duration",
+    "playlist_duration_ms",
     "playlist_duration_seconds",
     "videoDuration",
     "videoDurationSeconds",
     "video_duration",
+    "video_duration_ms",
     "video_duration_seconds",
   ]);
+  const rawClipDuration = rawClipDurationMatch?.value ?? "";
   const rawDataTimecode = findTagDataValue(tag, [
     "timecode",
     "time_code",
     "time_range",
     "timerange",
+    "time",
+    "time_marker",
+    "timeMarker",
+    "tag_time",
+    "tagTime",
+    "clip_time",
+    "clipTime",
+    "clip_timestamp",
+    "clipTimestamp",
     "video_timecode",
     "video_timecode_display",
     "video_timestamp",
+    "video_time",
+    "videoTime",
   ]);
   if (timecode === "--" && rawDataTimecode) {
     timecode = rawDataTimecode;
   }
-  const offsetTimecode = buildOffsetTimecode(rawClipStart, rawClipEnd, rawClipDuration);
+  const offsetTimecode = buildOffsetTimecode(
+    rawClipStart,
+    rawClipEnd,
+    rawClipDuration,
+    rawClipDurationMatch?.key,
+    rawClipStartMatch?.key,
+    rawClipEndMatch?.key
+  );
   if (timecode === "--" && offsetTimecode) {
     timecode = offsetTimecode;
   }
@@ -1037,6 +1278,8 @@ const buildTagRowBySport = (
       matrixPeriod = rawQuarterValue ? groupQuarter : null;
       primaryDetail = formatFootballDownDistance(down, distance);
       secondaryDetail = formatYardValue(yards);
+      resultDisplay =
+        result || (isDisplayValue(secondaryDetail) ? secondaryDetail : formatFootballActionResult(action));
       break;
     }
     case "baseball": {
@@ -1091,11 +1334,23 @@ const buildTagRowBySport = (
       const ballInOver = findTagDataValue(tag, ["ball_in_over"]);
       const overValue = formatCricketOver(overDisplay, overNumber, ballInOver);
       const overGroupValue = formatCricketOverGroup(overNumber, overDisplay);
-      const runs = findTagDataValue(tag, ["score_home", "runs_scored", "points_or_runs_scored", "runs", "run_value"]);
+      const runs = findTagDataValue(tag, [
+        "exact_runs",
+        "runs_scored",
+        "points_or_runs_scored",
+        "runs",
+        "run",
+        "run_value",
+        "runs_value",
+        "score_value",
+        "score_home",
+        "total_runs",
+      ]);
       groupValue = overGroupValue || SPORT_TABLE_CONFIGS.cricket.defaultGroupValue;
       matrixPeriod = overGroupValue || (inningsNumber ? `Innings ${inningsNumber}` : null);
       primaryDetail = overValue || "--";
       secondaryDetail = formatCricketRuns(runs);
+      resultDisplay = result || (isDisplayValue(secondaryDetail) ? secondaryDetail : formatCricketActionResult(action));
       break;
     }
     default: {
@@ -1115,27 +1370,44 @@ const buildTagRowBySport = (
     playlistTimestamp ?? playlistFallbackTimestamp,
     baseEventDateTime
   );
-  const explicitClipStartSeconds = getExplicitTagOffsetSeconds(rawClipStart);
-  const explicitClipEndSeconds = getExplicitTagOffsetSeconds(rawClipEnd);
-  const explicitClipDurationSeconds = getExplicitTagDurationSeconds(rawClipDuration);
+  const explicitClipStartSeconds = getExplicitTagOffsetSeconds(rawClipStart, rawClipStartMatch?.key);
+  const explicitClipEndSeconds = getExplicitTagOffsetSeconds(rawClipEnd, rawClipEndMatch?.key);
+  const explicitClipDurationSeconds = getExplicitTagDurationSeconds(rawClipDuration, rawClipDurationMatch?.key);
   const timecodeStartSeconds = getTimeRangeOffsetSeconds(timecode, baseEventDateTime);
   const timecodeEndSeconds = getTimeRangeOffsetSeconds(
     timecode.split(TIMECODE_RANGE_SEPARATOR_REGEX)[1] ?? "",
     baseEventDateTime
   );
-  const clipDurationSeconds =
+  let clipDurationSeconds =
     explicitClipDurationSeconds ??
     (explicitClipStartSeconds !== null &&
     explicitClipEndSeconds !== null &&
     explicitClipEndSeconds > explicitClipStartSeconds
       ? explicitClipEndSeconds - explicitClipStartSeconds
       : null);
-  const clipStartSeconds =
-    explicitClipStartSeconds ?? timecodeStartSeconds ?? timestampOffsetSeconds;
+  const clipStartSeconds = explicitClipStartSeconds ?? timecodeStartSeconds ?? timestampOffsetSeconds;
+  const hasPlaylistTimestamp = Boolean(playlistTimestamp || playlistFallbackTimestamp || rawPlaylistTimestamp);
+  const hasClipReference = Boolean(explicitClipId || sourceUrl || thumbnailUrl);
+  const shouldUseDefaultSgClipDuration = sport === "american-football" || sport === "cricket";
+  if (
+    clipDurationSeconds === null &&
+    shouldUseDefaultSgClipDuration &&
+    (clipStartSeconds !== null || hasPlaylistTimestamp || hasClipReference)
+  ) {
+    clipDurationSeconds = DEFAULT_SG_TAG_DURATION_SECONDS;
+  }
   const clipEndSeconds =
     explicitClipEndSeconds ??
     timecodeEndSeconds ??
     (clipStartSeconds !== null && clipDurationSeconds !== null ? clipStartSeconds + clipDurationSeconds : null);
+
+  if (timecode === "--") {
+    const derivedTimecode =
+      formatClipRangeTimecode(clipStartSeconds, clipEndSeconds) || formatRawTimestampTimecode(rawPlaylistTimestamp);
+    if (derivedTimecode) {
+      timecode = derivedTimecode;
+    }
+  }
   const clipRangeSource =
     explicitClipStartSeconds !== null || explicitClipEndSeconds !== null || explicitClipDurationSeconds !== null
       ? "explicit"
