@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Django imports
+from django.db import transaction
 from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
 from django.db.models.functions import Coalesce
@@ -84,10 +85,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # If a user is moved to a guest role he can't have any other role in projects
-        if "role" in request.data and int(request.data.get("role")) == 5:
-            ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
-
         # SECURITY: The only field this endpoint is allowed to mutate is ``role``.
         # ``WorkSpaceMemberSerializer`` is declared with ``fields = "__all__"`` and
         # ``DynamicBaseSerializer`` ignores the ``fields=`` kwarg for writes, so
@@ -101,10 +98,22 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         serializer = WorkSpaceMemberSerializer(workspace_member, data=allowed_data, partial=True)
 
-        if serializer.is_valid():
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate the role (via the serializer) BEFORE cascading, and do the
+        # cascade + save atomically. Otherwise a bad role (e.g. non-integer) would
+        # 500 on the manual int() cast, and the guest project-role downgrade could
+        # persist even if the member update never succeeds.
+        with transaction.atomic():
+            # If a user is moved to a guest role they can't hold any other project role.
+            if serializer.validated_data.get("role") == 5:
+                ProjectMember.objects.filter(
+                    workspace__slug=slug, member_id=workspace_member.member_id
+                ).update(role=5)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):

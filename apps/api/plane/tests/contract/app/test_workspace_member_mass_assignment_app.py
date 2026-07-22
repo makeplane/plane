@@ -158,3 +158,22 @@ class TestWorkspaceMemberMassAssignment:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         own_member.refresh_from_db()
         assert own_member.role == 20
+
+    def test_non_integer_role_is_400_not_500(self, attacker_workspace):
+        """A non-integer role must be a validation error (400), not a 500 — and
+        the guest project-role cascade must not run when the update is invalid."""
+        attacker_ws, attacker = attacker_workspace
+        target = _make_user("bad-role-target@plane.so")
+        target_member = _add_member(attacker_ws, target, role=15)
+
+        client = APIClient()
+        client.force_authenticate(user=attacker)
+        response = client.patch(
+            _member_detail_url(attacker_ws.slug, target_member.id),
+            {"role": "not-a-number"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        target_member.refresh_from_db()
+        assert target_member.role == 15
