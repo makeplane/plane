@@ -80,6 +80,23 @@ class IntakeViewSet(BaseViewSet):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def retrieve(self, request, slug, project_id, pk):
+        # Guard the routed retrieve action with the project-membership check.
+        # Without this handler the action falls through to the stock DRF
+        # ModelViewSet.retrieve under bare IsAuthenticated, allowing any
+        # authenticated user to read an intake in a project they don't belong to.
+        return super().retrieve(request, slug=slug, project_id=project_id, pk=pk)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def partial_update(self, request, slug, project_id, pk):
+        # Guard the routed partial_update action with the project-membership
+        # check. Without this handler the action falls through to the stock
+        # DRF ModelViewSet.partial_update under bare IsAuthenticated, allowing
+        # any authenticated user to modify an intake in a project they don't
+        # belong to.
+        return super().partial_update(request, slug=slug, project_id=project_id, pk=pk)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, pk):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).first()
         # Handle default intake delete

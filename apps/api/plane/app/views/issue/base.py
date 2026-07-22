@@ -713,6 +713,15 @@ class IssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
+    def update(self, request, slug, project_id, pk=None):
+        # A full PUT-replace is not a meaningful operation for issues; the
+        # client only ever issues PATCH updates. Route PUT through the same
+        # authorized partial-update path so this routed action is guarded by
+        # the project-membership check instead of falling through to the
+        # stock DRF ModelViewSet.update under bare IsAuthenticated.
+        return self.partial_update(request, slug=slug, project_id=project_id, pk=pk)
+
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
