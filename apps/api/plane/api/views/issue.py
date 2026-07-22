@@ -951,6 +951,19 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    def _record_archive_activity(self, request, project_id, issue, requested_data):
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps(requested_data),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
     @work_item_docs(
         operation_id="archive_work_item",
         summary="Archive work item",
@@ -973,16 +986,11 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 {"error": "Can only archive completed or cancelled state group issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        issue_activity.delay(
-            type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
-            actor_id=str(request.user.id),
-            issue_id=str(issue.id),
-            project_id=str(project_id),
-            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
+        self._record_archive_activity(
+            request,
+            project_id,
+            issue,
+            {"archived_at": str(timezone.now().date()), "automation": False},
         )
         issue.archived_at = timezone.now().date()
         issue.save()
@@ -1009,16 +1017,11 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
             archived_at__isnull=False,
             pk=pk,
         )
-        issue_activity.delay(
-            type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": None}),
-            actor_id=str(request.user.id),
-            issue_id=str(issue.id),
-            project_id=str(project_id),
-            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
+        self._record_archive_activity(
+            request,
+            project_id,
+            issue,
+            {"archived_at": None},
         )
         issue.archived_at = None
         issue.save()
