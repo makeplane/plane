@@ -211,15 +211,17 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
 
         response = session_client.patch(
             self.get_playlist_url(playlist.id),
-            {"name": "Updated Playlist", "thumbnail": "", "clip": 3},
+            {"name": "Updated Playlist", "subtitle": "Offense clips", "thumbnail": "", "clip": 3},
             format="json",
         )
 
         assert response.status_code == status.HTTP_200_OK
         playlist.refresh_from_db()
         assert playlist.name == "Updated Playlist"
+        assert playlist.subtitle == "Offense clips"
         assert playlist.thumbnail is None
         assert playlist.clip == 3
+        assert response.json()["subtitle"] == "Offense clips"
         assert response.json()["thumbnail"] is None
         assert response.json()["clip"] == 3
 
