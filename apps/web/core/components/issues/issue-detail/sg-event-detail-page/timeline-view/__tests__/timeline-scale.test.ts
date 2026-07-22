@@ -7,6 +7,7 @@ import * as timelineScale from "../utils/timeline-scale.ts";
 
 const {
   DEFAULT_TIMELINE_SCALE_INDEX,
+  MIN_TIMELINE_MAJOR_TICK_SPACING_PX,
   MIN_SECOND_TICK_SPACING_PX,
   TIMELINE_SCALE_LEVELS,
   buildScaledTimelineTicks,
@@ -57,22 +58,52 @@ test("timeline ticks become more precise when zooming in and coarser when zoomin
   const zoomedOutTicks = buildScaledTimelineTicks(3600, 0.5);
   const defaultTicks = buildScaledTimelineTicks(3600, 1);
   const zoomedInTicks = buildScaledTimelineTicks(3600, 4);
+  const zoomedOutMajorTicks = zoomedOutTicks.filter((tick) => tick.kind === "major");
+  const defaultMajorTicks = defaultTicks.filter((tick) => tick.kind === "major");
+  const zoomedInMajorTicks = zoomedInTicks.filter((tick) => tick.kind === "major");
 
-  assert.ok(defaultTicks.length > zoomedOutTicks.length);
-  assert.ok(zoomedInTicks.length > defaultTicks.length);
+  assert.ok(defaultMajorTicks.length > zoomedOutMajorTicks.length);
+  assert.ok(zoomedInMajorTicks.length > defaultMajorTicks.length);
   assert.equal(zoomedInTicks[0]?.position, 0);
   assert.equal(zoomedInTicks.at(-1)?.position, 100);
+});
+
+test("timeline ruler includes labeled major ticks and unlabeled minor subdivisions", () => {
+  const ticks = buildScaledTimelineTicks(600, 2, getTimelineContentWidth(2, 600));
+  const majorTicks = ticks.filter((tick) => tick.kind === "major");
+  const minorTicks = ticks.filter((tick) => tick.kind === "minor");
+
+  assert.ok(majorTicks.length > 0);
+  assert.ok(minorTicks.length > 0);
+  assert.ok(majorTicks.every((tick) => tick.label.length > 0));
+  assert.ok(minorTicks.every((tick) => tick.label === ""));
+  assert.ok(minorTicks.some((tick) => tick.seconds > (majorTicks[0]?.seconds ?? 0)));
+});
+
+test("timeline ruler keeps major tick labels far enough apart at compact zoom", () => {
+  const totalSeconds = 3600;
+  const contentWidth = getTimelineContentWidth(0.5, totalSeconds);
+  const majorTicks = buildScaledTimelineTicks(totalSeconds, 0.5, contentWidth).filter((tick) => tick.kind === "major");
+  const majorTickGaps = majorTicks.slice(1).map((tick, index) => {
+    const previousTick = majorTicks[index];
+
+    return ((tick.seconds - previousTick.seconds) * contentWidth) / totalSeconds;
+  });
+
+  assert.ok(majorTickGaps.every((gapPx) => gapPx >= MIN_TIMELINE_MAJOR_TICK_SPACING_PX));
 });
 
 test("maximum timeline zoom supports readable one-second precision", () => {
   const eventDurationSeconds = 20 * 60;
   const maxScale = TIMELINE_SCALE_LEVELS.at(-1) ?? 1;
   const contentWidth = getTimelineContentWidth(maxScale, eventDurationSeconds);
-  const ticks = buildScaledTimelineTicks(eventDurationSeconds, maxScale);
+  const ticks = buildScaledTimelineTicks(eventDurationSeconds, maxScale, contentWidth);
+  const majorTicks = ticks.filter((tick) => tick.kind === "major");
 
   assert.ok(contentWidth / eventDurationSeconds >= MIN_SECOND_TICK_SPACING_PX);
-  assert.equal(ticks[1]?.label, "00:01");
-  assert.equal(ticks[1]?.position, (1 * 100) / eventDurationSeconds);
+  assert.equal(majorTicks[1]?.seconds, 1);
+  assert.equal(majorTicks[1]?.label, "00:01");
+  assert.equal(majorTicks[1]?.position, (1 * 100) / eventDurationSeconds);
   assert.equal(ticks.at(-1)?.position, 100);
   assert.equal(getTimelineScaleLabel(maxScale), "1 sec");
 });

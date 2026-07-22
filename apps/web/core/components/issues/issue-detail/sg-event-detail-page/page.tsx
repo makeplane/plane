@@ -276,6 +276,7 @@ export const SgEventDetailPage = ({
     setRowFilterMode,
     setSearchQuery,
     setSelectedGroupValue,
+    tagTypeRows,
   } = useSgEventTagState({
     cpServerBaseUrl,
     manifestArtifacts: sgMediaPayload?.manifestArtifacts,
@@ -613,6 +614,7 @@ export const SgEventDetailPage = ({
                     rows={filteredRows}
                     selectedTagIds={selectedTagIds}
                     sport={sportTableConfig.sport}
+                    tagTypeRows={tagTypeRows}
                     playerLabelByNumber={timelinePlayerLabelByNumber}
                   />
                 ) : (
