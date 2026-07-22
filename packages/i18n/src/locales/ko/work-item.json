@@ -339,10 +339,15 @@
       "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
       "dispatch_success": "Dispatched. Looper will claim it when connected.",
       "action_failed": "The action failed. Refresh the panel state and try again.",
+      "open_question": "미답변 질문",
       "answer": "Answer",
       "answer_placeholder": "Answer with a selected option ID or a concise decision",
       "submit_answer": "Submit answer",
       "answer_success": "Decision recorded. Looper will continue after it verifies the answer.",
+      "answer_mode": {
+        "formal_product_spec": "제품 스펙이 필요합니다",
+        "formal_product_spec_hint": "이 결정은 정식 제품 스펙으로 기록되므로 여기에서는 답변할 수 없습니다. 스펙을 게시하면 Looper가 이어서 진행합니다."
+      },
       "stop": "Stop",
       "release": "Release ownership",
       "release_reason": "Describe why this ownership is being released",

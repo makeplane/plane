@@ -339,10 +339,15 @@
       "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
       "dispatch_success": "Dispatched. Looper will claim it when connected.",
       "action_failed": "The action failed. Refresh the panel state and try again.",
+      "open_question": "待回答的問題",
       "answer": "Answer",
       "answer_placeholder": "Answer with a selected option ID or a concise decision",
       "submit_answer": "Submit answer",
       "answer_success": "Decision recorded. Looper will continue after it verifies the answer.",
+      "answer_mode": {
+        "formal_product_spec": "需要產品 spec",
+        "formal_product_spec_hint": "此決策需要正式的產品 spec，無法在這裡快速回答。發布 spec 後 Looper 會繼續。"
+      },
       "stop": "Stop",
       "release": "Release ownership",
       "release_reason": "Describe why this ownership is being released",

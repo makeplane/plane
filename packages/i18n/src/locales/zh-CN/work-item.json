@@ -79,10 +79,15 @@
       "dispatch_confirm_body": "{owner} 的 {node} 将先调研需求并按角色收集决策，再产出技术方案。Plane 会保留唯一执行归属。",
       "dispatch_success": "已派发，Looper 联网后会自动领取",
       "action_failed": "操作失败，请根据面板状态重试",
+      "open_question": "待回答的问题",
       "answer": "回答",
       "answer_placeholder": "填写选项 ID 或简洁、明确的决策",
       "submit_answer": "提交回答",
       "answer_success": "决策已记录，Looper 核验后会继续推进",
+      "answer_mode": {
+        "formal_product_spec": "需要产品 spec",
+        "formal_product_spec_hint": "该决策需要正式的产品 spec，无法在这里快速回答。发布 spec 后 Looper 会继续。"
+      },
       "stop": "停止",
       "release": "释放归属",
       "release_reason": "填写释放原因",

@@ -339,10 +339,15 @@
       "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
       "dispatch_success": "Dispatched. Looper will claim it when connected.",
       "action_failed": "The action failed. Refresh the panel state and try again.",
+      "open_question": "Domanda aperta",
       "answer": "Answer",
       "answer_placeholder": "Answer with a selected option ID or a concise decision",
       "submit_answer": "Submit answer",
       "answer_success": "Decision recorded. Looper will continue after it verifies the answer.",
+      "answer_mode": {
+        "formal_product_spec": "Richiede una specifica di prodotto",
+        "formal_product_spec_hint": "Questa decisione viene registrata come specifica di prodotto e non può essere gestita qui. Pubblichi la specifica e Looper proseguirà."
+      },
       "stop": "Stop",
       "release": "Release ownership",
       "release_reason": "Describe why this ownership is being released",
