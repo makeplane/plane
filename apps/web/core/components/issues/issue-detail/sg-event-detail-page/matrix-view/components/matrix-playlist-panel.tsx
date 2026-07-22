@@ -1,17 +1,22 @@
-import type { MouseEvent as ReactMouseEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Download, Maximize2, MoreVertical, Share2, Trash2, Video, X } from "lucide-react";
+import type { MouseEvent as ReactMouseEvent } from "react";
+import { Maximize2, MoreVertical, Share2, Trash2, Video, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import type { TCustomPlaylist, TCustomPlaylistUpdatePayload } from "@/services/media-library.service";
 import { HlsVideo } from "ce/features/media-library/components/hls-video";
 import { PLAYER_FRAME_CLASS } from "../../constants";
+import type { SgTagRow } from "../../types";
 import { buildCustomPlaylistThumbnailUrl, buildCustomPlaylistUrl } from "../../utils";
 
 type SgMatrixPlaylistPanelProps = {
   customPlaylists: TCustomPlaylist[];
+  isCreatingPlaylist?: boolean;
+  onCreateCard?: () => void;
+  onCreatePlaylist?: () => void;
   onDeletePlaylist: (playlist: TCustomPlaylist) => Promise<void>;
   onUpdatePlaylist: (playlist: TCustomPlaylist, payload: TCustomPlaylistUpdatePayload) => Promise<TCustomPlaylist>;
+  rows?: SgTagRow[];
 };
 
 type SgPlaylistVideoModalProps = {
