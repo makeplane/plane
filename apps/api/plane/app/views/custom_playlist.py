@@ -74,5 +74,7 @@ class CustomPlaylistViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
-        self.get_object().delete()
+        playlist = get_object_or_404(CustomPlaylist.all_objects.all(), pk=pk)
+        self._authorize_event(playlist.event_id)
+        playlist.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)

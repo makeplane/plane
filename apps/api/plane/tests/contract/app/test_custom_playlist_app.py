@@ -27,6 +27,17 @@ class TestCustomPlaylistBase:
             "url": "https://sports.kanavio.com/hls/final-match/master.m3u8",
             "thumbnail": "https://sports.kanavio.com/thumbnails/final-match.jpg",
             "clip": 12,
+            "clips": [
+                {
+                    "id": "tag-row-1",
+                    "title": "Fast Break Dunk",
+                    "durationSeconds": 12,
+                    "fallbackTimestamp": "00:28:45",
+                    "timestamp": "00:28:45",
+                    "thumbnail": "https://sports.kanavio.com/thumbnails/fast-break.jpg",
+                    "timecode": "00:28:45-00:28:57",
+                }
+            ],
         }
 
     def project_playlist_payload(self, project, event_id=1313):
@@ -38,6 +49,17 @@ class TestCustomPlaylistBase:
             "url": "https://sports.kanavio.com/hls/media-library-event/master.m3u8",
             "thumbnail": "https://sports.kanavio.com/thumbnails/media-library-event.jpg",
             "clip": 7,
+            "clips": [
+                {
+                    "id": "tag-row-1",
+                    "title": "Fast Break Dunk",
+                    "durationSeconds": 12,
+                    "fallbackTimestamp": "00:28:45",
+                    "timestamp": "00:28:45",
+                    "thumbnail": "https://sports.kanavio.com/thumbnails/fast-break.jpg",
+                    "timecode": "00:28:45-00:28:57",
+                }
+            ],
         }
 
 
@@ -56,6 +78,10 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert data["url"] == "master.m3u8"
         assert data["thumbnail"] == "final-match.jpg"
         assert data["clip"] == 12
+        assert data["clips"][0]["title"] == "Fast Break Dunk"
+        assert "durationSeconds" not in data["clips"][0]
+        assert "fallbackTimestamp" not in data["clips"][0]
+        assert "timecode" not in data["clips"][0]
         assert CustomPlaylist.objects.filter(pk=data["id"], event_id=event.sg_event_id).exists()
 
     @pytest.mark.django_db
@@ -124,6 +150,10 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert data["url"] == "master.m3u8"
         assert data["thumbnail"] == "media-library-event.jpg"
         assert data["clip"] == 7
+        assert data["clips"][0]["title"] == "Fast Break Dunk"
+        assert "durationSeconds" not in data["clips"][0]
+        assert "fallbackTimestamp" not in data["clips"][0]
+        assert "timecode" not in data["clips"][0]
         assert "project_id" not in data
         assert "workspace_slug" not in data
 
@@ -205,7 +235,22 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         response = session_client.delete(self.get_playlist_url(playlist.id))
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not CustomPlaylist.objects.filter(pk=playlist.id).exists()
+        assert not CustomPlaylist.all_objects.filter(pk=playlist.id).exists()
+
+    @pytest.mark.django_db
+    def test_delete_soft_deleted_playlist_hard_deletes_row(self, session_client, workspace, create_user):
+        _, event = self.create_project_event(workspace, create_user)
+        playlist = CustomPlaylist.objects.create(
+            event_id=event.sg_event_id,
+            name="Playlist",
+            url="https://sports.kanavio.com/hls/playlist/master.m3u8",
+        )
+        playlist.delete()
+
+        response = session_client.delete(self.get_playlist_url(playlist.id))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not CustomPlaylist.all_objects.filter(pk=playlist.id).exists()
 
     @pytest.mark.django_db
     def test_create_playlist_rejects_invalid_input(self, session_client, workspace, create_user):
