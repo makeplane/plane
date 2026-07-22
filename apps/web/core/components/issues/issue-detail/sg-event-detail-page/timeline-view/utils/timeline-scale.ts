@@ -1,16 +1,22 @@
 export const BASE_TIMELINE_WIDTH_PX = 1400;
 export const MIN_TIMELINE_WIDTH_PX = 760;
+export const MIN_TIMELINE_MAJOR_TICK_SPACING_PX = 72;
+export const MIN_TIMELINE_MINOR_TICK_SPACING_PX = 12;
 export const MIN_SECOND_TICK_SPACING_PX = 56;
 export const SECOND_LEVEL_TIMELINE_SCALE = 64;
 export const DEFAULT_TIMELINE_TAG_DURATION_SECONDS = 8;
 export const TIMELINE_SCALE_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4, 8, 16, 32, 64] as const;
 export const DEFAULT_TIMELINE_SCALE_INDEX = 2;
+const TIMELINE_NICE_INTERVAL_SECONDS = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 14400] as const;
 
 export type TimelineScaleDirection = "in" | "out";
+export type TimelineTickKind = "major" | "minor";
 
 export type TimelineTick = {
+  kind: TimelineTickKind;
   label: string;
   position: number;
+  seconds: number;
 };
 
 export const getClampedTimelineScaleIndex = (index: number) =>
@@ -139,21 +145,30 @@ export const getTimelinePanelInputPlayheadSeconds = ({
   playerLocalSeconds: number;
 }) => Math.max(0, (playbackOverrideId === null ? playheadBaseSeconds : 0) + playerLocalSeconds);
 
-const buildTickStepSeconds = (totalSeconds: number) => {
-  if (totalSeconds <= 60) return 5;
-  if (totalSeconds <= 180) return 10;
-  if (totalSeconds <= 600) return 30;
-  if (totalSeconds <= 1800) return 60;
-  if (totalSeconds <= 5400) return 300;
-  return 600;
+const getNiceTimelineIntervalSeconds = (minimumSeconds: number) => {
+  const safeMinimumSeconds = Math.max(1, Math.ceil(minimumSeconds || 0));
+  const matchingInterval = TIMELINE_NICE_INTERVAL_SECONDS.find(
+    (intervalSeconds) => intervalSeconds >= safeMinimumSeconds
+  );
+
+  if (matchingInterval) return matchingInterval;
+
+  const largestInterval = TIMELINE_NICE_INTERVAL_SECONDS.at(-1) ?? 14400;
+  return Math.ceil(safeMinimumSeconds / largestInterval) * largestInterval;
 };
 
-export const buildScaledTickStepSeconds = (totalSeconds: number, scale: number) => {
+const getTimelineMajorTickStepSeconds = (totalSeconds: number, scale: number, contentWidthPx: number) => {
   const safeScale = Math.max(scale, TIMELINE_SCALE_LEVELS[0]);
-  if (safeScale >= SECOND_LEVEL_TIMELINE_SCALE) return 1;
+  const safeTotalSeconds = Math.max(1, Math.ceil(totalSeconds || 0));
+  const safeContentWidthPx = Math.max(1, contentWidthPx || getTimelineContentWidth(safeScale, safeTotalSeconds));
+  const pixelsPerSecond = getTimelinePixelsPerSecond(safeContentWidthPx, safeTotalSeconds);
+  const minimumMajorStepSeconds = MIN_TIMELINE_MAJOR_TICK_SPACING_PX / Math.max(pixelsPerSecond, 0.0001);
 
-  return buildTickStepSeconds(Math.max(1, totalSeconds / safeScale));
+  return getNiceTimelineIntervalSeconds(minimumMajorStepSeconds);
 };
+
+export const buildScaledTickStepSeconds = (totalSeconds: number, scale: number, contentWidthPx?: number) =>
+  getTimelineMajorTickStepSeconds(totalSeconds, scale, contentWidthPx ?? getTimelineContentWidth(scale, totalSeconds));
 
 export const formatTimelineTickLabel = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.round(seconds));
@@ -168,25 +183,66 @@ export const formatTimelineTickLabel = (seconds: number) => {
   return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 };
 
-export const buildScaledTimelineTicks = (totalSeconds: number, scale: number): TimelineTick[] => {
+const getTimelineMinorTickStepSeconds = (majorStepSeconds: number, pixelsPerSecond: number) => {
+  const minorStepCandidates = TIMELINE_NICE_INTERVAL_SECONDS.filter(
+    (intervalSeconds) => intervalSeconds < majorStepSeconds && majorStepSeconds % intervalSeconds === 0
+  );
+
+  return (
+    minorStepCandidates.find(
+      (intervalSeconds) => intervalSeconds * pixelsPerSecond >= MIN_TIMELINE_MINOR_TICK_SPACING_PX
+    ) ?? null
+  );
+};
+
+export const buildScaledTimelineTicks = (
+  totalSeconds: number,
+  scale: number,
+  contentWidthPx?: number
+): TimelineTick[] => {
   const safeTotalSeconds = Math.max(1, Math.ceil(totalSeconds || 0));
-  const tickStepSeconds = buildScaledTickStepSeconds(safeTotalSeconds, scale);
-  const ticks = Array.from({ length: Math.floor(safeTotalSeconds / tickStepSeconds) + 1 }, (_, index) => {
-    const tickSeconds = index * tickStepSeconds;
+  const safeContentWidthPx = Math.max(1, contentWidthPx ?? getTimelineContentWidth(scale, safeTotalSeconds));
+  const pixelsPerSecond = getTimelinePixelsPerSecond(safeContentWidthPx, safeTotalSeconds);
+  const majorStepSeconds = buildScaledTickStepSeconds(safeTotalSeconds, scale, safeContentWidthPx);
+  const minorStepSeconds = getTimelineMinorTickStepSeconds(majorStepSeconds, pixelsPerSecond);
+  const majorSeconds = new Set<number>();
+  const minorSeconds = new Set<number>();
 
-    return {
-      label: formatTimelineTickLabel(tickSeconds),
-      position: (tickSeconds * 100) / safeTotalSeconds,
-    };
-  });
+  for (let tickSeconds = 0; tickSeconds <= safeTotalSeconds; tickSeconds += majorStepSeconds) {
+    majorSeconds.add(tickSeconds);
+  }
 
-  if (ticks.at(-1)?.position === 100) return ticks;
+  if (minorStepSeconds !== null) {
+    for (let tickSeconds = minorStepSeconds; tickSeconds <= safeTotalSeconds; tickSeconds += minorStepSeconds) {
+      if (!majorSeconds.has(tickSeconds)) {
+        minorSeconds.add(tickSeconds);
+      }
+    }
+  }
+
+  if (!majorSeconds.has(safeTotalSeconds)) {
+    const previousMajorSeconds = Math.floor(safeTotalSeconds / majorStepSeconds) * majorStepSeconds;
+    const endLabelSpacingPx = (safeTotalSeconds - previousMajorSeconds) * pixelsPerSecond;
+
+    if (endLabelSpacingPx >= MIN_TIMELINE_MAJOR_TICK_SPACING_PX) {
+      majorSeconds.add(safeTotalSeconds);
+    } else {
+      minorSeconds.add(safeTotalSeconds);
+    }
+  }
 
   return [
-    ...ticks,
-    {
-      label: formatTimelineTickLabel(safeTotalSeconds),
-      position: 100,
-    },
-  ];
+    ...Array.from(majorSeconds, (seconds) => ({
+      kind: "major" as const,
+      label: formatTimelineTickLabel(seconds),
+      position: (seconds * 100) / safeTotalSeconds,
+      seconds,
+    })),
+    ...Array.from(minorSeconds, (seconds) => ({
+      kind: "minor" as const,
+      label: "",
+      position: (seconds * 100) / safeTotalSeconds,
+      seconds,
+    })),
+  ].sort((leftTick, rightTick) => leftTick.seconds - rightTick.seconds);
 };

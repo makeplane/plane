@@ -4,11 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { UIEvent, WheelEvent } from "react";
 import {
   Check,
-  Clock3,
-  Copy,
   Eye,
   ListPlus,
-  Maximize2,
   Minus,
   MousePointer2,
   Plus,
@@ -41,7 +38,8 @@ import {
   buildTimelineTagTypeOptions,
   getPlaybackOverrideRowId,
   getPositiveDurationSeconds,
-  getTimelineTagTypeKey,
+  getTimelinePrimaryTagTypeKey,
+  getTimelineRowTagTypeKeys,
   hashString,
   LANE_TONE_CLASS,
   MARKER_COLORS,
@@ -84,6 +82,7 @@ type SgEventTimelinePanelProps = {
   rows: SgTagRow[];
   selectedTagIds: string[];
   sport: SportTableKind;
+  tagTypeRows?: SgTagRow[];
 };
 
 const TOOL_BUTTON_CLASS =
@@ -92,6 +91,12 @@ const TEXT_TOOL_BUTTON_CLASS =
   "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-xs font-medium transition-colors";
 
 const getPlayheadTransform = (positionPx: number) => `translate3d(${positionPx}px, 0, 0) translateX(-50%)`;
+
+const getTimelineTickLabelClassName = (position: number) =>
+  cn(
+    "absolute top-4 whitespace-nowrap text-[10px] font-medium tabular-nums leading-none text-custom-text-400",
+    position <= 0 ? "translate-x-0" : position >= 100 ? "-translate-x-full" : "-translate-x-1/2"
+  );
 
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
@@ -113,6 +118,7 @@ export const SgEventTimelinePanel = ({
   rows,
   selectedTagIds,
   sport,
+  tagTypeRows,
 }: SgEventTimelinePanelProps) => {
   const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
   const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
@@ -126,17 +132,29 @@ export const SgEventTimelinePanel = ({
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
   const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
   const timelineDurationSeconds = isTagClipActive ? fullStreamDurationSecondsRef.current : playerDurationSeconds;
-  const tagTypeOptions = useMemo(() => buildTimelineTagTypeOptions(rows, sport), [rows, sport]);
-  const defaultVisibleTagTypeKeys = useMemo(() => tagTypeOptions.map((option) => option.key), [tagTypeOptions]);
-  const activeVisibleTagTypeKeys = visibleTagTypeKeys ?? defaultVisibleTagTypeKeys;
+  const tagTypeSourceRows = tagTypeRows ?? rows;
+  const tagTypeOptions = useMemo(
+    () => buildTimelineTagTypeOptions(tagTypeSourceRows, sport),
+    [sport, tagTypeSourceRows]
+  );
+  const defaultVisibleTagTypeKeys = useMemo(
+    () => tagTypeOptions.filter((option) => option.defaultVisible).map((option) => option.key),
+    [tagTypeOptions]
+  );
+  const tagTypeOptionKeySet = useMemo(() => new Set(tagTypeOptions.map((option) => option.key)), [tagTypeOptions]);
+  const activeVisibleTagTypeKeys = useMemo(
+    () => (visibleTagTypeKeys ?? defaultVisibleTagTypeKeys).filter((key) => tagTypeOptionKeySet.has(key)),
+    [defaultVisibleTagTypeKeys, tagTypeOptionKeySet, visibleTagTypeKeys]
+  );
   const activeVisibleTagTypeKeySet = useMemo(() => new Set(activeVisibleTagTypeKeys), [activeVisibleTagTypeKeys]);
   const tagTypeOptionsByKey = useMemo(
     () => new Map(tagTypeOptions.map((option) => [option.key, option])),
     [tagTypeOptions]
   );
   const visibleTimelineRows = useMemo(
-    () => rows.filter((row) => activeVisibleTagTypeKeySet.has(getTimelineTagTypeKey(row))),
-    [activeVisibleTagTypeKeySet, rows]
+    () =>
+      rows.filter((row) => getTimelineRowTagTypeKeys(row, sport).some((key) => activeVisibleTagTypeKeySet.has(key))),
+    [activeVisibleTagTypeKeySet, rows, sport]
   );
   const timelineLanes = useMemo(
     () => buildTimelineLanes(visibleTimelineRows, sport, playerLabelByNumber),
@@ -211,7 +229,7 @@ export const SgEventTimelinePanel = ({
   const timelineContentWidth = getTimelineContentWidth(timelineScale, totalSeconds);
   const timelinePlayheadSeconds = Math.min(timelinePlayheadSecondsRaw, totalSeconds);
   const playheadPositionPx = getTimelineTimePixel(timelinePlayheadSeconds, totalSeconds, timelineContentWidth);
-  const visibleTicks = buildScaledTimelineTicks(totalSeconds, timelineScale);
+  const visibleTicks = buildScaledTimelineTicks(totalSeconds, timelineScale, timelineContentWidth);
   const canZoomOut = timelineScaleIndex > 0;
   const canZoomIn = timelineScaleIndex < TIMELINE_SCALE_LEVELS.length - 1;
   const hasTimelineRows = sortedTimelineRows.length > 0;
@@ -509,7 +527,7 @@ export const SgEventTimelinePanel = ({
               </span>
             </button>
           </Tooltip>
-          <div className="inline-flex h-8 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100">
+          {/* <div className="inline-flex h-8 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100">
             <Tooltip tooltipContent="Timeline view" isMobile={false}>
               <button
                 type="button"
@@ -534,7 +552,7 @@ export const SgEventTimelinePanel = ({
                 <Copy className="h-3.5 w-3.5" />
               </button>
             </Tooltip>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -583,8 +601,9 @@ export const SgEventTimelinePanel = ({
                         startSeconds: 0,
                       };
                       const range = getPlacementRange(placement);
+                      const markerTagTypeKey = getTimelinePrimaryTagTypeKey(row, sport, activeVisibleTagTypeKeySet);
                       const markerColor =
-                        tagTypeOptionsByKey.get(getTimelineTagTypeKey(row))?.color ??
+                        tagTypeOptionsByKey.get(markerTagTypeKey)?.color ??
                         MARKER_COLORS[hashString(`${row.action}-${row.player}-${row.timecode}`) % MARKER_COLORS.length];
                       const isActive =
                         activeTagRowId === row.id || activePlaybackOverrideId === buildTagPlaybackOverrideId(row);
@@ -706,15 +725,26 @@ export const SgEventTimelinePanel = ({
             className="relative h-10 transition-[width] duration-150 ease-out"
             style={{ minWidth: "100%", width: timelineContentWidth }}
           >
-            {visibleTicks.map((tick) => (
-              <div
-                key={`tick-${tick.label}`}
-                className="absolute top-0 flex h-full -translate-x-1/2 items-center text-[11px] text-custom-text-400"
-                style={{ left: `${tick.position}%` }}
-              >
-                {tick.label}
-              </div>
-            ))}
+            {visibleTicks.map((tick) => {
+              const isMajorTick = tick.kind === "major";
+
+              return (
+                <div
+                  key={`tick-${tick.kind}-${tick.seconds}`}
+                  className="pointer-events-none absolute top-0 h-8 -translate-x-px"
+                  style={{ left: `${tick.position}%` }}
+                  aria-hidden={!isMajorTick}
+                >
+                  <span
+                    className={cn(
+                      "block w-px bg-custom-border-300",
+                      isMajorTick ? "h-4 bg-custom-text-300" : "h-2.5 opacity-70"
+                    )}
+                  />
+                  {isMajorTick && <span className={getTimelineTickLabelClassName(tick.position)}>{tick.label}</span>}
+                </div>
+              );
+            })}
             <Plus className="absolute bottom-0 right-1 h-4 w-4 text-custom-text-400" />
           </div>
         </div>

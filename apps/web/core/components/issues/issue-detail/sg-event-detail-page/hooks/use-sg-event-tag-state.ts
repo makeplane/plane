@@ -62,6 +62,10 @@ export const useSgEventTagState = ({
     () => Array.from(new Set(tagRowsWithThumbnails.map((row) => row.groupValue))),
     [tagRowsWithThumbnails]
   );
+  const tagTypeRows = useMemo(
+    () => tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id)),
+    [removedTagIds, tagRowsWithThumbnails]
+  );
   const effectiveGroupValue =
     selectedGroupValue === "All tags" || availableGroups.includes(selectedGroupValue)
       ? selectedGroupValue
@@ -210,5 +214,6 @@ export const useSgEventTagState = ({
     setRowFilterMode,
     setSearchQuery,
     setSelectedGroupValue,
+    tagTypeRows,
   };
 };
