@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Check, Circle, ExternalLink, FileText, Laptop, TriangleAlert } from "lucide-react";
+import { Bot, Check, Circle, ExternalLink, Laptop, TriangleAlert } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
@@ -7,11 +7,13 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { LooperCollaborationService } from "@/services/issue";
 
+import { createClientMessageId } from "./client-message-id";
 import { ConnectLooperModal } from "./connect-looper-modal";
-import { resolveRoleRequestView } from "./role-request-view";
-import type { TLooperRole, TLooperSummary } from "./types";
+import { LooperRoleThread } from "./role-thread";
+import type { TLooperSummary } from "./types";
 import { useLooperSummary } from "./use-looper-summary";
 
 type Props = {
@@ -21,19 +23,6 @@ type Props = {
 };
 
 const looperCollaborationService = new LooperCollaborationService();
-
-const ROLE_ACCENT: Record<TLooperRole, string> = {
-  product: "bg-accent-primary",
-  design: "bg-warning-primary",
-  engineering: "bg-success-primary",
-  qa: "bg-tertiary",
-};
-
-const roleBadgeVariant = (status: string) => {
-  if (status === "completed") return "success" as const;
-  if (status === "waiting") return "warning" as const;
-  return "neutral" as const;
-};
 
 const statusBadgeVariant = (summary: TLooperSummary) => {
   if (summary.dispatch?.health !== "ok") return "warning" as const;
@@ -49,11 +38,9 @@ export function LooperCollaborationPanel(props: Props) {
   const [confirmDispatch, setConfirmDispatch] = useState(false);
   const [showRelease, setShowRelease] = useState(false);
   const [releaseReason, setReleaseReason] = useState("");
-  const [answeringRequest, setAnsweringRequest] = useState<string | null>(null);
-  const [answerText, setAnswerText] = useState("");
-  const [pendingAnswer, setPendingAnswer] = useState(false);
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const { data: summary, mutate } = useLooperSummary(workspaceSlug, projectId, issueId);
+  const { toggleIssueLinkModal, setIssueLinkData } = useIssueDetail();
 
   if (!summary || summary.visibility !== "visible") return null;
 
@@ -92,24 +79,35 @@ export function LooperCollaborationPanel(props: Props) {
     }
   };
 
-  const submitAnswer = async () => {
-    if (!answeringRequest || !answerText.trim()) return;
-    setPendingAnswer(true);
+  const submitReply = async (roleRequestId: string, message: string) => {
     try {
-      await looperCollaborationService.answerRoleRequest(workspaceSlug, projectId, answeringRequest, answerText.trim());
-      setAnsweringRequest(null);
-      setAnswerText("");
+      await looperCollaborationService.replyToRoleRequest(
+        workspaceSlug,
+        projectId,
+        roleRequestId,
+        message,
+        createClientMessageId()
+      );
       await mutate();
-      setToast({ type: TOAST_TYPE.SUCCESS, title: t("toast.success"), message: t("issue.looper.answer_success") });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("issue.looper.thread.reply_success"),
+      });
+      return true;
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("common.error.label"),
         message: t("issue.looper.action_failed"),
       });
-    } finally {
-      setPendingAnswer(false);
+      return false;
     }
+  };
+
+  const openProductSpecLinkModal = () => {
+    setIssueLinkData(null);
+    toggleIssueLinkModal(true);
   };
 
   if (!summary.dispatch) {
@@ -302,97 +300,15 @@ export function LooperCollaborationPanel(props: Props) {
             <span>{t("issue.looper.role_policy", { revision: summary.dispatch.role_policy_revision })}</span>
           </div>
           <div className="divide-y divide-subtle overflow-hidden rounded-md border border-subtle">
-            {summary.roles?.map((role) => {
-              const openRequestId = role.open_request_id;
-              const { showQuestion, needsProductSpec, canQuickAnswer, isAnswering } = resolveRoleRequestView(
-                role,
-                answeringRequest
-              );
-
-              return (
-                <div key={role.role} className="px-2.5 py-1.5">
-                  <div className="flex min-h-9 flex-wrap items-center gap-2">
-                    <span className={cn("h-4 w-0.5 rounded-full", ROLE_ACCENT[role.role])} />
-                    <span className="min-w-24 text-body-xs-medium text-primary">
-                      {t(`issue.looper.role.${role.role}`)}
-                    </span>
-                    <span className="min-w-0 grow truncate text-caption-md-regular text-tertiary">
-                      {role.member?.display_name ?? t("issue.looper.unassigned")}
-                    </span>
-                    <Badge variant={roleBadgeVariant(role.status)} size="sm">
-                      {role.status === "completed"
-                        ? t("issue.looper.answered_count", { answered: role.answered_count, total: role.total_count })
-                        : role.status === "waiting"
-                          ? t("issue.looper.waiting_count", { count: role.open_count })
-                          : t("issue.looper.pending")}
-                    </Badge>
-                  </div>
-
-                  {showQuestion && (
-                    <div className="mt-1 mb-1.5 rounded-md border border-subtle bg-layer-1 px-2.5 py-2">
-                      <div className="text-caption-sm-regular text-tertiary">{t("issue.looper.open_question")}</div>
-                      {role.current_question && (
-                        <p className="mt-0.5 text-body-xs-regular text-primary">{role.current_question}</p>
-                      )}
-
-                      {needsProductSpec && (
-                        <div className="mt-2 flex items-start gap-1.5">
-                          <FileText className="mt-0.5 size-3.5 shrink-0 text-tertiary" />
-                          <div className="min-w-0">
-                            <div className="text-caption-sm-medium text-primary">
-                              {t("issue.looper.answer_mode.formal_product_spec")}
-                            </div>
-                            <p className="text-caption-md-regular text-secondary">
-                              {t("issue.looper.answer_mode.formal_product_spec_hint")}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {canQuickAnswer && !isAnswering && (
-                        <Button
-                          className="mt-2"
-                          variant="primary"
-                          size="sm"
-                          onClick={() => {
-                            setAnsweringRequest(openRequestId ?? null);
-                            setAnswerText("");
-                          }}
-                        >
-                          {t("issue.looper.answer")}
-                        </Button>
-                      )}
-
-                      {canQuickAnswer && isAnswering && (
-                        <div className="mt-2">
-                          <textarea
-                            value={answerText}
-                            onChange={(event) => setAnswerText(event.target.value)}
-                            placeholder={t("issue.looper.answer_placeholder")}
-                            rows={3}
-                            className="focus:border-accent-primary w-full resize-y rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-body-xs-regular text-primary outline-none"
-                          />
-                          <div className="mt-2 flex justify-end gap-2">
-                            <Button variant="secondary" size="sm" onClick={() => setAnsweringRequest(null)}>
-                              {t("common.cancel")}
-                            </Button>
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              disabled={!answerText.trim()}
-                              loading={pendingAnswer}
-                              onClick={() => void submitAnswer()}
-                            >
-                              {t("issue.looper.submit_answer")}
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {summary.roles?.map((role) => (
+              <LooperRoleThread
+                key={role.role}
+                role={role}
+                nodeLiveStatus={summary.dispatch?.node.live_status ?? "unavailable"}
+                onReply={submitReply}
+                onLinkProductSpec={openProductSpecLinkModal}
+              />
+            ))}
           </div>
         </div>
 

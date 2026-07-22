@@ -79,14 +79,49 @@
       "dispatch_confirm_body": "{owner} 的 {node} 将先调研需求并按角色收集决策，再产出技术方案。Plane 会保留唯一执行归属。",
       "dispatch_success": "已派发，Looper 联网后会自动领取",
       "action_failed": "操作失败，请根据面板状态重试",
-      "open_question": "待回答的问题",
-      "answer": "回答",
-      "answer_placeholder": "填写选项 ID 或简洁、明确的决策",
-      "submit_answer": "提交回答",
-      "answer_success": "决策已记录，Looper 核验后会继续推进",
       "answer_mode": {
-        "formal_product_spec": "需要产品 spec",
-        "formal_product_spec_hint": "该决策需要正式的产品 spec，无法在这里快速回答。发布 spec 后 Looper 会继续。"
+        "formal_product_spec": "需要产品 spec"
+      },
+      "thread": {
+        "status": {
+          "waiting_you": "等待你回复",
+          "waiting_owner": "等待负责人回复",
+          "waiting_looper": "Looper 正在理解",
+          "resolved": "已收敛",
+          "failed": "对话已中断"
+        },
+        "remaining": "还剩 {count} 个问题",
+        "questions_heading": "Looper 需要你拍板",
+        "design_document_required": "需要设计稿",
+        "recommended": "建议",
+        "recommendation_reason": "Looper 建议 {option}：{reason}",
+        "question_status": {
+          "decided": "已拍板",
+          "delegated": "已转交",
+          "still_open": "仍待定"
+        },
+        "outcome_answer": "结论：",
+        "looper": "Looper",
+        "delivery": {
+          "pending": "已排队，等待本机 Looper 接收",
+          "failed": "投递失败"
+        },
+        "queued_offline": "你的 Looper 当前离线，这条回复已排队，等它恢复后会自动接着处理。",
+        "thinking": "Looper 正在理解你的回复，会自行判断是继续追问还是收敛。",
+        "resolved_hint": "这轮决策已收敛，线程保留供回看。",
+        "reply_success": "已发送，Looper 会自行判断是否已经收敛。",
+        "composer": {
+          "label": "回复 Looper",
+          "placeholder": "用自然语言回复：可以直接拍板，也可以先追问。",
+          "submit": "回复 Looper",
+          "offline_hint": "你的 Looper 当前离线，回复会先排队。"
+        },
+        "spec_gate": {
+          "body": "这条决策只能通过在当前工作项的 Links 中以 {title} 为标题关联产品方案页来解除；在这里可以继续向 Looper 追问，但对话不会解除门禁。",
+          "cta": "关联产品 spec",
+          "copy": "复制标题",
+          "copied": "已复制"
+        }
       },
       "stop": "停止",
       "release": "释放归属",

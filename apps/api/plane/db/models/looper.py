@@ -148,11 +148,18 @@ class LooperRoleRequest(ProjectBaseModel):
         ("superseded", "Superseded"),
         ("expired", "Expired"),
     )
+    CONVERSATION_STATE_CHOICES = (
+        ("waiting_human", "Waiting for human"),
+        ("waiting_looper", "Waiting for Looper"),
+        ("resolved", "Resolved"),
+        ("failed", "Failed"),
+    )
 
     dispatch = models.ForeignKey(LooperDispatch, on_delete=models.CASCADE, related_name="role_requests")
     source_event_key = models.CharField(max_length=255)
     role = models.CharField(max_length=24, choices=ROLE_CHOICES)
     question_summary = models.CharField(max_length=500)
+    questions = models.JSONField(default=list, blank=True)
     eligible_member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -161,6 +168,12 @@ class LooperRoleRequest(ProjectBaseModel):
     )
     policy_revision = models.PositiveBigIntegerField()
     status = models.CharField(max_length=24, choices=STATUS_CHOICES, default="open")
+    conversation_state = models.CharField(
+        max_length=24,
+        choices=CONVERSATION_STATE_CHOICES,
+        default="waiting_human",
+    )
+    resolution = models.JSONField(default=dict, blank=True)
     answer_comment = models.ForeignKey(
         "db.IssueComment",
         on_delete=models.SET_NULL,
@@ -178,6 +191,72 @@ class LooperRoleRequest(ProjectBaseModel):
                 fields=["dispatch", "source_event_key"],
                 condition=Q(deleted_at__isnull=True),
                 name="looper_role_request_source_unique",
+            )
+        ]
+
+
+class LooperRoleRequestMessage(ProjectBaseModel):
+    KIND_CHOICES = (
+        ("human_reply", "Human reply"),
+        ("looper_reply", "Looper reply"),
+    )
+    DELIVERY_STATE_CHOICES = (
+        ("pending", "Pending"),
+        ("processed", "Processed"),
+        ("delivered", "Delivered"),
+        ("failed", "Failed"),
+    )
+
+    role_request = models.ForeignKey(
+        LooperRoleRequest,
+        on_delete=models.CASCADE,
+        related_name="messages",
+    )
+    kind = models.CharField(max_length=24, choices=KIND_CHOICES)
+    body = models.TextField()
+    actor_member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="looper_role_request_messages",
+    )
+    client_message_id = models.UUIDField()
+    in_reply_to = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="replies",
+    )
+    delivery_state = models.CharField(
+        max_length=24,
+        choices=DELIVERY_STATE_CHOICES,
+        default="pending",
+    )
+    evaluation = models.JSONField(default=dict, blank=True)
+    comment = models.ForeignKey(
+        "db.IssueComment",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="looper_role_request_messages",
+    )
+
+    class Meta:
+        db_table = "looper_role_request_messages"
+        ordering = ("created_at", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["role_request", "client_message_id"],
+                condition=Q(deleted_at__isnull=True),
+                name="looper_role_message_client_unique",
+            )
+        ]
+        indexes = [
+            models.Index(
+                fields=["role_request", "delivery_state", "created_at"],
+                name="looper_role_msg_pending_idx",
             )
         ]
 

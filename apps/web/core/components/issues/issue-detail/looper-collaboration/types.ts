@@ -15,6 +15,79 @@ export type TLooperMember = {
   avatar: string | null;
 };
 
+export type TLooperQuestionOption = {
+  id: string;
+  label: string;
+  impact: string;
+};
+
+/** One structured decision Looper needs settled, as published by the Node. */
+export type TLooperQuestion = {
+  id: string;
+  question: string;
+  context: string;
+  options: TLooperQuestionOption[];
+  recommended_option: string;
+  recommendation_reason: string;
+  design_document_required: boolean;
+};
+
+export type TLooperMessageKind = "human_reply" | "looper_reply";
+
+/** `pending` means Plane holds the reply until the Node picks it up. */
+export type TLooperMessageDeliveryState = "pending" | "processed" | "delivered" | "failed";
+
+export type TLooperQuestionOutcomeStatus = "decided" | "delegated" | "still_open";
+
+export type TLooperQuestionOutcome = {
+  id: string;
+  status: TLooperQuestionOutcomeStatus;
+  answer: string;
+  reason: string;
+};
+
+/** Looper's own read of the thread; `resolved` is what closes the role request. */
+export type TLooperResolution = {
+  resolved?: boolean;
+  questions?: TLooperQuestionOutcome[];
+};
+
+export type TLooperRoleMessage = {
+  id: string;
+  kind: TLooperMessageKind;
+  body: string;
+  delivery_state: TLooperMessageDeliveryState;
+  evaluation: TLooperResolution | null;
+  actor: TLooperMember | null;
+  created_at: string;
+};
+
+export type TLooperConversationState = "waiting_human" | "waiting_looper" | "resolved" | "failed";
+
+export type TLooperRoleSummary = {
+  role: TLooperRole;
+  member: TLooperMember | null;
+  open_count: number;
+  answered_count: number;
+  total_count: number;
+  status: "waiting" | "completed" | "pending";
+  current_question: string | null;
+  questions: TLooperQuestion[];
+  messages: TLooperRoleMessage[];
+  conversation_state: TLooperConversationState | null;
+  remaining_count: number;
+  resolution: TLooperResolution;
+  open_request_id: string | null;
+  can_answer: boolean;
+  can_reply: boolean;
+  answer_mode: "quick_decision" | "formal_product_spec";
+};
+
+export type TLooperRoleMessageResponse = {
+  message: TLooperRoleMessage;
+  created: boolean;
+};
+
 export type TLooperSummary = {
   visibility: "hidden" | "visible";
   protocol: "strict_v1" | null;
@@ -67,18 +140,7 @@ export type TLooperSummary = {
   waiting_role?: TLooperRole | null;
   current_question?: string | null;
   phases?: Array<{ key: TLooperPhaseKey; status: "completed" | "current" | "pending" | "skipped" }>;
-  roles?: Array<{
-    role: TLooperRole;
-    member: TLooperMember | null;
-    open_count: number;
-    answered_count: number;
-    total_count: number;
-    status: "waiting" | "completed" | "pending";
-    current_question: string | null;
-    open_request_id: string | null;
-    can_answer: boolean;
-    answer_mode: "quick_decision" | "formal_product_spec";
-  }>;
+  roles?: TLooperRoleSummary[];
   artifacts?: Array<{
     id: string;
     type: string;

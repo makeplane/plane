@@ -15,6 +15,9 @@ from plane.app.views.looper import (
     LooperNodeSessionEndpoint,
     LooperRoleRequestAnswerEndpoint,
     LooperRoleRequestCreateEndpoint,
+    LooperRoleRequestLooperReplyEndpoint,
+    LooperRoleRequestMessageEndpoint,
+    LooperRoleRequestPendingMessagesEndpoint,
     LooperNodeBindingApprovalEndpoint,
     LooperNodeBindingLinkEndpoint,
     LooperProjectIntegrationEndpoint,
@@ -88,6 +91,21 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/role-requests/<uuid:role_request_id>/answer/",
         LooperRoleRequestAnswerEndpoint.as_view(),
         name="looper-role-request-answer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/role-requests/<uuid:role_request_id>/messages/",
+        LooperRoleRequestMessageEndpoint.as_view(),
+        name="looper-role-request-message-create",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/role-requests/messages/pending/",
+        LooperRoleRequestPendingMessagesEndpoint.as_view(),
+        name="looper-role-request-pending-messages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/role-requests/<uuid:role_request_id>/messages/",
+        LooperRoleRequestLooperReplyEndpoint.as_view(),
+        name="looper-role-request-looper-reply",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/looper/dispatch/<uuid:dispatch_id>/<str:action>/",

@@ -79,14 +79,49 @@
       "dispatch_confirm_body": "{owner}'s {node} will research first, collect role decisions, and then draft the technical plan. Plane keeps the unique execution ownership.",
       "dispatch_success": "Dispatched. Looper will claim it when connected.",
       "action_failed": "The action failed. Refresh the panel state and try again.",
-      "open_question": "Open question",
-      "answer": "Answer",
-      "answer_placeholder": "Answer with a selected option ID or a concise decision",
-      "submit_answer": "Submit answer",
-      "answer_success": "Decision recorded. Looper will continue after it verifies the answer.",
       "answer_mode": {
-        "formal_product_spec": "Needs a product spec",
-        "formal_product_spec_hint": "This decision is recorded as a product spec, so it cannot be answered here. Publish the spec and Looper continues."
+        "formal_product_spec": "Needs a product spec"
+      },
+      "thread": {
+        "status": {
+          "waiting_you": "Waiting for your reply",
+          "waiting_owner": "Waiting for the decision owner",
+          "waiting_looper": "Looper is reading your reply",
+          "resolved": "Converged",
+          "failed": "Conversation stopped"
+        },
+        "remaining": "{count} open",
+        "questions_heading": "Looper needs a decision",
+        "design_document_required": "Design document required",
+        "recommended": "Recommended",
+        "recommendation_reason": "Looper recommends {option} — {reason}",
+        "question_status": {
+          "decided": "Decided",
+          "delegated": "Delegated",
+          "still_open": "Still open"
+        },
+        "outcome_answer": "Decision:",
+        "looper": "Looper",
+        "delivery": {
+          "pending": "Queued for your Looper",
+          "failed": "Delivery failed"
+        },
+        "queued_offline": "Your Looper is offline. The reply is queued and will be picked up as soon as it is back.",
+        "thinking": "Looper is reading your reply and decides on its own whether to ask again or move on.",
+        "resolved_hint": "Looper converged on this decision. The thread stays here for reference.",
+        "reply_success": "Sent. Looper decides on its own whether this settles it.",
+        "composer": {
+          "label": "Reply to Looper",
+          "placeholder": "Answer in your own words, or ask Looper for more context.",
+          "submit": "Reply to Looper",
+          "offline_hint": "Your Looper is offline, so the reply will be queued."
+        },
+        "spec_gate": {
+          "body": "This decision is only unblocked by a spec page linked on this work item with the title {title}. You can still ask Looper about it here, but the conversation does not lift the gate.",
+          "cta": "Link the product spec",
+          "copy": "Copy the title",
+          "copied": "Copied"
+        }
       },
       "stop": "Stop",
       "release": "Release ownership",

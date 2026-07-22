@@ -98,6 +98,7 @@ from .looper import (
     LooperLinkChallengeReplay,
     LooperRequestNonce,
     LooperRoleRequest,
+    LooperRoleRequestMessage,
 )
 from .looper_binding import (
     LooperConnectionSession,

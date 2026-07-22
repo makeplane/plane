@@ -8,6 +8,7 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   TLooperConnection,
   TLooperConnectionResponse,
+  TLooperRoleMessageResponse,
   TLooperSummary,
 } from "@/components/issues/issue-detail/looper-collaboration/types";
 import { APIService } from "@/services/api.service";
@@ -77,10 +78,20 @@ export class LooperCollaborationService extends APIService {
       });
   }
 
-  async answerRoleRequest(workspaceSlug: string, projectId: string, roleRequestId: string, answer: string) {
+  /**
+   * Posts one natural-language reply into a role decision thread. Looper decides on its side
+   * whether the thread converged, so there is no separate "final answer" call.
+   */
+  async replyToRoleRequest(
+    workspaceSlug: string,
+    projectId: string,
+    roleRequestId: string,
+    message: string,
+    clientMessageId: string
+  ): Promise<TLooperRoleMessageResponse> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/role-requests/${roleRequestId}/answer/`,
-      { answer }
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/role-requests/${roleRequestId}/messages/`,
+      { message, client_message_id: clientMessageId }
     )
       .then((response) => response.data)
       .catch((error) => {

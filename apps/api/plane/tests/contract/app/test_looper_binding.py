@@ -21,6 +21,7 @@ from plane.db.models import (
     LooperProjectIntegration,
     LooperProjectRolePolicy,
     LooperRoleRequest,
+    LooperRoleRequestMessage,
     LooperWorkItemProtocol,
     Issue,
     Project,
@@ -144,10 +145,7 @@ def signed_node_header(
         nonce=nonce,
     )
     signature = private_key.sign(domain_digest(NODE_REQUEST_PROFILE, payload))
-    return (
-        f"v=1; key={binding.id}:1; ts={timestamp_ms}; nonce={b64url_encode(nonce)}; "
-        f"sig={b64url_encode(signature)}"
-    )
+    return f"v=1; key={binding.id}:1; ts={timestamp_ms}; nonce={b64url_encode(nonce)}; sig={b64url_encode(signature)}"
 
 
 def link_binding(api_client, owner, workspace, project, binding_vectors):
@@ -504,9 +502,7 @@ def test_member_removal_suspends_binding_dispatch_and_project_integration(bindin
 
 def strict_dispatch_context(binding_context, binding_vectors):
     owner, admin, workspace, project = binding_context
-    private_key = Ed25519PrivateKey.from_private_bytes(
-        base64.b64decode(binding_vectors["node"]["private_seed_b64"])
-    )
+    private_key = Ed25519PrivateKey.from_private_bytes(base64.b64decode(binding_vectors["node"]["private_seed_b64"]))
     binding = LooperNodeBinding.objects.create(
         project=project,
         member=owner,
@@ -590,9 +586,7 @@ def test_owner_only_dispatch_is_idempotent_and_other_owner_cannot_override(
     assert denied.status_code == status.HTTP_409_CONFLICT
     assert denied.data["error"] == "active_owner_binding_required"
 
-    summary = api_client.get(
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/looper/"
-    )
+    summary = api_client.get(f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/looper/")
     assert summary.status_code == status.HTTP_200_OK
     assert summary.data["permissions"]["can_stop"] is False
 
@@ -641,16 +635,12 @@ def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
     owner_a, admin, workspace, project, _binding_a, _key_a, issue = strict_dispatch_context(
         binding_context, binding_vectors
     )
-    owner_b = User.objects.create(
-        email="second-owner@plane.so", username="second-owner", display_name="第二位研发"
-    )
+    owner_b = User.objects.create(email="second-owner@plane.so", username="second-owner", display_name="第二位研发")
     WorkspaceMember.objects.create(workspace=workspace, member=owner_b, role=15)
     ProjectMember.objects.create(project=project, member=owner_b, role=15, is_active=True)
     key_a = Ed25519PrivateKey.generate()
     binding_a = LooperNodeBinding.objects.get(project=project, member=owner_a)
-    LooperNodeKey.objects.filter(binding=binding_a).update(
-        public_key=key_a.public_key().public_bytes_raw()
-    )
+    LooperNodeKey.objects.filter(binding=binding_a).update(public_key=key_a.public_key().public_bytes_raw())
     key_b = Ed25519PrivateKey.generate()
     binding_b = LooperNodeBinding.objects.create(
         project=project,
@@ -671,9 +661,7 @@ def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
     )
     online = SimpleNamespace(online=True, strict_dispatch_v1=True)
     directory = SimpleNamespace(node=lambda node_id: online)
-    dispatch_url = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/work-items/{issue.id}/looper/dispatch/"
-    )
+    dispatch_url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/work-items/{issue.id}/looper/dispatch/"
     api_client.force_authenticate(owner_b)
     with patch("plane.app.views.looper.dispatch.get_directory_snapshot", return_value=directory):
         response = api_client.post(
@@ -713,10 +701,7 @@ def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
             HTTP_LOOPER_SIGNATURE=header,
         )
         assert opened.status_code == status.HTTP_200_OK
-        query = (
-            f"node_id={binding.node_id}&cursor=&session_id={session_id}"
-            f"&instance_nonce={instance_nonce_b64}"
-        )
+        query = f"node_id={binding.node_id}&cursor=&session_id={session_id}&instance_nonce={instance_nonce_b64}"
         inbox_header = signed_node_header(
             private_key=private_key,
             binding=binding,
@@ -730,9 +715,7 @@ def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
         expected = [] if name == "a" else [str(dispatch.id)]
         assert [item["id"] for item in inbox.data["dispatches"]] == expected
 
-    claim_path = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/claim/"
-    )
+    claim_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/claim/"
     for name, binding, private_key, expected_status in (
         ("a", binding_a, key_a, status.HTTP_409_CONFLICT),
         ("b", binding_b, key_b, status.HTTP_200_OK),
@@ -773,9 +756,7 @@ def test_two_owner_nodes_have_isolated_inboxes_and_wrong_node_cannot_claim(
 
 @pytest.mark.contract
 @pytest.mark.django_db(transaction=True)
-def test_signed_inbox_claim_and_fenced_transition_reject_replay(
-    api_client, binding_context, binding_vectors
-):
+def test_signed_inbox_claim_and_fenced_transition_reject_replay(api_client, binding_context, binding_vectors):
     owner, _admin, workspace, project, binding, private_key, issue = strict_dispatch_context(
         binding_context, binding_vectors
     )
@@ -839,10 +820,7 @@ def test_signed_inbox_claim_and_fenced_transition_reject_replay(
     assert "another Node instance" in competing.data["detail"]
 
     inbox_path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/inbox/"
-    query = (
-        f"node_id={binding.node_id}&cursor=&session_id={session_id}"
-        f"&instance_nonce={instance_nonce_b64}"
-    )
+    query = f"node_id={binding.node_id}&cursor=&session_id={session_id}&instance_nonce={instance_nonce_b64}"
     inbox_header = signed_node_header(
         private_key=private_key,
         binding=binding,
@@ -1049,10 +1027,7 @@ def test_strict_role_request_routes_to_plane_policy_owner_and_answer_resumes_vis
         lease_expires_at=timezone.now() + timedelta(seconds=90),
         last_renewed_at=timezone.now(),
     )
-    path = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
-        f"{dispatch.id}/role-requests/"
-    )
+    path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/role-requests/"
     body_value = {
         "expected_state_version": dispatch.state_version,
         "execution_attempt_id": str(attempt_id),
@@ -1119,28 +1094,152 @@ def test_strict_role_request_routes_to_plane_policy_owner_and_answer_resumes_vis
     product_role = next(role for role in owner_summary.data["roles"] if role["role"] == "product")
     assert product_role["can_answer"] is False
 
-    answer_url = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/role-requests/"
-        f"{role_request.id}/answer/"
+    message_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/role-requests/{role_request.id}/messages/"
     )
-    denied = api_client.post(answer_url, {"answer": "PROD-001: PROD-001-A"}, format="json")
+    legacy_answer_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/role-requests/{role_request.id}/answer/"
+    )
+    denied = api_client.post(
+        message_url,
+        {"message": "我没看懂，自动重试会让用户多等多久？", "client_message_id": str(uuid4())},
+        format="json",
+    )
     assert denied.status_code == status.HTTP_403_FORBIDDEN
     api_client.force_authenticate(product)
     product_summary = api_client.get(summary_url)
     product_role = next(role for role in product_summary.data["roles"] if role["role"] == "product")
     assert product_role["can_answer"] is True
-    answered = api_client.post(answer_url, {"answer": "PROD-001: PROD-001-A"}, format="json")
-    assert answered.status_code == status.HTTP_200_OK
+    first_reply = api_client.post(
+        legacy_answer_url,
+        {"answer": "我没看懂，自动重试会让用户多等多久？"},
+        format="json",
+    )
+    assert first_reply.status_code == status.HTTP_200_OK
     role_request.refresh_from_db()
-    assert role_request.status == "answered"
-    assert role_request.answer_comment.actor_id == product.id
+    assert (role_request.status, role_request.conversation_state) == ("open", "waiting_looper")
+
+    pending_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
+        f"{dispatch.id}/role-requests/messages/pending/"
+    )
+    pending_body_value = {
+        "expected_state_version": 4,
+        "execution_attempt_id": str(attempt_id),
+        "fencing_token": 1,
+        "session_id": str(session_id),
+        "instance_nonce": instance_nonce_b64,
+    }
+    pending_body = json.dumps(pending_body_value, separators=(",", ":")).encode()
+    pending_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=pending_url,
+        body=pending_body,
+        dispatch=dispatch,
+        state_version=4,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    api_client.force_authenticate(user=None)
+    pending = api_client.generic(
+        "POST", pending_url, data=pending_body, content_type="application/json", HTTP_LOOPER_SIGNATURE=pending_header
+    )
+    assert pending.status_code == status.HTTP_200_OK
+    assert pending.data["pending"][0]["message"]["body"].startswith("我没看懂")
+    assert pending.data["pending"][0]["role_request"]["questions"][0]["id"] == "PROD-001"
+
+    human_message_id = pending.data["pending"][0]["message"]["id"]
+    node_reply_url = (
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/"
+        f"role-requests/{role_request.id}/messages/"
+    )
+    node_reply_value = {
+        **pending_body_value,
+        "client_message_id": str(uuid4()),
+        "in_reply_to_message_id": human_message_id,
+        "reply": "自动重试最多增加约 6 秒等待。你希望采用自动重试，还是保留手动重试？",
+        "evaluation": {
+            "resolved": False,
+            "questions": [
+                {"id": "PROD-001", "status": "still_open", "answer": "", "reason": "负责人提出追问，尚未选择"}
+            ],
+        },
+    }
+    node_reply_body = json.dumps(node_reply_value, separators=(",", ":")).encode()
+    node_reply_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=node_reply_url,
+        body=node_reply_body,
+        dispatch=dispatch,
+        state_version=4,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    follow_up = api_client.generic(
+        "POST",
+        node_reply_url,
+        data=node_reply_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=node_reply_header,
+    )
+    assert follow_up.status_code == status.HTTP_201_CREATED
+    role_request.refresh_from_db()
+    assert (role_request.status, role_request.conversation_state) == ("open", "waiting_human")
+
+    api_client.force_authenticate(product)
+    final_human = api_client.post(
+        message_url,
+        {"message": "可以，按推荐的自动重试做。", "client_message_id": str(uuid4())},
+        format="json",
+    )
+    assert final_human.status_code == status.HTTP_201_CREATED
+    final_human_message_id = final_human.data["message"]["id"]
+    final_node_value = {
+        **pending_body_value,
+        "client_message_id": str(uuid4()),
+        "in_reply_to_message_id": final_human_message_id,
+        "reply": "已确认采用自动重试，Looper 将继续推进。",
+        "evaluation": {
+            "resolved": True,
+            "questions": [
+                {"id": "PROD-001", "status": "decided", "answer": "PROD-001-A", "reason": "负责人明确同意推荐方案"}
+            ],
+        },
+    }
+    final_node_body = json.dumps(final_node_value, separators=(",", ":")).encode()
+    final_node_header = signed_node_header(
+        private_key=private_key,
+        binding=binding,
+        method="POST",
+        path=node_reply_url,
+        body=final_node_body,
+        dispatch=dispatch,
+        state_version=4,
+        attempt_id=attempt_id,
+        fencing_token=1,
+    )
+    api_client.force_authenticate(user=None)
+    resolved = api_client.generic(
+        "POST",
+        node_reply_url,
+        data=final_node_body,
+        content_type="application/json",
+        HTTP_LOOPER_SIGNATURE=final_node_header,
+    )
+    assert resolved.status_code == status.HTTP_201_CREATED
+    role_request.refresh_from_db()
+    assert (role_request.status, role_request.conversation_state) == ("answered", "resolved")
+    assert role_request.resolution["questions"][0]["answer"] == "PROD-001-A"
+    assert LooperRoleRequestMessage.objects.filter(role_request=role_request).count() == 4
 
 
 @pytest.mark.contract
 @pytest.mark.django_db(transaction=True)
-def test_signed_spec_approval_handoff_requeues_same_dispatch_for_worker(
-    api_client, binding_context, binding_vectors
-):
+def test_signed_spec_approval_handoff_requeues_same_dispatch_for_worker(api_client, binding_context, binding_vectors):
     owner, _admin, workspace, project, binding, private_key, issue = strict_dispatch_context(
         binding_context, binding_vectors
     )
@@ -1174,10 +1273,7 @@ def test_signed_spec_approval_handoff_requeues_same_dispatch_for_worker(
         lease_expires_at=timezone.now() + timedelta(seconds=90),
         last_renewed_at=timezone.now(),
     )
-    path = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
-        f"{dispatch.id}/handoff/"
-    )
+    path = f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/handoff/"
     approval_comment_id = uuid4()
     body_value = {
         "expected_state_version": dispatch.state_version,
@@ -1228,8 +1324,7 @@ def test_signed_spec_approval_handoff_requeues_same_dispatch_for_worker(
         separators=(",", ":"),
     ).encode()
     transition_path = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/"
-        f"{dispatch.id}/transition/"
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/looper/dispatch/{dispatch.id}/transition/"
     )
     stale_header = signed_node_header(
         private_key=private_key,

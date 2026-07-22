@@ -44,6 +44,18 @@ def _member_payload(member):
     }
 
 
+def _role_message_payload(message):
+    return {
+        "id": str(message.id),
+        "kind": message.kind,
+        "body": message.body,
+        "delivery_state": message.delivery_state,
+        "evaluation": message.evaluation,
+        "actor": _member_payload(message.actor_member),
+        "created_at": message.created_at,
+    }
+
+
 def _node_live_status(directory, node_id):
     if directory is None:
         return "unavailable"
@@ -94,16 +106,34 @@ def build_looper_summary(dispatch, *, actor=None, live_status="unavailable"):
         "engineering": dispatch.owner_member,
         "qa": dispatch.qa_member_snapshot,
     }
-    requests = list(dispatch.role_requests.select_related("eligible_member").order_by("created_at"))
+    requests = list(
+        dispatch.role_requests.select_related("eligible_member")
+        .prefetch_related("messages__actor_member")
+        .order_by("created_at")
+    )
     roles = []
     for role in role_members:
         role_requests = [request for request in requests if request.role == role]
         open_requests = [request for request in role_requests if request.status == "open"]
         answered_requests = [request for request in role_requests if request.status == "answered"]
         current_request = open_requests[0] if open_requests else None
+        displayed_request = current_request or (role_requests[-1] if role_requests else None)
         requires_formal_spec = bool(
-            current_request and current_request.question_summary.startswith("PROD-000 ·")
+            displayed_request
+            and (
+                displayed_request.question_summary.startswith("PROD-000 ·")
+                or any(question.get("id") == "PROD-000" for question in displayed_request.questions)
+            )
         )
+        current_messages = (
+            [_role_message_payload(message) for message in displayed_request.messages.all()]
+            if displayed_request
+            else []
+        )
+        resolution_questions = displayed_request.resolution.get("questions", []) if displayed_request else []
+        remaining_count = sum(1 for item in resolution_questions if item.get("status") == "still_open")
+        if displayed_request and displayed_request.status == "open" and not resolution_questions:
+            remaining_count = len(displayed_request.questions) or 1
         roles.append(
             {
                 "role": role,
@@ -112,11 +142,19 @@ def build_looper_summary(dispatch, *, actor=None, live_status="unavailable"):
                 "answered_count": len(answered_requests),
                 "total_count": len(role_requests),
                 "status": "waiting" if open_requests else "completed" if role_requests else "pending",
-                "current_question": current_request.question_summary if current_request else None,
+                "current_question": displayed_request.question_summary if displayed_request else None,
+                "questions": displayed_request.questions if displayed_request else [],
+                "messages": current_messages,
+                "conversation_state": displayed_request.conversation_state if displayed_request else None,
+                "remaining_count": remaining_count,
+                "resolution": displayed_request.resolution if displayed_request else {},
                 "open_request_id": str(current_request.id) if current_request else None,
                 "can_answer": bool(
+                    current_request and actor is not None and current_request.eligible_member_id == actor.id
+                ),
+                "can_reply": bool(
                     current_request
-                    and not requires_formal_spec
+                    and current_request.conversation_state == "waiting_human"
                     and actor is not None
                     and current_request.eligible_member_id == actor.id
                 ),
@@ -155,7 +193,7 @@ def build_looper_summary(dispatch, *, actor=None, live_status="unavailable"):
         )
     )
     current_question = next(
-        (role["current_question"] for role in roles if role["current_question"]),
+        (role["current_question"] for role in roles if role["status"] == "waiting" and role["current_question"]),
         None,
     )
 
@@ -251,9 +289,7 @@ class IssueLooperSummaryEndpoint(BaseAPIView):
             pass
         if dispatch is None:
             integration = LooperProjectIntegration.objects.filter(project=issue.project).first()
-            membership = issue.project.project_projectmember.filter(
-                member=request.user, is_active=True
-            ).first()
+            membership = issue.project.project_projectmember.filter(member=request.user, is_active=True).first()
             can_manage_own_looper = bool(
                 membership
                 and membership.role >= ROLE.MEMBER.value
