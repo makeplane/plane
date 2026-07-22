@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { IssuesHeader } from "@/plane-web/components/issues/header";
+import { IssuesHeader } from "@/components/issues/header";
 
 export function ProjectIssuesHeader() {
   return <IssuesHeader />;

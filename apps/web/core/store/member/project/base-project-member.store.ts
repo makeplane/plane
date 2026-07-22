@@ -17,7 +17,7 @@ import type {
   TProjectMembership,
 } from "@plane/types";
 // plane web imports
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/store/root.store";
 // services
 import { ProjectMemberService, ProjectService } from "@/services/project";
 // store
@@ -84,7 +84,7 @@ export interface IBaseProjectMemberStore {
   removeMemberFromProject: (workspaceSlug: string, projectId: string, userId: string) => Promise<void>;
 }
 
-export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore {
+export class BaseProjectMemberStore implements IBaseProjectMemberStore {
   // observables
   projectMemberFetchStatusMap: {
     [projectId: string]: boolean;
@@ -204,7 +204,9 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
    * @param { string } projectId - The ID of the project
    * @returns { EUserProjectRoles | undefined } The user's role in the project, or undefined if not found
    */
-  abstract getUserProjectRole: (userId: string, projectId: string) => EUserProjectRoles | undefined;
+  getUserProjectRole = computedFn((userId: string, projectId: string): EUserProjectRoles | undefined =>
+    this.getRoleFromProjectMembership(userId, projectId)
+  );
 
   /**
    * @description get the details of a project member
@@ -329,16 +331,13 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     });
 
   /**
-   * @description update the role of a member in a project
+   * @description Returns the role to use when updating a project member
    * @param projectId
    * @param userId
    * @param role
    */
-  abstract getProjectMemberRoleForUpdate: (
-    projectId: string,
-    userId: string,
-    role: EUserProjectRoles
-  ) => EUserProjectRoles;
+  getProjectMemberRoleForUpdate = (_projectId: string, _userId: string, role: EUserProjectRoles): EUserProjectRoles =>
+    role;
 
   /**
    * @description update the role of a member in a project
@@ -417,11 +416,10 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
 
   /**
    * @description Processes the removal of a member from a project
-   * This abstract method handles the cleanup of member data from the project member map
    * @param projectId - The ID of the project to remove the member from
    * @param userId - The ID of the user to remove from the project
    */
-  abstract processMemberRemoval: (projectId: string, userId: string) => void;
+  processMemberRemoval = (projectId: string, userId: string) => this.handleMemberRemoval(projectId, userId);
 
   /**
    * @description remove a member from a project
@@ -432,6 +430,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
+    // oxlint-disable-next-line promise/always-return
     await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id).then(() => {
       runInAction(() => {
         this.processMemberRemoval(projectId, userId);
@@ -496,3 +495,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     }
   };
 }
+
+// Aliases so consumers can keep using ProjectMemberStore / IProjectMemberStore
+export type IProjectMemberStore = IBaseProjectMemberStore;
+export { BaseProjectMemberStore as ProjectMemberStore };

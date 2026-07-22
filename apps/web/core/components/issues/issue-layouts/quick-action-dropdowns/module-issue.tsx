@@ -19,8 +19,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -47,7 +45,7 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
-  const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
+  const [_, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug, moduleId } = useParams();
   // store hooks
@@ -137,15 +135,6 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
         }}
         storeType={EIssuesStoreType.MODULE}
       />
-      {issue.project_id && workspaceSlug && (
-        <DuplicateWorkItemModal
-          workItemId={issue.id}
-          isOpen={duplicateWorkItemModal}
-          onClose={() => setDuplicateWorkItemModal(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={issue.project_id}
-        />
-      )}
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu

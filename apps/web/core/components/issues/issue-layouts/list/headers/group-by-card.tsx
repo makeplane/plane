@@ -19,13 +19,10 @@ import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateEpicModal } from "@/components/epic-modal";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
-// plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-// Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 
 interface IHeaderGroupByCard {
   groupID: string;
@@ -45,7 +42,6 @@ interface IHeaderGroupByCard {
 export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
     groupID,
-    groupBy,
     icon,
     title,
     count,
@@ -114,15 +110,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
+        {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div
           className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
           onClick={() => handleCollapsedGroups(groupID)}
         >
           <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
           <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-          <div className="px-2.5">
-            <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
-          </div>
+          <div className="px-2.5"></div>
         </div>
 
         {!disableIssueCreation &&
@@ -150,6 +145,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (
+            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
             <div
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
               onClick={() => {

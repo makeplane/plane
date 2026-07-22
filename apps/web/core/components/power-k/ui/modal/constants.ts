@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-// plane web imports
-import { POWER_K_MODAL_PAGE_DETAILS_EXTENDED } from "@/plane-web/components/command-palette/power-k/constants";
 // local imports
 import type { TPowerKPageType } from "../../core/types";
 
@@ -74,5 +72,4 @@ export const POWER_K_MODAL_PAGE_DETAILS: Record<TPowerKPageType, TPowerKModalPag
   "update-language": {
     i18n_placeholder: "power_k.page_placeholders.update_language",
   },
-  ...POWER_K_MODAL_PAGE_DETAILS_EXTENDED,
 };

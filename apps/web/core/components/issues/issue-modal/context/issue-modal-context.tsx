@@ -10,18 +10,17 @@ import type { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
-import type { TIssueFields } from "@/plane-web/components/issues/issue-modal";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;
   workspaceSlug: string;
-  watch: UseFormWatch<TIssueFields>;
+  watch: UseFormWatch<TIssue>;
 };
 
 export type TActiveAdditionalPropertiesProps = {
   projectId: string | null;
   workspaceSlug: string;
-  watch: UseFormWatch<TIssueFields>;
+  watch: UseFormWatch<TIssue>;
 };
 
 export type TCreateUpdatePropertyValuesProps = {

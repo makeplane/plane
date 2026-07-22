@@ -203,6 +203,31 @@ class ProjectMemberInviteSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class ProjectMemberInvitePublicSerializer(BaseSerializer):
+    """Safe read-only serializer for the public project invite GET endpoint.
+
+    Intentionally excludes ``email`` and ``token`` so that an unauthenticated
+    caller cannot retrieve the invitee's email address or the acceptance token
+    (GHSA-2r58-hgv7-635q).
+    """
+
+    project = ProjectLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectMemberInvite
+        fields = [
+            "id",
+            "project",
+            "workspace",
+            "role",
+            "message",
+            "accepted",
+            "responded_at",
+        ]
+        read_only_fields = fields
+
+
 class ProjectIdentifierSerializer(BaseSerializer):
     class Meta:
         model = ProjectIdentifier

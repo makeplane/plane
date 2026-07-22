@@ -32,6 +32,11 @@ type Props = {
 
 type GoogleConfigFormValues = Record<TInstanceGoogleAuthenticationConfigurationKeys, string>;
 
+const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValues> = {
+  name: "ENABLE_GOOGLE_SYNC",
+  label: "Google",
+};
+
 export function InstanceGoogleConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -63,11 +68,11 @@ export function InstanceGoogleConfigForm(props: Props) {
         <>
           Your client ID lives in your Google API Console.{" "}
           <a
-            tabIndex={-1}
             href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google OAuth client ID documentation"
           >
             Learn more
           </a>
@@ -85,11 +90,11 @@ export function InstanceGoogleConfigForm(props: Props) {
         <>
           Your client secret should also be in your Google API Console.{" "}
           <a
-            tabIndex={-1}
             href="https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google OAuth client secret documentation"
           >
             Learn more
           </a>
@@ -100,11 +105,6 @@ export function InstanceGoogleConfigForm(props: Props) {
       required: true,
     },
   ];
-
-  const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValues> = {
-    name: "ENABLE_GOOGLE_SYNC",
-    label: "Google",
-  };
 
   const GOOGLE_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
@@ -120,6 +120,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google Cloud Console OAuth client credentials"
           >
             here.
           </a>
@@ -142,6 +143,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Google Cloud Console OAuth client credentials"
           >
             here.
           </a>

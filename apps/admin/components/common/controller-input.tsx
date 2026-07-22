@@ -66,7 +66,8 @@ export function ControllerInput(props: Props) {
         {type === "password" &&
           (showPassword ? (
             <button
-              tabIndex={-1}
+              type="button"
+              aria-label="Hide password"
               className="absolute top-2.5 right-3 flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(false)}
             >
@@ -74,7 +75,8 @@ export function ControllerInput(props: Props) {
             </button>
           ) : (
             <button
-              tabIndex={-1}
+              type="button"
+              aria-label="Show password"
               className="absolute top-2.5 right-3 flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(true)}
             >

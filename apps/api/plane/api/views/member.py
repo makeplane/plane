@@ -13,18 +13,26 @@ from drf_spectacular.utils import (
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.serializers import UserLiteSerializer, ProjectMemberSerializer
-from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
+from plane.api.serializers import (
+    UserLiteSerializer,
+    ProjectMemberSerializer,
+    WorkspaceMemberLiteAPISerializer,
+    ProjectMemberLiteAPISerializer,
+)
+from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
     WORKSPACE_NOT_FOUND_RESPONSE,
     PROJECT_NOT_FOUND_RESPONSE,
     WORKSPACE_MEMBER_EXAMPLE,
     PROJECT_MEMBER_EXAMPLE,
+    create_paginated_response,
 )
 
 
@@ -220,3 +228,105 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceMemberLiteAPIEndpoint(BaseAPIView):
+    """Workspace members (lite) list endpoint."""
+
+    permission_classes = [WorkSpaceAdminPermission]
+    use_read_replica = True
+
+    @extend_schema(
+        operation_id="get_workspace_members_lite",
+        summary="List workspace members (lite)",
+        description="Retrieve a paginated, lightweight list of workspace members for pickers and directories.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                WorkspaceMemberLiteAPISerializer,
+                "PaginatedWorkspaceMemberLite",
+                "Paginated list of workspace members with minimal fields",
+                "Paginated Workspace Members (Lite)",
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """List workspace members (lite)
+
+        Retrieve a paginated, lightweight list of workspace members, optimized for
+        pickers and directories.
+        """
+        # Check if the workspace exists
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        workspace_members = (
+            WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member").order_by("-created_at")
+        )
+        return self.paginate(
+            request=request,
+            queryset=workspace_members,
+            on_results=lambda members: WorkspaceMemberLiteAPISerializer(members, many=True).data,
+        )
+
+
+class ProjectMemberLiteAPIEndpoint(BaseAPIView):
+    """Project members (lite) list endpoint."""
+
+    permission_classes = [ProjectMemberPermission]
+    use_read_replica = True
+
+    @extend_schema(
+        operation_id="get_project_members_lite",
+        summary="List project members (lite)",
+        description="Retrieve a paginated, lightweight list of project members for pickers and directories.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                ProjectMemberLiteAPISerializer,
+                "PaginatedProjectMemberLite",
+                "Paginated list of project members with minimal fields",
+                "Paginated Project Members (Lite)",
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List project members (lite)
+
+        Retrieve a paginated, lightweight list of project members, optimized for
+        pickers and directories.
+        """
+        # Check if the workspace exists
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not Project.objects.filter(id=project_id, workspace__slug=slug).exists():
+            return Response(
+                {"error": "Provided project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        project_members = (
+            ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug)
+            .select_related("member")
+            .order_by("-created_at")
+        )
+        return self.paginate(
+            request=request,
+            queryset=project_members,
+            on_results=lambda members: ProjectMemberLiteAPISerializer(members, many=True).data,
+        )

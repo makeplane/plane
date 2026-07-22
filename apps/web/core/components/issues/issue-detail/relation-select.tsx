@@ -22,7 +22,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // Plane web imports
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 import type { TIssueRelationTypes } from "@plane/types";
 import type { TRelationObject } from "../issue-detail-widgets/relations";
 
@@ -138,6 +138,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                     </Tooltip>
                     {!disabled && (
                       <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
+                        {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
                         <span
                           onClick={(e) => {
                             e.preventDefault();

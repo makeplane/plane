@@ -19,10 +19,7 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-// types
-// Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { CreateUpdateEpicModal } from "@/components/epic-modal";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -41,7 +38,6 @@ interface IHeaderGroupByCard {
 
 export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
-    group_by,
     sub_group_by,
     column_id,
     icon,
@@ -138,8 +134,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             {count || 0}
           </div>
         </div>
-
-        <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
 
         {sub_group_by === null && (
           <button

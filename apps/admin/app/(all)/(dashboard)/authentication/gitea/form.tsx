@@ -31,6 +31,11 @@ type Props = {
 
 type GiteaConfigFormValues = Record<TInstanceGiteaAuthenticationConfigurationKeys, string>;
 
+const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
+  name: "ENABLE_GITEA_SYNC",
+  label: "Gitea",
+};
+
 export function InstanceGiteaConfigForm(props: Props) {
   const { config } = props;
   // states
@@ -74,7 +79,6 @@ export function InstanceGiteaConfigForm(props: Props) {
         <>
           You will get this from your{" "}
           <a
-            tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -96,7 +100,6 @@ export function InstanceGiteaConfigForm(props: Props) {
         <>
           Your client secret is also found in your{" "}
           <a
-            tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -112,11 +115,6 @@ export function InstanceGiteaConfigForm(props: Props) {
     },
   ];
 
-  const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
-    name: "ENABLE_GITEA_SYNC",
-    label: "Gitea",
-  };
-
   const GITEA_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Callback_URI",
@@ -127,11 +125,11 @@ export function InstanceGiteaConfigForm(props: Props) {
           We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
           field{" "}
           <a
-            tabIndex={-1}
             href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
+            aria-label="Gitea OAuth application settings"
           >
             here.
           </a>

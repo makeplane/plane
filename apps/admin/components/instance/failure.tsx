@@ -12,14 +12,14 @@ import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import InstanceFailureDarkImage from "@/app/assets/instance/instance-failure-dark.svg?url";
 import InstanceFailureImage from "@/app/assets/instance/instance-failure.svg?url";
 
+const handleRetry = () => {
+  window.location.reload();
+};
+
 export const InstanceFailureView = observer(function InstanceFailureView() {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;
-
-  const handleRetry = () => {
-    window.location.reload();
-  };
 
   return (
     <>

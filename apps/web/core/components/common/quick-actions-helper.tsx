@@ -8,7 +8,7 @@
 import type { ICycle, IModule, IProjectView, IWorkspaceView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 // hooks
-import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
+import { useQuickActionsFactory } from "@/components/common/quick-actions-factory";
 
 // Types
 interface UseCycleMenuItemsProps {

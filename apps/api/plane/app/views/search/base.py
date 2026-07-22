@@ -28,6 +28,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
+from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import (
     Workspace,
     Project,
@@ -302,6 +303,8 @@ class GlobalSearchEndpoint(BaseAPIView):
 
 
 class SearchEndpoint(BaseAPIView):
+    permission_classes = (WorkspaceUserPermission,)
+
     def get(self, request, slug):
         query = request.query_params.get("query", False)
         query_types = request.query_params.get("query_type", "user_mention").split(",")

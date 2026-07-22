@@ -13,8 +13,6 @@ import { useTranslation } from "@plane/i18n";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-// plane web imports
-import { EstimatePointDelete } from "@/plane-web/components/estimates";
 // local imports
 import { EstimatePointUpdate } from "./update";
 
@@ -73,6 +71,7 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
               <span className="text-placeholder">{t("project_settings.estimates.create.enter_estimate_point")}</span>
             )}
           </div>
+          {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div
             className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
             onClick={() => setEstimatePointEditToggle(true)}
@@ -80,6 +79,7 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
             <EditIcon width={14} height={14} className="text-secondary" />
           </div>
           {estimatePoints.length > estimateCount.min && (
+            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
             <div
               className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
               onClick={() =>
@@ -109,20 +109,6 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
           closeCallBack={() => setEstimatePointEditToggle(false)}
           estimatePointError={estimatePointError}
           handleEstimatePointError={handleEstimatePointError}
-        />
-      )}
-
-      {estimateId && estimatePointId && estimatePointDeleteToggle && (
-        <EstimatePointDelete
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          estimateId={estimateId}
-          estimatePointId={estimatePointId}
-          estimatePoints={estimatePoints}
-          callback={() => estimateId && setEstimatePointDeleteToggle(false)}
-          estimatePointError={estimatePointError}
-          handleEstimatePointError={handleEstimatePointError}
-          estimateSystem={estimateType}
         />
       )}
     </div>

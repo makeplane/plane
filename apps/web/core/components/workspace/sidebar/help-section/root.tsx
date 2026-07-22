@@ -14,10 +14,9 @@ import { CustomMenu } from "@plane/ui";
 // components
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
+import { PlaneVersionNumber } from "@/components/global/version-number";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
-// plane web components
-import { PlaneVersionNumber } from "@/plane-web/components/global";
 
 export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks

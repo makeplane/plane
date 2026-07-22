@@ -28,7 +28,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
-import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
+import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
 
 import type { Route } from "./+types/page";
 

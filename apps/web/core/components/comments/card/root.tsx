@@ -9,10 +9,10 @@ import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-// plane web imports
-import { CommentBlock, CommentCardDisplay } from "@/plane-web/components/comments";
 // local imports
 import { CommentQuickActions } from "../quick-actions";
+import { CommentBlock } from "../comment-block";
+import { CommentCardDisplay } from "./display";
 
 type TCommentCard = {
   workspaceSlug: string;
