@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
@@ -30,10 +30,7 @@ import { buildTimelinePlayerLabelMap } from "./media-thumbnail-lookup";
 import { SgEventVideoPlayer } from "./sg-event-video-player";
 import { SgEventTagsPanel } from "./tags-view";
 import { SgEventTimelinePanel, isTimelineTagPlaybackOverrideId } from "./timeline-view";
-import {
-  TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX,
-  getTimelineSplitBoundsUpdate,
-} from "./timeline-view/utils/timeline-layout";
+import { TIMELINE_PAGE_CONTENT_CLASS, TIMELINE_PAGE_SCROLL_CLASS } from "./timeline-view/utils/timeline-layout";
 import { getTimelinePlaylistRows } from "./timeline-view/utils/timeline-playlist-selection";
 import type { SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
 import {
@@ -116,14 +113,6 @@ export const SgEventDetailPage = ({
   const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
   const [isCreatingCustomPlaylist, setIsCreatingCustomPlaylist] = useState(false);
   const [isTimelinePlaylistSelectionMode, setIsTimelinePlaylistSelectionMode] = useState(false);
-  const [timelineExpansionPx, setTimelineExpansionPx] = useState(0);
-  const [timelineMaxExpansionPx, setTimelineMaxExpansionPx] = useState(0);
-  const [timelineUpperDefaultHeightPx, setTimelineUpperDefaultHeightPx] = useState<number | null>(null);
-  const timelineUpperLayoutRef = useRef<HTMLDivElement | null>(null);
-  const timelineUpperContentRef = useRef<HTMLDivElement | null>(null);
-  const timelineExpansionRef = useRef(0);
-  const timelineMaxExpansionRef = useRef(0);
-  const timelineUpperDefaultHeightRef = useRef<number | null>(null);
 
   const mediaMeta = asRecord(mediaItem?.meta);
   const cpServerBaseUrl = useMemo(() => getCpServerBaseUrl(), []);
@@ -509,95 +498,11 @@ export const SgEventDetailPage = ({
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
-  const shouldUseTimelineSplitLayout = tagViewMode === "timeline" && !isMatrixWorkspaceMode;
-
-  useEffect(() => {
-    timelineExpansionRef.current = timelineExpansionPx;
-  }, [timelineExpansionPx]);
-
-  useEffect(() => {
-    timelineMaxExpansionRef.current = timelineMaxExpansionPx;
-  }, [timelineMaxExpansionPx]);
-
-  useEffect(() => {
-    timelineUpperDefaultHeightRef.current = timelineUpperDefaultHeightPx;
-  }, [timelineUpperDefaultHeightPx]);
-
-  useEffect(() => {
-    if (!shouldUseTimelineSplitLayout) {
-      timelineExpansionRef.current = 0;
-      timelineMaxExpansionRef.current = 0;
-      timelineUpperDefaultHeightRef.current = null;
-      setTimelineExpansionPx(0);
-      setTimelineMaxExpansionPx(0);
-      setTimelineUpperDefaultHeightPx(null);
-      return;
-    }
-    if (typeof window === "undefined") return;
-
-    let animationFrameId = 0;
-    const updateTimelineSplitBounds = ({ force = false }: { force?: boolean } = {}) => {
-      window.cancelAnimationFrame(animationFrameId);
-      animationFrameId = window.requestAnimationFrame(() => {
-        const upperContentElement = timelineUpperContentRef.current;
-        if (!upperContentElement) return;
-
-        const measuredHeightPx = upperContentElement.scrollHeight || upperContentElement.getBoundingClientRect().height;
-        const boundsUpdate = getTimelineSplitBoundsUpdate({
-          currentExpansionPx: timelineExpansionRef.current,
-          currentMaxExpansionPx: timelineMaxExpansionRef.current,
-          currentUpperDefaultHeightPx: timelineUpperDefaultHeightRef.current,
-          force,
-          measuredUpperHeightPx: measuredHeightPx,
-        });
-        if (!boundsUpdate.shouldUpdateBounds) return;
-
-        timelineUpperDefaultHeightRef.current = boundsUpdate.nextUpperDefaultHeightPx;
-        timelineMaxExpansionRef.current = boundsUpdate.nextMaxExpansionPx;
-        timelineExpansionRef.current = boundsUpdate.nextExpansionPx;
-        setTimelineUpperDefaultHeightPx(boundsUpdate.nextUpperDefaultHeightPx);
-        setTimelineMaxExpansionPx(boundsUpdate.nextMaxExpansionPx);
-        setTimelineExpansionPx(boundsUpdate.nextExpansionPx);
-      });
-    };
-
-    updateTimelineSplitBounds({ force: true });
-
-    const forceTimelineSplitBoundsUpdate = () => updateTimelineSplitBounds({ force: true });
-
-    window.addEventListener("orientationchange", forceTimelineSplitBoundsUpdate);
-    window.addEventListener("resize", forceTimelineSplitBoundsUpdate);
-
-    const resizeObserver =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => updateTimelineSplitBounds()) : null;
-    const upperLayoutElement = timelineUpperContentRef.current;
-
-    if (resizeObserver && upperLayoutElement) {
-      resizeObserver.observe(upperLayoutElement);
-    }
-
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("orientationchange", forceTimelineSplitBoundsUpdate);
-      window.removeEventListener("resize", forceTimelineSplitBoundsUpdate);
-      resizeObserver?.disconnect();
-    };
-  }, [shouldUseTimelineSplitLayout]);
-
-  const handleTimelineExpansionChange = useCallback((nextExpansionPx: number) => {
-    timelineExpansionRef.current = nextExpansionPx;
-    setTimelineExpansionPx(nextExpansionPx);
-  }, []);
-
-  const timelineUpperLayoutHeightPx =
-    shouldUseTimelineSplitLayout && timelineUpperDefaultHeightPx !== null
-      ? Math.max(TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX, timelineUpperDefaultHeightPx - timelineExpansionPx)
-      : null;
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
-      <div className="h-full overflow-y-auto px-3 py-3">
-        <div className="flex w-full flex-col gap-3">
+      <div className={TIMELINE_PAGE_SCROLL_CLASS}>
+        <div className={TIMELINE_PAGE_CONTENT_CLASS}>
           <SgEventHeader
             eventStatus={eventStatus}
             eventTitle={eventTitle}
@@ -644,7 +549,7 @@ export const SgEventDetailPage = ({
                   isLoading={isTagRowsLoading}
                   layout="workspace"
                   onCreateCard={handleCreateMatrixCard}
-                  onCreatePlaylist={(rows) => void handleCreateCustomPlaylist(rows)}
+                  onCreatePlaylist={handleCreateMatrixPlaylist}
                   onFocusedRowsChange={setFocusedMatrixRows}
                   onPlayTagRow={handlePlayTagRow}
                   preferenceKey={matrixPreferenceKey}
@@ -656,46 +561,36 @@ export const SgEventDetailPage = ({
           ) : (
             <div className="min-w-0">
               <div className="flex min-h-0 flex-col gap-3">
-                <div
-                  ref={timelineUpperLayoutRef}
-                  className="min-w-0 overflow-hidden"
-                  style={
-                    timelineUpperLayoutHeightPx !== null ? { height: `${timelineUpperLayoutHeightPx}px` } : undefined
-                  }
-                >
-                  <div ref={timelineUpperContentRef} className="min-w-0">
-                    <div className="flex min-h-0 flex-col gap-3">
-                      <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
-                        <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
-                          <SgEventVideoPlayer
-                            item={playbackItem}
-                            compactEmpty={!hasPlayableVideo}
-                            onPlaybackTimeChange={handlePlaybackTimeChange}
-                            seekToSeconds={pendingSeekSeconds}
-                          />
-                        </div>
-                        <SgMatrixPlaylistPanel
-                          customPlaylists={customPlaylists}
-                          onDeletePlaylist={handleDeleteCustomPlaylist}
-                          onUpdatePlaylist={handleUpdateCustomPlaylist}
-                        />
-                      </div>
-
-                      <SgEventTitleBar
-                        eventStatus={eventStatus}
-                        eventTitle={eventTitle}
-                        handleSwitchToFullStream={handleSwitchToFullStream}
-                        isTagClipActive={isPlaybackOverrideActive}
-                      />
-
-                      <SgEventDetailsCard
-                        eventDateTimeLabel={eventDateTimeLabel}
-                        levelLabel={levelLabel}
-                        venueAddress={venueAddress}
-                        venueName={venueName}
+                <div className="flex min-w-0 flex-col gap-3">
+                  <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+                    <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+                      <SgEventVideoPlayer
+                        item={playbackItem}
+                        compactEmpty={!hasPlayableVideo}
+                        onPlaybackTimeChange={handlePlaybackTimeChange}
+                        seekToSeconds={pendingSeekSeconds}
                       />
                     </div>
+                    <SgMatrixPlaylistPanel
+                      customPlaylists={customPlaylists}
+                      onDeletePlaylist={handleDeleteCustomPlaylist}
+                      onUpdatePlaylist={handleUpdateCustomPlaylist}
+                    />
                   </div>
+
+                  <SgEventTitleBar
+                    eventStatus={eventStatus}
+                    eventTitle={eventTitle}
+                    handleSwitchToFullStream={handleSwitchToFullStream}
+                    isTagClipActive={isPlaybackOverrideActive}
+                  />
+
+                  <SgEventDetailsCard
+                    eventDateTimeLabel={eventDateTimeLabel}
+                    levelLabel={levelLabel}
+                    venueAddress={venueAddress}
+                    venueName={venueName}
+                  />
                 </div>
 
                 {tagViewMode === "timeline" ? (
@@ -715,12 +610,9 @@ export const SgEventDetailPage = ({
                     playerDurationSeconds={playerDurationSeconds}
                     playerPlaybackRate={playerPlaybackRate}
                     playheadSeconds={timelinePanelPlayheadSeconds}
-                    maxTimelineExpansionPx={timelineMaxExpansionPx}
-                    onTimelineExpansionChange={handleTimelineExpansionChange}
                     rows={filteredRows}
                     selectedTagIds={selectedTagIds}
                     sport={sportTableConfig.sport}
-                    timelineExpansionPx={timelineExpansionPx}
                     playerLabelByNumber={timelinePlayerLabelByNumber}
                   />
                 ) : (
