@@ -63,6 +63,80 @@
       },
       "waiting_for": "Waiting for {role}",
       "authority": "Authority rev {revision} · state {stateVersion}",
+      "authority_label": "Authority",
+      "authority_short": "rev {revision} · state {stateVersion}",
+      "node_status_label": "Node status",
+      "blocker_label": "Blocked on",
+      "runtime_label": "Runtime",
+      "runtime_value": "Running for {duration}",
+      "updated_label": "Updated",
+      "blocker": {
+        "none": "None",
+        "human_decision": "Waiting for {role}",
+        "failed": "Execution failed; waiting for the Looper owner"
+      },
+      "overview": {
+        "eyebrow": {
+          "planning": "Planning",
+          "waiting": "Waiting for a decision",
+          "ready": "Decisions ready",
+          "delivery": "Delivery in progress",
+          "attention": "Needs attention",
+          "complete": "Complete"
+        },
+        "title": {
+          "research": "Looper is researching the request",
+          "role_decisions": "Looper is collecting role decisions",
+          "technical_spec": "Looper is drafting the technical plan",
+          "waiting_human": "Waiting for {role} before continuing",
+          "implementation": "The plan is approved and Looper is implementing it",
+          "pull_request": "Implementation is ready and the PR is under review",
+          "qa": "The code is ready for QA",
+          "complete": "Delivery is complete",
+          "failed": "Looper execution failed",
+          "health": "Looper cannot continue yet"
+        },
+        "description": {
+          "research": "After researching the code and request, Looper identifies decisions for product, design, or engineering.",
+          "role_decisions": "Each question goes only to its decision owner. Looper continues once the required feedback is complete.",
+          "technical_spec": "The plan goes through GRILL and independent review, then moves into implementation after approval.",
+          "waiting_human": "Reply in the relevant role thread below. Looper decides whether another question is needed.",
+          "implementation": "There are no open questions. The work moves to QA after a pull request is ready.",
+          "pull_request": "Looper follows review feedback and checks, then moves the work into acceptance.",
+          "qa": "The QA result is recorded on this work item. Passing acceptance completes the workflow.",
+          "complete": "The plan, code, and acceptance record remain attached to this work item.",
+          "failed": "Ownership is retained. Check recent activity or let the Looper owner retry the run.",
+          "health": "Ownership is retained. The workflow continues after the node or state recovers."
+        },
+        "action": {
+          "technical_spec": "View technical spec",
+          "pull_request": "View PR",
+          "qa": "View QA record"
+        }
+      },
+      "activity": {
+        "title": "Recent activity",
+        "looper": "Looper",
+        "event": {
+          "dispatch_created": "The task was dispatched to Looper",
+          "dispatch_claimed": "The local Looper claimed the task",
+          "dispatch_queued": "The task entered the local queue",
+          "dispatch_running": "Looper started working",
+          "dispatch_awaiting_human": "Looper is waiting for a role decision",
+          "dispatch_completed": "Looper completed the delivery",
+          "dispatch_failed": "Looper execution failed",
+          "dispatch_stopped": "Looper stopped the run",
+          "dispatch_released": "The Looper owner released execution ownership",
+          "stop_requested": "A stop was requested",
+          "role_request_created": "Looper asked {role} a question",
+          "role_message_created": "{actor} replied in the {role} thread",
+          "role_message_follow_up": "Looper followed up in the {role} thread",
+          "role_request_answered": "{role} converged",
+          "technical_spec_approved": "The technical plan was approved; Looper started implementation",
+          "artifact_published": "Looper published a new delivery artifact",
+          "generic": "The Looper workflow was updated"
+        }
+      },
       "current_action": "Current action",
       "health_action": "Execution ownership is retained. Resolve the health issue before continuing.",
       "role_collaboration": "Role collaboration",

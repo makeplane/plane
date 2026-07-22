@@ -63,6 +63,80 @@
       },
       "waiting_for": "等待{role}",
       "authority": "Authority rev {revision} · state {stateVersion}",
+      "authority_label": "执行版本",
+      "authority_short": "rev {revision} · state {stateVersion}",
+      "node_status_label": "节点状态",
+      "blocker_label": "阻塞",
+      "runtime_label": "运行时长",
+      "runtime_value": "已运行 {duration}",
+      "updated_label": "数据更新",
+      "blocker": {
+        "none": "无",
+        "human_decision": "等待{role}回答",
+        "failed": "执行失败，等待 Looper owner 处理"
+      },
+      "overview": {
+        "eyebrow": {
+          "planning": "正在梳理",
+          "waiting": "等待决策",
+          "ready": "决策已齐备",
+          "delivery": "交付进行中",
+          "attention": "需要处理",
+          "complete": "已完成"
+        },
+        "title": {
+          "research": "Looper 正在调研需求",
+          "role_decisions": "Looper 正在收集多角色决策",
+          "technical_spec": "Looper 正在编写技术方案",
+          "waiting_human": "等待{role}拍板后继续",
+          "implementation": "技术方案已批准，Looper 正在实现",
+          "pull_request": "实现已提交，正在完成 PR 评审",
+          "qa": "代码已就绪，等待 QA 验收",
+          "complete": "交付流程已完成",
+          "failed": "Looper 执行失败",
+          "health": "Looper 暂时无法继续"
+        },
+        "description": {
+          "research": "完成代码与需求调研后，Looper 会识别需要由产品、设计或研发拍板的问题。",
+          "role_decisions": "问题会只发给对应角色；反馈收齐后继续产出技术方案。",
+          "technical_spec": "方案将经过 GRILL 与独立复核，批准后自动进入实现。",
+          "waiting_human": "请在下方对应角色线程中回答；Looper 会判断是否需要继续追问。",
+          "implementation": "当前无待回答问题。产出 PR 后会自动流转到 QA 验收。",
+          "pull_request": "Looper 会跟进评审意见和检查结果，全部通过后进入验收。",
+          "qa": "QA 结论会记录在当前工作项，验收通过后自动完成。",
+          "complete": "技术方案、代码和验收记录均保留在当前工作项，可随时回看。",
+          "failed": "执行归属仍保留，请查看最近动态或由 Looper owner 处理后重试。",
+          "health": "执行归属仍保留，恢复节点或修正状态后会继续推进。"
+        },
+        "action": {
+          "technical_spec": "查看技术 Spec",
+          "pull_request": "查看 PR",
+          "qa": "查看验收记录"
+        }
+      },
+      "activity": {
+        "title": "最近动态",
+        "looper": "Looper",
+        "event": {
+          "dispatch_created": "任务已派发给 Looper",
+          "dispatch_claimed": "本机 Looper 已领取任务",
+          "dispatch_queued": "任务已进入本机队列",
+          "dispatch_running": "Looper 已开始处理",
+          "dispatch_awaiting_human": "Looper 正在等待角色决策",
+          "dispatch_completed": "Looper 已完成交付",
+          "dispatch_failed": "Looper 执行失败",
+          "dispatch_stopped": "Looper 已停止执行",
+          "dispatch_released": "Looper owner 已释放执行归属",
+          "stop_requested": "已请求 Looper 停止",
+          "role_request_created": "Looper 向{role}提出了一个问题",
+          "role_message_created": "{actor}回复了{role}线程",
+          "role_message_follow_up": "Looper 在{role}线程继续追问",
+          "role_request_answered": "{role}已经收敛",
+          "technical_spec_approved": "技术方案已批准，Looper 开始实现",
+          "artifact_published": "Looper 发布了新的交付产物",
+          "generic": "Looper 工作流已更新"
+        }
+      },
       "current_action": "当前需要处理",
       "health_action": "执行归属仍被保留；请先恢复健康状态再继续。",
       "role_collaboration": "角色协作",

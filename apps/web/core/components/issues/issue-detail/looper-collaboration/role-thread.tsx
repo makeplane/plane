@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bot, FileText, Link2 } from "lucide-react";
+import { Bot, ChevronDown, FileText, Link2 } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
@@ -149,6 +149,7 @@ export function LooperRoleThread(props: Props) {
   /** Bridges the gap between a successful post and the refreshed summary. */
   const [justReplied, setJustReplied] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(role.conversation_state !== "resolved");
 
   const view = resolveRoleThreadView(role, nodeLiveStatus);
   const isNodeOffline = nodeLiveStatus !== "online";
@@ -203,7 +204,13 @@ export function LooperRoleThread(props: Props) {
 
   return (
     <div className="px-2.5 py-1.5">
-      <div className="flex min-h-9 flex-wrap items-center gap-2">
+      <button
+        type="button"
+        disabled={!view.hasThread}
+        aria-expanded={view.hasThread ? isExpanded : undefined}
+        onClick={() => setIsExpanded((value) => !value)}
+        className="flex min-h-9 w-full flex-wrap items-center gap-2 text-left disabled:cursor-default"
+      >
         <span className={cn("h-4 w-0.5 rounded-full", ROLE_ACCENT[role.role])} />
         <span className="min-w-24 text-body-xs-medium text-primary">{t(`issue.looper.role.${role.role}`)}</span>
         <span className="min-w-0 grow truncate text-caption-md-regular text-tertiary">
@@ -217,9 +224,12 @@ export function LooperRoleThread(props: Props) {
         <Badge variant={statusBadge.variant} size="sm">
           {statusBadge.label}
         </Badge>
-      </div>
+        {view.hasThread && (
+          <ChevronDown className={cn("size-3.5 text-tertiary transition-transform", isExpanded && "rotate-180")} />
+        )}
+      </button>
 
-      {view.hasThread && (
+      {view.hasThread && isExpanded && (
         <div className="mt-1 mb-1.5 space-y-2 rounded-md border border-subtle bg-layer-1 px-2.5 py-2">
           <div className="text-caption-sm-regular text-tertiary">{t("issue.looper.thread.questions_heading")}</div>
 

@@ -1,9 +1,12 @@
+from datetime import timedelta
 from uuid import uuid4
 
 from django.utils import timezone
 
 from plane.db.models import (
     Issue,
+    LooperArtifact,
+    LooperCollaborationEvent,
     LooperCollaborationSnapshot,
     LooperDispatch,
     LooperRoleRequest,
@@ -210,6 +213,125 @@ LooperCollaborationSnapshot.objects.create(
     snapshot_version=1,
 )
 
+delivery_issue = issue("交付概览示例：决策已齐备并进入实现")
+delivery_dispatch = dispatch(delivery_issue, "杨瑾龙的 MacBook Pro", state="running", wait_kind=None)
+delivery_dispatch.active_role = "worker"
+delivery_dispatch.state_version = 7
+delivery_dispatch.revision = 3
+delivery_dispatch.save(update_fields=["active_role", "state_version", "revision", "updated_at"])
+delivery_started_at = timezone.now() - timedelta(minutes=41)
+LooperDispatch.objects.filter(id=delivery_dispatch.id).update(created_at=delivery_started_at)
+
+resolved_questions = (
+    ("product", "PROD-401", "首版导出范围", "HTML、CSS 与 React", product),
+    ("design", "DESIGN-402", "导出入口位置", "放在顶部主操作区", designer),
+    ("engineering", "ENG-403", "失败重试策略", "最多 3 次指数退避", owner),
+)
+for index, (role, question_id, question, answer, eligible_member) in enumerate(resolved_questions, start=1):
+    role_request = LooperRoleRequest.objects.create(
+        project=project,
+        dispatch=delivery_dispatch,
+        source_event_key=f"demo-delivery-role-{index}",
+        role=role,
+        question_summary=f"{question_id} · {question}",
+        questions=[
+            {
+                "id": question_id,
+                "role": role,
+                "question": question,
+                "context": "实现前需要明确这一项决策。",
+                "options": [],
+                "recommended_option": "",
+                "recommendation_reason": "",
+                "design_document_required": False,
+            }
+        ],
+        eligible_member=eligible_member,
+        policy_revision=1,
+        status="answered",
+        conversation_state="resolved",
+        resolution={
+            "resolved": True,
+            "questions": [{"id": question_id, "status": "decided", "answer": answer, "reason": "已由决策人确认"}],
+        },
+        answered_at=delivery_started_at + timedelta(minutes=10 + index),
+    )
+    LooperRoleRequestMessage.objects.create(
+        project=project,
+        role_request=role_request,
+        kind="human_reply",
+        body=answer,
+        actor_member=eligible_member,
+        client_message_id=uuid4(),
+        delivery_state="processed",
+    )
+
+technical_spec = LooperArtifact.objects.create(
+    project=project,
+    dispatch=delivery_dispatch,
+    source_event_key="demo-delivery-technical-spec",
+    type="technical_spec",
+    title="技术 Spec",
+    url="https://plane.powerformer.net/open-design/pages/looper-demo-spec",
+    source_revision_id="spec-revision-3",
+    source_kind="plane_page",
+    source_object_id="looper-demo-spec",
+)
+LooperArtifact.objects.create(
+    project=project,
+    dispatch=delivery_dispatch,
+    source_event_key="demo-delivery-product-decisions",
+    type="product_decision",
+    title="产品决策",
+    url="https://plane.powerformer.net/open-design/pages/looper-demo-product",
+    source_revision_id="product-revision-2",
+    source_kind="plane_page",
+    source_object_id="looper-demo-product",
+)
+LooperArtifact.objects.create(
+    project=project,
+    dispatch=delivery_dispatch,
+    source_event_key="demo-delivery-design-plan",
+    type="design_plan",
+    title="设计方案",
+    url="https://plane.powerformer.net/open-design/pages/looper-demo-design",
+    source_revision_id="design-revision-1",
+    source_kind="plane_page",
+    source_object_id="looper-demo-design",
+)
+
+delivery_events = (
+    (1, "role_request_answered", "role_decisions", "product", product, None, 13),
+    (2, "technical_spec_approved", "technical_spec", "", owner, technical_spec, 25),
+    (3, "dispatch_running", "implementation", "", None, None, 27),
+)
+for version, event_type, phase, role, actor, artifact, minutes in delivery_events:
+    LooperCollaborationEvent.objects.create(
+        project=project,
+        dispatch=delivery_dispatch,
+        event_version=version,
+        source_event_key=f"demo-delivery-event-{version}",
+        event_type=event_type,
+        phase=phase,
+        role=role,
+        actor_member=actor,
+        role_policy_revision=1,
+        artifact=artifact,
+        occurred_at=delivery_started_at + timedelta(minutes=minutes),
+    )
+LooperCollaborationSnapshot.objects.create(
+    project=project,
+    dispatch=delivery_dispatch,
+    phase="implementation",
+    phase_started_at=delivery_started_at + timedelta(minutes=27),
+    role_counts={
+        "product": {"answered": 1},
+        "design": {"answered": 1},
+        "engineering": {"answered": 1},
+    },
+    snapshot_version=3,
+)
+
 formal_issue = issue("正式产品 spec 示例：多格式导出升级")
 formal_dispatch = dispatch(formal_issue, "elian-demo-macbook")
 LooperRoleRequest.objects.create(
@@ -250,6 +372,6 @@ LooperCollaborationSnapshot.objects.create(
 owner.profile.last_workspace_id = workspace.id
 owner.profile.save(update_fields=["last_workspace_id"])
 
-for demo_issue in (idle_issue, quick_issue, formal_issue):
+for demo_issue in (idle_issue, quick_issue, formal_issue, delivery_issue):
     print(f"{demo_issue.sequence_id}: http://localhost:3000/looper-demo/browse/LOOP-{demo_issue.sequence_id}")
 print(f"login: {owner.email} / {PASSWORD}")

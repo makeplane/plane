@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Check, Circle, ExternalLink, Laptop, TriangleAlert } from "lucide-react";
+import { Bot, Check, Circle, ExternalLink, Laptop } from "lucide-react";
 
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
@@ -12,6 +12,8 @@ import { LooperCollaborationService } from "@/services/issue";
 
 import { createClientMessageId } from "./client-message-id";
 import { ConnectLooperModal } from "./connect-looper-modal";
+import { LooperDeliveryOverviewCard } from "./delivery-overview-card";
+import { LooperRecentActivity } from "./recent-activity";
 import { LooperRoleThread } from "./role-thread";
 import type { TLooperSummary } from "./types";
 import { useLooperSummary } from "./use-looper-summary";
@@ -237,12 +239,6 @@ export function LooperCollaborationPanel(props: Props) {
           <span>{summary.dispatch.node.name}</span>
           <span>·</span>
           <span>{t(`issue.looper.live_status.${summary.dispatch.node.live_status}`)}</span>
-          <span className="ml-auto">
-            {t("issue.looper.authority", {
-              revision: summary.dispatch.revision,
-              stateVersion: summary.dispatch.state_version,
-            })}
-          </span>
         </div>
 
         <div className="grid grid-cols-7 max-md:grid-cols-1" aria-label={t("issue.looper.phases")}>
@@ -280,19 +276,11 @@ export function LooperCollaborationPanel(props: Props) {
           ))}
         </div>
 
-        {(summary.current_question || summary.dispatch.health !== "ok") && (
-          <div className="border-warning-subtle-1 rounded-md border bg-warning-subtle px-3 py-2.5">
-            <div className="flex items-center gap-1.5 text-caption-sm-medium text-warning-primary">
-              <TriangleAlert className="size-3.5" />
-              {summary.dispatch.health !== "ok"
-                ? t(`issue.looper.health.${summary.dispatch.health}`)
-                : t("issue.looper.current_action")}
-            </div>
-            <p className="mt-1 text-body-xs-medium text-primary">
-              {summary.current_question ?? t("issue.looper.health_action")}
-            </p>
-          </div>
-        )}
+        <LooperDeliveryOverviewCard
+          summary={summary}
+          isStopping={pendingAction === "stop"}
+          onStop={() => void runAction("stop")}
+        />
 
         <div>
           <div className="mb-2 flex items-center justify-between text-caption-sm-regular text-tertiary">
@@ -332,24 +320,16 @@ export function LooperCollaborationPanel(props: Props) {
           </div>
         )}
 
-        {(summary.permissions.can_stop || summary.permissions.can_release) && (
+        {summary.recent_events && summary.recent_events.length > 0 && (
+          <LooperRecentActivity events={summary.recent_events} />
+        )}
+
+        {summary.permissions.can_release && (
           <div className="space-y-2 border-t border-subtle pt-3">
             <div className="flex justify-end gap-2">
-              {summary.permissions.can_stop && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  loading={pendingAction === "stop"}
-                  onClick={() => void runAction("stop")}
-                >
-                  {t("issue.looper.stop")}
-                </Button>
-              )}
-              {summary.permissions.can_release && (
-                <Button variant="secondary" size="sm" onClick={() => setShowRelease((value) => !value)}>
-                  {t("issue.looper.release")}
-                </Button>
-              )}
+              <Button variant="secondary" size="sm" onClick={() => setShowRelease((value) => !value)}>
+                {t("issue.looper.release")}
+              </Button>
             </div>
             {showRelease && (
               <div className="rounded-md border border-subtle bg-layer-1 p-2.5">
