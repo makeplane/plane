@@ -1,6 +1,15 @@
 import type { SgTagRow, SportTableKind } from "../../types";
 import { parseTimecodeToSeconds } from "../../utils";
 import { getTimelineTagEndSeconds, isTimelineTagPlaybackOverrideId } from "./timeline-scale";
+import type { TimelineTagTypeOption } from "./timeline-tag-types";
+import {
+  MARKER_COLORS,
+  buildTimelineTagTypeOptions as buildTimelineTagTypeOptionsFromRows,
+  getObservedTimelineTagTypeKey,
+  getTimelinePrimaryTagTypeKey,
+  getTimelineRowTagTypeKeys,
+  hashString,
+} from "./timeline-tag-types";
 import {
   buildTimelinePlayerLaneId,
   getTimelineCategoryLaneId,
@@ -8,6 +17,15 @@ import {
   getTimelinePlayerLaneKey,
   getTimelineRowLaneIds,
 } from "./timeline-track-assignment";
+
+export {
+  MARKER_COLORS,
+  getObservedTimelineTagTypeKey,
+  getTimelinePrimaryTagTypeKey,
+  getTimelineRowTagTypeKeys,
+  hashString,
+};
+export type { TimelineTagTypeOption };
 
 export type TimelineLaneTone = "offense" | "defense" | "special" | "playerA" | "playerB";
 
@@ -30,27 +48,7 @@ export type CategoryLaneDefinition = {
   tone: TimelineLaneTone;
 };
 
-export type TimelineTagTypeOption = {
-  color: string;
-  group: string;
-  key: string;
-  label: string;
-  order: number;
-};
-
-export const MARKER_COLORS = [
-  "#ef4444",
-  "#22c55e",
-  "#c084fc",
-  "#fbbf24",
-  "#f472b6",
-  "#60a5fa",
-  "#f59e0b",
-  "#a3e635",
-];
 export const PLAYHEAD_OVERFLOW_BUCKET_SECONDS = 300;
-
-const EMPTY_TIMELINE_VALUES = new Set(["", "--", "\u2014", "n/a", "na", "none", "null", "undefined"]);
 
 export const LANE_TONE_CLASS: Record<TimelineLaneTone, string> = {
   offense: "border-l-[#2998d8] bg-[#b9defa] text-[#102d3f]",
@@ -62,61 +60,7 @@ export const LANE_TONE_CLASS: Record<TimelineLaneTone, string> = {
 
 const normalizeLabel = (value: string) => value.trim();
 
-const hasTimelineValue = (value: string | null | undefined) =>
-  !EMPTY_TIMELINE_VALUES.has(
-    String(value ?? "")
-      .trim()
-      .toLowerCase()
-  );
-
-const normalizeTagTypeKeyPart = (value: string | null | undefined) =>
-  String(value ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ");
-
-const getUniqueTagTypeParts = (values: readonly string[]) => {
-  const seen = new Set<string>();
-  const parts: string[] = [];
-
-  values.forEach((value) => {
-    const normalizedValue = normalizeTagTypeKeyPart(value);
-    if (!normalizedValue || seen.has(normalizedValue) || !hasTimelineValue(normalizedValue)) return;
-
-    seen.add(normalizedValue);
-    parts.push(normalizedValue);
-  });
-
-  return parts;
-};
-
-const getTimelineTagTypeParts = (row: SgTagRow) => {
-  const actionParts = getUniqueTagTypeParts([row.action, row.result]);
-  if (actionParts.length > 0) return actionParts;
-
-  const detailParts = getUniqueTagTypeParts([row.primaryDetail, row.secondaryDetail]);
-  if (detailParts.length > 0) return detailParts;
-
-  return getUniqueTagTypeParts([row.groupValue, row.team]);
-};
-
-export const getTimelineTagTypeKey = (row: SgTagRow) => getTimelineTagTypeParts(row).join("|") || row.id;
-
-const formatTagTypeLabelPart = (value: string) =>
-  value
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-    .join(" ");
-
-const getTimelineTagTypeLabel = (row: SgTagRow) => {
-  const label = getTimelineTagTypeParts(row).map(formatTagTypeLabelPart).join(" - ");
-  return label || "Tag";
-};
+export const getTimelineTagTypeKey = getObservedTimelineTagTypeKey;
 
 const formatPlayerLaneLabel = (player: string, playerLabelByNumber: Map<string, string>) => {
   const rosterLabel = getTimelineJerseyNumberKeys(player)
@@ -269,41 +213,21 @@ const CATEGORY_LANES_BY_SPORT: Record<SportTableKind, CategoryLaneDefinition[]> 
 const getCategoryLaneDefinitions = (sport: SportTableKind) =>
   CATEGORY_LANES_BY_SPORT[sport] ?? CATEGORY_LANES_BY_SPORT.default;
 
-export const hashString = (value: string) => {
-  let hash = 0;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash = (hash << 5) - hash + value.charCodeAt(index);
-    hash |= 0;
-  }
-
-  return Math.abs(hash);
-};
-
 export const buildTimelineTagTypeOptions = (rows: SgTagRow[], sport: SportTableKind) => {
   const categoryLanes = getCategoryLaneDefinitions(sport);
   const categoryLaneById = new Map(categoryLanes.map((lane, index) => [lane.id, { ...lane, order: index }]));
-  const optionsByKey = new Map<string, TimelineTagTypeOption>();
 
-  rows.forEach((row) => {
-    const key = getTimelineTagTypeKey(row);
-    if (optionsByKey.has(key)) return;
+  return buildTimelineTagTypeOptionsFromRows(rows, sport, {
+    getObservedGroup: (row) => {
+      const laneId = getTimelineCategoryLaneId(row, categoryLanes);
+      const categoryLane = categoryLaneById.get(laneId) ?? categoryLaneById.get(categoryLanes[0]?.id ?? "");
 
-    const laneId = getTimelineCategoryLaneId(row, categoryLanes);
-    const categoryLane = categoryLaneById.get(laneId) ?? categoryLaneById.get(categoryLanes[0]?.id ?? "");
-
-    optionsByKey.set(key, {
-      color: MARKER_COLORS[hashString(key) % MARKER_COLORS.length],
-      group: categoryLane?.label ?? "Other",
-      key,
-      label: getTimelineTagTypeLabel(row),
-      order: categoryLane?.order ?? Number.MAX_SAFE_INTEGER,
-    });
+      return {
+        group: categoryLane?.label ?? "Other",
+        order: categoryLane?.order ?? Number.MAX_SAFE_INTEGER,
+      };
+    },
   });
-
-  return Array.from(optionsByKey.values()).sort(
-    (left, right) => left.order - right.order || left.label.localeCompare(right.label)
-  );
 };
 
 const getTimecodeStart = (timecode: string) => timecode.split(/\s*[-\u2013\u2014]\s*/)[0] ?? timecode;
@@ -453,7 +377,7 @@ export const buildSortedTimelineRows = (rows: SgTagRow[], rowPlacements: Record<
 export const buildTagPlaybackOverrideId = (row: SgTagRow) => `sg-tag-${row.id}`;
 
 export const getPlaybackOverrideRowId = (playbackOverrideId: string | null) =>
-  isTimelineTagPlaybackOverrideId(playbackOverrideId) ? playbackOverrideId?.slice("sg-tag-".length) ?? null : null;
+  isTimelineTagPlaybackOverrideId(playbackOverrideId) ? (playbackOverrideId?.slice("sg-tag-".length) ?? null) : null;
 
 const buildPlayerLanes = (rows: SgTagRow[], playerLabelByNumber: Map<string, string>) => {
   const playerCounts = rows.reduce<Map<string, number>>((accumulator, row) => {

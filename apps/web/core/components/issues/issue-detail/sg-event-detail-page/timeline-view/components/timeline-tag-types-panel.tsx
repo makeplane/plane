@@ -129,7 +129,10 @@ export const TimelineTagTypesPanel = ({
                       {group.options.map((option) => (
                         <label
                           key={option.key}
-                          className="flex cursor-pointer items-center gap-2 rounded-md px-7 py-1.5 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90"
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-md px-7 py-1.5 text-sm text-custom-text-200 transition-colors hover:bg-custom-background-90",
+                            option.matchCount === 0 && "text-custom-text-400"
+                          )}
                         >
                           <input
                             type="checkbox"
@@ -144,6 +147,9 @@ export const TimelineTagTypesPanel = ({
                           />
                           <span className="min-w-0 flex-1 truncate" title={option.label}>
                             {option.label}
+                          </span>
+                          <span className="shrink-0 text-xs tabular-nums text-custom-text-400">
+                            {option.matchCount}
                           </span>
                         </label>
                       ))}
