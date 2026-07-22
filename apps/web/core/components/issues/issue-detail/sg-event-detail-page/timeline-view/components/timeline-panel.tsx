@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { UIEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { UIEvent, WheelEvent } from "react";
 import {
   Check,
   Clock3,
@@ -23,15 +23,14 @@ import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "../../constants";
 import type { SgTagRow, SportTableKind } from "../../types";
 import {
-  TIMELINE_FIXED_FOOTER_CLASS,
   TIMELINE_HORIZONTAL_SCROLL_CLASS,
   TIMELINE_LANE_LABEL_COLUMN_CLASS,
   TIMELINE_PANEL_ROOT_CLASS,
   TIMELINE_RULER_SCROLL_CLASS,
+  TIMELINE_STICKY_FOOTER_CLASS,
   TIMELINE_TRACKS_ROW_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
-  getTimelinePanelMaxHeightPx,
-  getTimelineSplitWheelUpdate,
+  getTimelineHorizontalWheelDeltaPx,
 } from "../utils/timeline-layout";
 import {
   buildLaneMarkerOffsets,
@@ -71,14 +70,12 @@ type SgEventTimelinePanelProps = {
   isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
   isPlaylistSelectionMode?: boolean;
-  maxTimelineExpansionPx?: number;
   onClearTagSelection?: () => void;
   onCreatePlaylist?: () => void;
   isPlayerPlaying: boolean;
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onPlaylistSelectionModeChange?: (nextValue: boolean) => void;
   onResetPlayback: () => void;
-  onTimelineExpansionChange?: (nextExpansionPx: number) => void;
   onToggleTagSelection: (tagId: string) => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
@@ -87,7 +84,6 @@ type SgEventTimelinePanelProps = {
   rows: SgTagRow[];
   selectedTagIds: string[];
   sport: SportTableKind;
-  timelineExpansionPx?: number;
 };
 
 const TOOL_BUTTON_CLASS =
@@ -97,27 +93,18 @@ const TEXT_TOOL_BUTTON_CLASS =
 
 const getPlayheadTransform = (positionPx: number) => `translate3d(${positionPx}px, 0, 0) translateX(-50%)`;
 
-type TimelineWheelEventLike = {
-  deltaX: number;
-  deltaY: number;
-  preventDefault: () => void;
-  stopPropagation: () => void;
-};
-
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
   isCreatingPlaylist = false,
   isMediaLoading,
   isPlaylistSelectionMode = false,
-  maxTimelineExpansionPx = 0,
   onClearTagSelection,
   onCreatePlaylist,
   isPlayerPlaying,
   onPlayTagRow,
   onPlaylistSelectionModeChange,
   onResetPlayback,
-  onTimelineExpansionChange,
   onToggleTagSelection,
   playerDurationSeconds,
   playheadSeconds,
@@ -126,20 +113,14 @@ export const SgEventTimelinePanel = ({
   rows,
   selectedTagIds,
   sport,
-  timelineExpansionPx = 0,
 }: SgEventTimelinePanelProps) => {
   const [isTagTypesPanelOpen, setIsTagTypesPanelOpen] = useState(false);
   const [visibleTagTypeKeys, setVisibleTagTypeKeys] = useState<string[] | null>(null);
   const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
   const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
-  const [timelinePanelMaxHeightPx, setTimelinePanelMaxHeightPx] = useState<number | null>(null);
-  const panelRef = useRef<HTMLElement | null>(null);
-  const timelineTracksScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineRulerScrollRef = useRef<HTMLDivElement | null>(null);
-  const timelineExpansionValueRef = useRef(timelineExpansionPx);
-  const isSyncingTimelineHorizontalScrollRef = useRef(false);
   const playheadElementRef = useRef<HTMLDivElement | null>(null);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
@@ -238,54 +219,10 @@ export const SgEventTimelinePanel = ({
   const canCreatePlaylist = Boolean(onCreatePlaylist) && selectedTagCount > 0 && !isCreatingPlaylist;
 
   useEffect(() => {
-    timelineExpansionValueRef.current = timelineExpansionPx;
-  }, [timelineExpansionPx]);
-
-  useEffect(() => {
     if (isTagClipActive || playerDurationSeconds === null || playerDurationSeconds <= 0) return;
 
     fullStreamDurationSecondsRef.current = playerDurationSeconds;
   }, [isTagClipActive, playerDurationSeconds]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    let animationFrameId = 0;
-    const updatePanelMaxHeight = () => {
-      window.cancelAnimationFrame(animationFrameId);
-      animationFrameId = window.requestAnimationFrame(() => {
-        const panelTopPx = panelRef.current?.getBoundingClientRect().top ?? 0;
-        const nextMaxHeightPx = getTimelinePanelMaxHeightPx({
-          panelTopPx,
-          viewportHeightPx: window.innerHeight,
-        });
-
-        setTimelinePanelMaxHeightPx((currentMaxHeightPx) =>
-          currentMaxHeightPx === nextMaxHeightPx ? currentMaxHeightPx : nextMaxHeightPx
-        );
-      });
-    };
-
-    updatePanelMaxHeight();
-
-    window.addEventListener("orientationchange", updatePanelMaxHeight);
-    window.addEventListener("resize", updatePanelMaxHeight);
-
-    const resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updatePanelMaxHeight) : null;
-    const panelParentElement = panelRef.current?.parentElement;
-
-    if (resizeObserver) {
-      if (panelParentElement) resizeObserver.observe(panelParentElement);
-      resizeObserver.observe(document.documentElement);
-    }
-
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("orientationchange", updatePanelMaxHeight);
-      window.removeEventListener("resize", updatePanelMaxHeight);
-      resizeObserver?.disconnect();
-    };
-  }, [timelineExpansionPx]);
 
   useEffect(() => {
     const playheadElement = playheadElementRef.current;
@@ -326,111 +263,62 @@ export const SgEventTimelinePanel = ({
     const rulerScrollElement = timelineRulerScrollRef.current;
     if (!trackScrollElement || !rulerScrollElement) return;
 
-    rulerScrollElement.scrollLeft = trackScrollElement.scrollLeft;
+    trackScrollElement.scrollLeft = rulerScrollElement.scrollLeft;
   }, [timelineContentWidth]);
 
-  const syncTimelineHorizontalScroll = (sourceElement: HTMLDivElement, targetElement: HTMLDivElement | null) => {
-    if (!targetElement) return;
+  const syncTimelineTrackScroll = (nextScrollLeft: number) => {
+    const trackScrollElement = timelineScrollRef.current;
+    if (!trackScrollElement || Math.abs(trackScrollElement.scrollLeft - nextScrollLeft) < 1) return;
 
-    const nextScrollLeft = sourceElement.scrollLeft;
-    if (Math.abs(targetElement.scrollLeft - nextScrollLeft) < 1) return;
-
-    isSyncingTimelineHorizontalScrollRef.current = true;
-    targetElement.scrollLeft = nextScrollLeft;
-    window.requestAnimationFrame(() => {
-      isSyncingTimelineHorizontalScrollRef.current = false;
-    });
-  };
-
-  const handleTimelineTrackScroll = (event: UIEvent<HTMLDivElement>) => {
-    if (isSyncingTimelineHorizontalScrollRef.current) return;
-
-    syncTimelineHorizontalScroll(event.currentTarget, timelineRulerScrollRef.current);
+    trackScrollElement.scrollLeft = nextScrollLeft;
   };
 
   const handleTimelineRulerScroll = (event: UIEvent<HTMLDivElement>) => {
-    if (isSyncingTimelineHorizontalScrollRef.current) return;
-
-    syncTimelineHorizontalScroll(event.currentTarget, timelineScrollRef.current);
+    syncTimelineTrackScroll(event.currentTarget.scrollLeft);
   };
 
-  const handleTimelineWheel = useCallback(
-    (event: TimelineWheelEventLike) => {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
-        const rulerScrollElement = timelineRulerScrollRef.current;
-        if (!rulerScrollElement || event.deltaX === 0) return;
+  const scrollTimelineTo = (nextScrollLeft: number, behavior: "auto" | "smooth" = "auto") => {
+    const rulerScrollElement = timelineRulerScrollRef.current;
+    const trackScrollElement = timelineScrollRef.current;
+    const scrollElement = rulerScrollElement ?? trackScrollElement;
+    if (!scrollElement) return;
 
-        const trackScrollElement = timelineScrollRef.current;
-        const maxScrollLeft = Math.max(0, rulerScrollElement.scrollWidth - rulerScrollElement.clientWidth);
-        const nextScrollLeft = Math.min(Math.max(rulerScrollElement.scrollLeft + event.deltaX, 0), maxScrollLeft);
+    scrollElement.scrollTo({ behavior, left: nextScrollLeft });
+    if (behavior === "auto") {
+      syncTimelineTrackScroll(nextScrollLeft);
+    }
+  };
 
-        if (Math.abs(rulerScrollElement.scrollLeft - nextScrollLeft) < 1) return;
+  const scrollTimelineBy = (deltaX: number) => {
+    const rulerScrollElement = timelineRulerScrollRef.current;
+    if (!rulerScrollElement) return false;
 
-        event.preventDefault();
-        event.stopPropagation();
+    const maxScrollLeft = Math.max(0, rulerScrollElement.scrollWidth - rulerScrollElement.clientWidth);
+    const nextScrollLeft = Math.min(Math.max(rulerScrollElement.scrollLeft + deltaX, 0), maxScrollLeft);
+    if (Math.abs(rulerScrollElement.scrollLeft - nextScrollLeft) < 1) return false;
 
-        rulerScrollElement.scrollLeft = nextScrollLeft;
+    rulerScrollElement.scrollLeft = nextScrollLeft;
+    syncTimelineTrackScroll(nextScrollLeft);
+    return true;
+  };
 
-        if (trackScrollElement && Math.abs(trackScrollElement.scrollLeft - nextScrollLeft) >= 1) {
-          isSyncingTimelineHorizontalScrollRef.current = true;
-          trackScrollElement.scrollLeft = nextScrollLeft;
-          window.requestAnimationFrame(() => {
-            isSyncingTimelineHorizontalScrollRef.current = false;
-          });
-        }
+  const handleTimelineHorizontalWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const deltaX = getTimelineHorizontalWheelDeltaPx({
+      deltaX: event.deltaX,
+      deltaY: event.deltaY,
+      shiftKey: event.shiftKey,
+    });
+    if (deltaX === 0 || !scrollTimelineBy(deltaX)) return;
 
-        return;
-      }
-
-      const trackScrollElement = timelineTracksScrollRef.current;
-      if (!trackScrollElement) return;
-
-      const maxTrackScrollTopPx = Math.max(0, trackScrollElement.scrollHeight - trackScrollElement.clientHeight);
-      const wheelUpdate = getTimelineSplitWheelUpdate({
-        currentExpansionPx: timelineExpansionValueRef.current,
-        deltaY: event.deltaY,
-        maxExpansionPx: maxTimelineExpansionPx,
-        maxTrackScrollTopPx,
-        trackScrollTopPx: trackScrollElement.scrollTop,
-      });
-
-      if (!wheelUpdate.shouldPreventDefault) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (trackScrollElement.scrollTop !== wheelUpdate.nextTrackScrollTopPx) {
-        trackScrollElement.scrollTop = wheelUpdate.nextTrackScrollTopPx;
-      }
-
-      if (timelineExpansionValueRef.current !== wheelUpdate.nextExpansionPx) {
-        timelineExpansionValueRef.current = wheelUpdate.nextExpansionPx;
-        onTimelineExpansionChange?.(wheelUpdate.nextExpansionPx);
-      }
-    },
-    [maxTimelineExpansionPx, onTimelineExpansionChange]
-  );
-
-  useEffect(() => {
-    const panelElement = panelRef.current;
-    if (!panelElement) return;
-
-    const handleNativeWheel = (event: Event) => {
-      handleTimelineWheel(event as unknown as TimelineWheelEventLike);
-    };
-
-    panelElement.addEventListener("wheel", handleNativeWheel, { passive: false });
-
-    return () => {
-      panelElement.removeEventListener("wheel", handleNativeWheel);
-    };
-  }, [handleTimelineWheel]);
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
   const scrollTimelineRangeIntoView = (
     range: { leftPx: number; widthPx: number },
     behavior: "auto" | "smooth" = "smooth"
   ) => {
-    const scrollElement = timelineScrollRef.current;
+    const scrollElement = timelineRulerScrollRef.current ?? timelineScrollRef.current;
     if (!scrollElement) return;
 
     const rangeLeft = range.leftPx;
@@ -441,19 +329,13 @@ export const SgEventTimelinePanel = ({
 
     if (rangeLeft < viewportLeft + padding) {
       const nextScrollLeft = Math.max(0, rangeLeft - padding);
-      scrollElement.scrollTo({ behavior, left: nextScrollLeft });
-      if (behavior === "auto" && timelineRulerScrollRef.current) {
-        timelineRulerScrollRef.current.scrollLeft = nextScrollLeft;
-      }
+      scrollTimelineTo(nextScrollLeft, behavior);
       return;
     }
 
     if (rangeRight > viewportRight - padding) {
       const nextScrollLeft = Math.max(0, rangeRight - scrollElement.clientWidth + padding);
-      scrollElement.scrollTo({ behavior, left: nextScrollLeft });
-      if (behavior === "auto" && timelineRulerScrollRef.current) {
-        timelineRulerScrollRef.current.scrollLeft = nextScrollLeft;
-      }
+      scrollTimelineTo(nextScrollLeft, behavior);
     }
   };
 
@@ -527,14 +409,9 @@ export const SgEventTimelinePanel = ({
   const handleTimelineScaleChange = (direction: "in" | "out") => {
     setTimelineScaleIndex((currentIndex) => getNextTimelineScaleIndex(currentIndex, direction));
   };
-  const timelinePanelHeightValue = timelinePanelMaxHeightPx ? `${timelinePanelMaxHeightPx}px` : "calc(100dvh - 12px)";
 
   return (
-    <section
-      ref={panelRef}
-      className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)}
-      style={{ height: timelinePanelHeightValue, maxHeight: timelinePanelHeightValue }}
-    >
+    <section className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)}>
       <div className="flex flex-col gap-3 border-b border-custom-border-200 px-3 py-2.5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1">
           <Tooltip tooltipContent="Jump to previous tag" isMobile={false}>
@@ -661,7 +538,7 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      <div ref={timelineTracksScrollRef} className={TIMELINE_TRACKS_SCROLL_CLASS}>
+      <div className={TIMELINE_TRACKS_SCROLL_CLASS}>
         <div className={TIMELINE_TRACKS_ROW_CLASS}>
           <div className={TIMELINE_LANE_LABEL_COLUMN_CLASS}>
             {timelineLanes.map((lane) => (
@@ -680,7 +557,7 @@ export const SgEventTimelinePanel = ({
 
           <div
             ref={timelineScrollRef}
-            onScroll={handleTimelineTrackScroll}
+            onWheel={handleTimelineHorizontalWheel}
             className={TIMELINE_HORIZONTAL_SCROLL_CLASS}
           >
             <div
@@ -778,7 +655,7 @@ export const SgEventTimelinePanel = ({
         </div>
       </div>
 
-      <div className={cn(TIMELINE_FIXED_FOOTER_CLASS, "flex border-t border-custom-border-200")}>
+      <div className={cn(TIMELINE_STICKY_FOOTER_CLASS, "flex border-t border-custom-border-200")}>
         <div
           className={cn(
             TIMELINE_LANE_LABEL_COLUMN_CLASS,
@@ -819,7 +696,12 @@ export const SgEventTimelinePanel = ({
           </span>
         </div>
 
-        <div ref={timelineRulerScrollRef} onScroll={handleTimelineRulerScroll} className={TIMELINE_RULER_SCROLL_CLASS}>
+        <div
+          ref={timelineRulerScrollRef}
+          onScroll={handleTimelineRulerScroll}
+          onWheel={handleTimelineHorizontalWheel}
+          className={TIMELINE_RULER_SCROLL_CLASS}
+        >
           <div
             className="relative h-10 transition-[width] duration-150 ease-out"
             style={{ minWidth: "100%", width: timelineContentWidth }}
