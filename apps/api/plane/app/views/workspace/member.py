@@ -88,7 +88,18 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         if "role" in request.data and int(request.data.get("role")) == 5:
             ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
 
-        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
+        # SECURITY: The only field this endpoint is allowed to mutate is ``role``.
+        # ``WorkSpaceMemberSerializer`` is declared with ``fields = "__all__"`` and
+        # ``DynamicBaseSerializer`` ignores the ``fields=`` kwarg for writes, so
+        # passing ``request.data`` verbatim would let a workspace admin mass-assign
+        # ``workspace`` (relocating a controlled member row into a victim workspace as
+        # an admin — full cross-tenant takeover), ``is_active``, and other columns.
+        # Restrict the writable payload to ``role`` only. See GHSA-f739-39g5-jj49.
+        allowed_data = {}
+        if "role" in request.data:
+            allowed_data["role"] = request.data.get("role")
+
+        serializer = WorkSpaceMemberSerializer(workspace_member, data=allowed_data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
