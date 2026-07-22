@@ -8,7 +8,9 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   TLooperConnection,
   TLooperConnectionResponse,
+  TLooperProjectIntegration,
   TLooperRoleMessageResponse,
+  TLooperRolePolicy,
   TLooperSummary,
 } from "@/components/issues/issue-detail/looper-collaboration/types";
 import { APIService } from "@/services/api.service";
@@ -73,6 +75,50 @@ export class LooperCollaborationService extends APIService {
   async cancelConnection(workspaceSlug: string, projectId: string, connectionId: string) {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/connections/${connectionId}/`)
       .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getRolePolicy(workspaceSlug: string, projectId: string): Promise<TLooperRolePolicy | null> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/role-policy/`)
+      .then((response) => response.data.policy as TLooperRolePolicy | null)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateRolePolicy(
+    workspaceSlug: string,
+    projectId: string,
+    policy: Pick<TLooperRolePolicy, "product_member_id" | "design_member_id" | "qa_member_id">
+  ): Promise<TLooperRolePolicy> {
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/role-policy/`, policy)
+      .then((response) => response.data.policy as TLooperRolePolicy)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectIntegration(workspaceSlug: string, projectId: string): Promise<TLooperProjectIntegration> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/integration/`)
+      .then((response) => response.data.integration as TLooperProjectIntegration)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async activateProjectIntegration(
+    workspaceSlug: string,
+    projectId: string,
+    activationChecklistRevision: number
+  ): Promise<TLooperProjectIntegration> {
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/looper/integration/`, {
+      action: "activate",
+      activation_checklist_revision: activationChecklistRevision,
+      effective_legacy_trigger_label_ids: [],
+    })
+      .then((response) => response.data.integration as TLooperProjectIntegration)
       .catch((error) => {
         throw error?.response?.data;
       });

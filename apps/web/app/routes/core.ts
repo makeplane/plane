@@ -345,6 +345,11 @@ export const coreRoutes: RouteConfigEntry[] = [
                 "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
               ),
             ]),
+            // Looper collaboration
+            route(
+              ":workspaceSlug/settings/projects/:projectId/looper",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/looper/page.tsx"
+            ),
           ]),
         ]),
       ]),

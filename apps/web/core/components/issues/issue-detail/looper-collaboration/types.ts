@@ -212,3 +212,22 @@ export type TLooperConnection = {
 export type TLooperConnectionResponse = {
   connection: TLooperConnection;
 };
+
+export type TLooperRolePolicy = {
+  id: string;
+  revision: number;
+  product_member_id: string;
+  design_member_id: string;
+  engineering_member_rule: "dispatch_owner";
+  qa_member_id: string;
+  updated_at: string;
+};
+
+export type TLooperProjectIntegration = {
+  id?: string;
+  state: "unconfigured" | "active" | "paused" | "read_only";
+  strict_epoch: string | null;
+  activation_checklist_revision: number;
+  paused_reason: string;
+  updated_at?: string;
+};
