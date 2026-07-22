@@ -2,6 +2,7 @@ export const TIMELINE_PANEL_MIN_HEIGHT_PX = 240;
 export const TIMELINE_PANEL_VIEWPORT_PADDING_PX = 12;
 export const TIMELINE_SPLIT_MAX_EXPANSION_PX = 360;
 export const TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX = 280;
+export const TIMELINE_UPPER_CONTENT_SCALE_MIN = 0.3;
 export const TIMELINE_WHEEL_DELTA_CAP_PX = 16;
 
 export const TIMELINE_PANEL_ROOT_CLASS = "flex min-h-0 flex-col overflow-hidden overscroll-contain";
@@ -15,10 +16,12 @@ export const TIMELINE_LANE_LABEL_COLUMN_CLASS = "w-[220px] shrink-0 border-r bor
 
 export const TIMELINE_HORIZONTAL_SCROLL_CLASS = "min-w-0 flex-1 overflow-x-hidden overflow-y-hidden";
 
-export const TIMELINE_FIXED_FOOTER_CLASS = "shrink-0 bg-custom-background-100 [contain:layout]";
+export const TIMELINE_FIXED_FOOTER_CLASS = "shrink-0 overflow-hidden bg-custom-background-100 [contain:layout_paint]";
 
 export const TIMELINE_RULER_SCROLL_CLASS =
-  "sg-event-timeline-scrollbar horizontal-scrollbar scrollbar-md min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-2 [scrollbar-gutter:stable]";
+  "sg-event-timeline-scrollbar horizontal-scrollbar scrollbar-md h-10 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-gutter:stable]";
+
+export const TIMELINE_UPPER_CONTENT_SCALE_CLASS = "min-w-0 origin-top-left will-change-transform";
 
 type TimelinePanelMaxHeightArgs = {
   minHeightPx?: number;
@@ -45,6 +48,39 @@ type TimelineSplitMaxExpansionArgs = {
 };
 
 const clampTimelineValue = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+type TimelineUpperContentScaleArgs = {
+  minScale?: number;
+  upperDefaultHeightPx: number | null;
+  upperLayoutHeightPx: number | null;
+};
+
+export const getTimelineUpperContentScale = ({
+  minScale = TIMELINE_UPPER_CONTENT_SCALE_MIN,
+  upperDefaultHeightPx,
+  upperLayoutHeightPx,
+}: TimelineUpperContentScaleArgs) => {
+  if (
+    upperDefaultHeightPx === null ||
+    upperLayoutHeightPx === null ||
+    !Number.isFinite(upperDefaultHeightPx) ||
+    !Number.isFinite(upperLayoutHeightPx) ||
+    upperDefaultHeightPx <= 0 ||
+    upperLayoutHeightPx <= 0
+  ) {
+    return 1;
+  }
+
+  if (upperLayoutHeightPx >= upperDefaultHeightPx) return 1;
+
+  return clampTimelineValue(upperLayoutHeightPx / upperDefaultHeightPx, minScale, 1);
+};
+
+export const getTimelineUpperContentWidthPercent = (scale: number) => {
+  if (!Number.isFinite(scale) || scale <= 0) return 100;
+
+  return 100 / clampTimelineValue(scale, TIMELINE_UPPER_CONTENT_SCALE_MIN, 1);
+};
 
 export const getTimelineSplitMaxExpansionPx = ({
   maxExpansionPx = TIMELINE_SPLIT_MAX_EXPANSION_PX,

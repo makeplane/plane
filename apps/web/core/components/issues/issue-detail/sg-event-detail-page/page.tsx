@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,7 +29,10 @@ import { SgEventTagsPanel } from "./tags-view";
 import { SgEventTimelinePanel, isTimelineTagPlaybackOverrideId } from "./timeline-view";
 import {
   TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX,
+  TIMELINE_UPPER_CONTENT_SCALE_CLASS,
   getTimelineSplitBoundsUpdate,
+  getTimelineUpperContentScale,
+  getTimelineUpperContentWidthPercent,
 } from "./timeline-view/utils/timeline-layout";
 import { getTimelinePlaylistRows } from "./timeline-view/utils/timeline-playlist-selection";
 import type { SgEventDetailPageProps, SgEventTagViewMode, SgIssue, SgTagRow } from "./types";
@@ -576,6 +580,17 @@ export const SgEventDetailPage = ({
     shouldUseTimelineSplitLayout && timelineUpperDefaultHeightPx !== null
       ? Math.max(TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX, timelineUpperDefaultHeightPx - timelineExpansionPx)
       : null;
+  const timelineUpperContentScale = getTimelineUpperContentScale({
+    upperDefaultHeightPx: timelineUpperDefaultHeightPx,
+    upperLayoutHeightPx: timelineUpperLayoutHeightPx,
+  });
+  const timelineUpperContentStyle: CSSProperties | undefined =
+    shouldUseTimelineSplitLayout && timelineUpperContentScale < 1
+      ? {
+          transform: `scale(${timelineUpperContentScale})`,
+          width: `${getTimelineUpperContentWidthPercent(timelineUpperContentScale)}%`,
+        }
+      : undefined;
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
@@ -647,35 +662,37 @@ export const SgEventDetailPage = ({
                     }
                   >
                     <div ref={timelineUpperContentRef} className="min-w-0">
-                      <div className="flex min-h-0 flex-col gap-3">
-                        <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
-                          <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
-                            <SgEventVideoPlayer
-                              item={playbackItem}
-                              compactEmpty={!hasPlayableVideo}
-                              onPlaybackTimeChange={handlePlaybackTimeChange}
-                              seekToSeconds={pendingSeekSeconds}
+                      <div className={TIMELINE_UPPER_CONTENT_SCALE_CLASS} style={timelineUpperContentStyle}>
+                        <div className="flex min-h-0 flex-col gap-3">
+                          <div className="grid min-w-0 gap-[10px] xl:grid-cols-[minmax(0,76fr)_minmax(260px,24fr)]">
+                            <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
+                              <SgEventVideoPlayer
+                                item={playbackItem}
+                                compactEmpty={!hasPlayableVideo}
+                                onPlaybackTimeChange={handlePlaybackTimeChange}
+                                seekToSeconds={pendingSeekSeconds}
+                              />
+                            </div>
+                            <SgMatrixPlaylistPanel
+                              customPlaylists={customPlaylists}
+                              onDeletePlaylist={handleDeleteCustomPlaylist}
                             />
                           </div>
-                          <SgMatrixPlaylistPanel
-                            customPlaylists={customPlaylists}
-                            onDeletePlaylist={handleDeleteCustomPlaylist}
+
+                          <SgEventTitleBar
+                            eventStatus={eventStatus}
+                            eventTitle={eventTitle}
+                            handleSwitchToFullStream={handleSwitchToFullStream}
+                            isTagClipActive={isPlaybackOverrideActive}
+                          />
+
+                          <SgEventDetailsCard
+                            eventDateTimeLabel={eventDateTimeLabel}
+                            levelLabel={levelLabel}
+                            venueAddress={venueAddress}
+                            venueName={venueName}
                           />
                         </div>
-
-                        <SgEventTitleBar
-                          eventStatus={eventStatus}
-                          eventTitle={eventTitle}
-                          handleSwitchToFullStream={handleSwitchToFullStream}
-                          isTagClipActive={isPlaybackOverrideActive}
-                        />
-
-                        <SgEventDetailsCard
-                          eventDateTimeLabel={eventDateTimeLabel}
-                          levelLabel={levelLabel}
-                          venueAddress={venueAddress}
-                          venueName={venueName}
-                        />
                       </div>
                     </div>
                   </div>

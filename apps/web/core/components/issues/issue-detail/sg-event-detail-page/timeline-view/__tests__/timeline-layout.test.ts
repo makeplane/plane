@@ -14,11 +14,14 @@ const {
   TIMELINE_SPLIT_MAX_EXPANSION_PX,
   TIMELINE_SPLIT_UPPER_MIN_HEIGHT_PX,
   TIMELINE_TRACKS_SCROLL_CLASS,
+  TIMELINE_UPPER_CONTENT_SCALE_MIN,
   getTimelinePanelMaxHeightPx,
   getTimelineSplitBoundsUpdate,
   getTimelineSplitMaxExpansionPx,
   getTimelineSplitResizeResult,
   getTimelineSplitWheelUpdate,
+  getTimelineUpperContentScale,
+  getTimelineUpperContentWidthPercent,
   getTimelineWheelDeltaPx,
 } = timelineLayout;
 
@@ -61,12 +64,16 @@ test("timeline vertical overflow is owned by the track scroll region", () => {
 
 test("timeline ruler footer stays outside vertical track scrolling", () => {
   assert.match(TIMELINE_FIXED_FOOTER_CLASS, /\bshrink-0\b/);
+  assert.match(TIMELINE_FIXED_FOOTER_CLASS, /\boverflow-hidden\b/);
   assert.match(TIMELINE_FIXED_FOOTER_CLASS, /\bbg-custom-background-100\b/);
+  assert.ok(TIMELINE_FIXED_FOOTER_CLASS.includes("[contain:layout_paint]"));
   assert.doesNotMatch(TIMELINE_FIXED_FOOTER_CLASS, /\bsticky\b/);
 
+  assert.match(TIMELINE_RULER_SCROLL_CLASS, /\bh-10\b/);
   assert.match(TIMELINE_RULER_SCROLL_CLASS, /\boverflow-x-auto\b/);
   assert.match(TIMELINE_RULER_SCROLL_CLASS, /\boverflow-y-hidden\b/);
   assert.doesNotMatch(TIMELINE_RULER_SCROLL_CLASS, /\boverflow-y-auto\b/);
+  assert.doesNotMatch(TIMELINE_RULER_SCROLL_CLASS, /\bpb-\d/);
   assert.match(TIMELINE_RULER_SCROLL_CLASS, /\bsg-event-timeline-scrollbar\b/);
   assert.ok(TIMELINE_RULER_SCROLL_CLASS.includes("[scrollbar-gutter:stable]"));
 });
@@ -423,6 +430,46 @@ test("timeline split bounds refresh when restored or forced by viewport changes"
       shouldUpdateBounds: true,
     }
   );
+});
+
+test("timeline upper content scales into the shrinking layout instead of being clipped", () => {
+  assert.equal(
+    getTimelineUpperContentScale({
+      upperDefaultHeightPx: 600,
+      upperLayoutHeightPx: 600,
+    }),
+    1
+  );
+
+  assert.equal(
+    getTimelineUpperContentScale({
+      upperDefaultHeightPx: 600,
+      upperLayoutHeightPx: 420,
+    }),
+    0.7
+  );
+
+  assert.equal(
+    getTimelineUpperContentScale({
+      upperDefaultHeightPx: 600,
+      upperLayoutHeightPx: 60,
+    }),
+    TIMELINE_UPPER_CONTENT_SCALE_MIN
+  );
+
+  assert.equal(
+    getTimelineUpperContentScale({
+      upperDefaultHeightPx: null,
+      upperLayoutHeightPx: 420,
+    }),
+    1
+  );
+});
+
+test("timeline upper content width compensates for transform scaling", () => {
+  assert.equal(getTimelineUpperContentWidthPercent(1), 100);
+  assert.equal(getTimelineUpperContentWidthPercent(0.8), 125);
+  assert.equal(getTimelineUpperContentWidthPercent(0.5), 200);
 });
 
 test("timeline wheel prevents page scroll leakage while timeline owns vertical scrolling", () => {

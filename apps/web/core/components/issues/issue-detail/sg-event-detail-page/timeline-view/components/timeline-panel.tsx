@@ -527,12 +527,13 @@ export const SgEventTimelinePanel = ({
   const handleTimelineScaleChange = (direction: "in" | "out") => {
     setTimelineScaleIndex((currentIndex) => getNextTimelineScaleIndex(currentIndex, direction));
   };
+  const timelinePanelHeightValue = timelinePanelMaxHeightPx ? `${timelinePanelMaxHeightPx}px` : "calc(100dvh - 12px)";
 
   return (
     <section
       ref={panelRef}
       className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)}
-      style={{ maxHeight: timelinePanelMaxHeightPx ? `${timelinePanelMaxHeightPx}px` : "calc(100dvh - 12px)" }}
+      style={{ height: timelinePanelHeightValue, maxHeight: timelinePanelHeightValue }}
     >
       <div className="flex flex-col gap-3 border-b border-custom-border-200 px-3 py-2.5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1">
