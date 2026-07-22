@@ -1,4 +1,4 @@
-import { Check, Columns3, ListPlus, Maximize2, Minimize2, Plus, Search } from "lucide-react";
+import { Check, Columns3, ListPlus, Plus, Search } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -29,14 +29,12 @@ type TagsPanelToolbarProps = {
   groupSelectLabel: string;
   isColumnsPanelOpen: boolean;
   isCreatingPlaylist: boolean;
-  isExpanded: boolean;
   isSearchOpen: boolean;
   onColumnsPanelOpen: () => void;
   onCreatePlaylist?: () => void;
   onRowFilterModeChange: (mode: RowFilterMode) => void;
   onSearchQueryChange: (value: string) => void;
   onSelectedGroupValueChange: (value: string) => void;
-  onToggleExpanded?: () => void;
   onToggleSearch: () => void;
   rowFilterMode: RowFilterMode;
   searchQuery: string;
@@ -54,14 +52,12 @@ export const TagsPanelToolbar = ({
   groupSelectLabel,
   isColumnsPanelOpen,
   isCreatingPlaylist,
-  isExpanded,
   isSearchOpen,
   onColumnsPanelOpen,
   onCreatePlaylist,
   onRowFilterModeChange,
   onSearchQueryChange,
   onSelectedGroupValueChange,
-  onToggleExpanded,
   onToggleSearch,
   rowFilterMode,
   searchQuery,
@@ -99,19 +95,6 @@ export const TagsPanelToolbar = ({
           <Plus className="h-3.5 w-3.5" />
           <span>Create Card</span>
         </button>
-      )}
-      {onToggleExpanded && (
-        <Tooltip tooltipContent={isExpanded ? "Collapse list" : "Expand list"} isMobile={false}>
-          <button
-            type="button"
-            onClick={onToggleExpanded}
-            className={ICON_BUTTON_CLASS}
-            aria-label={isExpanded ? "Collapse list" : "Expand list"}
-            aria-pressed={isExpanded}
-          >
-            {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          </button>
-        </Tooltip>
       )}
       {isSearchOpen && (
         <label className="flex h-9 items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-300">
