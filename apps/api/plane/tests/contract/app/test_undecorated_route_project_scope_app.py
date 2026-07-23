@@ -52,8 +52,10 @@ def _module_detail_url(slug, project_id, pk):
     return f"/api/workspaces/{slug}/projects/{project_id}/modules/{pk}/"
 
 
-def _intake_detail_url(slug, project_id, pk):
-    return f"/api/workspaces/{slug}/projects/{project_id}/intakes/{pk}/"
+def _intake_detail_url(slug, project_id, pk, route="intakes"):
+    # ``intakes`` and the legacy ``inboxes`` alias both route to IntakeViewSet;
+    # tests parameterize ``route`` so the alias cannot regress independently.
+    return f"/api/workspaces/{slug}/projects/{project_id}/{route}/{pk}/"
 
 
 def _make_user(email):
@@ -108,14 +110,30 @@ def state_b(db, workspace, project_b):
 
 
 @pytest.fixture
-def issue_b(db, workspace, project_b, state_b, create_user):
-    return Issue.objects.create(
-        name="Victim Issue",
-        project=project_b,
-        workspace=workspace,
-        state=state_b,
-        created_by=create_user,
+def other_member_b(db, workspace, project_b):
+    """A second active project-B member, distinct from ``create_user``.
+
+    Used as an issue's author so the positive-control PUT is authorized through
+    the ROLE.MEMBER branch of ``allow_permission`` rather than the ``creator=True``
+    short-circuit (which would fire if the caller were also the author).
+    """
+    user = _make_user(f"member-b-{uuid4().hex[:8]}@plane.so")
+    WorkspaceMember.objects.create(workspace=workspace, member=user, role=15, is_active=True)
+    ProjectMember.objects.create(
+        workspace=workspace, project=project_b, member=user, role=15, is_active=True
     )
+    return user
+
+
+@pytest.fixture
+def issue_b(db, workspace, project_b, state_b, other_member_b):
+    # Author is a *different* project member so ``test_member_can_put_issue``
+    # exercises the role-based path, not the creator short-circuit. ``save`` with
+    # ``created_by_id`` sets the author explicitly (BaseModel.save otherwise
+    # overwrites ``created_by`` from the request user, which is None under tests).
+    issue = Issue(name="Victim Issue", project=project_b, workspace=workspace, state=state_b)
+    issue.save(created_by_id=other_member_b.id)
+    return issue
 
 
 @pytest.fixture
@@ -221,44 +239,50 @@ class TestUndecoratedRouteProjectScope:
         assert module_b.name == "Renamed Module"
 
     # ---- IntakeViewSet GET (retrieve) ----------------------------------------------
+    # Both the ``intakes/`` route and the legacy ``inboxes/`` alias are covered so
+    # the alias cannot regress independently.
 
-    def test_non_member_cannot_retrieve_intake(self, attacker_client, workspace, project_b, intake_b):
-        response = attacker_client.get(_intake_detail_url(workspace.slug, project_b.id, intake_b.id))
+    @pytest.mark.parametrize("route", ["intakes", "inboxes"])
+    def test_non_member_cannot_retrieve_intake(self, attacker_client, workspace, project_b, intake_b, route):
+        response = attacker_client.get(_intake_detail_url(workspace.slug, project_b.id, intake_b.id, route))
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+            f"[{route}] Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
 
-    def test_member_can_retrieve_intake(self, session_client, workspace, project_b, intake_b):
+    @pytest.mark.parametrize("route", ["intakes", "inboxes"])
+    def test_member_can_retrieve_intake(self, session_client, workspace, project_b, intake_b, route):
         """Positive control: a project-B member may retrieve a project-B intake."""
-        response = session_client.get(_intake_detail_url(workspace.slug, project_b.id, intake_b.id))
+        response = session_client.get(_intake_detail_url(workspace.slug, project_b.id, intake_b.id, route))
         assert response.status_code == status.HTTP_200_OK, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+            f"[{route}] Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert str(response.data["id"]) == str(intake_b.id)
 
     # ---- IntakeViewSet PATCH (partial_update) --------------------------------------
 
-    def test_non_member_cannot_patch_intake(self, attacker_client, workspace, project_b, intake_b):
+    @pytest.mark.parametrize("route", ["intakes", "inboxes"])
+    def test_non_member_cannot_patch_intake(self, attacker_client, workspace, project_b, intake_b, route):
         response = attacker_client.patch(
-            _intake_detail_url(workspace.slug, project_b.id, intake_b.id),
+            _intake_detail_url(workspace.slug, project_b.id, intake_b.id, route),
             {"name": "Hacked Intake"},
             format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+            f"[{route}] Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         intake_b.refresh_from_db()
         assert intake_b.name == "Victim Intake"
 
-    def test_member_can_patch_intake(self, session_client, workspace, project_b, intake_b):
+    @pytest.mark.parametrize("route", ["intakes", "inboxes"])
+    def test_member_can_patch_intake(self, session_client, workspace, project_b, intake_b, route):
         """Positive control: a project-B member may patch a project-B intake."""
         response = session_client.patch(
-            _intake_detail_url(workspace.slug, project_b.id, intake_b.id),
-            {"name": "Renamed Intake"},
+            _intake_detail_url(workspace.slug, project_b.id, intake_b.id, route),
+            {"name": f"Renamed via {route}"},
             format="json",
         )
         assert response.status_code == status.HTTP_200_OK, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+            f"[{route}] Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         intake_b.refresh_from_db()
-        assert intake_b.name == "Renamed Intake"
+        assert intake_b.name == f"Renamed via {route}"
