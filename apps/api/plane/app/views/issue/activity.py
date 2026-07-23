@@ -47,6 +47,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
+                project_id=project_id,
             )
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
@@ -58,6 +59,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
+                project_id=project_id,
             )
             .filter(**filters)
             .order_by("created_at")

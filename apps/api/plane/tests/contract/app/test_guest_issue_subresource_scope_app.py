@@ -67,7 +67,8 @@ def _make_attachment(issue, project, workspace):
 
 @pytest.fixture
 def project(db, workspace, create_user):
-    """A project with guest_view_all_features defaulting to False; owner is a member."""
+    """A project with guest_view_all_features defaulting to False; the owner
+    (``create_user``) is an active project ADMIN (role 20)."""
     project = Project.objects.create(
         name="Scoped Project", identifier="SP", workspace=workspace, created_by=create_user
     )
@@ -129,8 +130,30 @@ class TestGuestIssueSubresourceScope:
         )
 
     def test_guest_blocked_v2_attachments(self, guest_client, workspace, project, foreign_issue):
-        response = guest_client.get(
-            V2_ATTACH_URL.format(slug=workspace.slug, project_id=project.id, issue_id=foreign_issue.id)
+        base = V2_ATTACH_URL.format(slug=workspace.slug, project_id=project.id, issue_id=foreign_issue.id)
+        # Collection endpoint.
+        response = guest_client.get(base)
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        # Single-attachment endpoint — the highest-risk path (returns a presigned
+        # download redirect); must also be blocked.
+        asset = FileAsset.objects.filter(
+            issue_id=foreign_issue.id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        ).first()
+        response_pk = guest_client.get(f"{base}{asset.id}/")
+        assert response_pk.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Single-attachment leak: {response_pk.status_code} {getattr(response_pk, 'data', None)!r}"
+        )
+
+    def test_guest_cannot_post_attachment_to_foreign_issue(self, guest_client, workspace, project, foreign_issue):
+        """The visibility rule covers writes too: a restricted guest cannot add an
+        attachment to an issue they are not allowed to view."""
+        response = guest_client.post(
+            V2_ATTACH_URL.format(slug=workspace.slug, project_id=project.id, issue_id=foreign_issue.id),
+            {"name": "evil.pdf", "type": "application/pdf", "size": 100},
+            format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
