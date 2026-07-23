@@ -652,10 +652,15 @@ class ModuleViewSet(BaseViewSet):
     def update(self, request, slug, project_id, pk):
         # A full PUT-replace is not a meaningful operation for modules; the
         # client only ever issues PATCH updates. Route PUT through the same
-        # authorized partial-update path so this routed action is guarded by
-        # the project-membership check instead of falling through to the
-        # stock DRF ModelViewSet.update under bare IsAuthenticated.
-        return self.partial_update(request, slug=slug, project_id=project_id, pk=pk)
+        # partial-update logic so this routed action is guarded by the
+        # project-membership check instead of falling through to the stock DRF
+        # ModelViewSet.update under bare IsAuthenticated. Call partial_update's
+        # *undecorated* implementation (__wrapped__) since this method's own
+        # decorator has already authorized the request — avoids running
+        # allow_permission (and its DB lookups) a second time on every PUT.
+        return self.partial_update.__wrapped__(
+            self, request, slug=slug, project_id=project_id, pk=pk
+        )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
