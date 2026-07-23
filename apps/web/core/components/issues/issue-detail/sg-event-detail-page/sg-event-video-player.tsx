@@ -19,6 +19,7 @@ type SgEventVideoPlayerProps = {
       playbackRate: number;
     }
   ) => void;
+  seekRequestId?: number;
   seekToSeconds?: number | null;
 };
 
@@ -45,6 +46,7 @@ export const SgEventVideoPlayer = ({
   item,
   compactEmpty = false,
   onPlaybackTimeChange,
+  seekRequestId = 0,
   seekToSeconds = null,
 }: SgEventVideoPlayerProps) => {
   const normalizedAction = (item?.action ?? "").toLowerCase();
@@ -497,7 +499,7 @@ export const SgEventVideoPlayer = ({
     return () => {
       player.off("loadeddata", seekAndPlay);
     };
-  }, [seekToSeconds]);
+  }, [effectiveVideoSrc, item?.id, seekRequestId, seekToSeconds]);
 
   const qualityOptions = useMemo(() => {
     const qualityRefreshKey = playerTick;

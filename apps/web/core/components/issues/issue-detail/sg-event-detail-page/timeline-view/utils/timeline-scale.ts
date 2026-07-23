@@ -25,6 +25,12 @@ export const getClampedTimelineScaleIndex = (index: number) =>
 export const getNextTimelineScaleIndex = (currentIndex: number, direction: TimelineScaleDirection) =>
   getClampedTimelineScaleIndex(currentIndex + (direction === "in" ? 1 : -1));
 
+export const getTimelineScaleIndexFromSliderValue = (value: number | string, fallbackIndex: number) => {
+  const parsedIndex = typeof value === "number" ? value : Number(value);
+
+  return Number.isFinite(parsedIndex) ? getClampedTimelineScaleIndex(Math.round(parsedIndex)) : fallbackIndex;
+};
+
 export const getTimelineContentWidth = (scale: number, totalSeconds = 0) => {
   const scaledBaseWidth = Math.round(BASE_TIMELINE_WIDTH_PX * scale);
   const secondLevelWidth =
@@ -51,6 +57,35 @@ export const getTimelineTimePixel = (seconds: number, totalSeconds: number, cont
   const clampedSeconds = Math.min(Math.max(seconds || 0, 0), safeTotalSeconds);
 
   return clampedSeconds * getTimelinePixelsPerSecond(contentWidthPx, safeTotalSeconds);
+};
+
+export const getTimelineSecondsFromClientX = ({
+  clientX,
+  contentWidthPx,
+  scrollLeftPx,
+  seekableSeconds,
+  totalSeconds,
+  viewportLeftPx,
+}: {
+  clientX: number;
+  contentWidthPx: number;
+  scrollLeftPx: number;
+  seekableSeconds?: number | null;
+  totalSeconds: number;
+  viewportLeftPx: number;
+}) => {
+  const safeContentWidthPx = Math.max(1, contentWidthPx || 0);
+  const safeTotalSeconds = Math.max(1, totalSeconds || 0);
+  const safeScrollLeftPx = Math.max(0, scrollLeftPx || 0);
+  const safeSeekableSeconds =
+    typeof seekableSeconds === "number" && Number.isFinite(seekableSeconds) && seekableSeconds >= 0
+      ? seekableSeconds
+      : safeTotalSeconds;
+  const timelinePositionPx = clientX - viewportLeftPx + safeScrollLeftPx;
+  const clampedPositionPx = Math.min(Math.max(timelinePositionPx, 0), safeContentWidthPx);
+  const timelineSeconds = (clampedPositionPx / safeContentWidthPx) * safeTotalSeconds;
+
+  return Math.min(Math.max(timelineSeconds, 0), safeSeekableSeconds);
 };
 
 export const getTimelineRangePixels = ({
