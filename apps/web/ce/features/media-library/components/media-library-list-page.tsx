@@ -322,7 +322,13 @@ const MediaLibraryListPage = observer(() => {
         ) : isAllMediaView ? (
           <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filteredItems.map((item) => (
-              <MediaCard key={`all-media-${item.id}`} item={item} href={getItemHref(item)} forceThumbnail className="!w-full" />
+              <MediaCard
+                key={`all-media-${item.id}`}
+                item={item}
+                href={getItemHref(item)}
+                forceThumbnail
+                className="!w-full"
+              />
             ))}
           </div>
         ) : (

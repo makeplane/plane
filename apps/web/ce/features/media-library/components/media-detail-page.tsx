@@ -121,8 +121,7 @@ const MediaDetailPage = () => {
   console.log("Resolved Media Sources:", crossOrigin, useCredentials);
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
-    item?.mediaType === "document" &&
-    new Set(["txt", "json", "md", "log", "yaml", "yml", "xml"]).has(documentFormat);
+    item?.mediaType === "document" && new Set(["txt", "json", "md", "log", "yaml", "yml", "xml"]).has(documentFormat);
   const isDocx = item?.mediaType === "document" && documentFormat === "docx";
   const isSpreadsheet = item?.mediaType === "document" && new Set(["xlsx", "xls", "csv"]).has(documentFormat);
   const isPptx = item?.mediaType === "document" && documentFormat === "pptx";
@@ -761,12 +760,13 @@ const MediaDetailPage = () => {
     );
   }
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
-  const createdByLabel = (createdBy ? getUserDetails(createdBy)?.display_name ?? createdBy : "") || item.author;
+  const createdByLabel = (createdBy ? (getUserDetails(createdBy)?.display_name ?? createdBy) : "") || item.author;
 
   if (isSgEventAsset) {
     return (
       <SgEventDetailPage
         enableMatrixView
+        defaultTagViewMode="list"
         showTagListActions={false}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -853,7 +853,13 @@ const MediaDetailPage = () => {
               createdByLabel={createdByLabel}
               createdAt={item.createdAt}
             />
-            <TagsSection item={item} onPlay={handleOverlayToggle} editable onTagsChange={handleTagsUpdate} isSaving={isTagsSaving} />
+            <TagsSection
+              item={item}
+              onPlay={handleOverlayToggle}
+              editable
+              onTagsChange={handleTagsUpdate}
+              isSaving={isTagsSaving}
+            />
           </div>
           {isVideo ? (
             <style jsx global>
