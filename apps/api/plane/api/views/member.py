@@ -79,7 +79,10 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace_members = WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member")
+        workspace_members = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_instance_admin_access=False,
+        ).select_related("member")
 
         # Get all the users with their roles
         users_with_roles = []
@@ -132,9 +135,11 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
-            "member_id", flat=True
-        )
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            is_instance_admin_access=False,
+        ).values_list("member_id", flat=True)
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
@@ -186,7 +191,12 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project_members = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            pk=pk,
+            is_instance_admin_access=False,
+        )
         user = User.objects.get(id=project_members.member_id)
         user = UserLiteSerializer(user).data
         return Response(user, status=status.HTTP_200_OK)
@@ -201,7 +211,12 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         request=OpenApiRequest(request=ProjectMemberSerializer),
     )
     def patch(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            pk=pk,
+            is_instance_admin_access=False,
+        )
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -216,7 +231,12 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         responses={204: OpenApiResponse(description="Project member deleted")},
     )
     def delete(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            pk=pk,
+            is_instance_admin_access=False,
+        )
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

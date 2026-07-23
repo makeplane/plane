@@ -729,6 +729,19 @@
         gap: 2px;
         padding: 16px 14px;
       }
+      .load-older {
+        display: none;
+        margin: 10px auto 0;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg-panel);
+        color: var(--text-muted);
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .load-older.show {
+        display: block;
+      }
       .messages.searching .messages-inner {
         padding-top: 56px;
       }
@@ -1209,6 +1222,35 @@
       }
       .composer:focus-within {
         border-color: var(--accent);
+      }
+      .composer.dragging {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+      }
+      .recording-status {
+        display: none;
+        flex: 1;
+        align-items: center;
+        gap: 8px;
+        min-height: 36px;
+        color: var(--danger);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .recording-status.show {
+        display: flex;
+      }
+      .recording-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--danger);
+        animation: recording-pulse 1s ease-in-out infinite;
+      }
+      @keyframes recording-pulse {
+        50% {
+          opacity: 0.35;
+        }
       }
       .composer textarea {
         width: 100%;
@@ -2109,6 +2151,7 @@
                 <svg class="icon" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
               </button>
             </div>
+            <button class="load-older" id="loadOlderBtn">Загрузить предыдущие сообщения</button>
             <div class="messages-inner" id="messagesInner"></div>
           </section>
 
@@ -2161,6 +2204,10 @@
                   </svg>
                 </button>
                 <textarea id="draftInput" rows="1" placeholder="Сообщение"></textarea>
+                <div class="recording-status" id="recordingStatus">
+                  <span class="recording-dot"></span><span id="recordingTime">0:00</span
+                  ><span>Нажмите ещё раз, чтобы отправить</span>
+                </div>
                 <button class="icon-btn" id="attachBtn" aria-label="Прикрепить файл">
                   <svg class="icon" viewBox="0 0 24 24">
                     <path
@@ -2370,6 +2417,16 @@
         isSending: false,
         forceScrollBottom: true,
         pollInFlight: false,
+        messagePages: {},
+        isRecording: false,
+        mediaRecorder: null,
+        recordingStream: null,
+        recordingStartedAt: 0,
+        recordingTimer: null,
+        recordingCancelled: false,
+        searchTimer: null,
+        searchServerResults: null,
+        addMemberChatId: null,
       };
 
       const $ = (id) => document.getElementById(id);
@@ -2415,6 +2472,10 @@
         messageSearchInput = $("messageSearchInput"),
         searchNav = $("searchNav"),
         searchCount = $("searchCount");
+      const loadOlderBtn = $("loadOlderBtn"),
+        recordingStatus = $("recordingStatus"),
+        recordingTime = $("recordingTime"),
+        composer = document.querySelector(".composer");
 
       function icon(type) {
         const map = {
@@ -2428,6 +2489,7 @@
           file: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
           send: '<svg class="icon" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
           mic: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>',
+          stop: '<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
           moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"/></svg>',
           sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
           copy: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
@@ -2640,6 +2702,7 @@
       function attachmentHtml(file) {
         const isImage = file.mime_type && file.mime_type.startsWith("image/") && file.public_url;
         const isVideo = file.mime_type && file.mime_type.startsWith("video/") && file.public_url;
+        const isAudio = file.mime_type && file.mime_type.startsWith("audio/") && file.public_url;
         const downloadUrl = file.public_url || "";
         const name = escapeHtml(file.original_name || "file");
         if (isImage) {
@@ -2647,6 +2710,9 @@
         }
         if (isVideo) {
           return `<a class="attachment media-attachment" href="${escapeHtml(downloadUrl)}" target="_blank" download="${name}"><video class="attachment-preview" src="${escapeHtml(downloadUrl)}" preload="metadata" muted></video><span class="attachment-info"><span class="attachment-name">${name}</span><span class="attachment-size">${escapeHtml(fileSize(file.size_bytes))}</span></span></a>`;
+        }
+        if (isAudio) {
+          return `<div class="attachment media-attachment"><audio controls preload="metadata" src="${escapeHtml(downloadUrl)}"></audio><span class="attachment-info"><span class="attachment-name">Голосовое сообщение</span><span class="attachment-size">${escapeHtml(fileSize(file.size_bytes))}</span></span></div>`;
         }
         return `<a class="attachment" href="${escapeHtml(downloadUrl)}" target="_blank" download="${name}">${icon("file")}<span class="attachment-info"><span class="attachment-name">${name}</span><span class="attachment-size">${escapeHtml(fileSize(file.size_bytes))}</span></span></a>`;
       }
@@ -2707,7 +2773,10 @@
         }
         const previousScrollTop = messagesBox.scrollTop;
         const wasNearBottom = messagesBox.scrollHeight - messagesBox.clientHeight - previousScrollTop < 80;
-        const allItems = messagesCache[chat.id] || [];
+        const allItems =
+          state.searchMode && state.searchServerResults ? state.searchServerResults : messagesCache[chat.id] || [];
+        const page = state.messagePages[chat.id];
+        loadOlderBtn.classList.toggle("show", Boolean(page && page.offset > 0 && !state.searchMode));
         const query = state.searchMode ? state.searchQuery.trim().toLowerCase() : "";
         const items = allItems.filter((m) => {
           const text = (m.text || "").toLowerCase();
@@ -2798,8 +2867,11 @@
         profileSub.textContent =
           chat.type === "group" ? "Рабочий групповой чат" : chat.type === "bot" ? "Системный бот" : "Личный контакт";
         const ls = getChatLocalState(chat.id);
+        const myMembership = (chat.members || []).find((m) => String(m.user) === String(currentUser?.id));
+        const canManageMembers = myMembership && ["owner", "admin"].includes(myMembership.role);
         const rows = [
-          chat.type === "group" ? ["Название", chat.name || "Группа", "renameGroup"] : null,
+          chat.type === "group" ? ["Название", chat.title || chat.display_name || "Группа", "renameGroup"] : null,
+          chat.type === "group" && canManageMembers ? ["Участники", "Добавить участника", "addMember"] : null,
           ["Уведомления", ls.muted ? "Отключены" : "Включены", "toggleMute"],
           ["Архив", ls.archived ? "В архиве" : "Не в архиве", "toggleArchive"],
           ["Закреп", ls.pinnedMessageId ? "Есть" : "Нет", "scrollPin"],
@@ -2828,7 +2900,8 @@
             .map((m) => {
               const u = m.user_detail || {};
               const name = u.display_name || `${u.first_name || ""} ${u.last_name || ""}`.trim() || u.email || "User";
-              return `<div class="member-row">${avatarHtml({ name, display_avatar: { initials: (name || "U").slice(0, 2).toUpperCase(), color: "blue" } })}<span>${escapeHtml(name)}</span><span class="member-role">${escapeHtml(m.role || "member")}</span></div>`;
+              const manageable = canManageMembers && m.role !== "owner" && String(m.user) !== String(currentUser?.id);
+              return `<div class="member-row">${avatarHtml({ name, display_avatar: { initials: (name || "U").slice(0, 2).toUpperCase(), color: "blue" } })}<span>${escapeHtml(name)}</span><span class="member-role">${escapeHtml(m.role || "member")}</span>${manageable ? `<button class="icon-btn" data-member-role="${m.id}" data-next-role="${m.role === "admin" ? "member" : "admin"}" title="${m.role === "admin" ? "Снять администратора" : "Назначить администратором"}">${icon("edit")}</button><button class="icon-btn" data-remove-member="${m.id}" title="Удалить участника">${icon("trash")}</button>` : ""}</div>`;
             })
             .join("");
         } else {
@@ -2837,7 +2910,6 @@
 
         // Invite
         const inviteCard = $("inviteCard");
-        const myMembership = (chat.members || []).find((m) => String(m.user) === String(currentUser?.id));
         const canInvite = myMembership && ["owner", "admin"].includes(myMembership.role);
         if (chat.type === "group" && canInvite) {
           inviteCard.style.display = "";
@@ -2936,7 +3008,10 @@
         const hasContent =
           draftInput.value.trim().length > 0 || state.pendingFiles.length > 0 || state.editingMessageId;
         sendBtn.classList.toggle("has-text", hasContent);
-        sendBtn.innerHTML = hasContent ? icon("send") : icon("mic");
+        sendBtn.classList.toggle("recording", state.isRecording);
+        sendBtn.innerHTML = state.isRecording ? icon("stop") : hasContent ? icon("send") : icon("mic");
+        draftInput.style.display = state.isRecording ? "none" : "";
+        recordingStatus.classList.toggle("show", state.isRecording);
       }
       function resizeTextarea() {
         draftInput.style.height = "auto";
@@ -2965,7 +3040,11 @@
 
       async function markChatRead(chatId) {
         try {
-          await apiFetch(`${API_BASE}/chats/${chatId}/read/`, { method: "POST", body: JSON.stringify({}) });
+          const lastMessage = (messagesCache[chatId] || []).at(-1);
+          await apiFetch(`${API_BASE}/chats/${chatId}/read/`, {
+            method: "POST",
+            body: JSON.stringify({ last_message_id: lastMessage?.id || null }),
+          });
           const ls = state.chatStates[chatId];
           if (ls) {
             ls.unread_count = 0;
@@ -3076,6 +3155,72 @@
           sendBtn.disabled = false;
           updateSendButton();
         }
+      }
+
+      async function toggleVoiceRecording() {
+        if (state.isRecording) {
+          state.mediaRecorder?.stop();
+          return;
+        }
+        if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+          showNotice("Запись голоса не поддерживается браузером");
+          return;
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const recorder = new MediaRecorder(stream);
+          const chunks = [];
+          recorder.addEventListener("dataavailable", (event) => {
+            if (event.data.size) chunks.push(event.data);
+          });
+          recorder.addEventListener("stop", async () => {
+            const duration = Date.now() - state.recordingStartedAt;
+            const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+            stream.getTracks().forEach((track) => track.stop());
+            clearInterval(state.recordingTimer);
+            state.isRecording = false;
+            state.mediaRecorder = null;
+            state.recordingStream = null;
+            updateSendButton();
+            if (state.recordingCancelled) {
+              state.recordingCancelled = false;
+              return;
+            }
+            if (duration < 500 || !blob.size) {
+              showNotice("Голосовое сообщение слишком короткое");
+              return;
+            }
+            const extension = blob.type.includes("ogg") ? "ogg" : "webm";
+            handleFiles([new File([blob], `voice-${Date.now()}.${extension}`, { type: blob.type })]);
+            await sendMessage();
+          });
+          state.isRecording = true;
+          state.recordingCancelled = false;
+          state.mediaRecorder = recorder;
+          state.recordingStream = stream;
+          state.recordingStartedAt = Date.now();
+          recordingTime.textContent = "0:00";
+          state.recordingTimer = setInterval(() => {
+            const seconds = Math.floor((Date.now() - state.recordingStartedAt) / 1000);
+            recordingTime.textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+          }, 250);
+          recorder.start(250);
+          updateSendButton();
+          showNotice("Идёт запись голосового сообщения");
+        } catch (error) {
+          showNotice(error?.name === "NotAllowedError" ? "Разрешите доступ к микрофону" : "Не удалось начать запись");
+        }
+      }
+
+      function cancelVoiceRecording() {
+        if (!state.isRecording) return;
+        state.recordingCancelled = true;
+        clearInterval(state.recordingTimer);
+        state.isRecording = false;
+        if (state.mediaRecorder?.state !== "inactive") state.mediaRecorder?.stop();
+        else state.recordingStream?.getTracks().forEach((track) => track.stop());
+        updateSendButton();
+        showNotice("Запись отменена");
       }
 
       async function openMessageMenu(messageId, x, y) {
@@ -3421,6 +3566,21 @@
             const items = contacts.filter((contact) => contact.group === group);
             if (!items.length) return "";
             const header = `<div class="contact-group-title">${escapeHtml(group)}</div>`;
+            if (forGroup === "add") {
+              const existingIds = new Set(
+                (getChat(state.addMemberChatId)?.members || []).map((member) => String(member.user))
+              );
+              return (
+                header +
+                items
+                  .filter((contact) => !existingIds.has(String(contact.id)))
+                  .map(
+                    (contact) =>
+                      `<button class="contact-row" data-add-member="${contact.id}">${avatarHtml(contact)}<span class="contact-meta"><span class="contact-name">${escapeHtml(contact.name)}</span><span class="contact-role">${escapeHtml(contact.role)}</span></span></button>`
+                  )
+                  .join("")
+              );
+            }
             if (forGroup) {
               return (
                 header +
@@ -3446,6 +3606,7 @@
       }
 
       async function openNewChatModal() {
+        state.addMemberChatId = null;
         try {
           const data = await apiFetch(`${API_BASE}/contacts/`);
           contacts = data || [];
@@ -3524,6 +3685,47 @@
           showNotice(`Группа «${title}» создана`);
         } catch (e) {
           showNotice("Ошибка создания группы");
+        }
+      }
+
+      function openAddMemberModal() {
+        state.addMemberChatId = state.selectedId;
+        switchNewChatTab("contacts");
+        renderContactList(contactTargets, "add");
+        newChatModal.classList.add("show");
+      }
+
+      async function addGroupMember(userId) {
+        const chatId = state.addMemberChatId;
+        if (!chatId) return;
+        try {
+          await apiFetch(`${API_BASE}/chats/${chatId}/members/`, {
+            method: "POST",
+            body: JSON.stringify({ user_id: userId, role: "member" }),
+          });
+          newChatModal.classList.remove("show");
+          state.addMemberChatId = null;
+          await loadChats();
+          renderAll();
+          showNotice("Участник добавлен");
+        } catch (error) {
+          showNotice("Не удалось добавить участника");
+        }
+      }
+
+      async function updateGroupMember(memberId, payload, successMessage) {
+        const chat = getChat();
+        if (!chat) return;
+        try {
+          await apiFetch(`${API_BASE}/chats/${chat.id}/members/${memberId}/`, {
+            method: payload ? "PATCH" : "DELETE",
+            body: payload ? JSON.stringify(payload) : undefined,
+          });
+          await loadChats();
+          renderAll();
+          showNotice(successMessage);
+        } catch (error) {
+          showNotice("Не удалось изменить участника");
         }
       }
 
@@ -3645,9 +3847,26 @@
 
       function openMainMenu(x, y) {
         const chat = getChat();
-        const ls = getChatLocalState(chat.id);
-        mainMenu.innerHTML = `<button class="menu-row" data-main-action="new">${icon("edit")} Новый чат</button><button class="menu-row" data-main-action="markRead">${icon("check")} Отметить как прочитанное</button><button class="menu-row" data-main-action="pinChat">${icon("pin")} ${ls.pinned ? "Открепить чат" : "Закрепить чат"}</button><button class="menu-row" data-main-action="mute">${icon("bell")} ${ls.muted ? "Включить уведомления" : "Выключить уведомления"}</button><button class="menu-row" data-main-action="archive">${icon("archive")} ${ls.archived ? "Вернуть из архива" : "Архивировать"}</button><button class="menu-row" data-main-action="block">${icon("block")} ${ls.blocked ? "Разблокировать" : "Заблокировать"}</button><button class="menu-row danger" data-main-action="deleteChat">${icon("trash")} Удалить чат</button>`;
+        const ls = getChatLocalState(chat?.id);
+        mainMenu.innerHTML = `<button class="menu-row" data-main-action="saved">★ Избранное</button><button class="menu-row" data-main-action="new">${icon("edit")} Новый чат</button>${chat ? `<button class="menu-row" data-main-action="markRead">${icon("check")} Отметить как прочитанное</button><button class="menu-row" data-main-action="pinChat">${icon("pin")} ${ls.pinned ? "Открепить чат" : "Закрепить чат"}</button><button class="menu-row" data-main-action="mute">${icon("bell")} ${ls.muted ? "Включить уведомления" : "Выключить уведомления"}</button><button class="menu-row" data-main-action="archive">${icon("archive")} ${ls.archived ? "Вернуть из архива" : "Архивировать"}</button><button class="menu-row" data-main-action="block">${icon("block")} ${ls.blocked ? "Разблокировать" : "Заблокировать"}</button><button class="menu-row danger" data-main-action="deleteChat">${icon("trash")} Удалить чат</button>` : ""}`;
         placePopover(mainMenu, x, y);
+      }
+
+      async function openSavedMessages() {
+        try {
+          const saved = await apiFetch(`${API_BASE}/chats/`, {
+            method: "POST",
+            body: JSON.stringify({ type: "direct", members: [] }),
+          });
+          if (!chats.some((chat) => String(chat.id) === String(saved.id))) chats.unshift(saved);
+          state.selectedId = saved.id;
+          state.forceScrollBottom = true;
+          await loadMessages(saved.id);
+          renderAll();
+          showNotice("Избранное открыто");
+        } catch (error) {
+          showNotice("Не удалось открыть Избранное");
+        }
       }
 
       document.addEventListener("click", (event) => {
@@ -3661,6 +3880,7 @@
 
         const chatButton = event.target.closest("[data-chat-id]");
         if (chatButton) {
+          if (state.isRecording) cancelVoiceRecording();
           persistDraft();
           state.selectedId = chatButton.dataset.chatId;
           state.selectedMessages.clear();
@@ -3721,6 +3941,7 @@
         const mainAction = event.target.closest("[data-main-action]");
         if (mainAction) {
           const a = mainAction.dataset.mainAction;
+          if (a === "saved") openSavedMessages();
           if (a === "new") openNewChatModal();
           if (a === "markRead") markChatRead(state.selectedId);
           if (a === "pinChat") toggleChatPin();
@@ -3759,6 +3980,28 @@
           return;
         }
 
+        const addMemberTarget = event.target.closest("[data-add-member]");
+        if (addMemberTarget) {
+          addGroupMember(addMemberTarget.dataset.addMember);
+          return;
+        }
+
+        const memberRoleTarget = event.target.closest("[data-member-role]");
+        if (memberRoleTarget) {
+          updateGroupMember(
+            memberRoleTarget.dataset.memberRole,
+            { role: memberRoleTarget.dataset.nextRole },
+            memberRoleTarget.dataset.nextRole === "admin" ? "Администратор назначен" : "Роль изменена"
+          );
+          return;
+        }
+
+        const removeMemberTarget = event.target.closest("[data-remove-member]");
+        if (removeMemberTarget) {
+          updateGroupMember(removeMemberTarget.dataset.removeMember, null, "Участник удалён");
+          return;
+        }
+
         const material = event.target.closest("[data-material]");
         if (material) {
           openMaterialFilter(material.dataset.material);
@@ -3777,9 +4020,10 @@
           if (a === "links") openMaterialFilter("URL");
           if (a === "deleteChat") deleteCurrentChat();
           if (a === "renameGroup") {
-            const newName = prompt("Новое название группы:", getChat()?.name || "");
+            const newName = prompt("Новое название группы:", getChat()?.title || getChat()?.display_name || "");
             if (newName?.trim()) renameGroup(newName.trim());
           }
+          if (a === "addMember") openAddMemberModal();
           return;
         }
 
@@ -3863,6 +4107,7 @@
         state.searchMode = false;
         state.searchQuery = "";
         state.materialFilter = null;
+        state.searchServerResults = null;
         messageSearchInput.placeholder = "Поиск сообщений...";
         renderMessages();
       });
@@ -3871,7 +4116,10 @@
         messageSearchInput.placeholder = "Поиск сообщений...";
         state.searchQuery = event.target.value;
         renderMessages();
+        clearTimeout(state.searchTimer);
+        state.searchTimer = setTimeout(() => searchMessagesOnServer(state.searchQuery), 250);
       });
+      loadOlderBtn.addEventListener("click", loadOlderMessages);
       $("searchUpBtn").addEventListener("click", () => {
         if (!state.searchResults.length) return;
         state.searchIndex = Math.max(0, state.searchIndex - 1);
@@ -3900,7 +4148,33 @@
           sendMessage();
         }
       });
-      sendBtn.addEventListener("click", sendMessage);
+      sendBtn.addEventListener("click", () => {
+        const hasContent = draftInput.value.trim() || state.pendingFiles.length || state.editingMessageId;
+        if (hasContent && !state.isRecording) sendMessage();
+        else toggleVoiceRecording();
+      });
+
+      [composer, messagesBox].forEach((target) => {
+        target.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          composer.classList.add("dragging");
+        });
+        target.addEventListener("dragleave", (event) => {
+          if (!composer.contains(event.relatedTarget)) composer.classList.remove("dragging");
+        });
+        target.addEventListener("drop", (event) => {
+          event.preventDefault();
+          composer.classList.remove("dragging");
+          if (event.dataTransfer?.files?.length) handleFiles(event.dataTransfer.files);
+        });
+      });
+      draftInput.addEventListener("paste", (event) => {
+        const files = [...(event.clipboardData?.items || [])]
+          .filter((item) => item.kind === "file")
+          .map((item) => item.getAsFile())
+          .filter(Boolean);
+        if (files.length) handleFiles(files);
+      });
       $("cancelComposeState").addEventListener("click", () => {
         state.replyToId = null;
         state.editingMessageId = null;
@@ -4018,6 +4292,10 @@
           return;
         }
         if (event.key === "Escape") {
+          if (state.isRecording) {
+            cancelVoiceRecording();
+            return;
+          }
           hidePopovers();
           forwardModal.classList.remove("show");
           newChatModal.classList.remove("show");
@@ -4025,6 +4303,7 @@
             state.searchMode = false;
             state.searchQuery = "";
             state.materialFilter = null;
+            state.searchServerResults = null;
             messageSearchInput.placeholder = "Поиск сообщений...";
             renderMessages();
           } else if (state.selectMode) {
@@ -4129,10 +4408,77 @@
           msgs.forEach((m) => {
             m.mine = m.sender === currentUser?.id || (m.sender_detail && m.sender_detail.id === currentUser?.id);
             m.unread = false;
+            m.myReactions = m.my_reactions || [];
           });
           messagesCache[chatId] = msgs;
+          state.messagePages[chatId] = {
+            offset: data.offset || 0,
+            total: data.total ?? msgs.length,
+            limit: data.limit || 50,
+          };
         } catch (e) {
           showNotice("Ошибка загрузки сообщений");
+        }
+      }
+
+      async function loadOlderMessages() {
+        const chatId = state.selectedId;
+        const page = state.messagePages[chatId];
+        if (!chatId || !page || page.offset <= 0) return;
+        const nextOffset = Math.max(page.offset - page.limit, 0);
+        const previousHeight = messagesBox.scrollHeight;
+        loadOlderBtn.disabled = true;
+        try {
+          const data = await apiFetch(
+            `${API_BASE}/chats/${chatId}/messages/?offset=${nextOffset}&limit=${page.offset - nextOffset}`
+          );
+          const older = (data.results || []).map((message) => ({
+            ...message,
+            mine:
+              message.sender === currentUser?.id ||
+              (message.sender_detail && message.sender_detail.id === currentUser?.id),
+            unread: false,
+            myReactions: message.my_reactions || [],
+          }));
+          const knownIds = new Set((messagesCache[chatId] || []).map((message) => String(message.id)));
+          messagesCache[chatId] = [
+            ...older.filter((message) => !knownIds.has(String(message.id))),
+            ...(messagesCache[chatId] || []),
+          ];
+          page.offset = nextOffset;
+          renderMessages();
+          requestAnimationFrame(() => {
+            messagesBox.scrollTop = messagesBox.scrollHeight - previousHeight;
+          });
+        } catch (error) {
+          showNotice("Не удалось загрузить предыдущие сообщения");
+        } finally {
+          loadOlderBtn.disabled = false;
+        }
+      }
+
+      async function searchMessagesOnServer(query) {
+        const chatId = state.selectedId;
+        if (!chatId || !query.trim()) {
+          state.searchServerResults = null;
+          renderMessages();
+          return;
+        }
+        try {
+          const data = await apiFetch(
+            `${API_BASE}/chats/${chatId}/messages/?q=${encodeURIComponent(query.trim())}&offset=0&limit=100`
+          );
+          state.searchServerResults = (data.results || []).map((message) => ({
+            ...message,
+            mine:
+              message.sender === currentUser?.id ||
+              (message.sender_detail && message.sender_detail.id === currentUser?.id),
+            unread: false,
+            myReactions: message.my_reactions || [],
+          }));
+          renderMessages();
+        } catch (error) {
+          showNotice("Ошибка поиска сообщений");
         }
       }
 

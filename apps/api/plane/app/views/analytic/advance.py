@@ -65,14 +65,20 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
     def get_overview_data(self) -> Dict[str, Dict[str, int]]:
         members_query = WorkspaceMember.objects.filter(
-            workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
+            workspace__slug=self._workspace_slug,
+            is_active=True,
+            member__is_bot=False,
+            is_instance_admin_access=False,
         )
 
         if self.request.GET.get("project_ids", None):
             project_ids = self.request.GET.get("project_ids", None)
             project_ids = [str(project_id) for project_id in project_ids.split(",")]
             members_query = ProjectMember.objects.filter(
-                project_id__in=project_ids, is_active=True, member__is_bot=False
+                project_id__in=project_ids,
+                is_active=True,
+                member__is_bot=False,
+                is_instance_admin_access=False,
             )
 
         return {

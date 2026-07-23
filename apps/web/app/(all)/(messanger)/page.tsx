@@ -4,19 +4,14 @@
  * See the LICENSE file for details.
  */
 
-// components
 import { PageHead } from "@/components/core/page-title";
 import { MessengerFrame } from "@/components/messenger/messenger-frame";
 
-function MessengerPage() {
+export default function MessangerPage() {
   return (
     <>
       <PageHead title="Gizmo Messenger" />
-      <div className="relative h-full w-full overflow-hidden">
-        <MessengerFrame />
-      </div>
+      <MessengerFrame />
     </>
   );
 }
-
-export default MessengerPage;

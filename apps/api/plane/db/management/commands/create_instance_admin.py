@@ -6,7 +6,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
-from plane.license.models import Instance, InstanceAdmin
+from plane.license.models import Instance, InstanceAdmin, INSTANCE_SUPER_ADMIN_ROLE
 from plane.db.models import User
 
 
@@ -32,7 +32,9 @@ class Command(BaseCommand):
             instance = Instance.objects.last()
 
             # Get or create an instance admin
-            _, created = InstanceAdmin.objects.get_or_create(user=user, instance=instance, role=20)
+            _, created = InstanceAdmin.objects.get_or_create(
+                user=user, instance=instance, role=INSTANCE_SUPER_ADMIN_ROLE
+            )
 
             if not created:
                 raise CommandError("The provided email is already an instance admin.")

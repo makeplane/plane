@@ -18,6 +18,7 @@ import { ControllerInput } from "@/components/common/controller-input";
 import { useInstance } from "@/hooks/store";
 // components
 import { IntercomConfig } from "./intercom";
+import { InstanceAdmins } from "./instance-admins";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -89,7 +90,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               id="email"
               name="email"
               type="email"
-              value={instanceAdmins[0]?.user_detail?.email ?? ""}
+              value={instanceAdmins.find((admin) => admin.role === 20)?.user_detail?.email ?? ""}
               placeholder="Эл. почта администратора"
               className="w-full cursor-not-allowed !text-placeholder"
               autoComplete="on"
@@ -122,9 +123,12 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Разрешить Gizmo собирать анонимные данные об использовании</div>
+              <div className="text-13 leading-5 font-medium text-primary">
+                Разрешить Gizmo собирать анонимные данные об использовании
+              </div>
               <div className="text-11 leading-5 font-regular text-tertiary">
-                Персональные данные не собираются. Эти обезличенные данные используются для понимания того, как вы используете Gizmo, и для создания новых функций в соответствии с{" "}
+                Персональные данные не собираются. Эти обезличенные данные используются для понимания того, как вы
+                используете Gizmo, и для создания новых функций в соответствии с{" "}
                 <a
                   href="https://developers.gizmo.so/self-hosting/telemetry"
                   target="_blank"
@@ -147,6 +151,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           </div>
         </div>
       </div>
+
+      <InstanceAdmins instanceAdmins={instanceAdmins} />
 
       <div>
         <Button

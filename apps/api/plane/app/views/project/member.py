@@ -37,6 +37,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(member__is_bot=False)
+            .filter(is_instance_admin_access=False)
             .filter()
             .select_related("project")
             .select_related("member")
@@ -205,6 +206,11 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
+        if project_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators are managed in God Mode"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Fetch the workspace role of the project member
         workspace_role = WorkspaceMember.objects.get(
@@ -258,6 +264,11 @@ class ProjectMemberViewSet(BaseViewSet):
             member__is_bot=False,
             is_active=True,
         )
+        if project_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators are managed in God Mode"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # check requesting user role
         requesting_project_member = ProjectMember.objects.get(
             workspace__slug=slug,
@@ -290,12 +301,21 @@ class ProjectMemberViewSet(BaseViewSet):
             member=request.user,
             is_active=True,
         )
+        if project_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators cannot leave individual projects"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check if the leaving user is the only admin of the project
         if (
             project_member.role == 20
             and not ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id, role=20, is_active=True
+                workspace__slug=slug,
+                project_id=project_id,
+                role=20,
+                is_active=True,
+                is_instance_admin_access=False,
             ).count()
             > 1
         ):

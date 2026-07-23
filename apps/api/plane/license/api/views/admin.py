@@ -23,12 +23,12 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import InstanceAdminPermission, InstanceSuperAdminPermission
 from plane.license.api.serializers import (
     InstanceAdminMeSerializer,
     InstanceAdminSerializer,
 )
-from plane.license.models import Instance, InstanceAdmin
+from plane.license.models import Instance, InstanceAdmin, INSTANCE_ADMIN_ROLE, INSTANCE_SUPER_ADMIN_ROLE
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
@@ -42,16 +42,24 @@ from plane.utils.path_validator import get_safe_redirect_url
 
 
 class InstanceAdminEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    def get_permissions(self):
+        if self.request.method in ["POST", "DELETE"]:
+            return [InstanceSuperAdminPermission()]
+        return [InstanceAdminPermission()]
 
     @invalidate_cache(path="/api/instances/", user=False)
     # Create an instance admin
     def post(self, request):
-        email = request.data.get("email", False)
-        role = request.data.get("role", 20)
+        email = request.data.get("email", "")
 
         if not email:
             return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        email = email.strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "A valid email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         instance = Instance.objects.first()
         if instance is None:
@@ -60,10 +68,19 @@ class InstanceAdminEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Fetch the user
-        user = User.objects.get(email=email)
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            return Response(
+                {"error": "The user must register before they can be made an admin"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        instance_admin = InstanceAdmin.objects.create(instance=instance, user=user, role=role)
+        if InstanceAdmin.objects.filter(instance=instance, user=user).exists():
+            return Response({"error": "This user is already an instance admin"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # The public endpoint intentionally never accepts a role. Only the
+        # bootstrap account can be a super admin; delegated accounts are admins.
+        instance_admin = InstanceAdmin.objects.create(instance=instance, user=user, role=INSTANCE_ADMIN_ROLE)
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -82,7 +99,15 @@ class InstanceAdminEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
+        instance_admin = InstanceAdmin.objects.filter(instance=instance, pk=pk).first()
+        if instance_admin is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if instance_admin.role >= INSTANCE_SUPER_ADMIN_ROLE:
+            return Response(
+                {"error": "Super admins cannot be removed through this endpoint"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        instance_admin.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -226,7 +251,7 @@ class InstanceAdminSignUpEndpoint(View):
             user.save()
 
             # Register the user as an instance admin
-            _ = InstanceAdmin.objects.create(user=user, instance=instance)
+            _ = InstanceAdmin.objects.create(user=user, instance=instance, role=INSTANCE_SUPER_ADMIN_ROLE)
             # Make the setup flag True
             instance.is_setup_done = True
             instance.instance_name = company_name

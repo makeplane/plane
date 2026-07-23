@@ -12,6 +12,8 @@ import type {
   IInstanceAdmin,
   IInstanceConfiguration,
   IInstanceInfo,
+  IInstanceUser,
+  TInstanceUserPaginationInfo,
   TPage,
 } from "@plane/types";
 // api service
@@ -66,6 +68,45 @@ export class InstanceService extends APIService {
    */
   async admins(): Promise<IInstanceAdmin[]> {
     return this.get("/api/instances/admins/", { validateStatus: null })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Gives a registered user God Mode access as an instance admin.
+   * Only instance super admins may call this endpoint.
+   */
+  async createAdmin(email: string): Promise<IInstanceAdmin> {
+    return this.post("/api/instances/admins/", { email })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Removes a delegated instance admin. Only super admins may call this endpoint. */
+  async deleteAdmin(adminId: string): Promise<void> {
+    return this.delete(`/api/instances/admins/${adminId}/`)
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async users(search = "", cursor?: string): Promise<TInstanceUserPaginationInfo> {
+    return this.get("/api/instances/users/", {
+      params: { search, cursor, per_page: 25 },
+    })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateUser(userId: string, data: Pick<IInstanceUser, "is_active">): Promise<IInstanceUser> {
+    return this.patch(`/api/instances/users/${userId}/`, data)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

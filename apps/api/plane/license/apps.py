@@ -7,3 +7,6 @@ from django.apps import AppConfig
 
 class LicenseConfig(AppConfig):
     name = "plane.license"
+
+    def ready(self):
+        from plane.license import signals  # noqa: F401

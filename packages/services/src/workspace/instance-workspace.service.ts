@@ -5,7 +5,12 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
+import type {
+  IWorkspace,
+  IWorkspaceMember,
+  TInstanceWorkspaceMemberPaginationInfo,
+  TWorkspacePaginationInfo,
+} from "@plane/types";
 import { APIService } from "../api.service";
 
 /**
@@ -64,6 +69,48 @@ export class InstanceWorkspaceService extends APIService {
   async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.post("/api/instances/workspaces/", data)
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async retrieve(workspaceId: string): Promise<IWorkspace> {
+    return this.get(`/api/instances/workspaces/${workspaceId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async members(workspaceId: string, search = "", cursor?: string): Promise<TInstanceWorkspaceMemberPaginationInfo> {
+    return this.get(`/api/instances/workspaces/${workspaceId}/members/`, {
+      params: { search, cursor, per_page: 50 },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async addMember(workspaceId: string, email: string, role: number): Promise<IWorkspaceMember> {
+    return this.post(`/api/instances/workspaces/${workspaceId}/members/`, { email, role })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateMember(workspaceId: string, memberId: string, role: number): Promise<IWorkspaceMember> {
+    return this.patch(`/api/instances/workspaces/${workspaceId}/members/${memberId}/`, { role })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeMember(workspaceId: string, memberId: string): Promise<void> {
+    return this.delete(`/api/instances/workspaces/${workspaceId}/members/${memberId}/`)
+      .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;
       });

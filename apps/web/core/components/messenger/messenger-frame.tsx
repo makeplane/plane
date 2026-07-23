@@ -80,7 +80,7 @@ export function MessengerFrame() {
       className="h-full w-full border-0 bg-canvas"
       title="Gizmo Messenger"
       onLoad={syncTheme}
-      allow="clipboard-read; clipboard-write"
+      allow="clipboard-read; clipboard-write; microphone"
     />
   );
 }

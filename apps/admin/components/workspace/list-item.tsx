@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import Link from "next/link";
 
 // gizmo internal packages
 import { WEB_BASE_URL } from "@plane/constants";
@@ -26,12 +27,9 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
 
   if (!workspace) return null;
   return (
-    <a
+    <div
       key={workspaceId}
-      href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
-      target="_blank"
-      className="group flex items-center justify-between gap-2.5 truncate rounded-lg border border-subtle bg-layer-1 p-3 hover:border-subtle-1 hover:bg-layer-1-hover hover:shadow-raised-100"
-      rel="noreferrer"
+      className="flex items-center justify-between gap-2.5 truncate rounded-lg border border-subtle bg-layer-1 p-3 hover:border-subtle-1 hover:bg-layer-1-hover hover:shadow-raised-100"
     >
       <div className="flex items-start gap-4">
         <span
@@ -81,9 +79,23 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
           </div>
         </div>
       </div>
-      <div className="flex-shrink-0">
-        <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
+      <div className="flex flex-shrink-0 items-center gap-3">
+        <Link
+          href={`/workspace/${workspace.id}`}
+          className="rounded-md border border-subtle px-3 py-1.5 text-12 text-secondary hover:bg-layer-1-hover hover:text-primary"
+        >
+          Участники
+        </Link>
+        <a
+          href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
+          target="_blank"
+          title="Открыть пространство"
+          className="group rounded-sm p-1.5"
+          rel="noreferrer"
+        >
+          <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
+        </a>
       </div>
-    </a>
+    </div>
   );
 });

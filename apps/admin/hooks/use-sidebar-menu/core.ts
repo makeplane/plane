@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Image, BrainCog, Cog, Mail, Server } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, Server, Users } from "lucide-react";
 // gizmo imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -15,6 +15,7 @@ export type TCoreSidebarMenuKey =
   | "email"
   | "mail"
   | "workspace"
+  | "users"
   | "authentication"
   | "ai"
   | "image";
@@ -43,6 +44,12 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Workspaces",
     description: "Manage all workspaces on this instance.",
     href: `/workspace/`,
+  },
+  users: {
+    Icon: Users,
+    name: "Пользователи",
+    description: "Управление пользователями экземпляра.",
+    href: `/users/`,
   },
   authentication: {
     Icon: LockIcon,

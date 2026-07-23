@@ -25,6 +25,7 @@ from .admin import (
 from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceWorkspaceMemberEndpoint,
 )
 
 
@@ -33,3 +34,4 @@ from .mailbox import (
     MailAliasEndpoint,
     MailConfigEndpoint,
 )
+from .user import InstanceUserEndpoint

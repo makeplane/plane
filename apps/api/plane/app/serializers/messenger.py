@@ -110,6 +110,8 @@ class ChatMessengerSerializer(BaseSerializer):
                 if other:
                     u = other.user
                     return u.display_name or f"{u.first_name} {u.last_name}".strip() or u.email
+                if obj.members.filter(user=request.user, is_active=True).exists():
+                    return "Избранное"
         if obj.title:
             return obj.title
         return "Чат"
@@ -123,6 +125,8 @@ class ChatMessengerSerializer(BaseSerializer):
                     u = other.user
                     initials = (u.display_name or u.first_name or "U")[:2].upper()
                     return {"initials": initials, "color": "blue", "url": u.avatar if hasattr(u, "avatar") else None}
+                if obj.members.filter(user=request.user, is_active=True).exists():
+                    return {"initials": "★", "color": "violet", "url": None}
         return {"initials": (obj.title or "CH")[:2].upper(), "color": obj.avatar_color or "blue", "url": obj.avatar_url}
 
     def get_other_user(self, obj):
@@ -236,6 +240,7 @@ class MessageMessengerSerializer(BaseSerializer):
     reply_to_detail = serializers.SerializerMethodField()
     forwarded_from_detail = serializers.SerializerMethodField()
     read_by = serializers.SerializerMethodField()
+    my_reactions = serializers.SerializerMethodField()
 
     class Meta:
         model = MessageMessenger
@@ -256,6 +261,7 @@ class MessageMessengerSerializer(BaseSerializer):
             "edited_at",
             "attachments",
             "reactions",
+            "my_reactions",
             "read_by",
             "created_at",
             "updated_at",
@@ -294,6 +300,12 @@ class MessageMessengerSerializer(BaseSerializer):
     def get_read_by(self, obj):
         receipts = obj.receipts.filter(read_at__isnull=False)
         return [UserLiteSerializer(r.user).data for r in receipts]
+
+    def get_my_reactions(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return []
+        return list(obj.reactions.filter(user=request.user).values_list("emoji", flat=True))
 
 
 class MessageMessengerLiteSerializer(BaseSerializer):

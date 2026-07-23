@@ -8,7 +8,7 @@ import uuid
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Q, Count, Max
+from django.db.models import Q, F, Max
 from django.http import FileResponse, HttpResponseRedirect
 from django.utils import timezone
 
@@ -40,28 +40,23 @@ from plane.db.models import (
 )
 from plane.app.serializers import (
     ChatMessengerSerializer,
-    ChatMessengerLiteSerializer,
     ChatMemberMessengerSerializer,
     UserChatStateMessengerSerializer,
     MessageMessengerSerializer,
-    MessageMessengerLiteSerializer,
     MessageReactionMessengerSerializer,
-    MessageAttachmentMessengerSerializer,
     PinnedMessageMessengerSerializer,
     BlockMessengerSerializer,
     UserRelationMessengerSerializer,
     InviteLinkMessengerSerializer,
 )
-from .base import BaseAPIView, BaseViewSet
+from .base import BaseAPIView
 
 
 class ChatListCreateAPIEndpoint(BaseAPIView):
     """List and create chats globally for the current user."""
 
     def _ensure_membership(self, chat, user):
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -73,19 +68,15 @@ class ChatListCreateAPIEndpoint(BaseAPIView):
         user = request.user
 
         # Get chat IDs where user is a member
-        member_chat_ids = ChatMemberMessenger.objects.filter(
-            user=user, is_active=True
-        ).values_list("chat_id", flat=True)
+        member_chat_ids = ChatMemberMessenger.objects.filter(user=user, is_active=True).values_list(
+            "chat_id", flat=True
+        )
 
         # Exclude chats deleted by this user
-        deleted_chat_ids = ChatDeletionMessenger.objects.filter(
-            user=user
-        ).values_list("chat_id", flat=True)
+        deleted_chat_ids = ChatDeletionMessenger.objects.filter(user=user).values_list("chat_id", flat=True)
 
         chats = (
-            ChatMessenger.objects.filter(
-                id__in=member_chat_ids
-            )
+            ChatMessenger.objects.filter(id__in=member_chat_ids)
             .exclude(id__in=deleted_chat_ids)
             .annotate(
                 last_message_time=Max("messages__created_at"),
@@ -93,9 +84,7 @@ class ChatListCreateAPIEndpoint(BaseAPIView):
             .order_by("-last_message_time", "-updated_at")
         )
 
-        serializer = ChatMessengerSerializer(
-            chats, many=True, context={"request": request}
-        )
+        serializer = ChatMessengerSerializer(chats, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -114,15 +103,48 @@ class ChatListCreateAPIEndpoint(BaseAPIView):
             if project:
                 workspace = project.workspace
         if not workspace:
-            workspace = Workspace.objects.filter(
-                workspace_member__member=request.user
-            ).first()
+            workspace = Workspace.objects.filter(workspace_member__member=request.user).first()
 
         if not workspace:
             return Response(
                 {"error": "No workspace found for user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        workspace_user_ids = set(
+            WorkspaceMember.objects.filter(workspace=workspace, is_active=True).values_list("member_id", flat=True)
+        )
+        try:
+            requested_member_ids = {uuid.UUID(str(member_id)) for member_id in member_ids}
+        except (TypeError, ValueError, AttributeError):
+            return Response({"error": "Invalid member id"}, status=status.HTTP_400_BAD_REQUEST)
+        if not requested_member_ids.issubset(workspace_user_ids):
+            return Response(
+                {"error": "Every chat member must belong to the selected workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if chat_type == "direct":
+            direct_member_ids = requested_member_ids | {request.user.id}
+            if len(direct_member_ids) > 2:
+                return Response(
+                    {"error": "A direct chat can contain at most two users"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            existing = ChatMessenger.objects.filter(
+                type="direct",
+                organization=workspace,
+                members__user=request.user,
+                members__is_active=True,
+            ).distinct()
+            for candidate in existing:
+                candidate_member_ids = set(candidate.members.filter(is_active=True).values_list("user_id", flat=True))
+                if candidate_member_ids == direct_member_ids:
+                    ChatDeletionMessenger.objects.filter(chat=candidate, user=request.user).delete()
+                    return Response(
+                        ChatMessengerSerializer(candidate, context={"request": request}).data,
+                        status=status.HTTP_200_OK,
+                    )
 
         with transaction.atomic():
             kwargs = {
@@ -170,9 +192,7 @@ class ProjectTeamChatAPIEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if not ProjectMember.objects.filter(
-            project=project, member=user, is_active=True
-        ).exists():
+        if not ProjectMember.objects.filter(project=project, member=user, is_active=True).exists():
             return Response(
                 {"error": "Access denied"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -204,9 +224,9 @@ class ProjectTeamChatAPIEndpoint(BaseAPIView):
                     updated_by=request.user,
                 )
                 # Add all project members
-                member_ids = ProjectMember.objects.filter(
-                    project=project, is_active=True
-                ).values_list("member_id", flat=True)
+                member_ids = ProjectMember.objects.filter(project=project, is_active=True).values_list(
+                    "member_id", flat=True
+                )
                 for uid in member_ids:
                     ChatMemberMessenger.objects.get_or_create(
                         chat=chat,
@@ -230,9 +250,7 @@ class ChatDetailAPIEndpoint(BaseAPIView):
 
     def _get_chat(self, pk, user):
         chat = ChatMessenger.objects.get(pk=pk)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             raise PermissionError("You are not a member of this chat")
         return chat
 
@@ -256,9 +274,7 @@ class ChatDetailAPIEndpoint(BaseAPIView):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Only owner/admin can update
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can update the chat"},
@@ -293,9 +309,7 @@ class ChatMemberListCreateAPIEndpoint(BaseAPIView):
 
     def _get_chat(self, pk, user):
         chat = ChatMessenger.objects.get(pk=pk)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             raise PermissionError("You are not a member of this chat")
         return chat
 
@@ -320,9 +334,7 @@ class ChatMemberListCreateAPIEndpoint(BaseAPIView):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check permissions
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can add members"},
@@ -331,11 +343,20 @@ class ChatMemberListCreateAPIEndpoint(BaseAPIView):
 
         user_id = request.data.get("user_id")
         role = request.data.get("role", "member")
-        member, _ = ChatMemberMessenger.objects.get_or_create(
-            chat=chat, user_id=user_id, defaults={"role": role}
+        if role not in {"admin", "member"}:
+            return Response({"error": "Invalid member role"}, status=status.HTTP_400_BAD_REQUEST)
+        if not WorkspaceMember.objects.filter(workspace=chat.organization, member_id=user_id, is_active=True).exists():
+            return Response({"error": "User is not a workspace member"}, status=status.HTTP_400_BAD_REQUEST)
+        member, created = ChatMemberMessenger.objects.get_or_create(
+            chat=chat, user_id=user_id, defaults={"role": role, "is_active": True}
         )
+        if not created and not member.is_active:
+            member.is_active = True
+            member.left_at = None
+            member.role = role
+            member.save(update_fields=["is_active", "left_at", "role"])
         serializer = ChatMemberMessengerSerializer(member)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class ChatMemberDetailAPIEndpoint(BaseAPIView):
@@ -343,9 +364,7 @@ class ChatMemberDetailAPIEndpoint(BaseAPIView):
 
     def _get_chat(self, pk, user):
         chat = ChatMessenger.objects.get(pk=pk)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             raise PermissionError("You are not a member of this chat")
         return chat
 
@@ -357,9 +376,7 @@ class ChatMemberDetailAPIEndpoint(BaseAPIView):
         except ChatMessenger.DoesNotExist:
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can update members"},
@@ -368,6 +385,10 @@ class ChatMemberDetailAPIEndpoint(BaseAPIView):
 
         member = ChatMemberMessenger.objects.get(chat=chat, pk=pk)
         if "role" in request.data:
+            if request.data["role"] not in {"admin", "member"}:
+                return Response({"error": "Invalid member role"}, status=status.HTTP_400_BAD_REQUEST)
+            if member.role == "owner":
+                return Response({"error": "The owner role cannot be changed"}, status=status.HTTP_400_BAD_REQUEST)
             member.role = request.data["role"]
         if "is_active" in request.data:
             member.is_active = request.data["is_active"]
@@ -386,9 +407,7 @@ class ChatMemberDetailAPIEndpoint(BaseAPIView):
         except ChatMessenger.DoesNotExist:
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can remove members"},
@@ -396,6 +415,8 @@ class ChatMemberDetailAPIEndpoint(BaseAPIView):
             )
 
         member = ChatMemberMessenger.objects.get(chat=chat, pk=pk)
+        if member.role == "owner":
+            return Response({"error": "The group owner cannot be removed"}, status=status.HTTP_400_BAD_REQUEST)
         member.is_active = False
         member.left_at = timezone.now()
         member.save()
@@ -407,9 +428,7 @@ class MessageListCreateAPIEndpoint(BaseAPIView):
 
     def _get_chat(self, pk, user):
         chat = ChatMessenger.objects.get(pk=pk)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             raise PermissionError("You are not a member of this chat")
         return chat
 
@@ -422,23 +441,36 @@ class MessageListCreateAPIEndpoint(BaseAPIView):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Exclude messages deleted for this user
-        deleted_message_ids = MessageDeletionMessenger.objects.filter(
-            user=request.user, scope="for_me"
-        ).values_list("message_id", flat=True)
-
-        messages = (
-            MessageMessenger.objects.filter(chat=chat)
-            .exclude(id__in=deleted_message_ids)
-            .order_by("created_at")
+        deleted_message_ids = MessageDeletionMessenger.objects.filter(user=request.user, scope="for_me").values_list(
+            "message_id", flat=True
         )
 
+        messages = MessageMessenger.objects.filter(chat=chat).exclude(id__in=deleted_message_ids).order_by("created_at")
+
+        query = request.GET.get("q", "").strip()
+        if query:
+            messages = messages.filter(
+                Q(text__icontains=query)
+                | Q(sender__display_name__icontains=query)
+                | Q(sender__first_name__icontains=query)
+                | Q(sender__last_name__icontains=query)
+                | Q(attachments__original_name__icontains=query)
+            ).distinct()
+
         # Pagination
-        limit = int(request.GET.get("limit", 50))
-        offset = int(request.GET.get("offset", 0))
+        limit = min(max(int(request.GET.get("limit", 50)), 1), 100)
         total = messages.count()
+        raw_offset = request.GET.get("offset")
+        offset = max(int(raw_offset), 0) if raw_offset is not None else max(total - limit, 0)
         page_messages = messages[offset : offset + limit]
 
-        serializer = MessageMessengerSerializer(page_messages, many=True)
+        MessageReceiptMessenger.objects.filter(
+            message__in=page_messages,
+            user=request.user,
+            delivered_at__isnull=True,
+        ).update(delivered_at=timezone.now())
+
+        serializer = MessageMessengerSerializer(page_messages, many=True, context={"request": request})
         return Response(
             {
                 "results": serializer.data,
@@ -458,12 +490,10 @@ class MessageListCreateAPIEndpoint(BaseAPIView):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check block
-        other_members = ChatMemberMessenger.objects.filter(
-            chat=chat, is_active=True
-        ).exclude(user=request.user)
+        other_members = ChatMemberMessenger.objects.filter(chat=chat, is_active=True).exclude(user=request.user)
         for member in other_members:
             if BlockMessenger.objects.filter(
-                blocker=member.user, blocked_user=request.user
+                Q(blocker=member.user, blocked_user=request.user) | Q(blocker=request.user, blocked_user=member.user)
             ).exists():
                 return Response(
                     {"error": "You are blocked by a chat member"},
@@ -524,10 +554,24 @@ class MessageListCreateAPIEndpoint(BaseAPIView):
                     user=member.user,
                 )
 
+                UserChatStateMessenger.objects.update_or_create(
+                    user=member.user,
+                    chat=chat,
+                    defaults={"archived_at": None},
+                )
+                UserChatStateMessenger.objects.filter(user=member.user, chat=chat).update(
+                    unread_count_cache=F("unread_count_cache") + 1,
+                )
+
+            ChatDeletionMessenger.objects.filter(
+                chat=chat,
+                user__in=other_members.values_list("user_id", flat=True),
+            ).delete()
+
             # Update chat updated_at
             chat.save()
 
-        serializer = MessageMessengerSerializer(message)
+        serializer = MessageMessengerSerializer(message, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -536,9 +580,7 @@ class MessageDetailAPIEndpoint(BaseAPIView):
 
     def _get_chat(self, pk, user):
         chat = ChatMessenger.objects.get(pk=pk)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=user, is_active=True).exists():
             raise PermissionError("You are not a member of this chat")
         return chat
 
@@ -551,7 +593,7 @@ class MessageDetailAPIEndpoint(BaseAPIView):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
 
         message = MessageMessenger.objects.get(chat=chat, pk=pk)
-        serializer = MessageMessengerSerializer(message)
+        serializer = MessageMessengerSerializer(message, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, chat_id, pk):
@@ -575,7 +617,7 @@ class MessageDetailAPIEndpoint(BaseAPIView):
             message.updated_by = request.user
             message.save()
 
-        serializer = MessageMessengerSerializer(message)
+        serializer = MessageMessengerSerializer(message, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, chat_id, pk):
@@ -589,6 +631,8 @@ class MessageDetailAPIEndpoint(BaseAPIView):
         message = MessageMessenger.objects.get(chat=chat, pk=pk)
 
         scope = request.data.get("scope", "for_me")
+        if scope not in {"for_me", "for_everyone"}:
+            return Response({"error": "Invalid deletion scope"}, status=status.HTTP_400_BAD_REQUEST)
         # If message sender and scope is for_everyone, allow
         if scope == "for_everyone" and message.sender != request.user:
             return Response(
@@ -596,7 +640,7 @@ class MessageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        MessageDeletionMessenger.objects.create(
+        MessageDeletionMessenger.objects.get_or_create(
             message=message,
             user=request.user,
             scope=scope,
@@ -611,17 +655,34 @@ class MessageDetailAPIEndpoint(BaseAPIView):
 class MessageReactionListCreateAPIEndpoint(BaseAPIView):
     """List and create reactions for a message."""
 
+    def _get_message(self, chat_id, message_id, user):
+        if not ChatMemberMessenger.objects.filter(chat_id=chat_id, user=user, is_active=True).exists():
+            raise PermissionError("You are not a member of this chat")
+        return MessageMessenger.objects.get(chat_id=chat_id, pk=message_id)
+
     def get(self, request, chat_id, message_id):
-        reactions = MessageReactionMessenger.objects.filter(
-            message_id=message_id
-        )
+        try:
+            message = self._get_message(chat_id, message_id, request.user)
+        except PermissionError as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except MessageMessenger.DoesNotExist:
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
+        reactions = MessageReactionMessenger.objects.filter(message=message)
         serializer = MessageReactionMessengerSerializer(reactions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, chat_id, message_id):
-        emoji = request.data.get("emoji")
+        try:
+            message = self._get_message(chat_id, message_id, request.user)
+        except PermissionError as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except MessageMessenger.DoesNotExist:
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
+        emoji = str(request.data.get("emoji", "")).strip()
+        if not emoji or len(emoji) > 16:
+            return Response({"error": "A valid emoji is required"}, status=status.HTTP_400_BAD_REQUEST)
         reaction, created = MessageReactionMessenger.objects.get_or_create(
-            message_id=message_id,
+            message=message,
             user=request.user,
             emoji=emoji,
         )
@@ -629,10 +690,14 @@ class MessageReactionListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, chat_id, message_id):
+        try:
+            message = self._get_message(chat_id, message_id, request.user)
+        except PermissionError as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except MessageMessenger.DoesNotExist:
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
         emoji = request.data.get("emoji")
-        MessageReactionMessenger.objects.filter(
-            message_id=message_id, user=request.user, emoji=emoji
-        ).delete()
+        MessageReactionMessenger.objects.filter(message=message, user=request.user, emoji=emoji).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -641,9 +706,7 @@ class MessageReadAPIEndpoint(BaseAPIView):
 
     def post(self, request, chat_id):
         chat = ChatMessenger.objects.get(pk=chat_id)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -653,10 +716,13 @@ class MessageReadAPIEndpoint(BaseAPIView):
         last_message_id = request.data.get("last_message_id")
 
         if last_message_id:
+            last_message = MessageMessenger.objects.filter(chat=chat, pk=last_message_id).first()
+            if not last_message:
+                return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
             # Mark all messages up to last_message_id as read
             messages = MessageMessenger.objects.filter(
                 chat=chat,
-                id__lte=last_message_id,
+                created_at__lte=last_message.created_at,
             ).exclude(sender=request.user)
 
             for msg in messages:
@@ -698,25 +764,21 @@ class PinnedMessageListCreateAPIEndpoint(BaseAPIView):
     """List and create pinned messages."""
 
     def get(self, request, chat_id):
-        pinned = PinnedMessageMessenger.objects.filter(
-            chat_id=chat_id
-        ).select_related("message", "pinned_by")
+        if not ChatMemberMessenger.objects.filter(chat_id=chat_id, user=request.user, is_active=True).exists():
+            return Response({"error": "You are not a member of this chat"}, status=status.HTTP_403_FORBIDDEN)
+        pinned = PinnedMessageMessenger.objects.filter(chat_id=chat_id).select_related("message", "pinned_by")
         serializer = PinnedMessageMessengerSerializer(pinned, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, chat_id):
         chat = ChatMessenger.objects.get(pk=chat_id)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can pin messages"},
@@ -724,6 +786,8 @@ class PinnedMessageListCreateAPIEndpoint(BaseAPIView):
             )
 
         message_id = request.data.get("message_id")
+        if not MessageMessenger.objects.filter(chat=chat, pk=message_id).exists():
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
         # Unpin existing if any
         PinnedMessageMessenger.objects.filter(chat=chat).delete()
         pinned = PinnedMessageMessenger.objects.create(
@@ -738,9 +802,7 @@ class PinnedMessageListCreateAPIEndpoint(BaseAPIView):
 
     def delete(self, request, chat_id):
         chat = ChatMessenger.objects.get(pk=chat_id)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -765,6 +827,8 @@ class ChatStateUpdateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, chat_id):
+        if not ChatMemberMessenger.objects.filter(chat_id=chat_id, user=request.user, is_active=True).exists():
+            return Response({"error": "You are not a member of this chat"}, status=status.HTTP_403_FORBIDDEN)
         state, _ = UserChatStateMessenger.objects.get_or_create(
             user=request.user,
             chat_id=chat_id,
@@ -786,9 +850,6 @@ class ChatStateUpdateAPIEndpoint(BaseAPIView):
         if "last_read_message_id" in request.data:
             state.last_read_message_id = request.data["last_read_message_id"]
             state.last_read_at = timezone.now()
-        if "unread_count_cache" in request.data:
-            state.unread_count_cache = request.data["unread_count_cache"]
-
         state.save()
         serializer = UserChatStateMessengerSerializer(state)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -822,9 +883,7 @@ class BlockListCreateAPIEndpoint(BaseAPIView):
 
     def delete(self, request):
         blocked_user_id = request.data.get("blocked_user_id")
-        BlockMessenger.objects.filter(
-            blocker=request.user, blocked_user_id=blocked_user_id
-        ).delete()
+        BlockMessenger.objects.filter(blocker=request.user, blocked_user_id=blocked_user_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -832,9 +891,9 @@ class UserRelationListCreateAPIEndpoint(BaseAPIView):
     """List and create user relations (friends, team, subordinate/manager, bot)."""
 
     def get(self, request):
-        relations = UserRelationMessenger.objects.filter(
-            owner_user=request.user, status="active"
-        ).select_related("target_user")
+        relations = UserRelationMessenger.objects.filter(owner_user=request.user, status="active").select_related(
+            "target_user"
+        )
         serializer = UserRelationMessengerSerializer(relations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -860,9 +919,7 @@ class UserRelationListCreateAPIEndpoint(BaseAPIView):
 
     def delete(self, request):
         target_user_id = request.data.get("target_user_id")
-        UserRelationMessenger.objects.filter(
-            owner_user=request.user, target_user_id=target_user_id
-        ).delete()
+        UserRelationMessenger.objects.filter(owner_user=request.user, target_user_id=target_user_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -871,25 +928,23 @@ class MessengerContactsAPIEndpoint(BaseAPIView):
 
     def get(self, request):
         # Workspaces where user is member
-        workspace_ids = WorkspaceMember.objects.filter(
-            member=request.user
-        ).values_list("workspace_id", flat=True)
+        workspace_ids = WorkspaceMember.objects.filter(member=request.user).values_list("workspace_id", flat=True)
 
         # Get active project members in those workspaces
-        user_ids = ProjectMember.objects.filter(
-            project__workspace_id__in=workspace_ids,
-            is_active=True,
-        ).values_list("member_id", flat=True).distinct()
+        user_ids = (
+            ProjectMember.objects.filter(
+                project__workspace_id__in=workspace_ids,
+                is_active=True,
+            )
+            .values_list("member_id", flat=True)
+            .distinct()
+        )
 
-        users = User.objects.filter(
-            id__in=user_ids, is_active=True
-        ).exclude(id=request.user.id)
+        users = User.objects.filter(id__in=user_ids, is_active=True).exclude(id=request.user.id)
 
         result = []
         for user in users:
-            relation = UserRelationMessenger.objects.filter(
-                owner_user=request.user, target_user=user
-            ).first()
+            relation = UserRelationMessenger.objects.filter(owner_user=request.user, target_user=user).first()
             group = "Команда"
             if relation:
                 type_map = {
@@ -901,17 +956,19 @@ class MessengerContactsAPIEndpoint(BaseAPIView):
                 }
                 group = type_map.get(relation.relation_type, "Команда")
 
-            result.append({
-                "id": str(user.id),
-                "name": user.display_name or f"{user.first_name} {user.last_name}".strip() or user.email,
-                "role": f"{group} · {user.email}",
-                "group": group,
-                "avatar": (user.display_name or user.first_name or "U")[:2].upper(),
-                "color": "blue",
-                "online": user.messenger_is_active,
-                "type": "person",
-                "email": user.email,
-            })
+            result.append(
+                {
+                    "id": str(user.id),
+                    "name": user.display_name or f"{user.first_name} {user.last_name}".strip() or user.email,
+                    "role": f"{group} · {user.email}",
+                    "group": group,
+                    "avatar": (user.display_name or user.first_name or "U")[:2].upper(),
+                    "color": "blue",
+                    "online": user.messenger_is_active,
+                    "type": "person",
+                    "email": user.email,
+                }
+            )
 
         return Response(result, status=status.HTTP_200_OK)
 
@@ -926,17 +983,29 @@ class MessageForwardAPIEndpoint(BaseAPIView):
 
         target_chat = ChatMessenger.objects.get(pk=target_chat_id)
 
-        if not ChatMemberMessenger.objects.filter(
-            chat=target_chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=target_chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of the target chat"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        source_message_ids = set(
+            MessageMessenger.objects.filter(
+                id__in=message_ids,
+                chat_id=source_chat_id,
+                chat__members__user=request.user,
+                chat__members__is_active=True,
+            ).values_list("id", flat=True)
+        )
+        if len(source_message_ids) != len(set(message_ids)):
+            return Response(
+                {"error": "One or more source messages are unavailable"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         forwarded_messages = []
         with transaction.atomic():
-            for msg_id in message_ids:
+            for msg_id in source_message_ids:
                 source_msg = MessageMessenger.objects.get(pk=msg_id)
                 new_msg = MessageMessenger.objects.create(
                     chat=target_chat,
@@ -951,18 +1020,45 @@ class MessageForwardAPIEndpoint(BaseAPIView):
                 )
                 forwarded_messages.append(new_msg)
 
+                for attachment in source_msg.attachments.all():
+                    MessageAttachmentMessenger.objects.create(
+                        message=new_msg,
+                        uploader=request.user,
+                        original_name=attachment.original_name,
+                        mime_type=attachment.mime_type,
+                        size_bytes=attachment.size_bytes,
+                        storage_provider=attachment.storage_provider,
+                        storage_key=attachment.storage_key,
+                        public_url=attachment.public_url,
+                        width=attachment.width,
+                        height=attachment.height,
+                        duration_seconds=attachment.duration_seconds,
+                    )
+
                 # Create receipts for target chat members
-                for member in ChatMemberMessenger.objects.filter(
-                    chat=target_chat, is_active=True
-                ).exclude(user=request.user):
+                for member in ChatMemberMessenger.objects.filter(chat=target_chat, is_active=True).exclude(
+                    user=request.user
+                ):
                     MessageReceiptMessenger.objects.create(
                         message=new_msg,
                         user=member.user,
                     )
+                    UserChatStateMessenger.objects.get_or_create(user=member.user, chat=target_chat)
+                    UserChatStateMessenger.objects.filter(user=member.user, chat=target_chat).update(
+                        archived_at=None,
+                        unread_count_cache=F("unread_count_cache") + 1,
+                    )
+
+            ChatDeletionMessenger.objects.filter(
+                chat=target_chat,
+                user__in=target_chat.members.filter(is_active=True)
+                .exclude(user=request.user)
+                .values_list("user_id", flat=True),
+            ).delete()
 
             target_chat.save()
 
-        serializer = MessageMessengerSerializer(forwarded_messages, many=True)
+        serializer = MessageMessengerSerializer(forwarded_messages, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -972,9 +1068,7 @@ class ChatInviteLinkAPIEndpoint(BaseAPIView):
     def get(self, request, chat_id):
         """List active invite links for a chat."""
         chat = ChatMessenger.objects.get(pk=chat_id)
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -983,9 +1077,7 @@ class ChatInviteLinkAPIEndpoint(BaseAPIView):
         links = InviteLinkMessenger.objects.filter(
             chat=chat,
             revoked_at__isnull=True,
-        ).exclude(
-            expires_at__lt=timezone.now()
-        )
+        ).exclude(expires_at__lt=timezone.now())
         serializer = InviteLinkMessengerSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -993,9 +1085,7 @@ class ChatInviteLinkAPIEndpoint(BaseAPIView):
         """Create a new invite link for a chat."""
         chat = ChatMessenger.objects.get(pk=chat_id)
         # Check permissions
-        membership = ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).first()
+        membership = ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).first()
         if not membership or membership.role not in ["owner", "admin"]:
             return Response(
                 {"error": "Only owner or admin can create invite links"},
@@ -1093,6 +1183,7 @@ class ChatJoinByLinkAPIEndpoint(BaseAPIView):
     def post(self, request):
         link = request.data.get("link", "")
         import re
+
         match = re.match(r"^messenger:([a-f0-9\-]+)$", link.strip(), re.IGNORECASE)
         if not match:
             return Response(
@@ -1109,9 +1200,7 @@ class ChatJoinByLinkAPIEndpoint(BaseAPIView):
             )
 
         # Check if already a member
-        if ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             serializer = ChatMessengerSerializer(chat, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -1151,11 +1240,13 @@ class UserOnlineStatusAPIEndpoint(BaseAPIView):
         users = User.objects.filter(id__in=user_ids)
         result = []
         for user in users:
-            result.append({
-                "id": str(user.id),
-                "is_online": user.messenger_is_active,
-                "last_seen_at": user.messenger_last_seen_at,
-            })
+            result.append(
+                {
+                    "id": str(user.id),
+                    "is_online": user.messenger_is_active,
+                    "last_seen_at": user.messenger_last_seen_at,
+                }
+            )
         return Response(result, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -1179,9 +1270,11 @@ class MessengerFileDownloadAPIEndpoint(BaseAPIView):
     """Download a messenger file attachment."""
 
     def get(self, request, file_path):
-        attachment = MessageAttachmentMessenger.objects.filter(
-            storage_key=file_path
-        ).select_related("message", "message__chat").first()
+        attachment = (
+            MessageAttachmentMessenger.objects.filter(storage_key=file_path)
+            .select_related("message", "message__chat")
+            .first()
+        )
         if not attachment:
             return Response(
                 {"error": "File not found"},
@@ -1189,9 +1282,7 @@ class MessengerFileDownloadAPIEndpoint(BaseAPIView):
             )
 
         chat = attachment.message.chat
-        if not ChatMemberMessenger.objects.filter(
-            chat=chat, user=request.user, is_active=True
-        ).exists():
+        if not ChatMemberMessenger.objects.filter(chat=chat, user=request.user, is_active=True).exists():
             return Response(
                 {"error": "You are not a member of this chat"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -1225,7 +1316,5 @@ class MessengerFileDownloadAPIEndpoint(BaseAPIView):
             open(absolute_path, "rb"),
             content_type=content_type,
         )
-        response.headers["Content-Disposition"] = (
-            f'inline; filename="{attachment.original_name}"'
-        )
+        response.headers["Content-Disposition"] = f'inline; filename="{attachment.original_name}"'
         return response

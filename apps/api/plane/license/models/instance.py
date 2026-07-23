@@ -12,7 +12,13 @@ from django.conf import settings
 # Module imports
 from plane.db.models import BaseModel
 
-ROLE_CHOICES = ((20, "Admin"),)
+INSTANCE_ADMIN_ROLE = 15
+INSTANCE_SUPER_ADMIN_ROLE = 20
+
+ROLE_CHOICES = (
+    (INSTANCE_ADMIN_ROLE, "Admin"),
+    (INSTANCE_SUPER_ADMIN_ROLE, "Super admin"),
+)
 
 
 class InstanceEdition(Enum):
@@ -58,7 +64,9 @@ class InstanceAdmin(BaseModel):
         related_name="instance_owner",
     )
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
-    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
+    # Existing instance administrators used role 20 before distinct roles were
+    # introduced. Keeping it as the default preserves their super-admin access.
+    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=INSTANCE_SUPER_ADMIN_ROLE)
     is_verified = models.BooleanField(default=False)
 
     class Meta:

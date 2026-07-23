@@ -222,6 +222,14 @@ class ProjectMember(ProjectBaseModel):
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    # Technical access projection for an instance-wide admin. See the matching
+    # fields on WorkspaceMember.
+    is_instance_admin_access = models.BooleanField(default=False)
+    instance_admin_previous_role = models.PositiveSmallIntegerField(
+        choices=ROLE_CHOICES,
+        null=True,
+        blank=True,
+    )
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.member:

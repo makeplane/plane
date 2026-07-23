@@ -92,7 +92,13 @@ export interface IWorkspaceMember {
   display_name?: string;
   last_login_medium?: TLoginMediums;
   is_active?: boolean;
+  is_instance_admin_access?: boolean;
+  instance_admin_previous_role?: EUserWorkspaceRoles | null;
 }
+
+export type TInstanceWorkspaceMemberPaginationInfo = TPaginationInfo & {
+  results: IWorkspaceMember[];
+};
 
 export interface IWorkspaceMemberMe {
   company_role: string | null;

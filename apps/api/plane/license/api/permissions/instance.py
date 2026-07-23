@@ -6,7 +6,7 @@
 from rest_framework.permissions import BasePermission
 
 # Module imports
-from plane.license.models import Instance, InstanceAdmin
+from plane.license.models import Instance, InstanceAdmin, INSTANCE_ADMIN_ROLE, INSTANCE_SUPER_ADMIN_ROLE
 
 
 class InstanceAdminPermission(BasePermission):
@@ -15,4 +15,19 @@ class InstanceAdminPermission(BasePermission):
             return False
 
         instance = Instance.objects.first()
-        return InstanceAdmin.objects.filter(role__gte=15, instance=instance, user=request.user).exists()
+        return InstanceAdmin.objects.filter(
+            role__gte=INSTANCE_ADMIN_ROLE, instance=instance, user=request.user
+        ).exists()
+
+
+class InstanceSuperAdminPermission(BasePermission):
+    """Allows only instance super admins to manage instance administrators."""
+
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+
+        instance = Instance.objects.first()
+        return InstanceAdmin.objects.filter(
+            role__gte=INSTANCE_SUPER_ADMIN_ROLE, instance=instance, user=request.user
+        ).exists()

@@ -38,7 +38,7 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
   const isNotificationsPath = pathname.includes(`/${workspaceSlug}/notifications`);
-  const isMessengerPath = pathname.includes(`/${workspaceSlug}/messenger`);
+  const isMessengerPath = pathname.includes(`/${workspaceSlug}/messenger`) || pathname.includes("/messanger");
 
   // handlers
   const handleWidthChange = (width: number) => setValue(width);

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import type { TPaginationInfo } from "../common";
 import type { IUserLite } from "../users";
 import type {
   TInstanceAIConfigurationKeys,
@@ -76,12 +77,34 @@ export interface IInstanceAdmin {
   created_by: string;
   id: string;
   instance: string;
-  role: string;
+  role: TInstanceAdminRole;
   updated_at: string;
   updated_by: string;
   user: string;
   user_detail: IUserLite;
 }
+
+export type TInstanceAdminRole = 15 | 20;
+
+export interface IInstanceUser {
+  id: string;
+  email: string;
+  display_name: string;
+  first_name: string;
+  last_name: string;
+  avatar_url: string | null;
+  is_active: boolean;
+  is_email_verified: boolean;
+  date_joined: string;
+  last_active: string | null;
+  last_login_time: string | null;
+  workspace_count: number;
+  instance_admin_role: TInstanceAdminRole | null;
+}
+
+export type TInstanceUserPaginationInfo = TPaginationInfo & {
+  results: IInstanceUser[];
+};
 
 export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
 

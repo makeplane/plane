@@ -64,7 +64,12 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
+            WorkspaceMember.objects.filter(
+                workspace=OuterRef("id"),
+                member__is_bot=False,
+                is_active=True,
+                is_instance_admin_access=False,
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -209,7 +214,12 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
+            WorkspaceMember.objects.filter(
+                workspace=OuterRef("id"),
+                member__is_bot=False,
+                is_active=True,
+                is_instance_admin_access=False,
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")

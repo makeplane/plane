@@ -208,6 +208,15 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    # Technical access projection for an instance-wide admin. The source of
+    # truth remains license.InstanceAdmin; this flag keeps the global role
+    # distinct from an explicitly assigned workspace role.
+    is_instance_admin_access = models.BooleanField(default=False)
+    instance_admin_previous_role = models.PositiveSmallIntegerField(
+        choices=ROLE_CHOICES,
+        null=True,
+        blank=True,
+    )
     getting_started_checklist = models.JSONField(default=dict)
     tips = models.JSONField(default=dict)
     explored_features = models.JSONField(default=dict)

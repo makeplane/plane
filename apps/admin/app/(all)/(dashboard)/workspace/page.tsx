@@ -64,14 +64,13 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
       },
     });
 
-    await updateConfigPromise
-      .then(() => {
-        setIsSubmitting(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsSubmitting(false);
-      });
+    try {
+      await updateConfigPromise;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,7 +87,8 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
               <div className="grow">
                 <div className="pb-1 text-16 font-medium">Запретить остальным создавать рабочие пространства.</div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Если включить эту опцию, создавать рабочие пространства сможете только вы. Вам придётся приглашать пользователей в новые рабочие пространства.
+                  Если включить эту опцию, создавать рабочие пространства сможете только вы. Вам придётся приглашать
+                  пользователей в новые рабочие пространства.
                 </div>
               </div>
             </div>
@@ -119,14 +119,15 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             <div className="flex items-center justify-between gap-2 pt-6">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
-                  Все рабочие пространства в этом инстансе <span className="text-tertiary">• {workspaceIds.length}</span>
+                  Все рабочие пространства в этом инстансе{" "}
+                  <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
                     <LoaderIcon className="h-4 w-4 animate-spin" />
                   )}
                 </div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Удалять рабочие пространства пока нельзя, а перейти в рабочее пространство можно, только если вы
-                  администратор или участник.
+                  Администраторы экземпляра имеют доступ ко всем пространствам. Управлять участниками можно прямо из
+                  этого списка.
                 </div>
               </div>
               <div className="flex items-center gap-2">

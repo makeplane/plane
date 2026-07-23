@@ -66,13 +66,13 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
           <AppSidebarItem
             variant="link"
             item={{
-              href: `/${workspaceSlug?.toString()}/messenger/`,
+              href: "/messanger/",
               icon: (
                 <div className="relative">
                   <CommentFillIcon className="size-5" />
                 </div>
               ),
-              isActive: pathname?.includes("/messenger/"),
+              isActive: pathname?.includes("/messenger/") || pathname?.includes("/messanger"),
             }}
           />
         </Tooltip>

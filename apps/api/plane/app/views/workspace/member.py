@@ -38,7 +38,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                is_instance_admin_access=False,
+            )
             .select_related("member", "member__avatar_asset")
         )
 
@@ -78,6 +81,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
         )
+        if workspace_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators are managed in God Mode"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if request.user.id == workspace_member.member_id:
             return Response(
                 {"error": "You cannot update your own role"},
@@ -101,6 +109,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
         )
+        if workspace_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators are managed in God Mode"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # check requesting user role
         requesting_workspace_member = WorkspaceMember.objects.get(
@@ -160,11 +173,22 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
+        if workspace_member.is_instance_admin_access:
+            return Response(
+                {"error": "Instance administrators cannot leave individual workspaces"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check if the leaving user is the only admin of the workspace
         if (
             workspace_member.role == 20
-            and not WorkspaceMember.objects.filter(workspace__slug=slug, role=20, is_active=True).count() > 1
+            and not WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                role=20,
+                is_active=True,
+                is_instance_admin_access=False,
+            ).count()
+            > 1
         ):
             return Response(
                 {

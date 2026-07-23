@@ -59,6 +59,9 @@ export const coreRoutes: RouteConfigEntry[] = [
       route("mail/:folderKey/:uid", "./(all)/(mail)/[folderKey]/[uid]/page.tsx"),
     ]),
 
+    // Gizmo Messenger - global Telegram-like client
+    layout("./(all)/(messanger)/layout.tsx", [route("messanger", "./(all)/(messanger)/page.tsx")]),
+
     // ======================================================================
     // WORKSPACE-SCOPED ROUTES
     // ======================================================================
