@@ -20,6 +20,7 @@ export type SgIssue = TIssue & { sg_event_id?: string | number | null };
 
 export type SgEventDetailPageProps = {
   enableMatrixView?: boolean;
+  defaultTagViewMode?: SgEventTagViewMode;
   showTagListActions?: boolean;
   projectId: string;
   workspaceSlug: string;

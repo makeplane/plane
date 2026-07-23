@@ -98,6 +98,7 @@ const buildCustomPlaylistClips = (rows: SgTagRow[]): TCustomPlaylistClip[] =>
 
 export const SgEventDetailPage = ({
   enableMatrixView = false,
+  defaultTagViewMode,
   showTagListActions = true,
   issue,
   mediaItem = null,
@@ -111,7 +112,10 @@ export const SgEventDetailPage = ({
   const { getProjectById } = useProject();
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const rosterService = useMemo(() => new RosterService(), []);
-  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(enableMatrixView ? "matrix" : "timeline");
+  const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(() => {
+    if (defaultTagViewMode === "matrix" && !enableMatrixView) return "timeline";
+    return defaultTagViewMode ?? (enableMatrixView ? "matrix" : "timeline");
+  });
   const [isTagListBodyScrolled, setIsTagListBodyScrolled] = useState(false);
   const [isListPageScrolled, setIsListPageScrolled] = useState(false);
   const [isCreatingCustomPlaylist, setIsCreatingCustomPlaylist] = useState(false);
@@ -512,9 +516,10 @@ export const SgEventDetailPage = ({
   }:${sportTableConfig.sport}`;
   const isTagListScrolled = isTagListBodyScrolled || isListPageScrolled;
   const shouldShowEventDetailsCard = tagViewMode !== "list" || !isTagListScrolled;
+  const shouldShowMatrixEventSummary = !isListPageScrolled;
   const handlePageScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
-      if (tagViewMode !== "list") return;
+      if (tagViewMode !== "list" && tagViewMode !== "matrix") return;
       setIsListPageScrolled(event.currentTarget.scrollTop > 8);
     },
     [tagViewMode]
@@ -559,6 +564,26 @@ export const SgEventDetailPage = ({
                   onUpdatePlaylist={handleUpdateCustomPlaylist}
                 />
               </div>
+
+              {shouldShowMatrixEventSummary && (
+                <>
+                  <SgEventTitleBar
+                    eventStatus={eventStatus}
+                    eventTitle={eventTitle}
+                    handleSwitchToFullStream={handleSwitchToFullStream}
+                    isTagClipActive={isPlaybackOverrideActive}
+                  />
+
+                  {shouldShowEventDetailsCard && (
+                    <SgEventDetailsCard
+                      eventDateTimeLabel={eventDateTimeLabel}
+                      levelLabel={levelLabel}
+                      venueAddress={venueAddress}
+                      venueName={venueName}
+                    />
+                  )}
+                </>
+              )}
 
               <div className="flex flex-col gap-2">
                 <MatrixView

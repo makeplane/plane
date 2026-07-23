@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CalendarClock, ChevronDown, Clock3, LayoutGrid, List, Search, Upload, X } from "lucide-react";
+import { CalendarClock, ChevronDown, Clock3, LayoutGrid, List, ListFilter, Search, Upload, X } from "lucide-react";
 
 // UI
 import { Button } from "@plane/propel/button";
@@ -300,9 +300,9 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
   /* ------------------------------------------------------------------ */
 
   return (
-    <Header className="relative">
+    <Header className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:grid-cols-[minmax(120px,0.65fr)_minmax(120px,1fr)_auto]">
       {/* LEFT */}
-      <Header.LeftItem>
+      <Header.LeftItem className="min-w-0 max-w-none flex-none overflow-hidden">
         <Breadcrumbs isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug} projectId={projectId} />
           <Breadcrumbs.Item component={<BreadcrumbLink label="Media Library" isLast />} />
@@ -310,7 +310,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
       </Header.LeftItem>
 
       {/* CENTER SEARCH */}
-      <div className="pointer-events-auto absolute left-1/2 top-1/2 w-full max-w-[180px] -translate-x-1/2 -translate-y-1/2 md:max-w-[220px] lg:max-w-[280px] xl:max-w-[320px]">
+      <div className="pointer-events-auto hidden min-w-0 sm:block">
         <div className="relative">
           <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
           <input
@@ -343,8 +343,8 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
       </div>
 
       {/* RIGHT */}
-      <Header.RightItem>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+      <Header.RightItem className="min-w-0 shrink-0 items-center gap-1">
+        <div className="flex min-w-0 items-center gap-1 @lg:gap-1.5">
           <div className="hidden 3xl:flex items-center gap-1 border border-custom-border-200 rounded bg-custom-background-100 px-0">
             <DateRangeDropdown
               value={{ from: startDateFrom, to: startDateTo }}
@@ -398,16 +398,16 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
             <Button
               variant="neutral-primary"
               size="sm"
-              className="gap-1 px-2 xl:px-3"
+              className="gap-1 px-2 @4xl:px-3"
               onClick={() => {
                 setIsTemporalFiltersOpen((prev) => !prev);
               }}
             >
               <CalendarClock size={14} className="h-3.5 w-3.5" />
-              <span className="hidden xl:inline">{ENABLE_START_TIME_FILTER ? "Time filters" : "Date filter"}</span>
+              <span className="hidden @4xl:inline">{ENABLE_START_TIME_FILTER ? "Time filters" : "Date filter"}</span>
               <ChevronDown
                 size={14}
-                className={`hidden h-3.5 w-3.5 transition-transform xl:block ${isTemporalFiltersOpen ? "rotate-180" : ""}`}
+                className={`hidden h-3.5 w-3.5 transition-transform @4xl:block ${isTemporalFiltersOpen ? "rotate-180" : ""}`}
               />
             </Button>
             {isTemporalFiltersOpen ? (
@@ -469,11 +469,22 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
           </div>
           {/* Layout Toggle */}
           {!isSectionScope ? (
-            <Button variant="neutral-primary" size="sm" className="px-2 xl:px-3" onClick={handleGroupModeToggle}>
-              {isAllMediaView ? "Group by category" : "Show all media"}
-            </Button>
+            <Tooltip tooltipContent={isAllMediaView ? "Group by category" : "Show all media"} isMobile={isMobile}>
+              <Button
+                variant="neutral-primary"
+                size="sm"
+                className="min-w-0 gap-1 px-2 @4xl:px-3"
+                onClick={handleGroupModeToggle}
+                aria-label={isAllMediaView ? "Group by category" : "Show all media"}
+              >
+                <ListFilter size={14} className="h-3.5 w-3.5 flex-shrink-0" />
+                <span className="hidden max-w-[90px] truncate @4xl:inline">
+                  {isAllMediaView ? "By category" : "All media"}
+                </span>
+              </Button>
+            </Tooltip>
           ) : null}
-          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+          <div className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 p-1">
             {normalizedLayouts.map((layout) => (
               <Tooltip key={layout.key} tooltipContent={layout.i18n_title} isMobile={isMobile}>
                 <button
@@ -497,9 +508,9 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
           </div>
           {hasFilterOptions ? <FiltersToggle filter={mediaFilters} /> : null}
           {/* Upload */}
-          <Button variant="primary" size="sm" className="gap-1.5 px-2 lg:px-3" onClick={openUpload}>
-            <Upload size={16} className="h-3.5 w-3.5" />
-            <span className="hidden lg:inline">Upload</span>
+          <Button variant="primary" size="sm" className="gap-1.5 px-2 @4xl:px-3" onClick={openUpload}>
+            <Upload size={16} className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="hidden @4xl:inline">Upload</span>
           </Button>
         </div>
       </Header.RightItem>

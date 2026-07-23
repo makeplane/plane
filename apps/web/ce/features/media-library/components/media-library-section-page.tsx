@@ -81,7 +81,7 @@ const MediaLibrarySectionPage = observer(() => {
   const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get(SECTION_QUERY_PARAM_KEY) ?? "").trim();
-  const viewMode = searchParams.get(SECTION_VIEW_PARAM_KEY) === "list" ? "list" : "grid";
+  const viewMode = searchParams.get(SECTION_VIEW_PARAM_KEY) === "grid" ? "grid" : "list";
   const pathname = usePathname();
   const pageParam = Number(searchParams.get("page") ?? "1");
   const listPageSize = 10;
@@ -298,7 +298,7 @@ const MediaLibrarySectionPage = observer(() => {
     const mainGroup = params.get(MAIN_GROUP_PARAM_KEY);
 
     if (mainQuery) allowedParams.set(MAIN_QUERY_PARAM_KEY, mainQuery);
-    if (mainView === "list") allowedParams.set(MAIN_VIEW_PARAM_KEY, mainView);
+    if (mainView === "list" || mainView === "grid") allowedParams.set(MAIN_VIEW_PARAM_KEY, mainView);
     if (mainGroup === GROUPED_MEDIA_GROUP_VALUE) allowedParams.set(MAIN_GROUP_PARAM_KEY, mainGroup);
 
     params.delete(SECTION_QUERY_PARAM_KEY);
