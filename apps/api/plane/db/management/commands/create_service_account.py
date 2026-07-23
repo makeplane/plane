@@ -24,13 +24,26 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--workspace", type=str, required=True, help="Workspace slug")
-        parser.add_argument("--name", type=str, required=True, help="Display name for the service account")
+        parser.add_argument("--name", type=str, required=True, help="Name for the service account (token label)")
         parser.add_argument(
             "--role",
             type=str,
             choices=list(SERVICE_ACCOUNT_ROLES),
             default=DEFAULT_SERVICE_ACCOUNT_ROLE,
             help=f"Workspace role (default: {DEFAULT_SERVICE_ACCOUNT_ROLE})",
+        )
+        parser.add_argument(
+            "--username",
+            type=str,
+            default=None,
+            help="Optional globally-unique username; a synthetic svc_<uuid> is generated when omitted",
+        )
+        parser.add_argument(
+            "--display-name",
+            type=str,
+            default=None,
+            dest="display_name",
+            help="Optional display name shown in the members UI; falls back to --name when omitted",
         )
         parser.add_argument(
             "--email",
@@ -41,6 +54,9 @@ class Command(BaseCommand):
         parser.add_argument("--description", type=str, default="", help="Optional token description")
 
     def handle(self, *args, **options):
+        if not options["name"].strip():
+            raise CommandError("--name must not be empty")
+
         workspace = Workspace.objects.filter(slug=options["workspace"]).first()
         if workspace is None:
             raise CommandError(f"Workspace with slug '{options['workspace']}' does not exist")
@@ -49,6 +65,10 @@ class Command(BaseCommand):
         if email and User.objects.filter(email=email).exists():
             raise CommandError(f"A user with email '{email}' already exists")
 
+        username = options.get("username")
+        if username and User.objects.filter(username=username).exists():
+            raise CommandError(f"A user with username '{username}' already exists")
+
         try:
             service_account = create_service_account(
                 workspace=workspace,
@@ -56,21 +76,24 @@ class Command(BaseCommand):
                 role=options["role"],
                 email=options["email"],
                 description=options["description"],
+                username=username,
+                display_name=options.get("display_name"),
             )
         except IntegrityError as exc:
-            # A concurrent insert (email race that slipped past the check above)
-            # or an extremely unlikely synthetic username/email collision surfaces
-            # here — report it readably instead of a raw traceback. The helper's
+            # A concurrent insert (email/username race that slipped past the checks
+            # above) or an extremely unlikely synthetic collision surfaces here —
+            # report it readably instead of a raw traceback. The helper's
             # @transaction.atomic has already rolled back, so no partial account
             # remains.
-            raise CommandError(f"Could not create the service account — the email is already in use: {exc}")
+            raise CommandError(f"Could not create the service account — the email or username is already in use: {exc}")
 
         user = service_account.user
         self.stdout.write(self.style.SUCCESS("Service account created successfully"))
-        self.stdout.write(f"  user_id  : {user.id}")
-        self.stdout.write(f"  username : {user.username}")
-        self.stdout.write(f"  email    : {user.email}")
-        self.stdout.write(f"  role     : {options['role']}")
-        self.stdout.write(f"  workspace: {workspace.slug}")
+        self.stdout.write(f"  user_id     : {user.id}")
+        self.stdout.write(f"  username    : {user.username}")
+        self.stdout.write(f"  display_name: {user.display_name}")
+        self.stdout.write(f"  email       : {user.email}")
+        self.stdout.write(f"  role        : {options['role']}")
+        self.stdout.write(f"  workspace   : {workspace.slug}")
         self.stdout.write(self.style.WARNING("API token (shown once — store it securely):"))
         self.stdout.write(f"  {service_account.token}")

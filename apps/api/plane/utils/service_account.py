@@ -75,6 +75,8 @@ def create_service_account(
     role: str | int = DEFAULT_SERVICE_ACCOUNT_ROLE,
     email: str | None = None,
     description: str = "",
+    username: str | None = None,
+    display_name: str | None = None,
 ) -> ServiceAccount:
     """Create a service account in ``workspace`` and mint its API token.
 
@@ -86,6 +88,13 @@ def create_service_account(
     * an :class:`APIToken` (``user_type=Bot``, ``is_service=True``,
       workspace-scoped) whose plaintext value is returned on the result.
 
+    ``username`` and ``display_name`` are optional caller-chosen identity fields.
+    ``username`` must be globally unique (a collision raises ``IntegrityError``
+    from the DB insert — the caller is expected to check for it and surface a
+    readable error); when omitted a synthetic ``svc_<uuid>`` value is generated.
+    ``display_name`` is what the workspace members UI shows; it falls back to
+    ``name`` when omitted.
+
     No email is sent and no password is ever round-tripped. ``is_bot=True``
     additionally blocks the interactive login/signup flow
     (``BOT_USER_LOGIN_FORBIDDEN``), so the identity can be used *only* via its
@@ -93,17 +102,22 @@ def create_service_account(
     """
     role_value = resolve_service_account_role(role)
 
-    # A service account never logs in, so username/email are internal, unique
-    # identifiers rather than human contact addresses.
+    # A service account never logs in, so a caller-omitted username/email are
+    # internal, unique identifiers rather than human contact addresses. The
+    # synthetic email is always derived from a fresh uuid (never the caller's
+    # username) so it stays valid and unique regardless of the username.
     unique = uuid.uuid4().hex
-    username = f"svc_{unique}"
+    if not username:
+        username = f"svc_{unique}"
     if not email:
-        email = f"{username}@service.plane.local"
+        email = f"svc_{unique}@service.plane.local"
+    if not display_name:
+        display_name = name
 
     user = User(
         username=username,
         email=email,
-        display_name=name,
+        display_name=display_name,
         first_name=name,
         last_name="",
         # Machine identity that acts only through API tokens (mirrors the

@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db import IntegrityError
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -13,11 +16,14 @@ from plane.api.serializers.service_account import (
     ServiceAccountCreateSerializer,
     ServiceAccountSerializer,
 )
-from plane.db.models import Workspace
+from plane.db.models import User, Workspace
 from plane.middleware.logger import redact_response_body
 from plane.utils.permissions import WorkspaceOwnerPermission
 from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER
 from plane.utils.service_account import create_service_account
+
+# Machine-readable error surfaced when a caller-chosen username is already taken.
+USERNAME_CONFLICT = {"error": "A user with this username already exists.", "code": "USERNAME_ALREADY_EXISTS"}
 
 
 class ServiceAccountAPIEndpoint(BaseAPIView):
@@ -45,7 +51,8 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
             201: OpenApiResponse(
                 description="Service account created",
                 response=ServiceAccountSerializer,
-            )
+            ),
+            409: OpenApiResponse(description="A user with the requested username already exists"),
         },
     )
     def post(self, request, slug):
@@ -55,12 +62,33 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        service_account = create_service_account(
-            workspace=workspace,
-            name=data["name"],
-            role=data["role"],
-            description=data.get("description", ""),
-        )
+        username = data.get("username")
+        # Reject a taken username with a machine-readable code — never silently
+        # mutate it into a unique one. The insert below is still wrapped so a
+        # race between this check and the create is reported the same way.
+        if username and User.objects.filter(username=username).exists():
+            return Response(USERNAME_CONFLICT, status=status.HTTP_409_CONFLICT)
+
+        try:
+            service_account = create_service_account(
+                workspace=workspace,
+                name=data["name"],
+                role=data["role"],
+                description=data.get("description", ""),
+                username=username,
+                display_name=data.get("display_name"),
+            )
+        except IntegrityError:
+            # The only caller-controlled unique field here is the username
+            # (email/token are server-generated). If it is now taken — including
+            # a race that slipped past the pre-check — report the conflict. Any
+            # other IntegrityError is unexpected and must not be mislabeled, so
+            # let it surface via BaseAPIView.handle_exception. The helper's
+            # @transaction.atomic has already rolled back, so this SELECT runs on
+            # a clean connection.
+            if username and User.objects.filter(username=username).exists():
+                return Response(USERNAME_CONFLICT, status=status.HTTP_409_CONFLICT)
+            raise
 
         response = ServiceAccountSerializer(
             {

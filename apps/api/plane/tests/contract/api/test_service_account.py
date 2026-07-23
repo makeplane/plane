@@ -155,6 +155,54 @@ class TestServiceAccountCommand:
             with pytest.raises(CommandError):
                 call_command("create_service_account", workspace=workspace.slug, name="Race", role="admin")
 
+    @pytest.mark.django_db
+    def test_command_username_and_display_name_round_trip(self, workspace):
+        call_command(
+            "create_service_account",
+            workspace=workspace.slug,
+            name="CI",
+            role="admin",
+            username="ci-bot",
+            display_name="CI Bot",
+        )
+
+        member = _service_account_for(workspace)
+        assert member.member.username == "ci-bot"
+        assert member.member.display_name == "CI Bot"
+
+    @pytest.mark.django_db
+    def test_command_omitted_identity_falls_back_to_synthetic(self, workspace):
+        call_command("create_service_account", workspace=workspace.slug, name="Fallback Bot", role="admin")
+
+        user = _service_account_for(workspace).member
+        assert user.username.startswith("svc_")
+        assert user.display_name == "Fallback Bot"
+
+    @pytest.mark.django_db
+    def test_command_duplicate_username_errors_cleanly(self, workspace):
+        User.objects.create(username="ci-bot", email="someone@plane.so")
+
+        from django.core.management.base import CommandError
+
+        with pytest.raises(CommandError):
+            call_command(
+                "create_service_account",
+                workspace=workspace.slug,
+                name="Dup",
+                role="admin",
+                username="ci-bot",
+            )
+
+        # No partial service account leaked into the workspace.
+        assert not WorkspaceMember.objects.filter(workspace=workspace, member__bot_type=BotTypeEnum.SERVICE).exists()
+
+    @pytest.mark.django_db
+    def test_command_blank_name_errors(self, workspace):
+        from django.core.management.base import CommandError
+
+        with pytest.raises(CommandError):
+            call_command("create_service_account", workspace=workspace.slug, name="", role="admin")
+
 
 @pytest.mark.contract
 class TestServiceAccountEndpoint:
@@ -244,3 +292,141 @@ class TestServiceAccountEndpoint:
             format="json",
         )
         assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+    @pytest.mark.django_db
+    def test_custom_username_and_display_name(self, api_key_client, workspace):
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "CI", "role": "admin", "username": "ci-provisioner", "display_name": "CI Provisioner"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        # The response echoes the effective identity.
+        assert response.data["username"] == "ci-provisioner"
+        assert response.data["display_name"] == "CI Provisioner"
+        # And it landed on the created user (so the members UI shows it).
+        user = User.objects.get(id=response.data["id"])
+        assert user.username == "ci-provisioner"
+        assert user.display_name == "CI Provisioner"
+
+    @pytest.mark.django_db
+    def test_omitted_identity_falls_back_to_synthetic(self, api_key_client, workspace):
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Fallback Bot", "role": "admin"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        assert response.data["username"].startswith("svc_")
+        assert response.data["display_name"] == "Fallback Bot"
+
+    @pytest.mark.django_db
+    def test_duplicate_username_is_rejected_with_code(self, api_key_client, workspace):
+        User.objects.create(username="ci-provisioner", email="human@plane.so")
+
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "CI", "role": "admin", "username": "ci-provisioner"},
+            format="json",
+        )
+
+        # Collision → 409 with a machine-readable code; the name is never mutated.
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+        # No service account leaked into the workspace.
+        assert not WorkspaceMember.objects.filter(workspace=workspace, member__bot_type=BotTypeEnum.SERVICE).exists()
+
+    @pytest.mark.django_db
+    def test_username_race_returns_409(self, api_key_client, workspace):
+        # Simulate a race: the username is free at the pre-check, then another
+        # actor creates it and our insert raises IntegrityError. The scoped
+        # handler re-checks, sees it now exists, and returns the same 409.
+        from django.db import IntegrityError
+
+        def racing_create(**kwargs):
+            User.objects.create(username="raced", email="racer@plane.so")
+            raise IntegrityError("duplicate key value violates unique constraint")
+
+        with patch("plane.api.views.service_account.create_service_account", side_effect=racing_create):
+            response = api_key_client.post(
+                self._url(workspace.slug),
+                {"name": "Race", "role": "admin", "username": "raced"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+
+    @pytest.mark.django_db
+    def test_non_username_integrity_error_is_not_mislabeled(self, api_key_client, workspace):
+        # An IntegrityError unrelated to the username (the username is still free)
+        # must not be reported as a username conflict — it falls through to the
+        # base handler (HTTP 400) instead.
+        from django.db import IntegrityError
+
+        with patch(
+            "plane.api.views.service_account.create_service_account",
+            side_effect=IntegrityError("some other constraint"),
+        ):
+            response = api_key_client.post(
+                self._url(workspace.slug),
+                {"name": "Boom", "role": "admin", "username": "unique-name"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data.get("code") != "USERNAME_ALREADY_EXISTS"
+
+    @pytest.mark.django_db
+    def test_custom_username_with_omitted_display_name_falls_back_to_name(self, api_key_client, workspace):
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "CI Provisioner", "role": "admin", "username": "ci-only"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        assert response.data["username"] == "ci-only"
+        assert response.data["display_name"] == "CI Provisioner"
+
+    @pytest.mark.django_db
+    def test_blank_identity_normalizes_to_synthetic(self, api_key_client, workspace):
+        # A blank username/display_name is treated as omitted (identical to the
+        # management command), not a 400.
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Blanky", "role": "admin", "username": "", "display_name": ""},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        assert response.data["username"].startswith("svc_")
+        assert response.data["display_name"] == "Blanky"
+
+
+@pytest.mark.contract
+class TestServiceAccountHelper:
+    """Direct tests of the shared create_service_account helper."""
+
+    @pytest.mark.django_db
+    def test_duplicate_username_rolls_back_atomically(self, workspace):
+        # A genuine (non-mocked) unique violation: the helper is @transaction.atomic,
+        # so the failed second creation must leave nothing behind.
+        from django.db import IntegrityError
+
+        from plane.utils.service_account import create_service_account
+
+        create_service_account(workspace=workspace, name="First", username="dup")
+
+        users_before = User.objects.count()
+        members_before = WorkspaceMember.objects.count()
+        tokens_before = APIToken.objects.count()
+
+        with pytest.raises(IntegrityError):
+            create_service_account(workspace=workspace, name="Second", username="dup")
+
+        assert User.objects.count() == users_before
+        assert WorkspaceMember.objects.count() == members_before
+        assert APIToken.objects.count() == tokens_before

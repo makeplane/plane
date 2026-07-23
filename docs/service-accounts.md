@@ -20,8 +20,10 @@ Creating a service account performs three writes in a single transaction:
 1. A `User` that is **active** (`is_active=True`) and **email-verified**
    (`is_email_verified=True`, `is_email_valid=True`), flagged as a bot
    (`is_bot=True`, `bot_type=SERVICE`) with an unusable password
-   (`is_password_autoset=True`). Its `username`/`email` are unique, synthetic
-   identifiers — no mail is ever sent to them.
+   (`is_password_autoset=True`). Its `username` and `display_name` may be
+   caller-chosen (see [Identity fields](#identity-fields)) or default to
+   synthetic values; its `email` is always a unique synthetic address — no mail
+   is ever sent to it.
 2. A `WorkspaceMember` binding the user to the workspace at the requested role.
 3. An `APIToken` (`user_type=Bot`, `is_service=True`, scoped to the workspace).
    Its plaintext value is printed/returned **once** — store it securely, it
@@ -51,14 +53,20 @@ member/guest scope.
 python manage.py create_service_account \
   --workspace <workspace-slug> \
   --name "CI Provisioner" \
-  --role admin
+  --role admin \
+  --username ci-provisioner \
+  --display-name "CI Provisioner"
 ```
 
 Arguments:
 
 - `--workspace` (required) — target workspace slug.
-- `--name` (required) — display name for the account.
+- `--name` (required) — name for the account; used as the API token label.
 - `--role` — `admin` (default), `member`, or `guest`.
+- `--username` — optional globally-unique username (see [Identity fields](#identity-fields));
+  a synthetic `svc_<uuid>` value is generated when omitted.
+- `--display-name` — optional display name shown in the members UI; falls back to
+  `--name` when omitted.
 - `--email` — optional; a unique synthetic address is generated when omitted.
 - `--description` — optional description stored on the token.
 
@@ -66,11 +74,12 @@ The command prints the account details and the API token (shown once):
 
 ```text
 Service account created successfully
-  user_id  : 1c2f...c7f3
-  username : svc_9d89245e45164385a00e42ff6056cbce
-  email    : svc_9d89245e45164385a00e42ff6056cbce@service.plane.local
-  role     : admin
-  workspace: my-workspace
+  user_id     : 1c2f...c7f3
+  username    : ci-provisioner
+  display_name: CI Provisioner
+  email       : svc_9d89245e45164385a00e42ff6056cbce@service.plane.local
+  role        : admin
+  workspace   : my-workspace
 API token (shown once — store it securely):
   plane_api_9d89245e45164385a00e42ff6056cbce
 ```
@@ -91,15 +100,22 @@ POST /api/v1/workspaces/{slug}/service-accounts/
 X-Api-Key: <workspace-admin token>
 Content-Type: application/json
 
-{ "name": "CI Provisioner", "role": "admin", "description": "optional" }
+{
+  "name": "CI Provisioner",
+  "role": "admin",
+  "username": "ci-provisioner",
+  "display_name": "CI Provisioner",
+  "description": "optional"
+}
 ```
 
-Response `201 Created` (the `token` is returned once):
+`username` and `display_name` are optional (see [Identity fields](#identity-fields)).
+Response `201 Created` (the `token` is returned once) echoes the effective values:
 
 ```json
 {
   "id": "1c2f...c7f3",
-  "username": "svc_...",
+  "username": "ci-provisioner",
   "email": "svc_...@service.plane.local",
   "display_name": "CI Provisioner",
   "role": 20,
@@ -112,6 +128,24 @@ The caller must be an **admin** of `{slug}` (enforced by `WorkspaceOwnerPermissi
 any other caller receives `403 Forbidden`. This endpoint requires an existing
 admin token, so the first service account in a fresh instance is typically minted
 with the management command above.
+
+## Identity fields
+
+`username` and `display_name` let an external provisioner assign stable, readable
+identity instead of the server-generated defaults:
+
+- **`username`** — a globally-unique handle. Use it to provision idempotently:
+  re-creating with a username that already exists is rejected with **`409 Conflict`**
+  and a machine-readable body `{"error": ..., "code": "USERNAME_ALREADY_EXISTS"}`;
+  the name is **never** silently mutated into a unique variant. Like every Plane
+  username it is bounded only by length (max 128 characters) — Plane applies no
+  charset validator to usernames (regular accounts get a random `uuid` handle), so
+  none is imposed here either. Omit it to get a synthetic `svc_<uuid>` handle.
+- **`display_name`** — the label the workspace members UI shows. Omit it to fall
+  back to `name`.
+
+On the management command, a taken `--username` (or `--email`) fails with a clear
+`CommandError` instead of a raw traceback.
 
 ## Notes
 
