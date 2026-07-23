@@ -86,3 +86,38 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
         return _wrapped_view
 
     return decorator
+
+
+def issue_hidden_from_guest(request, slug, project_id, issue_id):
+    """Return True when the caller is a *restricted* project guest who must not
+    see the given issue's data or sub-resources.
+
+    A project member with role GUEST on a project whose
+    ``guest_view_all_features`` is disabled may only see issues they created
+    (mirrors ``IssueViewSet.list`` / ``IssueListEndpoint``). Issue sub-resource
+    endpoints (attachments, activity, comments) must apply the same restriction;
+    they only run the project-membership check, which a legitimate guest passes.
+
+    Returns False for admins, members, unrestricted guests, and for the guest's
+    own issues. Callers should translate a True result into a 403.
+    """
+    from plane.db.models import Issue
+
+    is_restricted_guest = ProjectMember.objects.filter(
+        workspace__slug=slug,
+        project_id=project_id,
+        member=request.user,
+        role=ROLE.GUEST.value,
+        is_active=True,
+        project__guest_view_all_features=False,
+    ).exists()
+    if not is_restricted_guest:
+        return False
+
+    owns_issue = Issue.issue_objects.filter(
+        pk=issue_id,
+        workspace__slug=slug,
+        project_id=project_id,
+        created_by=request.user,
+    ).exists()
+    return not owns_issue
