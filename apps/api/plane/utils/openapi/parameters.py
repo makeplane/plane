@@ -503,3 +503,37 @@ ESTIMATE_ID_PARAMETER = OpenApiParameter(
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
 )
+
+PAGE_ID_PARAMETER = OpenApiParameter(
+    name="page_id",
+    description="Page ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page UUID",
+        )
+    ],
+)
+
+PAGE_TYPE_PARAMETER = OpenApiParameter(
+    name="type",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description=(
+        "Filter pages by type. `all` (default) returns non-archived pages, "
+        "`public` returns non-archived public pages, `private` returns "
+        "non-archived private pages owned by the requester, and `archived` "
+        "returns archived pages."
+    ),
+    required=False,
+    examples=[
+        OpenApiExample(name="All pages", value="all"),
+        OpenApiExample(name="Public pages", value="public"),
+        OpenApiExample(name="Private pages", value="private"),
+        OpenApiExample(name="Archived pages", value="archived"),
+    ],
+)

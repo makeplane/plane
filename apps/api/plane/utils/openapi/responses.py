@@ -274,6 +274,51 @@ MODULE_ISSUE_NOT_FOUND_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Page-specific Responses
+PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Page not found",
+    examples=[
+        OpenApiExample(
+            name="Page Not Found",
+            value={"error": "Page not found"},
+        )
+    ],
+)
+
+PAGE_LOCKED_RESPONSE = OpenApiResponse(
+    description="Page is locked and cannot be edited",
+    examples=[
+        OpenApiExample(
+            name="Page Locked",
+            value={"error": "Page is locked"},
+        )
+    ],
+)
+
+PAGE_ARCHIVED_RESPONSE = OpenApiResponse(
+    description="Archived page cannot be edited",
+    examples=[
+        OpenApiExample(
+            name="Page Archived",
+            value={"error": "Archived page cannot be edited"},
+        )
+    ],
+)
+
+PAGE_ACCESS_DENIED_RESPONSE = OpenApiResponse(
+    description="Action not permitted for the requesting user",
+    examples=[
+        OpenApiExample(
+            name="Access Update Denied",
+            value={"error": "Access cannot be updated since this page is owned by someone else"},
+        ),
+        OpenApiExample(
+            name="Owner Only Action",
+            value={"error": "Only the page owner can lock the page"},
+        ),
+    ],
+)
+
 # Cycle-specific Responses
 CYCLE_CANNOT_ARCHIVE_RESPONSE = OpenApiResponse(
     description="Cycle cannot be archived",
