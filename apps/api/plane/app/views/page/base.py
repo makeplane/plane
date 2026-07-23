@@ -53,7 +53,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
-from plane.bgtasks.webhook_task import model_activity, webhook_activity
+from plane.bgtasks.webhook_task import dispatch_page_webhook, model_activity
 from plane.app.permissions import ProjectPagePermission
 from plane.utils.host import base_host
 
@@ -72,40 +72,6 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Execute the SQL query
     with connection.cursor() as cursor:
         cursor.execute(sql, [page_id, archived_at])
-
-
-def dispatch_page_webhook(
-    request,
-    slug,
-    page_id,
-    verb,
-    field=None,
-    old_value=None,
-    new_value=None,
-    debounce=False,
-):
-    """Fire a ``page`` webhook through the shared webhook activity path.
-
-    Every DRF-side page mutation (create, delete, duplicate, and the property /
-    content updates) funnels through here so the payload, actor and origin are
-    built identically. ``debounce`` is only set for the live content-persist
-    flush (see PagesDescriptionViewSet) to keep an editing session from emitting
-    a webhook per flush.
-    """
-    webhook_activity.delay(
-        event="page",
-        verb=verb,
-        field=field,
-        old_value=old_value,
-        new_value=new_value,
-        actor_id=request.user.id,
-        slug=slug,
-        current_site=base_host(request=request, is_app=True),
-        event_id=page_id,
-        old_identifier=None,
-        new_identifier=None,
-        debounce=debounce,
-    )
 
 
 class PageViewSet(BaseViewSet):

@@ -55,6 +55,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 from plane.utils.url_security import pinned_fetch
 
 
@@ -594,3 +595,29 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
                 )
 
     return
+
+
+def dispatch_page_webhook(request, slug, page_id, verb, field=None, old_value=None, new_value=None, debounce=False):
+    """Fire a ``page`` webhook through the shared webhook activity path.
+
+    Every DRF-side page mutation — from both the internal app API and the public
+    token API (create, delete, duplicate, and the property / content updates) —
+    funnels through here so the payload, actor and origin are built identically.
+    ``debounce`` is only set for the live content-persist flush (see
+    ``PagesDescriptionViewSet`` / the public API content update) to keep an
+    editing session from emitting a webhook per flush.
+    """
+    webhook_activity.delay(
+        event="page",
+        verb=verb,
+        field=field,
+        old_value=old_value,
+        new_value=new_value,
+        actor_id=request.user.id,
+        slug=slug,
+        current_site=base_host(request=request, is_app=True),
+        event_id=page_id,
+        old_identifier=None,
+        new_identifier=None,
+        debounce=debounce,
+    )

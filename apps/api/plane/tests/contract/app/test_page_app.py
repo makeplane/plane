@@ -41,7 +41,7 @@ class TestPageWebhookDispatch:
     @pytest.mark.django_db
     def test_create_dispatches_page_webhook(self, session_client, workspace, project):
         with (
-            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             mock.patch("plane.app.views.page.base.page_transaction"),
         ):
             response = session_client.post(
@@ -66,7 +66,7 @@ class TestPageWebhookDispatch:
     def test_create_does_not_dispatch_on_invalid_payload(self, session_client, workspace, project):
         """A failed create (serializer invalid) must not fire a webhook."""
         with (
-            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             mock.patch("plane.app.views.page.base.page_transaction"),
         ):
             response = session_client.post(
@@ -98,7 +98,7 @@ class TestPageWebhookDispatch:
         )
 
         with (
-            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             # page.delete() soft-deletes and enqueues a cascade task; stub it so
             # the test has no hidden broker dependency.
             mock.patch("plane.db.mixins.soft_delete_related_objects"),
@@ -133,7 +133,7 @@ class TestPageWebhookDispatch:
 
         url = pages_url(workspace.slug, project.id, page.id) + "duplicate/"
         with (
-            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             mock.patch("plane.app.views.page.base.page_transaction"),
             mock.patch("plane.app.views.page.base.copy_s3_objects_of_description_and_assets"),
         ):
@@ -168,7 +168,7 @@ class TestPageWebhookDispatch:
             updated_by=create_user,
         )
 
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.delete(pages_url(workspace.slug, project.id, page.id))
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -225,7 +225,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_access_change_dispatches_update(self, session_client, workspace, project, page):
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(
                 page_action_url(workspace.slug, project.id, page.id, "access"),
                 {"access": 1},
@@ -243,7 +243,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_lock_dispatches_update(self, session_client, workspace, project, page):
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "lock"))
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -257,7 +257,7 @@ class TestPageUpdateWebhookDispatch:
     def test_unlock_dispatches_update(self, session_client, workspace, project, page):
         page.is_locked = True
         page.save()
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.delete(page_action_url(workspace.slug, project.id, page.id, "lock"))
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -269,7 +269,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_archive_dispatches_update(self, session_client, workspace, project, page):
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
 
         assert response.status_code == status.HTTP_200_OK
@@ -283,7 +283,7 @@ class TestPageUpdateWebhookDispatch:
     def test_unarchive_dispatches_update(self, session_client, workspace, project, page):
         page.archived_at = timezone.now()
         page.save()
-        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.delete(page_action_url(workspace.slug, project.id, page.id, "archive"))
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -298,7 +298,7 @@ class TestPageUpdateWebhookDispatch:
         """The description (live content-persist) endpoint fires a debounced
         ``page`` update webhook."""
         with (
-            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             mock.patch("plane.app.views.page.base.page_transaction"),
             mock.patch("plane.app.views.page.base.track_page_version"),
         ):
