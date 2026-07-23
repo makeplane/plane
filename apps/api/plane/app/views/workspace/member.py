@@ -96,6 +96,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         if "role" in request.data:
             allowed_data["role"] = request.data.get("role")
 
+        # If the payload carried no writable field (e.g. only forbidden keys like
+        # ``workspace``/``is_active``), there is nothing to update. Return the
+        # current member without calling ``save()`` so we don't issue a no-op write
+        # that bumps ``updated_at``/``updated_by`` or runs the guest cascade.
+        if not allowed_data:
+            return Response(
+                WorkSpaceMemberSerializer(workspace_member).data,
+                status=status.HTTP_200_OK,
+            )
+
         serializer = WorkSpaceMemberSerializer(workspace_member, data=allowed_data, partial=True)
 
         if not serializer.is_valid():

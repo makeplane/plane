@@ -110,10 +110,12 @@ class TestWorkspaceMemberMassAssignment:
         assert not WorkspaceMember.objects.filter(workspace=victim_ws, member=puppet).exists()
 
     def test_patch_is_active_false_does_not_deactivate(self, attacker_workspace):
-        """``is_active`` must not be assignable through this endpoint."""
+        """``is_active`` must not be assignable through this endpoint, and a payload
+        with no writable field must be a no-op (no phantom write)."""
         attacker_ws, attacker = attacker_workspace
         target = _make_user("active-target@plane.so")
         target_member = _add_member(attacker_ws, target, role=15)
+        original_updated_at = target_member.updated_at
 
         client = APIClient()
         client.force_authenticate(user=attacker)
@@ -126,6 +128,10 @@ class TestWorkspaceMemberMassAssignment:
         assert response.status_code == status.HTTP_200_OK
         target_member.refresh_from_db()
         assert target_member.is_active is True
+        # No writable field was supplied, so the row must not have been re-saved.
+        assert target_member.updated_at == original_updated_at, (
+            "A forbidden-only payload triggered a no-op write"
+        )
 
     def test_legitimate_role_update_still_works(self, attacker_workspace):
         """Positive control: the intended ``role`` update still functions."""
