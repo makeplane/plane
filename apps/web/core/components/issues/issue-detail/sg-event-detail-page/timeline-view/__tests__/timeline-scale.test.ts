@@ -20,7 +20,10 @@ const {
   getTimelineSecondsFromClientX,
   getTimelinePositionPercent,
   getTimelineContentWidth,
+  getTimelineEffectiveContentWidth,
+  getTimelineTimePixel,
   getTimelineScaleLabel,
+  getTimelineZoomPercentLabel,
   isTimelineTagPlaybackOverrideId,
 } = timelineScale;
 
@@ -51,11 +54,45 @@ test("timeline content width expands and contracts from the default scale", () =
   assert.match(getTimelineScaleLabel(TIMELINE_SCALE_LEVELS[DEFAULT_TIMELINE_SCALE_INDEX]), /^\d+%$/);
 });
 
+test("timeline zoom percent label always displays the current zoom percentage", () => {
+  assert.equal(getTimelineZoomPercentLabel(0.5), "50%");
+  assert.equal(getTimelineZoomPercentLabel(1), "100%");
+  assert.equal(getTimelineZoomPercentLabel(TIMELINE_SCALE_LEVELS.at(-1) ?? 1), "6400%");
+});
+
 test("timeline content can exceed the viewport width when users zoom in", () => {
   const compactViewportWidth = 900;
   const zoomedInWidth = getTimelineContentWidth(2);
 
   assert.ok(zoomedInWidth > compactViewportWidth);
+});
+
+test("timeline uses the rendered fit-to-viewport width for both ruler and item pixels", () => {
+  const totalSeconds = 49 * 60 + 2;
+  const finalTagSeconds = 37.5 * 60;
+  const viewportWidth = 2200;
+  const selectedZoomWidth = getTimelineContentWidth(0.5, totalSeconds);
+  const renderedContentWidth = getTimelineEffectiveContentWidth({
+    selectedContentWidthPx: selectedZoomWidth,
+    viewportWidthPx: viewportWidth,
+  });
+  const itemLeftPx = getTimelineTimePixel(finalTagSeconds, totalSeconds, renderedContentWidth);
+  const rulerTickPx = (getTimelinePositionPercent(finalTagSeconds, totalSeconds) / 100) * renderedContentWidth;
+
+  assert.equal(renderedContentWidth, viewportWidth);
+  assert.ok(Math.abs(itemLeftPx - rulerTickPx) < 0.000001);
+});
+
+test("timeline keeps selected zoom width once it exceeds the viewport", () => {
+  const selectedZoomWidth = getTimelineContentWidth(2, 49 * 60 + 2);
+
+  assert.equal(
+    getTimelineEffectiveContentWidth({
+      selectedContentWidthPx: selectedZoomWidth,
+      viewportWidthPx: 1200,
+    }),
+    selectedZoomWidth
+  );
 });
 
 test("timeline positions are clamped to the shared percent coordinate system", () => {

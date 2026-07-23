@@ -20,9 +20,11 @@ import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "../../constants";
 import type { SgTagRow, SportTableKind } from "../../types";
 import {
+  TIMELINE_CANVAS_CONTENT_CLASS,
   TIMELINE_HORIZONTAL_SCROLL_CLASS,
   TIMELINE_LANE_LABEL_COLUMN_CLASS,
   TIMELINE_PANEL_ROOT_CLASS,
+  TIMELINE_RULER_CONTENT_CLASS,
   TIMELINE_RULER_SCROLL_CLASS,
   TIMELINE_STICKY_FOOTER_CLASS,
   TIMELINE_TRACKS_ROW_CLASS,
@@ -53,12 +55,13 @@ import {
   buildScaledTimelineTicks,
   getNextTimelineScaleIndex,
   getTimelineContentWidth,
+  getTimelineEffectiveContentWidth,
   getTimelinePlaybackSeconds,
   getTimelineRangePixels,
   getTimelineScaleIndexFromSliderValue,
-  getTimelineScaleLabel,
   getTimelineSecondsFromClientX,
   getTimelineTimePixel,
+  getTimelineZoomPercentLabel,
   isTimelineTagPlaybackOverrideId,
 } from "../utils/timeline-scale";
 import { formatTooltipText, TimelineTagTooltip } from "./timeline-tag-tooltip";
@@ -129,6 +132,7 @@ export const SgEventTimelinePanel = ({
   const [tagTypeSearchQuery, setTagTypeSearchQuery] = useState("");
   const [collapsedTagTypeGroups, setCollapsedTagTypeGroups] = useState<Record<string, boolean>>({});
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
+  const [timelineViewportWidth, setTimelineViewportWidth] = useState(0);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineRulerScrollRef = useRef<HTMLDivElement | null>(null);
   const playheadTrackElementRef = useRef<HTMLDivElement | null>(null);
@@ -236,7 +240,11 @@ export const SgEventTimelinePanel = ({
   const totalSeconds = Math.max(1, Math.ceil(timelineExtentSeconds || 0));
   const timelineScale =
     TIMELINE_SCALE_LEVELS[timelineScaleIndex] ?? TIMELINE_SCALE_LEVELS[DEFAULT_TIMELINE_SCALE_INDEX];
-  const timelineContentWidth = getTimelineContentWidth(timelineScale, totalSeconds);
+  const selectedTimelineContentWidth = getTimelineContentWidth(timelineScale, totalSeconds);
+  const timelineContentWidth = getTimelineEffectiveContentWidth({
+    selectedContentWidthPx: selectedTimelineContentWidth,
+    viewportWidthPx: timelineViewportWidth,
+  });
   const timelinePlayheadSeconds = Math.min(timelinePlayheadSecondsRaw, totalSeconds);
   const playheadPositionPx = getTimelineTimePixel(timelinePlayheadSeconds, totalSeconds, timelineContentWidth);
   const visibleTicks = buildScaledTimelineTicks(totalSeconds, timelineScale, timelineContentWidth);
@@ -245,6 +253,7 @@ export const SgEventTimelinePanel = ({
   const hasTimelineRows = sortedTimelineRows.length > 0;
   const selectedTagCount = selectedTagIds.length;
   const canCreatePlaylist = Boolean(onCreatePlaylist) && selectedTagCount > 0 && !isCreatingPlaylist;
+  const timelineZoomPercentLabel = getTimelineZoomPercentLabel(timelineScale);
   const seekableDurationSeconds = Math.max(
     0,
     timelineDurationSeconds ?? fullStreamDurationSecondsRef.current ?? totalSeconds
@@ -392,6 +401,33 @@ export const SgEventTimelinePanel = ({
   useEffect(() => {
     refreshTimelineSkimmerFromLastPointer();
   }, [refreshTimelineSkimmerFromLastPointer]);
+
+  useEffect(() => {
+    const viewportElements = [timelineScrollRef.current, timelineRulerScrollRef.current].filter(
+      (element): element is HTMLDivElement => Boolean(element)
+    );
+    if (viewportElements.length === 0) return;
+
+    const updateTimelineViewportWidth = () => {
+      const nextViewportWidth = Math.max(...viewportElements.map((element) => element.clientWidth), 0);
+
+      setTimelineViewportWidth((currentWidth) =>
+        Math.abs(currentWidth - nextViewportWidth) < 1 ? currentWidth : nextViewportWidth
+      );
+    };
+
+    updateTimelineViewportWidth();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateTimelineViewportWidth);
+      return () => window.removeEventListener("resize", updateTimelineViewportWidth);
+    }
+
+    const resizeObserver = new ResizeObserver(updateTimelineViewportWidth);
+    viewportElements.forEach((element) => resizeObserver.observe(element));
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     const trackScrollElement = timelineScrollRef.current;
@@ -704,8 +740,8 @@ export const SgEventTimelinePanel = ({
             className={TIMELINE_HORIZONTAL_SCROLL_CLASS}
           >
             <div
-              className="relative transition-[width] duration-150 ease-out"
-              style={{ minWidth: "100%", width: timelineContentWidth }}
+              className={TIMELINE_CANVAS_CONTENT_CLASS}
+              style={{ width: timelineContentWidth }}
             >
               <div
                 ref={playheadTrackElementRef}
@@ -836,8 +872,8 @@ export const SgEventTimelinePanel = ({
               value={timelineScaleIndex}
               onChange={(event) => handleTimelineScaleSliderChange(event.currentTarget.value)}
               aria-label="Timeline zoom"
-              aria-valuetext={getTimelineScaleLabel(timelineScale)}
-              className="h-6 w-20 accent-custom-primary-100"
+              aria-valuetext={timelineZoomPercentLabel}
+              className="h-6 w-16 accent-custom-primary-100"
             />
             <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
               <button
@@ -853,6 +889,7 @@ export const SgEventTimelinePanel = ({
                 <Plus className="h-3.5 w-3.5" />
               </button>
             </Tooltip>
+            <span className="min-w-11 text-right tabular-nums text-custom-text-300">{timelineZoomPercentLabel}</span>
           </span>
         </div>
 
@@ -865,8 +902,8 @@ export const SgEventTimelinePanel = ({
           className={TIMELINE_RULER_SCROLL_CLASS}
         >
           <div
-            className="relative h-10 transition-[width] duration-150 ease-out"
-            style={{ minWidth: "100%", width: timelineContentWidth }}
+            className={TIMELINE_RULER_CONTENT_CLASS}
+            style={{ width: timelineContentWidth }}
           >
             <div
               ref={playheadRulerElementRef}

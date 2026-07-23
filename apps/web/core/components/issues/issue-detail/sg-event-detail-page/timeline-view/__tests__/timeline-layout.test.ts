@@ -6,11 +6,13 @@ import test from "node:test";
 import * as timelineLayout from "../utils/timeline-layout.ts";
 
 const {
+  TIMELINE_CANVAS_CONTENT_CLASS,
   TIMELINE_HORIZONTAL_SCROLL_CLASS,
   TIMELINE_PAGE_CONTENT_CLASS,
   TIMELINE_PAGE_SCROLL_CLASS,
   TIMELINE_PANEL_MIN_HEIGHT_PX,
   TIMELINE_PANEL_ROOT_CLASS,
+  TIMELINE_RULER_CONTENT_CLASS,
   TIMELINE_RULER_SCROLL_CLASS,
   TIMELINE_STICKY_FOOTER_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
@@ -61,6 +63,13 @@ test("timeline has a single visible horizontal scrollbar", () => {
   assert.equal(horizontalOwnerCount, 1);
   assert.doesNotMatch(TIMELINE_HORIZONTAL_SCROLL_CLASS, /\bhorizontal-scrollbar\b/);
   assert.doesNotMatch(TIMELINE_HORIZONTAL_SCROLL_CLASS, /\boverflow-x-auto\b/);
+});
+
+test("timeline content width changes are not animated between zoom levels", () => {
+  assert.equal(typeof TIMELINE_CANVAS_CONTENT_CLASS, "string");
+  assert.equal(typeof TIMELINE_RULER_CONTENT_CLASS, "string");
+  assert.doesNotMatch(TIMELINE_CANVAS_CONTENT_CLASS, /transition-\[width\]/);
+  assert.doesNotMatch(TIMELINE_RULER_CONTENT_CLASS, /transition-\[width\]/);
 });
 
 test("ordinary vertical wheel input does not move the horizontal timeline", () => {

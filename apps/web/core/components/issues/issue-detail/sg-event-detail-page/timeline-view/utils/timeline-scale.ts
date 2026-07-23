@@ -39,8 +39,18 @@ export const getTimelineContentWidth = (scale: number, totalSeconds = 0) => {
   return Math.max(MIN_TIMELINE_WIDTH_PX, scaledBaseWidth, secondLevelWidth);
 };
 
+export const getTimelineEffectiveContentWidth = ({
+  selectedContentWidthPx,
+  viewportWidthPx,
+}: {
+  selectedContentWidthPx: number;
+  viewportWidthPx: number;
+}) => Math.max(1, selectedContentWidthPx || 0, viewportWidthPx || 0);
+
 export const getTimelineScaleLabel = (scale: number) =>
   scale >= SECOND_LEVEL_TIMELINE_SCALE ? "1 sec" : `${Math.round(scale * 100)}%`;
+
+export const getTimelineZoomPercentLabel = (scale: number) => `${Math.round(Math.max(0, scale || 0) * 100)}%`;
 
 export const getTimelinePositionPercent = (seconds: number, totalSeconds: number) => {
   const safeTotalSeconds = Math.max(1, totalSeconds || 0);
