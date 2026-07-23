@@ -24,6 +24,10 @@ def pages_url(slug, project_id, page_id=None):
     return f"{base}{page_id}/" if page_id else base
 
 
+def page_action_url(slug, project_id, page_id, action):
+    return f"{pages_url(slug, project_id, page_id)}{action}/"
+
+
 @pytest.mark.contract
 class TestPageWebhookDispatch:
     """Creating or deleting a page through the app API fires a ``page`` webhook."""
@@ -170,3 +174,146 @@ class TestPageWebhookDispatch:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert Page.objects.filter(id=page.id).exists()
         mocked_webhook.delay.assert_not_called()
+
+
+@pytest.mark.contract
+class TestPageUpdateWebhookDispatch:
+    """DRF-side page property + content changes fire a ``page`` update webhook."""
+
+    @pytest.fixture(autouse=True)
+    def _web_url(self, settings):
+        settings.WEB_URL = "http://localhost"
+
+    @pytest.fixture
+    def page(self, db, workspace, project, create_user):
+        page = Page.objects.create(
+            workspace=workspace,
+            owned_by=create_user,
+            name="Runbook",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        return page
+
+    @pytest.mark.django_db
+    def test_rename_dispatches_update_via_model_activity(self, session_client, workspace, project, page):
+        """A rename goes through model_activity, which diffs and fans out one
+        ``page`` update webhook per changed field."""
+        with (
+            mock.patch("plane.app.views.page.base.model_activity") as mocked_model_activity,
+            mock.patch("plane.app.views.page.base.page_transaction"),
+        ):
+            response = session_client.patch(
+                pages_url(workspace.slug, project.id, page.id),
+                {"name": "Renamed Runbook"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        mocked_model_activity.delay.assert_called_once()
+        kwargs = mocked_model_activity.delay.call_args.kwargs
+        assert kwargs["model_name"] == "page"
+        assert str(kwargs["model_id"]) == str(page.id)
+        assert kwargs["requested_data"] == {"name": "Renamed Runbook"}
+
+    @pytest.mark.django_db
+    def test_access_change_dispatches_update(self, session_client, workspace, project, page):
+        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+            response = session_client.post(
+                page_action_url(workspace.slug, project.id, page.id, "access"),
+                {"access": 1},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["event"] == "page"
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "access"
+        assert kwargs["new_value"] == 1
+        assert str(kwargs["event_id"]) == str(page.id)
+
+    @pytest.mark.django_db
+    def test_lock_dispatches_update(self, session_client, workspace, project, page):
+        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+            response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "lock"))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "is_locked"
+        assert kwargs["new_value"] is True
+
+    @pytest.mark.django_db
+    def test_unlock_dispatches_update(self, session_client, workspace, project, page):
+        page.is_locked = True
+        page.save()
+        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+            response = session_client.delete(page_action_url(workspace.slug, project.id, page.id, "lock"))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "is_locked"
+        assert kwargs["new_value"] is False
+
+    @pytest.mark.django_db
+    def test_archive_dispatches_update(self, session_client, workspace, project, page):
+        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+            response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
+
+        assert response.status_code == status.HTTP_200_OK
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "archived_at"
+        assert kwargs["new_value"] is not None
+
+    @pytest.mark.django_db
+    def test_unarchive_dispatches_update(self, session_client, workspace, project, page):
+        page.archived_at = timezone.now()
+        page.save()
+        with mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook:
+            response = session_client.delete(page_action_url(workspace.slug, project.id, page.id, "archive"))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "archived_at"
+        assert kwargs["new_value"] is None
+
+    @pytest.mark.django_db
+    def test_content_persist_dispatches_debounced_update(self, session_client, workspace, project, page):
+        """The description (live content-persist) endpoint fires a debounced
+        ``page`` update webhook."""
+        with (
+            mock.patch("plane.app.views.page.base.webhook_activity") as mocked_webhook,
+            mock.patch("plane.app.views.page.base.page_transaction"),
+            mock.patch("plane.app.views.page.base.track_page_version"),
+        ):
+            response = session_client.patch(
+                page_action_url(workspace.slug, project.id, page.id, "description"),
+                {"description_html": "<p>hello</p>"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["event"] == "page"
+        assert kwargs["verb"] == "updated"
+        assert kwargs["field"] == "description_html"
+        # The live flush path is debounced so a session does not emit per flush.
+        assert kwargs["debounce"] is True
+        assert str(kwargs["event_id"]) == str(page.id)

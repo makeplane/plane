@@ -53,7 +53,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
-from plane.bgtasks.webhook_task import webhook_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.app.permissions import ProjectPagePermission
 from plane.utils.host import base_host
 
@@ -72,6 +72,40 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Execute the SQL query
     with connection.cursor() as cursor:
         cursor.execute(sql, [page_id, archived_at])
+
+
+def dispatch_page_webhook(
+    request,
+    slug,
+    page_id,
+    verb,
+    field=None,
+    old_value=None,
+    new_value=None,
+    debounce=False,
+):
+    """Fire a ``page`` webhook through the shared webhook activity path.
+
+    Every DRF-side page mutation (create, delete, duplicate, and the property /
+    content updates) funnels through here so the payload, actor and origin are
+    built identically. ``debounce`` is only set for the live content-persist
+    flush (see PagesDescriptionViewSet) to keep an editing session from emitting
+    a webhook per flush.
+    """
+    webhook_activity.delay(
+        event="page",
+        verb=verb,
+        field=field,
+        old_value=old_value,
+        new_value=new_value,
+        actor_id=request.user.id,
+        slug=slug,
+        current_site=base_host(request=request, is_app=True),
+        event_id=page_id,
+        old_identifier=None,
+        new_identifier=None,
+        debounce=debounce,
+    )
 
 
 class PageViewSet(BaseViewSet):
@@ -149,19 +183,7 @@ class PageViewSet(BaseViewSet):
                 page_id=serializer.data["id"],
             )
             # Dispatch the webhook for the page creation
-            webhook_activity.delay(
-                event="page",
-                verb="created",
-                field=None,
-                old_value=None,
-                new_value=None,
-                actor_id=request.user.id,
-                slug=slug,
-                current_site=base_host(request=request, is_app=True),
-                event_id=serializer.data["id"],
-                old_identifier=None,
-                new_identifier=None,
-            )
+            dispatch_page_webhook(request, slug, serializer.data["id"], verb="created")
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -197,6 +219,9 @@ class PageViewSet(BaseViewSet):
 
             serializer = PageDetailSerializer(page, data=request.data, partial=True)
             page_description = page.description_html
+            # Snapshot the page before the write so the webhook fan-out can diff
+            # which DRF-side properties (name, access, …) actually changed.
+            current_instance = json.dumps(PageDetailSerializer(page).data, cls=DjangoJSONEncoder)
             if serializer.is_valid():
                 serializer.save()
                 # capture the page transaction
@@ -206,6 +231,19 @@ class PageViewSet(BaseViewSet):
                         old_description_html=page_description,
                         page_id=page_id,
                     )
+
+                # Dispatch a "page" webhook (action=update) for every changed
+                # property. model_activity diffs request.data against the
+                # snapshot and fans out one update event per changed field.
+                model_activity.delay(
+                    model_name="page",
+                    model_id=str(page_id),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -269,6 +307,9 @@ class PageViewSet(BaseViewSet):
 
         page.is_locked = True
         page.save()
+        dispatch_page_webhook(
+            request, slug, page_id, verb="updated", field="is_locked", old_value=False, new_value=True
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
@@ -281,6 +322,9 @@ class PageViewSet(BaseViewSet):
 
         page.is_locked = False
         page.save()
+        dispatch_page_webhook(
+            request, slug, page_id, verb="updated", field="is_locked", old_value=True, new_value=False
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -300,8 +344,12 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        old_access = page.access
         page.access = access
         page.save()
+        dispatch_page_webhook(
+            request, slug, page_id, verb="updated", field="access", old_value=old_access, new_value=access
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, slug, project_id):
@@ -348,9 +396,16 @@ class PageViewSet(BaseViewSet):
             workspace__slug=slug,
         ).delete()
 
-        unarchive_archive_page_and_descendants(page_id, datetime.now())
+        # Capture a single timestamp for the SQL update, the webhook and the
+        # response so all three agree (previously datetime.now() was called
+        # twice, yielding two slightly different values).
+        archived_at = datetime.now()
+        unarchive_archive_page_and_descendants(page_id, archived_at)
+        dispatch_page_webhook(
+            request, slug, page_id, verb="updated", field="archived_at", old_value=None, new_value=str(archived_at)
+        )
 
-        return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
+        return Response({"archived_at": str(archived_at)}, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, page_id):
         page = Page.objects.get(
@@ -377,7 +432,17 @@ class PageViewSet(BaseViewSet):
             page.parent = None
             page.save(update_fields=["parent"])
 
+        old_archived_at = page.archived_at
         unarchive_archive_page_and_descendants(page_id, None)
+        dispatch_page_webhook(
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="archived_at",
+            old_value=str(old_archived_at) if old_archived_at else None,
+            new_value=None,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -419,19 +484,7 @@ class PageViewSet(BaseViewSet):
 
         page.delete()
         # Dispatch the webhook for the page deletion
-        webhook_activity.delay(
-            event="page",
-            verb="deleted",
-            field=None,
-            old_value=None,
-            new_value=None,
-            actor_id=request.user.id,
-            slug=slug,
-            current_site=base_host(request=request, is_app=True),
-            event_id=page.id,
-            old_identifier=None,
-            new_identifier=None,
-        )
+        dispatch_page_webhook(request, slug, page.id, verb="deleted")
         # Delete the user favorite page
         UserFavorite.objects.filter(
             project=project_id,
@@ -600,6 +653,19 @@ class PagesDescriptionViewSet(BaseViewSet):
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
+
+            # Dispatch a "page" webhook (action=update) for the content change.
+            # This endpoint is what the live (Yjs) collab server flushes into on
+            # every store cycle (~10s), so the delivery is debounced per page to
+            # avoid a webhook per flush during an active editing session.
+            dispatch_page_webhook(
+                request,
+                slug,
+                page_id,
+                verb="updated",
+                field="description_html",
+                debounce=True,
+            )
             return Response({"message": "Updated successfully"})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -642,19 +708,7 @@ class PageDuplicateEndpoint(BaseAPIView):
 
         # Duplicating a page creates a new page, so it fires a "created" webhook
         # just like PageViewSet.create does.
-        webhook_activity.delay(
-            event="page",
-            verb="created",
-            field=None,
-            old_value=None,
-            new_value=None,
-            actor_id=request.user.id,
-            slug=slug,
-            current_site=base_host(request=request, is_app=True),
-            event_id=page.id,
-            old_identifier=None,
-            new_identifier=None,
-        )
+        dispatch_page_webhook(request, slug, page.id, verb="created")
 
         page_transaction.delay(
             new_description_html=page.description_html,
