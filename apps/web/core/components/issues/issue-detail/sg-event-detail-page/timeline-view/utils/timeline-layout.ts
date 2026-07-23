@@ -29,6 +29,11 @@ type TimelineHorizontalWheelDeltaArgs = {
   shiftKey?: boolean;
 };
 
+type TimelineZoomWheelArgs = {
+  altKey?: boolean;
+  deltaY: number;
+};
+
 export const getTimelineHorizontalWheelDeltaPx = ({
   deltaX,
   deltaY,
@@ -40,4 +45,11 @@ export const getTimelineHorizontalWheelDeltaPx = ({
   if (shiftKey && normalizedDeltaY !== 0) return normalizedDeltaY;
 
   return Math.abs(normalizedDeltaX) > Math.abs(normalizedDeltaY) ? normalizedDeltaX : 0;
+};
+
+export const getTimelineZoomWheelDirection = ({ altKey = false, deltaY }: TimelineZoomWheelArgs) => {
+  const normalizedDeltaY = Number.isFinite(deltaY) ? deltaY : 0;
+  if (!altKey || normalizedDeltaY === 0) return null;
+
+  return normalizedDeltaY < 0 ? "in" : "out";
 };

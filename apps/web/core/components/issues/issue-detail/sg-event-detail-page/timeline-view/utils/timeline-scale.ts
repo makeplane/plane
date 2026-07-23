@@ -11,12 +11,20 @@ const TIMELINE_NICE_INTERVAL_SECONDS = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 
 
 export type TimelineScaleDirection = "in" | "out";
 export type TimelineTickKind = "major" | "minor";
+export type TimelineZoomStopKind = "fit" | "detail";
 
 export type TimelineTick = {
   kind: TimelineTickKind;
   label: string;
   position: number;
   seconds: number;
+};
+
+export type TimelineZoomStop = {
+  kind: TimelineZoomStopKind;
+  scale: number;
+  scaleIndex: number;
+  selectedContentWidthPx: number;
 };
 
 export const getClampedTimelineScaleIndex = (index: number) =>
@@ -51,6 +59,128 @@ export const getTimelineScaleLabel = (scale: number) =>
   scale >= SECOND_LEVEL_TIMELINE_SCALE ? "1 sec" : `${Math.round(scale * 100)}%`;
 
 export const getTimelineZoomPercentLabel = (scale: number) => `${Math.round(Math.max(0, scale || 0) * 100)}%`;
+
+export const getTimelineZoomLabel = ({
+  scale,
+  selectedContentWidthPx,
+  viewportWidthPx,
+}: {
+  scale: number;
+  selectedContentWidthPx: number;
+  viewportWidthPx: number;
+}) => {
+  const percentLabel = getTimelineZoomPercentLabel(scale);
+  const isFitToViewport = viewportWidthPx > 0 && selectedContentWidthPx <= viewportWidthPx;
+
+  return {
+    detailLabel: isFitToViewport ? `Fit to viewport (${percentLabel})` : percentLabel,
+    displayLabel: isFitToViewport ? "Fit" : percentLabel,
+    isFitToViewport,
+    percentLabel,
+  };
+};
+
+export const buildTimelineZoomStops = ({
+  totalSeconds,
+  viewportWidthPx,
+}: {
+  totalSeconds: number;
+  viewportWidthPx: number;
+}): TimelineZoomStop[] => {
+  const allStops = TIMELINE_SCALE_LEVELS.map((scale, scaleIndex) => ({
+    kind: "detail" as const,
+    scale,
+    scaleIndex,
+    selectedContentWidthPx: getTimelineContentWidth(scale, totalSeconds),
+  }));
+  if (viewportWidthPx <= 0) return allStops;
+
+  let lastFitStopIndex = -1;
+  for (let stopIndex = allStops.length - 1; stopIndex >= 0; stopIndex -= 1) {
+    if (allStops[stopIndex].selectedContentWidthPx <= viewportWidthPx) {
+      lastFitStopIndex = stopIndex;
+      break;
+    }
+  }
+  if (lastFitStopIndex < 0) return allStops;
+
+  return [
+    {
+      ...allStops[lastFitStopIndex],
+      kind: "fit" as const,
+    },
+    ...allStops.slice(lastFitStopIndex + 1),
+  ];
+};
+
+export const getTimelineZoomStopIndex = ({
+  scaleIndex,
+  zoomStops,
+}: {
+  scaleIndex: number;
+  zoomStops: TimelineZoomStop[];
+}) => {
+  if (zoomStops.length === 0) return 0;
+
+  const exactStopIndex = zoomStops.findIndex((stop) => stop.scaleIndex === scaleIndex);
+  if (exactStopIndex >= 0) return exactStopIndex;
+
+  const firstStop = zoomStops[0];
+  if (firstStop?.kind === "fit" && scaleIndex <= firstStop.scaleIndex) return 0;
+
+  const nextStopIndex = zoomStops.findIndex((stop) => stop.scaleIndex > scaleIndex);
+  return nextStopIndex >= 0 ? Math.max(0, nextStopIndex - 1) : zoomStops.length - 1;
+};
+
+export const getTimelineZoomStopIndexFromSliderValue = (
+  value: number | string,
+  fallbackStopIndex: number,
+  zoomStopCount: number
+) => {
+  const parsedStopIndex = typeof value === "number" ? value : Number(value);
+  const maxStopIndex = Math.max(0, zoomStopCount - 1);
+
+  return Number.isFinite(parsedStopIndex)
+    ? Math.min(Math.max(Math.round(parsedStopIndex), 0), maxStopIndex)
+    : fallbackStopIndex;
+};
+
+const getCompactDurationLabel = (seconds: number) => {
+  const roundedSeconds = Math.max(1, Math.round(seconds));
+
+  if (roundedSeconds >= 3600) {
+    const hours = Math.floor(roundedSeconds / 3600);
+    const minutes = Math.round((roundedSeconds % 3600) / 60);
+
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  }
+
+  if (roundedSeconds >= 60) {
+    return `${Math.max(1, Math.round(roundedSeconds / 60))}m`;
+  }
+
+  return `${roundedSeconds}s`;
+};
+
+export const getTimelineVisibleDurationLabel = ({
+  contentWidthPx,
+  totalSeconds,
+  viewportWidthPx,
+}: {
+  contentWidthPx: number;
+  totalSeconds: number;
+  viewportWidthPx: number;
+}) => {
+  if (contentWidthPx <= 0 || totalSeconds <= 0 || viewportWidthPx <= 0) return null;
+
+  const visibleSeconds = Math.min(totalSeconds, (viewportWidthPx / contentWidthPx) * totalSeconds);
+  const compactDurationLabel = `~${getCompactDurationLabel(visibleSeconds)}`;
+
+  return {
+    compactLabel: compactDurationLabel,
+    detailLabel: `${compactDurationLabel} visible`,
+  };
+};
 
 export const getTimelinePositionPercent = (seconds: number, totalSeconds: number) => {
   const safeTotalSeconds = Math.max(1, totalSeconds || 0);

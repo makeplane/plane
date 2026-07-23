@@ -10,7 +10,9 @@ const {
   MIN_TIMELINE_MAJOR_TICK_SPACING_PX,
   MIN_SECOND_TICK_SPACING_PX,
   TIMELINE_SCALE_LEVELS,
+  buildTimelineZoomStops,
   buildScaledTimelineTicks,
+  getTimelineVisibleDurationLabel,
   getTimelineTagEndSeconds,
   getTimelinePanelInputPlayheadSeconds,
   getTimelinePlaybackSeconds,
@@ -23,7 +25,10 @@ const {
   getTimelineEffectiveContentWidth,
   getTimelineTimePixel,
   getTimelineScaleLabel,
+  getTimelineZoomLabel,
   getTimelineZoomPercentLabel,
+  getTimelineZoomStopIndex,
+  getTimelineZoomStopIndexFromSliderValue,
   isTimelineTagPlaybackOverrideId,
 } = timelineScale;
 
@@ -58,6 +63,119 @@ test("timeline zoom percent label always displays the current zoom percentage", 
   assert.equal(getTimelineZoomPercentLabel(0.5), "50%");
   assert.equal(getTimelineZoomPercentLabel(1), "100%");
   assert.equal(getTimelineZoomPercentLabel(TIMELINE_SCALE_LEVELS.at(-1) ?? 1), "6400%");
+});
+
+test("timeline zoom label shows fit when selected zoom is below the viewport width", () => {
+  assert.deepEqual(
+    getTimelineZoomLabel({
+      scale: 0.75,
+      selectedContentWidthPx: 1050,
+      viewportWidthPx: 1800,
+    }),
+    {
+      detailLabel: "Fit to viewport (75%)",
+      displayLabel: "Fit",
+      isFitToViewport: true,
+      percentLabel: "75%",
+    }
+  );
+});
+
+test("timeline zoom label shows percentage before measurement and once detail exceeds viewport", () => {
+  assert.deepEqual(
+    getTimelineZoomLabel({
+      scale: 1,
+      selectedContentWidthPx: 1400,
+      viewportWidthPx: 0,
+    }),
+    {
+      detailLabel: "100%",
+      displayLabel: "100%",
+      isFitToViewport: false,
+      percentLabel: "100%",
+    }
+  );
+  assert.deepEqual(
+    getTimelineZoomLabel({
+      scale: 1.25,
+      selectedContentWidthPx: 1750,
+      viewportWidthPx: 1200,
+    }),
+    {
+      detailLabel: "125%",
+      displayLabel: "125%",
+      isFitToViewport: false,
+      percentLabel: "125%",
+    }
+  );
+});
+
+test("timeline zoom stops collapse redundant fit-to-viewport levels", () => {
+  const zoomStops = buildTimelineZoomStops({
+    totalSeconds: 49 * 60 + 2,
+    viewportWidthPx: 1800,
+  });
+
+  assert.equal(zoomStops[0]?.kind, "fit");
+  assert.equal(zoomStops[0]?.scaleIndex, 3);
+  assert.deepEqual(
+    zoomStops.slice(0, 4).map((stop) => stop.scaleIndex),
+    [3, 4, 5, 6]
+  );
+  assert.equal(zoomStops.some((stop) => stop.scaleIndex === 0), false);
+  assert.equal(zoomStops.some((stop) => stop.scaleIndex === 1), false);
+  assert.equal(zoomStops.some((stop) => stop.scaleIndex === 2), false);
+});
+
+test("timeline zoom stops preserve raw zoom levels before viewport measurement", () => {
+  const zoomStops = buildTimelineZoomStops({
+    totalSeconds: 49 * 60 + 2,
+    viewportWidthPx: 0,
+  });
+
+  assert.equal(zoomStops[0]?.kind, "detail");
+  assert.deepEqual(
+    zoomStops.slice(0, 4).map((stop) => stop.scaleIndex),
+    [0, 1, 2, 3]
+  );
+});
+
+test("timeline zoom stop index maps collapsed raw indexes to the fit stop", () => {
+  const zoomStops = buildTimelineZoomStops({
+    totalSeconds: 49 * 60 + 2,
+    viewportWidthPx: 1800,
+  });
+
+  assert.equal(getTimelineZoomStopIndex({ scaleIndex: 0, zoomStops }), 0);
+  assert.equal(getTimelineZoomStopIndex({ scaleIndex: 2, zoomStops }), 0);
+  assert.equal(getTimelineZoomStopIndex({ scaleIndex: 3, zoomStops }), 0);
+  assert.equal(getTimelineZoomStopIndex({ scaleIndex: 4, zoomStops }), 1);
+  assert.equal(getTimelineZoomStopIndexFromSliderValue("999", 0, zoomStops.length), zoomStops.length - 1);
+});
+
+test("timeline visible duration label summarizes how much time is currently on screen", () => {
+  assert.deepEqual(
+    getTimelineVisibleDurationLabel({
+      contentWidthPx: 1800,
+      totalSeconds: 49 * 60 + 2,
+      viewportWidthPx: 1800,
+    }),
+    {
+      compactLabel: "~49m",
+      detailLabel: "~49m visible",
+    }
+  );
+  assert.deepEqual(
+    getTimelineVisibleDurationLabel({
+      contentWidthPx: 7000,
+      totalSeconds: 50 * 60,
+      viewportWidthPx: 1400,
+    }),
+    {
+      compactLabel: "~10m",
+      detailLabel: "~10m visible",
+    }
+  );
 });
 
 test("timeline content can exceed the viewport width when users zoom in", () => {

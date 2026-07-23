@@ -17,6 +17,7 @@ const {
   TIMELINE_STICKY_FOOTER_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
   getTimelineHorizontalWheelDeltaPx,
+  getTimelineZoomWheelDirection,
 } = timelineLayout;
 
 test("timeline page scrollport exposes a flush sticky bottom edge", () => {
@@ -82,4 +83,11 @@ test("intentional horizontal wheel input can move the horizontal timeline", () =
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 120, deltaY: 8 }), 120);
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: -80, deltaY: 12 }), -80);
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 0, deltaY: 90, shiftKey: true }), 90);
+});
+
+test("alt wheel input intentionally controls timeline zoom", () => {
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: -120 }), "in");
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: 120 }), "out");
+  assert.equal(getTimelineZoomWheelDirection({ altKey: false, deltaY: -120 }), null);
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: 0 }), null);
 });

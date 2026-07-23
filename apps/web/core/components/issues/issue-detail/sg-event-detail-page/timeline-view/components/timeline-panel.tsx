@@ -30,6 +30,7 @@ import {
   TIMELINE_TRACKS_ROW_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
   getTimelineHorizontalWheelDeltaPx,
+  getTimelineZoomWheelDirection,
 } from "../utils/timeline-layout";
 import {
   buildLaneMarkerOffsets,
@@ -52,16 +53,18 @@ import {
   DEFAULT_TIMELINE_TAG_DURATION_SECONDS,
   DEFAULT_TIMELINE_SCALE_INDEX,
   TIMELINE_SCALE_LEVELS,
+  buildTimelineZoomStops,
   buildScaledTimelineTicks,
-  getNextTimelineScaleIndex,
   getTimelineContentWidth,
   getTimelineEffectiveContentWidth,
   getTimelinePlaybackSeconds,
   getTimelineRangePixels,
-  getTimelineScaleIndexFromSliderValue,
   getTimelineSecondsFromClientX,
   getTimelineTimePixel,
-  getTimelineZoomPercentLabel,
+  getTimelineVisibleDurationLabel,
+  getTimelineZoomLabel,
+  getTimelineZoomStopIndex,
+  getTimelineZoomStopIndexFromSliderValue,
   isTimelineTagPlaybackOverrideId,
 } from "../utils/timeline-scale";
 import { formatTooltipText, TimelineTagTooltip } from "./timeline-tag-tooltip";
@@ -89,6 +92,11 @@ type SgEventTimelinePanelProps = {
   selectedTagIds: string[];
   sport: SportTableKind;
   tagTypeRows?: SgTagRow[];
+};
+
+type TimelineZoomAnchor = {
+  seconds: number;
+  viewportOffsetPx: number;
 };
 
 const TOOL_BUTTON_CLASS =
@@ -143,6 +151,7 @@ export const SgEventTimelinePanel = ({
   const lastTimelinePointerClientXRef = useRef<number | null>(null);
   const lastTimelinePointerViewportRef = useRef<HTMLDivElement | null>(null);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
+  const pendingTimelineZoomAnchorRef = useRef<TimelineZoomAnchor | null>(null);
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
   const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
   const timelineDurationSeconds = isTagClipActive ? fullStreamDurationSecondsRef.current : playerDurationSeconds;
@@ -238,8 +247,21 @@ export const SgEventTimelinePanel = ({
       : knownTimelineExtentSeconds;
   const timelineExtentSeconds = Math.max(knownTimelineExtentSeconds, overflowTimelineExtentSeconds);
   const totalSeconds = Math.max(1, Math.ceil(timelineExtentSeconds || 0));
+  const timelineZoomStops = useMemo(
+    () =>
+      buildTimelineZoomStops({
+        totalSeconds,
+        viewportWidthPx: timelineViewportWidth,
+      }),
+    [timelineViewportWidth, totalSeconds]
+  );
+  const activeTimelineZoomStopIndex = getTimelineZoomStopIndex({
+    scaleIndex: timelineScaleIndex,
+    zoomStops: timelineZoomStops,
+  });
+  const effectiveTimelineScaleIndex = timelineZoomStops[activeTimelineZoomStopIndex]?.scaleIndex ?? timelineScaleIndex;
   const timelineScale =
-    TIMELINE_SCALE_LEVELS[timelineScaleIndex] ?? TIMELINE_SCALE_LEVELS[DEFAULT_TIMELINE_SCALE_INDEX];
+    TIMELINE_SCALE_LEVELS[effectiveTimelineScaleIndex] ?? TIMELINE_SCALE_LEVELS[DEFAULT_TIMELINE_SCALE_INDEX];
   const selectedTimelineContentWidth = getTimelineContentWidth(timelineScale, totalSeconds);
   const timelineContentWidth = getTimelineEffectiveContentWidth({
     selectedContentWidthPx: selectedTimelineContentWidth,
@@ -248,12 +270,24 @@ export const SgEventTimelinePanel = ({
   const timelinePlayheadSeconds = Math.min(timelinePlayheadSecondsRaw, totalSeconds);
   const playheadPositionPx = getTimelineTimePixel(timelinePlayheadSeconds, totalSeconds, timelineContentWidth);
   const visibleTicks = buildScaledTimelineTicks(totalSeconds, timelineScale, timelineContentWidth);
-  const canZoomOut = timelineScaleIndex > 0;
-  const canZoomIn = timelineScaleIndex < TIMELINE_SCALE_LEVELS.length - 1;
+  const canZoomOut = activeTimelineZoomStopIndex > 0;
+  const canZoomIn = activeTimelineZoomStopIndex < timelineZoomStops.length - 1;
   const hasTimelineRows = sortedTimelineRows.length > 0;
   const selectedTagCount = selectedTagIds.length;
   const canCreatePlaylist = Boolean(onCreatePlaylist) && selectedTagCount > 0 && !isCreatingPlaylist;
-  const timelineZoomPercentLabel = getTimelineZoomPercentLabel(timelineScale);
+  const timelineZoomLabel = getTimelineZoomLabel({
+    scale: timelineScale,
+    selectedContentWidthPx: selectedTimelineContentWidth,
+    viewportWidthPx: timelineViewportWidth,
+  });
+  const timelineVisibleDurationLabel = getTimelineVisibleDurationLabel({
+    contentWidthPx: timelineContentWidth,
+    totalSeconds,
+    viewportWidthPx: timelineViewportWidth,
+  });
+  const timelineZoomDetailLabel = timelineVisibleDurationLabel
+    ? `${timelineZoomLabel.detailLabel} · ${timelineVisibleDurationLabel.detailLabel}`
+    : timelineZoomLabel.detailLabel;
   const seekableDurationSeconds = Math.max(
     0,
     timelineDurationSeconds ?? fullStreamDurationSecondsRef.current ?? totalSeconds
@@ -364,6 +398,108 @@ export const SgEventTimelinePanel = ({
       onSeekTimelineSeconds,
       setPlaybackPlayheadPosition,
     ]
+  );
+
+  const setTimelineScrollLeft = useCallback((nextScrollLeft: number) => {
+    const rulerScrollElement = timelineRulerScrollRef.current;
+    const trackScrollElement = timelineScrollRef.current;
+    const scrollElement = rulerScrollElement ?? trackScrollElement;
+    if (!scrollElement) return 0;
+
+    const maxScrollLeft = Math.max(0, scrollElement.scrollWidth - scrollElement.clientWidth);
+    const clampedScrollLeft = Math.min(Math.max(nextScrollLeft, 0), maxScrollLeft);
+
+    if (rulerScrollElement && Math.abs(rulerScrollElement.scrollLeft - clampedScrollLeft) >= 1) {
+      rulerScrollElement.scrollLeft = clampedScrollLeft;
+    }
+    if (trackScrollElement && Math.abs(trackScrollElement.scrollLeft - clampedScrollLeft) >= 1) {
+      trackScrollElement.scrollLeft = clampedScrollLeft;
+    }
+
+    return clampedScrollLeft;
+  }, []);
+
+  const getTimelineZoomAnchorFromClientX = useCallback(
+    (clientX: number, viewportElement: HTMLDivElement): TimelineZoomAnchor => {
+      const viewportRect = viewportElement.getBoundingClientRect();
+      const viewportOffsetPx = Math.min(Math.max(clientX - viewportRect.left, 0), viewportElement.clientWidth);
+      const scrollLeftPx = timelineRulerScrollRef.current?.scrollLeft ?? timelineScrollRef.current?.scrollLeft ?? 0;
+
+      return {
+        seconds: getTimelineSecondsFromClientX({
+          clientX,
+          contentWidthPx: timelineContentWidth,
+          scrollLeftPx,
+          totalSeconds,
+          viewportLeftPx: viewportRect.left,
+        }),
+        viewportOffsetPx,
+      };
+    },
+    [timelineContentWidth, totalSeconds]
+  );
+
+  const getTimelineZoomAnchor = useCallback((): TimelineZoomAnchor | null => {
+    const scrollElement = timelineRulerScrollRef.current ?? timelineScrollRef.current;
+    if (!scrollElement) return null;
+
+    const pointerViewportElement = lastTimelinePointerViewportRef.current;
+    const pointerClientX = lastTimelinePointerClientXRef.current;
+    const pointerIsOverTimeline =
+      pointerViewportElement !== null &&
+      pointerClientX !== null &&
+      pointerViewportElement.isConnected &&
+      pointerViewportElement.matches(":hover");
+
+    if (pointerIsOverTimeline) {
+      return getTimelineZoomAnchorFromClientX(pointerClientX, pointerViewportElement);
+    }
+
+    const playheadPosition = getTimelineTimePixel(timelinePlayheadSeconds, totalSeconds, timelineContentWidth);
+    const viewportLeft = scrollElement.scrollLeft;
+    const viewportRight = viewportLeft + scrollElement.clientWidth;
+
+    if (playheadPosition >= viewportLeft && playheadPosition <= viewportRight) {
+      return {
+        seconds: timelinePlayheadSeconds,
+        viewportOffsetPx: playheadPosition - viewportLeft,
+      };
+    }
+
+    const viewportRect = scrollElement.getBoundingClientRect();
+    const viewportOffsetPx = scrollElement.clientWidth / 2;
+
+    return {
+      seconds: getTimelineSecondsFromClientX({
+        clientX: viewportRect.left + viewportOffsetPx,
+        contentWidthPx: timelineContentWidth,
+        scrollLeftPx: scrollElement.scrollLeft,
+        totalSeconds,
+        viewportLeftPx: viewportRect.left,
+      }),
+      viewportOffsetPx,
+    };
+  }, [getTimelineZoomAnchorFromClientX, timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
+
+  const restorePendingTimelineZoomAnchor = useCallback(() => {
+    const zoomAnchor = pendingTimelineZoomAnchorRef.current;
+    if (!zoomAnchor) return;
+
+    const nextAnchorPositionPx = getTimelineTimePixel(zoomAnchor.seconds, totalSeconds, timelineContentWidth);
+    setTimelineScrollLeft(nextAnchorPositionPx - zoomAnchor.viewportOffsetPx);
+    pendingTimelineZoomAnchorRef.current = null;
+    refreshTimelineSkimmerFromLastPointer();
+  }, [refreshTimelineSkimmerFromLastPointer, setTimelineScrollLeft, timelineContentWidth, totalSeconds]);
+
+  const applyTimelineZoomStopIndex = useCallback(
+    (nextZoomStopIndex: number, zoomAnchor: TimelineZoomAnchor | null = getTimelineZoomAnchor()) => {
+      const nextZoomStop = timelineZoomStops[nextZoomStopIndex];
+      if (!nextZoomStop) return;
+
+      pendingTimelineZoomAnchorRef.current = zoomAnchor;
+      setTimelineScaleIndex(nextZoomStop.scaleIndex);
+    },
+    [getTimelineZoomAnchor, timelineZoomStops]
   );
 
   useEffect(() => {
@@ -477,6 +613,20 @@ export const SgEventTimelinePanel = ({
   };
 
   const handleTimelineHorizontalWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const zoomDirection = getTimelineZoomWheelDirection({
+      altKey: event.altKey,
+      deltaY: event.deltaY,
+    });
+    if (zoomDirection) {
+      applyTimelineZoomStopIndex(
+        activeTimelineZoomStopIndex + (zoomDirection === "in" ? 1 : -1),
+        getTimelineZoomAnchorFromClientX(event.clientX, event.currentTarget)
+      );
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     const deltaX = getTimelineHorizontalWheelDeltaPx({
       deltaX: event.deltaX,
       deltaY: event.deltaY,
@@ -532,11 +682,16 @@ export const SgEventTimelinePanel = ({
 
   useEffect(() => {
     if (!activeTimelinePlacement) return;
+    if (pendingTimelineZoomAnchorRef.current) return;
 
     scrollTimelineRangeIntoView(getPlacementRange(activeTimelinePlacement), "auto");
     // The active placement identity intentionally drives scroll restoration on tag selection and zoom changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePlaybackOverrideId, activeTagRowId, activeTimelinePlacement, timelineContentWidth, totalSeconds]);
+
+  useEffect(() => {
+    restorePendingTimelineZoomAnchor();
+  }, [restorePendingTimelineZoomAnchor]);
 
   const jumpToPreviousTag = () => {
     if (!hasTimelineRows) return;
@@ -581,10 +736,12 @@ export const SgEventTimelinePanel = ({
     });
   };
   const handleTimelineScaleChange = (direction: "in" | "out") => {
-    setTimelineScaleIndex((currentIndex) => getNextTimelineScaleIndex(currentIndex, direction));
+    applyTimelineZoomStopIndex(activeTimelineZoomStopIndex + (direction === "in" ? 1 : -1));
   };
   const handleTimelineScaleSliderChange = (value: string) => {
-    setTimelineScaleIndex((currentIndex) => getTimelineScaleIndexFromSliderValue(value, currentIndex));
+    applyTimelineZoomStopIndex(
+      getTimelineZoomStopIndexFromSliderValue(value, activeTimelineZoomStopIndex, timelineZoomStops.length)
+    );
   };
 
   return (
@@ -867,12 +1024,12 @@ export const SgEventTimelinePanel = ({
             <input
               type="range"
               min={0}
-              max={TIMELINE_SCALE_LEVELS.length - 1}
+              max={Math.max(0, timelineZoomStops.length - 1)}
               step={1}
-              value={timelineScaleIndex}
+              value={activeTimelineZoomStopIndex}
               onChange={(event) => handleTimelineScaleSliderChange(event.currentTarget.value)}
               aria-label="Timeline zoom"
-              aria-valuetext={timelineZoomPercentLabel}
+              aria-valuetext={timelineZoomDetailLabel}
               className="h-6 w-16 accent-custom-primary-100"
             />
             <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
@@ -889,7 +1046,15 @@ export const SgEventTimelinePanel = ({
                 <Plus className="h-3.5 w-3.5" />
               </button>
             </Tooltip>
-            <span className="min-w-11 text-right tabular-nums text-custom-text-300">{timelineZoomPercentLabel}</span>
+            <span
+              className="flex min-w-11 flex-col items-end text-right tabular-nums leading-none text-custom-text-300"
+              title={timelineZoomDetailLabel}
+            >
+              <span>{timelineZoomLabel.displayLabel}</span>
+              {timelineVisibleDurationLabel && (
+                <span className="mt-0.5 text-[9px] text-custom-text-400">{timelineVisibleDurationLabel.compactLabel}</span>
+              )}
+            </span>
           </span>
         </div>
 
