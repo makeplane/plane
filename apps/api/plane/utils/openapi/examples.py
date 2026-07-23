@@ -453,6 +453,49 @@ MODULE_EXAMPLE = OpenApiExample(
     },
 )
 
+# Page Examples
+PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "PageCreateSerializer",
+    value={
+        "name": "Onboarding Runbook",
+        "description_html": "<p>Welcome to the team.</p>",
+        "access": 0,
+        "external_id": "1234567890",
+        "external_source": "notion",
+    },
+    description="Example request for creating a page",
+)
+
+PAGE_UPDATE_EXAMPLE = OpenApiExample(
+    "PageUpdateSerializer",
+    value={
+        "name": "Onboarding Runbook (v2)",
+        "description_html": "<p>Updated onboarding steps.</p>",
+        "access": 1,
+    },
+    description="Example request for updating a page",
+)
+
+PAGE_EXAMPLE = OpenApiExample(
+    name="Page",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Onboarding Runbook",
+        "description_html": "<p>Welcome to the team.</p>",
+        "access": 0,
+        "color": "",
+        "is_locked": False,
+        "archived_at": None,
+        "owned_by": "550e8400-e29b-41d4-a716-446655440001",
+        "parent": None,
+        "sort_order": 65535.0,
+        "external_id": "1234567890",
+        "external_source": "notion",
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+    },
+)
+
 # State Response Examples
 STATE_EXAMPLE = OpenApiExample(
     name="State",

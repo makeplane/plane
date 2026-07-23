@@ -15,6 +15,7 @@ from .work_item import urlpatterns as work_item_patterns
 from .invite import urlpatterns as invite_patterns
 from .sticky import urlpatterns as sticky_patterns
 from .webhook import urlpatterns as webhook_patterns
+from .page import urlpatterns as page_patterns
 
 urlpatterns = [
     *asset_patterns,
@@ -23,6 +24,7 @@ urlpatterns = [
     *label_patterns,
     *member_patterns,
     *module_patterns,
+    *page_patterns,
     *project_patterns,
     *state_patterns,
     *user_patterns,

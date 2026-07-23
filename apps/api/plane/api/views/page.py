@@ -1,0 +1,565 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Python imports
+import json
+from datetime import datetime
+
+# Django imports
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import connection, transaction
+from django.db.models import Q
+
+# Third party imports
+from rest_framework import status
+from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiResponse
+
+# Module imports
+from plane.api.serializers import PageAPISerializer
+from plane.app.permissions import ProjectEntityPermission
+from plane.db.models import (
+    Page,
+    Project,
+    ProjectMember,
+    ProjectPage,
+    UserFavorite,
+    UserRecentVisit,
+)
+from plane.bgtasks.page_transaction_task import page_transaction
+from plane.bgtasks.webhook_task import dispatch_page_webhook, model_activity
+from plane.utils.host import base_host
+from plane.utils.openapi import (
+    page_docs,
+    PAGE_ID_PARAMETER,
+    PAGE_TYPE_PARAMETER,
+    SEARCH_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    PAGE_CREATE_EXAMPLE,
+    PAGE_UPDATE_EXAMPLE,
+    PAGE_EXAMPLE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
+)
+
+from .base import BaseAPIView
+
+
+def unarchive_archive_page_and_descendants(page_id, archived_at):
+    """Archive or unarchive a page and all of its descendant pages."""
+    sql = """
+    WITH RECURSIVE descendants AS (
+        SELECT id FROM pages WHERE id = %s
+        UNION ALL
+        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
+    )
+    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(sql, [page_id, archived_at])
+
+
+class PageAPIEndpoint(BaseAPIView):
+    """Shared base for the public v1 page endpoints.
+
+    Centralises the access-scoped queryset so every action — list, retrieve,
+    update, delete, archive and lock — honours page visibility identically: a
+    private page (``access=PRIVATE_ACCESS``) is only ever visible or mutable to
+    its owner, while public pages follow project membership (enforced by
+    ``ProjectEntityPermission``). This closes the private-page leak where any
+    project member could read or edit another member's private page.
+    """
+
+    serializer_class = PageAPISerializer
+    model = Page
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                projects__id=self.kwargs.get("project_id"),
+                projects__archived_at__isnull=True,
+            )
+            .filter(project_pages__deleted_at__isnull=True)
+            # Visibility rule: the owner sees their own pages at any access
+            # level; everyone else only sees public pages. Private pages never
+            # leak to non-owners — used by every action, read or write.
+            .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
+            .select_related("workspace", "owned_by")
+            .distinct()
+        )
+
+    def _is_owner_or_admin(self, page):
+        """True if the caller owns the page or is a project admin.
+
+        Mirrors the internal ``PageViewSet`` authorization for archive/restore
+        and delete.
+        """
+        if page.owned_by_id == self.request.user.id:
+            return True
+        return ProjectMember.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            member=self.request.user,
+            role=20,
+            is_active=True,
+        ).exists()
+
+
+class PageListCreateAPIEndpoint(PageAPIEndpoint):
+    """List pages in a project or create a new page (public v1 API)."""
+
+    @page_docs(
+        operation_id="list_pages",
+        summary="List pages",
+        description=(
+            "Retrieve a paginated list of the pages the caller can access in a project. "
+            "Private pages are only returned to their owner. Filter with `type` "
+            "(all | public | private | archived) and `search` (page name)."
+        ),
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            PAGE_TYPE_PARAMETER,
+            SEARCH_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                PageAPISerializer,
+                "PaginatedPageResponse",
+                "Paginated list of pages",
+                "Paginated Pages",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List pages
+
+        Retrieve a paginated list of pages the caller can access, filtered by
+        `type` and `search`. Archived pages are excluded unless `type=archived`.
+        """
+        queryset = self.get_queryset()
+
+        search = request.GET.get("search")
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        page_type = request.GET.get("type", "all")
+        if page_type == "public":
+            queryset = queryset.filter(access=Page.PUBLIC_ACCESS, archived_at__isnull=True)
+        elif page_type == "private":
+            queryset = queryset.filter(access=Page.PRIVATE_ACCESS, archived_at__isnull=True)
+        elif page_type == "archived":
+            queryset = queryset.filter(archived_at__isnull=False)
+        else:
+            queryset = queryset.filter(archived_at__isnull=True)
+
+        return self.paginate(
+            request=request,
+            queryset=queryset.order_by("-created_at"),
+            on_results=lambda pages: PageAPISerializer(pages, many=True, fields=self.fields, expand=self.expand).data,
+        )
+
+    @page_docs(
+        operation_id="create_page",
+        summary="Create page",
+        description=(
+            "Create a new page in a project. Content is provided as `description_html`, "
+            "sanitized on write. Supports `external_id`/`external_source` for integrations."
+        ),
+        request=PageAPISerializer,
+        examples=[PAGE_CREATE_EXAMPLE],
+        responses={
+            201: OpenApiResponse(
+                description="Page created",
+                response=PageAPISerializer,
+                examples=[PAGE_EXAMPLE],
+            ),
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id):
+        """Create page
+
+        Create a new page owned by the caller. `description_html` is sanitized;
+        the Yjs binary is left empty for the live service to derive.
+        """
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+        serializer = PageAPISerializer(data=request.data)
+        if serializer.is_valid():
+            # Reject a duplicate (external_source, external_id) pair.
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Page.objects.filter(
+                    projects__id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                existing = Page.objects.filter(
+                    workspace__slug=slug,
+                    projects__id=project_id,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Page with the same external id and external source already exists",
+                        "id": str(existing.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
+            with transaction.atomic():
+                page = serializer.save(
+                    owned_by=request.user,
+                    workspace_id=project.workspace_id,
+                    # description_html arrives already sanitized via the
+                    # serializer; default to an empty doc when omitted. The
+                    # binary starts empty — the live service derives it.
+                    description_html=serializer.validated_data.get("description_html") or "<p></p>",
+                    description_binary=None,
+                )
+                ProjectPage.objects.create(
+                    workspace_id=project.workspace_id,
+                    project_id=project_id,
+                    page_id=page.id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+
+            # Track the page transaction for version history.
+            page_transaction.delay(
+                new_description_html=page.description_html,
+                old_description_html=None,
+                page_id=page.id,
+            )
+            # Fire the same `page` created webhook the internal app API fires.
+            dispatch_page_webhook(request, slug, page.id, verb="created")
+
+            return Response(PageAPISerializer(page).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PageDetailAPIEndpoint(PageAPIEndpoint):
+    """Retrieve, update or delete a page (public v1 API)."""
+
+    @page_docs(
+        operation_id="retrieve_page",
+        summary="Retrieve page",
+        description="Retrieve a page by ID. Private pages are only visible to their owner.",
+        parameters=[PAGE_ID_PARAMETER, FIELDS_PARAMETER, EXPAND_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="Page details",
+                response=PageAPISerializer,
+                examples=[PAGE_EXAMPLE],
+            )
+        },
+    )
+    def get(self, request, slug, project_id, page_id):
+        """Retrieve page"""
+        page = self.get_queryset().get(pk=page_id)
+        return Response(
+            PageAPISerializer(page, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
+        )
+
+    @page_docs(
+        operation_id="update_page",
+        summary="Update page",
+        description=(
+            "Update a page's properties or content. Locked and archived pages cannot be "
+            "edited, and only the owner may change `access`. Content is sanitized "
+            "`description_html`."
+        ),
+        parameters=[PAGE_ID_PARAMETER],
+        request=PageAPISerializer,
+        examples=[PAGE_UPDATE_EXAMPLE],
+        responses={
+            200: OpenApiResponse(
+                description="Page updated",
+                response=PageAPISerializer,
+                examples=[PAGE_EXAMPLE],
+            ),
+            400: OpenApiResponse(description="Page is locked or archived"),
+            403: OpenApiResponse(description="Only the owner can change access"),
+        },
+    )
+    def patch(self, request, slug, project_id, page_id):
+        """Update page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        if page.is_locked:
+            return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if page.archived_at:
+            return Response(
+                {"error": "Archived page cannot be edited"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Only the owner can change the access level.
+        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Access cannot be updated since this page is owned by someone else"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        old_description_html = page.description_html
+        # Snapshot BEFORE the write so the webhook fan-out can diff which
+        # properties actually changed.
+        current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
+
+        serializer = PageAPISerializer(page, data=request.data, partial=True)
+        if serializer.is_valid():
+            if request.data.get("description_html"):
+                # A direct content write resets the Yjs binary; the live service
+                # re-derives it from the HTML on next open.
+                serializer.save(description_binary=None)
+            else:
+                serializer.save()
+
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=old_description_html,
+                    page_id=page_id,
+                )
+
+            # Property edits fan out one `page` update webhook per changed field
+            # through the shared model_activity path. description_html is excluded
+            # here — content is signalled separately (debounced) below.
+            property_data = {key: value for key, value in request.data.items() if key != "description_html"}
+            if property_data:
+                model_activity.delay(
+                    model_name="page",
+                    model_id=str(page_id),
+                    requested_data=property_data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
+
+            # Content changes reuse the debounced content-persist webhook so an
+            # integration streaming edits does not emit a webhook per call.
+            if request.data.get("description_html"):
+                dispatch_page_webhook(
+                    request,
+                    slug,
+                    page_id,
+                    verb="updated",
+                    field="description_html",
+                    debounce=True,
+                )
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @page_docs(
+        operation_id="delete_page",
+        summary="Delete page",
+        description="Permanently delete an archived page. Only the owner or a project admin can delete.",
+        parameters=[PAGE_ID_PARAMETER],
+        responses={
+            204: OpenApiResponse(description="Page deleted"),
+            400: OpenApiResponse(description="Page must be archived first"),
+            403: OpenApiResponse(description="Only owner or admin can delete"),
+        },
+    )
+    def delete(self, request, slug, project_id, page_id):
+        """Delete page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        if page.archived_at is None:
+            return Response(
+                {"error": "The page should be archived before deleting"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not self._is_owner_or_admin(page):
+            return Response(
+                {"error": "Only admin or owner can delete the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Detach children so the recursive delete does not orphan them.
+        Page.objects.filter(
+            parent_id=page_id,
+            projects__id=project_id,
+            workspace__slug=slug,
+            project_pages__deleted_at__isnull=True,
+        ).update(parent=None)
+
+        page.delete()
+        # Fire the same `page` deleted webhook the internal app API fires.
+        dispatch_page_webhook(request, slug, page.id, verb="deleted")
+
+        UserFavorite.objects.filter(
+            project=project_id,
+            workspace__slug=slug,
+            entity_identifier=page_id,
+            entity_type="page",
+        ).delete()
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=page_id,
+            entity_name="page",
+        ).delete(soft=False)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PageArchiveAPIEndpoint(PageAPIEndpoint):
+    """Archive or restore a page (public v1 API)."""
+
+    @page_docs(
+        operation_id="archive_page",
+        summary="Archive page",
+        description="Archive a page and all its descendants. Only the owner or a project admin can archive.",
+        parameters=[PAGE_ID_PARAMETER],
+        request=None,
+        responses={
+            200: OpenApiResponse(description="Page archived"),
+            403: OpenApiResponse(description="Only owner or admin can archive"),
+        },
+    )
+    def post(self, request, slug, project_id, page_id):
+        """Archive page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        if not self._is_owner_or_admin(page):
+            return Response(
+                {"error": "Only the owner or admin can archive the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        UserFavorite.objects.filter(
+            entity_type="page",
+            entity_identifier=page_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
+        # Single timestamp shared by the SQL update, the webhook and the
+        # response so all three agree.
+        archived_at = datetime.now()
+        unarchive_archive_page_and_descendants(page_id, archived_at)
+        dispatch_page_webhook(
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="archived_at",
+            old_value=None,
+            new_value=str(archived_at),
+        )
+
+        return Response({"archived_at": str(archived_at)}, status=status.HTTP_200_OK)
+
+    @page_docs(
+        operation_id="unarchive_page",
+        summary="Unarchive page",
+        description="Unarchive a page and all its descendants. Only the owner or a project admin can restore.",
+        parameters=[PAGE_ID_PARAMETER],
+        request=None,
+        responses={
+            204: OpenApiResponse(description="Page unarchived"),
+            403: OpenApiResponse(description="Only owner or admin can unarchive"),
+        },
+    )
+    def delete(self, request, slug, project_id, page_id):
+        """Unarchive page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        if not self._is_owner_or_admin(page):
+            return Response(
+                {"error": "Only the owner or admin can unarchive the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        old_archived_at = page.archived_at
+        # If the parent is still archived, break the hierarchy.
+        if page.parent_id and page.parent.archived_at:
+            page.parent = None
+            page.save(update_fields=["parent"])
+
+        unarchive_archive_page_and_descendants(page_id, None)
+        dispatch_page_webhook(
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="archived_at",
+            old_value=str(old_archived_at) if old_archived_at else None,
+            new_value=None,
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PageLockAPIEndpoint(PageAPIEndpoint):
+    """Lock or unlock a page (public v1 API)."""
+
+    @page_docs(
+        operation_id="lock_page",
+        summary="Lock page",
+        description="Lock a page to prevent editing. Any project member who can access the page may lock it.",
+        parameters=[PAGE_ID_PARAMETER],
+        request=None,
+        responses={200: OpenApiResponse(description="Page locked")},
+    )
+    def post(self, request, slug, project_id, page_id):
+        """Lock page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        page.is_locked = True
+        page.save()
+        dispatch_page_webhook(
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="is_locked",
+            old_value=False,
+            new_value=True,
+        )
+        return Response({"is_locked": True}, status=status.HTTP_200_OK)
+
+    @page_docs(
+        operation_id="unlock_page",
+        summary="Unlock page",
+        description="Unlock a page to allow editing. Any project member who can access the page may unlock it.",
+        parameters=[PAGE_ID_PARAMETER],
+        request=None,
+        responses={200: OpenApiResponse(description="Page unlocked")},
+    )
+    def delete(self, request, slug, project_id, page_id):
+        """Unlock page"""
+        page = self.get_queryset().get(pk=page_id)
+
+        page.is_locked = False
+        page.save()
+        dispatch_page_webhook(
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="is_locked",
+            old_value=True,
+            new_value=False,
+        )
+        return Response({"is_locked": False}, status=status.HTTP_200_OK)

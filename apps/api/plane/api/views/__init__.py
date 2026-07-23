@@ -65,3 +65,10 @@ from .invite import WorkspaceInvitationsViewset
 from .sticky import StickyViewSet
 
 from .webhook import WebhookAPIEndpoint, WebhookDetailAPIEndpoint
+
+from .page import (
+    PageListCreateAPIEndpoint,
+    PageDetailAPIEndpoint,
+    PageArchiveAPIEndpoint,
+    PageLockAPIEndpoint,
+)
