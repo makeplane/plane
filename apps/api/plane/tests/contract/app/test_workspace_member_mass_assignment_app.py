@@ -28,7 +28,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import Project, ProjectMember, User, Workspace, WorkspaceMember
 
 
 def _member_detail_url(slug: str, pk: uuid.UUID) -> str:
@@ -102,6 +102,9 @@ class TestWorkspaceMemberMassAssignment:
         puppet_member.refresh_from_db()
         assert puppet_member.workspace_id == attacker_ws.id
         assert puppet_member.workspace_id != victim_ws.id
+        # ... and the allowed field in the same payload (role) WAS applied, proving
+        # the fix filters the payload rather than rejecting it wholesale.
+        assert puppet_member.role == 20
         # And no new member appeared in the victim workspace.
         assert WorkspaceMember.objects.filter(workspace=victim_ws).count() == victim_members_before
         assert not WorkspaceMember.objects.filter(workspace=victim_ws, member=puppet).exists()
@@ -166,6 +169,16 @@ class TestWorkspaceMemberMassAssignment:
         target = _make_user("bad-role-target@plane.so")
         target_member = _add_member(attacker_ws, target, role=15)
 
+        # Seed a non-guest project-role for the same member. The guest cascade
+        # (role == 5 -> downgrade every ProjectMember to guest) must not run when
+        # the workspace-member update fails validation, so this must stay at 15.
+        project = Project.objects.create(
+            name="Cascade Project", identifier="CP", workspace=attacker_ws, created_by=attacker
+        )
+        project_member = ProjectMember.objects.create(
+            workspace=attacker_ws, project=project, member=target, role=15, is_active=True
+        )
+
         client = APIClient()
         client.force_authenticate(user=attacker)
         response = client.patch(
@@ -177,3 +190,5 @@ class TestWorkspaceMemberMassAssignment:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         target_member.refresh_from_db()
         assert target_member.role == 15
+        project_member.refresh_from_db()
+        assert project_member.role == 15, "Guest cascade ran despite the invalid update"
