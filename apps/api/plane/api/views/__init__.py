@@ -71,6 +71,12 @@ from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
 
-from .service_account import ServiceAccountAPIEndpoint
+from .service_account import (
+    ServiceAccountAPIEndpoint,
+    ServiceAccountDetailAPIEndpoint,
+    ServiceAccountTokenAPIEndpoint,
+    ServiceAccountTokenDetailAPIEndpoint,
+    ServiceAccountTokenRotateAPIEndpoint,
+)
 
 from .sticky import StickyViewSet

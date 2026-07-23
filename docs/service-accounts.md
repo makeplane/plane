@@ -147,6 +147,62 @@ identity instead of the server-generated defaults:
 On the management command, a taken `--username` (or `--email`) fails with a clear
 `CommandError` instead of a raw traceback.
 
+## Managing tokens
+
+An external reconcile/rotation loop can list, mint, rotate, and revoke a service
+account's tokens over the API. All endpoints require the caller to be a workspace
+**admin** (`WorkspaceOwnerPermission`) and are scoped to a service account
+(`{user_id}` must be a `SERVICE` bot in `{slug}`, else `404`).
+
+**List** — `GET /api/v1/workspaces/{slug}/service-accounts/{user_id}/tokens/`
+
+Cursor-paginated. Returns each token's metadata (`label`, `is_active`,
+`created_at`, `expired_at`, `last_used`, …); the **secret value is always
+withheld**. Revoked tokens are omitted; a rotated-away token remains listed with
+`is_active: false`.
+
+**Mint** — `POST .../tokens/`
+
+```http
+POST /api/v1/workspaces/{slug}/service-accounts/{user_id}/tokens/
+X-Api-Key: <workspace-admin token>
+Content-Type: application/json
+
+{ "label": "ci-2025", "expired_at": "2026-01-01T00:00:00Z" }
+```
+
+`label`, `description`, and `expired_at` are optional. Response `201` returns the
+new token value **once**:
+
+```json
+{ "id": "…", "label": "ci-2025", "is_active": true, "created_at": "…", "expired_at": "…", "token": "plane_api_…" }
+```
+
+**Rotate** — `POST .../tokens/{token_id}/rotate/`
+
+Atomically mints a replacement (optional `expired_at` in the body, returned once)
+and deactivates the old token, so authenticating with the old value fails
+immediately. The old token stays listed as `is_active: false` for audit.
+
+**Revoke** — `DELETE .../tokens/{token_id}/`
+
+Revokes a single token (`204`); authenticating with it then fails.
+
+Mint and rotate responses carry the plaintext token, so — like the create
+endpoint — their bodies are redacted from the `api_activity_logs` request log.
+
+## Decommissioning
+
+`DELETE /api/v1/workspaces/{slug}/service-accounts/{user_id}/` retires an account:
+it deactivates **all** its tokens, removes its `ProjectMember` and
+`WorkspaceMember` rows, and deactivates the `User` (`is_active=False`). The user
+row is **kept**, so historical attribution (`created_by`/`updated_by` on
+everything it created) survives, and `is_active=False` alone revokes API access.
+
+The operation is hard-guarded: it only applies to a service account
+(`is_bot=True` **and** `bot_type=SERVICE`). Attempting it on a human or any other
+bot returns `400 {"error": ..., "code": "NOT_A_SERVICE_ACCOUNT"}`.
+
 ## Notes
 
 - Tokens are stored verbatim and matched exactly at authentication time; there is

@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from django.db import transaction
 
 # Module imports
-from plane.db.models import APIToken, BotTypeEnum, User, Workspace, WorkspaceMember
+from plane.db.models import APIToken, BotTypeEnum, ProjectMember, User, Workspace, WorkspaceMember
 
 # Human-friendly role name -> WorkspaceMember.role value.
 # Mirrors ROLE_CHOICES in plane/db/models/workspace.py ((20, Admin), (15, Member), (5, Guest)).
@@ -144,14 +144,74 @@ def create_service_account(
         company_role="",
     )
 
-    api_token = APIToken.objects.create(
+    api_token = mint_service_account_token(
+        user=user,
+        workspace=workspace,
         label=name,
         description=description or f"Service account token for {name}",
-        user=user,
-        # 1 == Bot (see APIToken.user_type choices).
-        user_type=1,
-        workspace=workspace,
-        is_service=True,
     )
 
     return ServiceAccount(user=user, member=member, api_token=api_token)
+
+
+def mint_service_account_token(*, user, workspace, label=None, description="", expired_at=None) -> APIToken:
+    """Mint an additional workspace-scoped bot token for a service account.
+
+    ``is_service=True`` + ``user_type=Bot`` mark it as a machine token; when
+    ``label`` is omitted the model's default (a random handle) is used.
+    """
+    fields = {
+        "description": description,
+        "user": user,
+        # 1 == Bot (see APIToken.user_type choices).
+        "user_type": 1,
+        "workspace": workspace,
+        "is_service": True,
+        "expired_at": expired_at,
+    }
+    if label:
+        fields["label"] = label
+    return APIToken.objects.create(**fields)
+
+
+@transaction.atomic
+def rotate_service_account_token(*, token: APIToken, expired_at=None) -> APIToken:
+    """Atomically mint a replacement token and deactivate the old one.
+
+    The replacement inherits the old token's label/description/workspace so the
+    rotation is transparent to consumers; ``expired_at`` may be set anew. The old
+    token is deactivated (``is_active=False``) so authenticating with it fails
+    immediately.
+    """
+    replacement = mint_service_account_token(
+        user=token.user,
+        workspace=token.workspace,
+        label=token.label,
+        description=token.description,
+        expired_at=expired_at,
+    )
+    token.is_active = False
+    token.save(update_fields=["is_active", "updated_at"])
+    return replacement
+
+
+@transaction.atomic
+def decommission_service_account(*, user: User, workspace: Workspace) -> None:
+    """Retire a service account: revoke access and remove its memberships.
+
+    Deactivates every token, removes (soft-deletes) the account's ProjectMember
+    and WorkspaceMember rows, and deactivates the User. The User row is kept (not
+    deleted) so historical attribution (``created_by``/``updated_by`` on
+    everything it created) survives; ``is_active=False`` alone revokes API access
+    (``APIKeyAuthentication`` requires ``user__is_active``).
+
+    The token/user deactivation is global while membership removal is scoped to
+    ``workspace``; this is consistent because a service account belongs to
+    exactly one workspace (it is created for one workspace and there is no API to
+    add it to another), so "retire the user" == "retire it in this workspace".
+    """
+    APIToken.objects.filter(user=user).update(is_active=False)
+    ProjectMember.objects.filter(member=user, workspace=workspace).delete()
+    WorkspaceMember.objects.filter(member=user, workspace=workspace).delete()
+    user.is_active = False
+    user.save(update_fields=["is_active"])

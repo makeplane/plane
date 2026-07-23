@@ -6,6 +6,8 @@
 from rest_framework import serializers
 
 # Module imports
+from plane.api.serializers.base import BaseSerializer
+from plane.db.models import APIToken
 from plane.utils.service_account import DEFAULT_SERVICE_ACCOUNT_ROLE, SERVICE_ACCOUNT_ROLES
 
 
@@ -59,4 +61,53 @@ class ServiceAccountSerializer(serializers.Serializer):
     display_name = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True, help_text="Workspace role value (20 admin, 15 member, 5 guest)")
     workspace = serializers.UUIDField(read_only=True)
+    token = serializers.CharField(read_only=True, help_text="Plaintext API token — shown once")
+
+
+class ServiceAccountTokenSerializer(BaseSerializer):
+    """Read/list view of a service account's API token.
+
+    The secret ``token`` value is intentionally NOT a field here, so it can never
+    be exposed by the list endpoint.
+    """
+
+    class Meta:
+        model = APIToken
+        fields = [
+            "id",
+            "label",
+            "description",
+            "is_active",
+            "is_service",
+            "user_type",
+            "created_at",
+            "updated_at",
+            "expired_at",
+            "last_used",
+        ]
+        read_only_fields = fields
+
+
+class ServiceAccountTokenCreateSerializer(serializers.Serializer):
+    """Request body for minting or rotating a service account token."""
+
+    label = serializers.CharField(
+        required=False, allow_blank=True, max_length=255, help_text="Optional human-readable token label"
+    )
+    description = serializers.CharField(
+        required=False, allow_blank=True, default="", help_text="Optional token description"
+    )
+    expired_at = serializers.DateTimeField(
+        required=False, allow_null=True, default=None, help_text="Optional expiry; the token never expires when omitted"
+    )
+
+
+class ServiceAccountTokenCreatedSerializer(serializers.Serializer):
+    """Response for a newly minted/rotated token — includes the value ONCE."""
+
+    id = serializers.UUIDField(read_only=True)
+    label = serializers.CharField(read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    expired_at = serializers.DateTimeField(read_only=True, allow_null=True)
     token = serializers.CharField(read_only=True, help_text="Plaintext API token — shown once")
