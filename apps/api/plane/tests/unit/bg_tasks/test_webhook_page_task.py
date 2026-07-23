@@ -12,8 +12,38 @@ from plane.bgtasks.webhook_task import (
     SERIALIZER_MAPPER,
     get_model_data,
     webhook_activity,
+    _page_update_webhook_debounce_key,
 )
 from plane.db.models import Page, Webhook
+
+
+class _FakeRedis:
+    """In-memory stand-in for the subset of redis ``webhook_activity`` uses.
+
+    Models ``set`` with ``nx``/``ex`` exactly like redis-py: a plain ``set``
+    returns ``True``; ``set(nx=True)`` returns ``True`` only when the key is
+    absent and ``None`` when it already exists. TTL is not wall-clock driven —
+    tests simulate the debounce window elapsing by calling :meth:`delete`.
+    """
+
+    def __init__(self):
+        self.store = {}
+
+    def set(self, key, value, nx=False, ex=None):
+        if nx and key in self.store:
+            return None
+        self.store[key] = value
+        return True
+
+    def get(self, key):
+        return self.store.get(key)
+
+    def delete(self, *keys):
+        removed = 0
+        for key in keys:
+            if self.store.pop(key, None) is not None:
+                removed += 1
+        return removed
 
 
 @pytest.fixture
@@ -157,3 +187,133 @@ class TestPageWebhookActivity:
         )
 
         mock_send_task.delay.assert_not_called()
+
+
+@pytest.mark.unit
+class TestPageUpdateWebhookDebounce:
+    """``page`` update webhooks: property edits always fire, content flushes are
+    debounced per page so a live editing session does not emit a webhook each
+    time the collab server persists the document."""
+
+    @pytest.fixture
+    def page_webhook(self, workspace):
+        return Webhook.objects.create(
+            workspace=workspace,
+            url="https://example.com/page-hook",
+            page=True,
+        )
+
+    @pytest.fixture
+    def fake_redis(self):
+        return _FakeRedis()
+
+    def _fire_update(self, page, create_user, workspace, *, debounce, field):
+        webhook_activity(
+            event="page",
+            verb="updated",
+            field=field,
+            old_value=None,
+            new_value=None,
+            actor_id=create_user.id,
+            slug=workspace.slug,
+            current_site="http://localhost",
+            event_id=page.id,
+            old_identifier=None,
+            new_identifier=None,
+            debounce=debounce,
+        )
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_property_update_fires_once(self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace):
+        """A discrete property edit (debounce=False) always delivers exactly one
+        update webhook."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_update(page, create_user, workspace, debounce=False, field="name")
+
+        mock_send_task.delay.assert_called_once()
+        kwargs = mock_send_task.delay.call_args.kwargs
+        assert kwargs["event"] == "page"
+        assert kwargs["action"] == "updated"
+        assert str(kwargs["event_data"]["id"]) == str(page.id)
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_two_rapid_content_persists_fire_once(
+        self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace
+    ):
+        """Two content flushes inside the debounce window collapse to one
+        delivery."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+
+        mock_send_task.delay.assert_called_once()
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_content_persist_after_window_fires_again(
+        self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace
+    ):
+        """Once the debounce window elapses (marker gone), the next flush fires
+        again."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+            # Simulate the debounce window expiring (redis TTL) by dropping the marker.
+            fake_redis.delete(_page_update_webhook_debounce_key(page.id))
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+
+        assert mock_send_task.delay.call_count == 2
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_property_edit_refreshes_window_and_suppresses_following_flush(
+        self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace
+    ):
+        """A property edit refreshes the window, so a content flush landing right
+        after it is coalesced (no duplicate)."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_update(page, create_user, workspace, debounce=False, field="name")
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+
+        mock_send_task.delay.assert_called_once()
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_toggle_off_no_delivery(self, mock_send_task, fake_redis, page, create_user, workspace):
+        """With no page-subscribed webhook, an update is never delivered."""
+        Webhook.objects.create(
+            workspace=workspace,
+            url="https://example.com/issue-hook",
+            issue=True,
+            page=False,
+        )
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_update(page, create_user, workspace, debounce=False, field="name")
+
+        mock_send_task.delay.assert_not_called()
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_update_payload_matches_create_serializer(
+        self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace
+    ):
+        """The update event carries the same PageSerializer payload as create."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            webhook_activity(
+                event="page",
+                verb="created",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=create_user.id,
+                slug=workspace.slug,
+                current_site="http://localhost",
+                event_id=page.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+            created_payload = mock_send_task.delay.call_args.kwargs["event_data"]
+
+            mock_send_task.reset_mock()
+
+            self._fire_update(page, create_user, workspace, debounce=True, field="description_html")
+            updated_payload = mock_send_task.delay.call_args.kwargs["event_data"]
+
+        # Same read-only PageSerializer projection for both create and update.
+        assert updated_payload == created_payload
+        assert "description_binary" not in updated_payload
