@@ -160,14 +160,18 @@ class TestSubIssuesCrossProjectScope:
 
     @pytest.mark.django_db
     def test_write_cross_project_sub_issue_ids_ignored(
-        self, session_client, workspace, project_a, parent_a, orphan_b
+        self, session_client, workspace, project_a, parent_a, orphan_b, mocker
     ):
         """Even with an in-project parent, sub_issue_ids from another project are ignored.
 
         Parent A is valid for the URL project, but ``orphan_b`` lives in project B,
         so the project-scoped ``sub_issue_ids`` filter must exclude it and leave its
-        parent untouched.
+        parent untouched — and no activity event may be enqueued for it (the activity
+        task does an unscoped lookup + updated_at bump on whatever id it receives).
         """
+        mock_activity = mocker.patch(
+            "plane.app.views.issue.sub_issue.issue_activity.delay"
+        )
         url = SUB_ISSUES_URL.format(
             slug=workspace.slug, project_id=project_a.id, issue_id=parent_a.id
         )
@@ -176,8 +180,16 @@ class TestSubIssuesCrossProjectScope:
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+        # The foreign issue must not appear in the response body either.
+        assert response.data["sub_issues"] == [], f"Leaked cross-project issue: {response.data!r}"
+        assert response.data["state_distribution"] == {}, f"Leaked state_distribution: {response.data!r}"
         orphan_b.refresh_from_db()
         assert orphan_b.parent_id is None, "Cross-project issue was re-parented"
+        # No activity may be dispatched for the excluded cross-project issue.
+        dispatched_ids = {call.kwargs.get("issue_id") for call in mock_activity.call_args_list}
+        assert str(orphan_b.id) not in dispatched_ids, (
+            f"Activity dispatched for a cross-project issue: {mock_activity.call_args_list!r}"
+        )
 
     # --- Positive controls: legitimate same-project use still works -----------
 

@@ -237,8 +237,15 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
+        # Only the issues that were actually re-parented — i.e. the project-scoped
+        # `sub_issues`, not the raw caller-supplied ids. Otherwise a cross-project id
+        # (excluded from the update above) would still fire issue_activity, whose task
+        # does an unscoped Issue.objects.get and bumps updated_at on a foreign issue
+        # (GHSA-gxhv-fw9x-2pg3).
+        scoped_sub_issue_ids = [str(sub_issue.id) for sub_issue in sub_issues]
+
         updated_sub_issues = Issue.issue_objects.filter(
-            id__in=sub_issue_ids, workspace__slug=slug, project_id=project_id
+            id__in=scoped_sub_issue_ids, workspace__slug=slug, project_id=project_id
         ).annotate(state_group=F("state__group"))
 
         # Track the issue
@@ -247,14 +254,14 @@ class SubIssuesEndpoint(BaseAPIView):
                 type="issue.activity.updated",
                 requested_data=json.dumps({"parent": str(issue_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(sub_issue_id),
+                issue_id=sub_issue_id,
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": str(sub_issue_id)}),
+                current_instance=json.dumps({"parent": sub_issue_id}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
-            for sub_issue_id in sub_issue_ids
+            for sub_issue_id in scoped_sub_issue_ids
         ]
 
         # create's a dict with state group name with their respective issue id's
