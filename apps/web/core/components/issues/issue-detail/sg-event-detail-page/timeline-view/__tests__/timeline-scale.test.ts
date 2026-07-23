@@ -14,8 +14,10 @@ const {
   getTimelineTagEndSeconds,
   getTimelinePanelInputPlayheadSeconds,
   getTimelinePlaybackSeconds,
+  getTimelineScaleIndexFromSliderValue,
   getNextTimelineScaleIndex,
   getTimelineRangePixels,
+  getTimelineSecondsFromClientX,
   getTimelinePositionPercent,
   getTimelineContentWidth,
   getTimelineScaleLabel,
@@ -27,6 +29,16 @@ test("timeline scale controls clamp at supported zoom bounds", () => {
   assert.equal(getNextTimelineScaleIndex(DEFAULT_TIMELINE_SCALE_INDEX, "out"), DEFAULT_TIMELINE_SCALE_INDEX - 1);
   assert.equal(getNextTimelineScaleIndex(0, "out"), 0);
   assert.equal(getNextTimelineScaleIndex(TIMELINE_SCALE_LEVELS.length - 1, "in"), TIMELINE_SCALE_LEVELS.length - 1);
+});
+
+test("timeline zoom slider values map to clamped scale indexes", () => {
+  assert.equal(getTimelineScaleIndexFromSliderValue("4", DEFAULT_TIMELINE_SCALE_INDEX), 4);
+  assert.equal(getTimelineScaleIndexFromSliderValue("-4", DEFAULT_TIMELINE_SCALE_INDEX), 0);
+  assert.equal(
+    getTimelineScaleIndexFromSliderValue("999", DEFAULT_TIMELINE_SCALE_INDEX),
+    TIMELINE_SCALE_LEVELS.length - 1
+  );
+  assert.equal(getTimelineScaleIndexFromSliderValue("not-a-number", DEFAULT_TIMELINE_SCALE_INDEX), DEFAULT_TIMELINE_SCALE_INDEX);
 });
 
 test("timeline content width expands and contracts from the default scale", () => {
@@ -52,6 +64,45 @@ test("timeline positions are clamped to the shared percent coordinate system", (
   assert.equal(getTimelinePositionPercent(120, 120), 100);
   assert.equal(getTimelinePositionPercent(150, 120), 100);
   assert.equal(getTimelinePositionPercent(-5, 120), 0);
+});
+
+test("timeline pointer seeking accounts for horizontal scroll and zoomed content width", () => {
+  assert.ok(
+    Math.abs(
+      getTimelineSecondsFromClientX({
+        clientX: 450,
+        contentWidthPx: 2000,
+        scrollLeftPx: 300,
+        totalSeconds: 100,
+        viewportLeftPx: 200,
+      }) - 27.5
+    ) < 0.000001
+  );
+});
+
+test("timeline pointer seeking clamps to the seekable media duration", () => {
+  assert.equal(
+    getTimelineSecondsFromClientX({
+      clientX: 2600,
+      contentWidthPx: 2000,
+      scrollLeftPx: 0,
+      seekableSeconds: 90,
+      totalSeconds: 120,
+      viewportLeftPx: 0,
+    }),
+    90
+  );
+  assert.equal(
+    getTimelineSecondsFromClientX({
+      clientX: -40,
+      contentWidthPx: 2000,
+      scrollLeftPx: 0,
+      seekableSeconds: 90,
+      totalSeconds: 120,
+      viewportLeftPx: 0,
+    }),
+    0
+  );
 });
 
 test("timeline ticks become more precise when zooming in and coarser when zooming out", () => {

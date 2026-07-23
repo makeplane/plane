@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { UIEvent, WheelEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent, PointerEvent, UIEvent, WheelEvent } from "react";
 import {
   Check,
   Eye,
@@ -55,7 +55,9 @@ import {
   getTimelineContentWidth,
   getTimelinePlaybackSeconds,
   getTimelineRangePixels,
+  getTimelineScaleIndexFromSliderValue,
   getTimelineScaleLabel,
+  getTimelineSecondsFromClientX,
   getTimelineTimePixel,
   isTimelineTagPlaybackOverrideId,
 } from "../utils/timeline-scale";
@@ -74,6 +76,7 @@ type SgEventTimelinePanelProps = {
   onPlayTagRow: (row: SgTagRow) => Promise<void>;
   onPlaylistSelectionModeChange?: (nextValue: boolean) => void;
   onResetPlayback: () => void;
+  onSeekTimelineSeconds?: (seconds: number) => void;
   onToggleTagSelection: (tagId: string) => void;
   playerDurationSeconds: number | null;
   playheadSeconds: number;
@@ -110,6 +113,7 @@ export const SgEventTimelinePanel = ({
   onPlayTagRow,
   onPlaylistSelectionModeChange,
   onResetPlayback,
+  onSeekTimelineSeconds,
   onToggleTagSelection,
   playerDurationSeconds,
   playheadSeconds,
@@ -127,7 +131,13 @@ export const SgEventTimelinePanel = ({
   const [timelineScaleIndex, setTimelineScaleIndex] = useState(DEFAULT_TIMELINE_SCALE_INDEX);
   const timelineScrollRef = useRef<HTMLDivElement | null>(null);
   const timelineRulerScrollRef = useRef<HTMLDivElement | null>(null);
-  const playheadElementRef = useRef<HTMLDivElement | null>(null);
+  const playheadTrackElementRef = useRef<HTMLDivElement | null>(null);
+  const playheadRulerElementRef = useRef<HTMLDivElement | null>(null);
+  const skimmerTrackElementRef = useRef<HTMLDivElement | null>(null);
+  const skimmerRulerElementRef = useRef<HTMLDivElement | null>(null);
+  const skimmerSecondsRef = useRef<number | null>(null);
+  const lastTimelinePointerClientXRef = useRef<number | null>(null);
+  const lastTimelinePointerViewportRef = useRef<HTMLDivElement | null>(null);
   const fullStreamDurationSecondsRef = useRef<number | null>(null);
   const isTagClipActive = isTimelineTagPlaybackOverrideId(activePlaybackOverrideId);
   const activePlaybackRowId = getPlaybackOverrideRowId(activePlaybackOverrideId);
@@ -235,6 +245,117 @@ export const SgEventTimelinePanel = ({
   const hasTimelineRows = sortedTimelineRows.length > 0;
   const selectedTagCount = selectedTagIds.length;
   const canCreatePlaylist = Boolean(onCreatePlaylist) && selectedTagCount > 0 && !isCreatingPlaylist;
+  const seekableDurationSeconds = Math.max(
+    0,
+    timelineDurationSeconds ?? fullStreamDurationSecondsRef.current ?? totalSeconds
+  );
+
+  const setTimelineIndicatorPosition = useCallback(
+    (element: HTMLDivElement | null, seconds: number) => {
+      if (!element) return;
+
+      element.style.transform = getPlayheadTransform(getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth));
+    },
+    [timelineContentWidth, totalSeconds]
+  );
+
+  const setPlaybackPlayheadPosition = useCallback(
+    (seconds: number) => {
+      setTimelineIndicatorPosition(playheadTrackElementRef.current, seconds);
+      setTimelineIndicatorPosition(playheadRulerElementRef.current, seconds);
+    },
+    [setTimelineIndicatorPosition]
+  );
+
+  const setTimelineSkimmerVisible = useCallback((isVisible: boolean) => {
+    const opacity = isVisible ? "1" : "0";
+
+    if (skimmerTrackElementRef.current) {
+      skimmerTrackElementRef.current.style.opacity = opacity;
+    }
+    if (skimmerRulerElementRef.current) {
+      skimmerRulerElementRef.current.style.opacity = opacity;
+    }
+  }, []);
+
+  const setTimelineSkimmerPosition = useCallback(
+    (seconds: number) => {
+      skimmerSecondsRef.current = seconds;
+      setTimelineIndicatorPosition(skimmerTrackElementRef.current, seconds);
+      setTimelineIndicatorPosition(skimmerRulerElementRef.current, seconds);
+      setTimelineSkimmerVisible(true);
+    },
+    [setTimelineIndicatorPosition, setTimelineSkimmerVisible]
+  );
+
+  const getTimelinePointerSeconds = useCallback(
+    (clientX: number, viewportElement: HTMLDivElement) => {
+      const viewportRect = viewportElement.getBoundingClientRect();
+      const scrollLeftPx = timelineRulerScrollRef.current?.scrollLeft ?? timelineScrollRef.current?.scrollLeft ?? 0;
+
+      return getTimelineSecondsFromClientX({
+        clientX,
+        contentWidthPx: timelineContentWidth,
+        scrollLeftPx,
+        seekableSeconds: seekableDurationSeconds,
+        totalSeconds,
+        viewportLeftPx: viewportRect.left,
+      });
+    },
+    [seekableDurationSeconds, timelineContentWidth, totalSeconds]
+  );
+
+  const isTimelineHorizontalScrollbarPointer = useCallback(
+    (event: { clientY: number }, element: HTMLDivElement) => {
+      const scrollbarHeight = Math.max(0, element.offsetHeight - element.clientHeight);
+      if (scrollbarHeight <= 0) return false;
+
+      return event.clientY >= element.getBoundingClientRect().bottom - scrollbarHeight;
+    },
+    []
+  );
+
+  const refreshTimelineSkimmerFromLastPointer = useCallback(() => {
+    const lastClientX = lastTimelinePointerClientXRef.current;
+    const lastViewportElement = lastTimelinePointerViewportRef.current;
+    if (lastClientX === null || !lastViewportElement || skimmerSecondsRef.current === null) return;
+
+    setTimelineSkimmerPosition(getTimelinePointerSeconds(lastClientX, lastViewportElement));
+  }, [getTimelinePointerSeconds, setTimelineSkimmerPosition]);
+
+  const handleTimelinePointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (isTimelineHorizontalScrollbarPointer(event, event.currentTarget)) return;
+
+      lastTimelinePointerClientXRef.current = event.clientX;
+      lastTimelinePointerViewportRef.current = event.currentTarget;
+      setTimelineSkimmerPosition(getTimelinePointerSeconds(event.clientX, event.currentTarget));
+    },
+    [getTimelinePointerSeconds, isTimelineHorizontalScrollbarPointer, setTimelineSkimmerPosition]
+  );
+
+  const handleTimelinePointerLeave = useCallback(() => {
+    skimmerSecondsRef.current = null;
+    lastTimelinePointerClientXRef.current = null;
+    lastTimelinePointerViewportRef.current = null;
+    setTimelineSkimmerVisible(false);
+  }, [setTimelineSkimmerVisible]);
+
+  const handleTimelineSeekClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (event.button !== 0 || isTimelineHorizontalScrollbarPointer(event, event.currentTarget)) return;
+
+      const seekSeconds = getTimelinePointerSeconds(event.clientX, event.currentTarget);
+      setPlaybackPlayheadPosition(seekSeconds);
+      onSeekTimelineSeconds?.(seekSeconds);
+    },
+    [
+      getTimelinePointerSeconds,
+      isTimelineHorizontalScrollbarPointer,
+      onSeekTimelineSeconds,
+      setPlaybackPlayheadPosition,
+    ]
+  );
 
   useEffect(() => {
     if (isTagClipActive || playerDurationSeconds === null || playerDurationSeconds <= 0) return;
@@ -243,19 +364,11 @@ export const SgEventTimelinePanel = ({
   }, [isTagClipActive, playerDurationSeconds]);
 
   useEffect(() => {
-    const playheadElement = playheadElementRef.current;
-    if (!playheadElement) return;
-
     const anchorSeconds = timelinePlayheadSeconds;
     const anchorTimeMs = window.performance.now();
     const activePlaybackRate = Number.isFinite(playerPlaybackRate) && playerPlaybackRate > 0 ? playerPlaybackRate : 1;
-    const setPlayheadPosition = (seconds: number) => {
-      playheadElement.style.transform = getPlayheadTransform(
-        getTimelineTimePixel(seconds, totalSeconds, timelineContentWidth)
-      );
-    };
 
-    setPlayheadPosition(anchorSeconds);
+    setPlaybackPlayheadPosition(anchorSeconds);
 
     if (!isPlayerPlaying || anchorSeconds >= totalSeconds) return;
 
@@ -264,7 +377,7 @@ export const SgEventTimelinePanel = ({
       const elapsedSeconds = Math.max(0, (currentTimeMs - anchorTimeMs) / 1000) * activePlaybackRate;
       const interpolatedSeconds = Math.min(anchorSeconds + elapsedSeconds, totalSeconds);
 
-      setPlayheadPosition(interpolatedSeconds);
+      setPlaybackPlayheadPosition(interpolatedSeconds);
 
       if (interpolatedSeconds < totalSeconds) {
         animationFrameId = window.requestAnimationFrame(animatePlayhead);
@@ -274,7 +387,11 @@ export const SgEventTimelinePanel = ({
     animationFrameId = window.requestAnimationFrame(animatePlayhead);
 
     return () => window.cancelAnimationFrame(animationFrameId);
-  }, [isPlayerPlaying, playerPlaybackRate, timelineContentWidth, timelinePlayheadSeconds, totalSeconds]);
+  }, [isPlayerPlaying, playerPlaybackRate, setPlaybackPlayheadPosition, timelinePlayheadSeconds, totalSeconds]);
+
+  useEffect(() => {
+    refreshTimelineSkimmerFromLastPointer();
+  }, [refreshTimelineSkimmerFromLastPointer]);
 
   useEffect(() => {
     const trackScrollElement = timelineScrollRef.current;
@@ -293,6 +410,7 @@ export const SgEventTimelinePanel = ({
 
   const handleTimelineRulerScroll = (event: UIEvent<HTMLDivElement>) => {
     syncTimelineTrackScroll(event.currentTarget.scrollLeft);
+    refreshTimelineSkimmerFromLastPointer();
   };
 
   const scrollTimelineTo = (nextScrollLeft: number, behavior: "auto" | "smooth" = "auto") => {
@@ -304,6 +422,7 @@ export const SgEventTimelinePanel = ({
     scrollElement.scrollTo({ behavior, left: nextScrollLeft });
     if (behavior === "auto") {
       syncTimelineTrackScroll(nextScrollLeft);
+      refreshTimelineSkimmerFromLastPointer();
     }
   };
 
@@ -317,6 +436,7 @@ export const SgEventTimelinePanel = ({
 
     rulerScrollElement.scrollLeft = nextScrollLeft;
     syncTimelineTrackScroll(nextScrollLeft);
+    refreshTimelineSkimmerFromLastPointer();
     return true;
   };
 
@@ -427,9 +547,12 @@ export const SgEventTimelinePanel = ({
   const handleTimelineScaleChange = (direction: "in" | "out") => {
     setTimelineScaleIndex((currentIndex) => getNextTimelineScaleIndex(currentIndex, direction));
   };
+  const handleTimelineScaleSliderChange = (value: string) => {
+    setTimelineScaleIndex((currentIndex) => getTimelineScaleIndexFromSliderValue(value, currentIndex));
+  };
 
   return (
-    <section className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)}>
+    <section className={cn(SURFACE_CLASS, TIMELINE_PANEL_ROOT_CLASS)} onPointerLeave={handleTimelinePointerLeave}>
       <div className="flex flex-col gap-3 border-b border-custom-border-200 px-3 py-2.5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1">
           <Tooltip tooltipContent="Jump to previous tag" isMobile={false}>
@@ -575,6 +698,8 @@ export const SgEventTimelinePanel = ({
 
           <div
             ref={timelineScrollRef}
+            onClick={handleTimelineSeekClick}
+            onPointerMove={handleTimelinePointerMove}
             onWheel={handleTimelineHorizontalWheel}
             className={TIMELINE_HORIZONTAL_SCROLL_CLASS}
           >
@@ -583,9 +708,14 @@ export const SgEventTimelinePanel = ({
               style={{ minWidth: "100%", width: timelineContentWidth }}
             >
               <div
-                ref={playheadElementRef}
-                className="absolute left-0 top-0 z-[3] h-full w-1 rounded-full bg-red-500 will-change-transform"
+                ref={playheadTrackElementRef}
+                className="pointer-events-none absolute left-0 top-0 z-[4] h-full w-0 border-l-2 border-red-500 will-change-transform"
                 style={{ transform: getPlayheadTransform(playheadPositionPx) }}
+              />
+              <div
+                ref={skimmerTrackElementRef}
+                className="pointer-events-none absolute left-0 top-0 z-[3] h-full w-0 border-l-2 border-sky-500 opacity-0 will-change-transform"
+                style={{ transform: getPlayheadTransform(0) }}
               />
               {timelineLanes.map((lane) => {
                 const laneMarkerOffsets = buildLaneMarkerOffsets(lane.rows, rowPlacements);
@@ -622,9 +752,10 @@ export const SgEventTimelinePanel = ({
                           <button
                             type="button"
                             onClick={(event) => {
+                              event.stopPropagation();
+
                               if (isPlaylistSelectionMode) {
                                 event.preventDefault();
-                                event.stopPropagation();
                                 onToggleTagSelection(row.id);
                                 return;
                               }
@@ -678,11 +809,11 @@ export const SgEventTimelinePanel = ({
         <div
           className={cn(
             TIMELINE_LANE_LABEL_COLUMN_CLASS,
-            "flex h-10 items-center justify-between px-3 text-[11px] text-custom-text-400"
+            "flex h-10 items-center gap-2 px-3 text-[11px] text-custom-text-400"
           )}
         >
-          <span>Scale Size</span>
-          <span className="inline-flex items-center gap-2">
+          <span className="shrink-0">Zoom</span>
+          <span className="inline-flex min-w-0 flex-1 items-center justify-end gap-1.5">
             <Tooltip tooltipContent="Zoom out timeline" isMobile={false}>
               <button
                 type="button"
@@ -697,7 +828,17 @@ export const SgEventTimelinePanel = ({
                 <Minus className="h-3.5 w-3.5" />
               </button>
             </Tooltip>
-            <span className="min-w-9 text-center tabular-nums">{getTimelineScaleLabel(timelineScale)}</span>
+            <input
+              type="range"
+              min={0}
+              max={TIMELINE_SCALE_LEVELS.length - 1}
+              step={1}
+              value={timelineScaleIndex}
+              onChange={(event) => handleTimelineScaleSliderChange(event.currentTarget.value)}
+              aria-label="Timeline zoom"
+              aria-valuetext={getTimelineScaleLabel(timelineScale)}
+              className="h-6 w-20 accent-custom-primary-100"
+            />
             <Tooltip tooltipContent="Zoom in timeline" isMobile={false}>
               <button
                 type="button"
@@ -717,6 +858,8 @@ export const SgEventTimelinePanel = ({
 
         <div
           ref={timelineRulerScrollRef}
+          onClick={handleTimelineSeekClick}
+          onPointerMove={handleTimelinePointerMove}
           onScroll={handleTimelineRulerScroll}
           onWheel={handleTimelineHorizontalWheel}
           className={TIMELINE_RULER_SCROLL_CLASS}
@@ -725,6 +868,20 @@ export const SgEventTimelinePanel = ({
             className="relative h-10 transition-[width] duration-150 ease-out"
             style={{ minWidth: "100%", width: timelineContentWidth }}
           >
+            <div
+              ref={playheadRulerElementRef}
+              className="pointer-events-none absolute left-0 top-0 z-[5] h-full w-0 border-l-2 border-red-500 will-change-transform"
+              style={{ transform: getPlayheadTransform(playheadPositionPx) }}
+            >
+              <span className="absolute left-1/2 top-0 h-3.5 w-2.5 -translate-x-1/2 rounded-b-sm bg-red-500" />
+            </div>
+            <div
+              ref={skimmerRulerElementRef}
+              className="pointer-events-none absolute left-0 top-0 z-[4] h-full w-0 border-l-2 border-sky-500 opacity-0 will-change-transform"
+              style={{ transform: getPlayheadTransform(0) }}
+            >
+              <span className="absolute left-1/2 top-0 h-3.5 w-2.5 -translate-x-1/2 rounded-b-sm bg-sky-500" />
+            </div>
             {visibleTicks.map((tick) => {
               const isMajorTick = tick.kind === "major";
 

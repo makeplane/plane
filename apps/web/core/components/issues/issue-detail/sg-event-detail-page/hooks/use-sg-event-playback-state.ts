@@ -30,6 +30,7 @@ export const useSgEventPlaybackState = ({
   const [activePlaybackOverride, setActivePlaybackOverride] = useState<TMediaItem | null>(null);
   const [activeTimelineTagId, setActiveTimelineTagId] = useState<string | null>(null);
   const [pendingSeekSeconds, setPendingSeekSeconds] = useState<number | null>(null);
+  const [pendingSeekRequestId, setPendingSeekRequestId] = useState(0);
   const [playerLocalSeconds, setPlayerLocalSeconds] = useState(0);
   const [playerDurationSeconds, setPlayerDurationSeconds] = useState<number | null>(null);
   const [isPlayerPlaying, setIsPlayerPlaying] = useState(false);
@@ -144,13 +145,21 @@ export const useSgEventPlaybackState = ({
     setIsPlayerPlaying(false);
   }, [playbackItem?.id]);
 
+  const requestPlayerSeek = useCallback((seconds: number | null) => {
+    setPendingSeekSeconds(seconds);
+
+    if (seconds !== null && seconds >= 0) {
+      setPendingSeekRequestId((currentValue) => currentValue + 1);
+    }
+  }, []);
+
   const handleSwitchToFullStream = useCallback(() => {
     setActivePlaybackOverride(null);
     setActiveTimelineTagId(null);
     setIsPlayerPlaying(false);
     setPlayheadBaseSeconds(0);
-    setPendingSeekSeconds(null);
-  }, []);
+    requestPlayerSeek(null);
+  }, [requestPlayerSeek]);
 
   const handleResetTimelinePlayback = useCallback(() => {
     setActivePlaybackOverride(null);
@@ -158,9 +167,23 @@ export const useSgEventPlaybackState = ({
     setIsPlayerPlaying(false);
     setPlayheadBaseSeconds(0);
     setPlayerLocalSeconds(0);
-    setPendingSeekSeconds(null);
-    window.setTimeout(() => setPendingSeekSeconds(0), 0);
-  }, []);
+    requestPlayerSeek(null);
+    window.setTimeout(() => requestPlayerSeek(0), 0);
+  }, [requestPlayerSeek]);
+
+  const handleSeekTimelineSeconds = useCallback(
+    (seconds: number) => {
+      const nextSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
+
+      setActivePlaybackOverride(null);
+      setActiveTimelineTagId(null);
+      setPlayheadBaseSeconds(0);
+      setPlayerLocalSeconds(nextSeconds);
+      setIsPlayerPlaying(true);
+      requestPlayerSeek(nextSeconds);
+    },
+    [requestPlayerSeek]
+  );
 
   const handlePlaybackTimeChange = useCallback(
     (
@@ -201,7 +224,7 @@ export const useSgEventPlaybackState = ({
       if (!originalStreamName || !playlistTimestamp) {
         setActivePlaybackOverride(null);
         setPlayheadBaseSeconds(0);
-        setPendingSeekSeconds(fallbackSeekSeconds);
+        requestPlayerSeek(fallbackSeekSeconds);
         return;
       }
 
@@ -226,7 +249,7 @@ export const useSgEventPlaybackState = ({
             continue;
           }
 
-          setPendingSeekSeconds(null);
+          requestPlayerSeek(null);
           setPlayerLocalSeconds(0);
           setPlayerDurationSeconds(null);
           setPlayheadBaseSeconds(fallbackSeekSeconds);
@@ -273,13 +296,14 @@ export const useSgEventPlaybackState = ({
 
       setActivePlaybackOverride(null);
       setPlayheadBaseSeconds(0);
-      setPendingSeekSeconds(fallbackSeekSeconds);
+      requestPlayerSeek(fallbackSeekSeconds);
     },
     [
       activeVideo?.thumbnail,
       mediaItem?.thumbnail,
       mediaLibraryService,
       primaryStreamName,
+      requestPlayerSeek,
       resolvedWorkItemId,
       selectedViewDevice?.streamName,
     ]
@@ -290,10 +314,10 @@ export const useSgEventPlaybackState = ({
   }, []);
 
   const playPlaybackOverride = useCallback((item: TMediaItem) => {
-    setPendingSeekSeconds(null);
+    requestPlayerSeek(null);
     setIsPlayerPlaying(false);
     setActivePlaybackOverride(item);
-  }, []);
+  }, [requestPlayerSeek]);
 
   return {
     activePlaybackOverrideId,
@@ -304,10 +328,12 @@ export const useSgEventPlaybackState = ({
     handlePlayTagRow,
     handlePlaybackTimeChange,
     handleResetTimelinePlayback,
+    handleSeekTimelineSeconds,
     handleSwitchToFullStream,
     hasPlayableVideo,
     isPlayerPlaying,
     isPlaybackOverrideActive,
+    pendingSeekRequestId,
     pendingSeekSeconds,
     playbackItem,
     playPlaybackOverride,

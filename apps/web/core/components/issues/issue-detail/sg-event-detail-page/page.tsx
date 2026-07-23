@@ -232,10 +232,12 @@ export const SgEventDetailPage = ({
     handlePlayTagRow,
     handlePlaybackTimeChange,
     handleResetTimelinePlayback,
+    handleSeekTimelineSeconds,
     handleSwitchToFullStream,
     hasPlayableVideo,
     isPlayerPlaying,
     isPlaybackOverrideActive,
+    pendingSeekRequestId,
     pendingSeekSeconds,
     playbackItem,
     playPlaybackOverride,
@@ -547,6 +549,7 @@ export const SgEventDetailPage = ({
                     item={playbackItem}
                     compactEmpty={!hasPlayableVideo}
                     onPlaybackTimeChange={handlePlaybackTimeChange}
+                    seekRequestId={pendingSeekRequestId}
                     seekToSeconds={pendingSeekSeconds}
                   />
                 </div>
@@ -587,6 +590,7 @@ export const SgEventDetailPage = ({
                         item={playbackItem}
                         compactEmpty={!hasPlayableVideo}
                         onPlaybackTimeChange={handlePlaybackTimeChange}
+                        seekRequestId={pendingSeekRequestId}
                         seekToSeconds={pendingSeekSeconds}
                       />
                     </div>
@@ -627,6 +631,7 @@ export const SgEventDetailPage = ({
                     onPlayTagRow={handlePlayTagRow}
                     onPlaylistSelectionModeChange={setIsTimelinePlaylistSelectionMode}
                     onResetPlayback={handleResetTimelinePlayback}
+                    onSeekTimelineSeconds={handleSeekTimelineSeconds}
                     onToggleTagSelection={handleToggleTagSelection}
                     playerDurationSeconds={playerDurationSeconds}
                     playerPlaybackRate={playerPlaybackRate}
