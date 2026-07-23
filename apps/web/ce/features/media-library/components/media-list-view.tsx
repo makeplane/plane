@@ -39,18 +39,22 @@ const MediaListRow = ({
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
   const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
   const linkedTypeLabel = showLinkedTypeIndicator
-    ? item.linkedMediaType === "video"
+    ? isEventItem
       ? "Video"
-      : item.linkedMediaType === "image"
-        ? "Image"
-        : "Document"
+      : item.linkedMediaType === "video"
+        ? "Video"
+        : item.linkedMediaType === "image"
+          ? "Image"
+          : "Document"
     : "";
   const LinkedTypeIcon = showLinkedTypeIndicator
-    ? item.linkedMediaType === "video"
+    ? isEventItem
       ? Video
-      : item.linkedMediaType === "image"
-        ? Image
-        : File
+      : item.linkedMediaType === "video"
+        ? Video
+        : item.linkedMediaType === "image"
+          ? Image
+          : File
     : null;
   const itemHref = getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`;
   const handleItemClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -90,7 +94,9 @@ const MediaListRow = ({
       <TableCell className="min-w-[240px] border-r border-custom-border-200">
         <Link href={itemHref} onClick={handleItemClick} className="block min-w-0">
           <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{displayTitle}</div>
-          {item.description ? <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div> : null}
+          {item.description ? (
+            <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div>
+          ) : null}
         </Link>
       </TableCell>
       <TableCell className="min-w-[120px] border-r border-custom-border-200 text-xs text-custom-text-300">
@@ -129,17 +135,15 @@ const MediaListSection = ({
     <div className="flex items-center justify-between">
       {getSectionHref ? (
         <>
-        <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
+          <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
 
-        <Link
-          href={getSectionHref(section)}
-          className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
-        >
-          View all
-        </Link>
-
+          <Link
+            href={getSectionHref(section)}
+            className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
+          >
+            View all
+          </Link>
         </>
-
       ) : null}
     </div>
     <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100">
