@@ -22,6 +22,7 @@ from uuid import uuid4
 
 import pytest
 from django.db import IntegrityError
+from django.test import override_settings
 from rest_framework import serializers, status
 from rest_framework.test import APIClient
 
@@ -294,6 +295,55 @@ class TestWebhookDeliverySigning:
         assert headers["X-Plane-Event"] == "issue"
         assert payload["event"] == "issue"
         assert payload["webhook_id"] == str(webhook_id)
+
+
+def _addr(ip):
+    """Build a getaddrinfo-style result tuple for a resolved IP (no real DNS)."""
+    family = 6 if ":" in ip else 2
+    return (family, None, None, None, (ip, 0))
+
+
+@pytest.mark.contract
+class TestWebhookAllowPrivateFlag:
+    """The dev-only WEBHOOK_ALLOW_PRIVATE_URLS escape hatch for local development.
+
+    The flag only lifts the private/internal-IP block — scheme and URL
+    well-formedness are still enforced regardless of the flag.
+    """
+
+    PRIVATE_URL = "http://internal.example.com/hook"
+
+    def _validate(self, url):
+        from plane.utils.webhook import validate_webhook_url
+
+        # Resolve the host to a private IP without touching real DNS.
+        with mock.patch(
+            "plane.utils.ip_address.socket.getaddrinfo",
+            return_value=[_addr("10.0.0.5")],
+        ):
+            validate_webhook_url(url)
+
+    def test_private_url_rejected_by_default(self):
+        # Guard active by default: a private/internal target is rejected.
+        with pytest.raises(serializers.ValidationError):
+            self._validate(self.PRIVATE_URL)
+
+    @override_settings(WEBHOOK_ALLOW_PRIVATE_URLS=True)
+    def test_flag_permits_private_url(self):
+        # Flag on: the same private target is permitted (no exception).
+        self._validate(self.PRIVATE_URL)
+
+    @override_settings(WEBHOOK_ALLOW_PRIVATE_URLS=True)
+    def test_non_http_scheme_rejected_regardless_of_flag(self):
+        # The flag must NOT bypass scheme validation.
+        with pytest.raises(serializers.ValidationError):
+            self._validate("ftp://internal.example.com/hook")
+
+    @override_settings(WEBHOOK_ALLOW_PRIVATE_URLS=True)
+    def test_malformed_url_rejected_regardless_of_flag(self):
+        # The flag must NOT bypass URL well-formedness validation.
+        with pytest.raises(serializers.ValidationError):
+            self._validate("http:///nohost")
 
 
 @pytest.mark.contract

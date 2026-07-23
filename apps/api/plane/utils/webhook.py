@@ -28,6 +28,12 @@ def validate_webhook_url(url, request=None):
     then rejects hosts matching ``WEBHOOK_DISALLOWED_DOMAINS`` (and the request
     host, as a loop-back guard).
 
+    The ``WEBHOOK_ALLOW_PRIVATE_URLS`` setting is a dev-only escape hatch: when
+    enabled it permits private/loopback targets (e.g. ``host.docker.internal``)
+    for local development. It only lifts the private-IP block — the scheme
+    (http/https) and URL well-formedness are still enforced. Never enable it in
+    production (see ``settings/common.py``).
+
     Args:
         url: The webhook target URL to validate.
         request: The active request, used to append the request host to the
@@ -42,6 +48,7 @@ def validate_webhook_url(url, request=None):
             url,
             allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
             allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
+            allow_private=settings.WEBHOOK_ALLOW_PRIVATE_URLS,
         )
     except ValueError as e:
         logger.warning("Webhook URL validation failed for %s: %s", url, e)
