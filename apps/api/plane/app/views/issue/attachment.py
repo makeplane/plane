@@ -22,7 +22,7 @@ from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
 from plane.db.models import FileAsset, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROLE
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -87,6 +87,13 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
+        # A restricted guest may only see attachments of issues they created,
+        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         issue_attachments = FileAsset.objects.filter(issue_id=issue_id, workspace__slug=slug, project_id=project_id)
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -171,6 +178,13 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk=None):
+        # A restricted guest may only see attachments of issues they created,
+        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if pk:
             # Get the asset
             asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id)
