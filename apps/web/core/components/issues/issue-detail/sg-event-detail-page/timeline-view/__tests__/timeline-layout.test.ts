@@ -6,15 +6,18 @@ import test from "node:test";
 import * as timelineLayout from "../utils/timeline-layout.ts";
 
 const {
+  TIMELINE_CANVAS_CONTENT_CLASS,
   TIMELINE_HORIZONTAL_SCROLL_CLASS,
   TIMELINE_PAGE_CONTENT_CLASS,
   TIMELINE_PAGE_SCROLL_CLASS,
   TIMELINE_PANEL_MIN_HEIGHT_PX,
   TIMELINE_PANEL_ROOT_CLASS,
+  TIMELINE_RULER_CONTENT_CLASS,
   TIMELINE_RULER_SCROLL_CLASS,
   TIMELINE_STICKY_FOOTER_CLASS,
   TIMELINE_TRACKS_SCROLL_CLASS,
   getTimelineHorizontalWheelDeltaPx,
+  getTimelineZoomWheelDirection,
 } = timelineLayout;
 
 test("timeline page scrollport exposes a flush sticky bottom edge", () => {
@@ -63,6 +66,13 @@ test("timeline has a single visible horizontal scrollbar", () => {
   assert.doesNotMatch(TIMELINE_HORIZONTAL_SCROLL_CLASS, /\boverflow-x-auto\b/);
 });
 
+test("timeline content width changes are not animated between zoom levels", () => {
+  assert.equal(typeof TIMELINE_CANVAS_CONTENT_CLASS, "string");
+  assert.equal(typeof TIMELINE_RULER_CONTENT_CLASS, "string");
+  assert.doesNotMatch(TIMELINE_CANVAS_CONTENT_CLASS, /transition-\[width\]/);
+  assert.doesNotMatch(TIMELINE_RULER_CONTENT_CLASS, /transition-\[width\]/);
+});
+
 test("ordinary vertical wheel input does not move the horizontal timeline", () => {
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 0, deltaY: 120 }), 0);
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 8, deltaY: 120 }), 0);
@@ -73,4 +83,11 @@ test("intentional horizontal wheel input can move the horizontal timeline", () =
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 120, deltaY: 8 }), 120);
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: -80, deltaY: 12 }), -80);
   assert.equal(getTimelineHorizontalWheelDeltaPx({ deltaX: 0, deltaY: 90, shiftKey: true }), 90);
+});
+
+test("alt wheel input intentionally controls timeline zoom", () => {
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: -120 }), "in");
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: 120 }), "out");
+  assert.equal(getTimelineZoomWheelDirection({ altKey: false, deltaY: -120 }), null);
+  assert.equal(getTimelineZoomWheelDirection({ altKey: true, deltaY: 0 }), null);
 });
