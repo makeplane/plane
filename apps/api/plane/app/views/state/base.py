@@ -62,6 +62,7 @@ class StateViewSet(BaseViewSet):
     # the sibling create/destroy/mark_as_default writes. Previously [ADMIN, MEMBER, GUEST]
     # let a Guest rewrite any state (incl. setting `default`, bypassing the admin-only
     # mark_as_default). See GHSA-4jpp-964m-27cr.
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         try:

@@ -75,13 +75,16 @@ class TestStatePartialUpdateAdminScope:
     def test_member_cannot_patch_state(self, workspace, project, state):
         member_client = _member_of(workspace, project, role=15)
         response = member_client.patch(
-            _state_url(workspace.slug, project.id, state.id), {"name": "Member Renamed"}, format="json"
+            _state_url(workspace.slug, project.id, state.id),
+            {"name": "Member Renamed", "default": True},
+            format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         state.refresh_from_db()
         assert state.name == "Backlog"
+        assert state.default is False
 
     def test_admin_can_patch_state(self, session_client, workspace, project, state):
         """Positive control: a project admin may still edit a state."""
