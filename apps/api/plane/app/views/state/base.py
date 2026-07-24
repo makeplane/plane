@@ -58,7 +58,11 @@ class StateViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    # Editing a workflow state is project configuration — restrict to ADMIN, matching
+    # the sibling create/destroy/mark_as_default writes. Previously [ADMIN, MEMBER, GUEST]
+    # let a Guest rewrite any state (incl. setting `default`, bypassing the admin-only
+    # mark_as_default). See GHSA-4jpp-964m-27cr.
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         try:
             state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
