@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
-import { Maximize2, MoreVertical, Share2, Trash2, Video, X } from "lucide-react";
+import { Maximize2, MoreVertical, Pencil, Share2, Trash2, Video, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import type { TCustomPlaylist, TCustomPlaylistUpdatePayload } from "@/services/media-library.service";
@@ -50,9 +50,10 @@ const GENERATED_PLAYLIST_NAME_SUFFIX = /\s*\(\d+\s+clips?\)\s*$/i;
 type PlaylistTextEditField = "name" | "subtitle";
 
 type PlaylistTextEditState = {
-  field: PlaylistTextEditField;
+  focusField: PlaylistTextEditField;
+  name: string;
   playlistId: string;
-  value: string;
+  subtitle: string;
 };
 
 const normalizeCardText = (value: string | null | undefined) => {
@@ -492,18 +493,16 @@ export const SgMatrixPlaylistPanel = ({
   const [activePlaylist, setActivePlaylist] = useState<TCustomPlaylist | null>(null);
   const [menuPlaylistId, setMenuPlaylistId] = useState<string | null>(null);
   const [editingPlaylistText, setEditingPlaylistText] = useState<PlaylistTextEditState | null>(null);
-  const [savingPlaylistText, setSavingPlaylistText] = useState<Pick<
-    PlaylistTextEditState,
-    "field" | "playlistId"
-  > | null>(null);
+  const [savingPlaylistText, setSavingPlaylistText] = useState<Pick<PlaylistTextEditState, "playlistId"> | null>(null);
   const [playlistPendingDelete, setPlaylistPendingDelete] = useState<TCustomPlaylist | null>(null);
   const [isDeletingPlaylist, setIsDeletingPlaylist] = useState(false);
   const activeMenuRef = useRef<HTMLDivElement | null>(null);
-  const textEditInputRef = useRef<HTMLInputElement | null>(null);
+  const titleEditInputRef = useRef<HTMLInputElement | null>(null);
+  const subtitleEditInputRef = useRef<HTMLInputElement | null>(null);
   const isSubmittingTextEditRef = useRef(false);
   const playlistOpenTimeoutRef = useRef<number | null>(null);
   const skipNextTextEditBlurRef = useRef(false);
-  const editingPlaylistTextField = editingPlaylistText?.field ?? null;
+  const editingPlaylistTextFocusField = editingPlaylistText?.focusField ?? null;
   const editingPlaylistTextPlaylistId = editingPlaylistText?.playlistId ?? null;
 
   const clearPendingPlaylistOpen = useCallback(() => {
@@ -527,19 +526,20 @@ export const SgMatrixPlaylistPanel = ({
   }, [activePlaylist, customPlaylists]);
 
   useEffect(() => {
-    if (!editingPlaylistTextField || !editingPlaylistTextPlaylistId) return;
-    const input = textEditInputRef.current;
+    if (!editingPlaylistTextFocusField || !editingPlaylistTextPlaylistId) return;
+    const input =
+      editingPlaylistTextFocusField === "subtitle" ? subtitleEditInputRef.current : titleEditInputRef.current;
     if (!input) return;
 
     input.focus();
-    if (editingPlaylistTextField === "name") {
+    if (editingPlaylistTextFocusField === "name") {
       input.select();
       return;
     }
 
     const cursorPosition = input.value.length;
     input.setSelectionRange(cursorPosition, cursorPosition);
-  }, [editingPlaylistTextField, editingPlaylistTextPlaylistId]);
+  }, [editingPlaylistTextFocusField, editingPlaylistTextPlaylistId]);
 
   useEffect(() => clearPendingPlaylistOpen, [clearPendingPlaylistOpen]);
 
@@ -565,33 +565,46 @@ export const SgMatrixPlaylistPanel = ({
 
   const getPlaylistTextUpdatePayload = (
     playlist: TCustomPlaylist,
-    field: PlaylistTextEditField,
-    currentValue: string,
-    nextValue: string
+    currentName: string,
+    currentSubtitle: string,
+    nextName: string,
+    nextSubtitle: string
   ): TCustomPlaylistUpdatePayload | null => {
-    if (field === "name") {
-      if (!nextValue || nextValue === currentValue) return null;
-      return { name: nextValue };
+    const payload: TCustomPlaylistUpdatePayload = {};
+
+    if (nextName && nextName !== currentName) {
+      payload.name = nextName;
     }
 
     const savedSubtitle = normalizeCardText(playlist.subtitle);
-    if (!nextValue) return savedSubtitle ? { subtitle: null } : null;
-    if (nextValue === savedSubtitle || (!savedSubtitle && nextValue === currentValue)) return null;
+    if (!nextSubtitle) {
+      if (savedSubtitle) payload.subtitle = null;
+    } else if (savedSubtitle) {
+      if (nextSubtitle !== savedSubtitle) payload.subtitle = nextSubtitle;
+    } else if (nextSubtitle !== currentSubtitle) {
+      payload.subtitle = nextSubtitle;
+    }
 
-    return { subtitle: nextValue };
+    return Object.keys(payload).length > 0 ? payload : null;
   };
 
   const handleStartTextEdit = (
     event: ReactMouseEvent<HTMLElement>,
     playlist: TCustomPlaylist,
-    field: PlaylistTextEditField,
-    currentValue: string
+    focusField: PlaylistTextEditField,
+    currentName: string,
+    currentSubtitle: string
   ) => {
     event.preventDefault();
     event.stopPropagation();
     clearPendingPlaylistOpen();
     setMenuPlaylistId(null);
-    setEditingPlaylistText({ field, playlistId: playlist.id, value: currentValue });
+    setEditingPlaylistText({
+      focusField,
+      name: currentName,
+      playlistId: playlist.id,
+      subtitle: currentSubtitle,
+    });
   };
 
   const handleCancelTextEdit = (skipBlurCommit = false) => {
@@ -601,20 +614,36 @@ export const SgMatrixPlaylistPanel = ({
     setEditingPlaylistText(null);
   };
 
-  const handleSubmitTextEdit = async (playlist: TCustomPlaylist, currentValue: string) => {
+  const handleSubmitTextEdit = async (playlist: TCustomPlaylist, currentName: string, currentSubtitle: string) => {
     if (isSubmittingTextEditRef.current || !editingPlaylistText) return;
 
-    const { field, playlistId, value } = editingPlaylistText;
+    const { playlistId } = editingPlaylistText;
     if (playlistId !== playlist.id) return;
 
-    const payload = getPlaylistTextUpdatePayload(playlist, field, currentValue, value.trim());
+    const nextName = editingPlaylistText.name.trim();
+    if (!nextName) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Edit custom playlist failed",
+        message: "Playlist title is required.",
+      });
+      return;
+    }
+
+    const payload = getPlaylistTextUpdatePayload(
+      playlist,
+      currentName,
+      currentSubtitle,
+      nextName,
+      editingPlaylistText.subtitle.trim()
+    );
     if (!payload) {
       handleCancelTextEdit();
       return;
     }
 
     isSubmittingTextEditRef.current = true;
-    setSavingPlaylistText({ field, playlistId: playlist.id });
+    setSavingPlaylistText({ playlistId: playlist.id });
     try {
       const updatedPlaylist = await onUpdatePlaylist(playlist, payload);
       if (activePlaylist?.id === updatedPlaylist.id) {
@@ -623,17 +652,14 @@ export const SgMatrixPlaylistPanel = ({
       setEditingPlaylistText(null);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: field === "name" ? "Playlist renamed" : "Playlist subtitle updated",
-        message: field === "name" ? "The playlist title was updated." : "The playlist subtitle was updated.",
+        title: "Custom playlist updated",
+        message: "The playlist details were updated.",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: field === "name" ? "Rename failed" : "Subtitle update failed",
-        message:
-          field === "name"
-            ? "Unable to rename this playlist. Please try again."
-            : "Unable to update this playlist subtitle. Please try again.",
+        title: "Edit custom playlist failed",
+        message: "Unable to edit this playlist. Please try again.",
       });
     } finally {
       isSubmittingTextEditRef.current = false;
@@ -742,8 +768,6 @@ export const SgMatrixPlaylistPanel = ({
                 const cardTitle = getPlaylistCardTitle(playlist);
                 const cardSubtitle = getPlaylistCardSubtitle(playlist);
                 const activeTextEdit = editingPlaylistText?.playlistId === playlist.id ? editingPlaylistText : null;
-                const isEditingTitle = activeTextEdit?.field === "name";
-                const isEditingSubtitle = activeTextEdit?.field === "subtitle";
                 const isEditing = Boolean(activeTextEdit);
                 const isSavingText = savingPlaylistText?.playlistId === playlist.id;
                 const thumbnailPreview = (
@@ -755,43 +779,6 @@ export const SgMatrixPlaylistPanel = ({
                     )}
                   </span>
                 );
-                const renderTextEditInput = (currentValue: string, ariaLabel: string, className: string) => (
-                  <form
-                    className="min-w-0 flex-1"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      void handleSubmitTextEdit(playlist, currentValue);
-                    }}
-                  >
-                    <input
-                      ref={textEditInputRef}
-                      type="text"
-                      value={activeTextEdit?.value ?? ""}
-                      disabled={isSavingText}
-                      onChange={(event) =>
-                        setEditingPlaylistText((currentState) =>
-                          currentState ? { ...currentState, value: event.target.value } : currentState
-                        )
-                      }
-                      onBlur={() => {
-                        if (skipNextTextEditBlurRef.current) {
-                          skipNextTextEditBlurRef.current = false;
-                          return;
-                        }
-                        void handleSubmitTextEdit(playlist, currentValue);
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key !== "Escape") return;
-                        event.preventDefault();
-                        event.stopPropagation();
-                        handleCancelTextEdit(true);
-                      }}
-                      className={className}
-                      aria-label={ariaLabel}
-                    />
-                  </form>
-                );
 
                 return (
                   <li key={playlist.id}>
@@ -800,38 +787,69 @@ export const SgMatrixPlaylistPanel = ({
                       ref={menuPlaylistId === playlist.id ? activeMenuRef : null}
                     >
                       {isEditing ? (
-                        <div className="flex w-full min-w-0 items-center gap-2 rounded-[5px] border border-[#338fdc]/50 bg-[var(--sg-matrix-selected-nav)] px-2 py-1.5 text-left shadow-[0_0_0_1px_rgba(51,143,220,0.18)]">
+                        <form
+                          className="flex w-full min-w-0 items-center gap-2 rounded-[5px] bg-[var(--sg-matrix-selected-nav)] px-2 py-1.5 text-left"
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            void handleSubmitTextEdit(playlist, cardTitle, cardSubtitle);
+                          }}
+                          onBlur={(event) => {
+                            if (skipNextTextEditBlurRef.current) {
+                              skipNextTextEditBlurRef.current = false;
+                              return;
+                            }
+                            if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+                            void handleSubmitTextEdit(playlist, cardTitle, cardSubtitle);
+                          }}
+                        >
                           {thumbnailPreview}
                           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span className="flex min-w-0 items-center gap-1.5">
-                              {isEditingTitle ? (
-                                renderTextEditInput(
-                                  cardTitle,
-                                  "Playlist title",
-                                  "h-[19px] w-full min-w-0 rounded-[4px] border border-[#338fdc]/45 bg-black/25 px-1.5 text-[11px] font-medium leading-none text-[var(--sg-matrix-text)] outline-none transition-colors placeholder:text-[var(--sg-matrix-text-muted)] focus:border-[#7cc6ff]/80"
-                                )
-                              ) : (
-                                <span className="truncate text-[11px] font-medium text-[var(--sg-matrix-text-secondary)]">
-                                  {cardTitle}
-                                </span>
-                              )}
+                              <input
+                                ref={titleEditInputRef}
+                                type="text"
+                                value={activeTextEdit?.name ?? ""}
+                                disabled={isSavingText}
+                                onChange={(event) =>
+                                  setEditingPlaylistText((currentState) =>
+                                    currentState ? { ...currentState, name: event.target.value } : currentState
+                                  )
+                                }
+                                onKeyDown={(event) => {
+                                  if (event.key !== "Escape") return;
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  handleCancelTextEdit(true);
+                                }}
+                                className="h-[19px] w-full min-w-0 border-0 bg-transparent px-0 text-[11px] font-medium leading-none text-[var(--sg-matrix-text)] outline-none placeholder:text-[var(--sg-matrix-text-muted)] focus:ring-0"
+                                aria-label="Playlist title"
+                              />
                               <span className="shrink-0 rounded-[4px] border border-[#338fdc]/25 bg-[#338fdc]/10 px-1.5 py-0.5 text-[9px] font-medium leading-none text-[#7cc6ff]">
                                 {formatPlaylistCardClipCount(clipCount)}
                               </span>
                             </span>
-                            {isEditingSubtitle ? (
-                              renderTextEditInput(
-                                cardSubtitle,
-                                "Playlist subtitle",
-                                "h-[18px] w-full min-w-0 rounded-[4px] border border-[#338fdc]/40 bg-black/25 px-1.5 text-[10px] leading-none text-[var(--sg-matrix-text)] outline-none transition-colors placeholder:text-[var(--sg-matrix-text-muted)] focus:border-[#7cc6ff]/75"
-                              )
-                            ) : (
-                              <span className="truncate text-[10px] text-[var(--sg-matrix-text-muted)]">
-                                {isSavingText ? "Saving" : cardSubtitle}
-                              </span>
-                            )}
+                            <input
+                              ref={subtitleEditInputRef}
+                              type="text"
+                              value={activeTextEdit?.subtitle ?? ""}
+                              disabled={isSavingText}
+                              onChange={(event) =>
+                                setEditingPlaylistText((currentState) =>
+                                  currentState ? { ...currentState, subtitle: event.target.value } : currentState
+                                )
+                              }
+                              onKeyDown={(event) => {
+                                if (event.key !== "Escape") return;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                handleCancelTextEdit(true);
+                              }}
+                              className="h-[18px] w-full min-w-0 border-0 bg-transparent px-0 text-[10px] leading-none text-[var(--sg-matrix-text)] outline-none placeholder:text-[var(--sg-matrix-text-muted)] focus:ring-0"
+                              aria-label="Playlist subtitle"
+                            />
                           </span>
-                        </div>
+                        </form>
                       ) : (
                         <button
                           type="button"
@@ -843,8 +861,10 @@ export const SgMatrixPlaylistPanel = ({
                             <span className="flex min-w-0 items-center gap-1.5">
                               <span
                                 className="truncate text-[11px] font-medium text-[var(--sg-matrix-text-secondary)]"
-                                title="Double-click to rename"
-                                onDoubleClick={(event) => handleStartTextEdit(event, playlist, "name", cardTitle)}
+                                title="Double-click to edit custom playlist"
+                                onDoubleClick={(event) =>
+                                  handleStartTextEdit(event, playlist, "name", cardTitle, cardSubtitle)
+                                }
                               >
                                 {cardTitle}
                               </span>
@@ -854,8 +874,10 @@ export const SgMatrixPlaylistPanel = ({
                             </span>
                             <span
                               className="truncate text-[10px] text-[var(--sg-matrix-text-muted)]"
-                              title="Double-click to edit subtitle"
-                              onDoubleClick={(event) => handleStartTextEdit(event, playlist, "subtitle", cardSubtitle)}
+                              title="Double-click to edit custom playlist"
+                              onDoubleClick={(event) =>
+                                handleStartTextEdit(event, playlist, "subtitle", cardTitle, cardSubtitle)
+                              }
                             >
                               {cardSubtitle}
                             </span>
@@ -876,7 +898,15 @@ export const SgMatrixPlaylistPanel = ({
                       ) : null}
 
                       {menuPlaylistId === playlist.id ? (
-                        <div className="absolute right-1.5 top-8 z-30 w-[86px] overflow-hidden rounded-[5px] border border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-panel-secondary)] py-1 shadow-[0_12px_34px_rgba(0,0,0,0.45)]">
+                        <div className="absolute right-1.5 top-8 z-30 w-[148px] overflow-hidden rounded-[5px] border border-[var(--sg-matrix-grid-border)] bg-[var(--sg-matrix-panel-secondary)] py-1 shadow-[0_12px_34px_rgba(0,0,0,0.45)]">
+                          <button
+                            type="button"
+                            onClick={(event) => handleStartTextEdit(event, playlist, "name", cardTitle, cardSubtitle)}
+                            className="flex h-7 w-full items-center gap-2 px-2 text-left text-[11px] text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                            <span>Edit</span>
+                          </button>
                           <button
                             type="button"
                             onClick={(event) => {
