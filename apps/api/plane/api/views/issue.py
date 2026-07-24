@@ -1602,6 +1602,17 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Validates external ID uniqueness if provided.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        # Only the comment author or a project admin may modify a comment.
+        # ProjectLitePermission alone lets any active member (incl. Guest) reach
+        # here, so enforce the same author/admin rule the app applies
+        # (GHSA-h4p4-mwfg-qh82).
+        if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
+            project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
+        ).exists():
+            return Response(
+                {"error": "Only the comment author or a project admin can modify this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
@@ -1671,6 +1682,15 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity for audit purposes.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        # Only the comment author or a project admin may delete a comment
+        # (GHSA-h4p4-mwfg-qh82).
+        if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
+            project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
+        ).exists():
+            return Response(
+                {"error": "Only the comment author or a project admin can delete this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
@@ -2002,6 +2022,23 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         List all attachments for an issue.
         """
+        # This endpoint has no permission_classes beyond IsAuthenticated, and API
+        # tokens authenticate globally (not workspace-scoped), so enforce project
+        # membership on the issue the same way post() does — otherwise any token
+        # holder could read any issue's attachment metadata cross-tenant
+        # (GHSA-xvc5-m5jf-gvpj).
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
+        if not user_has_issue_permission(
+            request.user.id,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to view these attachments"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id,
