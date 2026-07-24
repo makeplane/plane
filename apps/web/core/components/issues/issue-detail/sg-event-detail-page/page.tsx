@@ -515,7 +515,7 @@ export const SgEventDetailPage = ({
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
   const isTagListScrolled = isTagListBodyScrolled || isListPageScrolled;
-  const shouldShowEventDetailsCard = tagViewMode !== "list" || !isTagListScrolled;
+  const shouldShowEventSummary = tagViewMode !== "list" || !isTagListScrolled;
   const shouldShowMatrixEventSummary = !isListPageScrolled;
   const handlePageScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
@@ -574,14 +574,12 @@ export const SgEventDetailPage = ({
                     isTagClipActive={isPlaybackOverrideActive}
                   />
 
-                  {shouldShowEventDetailsCard && (
-                    <SgEventDetailsCard
-                      eventDateTimeLabel={eventDateTimeLabel}
-                      levelLabel={levelLabel}
-                      venueAddress={venueAddress}
-                      venueName={venueName}
-                    />
-                  )}
+                  <SgEventDetailsCard
+                    eventDateTimeLabel={eventDateTimeLabel}
+                    levelLabel={levelLabel}
+                    venueAddress={venueAddress}
+                    venueName={venueName}
+                  />
                 </>
               )}
 
@@ -626,20 +624,22 @@ export const SgEventDetailPage = ({
                     />
                   </div>
 
-                  <SgEventTitleBar
-                    eventStatus={eventStatus}
-                    eventTitle={eventTitle}
-                    handleSwitchToFullStream={handleSwitchToFullStream}
-                    isTagClipActive={isPlaybackOverrideActive}
-                  />
+                  {shouldShowEventSummary && (
+                    <>
+                      <SgEventTitleBar
+                        eventStatus={eventStatus}
+                        eventTitle={eventTitle}
+                        handleSwitchToFullStream={handleSwitchToFullStream}
+                        isTagClipActive={isPlaybackOverrideActive}
+                      />
 
-                  {shouldShowEventDetailsCard && (
-                    <SgEventDetailsCard
-                      eventDateTimeLabel={eventDateTimeLabel}
-                      levelLabel={levelLabel}
-                      venueAddress={venueAddress}
-                      venueName={venueName}
-                    />
+                      <SgEventDetailsCard
+                        eventDateTimeLabel={eventDateTimeLabel}
+                        levelLabel={levelLabel}
+                        venueAddress={venueAddress}
+                        venueName={venueName}
+                      />
+                    </>
                   )}
                 </div>
 
