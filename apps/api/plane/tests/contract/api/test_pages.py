@@ -22,6 +22,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from plane.api.serializers import PageAPISerializer
+from plane.api.views import page as page_views
 from plane.db.models import (
     APIToken,
     Page,
@@ -2076,26 +2077,56 @@ class TestPageLockMinimalWrite:
             assert "description_html" not in sql
 
     @pytest.mark.django_db
+    def test_lock_does_not_go_through_page_save(self, api_key_client, workspace, project, create_page):
+        """Toggling the lock never reaches `Page.save()`.
+
+        `Page.save()` re-derives `description_stripped` by stripping every tag
+        out of the body, however large. On a lock toggle that pass is pure
+        overhead, and its result is discarded anyway because the column is not
+        among the ones being written.
+        """
+        url = self.lock_url(workspace.slug, project.id, create_page.id)
+
+        with mock.patch.object(Page, "save", autospec=True) as saved:
+            assert api_key_client.post(url, format="json").status_code == status.HTTP_200_OK
+
+        saved.assert_not_called()
+        create_page.refresh_from_db()
+        assert create_page.is_locked is True
+
+    @pytest.mark.django_db
+    def test_unlock_does_not_go_through_page_save(self, api_key_client, workspace, project, locked_page):
+        """Unlocking skips `Page.save()` for the same reason."""
+        url = self.lock_url(workspace.slug, project.id, locked_page.id)
+
+        with mock.patch.object(Page, "save", autospec=True) as saved:
+            assert api_key_client.delete(url, format="json").status_code == status.HTTP_200_OK
+
+        saved.assert_not_called()
+        locked_page.refresh_from_db()
+        assert locked_page.is_locked is False
+
+    @pytest.mark.django_db
     def test_lock_preserves_concurrently_written_content(self, api_key_client, workspace, project, create_page):
         """An edit landing between the read and the lock write survives.
 
         The live (Yjs) service can persist content while a lock request is in
         flight. The interleaved write here lands immediately before the lock is
-        saved, so a full-row save would overwrite it with the stale in-memory
-        copy the view read at the start of the request.
+        written, so writing the whole row would overwrite it with the stale
+        in-memory copy the view read at the start of the request.
         """
         url = self.lock_url(workspace.slug, project.id, create_page.id)
-        original_save = Page.save
+        original_touch = page_views.touch_page
 
-        def save_after_concurrent_edit(page_self, *args, **kwargs):
-            """Persist a competing edit, then run the real save."""
-            Page.objects.filter(pk=page_self.pk).update(
+        def touch_after_concurrent_edit(page_id, user, **fields):
+            """Persist a competing edit, then run the real write."""
+            Page.objects.filter(pk=page_id).update(
                 description_html="<p>edited by the live service</p>",
                 description_binary=b"fresh-yjs-blob",
             )
-            return original_save(page_self, *args, **kwargs)
+            return original_touch(page_id, user, **fields)
 
-        with mock.patch.object(Page, "save", save_after_concurrent_edit):
+        with mock.patch.object(page_views, "touch_page", touch_after_concurrent_edit):
             response = api_key_client.post(url, format="json")
 
         assert response.status_code == status.HTTP_200_OK
@@ -2103,6 +2134,106 @@ class TestPageLockMinimalWrite:
         assert create_page.is_locked is True
         assert create_page.description_html == "<p>edited by the live service</p>"
         assert bytes(create_page.description_binary) == b"fresh-yjs-blob"
+
+    @pytest.mark.django_db
+    def test_lock_records_the_audit_trail(self, api_key_client, workspace, project, create_page, create_user):
+        """Writing the column directly still stamps who changed it, and when.
+
+        The narrow write goes around the model's save(), which is where
+        `auto_now` and the audit hook normally run, so the endpoint has to set
+        them itself.
+        """
+        before = create_page.updated_at
+        url = self.lock_url(workspace.slug, project.id, create_page.id)
+
+        assert api_key_client.post(url, format="json").status_code == status.HTTP_200_OK
+
+        create_page.refresh_from_db()
+        assert create_page.updated_by_id == create_user.id
+        assert create_page.updated_at > before
+
+
+@pytest.mark.contract
+class TestPageUnarchiveParentDetach:
+    """Unarchiving under an archived parent detaches without rewriting the body."""
+
+    def archive_url(self, slug, project_id, page_id):
+        """Return the page archive/unarchive URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/archive/"
+
+    @pytest.fixture
+    def archived_child(self, project, create_user):
+        """An archived page whose parent is archived too."""
+        archived_on = date(2024, 1, 1)
+        parent = Page.objects.create(
+            name="Archived Parent",
+            owned_by=create_user,
+            workspace=project.workspace,
+            archived_at=archived_on,
+        )
+        _link_page(project, parent, create_user)
+        child = Page.objects.create(
+            name="Archived Child",
+            owned_by=create_user,
+            workspace=project.workspace,
+            description_html="<p>child body</p>",
+            parent=parent,
+            archived_at=archived_on,
+        )
+        _link_page(project, child, create_user)
+        return child
+
+    @pytest.mark.django_db
+    def test_detach_writes_only_the_parent_column(self, api_key_client, workspace, project, archived_child):
+        """The detach UPDATE names the parent, not the description columns."""
+        url = self.archive_url(workspace.slug, project.id, archived_child.id)
+
+        with CaptureQueriesContext(connection) as captured:
+            assert api_key_client.delete(url, format="json").status_code == status.HTTP_204_NO_CONTENT
+
+        detaches = [
+            q["sql"]
+            for q in captured.captured_queries
+            if q["sql"].strip().upper().startswith("UPDATE") and "parent_id" in q["sql"]
+        ]
+        assert detaches, "expected an UPDATE detaching the parent"
+        for sql in detaches:
+            assert "description_html" not in sql
+            assert "description_binary" not in sql
+
+        archived_child.refresh_from_db()
+        assert archived_child.parent_id is None
+        assert archived_child.archived_at is None
+        assert archived_child.description_html == "<p>child body</p>"
+
+    @pytest.mark.django_db
+    def test_detach_does_not_go_through_page_save(self, api_key_client, workspace, project, archived_child):
+        """Clearing the parent never reaches `Page.save()`.
+
+        Only a foreign key changes, so re-deriving `description_stripped` from
+        the whole body is work with nothing to show for it — the column is not
+        among the ones being written.
+        """
+        url = self.archive_url(workspace.slug, project.id, archived_child.id)
+
+        with mock.patch.object(Page, "save", autospec=True) as saved:
+            assert api_key_client.delete(url, format="json").status_code == status.HTTP_204_NO_CONTENT
+
+        saved.assert_not_called()
+        archived_child.refresh_from_db()
+        assert archived_child.parent_id is None
+
+    @pytest.mark.django_db
+    def test_detach_records_the_audit_trail(self, api_key_client, workspace, project, archived_child, create_user):
+        """Detaching stamps the actor, as a save() would have."""
+        before = archived_child.updated_at
+        url = self.archive_url(workspace.slug, project.id, archived_child.id)
+
+        assert api_key_client.delete(url, format="json").status_code == status.HTTP_204_NO_CONTENT
+
+        archived_child.refresh_from_db()
+        assert archived_child.updated_by_id == create_user.id
+        assert archived_child.updated_at > before
 
 
 @pytest.mark.contract

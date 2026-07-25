@@ -64,6 +64,19 @@ from .base import BaseAPIView
 PAGE_TYPES = {"all", "public", "private", "archived"}
 
 
+def touch_page(page_id, user, **fields):
+    """Write the named page columns without going through ``Page.save()``.
+
+    ``Page.save()`` re-derives ``description_stripped`` by stripping the tags
+    off the whole HTML body on every call. These writes set a single flag or
+    foreign key, so that pass is pure overhead — and its result is discarded
+    anyway, because ``description_stripped`` is not among the columns being
+    written. Going straight to an UPDATE also skips ``auto_now`` and the audit
+    hook, so the audit trail is set here explicitly.
+    """
+    Page.objects.filter(pk=page_id).update(updated_at=timezone.now(), updated_by=user, **fields)
+
+
 def advisory_lock_key(*parts):
     """Derive a stable 64-bit advisory-lock key from the given parts.
 
@@ -204,7 +217,9 @@ class PageAPIBaseView(BaseAPIView):
         except (ValueError, AttributeError, TypeError):
             return invalid_parent
 
-        if self.get_queryset().filter(pk=parent_id).first() is None:
+        # Existence is all that matters here, so ask for exactly that rather
+        # than materialising a row out of the DISTINCT/select_related queryset.
+        if not self.get_queryset().filter(pk=parent_id).exists():
             return invalid_parent
 
         if page_id is not None:
@@ -779,8 +794,8 @@ class PageArchiveAPIEndpoint(PageAPIBaseView):
 
             # If parent is still archived, break the hierarchy
             if page.parent_id and page.parent.archived_at:
+                touch_page(page.id, request.user, parent=None)
                 page.parent = None
-                page.save(update_fields=["parent", "updated_at", "updated_by"])
 
             unarchive_archive_page_and_descendants(page_id, None)
 
@@ -828,12 +843,11 @@ class PageLockAPIEndpoint(PageAPIBaseView):
 
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
-        # Write only the lock flag. A bare save() would rewrite every column
-        # from this in-memory copy, including description_html/description_binary,
-        # clobbering any collaborative edit the live (Yjs) service persisted
-        # between this request's read and its write.
-        page.is_locked = True
-        page.save(update_fields=["is_locked", "updated_at", "updated_by"])
+        # Write only the lock flag. Saving the in-memory copy would rewrite
+        # every column, including description_html/description_binary, clobbering
+        # any collaborative edit the live (Yjs) service persisted between this
+        # request's read and its write.
+        touch_page(page_id, request.user, is_locked=True)
 
         # Dispatch the `page` webhook event for the is_locked change
         model_activity.delay(
@@ -879,8 +893,7 @@ class PageLockAPIEndpoint(PageAPIBaseView):
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
         # Write only the lock flag — see the note on locking above.
-        page.is_locked = False
-        page.save(update_fields=["is_locked", "updated_at", "updated_by"])
+        touch_page(page_id, request.user, is_locked=False)
 
         # Dispatch the `page` webhook event for the is_locked change
         model_activity.delay(
