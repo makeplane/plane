@@ -411,7 +411,10 @@ class TestPageContentUpdateRouting:
         Page.objects.filter(pk=page.id).update(updated_at=timezone.now() - timedelta(days=2))
         before = Page.objects.get(pk=page.id).updated_at
 
-        response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
+        # Stub the webhook fan-out: this test is about updated_at, and the real
+        # task would need a broker.
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity"):
+            response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
 
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()

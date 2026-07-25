@@ -548,7 +548,7 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, page_id):
-        """Create a page in the project and announce it to webhook subscribers."""
+        """Add the page to the requesting user's favorites."""
         _ = UserFavorite.objects.create(
             project_id=project_id,
             entity_identifier=page_id,
@@ -559,7 +559,7 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, page_id):
-        """Delete an archived page owned by the caller or a project admin."""
+        """Remove the page from the requesting user's favorites."""
         page_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
@@ -577,7 +577,7 @@ class PagesDescriptionViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
-        """Return a single page, recording the visit."""
+        """Stream the page's Yjs document back as a binary attachment."""
         page = Page.objects.get(
             Q(owned_by=self.request.user) | Q(access=0),
             pk=page_id,
@@ -598,7 +598,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        """Update page properties and/or content, fanning out the matching webhooks."""
+        """Persist the page's document content — the live collab server's flush target."""
         page = Page.objects.get(
             Q(owned_by=self.request.user) | Q(access=0),
             pk=page_id,

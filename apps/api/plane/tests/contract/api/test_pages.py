@@ -873,7 +873,10 @@ class TestPagePriorStateReporting:
         Page.objects.filter(pk=page.id).update(updated_at=timezone.now() - timedelta(days=2))
         before = Page.objects.get(pk=page.id).updated_at
 
-        response = api_key_client.post(archive_url(workspace.slug, project.id, page.id), format="json")
+        # Stub the webhook fan-out: this test is about updated_at, and the real
+        # task would need a broker.
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity"):
+            response = api_key_client.post(archive_url(workspace.slug, project.id, page.id), format="json")
 
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
@@ -883,7 +886,8 @@ class TestPagePriorStateReporting:
     def test_archive_writes_timezone_aware_date(self, api_key_client, workspace, project, create_user):
         """archived_at lands on the UTC date, not a naive server-local one."""
         page = make_page(project, create_user, access=Page.PUBLIC_ACCESS)
-        response = api_key_client.post(archive_url(workspace.slug, project.id, page.id), format="json")
+        with mock.patch("plane.bgtasks.webhook_task.webhook_activity"):
+            response = api_key_client.post(archive_url(workspace.slug, project.id, page.id), format="json")
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
         assert page.archived_at == timezone.now().date()
