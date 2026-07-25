@@ -12,6 +12,8 @@ project filter, and cursor pagination.
 """
 
 import pytest
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from rest_framework import status
 
 from plane.api.rate_limit import ApiKeyRateThrottle
@@ -333,22 +335,31 @@ class TestPageSearch:
 
     def test_heavy_page_columns_are_not_loaded(self, api_key_client, workspace, project, create_user):
         """The response only needs identity fields plus the stripped text, so the
-        large description columns must stay deferred."""
+        large description columns must never reach the SELECT.
+
+        Asserted against the SQL the request actually runs — checking a queryset
+        built here instead would only prove that Django's .only() works, and
+        would keep passing if the endpoint stopped deferring anything."""
         page = _make_page(workspace, project, create_user, name="Roadmap", content="Some body text")
         page.description_json = {"big": "payload"}
         page.save()
 
-        response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
+        with CaptureQueriesContext(connection) as captured:
+            response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
+
         assert response.status_code == status.HTTP_200_OK, response.data
         assert {r["id"] for r in response.data["results"]} == {str(page.id)}
 
-        # Assert on the queryset the view builds rather than the rendered output.
-        from plane.db.models import Page as PageModel
+        page_selects = [
+            entry["sql"]
+            for entry in captured.captured_queries
+            if entry["sql"].lstrip().upper().startswith("SELECT") and '"pages"."description_stripped"' in entry["sql"]
+        ]
+        assert page_selects, "no page SELECT captured — the assertions below would be vacuous"
 
-        deferred = PageModel.objects.only("id", "name", "parent_id", "updated_at", "description_stripped")[0]
-        assert "description_html" in deferred.get_deferred_fields()
-        assert "description_binary" in deferred.get_deferred_fields()
-        assert "description_json" in deferred.get_deferred_fields()
+        for sql in captured.captured_queries:
+            for heavy_column in ("description_html", "description_binary", "description_json"):
+                assert heavy_column not in sql["sql"], f"{heavy_column} was selected: {sql['sql']}"
 
     def test_page_linked_to_project_in_another_workspace_is_not_exposed(
         self, api_key_client, workspace, create_user, other_user

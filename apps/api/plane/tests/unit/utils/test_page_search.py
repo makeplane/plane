@@ -5,10 +5,10 @@
 """Unit tests for the page search snippet helper."""
 
 import re
-import time
 
 import pytest
 
+from plane.utils import page_search
 from plane.utils.page_search import (
     SNIPPET_LEAD_CHARS,
     SNIPPET_MAX_LENGTH,
@@ -104,20 +104,33 @@ class TestBuildPageSnippet:
         assert "budget review" in snippet.lower()
         assert "\n" not in snippet
 
-    def test_only_a_bounded_window_is_normalized(self):
-        """A large document must not be rewritten in full for a single snippet."""
-        head = "a" * 5_000_000
-        text = head + " needle tail"
+    def test_only_a_bounded_window_is_normalized(self, monkeypatch):
+        """A large document must not be rewritten in full for a single snippet.
 
-        started = time.perf_counter()
+        Checked by observing what the whitespace normalizer is handed rather than
+        by elapsed time, which would depend on CI hardware and load."""
+        real_pattern = page_search._WHITESPACE_RE
+        normalized_sizes = []
+
+        class RecordingPattern:
+            def sub(self, repl, string):
+                normalized_sizes.append(len(string))
+                return real_pattern.sub(repl, string)
+
+        monkeypatch.setattr(page_search, "_WHITESPACE_RE", RecordingPattern())
+
+        text = "a" * 5_000_000 + " needle tail"
         snippet = build_page_snippet(text, "needle")
-        elapsed = time.perf_counter() - started
 
         assert "needle" in snippet
         assert len(snippet) <= SNIPPET_MAX_LENGTH
-        # Collapsing all 5 MB per hit takes far longer than this; the window
-        # keeps the work proportional to the snippet, not the document.
-        assert elapsed < 0.25, f"took {elapsed:.3f}s — the whole document was likely normalized"
+        assert normalized_sizes, "the normalizer was never called"
+        # With the default budget the window is ~1.3 KB; the bound below is loose
+        # enough to survive tuning but still orders of magnitude under the 5 MB
+        # document, so collapsing everything would fail the test.
+        assert max(normalized_sizes) <= 10_000, (
+            f"normalizer received {max(normalized_sizes)} characters — the whole document was likely collapsed"
+        )
 
     @pytest.mark.parametrize(
         "text,query",
