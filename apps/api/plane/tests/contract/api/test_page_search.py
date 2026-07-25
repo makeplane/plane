@@ -265,6 +265,48 @@ class TestPageSearch:
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data["results"] == []
 
+    def test_guest_without_view_all_sees_only_own_pages(self, api_key_client, workspace, create_user, other_user):
+        """A guest in a project that has not opted guests into full visibility
+        may only see the pages they own — the rule PageViewSet enforces."""
+        project = _make_project(workspace, other_user, "GP", member=other_user)
+        project.guest_view_all_features = False
+        project.save()
+        ProjectMember.objects.create(project=project, member=create_user, role=5, is_active=True)
+
+        _make_page(workspace, project, other_user, name="Roadmap Owned By Other")
+        own = _make_page(workspace, project, create_user, name="Roadmap Owned By Me")
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert {r["id"] for r in response.data["results"]} == {str(own.id)}
+
+    def test_guest_with_view_all_sees_project_pages(self, api_key_client, workspace, create_user, other_user):
+        """When the project opts guests into full visibility, a guest sees the
+        project's public pages like any other member."""
+        project = _make_project(workspace, other_user, "GV", member=other_user)
+        project.guest_view_all_features = True
+        project.save()
+        ProjectMember.objects.create(project=project, member=create_user, role=5, is_active=True)
+
+        others = _make_page(workspace, project, other_user, name="Roadmap Owned By Other")
+        own = _make_page(workspace, project, create_user, name="Roadmap Owned By Me")
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert {r["id"] for r in response.data["results"]} == {str(others.id), str(own.id)}
+
+    def test_unknown_workspace_returns_empty_results(self, api_key_client, workspace, project, create_user):
+        """An unrecognised slug yields an empty result set rather than a 404 —
+        the endpoint documents exactly this behaviour."""
+        _make_page(workspace, project, create_user, name="Roadmap")
+
+        response = api_key_client.get(_url("no-such-workspace"), {"query": "roadmap"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data["results"] == []
+
     def test_per_page_zero_returns_400(self, api_key_client, workspace, project, create_user):
         _make_page(workspace, project, create_user, name="Roadmap")
         response = api_key_client.get(_url(workspace.slug), {"query": "roadmap", "per_page": 0})
