@@ -1991,3 +1991,34 @@ class TestPageProjectLinkScoping:
 
         assert response.status_code == status.HTTP_409_CONFLICT
         assert response.data["id"] == str(page.id)
+
+
+@pytest.mark.contract
+class TestPageCreateInArchivedProject:
+    """Creating a page in an archived project is refused, not silently lost."""
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    @pytest.mark.django_db
+    def test_create_is_rejected(self, api_key_client, workspace, project):
+        """An archived project rejects the write with a clear message.
+
+        Every read path excludes pages in archived projects, so accepting the
+        create would persist a row the caller can never retrieve again.
+        """
+        Project.objects.filter(pk=project.id).update(archived_at=timezone.now())
+
+        response = api_key_client.post(self.list_url(workspace.slug, project.id), {"name": "Doomed"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "archived project" in response.data["error"].lower()
+        assert not Page.objects.filter(name="Doomed").exists()
+
+    @pytest.mark.django_db
+    def test_create_still_works_in_a_live_project(self, api_key_client, workspace, project):
+        """A live project is unaffected by the guard."""
+        response = api_key_client.post(self.list_url(workspace.slug, project.id), {"name": "Fine"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED

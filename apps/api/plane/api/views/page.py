@@ -51,7 +51,7 @@ from plane.utils.openapi import (
     PAGE_ACCESS_DENIED_RESPONSE,
     PAGE_NOT_ARCHIVED_RESPONSE,
     PAGE_DELETE_FORBIDDEN_RESPONSE,
-    PAGE_INVALID_PARENT_RESPONSE,
+    PAGE_WRITE_REJECTED_RESPONSE,
     CONFLICT_RESPONSE,
     DELETED_RESPONSE,
     create_paginated_response,
@@ -325,7 +325,7 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
                 response=PageAPISerializer,
                 examples=[PAGE_EXAMPLE],
             ),
-            400: PAGE_INVALID_PARENT_RESPONSE,
+            400: PAGE_WRITE_REJECTED_RESPONSE,
             409: CONFLICT_RESPONSE,
         },
     )
@@ -336,6 +336,15 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
         Supports external_id/external_source for third-party integrations.
         """
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
+
+        # Pages in an archived project are excluded from every read path, so
+        # accepting the write here would create a row the caller can never see
+        # again through this API.
+        if project.archived_at:
+            return Response(
+                {"error": "Pages cannot be added to an archived project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = PageAPISerializer(data=request.data)
         if serializer.is_valid():

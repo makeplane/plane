@@ -346,8 +346,8 @@ PAGE_DELETE_FORBIDDEN_RESPONSE = OpenApiResponse(
     ],
 )
 
-PAGE_INVALID_PARENT_RESPONSE = OpenApiResponse(
-    description="The requested parent page is invalid",
+PAGE_WRITE_REJECTED_RESPONSE = OpenApiResponse(
+    description="The page cannot be created as requested",
     examples=[
         OpenApiExample(
             name="Parent Not Found",
@@ -356,6 +356,10 @@ PAGE_INVALID_PARENT_RESPONSE = OpenApiResponse(
         OpenApiExample(
             name="Parent Cycle",
             value={"error": "A page cannot be its own parent or descendant"},
+        ),
+        OpenApiExample(
+            name="Project Archived",
+            value={"error": "Pages cannot be added to an archived project"},
         ),
     ],
 )
