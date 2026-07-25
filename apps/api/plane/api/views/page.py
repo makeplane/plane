@@ -64,11 +64,6 @@ from .base import BaseAPIView
 PAGE_TYPES = {"all", "public", "private", "archived"}
 
 
-def as_text(value):
-    """Render a value the way the model stores it, so the two compare equally."""
-    return str(value) if value is not None else None
-
-
 def advisory_lock_key(*parts):
     """Derive a stable 64-bit advisory-lock key from the given parts.
 
@@ -508,29 +503,35 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Only the owner can change access
-        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        # Snapshot before mutation for version history + webhook diffing
-        description_html_sent = "description_html" in request.data
-        old_description_html = page.description_html
-        current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
-
-        # The external identity is the (id, source) pair: a change to either
-        # half can collide, so both are compared against the stored values.
-        external_id = request.data.get("external_id", page.external_id)
-        external_source = request.data.get("external_source", page.external_source)
-        identity_changed = (as_text(external_id), as_text(external_source)) != (
-            page.external_id,
-            page.external_source,
-        )
-
         serializer = self.serialize(page, data=request.data, partial=True)
         if serializer.is_valid():
+            # Only the owner can change access. Compare the *validated* value:
+            # request.data still carries the wire encoding, so a form-encoded
+            # body delivers access as "0"/"1", which never equals the stored
+            # integer and would 403 a non-owner who never touched access.
+            if serializer.validated_data.get("access", page.access) != page.access and (
+                page.owned_by_id != request.user.id
+            ):
+                return Response(
+                    {"error": "Access cannot be updated since this page is owned by someone else"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # Snapshot before mutation for version history + webhook diffing.
+            # Deliberately serialized without the request: this records what the
+            # page *is*, so activity and webhook payloads stay faithful, rather
+            # than being filtered for a reader as a response would be.
+            description_html_sent = "description_html" in serializer.validated_data
+            old_description_html = page.description_html
+            current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
+
+            # The external identity is the (id, source) pair: a change to either
+            # half can collide, so both are compared against the stored values.
+            # Read from validated_data for the same reason as access above.
+            external_id = serializer.validated_data.get("external_id", page.external_id)
+            external_source = serializer.validated_data.get("external_source", page.external_source)
+            identity_changed = (external_id, external_source) != (page.external_id, page.external_source)
+
             with transaction.atomic():
                 # Validate the requested parent inside the transaction that
                 # persists it. Two concurrent reparents could otherwise each see

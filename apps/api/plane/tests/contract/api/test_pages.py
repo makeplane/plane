@@ -1611,6 +1611,79 @@ class TestPageExternalIdentityUpdate:
 
 
 @pytest.mark.contract
+class TestPageAccessChangeDetection:
+    """Only a real change of `access` may cost a non-owner a 403."""
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.fixture
+    def other_users_page(self, project, actors):
+        """A public page owned by someone other than the `member` actor."""
+        owner = actors["owner"]["user"]
+        page = Page.objects.create(
+            name="Owned elsewhere",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+        )
+        _link_page(project, page, owner)
+        return page
+
+    @pytest.mark.django_db
+    def test_form_encoded_unchanged_access_is_not_a_change(self, workspace, project, actors, other_users_page):
+        """Resending the current access as form data is not an access change.
+
+        A form-encoded body delivers `access` as the string "0", which never
+        equals the stored integer. Comparing the raw body would read that as a
+        change and 403 a non-owner who touched nothing.
+        """
+        response = actors["member"]["client"].patch(
+            self.detail_url(workspace.slug, project.id, other_users_page.id),
+            {"name": "Renamed", "access": "0"},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        other_users_page.refresh_from_db()
+        assert other_users_page.name == "Renamed"
+        assert other_users_page.access == Page.PUBLIC_ACCESS
+
+    @pytest.mark.django_db
+    def test_form_encoded_real_access_change_is_still_forbidden(self, workspace, project, actors, other_users_page):
+        """The coercion must not soften the rule it is protecting."""
+        response = actors["member"]["client"].patch(
+            self.detail_url(workspace.slug, project.id, other_users_page.id),
+            {"access": "1"},
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        other_users_page.refresh_from_db()
+        assert other_users_page.access == Page.PUBLIC_ACCESS
+
+    @pytest.mark.django_db
+    def test_owner_may_change_access_form_encoded(self, workspace, project, actors):
+        """The owner keeps the ability to flip access."""
+        owner = actors["owner"]
+        page = Page.objects.create(
+            name="Mine",
+            owned_by=owner["user"],
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+        )
+        _link_page(project, page, owner["user"])
+
+        response = owner["client"].patch(
+            self.detail_url(workspace.slug, project.id, page.id),
+            {"access": "1"},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.access == Page.PRIVATE_ACCESS
+
+
+@pytest.mark.contract
 class TestPageExternalIdentityConflictPayload:
     """A 409 names the page that actually owns the conflicting identity."""
 
