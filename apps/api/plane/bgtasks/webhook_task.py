@@ -543,6 +543,22 @@ def webhook_activity(
         if not webhooks:
             return
 
+        # Build the payload once instead of once per subscriber: every webhook for
+        # this event receives the same serialized object and actor, so doing it
+        # inside the loop re-queried and re-serialized both N times. Resolving it
+        # before the debounce claim also means a vanished object bails out without
+        # burning the window, and no subscriber can be handed a payload that a
+        # later iteration then fails to build.
+        event_data = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+        activity = {
+            "field": field,
+            "new_value": new_value,
+            "old_value": old_value,
+            "actor": get_model_data(event="user", event_id=actor_id),
+            "old_identifier": old_identifier,
+            "new_identifier": new_identifier,
+        }
+
         # Collapse the live collab server's frequent content-persist flushes into
         # at most one ``page`` update webhook per debounce window. Property edits
         # (debounce=False) always deliver and just refresh that window. Claimed
@@ -558,19 +574,10 @@ def webhook_activity(
                     webhook_id=webhook.id,
                     slug=slug,
                     event=event,
-                    event_data=(
-                        {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
-                    ),
+                    event_data=event_data,
                     action=verb,
                     current_site=current_site,
-                    activity={
-                        "field": field,
-                        "new_value": new_value,
-                        "old_value": old_value,
-                        "actor": get_model_data(event="user", event_id=actor_id),
-                        "old_identifier": old_identifier,
-                        "new_identifier": new_identifier,
-                    },
+                    activity=activity,
                 )
         except Exception:
             if debounced_page_update:

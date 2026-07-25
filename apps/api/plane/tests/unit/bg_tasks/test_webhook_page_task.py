@@ -405,3 +405,69 @@ class TestPageUpdateWebhookDebounceSafety:
             self._fire_content_update(page, create_user, workspace)
 
         mock_send_task.delay.assert_called_once()
+
+
+@pytest.mark.unit
+class TestPageWebhookPayloadBuiltOnce:
+    """The payload is identical for every subscriber, so it is built once."""
+
+    @pytest.fixture
+    def three_page_webhooks(self, workspace):
+        """Three active webhooks all subscribed to page events."""
+        return [
+            Webhook.objects.create(workspace=workspace, url=f"https://example.com/hook-{i}", page=True)
+            for i in range(3)
+        ]
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_object_and_actor_serialized_once_for_many_subscribers(
+        self, mock_send_task, three_page_webhooks, page, create_user, workspace
+    ):
+        """Serializing per subscriber would re-query the page and actor N times."""
+        with patch(
+            "plane.bgtasks.webhook_task.get_model_data",
+            side_effect=lambda event, event_id, **kw: {"id": str(event_id), "event": event},
+        ) as mocked_get_model_data:
+            webhook_activity(
+                event="page",
+                verb="created",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=create_user.id,
+                slug=workspace.slug,
+                current_site="http://localhost",
+                event_id=page.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+
+        # All three subscribers were dispatched to...
+        assert mock_send_task.delay.call_count == 3
+        # ...from a single page lookup plus a single actor lookup.
+        assert mocked_get_model_data.call_count == 2
+        events = sorted(call.kwargs["event"] for call in mocked_get_model_data.call_args_list)
+        assert events == ["page", "user"]
+        # Every subscriber received the same payload.
+        payloads = [call.kwargs["event_data"] for call in mock_send_task.delay.call_args_list]
+        assert all(p == payloads[0] for p in payloads)
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_missing_object_dispatches_nothing(self, mock_send_task, three_page_webhooks, create_user, workspace):
+        """A page deleted before the fan-out runs delivers to nobody, rather than
+        to whichever subscribers came before the failure."""
+        webhook_activity(
+            event="page",
+            verb="created",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=create_user.id,
+            slug=workspace.slug,
+            current_site="http://localhost",
+            event_id=uuid4(),
+            old_identifier=None,
+            new_identifier=None,
+        )
+
+        mock_send_task.delay.assert_not_called()
