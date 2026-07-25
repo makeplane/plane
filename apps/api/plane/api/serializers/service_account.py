@@ -2,13 +2,42 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.utils import timezone
+
 # Third party imports
 from rest_framework import serializers
+from rest_framework.fields import empty
+from rest_framework.utils import html
 
 # Module imports
 from plane.api.serializers.base import BaseSerializer
 from plane.db.models import APIToken
 from plane.utils.service_account import DEFAULT_SERVICE_ACCOUNT_ROLE, SERVICE_ACCOUNT_ROLES
+
+
+class OmittableDateTimeField(serializers.DateTimeField):
+    """A DateTimeField where an empty HTML form value means "omitted", not null.
+
+    DRF maps an empty string from a form/multipart body to ``None`` when
+    ``allow_null`` is set, which is indistinguishable from an explicit JSON
+    ``null``. Rotation needs that distinction (omitted → inherit the source
+    token's expiry; null → never expire), so an empty HTML value is treated as
+    absent instead — the key is then omitted from ``validated_data``.
+    """
+
+    def get_value(self, dictionary):
+        """Return ``empty`` for a blank HTML value so it reads as omitted, not null."""
+        if html.is_html_input(dictionary) and dictionary.get(self.field_name, "") == "":
+            return empty
+        return super().get_value(dictionary)
+
+
+def _validate_future_expiry(value):
+    """Reject a non-null expiry that is not in the future (a DOA credential)."""
+    if value is not None and value <= timezone.now():
+        raise serializers.ValidationError("expired_at must be in the future.")
+    return value
 
 
 class ServiceAccountCreateSerializer(serializers.Serializer):
@@ -41,11 +70,13 @@ class ServiceAccountCreateSerializer(serializers.Serializer):
         max_length=255,
         help_text="Optional display name shown in the members UI; falls back to name when omitted",
     )
+    # No `default` so an omitted description is absent from validated_data (→ the
+    # helper applies its generated default), while an explicit "" is preserved as
+    # a deliberate empty description.
     description = serializers.CharField(
         required=False,
         allow_blank=True,
-        default="",
-        help_text="Optional description stored on the API token",
+        help_text="Optional description stored on the API token; a default is generated when omitted",
     )
 
 
@@ -89,7 +120,7 @@ class ServiceAccountTokenSerializer(BaseSerializer):
 
 
 class ServiceAccountTokenCreateSerializer(serializers.Serializer):
-    """Request body for minting or rotating a service account token."""
+    """Request body for minting a service account token."""
 
     label = serializers.CharField(
         required=False, allow_blank=True, max_length=255, help_text="Optional human-readable token label"
@@ -98,7 +129,33 @@ class ServiceAccountTokenCreateSerializer(serializers.Serializer):
         required=False, allow_blank=True, default="", help_text="Optional token description"
     )
     expired_at = serializers.DateTimeField(
-        required=False, allow_null=True, default=None, help_text="Optional expiry; the token never expires when omitted"
+        required=False,
+        allow_null=True,
+        validators=[_validate_future_expiry],
+        help_text="Optional expiry; the token never expires when omitted",
+    )
+
+
+class ServiceAccountTokenRotateSerializer(serializers.Serializer):
+    """Request body for rotating a service account token.
+
+    Only the expiry is caller-settable — the replacement inherits the source
+    token's label and description. ``expired_at`` uses :class:`OmittableDateTimeField`
+    and declares no ``default``, so DRF omits the key from ``validated_data`` when
+    the caller omits the field (or sends an empty form value). That lets rotation
+    tell "not supplied" (inherit the source token's expiry) apart from an explicit
+    ``null`` (never expire).
+    """
+
+    expired_at = OmittableDateTimeField(
+        required=False,
+        allow_null=True,
+        validators=[_validate_future_expiry],
+        help_text=(
+            "Expiry for the replacement token. Omit to inherit the source token's expiry; "
+            "pass null to deliberately make the replacement never expire. A supplied timestamp "
+            "must be in the future."
+        ),
     )
 
 

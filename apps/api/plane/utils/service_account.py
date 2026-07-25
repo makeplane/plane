@@ -21,6 +21,10 @@ from dataclasses import dataclass
 
 # Django imports
 from django.db import transaction
+from django.utils import timezone
+
+# Third party imports
+from crum import get_current_user
 
 # Module imports
 from plane.db.models import APIToken, BotTypeEnum, ProjectMember, User, Workspace, WorkspaceMember
@@ -33,6 +37,50 @@ SERVICE_ACCOUNT_ROLES: dict[str, int] = {"admin": 20, "member": 15, "guest": 5}
 # admin seat is the justified default. Narrow it with --role when a service
 # account only needs member/guest scope.
 DEFAULT_SERVICE_ACCOUNT_ROLE = "admin"
+
+# Sentinel for "the caller supplied no expiry" on rotation — distinct from an
+# explicit None, which means "the replacement never expires".
+INHERIT_EXPIRY = object()
+
+
+def _audit_fields() -> dict:
+    """Audit fields for a bulk ``QuerySet.update()``.
+
+    ``QuerySet.update()`` bypasses ``Model.save()``, so ``updated_at`` (auto_now)
+    and ``updated_by`` are not set automatically. Set them explicitly, mirroring
+    what ``BaseModel.save()`` would do — ``updated_by`` is the current actor, or
+    ``None`` when there is no authenticated user.
+    """
+    actor = get_current_user()
+    return {
+        "updated_at": timezone.now(),
+        "updated_by_id": actor.id if (actor is not None and not actor.is_anonymous) else None,
+    }
+
+
+class ServiceAccountTokenError(Exception):
+    """Base for token-rotation preconditions the caller has to resolve.
+
+    Subclasses carry a machine-readable ``code`` and the ``status_code`` the HTTP
+    layer should surface, so a view can map the whole family in one ``except``.
+    """
+
+    code = "SERVICE_ACCOUNT_TOKEN_ERROR"
+    status_code = 400
+
+
+class TokenNotActiveError(ServiceAccountTokenError):
+    """Raised when rotating a token that is not active."""
+
+    code = "TOKEN_NOT_ACTIVE"
+    status_code = 409
+
+
+class SourceExpiryElapsedError(ServiceAccountTokenError):
+    """Raised when inheriting the source token's expiry would mint an already-expired token."""
+
+    code = "SOURCE_TOKEN_EXPIRY_ELAPSED"
+    status_code = 400
 
 
 @dataclass
@@ -50,6 +98,7 @@ class ServiceAccount:
 
     @property
     def token(self) -> str:
+        """Return the plaintext API key minted for this account."""
         return self.api_token.token
 
 
@@ -64,7 +113,9 @@ def resolve_service_account_role(role: str | int) -> int:
         return SERVICE_ACCOUNT_ROLES[role]
     except KeyError:
         valid = ", ".join(SERVICE_ACCOUNT_ROLES)
-        raise ValueError(f"Invalid role '{role}'. Choose one of: {valid}.")
+        # `from None` so the user-facing validation error isn't buried under a
+        # noisy KeyError chain.
+        raise ValueError(f"Invalid role '{role}'. Choose one of: {valid}.") from None
 
 
 @transaction.atomic
@@ -74,7 +125,7 @@ def create_service_account(
     name: str,
     role: str | int = DEFAULT_SERVICE_ACCOUNT_ROLE,
     email: str | None = None,
-    description: str = "",
+    description: str | None = None,
     username: str | None = None,
     display_name: str | None = None,
 ) -> ServiceAccount:
@@ -93,7 +144,8 @@ def create_service_account(
     from the DB insert — the caller is expected to check for it and surface a
     readable error); when omitted a synthetic ``svc_<uuid>`` value is generated.
     ``display_name`` is what the workspace members UI shows; it falls back to
-    ``name`` when omitted.
+    ``name`` when omitted. ``description`` is the token's description; ``None``
+    (omitted) applies a generated default, while an explicit ``""`` is preserved.
 
     No email is sent and no password is ever round-tripped. ``is_bot=True``
     additionally blocks the interactive login/signup flow
@@ -144,11 +196,17 @@ def create_service_account(
         company_role="",
     )
 
+    # None means "omitted" → apply the generated default; an explicit "" is a
+    # deliberate empty description and is preserved (do not use `or`, which would
+    # conflate blank with omitted).
+    if description is None:
+        description = f"Service account token for {name}"
+
     api_token = mint_service_account_token(
         user=user,
         workspace=workspace,
         label=name,
-        description=description or f"Service account token for {name}",
+        description=description,
     )
 
     return ServiceAccount(user=user, member=member, api_token=api_token)
@@ -175,23 +233,53 @@ def mint_service_account_token(*, user, workspace, label=None, description="", e
 
 
 @transaction.atomic
-def rotate_service_account_token(*, token: APIToken, expired_at=None) -> APIToken:
+def rotate_service_account_token(*, token: APIToken, expired_at=INHERIT_EXPIRY) -> APIToken:
     """Atomically mint a replacement token and deactivate the old one.
 
-    The replacement inherits the old token's label/description/workspace so the
-    rotation is transparent to consumers; ``expired_at`` may be set anew. The old
-    token is deactivated (``is_active=False``) so authenticating with it fails
-    immediately.
+    The replacement inherits the source token's label, description, workspace
+    and — unless the caller says otherwise — its ``expired_at``, so rotating a
+    bounded-lifetime credential never silently produces a never-expiring one.
+    Pass a datetime to set a new expiry, or an explicit ``None`` to clear it.
+
+    Raises :class:`TokenNotActiveError` if the source token is not active (an
+    already-rotated or deactivated token cannot be used to mint further
+    replacements), and :class:`SourceExpiryElapsedError` if inheriting would
+    produce a token that is already expired — the caller must state its intent
+    instead of receiving a credential that can never authenticate.
+
+    The old token is deactivated (``is_active=False``) so authenticating with it
+    fails immediately.
     """
+    inherited = expired_at is INHERIT_EXPIRY
+    new_expired_at = token.expired_at if inherited else expired_at
+
+    # When inheriting, the replacement copies the source's ABSOLUTE expiry instant
+    # (its remaining lifetime), never a fresh window. If that instant has already
+    # elapsed, inheriting would hand back a token that can never authenticate
+    # (auth requires expired_at > now), so make the caller state its intent. An
+    # explicitly-supplied expiry is validated for future-ness at the serializer,
+    # so it is trusted here.
+    if inherited and new_expired_at is not None and new_expired_at <= timezone.now():
+        raise SourceExpiryElapsedError(
+            "The source token's expiry has already elapsed; pass expired_at explicitly (a future timestamp or null)."
+        )
+
+    # Deactivate FIRST, conditionally on the row still being active: a plain
+    # read-then-write is racy, so two concurrent rotations of the same token
+    # would each mint an active replacement. Only the caller whose UPDATE
+    # actually matched a row proceeds. .update() bypasses save(), so updated_at
+    # (auto_now) and the acting user are set explicitly via _audit_fields.
+    if not APIToken.objects.filter(pk=token.pk, is_active=True).update(is_active=False, **_audit_fields()):
+        raise TokenNotActiveError("The token is not active and cannot be rotated.")
+
     replacement = mint_service_account_token(
         user=token.user,
         workspace=token.workspace,
         label=token.label,
         description=token.description,
-        expired_at=expired_at,
+        expired_at=new_expired_at,
     )
     token.is_active = False
-    token.save(update_fields=["is_active", "updated_at"])
     return replacement
 
 
@@ -205,12 +293,15 @@ def decommission_service_account(*, user: User, workspace: Workspace) -> None:
     everything it created) survives; ``is_active=False`` alone revokes API access
     (``APIKeyAuthentication`` requires ``user__is_active``).
 
-    The token/user deactivation is global while membership removal is scoped to
-    ``workspace``; this is consistent because a service account belongs to
-    exactly one workspace (it is created for one workspace and there is no API to
-    add it to another), so "retire the user" == "retire it in this workspace".
+    Token deactivation and membership removal are scoped to ``workspace`` (tokens
+    are workspace-scoped via ``APIToken.workspace``), so decommissioning in one
+    workspace never touches tokens or memberships in another. The User is then
+    deactivated to retire the identity — a service account belongs to exactly one
+    workspace, so this completes the revocation.
     """
-    APIToken.objects.filter(user=user).update(is_active=False)
+    # .update() bypasses save(), so set the audit fields (updated_at/updated_by)
+    # explicitly, consistent with rotation.
+    APIToken.objects.filter(user=user, workspace=workspace).update(is_active=False, **_audit_fields())
     ProjectMember.objects.filter(member=user, workspace=workspace).delete()
     WorkspaceMember.objects.filter(member=user, workspace=workspace).delete()
     user.is_active = False

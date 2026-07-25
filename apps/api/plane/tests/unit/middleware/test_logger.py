@@ -77,6 +77,7 @@ class TestAPITokenLogMiddleware:
             assert not process_logs.delay.called
 
     def test_response_body_is_logged_by_default(self, middleware, request_factory):
+        """Test an unflagged response body is logged verbatim"""
         request = request_factory.get("/api/v1/workspaces/", HTTP_X_API_KEY=self.API_KEY)
         request.user = AnonymousUser()
         response = HttpResponse(b'{"ok": true}')
@@ -86,6 +87,7 @@ class TestAPITokenLogMiddleware:
         assert log_data["response_body"] == '{"ok": true}'
 
     def test_flagged_response_body_is_redacted(self, middleware, request_factory):
+        """Test a flagged (secret-bearing) response body is redacted"""
         # A view that returns a secret (e.g. a minted API token) flags its response
         # via redact_response_body so the body is never persisted in plaintext.
         request = request_factory.post("/api/v1/workspaces/x/service-accounts/", HTTP_X_API_KEY=self.API_KEY)

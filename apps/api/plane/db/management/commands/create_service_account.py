@@ -23,6 +23,7 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
+        """Register the command's arguments on the parser."""
         parser.add_argument("--workspace", type=str, required=True, help="Workspace slug")
         parser.add_argument("--name", type=str, required=True, help="Name for the service account (token label)")
         parser.add_argument(
@@ -51,9 +52,15 @@ class Command(BaseCommand):
             default=None,
             help="Optional email; a unique synthetic one is generated when omitted",
         )
-        parser.add_argument("--description", type=str, default="", help="Optional token description")
+        parser.add_argument(
+            "--description",
+            type=str,
+            default=None,
+            help="Optional token description; a default is generated when omitted",
+        )
 
     def handle(self, *args, **options):
+        """Create the service account and print its details and API token."""
         if not options["name"].strip():
             raise CommandError("--name must not be empty")
 
@@ -61,11 +68,29 @@ class Command(BaseCommand):
         if workspace is None:
             raise CommandError(f"Workspace with slug '{options['workspace']}' does not exist")
 
-        email = options.get("email")
+        # Normalize identity options: strip surrounding whitespace and treat a
+        # blank (or whitespace-only) value as omitted, so " " cannot slip past the
+        # synthetic-fallback checks and create an all-whitespace username/email.
+        email = (options.get("email") or "").strip() or None
+        username = (options.get("username") or "").strip() or None
+        display_name = (options.get("display_name") or "").strip() or None
+
+        # Mirror the serializer's max_length checks so an over-long value fails
+        # with a clear CommandError instead of a raw DB DataError. Lengths are
+        # read from the model fields rather than hardcoded.
+        length_limits = {
+            "--name": (options["name"], User._meta.get_field("first_name").max_length),
+            "--username": (username, User._meta.get_field("username").max_length),
+            "--display-name": (display_name, User._meta.get_field("display_name").max_length),
+            "--email": (email, User._meta.get_field("email").max_length),
+        }
+        for flag, (value, limit) in length_limits.items():
+            if value and len(value) > limit:
+                raise CommandError(f"{flag} must be at most {limit} characters")
+
         if email and User.objects.filter(email=email).exists():
             raise CommandError(f"A user with email '{email}' already exists")
 
-        username = options.get("username")
         if username and User.objects.filter(username=username).exists():
             raise CommandError(f"A user with username '{username}' already exists")
 
@@ -74,10 +99,10 @@ class Command(BaseCommand):
                 workspace=workspace,
                 name=options["name"],
                 role=options["role"],
-                email=options["email"],
+                email=email,
                 description=options["description"],
                 username=username,
-                display_name=options.get("display_name"),
+                display_name=display_name,
             )
         except IntegrityError as exc:
             # A concurrent insert (email/username race that slipped past the checks

@@ -22,18 +22,19 @@ Creating a service account performs three writes in a single transaction:
    (`is_bot=True`, `bot_type=SERVICE`) with an unusable password
    (`is_password_autoset=True`). Its `username` and `display_name` may be
    caller-chosen (see [Identity fields](#identity-fields)) or default to
-   synthetic values; its `email` is always a unique synthetic address — no mail
-   is ever sent to it.
+   synthetic values; its `email` defaults to a unique synthetic address (the
+   management command's `--email` can override it) — no mail is ever sent to it.
 2. A `WorkspaceMember` binding the user to the workspace at the requested role.
 3. An `APIToken` (`user_type=Bot`, `is_service=True`, scoped to the workspace).
    Its plaintext value is printed/returned **once** — store it securely, it
    cannot be retrieved again.
 
-Because `is_bot=True`, the account is intentionally omitted from the human-facing
-workspace **member list** (the same behaviour as the built-in workspace-seed bot).
-It is still a full member for authorization and attribution: it passes permission
-checks and appears as the `created_by`/`updated_by` actor on everything it writes,
-and it is visible via the API (e.g. `GET /api/v1/workspaces/{slug}/members/`).
+Because `is_bot=True`, the account is omitted from the **web app's** member list
+(the internal app API filters bots out of its member endpoints, the same
+behaviour as the built-in workspace-seed bot). It is still a full member for
+authorization and attribution: it passes permission checks and appears as the
+`created_by`/`updated_by` actor on everything it writes, and the **public API**
+lists it (e.g. `GET /api/v1/workspaces/{slug}/members/` returns bot members).
 
 ## Roles
 
@@ -168,21 +169,49 @@ POST /api/v1/workspaces/{slug}/service-accounts/{user_id}/tokens/
 X-Api-Key: <workspace-admin token>
 Content-Type: application/json
 
-{ "label": "ci-2025", "expired_at": "2026-01-01T00:00:00Z" }
+{ "label": "ci-runner", "expired_at": "2099-12-31T23:59:59Z" }
 ```
 
-`label`, `description`, and `expired_at` are optional. Response `201` returns the
-new token value **once**:
+`label`, `description`, and `expired_at` are optional (a supplied `expired_at`
+must be in the future). Response `201` returns the new token value **once**:
 
 ```json
-{ "id": "…", "label": "ci-2025", "is_active": true, "created_at": "…", "expired_at": "…", "token": "plane_api_…" }
+{ "id": "…", "label": "ci-runner", "is_active": true, "created_at": "…", "expired_at": "…", "token": "plane_api_…" }
 ```
 
 **Rotate** — `POST .../tokens/{token_id}/rotate/`
 
-Atomically mints a replacement (optional `expired_at` in the body, returned once)
-and deactivates the old token, so authenticating with the old value fails
-immediately. The old token stays listed as `is_active: false` for audit.
+Atomically mints a replacement (returned once) and deactivates the old token, so
+authenticating with the old value fails immediately. The old token stays listed as
+`is_active: false` for audit. The replacement inherits the source token's `label`
+and `description`; only the expiry is caller-settable:
+
+| request body | replacement `expired_at` |
+| --- | --- |
+| `expired_at` omitted (or empty form value) | **inherits** the source token's expiry |
+| `{"expired_at": null}` | never expires (explicit opt-out) |
+| `{"expired_at": "<future timestamp>"}` | that timestamp |
+
+Rotation never *widens* a credential's validity window unless you ask: an omitted
+expiry copies the source token's **absolute** expiry instant, so the replacement
+carries the source's *remaining* lifetime — not a renewed window. Rotating a token
+that expires next Tuesday yields a replacement that also expires next Tuesday; pass
+`expired_at` explicitly to extend it. A supplied timestamp must be in the future
+(a past value is rejected with `400`).
+
+Two preconditions are enforced:
+
+- Only an **active** token can be rotated. A token that has already been rotated
+  away returns `409 {"code": "TOKEN_NOT_ACTIVE"}` — one source token cannot mint an
+  endless chain of replacements; mint a new token instead. (A revoked or
+  decommissioned token is no longer addressable and returns `404`.)
+- If the source token's expiry has **already elapsed**, inheriting it would hand
+  back a token that can never authenticate, so the request returns
+  `400 {"code": "SOURCE_TOKEN_EXPIRY_ELAPSED"}`; re-send it with `expired_at` set
+  to a **future** timestamp, or `null` for no expiry.
+
+If a `201` is lost in transit (the secret is unrecoverable), recover with
+list → revoke the orphaned token → mint a new one.
 
 **Revoke** — `DELETE .../tokens/{token_id}/`
 

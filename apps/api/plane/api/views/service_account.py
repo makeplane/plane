@@ -18,6 +18,7 @@ from plane.api.serializers.service_account import (
     ServiceAccountSerializer,
     ServiceAccountTokenCreateSerializer,
     ServiceAccountTokenCreatedSerializer,
+    ServiceAccountTokenRotateSerializer,
     ServiceAccountTokenSerializer,
 )
 from plane.db.models import APIToken, BotTypeEnum, User, Workspace, WorkspaceMember
@@ -36,6 +37,7 @@ from plane.utils.service_account import (
     decommission_service_account,
     mint_service_account_token,
     rotate_service_account_token,
+    ServiceAccountTokenError,
 )
 
 # Machine-readable error surfaced when a caller-chosen username is already taken.
@@ -110,10 +112,18 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
                 description="Service account created",
                 response=ServiceAccountSerializer,
             ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
             409: OpenApiResponse(description="A user with the requested username already exists"),
         },
     )
     def post(self, request, slug):
+        """Create a service account
+
+        Provision a machine identity in the workspace and mint its first API
+        token. The token value is returned once and cannot be retrieved again.
+        """
         workspace = Workspace.objects.get(slug=slug)
 
         serializer = ServiceAccountCreateSerializer(data=request.data)
@@ -132,7 +142,8 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
                 workspace=workspace,
                 name=data["name"],
                 role=data["role"],
-                description=data.get("description", ""),
+                # None (omitted) → generated default; an explicit "" is preserved.
+                description=data.get("description"),
                 username=username,
                 display_name=data.get("display_name"),
             )
@@ -191,6 +202,12 @@ class ServiceAccountDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, user_id):
+        """Decommission a service account
+
+        Deactivate every token, remove the account's project and workspace
+        memberships, and deactivate the user. The user row is preserved so
+        historical attribution survives.
+        """
         # is_active is not filtered so a deactivated (but not yet decommissioned)
         # account can still be retired; a decommissioned one is soft-deleted and
         # excluded by the default manager (→ 404, idempotent).
@@ -236,11 +253,18 @@ class ServiceAccountTokenAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, user_id):
+        """List service account tokens
+
+        Retrieve the account's API tokens with their metadata. The secret token
+        value is always withheld.
+        """
         member = get_service_account_member(slug, user_id)
         if member is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        queryset = APIToken.objects.filter(user_id=user_id, workspace=member.workspace).order_by("-created_at")
+        queryset = APIToken.objects.filter(user_id=user_id, workspace=member.workspace, is_service=True).order_by(
+            "-created_at"
+        )
         return self.paginate(
             request=request,
             queryset=queryset,
@@ -263,6 +287,11 @@ class ServiceAccountTokenAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, user_id):
+        """Mint a service account token
+
+        Create an additional workspace-scoped bot token for the account. The
+        token value is returned once and cannot be retrieved again.
+        """
         member = get_service_account_member(slug, user_id)
         if member is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -300,11 +329,17 @@ class ServiceAccountTokenDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, user_id, token_id):
+        """Revoke a service account token
+
+        Revoke a single API token so authenticating with it fails immediately.
+        """
         member = get_service_account_member(slug, user_id)
         if member is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        token = APIToken.objects.filter(id=token_id, user_id=user_id, workspace=member.workspace).first()
+        token = APIToken.objects.filter(
+            id=token_id, user_id=user_id, workspace=member.workspace, is_service=True
+        ).first()
         if token is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -323,30 +358,49 @@ class ServiceAccountTokenRotateAPIEndpoint(BaseAPIView):
             "Atomically mint a replacement token and deactivate the old one. The replacement value "
             "is returned once. Authenticating with the old token fails immediately. Requires workspace admin."
         ),
-        request=OpenApiRequest(request=ServiceAccountTokenCreateSerializer),
+        request=OpenApiRequest(request=ServiceAccountTokenRotateSerializer),
         parameters=[WORKSPACE_SLUG_PARAMETER, SERVICE_ACCOUNT_ID_PARAMETER, TOKEN_ID_PARAMETER],
         responses={
             201: OpenApiResponse(
                 description="Replacement token created", response=ServiceAccountTokenCreatedSerializer
             ),
+            400: OpenApiResponse(description="Invalid request body, or the source token's expiry has already elapsed"),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: NOT_FOUND_RESPONSE,
+            409: OpenApiResponse(description="The token is not active and cannot be rotated"),
         },
     )
     def post(self, request, slug, user_id, token_id):
+        """Rotate a service account token
+
+        Atomically mint a replacement token and deactivate the old one. The
+        replacement value is returned once and inherits the source token's
+        expiry unless the request overrides it.
+        """
         member = get_service_account_member(slug, user_id)
         if member is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        token = APIToken.objects.filter(id=token_id, user_id=user_id, workspace=member.workspace).first()
+        token = APIToken.objects.filter(
+            id=token_id, user_id=user_id, workspace=member.workspace, is_service=True
+        ).first()
         if token is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ServiceAccountTokenCreateSerializer(data=request.data)
+        serializer = ServiceAccountTokenRotateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
 
-        replacement = rotate_service_account_token(token=token, expired_at=serializer.validated_data.get("expired_at"))
+        # Only forward expired_at when the caller actually sent the key, so the
+        # helper can tell "inherit the source expiry" from an explicit null.
+        overrides = {"expired_at": data["expired_at"]} if "expired_at" in data else {}
+
+        try:
+            replacement = rotate_service_account_token(token=token, **overrides)
+        except ServiceAccountTokenError as exc:
+            return Response({"error": str(exc), "code": exc.code}, status=exc.status_code)
+
         return redact_response_body(Response(_token_created_payload(replacement), status=status.HTTP_201_CREATED))
 
 
