@@ -1111,7 +1111,7 @@ class TestPageParentValidation:
         """400 when the parent page does not exist in the project."""
         url = self.list_url(workspace.slug, project.id)
         resp = api_key_client.post(url, {"name": "Child", "parent": str(uuid4())}, format="json")
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        _assert_parent_error(resp)
 
     @pytest.mark.django_db
     def test_create_with_cross_project_parent(self, api_key_client, workspace, project, create_user):
@@ -1135,7 +1135,7 @@ class TestPageParentValidation:
         """400 when a page is set as its own parent."""
         url = self.detail_url(workspace.slug, project.id, create_page.id)
         resp = api_key_client.patch(url, {"parent": str(create_page.id)}, format="json")
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        _assert_parent_error(resp)
 
     @pytest.mark.django_db
     def test_update_cyclic_parent_rejected(self, api_key_client, workspace, project, create_user):
@@ -1148,7 +1148,7 @@ class TestPageParentValidation:
         # Setting P.parent = C would create P -> C -> P.
         url = self.detail_url(workspace.slug, project.id, parent.id)
         resp = api_key_client.patch(url, {"parent": str(child.id)}, format="json")
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        _assert_parent_error(resp)
 
     @pytest.mark.django_db
     def test_update_valid_parent_succeeds(self, api_key_client, workspace, project, create_user):
@@ -1534,3 +1534,96 @@ class TestPageExternalIdentityUpdate:
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
         assert page.name == "Renamed"
+
+
+@pytest.mark.contract
+class TestPageExternalIdentityConflictPayload:
+    """A 409 names the page that actually owns the conflicting identity."""
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_update_conflict_returns_conflicting_page_id(self, api_key_client, workspace, project, create_user):
+        """The 409 carries the holder's id, not the edited page's own id."""
+        holder = Page.objects.create(
+            name="Holder",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="taken",
+            external_source="notion",
+        )
+        _link_page(project, holder, create_user)
+        edited = Page.objects.create(
+            name="Edited",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="free",
+            external_source="notion",
+        )
+        _link_page(project, edited, create_user)
+
+        url = self.detail_url(workspace.slug, project.id, edited.id)
+        response = api_key_client.patch(url, {"external_id": "taken", "external_source": "notion"}, format="json")
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.data["id"] == str(holder.id)
+        assert response.data["id"] != str(edited.id)
+
+    @pytest.mark.django_db
+    def test_update_conflict_hides_private_holder_id(self, workspace, project, actors):
+        """A private holder owned by someone else is never named in the 409."""
+        owner = actors["owner"]["user"]
+        private_holder = Page.objects.create(
+            name="Private Holder",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PRIVATE_ACCESS,
+            external_id="secret-ext",
+            external_source="notion",
+        )
+        _link_page(project, private_holder, owner)
+
+        member = actors["member"]["user"]
+        edited = Page.objects.create(
+            name="Member Page",
+            owned_by=member,
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+        )
+        _link_page(project, edited, member)
+
+        url = self.detail_url(workspace.slug, project.id, edited.id)
+        response = actors["member"]["client"].patch(
+            url, {"external_id": "secret-ext", "external_source": "notion"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        # The conflict is reported, but the private page's id stays hidden.
+        assert "id" not in response.data
+
+
+@pytest.mark.contract
+class TestPageNotFoundPayload:
+    """The documented 404 example matches what the endpoints actually return."""
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_missing_page_matches_documented_example(self, api_key_client, workspace, project):
+        """A missing page returns the body PAGE_NOT_FOUND_RESPONSE documents."""
+        from plane.utils.openapi import PAGE_NOT_FOUND_RESPONSE
+
+        url = self.detail_url(workspace.slug, project.id, uuid4())
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        documented = PAGE_NOT_FOUND_RESPONSE.examples[0].value
+        assert response.data == documented

@@ -506,7 +506,7 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 # lock as create so the two paths cannot race each other.
                 if external_id and identity_changed:
                     lock_external_id(project_id, external_source, external_id)
-                    if (
+                    conflict = (
                         Page.objects.filter(
                             projects__id=project_id,
                             workspace__slug=slug,
@@ -514,15 +514,17 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                             external_id=external_id,
                         )
                         .exclude(pk=page.id)
-                        .exists()
-                    ):
-                        return Response(
-                            {
-                                "error": "Page with the same external id and external source already exists",
-                                "id": str(page.id),
-                            },
-                            status=status.HTTP_409_CONFLICT,
-                        )
+                        .first()
+                    )
+                    if conflict is not None:
+                        # Report the page that actually owns the identity, not
+                        # the one being edited — and, as on create, only when
+                        # the caller can see it, so the 409 cannot reveal the
+                        # id of someone else's private page.
+                        body = {"error": "Page with the same external id and external source already exists"}
+                        if self.get_queryset().filter(pk=conflict.id).exists():
+                            body["id"] = str(conflict.id)
+                        return Response(body, status=status.HTTP_409_CONFLICT)
 
                 # Reset description_binary when description_html changes so the live
                 # (Yjs) service regenerates it from the sanitized HTML.

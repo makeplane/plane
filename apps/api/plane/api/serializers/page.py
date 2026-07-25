@@ -19,6 +19,8 @@ class PageLiteSerializer(BaseSerializer):
     """
 
     class Meta:
+        """Expose only the identity fields needed for a page reference."""
+
         model = Page
         fields = ["id", "name", "access", "logo_props", "owned_by"]
         read_only_fields = fields
@@ -82,6 +84,8 @@ class PageAPISerializer(BaseSerializer):
         return sanitized_html if sanitized_html is not None else value
 
     class Meta:
+        """Expose page metadata plus the sanitized HTML body."""
+
         model = Page
         fields = [
             "id",

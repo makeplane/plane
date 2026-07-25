@@ -276,11 +276,15 @@ MODULE_ISSUE_NOT_FOUND_RESPONSE = OpenApiResponse(
 
 # Page-specific Responses
 PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
-    description="Page not found",
+    description="Page not found, or not visible to the requesting user",
     examples=[
         OpenApiExample(
+            # Page lookups resolve through the visibility queryset and raise
+            # Page.DoesNotExist, which BaseAPIView renders with this body. A
+            # private page owned by someone else is reported the same way, so
+            # its existence stays hidden.
             name="Page Not Found",
-            value={"error": "Page not found"},
+            value={"error": "The requested resource does not exist."},
         )
     ],
 )
