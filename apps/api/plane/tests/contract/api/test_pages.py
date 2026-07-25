@@ -857,6 +857,91 @@ class TestPageParentScoping:
 
 
 # ---------------------------------------------------------------------------
+# A page removed from this project is out of scope for every action
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.contract
+class TestPageSoftRemovedProjectLink:
+    """``ProjectPage`` is soft-deleted, so "linked to this project" means an
+    ACTIVE link — for visibility and for external-id uniqueness alike."""
+
+    @pytest.fixture
+    def second_project(self, db, workspace, create_user):
+        """Another project in the workspace the api-key user administers."""
+        project = Project.objects.create(
+            name="Second Project",
+            identifier="SP",
+            workspace=workspace,
+            created_by=create_user,
+        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+        return project
+
+    @pytest.mark.django_db
+    def test_page_removed_from_this_project_is_not_visible(
+        self, api_key_client, workspace, project, second_project, create_user
+    ):
+        """A page still live in another project must not leak through this one.
+
+        The link conditions have to hold of the same ``ProjectPage`` row: split
+        across separate ``filter()`` calls they get separate joins, and "linked
+        here" plus "has a live link" were satisfiable by two different rows.
+        """
+        page = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Moved Out")
+        # Also live in the second project, then removed from the first.
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=second_project,
+            page=page,
+            created_by_id=create_user.id,
+            updated_by_id=create_user.id,
+        )
+        ProjectPage.objects.filter(page=page, project=project).update(deleted_at=timezone.now())
+
+        assert api_key_client.get(detail_url(workspace.slug, project.id, page.id)).status_code == (
+            status.HTTP_404_NOT_FOUND
+        )
+        listed = api_key_client.get(list_url(workspace.slug, project.id))
+        assert [str(row["id"]) for row in listed.data["results"]] == []
+        # Still reachable where it actually lives.
+        assert api_key_client.get(detail_url(workspace.slug, second_project.id, page.id)).status_code == (
+            status.HTTP_200_OK
+        )
+
+    @pytest.mark.django_db
+    def test_external_id_is_free_again_after_the_link_is_removed(self, api_key_client, workspace, project, create_user):
+        """A removed page must not keep holding its external id hostage.
+
+        The pair looked taken while the page was unreachable through this
+        project — and its id is withheld from the 409 — so a re-sync had no way
+        forward: it could neither create nor update.
+        """
+        stale = make_page(
+            project,
+            create_user,
+            access=Page.PUBLIC_ACCESS,
+            name="Removed Import",
+            external_id="ext-1",
+            external_source="notion",
+        )
+        ProjectPage.objects.filter(page=stale, project=project).update(deleted_at=timezone.now())
+
+        with (
+            mock.patch("plane.api.views.page.page_transaction"),
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+        ):
+            response = api_key_client.post(
+                list_url(workspace.slug, project.id),
+                {"name": "Re-synced", "external_id": "ext-1", "external_source": "notion"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.data!r}"
+        assert str(response.data["id"]) != str(stale.id)
+
+
+# ---------------------------------------------------------------------------
 # An external-id conflict must not disclose a page the caller cannot see
 # ---------------------------------------------------------------------------
 

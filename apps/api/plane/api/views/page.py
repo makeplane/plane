@@ -71,11 +71,18 @@ class PageAPIEndpoint(BaseAPIView):
         """The access-scoped page queryset every action reads and writes through."""
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            # Every link condition is stated against the ProjectPage row itself,
+            # in ONE filter() call, so they all have to hold of the SAME link. A
+            # multi-valued relation filtered across separate filter() calls gets
+            # a separate join per call: "linked to this project" and "has a live
+            # link" would then be satisfiable by two different rows, so a page
+            # soft-removed from this project but still live in another one passed
+            # both and stayed readable and writable through this project's URL.
             .filter(
-                projects__id=self.kwargs.get("project_id"),
-                projects__archived_at__isnull=True,
+                project_pages__project_id=self.kwargs.get("project_id"),
+                project_pages__project__archived_at__isnull=True,
+                project_pages__deleted_at__isnull=True,
             )
-            .filter(project_pages__deleted_at__isnull=True)
             # Visibility rule: the owner sees their own pages at any access
             # level; everyone else only sees public pages. Private pages never
             # leak to non-owners — used by every action, read or write.
@@ -283,7 +290,15 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
                 existing = (
                     Page.objects.filter(
                         workspace__slug=slug,
-                        projects__id=project_id,
+                        # Only an ACTIVE link counts. Matching through the m2m
+                        # alone ignored ProjectPage.deleted_at, so a page since
+                        # removed from this project still took its external id:
+                        # the integration could not create the page, and could
+                        # not reach the conflicting one either (get_queryset
+                        # excludes it, so even its id is withheld below) — a
+                        # re-sync had no way forward.
+                        project_pages__project_id=project_id,
+                        project_pages__deleted_at__isnull=True,
                         external_source=request.data.get("external_source"),
                         external_id=request.data.get("external_id"),
                     )
