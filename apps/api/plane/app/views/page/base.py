@@ -59,6 +59,8 @@ from plane.utils.page import unarchive_archive_page_and_descendants
 
 
 class PageViewSet(BaseViewSet):
+    """Project page CRUD for the internal app API."""
+
     serializer_class = PageSerializer
     model = Page
     permission_classes = [ProjectPagePermission]
@@ -113,6 +115,7 @@ class PageViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
+        """Create a page in the project and announce it to webhook subscribers."""
         serializer = PageSerializer(
             data=request.data,
             context={
@@ -140,6 +143,7 @@ class PageViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, page_id):
+        """Update page properties and/or content, fanning out the matching webhooks."""
         try:
             page = Page.objects.get(
                 pk=page_id,
@@ -174,10 +178,11 @@ class PageViewSet(BaseViewSet):
             current_instance = json.dumps(PageDetailSerializer(page).data, cls=DjangoJSONEncoder)
             if serializer.is_valid():
                 serializer.save()
-                # capture the page transaction
+                # capture the page transaction, recording the value that was
+                # actually stored rather than the raw request body
                 if request.data.get("description_html"):
                     page_transaction.delay(
-                        new_description_html=request.data.get("description_html", "<p></p>"),
+                        new_description_html=serializer.instance.description_html or "<p></p>",
                         old_description_html=page_description,
                         page_id=page_id,
                     )
@@ -185,15 +190,30 @@ class PageViewSet(BaseViewSet):
                 # Dispatch a "page" webhook (action=update) for every changed
                 # property. model_activity diffs request.data against the
                 # snapshot and fans out one update event per changed field.
-                model_activity.delay(
-                    model_name="page",
-                    model_id=str(page_id),
-                    requested_data=request.data,
-                    current_instance=current_instance,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
+                # description_html is held back: content is high-frequency, so it
+                # goes down the debounced path below instead of emitting an
+                # undebounced webhook per edit.
+                property_data = {key: value for key, value in request.data.items() if key != "description_html"}
+                if property_data:
+                    model_activity.delay(
+                        model_name="page",
+                        model_id=str(page_id),
+                        requested_data=property_data,
+                        current_instance=current_instance,
+                        actor_id=request.user.id,
+                        slug=slug,
+                        origin=base_host(request=request, is_app=True),
+                    )
+
+                if request.data.get("description_html"):
+                    dispatch_page_webhook(
+                        request,
+                        slug,
+                        page_id,
+                        verb="updated",
+                        field="description_html",
+                        debounce=True,
+                    )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -204,6 +224,7 @@ class PageViewSet(BaseViewSet):
             )
 
     def retrieve(self, request, slug, project_id, page_id=None):
+        """Return a single page, recording the visit."""
         page = self.get_queryset().filter(pk=page_id).first()
         project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
@@ -248,6 +269,7 @@ class PageViewSet(BaseViewSet):
             return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
+        """Lock a page so it can no longer be edited."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -266,6 +288,7 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
+        """Unlock a page so it can be edited again."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -283,6 +306,7 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def access(self, request, slug, project_id, page_id):
+        """Switch a page between public and private (owner only)."""
         access = request.data.get("access", 0)
         page = Page.objects.get(
             pk=page_id,
@@ -324,6 +348,7 @@ class PageViewSet(BaseViewSet):
         return Response(pages, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, page_id):
+        """Archive a page and its descendants."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -350,14 +375,15 @@ class PageViewSet(BaseViewSet):
             workspace__slug=slug,
         ).delete()
 
-        # Capture a single timestamp for the SQL update, the webhook and the
-        # response so all three agree (previously datetime.now() was called
-        # twice, yielding two slightly different values). timezone.now() keeps
-        # it tz-aware: archived_at is a DateField, so a naive server-local value
-        # can land on the wrong calendar day around midnight under USE_TZ.
+        # One value for the SQL update, the webhook and the response so all three
+        # agree (previously datetime.now() was called twice, yielding two
+        # slightly different values). archived_at is a DateField, so resolve the
+        # UTC date here rather than handing the database a datetime and relying
+        # on the session time zone to cast it — and a naive server-local clock
+        # could land on the wrong calendar day around midnight.
         old_archived_at = page.archived_at
-        archived_at = timezone.now()
-        unarchive_archive_page_and_descendants(page_id, archived_at)
+        archived_at = timezone.now().date()
+        unarchive_archive_page_and_descendants(page_id, archived_at, actor_id=request.user.id)
         dispatch_page_webhook(
             request,
             slug,
@@ -371,6 +397,7 @@ class PageViewSet(BaseViewSet):
         return Response({"archived_at": str(archived_at)}, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, page_id):
+        """Restore a page and its descendants."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -396,7 +423,7 @@ class PageViewSet(BaseViewSet):
             page.save(update_fields=["parent"])
 
         old_archived_at = page.archived_at
-        unarchive_archive_page_and_descendants(page_id, None)
+        unarchive_archive_page_and_descendants(page_id, None, actor_id=request.user.id)
         dispatch_page_webhook(
             request,
             slug,
@@ -410,6 +437,7 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, page_id):
+        """Delete an archived page owned by the caller or a project admin."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
@@ -520,6 +548,7 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, page_id):
+        """Create a page in the project and announce it to webhook subscribers."""
         _ = UserFavorite.objects.create(
             project_id=project_id,
             entity_identifier=page_id,
@@ -530,6 +559,7 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, page_id):
+        """Delete an archived page owned by the caller or a project admin."""
         page_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
@@ -542,9 +572,12 @@ class PageFavoriteViewSet(BaseViewSet):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
+    """Read and persist a page's rich-text/Yjs document."""
+
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
+        """Return a single page, recording the visit."""
         page = Page.objects.get(
             Q(owned_by=self.request.user) | Q(access=0),
             pk=page_id,
@@ -565,6 +598,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
+        """Update page properties and/or content, fanning out the matching webhooks."""
         page = Page.objects.get(
             Q(owned_by=self.request.user) | Q(access=0),
             pk=page_id,
@@ -643,9 +677,12 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 
 class PageDuplicateEndpoint(BaseAPIView):
+    """Copy a page, its content and its project links."""
+
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
+        """Duplicate the page as a new page owned by the caller."""
         page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,

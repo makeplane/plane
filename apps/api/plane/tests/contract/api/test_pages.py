@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -864,6 +865,19 @@ class TestPagePriorStateReporting:
         assert kwargs["field"] == "archived_at"
         assert kwargs["old_value"] is not None
         assert kwargs["new_value"] is not None
+
+    @pytest.mark.django_db
+    def test_archive_refreshes_updated_at(self, api_key_client, workspace, project, create_user):
+        """Archiving through the public API also maintains updated_at."""
+        page = make_page(project, create_user, access=Page.PUBLIC_ACCESS)
+        Page.objects.filter(pk=page.id).update(updated_at=timezone.now() - timedelta(days=2))
+        before = Page.objects.get(pk=page.id).updated_at
+
+        response = api_key_client.post(archive_url(workspace.slug, project.id, page.id), format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.updated_at > before
 
     @pytest.mark.django_db
     def test_archive_writes_timezone_aware_date(self, api_key_client, workspace, project, create_user):

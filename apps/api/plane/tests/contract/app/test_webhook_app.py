@@ -11,6 +11,7 @@ from plane.db.models import Webhook
 
 
 def webhooks_url(slug, pk=None):
+    """URL of the workspace webhook collection."""
     base = f"/api/workspaces/{slug}/webhooks/"
     return f"{base}{pk}/" if pk else base
 
@@ -23,11 +24,13 @@ class TestWebhookPageField:
     def _no_ssrf(self):
         # The create/update path runs an SSRF check that resolves DNS; stub it so
         # the test stays hermetic and focused on the `page` flag wiring.
+        """Allow the test webhook URL past the SSRF guard."""
         with mock.patch("plane.app.serializers.webhook.validate_url"):
             yield
 
     @pytest.mark.django_db
     def test_create_webhook_with_page_flag(self, session_client, workspace):
+        """A webhook can subscribe to page events on create."""
         response = session_client.post(
             webhooks_url(workspace.slug),
             {"url": "https://example.com/hook", "page": True},
@@ -41,6 +44,7 @@ class TestWebhookPageField:
 
     @pytest.mark.django_db
     def test_get_and_patch_page_flag(self, session_client, workspace):
+        """The page flag round-trips through GET and PATCH."""
         webhook = Webhook.objects.create(
             workspace=workspace,
             url="https://example.com/hook",

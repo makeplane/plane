@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -20,11 +21,13 @@ def project(db, workspace, create_user):
 
 
 def pages_url(slug, project_id, page_id=None):
+    """URL of the app-API page list or detail endpoint."""
     base = f"/api/workspaces/{slug}/projects/{project_id}/pages/"
     return f"{base}{page_id}/" if page_id else base
 
 
 def page_action_url(slug, project_id, page_id, action):
+    """URL of a page sub-action (archive, lock, access, description)."""
     return f"{pages_url(slug, project_id, page_id)}{action}/"
 
 
@@ -36,10 +39,12 @@ class TestPageWebhookDispatch:
     def _web_url(self, settings):
         # base_host() needs an origin to build current_site; the value is
         # irrelevant to the assertions but must be a valid URL.
+        """Give base_host() an origin to build current_site from."""
         settings.WEB_URL = "http://localhost"
 
     @pytest.mark.django_db
     def test_create_dispatches_page_webhook(self, session_client, workspace, project):
+        """Creating a page fires the created webhook."""
         with (
             mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
             mock.patch("plane.app.views.page.base.page_transaction"),
@@ -81,6 +86,7 @@ class TestPageWebhookDispatch:
 
     @pytest.mark.django_db
     def test_destroy_dispatches_page_webhook(self, session_client, workspace, project, create_user):
+        """Deleting a page fires the deleted webhook."""
         page = Page.objects.create(
             workspace=workspace,
             owned_by=create_user,
@@ -116,6 +122,7 @@ class TestPageWebhookDispatch:
 
     @pytest.mark.django_db
     def test_duplicate_dispatches_page_webhook(self, session_client, workspace, project, create_user):
+        """Duplicating a page fires a created webhook for the copy."""
         page = Page.objects.create(
             workspace=workspace,
             owned_by=create_user,
@@ -182,10 +189,12 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.fixture(autouse=True)
     def _web_url(self, settings):
+        """Give base_host() an origin to build current_site from."""
         settings.WEB_URL = "http://localhost"
 
     @pytest.fixture
     def page(self, db, workspace, project, create_user):
+        """A page owned by the requesting user, linked to the project."""
         page = Page.objects.create(
             workspace=workspace,
             owned_by=create_user,
@@ -225,6 +234,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_access_change_dispatches_update(self, session_client, workspace, project, page):
+        """Changing access fires an update webhook."""
         with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(
                 page_action_url(workspace.slug, project.id, page.id, "access"),
@@ -243,6 +253,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_lock_dispatches_update(self, session_client, workspace, project, page):
+        """Locking fires an update webhook."""
         with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "lock"))
 
@@ -255,6 +266,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_unlock_dispatches_update(self, session_client, workspace, project, page):
+        """Unlocking fires an update webhook."""
         page.is_locked = True
         page.save()
         with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
@@ -269,6 +281,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_archive_dispatches_update(self, session_client, workspace, project, page):
+        """Archiving fires an update webhook."""
         with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
             response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
 
@@ -281,6 +294,7 @@ class TestPageUpdateWebhookDispatch:
 
     @pytest.mark.django_db
     def test_unarchive_dispatches_update(self, session_client, workspace, project, page):
+        """Restoring fires an update webhook."""
         page.archived_at = timezone.now()
         page.save()
         with mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook:
@@ -317,3 +331,89 @@ class TestPageUpdateWebhookDispatch:
         # The live flush path is debounced so a session does not emit per flush.
         assert kwargs["debounce"] is True
         assert str(kwargs["event_id"]) == str(page.id)
+
+
+@pytest.mark.contract
+class TestPageContentUpdateRouting:
+    """Content edits go down the debounced path, never the per-field one."""
+
+    @pytest.fixture(autouse=True)
+    def _web_url(self, settings):
+        """Give base_host() an origin to build current_site from."""
+        settings.WEB_URL = "http://localhost"
+
+    @pytest.fixture
+    def page(self, db, workspace, project, create_user):
+        """A page owned by the requesting user, linked to the project."""
+        page = Page.objects.create(
+            workspace=workspace,
+            owned_by=create_user,
+            name="Runbook",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        return page
+
+    @pytest.mark.django_db
+    def test_content_edit_is_debounced_and_kept_out_of_model_activity(self, session_client, workspace, project, page):
+        """A description_html edit must not fan out an undebounced per-field
+        webhook through model_activity."""
+        with (
+            mock.patch("plane.app.views.page.base.model_activity") as mocked_model_activity,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+            mock.patch("plane.app.views.page.base.page_transaction"),
+        ):
+            response = session_client.patch(
+                pages_url(workspace.slug, project.id, page.id),
+                {"name": "Renamed", "description_html": "<p>new body</p>"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        # The property edit still goes through model_activity...
+        mocked_model_activity.delay.assert_called_once()
+        requested = mocked_model_activity.delay.call_args.kwargs["requested_data"]
+        assert requested == {"name": "Renamed"}
+        assert "description_html" not in requested
+        # ...and the content edit rides the debounced content webhook.
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["field"] == "description_html"
+        assert kwargs["debounce"] is True
+
+    @pytest.mark.django_db
+    def test_property_only_edit_does_not_fire_a_content_webhook(self, session_client, workspace, project, page):
+        """A rename alone must not emit a content update."""
+        with (
+            mock.patch("plane.app.views.page.base.model_activity") as mocked_model_activity,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+        ):
+            response = session_client.patch(
+                pages_url(workspace.slug, project.id, page.id),
+                {"name": "Renamed only"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        mocked_model_activity.delay.assert_called_once()
+        mocked_webhook.delay.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_archive_refreshes_updated_at(self, session_client, workspace, project, page):
+        """Archiving is a modification: the raw SQL must maintain updated_at."""
+        Page.objects.filter(pk=page.id).update(updated_at=timezone.now() - timedelta(days=2))
+        before = Page.objects.get(pk=page.id).updated_at
+
+        response = session_client.post(page_action_url(workspace.slug, project.id, page.id, "archive"))
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.updated_at > before
+        assert page.archived_at is not None

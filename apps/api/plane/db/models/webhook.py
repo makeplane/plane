@@ -32,6 +32,8 @@ def validate_domain(value):
 
 
 class Webhook(BaseModel):
+    """An outgoing webhook subscribing to a workspace's entity events."""
+
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks")
     url = models.URLField(validators=[validate_schema, validate_domain], max_length=1024)
     is_active = models.BooleanField(default=True)

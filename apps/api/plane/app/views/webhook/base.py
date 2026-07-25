@@ -18,6 +18,8 @@ from plane.app.serializers import WebhookSerializer, WebhookLogSerializer
 
 
 class WebhookEndpoint(BaseAPIView):
+    """Manage a workspace's outgoing webhooks."""
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -37,6 +39,7 @@ class WebhookEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, pk=None):
+        """List the workspace's webhooks, or retrieve one."""
         if pk is None:
             webhooks = Webhook.objects.filter(workspace__slug=slug)
             serializer = WebhookSerializer(
@@ -79,6 +82,7 @@ class WebhookEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def patch(self, request, slug, pk):
+        """Update a webhook's URL, active flag or event subscriptions."""
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
         serializer = WebhookSerializer(
             webhook,
@@ -124,6 +128,7 @@ class WebhookSecretRegenerateEndpoint(BaseAPIView):
 class WebhookLogsEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
+        """List the workspace's webhooks, or retrieve one."""
         webhook_logs = WebhookLog.objects.filter(workspace__slug=slug, webhook=webhook_id)
         serializer = WebhookLogSerializer(webhook_logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

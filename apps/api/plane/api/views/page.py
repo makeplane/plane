@@ -514,13 +514,14 @@ class PageArchiveAPIEndpoint(PageAPIEndpoint):
             workspace__slug=slug,
         ).delete()
 
-        # Single timestamp shared by the SQL update, the webhook and the response
-        # so all three agree. timezone.now() keeps it tz-aware: archived_at is a
-        # DateField, so a naive server-local value can land on the wrong calendar
-        # day around midnight under USE_TZ.
+        # One value shared by the SQL update, the webhook and the response so all
+        # three agree. archived_at is a DateField, so resolve the UTC date here
+        # rather than handing the database a datetime and relying on the session
+        # time zone to cast it — and a naive server-local clock could land on the
+        # wrong calendar day around midnight.
         old_archived_at = page.archived_at
-        archived_at = timezone.now()
-        unarchive_archive_page_and_descendants(page_id, archived_at)
+        archived_at = timezone.now().date()
+        unarchive_archive_page_and_descendants(page_id, archived_at, actor_id=request.user.id)
         dispatch_page_webhook(
             request,
             slug,
@@ -560,7 +561,7 @@ class PageArchiveAPIEndpoint(PageAPIEndpoint):
             page.parent = None
             page.save(update_fields=["parent"])
 
-        unarchive_archive_page_and_descendants(page_id, None)
+        unarchive_archive_page_and_descendants(page_id, None, actor_id=request.user.id)
         dispatch_page_webhook(
             request,
             slug,

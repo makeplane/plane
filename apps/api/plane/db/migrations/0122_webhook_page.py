@@ -4,6 +4,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """Add the Webhook.page event subscription flag."""
+
     dependencies = [
         ("db", "0121_alter_estimate_type"),
     ]
