@@ -11,6 +11,19 @@ from plane.db.models import Page
 from plane.utils.content_validator import validate_html_content
 
 
+class PageLiteSerializer(BaseSerializer):
+    """
+    Lightweight page serializer used when expanding page relations.
+
+    Keeps the payload small for references such as a page's ``parent``.
+    """
+
+    class Meta:
+        model = Page
+        fields = ["id", "name", "access", "logo_props", "owned_by"]
+        read_only_fields = fields
+
+
 class PageAPISerializer(BaseSerializer):
     """
     Serializer for pages in the public v1 API.
@@ -22,6 +35,9 @@ class PageAPISerializer(BaseSerializer):
     serializer so it never crosses the public contract — clients read and write
     HTML only.
     """
+
+    # A page's `parent` is another page, not an issue — expand it accordingly.
+    expansion_overrides = {"parent": PageLiteSerializer}
 
     def validate_description_html(self, value):
         """

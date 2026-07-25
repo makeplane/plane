@@ -68,4 +68,4 @@ from .member import (
     ProjectMemberLiteAPISerializer,
 )
 from .sticky import StickySerializer
-from .page import PageAPISerializer
+from .page import PageAPISerializer, PageLiteSerializer

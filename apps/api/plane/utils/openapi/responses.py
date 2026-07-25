@@ -285,23 +285,25 @@ PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
     ],
 )
 
-PAGE_LOCKED_RESPONSE = OpenApiResponse(
-    description="Page is locked and cannot be edited",
+PAGE_NOT_EDITABLE_RESPONSE = OpenApiResponse(
+    description="Page cannot be edited as requested",
     examples=[
         OpenApiExample(
             name="Page Locked",
             value={"error": "Page is locked"},
-        )
-    ],
-)
-
-PAGE_ARCHIVED_RESPONSE = OpenApiResponse(
-    description="Archived page cannot be edited",
-    examples=[
+        ),
         OpenApiExample(
             name="Page Archived",
             value={"error": "Archived page cannot be edited"},
-        )
+        ),
+        OpenApiExample(
+            name="Parent Not Found",
+            value={"error": "The parent page does not exist in this project"},
+        ),
+        OpenApiExample(
+            name="Parent Cycle",
+            value={"error": "A page cannot be its own parent or descendant"},
+        ),
     ],
 )
 
@@ -315,6 +317,41 @@ PAGE_ACCESS_DENIED_RESPONSE = OpenApiResponse(
         OpenApiExample(
             name="Owner Only Action",
             value={"error": "Only the page owner can lock the page"},
+        ),
+    ],
+)
+
+# Delete has its own 400/403 payloads, distinct from the edit-time ones above.
+PAGE_NOT_ARCHIVED_RESPONSE = OpenApiResponse(
+    description="Page must be archived before it can be deleted",
+    examples=[
+        OpenApiExample(
+            name="Page Not Archived",
+            value={"error": "The page should be archived before deleting"},
+        )
+    ],
+)
+
+PAGE_DELETE_FORBIDDEN_RESPONSE = OpenApiResponse(
+    description="Only the page owner or a project admin can delete the page",
+    examples=[
+        OpenApiExample(
+            name="Delete Forbidden",
+            value={"error": "Only admin or owner can delete the page"},
+        )
+    ],
+)
+
+PAGE_INVALID_PARENT_RESPONSE = OpenApiResponse(
+    description="The requested parent page is invalid",
+    examples=[
+        OpenApiExample(
+            name="Parent Not Found",
+            value={"error": "The parent page does not exist in this project"},
+        ),
+        OpenApiExample(
+            name="Parent Cycle",
+            value={"error": "A page cannot be its own parent or descendant"},
         ),
     ],
 )

@@ -1168,3 +1168,144 @@ class TestPageWebhookRouting:
         assert send_task.delay.call_count == 1
         assert send_task.delay.call_args.kwargs["webhook_id"] == page_webhook.id
         assert send_task.delay.call_args.kwargs["event"] == "page"
+
+
+# ---------------------------------------------------------------------------
+# Review-feedback regressions (PR #9470)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.contract
+class TestPageAuditFields:
+    """`created_by`/`updated_by` are populated for API-token writes.
+
+    Review feedback suggested pages were persisted without audit users because
+    the serializer marks them read-only. They are in fact set by
+    ``BaseModel.save()`` from ``crum.CurrentRequestUserMiddleware``, which sees
+    the DRF-authenticated user (DRF mirrors ``request.user`` onto the underlying
+    Django request). These tests lock that behaviour in.
+    """
+
+    def list_url(self, slug, project_id):
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    @pytest.mark.django_db
+    def test_create_sets_created_by(self, api_key_client, workspace, project, create_user):
+        """The created page records the API token's user as created_by."""
+        url = self.list_url(workspace.slug, project.id)
+        response = api_key_client.post(url, {"name": "Audited"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        page = Page.objects.get(pk=response.data["id"])
+        assert page.created_by_id == create_user.id
+        # Plane leaves updated_by unset on insert.
+        assert page.updated_by_id is None
+
+    @pytest.mark.django_db
+    def test_update_sets_updated_by(self, api_key_client, workspace, project, create_page, create_user):
+        """Updating a page records the API token's user as updated_by."""
+        url = f"{self.list_url(workspace.slug, project.id)}{create_page.id}/"
+        response = api_key_client.patch(url, {"name": "Renamed"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        create_page.refresh_from_db()
+        assert create_page.updated_by_id == create_user.id
+
+
+@pytest.mark.contract
+class TestPageExpand:
+    """`expand` resolves page relations with page-aware serializers."""
+
+    def detail_url(self, slug, project_id, page_id):
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_expand_parent_returns_page_fields(self, api_key_client, workspace, project, create_user):
+        """expand=parent returns the parent page, not an empty issue payload.
+
+        The shared expansion mapper points `parent` at IssueLiteSerializer; for a
+        page that silently produced `{"id": ...}` with every issue-only field
+        dropped. PageAPISerializer overrides it with a page serializer.
+        """
+        parent = Page.objects.create(name="Parent Page", owned_by=create_user, workspace=project.workspace)
+        _link_page(project, parent, create_user)
+        child = Page.objects.create(name="Child Page", owned_by=create_user, workspace=project.workspace, parent=parent)
+        _link_page(project, child, create_user)
+
+        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["parent"]["name"] == "Parent Page"
+        assert str(response.data["parent"]["id"]) == str(parent.id)
+
+    @pytest.mark.django_db
+    def test_expand_owned_by_returns_user(self, api_key_client, workspace, project, create_page, create_user):
+        """expand=owned_by still resolves through the shared user serializer."""
+        url = f"{self.detail_url(workspace.slug, project.id, create_page.id)}?expand=owned_by"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert str(response.data["owned_by"]["id"]) == str(create_user.id)
+
+
+@pytest.mark.contract
+class TestPageParentValidationEdgeCases:
+    """Malformed parent references are reported as parent errors."""
+
+    def list_url(self, slug, project_id):
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    @pytest.mark.django_db
+    def test_create_with_malformed_parent_uuid(self, api_key_client, workspace, project):
+        """A non-UUID parent yields a 400 naming the parent, not a generic error."""
+        url = self.list_url(workspace.slug, project.id)
+        response = api_key_client.post(url, {"name": "Child", "parent": "not-a-uuid"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_update_with_malformed_parent_uuid(self, api_key_client, workspace, project, create_page):
+        """Same on update: malformed parent is a parent error, not a 500."""
+        url = f"{self.list_url(workspace.slug, project.id)}{create_page.id}/"
+        response = api_key_client.patch(url, {"parent": "not-a-uuid"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "parent" in response.data["error"].lower()
+
+    @pytest.mark.django_db
+    def test_deep_chain_parent_is_allowed(self, api_key_client, workspace, project, create_user):
+        """A valid deep ancestor chain still passes the cycle walk."""
+        pages = []
+        previous = None
+        for index in range(4):
+            page = Page.objects.create(
+                name=f"Level {index}",
+                owned_by=create_user,
+                workspace=project.workspace,
+                parent=previous,
+            )
+            _link_page(project, page, create_user)
+            pages.append(page)
+            previous = page
+
+        standalone = Page.objects.create(name="Standalone", owned_by=create_user, workspace=project.workspace)
+        _link_page(project, standalone, create_user)
+
+        url = f"{self.list_url(workspace.slug, project.id)}{standalone.id}/"
+        response = api_key_client.patch(url, {"parent": str(pages[-1].id)}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        standalone.refresh_from_db()
+        assert standalone.parent_id == pages[-1].id
+
+
+@pytest.mark.contract
+class TestPageTypeParameterSchema:
+    """The documented `type` values are constrained in the generated schema."""
+
+    def test_type_parameter_declares_enum_and_default(self):
+        from plane.utils.openapi import PAGE_TYPE_PARAMETER
+
+        assert PAGE_TYPE_PARAMETER.enum == ["all", "public", "private", "archived"]
+        assert PAGE_TYPE_PARAMETER.default == "all"

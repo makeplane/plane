@@ -16,6 +16,13 @@ class BaseSerializer(serializers.ModelSerializer):
 
     id = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    # Per-serializer overrides for the shared `expand` mapper used in
+    # `to_representation`. That mapper is keyed by field name, so a name like
+    # `parent` can only point at one serializer (Issue's). A serializer whose
+    # same-named relation targets a different model declares it here so the
+    # field is expanded with the right serializer instead of being mis-expanded.
+    expansion_overrides = {}
+
     def __init__(self, *args, **kwargs):
         # If 'fields' is provided in the arguments, remove it and store it separately.
         # This is done so as not to pass this custom argument up to the superclass.
@@ -104,6 +111,9 @@ class BaseSerializer(serializers.ModelSerializer):
                         "parent": IssueLiteSerializer,
                         "estimate_point": EstimatePointSerializer,
                     }
+                    # Let a serializer redirect a field to a model-appropriate
+                    # serializer (e.g. a page's `parent` is a page, not an issue)
+                    expansion.update(self.expansion_overrides or {})
                     # Check if field in expansion  then expand the field
                     if expand in expansion:
                         if isinstance(response.get(expand), list):

@@ -3,7 +3,9 @@
 # See the LICENSE file for details.
 
 # Python imports
+import hashlib
 import json
+import uuid
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -44,15 +46,47 @@ from plane.utils.openapi import (
     PAGE_CREATE_EXAMPLE,
     PAGE_UPDATE_EXAMPLE,
     PAGE_NOT_FOUND_RESPONSE,
-    PAGE_LOCKED_RESPONSE,
-    PAGE_ARCHIVED_RESPONSE,
+    PAGE_NOT_EDITABLE_RESPONSE,
     PAGE_ACCESS_DENIED_RESPONSE,
+    PAGE_NOT_ARCHIVED_RESPONSE,
+    PAGE_DELETE_FORBIDDEN_RESPONSE,
+    PAGE_INVALID_PARENT_RESPONSE,
     CONFLICT_RESPONSE,
     DELETED_RESPONSE,
     create_paginated_response,
 )
 
 from .base import BaseAPIView
+
+
+def external_id_lock_key(project_id, external_source, external_id):
+    """Derive a stable 64-bit advisory-lock key for one external page identity.
+
+    Mirrors ``plane.utils.uuid.convert_uuid_to_integer`` (sha256 truncated to a
+    signed bigint), but keyed on the whole external identity so concurrent
+    creates only serialize against the same (project, source, id) triple.
+    """
+    digest = hashlib.sha256(f"page:{project_id}:{external_source}:{external_id}".encode()).digest()
+    return int.from_bytes(digest[:8], byteorder="big", signed=True)
+
+
+def lock_external_id(project_id, external_source, external_id):
+    """Take a transaction-scoped advisory lock on an external page identity.
+
+    ``external_id``/``external_source`` have no DB uniqueness constraint (no
+    Plane entity constrains them, and a project-scoped constraint is not even
+    expressible on ``Page`` — pages attach to projects through the ``ProjectPage``
+    m2m). Without one, a bare check-then-insert races: two concurrent creates
+    can both pass the existence check and both insert. Serializing on this lock
+    — the same ``pg_advisory_xact_lock`` pattern ``Issue.save`` uses to allocate
+    sequence ids — makes the check-then-insert deterministic. The lock is
+    released when the surrounding transaction ends.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT pg_advisory_xact_lock(%s)",
+            [external_id_lock_key(project_id, external_source, external_id)],
+        )
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -119,28 +153,38 @@ class PageAPIBaseView(BaseAPIView):
         if parent_id in (None, ""):
             return None
 
-        parent = self.get_queryset().filter(pk=parent_id).first()
-        if parent is None:
-            return Response(
-                {"error": "The parent page does not exist in this project"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        invalid_parent = Response(
+            {"error": "The parent page does not exist in this project"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+        # A malformed UUID would otherwise surface as a generic 400 from the
+        # base exception handler; report it as the parent problem it is.
+        try:
+            parent_id = uuid.UUID(str(parent_id))
+        except (ValueError, AttributeError, TypeError):
+            return invalid_parent
+
+        if self.get_queryset().filter(pk=parent_id).first() is None:
+            return invalid_parent
 
         if page_id is not None:
             # Walk the proposed parent's ancestor chain; if the page itself
-            # appears, setting this parent would create a cycle.
-            ancestor = parent
+            # appears, setting this parent would create a cycle. Only parent_id
+            # is read at each level, so this never loads whole page rows, and
+            # `seen` bounds the walk even if the stored data already cycles.
+            ancestor_id = parent_id
             seen = set()
-            while ancestor is not None:
-                if str(ancestor.id) == str(page_id):
+            while ancestor_id is not None:
+                if str(ancestor_id) == str(page_id):
                     return Response(
                         {"error": "A page cannot be its own parent or descendant"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                if ancestor.id in seen:
+                if ancestor_id in seen:
                     break
-                seen.add(ancestor.id)
-                ancestor = ancestor.parent
+                seen.add(ancestor_id)
+                ancestor_id = Page.objects.filter(pk=ancestor_id).values_list("parent_id", flat=True).first()
         return None
 
 
@@ -226,6 +270,7 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
                 response=PageAPISerializer,
                 examples=[PAGE_EXAMPLE],
             ),
+            400: PAGE_INVALID_PARENT_RESPONSE,
             409: CONFLICT_RESPONSE,
         },
     )
@@ -244,34 +289,32 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
             if parent_error is not None:
                 return parent_error
 
-            # Check for a duplicate external_id. Uniqueness is project-wide (an
-            # integration must not create two pages for the same external
-            # record), so the existence check is intentionally unscoped by
-            # visibility — but the conflicting page's id is only disclosed when
-            # the caller can actually see it, so a 409 never leaks the UUID of
-            # another user's private page.
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and Page.objects.filter(
-                    projects__id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
-                existing = Page.objects.filter(
-                    workspace__slug=slug,
-                    projects__id=project_id,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).first()
-                body = {"error": "Page with the same external id and external source already exists"}
-                if self.get_queryset().filter(pk=existing.id).exists():
-                    body["id"] = str(existing.id)
-                return Response(body, status=status.HTTP_409_CONFLICT)
+            external_id = request.data.get("external_id")
+            external_source = request.data.get("external_source")
 
             with transaction.atomic():
+                # Duplicate external_id check. Uniqueness is project-wide (an
+                # integration must not create two pages for the same external
+                # record), so the existence check is intentionally unscoped by
+                # visibility — but the conflicting page's id is only disclosed
+                # when the caller can actually see it, so a 409 never leaks the
+                # UUID of another user's private page. The check and the insert
+                # run inside one transaction behind an advisory lock on the
+                # external identity, so concurrent creates cannot both pass it.
+                if external_id and external_source:
+                    lock_external_id(project_id, external_source, external_id)
+                    existing = Page.objects.filter(
+                        workspace__slug=slug,
+                        projects__id=project_id,
+                        external_source=external_source,
+                        external_id=external_id,
+                    ).first()
+                    if existing is not None:
+                        body = {"error": "Page with the same external id and external source already exists"}
+                        if self.get_queryset().filter(pk=existing.id).exists():
+                            body["id"] = str(existing.id)
+                        return Response(body, status=status.HTTP_409_CONFLICT)
+
                 # description_html is sanitized by the serializer; description_binary
                 # is reset so the live (Yjs) service regenerates it from the HTML.
                 page = serializer.save(
@@ -356,9 +399,10 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 response=PageAPISerializer,
                 examples=[PAGE_EXAMPLE],
             ),
-            400: PAGE_LOCKED_RESPONSE,
+            400: PAGE_NOT_EDITABLE_RESPONSE,
             403: PAGE_ACCESS_DENIED_RESPONSE,
             404: PAGE_NOT_FOUND_RESPONSE,
+            409: CONFLICT_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, page_id):
@@ -393,39 +437,43 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
         if parent_error is not None:
             return parent_error
 
-        # Guard external_id uniqueness on update, mirroring the create path and
-        # the cycle/module endpoints, so a page's external_id can't be changed
-        # to one already used by another page in the project.
-        if (
-            request.data.get("external_id")
-            and (page.external_id != str(request.data.get("external_id")))
-            and Page.objects.filter(
-                projects__id=project_id,
-                workspace__slug=slug,
-                external_source=request.data.get("external_source", page.external_source),
-                external_id=request.data.get("external_id"),
-            ).exists()
-        ):
-            return Response(
-                {
-                    "error": "Page with the same external id and external source already exists",
-                    "id": str(page.id),
-                },
-                status=status.HTTP_409_CONFLICT,
-            )
-
         # Snapshot before mutation for version history + webhook diffing
         old_description_html = page.description_html
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source", page.external_source)
+
         serializer = PageAPISerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
-            # Reset description_binary when description_html changes so the live
-            # (Yjs) service regenerates it from the sanitized HTML.
-            if request.data.get("description_html"):
-                page = serializer.save(description_binary=None)
-            else:
-                page = serializer.save()
+            with transaction.atomic():
+                # Guard external_id uniqueness on update, mirroring the create
+                # path and the cycle/module endpoints, so a page's external_id
+                # can't be changed to one already used by another page in the
+                # project. Checked under the same advisory lock as create so the
+                # two paths cannot race each other.
+                if external_id and page.external_id != str(external_id):
+                    lock_external_id(project_id, external_source, external_id)
+                    if Page.objects.filter(
+                        projects__id=project_id,
+                        workspace__slug=slug,
+                        external_source=external_source,
+                        external_id=external_id,
+                    ).exists():
+                        return Response(
+                            {
+                                "error": "Page with the same external id and external source already exists",
+                                "id": str(page.id),
+                            },
+                            status=status.HTTP_409_CONFLICT,
+                        )
+
+                # Reset description_binary when description_html changes so the live
+                # (Yjs) service regenerates it from the sanitized HTML.
+                if request.data.get("description_html"):
+                    page = serializer.save(description_binary=None)
+                else:
+                    page = serializer.save()
 
             # Track page transaction for version history and mentions
             if request.data.get("description_html"):
@@ -456,8 +504,8 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
         parameters=[PAGE_ID_PARAMETER],
         responses={
             204: DELETED_RESPONSE,
-            400: PAGE_ARCHIVED_RESPONSE,
-            403: PAGE_ACCESS_DENIED_RESPONSE,
+            400: PAGE_NOT_ARCHIVED_RESPONSE,
+            403: PAGE_DELETE_FORBIDDEN_RESPONSE,
             404: PAGE_NOT_FOUND_RESPONSE,
         },
     )

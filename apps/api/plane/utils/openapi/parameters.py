@@ -530,6 +530,8 @@ PAGE_TYPE_PARAMETER = OpenApiParameter(
         "returns archived pages."
     ),
     required=False,
+    enum=["all", "public", "private", "archived"],
+    default="all",
     examples=[
         OpenApiExample(name="All pages", value="all"),
         OpenApiExample(name="Public pages", value="public"),
