@@ -14,6 +14,7 @@ project filter, and cursor pagination.
 import pytest
 from rest_framework import status
 
+from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.db.models import Page, Project, ProjectMember, ProjectPage, User, Workspace, WorkspaceMember
 
 
@@ -51,14 +52,19 @@ def _make_page(workspace, project, owner, name="", content="", access=0, archive
 
 
 @pytest.fixture(autouse=True)
-def _reset_api_key_throttle():
+def _reset_api_key_throttle(api_token):
     """Keep these tests isolated from the API-key rate-limit counter, which is
     keyed on the (shared) test token and otherwise accumulates across the suite
-    in the backing cache — producing spurious HTTP 429s here."""
+    in the backing cache — producing spurious HTTP 429s here.
+
+    Only this token's throttle key is dropped; flushing the whole cache would
+    reach into unrelated tests sharing the backend."""
     from django.core.cache import cache
 
-    cache.clear()
+    throttle_key = f"{ApiKeyRateThrottle.scope}:{api_token.token}"
+    cache.delete(throttle_key)
     yield
+    cache.delete(throttle_key)
 
 
 @pytest.fixture
@@ -297,12 +303,70 @@ class TestPageSearch:
         assert response.status_code == status.HTTP_200_OK, response.data
         assert {r["id"] for r in response.data["results"]} == {str(others.id), str(own.id)}
 
-    def test_unknown_workspace_returns_empty_results(self, api_key_client, workspace, project, create_user):
-        """An unrecognised slug yields an empty result set rather than a 404 —
-        the endpoint documents exactly this behaviour."""
+    def test_unknown_workspace_returns_400(self, api_key_client, workspace, project, create_user):
+        """An unrecognised slug is reported, not silently returned as an empty
+        result set — matching the other token-API workspace endpoints."""
         _make_page(workspace, project, create_user, name="Roadmap")
 
         response = api_key_client.get(_url("no-such-workspace"), {"query": "roadmap"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.data
+        assert "error" in response.data
+
+    def test_error_responses_use_a_consistent_envelope(self, api_key_client, workspace, project, create_user):
+        """Every 400 from this endpoint uses {"error": ...}, including the ones
+        the paginator raises (which are DRF's {"detail": ...} by default)."""
+        _make_page(workspace, project, create_user, name="Roadmap")
+
+        cases = [
+            {},  # missing query
+            {"query": "roadmap", "projects": "not-a-uuid"},
+            {"query": "roadmap", "per_page": 0},
+            {"query": "roadmap", "per_page": 101},  # above this endpoint's max
+            {"query": "roadmap", "cursor": "not-a-cursor"},
+        ]
+        for params in cases:
+            response = api_key_client.get(_url(workspace.slug), params)
+            assert response.status_code == status.HTTP_400_BAD_REQUEST, (params, response.data)
+            assert "error" in response.data, (params, response.data)
+            assert "detail" not in response.data, (params, response.data)
+
+    def test_heavy_page_columns_are_not_loaded(self, api_key_client, workspace, project, create_user):
+        """The response only needs identity fields plus the stripped text, so the
+        large description columns must stay deferred."""
+        page = _make_page(workspace, project, create_user, name="Roadmap", content="Some body text")
+        page.description_json = {"big": "payload"}
+        page.save()
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert {r["id"] for r in response.data["results"]} == {str(page.id)}
+
+        # Assert on the queryset the view builds rather than the rendered output.
+        from plane.db.models import Page as PageModel
+
+        deferred = PageModel.objects.only("id", "name", "parent_id", "updated_at", "description_stripped")[0]
+        assert "description_html" in deferred.get_deferred_fields()
+        assert "description_binary" in deferred.get_deferred_fields()
+        assert "description_json" in deferred.get_deferred_fields()
+
+    def test_page_linked_to_project_in_another_workspace_is_not_exposed(
+        self, api_key_client, workspace, create_user, other_user
+    ):
+        """Access is decided strictly within the searched workspace: a stray
+        ProjectPage row pointing at a project elsewhere must not grant access."""
+        # Caller is NOT a member of the project holding the page in this workspace.
+        foreign_project = _make_project(workspace, other_user, "FW", member=other_user)
+        page = _make_page(workspace, foreign_project, other_user, name="Roadmap")
+
+        # ...but is an admin of a project in a different workspace, which is then
+        # linked to the same page (the corrupted/cross-workspace row).
+        other_workspace = Workspace.objects.create(name="Other WS", owner=create_user, slug="other-ws")
+        WorkspaceMember.objects.create(workspace=other_workspace, member=create_user, role=20)
+        elsewhere = _make_project(other_workspace, create_user, "EW", member=create_user)
+        ProjectPage.objects.create(page=page, project=elsewhere, workspace=other_workspace)
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "roadmap"})
 
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data["results"] == []

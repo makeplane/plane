@@ -28,6 +28,75 @@ SNIPPET_LEAD_CHARS = 40
 
 _ELLIPSIS = "…"
 _WHITESPACE_RE = re.compile(r"\s+")
+_NON_WHITESPACE_RE = re.compile(r"\S")
+
+# Smallest slice of the raw document to collapse whitespace in. Collapsing only
+# ever shrinks text, so a window a few times the display budget supplies all the
+# context a snippet can use for any realistic document; _normalized_window grows
+# it when a pathologically whitespace-heavy document needs more.
+_MIN_WINDOW_CHARS = 512
+
+
+def _query_pattern(query: str) -> re.Pattern | None:
+    """Compile ``query`` so it matches across any run of whitespace.
+
+    The document is only whitespace-normalized in a window around the match, so
+    the search itself runs against the raw text — where the query's words may be
+    separated by newlines or runs of spaces.
+    """
+    tokens = [re.escape(token) for token in query.split()]
+    if not tokens:
+        return None
+    return re.compile(r"\s+".join(tokens), re.IGNORECASE)
+
+
+def _normalized_window(raw: str, anchor: int, need_left: int, need_right: int) -> tuple[str, int, bool, bool]:
+    """Collapse whitespace in a bounded window of ``raw`` around ``anchor``.
+
+    Returns the normalized window, the anchor's offset within it, and whether
+    real content was left outside the window on either side.
+
+    The window grows until it holds all the context the caller can use, so the
+    excerpt matches what normalizing the entire document would produce without
+    paying to rewrite the entire document for every search hit. ``anchor``
+    always sits on a non-whitespace character (or at 0), so no whitespace run
+    straddles it and the two halves can be collapsed independently.
+    """
+    left_span = max(need_left * 4, _MIN_WINDOW_CHARS)
+    right_span = max(need_right * 4, _MIN_WINDOW_CHARS)
+
+    while True:
+        start = max(0, anchor - left_span)
+        end = min(len(raw), anchor + right_span)
+
+        left = _WHITESPACE_RE.sub(" ", raw[start:anchor])
+        right = _WHITESPACE_RE.sub(" ", raw[anchor:end])
+
+        # Reproduce the document-level strip() at the real edges only.
+        if start == 0:
+            if left:
+                left = left.lstrip()
+            else:
+                right = right.lstrip()
+        if end == len(raw):
+            if right:
+                right = right.rstrip()
+            else:
+                left = left.rstrip()
+
+        covers_all = start == 0 and end == len(raw)
+        enough_left = start == 0 or len(left) >= need_left
+        enough_right = end == len(raw) or len(right) >= need_right
+
+        if covers_all or (enough_left and enough_right):
+            # A search bounded to the discarded region: it stops at the first
+            # non-whitespace character, so this does not rescan the document.
+            more_before = start > 0 and _NON_WHITESPACE_RE.search(raw, 0, start) is not None
+            more_after = end < len(raw) and _NON_WHITESPACE_RE.search(raw, end) is not None
+            return left + right, len(left), more_before, more_after
+
+        left_span *= 4
+        right_span *= 4
 
 
 def build_page_snippet(
@@ -59,29 +128,34 @@ def build_page_snippet(
     if max_length <= 0:
         return ""
 
-    # Collapse runs of whitespace/newlines so the excerpt reads as one clean line.
-    text = _WHITESPACE_RE.sub(" ", stripped_text).strip()
+    # Locate the match in the raw text: scanning is cheap, whereas collapsing
+    # whitespace across a large document allocates a full copy of it per result.
+    pattern = _query_pattern(query)
+    match = pattern.search(stripped_text) if pattern else None
+    anchor = match.start() if match else 0
+
+    text, match_pos, more_before, more_after = _normalized_window(
+        stripped_text,
+        anchor,
+        need_left=lead if match else 0,
+        need_right=max_length,
+    )
     if not text:
         return ""
 
-    # Search the original text case-insensitively so the match offset stays
-    # aligned with the string we slice. (Indexing into text.lower() would drift
-    # for characters that change length when lowercased, e.g. "İ".)
-    match = re.search(re.escape(query), text, re.IGNORECASE) if query else None
-
     if match is None:
         # No content match: excerpt from the start of the document.
-        if len(text) <= max_length:
+        if not more_after and len(text) <= max_length:
             return text
         # Reserve room for the trailing ellipsis inside the budget.
         return text[: max_length - len(_ELLIPSIS)] + _ELLIPSIS
 
-    start = max(0, match.start() - lead)
-    prefix = _ELLIPSIS if start > 0 else ""
+    start = max(0, match_pos - lead)
+    prefix = _ELLIPSIS if start > 0 or more_before else ""
 
     # Whatever the leading ellipsis costs comes out of the budget, not on top of it.
     budget = max_length - len(prefix)
-    if start + budget < len(text):
+    if start + budget < len(text) or more_after:
         # The excerpt will not reach the end of the text, so a trailing ellipsis
         # is needed — reserve its room before slicing.
         budget -= len(_ELLIPSIS)
@@ -92,5 +166,5 @@ def build_page_snippet(
         return _ELLIPSIS[:max_length]
 
     end = min(len(text), start + budget)
-    suffix = _ELLIPSIS if end < len(text) else ""
+    suffix = _ELLIPSIS if end < len(text) or more_after else ""
     return prefix + text[start:end] + suffix

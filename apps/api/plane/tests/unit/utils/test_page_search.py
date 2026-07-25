@@ -4,6 +4,9 @@
 
 """Unit tests for the page search snippet helper."""
 
+import re
+import time
+
 import pytest
 
 from plane.utils.page_search import (
@@ -11,6 +14,38 @@ from plane.utils.page_search import (
     SNIPPET_MAX_LENGTH,
     build_page_snippet,
 )
+
+_ELLIPSIS = "…"
+
+
+def _reference_snippet(stripped_text, query, max_length=SNIPPET_MAX_LENGTH, lead=SNIPPET_LEAD_CHARS):
+    """Straightforward implementation used as an oracle: normalize the whole
+    document, then excerpt around the match. The shipped version must agree with
+    this while only normalizing a bounded window."""
+    if not stripped_text or max_length <= 0:
+        return ""
+    text = re.sub(r"\s+", " ", stripped_text).strip()
+    if not text:
+        return ""
+
+    tokens = [re.escape(token) for token in query.split()]
+    match = re.search(r"\s+".join(tokens), text, re.IGNORECASE) if tokens else None
+
+    if match is None:
+        if len(text) <= max_length:
+            return text
+        return text[: max_length - len(_ELLIPSIS)] + _ELLIPSIS
+
+    start = max(0, match.start() - lead)
+    prefix = _ELLIPSIS if start > 0 else ""
+    budget = max_length - len(prefix)
+    if start + budget < len(text):
+        budget -= len(_ELLIPSIS)
+    if budget <= 0:
+        return _ELLIPSIS[:max_length]
+    end = min(len(text), start + budget)
+    suffix = _ELLIPSIS if end < len(text) else ""
+    return prefix + text[start:end] + suffix
 
 
 @pytest.mark.unit
@@ -60,6 +95,50 @@ class TestBuildPageSnippet:
         text = "The quarterly budget review covers spend across every team."
         assert build_page_snippet(text, "budget", max_length=max_length) == ""
         assert build_page_snippet(text, "absent-term", max_length=max_length) == ""
+
+    def test_match_is_found_across_whitespace_runs(self):
+        """The document is only normalized in a window, so the search itself runs
+        against raw text where the query's words may straddle newlines."""
+        text = "intro\n\nThe budget\n   review happens Friday."
+        snippet = build_page_snippet(text, "budget review")
+        assert "budget review" in snippet.lower()
+        assert "\n" not in snippet
+
+    def test_only_a_bounded_window_is_normalized(self):
+        """A large document must not be rewritten in full for a single snippet."""
+        head = "a" * 5_000_000
+        text = head + " needle tail"
+
+        started = time.perf_counter()
+        snippet = build_page_snippet(text, "needle")
+        elapsed = time.perf_counter() - started
+
+        assert "needle" in snippet
+        assert len(snippet) <= SNIPPET_MAX_LENGTH
+        # Collapsing all 5 MB per hit takes far longer than this; the window
+        # keeps the work proportional to the snippet, not the document.
+        assert elapsed < 0.25, f"took {elapsed:.3f}s — the whole document was likely normalized"
+
+    @pytest.mark.parametrize(
+        "text,query",
+        [
+            ("word " * 500, "word"),
+            ("x" * 300 + " needle " + "y" * 300, "needle"),
+            ("a" * 500, "absent-term"),
+            ("b" * 500 + " tail", "tail"),
+            ("   \n\n  leading whitespace then needle here", "needle"),
+            ("needle at the very start of the document", "needle"),
+            ("trailing match needle   \n\n   ", "needle"),
+            ("\n\n".join(["para " * 40] * 30) + " needle", "needle"),
+            ("tiny", "tiny"),
+            ("no match at all here", "absent"),
+            ("İ" * 100 + " needle", "needle"),
+        ],
+    )
+    def test_matches_naive_full_normalization(self, text, query):
+        """The windowed implementation must agree with the obvious one that
+        normalizes the entire document up front."""
+        assert build_page_snippet(text, query) == _reference_snippet(text, query)
 
     @pytest.mark.parametrize("max_length", range(1, 12))
     def test_small_max_length_stays_within_budget(self, max_length):
