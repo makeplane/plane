@@ -32,6 +32,7 @@ from plane.db.models import (
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.utils.host import base_host
+from plane.utils.order_queryset import PAGE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.openapi import (
     page_docs,
     CURSOR_PARAMETER,
@@ -273,6 +274,17 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
             queryset = queryset.filter(archived_at__isnull=False)
         else:
             queryset = queryset.filter(archived_at__isnull=True)
+
+        # `order_by` is advertised on this endpoint, so honour it — through the
+        # allowlist helper, which keeps user input out of .order_by() and falls
+        # back to the default for anything unrecognised.
+        queryset = queryset.order_by(
+            sanitize_order_by(
+                request.GET.get("order_by", "-created_at"),
+                PAGE_ORDER_BY_ALLOWLIST,
+                default="-created_at",
+            )
+        )
 
         return self.paginate(
             request=request,

@@ -1821,3 +1821,65 @@ class TestPageLockMinimalWrite:
         assert create_page.is_locked is True
         assert create_page.description_html == "<p>edited by the live service</p>"
         assert bytes(create_page.description_binary) == b"fresh-yjs-blob"
+
+
+@pytest.mark.contract
+class TestPageListOrdering:
+    """The documented `order_by` parameter actually orders the list."""
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    @pytest.fixture
+    def named_pages(self, project, create_user):
+        """Create three pages whose names sort differently from their creation order."""
+        names = ["Beta", "Alpha", "Gamma"]
+        for name in names:
+            page = Page.objects.create(name=name, owned_by=create_user, workspace=project.workspace)
+            _link_page(project, page, create_user)
+        return names
+
+    def _names(self, response):
+        """Return the page names in the order the endpoint returned them."""
+        return [row["name"] for row in response.data["results"]]
+
+    @pytest.mark.django_db
+    def test_order_by_name_ascending(self, api_key_client, workspace, project, named_pages):
+        """order_by=name sorts alphabetically."""
+        url = f"{self.list_url(workspace.slug, project.id)}?order_by=name"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self._names(response) == ["Alpha", "Beta", "Gamma"]
+
+    @pytest.mark.django_db
+    def test_order_by_name_descending(self, api_key_client, workspace, project, named_pages):
+        """A leading '-' reverses the ordering."""
+        url = f"{self.list_url(workspace.slug, project.id)}?order_by=-name"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self._names(response) == ["Gamma", "Beta", "Alpha"]
+
+    @pytest.mark.django_db
+    def test_default_ordering_is_newest_first(self, api_key_client, workspace, project, named_pages):
+        """Without order_by the list stays newest-first."""
+        response = api_key_client.get(self.list_url(workspace.slug, project.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self._names(response) == ["Gamma", "Alpha", "Beta"]
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("value", ["password", "owned_by__email", "--created_at", "; DROP TABLE pages"])
+    def test_unrecognised_ordering_falls_back(self, api_key_client, workspace, project, named_pages, value):
+        """Anything outside the allowlist falls back to the default ordering.
+
+        User input must never reach .order_by() directly — related-field and
+        malformed values are rejected rather than passed through.
+        """
+        url = f"{self.list_url(workspace.slug, project.id)}?order_by={value}"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self._names(response) == ["Gamma", "Alpha", "Beta"]

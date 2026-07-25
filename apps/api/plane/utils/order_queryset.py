@@ -107,6 +107,18 @@ CYCLE_ORDER_BY_ALLOWLIST = frozenset({
     "sort_order",
 })
 
+# Page list queryset. Direct Page columns only: the list queryset is DISTINCT,
+# so ordering by a related field would put an expression outside the select
+# list and Postgres would reject the query.
+PAGE_ORDER_BY_ALLOWLIST = frozenset({
+    "created_at",
+    "updated_at",
+    "name",
+    "sort_order",
+    "access",
+    "archived_at",
+})
+
 # Module list queryset.
 MODULE_ORDER_BY_ALLOWLIST = frozenset({
     "created_at",
