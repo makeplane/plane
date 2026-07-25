@@ -43,6 +43,10 @@ def build_page_snippet(
     When the query does not appear in the text (for example the page matched on
     its name only, or no query was supplied) the excerpt is taken from the start
     of the text. An ellipsis marks either side that was truncated.
+
+    ``max_length`` bounds the WHOLE returned string: the ellipsis markers are
+    paid for out of that budget, never appended on top of it, so a caller sizing
+    its layout on ``max_length`` is never handed a longer string.
     """
     if not stripped_text:
         return ""
@@ -59,13 +63,21 @@ def build_page_snippet(
 
     if match is None:
         # No content match: excerpt from the start of the document.
-        excerpt = text[:max_length]
-        suffix = _ELLIPSIS if len(text) > max_length else ""
-        return excerpt + suffix
+        if len(text) <= max_length:
+            return text
+        # Reserve room for the trailing ellipsis inside the budget.
+        return text[: max_length - len(_ELLIPSIS)] + _ELLIPSIS
 
     start = max(0, match.start() - lead)
-    end = min(len(text), start + max_length)
-    excerpt = text[start:end]
     prefix = _ELLIPSIS if start > 0 else ""
+
+    # Whatever the leading ellipsis costs comes out of the budget, not on top of it.
+    budget = max_length - len(prefix)
+    if start + budget < len(text):
+        # The excerpt will not reach the end of the text, so a trailing ellipsis
+        # is needed — reserve its room before slicing.
+        budget -= len(_ELLIPSIS)
+
+    end = min(len(text), start + budget)
     suffix = _ELLIPSIS if end < len(text) else ""
-    return prefix + excerpt + suffix
+    return prefix + text[start:end] + suffix

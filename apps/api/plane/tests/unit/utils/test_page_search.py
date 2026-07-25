@@ -38,8 +38,20 @@ class TestBuildPageSnippet:
     def test_length_is_capped(self):
         text = "word " * 500
         snippet = build_page_snippet(text, "word")
-        # The excerpt itself is capped; a trailing ellipsis may add one char.
-        assert len(snippet) <= SNIPPET_MAX_LENGTH + 1
+        assert len(snippet) <= SNIPPET_MAX_LENGTH
+
+    @pytest.mark.parametrize(
+        "text,query",
+        [
+            ("word " * 500, "word"),  # match at the start
+            ("x" * 300 + " needle " + "y" * 300, "needle"),  # match in the middle
+            ("a" * 500, "absent-term"),  # no content match
+            ("b" * 500 + " tail", "tail"),  # match at the very end
+        ],
+    )
+    def test_ellipses_are_paid_for_out_of_the_budget(self, text, query):
+        """The ellipsis markers must never push the snippet past max_length."""
+        assert len(build_page_snippet(text, query)) <= SNIPPET_MAX_LENGTH
 
     def test_no_content_match_excerpts_from_start(self):
         text = "The introduction paragraph explains the overall context here."
