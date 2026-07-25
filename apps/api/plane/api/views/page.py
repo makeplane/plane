@@ -154,7 +154,10 @@ class PageAPIBaseView(BaseAPIView):
             )
             .filter(project_pages__deleted_at__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
-            .select_related("workspace", "owned_by")
+            # `parent` is selected too: the serializer reads it for the
+            # expand=parent visibility check, and unarchive reads
+            # parent.archived_at — both would otherwise be a query per row.
+            .select_related("workspace", "owned_by", "parent")
             .order_by("-created_at")
             .distinct()
         )
@@ -475,6 +478,7 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
             )
 
         # Snapshot before mutation for version history + webhook diffing
+        description_html_sent = "description_html" in request.data
         old_description_html = page.description_html
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
@@ -526,15 +530,18 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                             body["id"] = str(conflict.id)
                         return Response(body, status=status.HTTP_409_CONFLICT)
 
-                # Reset description_binary when description_html changes so the live
-                # (Yjs) service regenerates it from the sanitized HTML.
-                if request.data.get("description_html"):
+                # Reset description_binary whenever description_html is sent so
+                # the live (Yjs) service regenerates it from the sanitized HTML.
+                # Keyed on presence, not truthiness: clearing a page by sending
+                # an empty body must drop the stale binary too, or the editor
+                # would restore the old content from it.
+                if description_html_sent:
                     page = serializer.save(description_binary=None)
                 else:
                     page = serializer.save()
 
             # Track page transaction for version history and mentions
-            if request.data.get("description_html"):
+            if description_html_sent:
                 page_transaction.delay(
                     new_description_html=page.description_html,
                     old_description_html=old_description_html,

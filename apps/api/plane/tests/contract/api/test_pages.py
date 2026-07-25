@@ -15,6 +15,8 @@ from unittest import mock
 from uuid import uuid4
 
 import pytest
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -1627,3 +1629,116 @@ class TestPageNotFoundPayload:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         documented = PAGE_NOT_FOUND_RESPONSE.examples[0].value
         assert response.data == documented
+
+
+@pytest.mark.contract
+class TestPageDescriptionClearing:
+    """Sending `description_html` is keyed on presence, not truthiness."""
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_clearing_description_resets_binary(self, api_key_client, workspace, project, create_user):
+        """Clearing the body drops the stale collaborative binary with it.
+
+        The live (Yjs) service rebuilds page content from description_binary, so
+        emptying description_html while leaving the binary in place would let the
+        editor restore the old content.
+        """
+        page = Page.objects.create(
+            name="Doc",
+            description_html="<p>original</p>",
+            owned_by=create_user,
+            workspace=project.workspace,
+        )
+        _link_page(project, page, create_user)
+        Page.objects.filter(pk=page.id).update(description_binary=b"stale-yjs-blob")
+
+        url = self.detail_url(workspace.slug, project.id, page.id)
+        response = api_key_client.patch(url, {"description_html": ""}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.description_html == ""
+        assert page.description_binary is None
+
+    @pytest.mark.django_db
+    def test_clearing_description_records_a_version(self, api_key_client, workspace, project, create_user):
+        """Clearing the body still goes through page_transaction."""
+        page = Page.objects.create(
+            name="Doc",
+            description_html="<p>original</p>",
+            owned_by=create_user,
+            workspace=project.workspace,
+        )
+        _link_page(project, page, create_user)
+
+        url = self.detail_url(workspace.slug, project.id, page.id)
+        with mock.patch("plane.api.views.page.page_transaction") as page_txn:
+            response = api_key_client.patch(url, {"description_html": ""}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        page_txn.delay.assert_called_once()
+        assert page_txn.delay.call_args.kwargs["old_description_html"] == "<p>original</p>"
+
+    @pytest.mark.django_db
+    def test_untouched_description_is_left_alone(self, api_key_client, workspace, project, create_user):
+        """An update that omits description_html leaves the binary intact."""
+        page = Page.objects.create(
+            name="Doc",
+            description_html="<p>original</p>",
+            owned_by=create_user,
+            workspace=project.workspace,
+        )
+        _link_page(project, page, create_user)
+        Page.objects.filter(pk=page.id).update(description_binary=b"live-yjs-blob")
+
+        url = self.detail_url(workspace.slug, project.id, page.id)
+        with mock.patch("plane.api.views.page.page_transaction") as page_txn:
+            response = api_key_client.patch(url, {"name": "Renamed"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert bytes(page.description_binary) == b"live-yjs-blob"
+        page_txn.delay.assert_not_called()
+
+
+@pytest.mark.contract
+class TestPageExpandQueryCount:
+    """`expand=parent` must not issue a query per row."""
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    def _seed(self, project, user, count):
+        """Create `count` child pages, each under its own parent page."""
+        for index in range(count):
+            parent = Page.objects.create(name=f"Parent {index}", owned_by=user, workspace=project.workspace)
+            _link_page(project, parent, user)
+            child = Page.objects.create(
+                name=f"Child {index}", owned_by=user, workspace=project.workspace, parent=parent
+            )
+            _link_page(project, child, user)
+
+    @pytest.mark.django_db
+    def test_query_count_does_not_grow_with_page_count(self, api_key_client, workspace, project, create_user):
+        """Listing with expand=parent costs the same however many pages match.
+
+        The serializer touches `parent` for both the visibility check and the
+        expansion, so without select_related the query count grows with the
+        result size. Five extra parent/child pairs must add no extra queries.
+        """
+        url = f"{self.list_url(workspace.slug, project.id)}?expand=parent"
+
+        self._seed(project, create_user, 1)
+        with CaptureQueriesContext(connection) as small:
+            assert api_key_client.get(url).status_code == status.HTTP_200_OK
+
+        self._seed(project, create_user, 5)
+        with CaptureQueriesContext(connection) as large:
+            assert api_key_client.get(url).status_code == status.HTTP_200_OK
+
+        assert len(large.captured_queries) == len(small.captured_queries)
