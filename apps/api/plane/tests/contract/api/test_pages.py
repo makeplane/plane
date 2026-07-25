@@ -16,6 +16,7 @@ from uuid import uuid4
 
 import pytest
 from django.db import connection
+from django.utils import timezone
 from django.test.utils import CaptureQueriesContext
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -1883,3 +1884,110 @@ class TestPageListOrdering:
 
         assert response.status_code == status.HTTP_200_OK
         assert self._names(response) == ["Gamma", "Alpha", "Beta"]
+
+
+@pytest.mark.contract
+class TestPageProjectLinkScoping:
+    """Project scope is asserted on one active ProjectPage row.
+
+    A page can be linked to several projects, and a link is soft-deleted when
+    the page is removed from a project. Scoping that spans two joins — "linked
+    to this project" plus "has some undeleted link" — is satisfied by a page
+    whose link *here* is deleted while another project still holds a live one.
+    """
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.fixture
+    def second_project(self, db, workspace, create_user):
+        """Create a second project in the same workspace, with the same member."""
+        project = Project.objects.create(
+            name="Second Project", identifier="SP", workspace=workspace, created_by=create_user
+        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+        return project
+
+    @pytest.mark.django_db
+    def test_page_removed_from_project_is_not_visible(
+        self, api_key_client, workspace, project, second_project, create_user
+    ):
+        """A page whose link here is deleted is invisible, even if linked elsewhere."""
+        page = Page.objects.create(name="Moved Away", owned_by=create_user, workspace=project.workspace)
+        removed_link = ProjectPage.objects.create(
+            workspace=project.workspace,
+            project=project,
+            page=page,
+            created_by_id=create_user.id,
+            updated_by_id=create_user.id,
+        )
+        _link_page(second_project, page, create_user)
+        ProjectPage.objects.filter(pk=removed_link.pk).update(deleted_at=timezone.now())
+
+        detail = api_key_client.get(self.detail_url(workspace.slug, project.id, page.id))
+        assert detail.status_code == status.HTTP_404_NOT_FOUND
+
+        listing = api_key_client.get(self.list_url(workspace.slug, project.id))
+        assert listing.status_code == status.HTTP_200_OK
+        assert "Moved Away" not in [row["name"] for row in listing.data["results"]]
+
+        # It remains visible under the project that still holds a live link.
+        still_there = api_key_client.get(self.detail_url(workspace.slug, second_project.id, page.id))
+        assert still_there.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_removed_page_does_not_block_its_external_identity(self, api_key_client, workspace, project, create_user):
+        """Re-creating the external identity of a removed page is allowed.
+
+        The existence check must ignore pages whose link to this project was
+        deleted, or an integration is permanently blocked from re-importing.
+        """
+        page = Page.objects.create(
+            name="Removed",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="ext-removed",
+            external_source="notion",
+        )
+        link = ProjectPage.objects.create(
+            workspace=project.workspace,
+            project=project,
+            page=page,
+            created_by_id=create_user.id,
+            updated_by_id=create_user.id,
+        )
+        ProjectPage.objects.filter(pk=link.pk).update(deleted_at=timezone.now())
+
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Re-imported", "external_id": "ext-removed", "external_source": "notion"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    @pytest.mark.django_db
+    def test_live_page_still_blocks_its_external_identity(self, api_key_client, workspace, project, create_user):
+        """The check still fires for a page that is actually in the project."""
+        page = Page.objects.create(
+            name="Present",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="ext-present",
+            external_source="notion",
+        )
+        _link_page(project, page, create_user)
+
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Duplicate", "external_id": "ext-present", "external_source": "notion"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.data["id"] == str(page.id)

@@ -149,11 +149,18 @@ class PageAPIBaseView(BaseAPIView):
         """Return the visibility-filtered page queryset for this request."""
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            # Project scope, active link and live project are asserted on ONE
+            # ProjectPage row. Split across separate filter() calls they become
+            # separate joins meaning "linked to this project" AND "has some
+            # undeleted link somewhere" — so a page removed from this project
+            # but still linked to another stayed visible here. The m2m
+            # (`projects__id`) cannot express it either: it joins the through
+            # table directly and never sees the soft-delete.
             .filter(
-                projects__id=self.kwargs.get("project_id"),
-                projects__archived_at__isnull=True,
+                project_pages__project_id=self.kwargs.get("project_id"),
+                project_pages__deleted_at__isnull=True,
+                project_pages__project__archived_at__isnull=True,
             )
-            .filter(project_pages__deleted_at__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
             # `parent` is selected too: the serializer reads it for the
             # expand=parent visibility check, and unarchive reads
@@ -357,7 +364,8 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
                     lock_external_id(project_id, external_source, external_id)
                     existing = Page.objects.filter(
                         workspace__slug=slug,
-                        projects__id=project_id,
+                        project_pages__project_id=project_id,
+                        project_pages__deleted_at__isnull=True,
                         external_source=external_source,
                         external_id=external_id,
                     ).first()
@@ -524,8 +532,9 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                     lock_external_id(project_id, external_source, external_id)
                     conflict = (
                         Page.objects.filter(
-                            projects__id=project_id,
                             workspace__slug=slug,
+                            project_pages__project_id=project_id,
+                            project_pages__deleted_at__isnull=True,
                             external_source=external_source,
                             external_id=external_id,
                         )
@@ -617,8 +626,8 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
         # Remove parent from all children
         Page.objects.filter(
             parent_id=page_id,
-            projects__id=project_id,
             workspace__slug=slug,
+            project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
         ).update(parent=None)
 
