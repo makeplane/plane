@@ -39,6 +39,32 @@ class PageAPISerializer(BaseSerializer):
     # A page's `parent` is another page, not an issue — expand it accordingly.
     expansion_overrides = {"parent": PageLiteSerializer}
 
+    def to_representation(self, instance):
+        """
+        Serialize the page, keeping ``expand=parent`` inside the same
+        private-page visibility rule the endpoints enforce.
+
+        Expansion reads the ``parent`` foreign key straight off the instance, so
+        without this check a page whose parent is someone else's private page
+        would disclose that parent's name and metadata to any project member.
+        When the requester may not see the parent, fall back to the bare id —
+        exactly what the unexpanded representation already returns, so nothing
+        new is revealed.
+        """
+        data = super().to_representation(instance)
+
+        if self.expand and "parent" in self.expand and instance.parent_id:
+            request = self.context.get("request")
+            user = getattr(request, "user", None)
+            parent = instance.parent
+            visible = parent.access == Page.PUBLIC_ACCESS or (
+                user is not None and not user.is_anonymous and parent.owned_by_id == user.id
+            )
+            if not visible:
+                data["parent"] = instance.parent_id
+
+        return data
+
     def validate_description_html(self, value):
         """
         Sanitize incoming page HTML with the same sanitizer the internal app

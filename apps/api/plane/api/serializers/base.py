@@ -24,6 +24,7 @@ class BaseSerializer(serializers.ModelSerializer):
     expansion_overrides = {}
 
     def __init__(self, *args, **kwargs):
+        """Store the optional `fields`/`expand` arguments before initialising DRF."""
         # If 'fields' is provided in the arguments, remove it and store it separately.
         # This is done so as not to pass this custom argument up to the superclass.
         fields = kwargs.pop("fields", [])
@@ -77,6 +78,7 @@ class BaseSerializer(serializers.ModelSerializer):
         return self.fields
 
     def to_representation(self, instance):
+        """Serialize the instance, expanding any requested related fields."""
         response = super().to_representation(instance)
 
         # Ensure 'expand' is iterable before processing

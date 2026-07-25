@@ -57,6 +57,20 @@ def _api_client_for(user):
     return client
 
 
+def _assert_parent_error(response):
+    """Assert a 400 body identifies the parent field, in either error shape.
+
+    A malformed UUID is rejected by the serializer field (``{"parent": [...]}``);
+    a well-formed but out-of-scope parent is rejected by the view
+    (``{"error": "The parent page ..."}``). Both must name the parent so an
+    unrelated 400 cannot satisfy the assertion.
+    """
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    if "parent" in response.data:
+        return
+    assert "parent" in str(response.data.get("error", "")).lower()
+
+
 def _link_page(project, page, user):
     """Attach a page to a project through the ProjectPage join model."""
     ProjectPage.objects.create(
@@ -202,6 +216,7 @@ class TestPageListCreateAPIEndpoint:
     """Test Page List and Create API Endpoint."""
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     @pytest.mark.django_db
@@ -369,6 +384,7 @@ class TestPageDetailAPIEndpoint:
     """Test Page Detail API Endpoint."""
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     @pytest.mark.django_db
@@ -511,6 +527,7 @@ class TestPageArchiveAPIEndpoint:
     """Test Page Archive and Unarchive API Endpoint."""
 
     def archive_url(self, slug, project_id, page_id):
+        """Return the page archive/unarchive URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/archive/"
 
     @pytest.mark.django_db
@@ -565,6 +582,7 @@ class TestPageLockAPIEndpoint:
     """Test Page Lock and Unlock API Endpoint."""
 
     def lock_url(self, slug, project_id, page_id):
+        """Return the page lock/unlock URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/lock/"
 
     @pytest.mark.django_db
@@ -649,15 +667,19 @@ class TestPrivatePageAccessMatrix:
     """
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     def archive_url(self, slug, project_id, page_id):
+        """Return the page archive/unarchive URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/archive/"
 
     def lock_url(self, slug, project_id, page_id):
+        """Return the page lock/unlock URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/lock/"
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     @pytest.mark.django_db
@@ -671,6 +693,7 @@ class TestPrivatePageAccessMatrix:
         ],
     )
     def test_retrieve(self, workspace, project, private_page, actors, actor, expected):
+        """GET resolves per vantage point: the private page is invisible to non-owners."""
         client = actors[actor]["client"]
         url = self.detail_url(workspace.slug, project.id, private_page.id)
         assert client.get(url).status_code == expected
@@ -686,6 +709,7 @@ class TestPrivatePageAccessMatrix:
         ],
     )
     def test_update(self, workspace, project, private_page, actors, actor, expected):
+        """PATCH per vantage point: the private page is invisible to non-owners."""
         client = actors[actor]["client"]
         url = self.detail_url(workspace.slug, project.id, private_page.id)
         assert client.patch(url, {"name": "Edited"}, format="json").status_code == expected
@@ -701,6 +725,7 @@ class TestPrivatePageAccessMatrix:
         ],
     )
     def test_archive(self, workspace, project, private_page, actors, actor, expected):
+        """POST /archive/ per vantage point on the private page."""
         client = actors[actor]["client"]
         url = self.archive_url(workspace.slug, project.id, private_page.id)
         assert client.post(url, format="json").status_code == expected
@@ -716,6 +741,7 @@ class TestPrivatePageAccessMatrix:
         ],
     )
     def test_lock(self, workspace, project, private_page, actors, actor, expected):
+        """POST /lock/ per vantage point on the private page."""
         client = actors[actor]["client"]
         url = self.lock_url(workspace.slug, project.id, private_page.id)
         assert client.post(url, format="json").status_code == expected
@@ -732,6 +758,7 @@ class TestPrivatePageAccessMatrix:
     )
     def test_unarchive(self, workspace, project, create_user, actors, actor, expected):
         # A private, archived page owned by the owner.
+        """DELETE /archive/ per vantage point on the private page."""
         page = Page.objects.create(
             name="Private Archived",
             description_html="<p>secret</p>",
@@ -758,6 +785,7 @@ class TestPrivatePageAccessMatrix:
     )
     def test_unlock(self, workspace, project, create_user, actors, actor, expected):
         # A private, locked page owned by the owner.
+        """DELETE /lock/ per vantage point on the private page."""
         page = Page.objects.create(
             name="Private Locked",
             description_html="<p>secret</p>",
@@ -784,6 +812,7 @@ class TestPrivatePageAccessMatrix:
     )
     def test_delete(self, workspace, project, create_user, actors, actor, expected):
         # A private, already-archived page owned by the owner.
+        """DELETE per vantage point on an archived private page."""
         page = Page.objects.create(
             name="Private Archived",
             description_html="<p>secret</p>",
@@ -836,12 +865,15 @@ class TestPublicPageAccessMatrix:
     """
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     def archive_url(self, slug, project_id, page_id):
+        """Return the page archive/unarchive URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/archive/"
 
     def lock_url(self, slug, project_id, page_id):
+        """Return the page lock/unlock URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/lock/"
 
     @pytest.mark.django_db
@@ -855,6 +887,7 @@ class TestPublicPageAccessMatrix:
         ],
     )
     def test_retrieve(self, workspace, project, public_page, actors, actor, expected):
+        """GET resolves per vantage point: the public page follows project membership."""
         client = actors[actor]["client"]
         url = self.detail_url(workspace.slug, project.id, public_page.id)
         assert client.get(url).status_code == expected
@@ -870,6 +903,7 @@ class TestPublicPageAccessMatrix:
         ],
     )
     def test_update(self, workspace, project, public_page, actors, actor, expected):
+        """PATCH per vantage point: the public page follows project membership."""
         client = actors[actor]["client"]
         url = self.detail_url(workspace.slug, project.id, public_page.id)
         assert client.patch(url, {"name": "Edited"}, format="json").status_code == expected
@@ -885,6 +919,7 @@ class TestPublicPageAccessMatrix:
         ],
     )
     def test_lock_is_owner_only(self, workspace, project, public_page, actors, actor, expected):
+        """POST /lock/ stays owner-only on a public page."""
         client = actors[actor]["client"]
         url = self.lock_url(workspace.slug, project.id, public_page.id)
         assert client.post(url, format="json").status_code == expected
@@ -901,6 +936,7 @@ class TestPublicPageAccessMatrix:
     )
     def test_unlock_is_owner_only(self, workspace, project, create_user, actors, actor, expected):
         # A public, locked page owned by the owner.
+        """DELETE /lock/ stays owner-only on a public page."""
         page = Page.objects.create(
             name="Public Locked",
             description_html="<p>public</p>",
@@ -926,6 +962,7 @@ class TestPublicPageAccessMatrix:
         ],
     )
     def test_archive(self, workspace, project, public_page, actors, actor, expected):
+        """POST /archive/ per vantage point on the public page."""
         client = actors[actor]["client"]
         url = self.archive_url(workspace.slug, project.id, public_page.id)
         assert client.post(url, format="json").status_code == expected
@@ -942,6 +979,7 @@ class TestPublicPageAccessMatrix:
     )
     def test_unarchive(self, workspace, project, create_user, actors, actor, expected):
         # A public, archived page owned by the owner.
+        """DELETE /archive/ per vantage point on the public page."""
         page = Page.objects.create(
             name="Public Archived",
             description_html="<p>public</p>",
@@ -968,9 +1006,11 @@ class TestPageExternalIdConflicts:
     of a page the caller cannot see."""
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     @pytest.mark.django_db
@@ -1059,9 +1099,11 @@ class TestPageParentValidation:
     form a cycle (which would make the recursive archive CTE loop forever)."""
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     @pytest.mark.django_db
@@ -1187,6 +1229,7 @@ class TestPageAuditFields:
     """
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     @pytest.mark.django_db
@@ -1217,6 +1260,7 @@ class TestPageExpand:
     """`expand` resolves page relations with page-aware serializers."""
 
     def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
     @pytest.mark.django_db
@@ -1254,6 +1298,7 @@ class TestPageParentValidationEdgeCases:
     """Malformed parent references are reported as parent errors."""
 
     def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     @pytest.mark.django_db
@@ -1262,7 +1307,7 @@ class TestPageParentValidationEdgeCases:
         url = self.list_url(workspace.slug, project.id)
         response = api_key_client.post(url, {"name": "Child", "parent": "not-a-uuid"}, format="json")
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        _assert_parent_error(response)
 
     @pytest.mark.django_db
     def test_update_with_malformed_parent_uuid(self, api_key_client, workspace, project, create_page):
@@ -1270,8 +1315,7 @@ class TestPageParentValidationEdgeCases:
         url = f"{self.list_url(workspace.slug, project.id)}{create_page.id}/"
         response = api_key_client.patch(url, {"parent": "not-a-uuid"}, format="json")
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "parent" in response.data["error"].lower()
+        _assert_parent_error(response)
 
     @pytest.mark.django_db
     def test_deep_chain_parent_is_allowed(self, api_key_client, workspace, project, create_user):
@@ -1305,7 +1349,188 @@ class TestPageTypeParameterSchema:
     """The documented `type` values are constrained in the generated schema."""
 
     def test_type_parameter_declares_enum_and_default(self):
+        """The `type` parameter advertises its allowed values and default."""
         from plane.utils.openapi import PAGE_TYPE_PARAMETER
 
         assert PAGE_TYPE_PARAMETER.enum == ["all", "public", "private", "archived"]
         assert PAGE_TYPE_PARAMETER.default == "all"
+
+
+@pytest.mark.contract
+class TestPageExpandVisibility:
+    """`expand=parent` stays inside the private-page visibility rule."""
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_expand_parent_hides_other_users_private_parent(self, workspace, project, actors):
+        """A private parent owned by someone else is never expanded.
+
+        A public page may point at a private parent. Expansion reads the foreign
+        key directly, so without a visibility check the parent's name and
+        metadata would leak to any project member. The response falls back to
+        the bare id, which the unexpanded representation already exposes.
+        """
+        owner = actors["owner"]["user"]
+        private_parent = Page.objects.create(
+            name="Secret Parent",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PRIVATE_ACCESS,
+        )
+        _link_page(project, private_parent, owner)
+        child = Page.objects.create(
+            name="Public Child",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+            parent=private_parent,
+        )
+        _link_page(project, child, owner)
+
+        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
+        response = actors["member"]["client"].get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert str(response.data["parent"]) == str(private_parent.id)
+        assert "Secret Parent" not in str(response.data)
+
+    @pytest.mark.django_db
+    def test_owner_still_sees_own_private_parent_expanded(self, workspace, project, actors):
+        """The parent's owner still gets the expanded payload."""
+        owner = actors["owner"]["user"]
+        private_parent = Page.objects.create(
+            name="My Parent",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PRIVATE_ACCESS,
+        )
+        _link_page(project, private_parent, owner)
+        child = Page.objects.create(
+            name="Child",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+            parent=private_parent,
+        )
+        _link_page(project, child, owner)
+
+        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
+        response = actors["owner"]["client"].get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["parent"]["name"] == "My Parent"
+
+    @pytest.mark.django_db
+    def test_list_expand_parent_hides_private_parent(self, workspace, project, actors):
+        """The list endpoint applies the same rule as retrieve."""
+        owner = actors["owner"]["user"]
+        private_parent = Page.objects.create(
+            name="Secret List Parent",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PRIVATE_ACCESS,
+        )
+        _link_page(project, private_parent, owner)
+        child = Page.objects.create(
+            name="Listed Child",
+            owned_by=owner,
+            workspace=project.workspace,
+            access=Page.PUBLIC_ACCESS,
+            parent=private_parent,
+        )
+        _link_page(project, child, owner)
+
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/pages/?expand=parent"
+        response = actors["member"]["client"].get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "Secret List Parent" not in str(response.data)
+
+
+@pytest.mark.contract
+class TestPageTypeFilterValidation:
+    """Unsupported `type` values are rejected rather than silently defaulting."""
+
+    def list_url(self, slug, project_id):
+        """Return the page list URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    @pytest.mark.django_db
+    def test_unsupported_type_is_rejected(self, api_key_client, workspace, project, create_page):
+        """An unknown type returns 400 listing the allowed values."""
+        url = f"{self.list_url(workspace.slug, project.id)}?type=bogus"
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["allowed"] == ["all", "archived", "private", "public"]
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("page_type", ["all", "public", "private", "archived"])
+    def test_documented_types_are_accepted(self, api_key_client, workspace, project, create_page, page_type):
+        """Every documented type value is accepted."""
+        url = f"{self.list_url(workspace.slug, project.id)}?type={page_type}"
+        assert api_key_client.get(url).status_code == status.HTTP_200_OK
+
+
+@pytest.mark.contract
+class TestPageExternalIdentityUpdate:
+    """The external identity is the (external_id, external_source) pair."""
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_changing_only_external_source_detects_collision(self, api_key_client, workspace, project, create_user):
+        """Moving a page onto another page's (id, source) pair conflicts.
+
+        Comparing only external_id would let a source-only change slip past the
+        guard and create a duplicate identity.
+        """
+        first = Page.objects.create(
+            name="First",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="shared-id",
+            external_source="notion",
+        )
+        _link_page(project, first, create_user)
+        second = Page.objects.create(
+            name="Second",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="shared-id",
+            external_source="confluence",
+        )
+        _link_page(project, second, create_user)
+
+        url = self.detail_url(workspace.slug, project.id, second.id)
+        response = api_key_client.patch(url, {"external_source": "notion"}, format="json")
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    @pytest.mark.django_db
+    def test_resubmitting_own_identity_is_not_a_conflict(self, api_key_client, workspace, project, create_user):
+        """A page may re-send its own identity without colliding with itself."""
+        page = Page.objects.create(
+            name="Self",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="own-id",
+            external_source="notion",
+        )
+        _link_page(project, page, create_user)
+
+        url = self.detail_url(workspace.slug, project.id, page.id)
+        response = api_key_client.patch(
+            url,
+            {"name": "Renamed", "external_id": "own-id", "external_source": "notion"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.name == "Renamed"

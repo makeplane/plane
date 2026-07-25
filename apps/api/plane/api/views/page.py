@@ -59,34 +59,56 @@ from plane.utils.openapi import (
 from .base import BaseAPIView
 
 
-def external_id_lock_key(project_id, external_source, external_id):
-    """Derive a stable 64-bit advisory-lock key for one external page identity.
+# Supported values for the `type` query filter on the list endpoint.
+PAGE_TYPES = {"all", "public", "private", "archived"}
+
+
+def as_text(value):
+    """Render a value the way the model stores it, so the two compare equally."""
+    return str(value) if value is not None else None
+
+
+def advisory_lock_key(*parts):
+    """Derive a stable 64-bit advisory-lock key from the given parts.
 
     Mirrors ``plane.utils.uuid.convert_uuid_to_integer`` (sha256 truncated to a
-    signed bigint), but keyed on the whole external identity so concurrent
-    creates only serialize against the same (project, source, id) triple.
+    signed bigint). The leading part namespaces the key so page locks never
+    collide with other advisory locks (e.g. Issue's per-project sequence lock).
     """
-    digest = hashlib.sha256(f"page:{project_id}:{external_source}:{external_id}".encode()).digest()
+    digest = hashlib.sha256(":".join(str(part) for part in parts).encode()).digest()
     return int.from_bytes(digest[:8], byteorder="big", signed=True)
 
 
+def take_advisory_lock(*parts):
+    """Take a transaction-scoped advisory lock, released when the txn ends."""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT pg_advisory_xact_lock(%s)", [advisory_lock_key(*parts)])
+
+
 def lock_external_id(project_id, external_source, external_id):
-    """Take a transaction-scoped advisory lock on an external page identity.
+    """Serialize writes touching one external page identity.
 
     ``external_id``/``external_source`` have no DB uniqueness constraint (no
     Plane entity constrains them, and a project-scoped constraint is not even
     expressible on ``Page`` — pages attach to projects through the ``ProjectPage``
-    m2m). Without one, a bare check-then-insert races: two concurrent creates
-    can both pass the existence check and both insert. Serializing on this lock
-    — the same ``pg_advisory_xact_lock`` pattern ``Issue.save`` uses to allocate
-    sequence ids — makes the check-then-insert deterministic. The lock is
-    released when the surrounding transaction ends.
+    m2m). Without one, a bare check-then-insert races: two concurrent writes can
+    both pass the existence check and both persist. Locking on the identity —
+    the same ``pg_advisory_xact_lock`` pattern ``Issue.save`` uses to allocate
+    sequence ids — makes check-then-write deterministic.
     """
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT pg_advisory_xact_lock(%s)",
-            [external_id_lock_key(project_id, external_source, external_id)],
-        )
+    take_advisory_lock("page-external-id", project_id, external_source, external_id)
+
+
+def lock_page_hierarchy(project_id):
+    """Serialize reparenting within a project so cycles cannot interleave.
+
+    Validating the ancestor chain and saving the new parent must be one atomic
+    step: two concurrent updates (A under B, B under A) can each read a
+    cycle-free hierarchy and then both commit, leaving a cycle that would make
+    the recursive archive CTE loop forever. Reparenting is rare, so one
+    project-scoped lock is enough and avoids lock-ordering deadlocks.
+    """
+    take_advisory_lock("page-hierarchy", project_id)
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -123,6 +145,7 @@ class PageAPIBaseView(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return the visibility-filtered page queryset for this request."""
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
@@ -230,6 +253,15 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
             queryset = queryset.filter(name__icontains=search)
 
         page_type = request.GET.get("type", "all")
+        if page_type not in PAGE_TYPES:
+            return Response(
+                {
+                    "error": "Invalid type",
+                    "allowed": sorted(PAGE_TYPES),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if page_type == "public":
             queryset = queryset.filter(access=Page.PUBLIC_ACCESS, archived_at__isnull=True)
         elif page_type == "private":
@@ -248,6 +280,7 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
+                    context={"request": request},
                 ).data
             ),
         )
@@ -284,15 +317,19 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
 
         serializer = PageAPISerializer(data=request.data)
         if serializer.is_valid():
-            # Validate the requested parent (project scope) before persisting.
-            parent_error = self.validate_parent_or_error(request)
-            if parent_error is not None:
-                return parent_error
-
             external_id = request.data.get("external_id")
             external_source = request.data.get("external_source")
 
             with transaction.atomic():
+                # Validate the requested parent (project scope) inside the
+                # transaction that persists it, so a parent cannot be archived
+                # or detached between the check and the insert.
+                if "parent" in request.data:
+                    lock_page_hierarchy(project_id)
+                    parent_error = self.validate_parent_or_error(request)
+                    if parent_error is not None:
+                        return parent_error
+
                 # Duplicate external_id check. Uniqueness is project-wide (an
                 # integration must not create two pages for the same external
                 # record), so the existence check is intentionally unscoped by
@@ -380,7 +417,12 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
         """
         page = self.get_queryset().get(pk=page_id)
         return Response(
-            PageAPISerializer(page, fields=self.fields, expand=self.expand).data,
+            PageAPISerializer(
+                page,
+                fields=self.fields,
+                expand=self.expand,
+                context={"request": request},
+            ).data,
             status=status.HTTP_200_OK,
         )
 
@@ -432,34 +474,48 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Validate the requested parent (project scope + no cycles).
-        parent_error = self.validate_parent_or_error(request, page_id=page_id)
-        if parent_error is not None:
-            return parent_error
-
         # Snapshot before mutation for version history + webhook diffing
         old_description_html = page.description_html
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
-        external_id = request.data.get("external_id")
+        # The external identity is the (id, source) pair: a change to either
+        # half can collide, so both are compared against the stored values.
+        external_id = request.data.get("external_id", page.external_id)
         external_source = request.data.get("external_source", page.external_source)
+        identity_changed = (as_text(external_id), as_text(external_source)) != (
+            page.external_id,
+            page.external_source,
+        )
 
         serializer = PageAPISerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
             with transaction.atomic():
-                # Guard external_id uniqueness on update, mirroring the create
-                # path and the cycle/module endpoints, so a page's external_id
-                # can't be changed to one already used by another page in the
-                # project. Checked under the same advisory lock as create so the
-                # two paths cannot race each other.
-                if external_id and page.external_id != str(external_id):
+                # Validate the requested parent inside the transaction that
+                # persists it. Two concurrent reparents could otherwise each see
+                # a cycle-free hierarchy and both commit, leaving a cycle.
+                if "parent" in request.data:
+                    lock_page_hierarchy(project_id)
+                    parent_error = self.validate_parent_or_error(request, page_id=page_id)
+                    if parent_error is not None:
+                        return parent_error
+
+                # Guard external identity uniqueness on update, mirroring the
+                # create path and the cycle/module endpoints, so a page's
+                # external identity can't be changed to one already used by
+                # another page in the project. Checked under the same advisory
+                # lock as create so the two paths cannot race each other.
+                if external_id and identity_changed:
                     lock_external_id(project_id, external_source, external_id)
-                    if Page.objects.filter(
-                        projects__id=project_id,
-                        workspace__slug=slug,
-                        external_source=external_source,
-                        external_id=external_id,
-                    ).exists():
+                    if (
+                        Page.objects.filter(
+                            projects__id=project_id,
+                            workspace__slug=slug,
+                            external_source=external_source,
+                            external_id=external_id,
+                        )
+                        .exclude(pk=page.id)
+                        .exists()
+                    ):
                         return Response(
                             {
                                 "error": "Page with the same external id and external source already exists",
