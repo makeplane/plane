@@ -4,12 +4,12 @@
 
 # Python imports
 import json
-from datetime import datetime
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import connection, transaction
+from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -30,6 +30,7 @@ from plane.db.models import (
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.webhook_task import dispatch_page_webhook, model_activity
 from plane.utils.host import base_host
+from plane.utils.page import MAX_PAGE_TREE_DEPTH, unarchive_archive_page_and_descendants
 from plane.utils.openapi import (
     page_docs,
     PAGE_ID_PARAMETER,
@@ -49,20 +50,6 @@ from plane.utils.openapi import (
 from .base import BaseAPIView
 
 
-def unarchive_archive_page_and_descendants(page_id, archived_at):
-    """Archive or unarchive a page and all of its descendant pages."""
-    sql = """
-    WITH RECURSIVE descendants AS (
-        SELECT id FROM pages WHERE id = %s
-        UNION ALL
-        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
-    )
-    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
-    """
-    with connection.cursor() as cursor:
-        cursor.execute(sql, [page_id, archived_at])
-
-
 class PageAPIEndpoint(BaseAPIView):
     """Shared base for the public v1 page endpoints.
 
@@ -80,6 +67,7 @@ class PageAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """The access-scoped page queryset every action reads and writes through."""
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
@@ -110,6 +98,64 @@ class PageAPIEndpoint(BaseAPIView):
             role=20,
             is_active=True,
         ).exists()
+
+    def _invalid_parent_response(self, request, page=None):
+        """Validate a ``parent`` in the request body, returning an error response.
+
+        ``parent`` is a writable relation, and DRF would otherwise resolve it
+        through ``Page.objects.all()`` — letting a caller re-parent a page under
+        any page id in the database, including another project's, another
+        workspace's, or another user's private page. Resolving it through
+        :meth:`get_queryset` instead confines the target to pages this caller can
+        actually see in this project.
+
+        Also rejects a parent that would form a cycle (a page under itself or
+        under one of its own descendants): the page tree is walked with a
+        recursive CTE, so a cycle would recurse until it is cut off.
+
+        Returns ``None`` when the payload is acceptable.
+        """
+        if "parent" not in request.data:
+            return None
+
+        parent_id = request.data.get("parent")
+        if parent_id is None:
+            # Explicitly detaching the page from its parent is always allowed.
+            return None
+
+        if not self.get_queryset().filter(pk=parent_id).exists():
+            return Response(
+                {"error": "The requested parent page does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if page is not None and self._parent_would_cycle(page, parent_id):
+            return Response(
+                {"error": "A page cannot be nested under itself or its own descendant"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return None
+
+    def _parent_would_cycle(self, page, parent_id):
+        """True if re-parenting ``page`` under ``parent_id`` closes a loop.
+
+        Walks up from the proposed parent; if ``page`` is one of its ancestors the
+        link would create a cycle. The walk is depth-bounded so an already-cyclic
+        row cannot spin here either.
+        """
+        if str(parent_id) == str(page.id):
+            return True
+
+        ancestor_id = parent_id
+        for _ in range(MAX_PAGE_TREE_DEPTH):
+            ancestor = Page.objects.filter(pk=ancestor_id).values_list("parent_id", flat=True).first()
+            if ancestor is None:
+                return False
+            if str(ancestor) == str(page.id):
+                return True
+            ancestor_id = ancestor
+        return False
 
 
 class PageListCreateAPIEndpoint(PageAPIEndpoint):
@@ -193,6 +239,11 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
         the Yjs binary is left empty for the live service to derive.
         """
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+        # A parent must be a page this caller can already see in this project.
+        invalid_parent = self._invalid_parent_response(request)
+        if invalid_parent:
+            return invalid_parent
 
         serializer = PageAPISerializer(data=request.data)
         if serializer.is_valid():
@@ -317,6 +368,12 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # A parent must be a page this caller can already see in this project, and
+        # must not put the page under itself or one of its descendants.
+        invalid_parent = self._invalid_parent_response(request, page=page)
+        if invalid_parent:
+            return invalid_parent
+
         old_description_html = page.description_html
         # Snapshot BEFORE the write so the webhook fan-out can diff which
         # properties actually changed.
@@ -332,8 +389,11 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
                 serializer.save()
 
             if request.data.get("description_html"):
+                # Record what was actually stored: the serializer sanitizes
+                # description_html, so the raw request body would put unsanitized
+                # markup into the page's version history.
                 page_transaction.delay(
-                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    new_description_html=serializer.instance.description_html or "<p></p>",
                     old_description_html=old_description_html,
                     page_id=page_id,
                 )
@@ -454,9 +514,12 @@ class PageArchiveAPIEndpoint(PageAPIEndpoint):
             workspace__slug=slug,
         ).delete()
 
-        # Single timestamp shared by the SQL update, the webhook and the
-        # response so all three agree.
-        archived_at = datetime.now()
+        # Single timestamp shared by the SQL update, the webhook and the response
+        # so all three agree. timezone.now() keeps it tz-aware: archived_at is a
+        # DateField, so a naive server-local value can land on the wrong calendar
+        # day around midnight under USE_TZ.
+        old_archived_at = page.archived_at
+        archived_at = timezone.now()
         unarchive_archive_page_and_descendants(page_id, archived_at)
         dispatch_page_webhook(
             request,
@@ -464,7 +527,7 @@ class PageArchiveAPIEndpoint(PageAPIEndpoint):
             page_id,
             verb="updated",
             field="archived_at",
-            old_value=None,
+            old_value=str(old_archived_at) if old_archived_at else None,
             new_value=str(archived_at),
         )
 
@@ -526,6 +589,9 @@ class PageLockAPIEndpoint(PageAPIEndpoint):
         """Lock page"""
         page = self.get_queryset().get(pk=page_id)
 
+        # Report the page's real prior state — locking an already-locked page must
+        # not claim it changed from unlocked.
+        was_locked = page.is_locked
         page.is_locked = True
         page.save()
         dispatch_page_webhook(
@@ -534,7 +600,7 @@ class PageLockAPIEndpoint(PageAPIEndpoint):
             page_id,
             verb="updated",
             field="is_locked",
-            old_value=False,
+            old_value=was_locked,
             new_value=True,
         )
         return Response({"is_locked": True}, status=status.HTTP_200_OK)
@@ -551,6 +617,7 @@ class PageLockAPIEndpoint(PageAPIEndpoint):
         """Unlock page"""
         page = self.get_queryset().get(pk=page_id)
 
+        was_locked = page.is_locked
         page.is_locked = False
         page.save()
         dispatch_page_webhook(
@@ -559,7 +626,7 @@ class PageLockAPIEndpoint(PageAPIEndpoint):
             page_id,
             verb="updated",
             field="is_locked",
-            old_value=True,
+            old_value=was_locked,
             new_value=False,
         )
         return Response({"is_locked": False}, status=status.HTTP_200_OK)

@@ -27,18 +27,22 @@ class _FakeRedis:
     """
 
     def __init__(self):
+        """Start with an empty keyspace."""
         self.store = {}
 
     def set(self, key, value, nx=False, ex=None):
+        """Mimic redis SET with optional NX/EX semantics."""
         if nx and key in self.store:
             return None
         self.store[key] = value
         return True
 
     def get(self, key):
+        """Return the stored value, or None."""
         return self.store.get(key)
 
     def delete(self, *keys):
+        """Remove keys, returning how many existed."""
         removed = 0
         for key in keys:
             if self.store.pop(key, None) is not None:
@@ -63,11 +67,13 @@ class TestPageWebhookMapping:
     """The webhook fan-out must know how to serialize a ``page`` event."""
 
     def test_page_registered_in_mappers(self):
+        """The page event has both a model and a serializer."""
         assert "page" in MODEL_MAPPER
         assert MODEL_MAPPER["page"] is Page
         assert "page" in SERIALIZER_MAPPER
 
     def test_get_model_data_serializes_page(self, page):
+        """A page serializes to the webhook payload contract."""
         data = get_model_data(event="page", event_id=page.id)
         assert str(data["id"]) == str(page.id)
         assert data["name"] == "Release Notes"
@@ -94,6 +100,7 @@ class TestPageWebhookActivity:
 
     @pytest.fixture
     def page_webhook(self, workspace):
+        """A workspace webhook subscribed to page events."""
         return Webhook.objects.create(
             workspace=workspace,
             url="https://example.com/page-hook",
@@ -114,6 +121,7 @@ class TestPageWebhookActivity:
     def test_created_dispatches_only_to_page_webhooks(
         self, mock_send_task, page_webhook, other_webhook, page, create_user, workspace
     ):
+        """Only page-subscribed webhooks receive page events."""
         webhook_activity(
             event="page",
             verb="created",
@@ -141,6 +149,7 @@ class TestPageWebhookActivity:
     def test_deleted_sends_only_the_id(self, mock_send_task, page_webhook, create_user, workspace):
         # A delete fires after the row is gone, so the fan-out never reloads the
         # page — any id stands in for the already-deleted page here.
+        """A delete carries just the page id."""
         deleted_page_id = uuid4()
 
         webhook_activity(
@@ -165,6 +174,7 @@ class TestPageWebhookActivity:
 
     @patch("plane.bgtasks.webhook_task.webhook_send_task")
     def test_inactive_webhook_is_skipped(self, mock_send_task, page, create_user, workspace):
+        """Inactive webhooks receive nothing."""
         Webhook.objects.create(
             workspace=workspace,
             url="https://example.com/inactive-hook",
@@ -197,6 +207,7 @@ class TestPageUpdateWebhookDebounce:
 
     @pytest.fixture
     def page_webhook(self, workspace):
+        """A workspace webhook subscribed to page events."""
         return Webhook.objects.create(
             workspace=workspace,
             url="https://example.com/page-hook",
@@ -205,9 +216,11 @@ class TestPageUpdateWebhookDebounce:
 
     @pytest.fixture
     def fake_redis(self):
+        """An in-memory stand-in for the debounce keyspace."""
         return _FakeRedis()
 
     def _fire_update(self, page, create_user, workspace, *, debounce, field):
+        """Invoke webhook_activity for a page update."""
         webhook_activity(
             event="page",
             verb="updated",
@@ -317,3 +330,78 @@ class TestPageUpdateWebhookDebounce:
         # Same read-only PageSerializer projection for both create and update.
         assert updated_payload == created_payload
         assert "description_binary" not in updated_payload
+
+
+@pytest.mark.unit
+class TestPageUpdateWebhookDebounceSafety:
+    """The debounce window must only be spent on a delivery that actually happens.
+
+    Claiming it earlier means a no-subscriber call or a transient failure silences
+    every page change for the rest of the window."""
+
+    @pytest.fixture
+    def fake_redis(self):
+        """An in-memory stand-in for the debounce keyspace."""
+        return _FakeRedis()
+
+    def _fire_content_update(self, page, create_user, workspace):
+        """Invoke webhook_activity for a debounced content update."""
+        webhook_activity(
+            event="page",
+            verb="updated",
+            field="description_html",
+            old_value=None,
+            new_value=None,
+            actor_id=create_user.id,
+            slug=workspace.slug,
+            current_site="http://localhost",
+            event_id=page.id,
+            old_identifier=None,
+            new_identifier=None,
+            debounce=True,
+        )
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_no_subscriber_does_not_claim_the_window(self, mock_send_task, fake_redis, page, create_user, workspace):
+        """With nothing subscribed the window stays free, so the next deliverable
+        change is not swallowed."""
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_content_update(page, create_user, workspace)
+
+            mock_send_task.delay.assert_not_called()
+            assert fake_redis.get(_page_update_webhook_debounce_key(page.id)) is None
+
+            # A subscriber appears; the very next flush must still deliver.
+            Webhook.objects.create(workspace=workspace, url="https://example.com/page-hook", page=True)
+            self._fire_content_update(page, create_user, workspace)
+
+        mock_send_task.delay.assert_called_once()
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_failed_dispatch_releases_the_window(self, mock_send_task, fake_redis, page, create_user, workspace):
+        """A broker error must cost one webhook, not a whole window."""
+        Webhook.objects.create(workspace=workspace, url="https://example.com/page-hook", page=True)
+        mock_send_task.delay.side_effect = RuntimeError("broker down")
+
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            # webhook_activity swallows the error (logged) — the point is the marker.
+            self._fire_content_update(page, create_user, workspace)
+            assert fake_redis.get(_page_update_webhook_debounce_key(page.id)) is None
+
+            # The next flush gets a working broker and delivers immediately.
+            mock_send_task.delay.side_effect = None
+            self._fire_content_update(page, create_user, workspace)
+
+        assert mock_send_task.delay.call_count == 2
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_successful_dispatch_keeps_the_window(self, mock_send_task, fake_redis, page, create_user, workspace):
+        """A delivered webhook holds the window so the flood stays collapsed."""
+        Webhook.objects.create(workspace=workspace, url="https://example.com/page-hook", page=True)
+
+        with patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis):
+            self._fire_content_update(page, create_user, workspace)
+            assert fake_redis.get(_page_update_webhook_debounce_key(page.id)) is not None
+            self._fire_content_update(page, create_user, workspace)
+
+        mock_send_task.delay.assert_called_once()

@@ -4,11 +4,9 @@
 
 # Python imports
 import json
-from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.db import connection
 from django.db.models import (
     Exists,
     OuterRef,
@@ -24,6 +22,7 @@ from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -56,22 +55,7 @@ from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_asse
 from plane.bgtasks.webhook_task import dispatch_page_webhook, model_activity
 from plane.app.permissions import ProjectPagePermission
 from plane.utils.host import base_host
-
-
-def unarchive_archive_page_and_descendants(page_id, archived_at):
-    # Your SQL query
-    sql = """
-    WITH RECURSIVE descendants AS (
-        SELECT id FROM pages WHERE id = %s
-        UNION ALL
-        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
-    )
-    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
-    """
-
-    # Execute the SQL query
-    with connection.cursor() as cursor:
-        cursor.execute(sql, [page_id, archived_at])
+from plane.utils.page import unarchive_archive_page_and_descendants
 
 
 class PageViewSet(BaseViewSet):
@@ -271,10 +255,13 @@ class PageViewSet(BaseViewSet):
             project_pages__deleted_at__isnull=True,
         )
 
+        # Report the page's real prior state — locking an already-locked page
+        # must not claim it changed from unlocked.
+        was_locked = page.is_locked
         page.is_locked = True
         page.save()
         dispatch_page_webhook(
-            request, slug, page_id, verb="updated", field="is_locked", old_value=False, new_value=True
+            request, slug, page_id, verb="updated", field="is_locked", old_value=was_locked, new_value=True
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -286,10 +273,11 @@ class PageViewSet(BaseViewSet):
             project_pages__deleted_at__isnull=True,
         )
 
+        was_locked = page.is_locked
         page.is_locked = False
         page.save()
         dispatch_page_webhook(
-            request, slug, page_id, verb="updated", field="is_locked", old_value=True, new_value=False
+            request, slug, page_id, verb="updated", field="is_locked", old_value=was_locked, new_value=False
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -364,11 +352,20 @@ class PageViewSet(BaseViewSet):
 
         # Capture a single timestamp for the SQL update, the webhook and the
         # response so all three agree (previously datetime.now() was called
-        # twice, yielding two slightly different values).
-        archived_at = datetime.now()
+        # twice, yielding two slightly different values). timezone.now() keeps
+        # it tz-aware: archived_at is a DateField, so a naive server-local value
+        # can land on the wrong calendar day around midnight under USE_TZ.
+        old_archived_at = page.archived_at
+        archived_at = timezone.now()
         unarchive_archive_page_and_descendants(page_id, archived_at)
         dispatch_page_webhook(
-            request, slug, page_id, verb="updated", field="archived_at", old_value=None, new_value=str(archived_at)
+            request,
+            slug,
+            page_id,
+            verb="updated",
+            field="archived_at",
+            old_value=str(old_archived_at) if old_archived_at else None,
+            new_value=str(archived_at),
         )
 
         return Response({"archived_at": str(archived_at)}, status=status.HTTP_200_OK)
@@ -605,10 +602,12 @@ class PagesDescriptionViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            # Capture the page transaction
+            # Capture the page transaction. The serializer sanitizes
+            # description_html, so record the value that was actually stored
+            # rather than the raw request body.
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    new_description_html=page.description_html or "<p></p>",
                     old_description_html=old_description_html,
                     page_id=page_id,
                 )
@@ -624,14 +623,20 @@ class PagesDescriptionViewSet(BaseViewSet):
             # This endpoint is what the live (Yjs) collab server flushes into on
             # every store cycle (~10s), so the delivery is debounced per page to
             # avoid a webhook per flush during an active editing session.
-            dispatch_page_webhook(
-                request,
-                slug,
-                page_id,
-                verb="updated",
-                field="description_html",
-                debounce=True,
-            )
+            # Only fire when content actually travelled in the request: a live
+            # flush always carries the document, but a payload with no content
+            # field at all changed nothing and must not emit an update. The
+            # binary and json forms count too — a binary-only flush is still a
+            # real content change.
+            if any(field in request.data for field in ("description_html", "description_binary", "description_json")):
+                dispatch_page_webhook(
+                    request,
+                    slug,
+                    page_id,
+                    verb="updated",
+                    field="description_html",
+                    debounce=True,
+                )
             return Response({"message": "Updated successfully"})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

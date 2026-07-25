@@ -110,6 +110,7 @@ PAGE_UPDATE_WEBHOOK_DEBOUNCE = 60
 
 
 def _page_update_webhook_debounce_key(page_id: str | uuid.UUID) -> str:
+    """Redis key holding the debounce marker for one page's update webhooks."""
     return f"page_update_webhook:{page_id}"
 
 
@@ -123,6 +124,11 @@ def _suppress_page_update_webhook(page_id: str | uuid.UUID, debounce: bool) -> b
       ``PAGE_UPDATE_WEBHOOK_DEBOUNCE`` seconds, so this flush is suppressed.
     - ``debounce=False`` (discrete property edit): never suppressed; just refresh
       the window so an immediately following content flush is coalesced.
+
+    Only call this once a delivery is actually about to be enqueued: claiming the
+    window is what silences the next 60s, so claiming it for a call that then
+    delivers nothing would drop that whole window's changes. Callers must release
+    it with :func:`_release_page_update_webhook` if the dispatch fails.
 
     Fails open — a redis error must never drop a webhook, so on any failure we
     return ``False`` (deliver).
@@ -139,6 +145,19 @@ def _suppress_page_update_webhook(page_id: str | uuid.UUID, debounce: bool) -> b
     except Exception as e:
         log_exception(e, warning=True)
         return False
+
+
+def _release_page_update_webhook(page_id: str | uuid.UUID) -> None:
+    """Drop a page's debounce marker so the next update can deliver immediately.
+
+    Used when a claimed window did not result in a delivery (the fan-out raised),
+    so a transient DB/broker failure costs one webhook instead of silencing the
+    page for the rest of the window.
+    """
+    try:
+        redis_instance().delete(_page_update_webhook_debounce_key(page_id))
+    except Exception as e:
+        log_exception(e, warning=True)
 
 
 logger = logging.getLogger("plane.worker")
@@ -497,12 +516,6 @@ def webhook_activity(
         race conditions where objects might have been deleted.
     """
     try:
-        # Collapse the live collab server's frequent content-persist flushes into
-        # at most one ``page`` update webhook per debounce window. Property edits
-        # (debounce=False) always deliver and just refresh that window.
-        if event == "page" and verb == "updated" and _suppress_page_update_webhook(event_id, debounce):
-            return
-
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
         if event == "project":
@@ -523,23 +536,46 @@ def webhook_activity(
         if event == "page":
             webhooks = webhooks.filter(page=True)
 
-        for webhook in webhooks:
-            webhook_send_task.delay(
-                webhook_id=webhook.id,
-                slug=slug,
-                event=event,
-                event_data=({"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)),
-                action=verb,
-                current_site=current_site,
-                activity={
-                    "field": field,
-                    "new_value": new_value,
-                    "old_value": old_value,
-                    "actor": get_model_data(event="user", event_id=actor_id),
-                    "old_identifier": old_identifier,
-                    "new_identifier": new_identifier,
-                },
-            )
+        # Resolve the subscribers BEFORE touching the debounce window: a page with
+        # no subscriber must not burn a window that a later, deliverable change
+        # would then be silenced by.
+        webhooks = list(webhooks)
+        if not webhooks:
+            return
+
+        # Collapse the live collab server's frequent content-persist flushes into
+        # at most one ``page`` update webhook per debounce window. Property edits
+        # (debounce=False) always deliver and just refresh that window. Claimed
+        # here, immediately before dispatch, and released below if dispatch fails
+        # so a transient error costs one webhook rather than a whole window.
+        debounced_page_update = event == "page" and verb == "updated"
+        if debounced_page_update and _suppress_page_update_webhook(event_id, debounce):
+            return
+
+        try:
+            for webhook in webhooks:
+                webhook_send_task.delay(
+                    webhook_id=webhook.id,
+                    slug=slug,
+                    event=event,
+                    event_data=(
+                        {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+                    ),
+                    action=verb,
+                    current_site=current_site,
+                    activity={
+                        "field": field,
+                        "new_value": new_value,
+                        "old_value": old_value,
+                        "actor": get_model_data(event="user", event_id=actor_id),
+                        "old_identifier": old_identifier,
+                        "new_identifier": new_identifier,
+                    },
+                )
+        except Exception:
+            if debounced_page_update:
+                _release_page_update_webhook(event_id)
+            raise
         return
     except Exception as e:
         # Return if a does not exist error occurs

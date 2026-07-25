@@ -54,6 +54,12 @@ class PageAPISerializer(BaseSerializer):
     internal API uses. The Yjs ``description_binary`` / ``description_json``
     fields are intentionally excluded from the public contract — they are the
     live-collaboration document state and have no stable JSON representation.
+
+    ``parent`` is writable, and DRF resolves relations through the model's default
+    manager, which knows nothing about who is asking. It is therefore validated
+    against the caller's access-scoped queryset by
+    ``PageAPIEndpoint._invalid_parent_response`` — the single place that owns page
+    visibility — before any save. Any new page write path must call it too.
     """
 
     class Meta:
