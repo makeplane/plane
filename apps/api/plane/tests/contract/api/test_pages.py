@@ -1611,6 +1611,143 @@ class TestPageExternalIdentityUpdate:
 
 
 @pytest.mark.contract
+class TestPageExternalIdentityPairing:
+    """`external_id` and `external_source` are accepted only as a pair.
+
+    They name one record in one external system, and the uniqueness guard keys
+    on the pair. Half an identity matches nothing and would slip past that
+    guard, so it is refused as a field error rather than stored.
+    """
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.mark.django_db
+    def test_create_with_only_external_id_is_rejected(self, api_key_client, workspace, project):
+        """A create carrying just an id names the missing half."""
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Half", "external_id": "abc-123"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "external_source" in response.data
+        assert not Page.objects.filter(external_id="abc-123").exists()
+
+    @pytest.mark.django_db
+    def test_create_with_only_external_source_is_rejected(self, api_key_client, workspace, project):
+        """The mirror case names the other half."""
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Half", "external_source": "notion"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "external_id" in response.data
+
+    @pytest.mark.django_db
+    def test_create_with_both_halves_succeeds(self, api_key_client, workspace, project):
+        """A complete identity is still accepted."""
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Whole", "external_id": "abc-123", "external_source": "notion"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    @pytest.mark.django_db
+    def test_patch_adding_only_external_id_is_rejected(self, api_key_client, workspace, project, create_page):
+        """A PATCH is judged on the identity the page would end up with.
+
+        This is the easy way to end up with half an identity, since a partial
+        update naturally carries one field.
+        """
+        response = api_key_client.patch(
+            self.detail_url(workspace.slug, project.id, create_page.id),
+            {"external_id": "abc-123"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "external_source" in response.data
+        create_page.refresh_from_db()
+        assert create_page.external_id is None
+
+    @pytest.mark.django_db
+    def test_patch_completing_a_stored_identity_succeeds(self, api_key_client, workspace, project, create_user):
+        """Sending one half is fine when the page already holds the other."""
+        page = Page.objects.create(
+            name="Has source",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_source="notion",
+        )
+        _link_page(project, page, create_user)
+
+        response = api_key_client.patch(
+            self.detail_url(workspace.slug, project.id, page.id),
+            {"external_id": "abc-123"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert (page.external_id, page.external_source) == ("abc-123", "notion")
+
+    @pytest.mark.django_db
+    def test_patch_clearing_one_half_is_rejected(self, api_key_client, workspace, project, create_user):
+        """Dropping half of a stored identity leaves the same broken state."""
+        page = Page.objects.create(
+            name="Whole",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="abc-123",
+            external_source="notion",
+        )
+        _link_page(project, page, create_user)
+
+        response = api_key_client.patch(
+            self.detail_url(workspace.slug, project.id, page.id),
+            {"external_source": None},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        page.refresh_from_db()
+        assert page.external_source == "notion"
+
+    @pytest.mark.django_db
+    def test_patch_clearing_both_halves_succeeds(self, api_key_client, workspace, project, create_user):
+        """Unlinking a page from its external system clears the whole pair."""
+        page = Page.objects.create(
+            name="Whole",
+            owned_by=create_user,
+            workspace=project.workspace,
+            external_id="abc-123",
+            external_source="notion",
+        )
+        _link_page(project, page, create_user)
+
+        response = api_key_client.patch(
+            self.detail_url(workspace.slug, project.id, page.id),
+            {"external_id": None, "external_source": None},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert (page.external_id, page.external_source) == (None, None)
+
+
+@pytest.mark.contract
 class TestPageAccessChangeDetection:
     """Only a real change of `access` may cost a non-owner a 403."""
 

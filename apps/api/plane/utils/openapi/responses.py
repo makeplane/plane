@@ -308,6 +308,12 @@ PAGE_NOT_EDITABLE_RESPONSE = OpenApiResponse(
             name="Parent Cycle",
             value={"error": "A page cannot be its own parent or descendant"},
         ),
+        OpenApiExample(
+            # Field errors are keyed by field name rather than by the "error"
+            # key the view's own rejections use, so both shapes are documented.
+            name="Incomplete External Identity",
+            value={"external_source": ["external_id and external_source must be set together"]},
+        ),
     ],
 )
 
@@ -360,6 +366,12 @@ PAGE_WRITE_REJECTED_RESPONSE = OpenApiResponse(
         OpenApiExample(
             name="Project Archived",
             value={"error": "Pages cannot be added to an archived project"},
+        ),
+        OpenApiExample(
+            # Field errors are keyed by field name rather than by the "error"
+            # key the view's own rejections use, so both shapes are documented.
+            name="Incomplete External Identity",
+            value={"external_source": ["external_id and external_source must be set together"]},
         ),
     ],
 )

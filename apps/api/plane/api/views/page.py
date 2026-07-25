@@ -318,7 +318,8 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
         description=(
             "Create a new page in the specified project. Content is exchanged as "
             "sanitized description_html. Supports external_id/external_source for "
-            "third-party integrations."
+            "third-party integrations; the two identify one external record and "
+            "must be sent together."
         ),
         request=OpenApiRequest(
             request=PageAPISerializer,
@@ -465,7 +466,10 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
     @page_docs(
         operation_id="update_page",
         summary="Update page",
-        description="Update a page's properties. Locked and archived pages cannot be updated.",
+        description=(
+            "Update a page's properties. Locked and archived pages cannot be "
+            "updated. external_id and external_source must be set together."
+        ),
         parameters=[PAGE_ID_PARAMETER],
         request=OpenApiRequest(
             request=PageAPISerializer,
@@ -545,9 +549,11 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 # Guard external identity uniqueness on update, mirroring the
                 # create path and the cycle/module endpoints, so a page's
                 # external identity can't be changed to one already used by
-                # another page in the project. Checked under the same advisory
-                # lock as create so the two paths cannot race each other.
-                if external_id and identity_changed:
+                # another page in the project. Both halves are required, exactly
+                # as on create, so a lone external_id never gets locked or
+                # enforced as an identity of its own. Checked under the same
+                # advisory lock as create so the two paths cannot race.
+                if external_id and external_source and identity_changed:
                     lock_external_id(project_id, external_source, external_id)
                     conflict = (
                         Page.objects.filter(

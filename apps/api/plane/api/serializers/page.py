@@ -79,6 +79,26 @@ class PageAPISerializer(BaseSerializer):
 
         return data
 
+    def validate(self, attrs):
+        """
+        Require ``external_id`` and ``external_source`` to move together.
+
+        The two name one record in one external system, and the uniqueness
+        guard on the write paths keys on the pair. Accepting half of it — easy
+        to do on a PATCH that sends only one — stores an identity no integration
+        can match on and slips past that guard, so reject it as a field error
+        naming the half that is missing.
+        """
+        attrs = super().validate(attrs)
+
+        external_id = attrs.get("external_id", getattr(self.instance, "external_id", None))
+        external_source = attrs.get("external_source", getattr(self.instance, "external_source", None))
+        if bool(external_id) != bool(external_source):
+            missing = "external_source" if external_id else "external_id"
+            raise serializers.ValidationError({missing: ["external_id and external_source must be set together"]})
+
+        return attrs
+
     def validate_description_html(self, value):
         """
         Sanitize incoming page HTML with the same sanitizer the internal app
