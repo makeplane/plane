@@ -380,21 +380,28 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
         # properties actually changed.
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
+        # Keyed on presence, not truthiness: description_html is a blankable
+        # TextField, so "" is a valid payload meaning "empty this page". Testing
+        # truthiness treated that clear as "no content sent", leaving the stale
+        # Yjs binary in place (so the editor resurrected the old body) and
+        # skipping both the version entry and the webhook.
+        content_changed = "description_html" in request.data
+
         serializer = PageAPISerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
-            if request.data.get("description_html"):
+            if content_changed:
                 # A direct content write resets the Yjs binary; the live service
                 # re-derives it from the HTML on next open.
                 serializer.save(description_binary=None)
             else:
                 serializer.save()
 
-            if request.data.get("description_html"):
+            if content_changed:
                 # Record what was actually stored: the serializer sanitizes
                 # description_html, so the raw request body would put unsanitized
                 # markup into the page's version history.
                 page_transaction.delay(
-                    new_description_html=serializer.instance.description_html or "<p></p>",
+                    new_description_html=serializer.instance.description_html,
                     old_description_html=old_description_html,
                     page_id=page_id,
                 )
@@ -416,7 +423,7 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
 
             # Content changes reuse the debounced content-persist webhook so an
             # integration streaming edits does not emit a webhook per call.
-            if request.data.get("description_html"):
+            if content_changed:
                 dispatch_page_webhook(
                     request,
                     slug,

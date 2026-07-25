@@ -176,13 +176,19 @@ class PageViewSet(BaseViewSet):
             # Snapshot the page before the write so the webhook fan-out can diff
             # which DRF-side properties (name, access, …) actually changed.
             current_instance = json.dumps(PageDetailSerializer(page).data, cls=DjangoJSONEncoder)
+            # Keyed on presence rather than truthiness so an empty body would
+            # still count as a content change. PageDetailSerializer rejects a
+            # blank description_html today, so this is defensive: it keeps the
+            # branch correct if that field is ever made blankable, as it already
+            # is on the model and in the public API.
+            content_changed = "description_html" in request.data
             if serializer.is_valid():
                 serializer.save()
                 # capture the page transaction, recording the value that was
                 # actually stored rather than the raw request body
-                if request.data.get("description_html"):
+                if content_changed:
                     page_transaction.delay(
-                        new_description_html=serializer.instance.description_html or "<p></p>",
+                        new_description_html=serializer.instance.description_html,
                         old_description_html=page_description,
                         page_id=page_id,
                     )
@@ -205,7 +211,7 @@ class PageViewSet(BaseViewSet):
                         origin=base_host(request=request, is_app=True),
                     )
 
-                if request.data.get("description_html"):
+                if content_changed:
                     dispatch_page_webhook(
                         request,
                         slug,

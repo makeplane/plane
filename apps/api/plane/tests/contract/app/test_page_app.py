@@ -420,3 +420,44 @@ class TestPageContentUpdateRouting:
         page.refresh_from_db()
         assert page.updated_at > before
         assert page.archived_at is not None
+
+
+@pytest.mark.contract
+class TestPageInternalBlankContentRejected:
+    """The internal serializer does not accept a blank description_html."""
+
+    @pytest.fixture
+    def page(self, db, workspace, project, create_user):
+        """A page owned by the requesting user, linked to the project."""
+        page = Page.objects.create(
+            workspace=workspace,
+            owned_by=create_user,
+            name="Runbook",
+            description_html="<p>body</p>",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        return page
+
+    @pytest.mark.django_db
+    def test_blank_description_html_is_rejected(self, session_client, workspace, project, page):
+        """PageDetailSerializer.description_html is a non-blank CharField, so an
+        empty body is a validation error here — unlike the public API, where the
+        model's blankable field makes "" a valid clear."""
+        response = session_client.patch(
+            pages_url(workspace.slug, project.id, page.id),
+            {"description_html": ""},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "description_html" in response.data
+        page.refresh_from_db()
+        assert page.description_html == "<p>body</p>"

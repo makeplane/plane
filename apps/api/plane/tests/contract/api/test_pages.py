@@ -915,3 +915,106 @@ class TestPagePriorStateReporting:
         assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
         assert page.archived_at == timezone.now().date()
+
+
+# ---------------------------------------------------------------------------
+# Clearing content — "" is a real value, not "nothing sent"
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.contract
+class TestPageClearContent:
+    """description_html is a blankable field, so emptying a page is a content
+    change and must be treated as one."""
+
+    @pytest.fixture(autouse=True)
+    def _web_url(self, settings):
+        """Give base_host() an origin to build current_site from."""
+        settings.WEB_URL = "http://localhost"
+
+    @pytest.fixture
+    def page_with_binary(self, db, project, create_user):
+        """A page carrying both HTML and a stale Yjs binary."""
+        page = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Has content")
+        Page.objects.filter(pk=page.id).update(description_html="<p>old body</p>", description_binary=b"STALE")
+        page.refresh_from_db()
+        return page
+
+    @pytest.mark.django_db
+    def test_clearing_content_resets_the_yjs_binary(self, api_key_client, workspace, project, page_with_binary):
+        """Without this the live editor re-derives the old body from the stale
+        binary and the clear silently does not stick."""
+        with (
+            mock.patch("plane.api.views.page.page_transaction"),
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+        ):
+            response = api_key_client.patch(
+                detail_url(workspace.slug, project.id, page_with_binary.id),
+                {"description_html": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.data!r}"
+        page_with_binary.refresh_from_db()
+        assert page_with_binary.description_html == ""
+        assert page_with_binary.description_binary is None
+
+    @pytest.mark.django_db
+    def test_clearing_content_records_a_version(self, api_key_client, workspace, project, page_with_binary):
+        """The clear belongs in version history, recorded as the empty body."""
+        with (
+            mock.patch("plane.api.views.page.page_transaction") as mocked_transaction,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+        ):
+            response = api_key_client.patch(
+                detail_url(workspace.slug, project.id, page_with_binary.id),
+                {"description_html": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        mocked_transaction.delay.assert_called_once()
+        kwargs = mocked_transaction.delay.call_args.kwargs
+        assert kwargs["new_description_html"] == ""
+        assert kwargs["old_description_html"] == "<p>old body</p>"
+
+    @pytest.mark.django_db
+    def test_clearing_content_fires_the_content_webhook(self, api_key_client, workspace, project, page_with_binary):
+        """Subscribers must learn that the page was emptied."""
+        with (
+            mock.patch("plane.api.views.page.page_transaction"),
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+        ):
+            response = api_key_client.patch(
+                detail_url(workspace.slug, project.id, page_with_binary.id),
+                {"description_html": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        mocked_webhook.delay.assert_called_once()
+        kwargs = mocked_webhook.delay.call_args.kwargs
+        assert kwargs["field"] == "description_html"
+        assert kwargs["debounce"] is True
+
+    @pytest.mark.django_db
+    def test_property_only_update_leaves_content_and_binary_alone(
+        self, api_key_client, workspace, project, page_with_binary
+    ):
+        """A rename must not be mistaken for a content change."""
+        with (
+            mock.patch("plane.api.views.page.page_transaction") as mocked_transaction,
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+        ):
+            response = api_key_client.patch(
+                detail_url(workspace.slug, project.id, page_with_binary.id),
+                {"name": "Renamed"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        page_with_binary.refresh_from_db()
+        assert page_with_binary.description_html == "<p>old body</p>"
+        assert page_with_binary.description_binary == b"STALE"
+        mocked_transaction.delay.assert_not_called()
+        mocked_webhook.delay.assert_not_called()
