@@ -548,6 +548,35 @@ class TestPageContentFieldReporting:
         assert "Runbook" in snapshot
 
     @pytest.mark.django_db
+    def test_emptying_the_body_still_records_a_transaction(self, session_client, workspace, project, page):
+        """A flush that empties the page is a content change.
+
+        page_transaction is what removes the PageLog rows for mentions and assets
+        an edit deleted, so skipping it on a clear left the whole log behind.
+        """
+        Page.objects.filter(pk=page.id).update(description_html="<p>old body</p>")
+
+        with (
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+            mock.patch("plane.app.views.page.base.page_transaction") as mocked_transaction,
+            mock.patch("plane.app.views.page.base.track_page_version"),
+        ):
+            response = session_client.patch(
+                page_action_url(workspace.slug, project.id, page.id, "description"),
+                {"description_html": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        page.refresh_from_db()
+        assert page.description_html == ""
+        mocked_transaction.delay.assert_called_once()
+        kwargs = mocked_transaction.delay.call_args.kwargs
+        # Recorded as what was stored, not normalised to a paragraph.
+        assert kwargs["new_description_html"] == ""
+        assert kwargs["old_description_html"] == "<p>old body</p>"
+
+    @pytest.mark.django_db
     def test_blank_binary_is_stored_as_null_not_a_500(self, session_client, workspace, project, page):
         """An empty description_binary used to be handed to a BinaryField as a
         str, raising "bytes or buffer expected" and returning 500."""

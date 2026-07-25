@@ -1137,3 +1137,40 @@ class TestPageClearContent:
         assert page_with_binary.description_binary == b"STALE"
         mocked_transaction.delay.assert_not_called()
         mocked_webhook.delay.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_creating_with_blank_content_stores_the_empty_body(self, api_key_client, workspace, project):
+        """`description_html: ""` on create means "start this page empty".
+
+        It is the same meaning update gives the value, and the model itself
+        models the state. Defaulting it to `<p></p>` stored markup the caller
+        never sent and disagreed with what a subsequent clear would store.
+        """
+        with (
+            mock.patch("plane.api.views.page.page_transaction"),
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+        ):
+            response = api_key_client.post(
+                list_url(workspace.slug, project.id),
+                {"name": "Starts empty", "description_html": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.data!r}"
+        assert Page.objects.get(pk=response.data["id"]).description_html == ""
+
+    @pytest.mark.django_db
+    def test_creating_without_content_falls_back_to_an_empty_doc(self, api_key_client, workspace, project):
+        """An omitted field still picks up the model default."""
+        with (
+            mock.patch("plane.api.views.page.page_transaction"),
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+        ):
+            response = api_key_client.post(
+                list_url(workspace.slug, project.id),
+                {"name": "No content sent"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.data!r}"
+        assert Page.objects.get(pk=response.data["id"]).description_html == "<p></p>"

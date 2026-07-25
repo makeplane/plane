@@ -307,10 +307,14 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
                 page = serializer.save(
                     owned_by=request.user,
                     workspace_id=project.workspace_id,
-                    # description_html arrives already sanitized via the
-                    # serializer; default to an empty doc when omitted. The
-                    # binary starts empty — the live service derives it.
-                    description_html=serializer.validated_data.get("description_html") or "<p></p>",
+                    # description_html is not passed explicitly: it arrives
+                    # already sanitized in validated_data, and an omitted field
+                    # picks up the model's own default ("<p></p>"). Defaulting it
+                    # here with `or` also rewrote an explicit "" — which means
+                    # "create this page empty", the same meaning update gives it
+                    # and a state the model itself models (description_stripped
+                    # special-cases it) — into a paragraph the caller never sent.
+                    # The binary starts empty; the live service derives it.
                     description_binary=None,
                 )
                 ProjectPage.objects.create(

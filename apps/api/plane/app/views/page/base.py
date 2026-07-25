@@ -655,9 +655,15 @@ class PagesDescriptionViewSet(BaseViewSet):
             # Capture the page transaction. The serializer sanitizes
             # description_html, so record the value that was actually stored
             # rather than the raw request body.
-            if request.data.get("description_html"):
+            # Keyed on presence, not truthiness: description_html is blankable
+            # and the serializer stores "" verbatim, so a flush that empties the
+            # page is a real content change. Testing truthiness skipped the
+            # transaction for exactly that flush — and the transaction is what
+            # deletes the PageLog rows for mentions and assets the edit removed,
+            # so clearing a page left its entire log behind.
+            if "description_html" in request.data:
                 page_transaction.delay(
-                    new_description_html=page.description_html or "<p></p>",
+                    new_description_html=page.description_html,
                     old_description_html=old_description_html,
                     page_id=page_id,
                 )
