@@ -167,7 +167,8 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
         description=(
             "Retrieve a paginated list of the pages the caller can access in a project. "
             "Private pages are only returned to their owner. Filter with `type` "
-            "(all | public | private | archived) and `search` (page name)."
+            "(all | public | private | archived) and `search` (page name). `type` defaults to "
+            "`all`, which covers non-archived pages only — pass `archived` to list archived ones."
         ),
         parameters=[
             CURSOR_PARAMETER,

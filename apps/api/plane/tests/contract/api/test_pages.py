@@ -218,6 +218,30 @@ class TestPageListCreateAPIEndpoint:
         assert archived_ids == {str(archived.id)}
 
     @pytest.mark.django_db
+    def test_list_type_all_excludes_archived_as_documented(self, api_key_client, workspace, project, create_user):
+        """`type=all` means every non-archived page — the documented behaviour."""
+        live = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Live")
+        mine = make_page(project, create_user, access=Page.PRIVATE_ACCESS, name="Mine")
+        archived = make_page(project, create_user, access=Page.PUBLIC_ACCESS, archived=True, name="Archived")
+
+        response = api_key_client.get(list_url(workspace.slug, project.id), {"type": "all"})
+        ids = {str(p["id"]) for p in response.data["results"]}
+        assert {str(live.id), str(mine.id)} <= ids
+        assert str(archived.id) not in ids
+
+    @pytest.mark.django_db
+    def test_list_unrecognised_type_falls_back_to_all(self, api_key_client, workspace, project, create_user):
+        """An unknown `type` behaves as `all`, as the parameter documents."""
+        live = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Live")
+        archived = make_page(project, create_user, access=Page.PUBLIC_ACCESS, archived=True, name="Archived")
+
+        response = api_key_client.get(list_url(workspace.slug, project.id), {"type": "nonsense"})
+        assert response.status_code == status.HTTP_200_OK
+        ids = {str(p["id"]) for p in response.data["results"]}
+        assert str(live.id) in ids
+        assert str(archived.id) not in ids
+
+    @pytest.mark.django_db
     def test_list_hides_other_users_private_pages(self, role_clients, workspace, project, create_user):
         """The private-page leak fix: a member never sees another user's private page."""
         private = make_page(project, create_user, access=Page.PRIVATE_ACCESS, name="Owner Only")
