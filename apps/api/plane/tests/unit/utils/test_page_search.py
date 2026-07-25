@@ -53,6 +53,28 @@ class TestBuildPageSnippet:
         """The ellipsis markers must never push the snippet past max_length."""
         assert len(build_page_snippet(text, query)) <= SNIPPET_MAX_LENGTH
 
+    @pytest.mark.parametrize("max_length", [-5, -1, 0])
+    def test_non_positive_max_length_returns_empty(self, max_length):
+        """A non-positive budget must yield nothing. Previously the negative
+        slice bound (text[:max_length - 1]) returned nearly the whole document."""
+        text = "The quarterly budget review covers spend across every team."
+        assert build_page_snippet(text, "budget", max_length=max_length) == ""
+        assert build_page_snippet(text, "absent-term", max_length=max_length) == ""
+
+    @pytest.mark.parametrize("max_length", range(1, 12))
+    def test_small_max_length_stays_within_budget(self, max_length):
+        """Tiny budgets degrade to a marker rather than overflowing, for a match
+        at the start, a match far into the text, and no match at all."""
+        long_text = "z" * 400
+        cases = [
+            ("budget review is here, " + long_text, "budget"),  # match at start
+            (long_text + " budget review", "budget"),  # match far in (leading ellipsis)
+            (long_text, "absent-term"),  # no match
+        ]
+        for text, query in cases:
+            snippet = build_page_snippet(text, query, max_length=max_length)
+            assert len(snippet) <= max_length, (max_length, query, repr(snippet))
+
     def test_no_content_match_excerpts_from_start(self):
         text = "The introduction paragraph explains the overall context here."
         snippet = build_page_snippet(text, "term-not-present")

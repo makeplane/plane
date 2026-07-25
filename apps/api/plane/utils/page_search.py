@@ -46,9 +46,17 @@ def build_page_snippet(
 
     ``max_length`` bounds the WHOLE returned string: the ellipsis markers are
     paid for out of that budget, never appended on top of it, so a caller sizing
-    its layout on ``max_length`` is never handed a longer string.
+    its layout on ``max_length`` is never handed a longer string. A budget too
+    small to hold any text yields just a marker, and a non-positive budget
+    yields an empty string — never a longer fallback.
     """
     if not stripped_text:
+        return ""
+
+    # A non-positive budget has no room for anything. Guarding here keeps the
+    # slice arithmetic below from going negative, which would otherwise turn
+    # text[:max_length - 1] into a near-complete copy of the document.
+    if max_length <= 0:
         return ""
 
     # Collapse runs of whitespace/newlines so the excerpt reads as one clean line.
@@ -77,6 +85,11 @@ def build_page_snippet(
         # The excerpt will not reach the end of the text, so a trailing ellipsis
         # is needed — reserve its room before slicing.
         budget -= len(_ELLIPSIS)
+
+    if budget <= 0:
+        # The markers alone exhaust the budget; show a single one rather than
+        # letting a negative slice bound run backwards through the text.
+        return _ELLIPSIS[:max_length]
 
     end = min(len(text), start + budget)
     suffix = _ELLIPSIS if end < len(text) else ""
