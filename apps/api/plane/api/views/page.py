@@ -672,14 +672,21 @@ class PageArchiveAPIEndpoint(PageAPIBaseView):
         # full timestamp would not round-trip on a subsequent read.
         archived_at = timezone.now().date()
 
-        UserFavorite.objects.filter(
-            entity_type="page",
-            entity_identifier=page_id,
-            project_id=project_id,
-            workspace__slug=slug,
-        ).delete()
+        # Archiving walks the parent chain, so it takes the same lock as
+        # reparenting and runs as one transaction: a concurrent reparent must
+        # not move a page into or out of the subtree midway through the walk,
+        # and the favourite cleanup must not survive a failed archive.
+        with transaction.atomic():
+            lock_page_hierarchy(project_id)
 
-        unarchive_archive_page_and_descendants(page_id, archived_at)
+            UserFavorite.objects.filter(
+                entity_type="page",
+                entity_identifier=page_id,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
+
+            unarchive_archive_page_and_descendants(page_id, archived_at)
 
         # Dispatch the `page` webhook event for the archived_at change
         model_activity.delay(
@@ -718,12 +725,18 @@ class PageArchiveAPIEndpoint(PageAPIBaseView):
 
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
-        # If parent is still archived, break the hierarchy
-        if page.parent_id and page.parent.archived_at:
-            page.parent = None
-            page.save(update_fields=["parent"])
+        # Detaching from an archived parent and unarchiving the subtree are one
+        # hierarchy mutation: they take the reparenting lock and commit together
+        # so a page can never end up detached but still archived.
+        with transaction.atomic():
+            lock_page_hierarchy(project_id)
 
-        unarchive_archive_page_and_descendants(page_id, None)
+            # If parent is still archived, break the hierarchy
+            if page.parent_id and page.parent.archived_at:
+                page.parent = None
+                page.save(update_fields=["parent", "updated_at", "updated_by"])
+
+            unarchive_archive_page_and_descendants(page_id, None)
 
         # Dispatch the `page` webhook event for the archived_at change
         model_activity.delay(
@@ -769,8 +782,12 @@ class PageLockAPIEndpoint(PageAPIBaseView):
 
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
+        # Write only the lock flag. A bare save() would rewrite every column
+        # from this in-memory copy, including description_html/description_binary,
+        # clobbering any collaborative edit the live (Yjs) service persisted
+        # between this request's read and its write.
         page.is_locked = True
-        page.save()
+        page.save(update_fields=["is_locked", "updated_at", "updated_by"])
 
         # Dispatch the `page` webhook event for the is_locked change
         model_activity.delay(
@@ -815,8 +832,9 @@ class PageLockAPIEndpoint(PageAPIBaseView):
 
         current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
+        # Write only the lock flag — see the note on locking above.
         page.is_locked = False
-        page.save()
+        page.save(update_fields=["is_locked", "updated_at", "updated_by"])
 
         # Dispatch the `page` webhook event for the is_locked change
         model_activity.delay(

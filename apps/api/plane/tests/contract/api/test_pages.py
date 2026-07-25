@@ -1742,3 +1742,82 @@ class TestPageExpandQueryCount:
             assert api_key_client.get(url).status_code == status.HTTP_200_OK
 
         assert len(large.captured_queries) == len(small.captured_queries)
+
+
+@pytest.mark.contract
+class TestPageLockMinimalWrite:
+    """Toggling the lock must not rewrite the page body."""
+
+    def lock_url(self, slug, project_id, page_id):
+        """Return the page lock/unlock URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/lock/"
+
+    def _page_updates(self, queries):
+        """Return the UPDATE statements issued against the pages table.
+
+        Matched on the leading keyword: a SELECT that lists `updated_at` also
+        contains the substring "UPDATE".
+        """
+        return [q["sql"] for q in queries if q["sql"].strip().upper().startswith("UPDATE") and "pages" in q["sql"]]
+
+    @pytest.mark.django_db
+    def test_lock_writes_only_the_lock_columns(self, api_key_client, workspace, project, create_page):
+        """The lock UPDATE touches is_locked, not the description columns.
+
+        A bare save() rewrites every column from the in-memory copy, so a lock
+        toggle would clobber whatever the live (Yjs) service wrote in between.
+        """
+        url = self.lock_url(workspace.slug, project.id, create_page.id)
+
+        with CaptureQueriesContext(connection) as captured:
+            assert api_key_client.post(url, format="json").status_code == status.HTTP_200_OK
+
+        updates = self._page_updates(captured.captured_queries)
+        assert updates, "expected an UPDATE on the pages table"
+        for sql in updates:
+            assert "is_locked" in sql
+            assert "description_html" not in sql
+            assert "description_binary" not in sql
+
+    @pytest.mark.django_db
+    def test_unlock_writes_only_the_lock_columns(self, api_key_client, workspace, project, locked_page):
+        """Unlocking is equally narrow."""
+        url = self.lock_url(workspace.slug, project.id, locked_page.id)
+
+        with CaptureQueriesContext(connection) as captured:
+            assert api_key_client.delete(url, format="json").status_code == status.HTTP_200_OK
+
+        updates = self._page_updates(captured.captured_queries)
+        assert updates, "expected an UPDATE on the pages table"
+        for sql in updates:
+            assert "is_locked" in sql
+            assert "description_html" not in sql
+
+    @pytest.mark.django_db
+    def test_lock_preserves_concurrently_written_content(self, api_key_client, workspace, project, create_page):
+        """An edit landing between the read and the lock write survives.
+
+        The live (Yjs) service can persist content while a lock request is in
+        flight. The interleaved write here lands immediately before the lock is
+        saved, so a full-row save would overwrite it with the stale in-memory
+        copy the view read at the start of the request.
+        """
+        url = self.lock_url(workspace.slug, project.id, create_page.id)
+        original_save = Page.save
+
+        def save_after_concurrent_edit(page_self, *args, **kwargs):
+            """Persist a competing edit, then run the real save."""
+            Page.objects.filter(pk=page_self.pk).update(
+                description_html="<p>edited by the live service</p>",
+                description_binary=b"fresh-yjs-blob",
+            )
+            return original_save(page_self, *args, **kwargs)
+
+        with mock.patch.object(Page, "save", save_after_concurrent_edit):
+            response = api_key_client.post(url, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        create_page.refresh_from_db()
+        assert create_page.is_locked is True
+        assert create_page.description_html == "<p>edited by the live service</p>"
+        assert bytes(create_page.description_binary) == b"fresh-yjs-blob"
