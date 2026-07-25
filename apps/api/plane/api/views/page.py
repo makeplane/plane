@@ -632,13 +632,13 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Remove parent from all children
-        Page.objects.filter(
-            parent_id=page_id,
-            workspace__slug=slug,
-            project_pages__project_id=project_id,
-            project_pages__deleted_at__isnull=True,
-        ).update(parent=None)
+        # Detach EVERY child first. Page.parent is on_delete=CASCADE and
+        # page.delete() soft-deletes through its relations, so any child still
+        # pointing at this page goes down with it. Scoping the detach to this
+        # project left children that live in another project — or whose link
+        # here was removed — still attached, and deleting one page silently
+        # destroyed them.
+        Page.objects.filter(parent_id=page_id).update(parent=None)
 
         page.delete()
 

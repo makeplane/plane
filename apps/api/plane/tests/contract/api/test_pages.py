@@ -2022,3 +2022,100 @@ class TestPageCreateInArchivedProject:
         response = api_key_client.post(self.list_url(workspace.slug, project.id), {"name": "Fine"}, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.contract
+class TestPageDeleteChildDetachment:
+    """Deleting a page must not take unrelated pages down with it.
+
+    `Page.parent` is `on_delete=CASCADE` and `page.delete()` soft-deletes
+    through its relations, so every child has to be detached first — including
+    children this endpoint cannot otherwise see.
+    """
+
+    def detail_url(self, slug, project_id, page_id):
+        """Return the page detail URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
+
+    @pytest.fixture
+    def second_project(self, db, workspace, create_user):
+        """Create a second project in the same workspace, with the same member."""
+        project = Project.objects.create(
+            name="Second Project", identifier="SP2", workspace=workspace, created_by=create_user
+        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+        return project
+
+    def _archived_parent(self, project, user):
+        """Create an archived parent page in the given project."""
+        parent = Page.objects.create(
+            name="Parent",
+            owned_by=user,
+            workspace=project.workspace,
+            archived_at=date.today(),
+        )
+        _link_page(project, parent, user)
+        return parent
+
+    @pytest.mark.django_db
+    def test_child_in_another_project_survives(self, api_key_client, workspace, project, second_project, create_user):
+        """A child living in a different project is detached, not deleted."""
+        parent = self._archived_parent(project, create_user)
+        child = Page.objects.create(
+            name="Child Elsewhere", owned_by=create_user, workspace=project.workspace, parent=parent
+        )
+        _link_page(second_project, child, create_user)
+
+        response = api_key_client.delete(self.detail_url(workspace.slug, project.id, parent.id))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        child.refresh_from_db()
+        assert child.parent_id is None
+        assert child.deleted_at is None
+        # Still reachable in the project that owns it.
+        assert (
+            api_key_client.get(self.detail_url(workspace.slug, second_project.id, child.id)).status_code
+            == status.HTTP_200_OK
+        )
+
+    @pytest.mark.django_db
+    def test_child_removed_from_this_project_survives(
+        self, api_key_client, workspace, project, second_project, create_user
+    ):
+        """A child whose link here was removed is still detached before delete."""
+        parent = self._archived_parent(project, create_user)
+        child = Page.objects.create(
+            name="Child Unlinked", owned_by=create_user, workspace=project.workspace, parent=parent
+        )
+        removed_link = ProjectPage.objects.create(
+            workspace=project.workspace,
+            project=project,
+            page=child,
+            created_by_id=create_user.id,
+            updated_by_id=create_user.id,
+        )
+        _link_page(second_project, child, create_user)
+        ProjectPage.objects.filter(pk=removed_link.pk).update(deleted_at=timezone.now())
+
+        response = api_key_client.delete(self.detail_url(workspace.slug, project.id, parent.id))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        child.refresh_from_db()
+        assert child.parent_id is None
+        assert child.deleted_at is None
+
+    @pytest.mark.django_db
+    def test_child_in_this_project_is_detached(self, api_key_client, workspace, project, create_user):
+        """The ordinary case keeps working: a local child is detached and kept."""
+        parent = self._archived_parent(project, create_user)
+        child = Page.objects.create(
+            name="Local Child", owned_by=create_user, workspace=project.workspace, parent=parent
+        )
+        _link_page(project, child, create_user)
+
+        response = api_key_client.delete(self.detail_url(workspace.slug, project.id, parent.id))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        child.refresh_from_db()
+        assert child.parent_id is None
+        assert child.deleted_at is None
