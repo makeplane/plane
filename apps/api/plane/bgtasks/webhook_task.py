@@ -147,6 +147,24 @@ def _suppress_page_update_webhook(page_id: str | uuid.UUID, debounce: bool) -> b
         return False
 
 
+def _page_update_webhook_recently_fired(page_id: str | uuid.UUID) -> bool:
+    """Cheap read-only peek at a page's debounce window.
+
+    Lets a content flush that is going to be suppressed bail out for the price of
+    one redis GET, before the subject page and actor are loaded and serialized —
+    during a live editing session most flushes take this path, which is the whole
+    point of debouncing them. The authoritative, atomic claim still happens in
+    :func:`_suppress_page_update_webhook` right before dispatch.
+
+    Fails open (returns ``False``) so a redis error never drops a webhook.
+    """
+    try:
+        return redis_instance().get(_page_update_webhook_debounce_key(page_id)) is not None
+    except Exception as e:
+        log_exception(e, warning=True)
+        return False
+
+
 def _release_page_update_webhook(page_id: str | uuid.UUID) -> None:
     """Drop a page's debounce marker so the next update can deliver immediately.
 
@@ -536,6 +554,17 @@ def webhook_activity(
         if event == "page":
             webhooks = webhooks.filter(page=True)
 
+        # Collapse the live collab server's frequent content-persist flushes into
+        # at most one ``page`` update webhook per debounce window. Property edits
+        # (debounce=False) always deliver and just refresh that window.
+        debounced_page_update = event == "page" and verb == "updated"
+
+        # Cheap peek first: during a live editing session most flushes land inside
+        # an open window, and those must cost one redis GET rather than a page +
+        # actor serialization. The atomic claim still happens below.
+        if debounced_page_update and debounce and _page_update_webhook_recently_fired(event_id):
+            return
+
         # Resolve the subscribers BEFORE touching the debounce window: a page with
         # no subscriber must not burn a window that a later, deliverable change
         # would then be silenced by.
@@ -543,32 +572,28 @@ def webhook_activity(
         if not webhooks:
             return
 
-        # Build the payload once instead of once per subscriber: every webhook for
-        # this event receives the same serialized object and actor, so doing it
-        # inside the loop re-queried and re-serialized both N times. Resolving it
-        # before the debounce claim also means a vanished object bails out without
-        # burning the window, and no subscriber can be handed a payload that a
-        # later iteration then fails to build.
-        event_data = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
-        activity = {
-            "field": field,
-            "new_value": new_value,
-            "old_value": old_value,
-            "actor": get_model_data(event="user", event_id=actor_id),
-            "old_identifier": old_identifier,
-            "new_identifier": new_identifier,
-        }
-
-        # Collapse the live collab server's frequent content-persist flushes into
-        # at most one ``page`` update webhook per debounce window. Property edits
-        # (debounce=False) always deliver and just refresh that window. Claimed
-        # here, immediately before dispatch, and released below if dispatch fails
-        # so a transient error costs one webhook rather than a whole window.
-        debounced_page_update = event == "page" and verb == "updated"
+        # Claim the window immediately before dispatch, and release it below if
+        # anything from here on fails, so a transient error costs one webhook
+        # rather than a whole window.
         if debounced_page_update and _suppress_page_update_webhook(event_id, debounce):
             return
 
         try:
+            # Build the payload once instead of once per subscriber: every webhook
+            # for this event receives the same serialized object and actor, so
+            # doing it inside the loop re-queried and re-serialized both N times.
+            # It sits inside the try so a vanished object releases the window it
+            # just claimed instead of blacking out the page for the rest of it.
+            event_data = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+            activity = {
+                "field": field,
+                "new_value": new_value,
+                "old_value": old_value,
+                "actor": get_model_data(event="user", event_id=actor_id),
+                "old_identifier": old_identifier,
+                "new_identifier": new_identifier,
+            }
+
             for webhook in webhooks:
                 webhook_send_task.delay(
                     webhook_id=webhook.id,

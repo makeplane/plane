@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import base64
 from datetime import timedelta
 from unittest import mock
 
@@ -461,3 +462,105 @@ class TestPageInternalBlankContentRejected:
         assert "description_html" in response.data
         page.refresh_from_db()
         assert page.description_html == "<p>body</p>"
+
+
+@pytest.mark.contract
+class TestPageContentFieldReporting:
+    """The content webhook names the field that actually travelled."""
+
+    @pytest.fixture(autouse=True)
+    def _web_url(self, settings):
+        """Give base_host() an origin to build current_site from."""
+        settings.WEB_URL = "http://localhost"
+
+    @pytest.fixture
+    def page(self, db, workspace, project, create_user):
+        """A page owned by the requesting user, linked to the project."""
+        page = Page.objects.create(
+            workspace=workspace,
+            owned_by=create_user,
+            name="Runbook",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        return page
+
+    @pytest.mark.django_db
+    def test_binary_only_flush_reports_binary_field(self, session_client, workspace, project, page):
+        """A binary-only persist is a content change, but it is not an HTML edit."""
+        with (
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+            mock.patch("plane.app.views.page.base.track_page_version"),
+        ):
+            response = session_client.patch(
+                page_action_url(workspace.slug, project.id, page.id, "description"),
+                {"description_binary": base64.b64encode(b"yjs-doc-bytes").decode()},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        mocked_webhook.delay.assert_called_once()
+        assert mocked_webhook.delay.call_args.kwargs["field"] == "description_binary"
+
+    @pytest.mark.django_db
+    def test_html_flush_still_reports_html_field(self, session_client, workspace, project, page):
+        """When the body travels, the webhook names description_html."""
+        with (
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity") as mocked_webhook,
+            mock.patch("plane.app.views.page.base.page_transaction"),
+            mock.patch("plane.app.views.page.base.track_page_version"),
+        ):
+            response = session_client.patch(
+                page_action_url(workspace.slug, project.id, page.id, "description"),
+                {
+                    "description_html": "<p>body</p>",
+                    "description_binary": base64.b64encode(b"yjs-doc-bytes").decode(),
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert mocked_webhook.delay.call_args.kwargs["field"] == "description_html"
+
+    @pytest.mark.django_db
+    def test_property_snapshot_excludes_page_body(self, session_client, workspace, project, page):
+        """The model_activity snapshot must not carry the page body into Celery."""
+        Page.objects.filter(pk=page.id).update(description_html="<p>" + ("x" * 5000) + "</p>")
+
+        with mock.patch("plane.app.views.page.base.model_activity") as mocked_model_activity:
+            response = session_client.patch(
+                pages_url(workspace.slug, project.id, page.id),
+                {"name": "Renamed"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        snapshot = mocked_model_activity.delay.call_args.kwargs["current_instance"]
+        assert "description_html" not in snapshot
+        assert "xxxxx" not in snapshot
+        assert "Runbook" in snapshot
+
+    @pytest.mark.django_db
+    def test_blank_binary_is_stored_as_null_not_a_500(self, session_client, workspace, project, page):
+        """An empty description_binary used to be handed to a BinaryField as a
+        str, raising "bytes or buffer expected" and returning 500."""
+        with (
+            mock.patch("plane.bgtasks.webhook_task.webhook_activity"),
+            mock.patch("plane.app.views.page.base.track_page_version"),
+        ):
+            response = session_client.patch(
+                page_action_url(workspace.slug, project.id, page.id, "description"),
+                {"description_binary": ""},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        page.refresh_from_db()
+        assert page.description_binary is None

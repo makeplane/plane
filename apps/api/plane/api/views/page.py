@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import uuid
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -122,6 +123,16 @@ class PageAPIEndpoint(BaseAPIView):
         if parent_id is None:
             # Explicitly detaching the page from its parent is always allowed.
             return None
+
+        try:
+            uuid.UUID(str(parent_id))
+        except (AttributeError, TypeError, ValueError):
+            # A malformed id would otherwise surface as the base view's generic
+            # "Please provide valid detail"; name the offending field instead.
+            return Response(
+                {"error": "The requested parent page does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not self.get_queryset().filter(pk=parent_id).exists():
             return Response(
@@ -248,23 +259,18 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
 
         serializer = PageAPISerializer(data=request.data)
         if serializer.is_valid():
-            # Reject a duplicate (external_source, external_id) pair.
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and Page.objects.filter(
-                    projects__id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
+            # Reject a duplicate (external_source, external_id) pair. Fetched in
+            # one query: an exists() followed by a first() both costs an extra
+            # round trip and can return None if the row disappears in between.
+            existing = None
+            if request.data.get("external_id") and request.data.get("external_source"):
                 existing = Page.objects.filter(
                     workspace__slug=slug,
                     projects__id=project_id,
                     external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
                 ).first()
+            if existing:
                 return Response(
                     {
                         "error": "Page with the same external id and external source already exists",
@@ -376,9 +382,6 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
             return invalid_parent
 
         old_description_html = page.description_html
-        # Snapshot BEFORE the write so the webhook fan-out can diff which
-        # properties actually changed.
-        current_instance = json.dumps(PageAPISerializer(page).data, cls=DjangoJSONEncoder)
 
         # Keyed on presence, not truthiness: description_html is a blankable
         # TextField, so "" is a valid payload meaning "empty this page". Testing
@@ -386,6 +389,23 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
         # Yjs binary in place (so the editor resurrected the old body) and
         # skipping both the version entry and the webhook.
         content_changed = "description_html" in request.data
+
+        # Properties travel through model_activity; content is signalled
+        # separately (debounced) further down.
+        property_data = {key: value for key, value in request.data.items() if key != "description_html"}
+        # Snapshot BEFORE the write so the fan-out can diff what changed — but
+        # only when a property actually changed, and never carrying
+        # description_html: model_activity does not diff it, and a large page
+        # body would otherwise ride along in every Celery message, including
+        # pure-content updates that need no snapshot at all.
+        current_instance = (
+            json.dumps(
+                {key: value for key, value in PageAPISerializer(page).data.items() if key != "description_html"},
+                cls=DjangoJSONEncoder,
+            )
+            if property_data
+            else None
+        )
 
         serializer = PageAPISerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
@@ -407,9 +427,7 @@ class PageDetailAPIEndpoint(PageAPIEndpoint):
                 )
 
             # Property edits fan out one `page` update webhook per changed field
-            # through the shared model_activity path. description_html is excluded
-            # here — content is signalled separately (debounced) below.
-            property_data = {key: value for key, value in request.data.items() if key != "description_html"}
+            # through the shared model_activity path.
             if property_data:
                 model_activity.delay(
                     model_name="page",

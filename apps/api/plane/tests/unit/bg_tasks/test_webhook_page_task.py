@@ -471,3 +471,59 @@ class TestPageWebhookPayloadBuiltOnce:
         )
 
         mock_send_task.delay.assert_not_called()
+
+
+@pytest.mark.unit
+class TestPageWebhookDebounceFastPath:
+    """A suppressed content flush must not pay for serialization."""
+
+    @pytest.fixture
+    def fake_redis(self):
+        """An in-memory stand-in for the debounce keyspace."""
+        return _FakeRedis()
+
+    @pytest.fixture
+    def page_webhook(self, workspace):
+        """A workspace webhook subscribed to page events."""
+        return Webhook.objects.create(workspace=workspace, url="https://example.com/page-hook", page=True)
+
+    def _fire_content_update(self, page, create_user, workspace):
+        """Invoke webhook_activity for a debounced content update."""
+        webhook_activity(
+            event="page",
+            verb="updated",
+            field="description_html",
+            old_value=None,
+            new_value=None,
+            actor_id=create_user.id,
+            slug=workspace.slug,
+            current_site="http://localhost",
+            event_id=page.id,
+            old_identifier=None,
+            new_identifier=None,
+            debounce=True,
+        )
+
+    @patch("plane.bgtasks.webhook_task.webhook_send_task")
+    def test_suppressed_flush_does_not_serialize(
+        self, mock_send_task, fake_redis, page_webhook, page, create_user, workspace
+    ):
+        """Debouncing exists to shed load, so a flush inside an open window must
+        bail before loading and serializing the page and actor."""
+        with (
+            patch("plane.bgtasks.webhook_task.redis_instance", return_value=fake_redis),
+            patch(
+                "plane.bgtasks.webhook_task.get_model_data",
+                side_effect=lambda event, event_id, **kw: {"id": str(event_id)},
+            ) as mocked_get_model_data,
+        ):
+            self._fire_content_update(page, create_user, workspace)
+            first_round = mocked_get_model_data.call_count
+
+            self._fire_content_update(page, create_user, workspace)
+            second_round = mocked_get_model_data.call_count
+
+        # The delivered flush serialized page + actor; the suppressed one added nothing.
+        assert first_round == 2
+        assert second_round == first_round
+        mock_send_task.delay.assert_called_once()

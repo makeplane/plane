@@ -173,15 +173,29 @@ class PageViewSet(BaseViewSet):
 
             serializer = PageDetailSerializer(page, data=request.data, partial=True)
             page_description = page.description_html
-            # Snapshot the page before the write so the webhook fan-out can diff
-            # which DRF-side properties (name, access, …) actually changed.
-            current_instance = json.dumps(PageDetailSerializer(page).data, cls=DjangoJSONEncoder)
             # Keyed on presence rather than truthiness so an empty body would
             # still count as a content change. PageDetailSerializer rejects a
             # blank description_html today, so this is defensive: it keeps the
             # branch correct if that field is ever made blankable, as it already
             # is on the model and in the public API.
             content_changed = "description_html" in request.data
+            # description_html is held back from the property fan-out: content is
+            # high-frequency, so it goes down the debounced path below instead of
+            # emitting an undebounced webhook per edit.
+            property_data = {key: value for key, value in request.data.items() if key != "description_html"}
+            # Snapshot the page before the write so the fan-out can diff which
+            # properties (name, access, …) changed — but only when a property
+            # actually changed, and without description_html: model_activity does
+            # not diff it, and a large page body would otherwise be carried in
+            # every Celery message.
+            current_instance = (
+                json.dumps(
+                    {key: value for key, value in PageDetailSerializer(page).data.items() if key != "description_html"},
+                    cls=DjangoJSONEncoder,
+                )
+                if property_data
+                else None
+            )
             if serializer.is_valid():
                 serializer.save()
                 # capture the page transaction, recording the value that was
@@ -196,10 +210,6 @@ class PageViewSet(BaseViewSet):
                 # Dispatch a "page" webhook (action=update) for every changed
                 # property. model_activity diffs request.data against the
                 # snapshot and fans out one update event per changed field.
-                # description_html is held back: content is high-frequency, so it
-                # goes down the debounced path below instead of emitting an
-                # undebounced webhook per edit.
-                property_data = {key: value for key, value in request.data.items() if key != "description_html"}
                 if property_data:
                     model_activity.delay(
                         model_name="page",
@@ -668,13 +678,23 @@ class PagesDescriptionViewSet(BaseViewSet):
             # field at all changed nothing and must not emit an update. The
             # binary and json forms count too — a binary-only flush is still a
             # real content change.
-            if any(field in request.data for field in ("description_html", "description_binary", "description_json")):
+            # Name the content field that actually travelled rather than always
+            # claiming description_html: a binary-only or json-only flush is a
+            # real content change, but reporting it as an HTML edit misdescribes
+            # it to subscribers. Preference order puts the human-readable body
+            # first when more than one form is sent, as the live server does.
+            changed_content_fields = [
+                content_field
+                for content_field in ("description_html", "description_binary", "description_json")
+                if content_field in request.data
+            ]
+            if changed_content_fields:
                 dispatch_page_webhook(
                     request,
                     slug,
                     page_id,
                     verb="updated",
-                    field="description_html",
+                    field=changed_content_fields[0],
                     debounce=True,
                 )
             return Response({"message": "Updated successfully"})
