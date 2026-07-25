@@ -221,9 +221,25 @@ class TestWebhookReadUpdateDeleteAPIEndpoint:
         )
 
         assert response.status_code == status.HTTP_200_OK
+        assert "secret_key" not in response.data
         create_webhook.refresh_from_db()
         assert create_webhook.is_active is False
         assert create_webhook.cycle is True
+
+    @pytest.mark.django_db
+    def test_update_ignores_client_supplied_secret(self, api_key_client, workspace, create_webhook):
+        """secret_key is read-only on update too — a supplied value is discarded."""
+        original_secret = create_webhook.secret_key
+
+        response = api_key_client.patch(
+            _webhook_detail_url(workspace.slug, create_webhook.id),
+            {"secret_key": "attacker-controlled", "is_active": False},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        create_webhook.refresh_from_db()
+        assert create_webhook.secret_key == original_secret
 
     @pytest.mark.django_db
     def test_update_rejects_ssrf_target(self, api_key_client, workspace, create_webhook):
@@ -240,6 +256,27 @@ class TestWebhookReadUpdateDeleteAPIEndpoint:
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Webhook.objects.filter(id=create_webhook.id).exists()
+
+
+@pytest.mark.contract
+class TestWebhookSerializerShapes:
+    """The read serializer is what the OpenAPI schema is generated from, so its
+    shape IS the published contract — these assertions keep the documented
+    response identical to the one the endpoints actually return."""
+
+    def test_read_shape_excludes_secret_but_create_shape_includes_it(self):
+        from plane.api.serializers import WebhookLiteSerializer, WebhookSerializer
+
+        # The secret is surfaced exactly once, in the create response ...
+        assert "secret_key" in WebhookSerializer().fields
+        # ... and never on a read (list / retrieve / update).
+        assert "secret_key" not in WebhookLiteSerializer().fields
+
+    def test_read_shape_is_the_full_shape_minus_the_secret(self):
+        """Adding a field to the webhook API must not silently drop it from reads."""
+        from plane.api.serializers import WebhookLiteSerializer, WebhookSerializer
+
+        assert set(WebhookLiteSerializer().fields) == set(WebhookSerializer().fields) - {"secret_key"}
 
 
 @pytest.mark.contract

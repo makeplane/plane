@@ -18,7 +18,7 @@ from drf_spectacular.utils import (
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.serializers import WebhookSerializer
+from plane.api.serializers import WebhookSerializer, WebhookLiteSerializer
 from plane.db.models import Webhook, Workspace
 from plane.utils.permissions import WorkspaceOwnerPermission
 from plane.utils.openapi import (
@@ -29,21 +29,11 @@ from plane.utils.openapi import (
     CONFLICT_RESPONSE,
 )
 
-# Fields returned to clients everywhere except the create response — the
-# server-generated ``secret_key`` is intentionally withheld here and only ever
-# surfaced once, in the create response, so it is not leaked on every read.
-WEBHOOK_READ_FIELDS = (
-    "id",
-    "url",
-    "is_active",
-    "created_at",
-    "updated_at",
-    "project",
-    "issue",
-    "cycle",
-    "module",
-    "issue_comment",
-)
+# Reads (list/retrieve/update) serialize through WebhookLiteSerializer, which
+# omits the server-generated ``secret_key`` — the secret is surfaced exactly
+# once, in the create response, so it is not leaked on every read. Using a
+# dedicated serializer rather than runtime field filtering keeps the published
+# OpenAPI schema identical to what the endpoint actually returns.
 
 WEBHOOK_PK_PARAMETER = OpenApiParameter(
     name="pk",
@@ -113,7 +103,7 @@ class WebhookAPIEndpoint(BaseAPIView):
         tags=["Webhooks"],
         parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
-            200: OpenApiResponse(description="Webhooks", response=WebhookSerializer(many=True)),
+            200: OpenApiResponse(description="Webhooks", response=WebhookLiteSerializer(many=True)),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: WORKSPACE_NOT_FOUND_RESPONSE,
@@ -121,7 +111,7 @@ class WebhookAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug):
         webhooks = Webhook.objects.filter(workspace__slug=slug)
-        serializer = WebhookSerializer(webhooks, fields=WEBHOOK_READ_FIELDS, many=True)
+        serializer = WebhookLiteSerializer(webhooks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -143,7 +133,7 @@ class WebhookDetailAPIEndpoint(BaseAPIView):
         tags=["Webhooks"],
         parameters=[WORKSPACE_SLUG_PARAMETER, WEBHOOK_PK_PARAMETER],
         responses={
-            200: OpenApiResponse(description="Webhook", response=WebhookSerializer),
+            200: OpenApiResponse(description="Webhook", response=WebhookLiteSerializer),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: WORKSPACE_NOT_FOUND_RESPONSE,
@@ -151,7 +141,7 @@ class WebhookDetailAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, pk):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
-        serializer = WebhookSerializer(webhook, fields=WEBHOOK_READ_FIELDS)
+        serializer = WebhookLiteSerializer(webhook)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -166,7 +156,7 @@ class WebhookDetailAPIEndpoint(BaseAPIView):
         parameters=[WORKSPACE_SLUG_PARAMETER, WEBHOOK_PK_PARAMETER],
         request=OpenApiRequest(request=WebhookSerializer),
         responses={
-            200: OpenApiResponse(description="Webhook updated", response=WebhookSerializer),
+            200: OpenApiResponse(description="Webhook updated", response=WebhookLiteSerializer),
             400: OpenApiResponse(description="Invalid or disallowed webhook URL"),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
@@ -177,16 +167,19 @@ class WebhookDetailAPIEndpoint(BaseAPIView):
     def patch(self, request, slug, pk):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
         try:
+            # Validate/save with the full serializer (it carries the URL schema,
+            # domain and SSRF guards); serialize the response with the lite one so
+            # the secret is not echoed back on update. secret_key is read-only on
+            # both, so it can never be written here either.
             serializer = WebhookSerializer(
                 webhook,
                 data=request.data,
                 context={"request": request},
                 partial=True,
-                fields=WEBHOOK_READ_FIELDS,
             )
             if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                updated = serializer.save()
+                return Response(WebhookLiteSerializer(updated).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             # Only the unique webhook-URL violation maps to 409; any other

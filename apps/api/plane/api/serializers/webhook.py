@@ -65,3 +65,21 @@ class WebhookSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class WebhookLiteSerializer(BaseSerializer):
+    """Read-side webhook shape — everything ``WebhookSerializer`` exposes except
+    the signing ``secret_key``.
+
+    The secret is surfaced exactly once, in the create response; list, retrieve
+    and update responses use this serializer so it is never returned on a read.
+    Deriving the field list from ``WebhookSerializer`` (minus the secret) makes
+    that exclusion structural rather than a hand-maintained parallel list, and
+    because the runtime response and the published OpenAPI schema are both
+    generated from this one class they cannot contradict each other.
+    """
+
+    class Meta:
+        model = Webhook
+        fields = [field for field in WebhookSerializer.Meta.fields if field != "secret_key"]
+        read_only_fields = fields
