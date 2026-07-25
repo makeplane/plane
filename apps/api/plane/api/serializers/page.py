@@ -43,27 +43,39 @@ class PageAPISerializer(BaseSerializer):
 
     def to_representation(self, instance):
         """
-        Serialize the page, keeping ``expand=parent`` inside the same
-        private-page visibility rule the endpoints enforce.
+        Serialize the page, holding ``parent`` to the same private-page
+        visibility rule the endpoints enforce on the page itself.
 
-        Expansion reads the ``parent`` foreign key straight off the instance, so
-        without this check a page whose parent is someone else's private page
-        would disclose that parent's name and metadata to any project member.
-        When the requester may not see the parent, fall back to the bare id —
-        exactly what the unexpanded representation already returns, so nothing
-        new is revealed.
+        The endpoint queryset filters the page being returned, not the page it
+        points at, so a public page whose parent is someone else's private page
+        would hand every project member that parent's id — and, with
+        ``expand=parent``, its name, access, logo and owner — disclosing a page
+        they are not allowed to know exists. Returning the bare id is not a safe
+        fallback: the id *is* what must not leak. So an invisible parent is
+        reported as no parent at all, which is indistinguishable from a
+        top-level page and therefore reveals nothing.
+
+        Pages in that shape are not only created here — the app and legacy
+        imports nest public pages under private ones too — so the filter belongs
+        on the read path rather than on validation.
+
+        The viewer is ``context["request"].user``. With no request in context
+        the serializer is not rendering for a viewer but building an internal
+        snapshot for activity/webhook payloads, which record the stored value.
         """
         data = super().to_representation(instance)
 
-        if self.expand and "parent" in self.expand and instance.parent_id:
-            request = self.context.get("request")
-            user = getattr(request, "user", None)
-            parent = instance.parent
-            visible = parent.access == Page.PUBLIC_ACCESS or (
-                user is not None and not user.is_anonymous and parent.owned_by_id == user.id
-            )
-            if not visible:
-                data["parent"] = instance.parent_id
+        request = self.context.get("request")
+        if request is None or not instance.parent_id or "parent" not in data:
+            return data
+
+        user = getattr(request, "user", None)
+        parent = instance.parent
+        visible = parent.access == Page.PUBLIC_ACCESS or (
+            user is not None and not user.is_anonymous and parent.owned_by_id == user.id
+        )
+        if not visible:
+            data["parent"] = None
 
         return data
 

@@ -21,6 +21,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from plane.api.serializers import PageAPISerializer
 from plane.db.models import (
     APIToken,
     Page,
@@ -1360,22 +1361,28 @@ class TestPageTypeParameterSchema:
 
 
 @pytest.mark.contract
-class TestPageExpandVisibility:
-    """`expand=parent` stays inside the private-page visibility rule."""
+class TestPageParentVisibility:
+    """A page's `parent` stays inside the private-page visibility rule.
+
+    The visibility queryset filters the page being returned, not the page it
+    points at. A public page may sit under a private parent — the app and legacy
+    imports both produce that shape — so every representation of the child has to
+    withhold the parent reference from anyone who may not see the parent. That
+    includes the bare id: the id is precisely what discloses the private page's
+    existence.
+    """
+
+    def list_url(self, slug, project_id):
+        """Return the page list/create URL."""
+        return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/"
 
     def detail_url(self, slug, project_id, page_id):
         """Return the page detail URL."""
         return f"/api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/"
 
-    @pytest.mark.django_db
-    def test_expand_parent_hides_other_users_private_parent(self, workspace, project, actors):
-        """A private parent owned by someone else is never expanded.
-
-        A public page may point at a private parent. Expansion reads the foreign
-        key directly, so without a visibility check the parent's name and
-        metadata would leak to any project member. The response falls back to
-        the bare id, which the unexpanded representation already exposes.
-        """
+    @pytest.fixture
+    def nested_pages(self, project, actors):
+        """A public page whose parent is a private page owned by someone else."""
         owner = actors["owner"]["user"]
         private_parent = Page.objects.create(
             name="Secret Parent",
@@ -1392,65 +1399,129 @@ class TestPageExpandVisibility:
             parent=private_parent,
         )
         _link_page(project, child, owner)
-
-        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
-        response = actors["member"]["client"].get(url)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert str(response.data["parent"]) == str(private_parent.id)
-        assert "Secret Parent" not in str(response.data)
+        return private_parent, child
 
     @pytest.mark.django_db
-    def test_owner_still_sees_own_private_parent_expanded(self, workspace, project, actors):
-        """The parent's owner still gets the expanded payload."""
-        owner = actors["owner"]["user"]
-        private_parent = Page.objects.create(
-            name="My Parent",
-            owned_by=owner,
-            workspace=project.workspace,
-            access=Page.PRIVATE_ACCESS,
-        )
-        _link_page(project, private_parent, owner)
-        child = Page.objects.create(
-            name="Child",
-            owned_by=owner,
-            workspace=project.workspace,
-            access=Page.PUBLIC_ACCESS,
-            parent=private_parent,
-        )
-        _link_page(project, child, owner)
+    def test_retrieve_hides_private_parent_id(self, workspace, project, actors, nested_pages):
+        """Retrieving the child does not disclose the private parent's id.
 
-        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
-        response = actors["owner"]["client"].get(url)
+        This is the leak in its simplest form: no expansion needed, just read a
+        public page and read off the uuid of a page you cannot see.
+        """
+        private_parent, child = nested_pages
+
+        response = actors["member"]["client"].get(self.detail_url(workspace.slug, project.id, child.id))
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["parent"]["name"] == "My Parent"
+        assert response.data["parent"] is None
+        assert str(private_parent.id) not in str(response.data)
 
     @pytest.mark.django_db
-    def test_list_expand_parent_hides_private_parent(self, workspace, project, actors):
+    def test_list_hides_private_parent_id(self, workspace, project, actors, nested_pages):
         """The list endpoint applies the same rule as retrieve."""
-        owner = actors["owner"]["user"]
-        private_parent = Page.objects.create(
-            name="Secret List Parent",
-            owned_by=owner,
-            workspace=project.workspace,
-            access=Page.PRIVATE_ACCESS,
-        )
-        _link_page(project, private_parent, owner)
-        child = Page.objects.create(
-            name="Listed Child",
-            owned_by=owner,
-            workspace=project.workspace,
-            access=Page.PUBLIC_ACCESS,
-            parent=private_parent,
-        )
-        _link_page(project, child, owner)
+        private_parent, child = nested_pages
 
-        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/pages/?expand=parent"
+        response = actors["member"]["client"].get(self.list_url(workspace.slug, project.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        listed = next(item for item in response.data["results"] if str(item["id"]) == str(child.id))
+        assert listed["parent"] is None
+        assert str(private_parent.id) not in str(response.data)
+
+    @pytest.mark.django_db
+    def test_expand_parent_hides_other_users_private_parent(self, workspace, project, actors, nested_pages):
+        """Expansion discloses neither the parent's metadata nor its id."""
+        private_parent, child = nested_pages
+
+        url = f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent"
         response = actors["member"]["client"].get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert "Secret List Parent" not in str(response.data)
+        assert response.data["parent"] is None
+        assert "Secret Parent" not in str(response.data)
+        assert str(private_parent.id) not in str(response.data)
+
+    @pytest.mark.django_db
+    def test_list_expand_parent_hides_private_parent(self, workspace, project, actors, nested_pages):
+        """The list endpoint applies the same rule when expanding."""
+        private_parent, _ = nested_pages
+
+        url = f"{self.list_url(workspace.slug, project.id)}?expand=parent"
+        response = actors["member"]["client"].get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "Secret Parent" not in str(response.data)
+        assert str(private_parent.id) not in str(response.data)
+
+    @pytest.mark.django_db
+    def test_update_response_hides_private_parent(self, workspace, project, actors, nested_pages):
+        """The echo on a successful PATCH is filtered like any other read."""
+        private_parent, child = nested_pages
+
+        response = actors["member"]["client"].patch(
+            self.detail_url(workspace.slug, project.id, child.id),
+            {"name": "Renamed Child"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["parent"] is None
+        assert str(private_parent.id) not in str(response.data)
+
+    @pytest.mark.django_db
+    def test_owner_still_sees_own_private_parent(self, workspace, project, actors, nested_pages):
+        """The parent's owner keeps both the reference and the expansion."""
+        private_parent, child = nested_pages
+        client = actors["owner"]["client"]
+
+        plain = client.get(self.detail_url(workspace.slug, project.id, child.id))
+        assert plain.status_code == status.HTTP_200_OK
+        assert str(plain.data["parent"]) == str(private_parent.id)
+
+        expanded = client.get(f"{self.detail_url(workspace.slug, project.id, child.id)}?expand=parent")
+        assert expanded.status_code == status.HTTP_200_OK
+        assert expanded.data["parent"]["name"] == "Secret Parent"
+
+    @pytest.mark.django_db
+    def test_create_response_keeps_the_callers_own_private_parent(
+        self, api_key_client, workspace, project, create_user
+    ):
+        """Creating a child under your own private page echoes that parent back.
+
+        Withholding a parent the caller just supplied would be a regression, so
+        the filter has to key on the viewer rather than on the parent's access.
+        """
+        private_parent = Page.objects.create(
+            name="My Private Parent",
+            owned_by=create_user,
+            workspace=project.workspace,
+            access=Page.PRIVATE_ACCESS,
+        )
+        _link_page(project, private_parent, create_user)
+
+        response = api_key_client.post(
+            self.list_url(workspace.slug, project.id),
+            {"name": "Mine", "parent": str(private_parent.id)},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert str(response.data["parent"]) == str(private_parent.id)
+
+    @pytest.mark.django_db
+    def test_activity_snapshot_keeps_the_stored_parent(self, project, actors, nested_pages):
+        """Internal snapshots record the stored parent, unfiltered.
+
+        Activity and webhook payloads describe what the page *is*; they are not
+        a reply to a reader, and the serializer only filters when a request is in
+        context. Losing the parent there would fabricate a change in the diff
+        `model_activity` computes.
+        """
+        private_parent, child = nested_pages
+
+        snapshot = PageAPISerializer(child).data
+
+        assert str(snapshot["parent"]) == str(private_parent.id)
 
 
 @pytest.mark.contract

@@ -170,6 +170,16 @@ class PageAPIBaseView(BaseAPIView):
             .distinct()
         )
 
+    def serialize(self, pages, **kwargs):
+        """Build the response serializer for this request.
+
+        Every page response is built here so the request is always in context:
+        ``PageAPISerializer`` needs it to decide whether the caller may see a
+        page's ``parent``, and without it falls back to reporting the stored
+        value — which is right for an internal snapshot and wrong for a reply.
+        """
+        return PageAPISerializer(pages, context={"request": self.request}, **kwargs)
+
     def validate_parent_or_error(self, request, page_id=None):
         """Validate a requested ``parent`` against project scope and cycles.
 
@@ -230,8 +240,9 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
         summary="List pages",
         description=(
             "Retrieve a paginated list of pages in a project. Private pages are "
-            "only returned to their owner. Supports name search and filtering by "
-            "type (all, public, private, archived)."
+            "only returned to their owner, and a page whose parent is private to "
+            "another user reports no parent. Supports name search and filtering "
+            "by type (all, public, private, archived)."
         ),
         parameters=[
             CURSOR_PARAMETER,
@@ -297,12 +308,11 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
             request=request,
             queryset=queryset,
             on_results=lambda pages: (
-                PageAPISerializer(
+                self.serialize(
                     pages,
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
-                    context={"request": request},
                 ).data
             ),
         )
@@ -419,7 +429,7 @@ class PageListCreateAPIEndpoint(PageAPIBaseView):
             )
 
             return Response(
-                PageAPISerializer(page).data,
+                self.serialize(page).data,
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -431,7 +441,11 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
     @page_docs(
         operation_id="retrieve_page",
         summary="Retrieve page",
-        description="Retrieve a specific page by its ID. Private pages are only visible to their owner.",
+        description=(
+            "Retrieve a specific page by its ID. Private pages are only visible to "
+            "their owner, and a page whose parent is private to another user "
+            "reports no parent."
+        ),
         parameters=[PAGE_ID_PARAMETER, FIELDS_PARAMETER, EXPAND_PARAMETER],
         responses={
             200: OpenApiResponse(
@@ -449,12 +463,7 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
         """
         page = self.get_queryset().get(pk=page_id)
         return Response(
-            PageAPISerializer(
-                page,
-                fields=self.fields,
-                expand=self.expand,
-                context={"request": request},
-            ).data,
+            self.serialize(page, fields=self.fields, expand=self.expand).data,
             status=status.HTTP_200_OK,
         )
 
@@ -520,7 +529,7 @@ class PageDetailAPIEndpoint(PageAPIBaseView):
             page.external_source,
         )
 
-        serializer = PageAPISerializer(page, data=request.data, partial=True)
+        serializer = self.serialize(page, data=request.data, partial=True)
         if serializer.is_valid():
             with transaction.atomic():
                 # Validate the requested parent inside the transaction that
