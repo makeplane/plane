@@ -17,6 +17,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     User,
+    Workspace,
     WorkspaceMember,
 )
 from plane.db.models.api import APIToken
@@ -107,6 +108,8 @@ def make_page(
     locked=False,
     name="Secret Page",
     parent=None,
+    external_id=None,
+    external_source=None,
 ):
     """Create a page linked to ``project`` and owned by ``owner``."""
     page = Page.objects.create(
@@ -120,6 +123,8 @@ def make_page(
         archived_at=timezone.now() if archived else None,
         is_locked=locked,
         parent=parent,
+        external_id=external_id,
+        external_source=external_source,
     )
     ProjectPage.objects.create(
         workspace=project.workspace,
@@ -288,6 +293,8 @@ class TestPageListCreateAPIEndpoint:
         second = api_key_client.post(list_url(workspace.slug, project.id), dup, format="json")
         assert second.status_code == status.HTTP_409_CONFLICT
         assert "same external id" in second.data["error"]
+        # The caller owns the conflicting page, so it is theirs to look up.
+        assert second.data["id"] == str(first.data["id"])
 
     @pytest.mark.django_db
     def test_create_forbidden_for_guest(self, role_clients, workspace, project):
@@ -781,6 +788,21 @@ class TestPageParentScoping:
         assert parent.parent_id is None
 
     @pytest.mark.django_db
+    def test_update_rejects_deep_descendant_as_parent(self, api_key_client, workspace, project, create_user):
+        """The cycle walk climbs more than one level."""
+        root = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Root")
+        child = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Child", parent=root)
+        grandchild = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Grandchild", parent=child)
+        response = api_key_client.patch(
+            detail_url(workspace.slug, project.id, root.id),
+            {"parent": str(grandchild.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        root.refresh_from_db()
+        assert root.parent_id is None
+
+    @pytest.mark.django_db
     def test_update_allows_detaching_parent(self, api_key_client, workspace, project, create_user):
         """Clearing the parent is allowed."""
         parent = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Root")
@@ -793,6 +815,103 @@ class TestPageParentScoping:
         assert response.status_code == status.HTTP_200_OK, f"Got {response.data!r}"
         child.refresh_from_db()
         assert child.parent_id is None
+
+    @pytest.mark.django_db
+    def test_cycle_walk_stops_at_the_workspace_boundary(self, api_key_client, workspace, project, create_user):
+        """The ancestor walk does not follow a parent link out of the workspace.
+
+        Legacy rows can carry a cross-tenant ``parent_id``, so the chain
+        ``proposed -> bridge (other workspace) -> target`` exists in the data. An
+        unscoped walk would climb through the foreign row and call this a cycle;
+        the archive traversal it guards stops at the workspace boundary and could
+        never follow that link, so the walk stops there too.
+        """
+        other_workspace = Workspace.objects.create(
+            name="Other Workspace",
+            owner=create_user,
+            slug="other-workspace",
+        )
+        other_project = Project.objects.create(
+            name="Other Workspace Project",
+            identifier="OWP",
+            workspace=other_workspace,
+            created_by=create_user,
+        )
+        target = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Target")
+        proposed = make_page(project, create_user, access=Page.PUBLIC_ACCESS, name="Proposed Parent")
+        bridge = make_page(other_project, create_user, access=Page.PUBLIC_ACCESS, name="Foreign Bridge")
+
+        # Written straight to the rows: the endpoints reject these links, which is
+        # exactly why only legacy data can hold them.
+        Page.objects.filter(pk=proposed.id).update(parent=bridge)
+        Page.objects.filter(pk=bridge.id).update(parent=target)
+
+        response = api_key_client.patch(
+            detail_url(workspace.slug, project.id, target.id),
+            {"parent": str(proposed.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.data!r}"
+        target.refresh_from_db()
+        assert str(target.parent_id) == str(proposed.id)
+
+
+# ---------------------------------------------------------------------------
+# An external-id conflict must not disclose a page the caller cannot see
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.contract
+class TestPageExternalIdConflictDisclosure:
+    """409 is reported for any taken (external_source, external_id) pair, but the
+    conflicting page's id is only echoed when the caller can already see it."""
+
+    @pytest.mark.django_db
+    def test_conflict_withholds_id_of_another_users_private_page(
+        self, api_key_client, workspace, project, make_project_user
+    ):
+        """A private page owned by someone else conflicts without disclosing it."""
+        other = make_project_user("extowner@plane.so", 15)
+        make_page(
+            project,
+            other,
+            access=Page.PRIVATE_ACCESS,
+            name="Their Import",
+            external_id="ext-1",
+            external_source="notion",
+        )
+
+        response = api_key_client.post(
+            list_url(workspace.slug, project.id),
+            {"name": "Mine", "external_id": "ext-1", "external_source": "notion"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert "same external id" in response.data["error"]
+        assert "id" not in response.data
+
+    @pytest.mark.django_db
+    def test_conflict_returns_id_of_another_users_public_page(
+        self, api_key_client, workspace, project, make_project_user
+    ):
+        """A public page is visible to the caller, so its id is safe to return."""
+        other = make_project_user("publicowner@plane.so", 15)
+        existing = make_page(
+            project,
+            other,
+            access=Page.PUBLIC_ACCESS,
+            name="Shared Import",
+            external_id="ext-1",
+            external_source="notion",
+        )
+
+        response = api_key_client.post(
+            list_url(workspace.slug, project.id),
+            {"name": "Mine", "external_id": "ext-1", "external_source": "notion"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.data["id"] == str(existing.id)
 
 
 # ---------------------------------------------------------------------------

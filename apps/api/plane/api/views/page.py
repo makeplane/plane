@@ -45,7 +45,7 @@ from plane.utils.openapi import (
     PAGE_CREATE_EXAMPLE,
     PAGE_UPDATE_EXAMPLE,
     PAGE_EXAMPLE,
-    EXTERNAL_ID_EXISTS_RESPONSE,
+    PAGE_EXTERNAL_ID_EXISTS_RESPONSE,
 )
 
 from .base import BaseAPIView
@@ -154,13 +154,27 @@ class PageAPIEndpoint(BaseAPIView):
         Walks up from the proposed parent; if ``page`` is one of its ancestors the
         link would create a cycle. The walk is depth-bounded so an already-cyclic
         row cannot spin here either.
+
+        The walk stays inside ``page``'s workspace. Legacy rows can carry a
+        cross-tenant ``parent_id`` — the page endpoints historically accepted any
+        parent id — and following one would take the search into another tenant's
+        tree. It is also the wrong answer: the subtree traversal this check exists
+        to protect (:func:`unarchive_archive_page_and_descendants`) stops at the
+        same workspace boundary, so a chain that leaves the workspace can never
+        close a cycle that traversal would follow. Bounding the walk keeps the two
+        in step and makes a corrupted link terminate the search instead of
+        extending it.
         """
         if str(parent_id) == str(page.id):
             return True
 
         ancestor_id = parent_id
         for _ in range(MAX_PAGE_TREE_DEPTH):
-            ancestor = Page.objects.filter(pk=ancestor_id).values_list("parent_id", flat=True).first()
+            ancestor = (
+                Page.objects.filter(pk=ancestor_id, workspace_id=page.workspace_id)
+                .values_list("parent_id", flat=True)
+                .first()
+            )
             if ancestor is None:
                 return False
             if str(ancestor) == str(page.id):
@@ -241,7 +255,7 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
                 response=PageAPISerializer,
                 examples=[PAGE_EXAMPLE],
             ),
-            409: EXTERNAL_ID_EXISTS_RESPONSE,
+            409: PAGE_EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -259,25 +273,35 @@ class PageListCreateAPIEndpoint(PageAPIEndpoint):
 
         serializer = PageAPISerializer(data=request.data)
         if serializer.is_valid():
-            # Reject a duplicate (external_source, external_id) pair. Fetched in
-            # one query: an exists() followed by a first() both costs an extra
+            # Reject a duplicate (external_source, external_id) pair. The lookup
+            # is a single query: an exists() followed by a first() costs an extra
             # round trip and can return None if the row disappears in between.
+            # Only the id is selected — a full row would drag the page body and
+            # its Yjs binary back just to build an error response.
             existing = None
             if request.data.get("external_id") and request.data.get("external_source"):
-                existing = Page.objects.filter(
-                    workspace__slug=slug,
-                    projects__id=project_id,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).first()
-            if existing:
-                return Response(
-                    {
-                        "error": "Page with the same external id and external source already exists",
-                        "id": str(existing.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
+                existing = (
+                    Page.objects.filter(
+                        workspace__slug=slug,
+                        projects__id=project_id,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    )
+                    .values("id")
+                    .first()
                 )
+            if existing:
+                error = {"error": "Page with the same external id and external source already exists"}
+                # The conflict itself is reported either way — the pair is taken
+                # in this project no matter who owns the page holding it. The id
+                # is only echoed for a page get_queryset would hand back anyway:
+                # returning it for someone else's private page would leak both the
+                # existence and the identifier of a page this API deliberately
+                # hides. Resolved through get_queryset so the visibility rule
+                # stays written once; the extra query only runs on this error path.
+                if self.get_queryset().filter(pk=existing["id"]).exists():
+                    error["id"] = str(existing["id"])
+                return Response(error, status=status.HTTP_409_CONFLICT)
 
             with transaction.atomic():
                 page = serializer.save(
