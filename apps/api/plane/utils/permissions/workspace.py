@@ -22,30 +22,27 @@ class WorkSpaceBasePermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        if request.method == "POST":
-            return True
-
-        ## Safe Methods
-        if request.method in SAFE_METHODS:
-            return True
-
-        # allow only admins and owners to update the workspace settings
-        if request.method in ["PUT", "PATCH"]:
-            return WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=view.workspace_slug,
-                role__in=[Admin, Member],
-                is_active=True,
-            ).exists()
-
-        # allow only owner to delete the workspace
-        if request.method == "DELETE":
-            return WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=view.workspace_slug,
-                role=Admin,
-                is_active=True,
-            ).exists()
+        match request.method:
+            case "POST":
+                return True
+            case method if method in SAFE_METHODS:
+                return True
+            case "PUT" | "PATCH":
+                return WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=view.workspace_slug,
+                    role__in=[Admin, Member],
+                    is_active=True,
+                ).exists()
+            case "DELETE":
+                return WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=view.workspace_slug,
+                    role=Admin,
+                    is_active=True,
+                ).exists()
+            case _:
+                return False
 
 
 class WorkspaceOwnerPermission(BasePermission):
