@@ -4,6 +4,8 @@
 
 # Python imports
 import uuid
+from functools import reduce
+from operator import and_
 
 # Django imports
 from django.db.models import Exists, OuterRef, Q, Subquery
@@ -51,13 +53,17 @@ PAGE_SEARCH_QUERY_PARAMETER = OpenApiParameter(
     name="query",
     type=OpenApiTypes.STR,
     location=OpenApiParameter.QUERY,
-    description="Search query matched (case-insensitively) against page name and page text content",
+    description=(
+        "Search query, split on whitespace into keywords. Every keyword must appear "
+        "(case-insensitively) in the page name or the page text content; they need not "
+        "appear together or in order."
+    ),
     required=True,
     examples=[
         OpenApiExample(
-            name="Content search",
-            value="onboarding checklist",
-            description="Find pages whose name or body contains this text",
+            name="Keyword search",
+            value="latency spike rollback",
+            description="Find pages containing all of these keywords, in the name or the body",
         )
     ],
 )
@@ -95,9 +101,12 @@ class PageSearchEndpoint(BaseAPIView):
         operation_id="search_pages",
         tags=["Pages"],
         description=(
-            "Search pages across a workspace by name and text content. Only pages in projects the "
-            "requesting user is a member of are returned; private pages are visible only to their owner "
-            "and archived pages are excluded unless ``archived=true``."
+            "Search pages across a workspace by name and text content. The query is split on "
+            "whitespace into keywords and a page matches only when every keyword appears in its "
+            "name or its text content, so the keywords may be scattered across the document. "
+            "Only pages in projects the requesting user is a member of are returned; private "
+            "pages are visible only to their owner and archived pages are excluded unless "
+            "``archived=true``."
         ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
@@ -135,7 +144,8 @@ class PageSearchEndpoint(BaseAPIView):
             )
 
         query = request.query_params.get("query", "").strip()
-        if not query:
+        tokens = query.split()
+        if not tokens:
             return Response(
                 {"error": "The 'query' parameter is required to search pages."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -153,8 +163,17 @@ class PageSearchEndpoint(BaseAPIView):
 
         include_archived = request.query_params.get("archived", "false").lower() == "true"
 
-        # Match on page name OR the maintained stripped text content, case-insensitively.
-        match_query = Q(name__icontains=query) | Q(description_stripped__icontains=query)
+        # Callers send keyword queries, not phrases, so the query is tokenised on
+        # whitespace: every token must appear (AND), and each token may appear in
+        # either the page name or the maintained stripped text content. Matching
+        # the whole query as one literal substring would only find pages carrying
+        # the exact phrase; OR-ing the tokens instead would flood the results with
+        # pages that happen to contain just one common word. A single-token query
+        # reduces to the same condition as before.
+        match_query = reduce(
+            and_,
+            (Q(name__icontains=token) | Q(description_stripped__icontains=token) for token in tokens),
+        )
 
         # Scoping (security critical) — mirror the internal GlobalSearchEndpoint /
         # PageViewSet rules using an Exists() subquery so the project membership

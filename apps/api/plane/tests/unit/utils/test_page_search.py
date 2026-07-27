@@ -30,6 +30,12 @@ def _reference_snippet(stripped_text, query, max_length=SNIPPET_MAX_LENGTH, lead
 
     tokens = [re.escape(token) for token in query.split()]
     match = re.search(r"\s+".join(tokens), text, re.IGNORECASE) if tokens else None
+    if match is None:
+        # Phrase absent: anchor on the first query token present in the text.
+        for token in tokens:
+            match = re.search(token, text, re.IGNORECASE)
+            if match is not None:
+                break
 
     if match is None:
         if len(text) <= max_length:
@@ -96,6 +102,37 @@ class TestBuildPageSnippet:
         assert build_page_snippet(text, "budget", max_length=max_length) == ""
         assert build_page_snippet(text, "absent-term", max_length=max_length) == ""
 
+    def test_phrase_is_preferred_when_present(self):
+        """When the whole phrase occurs, it stays the anchor — the most
+        informative excerpt."""
+        text = "rollback notes. " + "z" * 400 + " latency spike happened here."
+        snippet = build_page_snippet(text, "latency spike")
+        assert "latency spike" in snippet.lower()
+
+    def test_anchors_on_first_token_when_phrase_absent(self):
+        """Tokenised search matches pages whose tokens sit in different
+        sentences, so the phrase is often absent; anchor on the first token."""
+        text = "intro " + "z" * 400 + " a latency problem. " + "y" * 400 + " and then a spike."
+        snippet = build_page_snippet(text, "latency spike")
+        assert "latency" in snippet.lower()
+        # 'spike' is ~400 characters further on, well outside a 200-char excerpt.
+        assert "spike" not in snippet.lower()
+
+    def test_anchor_falls_through_to_a_later_token(self):
+        """If the first token is absent the next matching one anchors it."""
+        text = "z" * 400 + " the spike happened overnight."
+        snippet = build_page_snippet(text, "latency spike")
+        assert "spike" in snippet.lower()
+
+    def test_no_token_present_excerpts_from_the_start(self):
+        """A page that matched on its name alone still gets a preview."""
+        text = "Body text that shares nothing with the query at all."
+        assert build_page_snippet(text, "latency spike").startswith("Body text")
+
+    def test_single_token_behaviour_unchanged(self):
+        text = "x" * 300 + " needle " + "y" * 300
+        assert build_page_snippet(text, "needle") == _reference_snippet(text, "needle")
+
     def test_match_is_found_across_whitespace_runs(self):
         """The document is only normalized in a window, so the search itself runs
         against raw text where the query's words may straddle newlines."""
@@ -146,6 +183,14 @@ class TestBuildPageSnippet:
             ("tiny", "tiny"),
             ("no match at all here", "absent"),
             ("İ" * 100 + " needle", "needle"),
+            # Multi-token queries: phrase present, phrase absent (anchors on the
+            # first token), first token absent, and no token present at all.
+            ("z" * 300 + " latency spike " + "y" * 300, "latency spike"),
+            ("z" * 300 + " latency here " + "y" * 300 + " spike there", "latency spike"),
+            ("z" * 300 + " only a spike here " + "y" * 300, "latency spike"),
+            ("nothing relevant in this document", "latency spike"),
+            ("latency at the very start " + "y" * 400 + " spike", "latency spike"),
+            ("a\n\nlatency\n\n b \n\n spike", "latency spike"),
         ],
     )
     def test_matches_naive_full_normalization(self, text, query):

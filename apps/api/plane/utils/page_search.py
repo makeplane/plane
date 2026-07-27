@@ -37,17 +37,47 @@ _NON_WHITESPACE_RE = re.compile(r"\S")
 _MIN_WINDOW_CHARS = 512
 
 
-def _query_pattern(query: str) -> re.Pattern | None:
-    """Compile ``query`` so it matches across any run of whitespace.
+def _query_patterns(query: str) -> tuple[re.Pattern | None, list[re.Pattern]]:
+    """Compile ``query`` into a whole-phrase pattern and its per-token patterns.
 
-    The document is only whitespace-normalized in a window around the match, so
-    the search itself runs against the raw text — where the query's words may be
-    separated by newlines or runs of spaces.
+    Both allow any run of whitespace where the query has whitespace: the document
+    is only whitespace-normalized in a window around the match, so the search
+    itself runs against the raw text, where the query's words may be separated by
+    newlines or runs of spaces.
+
+    For a single-token query the phrase pattern and the sole token pattern are
+    equivalent, so behaviour is unchanged.
     """
-    tokens = [re.escape(token) for token in query.split()]
+    tokens = query.split()
     if not tokens:
+        return None, []
+    phrase = re.compile(r"\s+".join(re.escape(token) for token in tokens), re.IGNORECASE)
+    return phrase, [re.compile(re.escape(token), re.IGNORECASE) for token in tokens]
+
+
+def _locate_match(raw: str, query: str) -> re.Match | None:
+    """Find where to anchor the snippet.
+
+    The whole phrase is preferred, since that is the most informative excerpt.
+    Search is tokenised (every token must appear somewhere, in the name or the
+    body), so a page can match without containing the phrase at all — and its
+    tokens may even live in different sentences. In that case anchor on the first
+    query token that appears in this text, so the excerpt still shows the reader
+    something they searched for rather than the top of the document.
+    """
+    phrase, token_patterns = _query_patterns(query)
+    if phrase is None:
         return None
-    return re.compile(r"\s+".join(tokens), re.IGNORECASE)
+
+    match = phrase.search(raw)
+    if match is not None:
+        return match
+
+    for pattern in token_patterns:
+        match = pattern.search(raw)
+        if match is not None:
+            return match
+    return None
 
 
 def _normalized_window(raw: str, anchor: int, need_left: int, need_right: int) -> tuple[str, int, bool, bool]:
@@ -107,11 +137,13 @@ def build_page_snippet(
 ) -> str:
     """Return a short single-line excerpt of ``stripped_text``.
 
-    When ``query`` appears in the text the excerpt is taken around the first
-    (case-insensitive) occurrence, with ``lead`` characters of leading context.
-    When the query does not appear in the text (for example the page matched on
-    its name only, or no query was supplied) the excerpt is taken from the start
-    of the text. An ellipsis marks either side that was truncated.
+    The excerpt is anchored, in order of preference, on the first
+    (case-insensitive) occurrence of the whole query phrase, then on the first
+    query token that appears in the text — search matches pages whose tokens are
+    scattered across different sentences, so the phrase is often absent. Failing
+    both (the page matched on its name only, or no query was supplied) the
+    excerpt is taken from the start of the text. ``lead`` characters of preceding
+    context are included, and an ellipsis marks either side that was truncated.
 
     ``max_length`` bounds the WHOLE returned string: the ellipsis markers are
     paid for out of that budget, never appended on top of it, so a caller sizing
@@ -130,8 +162,7 @@ def build_page_snippet(
 
     # Locate the match in the raw text: scanning is cheap, whereas collapsing
     # whitespace across a large document allocates a full copy of it per result.
-    pattern = _query_pattern(query)
-    match = pattern.search(stripped_text) if pattern else None
+    match = _locate_match(stripped_text, query)
     anchor = match.start() if match else 0
 
     text, match_pos, more_before, more_after = _normalized_window(

@@ -131,6 +131,101 @@ class TestPageSearch:
         assert response.status_code == status.HTTP_200_OK, response.data
         assert {r["id"] for r in response.data["results"]} == {str(match.id)}
 
+    def test_multi_keyword_query_matches_tokens_in_different_sentences(
+        self, api_key_client, workspace, project, create_user
+    ):
+        """Callers send keyword queries. The tokens need not appear together, or
+        even in the same sentence — matching the query as one literal phrase
+        would find none of these."""
+        scattered = _make_page(
+            workspace,
+            project,
+            create_user,
+            name="Untitled",
+            content=(
+                "We saw a latency regression on Tuesday. A spike in error rates followed. "
+                "The rollback was clean and the incident is closed."
+            ),
+        )
+        # Tokens split across the name and the body.
+        across_name_and_body = _make_page(
+            workspace,
+            project,
+            create_user,
+            name="Rollback runbook",
+            content="Mitigation for a latency spike during an incident.",
+        )
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "latency spike rollback incident"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert {r["id"] for r in response.data["results"]} == {
+            str(scattered.id),
+            str(across_name_and_body.id),
+        }
+
+    def test_page_with_only_some_tokens_does_not_match(self, api_key_client, workspace, project, create_user):
+        """Tokens are ANDed: a page missing any one of them is not a result.
+        OR-ing would flood the response with single-common-word matches."""
+        _make_page(
+            workspace,
+            project,
+            create_user,
+            name="Untitled",
+            content="A latency spike happened, but this page never mentions the other terms.",
+        )
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "latency spike rollback incident"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data["results"] == []
+
+    def test_snippet_anchors_on_first_matching_token(self, api_key_client, workspace, project, create_user):
+        """With the phrase absent, the excerpt is anchored on the first query
+        token so the reader sees something they searched for."""
+        filler = "z" * 400
+        page = _make_page(
+            workspace,
+            project,
+            create_user,
+            name="Untitled",
+            content=f"{filler} a latency regression appeared. {filler} and later a spike followed.",
+        )
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "latency spike"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        snippet = next(r for r in response.data["results"] if r["id"] == str(page.id))["snippet"]
+        assert "latency" in snippet.lower()
+        # 'spike' sits ~400 characters later, outside the 200-character budget.
+        assert "spike" not in snippet.lower()
+
+    def test_whitespace_only_query_returns_400(self, api_key_client, workspace, project):
+        """A query that is empty once tokenised is rejected, as before."""
+        for value in ("   ", "\t", "\n "):
+            response = api_key_client.get(_url(workspace.slug), {"query": value})
+            assert response.status_code == status.HTTP_400_BAD_REQUEST, (value, response.data)
+
+    def test_multi_keyword_results_ordered_by_updated_at_desc(self, api_key_client, workspace, project, create_user):
+        """Ordering is unchanged by tokenisation: most recently updated first."""
+        content = "latency spike rollback incident notes"
+        first = _make_page(workspace, project, create_user, name="First", content=content)
+        second = _make_page(workspace, project, create_user, name="Second", content=content)
+        third = _make_page(workspace, project, create_user, name="Third", content=content)
+
+        # Touch them in a known order; updated_at is auto_now.
+        for page in (first, third, second):
+            page.save()
+
+        response = api_key_client.get(_url(workspace.slug), {"query": "latency spike rollback incident"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert [r["id"] for r in response.data["results"]] == [
+            str(second.id),
+            str(third.id),
+            str(first.id),
+        ]
+
     def test_membership_scoping_non_member_sees_nothing(self, api_key_client, workspace, create_user, other_user):
         # A project the caller is NOT a member of, holding a matching page.
         foreign_project = _make_project(workspace, other_user, "FP", member=other_user)
