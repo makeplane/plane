@@ -51,8 +51,21 @@ def _query_patterns(query: str) -> tuple[re.Pattern | None, list[re.Pattern]]:
     tokens = query.split()
     if not tokens:
         return None, []
+
+    # The phrase keeps every token, repeats included, since that is the literal
+    # text being looked for. The fallback list is de-duplicated: scanning the
+    # document again for a keyword already searched cannot find a new anchor, and
+    # each rescan costs a pass over the whole document.
     phrase = re.compile(r"\s+".join(re.escape(token) for token in tokens), re.IGNORECASE)
-    return phrase, [re.compile(re.escape(token), re.IGNORECASE) for token in tokens]
+
+    seen = set()
+    distinct = []
+    for token in tokens:
+        folded = token.casefold()
+        if folded not in seen:
+            seen.add(folded)
+            distinct.append(token)
+    return phrase, [re.compile(re.escape(token), re.IGNORECASE) for token in distinct]
 
 
 def _locate_match(raw: str, query: str) -> re.Match | None:
@@ -102,27 +115,33 @@ def _normalized_window(raw: str, anchor: int, need_left: int, need_right: int) -
         left = _WHITESPACE_RE.sub(" ", raw[start:anchor])
         right = _WHITESPACE_RE.sub(" ", raw[anchor:end])
 
-        # Reproduce the document-level strip() at the real edges only.
-        if start == 0:
+        # Whether real content — not merely characters — lies outside the window.
+        # Each search is bounded to the discarded region and stops at the first
+        # non-whitespace character, so this does not rescan the document.
+        more_before = start > 0 and _NON_WHITESPACE_RE.search(raw, 0, start) is not None
+        more_after = end < len(raw) and _NON_WHITESPACE_RE.search(raw, end) is not None
+
+        # Reproduce the document-level strip(). It has to key on content rather
+        # than on window position: a window that begins inside a long run of
+        # leading whitespace has characters before it but no content, and the
+        # whole-document form would have stripped that run away.
+        if not more_before:
             if left:
                 left = left.lstrip()
             else:
                 right = right.lstrip()
-        if end == len(raw):
+        if not more_after:
             if right:
                 right = right.rstrip()
             else:
                 left = left.rstrip()
 
-        covers_all = start == 0 and end == len(raw)
-        enough_left = start == 0 or len(left) >= need_left
-        enough_right = end == len(raw) or len(right) >= need_right
+        # Sufficiency is judged the same way: there is nothing more to gather on a
+        # side that holds no further content, however many characters remain.
+        enough_left = not more_before or len(left) >= need_left
+        enough_right = not more_after or len(right) >= need_right
 
-        if covers_all or (enough_left and enough_right):
-            # A search bounded to the discarded region: it stops at the first
-            # non-whitespace character, so this does not rescan the document.
-            more_before = start > 0 and _NON_WHITESPACE_RE.search(raw, 0, start) is not None
-            more_after = end < len(raw) and _NON_WHITESPACE_RE.search(raw, end) is not None
+        if enough_left and enough_right:
             return left + right, len(left), more_before, more_after
 
         left_span *= 4

@@ -17,6 +17,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework import status
 
 from plane.api.rate_limit import ApiKeyRateThrottle
+from plane.api.views.page import PAGE_SEARCH_MAX_TOKENS
 from plane.db.models import Page, Project, ProjectMember, ProjectPage, User, Workspace, WorkspaceMember
 
 
@@ -199,6 +200,59 @@ class TestPageSearch:
         assert "latency" in snippet.lower()
         # 'spike' sits ~400 characters later, outside the 200-character budget.
         assert "spike" not in snippet.lower()
+
+    def test_snippet_anchor_follows_query_order(self, api_key_client, workspace, project, create_user):
+        """Reversing the keywords moves the anchor, proving the excerpt follows
+        query order rather than whichever keyword appears first in the page."""
+        filler = "z" * 400
+        page = _make_page(
+            workspace,
+            project,
+            create_user,
+            name="Untitled",
+            content=f"a latency regression appeared. {filler} and later a spike followed.",
+        )
+
+        def snippet_for(query):
+            response = api_key_client.get(_url(workspace.slug), {"query": query})
+            assert response.status_code == status.HTTP_200_OK, response.data
+            return next(r for r in response.data["results"] if r["id"] == str(page.id))["snippet"].lower()
+
+        forward = snippet_for("latency spike")
+        assert "latency regression" in forward and "spike" not in forward
+
+        reverse = snippet_for("spike latency")
+        assert "spike followed" in reverse and "latency regression" not in reverse
+
+    def test_too_many_keywords_returns_400(self, api_key_client, workspace, project, create_user):
+        """Each keyword adds two unindexable ILIKE predicates, so the keyword
+        count — which the caller picks for free — has to be bounded."""
+        _make_page(workspace, project, create_user, name="Roadmap")
+
+        at_limit = " ".join(f"term{i}" for i in range(PAGE_SEARCH_MAX_TOKENS))
+        response = api_key_client.get(_url(workspace.slug), {"query": at_limit})
+        assert response.status_code == status.HTTP_200_OK, response.data
+
+        over_limit = " ".join(f"term{i}" for i in range(PAGE_SEARCH_MAX_TOKENS + 1))
+        response = api_key_client.get(_url(workspace.slug), {"query": over_limit})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.data
+        assert "error" in response.data
+
+    def test_repeated_keywords_are_collapsed(self, api_key_client, workspace, project, create_user):
+        """AND is idempotent, so repeats must not count towards the limit or
+        multiply the scan — a single keyword repeated past the cap still works."""
+        page = _make_page(workspace, project, create_user, name="Roadmap")
+
+        repeated = " ".join(["roadmap"] * (PAGE_SEARCH_MAX_TOKENS * 3))
+        response = api_key_client.get(_url(workspace.slug), {"query": repeated})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert {r["id"] for r in response.data["results"]} == {str(page.id)}
+
+        # Case-insensitive repeats collapse too.
+        mixed_case = api_key_client.get(_url(workspace.slug), {"query": "roadmap ROADMAP RoAdMaP"})
+        assert mixed_case.status_code == status.HTTP_200_OK, mixed_case.data
+        assert {r["id"] for r in mixed_case.data["results"]} == {str(page.id)}
 
     def test_whitespace_only_query_returns_400(self, api_key_client, workspace, project):
         """A query that is empty once tokenised is rejected, as before."""

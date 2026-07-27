@@ -103,11 +103,39 @@ class TestBuildPageSnippet:
         assert build_page_snippet(text, "absent-term", max_length=max_length) == ""
 
     def test_phrase_is_preferred_when_present(self):
-        """When the whole phrase occurs, it stays the anchor — the most
-        informative excerpt."""
-        text = "rollback notes. " + "z" * 400 + " latency spike happened here."
+        """When the whole phrase occurs it stays the anchor, even though the
+        first token appears on its own earlier in the document — dropping the
+        phrase branch would anchor on that earlier lone occurrence instead."""
+        text = "latency alone here. " + "z" * 400 + " latency spike together."
         snippet = build_page_snippet(text, "latency spike")
         assert "latency spike" in snippet.lower()
+        assert "latency alone here" not in snippet.lower()
+
+    def test_token_fallback_follows_query_order_not_document_order(self):
+        """The fallback anchors on the first token of the QUERY, not on whichever
+        token happens to appear first in the document."""
+        text = "latency arrived early. " + "z" * 400 + " a spike arrived late."
+
+        forward = build_page_snippet(text, "latency spike").lower()
+        assert "latency arrived early" in forward
+        assert "spike" not in forward
+
+        # Same document, reversed query: the later occurrence now wins.
+        reversed_query = build_page_snippet(text, "spike latency").lower()
+        assert "spike arrived late" in reversed_query
+        assert "latency arrived early" not in reversed_query
+
+    def test_repeated_tokens_are_collapsed_into_one_fallback_scan(self):
+        """Each fallback token costs a pass over the document, so repeats must be
+        dropped. Asserted on the compiled pattern list — equal output alone would
+        hold with or without the de-duplication."""
+        phrase, token_patterns = page_search._query_patterns("spike Spike SPIKE latency")
+        assert [p.pattern for p in token_patterns] == ["spike", "latency"]
+        # The phrase keeps every occurrence: it is the literal text sought.
+        assert phrase.pattern == r"spike\s+Spike\s+SPIKE\s+latency"
+
+        text = "z" * 400 + " a spike happened."
+        assert build_page_snippet(text, "spike spike spike") == build_page_snippet(text, "spike")
 
     def test_anchors_on_first_token_when_phrase_absent(self):
         """Tokenised search matches pages whose tokens sit in different
@@ -191,6 +219,19 @@ class TestBuildPageSnippet:
             ("nothing relevant in this document", "latency spike"),
             ("latency at the very start " + "y" * 400 + " spike", "latency spike"),
             ("a\n\nlatency\n\n b \n\n spike", "latency spike"),
+            # Phrase present but the first token also occurs alone earlier.
+            ("latency alone here. " + "z" * 400 + " latency spike together.", "latency spike"),
+            # Query order and document order disagree.
+            ("latency arrived early. " + "z" * 400 + " a spike arrived late.", "spike latency"),
+            # Whitespace runs longer than the window at the document edges: the
+            # window starts/ends inside them, so stripping has to key on content
+            # rather than on position or a spurious ellipsis appears.
+            ("\xa0" * 473 + "A" * 39 + " latency spike notes " + "b" * 300, "latency spike"),
+            ("\xa0" * 474 + "A" * 38 + " latency spike notes " + "b" * 300, "latency spike"),
+            (" " * 600 + "latency spike here", "latency spike"),
+            ("latency spike here" + " " * 600, "latency spike"),
+            ("\n" * 500 + "x" * 100 + " latency spike " + "y" * 100 + "\t" * 500, "latency spike"),
+            ("\t" * 900 + "only trailing", "absent"),
         ],
     )
     def test_matches_naive_full_normalization(self, text, query):
