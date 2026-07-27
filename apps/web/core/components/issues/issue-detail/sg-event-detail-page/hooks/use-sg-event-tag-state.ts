@@ -3,8 +3,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TMediaArtifact } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { buildMediaThumbnailLookup, resolveTagRowArtifactThumbnail } from "../media-thumbnail-lookup";
-import { buildMockFootballRows } from "../mock-football-rows";
-import type { RowFilterMode, SgTagRow, SgTagRowEditPayload, SportTableKind } from "../types";
+import type { RowFilterMode, SgTagRow, SgTagRowEditPayload } from "../types";
 
 type UseSgEventTagStateArgs = {
   cpServerBaseUrl: string;
@@ -13,7 +12,6 @@ type UseSgEventTagStateArgs = {
   onActiveTagRemoved: (tagId: string) => void;
   packageId: string | undefined;
   projectId: string;
-  sport: SportTableKind;
   tagRows: SgTagRow[];
   workspaceSlug: string;
 };
@@ -25,7 +23,6 @@ export const useSgEventTagState = ({
   onActiveTagRemoved,
   packageId,
   projectId,
-  sport,
   tagRows,
   workspaceSlug,
 }: UseSgEventTagStateArgs) => {
@@ -109,11 +106,10 @@ export const useSgEventTagState = ({
     () => tagRowsWithThumbnails.filter((row) => selectedTagIds.includes(row.id) && !removedTagIds.includes(row.id)),
     [removedTagIds, selectedTagIds, tagRowsWithThumbnails]
   );
-  const matrixRows = useMemo(() => {
-    const realRows = tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id));
-    if (realRows.length > 0 || sport !== "american-football") return realRows;
-    return buildMockFootballRows();
-  }, [removedTagIds, sport, tagRowsWithThumbnails]);
+  const matrixRows = useMemo(
+    () => tagRowsWithThumbnails.filter((row) => !removedTagIds.includes(row.id)),
+    [removedTagIds, tagRowsWithThumbnails]
+  );
   const playlistPanelRows = focusedMatrixRows.filter((row) => !removedTagIds.includes(row.id));
 
   useEffect(() => {
