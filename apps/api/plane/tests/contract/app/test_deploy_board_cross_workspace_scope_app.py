@@ -51,6 +51,19 @@ def own_board(db, workspace, project_a):
 
 
 @pytest.fixture
+def sibling_board(db, workspace, create_user):
+    """A board for a DIFFERENT project in the SAME workspace as project_a.
+
+    Guards the project predicate specifically: a workspace-slug-only scope would
+    still expose this board through project_a's URL.
+    """
+    other = Project.objects.create(
+        name="Sibling Project", identifier="SIB", workspace=workspace, created_by=create_user
+    )
+    return _board_for(workspace, other)
+
+
+@pytest.fixture
 def victim_board(db):
     """A published board in a DIFFERENT workspace the caller has no relation to."""
     unique = uuid4().hex[:8]
@@ -93,6 +106,15 @@ class TestDeployBoardCrossWorkspaceScope:
         )
         victim_board.refresh_from_db()
         assert victim_board.is_comments_enabled is False
+
+    def test_cannot_retrieve_same_workspace_other_project_board(
+        self, session_client, workspace, project_a, sibling_board
+    ):
+        """A board in the same workspace but a different project must 404 via project_a's URL."""
+        response = session_client.get(_board_url(workspace.slug, project_a.id, sibling_board.id))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
 
     def test_can_retrieve_own_board(self, session_client, workspace, project_a, own_board):
         """Positive control: a project member may retrieve their own board."""
