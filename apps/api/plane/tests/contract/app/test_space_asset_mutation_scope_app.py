@@ -118,6 +118,21 @@ class TestSpaceAssetMutationScope:
         asset.refresh_from_db()
         assert asset.comment_id == original_comment, "Another user's asset was rebound"
 
+    def test_attacker_cannot_patch_others_asset(self, workspace, project, board, owner):
+        asset = _asset(workspace, project, owner)
+        original_attributes = dict(asset.attributes)
+        attacker = _user("attacker")
+        response = _client(attacker).patch(
+            DELETE_URL.format(anchor=board.anchor, pk=asset.id),
+            {"attributes": {"name": "tampered.pdf"}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        asset.refresh_from_db()
+        assert asset.attributes == original_attributes, "Another user's asset attributes were modified"
+
     def test_owner_can_delete_own_asset(self, workspace, project, board, owner):
         """Positive control: the asset's creator may delete it."""
         asset = _asset(workspace, project, owner)
