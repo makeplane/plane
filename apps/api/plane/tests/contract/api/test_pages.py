@@ -6,7 +6,6 @@ from datetime import timedelta
 from unittest import mock
 
 import pytest
-from django.core.cache import cache
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -22,19 +21,11 @@ from plane.db.models import (
 )
 from plane.db.models.api import APIToken
 
-
-@pytest.fixture(autouse=True)
-def _clear_throttle_cache():
-    """Reset the ApiKeyRateThrottle counter (redis-backed cache) between tests.
-
-    The throttle state lives in the shared cache, not the DB, so it is not
-    rolled back per test — without clearing it, a run's requests accumulate and
-    later tests spuriously hit HTTP 429. Mirrors the pattern in
-    ``test_authentication.py``.
-    """
-    cache.clear()
-    yield
-    cache.clear()
+# This file used to carry an autouse fixture that called cache.clear() around
+# every test to keep the api-key throttle from accumulating. That is handled at
+# the root now — the shared conftest issues a unique token per test, so each one
+# gets its own throttle bucket — and flushing the whole cache from a test file
+# was a blunt instrument besides.
 
 
 # ---------------------------------------------------------------------------
