@@ -2,12 +2,17 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from unittest import mock
-
 import pytest
 from rest_framework import status
 
 from plane.db.models import Webhook
+
+# A public IP literal keeps the real SSRF guard deterministic and offline — no
+# DNS lookup happens for a numeric address — so these tests run the actual
+# validator instead of stubbing it. Patching the guard by name broke once
+# already: it moved into the shared ``plane.utils.webhook`` helper and the
+# patch target stopped existing.
+WEBHOOK_URL = "https://8.8.8.8/hook"
 
 
 def webhooks_url(slug, pk=None):
@@ -20,20 +25,12 @@ def webhooks_url(slug, pk=None):
 class TestWebhookPageField:
     """The workspace webhook API must let callers provision the ``page`` flag."""
 
-    @pytest.fixture(autouse=True)
-    def _no_ssrf(self):
-        # The create/update path runs an SSRF check that resolves DNS; stub it so
-        # the test stays hermetic and focused on the `page` flag wiring.
-        """Allow the test webhook URL past the SSRF guard."""
-        with mock.patch("plane.app.serializers.webhook.validate_url"):
-            yield
-
     @pytest.mark.django_db
     def test_create_webhook_with_page_flag(self, session_client, workspace):
         """A webhook can subscribe to page events on create."""
         response = session_client.post(
             webhooks_url(workspace.slug),
-            {"url": "https://example.com/hook", "page": True},
+            {"url": WEBHOOK_URL, "page": True},
             format="json",
         )
 
@@ -47,7 +44,7 @@ class TestWebhookPageField:
         """The page flag round-trips through GET and PATCH."""
         webhook = Webhook.objects.create(
             workspace=workspace,
-            url="https://example.com/hook",
+            url=WEBHOOK_URL,
             page=False,
         )
         detail = webhooks_url(workspace.slug, webhook.id)

@@ -404,3 +404,125 @@ class TestWebhookLoopbackGuard:
 
             # An unrelated public host still passes.
             validate_webhook_url("https://8.8.8.8/hook", request)
+
+
+@pytest.mark.contract
+class TestWebhookPageSubscription:
+    """The ``page`` entity toggle must be reachable through the token API.
+
+    Page events are gated on the column — ``webhook_activity`` narrows to
+    ``webhooks.filter(page=True)`` — and DRF drops request keys the serializer
+    does not declare. A ``page`` missing from ``WebhookSerializer.Meta.fields``
+    is therefore invisible rather than rejected: the create succeeds, echoes no
+    error, and yields a webhook that can never receive a page event. These tests
+    pin the round trip AND the delivery it is supposed to buy.
+    """
+
+    @pytest.fixture
+    def page(self, db, workspace, create_user):
+        """A page to build a real ``page`` webhook payload from."""
+        from plane.db.models import Page
+
+        return Page.objects.create(
+            workspace=workspace,
+            owned_by=create_user,
+            name="Runbook",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+
+    def _create_webhook(self, client, workspace, **toggles):
+        """Provision a webhook through the token API and return its id."""
+        response = client.post(
+            _webhooks_url(workspace.slug),
+            {"url": f"https://8.8.8.8/hook-{uuid4().hex[:8]}", **toggles},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.data!r}"
+        return response.data["id"]
+
+    @staticmethod
+    def _fire_page_created(workspace, page, actor):
+        """Run the real fan-out for a ``page`` created event.
+
+        Returns the webhook ids ``webhook_activity`` dispatched a delivery to.
+        """
+        from plane.bgtasks.webhook_task import webhook_activity
+
+        with mock.patch("plane.bgtasks.webhook_task.webhook_send_task") as mocked_send:
+            webhook_activity(
+                event="page",
+                verb="created",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=actor.id,
+                slug=workspace.slug,
+                current_site="http://example.com",
+                event_id=page.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+        return [str(call.kwargs["webhook_id"]) for call in mocked_send.delay.call_args_list]
+
+    @pytest.mark.django_db
+    def test_page_toggle_round_trips_on_create(self, api_key_client, workspace):
+        """``page: true`` survives the serializer instead of being dropped."""
+        webhook_id = self._create_webhook(api_key_client, workspace, page=True)
+
+        assert Webhook.objects.get(id=webhook_id).page is True
+
+    @pytest.mark.django_db
+    def test_page_toggle_is_returned_on_reads(self, api_key_client, workspace):
+        """The read shape carries the toggle, so a caller can see what it set."""
+        webhook_id = self._create_webhook(api_key_client, workspace, page=True)
+
+        listed = api_key_client.get(_webhooks_url(workspace.slug))
+        assert listed.status_code == status.HTTP_200_OK
+        assert [row["page"] for row in listed.data if str(row["id"]) == str(webhook_id)] == [True]
+
+        retrieved = api_key_client.get(_webhook_detail_url(workspace.slug, webhook_id))
+        assert retrieved.status_code == status.HTTP_200_OK
+        assert retrieved.data["page"] is True
+
+    @pytest.mark.django_db
+    def test_page_toggle_round_trips_on_patch(self, api_key_client, workspace):
+        """The toggle can be flipped on after the fact, and back off again."""
+        webhook_id = self._create_webhook(api_key_client, workspace, issue=True)
+        assert Webhook.objects.get(id=webhook_id).page is False
+
+        detail = _webhook_detail_url(workspace.slug, webhook_id)
+        turned_on = api_key_client.patch(detail, {"page": True}, format="json")
+        assert turned_on.status_code == status.HTTP_200_OK
+        assert turned_on.data["page"] is True
+        assert Webhook.objects.get(id=webhook_id).page is True
+
+        turned_off = api_key_client.patch(detail, {"page": False}, format="json")
+        assert turned_off.status_code == status.HTTP_200_OK
+        assert turned_off.data["page"] is False
+        assert Webhook.objects.get(id=webhook_id).page is False
+
+    @pytest.mark.django_db
+    def test_page_event_reaches_a_token_api_created_subscriber(self, api_key_client, workspace, create_user, page):
+        """The point of the toggle: a hook provisioned here receives page events."""
+        webhook_id = self._create_webhook(api_key_client, workspace, page=True)
+
+        assert self._fire_page_created(workspace, page, create_user) == [str(webhook_id)]
+
+    @pytest.mark.django_db
+    def test_page_event_skips_a_subscriber_without_the_toggle(self, api_key_client, workspace, create_user, page):
+        """A hook created without the flag gets nothing — and the flag is what
+        makes the difference.
+
+        Both webhooks are provisioned the same way in the same workspace and the
+        same event is fired once, so the assertion cannot pass by the fan-out
+        silently failing: ``webhook_activity`` swallows its exceptions, and a
+        lone negative assertion would be satisfied by a task that simply died.
+        """
+        subscribed = self._create_webhook(api_key_client, workspace, page=True)
+        unsubscribed = self._create_webhook(api_key_client, workspace, issue=True)
+
+        delivered = self._fire_page_created(workspace, page, create_user)
+
+        assert str(unsubscribed) not in delivered
+        assert delivered == [str(subscribed)]

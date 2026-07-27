@@ -55,6 +55,12 @@ class WebhookSerializer(BaseSerializer):
             "module",
             "cycle",
             "issue_comment",
+            # Every entity toggle on the model belongs here. DRF drops unknown
+            # keys silently, so a toggle missing from this list is not a
+            # validation error the caller can see — it is a webhook that simply
+            # never subscribes, since delivery is gated on the column
+            # (``webhooks.filter(page=True)`` in ``webhook_activity``).
+            "page",
             "created_at",
             "updated_at",
         ]
