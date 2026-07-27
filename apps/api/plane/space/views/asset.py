@@ -150,8 +150,17 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # get the asset id — scope to project to prevent cross-project IDOR
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        # Scope to the caller's own asset: public-site users may only mutate assets
+        # they created (post() sets created_by=request.user). Without created_by,
+        # any authenticated user could touch another user's asset (GHSA-5q33-2766-fprm).
+        asset = FileAsset.objects.filter(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            created_by=request.user,
+        ).first()
+        if asset is None:
+            return Response({"error": "The requested asset could not be found."}, status=status.HTTP_404_NOT_FOUND)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -170,8 +179,16 @@ class EntityAssetEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
-        # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        # Scope to the caller's own asset (GHSA-5q33-2766-fprm) — a public-site user
+        # may only delete assets they created, not another user's.
+        asset = FileAsset.objects.filter(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            created_by=request.user,
+        ).first()
+        if asset is None:
+            return Response({"error": "The requested asset could not be found."}, status=status.HTTP_404_NOT_FOUND)
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -190,8 +207,16 @@ class AssetRestoreEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get the asset — scope to project to prevent cross-project IDOR
-        asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        # Scope to the caller's own asset (GHSA-5q33-2766-fprm) — a public-site user
+        # may only restore assets they created, not another user's.
+        asset = FileAsset.all_objects.filter(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            created_by=request.user,
+        ).first()
+        if asset is None:
+            return Response({"error": "The requested asset could not be found."}, status=status.HTTP_404_NOT_FOUND)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -214,11 +239,13 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         if not asset_ids:
             return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # get the asset id
+        # Scope to the caller's own assets (GHSA-5q33-2766-fprm) — a public-site user
+        # may only rebind assets they created, not another user's.
         assets = FileAsset.objects.filter(
             id__in=asset_ids,
             workspace=deploy_board.workspace,
             project_id=deploy_board.project_id,
+            created_by=request.user,
         )
 
         asset = assets.first()
