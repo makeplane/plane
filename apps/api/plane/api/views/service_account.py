@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Django imports
-from django.db import IntegrityError
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -21,7 +18,7 @@ from plane.api.serializers.service_account import (
     ServiceAccountTokenRotateSerializer,
     ServiceAccountTokenSerializer,
 )
-from plane.db.models import APIToken, BotTypeEnum, User, Workspace, WorkspaceMember
+from plane.db.models import APIToken, BotTypeEnum, Workspace, WorkspaceMember
 from plane.middleware.logger import redact_response_body
 from plane.utils.permissions import WorkspaceOwnerPermission
 from plane.utils.openapi import (
@@ -38,10 +35,8 @@ from plane.utils.service_account import (
     mint_service_account_token,
     rotate_service_account_token,
     ServiceAccountTokenError,
+    ServiceAccountUsernameConflictError,
 )
-
-# Machine-readable error surfaced when a caller-chosen username is already taken.
-USERNAME_CONFLICT = {"error": "A user with this username already exists.", "code": "USERNAME_ALREADY_EXISTS"}
 
 # Path parameters shared by the service-account lifecycle endpoints.
 SERVICE_ACCOUNT_ID_PARAMETER = OpenApiParameter(
@@ -115,7 +110,12 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: NOT_FOUND_RESPONSE,
-            409: OpenApiResponse(description="A user with the requested username already exists"),
+            409: OpenApiResponse(
+                description=(
+                    "The requested username belongs to an active account or a non-service user. "
+                    "(A decommissioned service account with the same username is reactivated, not rejected.)"
+                )
+            ),
         },
     )
     def post(self, request, slug):
@@ -130,13 +130,6 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        username = data.get("username")
-        # Reject a taken username with a machine-readable code — never silently
-        # mutate it into a unique one. The insert below is still wrapped so a
-        # race between this check and the create is reported the same way.
-        if username and User.objects.filter(username=username).exists():
-            return Response(USERNAME_CONFLICT, status=status.HTTP_409_CONFLICT)
-
         try:
             service_account = create_service_account(
                 workspace=workspace,
@@ -144,20 +137,18 @@ class ServiceAccountAPIEndpoint(BaseAPIView):
                 role=data["role"],
                 # None (omitted) → generated default; an explicit "" is preserved.
                 description=data.get("description"),
-                username=username,
+                username=data.get("username"),
                 display_name=data.get("display_name"),
             )
-        except IntegrityError:
-            # The only caller-controlled unique field here is the username
-            # (email/token are server-generated). If it is now taken — including
-            # a race that slipped past the pre-check — report the conflict. Any
-            # other IntegrityError is unexpected and must not be mislabeled, so
-            # let it surface via BaseAPIView.handle_exception. The helper's
-            # @transaction.atomic has already rolled back, so this SELECT runs on
-            # a clean connection.
-            if username and User.objects.filter(username=username).exists():
-                return Response(USERNAME_CONFLICT, status=status.HTTP_409_CONFLICT)
-            raise
+        except ServiceAccountUsernameConflictError as exc:
+            # The username belongs to an active account, a non-service user, or a
+            # service account from another workspace — never silently mutated into a
+            # unique one. (A decommissioned service account OF THIS workspace with
+            # this username is reactivated by the helper instead.) The helper also
+            # classifies the brand-new-username insert race as this same conflict,
+            # so any IntegrityError that still reaches BaseAPIView.handle_exception
+            # is genuinely unexpected and is reported there rather than mislabeled.
+            return Response({"error": str(exc), "code": exc.code}, status=exc.status_code)
 
         response = ServiceAccountSerializer(
             {

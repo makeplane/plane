@@ -271,6 +271,82 @@ class TestServiceAccountCommand:
         with pytest.raises(CommandError):
             call_command("create_service_account", workspace=workspace.slug, name="", role="admin")
 
+    @pytest.mark.django_db
+    def test_command_reactivates_decommissioned_account(self, workspace):
+        """Test re-running with a decommissioned username revives the same identity"""
+        from io import StringIO
+
+        from plane.utils.service_account import decommission_service_account
+
+        call_command("create_service_account", workspace=workspace.slug, name="Runner", role="admin", username="runner")
+        user = _service_account_for(workspace).member
+        original_id = user.id
+
+        # Retire it, then re-provision by the same stable username.
+        decommission_service_account(user=user, workspace=workspace)
+        user.refresh_from_db()
+        assert user.is_active is False
+
+        out = StringIO()
+        call_command(
+            "create_service_account",
+            workspace=workspace.slug,
+            name="Runner",
+            role="member",
+            username="runner",
+            stdout=out,
+        )
+
+        member = _service_account_for(workspace)
+        # Same user id — the seat is re-provisioned, not duplicated.
+        assert member.member.id == original_id
+        assert member.member.is_active is True
+        # Reactivated at the newly requested role, with exactly one live membership.
+        assert member.role == 15
+        assert WorkspaceMember.all_objects.filter(member=member.member, workspace=workspace).count() == 1
+        # A single fresh, active token; the command reports the reactivation.
+        assert APIToken.objects.filter(user=member.member, is_active=True).count() == 1
+        assert "reactivated successfully" in out.getvalue()
+
+    @pytest.mark.django_db
+    def test_command_reactivation_with_email_is_not_blocked(self, workspace):
+        """Test passing --email while reactivating does not false-trip the email guard"""
+        from io import StringIO
+
+        from plane.utils.service_account import decommission_service_account
+
+        call_command(
+            "create_service_account",
+            workspace=workspace.slug,
+            name="Runner",
+            role="admin",
+            username="runner2",
+            email="runner2@bots.example.com",
+        )
+        user = _service_account_for(workspace).member
+        assert user.email == "runner2@bots.example.com"
+        decommission_service_account(user=user, workspace=workspace)
+
+        # Re-provision by username, passing the SAME --email (the account's own,
+        # preserved value). Reactivation is keyed on --username and preserves email,
+        # so the email uniqueness guard must not fire against the very account being
+        # revived — previously this raised "A user with email ... already exists".
+        out = StringIO()
+        call_command(
+            "create_service_account",
+            workspace=workspace.slug,
+            name="Runner",
+            role="member",
+            username="runner2",
+            email="runner2@bots.example.com",
+            stdout=out,
+        )
+
+        member = _service_account_for(workspace)
+        assert member.member.id == user.id
+        assert member.member.is_active is True
+        assert "reactivated successfully" in out.getvalue()
+
 
 @pytest.mark.contract
 class TestServiceAccountEndpoint:
@@ -416,18 +492,21 @@ class TestServiceAccountEndpoint:
 
     @pytest.mark.django_db
     def test_username_race_returns_409(self, api_key_client, workspace):
-        """Test a username taken after the pre-check still returns 409"""
-        # Simulate a race: the username is free at the pre-check, then another
-        # actor creates it and our insert raises IntegrityError. The scoped
-        # handler re-checks, sees it now exists, and returns the same 409.
-        from django.db import IntegrityError
+        """Test a brand-new username taken between the helper's check and insert returns 409"""
+        # Simulate a race: the username is free when create_service_account checks
+        # it, then a concurrent actor inserts it just before our User insert, so the
+        # DB raises IntegrityError. The helper's savepoint classifies that at its
+        # source as a username conflict (409), rather than letting it surface as an
+        # opaque error. Inject the racing insert via set_unusable_password, which
+        # runs immediately before the User row is saved.
+        original = User.set_unusable_password
 
-        def racing_create(**kwargs):
-            """Take the username, then fail as the database would."""
-            User.objects.create(username="raced", email="racer@plane.so")
-            raise IntegrityError("duplicate key value violates unique constraint")
+        def racing(user_self):
+            if not User.objects.filter(username="raced").exists():
+                User.objects.create(username="raced", email="racer@plane.so")
+            original(user_self)
 
-        with patch("plane.api.views.service_account.create_service_account", side_effect=racing_create):
+        with patch.object(User, "set_unusable_password", racing):
             response = api_key_client.post(
                 self._url(workspace.slug),
                 {"name": "Race", "role": "admin", "username": "raced"},
@@ -498,19 +577,216 @@ class TestServiceAccountEndpoint:
         assert response.status_code == status.HTTP_201_CREATED, response.data
         assert APIToken.objects.get(user_id=response.data["id"]).description == ""
 
+    def _detail_url(self, slug: str, user_id) -> str:
+        """Helper to get the service-account detail (decommission) URL"""
+        return f"/api/v1/workspaces/{slug}/service-accounts/{user_id}/"
+
+    @pytest.mark.django_db
+    def test_create_reactivates_decommissioned_account(self, api_key_client, workspace):
+        """Test creating with a decommissioned account's username revives it in place"""
+        # Provision, capture identity + token.
+        first = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Reconciler", "role": "admin", "username": "reconciler"},
+            format="json",
+        )
+        assert first.status_code == status.HTTP_201_CREATED, first.data
+        user_id = first.data["id"]
+        old_token = first.data["token"]
+
+        # Decommission it — memberships removed, user + tokens deactivated.
+        decommission = api_key_client.delete(self._detail_url(workspace.slug, user_id))
+        assert decommission.status_code == status.HTTP_204_NO_CONTENT
+        assert _client_for_token(old_token).get(USERS_ME_URL).status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        # Re-create with the SAME username → reactivates the same identity, at the
+        # newly requested role, with a fresh token.
+        second = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Reconciler", "role": "member", "username": "reconciler"},
+            format="json",
+        )
+        assert second.status_code == status.HTTP_201_CREATED, second.data
+        # Same user id — the retired seat is re-provisioned, not a new user.
+        assert str(second.data["id"]) == str(user_id)
+        assert second.data["role"] == 15
+
+        # New token authenticates; the old one stays dead.
+        new_token = second.data["token"]
+        assert new_token != old_token
+        assert _client_for_token(new_token).get(USERS_ME_URL).status_code == status.HTTP_200_OK
+        assert _client_for_token(old_token).get(USERS_ME_URL).status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        # The user is active again with a single live membership at the new role
+        # (the soft-deleted row was restored in place, not duplicated).
+        user = User.objects.get(id=user_id)
+        assert user.is_active is True
+        assert WorkspaceMember.all_objects.filter(member=user, workspace=workspace).count() == 1
+        member = WorkspaceMember.objects.get(member=user, workspace=workspace)
+        assert member.is_active is True
+        assert member.role == 15
+        # Exactly one active token now (the reactivation mint); old ones are inactive.
+        assert APIToken.objects.filter(user=user, is_active=True).count() == 1
+
+    @pytest.mark.django_db
+    def test_create_active_service_username_still_conflicts(self, api_key_client, workspace, service_account):
+        """Test an ACTIVE service account's username still 409s (no reactivation)"""
+        # service_account is a live SERVICE account with username "reconcile-bot".
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Dup", "role": "admin", "username": "reconcile-bot"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+        # The live account is untouched: still active, still one active token.
+        service_account.user.refresh_from_db()
+        assert service_account.user.is_active is True
+        assert APIToken.objects.filter(user=service_account.user, is_active=True).count() == 1
+
+    @pytest.mark.django_db
+    def test_create_human_username_conflicts(self, api_key_client, workspace):
+        """Test a human's username 409s and is never reactivated as a service account"""
+        User.objects.create(username="a-human", email="ahuman@plane.so", is_active=False)
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "X", "role": "admin", "username": "a-human"},
+            format="json",
+        )
+        # Even an INACTIVE human is not a reactivatable service account.
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+        assert not WorkspaceMember.objects.filter(workspace=workspace, member__bot_type=BotTypeEnum.SERVICE).exists()
+
+    @pytest.mark.django_db
+    def test_create_non_service_bot_username_conflicts(self, api_key_client, workspace):
+        """Test an inactive NON-service bot's username 409s (only SERVICE bots reactivate)"""
+        User.objects.create(
+            username="seed-bot",
+            email="seed2@plane.so",
+            is_bot=True,
+            bot_type=BotTypeEnum.WORKSPACE_SEED,
+            is_active=False,
+        )
+        response = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "X", "role": "admin", "username": "seed-bot"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+
+    @pytest.mark.django_db
+    def test_reactivation_is_scoped_to_originating_workspace(self, api_key_client, workspace):
+        """Test a decommissioned account's username cannot be revived from another workspace"""
+        # Provision + decommission "shared-bot" in `workspace`.
+        first = api_key_client.post(
+            self._url(workspace.slug),
+            {"name": "Shared", "role": "admin", "username": "shared-bot"},
+            format="json",
+        )
+        assert first.status_code == status.HTTP_201_CREATED, first.data
+        user_id = first.data["id"]
+        assert (
+            api_key_client.delete(self._detail_url(workspace.slug, user_id)).status_code == status.HTTP_204_NO_CONTENT
+        )
+
+        # A DIFFERENT workspace, with its own admin, tries to claim the same globally
+        # unique username. A username belongs to exactly one workspace's service
+        # account, so this must NOT resurrect W1's identity into W2.
+        other_owner = User.objects.create(username="w2-owner", email="w2owner@plane.so")
+        other_ws = Workspace.objects.create(name="W2", owner=other_owner, slug="w2-ws")
+        WorkspaceMember.objects.create(workspace=other_ws, member=other_owner, role=20, is_active=True)
+        w2_token = APIToken.objects.create(user=other_owner, label="w2", token=generate_token())
+
+        response = _client_for_token(w2_token.token).post(
+            self._url(other_ws.slug),
+            {"name": "Shared", "role": "admin", "username": "shared-bot"},
+            format="json",
+        )
+        # Cross-workspace resurrection is refused as a genuine conflict.
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
+        assert response.data["code"] == "USERNAME_ALREADY_EXISTS"
+        # W1's decommissioned identity is untouched: still inactive, no W2 membership
+        # or token was created for it.
+        w1_user = User.objects.get(id=user_id)
+        assert w1_user.is_active is False
+        assert not WorkspaceMember.all_objects.filter(member=w1_user, workspace=other_ws).exists()
+        assert not APIToken.objects.filter(user=w1_user, workspace=other_ws).exists()
+
+
+@pytest.mark.contract
+class TestServiceAccountMembersListing:
+    """The public members list exposes username + bot identity for discoverability."""
+
+    def _url(self, slug: str) -> str:
+        """Helper to get the public workspace members-list URL"""
+        return f"/api/v1/workspaces/{slug}/members/"
+
+    @pytest.mark.django_db
+    def test_service_account_row_carries_username_and_bot_identity(
+        self, api_key_client, workspace, service_account, create_user
+    ):
+        """Test a service-account row carries its username + is_bot/bot_type; a human is is_bot=false"""
+        response = api_key_client.get(self._url(workspace.slug))
+        assert response.status_code == status.HTTP_200_OK, response.data
+
+        rows_by_username = {row["username"]: row for row in response.data}
+        rows_by_id = {str(row["id"]): row for row in response.data}
+
+        # The service account is discoverable by the stable username it chose, and
+        # is flagged as a SERVICE bot.
+        assert "reconcile-bot" in rows_by_username
+        bot_row = rows_by_username["reconcile-bot"]
+        assert str(bot_row["id"]) == str(service_account.user.id)
+        assert bot_row["is_bot"] is True
+        assert bot_row["bot_type"] == BotTypeEnum.SERVICE
+
+        # The human admin row is present, carries a username, and is not a bot.
+        human_row = rows_by_id[str(create_user.id)]
+        assert human_row["is_bot"] is False
+        assert "username" in human_row
+
 
 @pytest.mark.contract
 class TestServiceAccountHelper:
     """Direct tests of the shared create_service_account helper."""
 
     @pytest.mark.django_db
-    def test_duplicate_username_rolls_back_atomically(self, workspace):
-        """Test a duplicate username rolls the whole creation back"""
-        # A genuine (non-mocked) unique violation: the helper is @transaction.atomic,
-        # so the failed second creation must leave nothing behind.
+    def test_email_collision_rolls_back_atomically(self, workspace):
+        """Test a genuine DB unique violation rolls the whole creation back"""
+        # A caller-provided email that already exists triggers a real IntegrityError
+        # from the User insert; the helper is @transaction.atomic, so the failed
+        # creation must leave nothing behind. (A duplicate *username* is caught
+        # earlier with ServiceAccountUsernameConflictError — see the reactivation
+        # and conflict tests — so an email collision exercises the DB-level rollback.)
         from django.db import IntegrityError
 
         from plane.utils.service_account import create_service_account
+
+        User.objects.create(username="human-x", email="taken@plane.so")
+
+        users_before = User.objects.count()
+        members_before = WorkspaceMember.objects.count()
+        tokens_before = APIToken.objects.count()
+
+        with pytest.raises(IntegrityError):
+            create_service_account(workspace=workspace, name="Second", username="brand-new", email="taken@plane.so")
+
+        assert User.objects.count() == users_before
+        assert WorkspaceMember.objects.count() == members_before
+        assert APIToken.objects.count() == tokens_before
+
+    @pytest.mark.django_db
+    def test_active_service_username_raises_typed_conflict(self, workspace):
+        """Test re-using an ACTIVE service account's username raises a typed conflict, no leak"""
+        from plane.utils.service_account import ServiceAccountUsernameConflictError, create_service_account
 
         create_service_account(workspace=workspace, name="First", username="dup")
 
@@ -518,12 +794,48 @@ class TestServiceAccountHelper:
         members_before = WorkspaceMember.objects.count()
         tokens_before = APIToken.objects.count()
 
-        with pytest.raises(IntegrityError):
+        with pytest.raises(ServiceAccountUsernameConflictError) as exc_info:
             create_service_account(workspace=workspace, name="Second", username="dup")
+        assert exc_info.value.code == "USERNAME_ALREADY_EXISTS"
+        assert exc_info.value.status_code == 409
 
+        # The conflict is detected before any write — nothing is created.
         assert User.objects.count() == users_before
         assert WorkspaceMember.objects.count() == members_before
         assert APIToken.objects.count() == tokens_before
+
+    @pytest.mark.django_db
+    def test_reactivation_preserves_identity_and_flags_result(self, workspace):
+        """Test reactivating a decommissioned account preserves identity and sets reactivated"""
+        from plane.utils.service_account import (
+            create_service_account,
+            decommission_service_account,
+        )
+
+        original = create_service_account(
+            workspace=workspace, name="Ident", role="admin", username="ident-bot", display_name="Ident Bot"
+        )
+        original_email = original.user.email
+        original_id = original.user.id
+
+        decommission_service_account(user=original.user, workspace=workspace)
+
+        revived = create_service_account(workspace=workspace, name="Ident Renamed", role="member", username="ident-bot")
+
+        # Same identity, revived in place — username/email/display_name preserved
+        # (reactivation is keyed on the stable username, not the new name).
+        assert revived.reactivated is True
+        assert revived.user.id == original_id
+        assert revived.user.is_active is True
+        assert revived.user.username == "ident-bot"
+        assert revived.user.email == original_email
+        assert revived.user.display_name == "Ident Bot"
+        # Membership restored in place at the newly requested role (no duplicate row).
+        assert revived.member.role == 15
+        assert WorkspaceMember.all_objects.filter(member=revived.user, workspace=workspace).count() == 1
+        # A fresh token that differs from the (now-inactive) original.
+        assert revived.token != original.token
+        assert revived.api_token.is_active is True
 
     @pytest.mark.django_db
     def test_omitted_description_uses_generated_default(self, workspace):

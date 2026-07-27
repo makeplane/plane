@@ -20,7 +20,7 @@ import uuid
 from dataclasses import dataclass
 
 # Django imports
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 
 # Third party imports
@@ -83,6 +83,22 @@ class SourceExpiryElapsedError(ServiceAccountTokenError):
     status_code = 400
 
 
+class ServiceAccountUsernameConflictError(Exception):
+    """Raised when a requested username cannot be provisioned as a service account.
+
+    The username belongs to an *active* account, or to a user that is not a
+    reactivatable service account (a human, or a non-``SERVICE`` bot). A
+    *decommissioned* (inactive ``SERVICE``) account with the same username is
+    reactivated in place instead of rejected — see :func:`create_service_account`.
+
+    Carries a machine-readable ``code`` and the ``status_code`` the HTTP layer
+    surfaces, mirroring :class:`ServiceAccountTokenError`.
+    """
+
+    code = "USERNAME_ALREADY_EXISTS"
+    status_code = 409
+
+
 @dataclass
 class ServiceAccount:
     """Result of :func:`create_service_account`.
@@ -90,16 +106,44 @@ class ServiceAccount:
     ``token`` is the *plaintext* API key. Plane stores API tokens verbatim (the
     authentication layer looks them up by exact match), so this is the value the
     caller must persist — it is surfaced here exactly once at creation time.
+
+    ``reactivated`` is ``True`` when the account was revived from a decommissioned
+    identity of the same username rather than freshly created; ``user.id`` is then
+    the pre-existing id (see :func:`create_service_account`).
     """
 
     user: User
     member: WorkspaceMember
     api_token: APIToken
+    reactivated: bool = False
 
     @property
     def token(self) -> str:
         """Return the plaintext API key minted for this account."""
         return self.api_token.token
+
+
+def is_reactivatable_service_account(user: User | None, workspace: Workspace) -> bool:
+    """Whether ``user`` is a decommissioned service account revivable in ``workspace``.
+
+    True only when ``user`` is an INACTIVE ``bot_type=SERVICE`` account that was a
+    member of ``workspace`` (a decommissioned seat, whose membership row survives
+    soft-deleted, so it is visible via ``all_objects``). A username is GLOBALLY
+    unique, so it may name a SERVICE account that belonged to a DIFFERENT workspace;
+    that account is *not* revivable here — reviving it would resurrect a
+    foreign-tenant identity under a shared user id (leaking its email/display_name,
+    seizing its username, and conflating attribution), breaking the "a service
+    account belongs to exactly one workspace" invariant. Such a cross-workspace
+    collision, an *active* account, and any non-service user all return ``False`` so
+    the caller treats them as a genuine conflict.
+    """
+    return bool(
+        user is not None
+        and user.is_bot
+        and user.bot_type == BotTypeEnum.SERVICE
+        and not user.is_active
+        and WorkspaceMember.all_objects.filter(workspace=workspace, member=user).exists()
+    )
 
 
 def resolve_service_account_role(role: str | int) -> int:
@@ -129,7 +173,7 @@ def create_service_account(
     username: str | None = None,
     display_name: str | None = None,
 ) -> ServiceAccount:
-    """Create a service account in ``workspace`` and mint its API token.
+    """Create (or reactivate) a service account in ``workspace`` and mint its API token.
 
     Creates, in a single transaction:
 
@@ -140,12 +184,27 @@ def create_service_account(
       workspace-scoped) whose plaintext value is returned on the result.
 
     ``username`` and ``display_name`` are optional caller-chosen identity fields.
-    ``username`` must be globally unique (a collision raises ``IntegrityError``
-    from the DB insert — the caller is expected to check for it and surface a
-    readable error); when omitted a synthetic ``svc_<uuid>`` value is generated.
-    ``display_name`` is what the workspace members UI shows; it falls back to
-    ``name`` when omitted. ``description`` is the token's description; ``None``
-    (omitted) applies a generated default, while an explicit ``""`` is preserved.
+    ``username`` must be globally unique; when omitted a synthetic ``svc_<uuid>``
+    value is generated. ``display_name`` is what the workspace members UI shows;
+    it falls back to ``name`` when omitted. ``description`` is the token's
+    description; ``None`` (omitted) applies a generated default, while an explicit
+    ``""`` is preserved.
+
+    **Reactivation.** If ``username`` is supplied and already belongs to a
+    *decommissioned* service account of **this** workspace (an inactive
+    ``bot_type=SERVICE`` user that was a member of ``workspace``), that identity is
+    revived in place instead of colliding: the user is reactivated
+    (``is_active=True``), its workspace membership is restored at ``role``, and a
+    fresh token is minted and returned — all under the pre-existing user id, so a
+    retired seat can be re-provisioned by its stable username. Its identity fields
+    (username/email/display_name) are preserved; only the membership role and a new
+    token are (re)provisioned, and the result carries ``reactivated=True``. A
+    username owned by an *active* account, by any non-service user (a human or a
+    non-``SERVICE`` bot), or by a service account that belonged to a *different*
+    workspace is a genuine conflict and raises
+    :class:`ServiceAccountUsernameConflictError` (see
+    :func:`is_reactivatable_service_account` — reactivation never crosses a
+    workspace boundary).
 
     No email is sent and no password is ever round-tripped. ``is_bot=True``
     additionally blocks the interactive login/signup flow
@@ -154,10 +213,40 @@ def create_service_account(
     """
     role_value = resolve_service_account_role(role)
 
-    # A service account never logs in, so a caller-omitted username/email are
-    # internal, unique identifiers rather than human contact addresses. The
-    # synthetic email is always derived from a fresh uuid (never the caller's
-    # username) so it stays valid and unique regardless of the username.
+    # None means "omitted" → apply the generated default; an explicit "" is a
+    # deliberate empty description and is preserved (do not use `or`, which would
+    # conflate blank with omitted). Resolved once so the fresh-create and the
+    # reactivation paths share it.
+    token_description = f"Service account token for {name}" if description is None else description
+
+    # Reactivation: a caller-chosen username that already belongs to a
+    # DECOMMISSIONED service account OF THIS WORKSPACE revives that identity in
+    # place rather than colliding, so a retired seat can be re-provisioned by its
+    # stable username. select_for_update serializes concurrent re-provisions of
+    # the same username.
+    if username:
+        existing = User.objects.select_for_update().filter(username=username).first()
+        if existing is not None:
+            if not is_reactivatable_service_account(existing, workspace):
+                # Owned by an active account, a non-service user (human/other bot),
+                # or a SERVICE account from a DIFFERENT workspace — none revivable
+                # here. The message is intentionally generic so a cross-workspace
+                # probe cannot confirm a username exists elsewhere.
+                raise ServiceAccountUsernameConflictError("A user with this username already exists.")
+            return _reactivate_service_account(
+                user=existing,
+                workspace=workspace,
+                role_value=role_value,
+                label=name,
+                description=token_description,
+            )
+
+    # Fresh creation. A service account never logs in, so a caller-omitted
+    # username/email are internal, unique identifiers rather than human contact
+    # addresses. The synthetic email is always derived from a fresh uuid (never
+    # the caller's username) so it stays valid and unique regardless of the
+    # username.
+    requested_username = username  # caller-provided (or None) — used to classify a race below
     unique = uuid.uuid4().hex
     if not username:
         username = f"svc_{unique}"
@@ -187,7 +276,19 @@ def create_service_account(
     # No password round-trip: the account authenticates only via its API token,
     # so give it an unusable password that can never be used to log in.
     user.set_unusable_password()
-    user.save()
+    # A concurrent create of the same brand-new caller-chosen username can win the
+    # race between the conflict check above and this insert. Wrap the insert in a
+    # savepoint so the unique-violation IntegrityError is classified at its source
+    # (a username conflict) without poisoning the outer transaction; any OTHER
+    # IntegrityError (e.g. a caller-supplied email collision) propagates unchanged
+    # for the caller to surface.
+    try:
+        with transaction.atomic():
+            user.save()
+    except IntegrityError:
+        if requested_username and User.objects.filter(username=requested_username).exists():
+            raise ServiceAccountUsernameConflictError("A user with this username already exists.") from None
+        raise
 
     member = WorkspaceMember.objects.create(
         workspace=workspace,
@@ -196,20 +297,71 @@ def create_service_account(
         company_role="",
     )
 
-    # None means "omitted" → apply the generated default; an explicit "" is a
-    # deliberate empty description and is preserved (do not use `or`, which would
-    # conflate blank with omitted).
-    if description is None:
-        description = f"Service account token for {name}"
-
     api_token = mint_service_account_token(
         user=user,
         workspace=workspace,
         label=name,
-        description=description,
+        description=token_description,
     )
 
     return ServiceAccount(user=user, member=member, api_token=api_token)
+
+
+def _reactivate_service_account(
+    *, user: User, workspace: Workspace, role_value: int, label: str, description: str
+) -> ServiceAccount:
+    """Revive a decommissioned service account in place.
+
+    Reactivates the ``User`` (``is_active=True``), restores its workspace
+    membership at ``role_value``, and mints a fresh token. Identity fields
+    (username/email/display_name) are preserved — reactivation is keyed on the
+    stable username. Previously-deactivated tokens stay inactive; the new one is
+    returned. Called only from :func:`create_service_account` inside its
+    transaction.
+    """
+    user.is_active = True
+    user.save(update_fields=["is_active"])
+
+    member = _provision_workspace_membership(workspace=workspace, user=user, role_value=role_value)
+
+    api_token = mint_service_account_token(
+        user=user,
+        workspace=workspace,
+        label=label,
+        description=description,
+    )
+    return ServiceAccount(user=user, member=member, api_token=api_token, reactivated=True)
+
+
+def _provision_workspace_membership(*, workspace: Workspace, user: User, role_value: int) -> WorkspaceMember:
+    """Bind ``user`` to ``workspace`` at ``role_value``, restoring a prior membership.
+
+    Decommissioning SOFT-deletes the ``WorkspaceMember`` (sets ``deleted_at``), so
+    a reactivated account has a soft-deleted membership row. The partial unique
+    index on ``(workspace, member) WHERE deleted_at IS NULL`` permits only one
+    live row, so restore the existing row in place rather than inserting a
+    duplicate:
+
+    * a live row (never soft-deleted) is reactivated at the requested role;
+    * otherwise a soft-deleted row is restored (``deleted_at`` cleared);
+    * otherwise a new membership is created.
+    """
+    live = WorkspaceMember.objects.filter(workspace=workspace, member=user).first()
+    if live is not None:
+        live.role = role_value
+        live.is_active = True
+        live.save()
+        return live
+
+    removed = WorkspaceMember.all_objects.filter(workspace=workspace, member=user).order_by("-created_at").first()
+    if removed is not None:
+        removed.deleted_at = None
+        removed.is_active = True
+        removed.role = role_value
+        removed.save()
+        return removed
+
+    return WorkspaceMember.objects.create(workspace=workspace, member=user, role=role_value, company_role="")
 
 
 def mint_service_account_token(*, user, workspace, label=None, description="", expired_at=None) -> APIToken:

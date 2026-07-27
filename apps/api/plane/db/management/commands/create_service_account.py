@@ -11,7 +11,9 @@ from plane.db.models import User, Workspace
 from plane.utils.service_account import (
     DEFAULT_SERVICE_ACCOUNT_ROLE,
     SERVICE_ACCOUNT_ROLES,
+    ServiceAccountUsernameConflictError,
     create_service_account,
+    is_reactivatable_service_account,
 )
 
 
@@ -88,12 +90,21 @@ class Command(BaseCommand):
             if value and len(value) > limit:
                 raise CommandError(f"{flag} must be at most {limit} characters")
 
-        if email and User.objects.filter(email=email).exists():
+        # Reactivation is keyed on --username and PRESERVES the existing account's
+        # email (--email is ignored on that path), so the email-uniqueness guard
+        # must not fire against the very account being revived. Only enforce it on
+        # the fresh-create path.
+        reactivating = username is not None and is_reactivatable_service_account(
+            User.objects.filter(username=username).first(), workspace
+        )
+        if email and not reactivating and User.objects.filter(email=email).exists():
             raise CommandError(f"A user with email '{email}' already exists")
 
-        if username and User.objects.filter(username=username).exists():
-            raise CommandError(f"A user with username '{username}' already exists")
-
+        # No username pre-check: a --username that already belongs to a
+        # decommissioned service account is REACTIVATED in place by the helper
+        # (not rejected), so a retired seat can be re-provisioned by its stable
+        # username. The helper raises ServiceAccountUsernameConflictError only for
+        # a genuine conflict (an active account, or a non-service user).
         try:
             service_account = create_service_account(
                 workspace=workspace,
@@ -104,6 +115,8 @@ class Command(BaseCommand):
                 username=username,
                 display_name=display_name,
             )
+        except ServiceAccountUsernameConflictError as exc:
+            raise CommandError(str(exc))
         except IntegrityError as exc:
             # A concurrent insert (email/username race that slipped past the checks
             # above) or an extremely unlikely synthetic collision surfaces here —
@@ -113,7 +126,8 @@ class Command(BaseCommand):
             raise CommandError(f"Could not create the service account — the email or username is already in use: {exc}")
 
         user = service_account.user
-        self.stdout.write(self.style.SUCCESS("Service account created successfully"))
+        action = "reactivated" if service_account.reactivated else "created"
+        self.stdout.write(self.style.SUCCESS(f"Service account {action} successfully"))
         self.stdout.write(f"  user_id     : {user.id}")
         self.stdout.write(f"  username    : {user.username}")
         self.stdout.write(f"  display_name: {user.display_name}")

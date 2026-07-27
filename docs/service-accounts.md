@@ -36,6 +36,13 @@ authorization and attribution: it passes permission checks and appears as the
 `created_by`/`updated_by` actor on everything it writes, and the **public API**
 lists it (e.g. `GET /api/v1/workspaces/{slug}/members/` returns bot members).
 
+Each row from `GET /api/v1/workspaces/{slug}/members/` carries `username`,
+`is_bot`, and `bot_type` alongside the usual profile fields and `role`, so
+external automation can **find a service account by the stable username it
+chose** and tell a bot member apart from a human (`is_bot: true`,
+`bot_type: "SERVICE"`). (The paginated `GET .../members-lite/` picker is a
+separate, minimal endpoint; it is unchanged and already exposes `is_bot`.)
+
 ## Roles
 
 | Name     | Value | Capability                                  |
@@ -136,17 +143,24 @@ with the management command above.
 identity instead of the server-generated defaults:
 
 - **`username`** — a globally-unique handle. Use it to provision idempotently:
-  re-creating with a username that already exists is rejected with **`409 Conflict`**
-  and a machine-readable body `{"error": ..., "code": "USERNAME_ALREADY_EXISTS"}`;
-  the name is **never** silently mutated into a unique variant. Like every Plane
-  username it is bounded only by length (max 128 characters) — Plane applies no
-  charset validator to usernames (regular accounts get a random `uuid` handle), so
-  none is imposed here either. Omit it to get a synthetic `svc_<uuid>` handle.
+  re-creating with a username that belongs to a **decommissioned** service account
+  **of this workspace** **reactivates** that account in place (see [Re-provisioning a
+  decommissioned account](#re-provisioning-a-decommissioned-account)); re-creating
+  with a username owned by an **active** account, by any **non-service** user (a human
+  or a non-`SERVICE` bot), or by a service account from **another workspace**, is
+  rejected with **`409 Conflict`** and a machine-readable body
+  `{"error": ..., "code": "USERNAME_ALREADY_EXISTS"}`. The name is **never** silently
+  mutated into a unique variant. Like every Plane username it is bounded only by
+  length (max 128 characters) — Plane applies no charset validator to usernames
+  (regular accounts get a random `uuid` handle), so none is imposed here either.
+  Omit it to get a synthetic `svc_<uuid>` handle.
 - **`display_name`** — the label the workspace members UI shows. Omit it to fall
   back to `name`.
 
-On the management command, a taken `--username` (or `--email`) fails with a clear
-`CommandError` instead of a raw traceback.
+On the management command, a `--username` owned by an active or non-service user
+(and a taken `--email`) fails with a clear `CommandError` instead of a raw
+traceback; a `--username` belonging to a decommissioned service account reactivates
+it (the command prints `Service account reactivated successfully`).
 
 ## Managing tokens
 
@@ -231,6 +245,36 @@ everything it created) survives, and `is_active=False` alone revokes API access.
 The operation is hard-guarded: it only applies to a service account
 (`is_bot=True` **and** `bot_type=SERVICE`). Attempting it on a human or any other
 bot returns `400 {"error": ..., "code": "NOT_A_SERVICE_ACCOUNT"}`.
+
+### Re-provisioning a decommissioned account
+
+A decommissioned service account is **not** a dead end: because its `User` row is
+kept, its username stays claimed. Re-creating a service account with that **same
+username** — via `POST .../service-accounts/` or the management command —
+**reactivates the retired identity in place** instead of returning `409`:
+
+- the `User` is re-activated (`is_active=True`);
+- its workspace membership is restored at the **requested** role (the soft-deleted
+  membership row is revived, never duplicated);
+- a **fresh** token is minted and returned once (the old, deactivated tokens stay
+  inactive).
+
+The response is a normal `201` and carries the **same `id`** as before, so a
+retired seat can be re-provisioned by its stable username without minting a new
+identity — historical `created_by`/`updated_by` attribution is preserved. Identity
+fields other than the membership role (username/email/display_name) are kept as-is;
+reactivation is keyed on the username, so a different `name`/`display_name` in the
+re-create request does not rename the existing account, and the management command's
+`--email` is ignored on this path (it never changes the revived account's email).
+
+Reactivation is **scoped to the workspace the account belonged to.** A username is
+globally unique, so it may name a decommissioned service account from a *different*
+workspace; that account is **not** revived here (which would resurrect a
+foreign-tenant identity under a shared user id). Only a **decommissioned service
+account of this workspace** reactivates — a username owned by an active account, by
+a human or non-`SERVICE` bot, or by a service account from another workspace all
+return `409 {"code": "USERNAME_ALREADY_EXISTS"}` (with a deliberately generic
+message that does not confirm the username exists elsewhere).
 
 ## Notes
 

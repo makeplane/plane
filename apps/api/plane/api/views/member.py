@@ -60,7 +60,20 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                                     "role": {
                                         "type": "integer",
                                         "description": "Member role in the workspace",
-                                    }
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Stable, globally-unique username of the member",
+                                    },
+                                    "is_bot": {
+                                        "type": "boolean",
+                                        "description": "Whether the member is a bot/service account",
+                                    },
+                                    "bot_type": {
+                                        "type": "string",
+                                        "nullable": True,
+                                        "description": "Bot type (e.g. SERVICE); null for human members",
+                                    },
                                 },
                             },
                         ]
@@ -92,8 +105,16 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         # Get all the users with their roles
         users_with_roles = []
         for workspace_member in workspace_members:
-            user_data = UserLiteSerializer(workspace_member.member).data
+            member = workspace_member.member
+            user_data = UserLiteSerializer(member).data
             user_data["role"] = workspace_member.role
+            # Surface the stable username and bot identity so external automation
+            # can locate a service account by the username it chose and tell a bot
+            # member apart from a human. UserLiteSerializer intentionally omits
+            # these (it is shared across many endpoints), so add them per-row here.
+            user_data["username"] = member.username
+            user_data["is_bot"] = member.is_bot
+            user_data["bot_type"] = member.bot_type
             users_with_roles.append(user_data)
 
         return Response(users_with_roles, status=status.HTTP_200_OK)
