@@ -293,7 +293,6 @@ export const SgEventDetailPage = ({
     onActiveTagRemoved: clearActiveTimelineTag,
     packageId: sgMediaPayload?.packageId,
     projectId,
-    sport: sportTableConfig.sport,
     tagRows,
     workspaceSlug,
   });

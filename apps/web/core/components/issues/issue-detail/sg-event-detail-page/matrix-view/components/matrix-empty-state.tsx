@@ -28,7 +28,7 @@ const STATE_CONTENT: Record<MatrixStateKind, { description: string; icon: Lucide
     title: "No matching tags",
   },
   "no-tags": {
-    description: "This event does not contain any tags that can be shown in a matrix.",
+    description: "No tags were returned for this event, so the matrix cannot be built.",
     icon: Tags,
     title: "No tags available",
   },
