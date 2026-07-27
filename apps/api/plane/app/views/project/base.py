@@ -537,6 +537,22 @@ class DeployBoardViewSet(BaseViewSet):
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
+    def get_queryset(self):
+        # SECURITY: the routed retrieve/partial_update/destroy actions are not
+        # defined on this class and fall through to DRF's ModelViewSet defaults,
+        # which resolve the object via get_object() -> get_queryset(). The base
+        # get_queryset returns DeployBoard.objects.all() (every workspace), and
+        # ProjectMemberPermission only checks the URL slug/project_id — nothing
+        # binds the object to that scope. Scope the queryset to the URL workspace
+        # + project so a foreign pk 404s instead of being read/modified/deleted
+        # cross-workspace (GHSA-h4w5-vhxc-265g).
+        return DeployBoard.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            entity_name="project",
+            entity_identifier=self.kwargs.get("project_id"),
+            project_id=self.kwargs.get("project_id"),
+        )
+
     def list(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.filter(
             entity_name="project", entity_identifier=project_id, workspace__slug=slug
