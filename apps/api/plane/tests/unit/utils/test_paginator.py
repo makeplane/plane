@@ -123,40 +123,6 @@ class TestPaginateGroupByValidation:
         assert response.data["grouped_by"] is None
 
 
-@pytest.mark.unit
-class TestGetPerPageBounds:
-    """get_per_page() must reject non-positive per_page before it reaches the
-    paginator. A per_page of 0 divides by zero in math.ceil(count / limit) and
-    a negative per_page slices the queryset with garbage bounds — both would
-    otherwise surface as an unhandled HTTP 500 (flagged by AppScan as
-    "Integer Overflow" on the stickies per_page parameter)."""
-
-    @pytest.mark.parametrize("per_page", ["0", "-1", "-1000"])
-    def test_non_positive_per_page_raises_parse_error(self, per_page):
-        request = _make_request(per_page=per_page)
-        with pytest.raises(ParseError):
-            BasePaginator().get_per_page(request)
-
-    def test_over_max_per_page_still_rejected(self):
-        request = _make_request(per_page="5000")
-        with pytest.raises(ParseError):
-            BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000)
-
-    def test_non_integer_per_page_raises_parse_error(self):
-        request = _make_request(per_page="abc")
-        with pytest.raises(ParseError):
-            BasePaginator().get_per_page(request)
-
-    def test_valid_per_page_passes_through(self):
-        request = _make_request(per_page="30")
-        assert BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000) == 30
-
-    def test_per_page_of_one_is_allowed(self):
-        # The exact lower boundary must be accepted.
-        request = _make_request(per_page="1")
-        assert BasePaginator().get_per_page(request) == 1
-
-
 class _ExplodingPaginator:
     """Fails if constructed — proves the cursor guard rejects BEFORE any paginator runs."""
 

@@ -6,7 +6,7 @@
 import os
 
 # Third party imports
-from rest_framework.throttling import AnonRateThrottle, SimpleRateThrottle, UserRateThrottle
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -47,53 +47,6 @@ def authentication_throttle_allows(request):
     # SimpleRateThrottle.allow_request only reads request.META and
     # request.user, both available on a plain Django HttpRequest.
     return throttle.allow_request(request, None)
-
-
-def _valid_rate_or_default(value, default):
-    """Return `value` only if it is a well-formed DRF throttle rate ("<num>/<period>"),
-    else `default`. SimpleRateThrottle.parse_rate() raises on a malformed rate, and the
-    throttle is instantiated on every auth POST — an unvalidated env value would take
-    authentication down instance-wide. Falling back to the default keeps auth up.
-    """
-    try:
-        num, period = value.split("/")
-        int(num)
-        if period[:1] not in ("s", "m", "h", "d"):
-            raise ValueError
-    except (ValueError, AttributeError):
-        return default
-    return value
-
-
-class AuthenticationAccountThrottle(SimpleRateThrottle):
-    """Per-(account, client-IP) authentication throttle.
-
-    Supplements the IP-only AuthenticationThrottle by also bucketing on the normalized
-    submitted email, capping rapid credential guessing against a single account from a
-    given source. The key combines email AND client IP on purpose: keying on email alone
-    would let anyone lock a victim out of their own account by spamming their address from
-    other IPs (self-inflicted account-lockout DoS). Email is normalized (strip + lower) to
-    match the login lookup so casing tricks cannot multiply the allowance; requests without
-    an email fall back to the client identity only.
-
-    NOTE: this does not by itself stop a spoofed-source distributed brute force — that
-    requires a trustworthy client IP (configure NUM_PROXIES / the proxy so X-Forwarded-For
-    cannot be forged). It is defense-in-depth alongside that deployment control.
-    """
-
-    scope = "authentication_account"
-    rate = _valid_rate_or_default(os.environ.get("AUTHENTICATION_ACCOUNT_RATE_LIMIT", "5/minute"), "5/minute")
-
-    def get_cache_key(self, request, view=None):
-        ip = self.get_ident(request)
-        email = (request.POST.get("email") or "").strip().lower()
-        ident = f"email:{email}|ip:{ip}" if email else f"ip:{ip}"
-        return self.cache_format % {"scope": self.scope, "ident": ident}
-
-
-def authentication_account_throttle_allows(request):
-    """Per-account counterpart to authentication_throttle_allows (see above)."""
-    return AuthenticationAccountThrottle().allow_request(request, None)
 
 
 class EmailVerificationThrottle(UserRateThrottle):

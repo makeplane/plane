@@ -646,13 +646,6 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
-        # Reject non-positive values before they reach the paginator, where a
-        # zero limit divides by zero in math.ceil(count / limit) and a negative
-        # limit slices the queryset with garbage bounds — both surface as an
-        # unhandled HTTP 500 instead of a clean client error.
-        if per_page < 1:
-            raise ParseError(detail="Invalid per_page value. Must be at least 1.")
-
         max_per_page = max(max_per_page, default_per_page)
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
