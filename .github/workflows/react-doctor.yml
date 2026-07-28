@@ -9,13 +9,13 @@ name: React Doctor
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  # Scans `main` on every push so you get a health-score trend on the
+  # Scans `preview` on every push so you get a health-score trend on the
   # default branch — useful for tracking the overall number commit-by-commit
   # and catching regressions that slipped past PR review. PR-specific steps
   # (the sticky summary comment) are skipped automatically on `push` events.
   # Comment this block out if you only want PR-time scans.
   push:
-    branches: [main]
+    branches: [preview]
 
 permissions:
   # `actions/checkout` needs this to read the repo source.
@@ -47,6 +47,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # React Doctor diffs the changed files against the merge base so it
+          # only reports what the PR introduces. The default shallow checkout
+          # has no merge base, which makes it fall back to listing every
+          # pre-existing issue in every changed file.
+          fetch-depth: 0
 
       - uses: millionco/react-doctor@v2
         # Common configuration knobs — uncomment any to override the default.

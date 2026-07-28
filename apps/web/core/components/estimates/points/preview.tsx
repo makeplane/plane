@@ -53,8 +53,15 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   const EstimatePointValueRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!estimatePointEditToggle && !estimatePointDeleteToggle)
-      EstimatePointValueRef?.current?.addEventListener("dblclick", () => setEstimatePointEditToggle(true));
+    const estimatePointValueElement = EstimatePointValueRef.current;
+    if (!estimatePointValueElement || estimatePointEditToggle || estimatePointDeleteToggle) return;
+
+    const handleDoubleClick = () => setEstimatePointEditToggle(true);
+    estimatePointValueElement.addEventListener("dblclick", handleDoubleClick);
+
+    return () => {
+      estimatePointValueElement.removeEventListener("dblclick", handleDoubleClick);
+    };
   }, [estimatePointDeleteToggle, estimatePointEditToggle]);
 
   return (
