@@ -1,29 +1,21 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
-
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.management import BaseCommand, CommandError
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
-
-
 class Command(BaseCommand):
     """Django command to pause execution until db is available"""
-
     def add_arguments(self, parser):
         # Positional argument
         parser.add_argument("to_email", type=str, help="receiver's email")
-
     def handle(self, *args, **options):
         receiver_email = options.get("to_email")
-
         if not receiver_email:
             raise CommandError("Receiver email is required")
-
         (
             EMAIL_HOST,
             EMAIL_HOST_USER,
@@ -34,9 +26,16 @@ class Command(BaseCommand):
             EMAIL_FROM,
         ) = get_email_configuration()
 
+        try:
+            port = int(EMAIL_PORT) if EMAIL_PORT else 587
+            if not (1 <= port <= 65535):
+                raise ValueError()
+        except (ValueError, TypeError):
+            raise CommandError("SMTP port is invalid. Please configure a valid SMTP port.")
+
         connection = get_connection(
             host=EMAIL_HOST,
-            port=int(EMAIL_PORT),
+            port=port,
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
             use_tls=EMAIL_USE_TLS == "1",
@@ -45,12 +44,9 @@ class Command(BaseCommand):
         )
         # Prepare email details
         subject = "Test email from Plane"
-
         html_content = render_to_string("emails/test_email.html")
         text_content = strip_tags(html_content)
-
         self.stdout.write(self.style.SUCCESS("Trying to send test email..."))
-
         # Send the email
         try:
             msg = EmailMultiAlternatives(
