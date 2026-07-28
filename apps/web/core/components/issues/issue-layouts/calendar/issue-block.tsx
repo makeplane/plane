@@ -59,7 +59,7 @@ export const CalendarIssueBlock = observer(
 
     // handlers
     const handleIssuePeekOverview = (peekIssue: TIssue) =>
-      handleRedirection(workspaceSlug.toString(), peekIssue, isMobile);
+      handleRedirection(workspaceSlug?.toString(), peekIssue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 

@@ -53,6 +53,10 @@ jobs:
           # has no merge base, which makes it fall back to listing every
           # pre-existing issue in every changed file.
           fetch-depth: 0
+          # Don't leave the workflow token in .git/config for the third-party
+          # action that runs next. fetch-depth: 0 has already fetched every ref
+          # it needs, and it talks to the API through its own credentials.
+          persist-credentials: false
 
       - uses: millionco/react-doctor@v2
         # Common configuration knobs — uncomment any to override the default.
