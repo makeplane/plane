@@ -40,7 +40,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f"{obj.key} configuration already exists"))
 
-        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED"]
+        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED", "IS_OIDC_FREE_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
             for key in keys:
                 if key == "IS_GOOGLE_ENABLED":
@@ -142,6 +142,73 @@ class Command(BaseCommand):
                         value = "0"
                     InstanceConfiguration.objects.create(
                         key="IS_GITEA_ENABLED",
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
+                if key == "IS_OIDC_FREE_ENABLED":
+                    (
+                        OIDC_FREE_HOST,
+                        OIDC_FREE_CLIENT_ID,
+                        OIDC_FREE_CLIENT_SECRET,
+                        OIDC_FREE_HOST,
+                        OIDC_FREE_SCOPE,
+                        OIDC_FREE_USERINFO_URL,
+                        OIDC_FREE_TOKEN_URL,
+                        OIDC_FREE_CALLBACK_URI,
+                        OIDC_FREE_AUTH_URI
+                    ) = get_configuration_value(
+                        [
+                            {
+                                "key": "OIDC_FREE_CLIENT_ID",
+                                "default": os.environ.get("OIDC_FREE_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_CLIENT_SECRET",
+                                "default": os.environ.get("OIDC_FREE_CLIENT_SECRET", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_HOST",
+                                "default": os.environ.get("OIDC_FREE_HOST", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_SCOPE",
+                                "default": os.environ.get("OIDC_FREE_SCOPE", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_USERINFO_URL",
+                                "default": os.environ.get("OIDC_FREE_USERINFO_URL", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_TOKEN_URL",
+                                "default": os.environ.get("OIDC_FREE_TOKEN_URL", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_CALLBACK_URI",
+                                "default": os.environ.get("OIDC_FREE_CALLBACK_URI", ""),
+                            },
+                            {
+                                "key": "OIDC_FREE_AUTH_URI",
+                                "default": os.environ.get("OIDC_FREE_AUTH_URI", ""),
+                            },
+                        ]
+                    )
+                    if all(bool(v) for v in [
+                            OIDC_FREE_CLIENT_ID,
+                            OIDC_FREE_CLIENT_SECRET,
+                            OIDC_FREE_HOST,
+                            OIDC_FREE_SCOPE,
+                            OIDC_FREE_USERINFO_URL,
+                            OIDC_FREE_TOKEN_URL,
+                            OIDC_FREE_CALLBACK_URI,
+                            OIDC_FREE_AUTH_URI
+                    ]):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key="IS_OIDC_FREE_ENABLED",
                         value=value,
                         category="AUTHENTICATION",
                         is_encrypted=False,

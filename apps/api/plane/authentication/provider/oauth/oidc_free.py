@@ -17,66 +17,87 @@ from plane.authentication.adapter.error import (
 )
 
 
-class GiteaOAuthProvider(OauthAdapter):
-    provider = "gitea"
-    scope = "openid email profile read:user"
+class OidcFreeOAuthProvider(OauthAdapter):
+    provider = "oidc-free"
+
+    def __read_option_from_env(self, option: str, default: str | None = None):
+        env_default = os.environ.get(option)
+        return {
+            "key": option,
+            "default": env_default if not default else env_default or default,
+        }
 
     def __init__(self, request, code=None, state=None, callback=None):
-        (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
+        (
+            OIDC_FREE_CLIENT_ID,
+            OIDC_FREE_CLIENT_SECRET,
+            OIDC_FREE_HOST,
+            OIDC_FREE_SCOPE,
+            OIDC_FREE_USERINFO_URL,
+            OIDC_FREE_TOKEN_URL,
+            OIDC_FREE_CALLBACK_URI,
+            OIDC_FREE_AUTH_URI,
+        ) = get_configuration_value(
             [
-                {
-                    "key": "GITEA_CLIENT_ID",
-                    "default": os.environ.get("GITEA_CLIENT_ID"),
-                },
-                {
-                    "key": "GITEA_CLIENT_SECRET",
-                    "default": os.environ.get("GITEA_CLIENT_SECRET"),
-                },
-                {
-                    "key": "GITEA_HOST",
-                    "default": os.environ.get("GITEA_HOST"),
-                },
+                self.__read_option_from_env("OIDC_FREE_CLIENT_ID"),
+                self.__read_option_from_env("OIDC_FREE_CLIENT_SECRET"),
+                self.__read_option_from_env("OIDC_FREE_HOST"),
+                self.__read_option_from_env("OIDC_FREE_SCOPE", "openid email profile"),
+                self.__read_option_from_env("OIDC_FREE_USERINFO_URL"),
+                self.__read_option_from_env("OIDC_FREE_TOKEN_URL"),
+                self.__read_option_from_env("OIDC_FREE_CALLBACK_URI"),
+                self.__read_option_from_env("OIDC_FREE_AUTH_URI"),
             ]
         )
 
-        if not (GITEA_CLIENT_ID and GITEA_CLIENT_SECRET and GITEA_HOST):
+        if any(v is None for v in [
+                OIDC_FREE_CLIENT_ID,
+                OIDC_FREE_CLIENT_SECRET,
+                OIDC_FREE_HOST,
+                OIDC_FREE_SCOPE,
+                OIDC_FREE_USERINFO_URL,
+                OIDC_FREE_TOKEN_URL,
+                OIDC_FREE_CALLBACK_URI,
+                OIDC_FREE_AUTH_URI
+        ]):
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["GITEA_NOT_CONFIGURED"],
-                error_message="GITEA_NOT_CONFIGURED",
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_FREE_NOT_CONFIGURED"],
+                error_message="OIDC_FREE_NOT_CONFIGURED",
             )
 
         # Enforce scheme and normalize trailing slash(es)
-        parsed = urlparse(GITEA_HOST)
+        parsed = urlparse(OIDC_FREE_HOST)
         if not parsed.scheme or parsed.scheme not in ("https", "http"):
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["GITEA_NOT_CONFIGURED"],
-                error_message="GITEA_NOT_CONFIGURED",  # avoid leaking details to query params
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_FREE_NOT_CONFIGURED"],
+                error_message="OIDC_FREE_NOT_CONFIGURED",  # avoid leaking details to query params
             )
-        GITEA_HOST = GITEA_HOST.rstrip("/")
+        OIDC_FREE_HOST = OIDC_FREE_HOST.rstrip("/")
 
         # Set URLs based on the host
-        self.token_url = f"{GITEA_HOST}/login/oauth/access_token"
-        self.userinfo_url = f"{GITEA_HOST}/api/v1/user"
+        self.token_url = f"{OIDC_FREE_HOST}/{OIDC_FREE_TOKEN_URL}"
+        self.userinfo_url = f"{OIDC_FREE_HOST}/{OIDC_FREE_USERINFO_URL}"
 
-        client_id = GITEA_CLIENT_ID
-        client_secret = GITEA_CLIENT_SECRET
+        scope = OIDC_FREE_SCOPE
+        client_id = OIDC_FREE_CLIENT_ID
+        client_secret = OIDC_FREE_CLIENT_SECRET
 
         server_host = request.get_host() + (":" + request.get_port() if request.get_port() != 80 else "")
-        redirect_uri = f"{'https' if request.is_secure() else 'http'}://{server_host}/auth/gitea/callback/"
+        redirect_uri = f"{'https' if request.is_secure() else 'http'}://{server_host}/{OIDC_FREE_CALLBACK_URI.lstrip('/')}"
         url_params = {
             "client_id": client_id,
-            "scope": self.scope,
+            "scope": scope,
             "redirect_uri": redirect_uri,
             "response_type": "code",
             "state": state,
         }
-        auth_url = f"{GITEA_HOST}/login/oauth/authorize?{urlencode(url_params)}"
+        auth_url = f"{OIDC_FREE_HOST}/{OIDC_FREE_AUTH_URI.lstrip('/')}?{urlencode(url_params)}"
 
         super().__init__(
             request,
             self.provider,
             client_id,
-            self.scope,
+            scope,
             redirect_uri,
             auth_url,
             self.token_url,
@@ -121,32 +142,30 @@ class GiteaOAuthProvider(OauthAdapter):
             response = requests.get(emails_url, headers=headers)
             if not response.ok:
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                    error_message="GITEA_OAUTH_PROVIDER_ERROR: Failed to fetch emails",
+                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_FREE_OAUTH_PROVIDER_ERROR"],
+                    error_message="OIDC_FREE_OAUTH_PROVIDER_ERROR: Failed to fetch emails",
                 )
             emails_response = response.json()
 
             if not emails_response:
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                    error_message="GITEA_OAUTH_PROVIDER_ERROR: No emails found",
+                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_FREE_OAUTH_PROVIDER_ERROR"],
+                    error_message="OIDC_FREE_OAUTH_PROVIDER_ERROR: No emails found",
                 )
-            # Prefer primary+verified, then any verified. Never fall back to an unverified
-            # email — an attacker with a self-hosted Gitea instance could assert any address
-            # to take over an existing account (GHSA-7j95-vh8g-f365).
+            # Prefer primary+verified, then any verified, then primary, else first
             email = next((e.get("email") for e in emails_response if e.get("primary") and e.get("verified")), None)
             if not email:
                 email = next((e.get("email") for e in emails_response if e.get("verified")), None)
             if not email:
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["OAUTH_PROVIDER_UNVERIFIED_EMAIL"],
-                    error_message="OAUTH_PROVIDER_UNVERIFIED_EMAIL",
-                )
+                email = next((e.get("email") for e in emails_response if e.get("primary")), None)
+            if not email and emails_response:
+                # If no primary email, use the first one
+                email = emails_response[0].get("email")
             return email
         except requests.RequestException:
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                error_message="GITEA_OAUTH_PROVIDER_ERROR: Exception occurred while fetching emails",
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_FREE_OAUTH_PROVIDER_ERROR"],
+                error_message="OIDC_FREE_OAUTH_PROVIDER_ERROR: Exception occurred while fetching emails",
             )
 
     def set_user_data(self):
@@ -156,20 +175,21 @@ class GiteaOAuthProvider(OauthAdapter):
             "Accept": "application/json",
         }
 
-        # Always use __get_email() which enforces the verified-email requirement.
-        # The user object's .email field carries no verification flag, so it cannot
-        # be trusted directly (GHSA-7j95-vh8g-f365).
-        email = self.__get_email(headers=headers)
+        # Get email if not provided in user info
+        email = user_info_response.get("email")
+        # if not email:
+        #     email = self.__get_email(headers=headers)
 
         super().set_user_data(
             {
                 "email": email,
                 "user": {
-                    "provider_id": str(user_info_response.get("id")),
+                    "provider_id": str(user_info_response.get("sub")),
                     "email": email,
-                    "avatar": user_info_response.get("avatar_url"),
-                    "first_name": user_info_response.get("full_name") or user_info_response.get("login"),
-                    "last_name": "",  # Gitea doesn't provide separate first/last name
+                    # have to set empty string, to prevent violating non-null constraint
+                    "avatar": user_info_response.get("avatar_url") or "",
+                    "first_name": user_info_response.get("given_name") or user_info_response.get("login"),
+                    "last_name": user_info_response.get("family_name"),
                     "is_password_autoset": True,
                 },
             }
