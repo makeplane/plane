@@ -121,3 +121,89 @@ class TestPaginateGroupByValidation:
             paginator_cls=_StubGroupedPaginator,
         )
         assert response.data["grouped_by"] is None
+
+
+@pytest.mark.unit
+class TestGetPerPageBounds:
+    """get_per_page() must reject non-positive per_page before it reaches the
+    paginator. A per_page of 0 divides by zero in math.ceil(count / limit) and
+    a negative per_page slices the queryset with garbage bounds — both would
+    otherwise surface as an unhandled HTTP 500 (flagged by AppScan as
+    "Integer Overflow" on the stickies per_page parameter)."""
+
+    @pytest.mark.parametrize("per_page", ["0", "-1", "-1000"])
+    def test_non_positive_per_page_raises_parse_error(self, per_page):
+        request = _make_request(per_page=per_page)
+        with pytest.raises(ParseError):
+            BasePaginator().get_per_page(request)
+
+    def test_over_max_per_page_still_rejected(self):
+        request = _make_request(per_page="5000")
+        with pytest.raises(ParseError):
+            BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000)
+
+    def test_non_integer_per_page_raises_parse_error(self):
+        request = _make_request(per_page="abc")
+        with pytest.raises(ParseError):
+            BasePaginator().get_per_page(request)
+
+    def test_valid_per_page_passes_through(self):
+        request = _make_request(per_page="30")
+        assert BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000) == 30
+
+    def test_per_page_of_one_is_allowed(self):
+        # The exact lower boundary must be accepted.
+        request = _make_request(per_page="1")
+        assert BasePaginator().get_per_page(request) == 1
+
+
+class _ExplodingPaginator:
+    """Fails if constructed — proves the cursor guard rejects BEFORE any paginator runs."""
+
+    def __init__(self, **kwargs):
+        raise AssertionError("paginator_cls must not be constructed for an invalid cursor")
+
+
+@pytest.mark.unit
+class TestCursorBounds:
+    """paginate() must reject an out-of-bounds client cursor before it drives slicing.
+
+    The grouped paginators use cursor.value as the per-group page size
+    (stop = offset + (cursor.value or limit) + 1). A negative value slices the queryset
+    with a negative stop -> ValueError('Negative indexing is not supported') -> HTTP 500;
+    a huge value fetches far more than max_per_page rows per group (cap bypass / DoS).
+    cursor.offset must be non-negative."""
+
+    @pytest.mark.parametrize("cursor", ["-1:0:0", "1000000:0:0", "20:-1:0"])
+    def test_out_of_bounds_cursor_rejected_before_paginator(self, cursor):
+        request = _make_request(cursor=cursor)
+        with pytest.raises(ParseError):
+            BasePaginator().paginate(
+                request=request,
+                queryset=None,
+                paginator_cls=_ExplodingPaginator,
+                default_per_page=20,
+                max_per_page=1000,
+            )
+
+    def test_valid_cursor_passes_the_guard(self):
+        request = _make_request(cursor="20:0:0")
+        response = BasePaginator().paginate(
+            request=request,
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+            default_per_page=20,
+            max_per_page=1000,
+        )
+        assert response.data["results"] == []
+
+    def test_cursor_value_at_max_is_allowed(self):
+        request = _make_request(cursor="1000:0:0")
+        response = BasePaginator().paginate(
+            request=request,
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+            default_per_page=20,
+            max_per_page=1000,
+        )
+        assert response.data["results"] == []

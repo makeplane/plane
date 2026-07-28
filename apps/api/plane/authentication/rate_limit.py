@@ -6,7 +6,7 @@
 import os
 
 # Third party imports
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import AnonRateThrottle, SimpleRateThrottle, UserRateThrottle
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -47,6 +47,31 @@ def authentication_throttle_allows(request):
     # SimpleRateThrottle.allow_request only reads request.META and
     # request.user, both available on a plain Django HttpRequest.
     return throttle.allow_request(request, None)
+
+
+class AuthenticationAccountThrottle(SimpleRateThrottle):
+    """Per-account (submitted email) authentication throttle.
+
+    AuthenticationThrottle keys on DRF get_ident, which honors X-Forwarded-For when
+    NUM_PROXIES is unset — an attacker can rotate that header to get a fresh bucket per
+    request and brute-force credentials unthrottled. Bucketing a second limiter by the
+    normalized email caps guesses against any single account regardless of source IP.
+    Email is normalized (strip + lower) to match the login lookup so casing tricks cannot
+    multiply the allowance; requests without an email fall back to the client identity.
+    """
+
+    scope = "authentication_account"
+    rate = os.environ.get("AUTHENTICATION_ACCOUNT_RATE_LIMIT", "5/minute")
+
+    def get_cache_key(self, request, view=None):
+        email = (request.POST.get("email") or "").strip().lower()
+        ident = f"email:{email}" if email else f"ip:{self.get_ident(request)}"
+        return self.cache_format % {"scope": self.scope, "ident": ident}
+
+
+def authentication_account_throttle_allows(request):
+    """Per-account counterpart to authentication_throttle_allows (see above)."""
+    return AuthenticationAccountThrottle().allow_request(request, None)
 
 
 class EmailVerificationThrottle(UserRateThrottle):

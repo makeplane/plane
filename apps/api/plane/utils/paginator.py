@@ -646,6 +646,13 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
+        # Reject non-positive values before they reach the paginator, where a
+        # zero limit divides by zero in math.ceil(count / limit) and a negative
+        # limit slices the queryset with garbage bounds — both surface as an
+        # unhandled HTTP 500 instead of a clean client error.
+        if per_page < 1:
+            raise ParseError(detail="Invalid per_page value. Must be at least 1.")
+
         max_per_page = max(max_per_page, default_per_page)
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
@@ -678,6 +685,17 @@ class BasePaginator:
         try:
             input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
         except ValueError:
+            raise ParseError(detail="Invalid cursor parameter.")
+
+        # Bound the client-supplied cursor before it drives any slicing. The grouped
+        # paginators use cursor.value as the per-group page size
+        # (stop = offset + (cursor.value or limit) + 1). Left unbounded, a negative value
+        # slices the queryset with a negative stop -> "Negative indexing is not supported"
+        # (HTTP 500), and a huge value fetches far more than max_per_page rows per group
+        # (max_per_page cap bypass / resource-exhaustion DoS). cursor.offset is the page
+        # index and must be non-negative.
+        effective_max_per_page = max(max_per_page, default_per_page)
+        if not (0 <= input_cursor.value <= effective_max_per_page) or input_cursor.offset < 0:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
