@@ -44,7 +44,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
-import { EditorAIMenu } from "./ai";
+import { EditorAIMenu } from "./ai/menu";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
