@@ -233,6 +233,9 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     super()
                     .get_queryset()
                     .filter(workspace_id=project_deploy_board.workspace_id)
+                    # FIX VULN-01: scope comments to the board's project so callers cannot
+                    # read comments from a different project by supplying a foreign issue_id.
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -261,6 +264,20 @@ class IssueCommentPublicViewSet(BaseViewSet):
             return Response(
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # FIX VULN-02: reject comment creation when the issue does not belong to the
+        # board's project.  Without this check a caller can attach a comment to any
+        # issue in the system — including issues from private projects — by supplying
+        # an arbitrary issue_id in the URL while using a public board as a proxy.
+        if not Issue.objects.filter(
+            pk=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+        ).exists():
+            return Response(
+                {"error": "Issue not found in this project."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = IssueCommentSerializer(data=request.data)
@@ -345,16 +362,20 @@ class IssueReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
+            # FIX BONUS: the URL pattern is /anchor/<str:anchor>/issues/<uuid:issue_id>/reactions/
+            # which provides no "slug" or "project_id" kwargs.  The old lookup via
+            # workspace__slug=self.kwargs.get("slug") and project_id=self.kwargs.get("project_id")
+            # always resolved both to None, causing DeployBoard.DoesNotExist on every list request
+            # and making reaction listing permanently broken on all public boards.
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_reactions_enabled:
                 return (
                     super()
                     .get_queryset()
-                    .filter(workspace__slug=self.kwargs.get("slug"))
-                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .order_by("-created_at")
                     .distinct()
@@ -525,8 +546,13 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
+            # FIX VULN-04: the URL pattern is /anchor/<str:anchor>/issues/<uuid:issue_id>/votes/
+            # which provides no "slug" kwarg.  The old lookup via
+            # workspace__slug=self.kwargs.get("anchor") passed an opaque anchor token as if it
+            # were a workspace slug, causing DeployBoard.DoesNotExist on every list request
+            # and making vote listing permanently broken on all public boards.
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("anchor"), entity_name="project"
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_votes_enabled:
                 return (
@@ -707,7 +733,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                     id=F("issue_reactions__actor__id"),
                                     first_name=F("issue_reactions__actor__first_name"),
                                     last_name=F("issue_reactions__actor__last_name"),
-                                    avatar=F("issue_reactions__actor__avatar"),
+                                    avatar=F("issue_reactions__actor__actor__avatar"),
                                     avatar_url=Case(
                                         When(
                                             votes__actor__avatar_asset__isnull=False,
