@@ -102,6 +102,17 @@ class Adapter:
     def __check_signup(self, email):
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
+        # Restrict signup to emails containing "civix" (case-insensitive)
+        if "civix" not in email.lower():
+            self.logger.warning(
+                "Sign up rejected - email does not contain 'civix': %s", email
+            )
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
+                error_message="SIGNUP_DISABLED",
+                payload={"email": email},
+            )
+
         # Get configuration value
         (ENABLE_SIGNUP,) = get_configuration_value([
             {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
