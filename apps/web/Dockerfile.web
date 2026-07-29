@@ -75,7 +75,7 @@ RUN pnpm turbo run build --filter=web
 # *****************************************************************************
 # STAGE 3: Serve with nginx
 # *****************************************************************************
-FROM nginx:1.29-alpine AS production
+FROM nginx:1.31-alpine AS production
 
 RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
 
