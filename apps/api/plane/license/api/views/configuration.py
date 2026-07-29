@@ -104,10 +104,24 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             EMAIL_FROM,
         ) = get_email_configuration()
 
+        # Guard: EMAIL_PORT may be an empty string when SMTP settings have not
+        # been saved yet (fresh install with SKIP_ENV_VAR=True). Attempting
+        # int("") raises an unhandled ValueError → HTTP 500 (Issue #9472).
+        try:
+            smtp_port = int(EMAIL_PORT)
+        except (ValueError, TypeError):
+            return Response(
+                {
+                    "error": "Email port is not configured. "
+                    "Please save your email settings before sending a test email."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Configure all the connections
         connection = get_connection(
             host=EMAIL_HOST,
-            port=int(EMAIL_PORT),
+            port=smtp_port,
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
             use_tls=EMAIL_USE_TLS == "1",
