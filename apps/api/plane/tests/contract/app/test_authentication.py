@@ -20,9 +20,20 @@ from plane.settings.redis import redis_instance
 from plane.license.models import Instance
 
 
+def _clear_auth_throttle_keys():
+    """Delete only the AuthenticationThrottle history keys from the shared cache.
+
+    DRF's SimpleRateThrottle stores request history under
+    ``throttle_<scope>_<ident>`` keys, so scoping the pattern to
+    ``throttle_authentication_`` removes just this throttle's entries instead
+    of wiping unrelated cache state.
+    """
+    cache.delete_pattern("throttle_authentication_*")
+
+
 @pytest.fixture(autouse=True)
 def _reset_auth_throttle_cache():
-    """Clear the shared cache around every test in this module.
+    """Clear the auth throttle state around every test in this module.
 
     The auth endpoints apply a per-IP throttle (AuthenticationThrottle) whose
     request history lives in the Django cache. Because the test session reuses a
@@ -31,9 +42,9 @@ def _reset_auth_throttle_cache():
     fixtures already used by the throttle / verify-attempt classes, applied
     module-wide so every auth test starts from a clean throttle state.
     """
-    cache.clear()
+    _clear_auth_throttle_keys()
     yield
-    cache.clear()
+    _clear_auth_throttle_keys()
 
 
 @pytest.fixture
