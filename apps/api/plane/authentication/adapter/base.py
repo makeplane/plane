@@ -78,7 +78,7 @@ class Adapter:
         try:
             validate_email(email)
         except ValidationError:
-            self.logger.warning(f"Email is not valid: {email}")
+            self.logger.warning("Email is not valid")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
