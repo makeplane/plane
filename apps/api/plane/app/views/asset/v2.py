@@ -708,8 +708,14 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         if not asset_ids:
             return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # get the asset id — scope to the project to prevent cross-project IDOR
-        assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug, project_id=project_id)
+        # Scope to the requester's own uploads in this workspace. This endpoint's job is
+        # to *associate* freshly-uploaded assets with a project/entity, so the assets are
+        # not yet project-scoped at this point (e.g. a cover uploaded during project
+        # creation has project_id=NULL until this call sets it). Filtering by
+        # project_id=project_id here 404s that flow; scoping by created_by still prevents
+        # cross-project/user IDOR (a caller can only touch assets they uploaded, and the
+        # @allow_permission decorator already scopes them to this project).
+        assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug, created_by=request.user)
 
         # Get the first asset
         asset = assets.first()
