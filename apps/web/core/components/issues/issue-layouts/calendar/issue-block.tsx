@@ -58,12 +58,16 @@ export const CalendarIssueBlock = observer(
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (peekIssue: TIssue) =>
+      handleRedirection(workspaceSlug?.toString(), peekIssue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
     const customActionButton = (
+      // CustomMenu renders this inside its own <button>, which already carries the
+      // interactive semantics and keyboard handling — this div is presentational.
       <div
+        role="presentation"
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
           isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
@@ -75,7 +79,9 @@ export const CalendarIssueBlock = observer(
     );
 
     const isMenuActionRefAboveScreenBottom =
-      menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
+      typeof window !== "undefined" &&
+      menuActionRef?.current &&
+      menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
 
     const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
@@ -136,7 +142,10 @@ export const CalendarIssueBlock = observer(
                     )}
                     <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>
+                  {/* Wrapper exists only to stop clicks reaching the ControlLink; the
+                      quick-action menu inside carries its own interactive semantics. */}
                   <div
+                    role="presentation"
                     className={cn("size-5 flex-shrink-0", {
                       "hidden group-hover/calendar-block:block": !isMobile,
                       block: isMenuActive,
