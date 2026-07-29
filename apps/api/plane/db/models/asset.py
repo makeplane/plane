@@ -98,6 +98,7 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.COMMENT_DESCRIPTION,
             self.EntityTypeContext.PAGE_DESCRIPTION,
             self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+            self.EntityTypeContext.MODULE_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 

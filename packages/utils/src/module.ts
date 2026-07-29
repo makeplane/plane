@@ -120,7 +120,7 @@ const plainTextToHTML = (description: string): string =>
  * @returns {string}
  */
 export const getModuleDescriptionInitialValue = (
-  moduleDetails: Pick<IModule, "description" | "description_html"> | undefined
+  moduleDetails: Pick<IModule, "description" | "description_html"> | null | undefined
 ): string => {
   const descriptionHTML = typeof moduleDetails?.description_html === "string" ? moduleDetails.description_html : "";
   if (descriptionHTML && !isEmptyHtmlString(descriptionHTML, ["img"])) return descriptionHTML;

@@ -49,6 +49,7 @@ export const ModuleDescriptionEditor = observer(function ModuleDescriptionEditor
       control={control}
       render={({ field: { onChange } }) => (
         <RichTextEditor
+          key={moduleId}
           editable
           id="module-modal-editor"
           initialValue={initialValue}
@@ -79,6 +80,7 @@ export const ModuleDescriptionEditor = observer(function ModuleDescriptionEditor
               });
               return asset_id;
             } catch (error) {
+              console.error("Error in uploading module description asset:", error);
               throw new Error("Asset upload failed. Please try again later.", { cause: error });
             }
           }}
@@ -92,8 +94,9 @@ export const ModuleDescriptionEditor = observer(function ModuleDescriptionEditor
                 workspaceSlug,
               });
               return asset_id;
-            } catch {
-              throw new Error("Asset duplication failed. Please try again later.");
+            } catch (error) {
+              console.error("Error in duplicating module description asset:", error);
+              throw new Error("Asset duplication failed. Please try again later.", { cause: error });
             }
           }}
         />

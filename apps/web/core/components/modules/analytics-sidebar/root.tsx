@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -23,7 +23,7 @@ import {
   ChevronRightIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ILinkDetails, IModule, ModuleLink, TNameDescriptionLoader } from "@plane/types";
+import type { ILinkDetails, IModule, ModuleLink, TModuleStatus, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 // plane ui
 import { Loader, CustomSelect } from "@plane/ui";
@@ -76,6 +76,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isEstimatePointValid = !!(estimateType && estimateType?.type == EEstimateSystem.POINTS);
+  // the editor is uncontrolled, so only recompute its starting content when the description actually changes
+  const descriptionInitialValue = useMemo(() => getModuleDescriptionInitialValue(moduleDetails), [moduleDetails]);
 
   const { reset, control } = useForm({
     defaultValues,
@@ -219,7 +221,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     </span>
                   }
                   value={value}
-                  onChange={(selectedStatus: any) => {
+                  onChange={(selectedStatus: TModuleStatus) => {
                     submitChanges({ status: selectedStatus });
                   }}
                   disabled={!isEditingAllowed || isArchived}
@@ -250,7 +252,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           disabled={!isEditingAllowed || isArchived}
           entityId={moduleId}
           fileAssetType={EFileAssetType.MODULE_DESCRIPTION}
-          initialValue={getModuleDescriptionInitialValue(moduleDetails)}
+          initialValue={descriptionInitialValue}
           key={moduleId}
           onSubmit={async (value) => {
             await submitChanges({ description_html: value.description_html });
