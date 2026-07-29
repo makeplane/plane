@@ -7,6 +7,7 @@ VULN-01  Cross-project comment list IDOR (AllowAny endpoint)
 VULN-02  Cross-project comment injection (IsAuthenticated endpoint)
 VULN-04  IssueVotePublicViewSet.get_queryset() used wrong kwarg
 BONUS    IssueReactionPublicViewSet.get_queryset() used wrong kwargs
+Phase-3  Cross-project vote/reaction injection in create() (adversarial review finding)
 
 Each test class documents:
   - the original exploit scenario (should now return 404 or empty)
@@ -49,16 +50,6 @@ class TestIssueCommentGetQuerysetProjectIsolation:
     between the workspace_id filter and the issue_id filter.
     """
 
-    def _build_queryset(self, qs_filter_calls):
-        """
-        Walk a chain of .filter() calls and return the accumulated kwargs so
-        we can assert which filters were applied.
-        """
-        combined = {}
-        for call in qs_filter_calls:
-            combined.update(call)
-        return combined
-
     def test_queryset_includes_project_id_filter(self):
         """
         After the fix the queryset MUST contain a project_id filter equal to
@@ -89,13 +80,7 @@ class TestIssueCommentGetQuerysetProjectIsolation:
              patch.object(type(view), "get_queryset",
                           wraps=IssueCommentPublicViewSet.get_queryset):
 
-            # Collect all .filter() kwarg dicts applied to the queryset chain
             filter_kwargs_seen = []
-            original_filter = mock_qs.filter
-
-            def recording_filter(**kwargs):
-                filter_kwargs_seen.append(kwargs)
-                return mock_qs
 
             mock_qs.filter = lambda **kw: (filter_kwargs_seen.append(kw), mock_qs)[1]
 
@@ -232,6 +217,190 @@ class TestIssueCommentCreateProjectIsolation:
 
 
 # ---------------------------------------------------------------------------
+# Phase-3 — IssueVotePublicViewSet.create() issue ownership validation
+# ---------------------------------------------------------------------------
+
+class TestIssueVoteCreateProjectIsolation:
+    """
+    Phase-3 adversarial finding: create() accepted the URL-supplied issue_id
+    without verifying it belonged to the board's project.  An authenticated
+    caller could cast a vote on any issue in the system, creating a DB record
+    with vote.project_id != vote.issue.project_id.
+
+    Fix: _issue_belongs_to_board() is checked before get_or_create().
+    Returns HTTP 404 if the issue does not belong to the board's project.
+    """
+
+    def _make_request(self):
+        req = MagicMock()
+        req.user = MagicMock(id=uuid4())
+        req.data = {"vote": 1}
+        return req
+
+    def test_returns_404_for_foreign_issue(self):
+        """
+        Casting a vote for an issue from a different project must return 404.
+        Before the fix this would create a cross-project IssueVote record.
+        """
+        from plane.space.views.issue import IssueVotePublicViewSet
+        from rest_framework import status
+
+        project_id = uuid4()
+        workspace_id = uuid4()
+        board = _board(project_id, workspace_id)
+        foreign_issue_id = uuid4()
+
+        view = IssueVotePublicViewSet()
+        view.kwargs = {"issue_id": foreign_issue_id}
+
+        with patch("plane.space.views.issue.DeployBoard.objects.get", return_value=board), \
+             patch("plane.space.views.issue.Issue.objects") as mock_issue_mgr:
+
+            # Issue does NOT exist in board's project
+            mock_issue_mgr.filter.return_value.exists.return_value = False
+
+            response = view.create(self._make_request(), anchor="public-anchor",
+                                   issue_id=foreign_issue_id)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            "Expected 404 when issue_id belongs to a foreign project, got %d. "
+            "Cross-project vote injection must be blocked." % response.status_code
+        )
+
+    def test_allows_vote_on_board_project_issue(self):
+        """
+        Casting a vote for an issue that belongs to the board's project
+        must succeed (HTTP 201).
+        """
+        from plane.space.views.issue import IssueVotePublicViewSet
+        from rest_framework import status
+
+        project_id = uuid4()
+        workspace_id = uuid4()
+        board = _board(project_id, workspace_id)
+        own_issue_id = uuid4()
+
+        view = IssueVotePublicViewSet()
+        view.kwargs = {"issue_id": own_issue_id}
+
+        mock_vote = MagicMock()
+        mock_serializer_instance = MagicMock()
+        mock_serializer_instance.data = {}
+
+        with patch("plane.space.views.issue.DeployBoard.objects.get", return_value=board), \
+             patch("plane.space.views.issue.Issue.objects") as mock_issue_mgr, \
+             patch("plane.space.views.issue.IssueVote.objects") as mock_vote_mgr, \
+             patch("plane.space.views.issue.IssueVoteSerializer",
+                   return_value=mock_serializer_instance), \
+             patch("plane.space.views.issue.issue_activity") as mock_task, \
+             patch("plane.space.views.issue.ProjectMember.objects") as mock_pm, \
+             patch("plane.space.views.issue.ProjectPublicMember.objects"):
+
+            mock_issue_mgr.filter.return_value.exists.return_value = True
+            mock_vote_mgr.get_or_create.return_value = (mock_vote, True)
+            mock_pm.filter.return_value.exists.return_value = True
+            mock_task.delay = MagicMock()
+
+            response = view.create(self._make_request(), anchor="public-anchor",
+                                   issue_id=own_issue_id)
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            "Expected 201 for a valid in-project vote, got %d" % response.status_code
+        )
+
+
+# ---------------------------------------------------------------------------
+# Phase-3 — IssueReactionPublicViewSet.create() issue ownership validation
+# ---------------------------------------------------------------------------
+
+class TestIssueReactionCreateProjectIsolation:
+    """
+    Phase-3 adversarial finding: create() accepted the URL-supplied issue_id
+    without verifying it belonged to the board's project.  An authenticated
+    caller could add a reaction to any issue in the system, creating a DB
+    record with reaction.project_id != reaction.issue.project_id.
+
+    Fix: _issue_belongs_to_board() is checked before serializer.save().
+    Returns HTTP 404 if the issue does not belong to the board's project.
+    """
+
+    def _make_request(self):
+        req = MagicMock()
+        req.user = MagicMock(id=uuid4())
+        req.data = {"reaction": "1F44D"}
+        return req
+
+    def test_returns_404_for_foreign_issue(self):
+        """
+        Adding a reaction to an issue from a different project must return 404.
+        Before the fix this would create a cross-project IssueReaction record.
+        """
+        from plane.space.views.issue import IssueReactionPublicViewSet
+        from rest_framework import status
+
+        project_id = uuid4()
+        workspace_id = uuid4()
+        board = _board(project_id, workspace_id)
+        foreign_issue_id = uuid4()
+
+        view = IssueReactionPublicViewSet()
+        view.kwargs = {"issue_id": foreign_issue_id}
+
+        with patch("plane.space.views.issue.DeployBoard.objects.get", return_value=board), \
+             patch("plane.space.views.issue.Issue.objects") as mock_issue_mgr:
+
+            # Issue does NOT exist in board's project
+            mock_issue_mgr.filter.return_value.exists.return_value = False
+
+            response = view.create(self._make_request(), anchor="public-anchor",
+                                   issue_id=foreign_issue_id)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            "Expected 404 when issue_id belongs to a foreign project, got %d. "
+            "Cross-project reaction injection must be blocked." % response.status_code
+        )
+
+    def test_allows_reaction_on_board_project_issue(self):
+        """
+        Adding a reaction to an issue that belongs to the board's project
+        must succeed (HTTP 201).
+        """
+        from plane.space.views.issue import IssueReactionPublicViewSet
+        from rest_framework import status
+
+        project_id = uuid4()
+        workspace_id = uuid4()
+        board = _board(project_id, workspace_id)
+        own_issue_id = uuid4()
+
+        view = IssueReactionPublicViewSet()
+        view.kwargs = {"issue_id": own_issue_id}
+
+        mock_serializer = MagicMock()
+        mock_serializer.is_valid.return_value = True
+        mock_serializer.data = {}
+
+        with patch("plane.space.views.issue.DeployBoard.objects.get", return_value=board), \
+             patch("plane.space.views.issue.Issue.objects") as mock_issue_mgr, \
+             patch("plane.space.views.issue.IssueReactionSerializer",
+                   return_value=mock_serializer), \
+             patch("plane.space.views.issue.issue_activity") as mock_task, \
+             patch("plane.space.views.issue.ProjectMember.objects") as mock_pm, \
+             patch("plane.space.views.issue.ProjectPublicMember.objects"):
+
+            mock_issue_mgr.filter.return_value.exists.return_value = True
+            mock_pm.filter.return_value.exists.return_value = True
+            mock_task.delay = MagicMock()
+
+            response = view.create(self._make_request(), anchor="public-anchor",
+                                   issue_id=own_issue_id)
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            "Expected 201 for a valid in-project reaction, got %d" % response.status_code
+        )
+
+
+# ---------------------------------------------------------------------------
 # VULN-04 — IssueVotePublicViewSet.get_queryset() wrong kwarg
 # ---------------------------------------------------------------------------
 
@@ -349,12 +518,15 @@ class TestIssueReactionGetQuerysetKwarg:
             "get_queryset() must look up DeployBoard via 'anchor' kwarg. "
             "Actual kwargs used: %s" % called_with
         )
-        assert called_with.get("anchor") == anchor_token
+        assert called_with.get("anchor") == anchor_token, (
+            "DeployBoard lookup must use anchor=%r; got %r" % (anchor_token, called_with.get("anchor"))
+        )
         assert "workspace__slug" not in called_with, (
             "workspace__slug must not be used for DeployBoard lookup; "
             "URL provides no 'slug' kwarg. kwargs seen: %s" % called_with
         )
-        assert "project_id" not in called_with or called_with.get("project_id") != uuid4(), (
+        # project_id must NOT be used as a DeployBoard lookup kwarg (it's not in the URL)
+        assert "project_id" not in called_with, (
             "project_id from URL must not be used for DeployBoard lookup; "
             "URL provides no 'project_id' kwarg. kwargs seen: %s" % called_with
         )
