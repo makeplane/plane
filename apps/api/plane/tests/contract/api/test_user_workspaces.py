@@ -8,6 +8,7 @@ GET /api/v1/users/me/workspaces/
 """
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import Workspace, WorkspaceMember
@@ -42,6 +43,26 @@ def inactive_workspace(db, create_user, create_bot_user):
     return workspace
 
 
+@pytest.fixture
+def deleted_workspace(db, create_user, create_bot_user):
+    """A soft deleted workspace the requesting user still has an active membership row on."""
+    workspace = Workspace.objects.create(
+        name="Deleted Workspace",
+        owner=create_bot_user,
+        slug="deleted-workspace",
+    )
+    WorkspaceMember.objects.create(
+        workspace=workspace,
+        member=create_user,
+        role=20,
+        is_active=True,
+    )
+    # Stamp deleted_at directly instead of calling delete(), which queues a Celery
+    # task to soft delete related objects.
+    Workspace.all_objects.filter(id=workspace.id).update(deleted_at=timezone.now())
+    return workspace
+
+
 @pytest.mark.contract
 class TestUserWorkspaces:
     @pytest.mark.django_db
@@ -71,6 +92,13 @@ class TestUserWorkspaces:
         assert response.status_code == status.HTTP_200_OK
         slugs = {item["slug"] for item in response.data}
         assert inactive_workspace.slug not in slugs
+
+    @pytest.mark.django_db
+    def test_excludes_soft_deleted_workspaces(self, api_key_client, workspace, deleted_workspace):
+        response = api_key_client.get(URL)
+        assert response.status_code == status.HTTP_200_OK
+        slugs = {item["slug"] for item in response.data}
+        assert deleted_workspace.slug not in slugs
 
     @pytest.mark.django_db
     def test_requires_authentication(self, api_client, workspace):
