@@ -1,1 +1,1 @@
-<patched full file content with Issue.issue_objects and scoped destructive ops, as inspected>
+<full corrected file content from earlier inspection, with added is_votes_enabled check and scoped destructive ops>
