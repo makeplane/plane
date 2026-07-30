@@ -70,6 +70,15 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 
+def _issue_belongs_to_board(issue_id, project_deploy_board):
+    """Return True when issue_id exists in the board's project and workspace."""
+    return Issue.objects.filter(
+        pk=issue_id,
+        project_id=project_deploy_board.project_id,
+        workspace_id=project_deploy_board.workspace_id,
+    ).exists()
+
+
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
@@ -233,6 +242,9 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     super()
                     .get_queryset()
                     .filter(workspace_id=project_deploy_board.workspace_id)
+                    # FIX VULN-01: scope comments to the board's project so callers cannot
+                    # read comments from a different project by supplying a foreign issue_id.
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -261,6 +273,16 @@ class IssueCommentPublicViewSet(BaseViewSet):
             return Response(
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # FIX VULN-02: reject writes when issue_id does not belong to the board's
+        # project. Without this check a caller can attach a comment to any issue in
+        # the system — including issues from private projects — by supplying an
+        # arbitrary issue_id while using a public board as a proxy.
+        if not _issue_belongs_to_board(issue_id, project_deploy_board):
+            return Response(
+                {"error": "Issue not found in this project."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = IssueCommentSerializer(data=request.data)
@@ -345,16 +367,20 @@ class IssueReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
+            # FIX BONUS: the URL pattern is /anchor/<str:anchor>/issues/<uuid:issue_id>/reactions/
+            # which provides no "slug" or "project_id" kwargs. The old lookup via
+            # workspace__slug=self.kwargs.get("slug") and project_id=self.kwargs.get("project_id")
+            # always resolved both to None, causing DeployBoard.DoesNotExist on every list request
+            # and making reaction listing permanently broken on all public boards.
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_reactions_enabled:
                 return (
                     super()
                     .get_queryset()
-                    .filter(workspace__slug=self.kwargs.get("slug"))
-                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .order_by("-created_at")
                     .distinct()
@@ -370,6 +396,14 @@ class IssueReactionPublicViewSet(BaseViewSet):
             return Response(
                 {"error": "Reactions are not enabled for this project board"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # FIX Phase-3: same cross-project injection risk as VULN-02 — reject reactions
+        # for issues that do not belong to the board's project.
+        if not _issue_belongs_to_board(issue_id, project_deploy_board):
+            return Response(
+                {"error": "Issue not found in this project."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = IssueReactionSerializer(data=request.data)
@@ -525,8 +559,13 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
+            # FIX VULN-04: the URL pattern is /anchor/<str:anchor>/issues/<uuid:issue_id>/votes/
+            # which provides no "slug" kwarg. The old lookup via
+            # workspace__slug=self.kwargs.get("anchor") passed an opaque anchor token as if it
+            # were a workspace slug, causing DeployBoard.DoesNotExist on every list request
+            # and making vote listing permanently broken on all public boards.
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("anchor"), entity_name="project"
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_votes_enabled:
                 return (
@@ -542,6 +581,15 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def create(self, request, anchor, issue_id):
         project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
+
+        # FIX Phase-3: same cross-project injection risk as VULN-02 — reject votes
+        # for issues that do not belong to the board's project.
+        if not _issue_belongs_to_board(issue_id, project_deploy_board):
+            return Response(
+                {"error": "Issue not found in this project."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,
