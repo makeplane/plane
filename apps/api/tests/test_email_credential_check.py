@@ -53,6 +53,7 @@ class TestEmailCredentialCheckEmptyPort:
         response = self._post({"receiver_email": "test@example.com"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "error" in response.data
+        assert "save your email settings before sending a test email" in response.data["error"].lower()
 
     @patch("plane.license.api.views.configuration.get_email_configuration")
     def test_returns_400_for_none_email_port(self, mock_config):
@@ -61,6 +62,7 @@ class TestEmailCredentialCheckEmptyPort:
         response = self._post({"receiver_email": "test@example.com"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "error" in response.data
+        assert "save your email settings before sending a test email" in response.data["error"].lower()
 
     @patch("plane.license.api.views.configuration.get_email_configuration")
     def test_returns_400_for_non_numeric_email_port(self, mock_config):
@@ -69,6 +71,7 @@ class TestEmailCredentialCheckEmptyPort:
         response = self._post({"receiver_email": "test@example.com"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "error" in response.data
+        assert "save your email settings before sending a test email" in response.data["error"].lower()
 
     # ------------------------------------------------------------------
     # Pre-existing guard must still pass
