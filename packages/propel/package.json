@@ -61,7 +61,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "generate-story": "node scripts/generate-story.mjs",
-    "audit-stories": "node scripts/audit.mjs"
+    "audit-stories": "node scripts/audit.mjs",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@base-ui-components/react": "catalog:",
@@ -88,11 +90,15 @@
     "@plane/typescript-config": "workspace:*",
     "@storybook/addon-designs": "catalog:",
     "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-vitest": "10.4.6",
     "@storybook/react-vite": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/browser-playwright": "4.1.8",
+    "playwright": "^1.62.1",
     "storybook": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "4.1.8"
   }
 }

@@ -5,6 +5,7 @@
  */
 
 import * as React from "react";
+import { expect, within } from "@storybook/test";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThinkingIndicator } from "./thinking-indicator";
 
@@ -39,14 +40,31 @@ export const Default: Story = {};
 
 export const Thinking: Story = {
   args: { status: "thinking" },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const indicator = canvas.getByRole("status");
+    await expect(indicator).toBeInTheDocument();
+    await expect(indicator).toHaveAttribute("aria-label", "AI is thinking");
+  },
 };
 
 export const Typing: Story = {
   args: { status: "typing" },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const indicator = canvas.getByRole("status");
+    await expect(indicator).toBeInTheDocument();
+    await expect(indicator).toHaveAttribute("aria-label", "AI is typing");
+  },
 };
 
 export const Done: Story = {
   args: { status: "done" },
+  play: async ({ canvasElement }) => {
+    // When status is "done" the component renders nothing
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByRole("status")).not.toBeInTheDocument();
+  },
 };
 
 export const AllStatuses: Story = {

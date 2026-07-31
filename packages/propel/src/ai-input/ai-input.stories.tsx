@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { expect, userEvent, within } from "@storybook/test";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AIInput } from "./ai-input";
 
@@ -49,4 +50,37 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole("textbox");
+    await expect(input).toBeInTheDocument();
+    await userEvent.type(input, "How do I create a project?");
+    await expect(input).toHaveValue("How do I create a project?");
+  },
+};
+
+export const WithSuggestion: Story = {
+  args: {
+    placeholder: "Ask anything…",
+    suggestion: "How do I create a new project in Plane?",
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText("How do I create a new project in Plane?")).toBeInTheDocument();
+    await expect(canvas.getByText("Tab")).toBeInTheDocument();
+  },
+};
+
+export const ErrorState: Story = {
+  args: { hasError: true, placeholder: "Something went wrong" },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole("textbox");
+    await expect(input).toHaveAttribute("aria-invalid", "true");
+  },
+};
+
+export const Loading: Story = {
+  args: { isLoading: true, placeholder: "Thinking…" },
+};
