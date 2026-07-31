@@ -83,15 +83,27 @@ class TestMemberPreferenceScope:
 
     def test_member_can_read_own_preferences(self, workspace, project):
         member = _member(workspace, project, role=15)
+        member_record = ProjectMember.objects.get(project=project, member=member)
+        member_record.preferences = {"pinned": ["existing"]}
+        member_record.save(update_fields=["preferences"])
+
         response = _client(member).get(
             PREF_URL.format(slug=workspace.slug, project_id=project.id, member_id=member.id)
         )
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+        # Assert the seeded value is actually served, not just that the route 200s —
+        # a queryset regression that returned the wrong member would still pass on
+        # status alone.
+        assert response.data["preferences"] == {"pinned": ["existing"]}
+        assert str(response.data["member_id"]) == str(member.id)
 
     def test_member_can_modify_own_preferences(self, workspace, project):
         member = _member(workspace, project, role=15)
+        member_record = ProjectMember.objects.get(project=project, member=member)
+        original = dict(member_record.preferences)
+
         response = _client(member).patch(
             PREF_URL.format(slug=workspace.slug, project_id=project.id, member_id=member.id),
             {"pinned": ["my-view"]},
@@ -100,3 +112,14 @@ class TestMemberPreferenceScope:
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+        assert response.data["preferences"]["pinned"] == ["my-view"]
+
+        # The write must actually persist — a no-op PATCH would still return 200.
+        member_record.refresh_from_db()
+        assert member_record.preferences["pinned"] == ["my-view"]
+
+        # ProjectMemberPreferenceSerializer.validate_preferences merges into the
+        # existing dict rather than replacing it, so the untouched default keys
+        # must survive. Pins that semantic against a wholesale-replace regression.
+        for key, value in original.items():
+            assert member_record.preferences[key] == value
