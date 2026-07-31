@@ -13,7 +13,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
+import { useProjectColumns } from "@/components/projects/settings/useProjectColumns";
 // store
 import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 // local imports
@@ -46,6 +46,7 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
 
     if (memberId === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
+        // oxlint-disable-next-line promise/always-return
         .then(async () => {
           router.push(`/${workspaceSlug}/projects`);
         })

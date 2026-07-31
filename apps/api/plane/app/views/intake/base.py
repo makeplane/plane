@@ -44,6 +44,7 @@ from plane.app.serializers import (
     IssueDescriptionVersionDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import INTAKE_ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.app.views.base import BaseAPIView
@@ -195,7 +196,13 @@ class IntakeIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
-        ).order_by(request.GET.get("order_by", "-issue__created_at"))
+        ).order_by(
+            sanitize_order_by(
+                request.GET.get("order_by", "-issue__created_at"),
+                INTAKE_ISSUE_ORDER_BY_ALLOWLIST,
+                "-issue__created_at",
+            )
+        )
         # Intake status filter
         intake_status = [item for item in request.GET.get("status", "-2").split(",") if item != "null"]
         if intake_status:

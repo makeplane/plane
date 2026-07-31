@@ -15,7 +15,7 @@ import SlackLogo from "@/app/assets/services/slack.png?url";
 import { SelectChannel } from "@/components/integration/slack/select-channel";
 import { SelectRepository } from "@/components/integration/github/select-repository";
 // constants
-import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
+import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
 // services
 import { ProjectService } from "@/services/project";
 

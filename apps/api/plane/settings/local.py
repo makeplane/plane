@@ -46,7 +46,7 @@ LOGGING = {
             "style": "{",
         },
         "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "()": "pythonjsonlogger.json.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
         },
     },
@@ -71,11 +71,6 @@ LOGGING = {
             "propagate": False,
         },
         "plane.external": {
-            "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False,
-        },
-        "plane.mongo": {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,

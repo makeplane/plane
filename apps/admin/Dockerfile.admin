@@ -13,7 +13,7 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.9.4
+RUN pnpm add -g turbo@2.9.18
 
 COPY . .
 
@@ -75,7 +75,9 @@ RUN pnpm turbo run build --filter=admin
 
 # =========================================================================== #
 
-FROM nginx:1.29-alpine AS production
+FROM nginx:1.31-alpine AS production
+
+RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
 
 COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode

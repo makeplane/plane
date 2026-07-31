@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Nastavenia pracovného priestoru",
+    "page_label": "{workspace} - Všeobecné nastavenia",
+    "key_created": "Kľúč vytvorený",
+    "copy_key": "Skopírujte a uložte tento kľúč do Plane Pages. Po zatvorení ho neuvidíte. CSV súbor s kľúčom bol stiahnutý.",
+    "token_copied": "Token skopírovaný do schránky.",
+    "settings": {
+      "general": {
+        "title": "Všeobecné",
+        "upload_logo": "Nahrať logo",
+        "edit_logo": "Upraviť logo",
+        "name": "Názov pracovného priestoru",
+        "company_size": "Veľkosť spoločnosti",
+        "url": "URL pracovného priestoru",
+        "workspace_timezone": "Časové pásmo pracovného priestoru",
+        "update_workspace": "Aktualizovať priestor",
+        "delete_workspace": "Zmazať tento priestor",
+        "delete_workspace_description": "Zmazaním priestoru odstránite všetky dáta a zdroje. Akcia je nevratná.",
+        "delete_btn": "Zmazať priestor",
+        "delete_modal": {
+          "title": "Naozaj chcete zmazať tento priestor?",
+          "description": "Máte aktívnu skúšobnú verziu. Najprv ju zrušte.",
+          "dismiss": "Zatvoriť",
+          "cancel": "Zrušiť skúšobnú verziu",
+          "success_title": "Priestor zmazaný.",
+          "success_message": "Budete presmerovaný na profil.",
+          "error_title": "Nepodarilo sa.",
+          "error_message": "Skúste to prosím znova."
+        },
+        "errors": {
+          "name": {
+            "required": "Názov je povinný",
+            "max_length": "Názov priestoru nesmie presiahnuť 80 znakov"
+          },
+          "company_size": {
+            "required": "Veľkosť spoločnosti je povinná",
+            "select_a_range": "Vyberte veľkosť organizácie"
+          }
+        }
+      },
+      "members": {
+        "title": "Členovia",
+        "add_member": "Pridať člena",
+        "pending_invites": "Čakajúce pozvánky",
+        "invitations_sent_successfully": "Pozvánky boli úspešne odoslané",
+        "leave_confirmation": "Naozaj chcete opustiť priestor? Stratíte prístup. Akcia je nevratná.",
+        "details": {
+          "full_name": "Celé meno",
+          "display_name": "Zobrazované meno",
+          "email_address": "E-mailová adresa",
+          "account_type": "Typ účtu",
+          "authentication": "Overovanie",
+          "joining_date": "Dátum pripojenia"
+        },
+        "modal": {
+          "title": "Pozvať spolupracovníkov",
+          "description": "Pozvite ľudí na spoluprácu.",
+          "button": "Odoslať pozvánky",
+          "button_loading": "Odosielanie pozvánok",
+          "placeholder": "meno@spoločnosť.sk",
+          "errors": {
+            "required": "Vyžaduje sa e-mailová adresa.",
+            "invalid": "E-mail je neplatný"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Fakturácia a plány",
+        "description": "Vyberte si plán, spravujte predplatné a jednoducho upgradujte podľa vašich potrieb.",
+        "title": "Fakturácia a plány",
+        "current_plan": "Aktuálny plán",
+        "free_plan": "Používate bezplatný plán",
+        "view_plans": "Zobraziť plány"
+      },
+      "exports": {
+        "heading": "Exporty",
+        "description": "Exportujte údaje o projektoch v rôznych formátoch a získajte prístup k histórii exportov s odkazmi na stiahnutie.",
+        "title": "Exporty",
+        "exporting": "Exportovanie",
+        "previous_exports": "Predchádzajúce exporty",
+        "export_separate_files": "Exportovať dáta do samostatných súborov",
+        "exporting_projects": "Exportovanie projektu",
+        "format": "Formát",
+        "filters_info": "Použite filtre na export konkrétnych pracovných položiek podľa vašich kritérií.",
+        "modal": {
+          "title": "Exportovať do",
+          "toasts": {
+            "success": {
+              "title": "Export úspešný",
+              "message": "Exportované {entity} si môžete stiahnuť z predchádzajúceho exportu."
+            },
+            "error": {
+              "title": "Export zlyhal",
+              "message": "Skúste to prosím znova."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooky",
+        "description": "Automatizujte oznámenia do externých služieb pri udalostiach v projekte.",
+        "title": "Webhooky",
+        "add_webhook": "Pridať webhook",
+        "modal": {
+          "title": "Vytvoriť webhook",
+          "details": "Detaily webhooku",
+          "payload": "URL pre payload",
+          "question": "Ktoré udalosti majú spustiť tento webhook?",
+          "error": "URL je povinná"
+        },
+        "secret_key": {
+          "title": "Tajný kľúč",
+          "message": "Vygenerujte token na prihlásenie k webhooku"
+        },
+        "options": {
+          "all": "Posielať všetko",
+          "individual": "Vybrať jednotlivé udalosti"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook vytvorený",
+            "message": "Webhook bol úspešne vytvorený"
+          },
+          "not_created": {
+            "title": "Webhook nebol vytvorený",
+            "message": "Vytvorenie webhooku zlyhalo"
+          },
+          "updated": {
+            "title": "Webhook aktualizovaný",
+            "message": "Webhook bol úspešne aktualizovaný"
+          },
+          "not_updated": {
+            "title": "Aktualizácia webhooku zlyhala",
+            "message": "Webhook sa nepodarilo aktualizovať"
+          },
+          "removed": {
+            "title": "Webhook odstránený",
+            "message": "Webhook bol úspešne odstránený"
+          },
+          "not_removed": {
+            "title": "Odstránenie webhooku zlyhalo",
+            "message": "Webhook sa nepodarilo odstrániť"
+          },
+          "secret_key_copied": {
+            "message": "Tajný kľúč skopírovaný do schránky."
+          },
+          "secret_key_not_copied": {
+            "message": "Chyba pri kopírovaní kľúča."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "API Tokeny",
+        "description": "Generujte bezpečné API tokeny na integráciu vašich dát s externými systémami a aplikáciami.",
+        "title": "API Tokeny",
+        "add_token": "Pridať token prístupu",
+        "create_token": "Vytvoriť token",
+        "never_expires": "Nikdy neexpiruje",
+        "generate_token": "Generovať token",
+        "generating": "Generovanie",
+        "delete": {
+          "title": "Zmazať API token",
+          "description": "Aplikácie používajúce tento token stratia prístup. Akcia je nevratná.",
+          "success": {
+            "title": "Úspech!",
+            "message": "Token úspešne zmazaný"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Mazanie tokenu zlyhalo"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integrácie",
+        "heading": "Integrácie",
+        "description": "Prepojte sa s populárnymi nástrojmi a službami a synchronizujte svoju prácu v rámci celého ekosystému pracovného postupu.",
+        "page_title": "Pracujte so svojimi údajmi Plane v dostupných aplikáciách alebo vo vlastných.",
+        "page_description": "Zobraziť všetky integrácie používané týmto pracovným priestorom alebo vami."
+      },
+      "imports": {
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu."
+      },
+      "worklogs": {
+        "title": "Pracovné záznamy",
+        "heading": "Záznamy práce",
+        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte."
+      },
+      "group_syncing": {
+        "title": "Synchronizácia skupín",
+        "heading": "Synchronizácia skupín",
+        "description": "Prepojte skupiny poskytovateľa identity s projektami a rolami. Prístup používateľov sa automaticky aktualizuje pri zmene členstva v skupine vo vašom IdP, čím sa zjednodušuje onboarding a offboarding.",
+        "enable": {
+          "title": "Povoliť synchronizáciu skupín",
+          "description": "Automaticky pridávajte používateľov do projektov na základe skupín poskytovateľa identity."
+        },
+        "config": {
+          "title": "Konfigurovať synchronizáciu skupín",
+          "description": "Nastavte, ako sú skupiny poskytovateľa identity mapované na projekty a role.",
+          "sync_on_login": {
+            "title": "Synchronizácia pri prihlásení",
+            "description": "Aktualizujte členstvo v skupine a prístup k projektu pri prihlásení používateľa."
+          },
+          "sync_offline": {
+            "title": "Offline synchronizácia",
+            "description": "Spúšťa synchronizáciu každých šesť hodín automaticky, bez čakania na prihlásenie používateľov."
+          },
+          "auto_remove": {
+            "title": "Automatické odstránenie",
+            "description": "Automaticky odstráňte používateľov z projektov, keď už nezodpovedajú skupine."
+          },
+          "group_attribute_key": {
+            "title": "Kľúč atribútu skupiny",
+            "description": "Atribút poskytovateľa identity používaný na identifikáciu a synchronizáciu používateľských skupín.",
+            "placeholder": "Skupiny"
+          }
+        },
+        "group_mapping": {
+          "title": "Mapovanie skupín",
+          "description": "Prepojte skupiny poskytovateľa identity s projektami a rolami.",
+          "button_text": "Pridať novú synchronizáciu skupín"
+        },
+        "toast": {
+          "updating": "Aktualizácia funkcie synchronizácie skupín",
+          "success": "Funkcia synchronizácie skupín bola úspešne aktualizovaná.",
+          "error": "Nepodarilo sa aktualizovať funkciu synchronizácie skupín!"
+        },
+        "delete_modal": {
+          "title": "Zmazať synchronizáciu skupín",
+          "content": "Noví používatelia z tejto skupiny identity už nebudú pridávaní do projektu. Už pridaní používatelia si zachovajú svoju súčasnú rolu."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Používateľská skupina",
+            "required": "Používateľská skupina je povinná",
+            "placeholder": "Zadajte názvy skupín IdP"
+          },
+          "project": {
+            "text": "Projekt",
+            "required": "Projekt je povinný",
+            "placeholder": "Vyberte projekt"
+          },
+          "default_role": {
+            "text": "Rola projektu",
+            "required": "Rola projektu je povinná",
+            "placeholder": "Vyberte rolu projektu"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identita",
+        "heading": "Identita",
+        "description": "Nakonfigurujte svoju doménu a povolte jednotné prihlásenie"
+      },
+      "project_states": {
+        "title": "Stavy projektu",
+        "heading": "Zobrazte prehľad priebehu všetkých projektov.",
+        "description": "Stavy projektov sú funkcia exkluzívna pre Plane na sledovanie priebehu všetkých vašich projektov podľa ľubovoľnej vlastnosti projektu.",
+        "go_to_settings": "Prejsť na nastavenia"
+      },
+      "projects": {
+        "title": "Projekty",
+        "description": "Spravujte stavy projektov, povoľte štítky projektov a ďalšie konfigurácie.",
+        "tabs": {
+          "states": "Stavy projektu",
+          "labels": "Štítky projektu"
+        }
+      },
+      "templates": {
+        "title": "Šablóny",
+        "heading": "Šablóny",
+        "description": "Ušetrite 80 % času stráveného vytváraním projektov, pracovných položiek a stránok pomocou šablón."
+      },
+      "relations": {
+        "title": "Vzťahy",
+        "heading": "Vzťahy",
+        "description": "Vytvárajte a spravujte typy vzťahov, ktoré prepájajú pracovné položky naprieč vaším pracovným priestorom."
+      },
+      "cancel_trial": {
+        "title": "Najprv zrušte vašu skúšobnú verziu.",
+        "description": "Máte aktívnu skúšobnú verziu jedného z našich platených plánov. Prosím, najskôr ju zrušte, aby ste mohli pokračovať.",
+        "dismiss": "Zavrieť",
+        "cancel": "Zrušiť skúšobnú verziu",
+        "cancel_success_title": "Skúšobná verzia zrušená.",
+        "cancel_success_message": "Teraz môžete odstrániť vorkspejs.",
+        "cancel_error_title": "To nefungovalo.",
+        "cancel_error_message": "Skúste to znova, prosím."
+      },
+      "applications": {
+        "internal": "Interný",
+        "title": "Aplikácie",
+        "applicationId_copied": "ID aplikácie skopírované do schránky",
+        "clientId_copied": "ID klienta skopírované do schránky",
+        "clientSecret_copied": "Tajomstvo klienta skopírované do schránky",
+        "third_party_apps": "Aplikácie tretích strán",
+        "your_apps": "Vaše aplikácie",
+        "connect": "Pripojiť",
+        "connected": "Pripojené",
+        "disconnect": "Odpojiť",
+        "install": "Nainštalovať",
+        "installed": "Nainštalované",
+        "configure": "Konfigurovať",
+        "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Plane",
+        "app_credentials_regenrated": {
+          "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
+          "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
+        },
+        "app_created": {
+          "title": "Aplikácia bola úspešne vytvorená",
+          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
+        },
+        "installed_apps": "Nainštalované aplikácie",
+        "all_apps": "Všetky aplikácie",
+        "internal_apps": "Interné aplikácie",
+        "app_name_title": "Ako pomenujete túto aplikáciu",
+        "app_description_title": {
+          "label": "Dlhý popis",
+          "placeholder": "Napíšte dlhý popis pre trhovisko. Stlačte '/' pre príkazy."
+        },
+        "authorization_grant_type": {
+          "title": "Typ pripojenia",
+          "description": "Vyberte, či má byť vaša aplikácia nainštalovaná raz pre pracovný priestor alebo umožniť každému používateľovi pripojiť svoj vlastný účet"
+        },
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webovú stránku vašej aplikácie.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvorca aplikácií",
+          "description": "Osoba alebo organizácia, ktorá vytvára aplikáciu."
+        },
+        "app_maker_error": "Tvorca aplikácie je povinný",
+        "setup_url": {
+          "label": "URL nastavenia",
+          "description": "Používatelia budú po nainštalovaní aplikácie presmerovaní na túto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Secret",
+          "description": "Tajný kľúč používaný na overenie prichádzajúcich webhook požiadaviek.",
+          "placeholder": "Zadajte náhodný tajný kľúč"
+        },
+        "redirect_uris": {
+          "label": "Presmerovacie URI (oddelené medzerou)",
+          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Pripojte pracovný priestor Plane pre začatie používania",
+        "client_id_and_secret": "ID a Tajomstvo Klienta",
+        "client_id_and_secret_description": "Skopírujte a uložte tento tajný kľúč. Po kliknutí na Zavrieť tento kľúč už neuvidíte.",
+        "client_id_and_secret_download": "Môžete si stiahnuť CSV s kľúčom odtiaľto.",
+        "application_id": "ID Aplikácie",
+        "client_id": "ID Klienta",
+        "client_secret": "Tajomstvo Klienta",
+        "export_as_csv": "Exportovať ako CSV",
+        "slug_already_exists": "Slug už existuje",
+        "failed_to_create_application": "Nepodarilo sa vytvoriť aplikáciu",
+        "upload_logo": "Nahrať Logo",
+        "app_name_error": "Názov aplikácie je povinný",
+        "app_short_description_title": "Dajte tejto aplikácii krátky popis",
+        "app_short_description_error": "Krátky popis aplikácie je povinný",
+        "app_description_error": "Popis aplikácie je povinný",
+        "app_slug_title": "Slug aplikácie",
+        "app_slug_error": "Slug aplikácie je povinný",
+        "invalid_website_error": "Neplatná webová stránka",
+        "webhook_url_title": "URL Webhooku",
+        "webhook_url_error": "URL webhooku je povinné",
+        "invalid_webhook_url_error": "Neplatné URL webhooku",
+        "redirect_uris_title": "URI presmerovania",
+        "redirect_uris_error": "URI presmerovania sú povinné",
+        "invalid_redirect_uris_error": "Neplatné URI presmerovania",
+        "redirect_uris_description": "Zadajte URI oddelené medzerami, kam aplikácia presmeruje po používateľovi, napr. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Autorizované JavaScript pôvody",
+        "authorized_javascript_origins_error": "Autorizované JavaScript pôvody sú povinné",
+        "invalid_authorized_javascript_origins_error": "Neplatné autorizované JavaScript pôvody",
+        "authorized_javascript_origins_description": "Zadajte pôvody oddelené medzerami, odkiaľ bude môcť aplikácia robiť požiadavky, napr. app.com example.com",
+        "create_app": "Vytvoriť aplikáciu",
+        "update_app": "Aktualizovať aplikáciu",
+        "build_your_own_app": "Vytvorte si vlastnú aplikáciu",
+        "edit_app_details": "Upraviť detaily aplikácie",
+        "regenerate_client_secret_description": "Znovu vygenerovať tajomstvo klienta. Po regenerácii môžete kľúč skopírovať alebo stiahnuť do CSV súboru.",
+        "regenerate_client_secret": "Znovu vygenerovať tajomstvo klienta",
+        "regenerate_client_secret_confirm_title": "Ste si istí, že chcete znovu vygenerovať tajomstvo klienta?",
+        "regenerate_client_secret_confirm_description": "Aplikácia používajúca toto tajomstvo prestane fungovať. Budete musieť aktualizovať tajomstvo v aplikácii.",
+        "regenerate_client_secret_confirm_cancel": "Zrušiť",
+        "regenerate_client_secret_confirm_regenerate": "Znovu vygenerovať",
+        "read_only_access_to_workspace": "Prístup len na čítanie k vášmu pracovnému priestoru",
+        "write_access_to_workspace": "Prístup na zápis k vášmu pracovnému priestoru",
+        "read_only_access_to_user_profile": "Prístup len na čítanie k vášmu používateľskému profilu",
+        "write_access_to_user_profile": "Prístup na zápis k vášmu používateľskému profilu",
+        "connect_app_to_workspace": "Pripojiť {app} k vášmu pracovnému priestoru {workspace}",
+        "user_permissions": "Používateľské oprávnenia",
+        "user_permissions_description": "Používateľské oprávnenia sa používajú na udelenie prístupu k profilu používateľa.",
+        "workspace_permissions": "Oprávnenia pracovného priestoru",
+        "workspace_permissions_description": "Oprávnenia pracovného priestoru sa používajú na udelenie prístupu k pracovnému priestoru.",
+        "with_the_permissions": "s oprávneniami",
+        "app_consent_title": "{app} žiada o prístup k vášmu pracovnému priestoru a profilu Plane.",
+        "choose_workspace_to_connect_app_with": "Vyberte pracovný priestor, s ktorým chcete pripojiť aplikáciu",
+        "app_consent_workspace_permissions_title": "{app} by chcel",
+        "app_consent_user_permissions_title": "{app} môže tiež požiadať o povolenie používateľa pre nasledujúce zdroje. Tieto oprávnenia budú vyžiadané a autorizované iba používateľom.",
+        "app_consent_accept_title": "Prijatím",
+        "app_consent_accept_1": "Udeľujete aplikácii prístup k vašim údajom Plane kdekoľvek, kde môžete používať aplikáciu v rámci alebo mimo Plane",
+        "app_consent_accept_2": "Súhlasíte s Pravidlami ochrany súkromia a Podmienkami používania {app}",
+        "accepting": "Prijímanie...",
+        "accept": "Prijať",
+        "categories": "Kategórie",
+        "select_app_categories": "Vyberte kategórie aplikácie",
+        "categories_title": "Kategórie",
+        "categories_error": "Kategórie sú povinné",
+        "invalid_categories_error": "Neplatné kategórie",
+        "categories_description": "Vyberte kategórie, ktoré najlepšie opisujú aplikáciu",
+        "supported_plans": "Podporované Plány",
+        "supported_plans_description": "Vyberte plány pracovného priestoru, ktoré môžu nainštalovať túto aplikáciu. Ponechajte prázdne, ak chcete povoliť všetky plány.",
+        "select_plans": "Vybrať Plány",
+        "privacy_policy_url_title": "URL Pravidiel ochrany súkromia",
+        "privacy_policy_url_error": "URL Pravidiel ochrany súkromia je povinné",
+        "invalid_privacy_policy_url_error": "Neplatné URL Pravidiel ochrany súkromia",
+        "terms_of_service_url_title": "URL Podmienok služby",
+        "terms_of_service_url_error": "URL Podmienok služby je povinné",
+        "invalid_terms_of_service_url_error": "Neplatné URL Podmienok služby",
+        "support_url_title": "URL Podpory",
+        "support_url_error": "URL Podpory je povinné",
+        "invalid_support_url_error": "Neplatné URL Podpory",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video je povinné",
+        "invalid_video_url_error": "Neplatné URL Video",
+        "setup_url_error": "URL Nastavenia je povinné",
+        "invalid_setup_url_error": "Neplatné URL Nastavenia",
+        "configuration_url_title": "URL Konfigurácie",
+        "configuration_url_error": "URL Konfigurácie je povinné",
+        "invalid_configuration_url_error": "Neplatné URL Konfigurácie",
+        "contact_email_title": "Email Kontaktu",
+        "contact_email_error": "Email Kontaktu je povinný",
+        "invalid_contact_email_error": "Neplatný email kontaktu",
+        "upload_attachments": "Nahrať prílohy",
+        "uploading_images": "Nahrávanie {count} obrázku{count, plural, one {s} other {s}}",
+        "drop_images_here": "Presuňte obrázky sem",
+        "click_to_upload_images": "Kliknite, aby ste nahrávali obrázky",
+        "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo presahuje limit veľkosti ({size} MB)",
+        "uploading": "Nahrávanie...",
+        "upload_and_save": "Nahrať a uložiť",
+        "app_consent_no_access_title": "Požiadavka na inštaláciu",
+        "app_consent_no_access_description": "Táto aplikácia môže byť nainštalovaná až po jej inštalácii administrátorom pracovného priestoru. Kontaktujte svojho administrátora pracovného priestoru, aby ste mohli pokračovať.",
+        "app_consent_unapproved_title": "Túto aplikáciu Plane ešte neskontrolovalo ani neschválilo.",
+        "app_consent_unapproved_description": "Pred prepojením s pracovným priestorom sa uistite, že tejto aplikácii dôverujete.",
+        "go_to_app": "Prejsť na aplikáciu",
+        "enable_app_mentions": "Povoliť zmienky o aplikácii",
+        "enable_app_mentions_tooltip": "Keď je toto povolené, používatelia môžu spomenúť alebo priradiť pracovné položky tejto aplikácii.",
+        "scopes": "Rozsahy",
+        "select_scopes": "Vybrať rozsahy",
+        "read_access_to": "Prístup len na čítanie k",
+        "write_access_to": "Prístup na zápis k",
+        "global_permission_expiration": "Globálne rozsahy čoskoro vypršia. Namiesto toho použite granulované rozsahy. Napríklad použite project:read namiesto globálneho čítania.",
+        "selected_scopes": "{count} vybraných",
+        "scopes_and_permissions": "Rozsahy a oprávnenia",
+        "read": "Čítanie",
+        "write": "Zápis",
+        "scope_description": {
+          "projects": "Prístup k projektom a všetkým súvisiacim entitám",
+          "wiki": "Prístup k wiki a všetkým súvisiacim entitám",
+          "workspaces": "Prístup k pracovným priestorom a všetkým súvisiacim entitám",
+          "stickies": "Prístup k poznámkam a všetkým súvisiacim entitám",
+          "profile": "Prístup k informáciám o profile používateľa",
+          "agents": "Prístup k agentom a všetkým súvisiacim entitám",
+          "assets": "Prístup k aktívam a všetkým súvisiacim entitám"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skripty",
+        "new_script": "Nový skript",
+        "description": "Automatizujte svoje pracovné postupy pomocou vlastných skriptov a automatizačných pravidiel."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Žiadne API tokeny",
+        "description": "Používajte API na integráciu Plane s externými systémami."
+      },
+      "webhooks": {
+        "title": "Žiadne webhooky",
+        "description": "Vytvorte webhooky na automatizáciu akcií."
+      },
+      "exports": {
+        "title": "Žiadne exporty",
+        "description": "Tu nájdete históriu exportov."
+      },
+      "imports": {
+        "title": "Žiadne importy",
+        "description": "Tu nájdete históriu importov."
+      }
+    }
+  }
+}

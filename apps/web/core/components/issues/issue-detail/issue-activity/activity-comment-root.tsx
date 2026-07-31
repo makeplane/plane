@@ -13,9 +13,6 @@ import type { TCommentsOperations } from "@plane/types";
 import { CommentCard } from "@/components/comments/card/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web components
-import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues/issue-details/issue-properties-activity";
-import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
 // local imports
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueActivityLoader } from "./loader";
@@ -82,24 +79,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
-        ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
-          <IssueAdditionalPropertiesActivity
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
-        ) : activityComment.activity_type === "WORKLOG" ? (
-          <IssueActivityWorklog
-            key={activityComment.id}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            activityComment={activityComment}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
-        ) : (
-          <></>
-        );
+        ) : null;
       })}
     </div>
   );

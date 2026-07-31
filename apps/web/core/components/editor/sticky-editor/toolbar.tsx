@@ -15,8 +15,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TSticky } from "@plane/types";
 // constants
 import { cn } from "@plane/utils";
-import type { ToolbarMenuItem } from "@/constants/editor";
-import { TOOLBAR_ITEMS } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@plane/editor";
+import { TOOLBAR_ITEMS } from "@plane/editor";
 // helpers
 import { ColorPalette } from "./color-palette";
 

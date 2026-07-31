@@ -27,8 +27,7 @@ import {
   usePersonalNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
-// plane-web imports
-import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
+import { SidebarItemBase } from "./sidebar-item";
 
 export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
@@ -84,6 +83,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   const sortedNavigationItems = useMemo(
     () =>
+      // oxlint-disable-next-line oxc/no-map-spread
       WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
         const preference = workspacePreferences.items[item.key];
         return {
@@ -98,7 +98,8 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
     <>
       <div className="flex flex-col gap-0.5">
         {filteredStaticNavigationItems.map((item, _index) => (
-          <SidebarItem key={`static_${_index}`} item={item} />
+          // oxlint-disable-next-line react/no-array-index-key
+          <SidebarItemBase key={`static_${_index}`} item={item} />
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
@@ -114,7 +115,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                 : "aria_labels.app_sidebar.open_workspace_menu"
             )}
           >
-            <span className="text-13 font-semibold">{t("workspace")}</span>
+            <span className="text-13 font-semibold">{t("common.workspace")}</span>
           </Disclosure.Button>
           <div className="pointer-events-none flex items-center opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
             <Disclosure.Button
@@ -149,10 +150,12 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
             <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
               <>
                 {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
-                  <SidebarItem key={`static_${_index}`} item={item} />
+                  // oxlint-disable-next-line react/no-array-index-key
+                  <SidebarItemBase key={`static_${_index}`} item={item} />
                 ))}
                 {sortedNavigationItems.map((item, _index) => (
-                  <SidebarItem key={`dynamic_${_index}`} item={item} />
+                  // oxlint-disable-next-line react/no-array-index-key
+                  <SidebarItemBase key={`dynamic_${_index}`} item={item} />
                 ))}
                 <SidebarNavItem>
                   <button

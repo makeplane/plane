@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Geben Sie eine Projekt-ID ein",
+      "please_select_a_timezone": "Bitte wählen Sie eine Zeitzone aus",
+      "archive_project": {
+        "title": "Projekt archivieren",
+        "description": "Durch das Archivieren wird das Projekt im Menü ausgeblendet. Der Zugriff bleibt über die Projektseite bestehen.",
+        "button": "Projekt archivieren"
+      },
+      "delete_project": {
+        "title": "Projekt löschen",
+        "description": "Durch das Löschen des Projekts werden alle zugehörigen Daten entfernt. Diese Aktion ist nicht umkehrbar.",
+        "button": "Projekt löschen"
+      },
+      "toast": {
+        "success": "Projekt aktualisiert",
+        "error": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "members": {
+      "label": "Mitglieder",
+      "project_lead": "Projektleitung",
+      "project_lead_description": "Wählen Sie den Projektleiter für das Projekt aus.",
+      "default_assignee": "Standardzuweisung",
+      "default_assignee_description": "Wählen Sie den Standard-Zuständigen für das Projekt aus.",
+      "project_subscribers": "Projektabonnenten",
+      "project_subscribers_description": "Wählen Sie Mitglieder aus, die Benachrichtigungen für dieses Projekt erhalten.",
+      "guest_super_permissions": {
+        "title": "Gastbenutzern Zugriff auf alle Elemente gewähren:",
+        "sub_heading": "Gäste sehen alle Elemente im Projekt."
+      },
+      "invite_members": {
+        "title": "Mitglieder einladen",
+        "sub_heading": "Laden Sie Mitglieder in das Projekt ein.",
+        "select_co_worker": "Wählen Sie einen Mitarbeiter"
+      }
+    },
+    "states": {
+      "heading": "Status",
+      "description": "Definieren und passen Sie Workflow-Status an, um den Fortschritt Ihrer Arbeitselemente zu verfolgen.",
+      "describe_this_state_for_your_members": "Beschreiben Sie diesen Status für Ihre Mitglieder.",
+      "empty_state": {
+        "title": "Keine Status für die Gruppe {groupKey}",
+        "description": "Erstellen Sie einen neuen Status"
+      }
+    },
+    "labels": {
+      "heading": "Labels",
+      "description": "Erstellen Sie benutzerdefinierte Labels, um Ihre Arbeitselemente zu kategorisieren und zu organisieren",
+      "label_title": "Labelname",
+      "label_title_is_required": "Ein Labelname ist erforderlich",
+      "label_max_char": "Der Labelname darf nicht mehr als 255 Zeichen enthalten",
+      "toast": {
+        "error": "Fehler beim Aktualisieren des Labels"
+      }
+    },
+    "estimates": {
+      "heading": "Schätzungen",
+      "description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      "label": "Schätzungen",
+      "title": "Schätzungen für mein Projekt aktivieren",
+      "enable_description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      "no_estimate": "Keine Schätzung",
+      "new": "Neues Schätzungssystem",
+      "create": {
+        "custom": "Benutzerdefiniert",
+        "start_from_scratch": "Von Grund auf neu",
+        "choose_template": "Vorlage wählen",
+        "choose_estimate_system": "Schätzungssystem wählen",
+        "enter_estimate_point": "Schätzung eingeben",
+        "step": "Schritt {step} von {total}",
+        "label": "Schätzung erstellen"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Schätzung erstellt",
+            "message": "Die Schätzung wurde erfolgreich erstellt"
+          },
+          "error": {
+            "title": "Schätzungserstellung fehlgeschlagen",
+            "message": "Wir konnten die neue Schätzung nicht erstellen, bitte versuche es erneut."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Schätzung geändert",
+            "message": "Die Schätzung wurde in deinem Projekt aktualisiert."
+          },
+          "error": {
+            "title": "Schätzungsänderung fehlgeschlagen",
+            "message": "Wir konnten die Schätzung nicht ändern, bitte versuche es erneut"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden aktiviert."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden deaktiviert."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Schätzung konnte nicht deaktiviert werden. Bitte versuche es erneut"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Schätzungen neu geordnet",
+            "message": "Die Schätzungen wurden in Ihrem Projekt neu geordnet."
+          },
+          "error": {
+            "title": "Neuordnung der Schätzungen fehlgeschlagen",
+            "message": "Die Schätzungen konnten nicht neu geordnet werden, bitte versuchen Sie es erneut"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Schätzungssystem erstellt",
+            "message": "Erfolgreich erstellt und aktiviert"
+          },
+          "error": {
+            "title": "Fehler",
+            "message": "Etwas ist schiefgelaufen"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Die Schätzung muss größer als 0 sein.",
+        "unable_to_process": "Wir können deine Anfrage nicht verarbeiten, bitte versuche es erneut.",
+        "numeric": "Die Schätzung muss ein numerischer Wert sein.",
+        "character": "Die Schätzung muss ein Zeichenwert sein.",
+        "empty": "Der Schätzungswert darf nicht leer sein.",
+        "already_exists": "Der Schätzungswert existiert bereits.",
+        "unsaved_changes": "Sie haben ungespeicherte Änderungen. Bitte speichern Sie diese, bevor Sie auf Fertig klicken",
+        "remove_empty": "Die Schätzung darf nicht leer sein. Geben Sie einen Wert in jedes Feld ein oder entfernen Sie die Felder, für die Sie keine Werte haben.",
+        "fill": "Bitte füllen Sie dieses Schätzungsfeld aus",
+        "repeat": "Schätzungswert darf nicht wiederholt werden"
+      },
+      "systems": {
+        "points": {
+          "label": "Punkte",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Quadrate",
+          "custom": "Benutzerdefiniert"
+        },
+        "categories": {
+          "label": "Kategorien",
+          "t_shirt_sizes": "T-Shirt-Größen",
+          "easy_to_hard": "Einfach bis schwer",
+          "custom": "Benutzerdefiniert"
+        },
+        "time": {
+          "label": "Zeit",
+          "hours": "Stunden"
+        }
+      },
+      "edit": {
+        "title": "Schätzsystem bearbeiten",
+        "add_or_update": {
+          "title": "Schätzungen hinzufügen, aktualisieren oder entfernen",
+          "description": "Verwalten Sie das aktuelle System durch Hinzufügen, Aktualisieren oder Entfernen von Punkten oder Kategorien."
+        },
+        "switch": {
+          "title": "Schätzungstyp ändern",
+          "description": "Konvertieren Sie Ihr Punktesystem in ein Kategoriesystem und umgekehrt."
+        }
+      },
+      "switch": "Schätzsystem wechseln",
+      "current": "Aktuelles Schätzsystem",
+      "select": "Wählen Sie ein Schätzsystem"
+    },
+    "automations": {
+      "label": "Automatisierungen",
+      "heading": "Automatisierungen",
+      "description": "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
+      "auto-archive": {
+        "title": "Geschlossene Arbeitselemente automatisch archivieren",
+        "description": "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
+        "duration": "Arbeitselemente automatisch archivieren, die geschlossen sind seit"
+      },
+      "auto-close": {
+        "title": "Arbeitselemente automatisch schließen",
+        "description": "Plane schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
+        "duration": "Arbeitselemente automatisch schließen, die inaktiv sind seit",
+        "auto_close_status": "Auto-Schließ-Status"
+      },
+      "auto-remind": {
+        "title": "Automatische Erinnerungen",
+        "description": "Plane wird automatische Erinnerungen via E-Mail und in-App-Benachrichtigungen senden, um Ihr Team auf den Lauf der Dinge zu halten.",
+        "duration": "Erinnerung vor"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Keine Labels",
+        "description": "Erstellen Sie Labels, um Elemente zu organisieren."
+      },
+      "estimates": {
+        "title": "Keine Schätzungssysteme",
+        "description": "Erstellen Sie ein Schätzungssystem, um den Aufwand zu kommunizieren.",
+        "primary_button": "Schätzungssystem hinzufügen"
+      },
+      "integrations": {
+        "title": "Keine Integrationen konfiguriert",
+        "description": "Konfigurieren Sie GitHub und andere Integrationen, um Ihre Projektarbeitsaufgaben zu synchronisieren."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Workflows aktivieren",
+        "description": "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
+        "no_states_tooltip": "Keine Status wurden dem Workflow hinzugefügt.",
+        "no_work_item_types_tooltip": "Keine Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
+        "no_states_or_work_item_types_tooltip": "Keine Status oder Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
+        "toast": {
+          "loading": {
+            "enabling": "Workflows werden aktiviert",
+            "disabling": "Workflows werden deaktiviert"
+          },
+          "success": {
+            "title": "Erfolg!",
+            "message": "Workflows erfolgreich aktiviert."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Workflows konnten nicht aktiviert werden. Bitte versuchen Sie es erneut."
+          }
+        }
+      },
+      "heading": "Workflows",
+      "description": "Automatisieren Sie Übergänge von Arbeitselementen und legen Sie Regeln fest, um zu steuern, wie Aufgaben durch Ihre Projektpipeline fließen.",
+      "add_button": "Neuen Workflow hinzufügen",
+      "search": "Workflows suchen",
+      "detail": {
+        "define": "Workflow definieren",
+        "add_states": "Status hinzufügen",
+        "unmapped_states": {
+          "title": "Nicht zugeordnete Status erkannt",
+          "description": "Einige Arbeitselemente der ausgewählten Typen befinden sich derzeit in Status, die in diesem Workflow nicht vorhanden sind.",
+          "note": "Wenn Sie diesen Workflow aktivieren, werden diese Elemente automatisch in den Anfangsstatus dieses Workflows verschoben.",
+          "label": "Fehlende Status",
+          "tooltip": "Einige Arbeitselemente befinden sich in Status, die diesem Workflow nicht zugeordnet sind. Öffnen Sie den Workflow zur Überprüfung."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Alle Status werden verwendet",
+          "description": "Alle für dieses Projekt definierten Status sind bereits in Ihrem aktuellen Workflow vorhanden."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Dieser Workflow gilt für jeden Arbeitselementtyp, der keinem Workflow zugeordnet ist."
+      },
+      "create": {
+        "heading": "Neuen Workflow erstellen",
+        "name": {
+          "placeholder": "Einen eindeutigen Namen hinzufügen",
+          "validation": {
+            "max_length": "Der Name darf nicht mehr als 255 Zeichen haben",
+            "required": "Name ist erforderlich",
+            "invalid": "Der Name darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
+          }
+        },
+        "description": {
+          "placeholder": "Eine kurze Beschreibung hinzufügen",
+          "validation": {
+            "invalid": "Die Beschreibung darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
+          }
+        },
+        "work_item_type": {
+          "label": "Arbeitselementtyp"
+        },
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich erstellt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich aktualisiert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "delete": {
+        "loading": "Workflow wird gelöscht",
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich gelöscht."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Status erfolgreich hinzugefügt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Status konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Arbeitselementtypen",
+      "description": "Erstellen und passen Sie verschiedene Typen von Arbeitselementen mit einzigartigen Eigenschaften an"
+    },
+    "features": {
+      "cycles": {
+        "title": "Zyklen",
+        "short_title": "Zyklen",
+        "description": "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        "toggle_title": "Zyklen aktivieren",
+        "toggle_description": "Planen Sie die Arbeit in fokussierten Zeiträumen."
+      },
+      "modules": {
+        "title": "Module",
+        "short_title": "Module",
+        "description": "Organisieren Sie die Arbeit in Teilprojekte mit engagierten Leitern und Verantwortlichen.",
+        "toggle_title": "Module aktivieren",
+        "toggle_description": "Projektmitglieder können Module erstellen und bearbeiten."
+      },
+      "views": {
+        "title": "Ansichten",
+        "short_title": "Ansichten",
+        "description": "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+        "toggle_title": "Ansichten aktivieren",
+        "toggle_description": "Projektmitglieder können Ansichten erstellen und bearbeiten."
+      },
+      "pages": {
+        "title": "Seiten",
+        "short_title": "Seiten",
+        "description": "Erstellen und bearbeiten Sie freie Inhalte: Notizen, Dokumente, alles.",
+        "toggle_title": "Seiten aktivieren",
+        "toggle_description": "Projektmitglieder können Seiten erstellen und bearbeiten."
+      },
+      "intake": {
+        "intake_responsibility": "Intake-Verantwortung",
+        "intake_sources": "Intake-Quellen",
+        "title": "Aufnahme",
+        "short_title": "Aufnahme",
+        "description": "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
+        "toggle_title": "Aufnahme aktivieren",
+        "toggle_description": "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
+        "toggle_tooltip_on": "Bitten Sie Ihren Projekt-Admin, dies zu aktivieren.",
+        "toggle_tooltip_off": "Bitten Sie Ihren Projekt-Admin, dies zu deaktivieren.",
+        "notify_assignee": {
+          "title": "Zuständige benachrichtigen",
+          "description": "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert"
+        },
+        "in_app": {
+          "title": "In der App",
+          "description": "Erhalten Sie neue Arbeitselemente von Mitgliedern und Gästen in Ihrem Arbeitsbereich, ohne Ihre bestehenden Arbeitselemente zu stören."
+        },
+        "email": {
+          "title": "E-Mail",
+          "description": "Sammeln Sie neue Arbeitselemente von allen, die eine E-Mail an eine Plane-E-Mail-Adresse senden.",
+          "fieldName": "E-Mail-ID"
+        },
+        "form": {
+          "title": "Formulare",
+          "description": "Ermöglichen Sie Personen außerhalb Ihres Arbeitsbereichs, über ein dediziertes und sicheres Formular potenzielle neue Arbeitselemente zu erstellen.",
+          "fieldName": "Standard-Formular-URL",
+          "create_forms": "Formulare mit Arbeitselementtypen erstellen",
+          "manage_forms": "Formulare verwalten",
+          "manage_forms_tooltip": "Bitten Sie Ihren Arbeitsbereichs-Admin, dies zu verwalten.",
+          "create_form": "Formular erstellen",
+          "edit_form": "Formulardetails bearbeiten",
+          "form_title": "Formulartitel",
+          "form_title_required": "Formulartitel ist erforderlich",
+          "work_item_type": "Arbeitselementtyp",
+          "remove_property": "Eigenschaft entfernen",
+          "select_properties": "Eigenschaften auswählen",
+          "search_placeholder": "Nach Eigenschaften suchen",
+          "toasts": {
+            "success_create": "Intake-Formular erfolgreich erstellt",
+            "success_update": "Intake-Formular erfolgreich aktualisiert",
+            "error_create": "Intake-Formular konnte nicht erstellt werden",
+            "error_update": "Intake-Formular konnte nicht aktualisiert werden"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Zuständige werden festgelegt...",
+            "success": {
+              "title": "Erfolg!",
+              "message": "Zuständige erfolgreich festgelegt."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Beim Festlegen der Zuständigen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Zeiterfassung",
+        "short_title": "Zeiterfassung",
+        "description": "Erfassen Sie die für Arbeitselemente und Projekte aufgewendete Zeit.",
+        "toggle_title": "Zeiterfassung aktivieren",
+        "toggle_description": "Projektmitglieder können die geleistete Arbeit protokollieren."
+      },
+      "milestones": {
+        "title": "Meilensteine",
+        "short_title": "Meilensteine",
+        "description": "Meilensteine bieten eine Ebene, um Arbeitselemente auf gemeinsame Fertigstellungstermine auszurichten.",
+        "toggle_title": "Meilensteine aktivieren",
+        "toggle_description": "Organisieren Sie Arbeitselemente nach Meilenstein-Fristen."
+      },
+      "toasts": {
+        "loading": "Projektfunktion wird aktualisiert...",
+        "success": "Projektfunktion erfolgreich aktualisiert.",
+        "error": "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "project_updates": {
+      "heading": "Projektaktualisierungen",
+      "description": "Konsolidierte Nachverfolgung und Fortschrittsüberwachung für dieses Projekt"
+    },
+    "templates": {
+      "heading": "Vorlagen",
+      "description": "Sparen Sie 80% der Zeit beim Erstellen von Projekten, Arbeitselementen und Seiten, wenn Sie Vorlagen verwenden."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Automatische Zyklusplanung",
+        "description": "Halten Sie Zyklen ohne manuelle Einrichtung in Bewegung.",
+        "tooltip": "Erstellen Sie automatisch neue Zyklen basierend auf Ihrem gewählten Zeitplan.",
+        "edit_button": "Bearbeiten",
+        "form": {
+          "cycle_title": {
+            "label": "Zyklustitel",
+            "placeholder": "Titel",
+            "tooltip": "Der Titel wird für nachfolgende Zyklen mit Nummern ergänzt. Zum Beispiel: Design - 1/2/3",
+            "validation": {
+              "required": "Zyklustitel ist erforderlich",
+              "max_length": "Der Titel darf 255 Zeichen nicht überschreiten"
+            }
+          },
+          "cycle_duration": {
+            "label": "Zyklusdauer",
+            "unit": "Wochen",
+            "validation": {
+              "required": "Zyklusdauer ist erforderlich",
+              "min": "Die Zyklusdauer muss mindestens 1 Woche betragen",
+              "max": "Die Zyklusdauer darf 30 Wochen nicht überschreiten",
+              "positive": "Die Zyklusdauer muss positiv sein"
+            }
+          },
+          "cooldown_period": {
+            "label": "Abkühlungsphase",
+            "unit": "Tage",
+            "tooltip": "Pause zwischen Zyklen, bevor der nächste beginnt.",
+            "validation": {
+              "required": "Abkühlungsphase ist erforderlich",
+              "negative": "Die Abkühlungsphase darf nicht negativ sein"
+            }
+          },
+          "start_date": {
+            "label": "Zyklus-Starttag",
+            "validation": {
+              "required": "Startdatum ist erforderlich",
+              "past": "Das Startdatum darf nicht in der Vergangenheit liegen"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Anzahl zukünftiger Zyklen",
+            "validation": {
+              "required": "Anzahl der Zyklen ist erforderlich",
+              "min": "Mindestens 1 Zyklus ist erforderlich",
+              "max": "Es können nicht mehr als 3 Zyklen geplant werden"
+            }
+          },
+          "auto_rollover": {
+            "label": "Automatische Übertragung von Arbeitselementen",
+            "tooltip": "Am Tag der Zyklusbeendigung werden alle unvollendeten Arbeitselemente in den nächsten Zyklus verschoben."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Automatische Zyklusplanung wird aktiviert",
+            "loading_disable": "Automatische Zyklusplanung wird deaktiviert",
+            "success": {
+              "title": "Erfolg!",
+              "message": "Automatische Zyklusplanung erfolgreich aktiviert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Aktivierung der automatischen Zyklusplanung fehlgeschlagen."
+            }
+          },
+          "save": {
+            "loading": "Konfiguration der automatischen Zyklusplanung wird gespeichert",
+            "success": {
+              "title": "Erfolg!",
+              "message_create": "Konfiguration der automatischen Zyklusplanung erfolgreich gespeichert.",
+              "message_update": "Konfiguration der automatischen Zyklusplanung erfolgreich aktualisiert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message_create": "Speichern der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+              "message_update": "Aktualisierung der Konfiguration der automatischen Zyklusplanung fehlgeschlagen."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -35,7 +35,7 @@ export interface IBasePowerKStore {
   toggleShortcutsListModal: (value?: boolean) => void;
 }
 
-export abstract class BasePowerKStore implements IBasePowerKStore {
+export class BasePowerKStore implements IBasePowerKStore {
   // observables
   isPowerKModalOpen: boolean = false;
   isShortcutsListModalOpen: boolean = false;

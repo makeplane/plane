@@ -17,6 +17,8 @@ from typing import Dict, Any, Tuple
 from typing import Optional
 from plane.db.models import IssueLink
 from plane.utils.exception_logger import log_exception
+from plane.utils.ip_address import is_blocked_ip
+from plane.utils.url_security import pinned_fetch, pinned_fetch_following_redirects
 
 logger = logging.getLogger("plane.worker")
 
@@ -36,30 +38,33 @@ def validate_url_ip(url: str) -> None:
         ValueError: If the URL points to a private/internal IP
     """
     parsed = urlparse(url)
-    hostname = parsed.hostname
-
-    if not hostname:
-        raise ValueError("Invalid URL: No hostname found")
 
     # Only allow HTTP and HTTPS to prevent file://, gopher://, etc.
     if parsed.scheme not in ("http", "https"):
         raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed")
+
+    hostname = parsed.hostname
+    if not hostname:
+        raise ValueError("Invalid URL: No hostname found")
 
     # Resolve hostname to IP addresses — this catches domain names that
     # point to internal IPs (e.g. attacker.com -> 169.254.169.254)
 
     try:
         addr_info = socket.getaddrinfo(hostname, None)
-    except socket.gaierror:
+    except (socket.gaierror, UnicodeError):
+        # UnicodeError covers IDNA failures raised before the address lookup.
         raise ValueError("Hostname could not be resolved")
 
     if not addr_info:
         raise ValueError("No IP addresses found for the hostname")
 
-    # Check every resolved IP against blocked ranges to prevent SSRF
+    # Check every resolved IP against blocked ranges to prevent SSRF. The
+    # actual fetch is pinned to the validated IP (see safe_get), so this acts
+    # as an early, fail-closed pre-filter.
     for addr in addr_info:
-        ip = ipaddress.ip_address(addr[4][0])
-        if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
+        ip = ipaddress.ip_address(addr[4][0].split("%")[0])
+        if is_blocked_ip(ip):
             raise ValueError("Access to private/internal networks is not allowed")
 
 
@@ -72,8 +77,9 @@ def safe_get(
     timeout: int = 1,
 ) -> Tuple[requests.Response, str]:
     """
-    Perform a GET request that validates every redirect hop against private IPs.
-    Prevents SSRF by ensuring no redirect lands on a private/internal address.
+    Perform a GET request that resolves, validates and pins every hop to its
+    validated IP. Prevents SSRF via private/internal targets, DNS rebinding
+    (TOCTOU) and redirects that bounce to internal addresses.
 
     Args:
         url: The URL to fetch
@@ -85,31 +91,15 @@ def safe_get(
 
     Raises:
         ValueError: If any URL in the redirect chain points to a private IP
-        requests.RequestException: On network errors
-        RuntimeError: If max redirects exceeded
+        requests.RequestException: On network errors (incl. TooManyRedirects)
     """
-    validate_url_ip(url)
-
-    current_url = url
-    response = requests.get(
-        current_url, headers=headers, timeout=timeout, allow_redirects=False
+    return pinned_fetch_following_redirects(
+        "GET",
+        url,
+        headers=headers,
+        timeout=timeout,
+        max_redirects=MAX_REDIRECTS,
     )
-
-    redirect_count = 0
-    while response.is_redirect:
-        if redirect_count >= MAX_REDIRECTS:
-            raise RuntimeError(f"Too many redirects for URL: {url}")
-        redirect_url = response.headers.get("Location")
-        if not redirect_url:
-            break
-        current_url = urljoin(current_url, redirect_url)
-        validate_url_ip(current_url)
-        redirect_count += 1
-        response = requests.get(
-            current_url, headers=headers, timeout=timeout, allow_redirects=False
-        )
-
-    return response, current_url
 
 
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
@@ -199,14 +189,13 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
     parsed_url = urlparse(base_url)
     fallback_url = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
 
-    # Check if fallback exists
+    # Check if fallback exists (pinned to the validated IP).
     try:
-        validate_url_ip(fallback_url)
-        response = requests.head(fallback_url, timeout=2, allow_redirects=False)
+        response = pinned_fetch("HEAD", fallback_url, timeout=2)
 
         if response.status_code == 200:
             return fallback_url
-    except requests.RequestException as e:
+    except (requests.RequestException, ValueError) as e:
         log_exception(e, warning=True)
         return None
 

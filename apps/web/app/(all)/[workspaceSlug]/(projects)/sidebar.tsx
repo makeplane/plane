@@ -17,8 +17,6 @@ import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-it
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
-import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
 
 export const AppSidebar = observer(function AppSidebar() {
   // store hooks
@@ -38,8 +36,6 @@ export const AppSidebar = observer(function AppSidebar() {
       <SidebarMenuItems />
       {/* Favorites Menu */}
       {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
-      {/* Teams List */}
-      <SidebarTeamsList />
       {/* Projects List */}
       <SidebarProjectsList />
     </SidebarWrapper>

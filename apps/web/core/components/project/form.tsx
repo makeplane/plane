@@ -105,8 +105,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
           const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
           const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const nameSpecialCharError = errorData?.name?.includes("PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS");
 
-          if (nameError || identifierError) {
+          if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
                 type: TOAST_TYPE.ERROR,
@@ -120,6 +121,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
+              });
+            }
+
+            if (nameSpecialCharError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {

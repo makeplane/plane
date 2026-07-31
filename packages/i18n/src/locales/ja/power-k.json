@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "作業項目を一括削除"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "作業項目のアクション",
+        "indicator": "作業項目",
+        "change_state": "ステータスを変更",
+        "change_priority": "優先度を変更",
+        "change_assignees": "担当者を割り当て",
+        "assign_to_me": "自分に割り当て",
+        "unassign_from_me": "自分の割り当てを解除",
+        "change_estimate": "見積もりを変更",
+        "add_to_cycle": "サイクルに追加",
+        "add_to_modules": "モジュールに追加",
+        "add_labels": "ラベルを追加",
+        "subscribe": "通知を購読",
+        "unsubscribe": "通知の購読を解除",
+        "delete": "削除",
+        "copy_id": "IDをコピー",
+        "copy_id_toast_success": "作業項目のIDをクリップボードにコピーしました。",
+        "copy_id_toast_error": "作業項目のIDのコピー中にエラーが発生しました。",
+        "copy_title": "タイトルをコピー",
+        "copy_title_toast_success": "作業項目のタイトルをクリップボードにコピーしました。",
+        "copy_title_toast_error": "作業項目のタイトルのコピー中にエラーが発生しました。",
+        "copy_url": "URLをコピー",
+        "copy_url_toast_success": "作業項目のURLをクリップボードにコピーしました。",
+        "copy_url_toast_error": "作業項目のURLのコピー中にエラーが発生しました。"
+      },
+      "cycle": {
+        "title": "サイクルのアクション",
+        "indicator": "サイクル",
+        "add_to_favorites": "お気に入りに追加",
+        "remove_from_favorites": "お気に入りから削除",
+        "copy_url": "URLをコピー",
+        "copy_url_toast_success": "サイクルのURLをクリップボードにコピーしました。",
+        "copy_url_toast_error": "サイクルのURLのコピー中にエラーが発生しました。"
+      },
+      "module": {
+        "title": "モジュールのアクション",
+        "indicator": "モジュール",
+        "add_remove_members": "メンバーの追加/削除",
+        "change_status": "ステータスを変更",
+        "add_to_favorites": "お気に入りに追加",
+        "remove_from_favorites": "お気に入りから削除",
+        "copy_url": "URLをコピー",
+        "copy_url_toast_success": "モジュールのURLをクリップボードにコピーしました。",
+        "copy_url_toast_error": "モジュールのURLのコピー中にエラーが発生しました。"
+      },
+      "page": {
+        "title": "ページのアクション",
+        "indicator": "ページ",
+        "lock": "ロック",
+        "unlock": "ロック解除",
+        "make_private": "プライベートにする",
+        "make_public": "公開する",
+        "archive": "アーカイブ",
+        "restore": "復元",
+        "add_to_favorites": "お気に入りに追加",
+        "remove_from_favorites": "お気に入りから削除",
+        "copy_url": "URLをコピー",
+        "copy_url_toast_success": "ページのURLをクリップボードにコピーしました。",
+        "copy_url_toast_error": "ページのURLのコピー中にエラーが発生しました。"
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "新規作業項目",
+      "create_page": "新規ページ",
+      "create_view": "新規ビュー",
+      "create_cycle": "新規サイクル",
+      "create_module": "新規モジュール",
+      "create_project": "新規プロジェクト",
+      "create_workspace": "新規ワークスペース",
+      "create_project_automation": "新規自動化"
+    },
+    "navigation_actions": {
+      "open_workspace": "ワークスペースを開く",
+      "nav_home": "ホームに移動",
+      "nav_inbox": "受信トレイに移動",
+      "nav_your_work": "あなたの作業に移動",
+      "nav_account_settings": "アカウント設定に移動",
+      "open_project": "プロジェクトを開く",
+      "nav_projects_list": "プロジェクト一覧に移動",
+      "nav_all_workspace_work_items": "すべての作業項目に移動",
+      "nav_assigned_workspace_work_items": "割り当てられた作業項目に移動",
+      "nav_created_workspace_work_items": "作成した作業項目に移動",
+      "nav_subscribed_workspace_work_items": "購読中の作業項目に移動",
+      "nav_workspace_analytics": "ワークスペースのアナリティクスに移動",
+      "nav_workspace_drafts": "ワークスペースの下書きに移動",
+      "nav_workspace_archives": "ワークスペースのアーカイブに移動",
+      "open_workspace_setting": "ワークスペースの設定を開く",
+      "nav_workspace_settings": "ワークスペースの設定に移動",
+      "nav_project_work_items": "作業項目に移動",
+      "open_project_cycle": "サイクルを開く",
+      "nav_project_cycles": "サイクルに移動",
+      "open_project_module": "モジュールを開く",
+      "nav_project_modules": "モジュールに移動",
+      "open_project_view": "プロジェクトのビューを開く",
+      "nav_project_views": "プロジェクトのビューに移動",
+      "nav_project_pages": "ページに移動",
+      "nav_project_intake": "インテークに移動",
+      "nav_project_archives": "プロジェクトのアーカイブに移動",
+      "open_project_setting": "プロジェクトの設定を開く",
+      "nav_project_settings": "プロジェクトの設定に移動",
+      "nav_workspace_active_cycle": "すべてのアクティブサイクルに移動",
+      "nav_project_overview": "プロジェクトの概要に移動"
+    },
+    "account_actions": {
+      "sign_out": "サインアウト",
+      "workspace_invites": "ワークスペースの招待"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "アプリのサイドバーを切り替え",
+      "copy_current_page_url": "現在のページのURLをコピー",
+      "copy_current_page_url_toast_success": "現在のページのURLをクリップボードにコピーしました。",
+      "copy_current_page_url_toast_error": "現在のページのURLのコピー中にエラーが発生しました。",
+      "focus_top_nav_search": "検索入力にフォーカス"
+    },
+    "preferences_actions": {
+      "update_theme": "インターフェースのテーマを変更",
+      "update_timezone": "タイムゾーンを変更",
+      "update_start_of_week": "週の開始日を変更",
+      "update_language": "インターフェースの言語を変更",
+      "toast": {
+        "theme": {
+          "success": "テーマを正常に更新しました。",
+          "error": "テーマの更新に失敗しました。もう一度お試しください。"
+        },
+        "timezone": {
+          "success": "タイムゾーンを正常に更新しました。",
+          "error": "タイムゾーンの更新に失敗しました。もう一度お試しください。"
+        },
+        "generic": {
+          "success": "環境設定を正常に更新しました。",
+          "error": "環境設定の更新に失敗しました。もう一度お試しください。"
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "キーボードショートカットを開く",
+      "open_plane_documentation": "Planeのドキュメントを開く",
+      "join_forum": "フォーラムに参加",
+      "report_bug": "バグを報告",
+      "chat_with_us": "チャットでお問い合わせ"
+    },
+    "page_placeholders": {
+      "default": "コマンドを入力または検索",
+      "open_workspace": "ワークスペースを開く",
+      "open_project": "プロジェクトを開く",
+      "open_workspace_setting": "ワークスペースの設定を開く",
+      "open_project_cycle": "サイクルを開く",
+      "open_project_module": "モジュールを開く",
+      "open_project_view": "プロジェクトのビューを開く",
+      "open_project_setting": "プロジェクトの設定を開く",
+      "update_work_item_state": "ステータスを変更",
+      "update_work_item_priority": "優先度を変更",
+      "update_work_item_assignee": "担当者を割り当て",
+      "update_work_item_estimate": "見積もりを変更",
+      "update_work_item_cycle": "サイクルに追加",
+      "update_work_item_module": "モジュールに追加",
+      "update_work_item_labels": "ラベルを追加",
+      "update_module_member": "メンバーを変更",
+      "update_module_status": "ステータスを変更",
+      "update_theme": "テーマを変更",
+      "update_timezone": "タイムゾーンを変更",
+      "update_start_of_week": "週の開始日を変更",
+      "update_language": "言語を変更"
+    },
+    "search_menu": {
+      "no_results": "結果が見つかりません",
+      "clear_search": "検索をクリア",
+      "go_to_advanced_search": "詳細検索に移動"
+    },
+    "footer": {
+      "workspace_level": "ワークスペースレベル"
+    },
+    "group_titles": {
+      "actions": "アクション",
+      "contextual": "コンテキスト",
+      "navigation": "ナビゲート",
+      "create": "作成",
+      "general": "一般",
+      "settings": "設定",
+      "account": "アカウント",
+      "miscellaneous": "その他",
+      "preferences": "環境設定",
+      "help": "ヘルプ"
+    }
+  }
+}

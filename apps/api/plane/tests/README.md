@@ -91,7 +91,7 @@ When writing tests, follow these guidelines:
    - For web app API (`/api/`), use `session_client`
    - For smoke tests with real HTTP, use `plane_server`
 3. Use the correct URL namespace when reverse-resolving URLs:
-   - For external API, use `reverse("api:endpoint_name")`  
+   - For external API, use `reverse("api:endpoint_name")`
    - For web app API, use `reverse("endpoint_name")`
 4. Add the `@pytest.mark.django_db` decorator to tests that interact with the database.
 5. Add the appropriate markers (`@pytest.mark.contract`, etc.) to categorize tests.
@@ -101,7 +101,7 @@ When writing tests, follow these guidelines:
 Common fixtures are defined in:
 
 - `conftest.py`: General fixtures for authentication, database access, etc.
-- `conftest_external.py`: Fixtures for external services (Redis, Elasticsearch, Celery, MongoDB)
+- `conftest_external.py`: Fixtures for external services (Redis, Elasticsearch, Celery)
 - `factories.py`: Test factories for easy model instance creation
 
 ## Best Practices
@@ -125,7 +125,7 @@ When writing tests, follow these guidelines:
 
 Tests for components that interact with external services should:
 
-1. Use the `mock_redis`, `mock_elasticsearch`, `mock_mongodb`, and `mock_celery` fixtures for unit and most contract tests.
+1. Use the `mock_redis`, `mock_elasticsearch`, and `mock_celery` fixtures for unit and most contract tests.
 2. For more comprehensive contract tests, use Docker-based test containers (optional).
 
 ## Coverage Reports
@@ -140,4 +140,4 @@ This creates an HTML report in the `htmlcov/` directory.
 
 ## Migration from Old Tests
 
-Some tests are still in the old format in the `api/` directory. These need to be migrated to the new contract test structure in the appropriate directories. 
+Some tests are still in the old format in the `api/` directory. These need to be migrated to the new contract test structure in the appropriate directories.

@@ -108,7 +108,7 @@ export function SendTestEmailModal(props: Props) {
                       onChange={(e) => setReceiverEmail(e.target.value)}
                       placeholder="Receiver email"
                       className="w-full resize-none text-16"
-                      tabIndex={1}
+                      tabIndex={0}
                     />
                   )}
                   {sendEmailStep === ESendEmailSteps.SUCCESS && (
@@ -122,11 +122,11 @@ export function SendTestEmailModal(props: Props) {
                   )}
                   {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13">{error}</div>}
                   <div className="mt-5 flex items-center justify-end gap-2">
-                    <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={2}>
+                    <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={0}>
                       {sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}
                     </Button>
                     {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
-                      <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
+                      <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={0}>
                         {isLoading ? "Sending email" : "Send email"}
                       </Button>
                     )}

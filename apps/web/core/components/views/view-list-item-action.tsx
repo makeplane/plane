@@ -21,8 +21,6 @@ import { getPublishViewLink } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { PublishViewModal } from "@/plane-web/components/views/publish";
 // local imports
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "./delete-view-modal";
@@ -39,7 +37,7 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-  const [isPublishModalOpen, setPublishModalOpen] = useState<boolean>(false);
+  const [_, setPublishModalOpen] = useState<boolean>(false);
   // router
   const { workspaceSlug, projectId } = useParams();
   // store
@@ -82,7 +80,6 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
 
   return (
     <>
-      <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
       {workspaceSlug && projectId && view && (
         <CreateUpdateProjectViewModal
           isOpen={createUpdateViewModal}
@@ -100,6 +97,7 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
       </div>
 
       {view?.anchor && publishLink ? (
+        // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
         <div
           className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-success-subtle px-3 py-1.5 text-11 font-medium text-success-primary"
           onClick={() => setPublishModalOpen(true)}

@@ -10,8 +10,8 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // constants
-import type { TPlanePlans } from "@/constants/plans";
-import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/constants/plans";
+import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
+import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/components/workspace/billing/comparison/plans";
 // local imports
 import { PlanFeatureDetail } from "./feature-detail";
 

@@ -69,7 +69,7 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
         exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
@@ -745,14 +745,12 @@ class IssueCommentSerializer(BaseSerializer):
         exclude = ["comment_stripped", "comment_json"]
 
     def validate(self, data):
-        try:
-            if data.get("comment_html", None) is not None:
-                parsed = html.fromstring(data["comment_html"])
-                parsed_str = html.tostring(parsed, encoding="unicode")
-                data["comment_html"] = parsed_str
-
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+        if "comment_html" in data and data["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                data["comment_html"] = sanitized_html
         return data
 
 
@@ -850,6 +848,7 @@ class IssueExpandSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "completed_at",
         ]
 
 

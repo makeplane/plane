@@ -14,9 +14,10 @@ import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+// components
+import { useTimeLineRelationOptions } from "@/components/relations";
+// types
+import type { TIssueRelationTypes } from "@plane/types";
 
 type Props = {
   issueId: string;
@@ -55,6 +56,7 @@ export const RelationActionButton = observer(function RelationActionButton(props
 
         return (
           <CustomMenu.MenuItem
+            // oxlint-disable-next-line react/no-array-index-key
             key={index}
             onClick={() => {
               handleOnClick(item.key);

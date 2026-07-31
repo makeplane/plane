@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "工作區設定",
+    "page_label": "{workspace} - 一般設定",
+    "key_created": "金鑰已建立",
+    "copy_key": "複製並儲存此金鑰到 Plane Pages。關閉後您將無法看到此金鑰。已下載包含金鑰的 CSV 檔案。",
+    "token_copied": "權杖已複製到剪貼簿。",
+    "settings": {
+      "general": {
+        "title": "一般",
+        "upload_logo": "上傳標誌",
+        "edit_logo": "編輯標誌",
+        "name": "工作區名稱",
+        "company_size": "公司規模",
+        "url": "工作區網址",
+        "workspace_timezone": "工作區時區",
+        "update_workspace": "更新工作區",
+        "delete_workspace": "刪除此工作區",
+        "delete_workspace_description": "刪除工作區時，該工作區內的所有資料和資源都將被永久移除且無法復原。",
+        "delete_btn": "刪除此工作區",
+        "delete_modal": {
+          "title": "您確定要刪除此工作區嗎？",
+          "description": "您有一個使用中的付費方案試用期。請先取消試用期再繼續。",
+          "dismiss": "關閉",
+          "cancel": "取消試用",
+          "success_title": "工作區已刪除。",
+          "success_message": "您很快就會進入個人資料頁面。",
+          "error_title": "操作失敗。",
+          "error_message": "請重試。"
+        },
+        "errors": {
+          "name": {
+            "required": "名稱為必填",
+            "max_length": "工作區名稱不應超過 80 個字元"
+          },
+          "company_size": {
+            "required": "公司規模為必填",
+            "select_a_range": "選擇組織規模"
+          }
+        }
+      },
+      "members": {
+        "title": "成員",
+        "add_member": "新增成員",
+        "pending_invites": "待處理的邀請",
+        "invitations_sent_successfully": "邀請傳送成功",
+        "leave_confirmation": "您確定要離開工作區嗎？您將無法再存取此工作區。此操作無法復原。",
+        "details": {
+          "full_name": "全名",
+          "display_name": "顯示名稱",
+          "email_address": "電子郵件地址",
+          "account_type": "帳號類型",
+          "authentication": "驗證",
+          "joining_date": "加入日期"
+        },
+        "modal": {
+          "title": "邀請人員協作",
+          "description": "邀請人員加入您的工作區進行協作。",
+          "button": "傳送邀請",
+          "button_loading": "傳送邀請中",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "我們需要電子郵件地址才能邀請他們。",
+            "invalid": "電子郵件無效"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "計費與方案",
+        "description": "選擇您的方案、管理訂閱，並在需求增加時輕鬆升級。",
+        "title": "計費和方案",
+        "current_plan": "目前方案",
+        "free_plan": "您目前使用的是免費方案",
+        "view_plans": "檢視方案"
+      },
+      "exports": {
+        "heading": "匯出",
+        "description": "以各種格式匯出您的專案資料，並透過下載連結存取您的匯出歷史記錄。",
+        "title": "匯出",
+        "exporting": "匯出中",
+        "previous_exports": "先前的匯出",
+        "export_separate_files": "將資料匯出為個別檔案",
+        "exporting_projects": "匯出專案",
+        "format": "格式",
+        "filters_info": "應用篩選器以根據您的條件匯出特定工作項。",
+        "modal": {
+          "title": "匯出至",
+          "toasts": {
+            "success": {
+              "title": "匯出成功",
+              "message": "您可以從先前的匯出下載匯出的 {entity}"
+            },
+            "error": {
+              "title": "匯出失敗",
+              "message": "匯出未成功。請再試一次。"
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooks",
+        "description": "當專案事件發生時，自動向外部服務傳送通知。",
+        "title": "Webhook",
+        "add_webhook": "新增 Webhook",
+        "modal": {
+          "title": "建立 Webhook",
+          "details": "Webhook 詳細資訊",
+          "payload": "承載網址",
+          "question": "您希望觸發此 Webhook 的事件有哪些？",
+          "error": "網址為必填"
+        },
+        "secret_key": {
+          "title": "金鑰",
+          "message": "產生權杖以簽署 Webhook 承載"
+        },
+        "options": {
+          "all": "傳送所有資訊給我",
+          "individual": "選擇個別事件"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook 已建立",
+            "message": "Webhook 已成功建立"
+          },
+          "not_created": {
+            "title": "Webhook 未建立",
+            "message": "無法建立 Webhook"
+          },
+          "updated": {
+            "title": "Webhook 已更新",
+            "message": "Webhook 已成功更新"
+          },
+          "not_updated": {
+            "title": "Webhook 未更新",
+            "message": "無法更新 Webhook"
+          },
+          "removed": {
+            "title": "Webhook 已移除",
+            "message": "Webhook 已成功移除"
+          },
+          "not_removed": {
+            "title": "Webhook 未移除",
+            "message": "無法移除 Webhook"
+          },
+          "secret_key_copied": {
+            "message": "金鑰已複製到剪貼簿。"
+          },
+          "secret_key_not_copied": {
+            "message": "複製金鑰時發生錯誤。"
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "API 權杖",
+        "description": "產生安全的 API 權杖，將您的資料與外部系統和應用程式整合。",
+        "title": "API 權杖",
+        "add_token": "新增存取權杖",
+        "create_token": "建立權杖",
+        "never_expires": "永不過期",
+        "generate_token": "產生權杖",
+        "generating": "產生中",
+        "delete": {
+          "title": "刪除 API 權杖",
+          "description": "使用此權杖的任何應用程式將無法再存取 Plane 資料。此操作無法復原。",
+          "success": {
+            "title": "成功！",
+            "message": "API 權杖已成功刪除"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法刪除 API 權杖"
+          }
+        }
+      },
+      "integrations": {
+        "title": "整合",
+        "heading": "整合",
+        "description": "與常用工具和服務連結，以便在整個工作流程生態系中同步您的工作。",
+        "page_title": "在可用的應用程式或您自己的應用程式中使用您的 Plane 資料。",
+        "page_description": "查看此工作區或您正在使用的所有整合。"
+      },
+      "imports": {
+        "title": "導入",
+        "heading": "匯入",
+        "description": "從您現有的專案管理工具連接並匯入資料，以簡化您的工作流程整合。"
+      },
+      "worklogs": {
+        "title": "工作日誌",
+        "heading": "工作日誌",
+        "description": "下載任何專案中任何人的工作日誌（即工時表）。"
+      },
+      "group_syncing": {
+        "title": "群組同步",
+        "heading": "群組同步",
+        "description": "將身份提供者群組與專案和角色連結。當 IdP 中的群組成員資格變更時，使用者存取權會自動更新，簡化入職與離職流程。",
+        "enable": {
+          "title": "啟用群組同步",
+          "description": "根據身份提供者群組自動將使用者加入專案。"
+        },
+        "config": {
+          "title": "設定群組同步",
+          "description": "設定身份提供者群組如何對應至專案和角色。",
+          "sync_on_login": {
+            "title": "登入時同步",
+            "description": "使用者登入時更新群組成員資格與專案存取權。"
+          },
+          "sync_offline": {
+            "title": "離線同步",
+            "description": "每六小時自動執行同步，無需等待使用者登入。"
+          },
+          "auto_remove": {
+            "title": "自動移除",
+            "description": "當使用者不再符合群組時，自動將其從專案中移除。"
+          },
+          "group_attribute_key": {
+            "title": "群組屬性鍵",
+            "description": "用於識別與同步使用者群組的身份提供者屬性。",
+            "placeholder": "群組"
+          }
+        },
+        "group_mapping": {
+          "title": "群組對應",
+          "description": "將身份提供者群組與專案和角色連結。",
+          "button_text": "新增群組同步"
+        },
+        "toast": {
+          "updating": "正在更新群組同步功能",
+          "success": "群組同步功能已成功更新。",
+          "error": "更新群組同步功能失敗！"
+        },
+        "delete_modal": {
+          "title": "刪除群組同步",
+          "content": "此身份群組的新使用者將不再被加入專案。已加入的使用者將保留其目前角色。"
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "使用者群組",
+            "required": "使用者群組為必填",
+            "placeholder": "輸入 IdP 群組名稱"
+          },
+          "project": {
+            "text": "專案",
+            "required": "專案為必填",
+            "placeholder": "選擇專案"
+          },
+          "default_role": {
+            "text": "專案角色",
+            "required": "專案角色為必填",
+            "placeholder": "選擇專案角色"
+          }
+        }
+      },
+      "identity": {
+        "title": "身份",
+        "heading": "身份",
+        "description": "配置您的網域並啟用單一登入"
+      },
+      "project_states": {
+        "title": "專案狀態",
+        "heading": "查看所有專案的進度概覽。",
+        "description": "專案狀態是 Plane 獨有的功能，可依任何專案屬性追蹤所有專案的進度。",
+        "go_to_settings": "前往設定"
+      },
+      "projects": {
+        "title": "專案",
+        "description": "管理專案狀態、啟用專案標籤及其他設定。",
+        "tabs": {
+          "states": "專案狀態",
+          "labels": "專案標籤"
+        }
+      },
+      "templates": {
+        "title": "範本",
+        "heading": "範本",
+        "description": "使用範本可節省 80% 建立專案、工作事項和頁面所花費的時間。"
+      },
+      "relations": {
+        "title": "關聯",
+        "heading": "關聯",
+        "description": "建立並管理能連接工作區中各工作事項的關聯類型。"
+      },
+      "cancel_trial": {
+        "title": "請先取消您的試用期。",
+        "description": "您有一個我們付費方案的有效試用期。請先取消它才能繼續。",
+        "dismiss": "忽略",
+        "cancel": "取消試用期",
+        "cancel_success_title": "試用期已取消。",
+        "cancel_success_message": "您現在可以刪除工作空間。",
+        "cancel_error_title": "操作失敗。",
+        "cancel_error_message": "請再試一次。"
+      },
+      "applications": {
+        "internal": "內部",
+        "title": "應用程式",
+        "applicationId_copied": "應用程式ID已複製到剪貼簿",
+        "clientId_copied": "客戶端ID已複製到剪貼簿",
+        "clientSecret_copied": "客戶端密鑰已複製到剪貼簿",
+        "third_party_apps": "第三方應用",
+        "your_apps": "您的應用",
+        "connect": "連接",
+        "connected": "已連接",
+        "disconnect": "中斷連線",
+        "install": "安裝",
+        "installed": "已安裝",
+        "configure": "配置",
+        "app_available": "您已使此應用可用於Plane工作空間",
+        "app_credentials_regenrated": {
+          "title": "應用程式憑證已成功重新生成",
+          "description": "請在所有使用的地方替換客戶端密鑰。之前的密鑰已不再有效。"
+        },
+        "app_created": {
+          "title": "應用程式已成功建立",
+          "description": "使用憑證將應用程式安裝到 Plane 工作區中"
+        },
+        "installed_apps": "已安裝的應用程式",
+        "all_apps": "所有應用程式",
+        "internal_apps": "內部應用程式",
+        "app_name_title": "您將如何命名此應用",
+        "app_description_title": {
+          "label": "詳細描述",
+          "placeholder": "為市集撰寫詳細描述。按 '/' 查看指令。"
+        },
+        "authorization_grant_type": {
+          "title": "連接類型",
+          "description": "選擇您的應用程式應該為工作區安裝一次，還是讓每個使用者連接自己的帳戶"
+        },
+        "website": {
+          "title": "網站",
+          "description": "連結到您的應用程式網站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "應用程式建立者",
+          "description": "建立該應用程式的個人或組織。"
+        },
+        "app_maker_error": "應用製作者為必填項",
+        "setup_url": {
+          "label": "設定 URL",
+          "description": "使用者在安裝應用程式時將被重新導向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我們將在此接收來自已安裝您應用的工作區的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook 密鑰",
+          "description": "用於驗證傳入 Webhook 請求的密鑰。",
+          "placeholder": "輸入隨機密鑰"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "使用者在透過 Plane 認證後將被重新導向到此路徑。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "連接Plane工作空間以開始使用",
+        "client_id_and_secret": "客戶端ID和密鑰",
+        "client_id_and_secret_description": "複製並保存此密鑰。關閉後您將無法再次查看此密鑰。",
+        "client_id_and_secret_download": "您可以從這裡下載包含密鑰的CSV檔案。",
+        "application_id": "應用程式ID",
+        "client_id": "客戶端ID",
+        "client_secret": "客戶端密鑰",
+        "export_as_csv": "匯出為CSV",
+        "slug_already_exists": "別名已存在",
+        "failed_to_create_application": "建立應用程式失敗",
+        "upload_logo": "上傳標誌",
+        "app_name_error": "應用名稱為必填項",
+        "app_short_description_title": "為此應用提供簡短描述",
+        "app_short_description_error": "應用簡短描述為必填項",
+        "app_description_error": "應用描述為必填項",
+        "app_slug_title": "應用別名",
+        "app_slug_error": "應用別名為必填項",
+        "invalid_website_error": "無效的網站",
+        "webhook_url_title": "Webhook URL",
+        "webhook_url_error": "Webhook URL為必填項",
+        "invalid_webhook_url_error": "無效的Webhook URL",
+        "redirect_uris_title": "重定向URI",
+        "redirect_uris_error": "重定向URI為必填項",
+        "invalid_redirect_uris_error": "無效的重定向URI",
+        "redirect_uris_description": "輸入應用將在用戶後重定向到的URI，用空格分隔，例如 https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "授權的JavaScript來源",
+        "authorized_javascript_origins_error": "授權的JavaScript來源為必填項",
+        "invalid_authorized_javascript_origins_error": "無效的授權JavaScript來源",
+        "authorized_javascript_origins_description": "輸入應用將被允許發出請求的來源，用空格分隔，例如 app.com example.com",
+        "create_app": "建立應用",
+        "update_app": "更新應用",
+        "build_your_own_app": "建立您自己的應用程式",
+        "edit_app_details": "編輯應用程式詳情",
+        "regenerate_client_secret_description": "重新生成客戶端密鑰。重新生成後，您可以複製密鑰或將其下載到CSV檔案中。",
+        "regenerate_client_secret": "重新生成客戶端密鑰",
+        "regenerate_client_secret_confirm_title": "確定要重新生成客戶端密鑰嗎？",
+        "regenerate_client_secret_confirm_description": "使用此密鑰的應用將停止工作。您需要在應用中更新密鑰。",
+        "regenerate_client_secret_confirm_cancel": "取消",
+        "regenerate_client_secret_confirm_regenerate": "重新生成",
+        "read_only_access_to_workspace": "對您的工作空間的唯讀存取",
+        "write_access_to_workspace": "對您的工作空間的寫入存取",
+        "read_only_access_to_user_profile": "對您的用戶設定檔的唯讀存取",
+        "write_access_to_user_profile": "對您的用戶設定檔的寫入存取",
+        "connect_app_to_workspace": "將{app}連接到您的工作空間{workspace}",
+        "user_permissions": "用戶權限",
+        "user_permissions_description": "用戶權限用於授予對用戶設定檔的存取權限。",
+        "workspace_permissions": "工作空間權限",
+        "workspace_permissions_description": "工作空間權限用於授予對工作空間的存取權限。",
+        "with_the_permissions": "具有權限",
+        "app_consent_title": "{app}正在請求存取您的Plane工作空間和設定檔。",
+        "choose_workspace_to_connect_app_with": "選擇要連接應用的工作空間",
+        "app_consent_workspace_permissions_title": "{app}想要",
+        "app_consent_user_permissions_title": "{app}還可以請求用戶對以下資源的權限。這些權限將僅由用戶請求和授權。",
+        "app_consent_accept_title": "通過接受",
+        "app_consent_accept_1": "您授予應用在Plane內部或外部可以使用應用的任何地方存取您的Plane資料的權限",
+        "app_consent_accept_2": "您同意{app}的隱私政策和使用條款",
+        "accepting": "接受中...",
+        "accept": "接受",
+        "categories": "類別",
+        "select_app_categories": "選擇應用類別",
+        "categories_title": "類別",
+        "categories_error": "類別是必填項",
+        "invalid_categories_error": "無效的類別",
+        "categories_description": "選擇最能描述應用的類別",
+        "supported_plans": "支援的方案",
+        "supported_plans_description": "選擇可以安裝此應用程式的工作區方案。留空以允許所有方案。",
+        "select_plans": "選擇方案",
+        "privacy_policy_url_title": "隱私政策URL",
+        "privacy_policy_url_error": "隱私政策URL是必填項",
+        "invalid_privacy_policy_url_error": "無效的隱私政策URL",
+        "terms_of_service_url_title": "使用條款URL",
+        "terms_of_service_url_error": "使用條款URL是必填項",
+        "invalid_terms_of_service_url_error": "無效的使用條款URL",
+        "support_url_title": "支持URL",
+        "support_url_error": "支持URL是必填項",
+        "invalid_support_url_error": "無效的支持URL",
+        "video_url_title": "視頻URL",
+        "video_url_error": "視頻URL是必填項",
+        "invalid_video_url_error": "無效的視頻URL",
+        "setup_url_error": "設置URL是必填項",
+        "invalid_setup_url_error": "無效的設置URL",
+        "configuration_url_title": "配置URL",
+        "configuration_url_error": "配置URL是必填項",
+        "invalid_configuration_url_error": "無效的配置URL",
+        "contact_email_title": "聯絡電子郵件",
+        "contact_email_error": "聯絡電子郵件是必填項",
+        "invalid_contact_email_error": "無效的聯絡電子郵件",
+        "upload_attachments": "上傳附件",
+        "uploading_images": "上傳 {count, plural, one {張圖片} other {張圖片}}",
+        "drop_images_here": "將圖片拖到這裡",
+        "click_to_upload_images": "點擊上傳圖片",
+        "invalid_file_or_exceeds_size_limit": "無效的文件或超過大小限制 ({size} MB)",
+        "uploading": "上傳中...",
+        "upload_and_save": "上傳並保存",
+        "app_consent_no_access_title": "請求安裝",
+        "app_consent_no_access_description": "此應用程式只能在工作區管理員安裝後才能安裝。請聯絡您的工作區管理員以繼續。",
+        "app_consent_unapproved_title": "此應用程式尚未經 Plane 審核或核准。",
+        "app_consent_unapproved_description": "將此應用程式連接到您的工作區之前，請確認您信任它。",
+        "go_to_app": "前往應用程式",
+        "enable_app_mentions": "啟用應用程式提及",
+        "enable_app_mentions_tooltip": "啟用此功能後，使用者可以提及或指派工作項目給此應用程式。",
+        "scopes": "範圍",
+        "select_scopes": "選擇範圍",
+        "read_access_to": "唯讀存取",
+        "write_access_to": "寫入存取",
+        "global_permission_expiration": "全域範圍即將過期。請改用細粒度範圍。例如，使用 project:read 取代全域讀取。",
+        "selected_scopes": "已選 {count} 項",
+        "scopes_and_permissions": "範圍與權限",
+        "read": "讀取",
+        "write": "寫入",
+        "scope_description": {
+          "projects": "存取專案及所有專案相關實體",
+          "wiki": "存取 Wiki 及所有 Wiki 相關實體",
+          "workspaces": "存取工作區及所有工作區相關實體",
+          "stickies": "存取便利貼及所有便利貼相關實體",
+          "profile": "存取使用者個人資料資訊",
+          "agents": "存取代理以及所有代理相關實體",
+          "assets": "存取資產以及所有資產相關實體"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "使用與您的工作和知識庫原生連接的 AI，讓您的任務變得更智能、更快速。"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "指令碼",
+        "new_script": "新指令碼",
+        "description": "使用自訂指令碼和自動化規則，自動化您的工作流程。"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "尚未建立 API 權杖",
+        "description": "Plane API 可用於將您在 Plane 中的資料與任何外部系統整合。建立權杖以開始使用。"
+      },
+      "webhooks": {
+        "title": "尚未新增 Webhook",
+        "description": "建立 Webhook 以接收即時更新並自動執行操作。"
+      },
+      "exports": {
+        "title": "尚無匯出",
+        "description": "每當您匯出時，也會在這裡保留一份副本供參考。"
+      },
+      "imports": {
+        "title": "尚無匯入",
+        "description": "在這裡找到所有您先前的匯入並下載它們。"
+      }
+    }
+  }
+}

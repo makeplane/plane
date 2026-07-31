@@ -4,19 +4,17 @@
  * See the LICENSE file for details.
  */
 
-// plane web imports
-import type { TEditorMentionComponentProps } from "@/plane-web/components/editor/embeds/mentions";
-import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor/embeds/mentions";
 // local imports
 import { EditorUserMention } from "./user";
+import type { TCallbackMentionComponentProps } from "@plane/editor";
 
-export function EditorMentionsRoot(props: TEditorMentionComponentProps) {
+export function EditorMentionsRoot(props: TCallbackMentionComponentProps) {
   const { entity_identifier, entity_name } = props;
 
   switch (entity_name) {
     case "user_mention":
       return <EditorUserMention id={entity_identifier} />;
     default:
-      return <EditorAdditionalMentionsRoot {...props} />;
+      return null;
   }
 }

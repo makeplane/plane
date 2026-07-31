@@ -14,7 +14,7 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-ARG TURBO_VERSION=2.9.4
+ARG TURBO_VERSION=2.9.18
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
@@ -75,7 +75,9 @@ RUN pnpm turbo run build --filter=web
 # *****************************************************************************
 # STAGE 3: Serve with nginx
 # *****************************************************************************
-FROM nginx:1.27-alpine AS production
+FROM nginx:1.31-alpine AS production
+
+RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
 
 COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html

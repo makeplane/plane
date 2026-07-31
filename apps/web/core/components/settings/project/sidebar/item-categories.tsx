@@ -8,7 +8,12 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useParams } from "react-router";
 // plane imports
-import { EUserPermissionsLevel, GROUPED_PROJECT_SETTINGS, PROJECT_SETTINGS_CATEGORIES } from "@plane/constants";
+import {
+  EUserPermissionsLevel,
+  GROUPED_PROJECT_SETTINGS,
+  PROJECT_SETTINGS_CATEGORIES,
+  PROJECT_SETTINGS_CATEGORY_LABELS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
@@ -45,7 +50,9 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
 
         return (
           <div key={category} className="shrink-0 py-3 first:pt-0 last:pb-0">
-            <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t(category)}</div>
+            <div className="p-2 text-caption-md-medium text-tertiary capitalize">
+              {t(PROJECT_SETTINGS_CATEGORY_LABELS[category])}
+            </div>
             <div className="flex flex-col">
               {accessibleItems.map((item) => {
                 const isItemActive =

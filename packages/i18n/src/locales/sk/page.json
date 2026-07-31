@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Osnova",
+        "empty_state": {
+          "title": "Chýbajú nadpisy",
+          "description": "Pridajme na túto stránku nejaké nadpisy, aby sa tu zobrazili."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Slová",
+          "characters": "Znaky",
+          "paragraphs": "Odseky",
+          "read_time": "Čas čítania"
+        },
+        "actors_info": {
+          "edited_by": "Upravil",
+          "created_by": "Vytvoril"
+        },
+        "version_history": {
+          "label": "História verzií",
+          "current_version": "Aktuálna verzia",
+          "highlight_changes": "Zvýrazniť zmeny"
+        }
+      },
+      "assets": {
+        "label": "Prílohy",
+        "download_button": "Stiahnuť",
+        "empty_state": {
+          "title": "Chýbajú obrázky",
+          "description": "Pridajte obrázky, aby sa tu zobrazili."
+        }
+      },
+      "comments": {
+        "label": "Komentáre",
+        "empty_state": {
+          "title": "Žiadne komentáre",
+          "description": "Pridávajte komentáre, aby ste ich videli tu."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Názov poznámky nemôže mať viac ako 100 znakov.",
+        "already_exists": "Už existuje poznámka bez popisu"
+      },
+      "created": {
+        "title": "Poznámka bola vytvorená",
+        "message": "Poznámka bola úspešne vytvorená"
+      },
+      "not_created": {
+        "title": "Poznámka nebola vytvorená",
+        "message": "Poznámku sa nepodarilo vytvoriť"
+      },
+      "updated": {
+        "title": "Poznámka bola aktualizovaná",
+        "message": "Poznámka bola úspešne aktualizovaná"
+      },
+      "not_updated": {
+        "title": "Poznámka nebola aktualizovaná",
+        "message": "Poznámku sa nepodarilo aktualizovať"
+      },
+      "removed": {
+        "title": "Poznámka bola odstránená",
+        "message": "Poznámka bola úspešne odstránená"
+      },
+      "not_removed": {
+        "title": "Poznámka nebola odstránená",
+        "message": "Poznámku sa nepodarilo odstrániť"
+      }
+    },
+    "open_button": "Otvoriť navigačný panel",
+    "close_button": "Zavrieť navigačný panel",
+    "outline_floating_button": "Otvoriť osnovu"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Presunúť",
+        "loading": "Presúvanie"
+      },
+      "cannot_move_to_teamspace": "Súkromné a zdieľané stránky nie je možné presunúť do tímspejsu.",
+      "placeholders": {
+        "workspace_to_all": "Hľadať projekty a tímspejsy",
+        "workspace_to_project": "Hľadať projekty",
+        "project_to_all": "Hľadať projekty a tímspejsy",
+        "project_to_project": "Hľadať projekty",
+        "project_to_all_with_wiki": "Hľadať wiki kolekcie, projekty a tímové priestory",
+        "project_to_project_with_wiki": "Hľadať wiki kolekcie a projekty"
+      },
+      "toasts": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Stránka bola úspešne presunutá."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Stránku nebolo možné presunúť. Skúste to prosím neskôr."
+        },
+        "collection_error": {
+          "title": "Presunuté do wiki",
+          "message": "Stránka bola presunutá do wiki, ale nepodarilo sa ju pridať do vybratej kolekcie. Zostáva v General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Odstrániť z kolekcie",
+      "success_message": "Stránka bola odstránená z kolekcie.",
+      "error_message": "Stránku sa nepodarilo odstrániť z kolekcie. Skúste to prosím znova."
+    }
+  }
+}

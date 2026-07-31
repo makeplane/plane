@@ -59,8 +59,10 @@ class CycleCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
-        project_id = self.initial_data.get("project_id") or (
-            self.instance.project_id if self.instance and hasattr(self.instance, "project_id") else None
+        project_id = (
+            self.context.get("project_id")
+            or self.initial_data.get("project_id")
+            or (self.instance.project_id if self.instance and hasattr(self.instance, "project_id") else None)
         )
 
         if not project_id:

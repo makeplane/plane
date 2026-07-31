@@ -20,7 +20,7 @@ import { Loader } from "@plane/ui";
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 // constants
-import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+import { WORKSPACE_INTEGRATIONS } from "@plane/constants";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUserPermissions } from "@/hooks/store/user";

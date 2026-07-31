@@ -14,7 +14,6 @@ import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 
 type Props = {
   issue: TIssue;
@@ -48,7 +47,7 @@ export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueCo
         }
       )}
     >
-      {isEpic ? <IssueStats issueId={issue.id} /> : label}
+      {isEpic ? null : label}
     </Row>
   );
 });

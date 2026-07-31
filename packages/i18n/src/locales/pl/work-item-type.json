@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Typy Elementów Pracy",
+    "label_lowercase": "typy elementów pracy",
+    "settings": {
+      "description": "Dostosuj i dodaj własne właściwości, aby dopasować do potrzeb zespołu.",
+      "cant_delete_default_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on ustawiony jako domyślny dla tego projektu.",
+      "set_as_default": "Ustaw jako domyślny",
+      "cant_set_default_inactive_message": "Aktywuj ten typ przed ustawieniem go jako domyślny",
+      "set_default_confirmation": {
+        "title": "Ustaw jako domyślny typ elementu pracy",
+        "description": "Ustawienie {name} jako domyślnego zaimportuje go do wszystkich projektów w tym obszarze roboczym. Wszystkie nowe elementy pracy będą domyślnie używać tego typu.",
+        "confirm_button": "Ustaw jako domyślny"
+      },
+      "properties": {
+        "title": "Właściwości",
+        "description": "Twórz i dostosowuj właściwości.",
+        "tooltip": "Każdy typ elementu pracy posiada domyślny zestaw właściwości, takich jak Tytuł, Opis, Przypisany, Stan, Priorytet, Data rozpoczęcia, Termin zakończenia, Moduł, Cykl itp. Możesz również dostosować i dodać własne właściwości, aby dopasować je do potrzeb Twojego zespołu.",
+        "add_button": "Dodaj nową właściwość",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importuj z przestrzeni roboczej"
+          }
+        },
+        "dropdown": {
+          "label": "Typ właściwości",
+          "placeholder": "Wybierz typ"
+        },
+        "property_type": {
+          "text": {
+            "label": "Tekst"
+          },
+          "number": {
+            "label": "Numer"
+          },
+          "dropdown": {
+            "label": "Lista rozwijana"
+          },
+          "boolean": {
+            "label": "Wartość logiczna"
+          },
+          "date": {
+            "label": "Data"
+          },
+          "member_picker": {
+            "label": "Wybór członka"
+          },
+          "formula": {
+            "label": "Formuła"
+          }
+        },
+        "attributes": {
+          "label": "Atrybuty",
+          "text": {
+            "single_line": {
+              "label": "Pojedyncza linia"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Tylko do odczytu",
+              "header": "Dane tylko do odczytu"
+            },
+            "invalid_text_format": {
+              "label": "Nieprawidłowy format tekstu"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Dodaj numer"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Pojedynczy wybór"
+            },
+            "multi_select": {
+              "label": "Wielokrotny wybór"
+            },
+            "no_default_value": {
+              "label": "Brak wartości domyślnej"
+            }
+          },
+          "boolean": {
+            "label": "Prawda | Fałsz",
+            "no_default": "Brak wartości domyślnej"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opcje",
+              "form": {
+                "placeholder": "Dodaj opcję",
+                "errors": {
+                  "name": {
+                    "required": "Nazwa opcji jest wymagana.",
+                    "integrity": "Opcja o tej samej nazwie już istnieje."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Wybierz opcję",
+                "multi": {
+                  "default": "Wybierz opcje",
+                  "variable": "Wybrano {count} opcji"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Sukces!",
+              "message": "Właściwość {name} utworzona pomyślnie."
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie udało się utworzyć właściwości. Spróbuj ponownie!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Sukces!",
+              "message": "Właściwość {name} zaktualizowana pomyślnie."
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie udało się zaktualizować właściwości. Spróbuj ponownie!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Sukces!",
+              "message": "Właściwość {name} usunięta pomyślnie."
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie udało się usunąć właściwości. Spróbuj ponownie!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} właściwość {name}",
+            "success": {
+              "title": "Sukces!",
+              "message": "Właściwość {name} {action} pomyślnie."
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie udało się {action} właściwości. Spróbuj ponownie!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Utwórz nową niestandardową właściwość",
+            "update": "Zaktualizuj niestandardową właściwość"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Tytuł"
+            },
+            "description": {
+              "placeholder": "Opis"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Musisz nazwać swoją właściwość.",
+              "max_length": "Nazwa właściwości nie powinna przekraczać 255 znaków."
+            },
+            "property_type": {
+              "required": "Musisz wybrać typ właściwości."
+            },
+            "options": {
+              "required": "Musisz dodać co najmniej jedną opcję."
+            },
+            "formula": {
+              "required": "Wyrażenie formuły jest wymagane.",
+              "invalid": "Nieprawidłowa formuła: {error}",
+              "circular_reference": "Wykryto odwołanie cykliczne. Formuła nie może odwoływać się do siebie bezpośrednio ani pośrednio.",
+              "invalid_reference": "Formuła odwołuje się do nieistniejącej właściwości."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Pole formuły",
+          "tooltip": "Wprowadź formułę używając składni '{'Nazwa pola'}'. Obsługuje operatory +, -, *, / i &.",
+          "placeholder": "Napisz formułę",
+          "test_button": "Test",
+          "validating": "Weryfikowanie",
+          "validation_success": "Formuła jest prawidłowa! Zwraca {resultType}",
+          "validation_success_with_refs": "Formuła jest prawidłowa! Zwraca {resultType} ({count} pól odwołanych)",
+          "error": {
+            "empty": "Wprowadź formułę",
+            "missing_context": "Brak kontekstu przestrzeni roboczej, projektu lub typu elementu roboczego",
+            "validation_failed": "Weryfikacja nie powiodła się"
+          },
+          "picker": {
+            "no_match": "Brak pasujących właściwości",
+            "no_available": "Brak dostępnych właściwości"
+          }
+        },
+        "enable_disable": {
+          "label": "Aktywna",
+          "tooltip": {
+            "disabled": "Kliknij, aby wyłączyć",
+            "enabled": "Kliknij, aby włączyć"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Usuń tę właściwość",
+          "description": "Usunięcie właściwości może prowadzić do utraty istniejących danych.",
+          "secondary_description": "Czy chcesz zamiast tego wyłączyć właściwość?",
+          "primary_button": "{action}, usuń to",
+          "secondary_button": "Tak, wyłącz to"
+        },
+        "mandate_confirmation": {
+          "label": "Obowiązkowa właściwość",
+          "content": "Wygląda na to, że istnieje domyślna opcja dla tej właściwości. Uczynienie właściwości obowiązkową usunie wartość domyślną, a użytkownicy będą musieli dodać wartość według własnego wyboru.",
+          "tooltip": {
+            "disabled": "Ten typ właściwości nie może być obowiązkowy",
+            "enabled": "Odznacz, aby oznaczyć pole jako opcjonalne",
+            "checked": "Zaznacz, aby oznaczyć pole jako obowiązkowe"
+          }
+        },
+        "empty_state": {
+          "title": "Dodaj niestandardowe właściwości",
+          "description": "Nowe właściwości, które dodasz dla tego typu elementu pracy, pojawią się tutaj."
+        }
+      },
+      "types": {
+        "title": "Typy",
+        "description": "Twórz i dostosowuj typy elementów pracy z właściwościami.",
+        "sort_options": {
+          "project_count": "Liczba projektów, w których uczestniczy"
+        },
+        "filter_options": {
+          "show_active": "Pokaż aktywne",
+          "show_inactive": "Pokaż nieaktywne"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Utwórz nowy",
+            "import_from_workspace": "Importuj z przestrzeni roboczej"
+          },
+          "banner": {
+            "with_access": "Włącz typy elementów pracy, aby importować typy z poziomu przestrzeni roboczej",
+            "without_access": "Typy elementów pracy są wyłączone. Skontaktuj się z administratorem przestrzeni roboczej, aby je włączyć w ustawieniach przestrzeni roboczej."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Niestandardowe właściwości",
+        "add_button": "Dodaj właściwości",
+        "modal": {
+          "title": "Dodaj właściwości",
+          "empty": {
+            "title": "Brak dostępnych właściwości",
+            "description": "Wszystkie właściwości zostały już powiązane z tym typem."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Odłącz właściwość",
+          "description": "Odłączenie tej właściwości trwale usunie wszystkie jej wartości z każdego elementu pracy używającego tego typu. Tej akcji nie można cofnąć.",
+          "input_label": "Wpisz",
+          "input_label_suffix": "aby kontynuować:",
+          "confirm": "Odłącz właściwość",
+          "loading": "Odłączanie"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Usuń ten typ",
+        "description": "Usunięcie typów może prowadzić do utraty istniejących danych.",
+        "can_disable_warning": "Czy chcesz zamiast tego wyłączyć ten typ?",
+        "primary_button": "Tak, usuń to",
+        "toast": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Typ elementu pracy został pomyślnie usunięty."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się usunąć typu elementu pracy. Spróbuj ponownie!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Nie można usunąć domyślnego typu elementu pracy",
+          "cannot_delete_work_item_type_with_associated_work_items": "Nie można usunąć typu elementu pracy z powiązanymi elementami pracy"
+        }
+      }
+    },
+    "create": {
+      "title": "Utwórz typ elementu pracy",
+      "button": "Dodaj typ elementu pracy",
+      "toast": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Typ elementu pracy utworzony pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": {
+            "default": "Nie udało się utworzyć typu elementu pracy. Spróbuj ponownie!",
+            "conflict": "Typ {name} już istnieje. Wybierz inną nazwę."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Aktualizuj typ elementu pracy",
+      "button": "Aktualizuj typ elementu pracy",
+      "toast": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Typ elementu pracy {name} zaktualizowany pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": {
+            "default": "Nie udało się zaktualizować typu elementu pracy. Spróbuj ponownie!",
+            "conflict": "Typ {name} już istnieje. Wybierz inną nazwę."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Nadaj temu typowi elementu pracy unikalną nazwę"
+        },
+        "description": {
+          "placeholder": "Opisz, do czego służy ten typ elementu pracy i kiedy należy go używać."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} typ elementu pracy {name}",
+        "success": {
+          "title": "Sukces!",
+          "message": "Typ elementu pracy {name} {action} pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się {action} typu elementu pracy. Spróbuj ponownie!"
+        }
+      },
+      "tooltip": "Kliknij, aby {action}"
+    },
+    "change_confirmation": {
+      "title": "Zmień typ elementu pracy?",
+      "description": "Zmiana typu elementu pracy może spowodować utratę wartości właściwości niestandardowych specyficznych dla bieżącego typu. Ta akcja nie może zostać cofnięta.",
+      "button": {
+        "loading": "Zmienianie",
+        "default": "Zmień typ"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Włącz Typy Elementów Pracy",
+        "description": "Kształtuj elementy pracy według swojej pracy za pomocą Typów elementów pracy. Dostosuj je za pomocą ikon, teł i właściwości oraz skonfiguruj je dla tego projektu.",
+        "primary_button": {
+          "text": "Włącz"
+        },
+        "confirmation": {
+          "title": "Po włączeniu Typów Elementów Pracy nie można ich wyłączyć.",
+          "description": "Element pracy Plane stanie się domyślnym typem elementu pracy dla tego projektu i pojawi się ze swoją ikoną i tłem w tym projekcie.",
+          "button": {
+            "default": "Włącz",
+            "loading": "Konfigurowanie"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Zdobądź Pro, aby włączyć Typy elementów pracy.",
+        "description": "Kształtuj elementy pracy według swojej pracy za pomocą Typów elementów pracy. Dostosuj je za pomocą ikon, teł i właściwości oraz skonfiguruj je dla tego projektu.",
+        "primary_button": {
+          "text": "Zdobądź Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Aktualizuj, aby włączyć Typy elementów pracy.",
+        "description": "Kształtuj elementy pracy według swojej pracy za pomocą Typów elementów pracy. Dostosuj je za pomocą ikon, teł i właściwości oraz skonfiguruj je dla tego projektu.",
+        "primary_button": {
+          "text": "Aktualizuj"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hierarchia",
+      "tab_label": "Hierarchia",
+      "description": "Skonfiguruj poziomy hierarchii, aby zorganizować swoją pracę. Każdy poziom definiuje relację nadrzędną z elementem bezpośrednio powyżej i relację podrzędną z elementem bezpośrednio poniżej. ",
+      "sidebar_label": "Hierarchia",
+      "enable_control": {
+        "title": "Włącz hierarchię",
+        "description": "Twórz relacje nadrzędny-podrzędny między różnymi typami elementów roboczych.",
+        "tooltip": "Nie można wyłączyć hierarchii po jej włączeniu."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Najpierw zdefiniuj typy elementów roboczych, aby utworzyć nową hierarchię.",
+        "cta": "Ustawienia typów elementów roboczych"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Przeciągnij i upuść typ, aby dodać nowy poziom hierarchii",
+      "empty_level_placeholder": "Przeciągnij i upuść typ elementu roboczego na poziom {level}",
+      "drag_tooltip": "Przeciągnij, aby zmienić poziom",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Ustaw jako domyślny",
+          "toast": {
+            "loading": "Ustawianie jako domyślny...",
+            "success": {
+              "title": "Sukces!",
+              "message": "Poziom hierarchii {level} został ustawiony jako domyślny."
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie udało się ustawić poziomu hierarchii {level} jako domyślnego. Spróbuj ponownie."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Przenoszenie {workItemTypeName} na poziom {level}...",
+        "success": {
+          "title": "Sukces!",
+          "message": "{workItemTypeName} został pomyślnie przeniesiony na poziom {level}."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Zapisanie usunie istniejące powiązania",
+      "content": {
+        "intro": "Typ elementu roboczego {workItemTypeName} obejmuje:",
+        "parent_items": "{count, plural, one {Zostanie usunięte # powiązanie nadrzędne} few {Zostaną usunięte # powiązania nadrzędne} other {Zostanie usuniętych # powiązań nadrzędnych}}.",
+        "child_items": "{count, plural, one {podelement} few {podelementy} other {podelementów}}",
+        "parent_line_suffix_when_also_children": ", oraz ",
+        "footer": "Ta zmiana usunie relacje nadrzędne i podrzędne z istniejących elementów roboczych typu {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Wpisz „potwierdź”, aby kontynuować.",
+        "placeholder": "potwierdź"
+      },
+      "error_toast": {
+        "title": "Błąd!",
+        "message": "Nie udało się odłączyć powiązań i zapisać. Spróbuj ponownie."
+      },
+      "confirm_button": {
+        "loading": "Zapisywanie",
+        "default": "Zapisz mimo to"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Błąd!",
+        "message": "Wybrany typ elementu roboczego nie może być użyty do utworzenia nowego elementu roboczego, ponieważ narusza zasady hierarchii."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Błąd!",
+        "message": "Typ elementu roboczego nie może być zaktualizowany, ponieważ narusza zasady hierarchii."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Poziom hierarchii",
+      "invalid_level_toast": {
+        "title": "Błąd!",
+        "message": "Typ elementu pracy nie może zostać zaktualizowany, ponieważ narusza zasady hierarchii."
+      }
+    }
+  }
+}

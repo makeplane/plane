@@ -13,11 +13,11 @@ import { ContentWrapper } from "@plane/ui";
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
 // plane web imports
-import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
-import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
+import { TourRoot } from "@/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
+import { HomePeekOverviewsRoot } from "../issues/peek-overview/peek-overviews";
 
 export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   // store hooks

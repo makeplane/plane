@@ -9,8 +9,8 @@ import type { IFavorite } from "@plane/types";
 // components
 import { getPageName } from "@plane/utils";
 import {
+  FavoriteItemIcon,
   generateFavoriteItemLink,
-  getFavoriteItemIcon,
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
 // hooks
@@ -19,8 +19,8 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 // plane web hooks
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
-import { useAdditionalFavoriteItemDetails } from "@/plane-web/hooks/use-additional-favorite-item-details";
+import { EPageStoreType, usePage } from "@/hooks/store";
+import { useAdditionalFavoriteItemDetails } from "@/hooks/use-additional-favorite-item-details";
 
 export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorite) => {
   const {
@@ -53,23 +53,23 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   switch (favoriteItemEntityType) {
     case "project":
       itemTitle = currentProjectDetails?.name ?? favoriteItemName;
-      itemIcon = getFavoriteItemIcon("project", currentProjectDetails?.logo_props || favoriteItemLogoProps);
+      itemIcon = <FavoriteItemIcon type="project" logo={currentProjectDetails?.logo_props || favoriteItemLogoProps} />;
       break;
     case "page":
       itemTitle = getPageName(pageDetail?.name ?? favoriteItemName);
-      itemIcon = getFavoriteItemIcon("page", pageDetail?.logo_props ?? favoriteItemLogoProps);
+      itemIcon = <FavoriteItemIcon type="page" logo={pageDetail?.logo_props ?? favoriteItemLogoProps} />;
       break;
     case "view":
       itemTitle = viewDetails?.name ?? favoriteItemName;
-      itemIcon = getFavoriteItemIcon("view", viewDetails?.logo_props || favoriteItemLogoProps);
+      itemIcon = <FavoriteItemIcon type="view" logo={viewDetails?.logo_props || favoriteItemLogoProps} />;
       break;
     case "cycle":
       itemTitle = cycleDetail?.name ?? favoriteItemName;
-      itemIcon = getFavoriteItemIcon("cycle");
+      itemIcon = <FavoriteItemIcon type="cycle" />;
       break;
     case "module":
       itemTitle = moduleDetail?.name ?? favoriteItemName;
-      itemIcon = getFavoriteItemIcon("module");
+      itemIcon = <FavoriteItemIcon type="module" />;
       break;
     default: {
       const additionalDetails = getAdditionalFavoriteItemDetails(workspaceSlug, favorite);

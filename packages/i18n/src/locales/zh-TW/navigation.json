@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "找不到結果"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "便利貼",
+    "your_work": "你的工作",
+    "projects": "專案",
+    "pages": "頁面",
+    "new_work_item": "新工作項目",
+    "home": "首頁",
+    "inbox": "收件匣",
+    "workspace": "工作區",
+    "views": "視圖",
+    "analytics": "分析",
+    "work_items": "工作項目",
+    "cycles": "週期",
+    "modules": "模組",
+    "intake": "接收",
+    "drafts": "草稿",
+    "favorites": "收藏",
+    "pro": "專業版",
+    "upgrade": "升級",
+    "pi_chat": "AI 聊天",
+    "epics": "史詩",
+    "upgrade_plan": "升級方案",
+    "plane_pro": "平面專業版",
+    "business": "商業"
+  }
+}

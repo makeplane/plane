@@ -13,7 +13,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web imports
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "../navigation-pane";
 import type { TVersionEditorProps } from "./editor";

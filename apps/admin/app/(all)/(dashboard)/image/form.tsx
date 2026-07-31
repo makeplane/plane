@@ -64,6 +64,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
                 target="_blank"
                 className="text-accent-primary hover:underline"
                 rel="noreferrer"
+                aria-label="Unsplash developer account documentation"
               >
                 Learn more.
               </a>

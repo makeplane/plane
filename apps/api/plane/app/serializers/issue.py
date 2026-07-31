@@ -110,6 +110,7 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "completed_at",
         ]
 
     def to_representation(self, instance):
@@ -713,6 +714,15 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, attrs):
+        if "comment_html" in attrs and attrs["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(attrs["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                attrs["comment_html"] = sanitized_html
+        return attrs
 
 
 class IssueStateFlatSerializer(BaseSerializer):

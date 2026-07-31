@@ -213,6 +213,14 @@ class ModuleIssueViewSet(BaseViewSet):
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
         project = Project.objects.get(pk=project_id)
+        # Scope to workspace+project to prevent cross-tenant IDOR
+        issues = list(
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk__in=issues,
+            ).values_list("id", flat=True)
+        )
         _ = ModuleIssue.objects.bulk_create(
             [
                 ModuleIssue(

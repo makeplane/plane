@@ -273,7 +273,7 @@ export function InstanceSetupForm() {
                 {showPassword.password ? (
                   <button
                     type="button"
-                    tabIndex={-1}
+                    aria-label="Hide password"
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
@@ -282,7 +282,7 @@ export function InstanceSetupForm() {
                 ) : (
                   <button
                     type="button"
-                    tabIndex={-1}
+                    aria-label="Show password"
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
@@ -317,7 +317,7 @@ export function InstanceSetupForm() {
                 {showPassword.retypePassword ? (
                   <button
                     type="button"
-                    tabIndex={-1}
+                    aria-label="Hide password"
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
@@ -326,7 +326,7 @@ export function InstanceSetupForm() {
                 ) : (
                   <button
                     type="button"
-                    tabIndex={-1}
+                    aria-label="Show password"
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
@@ -354,7 +354,6 @@ export function InstanceSetupForm() {
               <label className="cursor-pointer text-13 font-medium text-tertiary" htmlFor="is_telemetry_enabled">
                 Allow Plane to anonymously collect usage events.{" "}
                 <a
-                  tabIndex={-1}
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"
                   rel="noopener noreferrer"

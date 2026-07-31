@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Tipuri de Elemente de Lucru",
+    "label_lowercase": "tipuri de elemente de lucru",
+    "settings": {
+      "description": "Personalizează și adaugă propriile proprietăți pentru a le adapta nevoilor echipei tale.",
+      "cant_delete_default_message": "Nu se poate șterge acest tip de element de lucru deoarece este setat ca tip implicit pentru acest proiect.",
+      "set_as_default": "Setează ca implicit",
+      "cant_set_default_inactive_message": "Activează acest tip înainte de a-l seta ca implicit",
+      "set_default_confirmation": {
+        "title": "Setează ca tip implicit de element de lucru",
+        "description": "Setarea {name} ca implicit îl va importa în toate proiectele din acest spațiu de lucru. Toate elementele de lucru noi vor folosi acest tip în mod implicit.",
+        "confirm_button": "Setează ca implicit"
+      },
+      "properties": {
+        "title": "Proprietăți personalizate",
+        "description": "Creează și personalizează proprietăți.",
+        "tooltip": "Fiecare tip de element de lucru vine cu un set implicit de proprietăți precum Titlu, Descriere, Responsabil, Stare, Prioritate, Data de început, Data scadentă, Modul, Ciclu etc. De asemenea, poți personaliza și adăuga propriile proprietăți pentru a le adapta nevoilor echipei tale.",
+        "add_button": "Adaugă proprietate nouă",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importă din spațiul de lucru"
+          }
+        },
+        "dropdown": {
+          "label": "Tip de proprietate",
+          "placeholder": "Selectează tipul"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Număr"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Dată"
+          },
+          "member_picker": {
+            "label": "Selector de membri"
+          },
+          "formula": {
+            "label": "Formulă"
+          }
+        },
+        "attributes": {
+          "label": "Atribute",
+          "text": {
+            "single_line": {
+              "label": "Linie unică"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Doar citire",
+              "header": "Date doar pentru citire"
+            },
+            "invalid_text_format": {
+              "label": "Format de text invalid"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Adaugă număr"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Selecție unică"
+            },
+            "multi_select": {
+              "label": "Selecție multiplă"
+            },
+            "no_default_value": {
+              "label": "Nicio valoare implicită"
+            }
+          },
+          "boolean": {
+            "label": "Adevărat | Fals",
+            "no_default": "Nicio valoare implicită"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opțiuni",
+              "form": {
+                "placeholder": "Adaugă opțiune",
+                "errors": {
+                  "name": {
+                    "required": "Numele opțiunii este obligatoriu.",
+                    "integrity": "Opțiunea cu același nume există deja."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Selectează opțiune",
+                "multi": {
+                  "default": "Selectează opțiuni",
+                  "variable": "{count} opțiuni selectate"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost creată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut crea proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost actualizată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut actualiza proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost ștearsă cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut șterge proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} proprietatea {name}",
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} {action} cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut {action} proprietatea. Te rugăm să încerci din nou!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Creează o proprietate personalizată nouă",
+            "update": "Actualizează proprietatea personalizată"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Titlu"
+            },
+            "description": {
+              "placeholder": "Descriere"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Trebuie să denumești proprietatea ta.",
+              "max_length": "Numele proprietății nu trebuie să depășească 255 de caractere."
+            },
+            "property_type": {
+              "required": "Trebuie să selectezi un tip de proprietate."
+            },
+            "options": {
+              "required": "Trebuie să adaugi cel puțin o opțiune."
+            },
+            "formula": {
+              "required": "Expresia formulei este obligatorie.",
+              "invalid": "Formulă invalidă: {error}",
+              "circular_reference": "Referință circulară detectată. O formulă nu poate face referire la ea însăși direct sau indirect.",
+              "invalid_reference": "Formula face referire la o proprietate inexistentă."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Câmp formulă",
+          "tooltip": "Introduceți o formulă folosind sintaxa '{'Nume câmp'}'. Suportă operatorii +, -, *, / și &.",
+          "placeholder": "Scrieți formula",
+          "test_button": "Test",
+          "validating": "Se validează",
+          "validation_success": "Formula este validă! Returnează {resultType}",
+          "validation_success_with_refs": "Formula este validă! Returnează {resultType} ({count} câmp(uri) referențiat(e))",
+          "error": {
+            "empty": "Vă rugăm introduceți o formulă",
+            "missing_context": "Lipsește contextul spațiului de lucru, proiectului sau tipului de element de lucru",
+            "validation_failed": "Validarea a eșuat"
+          },
+          "picker": {
+            "no_match": "Nicio proprietate corespunzătoare",
+            "no_available": "Nicio proprietate disponibilă"
+          }
+        },
+        "enable_disable": {
+          "label": "Activ",
+          "tooltip": {
+            "disabled": "Click pentru a dezactiva",
+            "enabled": "Click pentru a activa"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Șterge această proprietate",
+          "description": "Ștergerea proprietăților poate duce la pierderea datelor existente.",
+          "secondary_description": "Vrei să dezactivezi proprietatea în schimb?",
+          "primary_button": "{action}, șterge-o",
+          "secondary_button": "Da, dezactiveaz-o"
+        },
+        "mandate_confirmation": {
+          "label": "Proprietate obligatorie",
+          "content": "Se pare că există o opțiune implicită pentru această proprietate. Dacă faci proprietatea obligatorie, aceasta va elimina valoarea implicită, iar utilizatorii vor trebui să adauge o valoare la alegerea lor.",
+          "tooltip": {
+            "disabled": "Acest tip de proprietate nu poate fi făcut obligatoriu",
+            "enabled": "Debifează pentru a marca câmpul ca opțional",
+            "checked": "Bifează pentru a marca câmpul ca obligatoriu"
+          }
+        },
+        "empty_state": {
+          "title": "Adaugă proprietăți personalizate",
+          "description": "Noile proprietăți pe care le adaugi pentru acest tip de element de lucru vor apărea aici."
+        }
+      },
+      "types": {
+        "title": "Tipuri",
+        "description": "Creează și personalizează tipuri de activități cu proprietăți.",
+        "sort_options": {
+          "project_count": "Numărul de proiecte din care face parte"
+        },
+        "filter_options": {
+          "show_active": "Afișează active",
+          "show_inactive": "Afișează inactive"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Creează nou",
+            "import_from_workspace": "Importă din spațiul de lucru"
+          },
+          "banner": {
+            "with_access": "Activează tipurile de activități pentru a importa tipuri de la nivelul spațiului de lucru",
+            "without_access": "Tipurile de activități sunt dezactivate. Contactează administratorul spațiului de lucru pentru a le activa în setările spațiului de lucru."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Proprietăți personalizate",
+        "add_button": "Adaugă proprietăți",
+        "modal": {
+          "title": "Adaugă proprietăți",
+          "empty": {
+            "title": "Nu există proprietăți disponibile",
+            "description": "Toate proprietățile au fost deja conectate la acest tip."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Deconectează proprietatea",
+          "description": "Deconectarea acestei proprietăți va șterge permanent toate valorile sale din fiecare activitate care folosește acest tip. Această acțiune nu poate fi anulată.",
+          "input_label": "Tastează",
+          "input_label_suffix": "pentru a continua:",
+          "confirm": "Deconectează proprietatea",
+          "loading": "Se deconectează"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Șterge acest tip",
+        "description": "Ștergerea tipurilor poate duce la pierderea datelor existente.",
+        "can_disable_warning": "Doriți să dezactivați tipul în schimb?",
+        "primary_button": "Da, șterge-l",
+        "toast": {
+          "success": {
+            "title": "Succes!",
+            "message": "Tipul elementului de lucru a fost șters cu succes."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Ștergerea tipului de element de lucru a eșuat. Vă rugăm să încercați din nou!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Nu se poate șterge tipul implicit de element de lucru",
+          "cannot_delete_work_item_type_with_associated_work_items": "Nu se poate șterge tipul de element de lucru cu elemente de lucru asociate"
+        }
+      }
+    },
+    "create": {
+      "title": "Creează tip de element de lucru",
+      "button": "Adaugă tip de element de lucru",
+      "toast": {
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru a fost creat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": {
+            "default": "Crearea tipului de activitate a eșuat. Te rugăm să încerci din nou!",
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Actualizează tipul de element de lucru",
+      "button": "Actualizează tipul de element de lucru",
+      "toast": {
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru {name} a fost actualizat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": {
+            "default": "Actualizarea tipului de activitate a eșuat. Te rugăm să încerci din nou!",
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dă acestui tip de element de lucru un nume unic"
+        },
+        "description": {
+          "placeholder": "Descrie pentru ce este destinat acest tip de element de lucru și când trebuie utilizat."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipul de element de lucru {name}",
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru {name} {action} cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Nu s-a putut {action} tipul de element de lucru. Te rugăm să încerci din nou!"
+        }
+      },
+      "tooltip": "Click pentru a {action}"
+    },
+    "change_confirmation": {
+      "title": "Schimbați tipul de element de lucru?",
+      "description": "Schimbarea tipului de element de lucru poate duce la pierderea valorilor proprietăților personalizate care sunt specifice tipului curent. Această acțiune nu poate fi anulată.",
+      "button": {
+        "loading": "Se schimbă",
+        "default": "Schimbă tipul"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Activează Tipurile de Elemente de Lucru",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Activează"
+        },
+        "confirmation": {
+          "title": "Odată activate, Tipurile de Elemente de Lucru nu pot fi dezactivate.",
+          "description": "Elementul de Lucru al Plane va deveni tipul implicit de element de lucru pentru acest proiect și va apărea cu pictograma și fundalul său în acest proiect.",
+          "button": {
+            "default": "Activează",
+            "loading": "Se configurează"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Obține Pro pentru a activa Tipurile de Elemente de Lucru.",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Obține Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Actualizează pentru a activa Tipurile de Elemente de Lucru.",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Actualizează"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Ierarhie",
+      "tab_label": "Ierarhie",
+      "description": "Configurați niveluri de ierarhie pentru a vă organiza munca. Fiecare nivel definește o relație de părinte cu elementul direct deasupra și o relație de copil cu elementul direct dedesubt. ",
+      "sidebar_label": "Ierarhie",
+      "enable_control": {
+        "title": "Activați ierarhia",
+        "description": "Creați relații părinte-copil între diferite tipuri de elemente de lucru.",
+        "tooltip": "Nu puteți dezactiva ierarhia odată ce este activată."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Definiți mai întâi tipurile de elemente de lucru pentru a crea o nouă ierarhie.",
+        "cta": "Setări tipuri elemente de lucru"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Trageți și plasați un tip pentru a adăuga un nou nivel ierarhic",
+      "empty_level_placeholder": "Trageți și plasați un tip de element de lucru la nivelul {level}",
+      "drag_tooltip": "Glisați pentru a schimba nivelul",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Setați ca implicit",
+          "toast": {
+            "loading": "Setare ca implicit...",
+            "success": {
+              "title": "Succes!",
+              "message": "Nivelul de ierarhie {level} a fost setat ca implicit cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut seta nivelul de ierarhie {level} ca implicit. Vă rugăm să încercați din nou."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Se mută {workItemTypeName} la nivelul {level}...",
+        "success": {
+          "title": "Succes!",
+          "message": "{workItemTypeName} a fost mutat la nivelul {level} cu succes."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Salvarea va rupe legăturile existente",
+      "content": {
+        "intro": "Tipul de element de lucru {workItemTypeName} are:",
+        "parent_items": "{count, plural, one {Se va elimina # legătură părinte} few {Se vor elimina # legături părinte} other {Se vor elimina # de legături părinte}}.",
+        "child_items": "{count, plural, one {sub-element de lucru} few {sub-elemente de lucru} other {sub-elemente de lucru}}",
+        "parent_line_suffix_when_also_children": ", și ",
+        "footer": "Această modificare va elimina relațiile părinte-copil din elementele de lucru existente de tipul {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Introduceți „confirmă” pentru a continua.",
+        "placeholder": "confirmă"
+      },
+      "error_toast": {
+        "title": "Eroare!",
+        "message": "Nu s-au putut elimina legăturile și salva. Vă rugăm să încercați din nou."
+      },
+      "confirm_button": {
+        "loading": "Se salvează",
+        "default": "Salvează oricum"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Eroare!",
+        "message": "Tipul de element de lucru selectat nu poate fi utilizat pentru a crea un nou element de lucru deoarece încalcă regulile ierarhiei."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Eroare!",
+        "message": "Tipul de element de lucru nu poate fi actualizat deoarece încalcă regulile ierarhiei."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Nivel de ierarhie",
+      "invalid_level_toast": {
+        "title": "Eroare!",
+        "message": "Tipul elementului de lucru nu poate fi actualizat deoarece încalcă regulile de ierarhie."
+      }
+    }
+  }
+}

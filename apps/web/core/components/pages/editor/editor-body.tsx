@@ -35,16 +35,16 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
 import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
-import { EditorAIMenu } from "@/plane-web/components/pages";
-import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import type { TExtendedEditorExtensionsConfig } from "@/hooks/pages";
+import type { EPageStoreType } from "@/hooks/store";
+import { useEditorFlagging } from "@/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
+import { EditorAIMenu } from "./ai/menu";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -188,6 +188,11 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
+    // The collaboration URL is derived from window.location, so it can only be
+    // built on the client. There is no socket to connect to during SSR anyway —
+    // the config is recomputed on hydration.
+    if (typeof window === "undefined") return undefined;
+
     // Construct the WebSocket Collaboration URL
     try {
       const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
@@ -244,8 +249,10 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
           <div className="page-summary-container absolute top-[64px] right-0 z-[5] h-full">
             <div className="sticky top-[72px]">
               <div className="group/page-toc relative px-page-x">
+                {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events */}
                 <div
                   className="max-h-[50vh] !cursor-pointer overflow-hidden"
+                  // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role
                   role="button"
                   aria-label={t("page_navigation_pane.outline_floating_button")}
                   onClick={handleOpenNavigationPane}
@@ -281,6 +288,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
                 if (!res) throw new Error("Failed in fetching mentions");
                 return res;
               },
+              // oxlint-disable-next-line no-shadow
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}

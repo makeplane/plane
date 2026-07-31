@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Phác thảo",
+        "empty_state": {
+          "title": "Thiếu tiêu đề",
+          "description": "Hãy thêm một số tiêu đề vào trang này để xem chúng ở đây."
+        }
+      },
+      "info": {
+        "label": "Thông tin",
+        "document_info": {
+          "words": "Từ",
+          "characters": "Ký tự",
+          "paragraphs": "Đoạn văn",
+          "read_time": "Thời gian đọc"
+        },
+        "actors_info": {
+          "edited_by": "Được chỉnh sửa bởi",
+          "created_by": "Được tạo bởi"
+        },
+        "version_history": {
+          "label": "Lịch sử phiên bản",
+          "current_version": "Phiên bản hiện tại",
+          "highlight_changes": "Đánh dấu thay đổi"
+        }
+      },
+      "assets": {
+        "label": "Tài sản",
+        "download_button": "Tải xuống",
+        "empty_state": {
+          "title": "Thiếu hình ảnh",
+          "description": "Thêm hình ảnh để xem chúng ở đây."
+        }
+      },
+      "comments": {
+        "label": "Bình luận",
+        "empty_state": {
+          "title": "Không có bình luận",
+          "description": "Thêm bình luận để xem chúng ở đây."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Tên ghi chú không được dài hơn 100 ký tự.",
+        "already_exists": "Đã tồn tại một ghi chú không có mô tả"
+      },
+      "created": {
+        "title": "Đã tạo ghi chú",
+        "message": "Ghi chú đã được tạo thành công"
+      },
+      "not_created": {
+        "title": "Không tạo được ghi chú",
+        "message": "Không thể tạo ghi chú"
+      },
+      "updated": {
+        "title": "Đã cập nhật ghi chú",
+        "message": "Ghi chú đã được cập nhật thành công"
+      },
+      "not_updated": {
+        "title": "Không cập nhật được ghi chú",
+        "message": "Không thể cập nhật ghi chú"
+      },
+      "removed": {
+        "title": "Đã xóa ghi chú",
+        "message": "Ghi chú đã được xóa thành công"
+      },
+      "not_removed": {
+        "title": "Không xóa được ghi chú",
+        "message": "Không thể xóa ghi chú"
+      }
+    },
+    "open_button": "Mở bảng điều hướng",
+    "close_button": "Đóng bảng điều hướng",
+    "outline_floating_button": "Mở phác thảo"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Di chuyển",
+        "loading": "Đang di chuyển"
+      },
+      "cannot_move_to_teamspace": "Không thể di chuyển trang riêng tư và trang đã chia sẻ đến không gian nhóm.",
+      "placeholders": {
+        "workspace_to_all": "Tìm dự án và không gian nhóm",
+        "workspace_to_project": "Tìm dự án",
+        "project_to_all": "Tìm dự án và không gian nhóm",
+        "project_to_project": "Tìm dự án",
+        "project_to_all_with_wiki": "Tìm bộ sưu tập wiki, dự án và không gian nhóm",
+        "project_to_project_with_wiki": "Tìm bộ sưu tập wiki và dự án"
+      },
+      "toasts": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã di chuyển trang thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể di chuyển trang. Vui lòng thử lại sau."
+        },
+        "collection_error": {
+          "title": "Đã chuyển vào wiki",
+          "message": "Trang đã được chuyển vào wiki, nhưng không thể thêm vào bộ sưu tập đã chọn. Trang vẫn nằm trong General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Xóa khỏi bộ sưu tập",
+      "success_message": "Đã xóa trang khỏi bộ sưu tập.",
+      "error_message": "Không thể xóa trang khỏi bộ sưu tập. Vui lòng thử lại."
+    }
+  }
+}

@@ -8,11 +8,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { getPageName } from "@plane/utils";
 // hooks
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useModule } from "@/hooks/store/use-module";
-// plane web imports
-import { useExtendedContextIndicator } from "@/plane-web/components/command-palette/power-k/hooks/use-extended-context-indicator";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import type { TPowerKContextType } from "../core/types";
 
@@ -28,10 +26,6 @@ export const useContextIndicator = (args: TArgs): string | null => {
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
   const { getPageById } = usePageStore(EPageStoreType.PROJECT);
-  // extended context indicator
-  const extendedIndicator = useExtendedContextIndicator({
-    activeContext,
-  });
   let indicator: string | undefined | null = null;
 
   switch (activeContext) {
@@ -55,7 +49,7 @@ export const useContextIndicator = (args: TArgs): string | null => {
       break;
     }
     default: {
-      indicator = extendedIndicator;
+      indicator = null;
     }
   }
 

@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Plan",
+        "empty_state": {
+          "title": "Titres manquants",
+          "description": "Ajoutons quelques titres à cette page pour les voir ici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Mots",
+          "characters": "Caractères",
+          "paragraphs": "Paragraphes",
+          "read_time": "Temps de lecture"
+        },
+        "actors_info": {
+          "edited_by": "Modifié par",
+          "created_by": "Créé par"
+        },
+        "version_history": {
+          "label": "Historique des versions",
+          "current_version": "Version actuelle",
+          "highlight_changes": "Mettre en évidence les modifications"
+        }
+      },
+      "assets": {
+        "label": "Ressources",
+        "download_button": "Télécharger",
+        "empty_state": {
+          "title": "Images manquantes",
+          "description": "Ajoutez des images pour les voir ici."
+        }
+      },
+      "comments": {
+        "label": "Commentaires",
+        "empty_state": {
+          "title": "Aucun commentaire",
+          "description": "Ajoutez des commentaires pour les voir ici."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Le nom du sticky ne peut pas dépasser 100 caractères.",
+        "already_exists": "Il existe déjà un sticky sans description"
+      },
+      "created": {
+        "title": "Sticky créé",
+        "message": "Le sticky a été créé avec succès"
+      },
+      "not_created": {
+        "title": "Sticky non créé",
+        "message": "Le sticky n’a pas pu être créé"
+      },
+      "updated": {
+        "title": "Sticky mis à jour",
+        "message": "Le sticky a été mis à jour avec succès"
+      },
+      "not_updated": {
+        "title": "Sticky non mis à jour",
+        "message": "Le sticky n’a pas pu être mis à jour"
+      },
+      "removed": {
+        "title": "Sticky supprimé",
+        "message": "Le sticky a été supprimé avec succès"
+      },
+      "not_removed": {
+        "title": "Sticky non supprimé",
+        "message": "Le sticky n’a pas pu être supprimé"
+      }
+    },
+    "open_button": "Ouvrir le panneau de navigation",
+    "close_button": "Fermer le panneau de navigation",
+    "outline_floating_button": "Ouvrir le plan"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Déplacer",
+        "loading": "Déplacement"
+      },
+      "cannot_move_to_teamspace": "Les pages privées et partagées ne peuvent pas être déplacées vers un teamspace.",
+      "placeholders": {
+        "workspace_to_all": "Rechercher des projets et des teamspaces",
+        "workspace_to_project": "Rechercher des projets",
+        "project_to_all": "Rechercher des projets et des teamspaces",
+        "project_to_project": "Rechercher des projets",
+        "project_to_all_with_wiki": "Rechercher des collections wiki, des projets et des espaces d'équipe",
+        "project_to_project_with_wiki": "Rechercher des collections wiki et des projets"
+      },
+      "toasts": {
+        "success": {
+          "title": "Succès !",
+          "message": "Page déplacée avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "La page n’a pas pu être déplacée. Veuillez réessayer plus tard."
+        },
+        "collection_error": {
+          "title": "Déplacée vers le wiki",
+          "message": "La page a été déplacée vers le wiki, mais n'a pas pu être ajoutée à la collection sélectionnée. Elle reste dans General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Retirer de la collection",
+      "success_message": "Page retirée de la collection.",
+      "error_message": "La page n'a pas pu être retirée de la collection. Veuillez réessayer."
+    }
+  }
+}

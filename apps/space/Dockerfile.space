@@ -13,7 +13,7 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.9.4
+RUN pnpm add -g turbo@2.9.18
 
 COPY . .
 
@@ -78,9 +78,21 @@ RUN pnpm turbo run build --filter=space
 
 FROM base AS runner
 
+ENV NODE_ENV=production
+
+# Remove go from Alpine APK database; not needed at runtime and carries stdlib CVEs
+RUN apk del go 2>/dev/null || true
+
+# Remove vulnerable picomatch bundled inside npm (CVE-2026-33671)
+# npx only needs picomatch when installing packages, not when running a locally-installed binary
+RUN rm -rf /usr/local/lib/node_modules/npm/node_modules/picomatch
+
 COPY --from=installer /app/apps/space/build ./apps/space/build
 COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules
 COPY --from=installer /app/node_modules ./node_modules
+
+# esbuild and tsgolint are build-only Go binaries; remove from runtime image to eliminate stdlib CVEs
+RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -delete 2>/dev/null || true
 
 WORKDIR /app/apps/space
 

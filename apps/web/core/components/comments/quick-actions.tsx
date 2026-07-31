@@ -78,45 +78,43 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
           icon: TrashIcon,
           shouldRender: canDelete,
         },
-      ];
+      ].filter((item) => item.shouldRender !== false);
     },
     [t, setEditMode, canEdit, showCopyLinkOption, activityOperations, comment, showAccessSpecifier, canDelete]
   );
 
+  if (MENU_ITEMS.length === 0) return null;
+
   return (
     <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
-      {MENU_ITEMS.map((item) => {
-        if (item.shouldRender === false) return null;
-
-        return (
-          <CustomMenu.MenuItem
-            key={item.key}
-            onClick={() => item.action()}
-            className={cn(
-              "flex items-center gap-2",
-              {
-                "text-placeholder": item.disabled,
-              },
-              item.className
+      {MENU_ITEMS.map((item) => (
+        <CustomMenu.MenuItem
+          key={item.key}
+          onClick={() => item.action()}
+          className={cn(
+            "flex items-center gap-2",
+            {
+              "text-placeholder": item.disabled,
+            },
+            item.className
+          )}
+          disabled={item.disabled}
+        >
+          {item.icon && <item.icon className={cn("size-3 shrink-0", item.iconClassName)} />}
+          <div>
+            <h5>{item.title}</h5>
+            {item.description && (
+              <p
+                className={cn("whitespace-pre-line text-tertiary", {
+                  "text-placeholder": item.disabled,
+                })}
+              >
+                {item.description}
+              </p>
             )}
-            disabled={item.disabled}
-          >
-            {item.icon && <item.icon className={cn("size-3 shrink-0", item.iconClassName)} />}
-            <div>
-              <h5>{item.title}</h5>
-              {item.description && (
-                <p
-                  className={cn("whitespace-pre-line text-tertiary", {
-                    "text-placeholder": item.disabled,
-                  })}
-                >
-                  {item.description}
-                </p>
-              )}
-            </div>
-          </CustomMenu.MenuItem>
-        );
-      })}
+          </div>
+        </CustomMenu.MenuItem>
+      ))}
     </CustomMenu>
   );
 });

@@ -117,7 +117,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Save Theme Button */}
         <Button variant="primary" size="lg" type="submit" loading={isSubmitting || isLoadingPalette}>
-          {isSubmitting ? t("creating_theme") : isLoadingPalette ? "Generating" : t("set_theme")}
+          {isSubmitting ? t("common.saving") : isLoadingPalette ? "Generating" : t("set_theme")}
         </Button>
         {/* Import/Export Section */}
         <CustomThemeDownloadConfigButton getValues={getValues} />

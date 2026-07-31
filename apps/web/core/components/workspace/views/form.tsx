@@ -19,7 +19,6 @@ import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/is
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // plane web imports
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
-import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -124,7 +123,6 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
             />
           </div>
           <div className="flex gap-2">
-            <AccessController control={control} />
             {/* display filters dropdown */}
             <Controller
               control={control}

@@ -31,7 +31,7 @@ export interface IBaseAnalyticsStore {
   updateIsEpic: (isEpic: boolean) => void;
 }
 
-export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
+export class BaseAnalyticsStore implements IBaseAnalyticsStore {
   //observables
   currentTab: TAnalyticsTabsBase = "overview";
   selectedProjects: string[] = [];

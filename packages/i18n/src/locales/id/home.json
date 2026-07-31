@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Panduan pemula Anda",
+      "not_right_now": "Tidak sekarang",
+      "create_project": {
+        "title": "Buat proyek",
+        "description": "Sebagian besar hal dimulai dengan proyek di Plane.",
+        "cta": "Mulai sekarang"
+      },
+      "invite_team": {
+        "title": "Undang tim Anda",
+        "description": "Bangun, kirim, dan kelola dengan rekan kerja.",
+        "cta": "Ajak mereka"
+      },
+      "configure_workspace": {
+        "title": "Atur ruang kerja Anda.",
+        "description": "Hidupkan atau matikan fitur atau lebih dari itu.",
+        "cta": "Konfigurasi ruang kerja ini"
+      },
+      "personalize_account": {
+        "title": "Jadikan Plane milik Anda.",
+        "description": "Pilih gambar Anda, warna, dan lainnya.",
+        "cta": "Personalisasi sekarang"
+      },
+      "widgets": {
+        "title": "Sepi Tanpa Widget, Nyalakan Mereka",
+        "description": "Sepertinya semua widget Anda dimatikan. Aktifkan sekarang untuk meningkatkan pengalaman Anda!",
+        "primary_button": {
+          "text": "Kelola widget"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Simpan tautan ke hal-hal kerja yang ingin Anda miliki.",
+      "add": "Tambahkan Tautan Cepat",
+      "title": "Tautan Cepat",
+      "title_plural": "Tautan Cepat"
+    },
+    "recents": {
+      "title": "Terbaru",
+      "empty": {
+        "project": "Proyek terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
+        "page": "Halaman terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
+        "issue": "Item kerja terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
+        "default": "Anda belum memiliki yang terbaru."
+      },
+      "filters": {
+        "all": "Semua",
+        "projects": "Proyek",
+        "pages": "Halaman",
+        "issues": "Item kerja"
+      }
+    },
+    "new_at_plane": {
+      "title": "Baru di Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial cepat"
+    },
+    "widget": {
+      "reordered_successfully": "Widget berhasil diurutkan ulang.",
+      "reordering_failed": "Kesalahan terjadi saat mengurutkan ulang widget."
+    },
+    "manage_widgets": "Kelola widget",
+    "title": "Beranda",
+    "star_us_on_github": "Bintang kami di GitHub",
+    "business_trial_banner": {
+      "title": "Uji coba 14 hari paket Business Anda telah aktif!",
+      "description": "Jelajahi semua fitur Business. Saat Anda siap, pilih untuk berlangganan. Anda tidak akan ditagih secara otomatis.",
+      "trial_ends_today": "Uji coba berakhir hari ini",
+      "trial_ends_in_days": "Uji coba berakhir dalam {days} hari",
+      "start_subscription": "Mulai berlangganan",
+      "explore_business_features": "Jelajahi fitur Business"
+    }
+  }
+}

@@ -99,15 +99,17 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),
+        title: errorInfo?.title ?? t("auth.common.password.toast.change_password.error.title"),
         message:
-          typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
+          typeof errorInfo?.message === "string"
+            ? errorInfo.message
+            : t("auth.common.password.toast.change_password.error.message"),
       });
 
       if (code && passwordErrors.includes(code as EAuthenticationErrorCodes)) {
         setError("new_password", {
           type: "manual",
-          message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
+          message: errorInfo?.message?.toString() || t("auth.common.password.toast.change_password.error.message"),
         });
       }
     }

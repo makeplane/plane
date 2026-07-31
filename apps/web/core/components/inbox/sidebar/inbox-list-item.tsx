@@ -20,8 +20,6 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
 
@@ -75,7 +73,6 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
-                {inboxIssue.source && <InboxSourcePill source={inboxIssue.source} />}
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>

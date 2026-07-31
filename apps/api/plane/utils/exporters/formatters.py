@@ -175,7 +175,7 @@ class XLSXFormatter(BaseFormatter):
         wb = Workbook()
         sh = wb.active
         for row in data:
-            sh.append(row)
+            sh.append(sanitize_csv_row(row))
         out = io.BytesIO()
         wb.save(out)
         out.seek(0)

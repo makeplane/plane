@@ -18,12 +18,11 @@ from django import apps
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.utils.path_validator import sanitize_filename
-from plane.db.mixins import SoftDeletionManager
+from plane.db.mixins import SoftDeletionManager, ChangeTrackerMixin
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
-from plane.db.mixins import ChangeTrackerMixin
 from .state import StateGroup
 
 
@@ -102,7 +101,9 @@ class IssueManager(SoftDeletionManager):
         )
 
 
-class Issue(ProjectBaseModel):
+class Issue(ChangeTrackerMixin, ProjectBaseModel):
+    TRACKED_FIELDS = ["state_id"]
+
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -177,30 +178,8 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        if self.state is None:
-            try:
-                from plane.db.models import State
-
-                default_state = State.objects.filter(
-                    ~models.Q(is_triage=True), project=self.project, default=True
-                ).first()
-                if default_state is None:
-                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
-                    self.state = random_state
-                else:
-                    self.state = default_state
-            except ImportError:
-                pass
-        else:
-            try:
-                from plane.db.models import State
-
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
-                else:
-                    self.completed_at = None
-            except ImportError:
-                pass
+        self._ensure_default_state()
+        kwargs = self._sync_completed_at(kwargs)
 
         if self._state.adding:
             with transaction.atomic():
@@ -245,6 +224,35 @@ class Issue(ProjectBaseModel):
     def __str__(self):
         """Return name of the issue"""
         return f"{self.name} <{self.project.name}>"
+
+    def _ensure_default_state(self):
+        """Assign a default state when none is set."""
+        if self.state is not None:
+            return
+        try:
+            from plane.db.models import State
+
+            default_state = State.objects.filter(~models.Q(is_triage=True), project=self.project, default=True).first()
+            self.state = default_state or State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
+        except ImportError as e:
+            log_exception(e)
+
+    def _sync_completed_at(self, kwargs):
+        """Update completed_at when state changes. Returns kwargs."""
+        if not self.state:
+            return kwargs
+        if not self._state.adding and not self.has_changed("state_id"):
+            return kwargs
+
+        if self.state.group == StateGroup.COMPLETED.value:
+            self.completed_at = timezone.now()
+        else:
+            self.completed_at = None
+
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"completed_at"})
+        return kwargs
 
 
 class IssueBlocker(ProjectBaseModel):

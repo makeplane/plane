@@ -100,7 +100,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
       router.push(redirectionPath);
     } catch (_error) {
       setToast({
-        title: t("toast.error "),
+        title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
