@@ -29,11 +29,11 @@ new_dirs=()
 if [[ "$NEW_ONLY" == true ]]; then
   base_sha="${GITHUB_BASE_SHA:-$(git merge-base HEAD origin/preview 2>/dev/null || echo "")}"
   if [[ -n "$base_sha" ]]; then
-    while IFS= read -r path; do
-      dir=$(echo "$path" | sed -E 's|packages/propel/src/([^/]+)/.*|\1|')
-      [[ "$dir" == "$path" ]] && continue
-      new_dirs+=("$dir")
-    done < <(git diff --name-only --diff-filter=A "$base_sha" HEAD -- "packages/propel/src/" 2>/dev/null | sort -u)
+    while IFS= read -r dir_name; do
+      old_count=$(git ls-tree -r "$base_sha" -- "packages/propel/src/$dir_name/" 2>/dev/null | wc -l | tr -d ' ')
+      [[ "$old_count" -eq 0 ]] && new_dirs+=("$dir_name")
+    done < <(git diff --name-only --diff-filter=A "$base_sha" HEAD -- "packages/propel/src/" 2>/dev/null |
+      sed -E 's|packages/propel/src/([^/]+)/.*|\1|' | sort -u)
     # deduplicate
     if [[ ${#new_dirs[@]} -gt 0 ]]; then
       mapfile -t new_dirs < <(printf '%s\n' "${new_dirs[@]}" | sort -u)
@@ -76,7 +76,7 @@ echo "━━━ Propel Story Coverage ━━━━━━━━━━━━━━
 echo "  Components : $total"
 echo "  With story : $covered"
 echo "  Missing    : ${#missing[@]}"
-echo "  Coverage   : $(( covered * 100 / total ))%"
+echo "  Coverage   : $(( total > 0 ? covered * 100 / total : 0 ))%"
 echo ""
 
 if [[ ${#missing[@]} -gt 0 ]]; then

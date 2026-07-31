@@ -61,7 +61,7 @@ function analyzeComponent(srcPath, name) {
       variantCount = (cvaMatches[1].match(/\w+:/g) || []).length;
     }
     // Check for hardcoded hex values
-    hardcodedValues = /#[0-9a-fA-F]{3,6}/.test(helperContent) || /\d+px/.test(helperContent.replace(/\d+px;/g, ""));
+    hardcodedValues = /#[0-9a-fA-F]{3,6}/.test(helperContent) || /\d+px/.test(helperContent);
   }
 
   // Also check main component file for hardcoded values
@@ -133,10 +133,7 @@ const uiResults = uiDirs.map((name) => analyzeComponent(UI_SRC, name));
 
 // Find UI components without propel equivalent
 const propelNames = new Set(propelResults.map((r) => r.name.toLowerCase()));
-const uiWithoutPropel = uiResults.filter((r) => {
-  const similar = [...propelNames].some((p) => p.includes(r.name.toLowerCase()) || r.name.toLowerCase().includes(p));
-  return !similar;
-});
+const uiWithoutPropel = uiResults.filter((r) => !propelNames.has(r.name.toLowerCase()));
 
 // Stats
 const propelWithStory = propelResults.filter((r) => r.hasStory).length;

@@ -60,7 +60,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "generate-story": "node scripts/generate-story.mjs"
+    "generate-story": "node scripts/generate-story.mjs",
+    "audit-stories": "node scripts/audit.mjs"
   },
   "dependencies": {
     "@base-ui-components/react": "catalog:",

@@ -64,9 +64,9 @@ function extractBracedBlock(content, openBraceIndex) {
  */
 function stripStringLiterals(content) {
   return content
-    .replace(/"[^"\\]*(?:\\.[^"\\]*)*"/g, '""')
-    .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, "''")
-    .replace(/`[^`\\]*(?:\\.[^`\\]*)*`/g, "``");
+    .replace(/"[^"\\]*(?:\\.[^"\\]*)*"/g, (m) => '"' + " ".repeat(m.length - 2) + '"')
+    .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, (m) => "'" + " ".repeat(m.length - 2) + "'")
+    .replace(/`[^`\\]*(?:\\.[^`\\]*)*`/g, (m) => "`" + " ".repeat(m.length - 2) + "`");
 }
 
 /**
@@ -186,15 +186,19 @@ function extractPropsFromHelper(content) {
 
 // ─── Component name finder ────────────────────────────────────────────────────
 
+function findComponentFile(dir) {
+  const files = readdirSync(dir);
+  return files.find(
+    (f) => f.endsWith(".tsx") && !f.includes(".stories.") && !f.includes("helper") && !f.includes("index")
+  );
+}
+
 /**
  * Scans files in the component dir to find the exported PascalCase component name.
  * Falls back to the provided PascalCase name.
  */
 function findExportedComponent(dir, fallback) {
-  const files = readdirSync(dir);
-  const componentFile = files.find(
-    (f) => f.endsWith(".tsx") && !f.includes(".stories.") && !f.includes("helper") && !f.includes("index")
-  );
+  const componentFile = findComponentFile(dir);
   if (!componentFile) return fallback;
 
   const content = readFileSync(join(dir, componentFile), "utf8");
@@ -214,10 +218,7 @@ function findExportedComponent(dir, fallback) {
  * Returns true if the component file contains `{children}` or `children` in JSX.
  */
 function componentUsesChildren(dir) {
-  const files = readdirSync(dir);
-  const componentFile = files.find(
-    (f) => f.endsWith(".tsx") && !f.includes(".stories.") && !f.includes("helper") && !f.includes("index")
-  );
+  const componentFile = findComponentFile(dir);
   if (!componentFile) return false;
   const content = readFileSync(join(dir, componentFile), "utf8");
   return /\{children\}/.test(content);
@@ -338,7 +339,7 @@ function generatePerVariantStories(variantKey, options, componentName, defaultVa
 
 function generateAllVariantsRender(variantKey, options, componentName, hasChildren) {
   const items = options.map((opt) => {
-    const label = capitalizeFirst(opt.replace("-", " "));
+    const label = opt.split("-").map(capitalizeFirst).join(" ");
     return hasChildren
       ? `          <${componentName} ${variantKey}="${opt}">${label}</${componentName}>`
       : `          <${componentName} ${variantKey}="${opt}" />`;

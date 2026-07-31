@@ -6,18 +6,11 @@
 
 import * as React from "react";
 
-enum EIconSize {
-  XS = "xs",
-  SM = "sm",
-  MD = "md",
-  LG = "lg",
-  XL = "xl",
-} // inlined from @plane/constants
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";
 import { CompletedGroupIcon } from "./completed-group-icon";
 import type { IStateGroupIcon } from "./helper";
-import { STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
+import { EIconSize, STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
 import { StartedGroupIcon } from "./started-group-icon";
 import { UnstartedGroupIcon } from "./unstarted-group-icon";
 

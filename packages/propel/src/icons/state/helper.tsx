@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-enum EIconSize {
+export enum EIconSize {
   XS = "xs",
   SM = "sm",
   MD = "md",
