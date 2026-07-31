@@ -6,7 +6,13 @@
 
 import * as React from "react";
 
-import { EIconSize } from "@plane/constants";
+enum EIconSize {
+  XS = "xs",
+  SM = "sm",
+  MD = "md",
+  LG = "lg",
+  XL = "xl",
+} // inlined from @plane/constants
 import type { IIntakeStateGroupIcon } from "./helper";
 import { INTAKE_STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
 import { TriageGroupIcon } from "./triage-group-icon";

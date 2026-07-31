@@ -6,7 +6,13 @@
 
 import * as React from "react";
 
-import { EIconSize } from "@plane/constants";
+enum EIconSize {
+  XS = "xs",
+  SM = "sm",
+  MD = "md",
+  LG = "lg",
+  XL = "xl",
+} // inlined from @plane/constants
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";
 import { CompletedGroupIcon } from "./completed-group-icon";
