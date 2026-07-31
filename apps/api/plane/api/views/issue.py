@@ -1591,6 +1591,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 examples=[ISSUE_COMMENT_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
@@ -1672,6 +1673,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             204: OpenApiResponse(description="Work item comment deleted successfully"),
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
         },
     )
@@ -2014,6 +2016,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 examples=[ISSUE_ATTACHMENT_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
