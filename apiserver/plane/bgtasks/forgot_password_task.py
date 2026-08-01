@@ -1,4 +1,5 @@
 # Python imports
+import html
 import logging
 
 # Third party imports
@@ -43,7 +44,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
 
         html_content = render_to_string("emails/auth/forgot_password.html", context)
 
-        text_content = strip_tags(html_content)
+        text_content = html.unescape(strip_tags(html_content))
 
         connection = get_connection(
             host=EMAIL_HOST,

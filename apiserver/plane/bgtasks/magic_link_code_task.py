@@ -1,4 +1,5 @@
 # Python imports
+import html
 import logging
 
 # Third party imports
@@ -33,7 +34,7 @@ def magic_link(email, key, token, current_site):
         context = {"code": token, "email": email}
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)
-        text_content = strip_tags(html_content)
+        text_content = html.unescape(strip_tags(html_content))
 
         connection = get_connection(
             host=EMAIL_HOST,
