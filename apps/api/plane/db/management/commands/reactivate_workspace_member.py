@@ -30,19 +30,22 @@ class Command(BaseCommand):
         if not email:
             raise CommandError("Error: Email is required")
 
+        # emails are stored lowercased and stripped (User.save)
+        email = email.strip().lower()
+
         # filter the user
         user = User.objects.filter(email=email).first()
 
         # Raise error if the user is not present
         if not user:
-            raise CommandError(f"Error: User with {email} does not exists")
+            raise CommandError(f"Error: User with {email} does not exist")
 
         # filter the workspace
         workspace = Workspace.objects.filter(slug=slug).first()
 
         # Raise error if the workspace is not present
         if not workspace:
-            raise CommandError(f"Error: Workspace with slug {slug} does not exists")
+            raise CommandError(f"Error: Workspace with slug {slug} does not exist")
 
         # Find the workspace membership (includes inactive members; soft-deleted are excluded by default manager)
         workspace_member = WorkspaceMember.objects.filter(workspace=workspace, member=user).first()
@@ -58,9 +61,10 @@ class Command(BaseCommand):
             )
             return
 
-        # Reactivate the membership
+        # Reactivate the membership; limit the write so audit fields set by
+        # BaseModel.save (no request user here) are not persisted
         workspace_member.is_active = True
-        workspace_member.save()
+        workspace_member.save(update_fields=["is_active"])
 
         self.stdout.write(
             self.style.SUCCESS(f"User {email} reactivated successfully in workspace {slug}")
