@@ -9,6 +9,7 @@ str(None) → "None" values rendered as empty form-like boxes.
 """
 
 from plane.bgtasks.email_notification_task import (
+    absolute_avatar_url,
     create_payload,
     is_meaningful_activity_value,
     process_email_html,
@@ -136,3 +137,24 @@ class TestProcessEmailHtml:
             ]
         )
         assert result == ["<p><strong>UPDATE</strong></p>"]
+
+
+class TestAbsoluteAvatarUrl:
+    def test_none_does_not_become_hostnone(self):
+        # Regression: f"{base}{None}" → "https://plane.darka.ioNone" broken <img>
+        assert absolute_avatar_url("https://plane.darka.io", None) == ""
+        assert absolute_avatar_url("https://plane.darka.io", "") == ""
+        assert absolute_avatar_url("https://plane.darka.io", "None") == ""
+
+    def test_relative_path_prefixed(self):
+        assert (
+            absolute_avatar_url(
+                "https://plane.darka.io",
+                "/api/assets/v2/static/abc/",
+            )
+            == "https://plane.darka.io/api/assets/v2/static/abc/"
+        )
+
+    def test_absolute_unchanged(self):
+        url = "https://cdn.example.com/a.png"
+        assert absolute_avatar_url("https://plane.darka.io", url) == url

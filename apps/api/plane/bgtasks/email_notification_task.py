@@ -98,6 +98,27 @@ def is_meaningful_activity_value(value):
     return value.strip() not in _EMPTY_ACTIVITY_VALUES
 
 
+def absolute_avatar_url(base_api, avatar_url):
+    """
+    Build an absolute avatar URL for email HTML, or "" for the initials fallback.
+
+    Upstream bug: f\"{base_api}{actor.avatar_url}\" when avatar_url is None becomes
+    \"https://hostNone\", which is truthy in the template so clients show a broken
+    image icon instead of the letter avatar.
+    """
+    if not avatar_url or not is_meaningful_activity_value(str(avatar_url)):
+        return ""
+    url = str(avatar_url).strip()
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if not base_api:
+        return url
+    base = str(base_api).rstrip("/")
+    if not url.startswith("/"):
+        url = f"/{url}"
+    return f"{base}{url}"
+
+
 def create_payload(notification_data):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
     data = {}
@@ -255,7 +276,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                             {
                                 "actor_comments": comment,
                                 "actor_detail": {
-                                    "avatar_url": f"{base_api}{actor.avatar_url}",
+                                    "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
                                     "first_name": actor.first_name,
                                     "last_name": actor.last_name,
                                 },
@@ -269,7 +290,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                             {
                                 "actor_comments": mention,
                                 "actor_detail": {
-                                    "avatar_url": f"{base_api}{actor.avatar_url}",
+                                    "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
                                     "first_name": actor.first_name,
                                     "last_name": actor.last_name,
                                 },
@@ -282,7 +303,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
