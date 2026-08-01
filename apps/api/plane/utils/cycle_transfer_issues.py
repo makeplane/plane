@@ -177,7 +177,7 @@ def transfer_cycle_issues(
                         assignees__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",
+                            Cast("assignees__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),
@@ -299,7 +299,7 @@ def transfer_cycle_issues(
                     assignees__avatar_asset__isnull=False,
                     then=Concat(
                         Value("/api/assets/v2/static/"),
-                        "assignees__avatar_asset",
+                        Cast("assignees__avatar_asset", models.CharField()),
                         Value("/"),
                     ),
                 ),

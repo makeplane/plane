@@ -22,7 +22,7 @@ from plane.db.models import (
 )
 from django.db import models
 from django.db.models import F, Case, When, Value
-from django.db.models.functions import Concat
+from django.db.models.functions import Cast, Concat
 from plane.utils.build_chart import build_analytics_chart
 from plane.utils.date_utils import (
     get_analytics_filters,
@@ -141,7 +141,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
                         assignees__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Cast("assignees__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),

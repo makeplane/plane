@@ -857,7 +857,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
@@ -954,7 +954,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
