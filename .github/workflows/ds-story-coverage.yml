@@ -1,0 +1,36 @@
+name: Design System — Story coverage
+
+on:
+  pull_request:
+    branches:
+      - preview
+    paths:
+      - "packages/propel/src/**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  story-coverage:
+    name: Propel story coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Report coverage summary
+        run: bash packages/propel/scripts/check-story-coverage.sh
+
+      - name: Fail on new components without stories
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash packages/propel/scripts/check-story-coverage.sh --new-only
