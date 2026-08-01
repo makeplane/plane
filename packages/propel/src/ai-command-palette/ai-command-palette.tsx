@@ -48,6 +48,8 @@ const SearchIcon = ({ className }: { className?: string }) => (
 
 const AICommandPalette = React.forwardRef(function AICommandPalette(
   {
+    open,
+    onOpenChange,
     aiMode = false,
     onAIModeChange,
     onAIQuery,
@@ -66,9 +68,16 @@ const AICommandPalette = React.forwardRef(function AICommandPalette(
     if (aiMode) aiInputRef.current?.focus();
   }, [aiMode]);
 
+  if (open === false) return null;
+
   const toggleAI = () => onAIModeChange?.(!aiMode);
+  const close = () => onOpenChange?.(false);
 
   const handleAIKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      close();
+      return;
+    }
     if (e.key === "Enter" && aiQuery.trim() && !isAILoading) {
       onAIQuery?.(aiQuery.trim());
     }
@@ -117,6 +126,10 @@ const AICommandPalette = React.forwardRef(function AICommandPalette(
             <CommandPrimitive.Input
               placeholder={placeholder}
               onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  close();
+                  return;
+                }
                 if (e.key === "Tab") {
                   e.preventDefault();
                   toggleAI();

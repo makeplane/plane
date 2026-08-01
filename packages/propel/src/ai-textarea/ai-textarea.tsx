@@ -41,8 +41,8 @@ function CommandMenu({
           className="hover:bg-layer-4 focus:bg-layer-4 flex w-full items-center gap-2 px-3 py-2 text-left text-13 text-primary transition-colors focus:outline-none"
           onMouseDown={(e) => {
             e.preventDefault();
-            onSelect(cmd);
           }}
+          onClick={() => onSelect(cmd)}
         >
           {cmd.icon && <span className="size-4 shrink-0 text-secondary">{cmd.icon}</span>}
           <span className="font-medium">/{cmd.name}</span>
@@ -111,8 +111,18 @@ const AITextarea = React.forwardRef(function AITextarea(
     const pos = textarea.selectionStart ?? value.length;
     const lastNewline = value.lastIndexOf("\n", pos - 1);
     const lineStart = lastNewline + 1;
+    const currentLine = value.slice(lineStart, pos);
+
+    if (!currentLine.startsWith("/")) {
+      setShowCommands(false);
+      return;
+    }
+
     const newValue = value.slice(0, lineStart) + value.slice(pos);
 
+    if (props.value === undefined) {
+      textarea.setRangeText("", lineStart, pos, "end");
+    }
     onChange?.(newValue);
     onCommand?.(cmd);
     setShowCommands(false);

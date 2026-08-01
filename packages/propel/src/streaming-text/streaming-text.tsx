@@ -19,7 +19,7 @@ const StreamingText = React.forwardRef(function StreamingText(
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
   return (
-    <span ref={ref} className={cn("break-words whitespace-pre-wrap", className)}>
+    <span ref={ref} className={cn("wrap-break-word whitespace-pre-wrap", className)}>
       {text}
       {isStreaming && showCursor && (
         <span
