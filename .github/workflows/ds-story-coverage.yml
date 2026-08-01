@@ -27,8 +27,74 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Report coverage summary
-        run: bash packages/propel/scripts/check-story-coverage.sh
+      - name: Compute coverage (HEAD)
+        id: coverage_head
+        run: |
+          bash packages/propel/scripts/check-story-coverage.sh 2>&1 | tee /tmp/coverage_head.txt
+          pct=$(grep 'Coverage' /tmp/coverage_head.txt | grep -oE '[0-9]+%' | head -1)
+          echo "pct=${pct}" >> "$GITHUB_OUTPUT"
+          echo "report<<EOF" >> "$GITHUB_OUTPUT"
+          cat /tmp/coverage_head.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Compute coverage (base)
+        id: coverage_base
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git checkout "$GITHUB_BASE_SHA" -- packages/propel/src 2>/dev/null || true
+          bash packages/propel/scripts/check-story-coverage.sh 2>&1 | tee /tmp/coverage_base.txt || true
+          pct=$(grep 'Coverage' /tmp/coverage_base.txt | grep -oE '[0-9]+%' | head -1)
+          echo "pct=${pct:-?%}" >> "$GITHUB_OUTPUT"
+          git checkout HEAD -- packages/propel/src
+
+      - name: Comment PR with coverage delta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const base = '${{ steps.coverage_base.outputs.pct }}';
+            const head = '${{ steps.coverage_head.outputs.pct }}';
+            const report = `${{ steps.coverage_head.outputs.report }}`;
+            const body = [
+              '## 📊 Propel Story Coverage',
+              '',
+              `| | Coverage |`,
+              `|---|---|`,
+              `| Base (\`preview\`) | ${base} |`,
+              `| This PR | ${head} |`,
+              '',
+              '<details><summary>Full report</summary>',
+              '',
+              '```',
+              report,
+              '```',
+              '</details>',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('Propel Story Coverage')
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
       - name: Fail on new components without stories
         env:
