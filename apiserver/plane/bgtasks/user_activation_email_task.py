@@ -1,4 +1,5 @@
 # Python imports
+import html
 import logging
 
 # Django imports
@@ -27,7 +28,7 @@ def user_activation_email(current_site, user_id):
         # Send email to user
         html_content = render_to_string("emails/user/user_activation.html", context)
 
-        text_content = strip_tags(html_content)
+        text_content = html.unescape(strip_tags(html_content))
         # Configure email connection from the database
         (
             EMAIL_HOST,

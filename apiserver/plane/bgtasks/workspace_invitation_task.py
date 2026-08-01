@@ -1,4 +1,5 @@
 # Python imports
+import html
 import logging
 
 # Third party imports
@@ -55,7 +56,7 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
             "emails/invitations/workspace_invitation.html", context
         )
 
-        text_content = strip_tags(html_content)
+        text_content = html.unescape(strip_tags(html_content))
 
         workspace_member_invite.message = text_content
         workspace_member_invite.save()

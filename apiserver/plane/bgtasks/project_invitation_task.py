@@ -1,4 +1,5 @@
 # Python imports
+import html
 import logging
 
 # Third party imports
@@ -41,7 +42,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
             "emails/invitations/project_invitation.html", context
         )
 
-        text_content = strip_tags(html_content)
+        text_content = html.unescape(strip_tags(html_content))
 
         project_member_invite.message = text_content
         project_member_invite.save()
