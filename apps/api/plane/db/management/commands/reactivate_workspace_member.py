@@ -6,7 +6,7 @@
 from django.core.management import BaseCommand, CommandError
 
 # Module imports
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import ProjectMember, User, Workspace, WorkspaceMember
 
 
 class Command(BaseCommand):
@@ -19,8 +19,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # get the workspace slug and user email from console
-        slug = options.get("slug", False)
-        email = options.get("email", False)
+        slug = options.get("slug") or ""
+        email = options.get("email") or ""
+
+        # normalize before validating; emails are stored lowercased and stripped (User.save)
+        slug = slug.strip()
+        email = email.strip().lower()
 
         # raise error if slug is not present
         if not slug:
@@ -29,9 +33,6 @@ class Command(BaseCommand):
         # raise error if email is not present
         if not email:
             raise CommandError("Error: Email is required")
-
-        # emails are stored lowercased and stripped (User.save)
-        email = email.strip().lower()
 
         # filter the user
         user = User.objects.filter(email=email).first()
@@ -56,16 +57,36 @@ class Command(BaseCommand):
 
         # If already active, report without erroring
         if workspace_member.is_active:
-            self.stdout.write(
-                self.style.SUCCESS(f"User {email} is already an active member of workspace {slug}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"User {email} is already an active member of workspace {slug}"))
             return
 
-        # Reactivate the membership; limit the write so audit fields set by
-        # BaseModel.save (no request user here) are not persisted
+        # Reactivate the membership. update_fields keeps the write to the columns that change, and
+        # disable_auto_set_user stops BaseModel.save from nulling created_by/updated_by when there
+        # is no request user, as is the case in a management command.
         workspace_member.is_active = True
-        workspace_member.save(update_fields=["is_active"])
+        workspace_member.save(update_fields=["is_active", "updated_at"], disable_auto_set_user=True)
 
         self.stdout.write(
-            self.style.SUCCESS(f"User {email} reactivated successfully in workspace {slug}")
+            self.style.SUCCESS(
+                f"User {email} reactivated successfully in workspace {slug} as {workspace_member.get_role_display()}"
+            )
         )
+
+        # Removing a member also deactivates their project memberships, which this command leaves alone
+        inactive_projects = ProjectMember.objects.filter(workspace=workspace, member=user, is_active=False).count()
+        if inactive_projects:
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Note: {inactive_projects} project membership(s) remain inactive; "
+                    "removing a member also deactivates their project memberships"
+                )
+            )
+
+        # A member removed by deactivating their account also has an inactive user record
+        if not user.is_active:
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Note: the account for {email} is deactivated and cannot sign in. "
+                    f"Run 'python manage.py activate_user {email}' to activate it."
+                )
+            )
