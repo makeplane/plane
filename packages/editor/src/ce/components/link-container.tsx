@@ -12,7 +12,7 @@ export function LinkContainer({
   containerRef,
 }: {
   editor: Editor;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
     <>

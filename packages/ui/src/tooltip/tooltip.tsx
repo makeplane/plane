@@ -22,7 +22,9 @@ interface ITooltipProps {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
   position?: TPosition;
-  children: React.ReactElement;
+  // React 19 defaults ReactElement's props to `unknown`; propel's Tooltip needs a
+  // named props shape, so mirror it here rather than casting at the call site.
+  children: React.ReactElement<Record<string, unknown>>;
   disabled?: boolean;
   className?: string;
   openDelay?: number;

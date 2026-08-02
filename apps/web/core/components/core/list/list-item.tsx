@@ -22,7 +22,7 @@ interface IListItemProps {
   appendTitleElement?: React.ReactNode;
   actionableItems?: React.ReactNode;
   isMobile?: boolean;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
   disableLink?: boolean;
   className?: string;
   itemClassName?: string;

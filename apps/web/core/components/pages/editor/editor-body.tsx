@@ -58,7 +58,7 @@ export type TEditorBodyHandlers = {
 type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
-  editorForwardRef: React.RefObject<EditorRefApi>;
+  editorForwardRef: React.RefObject<EditorRefApi | null>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;

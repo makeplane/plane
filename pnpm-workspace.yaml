@@ -14,7 +14,7 @@ catalog:
   "@effect/platform": "^0.94.0"
   "@effect/platform-node": "^0.104.0"
   "@floating-ui/dom": "^1.7.1"
-  "@floating-ui/react": "^0.26.4"
+  "@floating-ui/react": "^0.27.20"
   "@fontsource-variable/inter": "5.2.8"
   "@fontsource/ibm-plex-mono": "5.2.7"
   "@fontsource/inter": "5.2.8"
@@ -81,9 +81,9 @@ catalog:
   "@types/mdast": "^4.0.4"
   "@types/node": "22.12.0"
   "@types/pdf-parse": "^1.1.5"
-  "@types/react": "18.3.11"
+  "@types/react": "19.2.17"
   "@types/react-color": "^3.0.9"
-  "@types/react-dom": "18.3.1"
+  "@types/react-dom": "19.2.3"
   "@types/sanitize-html": "2.16.0"
   "@types/ws": "^8.18.1"
   "@vitest/coverage-v8": "^4.1.8"
@@ -130,7 +130,7 @@ catalog:
   "lucide-react": "0.469.0"
   "mdast": "^3.0.0"
   "mobx": "6.12.0"
-  "mobx-react": "9.1.1"
+  "mobx-react": "9.2.2"
   "mobx-utils": "6.0.8"
   "next-themes": "0.4.6"
   "oxfmt": "0.35.0"
@@ -140,21 +140,21 @@ catalog:
   "postcss-cli": "^11.0.0"
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
-  "react": "18.3.1"
+  "react": "19.2.8"
   "react-color": "^2.19.3"
   "react-day-picker": "9.5.0"
-  "react-dom": "18.3.1"
+  "react-dom": "19.2.8"
   "react-dropzone": "^14.2.3"
   "react-fast-compare": "^3.2.2"
-  "react-hook-form": "7.51.5"
+  "react-hook-form": "^7.84.0"
   "react-i18next": "16.6.6"
-  "react-is": "^18.2.0"
+  "react-is": "^19.2.8"
   "react-markdown": "^10.1.0"
   "react-masonry-component": "^6.3.0"
   "react-pdf-html": "^2.1.2"
   "react-popper": "^2.3.0"
   "react-router": "7.15.1"
-  "recharts": "^2.15.1"
+  "recharts": "^2.15.4"
   "reflect-metadata": "^0.2.2"
   "rehype-parse": "^9.0.1"
   "rehype-remark": "^10.0.1"
@@ -165,7 +165,7 @@ catalog:
   "sharp": "^0.34.3"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
   "storybook": "10.4.6"
-  "swr": "2.2.4"
+  "swr": "2.4.2"
   "tailwind-merge": "3.4.0"
   "tailwindcss": "4.1.17"
   "tippy.js": "^6.3.7"
@@ -189,6 +189,17 @@ catalog:
   "zod": "^3.25.76"
 
 overrides:
+  # Force a single React across the whole graph. With node-linker=isolated,
+  # auto-install-peers and resolution-mode=highest, a dependency still declaring a
+  # React 18 peer can otherwise pull in a second copy, which surfaces as an invalid
+  # hook call rather than as an install error. The vite `resolve.dedupe` entries only
+  # cover the three app client bundles, not the SSR build, the tsdown package builds
+  # or Storybook.
+  react: "catalog:"
+  react-dom: "catalog:"
+  react-is: "catalog:"
+  "@types/react": "catalog:"
+  "@types/react-dom": "catalog:"
   express: "catalog:"
   mdast-util-to-hast: 13.2.1
   valibot: 1.2.0
@@ -256,3 +267,15 @@ minimumReleaseAgeExclude:
 
 patchedDependencies:
   react-color@2.19.3: patches/react-color@2.19.3.patch
+
+peerDependencyRules:
+  allowedVersions:
+    # react-popper 2.3.0 is unmaintained and its peer range stops at React 18, but it
+    # only uses hooks — no findDOMNode, no string refs, no element.ref reads and no
+    # defaultProps on function components — so it runs unchanged on React 19. All 32
+    # call sites import usePopper only. Recorded here so the acceptance is explicit
+    # rather than hidden behind the global strict-peer-dependencies=false.
+    react-popper: "19"
+    # Same situation: peer range predates React 19, uses nothing React 19 removed.
+    react-masonry-component: "19"
+    use-font-face-observer: "19"

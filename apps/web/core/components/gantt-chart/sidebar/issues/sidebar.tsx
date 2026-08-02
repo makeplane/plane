@@ -28,7 +28,7 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: RefObject<HTMLDivElement | null>;
   blockIds: string[];
   enableReorder: boolean;
   enableSelection: boolean;

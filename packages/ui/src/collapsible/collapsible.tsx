@@ -10,7 +10,7 @@ import React, { useState, useEffect, useCallback } from "react";
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
   children: React.ReactNode;
-  buttonRef?: React.RefObject<HTMLButtonElement>;
+  buttonRef?: React.RefObject<HTMLButtonElement | null>;
   className?: string;
   buttonClassName?: string;
   isOpen?: boolean;

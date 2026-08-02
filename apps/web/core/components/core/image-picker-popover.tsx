@@ -8,7 +8,7 @@ import React, { useState, useRef, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import type { Control } from "react-hook-form";
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Popover } from "@headlessui/react";
@@ -34,10 +34,13 @@ type TTabOption = {
   isEnabled: boolean;
 };
 
-type Props = {
+// Generic over the form's values because react-hook-form's Control is invariant: its
+// `_options.validate` narrows `name` to a keyof union, so `Control<any>` no longer
+// accepts a typed form's control. Inferring from `control` keeps call sites unchanged.
+type Props<TFieldValues extends FieldValues = FieldValues> = {
   label: string | React.ReactNode;
   value: string | null;
-  control: Control<any>;
+  control: Control<TFieldValues>;
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;
@@ -48,7 +51,7 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const ImagePickerPopover = observer(function ImagePickerPopover(props: Props) {
+function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldValues>(props: Props<TFieldValues>) {
   const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
@@ -218,7 +221,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
-                          name="search"
+                          name={"search" as FieldPath<TFieldValues>}
                           render={({ field: { value, ref } }) => (
                             <Input
                               id="search"
@@ -372,4 +375,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
       )}
     </Popover>
   );
-});
+}
+
+// observer() erases the generic signature, so restore it with a cast.
+export const ImagePickerPopover = observer(ImagePickerPopoverComponent) as typeof ImagePickerPopoverComponent;

@@ -30,7 +30,7 @@ export type TCommentCardDisplayProps = {
   disabled: boolean;
   entityId: string;
   projectId?: string;
-  readOnlyEditorRef: React.RefObject<EditorRefApi>;
+  readOnlyEditorRef: React.RefObject<EditorRefApi | null>;
   showAccessSpecifier: boolean;
   workspaceId: string;
   workspaceSlug: string;

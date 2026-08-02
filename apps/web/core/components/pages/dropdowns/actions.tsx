@@ -45,7 +45,7 @@ type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
-  parentRef?: React.RefObject<HTMLElement>;
+  parentRef?: React.RefObject<HTMLElement | null>;
   storeType: EPageStoreType;
 };
 
