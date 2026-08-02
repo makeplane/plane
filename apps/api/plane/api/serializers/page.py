@@ -73,7 +73,7 @@ class PageDetailSerializer(PageSerializer):
     create, retrieve and update operations.
     """
 
-    description_html = serializers.CharField(required=False)
+    description_html = serializers.CharField(required=False, allow_blank=True)
 
     class Meta(PageSerializer.Meta):
         fields = PageSerializer.Meta.fields + ["description_html"]
