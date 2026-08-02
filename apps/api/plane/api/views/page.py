@@ -16,7 +16,7 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import PageSerializer, PageDetailSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ROLE, ProjectEntityPermission
 from plane.app.views.page.base import unarchive_archive_page_and_descendants
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.db.models import Page, ProjectMember, UserFavorite, UserRecentVisit
@@ -41,6 +41,22 @@ from plane.utils.openapi import (
 )
 
 
+def project_page_queryset(slug, project_id, user):
+    """Pages of a project visible to the user: their own plus public ones."""
+    return (
+        Page.objects.filter(workspace__slug=slug)
+        .filter(projects__id=project_id)
+        .filter(
+            projects__project_projectmember__member=user,
+            projects__project_projectmember__is_active=True,
+            projects__archived_at__isnull=True,
+        )
+        .filter(project_pages__deleted_at__isnull=True)
+        .filter(Q(owned_by=user) | Q(access=Page.PUBLIC_ACCESS))
+        .distinct()
+    )
+
+
 class PageListCreateAPIEndpoint(BaseAPIView):
     """Page List and Create Endpoint"""
 
@@ -50,20 +66,9 @@ class PageListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        return (
-            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(projects__id=self.kwargs.get("project_id"))
-            .filter(
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
-            .filter(project_pages__deleted_at__isnull=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
-            .select_related("workspace")
-            .select_related("owned_by")
-            .distinct()
-        )
+        return project_page_queryset(
+            self.kwargs.get("slug"), self.kwargs.get("project_id"), self.request.user
+        ).select_related("workspace", "owned_by")
 
     @page_docs(
         operation_id="create_page",
@@ -161,20 +166,9 @@ class PageDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        return (
-            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(projects__id=self.kwargs.get("project_id"))
-            .filter(
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
-            .filter(project_pages__deleted_at__isnull=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
-            .select_related("workspace")
-            .select_related("owned_by")
-            .distinct()
-        )
+        return project_page_queryset(
+            self.kwargs.get("slug"), self.kwargs.get("project_id"), self.request.user
+        ).select_related("workspace", "owned_by")
 
     @page_docs(
         operation_id="retrieve_page",
@@ -315,7 +309,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
-                role=20,
+                role=ROLE.ADMIN.value,
                 project_id=project_id,
                 is_active=True,
             ).exists()
@@ -360,18 +354,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
-        return (
-            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(projects__id=self.kwargs.get("project_id"))
-            .filter(
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
-            .filter(project_pages__deleted_at__isnull=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS))
-            .distinct()
-        )
+        return project_page_queryset(self.kwargs.get("slug"), self.kwargs.get("project_id"), self.request.user)
 
     @page_docs(
         operation_id="archive_page",
@@ -396,7 +379,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         # only the owner or admin can archive the page
         if (
             ProjectMember.objects.filter(
-                project_id=project_id, member=request.user, is_active=True, role__lte=15
+                project_id=project_id, member=request.user, is_active=True, role__lte=ROLE.MEMBER.value
             ).exists()
             and request.user.id != page.owned_by_id
         ):
@@ -439,7 +422,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         # only the owner or admin can unarchive the page
         if (
             ProjectMember.objects.filter(
-                project_id=project_id, member=request.user, is_active=True, role__lte=15
+                project_id=project_id, member=request.user, is_active=True, role__lte=ROLE.MEMBER.value
             ).exists()
             and request.user.id != page.owned_by_id
         ):

@@ -48,6 +48,25 @@ def other_user(db):
 
 
 @pytest.fixture
+def member_api_key_client(db, project, other_user):
+    """Return an API key client for a non-admin project member (role 15)"""
+    from rest_framework.test import APIClient
+
+    from plane.db.models.api import APIToken
+
+    ProjectMember.objects.create(
+        project=project,
+        member=other_user,
+        role=15,  # Member role
+        is_active=True,
+    )
+    token = APIToken.objects.create(user=other_user, label="Member Token", token="member-api-token-12345")
+    client = APIClient()
+    client.credentials(HTTP_X_API_KEY=token.token)
+    return client
+
+
+@pytest.fixture
 def page_data():
     """Sample page data for tests"""
     return {
@@ -299,6 +318,18 @@ class TestPageDetailAPIEndpoint:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Page.objects.filter(pk=create_page.pk).exists()
 
+    @pytest.mark.django_db
+    def test_delete_by_non_owner_member_forbidden(self, member_api_key_client, workspace, project, create_page):
+        """Test a non-owner non-admin member cannot delete a page"""
+        create_page.archived_at = timezone.now()
+        create_page.save()
+        url = self.get_page_url(workspace.slug, project.id, create_page.id)
+
+        response = member_api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert Page.objects.filter(pk=create_page.pk).exists()
+
 
 @pytest.mark.contract
 class TestPageArchiveUnarchiveAPIEndpoint:
@@ -332,3 +363,43 @@ class TestPageArchiveUnarchiveAPIEndpoint:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         create_page.refresh_from_db()
         assert create_page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_archive_cascades_to_children(self, api_key_client, workspace, project, create_page, create_user):
+        """Test archiving a page also archives its nested pages"""
+        child = _make_page(project, create_user, name="Child Page", parent=create_page)
+        url = self.get_archive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.post(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        child.refresh_from_db()
+        assert child.archived_at is not None
+
+    @pytest.mark.django_db
+    def test_unarchive_detaches_archived_parent(self, api_key_client, workspace, project, create_page, create_user):
+        """Test unarchiving a page whose parent stays archived clears the parent"""
+        create_page.archived_at = timezone.now()
+        create_page.save()
+        child = _make_page(project, create_user, name="Child Page", parent=create_page, archived_at=timezone.now())
+        url = self.get_archive_url(workspace.slug, project.id, child.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        child.refresh_from_db()
+        assert child.archived_at is None
+        assert child.parent_id is None
+
+    @pytest.mark.django_db
+    def test_archive_by_non_owner_member_forbidden(self, member_api_key_client, workspace, project, create_page):
+        """Test a non-owner non-admin member cannot archive or unarchive a page"""
+        url = self.get_archive_url(workspace.slug, project.id, create_page.id)
+
+        response = member_api_key_client.post(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+        create_page.archived_at = timezone.now()
+        create_page.save()
+        response = member_api_key_client.delete(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN

@@ -60,12 +60,17 @@ class PageSerializer(BaseSerializer):
         if value is None:
             return value
 
-        # Reject the page itself and any of its descendants to avoid cycles
+        # Reject the page itself and any of its descendants to avoid cycles;
+        # track visited ids so a pre-existing cycle in the chain cannot loop forever
         if self.instance:
+            visited = set()
             ancestor = value
             while ancestor is not None:
                 if ancestor.id == self.instance.id:
                     raise serializers.ValidationError("Parent page cannot be the page itself or one of its descendants")
+                if ancestor.id in visited:
+                    raise serializers.ValidationError("Parent page hierarchy contains a cycle")
+                visited.add(ancestor.id)
                 ancestor = ancestor.parent
 
         # The parent page must belong to the same project
@@ -100,7 +105,7 @@ class PageDetailSerializer(PageSerializer):
         if value:
             is_valid, error_msg, sanitized_html = validate_html_content(value)
             if not is_valid:
-                raise serializers.ValidationError("html content is not valid")
+                raise serializers.ValidationError(error_msg or "html content is not valid")
             if sanitized_html is not None:
                 return sanitized_html
         return value
