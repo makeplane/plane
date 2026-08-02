@@ -26,6 +26,7 @@ export function WebhookDeleteSection(props: Props) {
           </Disclosure.Button>
 
           <Transition
+            as="div"
             show={open}
             enter="transition duration-100 ease-out"
             enterFrom="transform opacity-0"

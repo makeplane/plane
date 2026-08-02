@@ -190,9 +190,8 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
           </div>
         )}
       </button>
-
       {isDropdownOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -221,6 +220,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                       if (!label.parent)
                         return (
                           <Combobox.Option
+                            as="li"
                             key={label.id}
                             className={({ active }) =>
                               `${
@@ -256,6 +256,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                           <div>
                             {children.map((child) => (
                               <Combobox.Option
+                                as="li"
                                 key={child.id}
                                 className={({ active }) =>
                                   `${

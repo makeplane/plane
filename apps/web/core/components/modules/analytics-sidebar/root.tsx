@@ -388,7 +388,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                       />
                     </div>
                   </Disclosure.Button>
-                  <Transition show={open}>
+                  <Transition as="div" show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (

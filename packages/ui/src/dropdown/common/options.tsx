@@ -52,6 +52,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
             options.length > 0 ? (
               options?.map((option) => (
                 <Combobox.Option
+                  as="li"
                   key={keyExtractor(option)}
                   value={keyExtractor(option)}
                   disabled={option.disabled}

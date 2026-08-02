@@ -132,7 +132,12 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <Combobox value={value} onChange={handleSubmit}>
+      <Combobox
+        value={value}
+        onChange={(selected: string | null) => {
+          if (selected !== null) handleSubmit(selected);
+        }}
+      >
         <div className="relative m-1">
           <SearchIcon
             className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
@@ -146,7 +151,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
           />
         </div>
 
-        <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
+        <Combobox.Options as="ul" static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
           {isSearching ? (
             <Loader className="space-y-3 p-3">
               <Loader.Item height="40px" />

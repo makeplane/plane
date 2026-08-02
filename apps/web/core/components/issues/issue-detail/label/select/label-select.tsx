@@ -139,7 +139,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           </Button>
         </Combobox.Button>
 
-        <Combobox.Options className="fixed z-10">
+        <Combobox.Options as="ul" className="fixed z-10">
           <div
             className={`z-10 my-1 w-48 rounded-sm border border-strong bg-surface-1 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
@@ -166,6 +166,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
+                    as="li"
                     key={option.value}
                     value={option.value}
                     className={({ selected }) =>
@@ -190,6 +191,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                 <Loader className="spin h-3.5 w-3.5" />
               ) : canCreateLabel ? (
                 <Combobox.Option
+                  as="li"
                   value={query}
                   onClick={(e) => {
                     e.preventDefault();

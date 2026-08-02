@@ -189,6 +189,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           </div>
                         </Disclosure.Button>
                         <Transition
+                          as="div"
                           show={open}
                           enter="transition duration-100 ease-out"
                           enterFrom="transform opacity-0"

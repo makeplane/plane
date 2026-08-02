@@ -7,7 +7,7 @@
 import { Tab } from "@headlessui/react";
 import type { LucideProps } from "lucide-react";
 import type { FC } from "react";
-import React from "react";
+import React, { Fragment } from "react";
 // helpers
 import { cn } from "../utils";
 
@@ -31,7 +31,7 @@ type TTabListProps = {
 
 export function TabList({ autoWrap = true, ...props }: TTabListProps) {
   return autoWrap ? (
-    <Tab.Group>
+    <Tab.Group as={Fragment}>
       <TabListInner {...props} />
     </Tab.Group>
   ) : (

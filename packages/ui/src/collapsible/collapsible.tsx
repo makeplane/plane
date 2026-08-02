@@ -44,6 +44,7 @@ export function Collapsible(props: TCollapsibleProps) {
         {title}
       </Disclosure.Button>
       <Transition
+        as="div"
         show={localIsOpen}
         enter="transition-all duration-300 ease-in-out"
         enterFrom="grid-rows-[0fr] opacity-0"

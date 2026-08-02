@@ -91,9 +91,9 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           </button>
         </Tooltip>
       </div>
-
       <div className="relative">
         <Transition
+          as="div"
           show={isNeedHelpOpen}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"

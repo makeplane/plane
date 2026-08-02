@@ -238,6 +238,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           </div>
         </div>
         <Transition
+          as="div"
           show={isFavoriteMenuOpen}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
