@@ -6,6 +6,7 @@
 from datetime import datetime
 
 # Django imports
+from django.db import transaction
 from django.db.models import Q
 
 # Third party imports
@@ -92,38 +93,29 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             context={"project_id": project_id, "owned_by_id": request.user.id},
         )
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and Page.objects.filter(
-                    projects__id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
-                page = Page.objects.filter(
+            if request.data.get("external_id") and request.data.get("external_source"):
+                existing_page = Page.objects.filter(
                     projects__id=project_id,
                     workspace__slug=slug,
                     external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
                 ).first()
-                return Response(
-                    {
-                        "error": "Page with the same external id and external source already exists",
-                        "id": str(page.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+                if existing_page:
+                    return Response(
+                        {
+                            "error": "Page with the same external id and external source already exists",
+                            "id": str(existing_page.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
-            serializer.save()
-            # capture the page transaction
+            page = serializer.save()
+            # capture the page transaction with the sanitized content
             page_transaction.delay(
-                new_description_html=request.data.get("description_html", "<p></p>"),
+                new_description_html=page.description_html or "<p></p>",
                 old_description_html=None,
-                page_id=serializer.data["id"],
+                page_id=str(page.id),
             )
-            page = Page.objects.get(pk=serializer.data["id"])
             return Response(PageDetailSerializer(page).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -240,11 +232,17 @@ class PageDetailAPIEndpoint(BaseAPIView):
         """
         page = self.get_queryset().get(pk=pk)
 
-        if page.is_locked:
+        # A locked page can only be unlocked
+        if page.is_locked and set(request.data.keys()) - {"is_locked"}:
             return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Only update access if the page owner is the requesting user
-        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+        requested_access = request.data.get("access", page.access)
+        try:
+            requested_access = int(requested_access)
+        except (TypeError, ValueError):
+            return Response({"error": "Invalid access value"}, status=status.HTTP_400_BAD_REQUEST)
+        if page.access != requested_access and page.owned_by_id != request.user.id:
             return Response(
                 {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -276,13 +274,13 @@ class PageDetailAPIEndpoint(BaseAPIView):
         )
         page_description = page.description_html
         if serializer.is_valid():
-            serializer.save()
-            # capture the page transaction
+            page = serializer.save()
+            # capture the page transaction with the sanitized content
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    new_description_html=page.description_html or "<p></p>",
                     old_description_html=page_description,
-                    page_id=pk,
+                    page_id=str(pk),
                 )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -327,29 +325,30 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # remove parent from all the children
-        _ = Page.objects.filter(
-            parent_id=pk,
-            projects__id=project_id,
-            workspace__slug=slug,
-            project_pages__deleted_at__isnull=True,
-        ).update(parent=None)
+        with transaction.atomic():
+            # remove parent from all the children
+            Page.objects.filter(
+                parent_id=pk,
+                projects__id=project_id,
+                workspace__slug=slug,
+                project_pages__deleted_at__isnull=True,
+            ).update(parent=None)
 
-        page.delete()
-        # Delete the user favorite page
-        UserFavorite.objects.filter(
-            project=project_id,
-            workspace__slug=slug,
-            entity_identifier=pk,
-            entity_type="page",
-        ).delete()
-        # Delete the page from recent visit
-        UserRecentVisit.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-            entity_identifier=pk,
-            entity_name="page",
-        ).delete(soft=False)
+            page.delete()
+            # Delete the user favorite page
+            UserFavorite.objects.filter(
+                project=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_type="page",
+            ).delete()
+            # Delete the page from recent visit
+            UserRecentVisit.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_name="page",
+            ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -403,7 +402,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "Only the owner or admin can archive the page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         UserFavorite.objects.filter(
@@ -446,7 +445,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "Only the owner or admin can unarchive the page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # if parent archived then page will be unarchived breaking hierarchy

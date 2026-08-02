@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import Page, Project, ProjectMember, ProjectPage, User
@@ -140,6 +140,18 @@ class TestPageListCreateAPIEndpoint:
         assert Page.objects.count() == 1
 
     @pytest.mark.django_db
+    def test_create_page_ignores_archived_at(self, api_key_client, workspace, project, page_data):
+        """Test archived_at is read-only and cannot be set on create"""
+        url = self.get_page_url(workspace.slug, project.id)
+        payload = {**page_data, "archived_at": "2024-01-01"}
+
+        with patch("plane.api.views.page.page_transaction"):
+            response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Page.objects.first().archived_at is None
+
+    @pytest.mark.django_db
     def test_list_pages(self, api_key_client, workspace, project, create_page):
         """Test listing pages returns the paginated envelope"""
         url = self.get_page_url(workspace.slug, project.id)
@@ -231,6 +243,31 @@ class TestPageDetailAPIEndpoint:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
+    def test_unlock_locked_page(self, api_key_client, workspace, project, create_page):
+        """Test a locked page can still be unlocked"""
+        create_page.is_locked = True
+        create_page.save()
+        url = self.get_page_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.patch(url, {"is_locked": False}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        create_page.refresh_from_db()
+        assert create_page.is_locked is False
+
+    @pytest.mark.django_db
+    def test_update_with_string_access_value(self, api_key_client, workspace, project, other_user):
+        """Test access values sent as strings do not trigger false ownership errors"""
+        page = _make_page(project, other_user, access=Page.PUBLIC_ACCESS)
+        url = self.get_page_url(workspace.slug, project.id, page.id)
+
+        response = api_key_client.patch(url, {"name": "Renamed", "access": str(Page.PUBLIC_ACCESS)}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.name == "Renamed"
+
+    @pytest.mark.django_db
     def test_update_access_by_non_owner(self, api_key_client, workspace, project, other_user):
         """Test only the page owner can change its access level"""
         page = _make_page(project, other_user, access=Page.PUBLIC_ACCESS)
@@ -253,7 +290,7 @@ class TestPageDetailAPIEndpoint:
     @pytest.mark.django_db
     def test_delete_archived_page(self, api_key_client, workspace, project, create_page):
         """Test archived pages can be deleted by their owner"""
-        create_page.archived_at = datetime.now()
+        create_page.archived_at = timezone.now()
         create_page.save()
         url = self.get_page_url(workspace.slug, project.id, create_page.id)
 
@@ -286,7 +323,7 @@ class TestPageArchiveUnarchiveAPIEndpoint:
     @pytest.mark.django_db
     def test_unarchive_page(self, api_key_client, workspace, project, create_page):
         """Test unarchiving an archived page"""
-        create_page.archived_at = datetime.now()
+        create_page.archived_at = timezone.now()
         create_page.save()
         url = self.get_archive_url(workspace.slug, project.id, create_page.id)
 
