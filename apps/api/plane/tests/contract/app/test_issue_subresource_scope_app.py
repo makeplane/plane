@@ -8,8 +8,8 @@ Regression coverage for GHSA-hvx3-58mp-5fpx (SECUR-243).
 
 ``ProjectEntityPermission`` / ``allow_permission`` validate only that the caller is
 an active member of the URL's ``project_id``. Neither validates that the sibling
-``issue_id`` path parameter belongs to that project or workspace, and three write
-handlers then used ``issue_id`` unscoped:
+``issue_id`` path parameter belongs to that project or workspace, and four handlers
+then used ``issue_id`` unscoped:
 
 * ``IssueCommentViewSet.create`` — ``Issue.objects.get(pk=issue_id)``. The 201
   response serializes the foreign issue's full ``issue_detail`` (name, description,
@@ -20,8 +20,13 @@ handlers then used ``issue_id`` unscoped:
 * ``IssueRelationViewSet.remove_relation`` — same gap on the delete path, found while
   reviewing the two above: workspace-scoped only, so a member of one project could
   delete relations belonging to a sibling project in the same workspace.
+* ``IssueRelationViewSet.list`` — same gap on the read path, raised by Copilot on
+  PR #9531: a member of project A could list the relations of an issue in project B of
+  the same workspace and receive its ``name``, ``priority``, ``assignee_ids`` and
+  ``label_ids``.
 
-All three bind the lookup to ``workspace__slug`` + ``project_id`` and 404 otherwise.
+All four bind the lookup to ``workspace__slug`` + ``project_id`` (via
+``relation.issue_in_project``) and 404 otherwise.
 """
 
 from unittest import mock
@@ -325,6 +330,61 @@ class TestIssueRelationRemoveScope:
 
 
 @pytest.mark.contract
+class TestIssueRelationListScope:
+    """The read path needs the same binding as the writes.
+
+    Raised by Copilot on PR #9531: ``list`` filtered relations on ``workspace__slug``
+    only, so a member of project A could read the relations of an issue in project B of
+    the same workspace — returning that issue's ``name``, ``priority``, ``assignee_ids``
+    and ``label_ids``.
+    """
+
+    @pytest.mark.django_db
+    def test_rejects_same_workspace_other_project_url_issue(
+        self, attacker_client, attacker_workspace, attacker_project, sibling_project_issue
+    ):
+        sibling_project = sibling_project_issue.project
+        related = Issue.objects.create(
+            name="Sibling relation target", project=sibling_project, workspace=attacker_workspace
+        )
+        IssueRelation.objects.create(
+            issue=related,
+            related_issue=sibling_project_issue,
+            relation_type="blocked_by",
+            project=sibling_project,
+            workspace=attacker_workspace,
+        )
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, sibling_project_issue.id)
+        response = attacker_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {str(getattr(response, 'data', None))[:300]}"
+        )
+        assert "Sibling relation target" not in str(getattr(response, "data", ""))
+
+    @pytest.mark.django_db
+    def test_allows_listing_within_project(self, attacker_client, attacker_workspace, attacker_project, attacker_issue):
+        """Positive control: listing an in-project issue's relations still works."""
+        other = Issue.objects.create(name="Second own issue", project=attacker_project, workspace=attacker_workspace)
+        IssueRelation.objects.create(
+            issue=other,
+            related_issue=attacker_issue,
+            relation_type="blocked_by",
+            project=attacker_project,
+            workspace=attacker_workspace,
+        )
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert "Second own issue" in str(response.data), "In-project relation went missing"
+
+
+@pytest.mark.contract
 class TestIssueManagerBoundary:
     """Pin the one axis on which the two fixes deliberately differ.
 
@@ -378,5 +438,61 @@ class TestIssueManagerBoundary:
         response = attacker_client.post(url, {"relation_type": "blocking", "issues": [str(other.id)]}, format="json")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_relation_remove_excludes_archived_url_issue(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        """Same narrowing on the delete path (raised by Copilot on PR #9531)."""
+        other = Issue.objects.create(name="Second own issue", project=attacker_project, workspace=attacker_workspace)
+        IssueRelation.objects.create(
+            issue=other,
+            related_issue=attacker_issue,
+            relation_type="blocked_by",
+            project=attacker_project,
+            workspace=attacker_workspace,
+        )
+        attacker_issue.archived_at = timezone.now().date()
+        attacker_issue.save(update_fields=["archived_at"])
+
+        url = remove_relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"related_issue": str(other.id)}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_relation_list_excludes_archived_url_issue(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        """And on the read path, so all three handlers are pinned to the same manager."""
+        attacker_issue.archived_at = timezone.now().date()
+        attacker_issue.save(update_fields=["archived_at"])
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_non_uuid_related_issue_is_400_not_500(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        """``related_issue`` goes straight into an ORM filter.
+
+        Copilot flagged this as a 500 risk on PR #9531. It is not: Django raises
+        ``ValidationError`` on the UUID coercion and ``BaseViewSet.handle_exception``
+        converts that to a 400. Pinned so a future change to that handler can't
+        silently turn malformed input into a 500.
+        """
+        url = remove_relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"related_issue": "not-a-uuid"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
