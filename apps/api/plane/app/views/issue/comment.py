@@ -63,7 +63,14 @@ class IssueCommentViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(pk=issue_id)
+        # SECURITY: bind the issue to the URL workspace + project. `allow_permission` only
+        # checks that the caller is a member of `project_id`, never that `issue_id` lives in
+        # it, so a bare pk lookup let any project member comment on an issue in another
+        # project/workspace — and read that issue's full `issue_detail` back out of the 201
+        # response (GHSA-hvx3-58mp-5fpx).
+        issue = Issue.objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).first()
+        if issue is None:
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,

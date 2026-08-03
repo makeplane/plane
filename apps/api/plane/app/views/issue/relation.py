@@ -217,6 +217,15 @@ class IssueRelationViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
+        # SECURITY: bind the URL issue to the workspace + project before using it as one
+        # side of the relation. The body `issues` are scoped below, but `issue_id` came
+        # straight from the URL and ProjectEntityPermission only checks the caller's
+        # membership of `project_id`, not that `issue_id` belongs to it — so the earlier
+        # scoping fix covered one side of the relationship and missed the other
+        # (GHSA-hvx3-58mp-5fpx).
+        if not Issue.issue_objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         # Scope to workspace to prevent cross-tenant IDOR
         # Relations can cross projects so only workspace scope is enforced
         issues = list(
