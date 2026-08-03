@@ -280,12 +280,24 @@ class IssueRelationViewSet(BaseViewSet):
     def remove_relation(self, request, slug, project_id, issue_id):
         related_issue = request.data.get("related_issue", None)
 
+        # SECURITY: same binding as create() — the URL issue must belong to the URL
+        # project before it can be used to select a relation for deletion. Otherwise a
+        # member of one project could delete relations between issues of a sibling
+        # project in the same workspace (GHSA-hvx3-58mp-5fpx). The IssueRelation row
+        # itself stays workspace-scoped only: relations legitimately span projects, and
+        # either participant's project may remove them.
+        if not Issue.issue_objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         issue_relations = IssueRelation.objects.filter(
             workspace__slug=slug,
         ).filter(
             Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
         issue_relations = issue_relations.first()
+        if issue_relations is None:
+            # Previously fell through to `None.delete()` -> AttributeError -> 500.
+            return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
         current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()
         issue_activity.delay(

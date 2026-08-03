@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for issue sub-resource scoping on comment + relation create.
+"""Contract tests for issue sub-resource scoping on comment + relation endpoints.
 
 Regression coverage for GHSA-hvx3-58mp-5fpx (SECUR-243).
 
 ``ProjectEntityPermission`` / ``allow_permission`` validate only that the caller is
 an active member of the URL's ``project_id``. Neither validates that the sibling
-``issue_id`` path parameter belongs to that project or workspace, and two write
+``issue_id`` path parameter belongs to that project or workspace, and three write
 handlers then used ``issue_id`` unscoped:
 
 * ``IssueCommentViewSet.create`` — ``Issue.objects.get(pk=issue_id)``. The 201
@@ -17,14 +17,18 @@ handlers then used ``issue_id`` unscoped:
   *read* as well as a write.
 * ``IssueRelationViewSet.create`` — the request-body ``issues`` were workspace-scoped
   but the URL ``issue_id`` used as the other side of the relation was not.
+* ``IssueRelationViewSet.remove_relation`` — same gap on the delete path, found while
+  reviewing the two above: workspace-scoped only, so a member of one project could
+  delete relations belonging to a sibling project in the same workspace.
 
-Both fixes bind the lookup to ``workspace__slug`` + ``project_id`` and 404 otherwise.
+All three bind the lookup to ``workspace__slug`` + ``project_id`` and 404 otherwise.
 """
 
 from unittest import mock
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -46,6 +50,10 @@ def comments_url(slug, project_id, issue_id):
 
 def relation_url(slug, project_id, issue_id):
     return f"/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/issue-relation/"
+
+
+def remove_relation_url(slug, project_id, issue_id):
+    return f"/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/remove-relation/"
 
 
 @pytest.fixture(autouse=True)
@@ -245,3 +253,130 @@ class TestIssueRelationCreateScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert IssueRelation.objects.filter(issue_id=other.id, related_issue_id=attacker_issue.id).exists()
+
+
+@pytest.mark.contract
+class TestIssueRelationRemoveScope:
+    """``remove_relation`` needs the same participant binding as ``create``.
+
+    The relation row itself stays workspace-scoped — relations legitimately span
+    projects and either participant may remove them — but the URL ``issue_id`` must
+    belong to the URL project.
+    """
+
+    @pytest.mark.django_db
+    def test_rejects_same_workspace_other_project_url_issue(
+        self, attacker_client, attacker_workspace, attacker_project, sibling_project_issue
+    ):
+        """A relation wholly inside a sibling project must not be deletable."""
+        sibling_project = sibling_project_issue.project
+        other_sibling_issue = Issue.objects.create(
+            name="Second sibling issue", project=sibling_project, workspace=attacker_workspace
+        )
+        relation = IssueRelation.objects.create(
+            issue=other_sibling_issue,
+            related_issue=sibling_project_issue,
+            relation_type="blocked_by",
+            project=sibling_project,
+            workspace=attacker_workspace,
+        )
+
+        url = remove_relation_url(attacker_workspace.slug, attacker_project.id, sibling_project_issue.id)
+        response = attacker_client.post(url, {"related_issue": str(other_sibling_issue.id)}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        relation.refresh_from_db()
+        assert relation.deleted_at is None, "Deleted a sibling project's relation"
+
+    @pytest.mark.django_db
+    def test_missing_relation_404s_rather_than_500(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        """No matching relation used to hit ``None.delete()`` -> AttributeError -> 500."""
+        url = remove_relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"related_issue": str(uuid4())}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_allows_removal_within_project(self, attacker_client, attacker_workspace, attacker_project, attacker_issue):
+        """Positive control: removing a relation inside the URL project still works."""
+        other = Issue.objects.create(name="Second own issue", project=attacker_project, workspace=attacker_workspace)
+        relation = IssueRelation.objects.create(
+            issue=other,
+            related_issue=attacker_issue,
+            relation_type="blocked_by",
+            project=attacker_project,
+            workspace=attacker_workspace,
+        )
+
+        url = remove_relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"related_issue": str(other.id)}, format="json")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        relation.refresh_from_db()
+        assert relation.deleted_at is not None
+
+
+@pytest.mark.contract
+class TestIssueManagerBoundary:
+    """Pin the one axis on which the two fixes deliberately differ.
+
+    ``comment.py`` scopes with ``Issue.objects`` and ``relation.py`` with
+    ``Issue.issue_objects``. ``IssueManager`` additionally excludes triage-state,
+    archived and draft issues, so the choice is behavioural, not cosmetic: intake
+    (triage) and archived issues must stay commentable, while the relation endpoints
+    follow the ``issue_objects`` convention already used for the body ``issues`` list
+    and by ``SubIssuesEndpoint``. Without these tests, "tidying" the two to match
+    would silently break commenting on intake items.
+    """
+
+    @pytest.mark.django_db
+    def test_comment_allowed_on_archived_issue(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        attacker_issue.archived_at = timezone.now().date()
+        attacker_issue.save(update_fields=["archived_at"])
+
+        url = comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"comment_html": "<p>hi</p>"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Archived issue must stay commentable, got {response.status_code}"
+        )
+
+    @pytest.mark.django_db
+    def test_comment_allowed_on_draft_issue(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        attacker_issue.is_draft = True
+        attacker_issue.save(update_fields=["is_draft"])
+
+        url = comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"comment_html": "<p>hi</p>"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Draft issue must stay commentable, got {response.status_code}"
+        )
+
+    @pytest.mark.django_db
+    def test_relation_create_excludes_archived_url_issue(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue
+    ):
+        """Documents the narrowing: ``issue_objects`` excludes archived issues."""
+        other = Issue.objects.create(name="Second own issue", project=attacker_project, workspace=attacker_workspace)
+        attacker_issue.archived_at = timezone.now().date()
+        attacker_issue.save(update_fields=["archived_at"])
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.post(url, {"relation_type": "blocking", "issues": [str(other.id)]}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
