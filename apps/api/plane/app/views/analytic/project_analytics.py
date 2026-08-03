@@ -199,7 +199,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 end_date = cycle.end_date.date()
             else:
                 return {"data": [], "schema": {}}
-            queryset = cycle_issues
+            queryset = Issue.issue_objects.filter(id__in=cycle_issues)
 
         elif module_id is not None:
             module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
@@ -211,7 +211,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 end_date = module.target_date
             else:
                 return {"data": [], "schema": {}}
-            queryset = module_issues
+            queryset = Issue.issue_objects.filter(id__in=module_issues)
 
         else:
             project = Project.objects.filter(id=project_id).first()
@@ -226,7 +226,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 queryset.values("created_at__date")
                 .annotate(
                     created_count=Count("id"),
-                    completed_count=Count("id", filter=Q(issue__state__group="completed")),
+                    completed_count=Count("id", filter=Q(state__group="completed")),
                 )
                 .order_by("created_at__date")
             )
