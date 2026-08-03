@@ -367,6 +367,9 @@ export const coreRoutes: RouteConfigEntry[] = [
   // ========================================================================
   // Legacy URL redirects for backward compatibility
 
+  // Desktop deep-link fallback: legacy clients navigate plane://open handoffs to /open
+  route("open", "routes/redirects/core/desktop-handoff.tsx"),
+
   // --------------------------------------------------------------------
   // REDIRECT ROUTES
   // --------------------------------------------------------------------
