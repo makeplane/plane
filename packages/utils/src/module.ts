@@ -10,6 +10,7 @@ import type { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOpti
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
+import { isEmptyHtmlString } from "./string";
 
 const collator = new Intl.Collator("en-US", { numeric: true, sensitivity: "base" });
 
@@ -30,8 +31,8 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
   let orderedModules: IModule[] = [];
   if (modules.length === 0 || !orderByKey) return [];
 
-  if (orderByKey === "name") orderedModules = [...modules].sort((a, b) => naturalSort(a.name, b.name));
-  if (orderByKey === "-name") orderedModules = [...modules].sort((a, b) => naturalSort(b.name, a.name));
+  if (orderByKey === "name") orderedModules = modules.toSorted((a, b) => naturalSort(a.name, b.name));
+  if (orderByKey === "-name") orderedModules = modules.toSorted((a, b) => naturalSort(b.name, a.name));
   if (["progress", "-progress"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => {
@@ -90,4 +91,42 @@ export const shouldFilterModule = (
   if (displayFilters.favorites && !module.is_favorite) fallsInFilters = false;
 
   return fallsInFilters;
+};
+
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+};
+
+/**
+ * @description converts a plain text module description into paragraph markup the rich text editor can render
+ * @param {string} description
+ * @returns {string}
+ */
+const plainTextToHTML = (description: string): string =>
+  description
+    .split("\n")
+    .map((line) => `<p>${line.replace(/[&<>"']/g, (char) => HTML_ESCAPE_MAP[char] ?? char)}</p>`)
+    .join("");
+
+/**
+ * @description resolves the value the module description editor should start with
+ * Modules predate the rich text description, so fall back to the legacy plain text
+ * `description` to avoid existing content disappearing from the UI.
+ * @param {Pick<IModule, "description" | "description_html">} moduleDetails
+ * @returns {string}
+ */
+export const getModuleDescriptionInitialValue = (
+  moduleDetails: Pick<IModule, "description" | "description_html"> | null | undefined
+): string => {
+  const descriptionHTML = typeof moduleDetails?.description_html === "string" ? moduleDetails.description_html : "";
+  if (descriptionHTML && !isEmptyHtmlString(descriptionHTML, ["img"])) return descriptionHTML;
+
+  const plainDescription = moduleDetails?.description?.trim();
+  if (plainDescription) return plainTextToHTML(plainDescription);
+
+  return "<p></p>";
 };

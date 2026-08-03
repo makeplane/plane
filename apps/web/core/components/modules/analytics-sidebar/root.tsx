@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -23,14 +23,17 @@ import {
   ChevronRightIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import type { ILinkDetails, IModule, ModuleLink, TModuleStatus, TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // plane ui
-import { Loader, CustomSelect, TextArea } from "@plane/ui";
+import { Loader, CustomSelect } from "@plane/ui";
 // components
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { getDate, getModuleDescriptionInitialValue, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -57,6 +60,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
+  const [isSubmittingDescription, setIsSubmittingDescription] = useState<TNameDescriptionLoader>("saved");
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -71,7 +75,9 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const moduleDetails = getModuleById(moduleId);
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
+  const isEstimatePointValid = !!(estimateType && estimateType?.type == EEstimateSystem.POINTS);
+  // the editor is uncontrolled, so only recompute its starting content when the description actually changes
+  const descriptionInitialValue = useMemo(() => getModuleDescriptionInitialValue(moduleDetails), [moduleDetails]);
 
   const { reset, control } = useForm({
     defaultValues,
@@ -215,8 +221,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     </span>
                   }
                   value={value}
-                  onChange={(value: any) => {
-                    submitChanges({ status: value });
+                  onChange={(selectedStatus: TModuleStatus) => {
+                    submitChanges({ status: selectedStatus });
                   }}
                   disabled={!isEditingAllowed || isArchived}
                 >
@@ -235,13 +241,26 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <h4 className="w-full text-18 font-semibold break-words text-primary">{moduleDetails.name}</h4>
         </div>
 
-        {moduleDetails.description && (
-          <TextArea
-            className="ring-none !m-0 max-h-max w-full resize-none !border-0 bg-transparent !p-0 text-13 leading-5 text-secondary outline-none"
-            value={moduleDetails.description}
-            disabled
-          />
+        {isSubmittingDescription !== "saved" && (
+          <div className="flex justify-end">
+            <NameDescriptionUpdateStatus isSubmitting={isSubmittingDescription} />
+          </div>
         )}
+
+        <DescriptionInput
+          containerClassName="-ml-3 border-none p-0! pl-3! text-13"
+          disabled={!isEditingAllowed || isArchived}
+          entityId={moduleId}
+          fileAssetType={EFileAssetType.MODULE_DESCRIPTION}
+          initialValue={descriptionInitialValue}
+          key={moduleId}
+          onSubmit={async (value) => {
+            await submitChanges({ description_html: value.description_html });
+          }}
+          projectId={projectId?.toString()}
+          setIsSubmitting={setIsSubmittingDescription}
+          workspaceSlug={workspaceSlug?.toString()}
+        />
 
         <div className="flex flex-col gap-5 pt-2.5 pb-6">
           <div className="flex items-center justify-start gap-1">

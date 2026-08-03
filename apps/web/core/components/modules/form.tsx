@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -12,13 +13,14 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IModule } from "@plane/types";
 // ui
-import { Input, TextArea } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { Input } from "@plane/ui";
+import { getDate, getModuleDescriptionInitialValue, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { ModuleStatusSelect } from "@/components/modules";
+import { ModuleDescriptionEditor } from "@/components/modules/description-editor";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 
@@ -35,6 +37,7 @@ type Props = {
 const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
+  description_html: "<p></p>",
   status: "backlog",
   lead_id: null,
   member_ids: [],
@@ -42,8 +45,13 @@ const defaultValues: Partial<IModule> = {
 
 export function ModuleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
+  // derived values
+  // the editor is uncontrolled, so its starting content must stay stable across re-renders
+  const descriptionInitialValue = useMemo(() => getModuleDescriptionInitialValue(data), [data]);
   // form info
   const {
     formState: { errors, isSubmitting, dirtyFields },
@@ -55,6 +63,7 @@ export function ModuleForm(props: Props) {
       project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
+      description_html: descriptionInitialValue,
       status: data?.status || "backlog",
       lead_id: data?.lead_id || null,
       member_ids: data?.member_ids || [],
@@ -77,8 +86,11 @@ export function ModuleForm(props: Props) {
     reset({
       ...defaultValues,
       ...data,
+      // keep the form value in sync with what the editor renders, so submitting an
+      // untouched form migrates a legacy plain text description instead of clearing it
+      description_html: descriptionInitialValue,
     });
-  }, [data, reset]);
+  }, [data, descriptionInitialValue, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
@@ -100,7 +112,7 @@ export function ModuleForm(props: Props) {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
+                    renderCondition={(id) => !!projectsWithCreatePermissions?.[id]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>
@@ -134,6 +146,7 @@ export function ModuleForm(props: Props) {
                   placeholder={t("title")}
                   className="w-full text-14"
                   tabIndex={getIndex("name")}
+                  // oxlint-disable-next-line jsx_a11y/no-autofocus
                   autoFocus
                 />
               )}
@@ -141,21 +154,13 @@ export function ModuleForm(props: Props) {
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
-            <Controller
-              name="description"
+            <ModuleDescriptionEditor
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t("description")}
-                  className="min-h-24 w-full resize-none text-14"
-                  hasError={Boolean(errors?.description)}
-                  tabIndex={getIndex("description")}
-                />
-              )}
+              initialValue={descriptionInitialValue}
+              moduleId={data?.id}
+              projectId={projectId}
+              tabIndex={getIndex("description")}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
