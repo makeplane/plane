@@ -199,7 +199,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 end_date = cycle.end_date.date()
             else:
                 return {"data": [], "schema": {}}
-            queryset = Issue.issue_objects.filter(id__in=cycle_issues)
+            queryset = queryset.filter(id__in=cycle_issues)
 
         elif module_id is not None:
             module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
@@ -211,7 +211,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 end_date = module.target_date
             else:
                 return {"data": [], "schema": {}}
-            queryset = Issue.issue_objects.filter(id__in=module_issues)
+            queryset = queryset.filter(id__in=module_issues)
 
         else:
             project = Project.objects.filter(id=project_id).first()
