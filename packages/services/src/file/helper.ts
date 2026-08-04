@@ -17,7 +17,7 @@ import { DANGEROUS_EXTENSIONS } from "@plane/constants";
 const EXTENSION_MIME_TYPE_MAP: Record<string, string> = {
   md: "text/markdown",
   markdown: "text/markdown",
-  mdx: "text/mdx",
+  mdx: "text/markdown",
 };
 
 /**
@@ -54,12 +54,11 @@ const validateFilename = (filename: string): string | null => {
 
   const parts = filename.split(".");
 
-  // Check for double extensions with dangerous patterns
-  if (parts.length >= 3) {
-    const secondLastExt = parts[parts.length - 2]?.toLowerCase() || "";
-    if (DANGEROUS_EXTENSIONS.includes(secondLastExt)) {
-      return "File has suspicious double extension";
-    }
+  // Check for dangerous extensions anywhere before the final extension.
+  // This catches both double and longer disguised chains (e.g. file.exe.safe.md).
+  const intermediateExtensions = parts.slice(1, -1).map((part) => part.toLowerCase());
+  if (intermediateExtensions.some((extension) => DANGEROUS_EXTENSIONS.includes(extension))) {
+    return "File has suspicious extension chain";
   }
 
   // Check if the actual extension is dangerous
