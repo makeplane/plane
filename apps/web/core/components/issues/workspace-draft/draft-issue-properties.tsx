@@ -122,7 +122,10 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
 
   if (!issue.project_id) return null;
 
-  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+  const defaultLabelOptions = issue?.label_ids?.flatMap((id) => {
+    const label = labelMap[id];
+    return label ? [label] : [];
+  }) || [];
 
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());

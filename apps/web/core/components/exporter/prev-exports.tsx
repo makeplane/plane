@@ -76,7 +76,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
             {refreshing ? t("refreshing") : t("refresh_status")}
           </Button>
         </div>
-        {!!exporterServices?.results?.length && (
+        {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
           <div className="flex items-center gap-2 text-11">
             <Button
               variant="secondary"
@@ -100,35 +100,33 @@ export const PrevExports = observer(function PrevExports(props: Props) {
         )}
       </div>
       <div className="flex flex-col">
-        {exporterServices && exporterServices?.results ? (
-          exporterServices?.results?.length > 0 ? (
-            <div>
-              <div className="divide-y divide-subtle-1">
-                <Table
-                  columns={columns}
-                  data={exporterServices?.results ?? []}
-                  keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
-                  tHeadClassName="border-b border-subtle"
-                  thClassName="text-left font-medium divide-x-0 text-placeholder"
-                  tBodyClassName="divide-y-0"
-                  tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
-                  tHeadTrClassName="divide-x-0"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <EmptyStateCompact
-                assetKey="export"
-                title={t("settings_empty_state.exports.title")}
-                description={t("settings_empty_state.exports.description")}
-                align="start"
-                rootClassName="py-20"
+        {!exporterServices ? (
+          <ImportExportSettingsLoader />
+        ) : Array.isArray(exporterServices.results) && exporterServices.results.length > 0 ? (
+          <div>
+            <div className="divide-y divide-subtle-1">
+              <Table
+                columns={columns}
+                data={exporterServices.results}
+                keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
+                tHeadClassName="border-b border-subtle"
+                thClassName="text-left font-medium divide-x-0 text-placeholder"
+                tBodyClassName="divide-y-0"
+                tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
+                tHeadTrClassName="divide-x-0"
               />
             </div>
-          )
+          </div>
         ) : (
-          <ImportExportSettingsLoader />
+          <div className="flex h-full w-full items-center justify-center">
+            <EmptyStateCompact
+              assetKey="export"
+              title={t("settings_empty_state.exports.title")}
+              description={t("settings_empty_state.exports.description")}
+              align="start"
+              rootClassName="py-20"
+            />
+          </div>
         )}
       </div>
     </div>
