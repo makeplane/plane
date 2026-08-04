@@ -4,9 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { Component } from "react";
+import { Component, Fragment } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 
 type Props = {
@@ -15,14 +16,29 @@ type Props = {
 
 type State = {
   hasError: boolean;
+  retryKey: number;
 };
+
+function LayoutErrorFallback({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
+      <AlertTriangle className="size-8 text-tertiary" />
+      <p className="text-14 text-secondary">{t("something_went_wrong")}</p>
+      <Button variant="secondary" size="sm" onClick={onRetry}>
+        {t("common.retry")}
+      </Button>
+    </div>
+  );
+}
 
 // Catches render crashes from a single issue layout (list/kanban/spreadsheet/calendar/gantt)
 // so a bad group/column shape degrades to a local fallback instead of taking down the whole page.
 export class LayoutErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false };
+  state: State = { hasError: false, retryKey: 0 };
 
-  static getDerivedStateFromError(): State {
+  static getDerivedStateFromError(): Partial<State> {
     return { hasError: true };
   }
 
@@ -31,18 +47,14 @@ export class LayoutErrorBoundary extends Component<Props, State> {
     console.error("Issue layout crashed", error, info);
   }
 
+  handleRetry = () => {
+    this.setState((prev) => ({ hasError: false, retryKey: prev.retryKey + 1 }));
+  };
+
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
-          <AlertTriangle className="size-8 text-tertiary" />
-          <p className="text-14 text-secondary">Something went wrong while loading this view.</p>
-          <Button variant="secondary" size="sm" onClick={() => this.setState({ hasError: false })}>
-            Try again
-          </Button>
-        </div>
-      );
+      return <LayoutErrorFallback onRetry={this.handleRetry} />;
     }
-    return this.props.children;
+    return <Fragment key={this.state.retryKey}>{this.props.children}</Fragment>;
   }
 }
