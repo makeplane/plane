@@ -179,7 +179,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     issue.start_date && issue.target_date && displayProperties.start_date && displayProperties.due_date
   );
 
-  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]).filter(Boolean) || [];
 
   const minDate = getDate(issue.start_date);
   const maxDate = getDate(issue.target_date);

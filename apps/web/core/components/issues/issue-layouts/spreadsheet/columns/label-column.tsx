@@ -25,7 +25,7 @@ export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(p
   // hooks
   const { labelMap } = useLabel();
 
-  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]).filter(Boolean) || [];
 
   return (
     <div className="h-11 w-full border-b-[0.5px] border-subtle">
