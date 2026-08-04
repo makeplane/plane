@@ -33,9 +33,9 @@ catalog:
   "@radix-ui/react-scroll-area": "^1.2.3"
   "@react-pdf/renderer": "^4.3.0"
   "@react-pdf/types": "^2.9.2"
-  "@react-router/dev": "7.15.0"
-  "@react-router/node": "7.15.0"
-  "@react-router/serve": "7.15.0"
+  "@react-router/dev": "7.17.0"
+  "@react-router/node": "7.18.1"
+  "@react-router/serve": "7.18.1"
   "@storybook/addon-designs": "11.1.3"
   "@storybook/addon-docs": "10.4.6"
   "@storybook/addon-links": "10.4.6"
@@ -138,7 +138,7 @@ catalog:
   "oxfmt": "0.35.0"
   "oxlint": "1.51.0"
   "pdf-parse": "^2.4.5"
-  "postcss": "8.5.15"
+  "postcss": "8.5.25"
   "postcss-cli": "^11.0.0"
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
@@ -155,16 +155,16 @@ catalog:
   "react-masonry-component": "^6.3.0"
   "react-pdf-html": "^2.1.2"
   "react-popper": "^2.3.0"
-  "react-router": "7.15.1"
+  "react-router": "7.18.1"
   "recharts": "^2.15.1"
   "reflect-metadata": "^0.2.2"
   "rehype-parse": "^9.0.1"
   "rehype-remark": "^10.0.1"
   "remark-gfm": "^4.0.1"
   "remark-stringify": "^11.0.0"
-  "sanitize-html": "2.17.0"
+  "sanitize-html": "2.17.5"
   "serve": "14.2.5"
-  "sharp": "^0.34.3"
+  "sharp": "^0.35.3"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
   "storybook": "10.4.6"
   "swr": "2.2.4"
@@ -193,7 +193,7 @@ catalog:
 overrides:
   express: "catalog:"
   mdast-util-to-hast: 13.2.1
-  valibot: 1.2.0
+  valibot: 1.4.2
   glob: 11.1.0
   brace-expansion: 5.0.7
   nanoid: 3.3.8
@@ -218,18 +218,22 @@ overrides:
   serialize-javascript: 7.0.5
   "ajv@6": 6.14.0
   "ajv@8": 8.18.0
-  "undici@7": 7.28.0
+  "undici@7": 7.29.0
   flatted: 3.4.2
   picomatch: 2.3.2
   "yaml@1": 1.10.3
   "yaml@2": 2.8.3
   path-to-regexp: 0.1.13
   defu: 6.1.5
-  postcss: 8.5.15
+  postcss: 8.5.25
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
-  "fast-uri@<3.1.2": ">=3.1.2"
+  "fast-uri@<3.1.5": "3.1.5"
+  "js-yaml@4": 4.3.0
+  linkify-it: 5.0.2
+  body-parser: 1.20.6
+  "@react-router/node": 7.18.1
   tmp: 0.2.7
   form-data: 4.0.6
   "ws@8": 8.21.0
