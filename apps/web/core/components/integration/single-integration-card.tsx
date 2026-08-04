@@ -107,7 +107,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   };
 
   const isInstalled = Array.isArray(workspaceIntegrations)
-    ? workspaceIntegrations.find((i: any) => i.integration_detail.id === integration.id)
+    ? workspaceIntegrations.find((i: IWorkspaceIntegration) => i.integration_detail.id === integration.id)
     : undefined;
 
   return (
