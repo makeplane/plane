@@ -44,7 +44,7 @@ const isBlockedIPv4 = (ip: string): boolean => {
     // Not a canonical dotted quad — callers treat unparseable hosts as unsafe.
     return true;
   }
-  const [a, b] = parts as [number, number, number, number];
+  const [a, b, c] = parts as [number, number, number, number];
 
   if (a === 0) return true; // 0.0.0.0/8      "this host on this network"
   if (a === 10) return true; // 10.0.0.0/8     private
@@ -53,11 +53,17 @@ const isBlockedIPv4 = (ip: string): boolean => {
   if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local (incl. 169.254.169.254 metadata)
   if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12  private
   if (a === 192 && b === 168) return true; // 192.168.0.0/16 private
-  if (a === 192 && b === 0) return true; // 192.0.0.0/24 + 192.0.2.0/24 (IETF protocol / TEST-NET-1)
   if (a === 198 && (b === 18 || b === 19)) return true; // 198.18.0.0/15  benchmarking
-  if (a === 198 && b === 51) return true; // 198.51.100.0/24 TEST-NET-2
-  if (a === 203 && b === 0) return true; // 203.0.113.0/24  TEST-NET-3
   if (a >= 224) return true; // 224.0.0.0/4 multicast, 240.0.0.0/4 reserved, 255.255.255.255
+
+  // The remaining special-purpose blocks are /24s sitting inside otherwise-public
+  // /16s, so they must be matched on the third octet. Testing only the second octet
+  // would blackhole real public space (192.0.3.0/24, 198.51.x, 203.0.x) and quietly
+  // stop legitimate images from rendering.
+  if (a === 192 && b === 0 && c === 0) return true; // 192.0.0.0/24   IETF protocol assignments
+  if (a === 192 && b === 0 && c === 2) return true; // 192.0.2.0/24   TEST-NET-1
+  if (a === 198 && b === 51 && c === 100) return true; // 198.51.100.0/24 TEST-NET-2
+  if (a === 203 && b === 0 && c === 113) return true; // 203.0.113.0/24  TEST-NET-3
 
   return false;
 };

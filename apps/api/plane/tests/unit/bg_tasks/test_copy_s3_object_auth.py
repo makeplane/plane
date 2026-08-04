@@ -16,9 +16,10 @@ These are pure unit tests: no database, no network.
 
 from unittest.mock import MagicMock, patch
 
+import requests
 from django.test import override_settings
 
-from plane.bgtasks.copy_s3_object import sync_with_external_service
+from plane.bgtasks.copy_s3_object import LIVE_REQUEST_TIMEOUT, sync_with_external_service
 
 LIVE_URL = "http://live:3000/live/"
 SECRET = "unit-test-live-secret"
@@ -38,6 +39,37 @@ def test_sends_secret_key_header():
 
     headers = mock_post.call_args.kwargs["headers"]
     assert headers == {"live-server-secret-key": SECRET}
+
+
+@override_settings(LIVE_URL=LIVE_URL, LIVE_SERVER_SECRET_KEY=SECRET)
+def test_sends_bounded_timeout():
+    """
+    `requests` has no default timeout. Without one, a Live service that accepts the
+    connection and then stalls would pin a Celery worker indefinitely.
+    """
+    response = MagicMock(status_code=200)
+    response.json.return_value = {}
+
+    with patch("plane.bgtasks.copy_s3_object.requests.post", return_value=response) as mock_post:
+        sync_with_external_service("PAGE", "<p>hello</p>")
+
+    timeout = mock_post.call_args.kwargs["timeout"]
+    assert timeout == LIVE_REQUEST_TIMEOUT
+    connect, read = timeout
+    assert 0 < connect <= 10
+    assert 0 < read <= 60
+
+
+@override_settings(LIVE_URL=LIVE_URL, LIVE_SERVER_SECRET_KEY=SECRET)
+def test_timeout_is_swallowed_not_raised():
+    """A stalled Live service must degrade duplication, not fail the whole task."""
+    with patch(
+        "plane.bgtasks.copy_s3_object.requests.post",
+        side_effect=requests.exceptions.ReadTimeout("timed out"),
+    ):
+        result = sync_with_external_service("PAGE", "<p>hello</p>")
+
+    assert result == {}
 
 
 @override_settings(LIVE_URL=LIVE_URL, LIVE_SERVER_SECRET_KEY=None)

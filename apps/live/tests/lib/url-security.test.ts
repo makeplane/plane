@@ -80,6 +80,25 @@ describe("isSafeImageSrc — GHSA-55gq-rf47-9pqx", () => {
       // 172.32.x is public; the private block ends at 172.31.
       expect(isSafeImageSrc("http://172.32.0.1/")).toBe(true);
     });
+
+    // These /24s sit inside otherwise-public /16s. Blocking the whole /16 would
+    // silently stop legitimate images from rendering, so the boundaries are pinned
+    // in both directions.
+    it("blocks the reserved /24s exactly", () => {
+      expect(isSafeImageSrc("http://192.0.0.1/")).toBe(false); // 192.0.0.0/24 IETF protocol assignments
+      expect(isSafeImageSrc("http://192.0.2.1/")).toBe(false); // 192.0.2.0/24 TEST-NET-1
+      expect(isSafeImageSrc("http://198.51.100.1/")).toBe(false); // 198.51.100.0/24 TEST-NET-2
+      expect(isSafeImageSrc("http://203.0.113.1/")).toBe(false); // 203.0.113.0/24 TEST-NET-3
+    });
+
+    it("still allows the public space surrounding those /24s", () => {
+      expect(isSafeImageSrc("http://192.0.1.1/")).toBe(true);
+      expect(isSafeImageSrc("http://192.0.3.1/")).toBe(true);
+      expect(isSafeImageSrc("http://198.51.99.1/")).toBe(true);
+      expect(isSafeImageSrc("http://198.51.101.1/")).toBe(true);
+      expect(isSafeImageSrc("http://203.0.112.1/")).toBe(true);
+      expect(isSafeImageSrc("http://203.0.114.1/")).toBe(true);
+    });
   });
 
   describe("obfuscated address encodings", () => {

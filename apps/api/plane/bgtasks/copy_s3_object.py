@@ -18,6 +18,12 @@ from plane.settings.storage import S3Storage
 from celery import shared_task
 from plane.utils.url import normalize_url_path
 
+# (connect, read) timeout for the Live service call. `requests` has no default
+# timeout, so omitting this lets a duplication task occupy a Celery worker
+# indefinitely if Live accepts the connection and then stops responding. The read
+# budget is generous because converting a large document is genuinely slow.
+LIVE_REQUEST_TIMEOUT = (5, 30)
+
 
 def get_entity_id_field(entity_type, entity_id):
     entity_mapping = {
@@ -89,7 +95,12 @@ def sync_with_external_service(entity_name, description_html):
             )
             return {}
 
-        response = requests.post(url, json=data, headers={"live-server-secret-key": secret_key})
+        response = requests.post(
+            url,
+            json=data,
+            headers={"live-server-secret-key": secret_key},
+            timeout=LIVE_REQUEST_TIMEOUT,
+        )
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:
