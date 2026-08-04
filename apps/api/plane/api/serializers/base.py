@@ -106,11 +106,18 @@ class BaseSerializer(serializers.ModelSerializer):
                     }
                     # Check if field in expansion  then expand the field
                     if expand in expansion:
-                        if isinstance(response.get(expand), list):
-                            exp_serializer = expansion[expand](getattr(instance, expand), many=True)
+                        is_many = isinstance(response.get(expand), list)
+                        related_obj = getattr(instance, expand, None)
+                        if related_obj is not None:
+                            if is_many:
+                                exp_serializer = expansion[expand](related_obj, many=True)
+                            else:
+                                exp_serializer = expansion[expand](related_obj)
+                            response[expand] = exp_serializer.data
                         else:
-                            exp_serializer = expansion[expand](getattr(instance, expand))
-                        response[expand] = exp_serializer.data
+                            # Related object is null or could not be resolved
+                            # (e.g. soft-deleted) - fall back to the raw id
+                            response[expand] = getattr(instance, f"{expand}_id", None)
                     else:
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)
