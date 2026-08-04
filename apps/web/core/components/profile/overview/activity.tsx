@@ -45,7 +45,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
     <div className="space-y-2">
       <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
-        {userProfileActivity ? (
+        {Array.isArray(userProfileActivity?.results) ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">
               {userProfileActivity.results.map((activity) => (
