@@ -46,9 +46,16 @@ export const PrevExports = observer(function PrevExports(props: Props) {
     workspaceSlug && cursor ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page) : null
   );
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
+    try {
+      await mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to refresh export services list", error);
+    } finally {
+      setRefreshing(false);
+    }
   }, [workspaceSlug, cursor, per_page]);
 
   useEffect(() => {
