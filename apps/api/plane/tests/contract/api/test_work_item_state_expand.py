@@ -110,3 +110,64 @@ class TestWorkItemDetailStateExpand:
         )
         assert str(response.data["state"]["id"]) == str(state.id)
         assert response.data["state"]["name"] == state.name
+
+
+@pytest.mark.contract
+class TestWorkspaceIssueByIdentifierStateExpand:
+    """Same #9534 regression as ``TestWorkItemDetailStateExpand``, but
+    against ``WorkspaceIssueAPIEndpoint`` -- the workspace-scoped
+    retrieve-by-identifier route (``.../work-items/{project_identifier}-
+    {sequence_id}/``) rather than the UUID-based ``work-items/{id}/`` route.
+    Both endpoints build their own ad hoc queryset in ``get()`` instead of
+    reusing ``get_queryset()``, so the fix (``.select_related("state")``)
+    had to be applied to each independently.
+    """
+
+    def get_url(self, workspace_slug, project_identifier, sequence_id):
+        return f"/api/v1/workspaces/{workspace_slug}/work-items/{project_identifier}-{sequence_id}/"
+
+    @pytest.mark.django_db
+    def test_null_state_expands_to_null_without_crashing(self, api_key_client, workspace, project):
+        """A work item with no state assigned returns `"state": null` when
+        expand=state is requested, instead of crashing or leaking a stale
+        default."""
+        issue = Issue.objects.create(
+            name="Issue with null state",
+            workspace=workspace,
+            project=project,
+        )
+        # Issue.save() auto-assigns a default state whenever state is None
+        # at save time; force it back to NULL to simulate a genuine orphan.
+        Issue.objects.filter(pk=issue.pk).update(state=None)
+        issue.refresh_from_db()
+
+        url = self.get_url(workspace.slug, project.identifier, issue.sequence_id)
+        response = api_key_client.get(url, {"expand": "state"})
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["state"] is None
+
+    @pytest.mark.django_db
+    def test_soft_deleted_state_still_expands(self, api_key_client, workspace, project, state):
+        """A work item whose state was soft-deleted after assignment still
+        returns the fully expanded state object (not a bare UUID, and not
+        a 404/500 from `State.DoesNotExist`)."""
+        issue = Issue.objects.create(
+            name="Issue with soft-deleted state",
+            workspace=workspace,
+            project=project,
+            state=state,
+        )
+
+        state.delete()  # soft delete: sets deleted_at, row still exists
+        assert state.deleted_at is not None
+
+        url = self.get_url(workspace.slug, project.identifier, issue.sequence_id)
+        response = api_key_client.get(url, {"expand": "state"})
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert isinstance(response.data["state"], dict), (
+            f"Expected expanded state object, got bare value: {response.data['state']!r}"
+        )
+        assert str(response.data["state"]["id"]) == str(state.id)
+        assert response.data["state"]["name"] == state.name
