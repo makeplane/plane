@@ -1,0 +1,61 @@
+# Claude Analysis Configuration
+# This file allows you to customize the behavior of the PR analysis
+
+# Categories to analyze (comment out to disable)
+enabled_categories:
+  - "Performance Issues"
+  - "Secret Scanning"
+  - "Security Issues"
+  - "Public Endpoints"
+  - "Dead Code"
+
+# File patterns to exclude from analysis
+exclude_patterns:
+  - "*.min.js"
+  - "*.map"
+  - "node_modules/**"
+  - "dist/**"
+  - "build/**"
+  - "*.lock"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "*.test.*"
+  - "*.spec.*"
+
+# File patterns to prioritize (analyzed first if size limits hit)
+priority_patterns:
+  - "**/*.py"
+  - "**/*.js"
+  - "**/*.ts"
+  - "**/*.jsx"
+  - "**/*.tsx"
+  - "**/*.go"
+  - "**/*.java"
+  - "**/*.rb"
+  - "**/*.php"
+
+# Size limits (in characters)
+limits:
+  max_total_size: 100000      # Total content to send to Claude
+  max_file_size: 50000        # Maximum size per file
+  max_diff_size: 30000        # Maximum diff size
+  max_files: 10               # Maximum number of files to analyze
+
+# Claude API settings
+claude:
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 4096
+  temperature: 0.0            # Use 0 for consistent, deterministic results
+
+# Comment formatting
+comment:
+  emoji_found: "⚠️"
+  emoji_clear: "✅"
+  show_details: true
+  max_details_per_category: 10
+
+# Cost control
+cost_control:
+  skip_if_pr_too_large: true  # Skip analysis if PR has too many changes
+  max_changed_files: 50       # Maximum files changed before skipping
+  max_diff_lines: 5000        # Maximum diff lines before skipping

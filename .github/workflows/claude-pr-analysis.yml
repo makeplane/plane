@@ -1,0 +1,115 @@
+name: Claude PR Code Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze'
+        required: true
+        type: number
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  analyze-with-claude:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Get PR details
+        id: pr-info
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: ${{ inputs.pr_number }}
+            });
+            
+            core.setOutput('base_ref', pr.data.base.ref);
+            core.setOutput('head_ref', pr.data.head.ref);
+            core.setOutput('head_sha', pr.data.head.sha);
+            
+            console.log(`Analyzing PR #${{ inputs.pr_number }}`);
+            console.log(`Base: ${pr.data.base.ref}, Head: ${pr.data.head.ref}`);
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr-info.outputs.head_sha }}
+          fetch-depth: 0
+          
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ steps.pr-info.outputs.base_ref }}:${{ steps.pr-info.outputs.base_ref }}
+          
+      - name: Get changed files
+        id: changed-files
+        run: |
+          # Get list of changed files
+          git diff --name-only origin/${{ steps.pr-info.outputs.base_ref }}...HEAD > changed_files.txt
+          echo "Changed files:"
+          cat changed_files.txt
+          
+          # Get the actual diff
+          git diff origin/${{ steps.pr-info.outputs.base_ref }}...HEAD > changes.diff
+          
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r .github/scripts/requirements.txt
+          
+      - name: Run Claude Analysis
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          REPO_NAME: ${{ github.repository }}
+        run: |
+          python .github/scripts/claude_analyzer.py
+          
+      - name: Post Analysis Results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            // Read analysis results
+            const results = JSON.parse(fs.readFileSync('analysis_results.json', 'utf8'));
+            
+            // Format the comment
+            let comment = '## 🤖 Claude AI Code Analysis\n\n';
+            comment += `*Manually triggered analysis for PR #${{ inputs.pr_number }}*\n\n`;
+            
+            for (const [category, analysis] of Object.entries(results)) {
+              const emoji = analysis.issues_found ? '⚠️' : '✅';
+              comment += `### ${emoji} ${category}\n\n`;
+              comment += `${analysis.summary}\n\n`;
+              
+              if (analysis.details && analysis.details.length > 0) {
+                comment += '<details>\n<summary>View Details</summary>\n\n';
+                analysis.details.forEach(detail => {
+                  comment += `- ${detail}\n`;
+                });
+                comment += '</details>\n\n';
+              }
+            }
+            
+            comment += '\n---\n*Analysis powered by Claude Sonnet 4*';
+            
+            // Post comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ inputs.pr_number }},
+              body: comment
+            });
