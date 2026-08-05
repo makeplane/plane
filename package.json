@@ -21,12 +21,21 @@
     "doctor": "npx react-doctor@latest"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "catalog:",
+    "@types/node": "catalog:",
+    "@types/picomatch": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "husky": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "picomatch": "catalog:",
     "react-doctor": "^0.4.2",
-    "turbo": "catalog:"
+    "tsx": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [

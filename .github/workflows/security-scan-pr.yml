@@ -1,0 +1,85 @@
+# Claude-based security scan — reviews a pull request's diff for issues that
+# static linters don't catch, starting with multi-tenancy isolation gaps.
+#
+# Spec: SPEC.md
+# Why this never fails the check: docs/adr/0001-advisory-only-ci-security-scan.md
+# Why `pull_request` and not `pull_request_target`:
+#   docs/adr/0002-pull-request-not-target-for-ci-scan.md
+#
+# IMPORTANT: do not switch this to `pull_request_target` to make the scan run on
+# fork PRs. That combination (base-repo secrets + untrusted PR content) is the
+# pattern behind several real GitHub Actions supply-chain compromises. Fork PRs
+# receive no secrets, so the scan detects the missing key and exits quietly.
+
+name: Security scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+    paths:
+      - "apps/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  # actions/checkout reads the repository source.
+  contents: read
+  # Needed to create and update the scan's sticky summary comment.
+  pull-requests: write
+
+jobs:
+  scan:
+    name: Scan pull request
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          # The scan diffs against the PR's merge base. A shallow checkout has no
+          # merge base, so the diff would come back empty.
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm store
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run security scan
+        env:
+          # Absent on pull requests from forks, which GitHub never grants secrets.
+          # The script treats a missing key as "skip quietly", not as a failure.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          pnpm exec tsx .github/scripts/security-scan/run.ts \
+            --mode=pr \
+            --base=${{ github.event.pull_request.base.sha }}

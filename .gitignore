@@ -111,6 +111,9 @@ build/
 temp/
 scripts/
 !packages/i18n/scripts/
+# CI tooling, not build output — the unanchored `scripts/` rule above would
+# otherwise swallow the whole directory and the workflows that call it.
+!.github/scripts/
 
 # i18n auto-generated types (regenerated on every build)
 packages/i18n/src/types/keys.generated.ts
