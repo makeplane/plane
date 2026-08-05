@@ -532,6 +532,11 @@ ATTACHMENT_MIME_TYPES = [
     # Other
     "text/css",
     "text/javascript",
+    # Script-capable markup. Safe to accept because every download path serves
+    # SCRIPT_CAPABLE_MIME_TYPES with Content-Disposition: attachment, so these
+    # are never rendered inline on the application's origin.
+    "text/html",
+    "application/xhtml+xml",
     "application/json",
     "text/xml",
     "text/csv",
