@@ -50,9 +50,9 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
           <p>Drop here...</p>
         ) : progress ? (
           <p className="text-center">
-            {progress.total > 1
-              ? `Uploading ${Math.min(progress.completed + 1, progress.total)}/${progress.total}...`
-              : "Uploading..."}
+            {/* Files finished, not the file being worked on: uploads run concurrently, so
+                there is no single "current" file to point at. */}
+            {progress.total > 1 ? `Uploading ${progress.completed}/${progress.total}...` : "Uploading..."}
           </p>
         ) : (
           <p className="text-center">Click or drag files here</p>

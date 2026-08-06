@@ -51,11 +51,15 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     onUploadSettled: handleUploadSettled,
   });
 
+  // react-dropzone does not forward its disabled state to the root element, so the native
+  // button has to be given the same condition or it stays clickable while doing nothing.
+  const isDropzoneDisabled = isUploading || disabled || !workspaceSlug;
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: maxFileSize,
     multiple: true,
-    disabled: isUploading || disabled || !workspaceSlug,
+    disabled: isDropzoneDisabled,
   });
 
   return (
@@ -68,7 +72,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
         e.stopPropagation();
       }}
     >
-      <button {...getRootProps()} type="button" disabled={disabled}>
+      <button {...getRootProps()} type="button" disabled={isDropzoneDisabled}>
         <input {...getInputProps()} />
         {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
       </button>
