@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Impossibile allegare il file. Riprova a caricarlo.",
-    "only_one_file_allowed": "È possibile caricare un solo file alla volta.",
-    "file_size_limit": "Il file deve essere di {size}MB o meno.",
     "drag_and_drop": "Trascina e rilascia ovunque per caricare",
-    "delete": "Elimina allegato"
+    "delete": "Elimina allegato",
+    "files_too_large": "{count, plural, one {# file ignorato} many {# file ignorati} other {# file ignorati}} perché supera il limite di {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Allegato caricato} many {Allegati caricati} other {Allegati caricati}}",
+    "upload_success": "{count, plural, one {# file è stato allegato.} many {# file sono stati allegati.} other {# file sono stati allegati.}}",
+    "upload_failed_title": "{count, plural, one {Allegato non caricato} many {Allegati non caricati} other {Allegati non caricati}}",
+    "upload_partial_failure": "{count, plural, one {# file è stato allegato.} many {# file sono stati allegati.} other {# file sono stati allegati.}} Impossibile allegare: {files}",
+    "upload_failure": "Impossibile allegare: {files}. Riprovare."
   },
   "label": {
     "select": "Seleziona etichetta",

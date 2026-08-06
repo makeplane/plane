@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "File could not be attached. Try uploading again.",
-    "only_one_file_allowed": "Only one file can be uploaded at a time.",
-    "file_size_limit": "File must be of {size}MB or less in size.",
     "drag_and_drop": "Drag and drop anywhere to upload",
-    "delete": "Delete attachment"
+    "delete": "Delete attachment",
+    "files_too_large": "Skipped {count, plural, one {# file} other {# files}} over the {size}MB limit: {files}",
+    "upload_success_title": "{count, plural, one {Attachment uploaded} other {Attachments uploaded}}",
+    "upload_success": "{count, plural, one {# file has been attached.} other {# files have been attached.}}",
+    "upload_failed_title": "{count, plural, one {Attachment not uploaded} other {Attachments not uploaded}}",
+    "upload_partial_failure": "{count, plural, one {# file was attached.} other {# files were attached.}} Could not attach: {files}",
+    "upload_failure": "Could not attach: {files}. Try uploading again."
   },
   "label": {
     "select": "Add labels",

@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Não foi possível anexar o arquivo. Tente enviar novamente.",
-    "only_one_file_allowed": "Apenas um arquivo pode ser enviado por vez.",
-    "file_size_limit": "O arquivo deve ter {size}MB ou menos.",
     "drag_and_drop": "Arraste e solte em qualquer lugar para enviar",
-    "delete": "Excluir anexo"
+    "delete": "Excluir anexo",
+    "files_too_large": "{count, plural, one {# arquivo ignorado} many {# arquivos ignorados} other {# arquivos ignorados}} por exceder o limite de {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Anexo enviado} many {Anexos enviados} other {Anexos enviados}}",
+    "upload_success": "{count, plural, one {# arquivo foi anexado.} many {# arquivos foram anexados.} other {# arquivos foram anexados.}}",
+    "upload_failed_title": "{count, plural, one {Anexo não enviado} many {Anexos não enviados} other {Anexos não enviados}}",
+    "upload_partial_failure": "{count, plural, one {# arquivo foi anexado.} many {# arquivos foram anexados.} other {# arquivos foram anexados.}} Não foi possível anexar: {files}",
+    "upload_failure": "Não foi possível anexar: {files}. Tente enviar novamente."
   },
   "label": {
     "select": "Selecionar etiqueta",

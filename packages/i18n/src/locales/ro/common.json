@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Fișierul nu a putut fi atașat. Încearcă să încarci din nou.",
-    "only_one_file_allowed": "Se poate încărca doar un fișier o dată.",
-    "file_size_limit": "Fișierul trebuie să aibă {size}MB sau mai puțin.",
     "drag_and_drop": "Trage și plasează oriunde pentru a încărca",
-    "delete": "Șterge atașamentul"
+    "delete": "Șterge atașamentul",
+    "files_too_large": "{count, plural, one {# fișier a fost omis} few {# fișiere au fost omise} other {# de fișiere au fost omise}} pentru depășirea limitei de {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Atașament încărcat} few {Atașamente încărcate} other {Atașamente încărcate}}",
+    "upload_success": "{count, plural, one {# fișier a fost atașat.} few {# fișiere au fost atașate.} other {# de fișiere au fost atașate.}}",
+    "upload_failed_title": "{count, plural, one {Atașament neîncărcat} few {Atașamente neîncărcate} other {Atașamente neîncărcate}}",
+    "upload_partial_failure": "{count, plural, one {# fișier a fost atașat.} few {# fișiere au fost atașate.} other {# de fișiere au fost atașate.}} Nu s-au putut atașa: {files}",
+    "upload_failure": "Nu s-au putut atașa: {files}. Încercați din nou."
   },
   "label": {
     "select": "Selectează eticheta",

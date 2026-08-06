@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Soubor nelze připojit. Zkuste to prosím znovu.",
-    "only_one_file_allowed": "Je možné nahrát pouze jeden soubor najednou.",
-    "file_size_limit": "Soubor musí být menší než {size}MB.",
     "drag_and_drop": "Přetáhněte soubor kamkoli pro nahrání",
-    "delete": "Smazat přílohu"
+    "delete": "Smazat přílohu",
+    "files_too_large": "Přeskočeno {count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}} kvůli překročení limitu {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Příloha nahrána} few {Přílohy nahrány} many {Přílohy nahrány} other {Přílohy nahrány}}",
+    "upload_success": "{count, plural, one {Přidán # soubor.} few {Přidány # soubory.} many {Přidáno # souboru.} other {Přidáno # souborů.}}",
+    "upload_failed_title": "{count, plural, one {Příloha nenahrána} few {Přílohy nenahrány} many {Přílohy nenahrány} other {Přílohy nenahrány}}",
+    "upload_partial_failure": "{count, plural, one {Přidán # soubor.} few {Přidány # soubory.} many {Přidáno # souboru.} other {Přidáno # souborů.}} Nepodařilo se přidat: {files}",
+    "upload_failure": "Nepodařilo se přidat: {files}. Zkuste to prosím znovu."
   },
   "label": {
     "select": "Vybrat štítek",
