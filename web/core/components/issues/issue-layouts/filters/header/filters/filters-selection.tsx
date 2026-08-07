@@ -25,6 +25,7 @@ import {
   FilterCycle,
   FilterModule,
   FilterIssueGrouping,
+  FilterCompletedAt,
 } from "@/components/issues";
 // hooks
 import { useMember } from "@/hooks/store";
@@ -274,6 +275,17 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterTargetDate
               appliedFilters={filters.target_date ?? null}
               handleUpdate={(val) => handleFiltersUpdate("target_date", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* completed_at */}
+        {isFilterEnabled("completed_at") && (
+          <div className="py-2">
+            <FilterCompletedAt
+              appliedFilters={filters.completed_at ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("completed_at", val)}
               searchQuery={filtersSearchQuery}
             />
           </div>

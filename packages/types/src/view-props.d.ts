@@ -98,6 +98,7 @@ export interface IIssueFilterOptions {
   state_group?: string[] | null;
   subscriber?: string[] | null;
   target_date?: string[] | null;
+  completed_at?: string[] | null;
   issue_type?: string[] | null;
 }
 
