@@ -70,9 +70,9 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 
-# GHSA-vqr2-wx56-gmq4: public Spaces board writes must bind caller-supplied
-# object ids to the board's project + workspace. Shared by every create() so the
-# check can't drift between endpoints or be forgotten on a new one.
+# Public Spaces board writes must bind caller-supplied object ids to the board's
+# project + workspace. Shared by every create() so the check can't drift between
+# endpoints or be forgotten on a new one.
 def _issue_in_board_scope(issue_id, project_deploy_board):
     """A board-visible issue in the board's project + workspace.
 
@@ -291,7 +291,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        # Bind the caller-supplied issue_id to this board.
         if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -404,7 +404,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        # Bind the caller-supplied issue_id to this board.
         if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -493,7 +493,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Bind the caller-supplied comment_id to this board (GHSA-vqr2-wx56-gmq4).
+        # Bind the caller-supplied comment_id to this board.
         if not _comment_in_board_scope(comment_id, project_deploy_board):
             return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -589,7 +589,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Bind the caller-supplied issue_id to this board (GHSA-vqr2-wx56-gmq4).
+        # Bind the caller-supplied issue_id to this board.
         if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 

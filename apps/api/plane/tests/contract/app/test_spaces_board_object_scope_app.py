@@ -4,7 +4,7 @@
 
 """Contract tests for public Spaces board object-ID scoping.
 
-Regression coverage for GHSA-vqr2-wx56-gmq4 (WEB-8283).
+Regression coverage for WEB-8283.
 
 The public Spaces board write endpoints (``/api/public/anchor/<anchor>/...``)
 resolve the ``DeployBoard`` from the URL ``anchor`` but previously trusted the

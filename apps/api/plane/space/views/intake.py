@@ -113,8 +113,8 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Ensure the intake belongs to this board before writing
-        # (GHSA-vqr2-wx56-gmq4: caller-supplied intake_id must be bound to the anchor).
+        # Ensure the intake belongs to this board before writing: a
+        # caller-supplied intake_id must be bound to the anchor.
         if str(intake_id) != str(project_deploy_board.intake_id):
             return Response(
                 {"error": "Intake does not belong to this Project Board"},
@@ -150,7 +150,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 default=False,
             )
 
-        # Sanitize description_html before saving to prevent stored XSS (GHSA-hh2r-3hwp-mvq3)
+        # Sanitize description_html before saving to prevent stored XSS
         raw_description_html = request.data.get("issue", {}).get("description_html", "<p></p>")
         _, _, sanitized_description_html = validate_html_content(raw_description_html)
         safe_description_html = sanitized_description_html if sanitized_description_html is not None else "<p></p>"
