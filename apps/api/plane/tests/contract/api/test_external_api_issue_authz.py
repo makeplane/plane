@@ -6,10 +6,10 @@
 
 Regression coverage for:
 
-* GHSA-h4p4-mwfg-qh82 — ``IssueCommentDetailAPIEndpoint`` (``ProjectLitePermission``,
+* comment tamper — ``IssueCommentDetailAPIEndpoint`` (``ProjectLitePermission``,
   any active member) edited/deleted comments by id with no author/admin check, so
   a Guest could tamper with anyone's comments.
-* GHSA-xvc5-m5jf-gvpj — ``IssueAttachmentListCreateAPIEndpoint.get`` had no
+* attachment leak — ``IssueAttachmentListCreateAPIEndpoint.get`` had no
   ``permission_classes`` (bare ``IsAuthenticated``) and no membership check, so any
   API-token holder could list any issue's attachment metadata cross-tenant.
 

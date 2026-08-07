@@ -349,7 +349,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         # Reject any field not in the allowlist before it reaches .order_by().
         # An unrecognised value is replaced with the safe default, preventing
-        # ORM order_by injection via relational traversal (GHSA-p885-6jpg-cr2p).
+        # ORM order_by injection via relational traversal.
         order_by_param = sanitize_order_by(
             request.GET.get("order_by", "-created_at"),
             ISSUE_ORDER_BY_ALLOWLIST,
@@ -1605,8 +1605,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         # Only the comment author or a project admin may modify a comment.
         # ProjectLitePermission alone lets any active member (incl. Guest) reach
-        # here, so enforce the same author/admin rule the app applies
-        # (GHSA-h4p4-mwfg-qh82).
+        # here, so enforce the same author/admin rule the app applies.
         if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
             project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
         ).exists():
@@ -1684,8 +1683,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity for audit purposes.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
-        # Only the comment author or a project admin may delete a comment
-        # (GHSA-h4p4-mwfg-qh82).
+        # Only the comment author or a project admin may delete a comment.
         if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
             project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
         ).exists():
@@ -2028,8 +2026,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         # This endpoint has no permission_classes beyond IsAuthenticated, and API
         # tokens authenticate globally (not workspace-scoped), so enforce project
         # membership on the issue the same way post() does — otherwise any token
-        # holder could read any issue's attachment metadata cross-tenant
-        # (GHSA-xvc5-m5jf-gvpj).
+        # holder could read any issue's attachment metadata cross-tenant.
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if not user_has_issue_permission(
             request.user.id,
