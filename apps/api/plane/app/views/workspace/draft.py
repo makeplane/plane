@@ -206,7 +206,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     def create_draft_to_issue(self, request, slug, draft_id):
         # Drafts are private to their creator; scope the lookup to the owner so a
         # workspace member cannot convert/steal/delete another user's draft
-        # (GHSA-vfqm-7rh7-84hq). Mirrors retrieve/partial_update.
+        # Mirrors retrieve/partial_update.
         draft_issue = self.get_queryset().filter(pk=draft_id, created_by=request.user).first()
 
         if not draft_issue:

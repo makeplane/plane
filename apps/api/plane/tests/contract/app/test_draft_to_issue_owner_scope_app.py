@@ -4,7 +4,7 @@
 
 """Contract tests for draft-to-issue conversion ownership scoping.
 
-Regression coverage for GHSA-vfqm-7rh7-84hq (WEB-8289).
+Regression coverage for WEB-8289.
 
 ``WorkspaceDraftIssueViewSet.create_draft_to_issue`` resolved the draft with
 ``get_queryset().filter(pk=draft_id)`` — scoped only to the workspace, with no
