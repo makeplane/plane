@@ -273,10 +273,9 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    // SSRF guard (GHSA-55gq-rf47-9pqx). `src` comes from page content, and
-    // @react-pdf/image will fetch() any URL with a host — including internal
-    // Docker service names — or fs.readFile() a bare path. Anything we are not
-    // willing to fetch renders as a placeholder instead.
+    // SSRF guard: `src` comes from page content, and @react-pdf/image will fetch()
+    // any URL with a host — including internal Docker service names — or
+    // fs.readFile() a bare path. Anything we won't fetch renders as a placeholder.
     if (!isSafeImageSrc(src)) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
@@ -321,11 +320,9 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    // Normally `resolvedSrc` is the `data:image/jpeg;base64,…` URI produced by the
-    // service's own pre-fetch, so nothing is fetched at render time. If asset
-    // resolution failed it is still the raw asset id, which is not a fetchable URL.
-    // Use the same guard as the `image` renderer rather than a startsWith("http")
-    // check, which would happily pass http://api:8000/ (GHSA-55gq-rf47-9pqx).
+    // `resolvedSrc` is normally the pre-fetched `data:image/…` URI, or the raw asset
+    // id if resolution failed. Same guard as the `image` renderer: a
+    // startsWith("http") check would happily pass http://api:8000/.
     if (!isSafeImageSrc(resolvedSrc)) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>

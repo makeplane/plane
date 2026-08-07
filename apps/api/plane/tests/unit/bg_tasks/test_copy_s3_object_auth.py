@@ -3,15 +3,11 @@
 # See the LICENSE file for details.
 
 """
-Authentication of the API -> Live `/convert-document/` call (GHSA-55gq-rf47-9pqx).
+Authentication of the API -> Live `/convert-document/` call.
 
-The Live service previously served `/convert-document/` to anyone who could reach
-it (`requireSecretKey` was defined but never applied to a controller). Now that the
-endpoint is gated on the `live-server-secret-key` header, this background task is
-the one caller that has to present it — so the header must actually be sent, and a
-missing key must fail loudly rather than firing a request that 401s.
-
-These are pure unit tests: no database, no network.
+Live now gates the endpoint on the `live-server-secret-key` header, and this task is
+its only caller: the header must actually be sent, and a missing key must fail loudly
+rather than firing a request that can only 401. Pure unit tests — no DB, no network.
 """
 
 from unittest.mock import MagicMock, patch

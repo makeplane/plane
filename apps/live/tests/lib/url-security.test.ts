@@ -7,11 +7,10 @@
 import { describe, expect, it } from "vitest";
 import { isBlockedHostLiteral, isSafeImageSrc } from "@/lib/url-security";
 
-describe("isSafeImageSrc — GHSA-55gq-rf47-9pqx", () => {
-  describe("advisory payloads: internal Docker service names", () => {
-    // The escalation path named in the advisory. Every one of these starts with
-    // "http", which is why the imageComponent-style startsWith("http") guard
-    // does not close this vulnerability.
+describe("isSafeImageSrc", () => {
+  describe("internal Docker service names", () => {
+    // The escalation path that matters: every one of these starts with "http", which
+    // is why an imageComponent-style startsWith("http") guard does not close it.
     it.each([
       "http://api:8000/api/workspaces/",
       "http://plane-minio:9000/uploads/",
@@ -126,7 +125,7 @@ describe("isSafeImageSrc — GHSA-55gq-rf47-9pqx", () => {
     });
 
     it("rejects bare filesystem paths that would reach fs.readFile", () => {
-      // The advisory's secondary local-file-read finding.
+      // Secondary local-file-read path: @react-pdf/image would fs.readFile these.
       expect(isSafeImageSrc("/etc/passwd")).toBe(false);
       expect(isSafeImageSrc("./relative.png")).toBe(false);
       expect(isSafeImageSrc("../../etc/hosts")).toBe(false);
@@ -144,8 +143,8 @@ describe("isSafeImageSrc — GHSA-55gq-rf47-9pqx", () => {
   });
 
   describe("whitespace and control-character smuggling", () => {
-    // The same class of bypass as GHSA-v2vv-7wq3-8w2j: URL parsers strip these,
-    // so a check performed before stripping can be walked straight past.
+    // URL parsers strip these, so a check performed before stripping can be walked
+    // straight past — a well-known class of URL-validation bypass.
     it.each([
       "\thttp://api:8000/",
       "\nhttp://api:8000/",

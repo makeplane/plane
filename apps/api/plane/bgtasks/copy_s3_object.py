@@ -19,9 +19,8 @@ from celery import shared_task
 from plane.utils.url import normalize_url_path
 
 # (connect, read) timeout for the Live service call. `requests` has no default
-# timeout, so omitting this lets a duplication task occupy a Celery worker
-# indefinitely if Live accepts the connection and then stops responding. The read
-# budget is generous because converting a large document is genuinely slow.
+# timeout, so without one a Live service that stalls after accepting the connection
+# pins a Celery worker forever. The read budget is wide: conversion is genuinely slow.
 LIVE_REQUEST_TIMEOUT = (5, 30)
 
 
@@ -83,8 +82,8 @@ def sync_with_external_service(entity_name, description_html):
 
         url = normalize_url_path(f"{live_url}/convert-document/")
 
-        # The Live service authenticates this endpoint with a shared secret
-        # (GHSA-55gq-rf47-9pqx). Without the header the request is rejected as 401.
+        # The Live service authenticates this endpoint with a shared secret.
+        # Without the header the request is rejected as 401.
         secret_key = settings.LIVE_SERVER_SECRET_KEY
         if not secret_key:
             log_exception(

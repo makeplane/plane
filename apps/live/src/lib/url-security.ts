@@ -7,17 +7,12 @@
 import net from "node:net";
 
 /**
- * SSRF guards for URLs that the Live service may cause to be fetched.
+ * SSRF guards for URLs the Live service may cause to be fetched.
  *
- * Context (GHSA-55gq-rf47-9pqx): the PDF exporter renders TipTap `image` nodes by
- * handing `node.attrs.src` straight to `@react-pdf/image`, which calls `fetch()` on
- * anything with a host. Because the Live container shares a Docker network with the
- * API, database, Redis, RabbitMQ and MinIO, an unvalidated `src` turns PDF export
- * into a request forgery primitive against internal-only services.
- *
- * A prefix check such as `src.startsWith("http")` does NOT close this: the payloads
- * that matter — `http://api:8000/`, `http://plane-minio:9000/` — all start with
- * "http". The scheme is irrelevant; the *destination* is what has to be judged.
+ * The PDF exporter hands TipTap `node.attrs.src` to `@react-pdf/image`, which
+ * fetch()es anything with a host — and Live shares a Docker network with the API,
+ * database, Redis, RabbitMQ and MinIO. A `startsWith("http")` check is no defence:
+ * `http://api:8000/` starts with "http" too. The destination is what must be judged.
  */
 
 /** Schemes we are willing to hand to the PDF image pipeline. */
@@ -56,10 +51,9 @@ const isBlockedIPv4 = (ip: string): boolean => {
   if (a === 198 && (b === 18 || b === 19)) return true; // 198.18.0.0/15  benchmarking
   if (a >= 224) return true; // 224.0.0.0/4 multicast, 240.0.0.0/4 reserved, 255.255.255.255
 
-  // The remaining special-purpose blocks are /24s sitting inside otherwise-public
-  // /16s, so they must be matched on the third octet. Testing only the second octet
-  // would blackhole real public space (192.0.3.0/24, 198.51.x, 203.0.x) and quietly
-  // stop legitimate images from rendering.
+  // The remaining special-purpose blocks are /24s inside otherwise-public /16s, so
+  // they must be matched on the third octet — testing only the second would blackhole
+  // real public space (192.0.3.0/24, 198.51.x, 203.0.x) and break legitimate images.
   if (a === 192 && b === 0 && c === 0) return true; // 192.0.0.0/24   IETF protocol assignments
   if (a === 192 && b === 0 && c === 2) return true; // 192.0.2.0/24   TEST-NET-1
   if (a === 198 && b === 51 && c === 100) return true; // 198.51.100.0/24 TEST-NET-2
@@ -93,12 +87,10 @@ const isBlockedIPv6 = (ip: string): boolean => {
 };
 
 /**
- * Returns true when `host` is an IP literal pointing somewhere we refuse to fetch,
- * or a numeric/obfuscated host form that is not a canonical address at all.
- *
- * Obfuscated encodings (`0x7f000001`, `2130706433`, `127.1`) are rejected outright:
- * some HTTP clients expand them to loopback, none of them are legitimate image
- * hosts, and normalising every variant is a losing game.
+ * Returns true when `host` is an IP literal we refuse to fetch, or a numeric/
+ * obfuscated host form that is not a canonical address at all. Obfuscated encodings
+ * (`0x7f000001`, `2130706433`, `127.1`) are rejected outright — some HTTP clients
+ * expand them to loopback, and normalising every variant is a losing game.
  */
 export const isBlockedHostLiteral = (host: string): boolean => {
   const bare = host.replace(/^\[|\]$/g, "");
@@ -118,10 +110,9 @@ export const isBlockedHostLiteral = (host: string): boolean => {
 /**
  * Returns true when a hostname is safe enough to hand to the image fetcher.
  *
- * Single-label hostnames are refused because that is exactly the shape of a Docker
- * Compose service name — `api`, `web`, `plane-db`, `plane-redis`, `plane-minio` —
- * which is the primary escalation path in this advisory. Public image hosts always
- * carry a dot.
+ * Single-label hostnames are refused: that is exactly the shape of a Docker Compose
+ * service name (`api`, `plane-db`, `plane-minio`), the primary escalation path here.
+ * Public image hosts always carry a dot.
  */
 const isAllowedHostname = (hostname: string): boolean => {
   const host = hostname.toLowerCase();
@@ -139,20 +130,12 @@ const isAllowedHostname = (hostname: string): boolean => {
 };
 
 /**
- * Decides whether a TipTap image `src` may be passed to the PDF image pipeline.
- *
- * `data:` URIs are allowed because the asset pipeline deliberately pre-fetches
- * images server-side and inlines them as `data:image/jpeg;base64,…`; those never
- * touch the network again at render time.
- *
- * NOTE ON DNS REBINDING: for an `http(s)` host that clears these checks we cannot
- * pin the resolved address here — the renderer is synchronous and the actual
- * `fetch()` happens inside `@react-pdf/image`, out of our reach. A hostname under
- * attacker control that resolves to a blocked address therefore remains a residual
- * TOCTOU. Closing it properly means pre-fetching raw image nodes the way
- * `imageComponent` already pre-fetches assets, then rendering only `data:` URIs.
- * Tracked as follow-up to SECUR-245 — do not mistake this helper for a complete
- * SSRF defence on the http(s) path.
+ * Decides whether a TipTap image `src` may reach the PDF image pipeline. `data:` is
+ * allowed because the asset pipeline pre-fetches images server-side and inlines them,
+ * so nothing is fetched at render time. Not a complete http(s) defence: the fetch
+ * happens inside `@react-pdf/image`, so a host that passes here but resolves to a
+ * blocked address is a residual DNS-rebinding TOCTOU (SECUR-245 follow-up).
+ * TODO(SECUR-245): close it by pre-fetching raw image nodes, as imageComponent does.
  */
 export const isSafeImageSrc = (src: string): boolean => {
   if (!src) return false;

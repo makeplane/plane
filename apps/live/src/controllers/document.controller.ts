@@ -28,10 +28,9 @@ const convertDocumentSchema = z.object({
 export class DocumentController {
   /**
    * Server-to-server only: the sole caller is the API's `copy_s3_object` background
-   * task (page / work-item duplication). It was previously reachable unauthenticated
-   * by anyone who could hit the Live service, which made an expensive HTML -> Y.js
-   * conversion available as free compute to the internet (GHSA-55gq-rf47-9pqx,
-   * CWE-306). Callers must now present `live-server-secret-key`.
+   * task. It was previously reachable unauthenticated by anyone who could hit the
+   * Live service, making an expensive HTML -> Y.js conversion free compute for the
+   * internet. Callers must now present `live-server-secret-key`.
    */
   @Post("/")
   @Middleware(requireSecretKey)
