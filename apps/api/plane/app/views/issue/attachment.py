@@ -37,7 +37,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         # A restricted guest may only add attachments to issues they created,
-        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -95,7 +95,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
         # A restricted guest may only see attachments of issues they created,
-        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -118,7 +118,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         # A restricted guest may only add attachments to issues they created,
-        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -198,7 +198,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk=None):
         # A restricted guest may only see attachments of issues they created,
-        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -238,7 +238,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, issue_id, pk):
         # A restricted guest may only touch attachments of issues they created,
-        # mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -264,7 +264,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             )
 
             # Update the attachment — do NOT overwrite created_by; it is set at
-            # creation time and must not be reassigned (GHSA-5mxw-g5mw-3v3w).
+            # creation time and must not be reassigned.
             issue_attachment.is_uploaded = True
 
         # Get the storage metadata
