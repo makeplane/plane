@@ -4,7 +4,7 @@
 
 """Contract tests for StateViewSet.partial_update authorization.
 
-Regression coverage for GHSA-4jpp-964m-27cr. Editing a workflow state is project
+Editing a workflow state is project
 configuration — its sibling writes (create, destroy, mark_as_default) are all
 ``@allow_permission([ROLE.ADMIN])``. ``partial_update`` was the outlier at
 ``[ADMIN, MEMBER, GUEST]``, so any project Guest could rewrite any state
