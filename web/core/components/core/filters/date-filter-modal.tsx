@@ -47,7 +47,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   };
 
   const date1 = getDate(watch("date1"));
-  const date2 = getDate(watch("date1"));
+  const date2 = getDate(watch("date2"));
 
   const isInvalid = watch("filterType") === "range" && date1 && date2 ? date1 > date2 : false;
 
