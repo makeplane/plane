@@ -29,7 +29,7 @@ class IssueActivityEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
         # A restricted guest may only see the activity/comments of issues they
-        # created, mirroring the issue-detail visibility rule (GHSA-wq96-4xjj-j4qg).
+        # created, mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},

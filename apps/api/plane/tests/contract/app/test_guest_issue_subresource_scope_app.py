@@ -4,7 +4,7 @@
 
 """Contract tests for guest visibility on issue sub-resources.
 
-Regression coverage for GHSA-wq96-4xjj-j4qg. On a project with
+On a project with
 ``guest_view_all_features=False`` the issue-detail endpoint correctly 403s a
 GUEST for issues they did not create, but the issue *sub-resource* endpoints did
 not replicate that restriction:
