@@ -4,7 +4,7 @@
 
 """Contract tests for ``ProjectInvitationsViewset`` authorization.
 
-Regression coverage for GHSA-r68c-48rr-m67f (WEB-8291).
+Regression coverage for WEB-8291.
 
 The viewset declared no ``permission_classes`` (inheriting ``IsAuthenticated``)
 and only decorated ``create`` with ``@allow_permission([ROLE.ADMIN])``. The
