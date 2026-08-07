@@ -91,7 +91,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # passing ``request.data`` verbatim would let a workspace admin mass-assign
         # ``workspace`` (relocating a controlled member row into a victim workspace as
         # an admin — full cross-tenant takeover), ``is_active``, and other columns.
-        # Restrict the writable payload to ``role`` only. See GHSA-f739-39g5-jj49.
+        # Restrict the writable payload to ``role`` only.
         allowed_data = {}
         if "role" in request.data:
             allowed_data["role"] = request.data.get("role")

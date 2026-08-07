@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 """
-Regression tests for GHSA-f739-39g5-jj49 (WEB-8332).
+Regression tests for WEB-8332.
 
 ``WorkSpaceMemberViewSet.partial_update`` is only meant to update a member's
 ``role``. Before the fix it passed ``request.data`` verbatim to
