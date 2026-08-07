@@ -40,7 +40,7 @@ def issue_in_project(issue_id, slug, project_id):
     ``ProjectEntityPermission`` only checks that the caller is a member of the URL's
     ``project_id`` — it never binds the sibling ``issue_id`` path parameter to that
     project. Every handler taking both must therefore check this itself, or it is
-    reachable cross-project/cross-tenant (GHSA-hvx3-58mp-5fpx).
+    reachable cross-project/cross-tenant.
     """
     return Issue.issue_objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists()
 

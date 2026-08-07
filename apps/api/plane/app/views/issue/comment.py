@@ -67,7 +67,7 @@ class IssueCommentViewSet(BaseViewSet):
         # checks that the caller is a member of `project_id`, never that `issue_id` lives in
         # it, so a bare pk lookup let any project member comment on an issue in another
         # project/workspace — and read that issue's full `issue_detail` back out of the 201
-        # response (GHSA-hvx3-58mp-5fpx).
+        # response.
         issue = Issue.objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).first()
         if issue is None:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)

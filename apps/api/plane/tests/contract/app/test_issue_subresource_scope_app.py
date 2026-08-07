@@ -4,7 +4,7 @@
 
 """Contract tests for issue sub-resource scoping on comment + relation endpoints.
 
-Regression coverage for GHSA-hvx3-58mp-5fpx (SECUR-243).
+Regression coverage for SECUR-243.
 
 ``ProjectEntityPermission`` / ``allow_permission`` validate only that the caller is
 an active member of the URL's ``project_id``. Neither validates that the sibling
