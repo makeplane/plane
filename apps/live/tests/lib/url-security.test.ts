@@ -212,6 +212,31 @@ describe("isBlockedHostLiteral", () => {
     expect(isBlockedHostLiteral("2606:4700:4700::1111")).toBe(false);
   });
 
+  it("blocks alternate spellings of the same IPv6 address", () => {
+    // The address is judged on its expanded form, so a non-canonical spelling
+    // cannot slip past a prefix check. Each of these is ::ffff:127.0.0.1.
+    expect(isBlockedHostLiteral("::ffff:127.0.0.1")).toBe(true);
+    expect(isBlockedHostLiteral("::ffff:7f00:1")).toBe(true);
+    expect(isBlockedHostLiteral("0:0::ffff:7f00:1")).toBe(true);
+    expect(isBlockedHostLiteral("0:0:0:0:0:ffff:127.0.0.1")).toBe(true);
+    expect(isBlockedHostLiteral("0000:0000:0000:0000:0000:ffff:7f00:0001")).toBe(true);
+    // ...and of ::1 and the cloud metadata address.
+    expect(isBlockedHostLiteral("0:0:0:0:0:0:0:1")).toBe(true);
+    expect(isBlockedHostLiteral("0:0:0:0:0:ffff:a9fe:a9fe")).toBe(true);
+    // Expanded forms of the range checks must hold too.
+    expect(isBlockedHostLiteral("fe80:0:0:0:0:0:0:1")).toBe(true);
+    expect(isBlockedHostLiteral("fc00:0:0:0:0:0:0:1")).toBe(true);
+    // Public addresses stay reachable in either spelling.
+    expect(isBlockedHostLiteral("2001:4860:4860:0:0:0:0:8888")).toBe(false);
+    expect(isBlockedHostLiteral("2001:4860:4860::8888")).toBe(false);
+  });
+
+  it("rejects malformed IPv6 URLs (caught at URL parsing, before the literal check)", () => {
+    expect(isSafeImageSrc("http://[::ffff:999.1.1.1]/x.png")).toBe(false);
+    expect(isSafeImageSrc("http://[1:2:3:4:5:6:7:8:9]/x.png")).toBe(false);
+    expect(isSafeImageSrc("http://[::1::2]/x.png")).toBe(false);
+  });
+
   it("treats real hostnames as non-literals", () => {
     expect(isBlockedHostLiteral("example.com")).toBe(false);
     expect(isBlockedHostLiteral("api")).toBe(false);

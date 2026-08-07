@@ -62,26 +62,69 @@ const isBlockedIPv4 = (ip: string): boolean => {
   return false;
 };
 
+/**
+ * Expands an IPv6 literal to its eight 16-bit groups, or null if unparseable.
+ * Prefix matching alone is not enough: `::ffff:127.0.0.1` and its expanded twin
+ * `0:0:0:0:0:ffff:127.0.0.1` denote the same address, so anything comparing raw
+ * strings blocks one and fetches the other.
+ */
+const expandIPv6 = (addr: string): number[] | null => {
+  let head = addr;
+  let tail = "";
+  // A trailing dotted quad occupies the last two groups.
+  const dotted = head.match(/(?:^|:)((?:\d{1,3}\.){3}\d{1,3})$/);
+  if (dotted?.[1]) {
+    const quad = dotted[1].split(".").map(Number);
+    if (quad.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return null;
+    head = head.slice(0, head.length - dotted[1].length);
+    tail = `${((quad[0] << 8) | quad[1]).toString(16)}:${((quad[2] << 8) | quad[3]).toString(16)}`;
+    head = head.endsWith(":") && !head.endsWith("::") ? head.slice(0, -1) : head;
+    head = head === "" ? "::" : head;
+    head = head.endsWith("::") ? `${head}${tail}` : `${head}:${tail}`;
+  }
+
+  const halves = head.split("::");
+  if (halves.length > 2) return null;
+  const left = halves[0] ? halves[0].split(":") : [];
+  const right = halves.length === 2 && halves[1] ? halves[1].split(":") : [];
+  const fill = halves.length === 2 ? 8 - left.length - right.length : 0;
+  if (fill < 0 || (halves.length === 1 && left.length !== 8)) return null;
+
+  const groups = [...left, ...Array<string>(fill).fill("0"), ...right];
+  if (groups.length !== 8) return null;
+  const out = groups.map((g) => (/^[0-9a-f]{1,4}$/.test(g) ? parseInt(g, 16) : NaN));
+  return out.some(Number.isNaN) ? null : out;
+};
+
 /** Returns true when an IPv6 literal must never be fetched. */
 const isBlockedIPv6 = (ip: string): boolean => {
   const addr = ip.toLowerCase().replace(/^\[|\]$/g, "");
 
-  // IPv4-mapped (::ffff:127.0.0.1) and IPv4-compatible forms: judge the embedded v4.
-  const mapped = addr.match(/^(?:::ffff:|::)((?:\d{1,3}\.){3}\d{1,3})$/);
-  if (mapped?.[1]) return isBlockedIPv4(mapped[1]);
+  // Judge on the expanded form so alternate spellings cannot slip past the
+  // prefix checks below. Unparseable literals are treated as unsafe.
+  const groups = expandIPv6(addr);
+  if (!groups) return true;
 
-  if (addr === "::" || addr === "::1") return true; // unspecified / loopback
-  if (addr.startsWith("fe8") || addr.startsWith("fe9") || addr.startsWith("fea") || addr.startsWith("feb")) return true; // fe80::/10 link-local
+  // IPv4-mapped (::ffff:a.b.c.d) and IPv4-compatible (::a.b.c.d): judge the embedded v4.
+  const firstFiveZero = groups.slice(0, 5).every((g) => g === 0);
+  if (firstFiveZero && (groups[5] === 0xffff || (groups[5] === 0 && (groups[6] !== 0 || groups[7] !== 0)))) {
+    const v4 = [groups[6] >> 8, groups[6] & 0xff, groups[7] >> 8, groups[7] & 0xff].join(".");
+    return isBlockedIPv4(v4);
+  }
+
+  const [g0, g1] = groups;
+  if (groups.every((g) => g === 0)) return true; // :: unspecified
+  if (firstFiveZero && groups[5] === 0 && groups[6] === 0 && groups[7] === 1) return true; // ::1 loopback
+  if ((g0 & 0xffc0) === 0xfe80) return true; // fe80::/10 link-local
   // fec0::/10 deprecated site-local. Kept in step with the Python guard's
   // _BLOCKED_NETWORKS (apps/api/plane/utils/ip_address.py) — the two lists must not
   // drift, or one service will block a range the other happily fetches.
-  if (addr.startsWith("fec") || addr.startsWith("fed") || addr.startsWith("fee") || addr.startsWith("fef")) return true;
-  if (addr.startsWith("fc") || addr.startsWith("fd")) return true; // fc00::/7 unique local
-  if (addr.startsWith("ff")) return true; // ff00::/8 multicast
-  if (addr.startsWith("64:ff9b:")) return true; // 64:ff9b::/96 + 64:ff9b:1::/48 NAT64
-  if (addr.startsWith("2002:")) return true; // 6to4 — can wrap a private v4
-  if (/^2001:(0{1,4})?:/.test(addr)) return true; // 2001::/32 Teredo
-  if (addr.startsWith("::ffff:")) return true; // any other IPv4-mapped form
+  if ((g0 & 0xffc0) === 0xfec0) return true;
+  if ((g0 & 0xfe00) === 0xfc00) return true; // fc00::/7 unique local
+  if ((g0 & 0xff00) === 0xff00) return true; // ff00::/8 multicast
+  if (g0 === 0x64 && g1 === 0xff9b) return true; // 64:ff9b::/96 + 64:ff9b:1::/48 NAT64
+  if (g0 === 0x2002) return true; // 6to4 — can wrap a private v4
+  if (g0 === 0x2001 && g1 === 0) return true; // 2001::/32 Teredo
 
   return false;
 };
