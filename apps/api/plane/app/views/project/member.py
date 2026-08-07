@@ -391,7 +391,7 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, member_id):
         # Preferences are personal: a member may only read/modify their OWN
         # preferences. member_id is a URL param, so reject any mismatch to prevent
-        # cross-member IDOR (GHSA-gx67-r6wp-3357).
+        # cross-member IDOR.
         if str(member_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot access another member's preferences."},
@@ -410,7 +410,7 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, member_id):
         # Preferences are personal: a member may only read their OWN preferences.
-        # member_id is a URL param, so reject any mismatch (GHSA-gx67-r6wp-3357).
+        # member_id is a URL param, so reject any mismatch.
         if str(member_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot access another member's preferences."},

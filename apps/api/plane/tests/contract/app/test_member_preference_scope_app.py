@@ -4,7 +4,7 @@
 
 """Contract tests for ProjectMemberPreferenceEndpoint ownership scoping.
 
-Regression coverage for GHSA-gx67-r6wp-3357. The endpoint takes a ``member_id``
+The endpoint takes a ``member_id``
 URL parameter and loaded the ``ProjectMember`` by ``(project_id, member_id,
 workspace__slug)`` with no check that ``member_id`` is the caller — so any project
 member (including a Guest) could read and modify any other member's per-project
