@@ -4,7 +4,7 @@
 
 """Contract tests for undecorated fall-through route authorization (WEB-8333).
 
-Regression coverage for GHSA-27v6-jc2m-x99w / GHSA-w83f-hr4p-3qhw (duplicates).
+Regression coverage for WEB-8333.
 
 Per-project authorization on the app viewsets lives in the
 ``@allow_permission(..., level="PROJECT")`` *method* decorator, not in
