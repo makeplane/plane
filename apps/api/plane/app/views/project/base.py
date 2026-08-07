@@ -545,7 +545,7 @@ class DeployBoardViewSet(BaseViewSet):
         # ProjectMemberPermission only checks the URL slug/project_id — nothing
         # binds the object to that scope. Scope the queryset to the URL workspace
         # + project so a foreign pk 404s instead of being read/modified/deleted
-        # cross-workspace (GHSA-h4w5-vhxc-265g).
+        # cross-workspace.
         return DeployBoard.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
             entity_name="project",
