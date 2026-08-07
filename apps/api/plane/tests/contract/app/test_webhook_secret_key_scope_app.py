@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 """
-Regression tests for GHSA-83rj-4282-x39v.
+Regression tests for WEB-8103.
 
 WebhookEndpoint list/retrieve/patch passed a fields= allowlist that excluded
 secret_key, but DynamicBaseSerializer.__init__ discards the allowlist, so the

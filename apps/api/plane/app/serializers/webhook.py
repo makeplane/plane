@@ -61,7 +61,7 @@ class WebhookSerializer(DynamicBaseSerializer):
         # never on list/retrieve/update.
         #
         # This context flag — not the fields= allowlists in views/webhook/base.py —
-        # is the sole enforcement point (GHSA-83rj). Those fields= kwargs are dead
+        # is the sole enforcement point. Those fields= kwargs are dead
         # on two independent levels, so do not assume fixing either one re-activates
         # them:
         #   1. DynamicBaseSerializer.__init__ pops the caller's fields= and then
