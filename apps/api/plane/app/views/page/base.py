@@ -105,7 +105,7 @@ class PageViewSet(BaseViewSet):
             # Sanitize the user-supplied order_by against an allowlist: Django
             # resolves the field at call time, so an unknown field raises
             # FieldError (500 DoS) and a relation path (e.g. owned_by__password)
-            # enables ORM relational traversal (GHSA-2v48). Favourites stay
+            # enables ORM relational traversal. Favourites stay
             # pinned first; the sanitized user ordering is the secondary sort
             # (a single .order_by() so it is not overridden), with id as a
             # stable tiebreak for pagination.

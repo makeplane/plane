@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 """
-Regression tests for GHSA-2v48-qcjw-74ch (page order_by ORM injection).
+Regression tests for page order_by ORM injection (WEB-8110).
 
 PageViewSet.get_queryset passed the raw order_by query param into .order_by(),
 which resolves field names at call time — an unknown field raised FieldError
