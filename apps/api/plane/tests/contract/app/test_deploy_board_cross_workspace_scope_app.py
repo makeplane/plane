@@ -4,7 +4,7 @@
 
 """Contract tests for DeployBoardViewSet object scoping.
 
-Regression coverage for GHSA-h4w5-vhxc-265g. ``DeployBoardViewSet`` defines only
+``DeployBoardViewSet`` defines only
 ``list``/``create``; the routed ``retrieve``/``partial_update``/``destroy`` fall
 through to DRF's ``ModelViewSet`` defaults, which resolve the object via
 ``get_object()`` -> ``get_queryset()``. The base ``get_queryset`` returns
