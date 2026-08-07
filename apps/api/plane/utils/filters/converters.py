@@ -306,8 +306,13 @@ class LegacyToRichFiltersConverter:
         result = {}
         if len(after_dates) == 1 and len(before_dates) == 1 and len(exact_dates) == 0:
             # Simple range: one after and one before
-            start_date = min(after_dates[0], before_dates[0])
-            end_date = max(after_dates[0], before_dates[0])
+            # Parse to datetime objects so comparison is chronological, not lexicographic.
+            # String min/max only works for zero-padded ISO YYYY-MM-DD; other formats
+            # accepted by _validate_date (e.g. M/D/YYYY) would produce a reversed range.
+            after_dt = dateutil_parse(after_dates[0])
+            before_dt = dateutil_parse(before_dates[0])
+            start_date = min(after_dt, before_dt).strftime("%Y-%m-%d")
+            end_date = max(after_dt, before_dt).strftime("%Y-%m-%d")
             self._add_rich_filter(result, field_name, "range", [start_date, end_date])
         elif len(exact_dates) == 1 and len(after_dates) == 0 and len(before_dates) == 0:
             # Single exact date
