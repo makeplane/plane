@@ -150,9 +150,8 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Scope to the caller's own asset: public-site users may only mutate assets
-        # they created (post() sets created_by=request.user). Without created_by,
-        # any authenticated user could touch another user's asset (GHSA-5q33-2766-fprm).
+        # Public-site users may only mutate assets they created; without this any
+        # authenticated user could touch another's.
         asset = FileAsset.objects.filter(
             id=pk,
             workspace=deploy_board.workspace,
@@ -179,8 +178,7 @@ class EntityAssetEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
-        # Scope to the caller's own asset (GHSA-5q33-2766-fprm) — a public-site user
-        # may only delete assets they created, not another user's.
+        # A public-site user may only delete assets they created.
         asset = FileAsset.objects.filter(
             id=pk,
             workspace=deploy_board.workspace,
@@ -207,8 +205,7 @@ class AssetRestoreEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Scope to the caller's own asset (GHSA-5q33-2766-fprm) — a public-site user
-        # may only restore assets they created, not another user's.
+        # A public-site user may only restore assets they created.
         asset = FileAsset.all_objects.filter(
             id=pk,
             workspace=deploy_board.workspace,
@@ -239,8 +236,7 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         if not asset_ids:
             return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Scope to the caller's own assets (GHSA-5q33-2766-fprm) — a public-site user
-        # may only rebind assets they created, not another user's.
+        # A public-site user may only rebind assets they created.
         assets = FileAsset.objects.filter(
             id__in=asset_ids,
             workspace=deploy_board.workspace,

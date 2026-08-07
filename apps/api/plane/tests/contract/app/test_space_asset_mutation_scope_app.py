@@ -4,7 +4,7 @@
 
 """Contract tests for public Space asset mutation ownership scoping.
 
-Regression coverage for GHSA-5q33-2766-fprm. The public Space asset
+The public Space asset
 delete/restore/bulk (and patch) endpoints require only authentication and scoped
 assets to the deploy board's workspace/project — but not to
 ``created_by=request.user``. Any authenticated public-site user who knew the
