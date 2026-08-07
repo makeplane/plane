@@ -4,7 +4,7 @@
 
 """Contract tests for ``SubIssuesEndpoint`` cross-project scoping.
 
-Regression coverage for GHSA-gxhv-fw9x-2pg3. ``SubIssuesEndpoint``
+``SubIssuesEndpoint``
 (``/workspaces/<slug>/projects/<project_id>/issues/<issue_id>/sub-issues/``) is
 guarded only by ``ProjectEntityPermission``, which checks that the caller is a
 member of the URL ``project_id`` — not that ``issue_id`` belongs to it. Both

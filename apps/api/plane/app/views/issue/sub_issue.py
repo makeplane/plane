@@ -38,7 +38,7 @@ class SubIssuesEndpoint(BaseAPIView):
         # SECURITY: scope the parent lookup to the URL project. ProjectEntityPermission
         # only checks that the caller belongs to `project_id`, not that `issue_id` lives
         # in it, so an unscoped filter leaks sub-issue metadata across projects in the
-        # same workspace (GHSA-gxhv-fw9x-2pg3).
+        # same workspace.
         sub_issues = (
             Issue.issue_objects.filter(
                 parent_id=issue_id, workspace__slug=slug, project_id=project_id
@@ -210,7 +210,7 @@ class SubIssuesEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         # SECURITY: bind the parent issue to the URL workspace + project. A bare
         # pk lookup let any project member re-parent issues under a parent in a
-        # different project/workspace (GHSA-gxhv-fw9x-2pg3).
+        # different project/workspace.
         parent_issue = Issue.issue_objects.filter(
             pk=issue_id, workspace__slug=slug, project_id=project_id
         ).first()
@@ -240,8 +240,7 @@ class SubIssuesEndpoint(BaseAPIView):
         # Only the issues that were actually re-parented — i.e. the project-scoped
         # `sub_issues`, not the raw caller-supplied ids. Otherwise a cross-project id
         # (excluded from the update above) would still fire issue_activity, whose task
-        # does an unscoped Issue.objects.get and bumps updated_at on a foreign issue
-        # (GHSA-gxhv-fw9x-2pg3).
+        # does an unscoped Issue.objects.get and bumps updated_at on a foreign issue.
         scoped_sub_issue_ids = [str(sub_issue.id) for sub_issue in sub_issues]
 
         updated_sub_issues = Issue.issue_objects.filter(
