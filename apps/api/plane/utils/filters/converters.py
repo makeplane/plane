@@ -306,8 +306,13 @@ class LegacyToRichFiltersConverter:
         result = {}
         if len(after_dates) == 1 and len(before_dates) == 1 and len(exact_dates) == 0:
             # Simple range: one after and one before
-            start_date = min(after_dates[0], before_dates[0])
-            end_date = max(after_dates[0], before_dates[0])
+            # Order the bounds chronologically by comparing parsed datetimes, not the
+            # raw strings: _validate_date accepts non-ISO formats that do not sort
+            # lexicographically (e.g. "9/1/2023" vs "10/1/2023").
+            if dateutil_parse(after_dates[0]) <= dateutil_parse(before_dates[0]):
+                start_date, end_date = after_dates[0], before_dates[0]
+            else:
+                start_date, end_date = before_dates[0], after_dates[0]
             self._add_rich_filter(result, field_name, "range", [start_date, end_date])
         elif len(exact_dates) == 1 and len(after_dates) == 0 and len(before_dates) == 0:
             # Single exact date
