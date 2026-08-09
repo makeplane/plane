@@ -95,7 +95,7 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None, str | None]:
         ]
     )
     models = os.environ.get("LLM_MODELS")
-    api_base = os.environ.get("LLM_API_BASE")
+    api_base = (os.environ.get("LLM_API_BASE") or "").strip() or None
 
     provider = SUPPORTED_PROVIDERS.get(provider_key.lower())
     if not provider:
@@ -110,9 +110,9 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None, str | None]:
     if not model:
         model = provider.default_model
 
-    supported_models = [item.strip() for item in models.split(",") if item.strip()] if models else provider.models
+    configured_models = [item.strip() for item in models.split(",") if item.strip()] if models else []
+    supported_models = configured_models or provider.models
 
-    # Validate model is supported by provider or the configured override
     if model not in supported_models:
         log_exception(
             ValueError(

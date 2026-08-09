@@ -152,15 +152,17 @@ Below are the most import keys you must refer to. _<span style="color: #fcba03">
 
 #### LLM settings
 
-God Mode exposes only the API key and selected model. `LLM_MODELS` and `LLM_API_BASE` are not available there and must be configured through `plane.env`. The provider can also be initialized through `plane.env`:
+God Mode exposes only the API key and selected model. For headless configuration, use `plane.env`; `LLM_PROVIDER`, `LLM_MODELS`, and `LLM_API_BASE` are not available in God Mode.
 
 ```env
+LLM_API_KEY=sk-example
 LLM_PROVIDER=openai
 LLM_MODEL=gpt-5-mini
 LLM_MODELS=gpt-5-mini,gpt-5.4-nano,qwen3-235b
 LLM_API_BASE=https://example.com/v1
 ```
 
+- `LLM_API_KEY` sets the API key required for LLM requests. It can also be configured in God Mode.
 - `LLM_PROVIDER` selects a built-in provider configuration. Use `openai` for an OpenAI-compatible API. Plane imports this value when it first creates the instance configuration.
 - `LLM_MODEL` selects the model used for AI requests. Plane imports this value when it first creates the instance configuration; later changes can be made in God Mode.
 - `LLM_MODELS` optionally replaces the provider's built-in model allowlist with a comma-separated list. Leave it empty to preserve the built-in allowlist.

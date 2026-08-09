@@ -40,6 +40,30 @@ class TestLLMConfiguration:
             "https://example.com/v1",
         )
 
+    @patch("plane.app.views.external.base.get_configuration_value")
+    def test_uses_provider_models_when_override_is_blank(self, mock_get_configuration_value, monkeypatch):
+        monkeypatch.setenv("LLM_MODELS", " , ")
+        monkeypatch.delenv("LLM_API_BASE", raising=False)
+        mock_get_configuration_value.return_value = (
+            "api-key",
+            "openai",
+            "gpt-4o-mini",
+        )
+
+        assert get_llm_config() == ("api-key", "gpt-4o-mini", "openai", None)
+
+    @patch("plane.app.views.external.base.get_configuration_value")
+    def test_normalizes_blank_api_base(self, mock_get_configuration_value, monkeypatch):
+        monkeypatch.delenv("LLM_MODELS", raising=False)
+        monkeypatch.setenv("LLM_API_BASE", "  ")
+        mock_get_configuration_value.return_value = (
+            "api-key",
+            "openai",
+            "gpt-4o-mini",
+        )
+
+        assert get_llm_config() == ("api-key", "gpt-4o-mini", "openai", None)
+
     @patch("plane.app.views.external.base.log_exception")
     @patch("plane.app.views.external.base.get_configuration_value")
     def test_rejects_model_outside_configured_override(

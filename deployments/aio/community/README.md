@@ -105,8 +105,9 @@ docker run --name myaio --rm -it \
 
 #### LLM Configuration
 
-God Mode exposes only the API key and selected model. `LLM_MODELS` and `LLM_API_BASE` are not available there and must be configured through environment variables. The provider can also be initialized through the environment:
+God Mode exposes only the API key and selected model. For headless configuration, use environment variables; `LLM_PROVIDER`, `LLM_MODELS`, and `LLM_API_BASE` are not available in God Mode.
 
+- `LLM_API_KEY`: API key required for LLM requests. It can also be configured in God Mode.
 - `LLM_PROVIDER`: Built-in provider configuration (default: `openai`). Use `openai` for an OpenAI-compatible API. Plane imports this value when it first creates the instance configuration.
 - `LLM_MODEL`: Model used for AI requests (default: `gpt-4o-mini`). Plane imports this value when it first creates the instance configuration; later changes can be made in God Mode.
 - `LLM_MODELS`: Comma-separated model allowlist that replaces the provider's built-in list. Leave it empty to preserve the built-in allowlist.
@@ -115,6 +116,7 @@ God Mode exposes only the API key and selected model. `LLM_MODELS` and `LLM_API_
 Example:
 
 ```env
+LLM_API_KEY=sk-example
 LLM_PROVIDER=openai
 LLM_MODEL=gpt-5-mini
 LLM_MODELS=gpt-5-mini,gpt-5.4-nano,qwen3-235b
