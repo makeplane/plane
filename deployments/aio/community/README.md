@@ -103,6 +103,26 @@ docker run --name myaio --rm -it \
 
 - `API_KEY_RATE_LIMIT`: API key rate limit (default: `60/minute`)
 
+#### LLM Configuration
+
+God Mode exposes only the API key and selected model. `LLM_MODELS` and `LLM_API_BASE` are not available there and must be configured through environment variables. The provider can also be initialized through the environment:
+
+- `LLM_PROVIDER`: Built-in provider configuration (default: `openai`). Use `openai` for an OpenAI-compatible API. Plane imports this value when it first creates the instance configuration.
+- `LLM_MODEL`: Model used for AI requests (default: `gpt-4o-mini`). Plane imports this value when it first creates the instance configuration; later changes can be made in God Mode.
+- `LLM_MODELS`: Comma-separated model allowlist that replaces the provider's built-in list. Leave it empty to preserve the built-in allowlist.
+- `LLM_API_BASE`: API base URL override. Leave it empty to use the OpenAI client's default endpoint.
+
+Example:
+
+```env
+LLM_PROVIDER=openai
+LLM_MODEL=gpt-5-mini
+LLM_MODELS=gpt-5-mini,gpt-5.4-nano,qwen3-235b
+LLM_API_BASE=https://example.com/v1
+```
+
+`LLM_MODELS` and `LLM_API_BASE` are read directly from the environment. Restart the container after changing them.
+
 ## Port Mapping
 
 The following ports are exposed:

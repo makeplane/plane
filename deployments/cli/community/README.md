@@ -150,6 +150,24 @@ Below are the most import keys you must refer to. _<span style="color: #fcba03">
 
 > `CORS_ALLOWED_ORIGINS` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
 
+#### LLM settings
+
+God Mode exposes only the API key and selected model. `LLM_MODELS` and `LLM_API_BASE` are not available there and must be configured through `plane.env`. The provider can also be initialized through `plane.env`:
+
+```env
+LLM_PROVIDER=openai
+LLM_MODEL=gpt-5-mini
+LLM_MODELS=gpt-5-mini,gpt-5.4-nano,qwen3-235b
+LLM_API_BASE=https://example.com/v1
+```
+
+- `LLM_PROVIDER` selects a built-in provider configuration. Use `openai` for an OpenAI-compatible API. Plane imports this value when it first creates the instance configuration.
+- `LLM_MODEL` selects the model used for AI requests. Plane imports this value when it first creates the instance configuration; later changes can be made in God Mode.
+- `LLM_MODELS` optionally replaces the provider's built-in model allowlist with a comma-separated list. Leave it empty to preserve the built-in allowlist.
+- `LLM_API_BASE` optionally overrides the API base URL. Leave it empty to use the OpenAI client's default endpoint.
+
+`LLM_MODELS` and `LLM_API_BASE` are read directly from the environment. Restart the services after changing them.
+
 There are many other settings you can play with, but we suggest you configure `EMAIL SETTINGS` as it will enable you to invite your teammates onto the platform.
 
 ---
@@ -420,7 +438,9 @@ api-1  | EMAIL_PORT loaded with value from environment variable.
 api-1  | EMAIL_FROM loaded with value from environment variable.
 api-1  | EMAIL_USE_TLS loaded with value from environment variable.
 api-1  | EMAIL_USE_SSL loaded with value from environment variable.
-api-1  | OPENAI_API_KEY loaded with value from environment variable.
+api-1  | LLM_API_KEY loaded with value from environment variable.
+api-1  | LLM_PROVIDER loaded with value from environment variable.
+api-1  | LLM_MODEL loaded with value from environment variable.
 api-1  | GPT_ENGINE loaded with value from environment variable.
 api-1  | UNSPLASH_ACCESS_KEY loaded with value from environment variable.
 api-1  | Checking bucket...
