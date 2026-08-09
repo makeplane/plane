@@ -7,6 +7,7 @@
 import { useMemo } from "react";
 import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 // plane package imports
 import type { TActivityFilters } from "@plane/constants";
 import { E_SORT_ORDER, defaultActivityFilters } from "@plane/constants";
@@ -18,6 +19,7 @@ import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // local imports
 import { IssueActivityCommentRoot } from "./activity-comment-root";
@@ -52,6 +54,21 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
 
   const { getProjectById } = useProject();
+  const {
+    timeLog: { fetchTimeLogs },
+  } = useIssueDetail();
+
+  // derived values
+  const isTimeTrackingEnabled = !!getProjectById(projectId)?.is_time_tracking_enabled;
+
+  // load the issue's time logs so they can be merged into the activity trail
+  useSWR(
+    isTimeTrackingEnabled && workspaceSlug && projectId && issueId
+      ? ["issueTimeLogs", workspaceSlug, projectId, issueId]
+      : null,
+    isTimeTrackingEnabled ? () => fetchTimeLogs(workspaceSlug, projectId, issueId) : null,
+    { revalidateOnFocus: false }
+  );
 
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {

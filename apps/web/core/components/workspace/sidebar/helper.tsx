@@ -13,6 +13,7 @@ import {
   InboxIcon,
   MultipleStickyIcon,
   ProjectIcon,
+  TimelineLayoutIcon,
   ViewsIcon,
   YourWorkIcon,
 } from "@plane/propel/icons";
@@ -38,6 +39,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <DraftIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "archives":
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "program_timeline":
+      return <TimelineLayoutIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "stickies":
       return <MultipleStickyIcon className={cn("size-4 flex-shrink-0", className)} />;
   }

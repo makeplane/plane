@@ -90,6 +90,8 @@ type IssueRelation = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
+  /** sum of all time logged against this work item, in minutes */
+  tracked_time_minutes?: number;
   parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachments?: TIssueAttachment[];

@@ -16,7 +16,6 @@ import { CustomizeNavigationDialog } from "@/components/navigation/customize-nav
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { WorkspaceEditionBadge } from "@/components/workspace/edition-badge";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
 import { IconButton } from "@plane/propel/icon-button";
 
@@ -83,7 +82,6 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
         </ScrollArea>
         {/* Help Section */}
         <div className="flex h-12 items-center justify-between border-t border-subtle bg-surface-1 p-3">
-          <WorkspaceEditionBadge />
           {/* TODO: To be checked if we need this */}
           {/* <div className="flex items-center gap-2">
           {!shouldRenderAppRail && <HelpMenu />}

@@ -26,6 +26,8 @@ import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./atta
 import { IssueCommentStore } from "./comment.store";
 import type { IIssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
 import { IssueCommentReactionStore } from "./comment_reaction.store";
+import { IssueTimeLogStore } from "./time-log.store";
+import type { IIssueTimeLogStore } from "./time-log.store";
 import type { IIssueCommentReactionStore, IIssueCommentReactionStoreActions } from "./comment_reaction.store";
 import { IssueStore } from "./issue.store";
 import type { IIssueStore, IIssueStoreActions } from "./issue.store";
@@ -104,7 +106,7 @@ export interface IIssueDetail
   toggleSubIssuesModal: (value: string | null) => void;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
   setOpenWidgets: (state: TWorkItemWidgets[]) => void;
-  setLastWidgetAction: (action: TWorkItemWidgets) => void;
+  setLastWidgetAction: (widgetAction: TWorkItemWidgets) => void;
   toggleOpenWidget: (state: TWorkItemWidgets) => void;
   setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
@@ -116,6 +118,7 @@ export interface IIssueDetail
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
+  timeLog: IIssueTimeLogStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
   subscription: IIssueSubscriptionStore;
@@ -163,6 +166,7 @@ export class IssueDetail implements IIssueDetail {
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
+  timeLog: IIssueTimeLogStore;
 
   constructor(rootStore: IIssueRootStore, serviceType: TIssueServiceType) {
     makeObservable(this, {
@@ -210,6 +214,7 @@ export class IssueDetail implements IIssueDetail {
     this.attachment = new IssueAttachmentStore(rootStore, serviceType);
     this.activity = new IssueActivityStore(rootStore.rootStore, serviceType);
     this.comment = new IssueCommentStore(this, serviceType);
+    this.timeLog = new IssueTimeLogStore(this);
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
     this.link = new IssueLinkStore(this, serviceType);
@@ -255,8 +260,8 @@ export class IssueDetail implements IIssueDetail {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TWorkItemWidgets) => {
-    this.openWidgets = [action];
+  setLastWidgetAction = (widgetAction: TWorkItemWidgets) => {
+    this.openWidgets = [widgetAction];
   };
   toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))

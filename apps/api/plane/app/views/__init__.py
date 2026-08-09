@@ -78,6 +78,12 @@ from .workspace.user import (
     UserIssueCompletedGraphEndpoint,
 )
 from .workspace.estimate import WorkspaceEstimatesEndpoint
+
+from .workspace.time_log import (
+    WorkspaceTimeLogEndpoint,
+    WorkspaceTimeLogExportEndpoint,
+    WorkspaceTimeLogAnalyticsEndpoint,
+)
 from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
@@ -139,6 +145,8 @@ from .issue.attachment import (
 )
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+
+from .issue.time_log import IssueTimeLogViewSet
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

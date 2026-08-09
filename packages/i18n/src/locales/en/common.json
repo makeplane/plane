@@ -121,6 +121,8 @@
   "sign_out": "Sign out",
   "signing_out": "Signing out",
   "active_cycles": "Active cycles",
+  "program_timeline": "Program Timeline",
+  "program_timeline_description": "See every project in the workspace on one timeline, colored by progress, to spot overlap and workload at a glance.",
   "active_cycles_description": "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
   "on_demand_snapshots_of_all_your_cycles": "On-demand snapshots of all your cycles",
   "upgrade": "Upgrade",

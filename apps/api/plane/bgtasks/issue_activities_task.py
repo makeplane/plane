@@ -752,6 +752,96 @@ def delete_comment_activity(
     )
 
 
+def create_time_log_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="logged time",
+            verb="created",
+            actor_id=actor_id,
+            field="time_log",
+            new_value=str(requested_data.get("duration_minutes", "")),
+            new_identifier=requested_data.get("id", None),
+            epoch=epoch,
+        )
+    )
+
+
+def update_time_log_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+
+    if current_instance.get("duration_minutes") != requested_data.get(
+        "duration_minutes", current_instance.get("duration_minutes")
+    ) or current_instance.get("description") != requested_data.get(
+        "description", current_instance.get("description")
+    ):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated a time log",
+                verb="updated",
+                actor_id=actor_id,
+                field="time_log",
+                old_value=str(current_instance.get("duration_minutes", "")),
+                old_identifier=current_instance.get("id"),
+                new_value=str(requested_data.get("duration_minutes", current_instance.get("duration_minutes", ""))),
+                new_identifier=current_instance.get("id"),
+                epoch=epoch,
+            )
+        )
+
+
+def delete_time_log_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="deleted a time log",
+            verb="deleted",
+            actor_id=actor_id,
+            field="time_log",
+            old_identifier=requested_data.get("time_log_id", None),
+            epoch=epoch,
+        )
+    )
+
+
 def create_cycle_issue_activity(
     requested_data,
     current_instance,
@@ -1544,6 +1634,9 @@ def issue_activity(
             "comment.activity.created": create_comment_activity,
             "comment.activity.updated": update_comment_activity,
             "comment.activity.deleted": delete_comment_activity,
+            "time_log.activity.created": create_time_log_activity,
+            "time_log.activity.updated": update_time_log_activity,
+            "time_log.activity.deleted": delete_time_log_activity,
             "cycle.activity.created": create_cycle_issue_activity,
             "cycle.activity.deleted": delete_cycle_issue_activity,
             "module.activity.created": create_module_issue_activity,

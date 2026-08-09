@@ -30,6 +30,7 @@ export interface IPartialProject {
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
+  is_time_tracking_enabled?: boolean;
   guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
   network?: number;
@@ -72,6 +73,8 @@ export type TProjectAnalyticsCount = Pick<IProject, "id"> & {
   total_cycles?: number;
   total_members?: number;
   total_modules?: number;
+  start_date?: string | null;
+  target_date?: string | null;
 };
 
 export interface IProjectLite {

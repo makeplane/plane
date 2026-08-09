@@ -19,6 +19,7 @@ from django.db.models import (
     Prefetch,
     Q,
     Subquery,
+    Sum,
     UUIDField,
     Value,
 )
@@ -583,6 +584,15 @@ class IssueViewSet(BaseViewSet):
                         issue_id=OuterRef("pk"),
                         subscriber=request.user,
                     )
+                )
+            )
+            .annotate(
+                tracked_time_minutes=Coalesce(
+                    Sum(
+                        "time_logs__duration_minutes",
+                        filter=Q(time_logs__deleted_at__isnull=True),
+                    ),
+                    Value(0),
                 )
             )
         ).first()

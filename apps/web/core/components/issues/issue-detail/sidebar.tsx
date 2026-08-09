@@ -4,7 +4,9 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
+import { Timer } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -39,6 +41,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueCycleSelect } from "./cycle-select";
+import { formatDuration } from "./time-log/helper";
+import { LogWorkModal } from "./time-log/log-work-modal";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
@@ -54,11 +58,14 @@ type Props = {
 export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
+  // states
+  const [isLogWorkModalOpen, setIsLogWorkModalOpen] = useState(false);
   // store hooks
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const {
     issue: { getIssueById },
+    timeLog: { getTotalMinutesByIssueId },
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
@@ -77,8 +84,20 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  // prefer the locally-tracked total so the value updates instantly after logging
+  const trackedMinutes = getTotalMinutesByIssueId(issueId) || (issue.tracked_time_minutes ?? 0);
+
   return (
     <>
+      {projectDetails?.is_time_tracking_enabled && (
+        <LogWorkModal
+          isOpen={isLogWorkModalOpen}
+          onClose={() => setIsLogWorkModalOpen(false)}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+        />
+      )}
       <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
@@ -200,6 +219,19 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   dropdownArrow
                   dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
                 />
+              </SidebarPropertyListItem>
+            )}
+
+            {projectDetails?.is_time_tracking_enabled && (
+              <SidebarPropertyListItem icon={Timer} label={t("time_tracking")}>
+                <button
+                  type="button"
+                  onClick={() => setIsLogWorkModalOpen(true)}
+                  disabled={!isEditable}
+                  className="flex h-7.5 w-full grow items-center rounded px-2 text-left text-body-xs-regular hover:bg-layer-transparent-hover disabled:cursor-not-allowed"
+                >
+                  {trackedMinutes > 0 ? formatDuration(trackedMinutes) : <span className="text-placeholder">0m</span>}
+                </button>
               </SidebarPropertyListItem>
             )}
 

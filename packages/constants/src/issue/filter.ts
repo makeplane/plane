@@ -311,6 +311,7 @@ export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFi
 export enum EActivityFilterType {
   ACTIVITY = "ACTIVITY",
   COMMENT = "COMMENT",
+  WORKLOG = "WORKLOG",
   STATE = "STATE",
   ASSIGNEE = "ASSIGNEE",
   DEFAULT = "DEFAULT",
@@ -326,6 +327,9 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   },
   [EActivityFilterType.COMMENT]: {
     labelTranslationKey: "common.comments",
+  },
+  [EActivityFilterType.WORKLOG]: {
+    labelTranslationKey: "common.time_tracking",
   },
   [EActivityFilterType.STATE]: {
     labelTranslationKey: "common.state",
@@ -345,6 +349,7 @@ export type TActivityFilterOption = {
 export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.COMMENT,
+  EActivityFilterType.WORKLOG,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
 ];
@@ -353,9 +358,9 @@ export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) => {
-    if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
-    return filters.includes(activity.activity_type as TActivityFilters);
+  activity.filter((activityItem) => {
+    if (activityItem.activity_type === EActivityFilterType.DEFAULT) return true;
+    return filters.includes(activityItem.activity_type as TActivityFilters);
   });
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;

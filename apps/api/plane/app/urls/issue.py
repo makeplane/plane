@@ -14,6 +14,7 @@ from plane.app.views import (
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
+    IssueTimeLogViewSet,
     IssueListEndpoint,
     IssueReactionViewSet,
     IssueRelationViewSet,
@@ -171,6 +172,18 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
+    ## Issue Time Logs
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/time-logs/",
+        IssueTimeLogViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-issue-time-log",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/time-logs/<uuid:pk>/",
+        IssueTimeLogViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+        name="project-issue-time-log",
+    ),
+    ## End Issue Time Logs
     # Issue Subscribers
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
