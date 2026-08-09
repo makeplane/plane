@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Concentrare",
+    "short_break": "Pauză scurtă",
+    "long_break": "Pauză lungă",
+    "start_focus": "Începe concentrarea",
+    "pause": "Pauză",
+    "resume": "Reia",
+    "complete": "Finalizează",
+    "discard": "Renunță",
+    "skip_break": "Sari peste pauză",
+    "open_work_item": "Deschide activitatea",
+    "session_count": "{completed} din {total} sesiuni",
+    "running_on": "Temporizatorul rulează pentru {issue}",
+    "another_work_item": "altă activitate"
+  }
+}

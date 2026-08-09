@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Concentrarse",
+    "short_break": "Descanso corto",
+    "long_break": "Descanso largo",
+    "start_focus": "Iniciar concentración",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "complete": "Completar",
+    "discard": "Descartar",
+    "skip_break": "Omitir descanso",
+    "open_work_item": "Abrir elemento de trabajo",
+    "session_count": "{completed} de {total} sesiones",
+    "running_on": "El temporizador se está ejecutando en {issue}",
+    "another_work_item": "otro elemento de trabajo"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "포모도로",
+    "focus": "집중",
+    "short_break": "짧은 휴식",
+    "long_break": "긴 휴식",
+    "start_focus": "집중 시작",
+    "pause": "일시정지",
+    "resume": "재개",
+    "complete": "완료",
+    "discard": "버리기",
+    "skip_break": "휴식 건너뛰기",
+    "open_work_item": "작업 항목 열기",
+    "session_count": "총 {total}회 중 {completed}회",
+    "running_on": "{issue}에서 타이머 실행 중",
+    "another_work_item": "다른 작업 항목"
+  }
+}

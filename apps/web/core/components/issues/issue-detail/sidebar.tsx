@@ -40,6 +40,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { PomodoroSidebarIndicator } from "@/components/pomodoro/sidebar-indicator";
 import { IssueCycleSelect } from "./cycle-select";
 import { formatDuration } from "./time-log/helper";
 import { LogWorkModal } from "./time-log/log-work-modal";
@@ -228,9 +229,12 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   type="button"
                   onClick={() => setIsLogWorkModalOpen(true)}
                   disabled={!isEditable}
-                  className="flex h-7.5 w-full grow items-center rounded px-2 text-left text-body-xs-regular hover:bg-layer-transparent-hover disabled:cursor-not-allowed"
+                  className="flex h-7.5 w-full grow items-center gap-2 rounded px-2 text-left text-body-xs-regular hover:bg-layer-transparent-hover disabled:cursor-not-allowed"
                 >
-                  {trackedMinutes > 0 ? formatDuration(trackedMinutes) : <span className="text-placeholder">0m</span>}
+                  <span className="grow">
+                    {trackedMinutes > 0 ? formatDuration(trackedMinutes) : <span className="text-placeholder">0m</span>}
+                  </span>
+                  <PomodoroSidebarIndicator issueId={issueId} />
                 </button>
               </SidebarPropertyListItem>
             )}

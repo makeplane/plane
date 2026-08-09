@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Soustředění",
+    "short_break": "Krátká přestávka",
+    "long_break": "Dlouhá přestávka",
+    "start_focus": "Zahájit soustředění",
+    "pause": "Pozastavit",
+    "resume": "Pokračovat",
+    "complete": "Dokončit",
+    "discard": "Zahodit",
+    "skip_break": "Přeskočit přestávku",
+    "open_work_item": "Otevřít pracovní položku",
+    "session_count": "{completed} z {total} sezení",
+    "running_on": "Časovač běží pro {issue}",
+    "another_work_item": "jinou pracovní položku"
+  }
+}

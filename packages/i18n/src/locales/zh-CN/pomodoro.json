@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "番茄钟",
+    "focus": "专注",
+    "short_break": "短休息",
+    "long_break": "长休息",
+    "start_focus": "开始专注",
+    "pause": "暂停",
+    "resume": "继续",
+    "complete": "完成",
+    "discard": "放弃",
+    "skip_break": "跳过休息",
+    "open_work_item": "打开工作项",
+    "session_count": "已完成 {completed} 个，共 {total} 个",
+    "running_on": "计时器正在运行于 {issue}",
+    "another_work_item": "其他工作项"
+  }
+}

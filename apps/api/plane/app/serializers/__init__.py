@@ -114,6 +114,8 @@ from .estimate import (
 
 from .time_log import TimeLogSerializer, TimeLogReadSerializer
 
+from .pomodoro import PomodoroTimerSerializer, PomodoroTimerReadSerializer
+
 from .intake import (
     IntakeSerializer,
     IntakeIssueSerializer,

@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Focus",
+    "short_break": "Short break",
+    "long_break": "Long break",
+    "start_focus": "Start focus",
+    "pause": "Pause",
+    "resume": "Resume",
+    "complete": "Complete",
+    "discard": "Discard",
+    "skip_break": "Skip break",
+    "open_work_item": "Open work item",
+    "session_count": "{completed} of {total} sessions",
+    "running_on": "Timer running on {issue}",
+    "another_work_item": "another work item"
+  }
+}

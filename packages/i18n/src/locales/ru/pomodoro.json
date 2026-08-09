@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Помодоро",
+    "focus": "Фокус",
+    "short_break": "Короткий перерыв",
+    "long_break": "Длинный перерыв",
+    "start_focus": "Начать фокус",
+    "pause": "Пауза",
+    "resume": "Продолжить",
+    "complete": "Завершить",
+    "discard": "Отменить",
+    "skip_break": "Пропустить перерыв",
+    "open_work_item": "Открыть рабочий элемент",
+    "session_count": "{completed} из {total} сессий",
+    "running_on": "Таймер запущен для {issue}",
+    "another_work_item": "другой рабочий элемент"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Fokus",
+    "short_break": "Istirahat singkat",
+    "long_break": "Istirahat panjang",
+    "start_focus": "Mulai fokus",
+    "pause": "Jeda",
+    "resume": "Lanjutkan",
+    "complete": "Selesai",
+    "discard": "Buang",
+    "skip_break": "Lewati istirahat",
+    "open_work_item": "Buka item kerja",
+    "session_count": "{completed} dari {total} sesi",
+    "running_on": "Timer berjalan untuk {issue}",
+    "another_work_item": "item kerja lainnya"
+  }
+}

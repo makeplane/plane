@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Odaklanma",
+    "short_break": "Kısa mola",
+    "long_break": "Uzun mola",
+    "start_focus": "Odaklanmayı başlat",
+    "pause": "Duraklat",
+    "resume": "Sürdür",
+    "complete": "Tamamla",
+    "discard": "Vazgeç",
+    "skip_break": "Molayı atla",
+    "open_work_item": "İş öğesini aç",
+    "session_count": "{total} oturumdan {completed}",
+    "running_on": "Zamanlayıcı {issue} için çalışıyor",
+    "another_work_item": "başka bir iş öğesi"
+  }
+}

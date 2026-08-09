@@ -6,6 +6,7 @@ from django.urls import path
 
 from plane.app.views import (
     AccountEndpoint,
+    PomodoroTimerViewSet,
     ProfileEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
@@ -57,6 +58,33 @@ urlpatterns = [
         name="users",
     ),
     path("users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"),
+    # Pomodoro timers
+    path(
+        "users/me/pomodoro-timers/",
+        PomodoroTimerViewSet.as_view({"get": "list", "post": "create"}),
+        name="pomodoro-timers",
+    ),
+    path(
+        "users/me/pomodoro-timers/<uuid:pk>/pause/",
+        PomodoroTimerViewSet.as_view({"post": "pause"}),
+        name="pomodoro-timers",
+    ),
+    path(
+        "users/me/pomodoro-timers/<uuid:pk>/resume/",
+        PomodoroTimerViewSet.as_view({"post": "resume"}),
+        name="pomodoro-timers",
+    ),
+    path(
+        "users/me/pomodoro-timers/<uuid:pk>/complete/",
+        PomodoroTimerViewSet.as_view({"post": "complete"}),
+        name="pomodoro-timers",
+    ),
+    path(
+        "users/me/pomodoro-timers/<uuid:pk>/discard/",
+        PomodoroTimerViewSet.as_view({"post": "discard"}),
+        name="pomodoro-timers",
+    ),
+    ## End pomodoro timers
     path(
         "users/me/tour-completed/",
         UpdateUserTourCompletedEndpoint.as_view(),

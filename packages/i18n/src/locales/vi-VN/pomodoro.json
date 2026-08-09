@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Tập trung",
+    "short_break": "Nghỉ ngắn",
+    "long_break": "Nghỉ dài",
+    "start_focus": "Bắt đầu tập trung",
+    "pause": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "complete": "Hoàn thành",
+    "discard": "Hủy",
+    "skip_break": "Bỏ qua giờ nghỉ",
+    "open_work_item": "Mở mục công việc",
+    "session_count": "{completed} trên {total} phiên",
+    "running_on": "Đang chạy hẹn giờ cho {issue}",
+    "another_work_item": "mục công việc khác"
+  }
+}
