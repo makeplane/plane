@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "워크로그",
         "heading": "워크로그",
-        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요."
+        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요.",
+        "export_success": "워크로그를 내보냈습니다.",
+        "export_error": "워크로그를 내보낼 수 없습니다."
       },
       "group_syncing": {
         "title": "그룹 동기화",

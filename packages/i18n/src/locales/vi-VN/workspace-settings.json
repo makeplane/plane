@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Nhật ký công việc",
         "heading": "Nhật ký công việc",
-        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào.",
+        "export_success": "Nhật ký công việc đã được xuất thành công.",
+        "export_error": "Không thể xuất nhật ký công việc."
       },
       "group_syncing": {
         "title": "Đồng bộ nhóm",

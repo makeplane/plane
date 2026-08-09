@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Workloglar",
         "heading": "Workloglar",
-        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
+        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin.",
+        "export_success": "Workloglar başarıyla dışa aktarıldı.",
+        "export_error": "Workloglar dışa aktarılamadı."
       },
       "group_syncing": {
         "title": "Grup senkronizasyonu",

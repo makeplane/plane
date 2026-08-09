@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Logi pracy",
         "heading": "Logi pracy",
-        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
+        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie.",
+        "export_success": "Logi pracy zostały pomyślnie wyeksportowane.",
+        "export_error": "Nie udało się wyeksportować logów pracy."
       },
       "group_syncing": {
         "title": "Synchronizacja grup",

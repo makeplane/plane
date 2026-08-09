@@ -19,8 +19,7 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUser } from "@/hooks/store/user";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { splitDuration } from "./helper";
 
@@ -99,8 +98,8 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
     if (durationMinutes <= 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Enter a duration greater than zero.",
+        title: t("toast.error"),
+        message: t("time_log.enter_duration"),
       });
       return;
     }
@@ -118,15 +117,15 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
       else await createTimeLog(workspaceSlug, projectId, issueId, payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: timeLogId ? "Time log updated." : "Time logged.",
+        title: t("toast.success"),
+        message: timeLogId ? t("time_log.time_log_updated") : t("time_log.time_logged"),
       });
       onClose();
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: timeLogId ? "Couldn't update the time log." : "Couldn't log the time.",
+        title: t("toast.error"),
+        message: timeLogId ? t("time_log.couldnt_update_time_log") : t("time_log.couldnt_log_time"),
       });
     }
   };
@@ -137,12 +136,14 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-h4-medium text-secondary">{timeLogId ? "Edit time log" : "Log work"}</h3>
+          <h3 className="text-h4-medium text-secondary">
+            {timeLogId ? t("time_log.edit_time_log") : t("time_log.log_work")}
+          </h3>
           <div className="mt-2 space-y-3">
             {/* admins can log time on behalf of another project member; this can't be changed once created */}
             {!timeLogId && isProjectAdmin && (
               <div>
-                <p className="mb-2 text-secondary">Logging for</p>
+                <p className="mb-2 text-secondary">{t("time_log.logging_for")}</p>
                 <Controller
                   control={control}
                   name="logged_by"
@@ -162,7 +163,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
             )}
             <div>
               <label htmlFor="logged_date" className="mb-2 text-secondary">
-                Date
+                {t("date")}
               </label>
               <Controller
                 control={control}
@@ -176,7 +177,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
             <div className="flex gap-3">
               <div className="flex-1">
                 <label htmlFor="hours" className="mb-2 text-secondary">
-                  Hours
+                  {t("time_log.hours")}
                 </label>
                 <Controller
                   control={control}
@@ -197,7 +198,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
               </div>
               <div className="flex-1">
                 <label htmlFor="minutes" className="mb-2 text-secondary">
-                  Minutes
+                  {t("time_log.minutes")}
                 </label>
                 <Controller
                   control={control}
@@ -220,7 +221,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
             </div>
             <div>
               <label htmlFor="description" className="mb-2 text-secondary">
-                Description
+                {t("description")}
                 <span className="block text-caption-xs-regular">{t("common.optional")}</span>
               </label>
               <Controller
@@ -233,7 +234,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
                     value={value}
                     onChange={onChange}
                     ref={ref}
-                    placeholder="What did you work on?"
+                    placeholder={t("time_log.what_did_you_work_on")}
                     className="w-full"
                   />
                 )}
@@ -246,7 +247,7 @@ export const LogWorkModal = observer(function LogWorkModal(props: TLogWorkModal)
             {t("common.cancel")}
           </Button>
           <Button variant="primary" size="lg" type="submit" loading={isSubmitting} disabled={totalMinutes <= 0}>
-            {timeLogId ? t("common.update") : "Log work"}
+            {timeLogId ? t("common.update") : t("time_log.log_work")}
           </Button>
         </div>
       </form>

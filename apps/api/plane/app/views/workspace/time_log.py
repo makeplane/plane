@@ -28,10 +28,12 @@ def _filtered_time_logs(request, slug):
         workspace__slug=slug,
         project__project_projectmember__member=request.user,
         project__project_projectmember__is_active=True,
+        project__archived_at__isnull=True,
     ).select_related("issue", "project", "logged_by", "created_by")
 
     user_id = request.GET.get("user_id")
     project_id = request.GET.get("project_id")
+    project_ids = request.GET.get("project_ids")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
 
@@ -39,6 +41,8 @@ def _filtered_time_logs(request, slug):
         queryset = queryset.filter(logged_by_id=user_id)
     if project_id:
         queryset = queryset.filter(project_id=project_id)
+    if project_ids:
+        queryset = queryset.filter(project_id__in=project_ids.split(","))
     if start_date:
         queryset = queryset.filter(logged_date__gte=start_date)
     if end_date:

@@ -793,11 +793,16 @@ def update_time_log_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
-    if current_instance.get("duration_minutes") != requested_data.get(
-        "duration_minutes", current_instance.get("duration_minutes")
-    ) or current_instance.get("description") != requested_data.get(
-        "description", current_instance.get("description")
-    ):
+    changed_fields = ["duration_minutes", "description", "logged_date", "logged_by"]
+    changed_field = next(
+        (
+            key
+            for key in changed_fields
+            if current_instance.get(key) != requested_data.get(key, current_instance.get(key))
+        ),
+        None,
+    )
+    if changed_field is not None:
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -807,9 +812,9 @@ def update_time_log_activity(
                 verb="updated",
                 actor_id=actor_id,
                 field="time_log",
-                old_value=str(current_instance.get("duration_minutes", "")),
+                old_value=str(current_instance.get(changed_field, "")),
                 old_identifier=current_instance.get("id"),
-                new_value=str(requested_data.get("duration_minutes", current_instance.get("duration_minutes", ""))),
+                new_value=str(requested_data.get(changed_field, current_instance.get(changed_field, ""))),
                 new_identifier=current_instance.get("id"),
                 epoch=epoch,
             )

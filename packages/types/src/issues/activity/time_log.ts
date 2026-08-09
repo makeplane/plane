@@ -37,18 +37,13 @@ export type TTimeLogIdMap = {
   [issue_id: string]: string[];
 };
 
-export type TTimeLogOperations = {
-  createTimeLog: (data: Partial<TTimeLog>) => Promise<TTimeLog | undefined>;
-  updateTimeLog: (timeLogId: string, data: Partial<TTimeLog>) => Promise<void>;
-  removeTimeLog: (timeLogId: string) => Promise<void>;
-};
-
 /** A worklog row as returned by the workspace-level reporting endpoints. */
 export type TWorkspaceTimeLog = TTimeLog;
 
 export type TTimeLogFilters = {
   user_id?: string | null;
   project_id?: string | null;
+  project_ids?: string | null;
   start_date?: string | null;
   end_date?: string | null;
 };

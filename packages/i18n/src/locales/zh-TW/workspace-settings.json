@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "工作日誌",
         "heading": "工作日誌",
-        "description": "下載任何專案中任何人的工作日誌（即工時表）。"
+        "description": "下載任何專案中任何人的工作日誌（即工時表）。",
+        "export_success": "工作日誌匯出成功。",
+        "export_error": "無法匯出工作日誌。"
       },
       "group_syncing": {
         "title": "群組同步",

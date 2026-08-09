@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, Pencil, Timer, Trash2 } from "lucide-react";
 // plane imports
+import type { ReactNode } from "react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
@@ -59,15 +60,40 @@ export const TimeLogCard = observer(function TimeLogCard(props: TTimeLogCard) {
   const handleDelete = async () => {
     try {
       await removeTimeLog(workspaceSlug, projectId, issueId, timeLogId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Time log deleted." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("toast.success"), message: t("time_log.time_log_deleted") });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Couldn't delete the time log." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("toast.error"), message: t("time_log.couldnt_delete_time_log") });
     }
   };
 
-  const loggedByName = timeLog.logged_by_detail?.display_name ?? "Someone";
+  const loggedByName = timeLog.logged_by_detail?.display_name ?? t("time_log.someone");
   // surface when an admin logged this on somebody else's behalf
   const loggedOnBehalf = timeLog.created_by && timeLog.created_by !== timeLog.logged_by;
+
+  const summaryTokens: Record<string, ReactNode> = {
+    name: loggedByName,
+    duration: formatDuration(timeLog.duration_minutes),
+    date: renderFormattedDate(timeLog.logged_date),
+  };
+  // the ICU template bolds the interpolated name/duration, keeping them translated and styled
+  const renderSummary = (template: string) => {
+    const parts: ReactNode[] = [];
+    const placeholderRegex = /\{(\w+)\}/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    let key = 0;
+    while ((match = placeholderRegex.exec(template)) !== null) {
+      if (match.index > lastIndex) parts.push(template.slice(lastIndex, match.index));
+      parts.push(
+        <span key={key++} className="font-medium text-primary">
+          {summaryTokens[match[1]]}
+        </span>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < template.length) parts.push(template.slice(lastIndex));
+    return parts;
+  };
 
   return (
     <>
@@ -92,11 +118,7 @@ export const TimeLogCard = observer(function TimeLogCard(props: TTimeLogCard) {
         </div>
         <div className="flex w-full items-start justify-between gap-2">
           <div className="w-full truncate text-secondary">
-            <span className="font-medium text-primary">{loggedByName}</span>
-            <span> logged </span>
-            <span className="font-medium text-primary">{formatDuration(timeLog.duration_minutes)}</span>
-            <span> on {renderFormattedDate(timeLog.logged_date)}</span>
-            {loggedOnBehalf && <span className="text-tertiary"> (added by an admin)</span>}
+            {renderSummary(loggedOnBehalf ? t("time_log.summary_on_behalf") : t("time_log.summary"))}
             <span>
               <Tooltip
                 isMobile={isMobile}

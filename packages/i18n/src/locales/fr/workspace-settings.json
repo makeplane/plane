@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Journaux de travail",
         "heading": "Journaux de travail",
-        "description": "Téléchargez les journaux de travail (feuilles de temps) pour n’importe qui dans n’importe quel projet."
+        "description": "Téléchargez les journaux de travail (feuilles de temps) pour n’importe qui dans n’importe quel projet.",
+        "export_success": "Journaux de travail exportés avec succès.",
+        "export_error": "Impossible d’exporter les journaux de travail."
       },
       "group_syncing": {
         "title": "Synchronisation des groupes",

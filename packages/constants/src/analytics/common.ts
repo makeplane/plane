@@ -100,6 +100,7 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
       i18nKey: "workspace_analytics.completed_work_items",
     },
   ],
+  "time-tracking": [],
 };
 
 export const ANALYTICS_DURATION_FILTER_OPTIONS = [
