@@ -24,26 +24,34 @@ import { ToggleSwitch } from "@plane/ui";
 import { CALENDAR_LAYOUTS } from "@plane/constants";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
     filters: TSupportedFilterForUpdate
   ) => Promise<void>;
+  isProfileCalendar?: boolean;
 }
 
 export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown(props: ICalendarHeader) {
-  const { issuesFilterStore, updateFilters } = props;
+  const { issuesFilterStore, updateFilters, isProfileCalendar = false } = props;
 
   const { t } = useTranslation();
 
-  const { projectId } = useParams();
+  const { projectId, userId } = useParams();
+  const filterEntityId = isProfileCalendar ? userId?.toString() : projectId?.toString();
 
   const issueCalendarView = useCalendarView();
   const [windowWidth] = useSize();
@@ -69,7 +77,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
   const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
     if (!updateFilters) return;
 
-    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(filterEntityId ?? "", EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -79,7 +87,9 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
     issueCalendarView.updateCalendarPayload(
       layout === "month"
         ? issueCalendarView.calendarFilters.activeMonthDate
-        : issueCalendarView.calendarFilters.activeWeekDate
+        : layout === "hours"
+          ? issueCalendarView.calendarFilters.activeHoursDate
+          : issueCalendarView.calendarFilters.activeWeekDate
     );
     if (windowWidth <= 768) closePopover(); // close the popover on mobile
   };
@@ -89,13 +99,17 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
 
     if (!updateFilters) return;
 
-    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(filterEntityId ?? "", EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,
       },
     });
   };
+
+  const availableLayouts = Object.entries(CALENDAR_LAYOUTS).filter(([layoutKey]) =>
+    isProfileCalendar ? true : layoutKey !== "hours"
+  );
 
   return (
     <Popover className="relative flex items-center">
@@ -137,14 +151,16 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                 className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
               >
                 <div>
-                  {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
+                  {availableLayouts.map(([layout, layoutDetails]) => (
                     <button
                       key={layout}
                       type="button"
                       className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
-                      {layoutDetails.title}
+                      {layout === "hours"
+                        ? t("issue.layouts.calendar.hours_layout")
+                        : layoutDetails.title}
                       {calendarLayout === layout && <CheckIcon width={12} height={12} strokeWidth={2} />}
                     </button>
                   ))}

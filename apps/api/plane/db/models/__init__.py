@@ -42,6 +42,7 @@ from .issue import (
     IssueRelation,
     IssueSequence,
     IssueSubscriber,
+    UserIssuePlan,
     IssueVote,
     IssueVersion,
     IssueDescriptionVersion,

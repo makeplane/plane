@@ -17,7 +17,8 @@ import { CalendarQuickAddIssueActions } from "./quick-add-issue-actions";
 // types
 
 type Props = {
-  date: Date;
+  date?: Date;
+  sourceDate?: string;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -32,11 +33,13 @@ type Props = {
   isMobileView?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  showDueDateBadge?: boolean;
 };
 
 export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: Props) {
   const {
     date,
+    sourceDate,
     issueIdList,
     quickActions,
     loadMoreIssues,
@@ -49,8 +52,9 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
     isMobileView = false,
     canEditProperties,
     isEpic = false,
+    showDueDateBadge = false,
   } = props;
-  const formattedDatePayload = renderFormattedPayloadDate(date);
+  const formattedDatePayload = sourceDate ?? (date ? renderFormattedPayloadDate(date) : undefined);
   const { t } = useTranslation();
 
   const {
@@ -76,8 +80,10 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
             issueId={issueId}
             quickActions={quickActions}
             isDragDisabled={isDragDisabled || isMobileView}
+            sourceDate={formattedDatePayload}
             canEditProperties={canEditProperties}
             isEpic={isEpic}
+            showDueDateBadge={showDueDateBadge}
           />
         </div>
       ))}

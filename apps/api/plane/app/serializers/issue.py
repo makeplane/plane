@@ -25,6 +25,7 @@ from plane.db.models import (
     ProjectUserProperty,
     IssueAssignee,
     IssueSubscriber,
+    UserIssuePlan,
     IssueLabel,
     Label,
     CycleIssue,
@@ -978,6 +979,32 @@ class IssueSubscriberSerializer(BaseSerializer):
         model = IssueSubscriber
         fields = "__all__"
         read_only_fields = ["workspace", "project", "issue"]
+
+
+class UserIssuePlanSerializer(BaseSerializer):
+    class Meta:
+        model = UserIssuePlan
+        fields = ["id", "issue", "user", "planned_at", "planned_duration_minutes"]
+        read_only_fields = ["id", "issue", "user"]
+
+    def save(self, **kwargs):
+        issue = self.context["issue"]
+        request = self.context["request"]
+
+        if self.instance is None:
+            return UserIssuePlan.objects.create(
+                issue=issue,
+                user=request.user,
+                project=issue.project,
+                workspace=issue.workspace,
+                created_by=request.user,
+                updated_by=request.user,
+                **self.validated_data,
+            )
+
+        self.validated_data.pop("issue", None)
+        self.validated_data.pop("user", None)
+        return super().save(updated_by=request.user, **kwargs)
 
 
 class IssueVersionDetailSerializer(BaseSerializer):

@@ -113,6 +113,9 @@ def issue_on_results(
         "priority",
         "start_date",
         "target_date",
+        "planned_at",
+        "planned_duration_minutes",
+        "planned_date",
         "sequence_id",
         "project_id",
         "parent_id",
@@ -206,6 +209,9 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id))
         else:
             return list(queryset)
+
+    if field == "planned_date":
+        return ["None"]
 
     if field == "created_by":
         queryset = queryset.values_list("created_by", flat=True).distinct()

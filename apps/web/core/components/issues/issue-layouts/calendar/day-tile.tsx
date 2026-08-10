@@ -7,12 +7,8 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
-// types
-// ui
 // components
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -20,6 +16,7 @@ import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { MONTHS_LIST } from "@plane/constants";
 // helpers
 // types
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
@@ -28,7 +25,12 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -51,6 +53,7 @@ type Props = {
   setSelectedDate: (date: Date) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  showDueDateBadge?: boolean;
 };
 
 export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
@@ -73,6 +76,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     setSelectedDate,
     canEditProperties,
     isEpic = false,
+    showDueDateBadge = false,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -81,12 +85,12 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
 
-  const dayTileRef = useRef<HTMLDivElement | null>(null);
+  const dayContentRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const element = dayTileRef.current;
+    const element = dayContentRef.current;
 
-    if (!element) return;
+    if (!element || !formattedDatePayload) return;
 
     return combine(
       dropTargetForElements({
@@ -98,38 +102,13 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         onDragLeave: () => {
           setIsDraggingOver(false);
         },
-        onDrop: ({ source, self }) => {
+        onDrop: ({ source }) => {
           setIsDraggingOver(false);
-          const sourceData = source?.data as { id: string; date: string } | undefined;
-          const destinationData = self?.data as { date: string } | undefined;
-          if (!sourceData || !destinationData) return;
-
-          const issueDetails = issues?.[sourceData?.id];
-          if (issueDetails?.start_date) {
-            const issueStartDate = new Date(issueDetails.start_date);
-            const targetDate = new Date(destinationData?.date);
-            const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
-            if (diffInDays < 0) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Due date cannot be before the start date of the work item.",
-              });
-              return;
-            }
-          }
-
-          handleDragAndDrop(
-            sourceData?.id,
-            issueDetails?.project_id ?? undefined,
-            sourceData?.date,
-            destinationData?.date
-          );
           highlightIssueOnDrop(source?.element?.id, false);
         },
       })
     );
-  }, [dayTileRef?.current, formattedDatePayload]);
+  }, [formattedDatePayload]);
 
   if (!formattedDatePayload) return null;
   const issueIds = groupedIssueIds?.[formattedDatePayload];
@@ -145,7 +124,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
 
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col">
+      <div className="group relative flex h-full w-full flex-col">
         {/* header */}
         <div
           className={`hidden flex-shrink-0 justify-end px-2 py-1.5 text-right text-11 md:flex ${
@@ -169,6 +148,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         {/* content */}
         <div className="hidden h-full w-full md:block">
           <div
+            ref={dayContentRef}
             className={cn(
               `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
               {
@@ -191,6 +171,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               readOnly={readOnly}
               canEditProperties={canEditProperties}
               isEpic={isEpic}
+              showDueDateBadge={showDueDateBadge}
             />
           </div>
         </div>

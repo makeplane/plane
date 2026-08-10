@@ -27,6 +27,7 @@ export enum EServerGroupByToFilterOptions {
   "cycle_id" = "cycle",
   "issue_module__module_id" = "module",
   "target_date" = "target_date",
+  "planned_at" = "planned_date",
   "project_id" = "project",
   "created_by" = "created_by",
 }
@@ -135,6 +136,16 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         extra_options: {
           access: true,
           values: ["show_empty_groups"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
         },
       },
     },

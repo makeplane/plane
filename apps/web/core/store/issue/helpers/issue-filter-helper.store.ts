@@ -320,7 +320,9 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
 
     // If before and after dates are sent from option to filter by then, add them to filter the options
     if (options.after && options.before) {
-      paginationParams["target_date"] = `${options.after};after,${options.before};before`;
+      const dateFilterKey =
+        options.groupedBy === EIssueGroupByToServerOptions["planned_at"] ? "planned_at" : "target_date";
+      paginationParams[dateFilterKey] = `${options.after};after,${options.before};before`;
     }
 
     // If groupId is passed down, add a filter param for that group Id

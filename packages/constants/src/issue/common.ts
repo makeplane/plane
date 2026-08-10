@@ -33,6 +33,7 @@ export enum EIssueGroupByToServerOptions {
   "cycle" = "cycle_id",
   "module" = "issue_module__module_id",
   "target_date" = "target_date",
+  "planned_at" = "planned_at",
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
@@ -48,6 +49,7 @@ export enum EIssueGroupBYServerToProperty {
   "cycle_id" = "cycle_id",
   "issue_module__module_id" = "module_ids",
   "target_date" = "target_date",
+  "planned_at" = "planned_at",
   "project_id" = "project_id",
   "created_by" = "created_by",
 }

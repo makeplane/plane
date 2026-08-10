@@ -21,13 +21,17 @@ type Props = {
   issueId: string;
   quickActions: TRenderQuickActions;
   isDragDisabled: boolean;
+  sourceDate: string;
   isEpic?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
+  showDueDateBadge?: boolean;
 };
 
 export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(props: Props) {
-  const { issueId, quickActions, isDragDisabled, isEpic = false, canEditProperties } = props;
+  const { issueId, quickActions, isDragDisabled, sourceDate, isEpic = false, canEditProperties, showDueDateBadge } =
+    props;
 
+  const dragRef = useRef<HTMLDivElement | null>(null);
   const issueRef = useRef<HTMLAnchorElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -40,7 +44,7 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
   const canDrag = !isDragDisabled && canEditProperties(issue?.project_id ?? undefined);
 
   useEffect(() => {
-    const element = issueRef.current;
+    const element = dragRef.current;
 
     if (!element) return;
 
@@ -48,7 +52,7 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
       draggable({
         element,
         canDrag: () => canDrag,
-        getInitialData: () => ({ id: issue?.id, date: issue?.target_date }),
+        getInitialData: () => ({ id: issue?.id, date: sourceDate, type: "CALENDAR_ISSUE" }),
         onDragStart: () => {
           setIsDragging(true);
         },
@@ -57,7 +61,7 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
         },
       })
     );
-  }, [issueRef?.current, issue, canDrag]);
+  }, [issue?.id, sourceDate, canDrag, isDragDisabled]);
 
   useOutsideClickDetector(issueRef, () => {
     issueRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
@@ -66,12 +70,15 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
   if (!issue) return null;
 
   return (
-    <CalendarIssueBlock
-      isDragging={isDragging}
-      issue={issue}
-      quickActions={quickActions}
-      ref={issueRef}
-      isEpic={isEpic}
-    />
+    <div ref={dragRef} className={canDrag ? "cursor-grab active:cursor-grabbing" : undefined}>
+      <CalendarIssueBlock
+        isDragging={isDragging}
+        issue={issue}
+        quickActions={quickActions}
+        ref={issueRef}
+        isEpic={isEpic}
+        showDueDateBadge={showDueDateBadge}
+      />
+    </div>
   );
 });

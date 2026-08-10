@@ -81,6 +81,10 @@
         "calendar": "Calendar Layout",
         "spreadsheet": "Table Layout",
         "gantt": "Timeline Layout"
+      },
+      "calendar": {
+        "hours_layout": "Hours layout",
+        "unscheduled": "Unscheduled"
       }
     },
     "states": {

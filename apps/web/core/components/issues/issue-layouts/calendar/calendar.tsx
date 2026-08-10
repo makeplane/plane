@@ -30,6 +30,7 @@ import { MONTHS_LIST } from "@plane/constants";
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -39,17 +40,26 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarHeader } from "./header";
+import { CalendarHoursGrid } from "./hours-grid";
 import { CalendarIssueBlocks } from "./issue-blocks";
+import { CalendarUnscheduledStrip } from "./unscheduled-strip";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  layout: "month" | "week" | undefined;
+  layout: "month" | "week" | "hours" | undefined;
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
+  storeType?: EIssuesStoreType;
+  isProfileCalendar?: boolean;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -91,6 +101,8 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     canEditProperties,
     readOnly = false,
     isEpic = false,
+    storeType = EIssuesStoreType.PROJECT,
+    isProfileCalendar = false,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -99,7 +111,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   // store hooks
   const {
     issues: { viewFlags },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
 
   const [windowWidth] = useSize();
 
@@ -140,6 +152,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
           setSelectedDate={setSelectedDate}
           issuesFilterStore={issuesFilterStore}
           updateFilters={updateFilters}
+          isProfileCalendar={isProfileCalendar}
         />
 
         <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
@@ -149,7 +162,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             })}
             ref={scrollableContainerRef}
           >
-            <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
+            {layout !== "hours" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
             <div className="h-full w-full">
               {layout === "month" && (
                 <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
@@ -175,6 +188,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                         readOnly={readOnly}
                         canEditProperties={canEditProperties}
                         isEpic={isEpic}
+                        showDueDateBadge={isProfileCalendar}
                       />
                     ))}
                 </div>
@@ -199,9 +213,33 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                   readOnly={readOnly}
                   canEditProperties={canEditProperties}
                   isEpic={isEpic}
+                  showDueDateBadge={isProfileCalendar}
+                />
+              )}
+              {layout === "hours" && (
+                <CalendarHoursGrid
+                  issues={issues}
+                  quickActions={quickActions}
+                  readOnly={readOnly}
+                  canEditProperties={canEditProperties}
+                  isEpic={isEpic}
+                  showDueDateBadge={isProfileCalendar}
                 />
               )}
             </div>
+
+            {isProfileCalendar && layout !== "hours" && (
+              <CalendarUnscheduledStrip
+                groupedIssueIds={groupedIssueIds}
+                quickActions={quickActions}
+                loadMoreIssues={loadMoreIssues}
+                getPaginationData={getPaginationData}
+                getGroupIssueCount={getGroupIssueCount}
+                readOnly={readOnly}
+                canEditProperties={canEditProperties}
+                isEpic={isEpic}
+              />
+            )}
 
             {/* mobile view */}
             <div className="md:hidden">

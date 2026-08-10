@@ -77,6 +77,7 @@ from .workspace.user import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
 )
+from .workspace.user_issue_plan import WorkspaceUserIssuePlanEndpoint
 from .workspace.estimate import WorkspaceEstimatesEndpoint
 
 from .workspace.time_log import (

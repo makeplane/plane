@@ -34,11 +34,12 @@ type Props = {
   quickActions: TRenderQuickActions;
   isDragging?: boolean;
   isEpic?: boolean;
+  showDueDateBadge?: boolean;
 };
 
 export const CalendarIssueBlock = observer(
   forwardRef(function CalendarIssueBlock(props: Props, ref: React.ForwardedRef<HTMLAnchorElement>) {
-    const { issue, quickActions, isDragging = false, isEpic = false } = props;
+    const { issue, quickActions, isDragging = false, isEpic = false, showDueDateBadge = false } = props;
     // states
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
@@ -141,6 +142,11 @@ export const CalendarIssueBlock = observer(
                       />
                     )}
                     <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
+                    {showDueDateBadge && issue.target_date && (
+                      <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                        {issue.target_date}
+                      </span>
+                    )}
                   </div>
                   {/* Wrapper exists only to stop clicks reaching the ControlLink; the
                       quick-action menu inside carries its own interactive semantics. */}

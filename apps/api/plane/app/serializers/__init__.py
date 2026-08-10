@@ -69,6 +69,7 @@ from .issue import (
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
+    UserIssuePlanSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,

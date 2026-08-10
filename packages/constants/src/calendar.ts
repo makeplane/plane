@@ -121,4 +121,8 @@ export const CALENDAR_LAYOUTS: {
     key: "week",
     title: "Week layout",
   },
+  hours: {
+    key: "hours",
+    title: "Hours layout",
+  },
 };
