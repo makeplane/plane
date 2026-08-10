@@ -22,6 +22,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
+import { PomodoroHeaderButton } from "@/components/pomodoro/pomodoro-header-button";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { IssueSubscription } from "./subscription";
 
@@ -44,7 +45,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
   // hooks
   const { data: currentUser } = useUser();
   const { isMobile } = usePlatformOS();
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectIdentifierById, getProjectById } = useProject();
   const {
     issue: { getIssueById },
     removeIssue,
@@ -62,6 +63,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
   if (!issue) return <></>;
 
   const projectIdentifier = getProjectIdentifierById(projectId);
+  const projectDetails = getProjectById(projectId);
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug: workspaceSlug,
@@ -147,6 +149,9 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
+            {projectDetails?.is_time_tracking_enabled && !issue?.archived_at && (
+              <PomodoroHeaderButton issueId={issueId} />
+            )}
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
               <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
             </Tooltip>

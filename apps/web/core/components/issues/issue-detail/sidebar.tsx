@@ -40,7 +40,6 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
-import { PomodoroSidebarIndicator } from "@/components/pomodoro/sidebar-indicator";
 import { IssueCycleSelect } from "./cycle-select";
 import { formatDuration } from "./time-log/helper";
 import { LogWorkModal } from "./time-log/log-work-modal";
@@ -234,7 +233,6 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   <span className="grow">
                     {trackedMinutes > 0 ? formatDuration(trackedMinutes) : <span className="text-placeholder">0m</span>}
                   </span>
-                  <PomodoroSidebarIndicator issueId={issueId} />
                 </button>
               </SidebarPropertyListItem>
             )}
