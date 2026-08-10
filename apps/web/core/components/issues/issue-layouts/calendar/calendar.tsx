@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { PanelRight } from "lucide-react";
 import { observer } from "mobx-react";
 // plane constants
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
@@ -21,6 +22,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
+import { IconButton } from "@plane/propel/icon-button";
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
 // constants
@@ -45,6 +47,13 @@ import { CalendarIssueBlocks } from "./issue-blocks";
 import { CalendarUnscheduledStrip } from "./unscheduled-strip";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
+
+const UNSCHEDULED_SIDEBAR_COLLAPSED_KEY = "calendar_unscheduled_sidebar_collapsed";
+
+const readUnscheduledSidebarCollapsed = () => {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem(UNSCHEDULED_SIDEBAR_COLLAPSED_KEY) === "true";
+};
 
 type Props = {
   issuesFilterStore:
@@ -112,6 +121,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isUnscheduledSidebarCollapsed, setIsUnscheduledSidebarCollapsed] = useState(readUnscheduledSidebarCollapsed);
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
@@ -151,6 +161,27 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : [];
 
+  const unscheduledStripProps = {
+    groupedIssueIds,
+    issues,
+    quickActions,
+    loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
+    readOnly,
+    canEditProperties,
+    isEpic,
+    handleDragAndDrop,
+  };
+
+  const handleToggleUnscheduledSidebar = () => {
+    setIsUnscheduledSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(UNSCHEDULED_SIDEBAR_COLLAPSED_KEY, String(next));
+      return next;
+    });
+  };
+
   return (
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
@@ -161,124 +192,137 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
           isProfileCalendar={isProfileCalendar}
         />
 
-        <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
-          <div
-            className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
-              "vertical-scrollbar scrollbar-lg": windowWidth > 768,
-            })}
-            ref={scrollableContainerRef}
-          >
-            {layout !== "hours" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
-            <div className="h-full w-full">
-              {layout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
-                  {allWeeksOfActiveMonth &&
-                    Object.entries(allWeeksOfActiveMonth).map(([weekKey, week]: [string, ICalendarWeek]) => (
-                      <CalendarWeekDays
-                        selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                        handleDragAndDrop={handleDragAndDrop}
-                        issuesFilterStore={issuesFilterStore}
-                        key={weekKey}
-                        week={week}
-                        issues={issues}
-                        groupedIssueIds={groupedIssueIds}
-                        loadMoreIssues={loadMoreIssues}
-                        getPaginationData={getPaginationData}
-                        getGroupIssueCount={getGroupIssueCount}
-                        enableQuickIssueCreate={enableQuickAdd}
-                        disableIssueCreation={!enableIssueCreation}
-                        quickActions={quickActions}
-                        quickAddCallback={quickAddCallback}
-                        addIssuesToView={addIssuesToView}
-                        readOnly={readOnly}
-                        canEditProperties={canEditProperties}
-                        isEpic={isEpic}
-                        showDueDateBadge={isProfileCalendar}
-                      />
-                    ))}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
+            <div className="flex h-full min-h-0 w-full flex-col md:flex-row">
+              <div
+                className={cn("flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto", {
+                  "vertical-scrollbar scrollbar-lg": windowWidth > 768,
+                })}
+                ref={scrollableContainerRef}
+              >
+                {layout !== "hours" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
+                <div className="h-full w-full">
+                  {layout === "month" && (
+                    <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
+                      {allWeeksOfActiveMonth &&
+                        Object.entries(allWeeksOfActiveMonth).map(([weekKey, week]: [string, ICalendarWeek]) => (
+                          <CalendarWeekDays
+                            selectedDate={selectedDate}
+                            setSelectedDate={setSelectedDate}
+                            handleDragAndDrop={handleDragAndDrop}
+                            issuesFilterStore={issuesFilterStore}
+                            key={weekKey}
+                            week={week}
+                            issues={issues}
+                            groupedIssueIds={groupedIssueIds}
+                            loadMoreIssues={loadMoreIssues}
+                            getPaginationData={getPaginationData}
+                            getGroupIssueCount={getGroupIssueCount}
+                            enableQuickIssueCreate={enableQuickAdd}
+                            disableIssueCreation={!enableIssueCreation}
+                            quickActions={quickActions}
+                            quickAddCallback={quickAddCallback}
+                            addIssuesToView={addIssuesToView}
+                            readOnly={readOnly}
+                            canEditProperties={canEditProperties}
+                            isEpic={isEpic}
+                            showDueDateBadge={isProfileCalendar}
+                          />
+                        ))}
+                    </div>
+                  )}
+                  {layout === "week" && (
+                    <CalendarWeekDays
+                      selectedDate={selectedDate}
+                      setSelectedDate={setSelectedDate}
+                      handleDragAndDrop={handleDragAndDrop}
+                      issuesFilterStore={issuesFilterStore}
+                      week={issueCalendarView.allDaysOfActiveWeek}
+                      issues={issues}
+                      groupedIssueIds={groupedIssueIds}
+                      loadMoreIssues={loadMoreIssues}
+                      getPaginationData={getPaginationData}
+                      getGroupIssueCount={getGroupIssueCount}
+                      enableQuickIssueCreate={enableQuickAdd}
+                      disableIssueCreation={!enableIssueCreation}
+                      quickActions={quickActions}
+                      quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isEpic={isEpic}
+                      showDueDateBadge={isProfileCalendar}
+                    />
+                  )}
+                  {layout === "hours" && handleResizePlan && (
+                    <CalendarHoursGrid
+                      issues={issues}
+                      quickActions={quickActions}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isEpic={isEpic}
+                      showDueDateBadge={isProfileCalendar}
+                      showWeekends={showWeekends}
+                      handleDragAndDrop={handleDragAndDrop}
+                      handleResizePlan={handleResizePlan}
+                    />
+                  )}
                 </div>
-              )}
-              {layout === "week" && (
-                <CalendarWeekDays
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  handleDragAndDrop={handleDragAndDrop}
-                  issuesFilterStore={issuesFilterStore}
-                  week={issueCalendarView.allDaysOfActiveWeek}
-                  issues={issues}
-                  groupedIssueIds={groupedIssueIds}
-                  loadMoreIssues={loadMoreIssues}
-                  getPaginationData={getPaginationData}
-                  getGroupIssueCount={getGroupIssueCount}
-                  enableQuickIssueCreate={enableQuickAdd}
-                  disableIssueCreation={!enableIssueCreation}
-                  quickActions={quickActions}
-                  quickAddCallback={quickAddCallback}
-                  addIssuesToView={addIssuesToView}
-                  readOnly={readOnly}
-                  canEditProperties={canEditProperties}
-                  isEpic={isEpic}
-                  showDueDateBadge={isProfileCalendar}
-                />
-              )}
-              {layout === "hours" && handleResizePlan && (
-                <CalendarHoursGrid
-                  issues={issues}
-                  quickActions={quickActions}
-                  readOnly={readOnly}
-                  canEditProperties={canEditProperties}
-                  isEpic={isEpic}
-                  showDueDateBadge={isProfileCalendar}
-                  showWeekends={showWeekends}
-                  handleDragAndDrop={handleDragAndDrop}
-                  handleResizePlan={handleResizePlan}
-                />
-              )}
-            </div>
 
-            {isProfileCalendar && (
-              <CalendarUnscheduledStrip
-                groupedIssueIds={groupedIssueIds}
-                issues={issues}
-                quickActions={quickActions}
-                loadMoreIssues={loadMoreIssues}
-                getPaginationData={getPaginationData}
-                getGroupIssueCount={getGroupIssueCount}
-                readOnly={readOnly}
-                canEditProperties={canEditProperties}
-                isEpic={isEpic}
-                handleDragAndDrop={handleDragAndDrop}
-              />
-            )}
+                {isProfileCalendar && (
+                  <CalendarUnscheduledStrip {...unscheduledStripProps} variant="strip" className="md:hidden" />
+                )}
 
-            {/* mobile view */}
-            <div className="md:hidden">
-              <p className="p-4 text-18 font-semibold">
-                {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
-                }, ${selectedDate.getFullYear()}`}
-              </p>
-              <CalendarIssueBlocks
-                date={selectedDate}
-                issueIdList={issueIdList}
-                loadMoreIssues={loadMoreIssues}
-                getPaginationData={getPaginationData}
-                getGroupIssueCount={getGroupIssueCount}
-                quickActions={quickActions}
-                enableQuickIssueCreate={enableQuickAdd}
-                disableIssueCreation={!enableIssueCreation}
-                quickAddCallback={quickAddCallback}
-                addIssuesToView={addIssuesToView}
-                readOnly={readOnly}
-                canEditProperties={canEditProperties}
-                isDragDisabled
-                isMobileView
-                isEpic={isEpic}
-              />
+                {/* mobile view */}
+                <div className="md:hidden">
+                  <p className="p-4 text-18 font-semibold">
+                    {`${selectedDate.getDate()} ${
+                      MONTHS_LIST[selectedDate.getMonth() + 1].title
+                    }, ${selectedDate.getFullYear()}`}
+                  </p>
+                  <CalendarIssueBlocks
+                    date={selectedDate}
+                    issueIdList={issueIdList}
+                    loadMoreIssues={loadMoreIssues}
+                    getPaginationData={getPaginationData}
+                    getGroupIssueCount={getGroupIssueCount}
+                    quickActions={quickActions}
+                    enableQuickIssueCreate={enableQuickAdd}
+                    disableIssueCreation={!enableIssueCreation}
+                    quickAddCallback={quickAddCallback}
+                    addIssuesToView={addIssuesToView}
+                    readOnly={readOnly}
+                    canEditProperties={canEditProperties}
+                    isDragDisabled
+                    isMobileView
+                    isEpic={isEpic}
+                  />
+                </div>
+              </div>
+
+              {isProfileCalendar &&
+                (isUnscheduledSidebarCollapsed ? (
+                  <div className="hidden h-full shrink-0 flex-col items-center border-l border-subtle-1 bg-surface-1 py-2 md:flex">
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={PanelRight}
+                      onClick={handleToggleUnscheduledSidebar}
+                      aria-label="Show unscheduled sidebar"
+                    />
+                  </div>
+                ) : (
+                  <CalendarUnscheduledStrip
+                    {...unscheduledStripProps}
+                    variant="sidebar"
+                    className="hidden md:flex"
+                    onCollapse={handleToggleUnscheduledSidebar}
+                  />
+                ))}
             </div>
-          </div>
-        </IssueLayoutHOC>
+          </IssueLayoutHOC>
+        </div>
 
         {/* mobile view */}
         <div className="md:hidden">

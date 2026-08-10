@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useRef } from "react";
+import { PanelRightClose } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -71,32 +72,34 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
 
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
+      // Auto-collapse only on small screens; do not force-expand on desktop
+      // so users can keep the sidebar hidden after toggling from the header.
       if (window && window.innerWidth < 768) {
         toggleProfileSidebar(true);
-      }
-      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
-        toggleProfileSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [toggleProfileSidebar]);
 
   return (
     <div
+      ref={ref}
       className={cn(
         `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
+        {
+          hidden: profileSidebarCollapsed,
+        },
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
         <>
           <div className="relative h-[110px]">
-            {currentUser?.id === userId && (
-              <div className="absolute top-3.5 right-3.5">
+            <div className="absolute top-3.5 right-3.5 z-[1] flex items-center gap-1.5">
+              {currentUser?.id === userId && (
                 <IconButton
                   variant="secondary"
                   icon={EditIcon}
@@ -107,8 +110,15 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                     })
                   }
                 />
-              </div>
-            )}
+              )}
+              <IconButton
+                variant="secondary"
+                icon={PanelRightClose}
+                onClick={() => toggleProfileSidebar(true)}
+                className="hidden md:inline-flex"
+                aria-label="Hide profile sidebar"
+              />
+            </div>
             <CoverImage
               src={userData?.cover_image_url ?? undefined}
               alt={userData?.display_name}

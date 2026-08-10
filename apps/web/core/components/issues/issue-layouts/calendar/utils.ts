@@ -13,10 +13,12 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 export const CALENDAR_DAY_DROP_TYPE = "CALENDAR_DAY";
 export const CALENDAR_ISSUE_DRAG_TYPE = "CALENDAR_ISSUE";
 
-export const HOURS_WORKDAY_START = 8;
-export const HOURS_WORKDAY_END = 18;
+export const HOURS_WORKDAY_START = 6;
+export const HOURS_WORKDAY_END = 23;
 export const HOURS_ROW_HEIGHT = 56;
-export const HOURS_MIN_DURATION_MINUTES = 60;
+export const HOURS_HALF_ROW_HEIGHT = HOURS_ROW_HEIGHT / 2;
+export const HOURS_SNAP_MINUTES = 30;
+export const HOURS_MIN_DURATION_MINUTES = 30;
 
 export type IssuePlanBounds = {
   startHour: number;
@@ -26,6 +28,7 @@ export type IssuePlanBounds = {
 
 /**
  * Resolve local start/end hours for an issue plan on the hours grid.
+ * Hours may be fractional (e.g. 9.5 = 09:30) for half-hour scheduling.
  */
 export const getIssuePlanBounds = (
   plannedAt: string | null | undefined,
@@ -33,10 +36,13 @@ export const getIssuePlanBounds = (
 ): IssuePlanBounds | undefined => {
   if (!plannedAt) return;
 
-  const startHour = parseISO(plannedAt).getHours();
-  const durationMinutes = Math.max(plannedDurationMinutes ?? HOURS_MIN_DURATION_MINUTES, HOURS_MIN_DURATION_MINUTES);
-  const durationHours = Math.max(1, Math.ceil(durationMinutes / 60));
-  const endHour = startHour + durationHours;
+  const start = parseISO(plannedAt);
+  const startHour = start.getHours() + start.getMinutes() / 60;
+  const durationMinutes = Math.max(
+    plannedDurationMinutes ?? HOURS_MIN_DURATION_MINUTES * 2,
+    HOURS_MIN_DURATION_MINUTES
+  );
+  const endHour = startHour + durationMinutes / 60;
 
   return { startHour, endHour, durationMinutes };
 };
@@ -44,6 +50,7 @@ export const getIssuePlanBounds = (
 /**
  * Build a planned_at ISO string for a calendar drop / hours resize.
  * Exported so hours resize can rebuild start times with the same local-hour encoding.
+ * destinationHour may be fractional (e.g. 10.5 => 10:30).
  */
 export const buildPlannedAtForDrop = (
   destinationDate: string,
@@ -54,9 +61,11 @@ export const buildPlannedAtForDrop = (
   if (!normalizedDestinationDate) return new Date().toISOString();
 
   if (destinationHour !== undefined) {
-    const hour = Math.min(Math.max(destinationHour, 0), 23);
+    const clamped = Math.min(Math.max(destinationHour, 0), 23.5);
+    const wholeHour = Math.floor(clamped);
+    const minutes = Math.round((clamped - wholeHour) * 60);
     const [year, month, day] = normalizedDestinationDate.split("-").map(Number);
-    return new Date(year, month - 1, day, hour, 0, 0, 0).toISOString();
+    return new Date(year, month - 1, day, wholeHour, minutes, 0, 0).toISOString();
   }
 
   if (existingPlannedAt) {

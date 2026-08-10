@@ -29,6 +29,7 @@ import type { CalendarStoreType } from "./base-calendar-root";
 import {
   buildPlannedAtForDrop,
   CALENDAR_ISSUE_DRAG_TYPE,
+  HOURS_HALF_ROW_HEIGHT,
   HOURS_MIN_DURATION_MINUTES,
   HOURS_ROW_HEIGHT,
   HOURS_WORKDAY_END,
@@ -59,7 +60,21 @@ type Props = {
   handleResizePlan: HandleResizePlan;
 };
 
-const formatHourLabel = (hour: number) => `${hour.toString().padStart(2, "0")}:00`;
+const formatHourLabel = (hour: number) => {
+  const wholeHour = Math.floor(hour);
+  const minutes = Math.round((hour - wholeHour) * 60);
+  return `${wholeHour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+};
+
+const formatDurationLabel = (durationMinutes: number) => {
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+};
+
+const MIN_SPAN_HOURS = HOURS_MIN_DURATION_MINUTES / 60;
 
 export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
   const {
@@ -67,7 +82,6 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
     dateString,
     startHour,
     endHour,
-    durationMinutes,
     columnIndex,
     columnCount,
     quickActions,
@@ -102,7 +116,7 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
   const displayStartHour = resizePreview?.startHour ?? startHour;
   const displayEndHour = resizePreview?.endHour ?? endHour;
   const top = (displayStartHour - HOURS_WORKDAY_START) * HOURS_ROW_HEIGHT;
-  const height = Math.max(1, displayEndHour - displayStartHour) * HOURS_ROW_HEIGHT;
+  const height = Math.max(MIN_SPAN_HOURS, displayEndHour - displayStartHour) * HOURS_ROW_HEIGHT;
   const widthPercent = 100 / Math.max(columnCount, 1);
   const leftPercent = columnIndex * widthPercent;
 
@@ -157,15 +171,15 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
     let latestEnd = originEnd;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const deltaHours = Math.round((moveEvent.clientY - originY) / HOURS_ROW_HEIGHT);
+      const deltaHours = Math.round((moveEvent.clientY - originY) / HOURS_HALF_ROW_HEIGHT) * 0.5;
 
       if (direction === "bottom") {
         const maxEnd = HOURS_WORKDAY_END + 1;
-        latestEnd = Math.min(Math.max(originEnd + deltaHours, originStart + 1), maxEnd);
+        latestEnd = Math.min(Math.max(originEnd + deltaHours, originStart + MIN_SPAN_HOURS), maxEnd);
         latestStart = originStart;
       } else {
         const minStart = HOURS_WORKDAY_START;
-        const maxStart = originEnd - 1;
+        const maxStart = originEnd - MIN_SPAN_HOURS;
         latestStart = Math.min(Math.max(originStart + deltaHours, minStart), maxStart);
         latestEnd = originEnd;
       }
@@ -290,11 +304,11 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
                 )}
                 <div className="truncate text-11 font-medium">{issue.name}</div>
               </div>
-              {(resizePreview || durationMinutes > HOURS_MIN_DURATION_MINUTES) && (
-                <div className="mt-0.5 text-9 text-tertiary">
-                  {formatHourLabel(displayStartHour)} – {formatHourLabel(displayEndHour)}
-                </div>
-              )}
+              <div className="mt-0.5 truncate text-9 text-tertiary">
+                {formatHourLabel(displayStartHour)} – {formatHourLabel(displayEndHour)}
+                {" · "}
+                {formatDurationLabel(Math.round((displayEndHour - displayStartHour) * 60))}
+              </div>
               {showDueDateBadge && issue.target_date && (
                 <span className="mt-0.5 inline-flex rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
                   {issue.target_date}

@@ -8,12 +8,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { DAYS_LIST } from "@plane/constants";
+import { DAYS_LIST, MONTHS_LIST } from "@plane/constants";
 import type { ICalendarDate, TIssue, TIssueMap } from "@plane/types";
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { useUserProfile } from "@/hooks/store/user";
+import { useCurrentTime } from "@/hooks/use-current-time";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { HoursIssueBlock } from "./hours-issue-block";
 import {
@@ -22,6 +23,7 @@ import {
   getCalendarDestinationFromDropPayload,
   getCalendarSourceFromDropPayload,
   getIssuePlanBounds,
+  HOURS_HALF_ROW_HEIGHT,
   HOURS_ROW_HEIGHT,
   HOURS_WORKDAY_END,
   HOURS_WORKDAY_START,
@@ -64,10 +66,12 @@ type DayPlanBlock = {
 const CalendarHourDropBand = observer(function CalendarHourDropBand(props: {
   dateString: string;
   hour: number;
+  height: number;
+  showBottomBorder?: boolean;
   issuesMap: TIssueMap | undefined;
   handleDragAndDrop: HandleDragAndDrop;
 }) {
-  const { dateString, hour, issuesMap, handleDragAndDrop } = props;
+  const { dateString, hour, height, showBottomBorder = false, issuesMap, handleDragAndDrop } = props;
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const bandRef = useRef<HTMLDivElement | null>(null);
 
@@ -106,10 +110,11 @@ const CalendarHourDropBand = observer(function CalendarHourDropBand(props: {
   return (
     <div
       ref={bandRef}
-      className={cn("pointer-events-auto border-b border-subtle-1", {
+      className={cn("pointer-events-auto", {
+        "border-b border-subtle-1": showBottomBorder,
         "bg-layer-transparent-hover opacity-80": isDraggingOver,
       })}
-      style={{ height: HOURS_ROW_HEIGHT }}
+      style={{ height }}
     />
   );
 });
@@ -125,6 +130,8 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
   isEpic?: boolean;
   showDueDateBadge?: boolean;
   isDraggingIssue: boolean;
+  showNowIndicator?: boolean;
+  nowTop?: number;
   handleDragAndDrop: HandleDragAndDrop;
   handleResizePlan: HandleResizePlan;
 }) {
@@ -139,6 +146,8 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
     isEpic,
     showDueDateBadge,
     isDraggingIssue,
+    showNowIndicator = false,
+    nowTop,
     handleDragAndDrop,
     handleResizePlan,
   } = props;
@@ -147,13 +156,22 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
     <div className="relative border-l border-subtle-1" style={{ height: hours.length * HOURS_ROW_HEIGHT }}>
       <div className="absolute inset-0 z-[1]">
         {hours.map((hour) => (
-          <CalendarHourDropBand
-            key={`${dateString}-${hour}`}
-            dateString={dateString}
-            hour={hour}
-            issuesMap={issuesMap}
-            handleDragAndDrop={handleDragAndDrop}
-          />
+          <div key={`${dateString}-${hour}`} className="border-b border-subtle-1" style={{ height: HOURS_ROW_HEIGHT }}>
+            <CalendarHourDropBand
+              dateString={dateString}
+              hour={hour}
+              height={HOURS_HALF_ROW_HEIGHT}
+              issuesMap={issuesMap}
+              handleDragAndDrop={handleDragAndDrop}
+            />
+            <CalendarHourDropBand
+              dateString={dateString}
+              hour={hour + 0.5}
+              height={HOURS_HALF_ROW_HEIGHT}
+              issuesMap={issuesMap}
+              handleDragAndDrop={handleDragAndDrop}
+            />
+          </div>
         ))}
       </div>
 
@@ -178,6 +196,17 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
           />
         ))}
       </div>
+
+      {showNowIndicator && nowTop !== undefined && (
+        <div
+          className="pointer-events-none absolute inset-x-0 z-[3] flex items-center"
+          style={{ top: nowTop }}
+          aria-hidden
+        >
+          <span className="size-2 flex-shrink-0 -translate-x-1/2 rounded-full bg-accent-primary" />
+          <span className="h-0.5 w-full bg-accent-primary" />
+        </div>
+      )}
     </div>
   );
 });
@@ -197,6 +226,7 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
   const issueCalendarView = useCalendarView();
   const { data } = useUserProfile();
   const startOfWeek = data?.start_of_the_week;
+  const { currentTime } = useCurrentTime();
   const [isDraggingIssue, setIsDraggingIssue] = useState(false);
 
   useEffect(
@@ -274,6 +304,13 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
 
   if (visibleDays.length === 0) return null;
 
+  const todayDateString = renderFormattedPayloadDate(currentTime);
+  const currentHour = currentTime.getHours() + currentTime.getMinutes() / 60;
+  const isNowWithinWorkday = currentHour >= HOURS_WORKDAY_START && currentHour < HOURS_WORKDAY_END + 1;
+  const nowTop = isNowWithinWorkday
+    ? (((currentTime.getHours() - HOURS_WORKDAY_START) * 60 + currentTime.getMinutes()) / 60) * HOURS_ROW_HEIGHT
+    : undefined;
+
   return (
     <div className="w-full border-t border-subtle-1">
       <div
@@ -286,21 +323,25 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
         {visibleDays.map((day) => {
           const dateString = renderFormattedPayloadDate(day.date);
           const dayMeta = DAYS_LIST[day.date.getDay() + 1];
+          const monthMeta = MONTHS_LIST[day.date.getMonth() + 1];
           const isToday = day.date.toDateString() === new Date().toDateString();
 
           return (
             <div
               key={dateString}
-              className="flex h-11 items-center justify-center gap-1.5 border-l border-subtle-1 px-2 text-13 font-medium"
+              className="flex min-h-12 flex-col items-center justify-center gap-0.5 border-l border-subtle-1 px-2 py-1 text-13 font-medium"
             >
-              <span className="text-tertiary">{dayMeta?.shortTitle}</span>
-              {isToday ? (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-11 text-on-color">
-                  {day.date.getDate()}
-                </span>
-              ) : (
-                <span>{day.date.getDate()}</span>
-              )}
+              <span className="text-11 text-tertiary">{dayMeta?.shortTitle}</span>
+              <div className="flex items-center gap-1">
+                {isToday ? (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-11 text-on-color">
+                    {day.date.getDate()}
+                  </span>
+                ) : (
+                  <span>{day.date.getDate()}</span>
+                )}
+                <span className="text-11 text-tertiary">{monthMeta?.shortTitle}</span>
+              </div>
             </div>
           );
         })}
@@ -341,6 +382,8 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
               isEpic={isEpic}
               showDueDateBadge={showDueDateBadge}
               isDraggingIssue={isDraggingIssue}
+              showNowIndicator={dateString === todayDateString && isNowWithinWorkday}
+              nowTop={nowTop}
               handleDragAndDrop={handleDragAndDrop}
               handleResizePlan={handleResizePlan}
             />
