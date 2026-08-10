@@ -182,7 +182,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
       if (currentReaction && currentReaction.id) {
         runInAction(() => {
           pull(this.commentReactions[commentId][reaction], currentReaction.id);
-          delete this.commentReactionMap[reaction];
+          delete this.commentReactionMap[currentReaction.id];
         });
       }
 
