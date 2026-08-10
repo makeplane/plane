@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
-import { Maximize2, MoreVertical, Pencil, Share2, Trash2, Video, X } from "lucide-react";
+import { MoreVertical, Pencil, Share2, Trash2, Video, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { AlertModalCore, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 import type { TCustomPlaylist, TCustomPlaylistUpdatePayload } from "@/services/media-library.service";
 import { HlsVideo } from "ce/features/media-library/components/hls-video";
 import { PLAYER_FRAME_CLASS } from "../../constants";
@@ -208,7 +208,6 @@ const buildClipCards = (playlist: TCustomPlaylist | null, segments: PlaylistSegm
 
 const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const videoShellRef = useRef<HTMLDivElement | null>(null);
   const [activeClipIndex, setActiveClipIndex] = useState<number | null>(null);
   const [playlistSegments, setPlaylistSegments] = useState<PlaylistSegment[]>([]);
   const playlistUrl = buildCustomPlaylistUrl(playlist?.url);
@@ -295,18 +294,30 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
     };
   }, [activeClip]);
 
-  const handleOpenFullscreen = useCallback(() => {
-    const fullscreenTarget = videoShellRef.current ?? videoRef.current;
+  useEffect(() => {
+    if (!playlist) return;
 
-    if (!fullscreenTarget || typeof document === "undefined") return;
+    const originalBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-    if (document.fullscreenElement) {
-      void document.exitFullscreen();
-      return;
-    }
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+    };
+  }, [playlist]);
 
-    void fullscreenTarget.requestFullscreen?.();
-  }, []);
+  useEffect(() => {
+    if (!playlist) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose, playlist]);
 
   const handlePlayFullPlaylist = useCallback(() => {
     setActiveClipIndex(null);
@@ -318,27 +329,29 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
     void video.play().catch(() => undefined);
   }, []);
 
-  return (
-    <ModalCore
-      isOpen={Boolean(playlist)}
-      handleClose={onClose}
-      position={EModalPosition.CENTER}
-      width={EModalWidth.VIIXL}
-      className="max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] overflow-hidden rounded-[8px] border border-white/10 bg-[#0d1016] p-0 text-white shadow-[0_28px_110px_rgba(0,0,0,0.62)] sm:!max-w-[1220px] lg:max-h-[calc(100dvh-2rem)]"
-    >
-      <div className="flex max-h-[calc(100dvh-1rem)] min-h-0 flex-col bg-[linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.015)_42%,rgba(0,0,0,0)_100%)] lg:max-h-[calc(100dvh-2rem)]">
-        <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <h3 className="truncate text-[16px] font-semibold leading-6 tracking-[-0.01em] text-white sm:text-[18px]">
-              {playlistTitle}
-            </h3>
-            <span className="shrink-0 rounded-[5px] border border-[#338fdc]/30 bg-[#338fdc]/15 px-2 py-1 text-[11px] font-medium leading-none text-[#7cc6ff]">
-              {clipCount} clip{clipCount === 1 ? "" : "s"}
-            </span>
-          </div>
+  if (!playlist) return null;
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-            {/* {playlistUrl ? (
+  return (
+    <div
+      className="fixed inset-0 z-[40] flex items-center justify-center overflow-y-auto bg-black/60 p-3 text-white backdrop-blur-sm sm:p-5"
+      aria-label={playlistTitle}
+      aria-modal="true"
+      role="dialog"
+    >
+      <div className="flex h-[min(700px,calc(100dvh-1.5rem))] w-[min(1120px,calc(100vw-1.5rem))] min-h-0 flex-col overflow-hidden rounded-[8px] border border-white/10 bg-[#0d1016] shadow-[0_24px_80px_rgba(0,0,0,0.58)] sm:h-[min(720px,calc(100dvh-2.5rem))] sm:w-[min(1120px,calc(100vw-2.5rem))]">
+        <div className="flex h-full min-h-0 flex-col bg-[linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.015)_42%,rgba(0,0,0,0)_100%)]">
+          <div className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-white/10 px-4 sm:h-16 sm:px-6">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <h3 className="truncate text-[16px] font-semibold leading-6 tracking-[-0.01em] text-white sm:text-[18px]">
+                {playlistTitle}
+              </h3>
+              <span className="shrink-0 rounded-[5px] border border-[#338fdc]/30 bg-[#338fdc]/15 px-2 py-1 text-[11px] font-medium leading-none text-[#7cc6ff]">
+                {clipCount} clip{clipCount === 1 ? "" : "s"}
+              </span>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+              {/* {playlistUrl ? (
               <a
                 href={playlistUrl}
                 download={`${playlistTitle}.m3u8`}
@@ -349,139 +362,128 @@ const SgPlaylistVideoModal = ({ onClose, playlist }: SgPlaylistVideoModalProps) 
               </a>
             ) : null} */}
 
-            {/* <button
-              type="button"
-              onClick={handleOpenFullscreen}
-              className="inline-flex h-8 items-center gap-2 rounded-[5px] px-2.5 text-[12px] font-medium text-white/88 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 sm:h-9 sm:px-3"
-              aria-label="Fullscreen playlist video"
-            >
-              <Maximize2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Fullscreen</span>
-            </button> */}
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-white/[0.045] text-white/86 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 sm:h-10 sm:w-10"
-              aria-label="Close playlist video"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="min-h-0 flex-1 px-3 pb-3 sm:px-6 sm:pb-6">
-          <div className="grid min-h-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_312px]">
-            <div
-              ref={videoShellRef}
-              className="aspect-video min-h-0 overflow-hidden rounded-[5px] border border-white/10 bg-black shadow-[0_18px_54px_rgba(0,0,0,0.44)]"
-            >
-              {playlist && playlistUrl ? (
-                <HlsVideo
-                  key={playlistUrl}
-                  src={playlistUrl}
-                  poster={thumbnailUrl || undefined}
-                  autoPlay
-                  videoRef={videoRef}
-                  className="block h-full w-full bg-black object-contain"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center px-4 text-center text-sm text-white/56">
-                  Playlist video is unavailable.
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-white/[0.045] text-white/86 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 sm:h-10 sm:w-10"
+                aria-label="Close playlist video"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
+          </div>
 
-            <aside className="flex w-full min-w-0 flex-col overflow-hidden rounded-[6px] border border-white/10 bg-white/[0.025]">
-              <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-white/10 px-3">
-                <div className="text-[14px] font-semibold text-white">Clips ({clipCards.length || clipCount})</div>
-                <button
-                  type="button"
-                  onClick={handlePlayFullPlaylist}
-                  className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[5px] border border-[#338fdc]/30 bg-[#338fdc]/10 px-2 text-[11px] font-medium text-[#7cc6ff] transition-colors hover:bg-[#338fdc]/18"
-                >
-                  <Video className="h-3.5 w-3.5" />
-                  <span>Full playlist</span>
-                </button>
-              </div>
-
-              <div className="vertical-scrollbar scrollbar-md max-h-[330px] overflow-y-auto overscroll-contain p-2.5 lg:max-h-[420px]">
-                {clipCards.length > 0 ? (
-                  <ul className="space-y-2">
-                    {clipCards.map((clipCard, index) => {
-                      const isActive = activeClipIndex === index;
-                      const canSeek = clipCard.endSeconds > clipCard.startSeconds;
-
-                      return (
-                        <li key={clipCard.id}>
-                          <button
-                            type="button"
-                            disabled={!canSeek}
-                            onClick={() => setActiveClipIndex(index)}
-                            className={[
-                              "group relative flex w-full min-w-0 gap-2 rounded-[6px] border p-2 text-left transition-colors",
-                              isActive
-                                ? "border-[#338fdc]/70 bg-[#338fdc]/12"
-                                : "border-white/10 bg-white/[0.035] hover:bg-white/[0.055]",
-                              !canSeek ? "cursor-not-allowed opacity-55" : "",
-                            ].join(" ")}
-                            aria-pressed={isActive}
-                          >
-                            <span className="absolute right-2 top-2 inline-flex max-w-[92px] items-center rounded-[4px] border border-[#338fdc]/20 bg-[#338fdc]/10 px-1.5 py-0.5 text-[10px] leading-none text-[#9bd4ff]">
-                              <span className="truncate">
-                                {clipCard.timestampLabel || `Clip ${clipCard.index + 1}`}
-                              </span>
-                            </span>
-
-                            <span className="relative flex h-[50px] w-[76px] shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-black text-white/46">
-                              {clipCard.thumbnailUrl ? (
-                                <img src={clipCard.thumbnailUrl} alt="" className="h-full w-full object-cover" />
-                              ) : (
-                                <Video className="h-4 w-4" />
-                              )}
-                              <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white">
-                                {clipCard.timeLabel}
-                              </span>
-                            </span>
-
-                            <span className="min-w-0 flex-1 pr-[96px]">
-                              <span className="block truncate text-[12px] font-medium leading-4 text-white">
-                                {clipCard.title}
-                              </span>
-                              {clipCard.subtitle ? (
-                                <span className="mt-0.5 block truncate text-[11px] leading-4 text-white/52">
-                                  {clipCard.subtitle}
-                                </span>
-                              ) : null}
-                              {clipCard.tags.length > 0 ? (
-                                <span className="mt-1.5 flex min-w-0 gap-1">
-                                  {clipCard.tags.map((tag) => (
-                                    <span
-                                      key={tag}
-                                      className="max-w-full truncate rounded-[4px] bg-[#338fdc]/12 mr-1.5  text-[10px] text-[#9bd4ff]"
-                                    >
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </span>
-                              ) : null}
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
+          <div className="min-h-0 flex-1 px-3 pb-3 sm:px-6 sm:pb-6">
+            <div className="grid h-full min-h-0 grid-rows-[minmax(220px,1fr)_minmax(150px,220px)] gap-4 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1">
+              <div className="relative h-full min-h-[240px] overflow-hidden rounded-[5px] border border-white/10 bg-black shadow-[0_18px_54px_rgba(0,0,0,0.44)]">
+                {playlist && playlistUrl ? (
+                  <HlsVideo
+                    key={playlistUrl}
+                    src={playlistUrl}
+                    poster={thumbnailUrl || undefined}
+                    autoPlay
+                    controls
+                    videoRef={videoRef}
+                    className="block h-full w-full bg-black object-contain"
+                  />
                 ) : (
-                  <div className="flex h-full items-center justify-center px-4 text-center text-xs leading-5 text-white/46">
-                    Clip cards will appear after the playlist metadata is available.
+                  <div className="flex h-full w-full items-center justify-center px-4 text-center text-sm text-white/56">
+                    Playlist video is unavailable.
                   </div>
                 )}
               </div>
-            </aside>
+
+              <aside className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[6px] border border-white/10 bg-white/[0.025]">
+                <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-white/10 px-3">
+                  <div className="text-[14px] font-semibold text-white">Clips ({clipCards.length || clipCount})</div>
+                  <button
+                    type="button"
+                    onClick={handlePlayFullPlaylist}
+                    className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[5px] border border-[#338fdc]/30 bg-[#338fdc]/10 px-2 text-[11px] font-medium text-[#7cc6ff] transition-colors hover:bg-[#338fdc]/18"
+                  >
+                    <Video className="h-3.5 w-3.5" />
+                    <span>Full playlist</span>
+                  </button>
+                </div>
+
+                <div className="vertical-scrollbar scrollbar-md min-h-0 flex-1 overflow-y-auto overscroll-contain p-2.5">
+                  {clipCards.length > 0 ? (
+                    <ul className="space-y-2">
+                      {clipCards.map((clipCard, index) => {
+                        const isActive = activeClipIndex === index;
+                        const canSeek = clipCard.endSeconds > clipCard.startSeconds;
+
+                        return (
+                          <li key={clipCard.id}>
+                            <button
+                              type="button"
+                              disabled={!canSeek}
+                              onClick={() => setActiveClipIndex(index)}
+                              className={[
+                                "group relative flex w-full min-w-0 gap-2 rounded-[6px] border p-2 text-left transition-colors",
+                                isActive
+                                  ? "border-[#338fdc]/70 bg-[#338fdc]/12"
+                                  : "border-white/10 bg-white/[0.035] hover:bg-white/[0.055]",
+                                !canSeek ? "cursor-not-allowed opacity-55" : "",
+                              ].join(" ")}
+                              aria-pressed={isActive}
+                            >
+                              <span className="absolute right-2 top-2 inline-flex max-w-[92px] items-center rounded-[4px] border border-[#338fdc]/20 bg-[#338fdc]/10 px-1.5 py-0.5 text-[10px] leading-none text-[#9bd4ff]">
+                                <span className="truncate">
+                                  {clipCard.timestampLabel || `Clip ${clipCard.index + 1}`}
+                                </span>
+                              </span>
+
+                              <span className="relative flex h-[50px] w-[76px] shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-black text-white/46">
+                                {clipCard.thumbnailUrl ? (
+                                  <img src={clipCard.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                                ) : (
+                                  <Video className="h-4 w-4" />
+                                )}
+                                <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white">
+                                  {clipCard.timeLabel}
+                                </span>
+                              </span>
+
+                              <span className="min-w-0 flex-1 pr-[96px]">
+                                <span className="block truncate text-[12px] font-medium leading-4 text-white">
+                                  {clipCard.title}
+                                </span>
+                                {clipCard.subtitle ? (
+                                  <span className="mt-0.5 block truncate text-[11px] leading-4 text-white/52">
+                                    {clipCard.subtitle}
+                                  </span>
+                                ) : null}
+                                {clipCard.tags.length > 0 ? (
+                                  <span className="mt-1.5 flex min-w-0 gap-1">
+                                    {clipCard.tags.map((tag) => (
+                                      <span
+                                        key={tag}
+                                        className="max-w-full truncate rounded-[4px] bg-[#338fdc]/12 mr-1.5  text-[10px] text-[#9bd4ff]"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </span>
+                                ) : null}
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <div className="flex h-full items-center justify-center px-4 text-center text-xs leading-5 text-white/46">
+                      Clip cards will appear after the playlist metadata is available.
+                    </div>
+                  )}
+                </div>
+              </aside>
+            </div>
           </div>
         </div>
       </div>
-    </ModalCore>
+    </div>
   );
 };
 
