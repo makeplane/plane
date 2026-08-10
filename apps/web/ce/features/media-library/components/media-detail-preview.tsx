@@ -1,9 +1,9 @@
 "use client";
 
-import type { CSSProperties, RefObject } from "react";
-import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties, ReactNode, RefObject } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Download, FileText, FileWarning } from "lucide-react";
+import { Check, Download, FileText, FileWarning, Pencil } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ImageFullScreenModal } from "@plane/editor";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -23,8 +23,13 @@ type TMediaDetailPreviewProps = {
   setIsImageZoomOpen: (open: boolean) => void;
   videoRef: RefObject<HTMLVideoElement>;
   isPlaying: boolean;
+  canAnnotateVideo?: boolean;
+  isVideoAnnotationMode?: boolean;
+  isVideoAnnotationWorkspaceOpen?: boolean;
   onOverlayToggle: () => void;
   onOverlaySeek: (delta: number) => void;
+  onOpenVideoAnnotationWorkspace?: () => void;
+  onCloseVideoAnnotationWorkspace?: () => void;
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
   qualityOptions: TQualityOption[];
@@ -36,6 +41,11 @@ type TMediaDetailPreviewProps = {
   crossOrigin: "anonymous" | "use-credentials" | "" | undefined;
   playerElement: HTMLElement | null;
   videoDownloadSrc: string;
+  videoAnnotationContent?: ReactNode;
+  onVideoAnnotationPropertiesElementChange?: (element: HTMLDivElement | null) => void;
+  onVideoAnnotationToolbarElementChange?: (element: HTMLDivElement | null) => void;
+  onVideoTimelineElementChange?: (element: HTMLDivElement | null) => void;
+  showVideoTimeline?: boolean;
   effectiveImageSrc: string;
   isUnsupportedDocument: boolean;
   isBinaryDocument: boolean;
@@ -54,6 +64,11 @@ type TMediaDetailPreviewProps = {
   createdAt: string;
 };
 
+const VIDEO_ANNOTATION_FLOATING_ACTION_CLASS =
+  "!absolute !right-4 !top-4 !z-30 !inline-flex !h-10 !w-auto !min-w-[118px] !items-center !justify-center !gap-2 !rounded-[7px] !border !px-3.5 !text-[13px] !font-semibold !leading-none !shadow-[0_14px_34px_rgba(0,0,0,0.38)] !backdrop-blur-md !transition-[background-color,border-color,color,box-shadow,transform] hover:!-translate-y-0.5 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-custom-primary-100/40 focus-visible:!ring-offset-2 focus-visible:!ring-offset-black active:!translate-y-0";
+const VIDEO_ANNOTATION_HEADER_ACTION_CLASS =
+  "inline-flex h-9 min-w-[118px] items-center justify-center gap-2 rounded-[7px] border border-custom-primary-100 bg-custom-primary-100 px-3.5 text-[13px] font-semibold leading-none text-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] transition-[background-color,box-shadow,transform] hover:-translate-y-0.5 hover:bg-custom-primary-100/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40 focus-visible:ring-offset-2 focus-visible:ring-offset-custom-background-100 active:translate-y-0";
+
 export const MediaDetailPreview = ({
   item,
   isVideo,
@@ -61,8 +76,13 @@ export const MediaDetailPreview = ({
   setIsImageZoomOpen,
   videoRef,
   isPlaying,
+  canAnnotateVideo = false,
+  isVideoAnnotationMode = false,
+  isVideoAnnotationWorkspaceOpen = false,
   onOverlayToggle,
   onOverlaySeek,
+  onOpenVideoAnnotationWorkspace,
+  onCloseVideoAnnotationWorkspace,
   isSettingsOpen,
   onCloseSettings,
   qualityOptions,
@@ -74,6 +94,11 @@ export const MediaDetailPreview = ({
   playerElement,
   crossOrigin,
   videoDownloadSrc,
+  videoAnnotationContent,
+  onVideoAnnotationPropertiesElementChange,
+  onVideoAnnotationToolbarElementChange,
+  onVideoTimelineElementChange,
+  showVideoTimeline = false,
   effectiveImageSrc,
   isUnsupportedDocument,
   isBinaryDocument,
@@ -100,6 +125,24 @@ export const MediaDetailPreview = ({
     return { width: window.innerWidth, height: window.innerHeight };
   });
   const displayTitle = getDisplayMediaTitle(item?.title);
+  const handleVideoTimelineElement = useCallback(
+    (element: HTMLDivElement | null) => {
+      onVideoTimelineElementChange?.(element);
+    },
+    [onVideoTimelineElementChange]
+  );
+  const handleVideoAnnotationToolbarElement = useCallback(
+    (element: HTMLDivElement | null) => {
+      onVideoAnnotationToolbarElementChange?.(element);
+    },
+    [onVideoAnnotationToolbarElementChange]
+  );
+  const handleVideoAnnotationPropertiesElement = useCallback(
+    (element: HTMLDivElement | null) => {
+      onVideoAnnotationPropertiesElementChange?.(element);
+    },
+    [onVideoAnnotationPropertiesElementChange]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -129,7 +172,9 @@ export const MediaDetailPreview = ({
 
   const overlayContent = (
     <>
-      <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
+      {!isVideoAnnotationMode ? (
+        <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
+      ) : null}
       <PlayerSettingsPanel
         isOpen={isSettingsOpen}
         onClose={onCloseSettings}
@@ -140,6 +185,29 @@ export const MediaDetailPreview = ({
         onSelectRate={onSelectRate}
         panelRef={settingsPanelRef}
       />
+    </>
+  );
+  const annotationWorkspaceToggleContent = (
+    <>
+      {canAnnotateVideo && !isVideoAnnotationWorkspaceOpen ? (
+        <button
+          type="button"
+          onClick={onOpenVideoAnnotationWorkspace}
+          className={`${VIDEO_ANNOTATION_FLOATING_ACTION_CLASS} !border-custom-primary-100 !bg-custom-primary-100 !text-white hover:!bg-custom-primary-100/90`}
+          aria-label="Open annotation editor"
+          title="Open annotation editor"
+        >
+          <Pencil className="!h-4 !w-4 !shrink-0" />
+          <span className="!whitespace-nowrap !leading-none">Annotate</span>
+        </button>
+      ) : null}
+    </>
+  );
+  const playerLayerContent = (
+    <>
+      {overlayContent}
+      {videoAnnotationContent}
+      {annotationWorkspaceToggleContent}
     </>
   );
 
@@ -168,19 +236,31 @@ export const MediaDetailPreview = ({
     const isDesktopViewport = viewport.width >= 1025;
     const isTabletViewport = viewport.width >= 768;
 
+    if (isVideoAnnotationWorkspaceOpen) {
+      if (isDesktopViewport) {
+        return Math.min(860, Math.max(500, viewport.height - 360));
+      }
+
+      if (isTabletViewport) {
+        return Math.min(680, Math.max(380, viewport.height - 330));
+      }
+
+      return Math.min(500, Math.max(260, viewport.height - 310));
+    }
+
     if (isDesktopViewport) {
-      const scaledHeight = Math.round(viewport.height * 0.78);
-      return Math.min(920, Math.max(620, scaledHeight));
+      const scaledHeight = Math.round(viewport.height * (showVideoTimeline ? 0.56 : 0.78));
+      return Math.min(showVideoTimeline ? 700 : 920, Math.max(showVideoTimeline ? 420 : 620, scaledHeight));
     }
 
     if (isTabletViewport) {
-      const scaledHeight = Math.round(viewport.height * 0.64);
-      return Math.min(740, Math.max(500, scaledHeight));
+      const scaledHeight = Math.round(viewport.height * (showVideoTimeline ? 0.52 : 0.64));
+      return Math.min(showVideoTimeline ? 600 : 740, Math.max(showVideoTimeline ? 380 : 500, scaledHeight));
     }
 
     const scaledHeight = Math.round(viewport.height * 0.44);
     return Math.min(480, Math.max(260, scaledHeight));
-  }, [viewport.height, viewport.width]);
+  }, [isVideoAnnotationWorkspaceOpen, showVideoTimeline, viewport.height, viewport.width]);
   const previewHeightStyle: CSSProperties = { height: `${previewHeight}px` };
   const videoPreviewHeightStyle: CSSProperties = { height: `${videoPreviewHeight}px` };
   const overlayVisibilityClass = [isSettingsOpen ? "is-settings-open" : "", !isPlaying ? "is-paused" : ""]
@@ -256,35 +336,74 @@ export const MediaDetailPreview = ({
 
   return (
     <>
-      <div className="rounded-lg bg-custom-background-100 p-3 sm:p-4">
+      <div
+        className={
+          isVideoAnnotationWorkspaceOpen && isVideo
+            ? "h-full min-h-0 bg-transparent p-0"
+            : "rounded-lg bg-custom-background-100 p-3 sm:p-4"
+        }
+      >
         {isVideo ? (
           <>
-            <div
-              className={`media-player mx-auto w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
-              style={videoPreviewHeightStyle}
-            >
-              <video
-                ref={videoRef}
-                className={`video-js vjs-default-skin h-full w-full ${isVideoPreviewBroken ? "opacity-0" : ""}`}
-                poster={item.thumbnail}
-                playsInline
-                preload="auto"
-                crossOrigin={crossOrigin}
-                onLoadedData={() => setIsVideoPreviewBroken(false)}
-                onError={() => setIsVideoPreviewBroken(true)}
-              />
-              {playerElement ? createPortal(overlayContent, playerElement) : overlayContent}
-              {isVideoPreviewBroken ? (
-                <div className="pointer-events-none absolute inset-0 z-20">
-                  {renderUnavailablePreview(
-                    "Video is not available",
-                    "This video cannot be previewed right now.",
-                    "h-full w-full border-0"
-                  )}
-                </div>
+            {isVideoAnnotationWorkspaceOpen ? (
+              <div className="mb-2 flex h-11 w-full items-center justify-end rounded-lg border border-custom-border-200 bg-custom-background-100 px-3">
+                <button
+                  type="button"
+                  onClick={onCloseVideoAnnotationWorkspace}
+                  className={VIDEO_ANNOTATION_HEADER_ACTION_CLASS}
+                  aria-label="Close annotation editor"
+                  title="Close annotation editor"
+                >
+                  <Check className="h-4 w-4 shrink-0" />
+                  <span className="whitespace-nowrap leading-none">Done</span>
+                </button>
+              </div>
+            ) : null}
+            <div className="flex w-full max-w-full items-start gap-2">
+              {showVideoTimeline ? (
+                <div
+                  ref={handleVideoAnnotationToolbarElement}
+                  className="flex w-10 shrink-0 justify-center overflow-y-auto overflow-x-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 py-2"
+                  style={videoPreviewHeightStyle}
+                  aria-label="Annotation tools"
+                />
+              ) : null}
+              <div
+                className={`media-player relative min-w-0 flex-1 overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
+                style={videoPreviewHeightStyle}
+              >
+                <video
+                  ref={videoRef}
+                  className={`video-js vjs-default-skin h-full w-full ${isVideoPreviewBroken ? "opacity-0" : ""}`}
+                  poster={item.thumbnail}
+                  playsInline
+                  preload="auto"
+                  crossOrigin={crossOrigin}
+                  onLoadedData={() => setIsVideoPreviewBroken(false)}
+                  onError={() => setIsVideoPreviewBroken(true)}
+                />
+                {playerElement ? createPortal(playerLayerContent, playerElement) : playerLayerContent}
+                {isVideoPreviewBroken ? (
+                  <div className="pointer-events-none absolute inset-0 z-20">
+                    {renderUnavailablePreview(
+                      "Video is not available",
+                      "This video cannot be previewed right now.",
+                      "h-full w-full border-0"
+                    )}
+                  </div>
+                ) : null}
+              </div>
+              {showVideoTimeline ? (
+                <div
+                  ref={handleVideoAnnotationPropertiesElement}
+                  className="flex w-[154px] shrink-0 overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 p-2"
+                  style={videoPreviewHeightStyle}
+                  aria-label="Annotation properties"
+                />
               ) : null}
             </div>
-            {videoDownloadSrc && !isVideoPreviewBroken ? (
+            {showVideoTimeline ? <div ref={handleVideoTimelineElement} className="mt-3" /> : null}
+            {videoDownloadSrc && !isVideoPreviewBroken && !isVideoAnnotationWorkspaceOpen ? (
               <div className="flex justify-end border-t border-custom-border-200 p-3">
                 <a
                   href={videoDownloadSrc}

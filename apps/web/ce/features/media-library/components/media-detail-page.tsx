@@ -10,8 +10,10 @@ import { ArrowLeft } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SgEventDetailPage } from "@/components/issues/issue-detail/sg-event-detail-page";
+import { VideoAnnotationEditor } from "@/components/issues/issue-detail/sg-event-detail-page/video-annotation-editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
 import { PLAYER_STYLE } from "../constants/player-styles";
 import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
@@ -85,6 +87,14 @@ const MediaDetailPage = () => {
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isVideoAnnotationMode, setIsVideoAnnotationMode] = useState(false);
+  const [isVideoAnnotationWorkspaceOpen, setIsVideoAnnotationWorkspaceOpen] = useState(false);
+  const [videoAnnotationWorkspaceActivationKey, setVideoAnnotationWorkspaceActivationKey] = useState(0);
+  const [currentVideoSeconds, setCurrentVideoSeconds] = useState(0);
+  const [currentVideoDurationSeconds, setCurrentVideoDurationSeconds] = useState<number | null>(null);
+  const [videoAnnotationPropertiesElement, setVideoAnnotationPropertiesElement] = useState<HTMLDivElement | null>(null);
+  const [videoAnnotationToolbarElement, setVideoAnnotationToolbarElement] = useState<HTMLDivElement | null>(null);
+  const [videoTimelineElement, setVideoTimelineElement] = useState<HTMLDivElement | null>(null);
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
@@ -94,6 +104,13 @@ const MediaDetailPage = () => {
   useEffect(() => {
     setMediaItemOverrides(null);
   }, [rawItem?.id]);
+
+  useEffect(() => {
+    setCurrentVideoSeconds(0);
+    setCurrentVideoDurationSeconds(null);
+    setIsVideoAnnotationMode(false);
+    setIsVideoAnnotationWorkspaceOpen(false);
+  }, [item?.id]);
 
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
@@ -467,6 +484,26 @@ const MediaDetailPage = () => {
 
   useEffect(() => {
     const player = playerRef.current;
+    if (!player || !isVideo) return;
+
+    const updateVideoTime = () => {
+      const currentTime = Number(player.currentTime?.() ?? 0);
+      const duration = Number(player.duration?.() ?? 0);
+      setCurrentVideoSeconds(Number.isFinite(currentTime) && currentTime > 0 ? currentTime : 0);
+      setCurrentVideoDurationSeconds(Number.isFinite(duration) && duration > 0 ? duration : null);
+    };
+    const playerEvents = ["durationchange", "loadedmetadata", "seeked", "seeking", "timeupdate"];
+
+    playerEvents.forEach((eventName) => player.on(eventName, updateVideoTime));
+    updateVideoTime();
+
+    return () => {
+      playerEvents.forEach((eventName) => player.off(eventName, updateVideoTime));
+    };
+  }, [effectiveVideoSrc, isVideo, item?.id]);
+
+  useEffect(() => {
+    const player = playerRef.current;
     if (!player) return;
     const handleChange = () => setPlayerTick((value) => value + 1);
     player.on("qualitychange", handleChange);
@@ -741,6 +778,64 @@ const MediaDetailPage = () => {
     player.playbackRate(rate);
     setPlayerTick((value) => value + 1);
   }, []);
+  const handleVideoTimelineSeek = useCallback((seconds: number) => {
+    const player = playerRef.current;
+    if (!player || !Number.isFinite(seconds)) return;
+
+    const duration = Number(player.duration?.() ?? 0);
+    const targetSeconds =
+      Number.isFinite(duration) && duration > 0 ? Math.min(duration, Math.max(0, seconds)) : Math.max(0, seconds);
+
+    player.currentTime(targetSeconds);
+    setCurrentVideoSeconds(targetSeconds);
+  }, []);
+  const handleAnnotationPause = useCallback(() => {
+    const player = playerRef.current;
+    player?.pause?.();
+  }, []);
+  const handleOpenVideoAnnotationWorkspace = useCallback(() => {
+    const player = playerRef.current;
+
+    player?.pause?.();
+    setIsVideoAnnotationWorkspaceOpen(true);
+    setVideoAnnotationWorkspaceActivationKey((currentValue) => currentValue + 1);
+  }, []);
+  const handleCloseVideoAnnotationWorkspace = useCallback(() => {
+    const player = playerRef.current;
+
+    setIsVideoAnnotationWorkspaceOpen(false);
+    setIsVideoAnnotationMode(false);
+    player?.controls?.(true);
+  }, []);
+  const handleAnnotationModeChange = useCallback((enabled: boolean) => {
+    setIsVideoAnnotationMode(enabled);
+
+    const player = playerRef.current;
+    player?.controls?.(!enabled);
+  }, []);
+  const handleSaveVideoAnnotations = useCallback(
+    async (annotations: TCustomPlaylistAnnotation[]) => {
+      if (!item?.packageId || !item.id) {
+        throw new Error("Uploaded video annotations can only be saved on media library videos.");
+      }
+
+      const nextMeta = {
+        ...(item.meta ?? {}),
+        annotations,
+      };
+
+      await mediaLibraryService.updateManifestArtifacts(workspaceSlug, projectId, item.packageId, {
+        artifact_id: item.id,
+        artifact: {
+          meta: nextMeta,
+        },
+      });
+      handleMediaItemUpdated({ meta: nextMeta });
+
+      return annotations;
+    },
+    [handleMediaItemUpdated, item?.id, item?.meta, item?.packageId, mediaLibraryService, projectId, workspaceSlug]
+  );
   if (!item && isLoading) {
     return (
       <div className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
@@ -761,6 +856,8 @@ const MediaDetailPage = () => {
   }
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
   const createdByLabel = (createdBy ? (getUserDetails(createdBy)?.display_name ?? createdBy) : "") || item.author;
+  const canAnnotateUploadedVideo = isVideo && Boolean(item.packageId && item.id);
+  const isFocusedVideoAnnotationWorkspace = isVideo && isVideoAnnotationWorkspaceOpen;
 
   if (isSgEventAsset) {
     return (
@@ -778,19 +875,25 @@ const MediaDetailPage = () => {
   }
 
   return (
-    <div className="relative h-full w-full overflow-x-hidden overflow-y-auto lg:overflow-y-hidden">
-      <div className="flex min-h-full flex-col gap-6 px-3 py-3 lg:h-full lg:min-h-0">
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href={backHref}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
-          >
-            <ArrowLeft className="size-md h-3.2 w-3.2" />
-          </Link>
+    <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-x-hidden overflow-y-auto">
+      <div
+        className={[
+          "flex min-h-full flex-col",
+          isFocusedVideoAnnotationWorkspace ? "gap-2 px-2 py-2" : "gap-6 px-3 py-3",
+        ].join(" ")}
+      >
+        {!isFocusedVideoAnnotationWorkspace ? (
+          <div className="flex items-center justify-between gap-4">
+            <Link
+              href={backHref}
+              className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+            >
+              <ArrowLeft className="size-md h-3.2 w-3.2" />
+            </Link>
 
-          {/* Currently not using this section */}
+            {/* Currently not using this section */}
 
-          {/* <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
               type="button"
@@ -812,10 +915,21 @@ const MediaDetailPage = () => {
             </button>
           </div>
         </div> */}
-        </div>
+          </div>
+        ) : null}
 
-        <div className="grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-[2fr_1fr] lg:gap-0">
-          <div className="flex min-h-0 flex-col gap-6">
+        <div
+          className={[
+            "grid",
+            isFocusedVideoAnnotationWorkspace ? "min-h-0 flex-1 gap-0" : "gap-6 lg:grid-cols-[2fr_1fr] lg:gap-0",
+          ].join(" ")}
+        >
+          <div
+            className={[
+              "flex flex-col",
+              isFocusedVideoAnnotationWorkspace ? "h-full min-h-0 w-full gap-2" : "gap-6",
+            ].join(" ")}
+          >
             <MediaDetailPreview
               item={item}
               isVideo={isVideo}
@@ -823,8 +937,13 @@ const MediaDetailPage = () => {
               setIsImageZoomOpen={setIsImageZoomOpen}
               videoRef={videoRef}
               isPlaying={isPlaying}
+              canAnnotateVideo={canAnnotateUploadedVideo}
+              isVideoAnnotationMode={isVideoAnnotationMode}
+              isVideoAnnotationWorkspaceOpen={isFocusedVideoAnnotationWorkspace}
               onOverlayToggle={handleOverlayToggle}
               onOverlaySeek={handleOverlaySeek}
+              onOpenVideoAnnotationWorkspace={handleOpenVideoAnnotationWorkspace}
+              onCloseVideoAnnotationWorkspace={handleCloseVideoAnnotationWorkspace}
               isSettingsOpen={isSettingsOpen}
               onCloseSettings={() => setIsSettingsOpen(false)}
               qualityOptions={qualityOptions}
@@ -836,6 +955,39 @@ const MediaDetailPage = () => {
               playerElement={playerElement}
               crossOrigin={crossOrigin}
               videoDownloadSrc={videoDownloadSrc}
+              onVideoAnnotationPropertiesElementChange={setVideoAnnotationPropertiesElement}
+              onVideoAnnotationToolbarElementChange={setVideoAnnotationToolbarElement}
+              onVideoTimelineElementChange={setVideoTimelineElement}
+              showVideoTimeline={isFocusedVideoAnnotationWorkspace}
+              videoAnnotationContent={
+                isVideo ? (
+                  <VideoAnnotationEditor
+                    annotationKey={`${item.packageId ?? ""}:${item.id}`}
+                    annotations={item.meta?.annotations}
+                    autoEnableAnnotationModeKey={
+                      isFocusedVideoAnnotationWorkspace ? videoAnnotationWorkspaceActivationKey : undefined
+                    }
+                    canEdit={isFocusedVideoAnnotationWorkspace && Boolean(item.packageId && item.id)}
+                    currentTime={currentVideoSeconds}
+                    durationSeconds={currentVideoDurationSeconds}
+                    enableAnnotationTransforms
+                    enableTextTool
+                    fitToVideoBounds
+                    isPlaying={isPlaying}
+                    modeResetKey={`${item.id}:${isFocusedVideoAnnotationWorkspace ? "open" : "closed"}`}
+                    onModeChange={handleAnnotationModeChange}
+                    onRequestPause={handleAnnotationPause}
+                    onSave={handleSaveVideoAnnotations}
+                    onSeek={handleVideoTimelineSeek}
+                    playbackRate={currentPlaybackRate}
+                    propertyHostElement={isFocusedVideoAnnotationWorkspace ? videoAnnotationPropertiesElement : null}
+                    toolbarHostElement={isFocusedVideoAnnotationWorkspace ? videoAnnotationToolbarElement : null}
+                    showTimeline={isFocusedVideoAnnotationWorkspace}
+                    thumbnailUrl={item.thumbnail}
+                    timelineHostElement={isFocusedVideoAnnotationWorkspace ? videoTimelineElement : null}
+                  />
+                ) : null
+              }
               effectiveImageSrc={effectiveImageSrc}
               isUnsupportedDocument={isUnsupportedDocument}
               isBinaryDocument={isBinaryDocument}
@@ -853,13 +1005,15 @@ const MediaDetailPage = () => {
               createdByLabel={createdByLabel}
               createdAt={item.createdAt}
             />
-            <TagsSection
-              item={item}
-              onPlay={handleOverlayToggle}
-              editable
-              onTagsChange={handleTagsUpdate}
-              isSaving={isTagsSaving}
-            />
+            {!isFocusedVideoAnnotationWorkspace ? (
+              <TagsSection
+                item={item}
+                onPlay={handleOverlayToggle}
+                editable
+                onTagsChange={handleTagsUpdate}
+                isSaving={isTagsSaving}
+              />
+            ) : null}
           </div>
           {isVideo ? (
             <style jsx global>
@@ -867,12 +1021,14 @@ const MediaDetailPage = () => {
             </style>
           ) : null}
 
-          <MediaDetailSidebar
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            item={item}
-            onMediaItemUpdated={handleMediaItemUpdated}
-          />
+          {!isFocusedVideoAnnotationWorkspace ? (
+            <MediaDetailSidebar
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              item={item}
+              onMediaItemUpdated={handleMediaItemUpdated}
+            />
+          ) : null}
         </div>
       </div>
     </div>
