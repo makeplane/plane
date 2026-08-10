@@ -22,6 +22,7 @@ import { CommentCreate } from "@/components/comments/comment-create";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // local imports
+import { PomodoroHeaderButton } from "@/components/pomodoro/pomodoro-header-button";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
 import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
@@ -112,6 +113,7 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
       <div className="flex items-center justify-between">
         <div className="text-h5-medium text-primary">{t("common.activity")}</div>
         <div className="flex items-center gap-2">
+          {isTimeTrackingEnabled && <PomodoroHeaderButton issueId={issueId} />}
           <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
           <ActivityFilterRoot
             selectedFilters={selectedFilters || defaultActivityFilters}
