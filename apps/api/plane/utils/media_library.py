@@ -10,6 +10,7 @@ import time
 from datetime import datetime, timezone as dt_timezone
 from contextlib import contextmanager
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 # Django imports
 from django.conf import settings
@@ -122,9 +123,13 @@ EVENT_META_KEYS = {
 }
 
 ARTIFACT_FIELD_KEYS = {
+    "action",
     "title",
     "description",
+    "format",
+    "link",
     "meta",
+    "path",
 }
 
 
@@ -713,11 +718,49 @@ def media_library_root() -> Path:
     return Path(settings.MEDIA_LIBRARY_ROOT).resolve(strict=False)
 
 
+def _meta_text(meta: dict, *keys: str) -> str | None:
+    for key in keys:
+        value = meta.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return None
+
+
+def _thumbnail_hint_candidates(thumbnail_hint: str | None) -> list[str]:
+    if not isinstance(thumbnail_hint, str) or not thumbnail_hint.strip():
+        return []
+
+    parsed_hint = urlparse(thumbnail_hint.strip())
+    normalized_hint = parsed_hint.path or thumbnail_hint.strip()
+    try:
+        normalized_hint = unquote(normalized_hint)
+    except ValueError:
+        pass
+    normalized_hint = normalized_hint.lstrip("/").replace("\\", "/")
+    parts = [part for part in normalized_hint.split("/") if part]
+    if not parts:
+        return []
+
+    candidates = ["/".join(parts)]
+    if parts[0] in {"coach", "plane-coach"} and len(parts) > 1:
+        candidates.append("/".join(parts[1:]))
+
+    return list(dict.fromkeys(candidates))
+
+
 def get_document_thumbnail_hint(format_value: str, meta: dict | None = None) -> str | None:
     if isinstance(meta, dict):
-        thumbnail_hint = meta.get("thumbnail")
-        if isinstance(thumbnail_hint, str) and thumbnail_hint.strip():
-            return thumbnail_hint.strip()
+        thumbnail_hint = _meta_text(meta, "thumbnail")
+        if thumbnail_hint:
+            return thumbnail_hint
+
+        poster_hint = _meta_text(meta, "poster_url", "posterUrl", "poster")
+        if not poster_hint:
+            event_meta = meta.get("event")
+            if isinstance(event_meta, dict):
+                poster_hint = _meta_text(event_meta, "poster_url", "posterUrl", "poster")
+        if poster_hint:
+            return poster_hint
 
         source_value = str(meta.get("source") or "").strip().lower()
         if source_value == "plane-coach" and str(format_value or "").strip().lower() == "json":
@@ -728,26 +771,37 @@ def get_document_thumbnail_hint(format_value: str, meta: dict | None = None) -> 
 
 def get_document_icon_source(format_value: str, thumbnail_hint: str | None = None) -> Path | None:
     base_public_dirs: list[Path] = []
+
+    def append_public_dir(candidate: Path) -> None:
+        if candidate not in base_public_dirs:
+            base_public_dirs.append(candidate)
+
     base_from_settings = Path(settings.BASE_DIR).parent.parent / "web" / "public"
-    base_public_dirs.append(base_from_settings)
+    append_public_dir(base_from_settings)
     base_from_repo = None
+    base_from_plane_coach = None
     resolved_path = Path(__file__).resolve()
     for parent in resolved_path.parents:
         candidate = parent / "apps" / "web" / "public"
         if candidate.exists():
             base_from_repo = candidate
             break
-    if base_from_repo and base_from_repo != base_from_settings:
-        base_public_dirs.append(base_from_repo)
+    for parent in resolved_path.parents:
+        candidate = parent / "plane-coach" / "public"
+        if candidate.exists():
+            base_from_plane_coach = candidate
+            break
+    if base_from_repo:
+        append_public_dir(base_from_repo)
+    if base_from_plane_coach:
+        append_public_dir(base_from_plane_coach)
     base_from_static = Path(settings.BASE_DIR) / "static"
-    if base_from_static not in base_public_dirs:
-        base_public_dirs.append(base_from_static)
+    append_public_dir(base_from_static)
 
     for base_public_dir in base_public_dirs:
         if not base_public_dir.exists():
             continue
-        if thumbnail_hint and isinstance(thumbnail_hint, str):
-            normalized_hint = thumbnail_hint.lstrip("/").replace("\\", "/")
+        for normalized_hint in _thumbnail_hint_candidates(thumbnail_hint):
             candidate = (base_public_dir / normalized_hint).resolve(strict=False)
             try:
                 if (
