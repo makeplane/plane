@@ -10,9 +10,26 @@
     "complete": "Complete",
     "discard": "Discard",
     "skip_break": "Skip break",
+    "start_break": "Start break",
+    "pause_break": "Pause break",
     "open_work_item": "Open work item",
     "session_count": "{completed} of {total} sessions",
     "running_on": "Timer running on {issue}",
-    "another_work_item": "another work item"
+    "another_work_item": "another work item",
+    "hide": "Hide",
+    "hide_confirm_title": "Hide pomodoro timer?",
+    "hide_confirm_description": "Your current focus session will be completed and the elapsed time saved.",
+    "hide_confirm_submit": "Complete & hide",
+    "hide_confirm_submit_loading": "Completing…",
+    "hide_confirm_cancel": "Cancel",
+    "settings": "Settings",
+    "focus_minutes": "Focus duration",
+    "short_break_minutes": "Short break",
+    "long_break_minutes": "Long break",
+    "sessions_before_long_break": "Sessions before long break",
+    "auto_start_break": "Auto-start break",
+    "auto_start_focus": "Auto-start next focus",
+    "auto_create_time_log": "Log time automatically",
+    "minutes_unit": "min"
   }
 }

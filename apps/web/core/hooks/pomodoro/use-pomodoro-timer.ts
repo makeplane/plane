@@ -7,12 +7,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // plane types
 import type { TCompletePomodoroResponse, TPomodoroSettings, TPomodoroTimer } from "@plane/types";
-import { DEFAULT_POMODORO_SETTINGS } from "@plane/types";
 // store hooks
 import { usePomodoroTimerStore } from "@/hooks/store/use-pomodoro-timer-store";
-import { useUserProfile } from "@/hooks/store/user";
+import type { TPomodoroPhase } from "@/store/pomodoro/pomodoro-timer.store";
 
-export type TPomodoroPhase = "focus" | "short-break" | "long-break";
+export type { TPomodoroPhase } from "@/store/pomodoro/pomodoro-timer.store";
 
 export type TPomodoroTimerReturn = {
   /** server-persisted focus session, if any is active */
@@ -33,36 +32,45 @@ export type TPomodoroTimerReturn = {
   isTimerPaused: boolean;
   hasActiveTimer: boolean;
   isBreak: boolean;
+  isBreakRunning: boolean;
+  isNextSessionReady: boolean;
   loader: "fetch" | "start" | "mutate" | undefined;
-  startFocus: (issueId: string) => Promise<TPomodoroTimer>;
+  startFocus: (issueId: string, resetSession?: boolean) => Promise<TPomodoroTimer>;
   pause: () => Promise<void>;
   resume: () => Promise<void>;
   complete: () => Promise<TCompletePomodoroResponse>;
   discard: () => Promise<void>;
+  discardToBreak: () => Promise<void>;
   skipBreak: () => void;
+  startBreak: () => void;
+  pauseBreak: () => void;
 };
 
 export const usePomodoroTimer = (): TPomodoroTimerReturn => {
-  const { activeTimer, loader, fetchTimers, startTimer, pauseTimer, resumeTimer, completeTimer, discardTimer } =
-    usePomodoroTimerStore();
-  const { data: userProfile } = useUserProfile();
-  const settings = userProfile?.pomodoro_settings ?? DEFAULT_POMODORO_SETTINGS;
+  const store = usePomodoroTimerStore();
+  const {
+    activeTimer,
+    settings,
+    phase,
+    sessionCount,
+    isBreak,
+    isBreakRunning,
+    isNextSessionReady,
+    hasActiveTimer,
+    loader,
+    breakSecondsLeft,
+    focusIssueId,
+  } = store;
 
   // focus countdown clock (server-authoritative elapsed time)
   const [now, setNow] = useState<number>(() => Date.now());
-
-  // client-side pomodoro phase state
-  const [phase, setPhase] = useState<TPomodoroPhase>("focus");
-  const [sessionCount, setSessionCount] = useState<number>(0);
-  const [breakSecondsLeft, setBreakSecondsLeft] = useState<number | null>(null);
-  const [focusIssueId, setFocusIssueId] = useState<string | null>(null);
 
   // guards against double-completing a focus session
   const completingRef = useRef(false);
 
   useEffect(() => {
-    void fetchTimers();
-  }, [fetchTimers]);
+    void store.fetchTimers();
+  }, [store]);
 
   // tick the clock only while a focus session is actually running
   useEffect(() => {
@@ -74,10 +82,10 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
 
   // tick the break countdown
   useEffect(() => {
-    if (phase === "focus" || breakSecondsLeft === null || breakSecondsLeft <= 0) return;
-    const interval = setInterval(() => setBreakSecondsLeft((seconds) => (seconds === null ? 0 : seconds - 1)), 1000);
+    if (!isBreakRunning) return;
+    const interval = setInterval(() => store.tickBreak(), 1000);
     return () => clearInterval(interval);
-  }, [phase, breakSecondsLeft]);
+  }, [isBreakRunning, store]);
 
   const elapsedSeconds = useMemo(() => {
     if (!activeTimer) return 0;
@@ -108,23 +116,16 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
       if (completingRef.current) return undefined;
       completingRef.current = true;
       try {
-        const response = await completeTimer(settings.auto_create_time_log);
-
-        const nextCount = sessionCount + 1;
-        const isLongBreak =
-          settings.sessions_before_long_break > 0 && nextCount % settings.sessions_before_long_break === 0;
+        const response = await store.completeTimer(settings.auto_create_time_log);
 
         if (settings.auto_start_break) {
-          const breakMinutes = isLongBreak ? settings.long_break_minutes : settings.short_break_minutes;
-          setSessionCount(nextCount);
-          setPhase(isLongBreak ? "long-break" : "short-break");
-          setBreakSecondsLeft(breakMinutes * 60);
-          setFocusIssueId(issueId);
+          store.transitionToBreak();
+          store.startBreak(); // auto-start the break countdown
+          store.focusIssueId = issueId;
         } else {
-          setSessionCount(nextCount);
-          setPhase("focus");
-          setFocusIssueId(null);
-          setBreakSecondsLeft(null);
+          store.phase = "focus";
+          store.breakSecondsLeft = null;
+          store.focusIssueId = null;
         }
 
         return response;
@@ -132,7 +133,7 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
         completingRef.current = false;
       }
     },
-    [activeTimer, settings, sessionCount, completeTimer]
+    [activeTimer, settings, store]
   );
 
   // auto-complete the focus session the moment its countdown hits zero
@@ -145,14 +146,11 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
   const startFocus = useCallback(
     async (issueId: string, resetSession: boolean = true): Promise<TPomodoroTimer> => {
       if (resetSession) {
-        setSessionCount(0);
+        store.sessionCount = 0;
       }
-      setFocusIssueId(issueId);
-      setPhase("focus");
-      setBreakSecondsLeft(null);
-      return startTimer({ issue_id: issueId, duration_minutes: settings.focus_minutes });
+      return store.startTimer({ issue_id: issueId, duration_minutes: settings.focus_minutes });
     },
-    [settings.focus_minutes, startTimer]
+    [settings.focus_minutes, store]
   );
 
   // when the break countdown reaches zero, start the next focus session (if enabled)
@@ -161,23 +159,22 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
     if (breakSecondsLeft === null || breakSecondsLeft > 0) return;
 
     const nextFocusIssueId = focusIssueId;
-    setPhase("focus");
-    setBreakSecondsLeft(null);
+    store.skipBreak();
 
     if (settings.auto_start_focus && nextFocusIssueId) {
       void startFocus(nextFocusIssueId, false);
     }
-  }, [breakSecondsLeft, phase, focusIssueId, settings.auto_start_focus, startFocus]);
+  }, [breakSecondsLeft, phase, focusIssueId, settings.auto_start_focus, startFocus, store]);
 
   const pause = useCallback(async () => {
     if (phase !== "focus") return;
-    await pauseTimer();
-  }, [phase, pauseTimer]);
+    await store.pauseTimer();
+  }, [phase, store]);
 
   const resume = useCallback(async () => {
     if (phase !== "focus") return;
-    await resumeTimer();
-  }, [phase, resumeTimer]);
+    await store.resumeTimer();
+  }, [phase, store]);
 
   const complete = useCallback(async (): Promise<TCompletePomodoroResponse> => {
     if (!activeTimer) throw new Error("No active pomodoro timer");
@@ -187,25 +184,11 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
   }, [activeTimer, handleTimerComplete]);
 
   const discard = useCallback(async () => {
-    setPhase("focus");
-    setBreakSecondsLeft(null);
-    await discardTimer();
-  }, [discardTimer]);
-
-  const skipBreak = useCallback(() => {
-    if (phase === "focus") return;
-    const nextFocusIssueId = focusIssueId;
-    setPhase("focus");
-    setBreakSecondsLeft(null);
-    if (nextFocusIssueId) {
-      void startFocus(nextFocusIssueId, false);
-    }
-  }, [phase, focusIssueId, startFocus]);
+    await store.discardTimer();
+  }, [store]);
 
   const isTimerRunning = phase === "focus" && activeTimer?.status === "running";
   const isTimerPaused = phase === "focus" && activeTimer?.status === "paused";
-  const hasActiveTimer = !!activeTimer && (activeTimer.status === "running" || activeTimer.status === "paused");
-  const isBreak = phase !== "focus";
 
   return {
     activeTimer,
@@ -219,12 +202,17 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
     isTimerPaused,
     hasActiveTimer,
     isBreak,
+    isBreakRunning,
+    isNextSessionReady,
     loader,
     startFocus,
     pause,
     resume,
     complete,
     discard,
-    skipBreak,
+    discardToBreak: store.discardToBreak,
+    skipBreak: store.skipBreak,
+    startBreak: store.startBreak,
+    pauseBreak: store.pauseBreak,
   };
 };

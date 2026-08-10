@@ -11,6 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 // components
 import { PomodoroTimer } from "@/components/pomodoro/pomodoro-timer";
+import { PomodoroSettingsInline } from "@/components/pomodoro/pomodoro-settings-inline";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePomodoroTimer } from "@/hooks/pomodoro/use-pomodoro-timer";
@@ -42,6 +43,7 @@ export const PomodoroCollapsibleContent = observer(function PomodoroCollapsibleC
         </p>
       )}
       <PomodoroTimer issueId={issueId} onTimeLogCreated={() => void fetchTimeLogs(workspaceSlug, projectId, issueId)} />
+      <PomodoroSettingsInline />
     </div>
   );
 });
