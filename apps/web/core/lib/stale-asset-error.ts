@@ -43,20 +43,24 @@ const hasRecentStaleAssetReload = (): boolean => {
 
 let isRecoveringFromStaleAsset = false;
 
-export const recoverFromStaleAsset = () => {
-  if (isRecoveringFromStaleAsset) return;
+// Returns whether it actually triggered a reload, so callers that can otherwise
+// fall back to default browser error handling (e.g. Vite's preload-error
+// overlay) only suppress that fallback when a reload is really in flight.
+export const recoverFromStaleAsset = (): boolean => {
+  if (isRecoveringFromStaleAsset) return false;
   isRecoveringFromStaleAsset = true;
 
   if (hasRecentStaleAssetReload()) {
     // Second failure in a row — surface to the route error boundary instead of looping.
     isRecoveringFromStaleAsset = false;
-    return;
+    return false;
   }
   try {
     sessionStorage.setItem(STALE_ASSET_RELOAD_KEY, String(Date.now()));
   } catch {
     isRecoveringFromStaleAsset = false;
-    return;
+    return false;
   }
   window.location.reload();
+  return true;
 };

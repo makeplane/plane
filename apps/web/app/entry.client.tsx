@@ -17,8 +17,7 @@ void polyfills;
 // stale optimized deps) and auto-reloading would mask them.
 if (import.meta.env.PROD) {
   window.addEventListener("vite:preloadError", (event) => {
-    event.preventDefault();
-    recoverFromStaleAsset();
+    if (recoverFromStaleAsset()) event.preventDefault();
   });
 
   window.addEventListener("error", (event) => {
