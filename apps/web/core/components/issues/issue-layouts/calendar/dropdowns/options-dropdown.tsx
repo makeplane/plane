@@ -87,22 +87,20 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
     issueCalendarView.updateCalendarPayload(
       layout === "month"
         ? issueCalendarView.calendarFilters.activeMonthDate
-        : layout === "hours"
-          ? issueCalendarView.calendarFilters.activeHoursDate
-          : issueCalendarView.calendarFilters.activeWeekDate
+        : issueCalendarView.calendarFilters.activeWeekDate
     );
     if (windowWidth <= 768) closePopover(); // close the popover on mobile
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
+    const currentShowWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
     if (!updateFilters) return;
 
     updateFilters(filterEntityId ?? "", EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        show_weekends: !showWeekends,
+        show_weekends: !currentShowWeekends,
       },
     });
   };
@@ -158,9 +156,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                       className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
-                      {layout === "hours"
-                        ? t("issue.layouts.calendar.hours_layout")
-                        : layoutDetails.title}
+                      {layout === "hours" ? t("issue.layouts.calendar.hours_layout") : layoutDetails.title}
                       {calendarLayout === layout && <CheckIcon width={12} height={12} strokeWidth={2} />}
                     </button>
                   ))}

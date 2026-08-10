@@ -10,7 +10,7 @@ import { observable, action, makeObservable, runInAction, computed, reaction } f
 import { computedFn } from "mobx-utils";
 import type { ICalendarPayload, ICalendarWeek } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
-import { generateCalendarData, getWeekNumberOfDate, renderFormattedPayloadDate } from "@plane/utils";
+import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
 // types
 import type { IIssueRootStore } from "./root.store";
 
@@ -23,7 +23,9 @@ export interface ICalendarStore {
   calendarPayload: ICalendarPayload | null;
 
   // action
-  updateCalendarFilters: (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>) => void;
+  updateCalendarFilters: (
+    filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>
+  ) => void;
   updateCalendarPayload: (date: Date) => void;
   regenerateCalendar: () => void;
 
@@ -152,12 +154,7 @@ export class CalendarStore implements ICalendarStore {
 
   getStartAndEndDate = computedFn((layout: "week" | "month" | "hours") => {
     switch (layout) {
-      case "hours": {
-        const { activeHoursDate } = this.calendarFilters;
-        const dateString = renderFormattedPayloadDate(activeHoursDate);
-        if (!dateString) return;
-        return { startDate: dateString, endDate: dateString };
-      }
+      case "hours":
       case "week": {
         if (!this.allDaysOfActiveWeek) return;
         const dates = Object.keys(this.allDaysOfActiveWeek);
@@ -174,8 +171,12 @@ export class CalendarStore implements ICalendarStore {
     }
   });
 
-  updateCalendarFilters = (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>) => {
-    this.updateCalendarPayload(filters.activeMonthDate || filters.activeWeekDate || filters.activeHoursDate || new Date());
+  updateCalendarFilters = (
+    filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>
+  ) => {
+    this.updateCalendarPayload(
+      filters.activeMonthDate || filters.activeWeekDate || filters.activeHoursDate || new Date()
+    );
 
     runInAction(() => {
       this.calendarFilters = {

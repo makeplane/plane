@@ -92,7 +92,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
           type="button"
           ref={setReferenceElement}
           className="text-18 font-semibold outline-none"
-          disabled={calendarLayout === "week"}
+          disabled={calendarLayout === "week" || calendarLayout === "hours"}
         >
           {calendarLayout === "month"
             ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`

@@ -46,20 +46,9 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
-  const { activeMonthDate, activeWeekDate, activeHoursDate } = issueCalendarView.calendarFilters;
+  const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
 
   const handlePrevious = () => {
-    if (calendarLayout === "hours") {
-      const previousDay = new Date(
-        activeHoursDate.getFullYear(),
-        activeHoursDate.getMonth(),
-        activeHoursDate.getDate() - 1
-      );
-      issueCalendarView.updateCalendarFilters({ activeHoursDate: previousDay });
-      setSelectedDate(previousDay);
-      return;
-    }
-
     if (calendarLayout === "month") {
       const previousMonthYear =
         activeMonthDate.getMonth() === 0 ? activeMonthDate.getFullYear() - 1 : activeMonthDate.getFullYear();
@@ -71,6 +60,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
         activeMonthDate: previousMonthFirstDate,
       });
     } else {
+      // week and hours layouts both navigate by week
       const previousWeekDate = new Date(
         activeWeekDate.getFullYear(),
         activeWeekDate.getMonth(),
@@ -79,22 +69,13 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
       issueCalendarView.updateCalendarFilters({
         activeWeekDate: previousWeekDate,
+        activeHoursDate: previousWeekDate,
       });
+      setSelectedDate(previousWeekDate);
     }
   };
 
   const handleNext = () => {
-    if (calendarLayout === "hours") {
-      const nextDay = new Date(
-        activeHoursDate.getFullYear(),
-        activeHoursDate.getMonth(),
-        activeHoursDate.getDate() + 1
-      );
-      issueCalendarView.updateCalendarFilters({ activeHoursDate: nextDay });
-      setSelectedDate(nextDay);
-      return;
-    }
-
     if (calendarLayout === "month") {
       const nextMonthYear =
         activeMonthDate.getMonth() === 11 ? activeMonthDate.getFullYear() + 1 : activeMonthDate.getFullYear();
@@ -106,6 +87,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
         activeMonthDate: nextMonthFirstDate,
       });
     } else {
+      // week and hours layouts both navigate by week
       const nextWeekDate = new Date(
         activeWeekDate.getFullYear(),
         activeWeekDate.getMonth(),
@@ -114,7 +96,9 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
       issueCalendarView.updateCalendarFilters({
         activeWeekDate: nextWeekDate,
+        activeHoursDate: nextWeekDate,
       });
+      setSelectedDate(nextWeekDate);
     }
   };
 

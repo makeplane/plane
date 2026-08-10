@@ -258,9 +258,10 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       throw new Error("Work item not found. Unable to update the personal plan.");
     }
 
+    const nextPlannedAt = data.planned_at !== undefined ? data.planned_at : (issueBeforeUpdate.planned_at ?? null);
     const updatedIssue = {
       ...issueBeforeUpdate,
-      planned_at: data.planned_at ?? null,
+      planned_at: nextPlannedAt,
       planned_duration_minutes: data.planned_duration_minutes ?? issueBeforeUpdate.planned_duration_minutes ?? 60,
     };
 
@@ -268,11 +269,11 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       this.rootIssueStore.issues.updateIssue(issueId, updatedIssue);
       this.updateIssueList(updatedIssue as TIssue, issueBeforeUpdate);
 
-      if (!data.planned_at) {
+      if (nextPlannedAt === null) {
         await this.userService.deleteUserIssuePlan(workspaceSlug, issueId);
       } else {
         await this.userService.upsertUserIssuePlan(workspaceSlug, issueId, {
-          planned_at: data.planned_at,
+          planned_at: nextPlannedAt,
           planned_duration_minutes: updatedIssue.planned_duration_minutes ?? 60,
         });
       }

@@ -72,6 +72,10 @@ type Props = {
     destinationDate: string | undefined,
     destinationHour?: number
   ) => Promise<void>;
+  handleResizePlan?: (
+    issueId: string,
+    data: { planned_at?: string | null; planned_duration_minutes?: number }
+  ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   updateFilters?: (
@@ -93,6 +97,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     issueCalendarView,
     loadMoreIssues,
     handleDragAndDrop,
+    handleResizePlan,
     quickActions,
     quickAddCallback,
     addIssuesToView,
@@ -217,7 +222,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                   showDueDateBadge={isProfileCalendar}
                 />
               )}
-              {layout === "hours" && (
+              {layout === "hours" && handleResizePlan && (
                 <CalendarHoursGrid
                   issues={issues}
                   quickActions={quickActions}
@@ -225,7 +230,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                   canEditProperties={canEditProperties}
                   isEpic={isEpic}
                   showDueDateBadge={isProfileCalendar}
+                  showWeekends={showWeekends}
                   handleDragAndDrop={handleDragAndDrop}
+                  handleResizePlan={handleResizePlan}
                 />
               )}
             </div>

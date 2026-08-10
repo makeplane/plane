@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { parseISO } from "date-fns";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import type { IPragmaticDropPayload } from "@plane/types";
@@ -11,6 +12,130 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 
 export const CALENDAR_DAY_DROP_TYPE = "CALENDAR_DAY";
 export const CALENDAR_ISSUE_DRAG_TYPE = "CALENDAR_ISSUE";
+
+export const HOURS_WORKDAY_START = 8;
+export const HOURS_WORKDAY_END = 18;
+export const HOURS_ROW_HEIGHT = 56;
+export const HOURS_MIN_DURATION_MINUTES = 60;
+
+export type IssuePlanBounds = {
+  startHour: number;
+  endHour: number;
+  durationMinutes: number;
+};
+
+/**
+ * Resolve local start/end hours for an issue plan on the hours grid.
+ */
+export const getIssuePlanBounds = (
+  plannedAt: string | null | undefined,
+  plannedDurationMinutes?: number | null
+): IssuePlanBounds | undefined => {
+  if (!plannedAt) return;
+
+  const startHour = parseISO(plannedAt).getHours();
+  const durationMinutes = Math.max(plannedDurationMinutes ?? HOURS_MIN_DURATION_MINUTES, HOURS_MIN_DURATION_MINUTES);
+  const durationHours = Math.max(1, Math.ceil(durationMinutes / 60));
+  const endHour = startHour + durationHours;
+
+  return { startHour, endHour, durationMinutes };
+};
+
+/**
+ * Build a planned_at ISO string for a calendar drop / hours resize.
+ * Exported so hours resize can rebuild start times with the same local-hour encoding.
+ */
+export const buildPlannedAtForDrop = (
+  destinationDate: string,
+  existingPlannedAt?: string | null,
+  destinationHour?: number
+): string => {
+  const normalizedDestinationDate = renderFormattedPayloadDate(destinationDate);
+  if (!normalizedDestinationDate) return new Date().toISOString();
+
+  if (destinationHour !== undefined) {
+    const hour = Math.min(Math.max(destinationHour, 0), 23);
+    const [year, month, day] = normalizedDestinationDate.split("-").map(Number);
+    return new Date(year, month - 1, day, hour, 0, 0, 0).toISOString();
+  }
+
+  if (existingPlannedAt) {
+    const timePortion = existingPlannedAt.includes("T")
+      ? existingPlannedAt.slice(existingPlannedAt.indexOf("T") + 1)
+      : "09:00:00.000Z";
+    return `${normalizedDestinationDate}T${timePortion}`;
+  }
+
+  return `${normalizedDestinationDate}T09:00:00.000Z`;
+};
+
+/**
+ * Pack overlapping timed blocks into side-by-side columns for a single day.
+ */
+export const packOverlappingPlanBlocks = <T extends { id: string; startHour: number; endHour: number }>(
+  blocks: T[]
+): Array<T & { columnIndex: number; columnCount: number }> => {
+  if (blocks.length === 0) return [];
+
+  const sorted = [...blocks].toSorted(
+    (a, b) => a.startHour - b.startHour || a.endHour - b.endHour || a.id.localeCompare(b.id)
+  );
+  const columnIndexById = new Map<string, number>();
+  const active: Array<{ id: string; endHour: number; columnIndex: number }> = [];
+
+  for (const block of sorted) {
+    for (let i = active.length - 1; i >= 0; i--) {
+      if (active[i].endHour <= block.startHour) active.splice(i, 1);
+    }
+
+    const usedColumns = new Set(active.map((item) => item.columnIndex));
+    let columnIndex = 0;
+    while (usedColumns.has(columnIndex)) columnIndex += 1;
+
+    columnIndexById.set(block.id, columnIndex);
+    active.push({ id: block.id, endHour: block.endHour, columnIndex });
+  }
+
+  const parent = new Map(sorted.map((block) => [block.id, block.id]));
+  const find = (id: string): string => {
+    const current = parent.get(id) ?? id;
+    if (current !== id) {
+      const root = find(current);
+      parent.set(id, root);
+      return root;
+    }
+    return current;
+  };
+  const union = (a: string, b: string) => {
+    const rootA = find(a);
+    const rootB = find(b);
+    if (rootA !== rootB) parent.set(rootA, rootB);
+  };
+
+  for (let i = 0; i < sorted.length; i++) {
+    for (let j = i + 1; j < sorted.length; j++) {
+      if (sorted[j].startHour >= sorted[i].endHour) break;
+      if (sorted[j].startHour < sorted[i].endHour) {
+        union(sorted[i].id, sorted[j].id);
+      }
+    }
+  }
+
+  const clusterMaxColumn = new Map<string, number>();
+  for (const block of sorted) {
+    const root = find(block.id);
+    const columnIndex = columnIndexById.get(block.id) ?? 0;
+    clusterMaxColumn.set(root, Math.max(clusterMaxColumn.get(root) ?? 0, columnIndex));
+  }
+
+  return sorted.map((block) => {
+    const root = find(block.id);
+    return Object.assign({}, block, {
+      columnIndex: columnIndexById.get(block.id) ?? 0,
+      columnCount: (clusterMaxColumn.get(root) ?? 0) + 1,
+    });
+  });
+};
 
 export type CalendarDropLocation = {
   id: string;
@@ -82,34 +207,6 @@ export const getCalendarDestinationFromDropPayload = (
     date,
     hour: typeof destinationDayData?.hour === "number" ? destinationDayData.hour : undefined,
   };
-};
-
-/**
- * Build a planned_at ISO string whose yyyy-MM-dd prefix matches the calendar tile key.
- * Using UTC wall-clock on the destination date avoids local→UTC day shifts that made
- * optimistic group keys miss the drop target day.
- */
-const buildPlannedAtForDrop = (
-  destinationDate: string,
-  existingPlannedAt?: string | null,
-  destinationHour?: number
-): string => {
-  const normalizedDestinationDate = renderFormattedPayloadDate(destinationDate);
-  if (!normalizedDestinationDate) return new Date().toISOString();
-
-  if (destinationHour !== undefined) {
-    const hour = Math.min(Math.max(destinationHour, 0), 23).toString().padStart(2, "0");
-    return `${normalizedDestinationDate}T${hour}:00:00.000Z`;
-  }
-
-  if (existingPlannedAt) {
-    const timePortion = existingPlannedAt.includes("T")
-      ? existingPlannedAt.slice(existingPlannedAt.indexOf("T") + 1)
-      : "09:00:00.000Z";
-    return `${normalizedDestinationDate}T${timePortion}`;
-  }
-
-  return `${normalizedDestinationDate}T09:00:00.000Z`;
 };
 
 export const handleDragDrop = async (

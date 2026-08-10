@@ -166,6 +166,21 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
     [issueMap, updateIssue, updateIssuePlan, workspaceSlug, storeType, isProfileCalendar]
   );
 
+  const handleResizePlan = useCallback(
+    async (issueId: string, data: { planned_at?: string | null; planned_duration_minutes?: number }) => {
+      if (!updateIssuePlan || !workspaceSlug) return;
+
+      await updateIssuePlan(workspaceSlug.toString(), issueId, data).catch((err) => {
+        setToast({
+          title: "Error!",
+          type: TOAST_TYPE.ERROR,
+          message: err?.detail ?? err?.message ?? "Failed to update the schedule",
+        });
+      });
+    },
+    [updateIssuePlan, workspaceSlug]
+  );
+
   const loadMoreIssues = useCallback(
     (dateString: string) => {
       fetchNextIssues(dateString);
@@ -244,6 +259,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
           readOnly={isCompletedCycle}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
+          handleResizePlan={handleResizePlan}
           canEditProperties={canEditProperties}
           isEpic={isEpic}
           isProfileCalendar={isProfileCalendar}
