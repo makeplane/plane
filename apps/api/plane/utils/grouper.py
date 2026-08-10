@@ -94,6 +94,7 @@ def issue_on_results(
     issues: QuerySet[Issue],
     group_by: Optional[str],
     sub_group_by: Optional[str],
+    extra_fields: Optional[List[str]] = None,
 ) -> List[Dict[str, Any]]:
     FIELD_MAPPER: Dict[str, str] = {
         "labels__id": "label_ids",
@@ -113,9 +114,6 @@ def issue_on_results(
         "priority",
         "start_date",
         "target_date",
-        "planned_at",
-        "planned_duration_minutes",
-        "planned_date",
         "sequence_id",
         "project_id",
         "parent_id",
@@ -140,6 +138,8 @@ def issue_on_results(
         original_list.remove(FIELD_MAPPER[sub_group_by])
         original_list.append(sub_group_by)
 
+    if extra_fields:
+        required_fields.extend(extra_fields)
     required_fields.extend(original_list)
     return list(issues.values(*required_fields))
 

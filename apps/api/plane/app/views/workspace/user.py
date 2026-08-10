@@ -226,7 +226,8 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                         queryset=issue_queryset,
                         total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by,
+                            extra_fields=["planned_at", "planned_duration_minutes", "planned_date"],
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=get_group_by_fields(group_by),
@@ -250,7 +251,8 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                     queryset=issue_queryset,
                     total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by,
+                        extra_fields=["planned_at", "planned_duration_minutes", "planned_date"],
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=get_group_by_fields(group_by),
@@ -270,7 +272,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 request=request,
                 queryset=issue_queryset,
                 total_count_queryset=total_issue_queryset,
-                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by, extra_fields=["planned_at", "planned_duration_minutes", "planned_date"]),
             )
 
 
