@@ -4,7 +4,13 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import CustomPlaylist, Issue, Project, ProjectMember, User
+from plane.db.models import (
+    CustomPlaylist,
+    Issue,
+    Project,
+    ProjectMember,
+    User,
+)
 
 
 class TestCustomPlaylistBase:
@@ -79,6 +85,7 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert data["thumbnail"] == "final-match.jpg"
         assert data["clip"] == 12
         assert data["clips"][0]["title"] == "Fast Break Dunk"
+        assert "annotations" not in data
         assert "durationSeconds" not in data["clips"][0]
         assert "fallbackTimestamp" not in data["clips"][0]
         assert "timecode" not in data["clips"][0]
@@ -211,7 +218,12 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
 
         response = session_client.patch(
             self.get_playlist_url(playlist.id),
-            {"name": "Updated Playlist", "subtitle": "Offense clips", "thumbnail": "", "clip": 3},
+            {
+                "name": "Updated Playlist",
+                "subtitle": "Offense clips",
+                "thumbnail": "",
+                "clip": 3,
+            },
             format="json",
         )
 
@@ -224,6 +236,7 @@ class TestCustomPlaylistAPI(TestCustomPlaylistBase):
         assert response.json()["subtitle"] == "Offense clips"
         assert response.json()["thumbnail"] is None
         assert response.json()["clip"] == 3
+        assert "annotations" not in response.json()
 
     @pytest.mark.django_db
     def test_delete_playlist_successfully(self, session_client, workspace, create_user):

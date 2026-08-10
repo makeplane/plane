@@ -19,7 +19,12 @@ import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../types/media-library.types";
 import { formatFileSize, formatMetaLabel, formatMetaValue } from "../utils/media-detail-utils";
-import { getEventMediaDateLabel, getEventMediaDetails, getEventMediaMetrics, isEventMediaItem } from "../utils/media-event";
+import {
+  getEventMediaDateLabel,
+  getEventMediaDetails,
+  getEventMediaMetrics,
+  isEventMediaItem,
+} from "../utils/media-event";
 import { DetailIssueOverview } from "./detail-peek-overview";
 import { PeekOverviewIssueDetails } from "./detail-peek-overview/issue-detail";
 
@@ -144,7 +149,13 @@ export const MediaDetailSidebar = ({
       Object.entries(artifactMeta).filter(([key, value]) => {
         if (baseMetaKeys.has(key)) return false;
         const normalizedKey = key.toLowerCase();
-        if (normalizedKey === "kind" || normalizedKey === "thumbnail" || normalizedKey === "tags") return false;
+        if (
+          normalizedKey === "annotations" ||
+          normalizedKey === "kind" ||
+          normalizedKey === "thumbnail" ||
+          normalizedKey === "tags"
+        )
+          return false;
         const normalized = formatMetaValue(value);
         return normalized && normalized !== "--";
       }),
@@ -190,10 +201,7 @@ export const MediaDetailSidebar = ({
           {eventSummaryFields.map((field) => (
             <div key={field.label} className="flex items-start justify-between gap-3 text-sm">
               <span className="text-custom-text-300">{field.label}</span>
-              <span
-                className="ml-auto block max-w-[65%] truncate text-right text-custom-text-100"
-                title={field.value}
-              >
+              <span className="ml-auto block max-w-[65%] truncate text-right text-custom-text-100" title={field.value}>
                 {field.value}
               </span>
             </div>
@@ -273,9 +281,7 @@ export const MediaDetailSidebar = ({
                     <User className="h-4 w-4 flex-shrink-0" />
                     <span>Created by</span>
                   </div>
-                  <span className="w-3/4 rounded px-2 py-0.5 text-sm text-custom-text-100">
-                    {createdByLabel}
-                  </span>
+                  <span className="w-3/4 rounded px-2 py-0.5 text-sm text-custom-text-100">{createdByLabel}</span>
                 </div>
 
                 {hasWorkItemId ? (

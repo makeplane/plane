@@ -1,12 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import videojs from "video.js";
 import { cn } from "@plane/utils";
+import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";
 import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getQualitySelection, getVideoRepresentations } from "ce/features/media-library/utils/media-detail-utils";
 import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./constants";
+import { VideoAnnotationEditor } from "./video-annotation-editor";
 
 type SgEventVideoPlayerProps = {
   item: TMediaItem | null;
@@ -19,6 +22,7 @@ type SgEventVideoPlayerProps = {
       playbackRate: number;
     }
   ) => void;
+  onUpdateAnnotations?: (item: TMediaItem, annotations: TCustomPlaylistAnnotation[]) => Promise<TMediaItem | void>;
   seekRequestId?: number;
   seekToSeconds?: number | null;
 };
@@ -46,6 +50,7 @@ export const SgEventVideoPlayer = ({
   item,
   compactEmpty = false,
   onPlaybackTimeChange,
+  onUpdateAnnotations,
   seekRequestId = 0,
   seekToSeconds = null,
 }: SgEventVideoPlayerProps) => {
@@ -62,6 +67,8 @@ export const SgEventVideoPlayer = ({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
+  const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
+  const [currentVideoSeconds, setCurrentVideoSeconds] = useState(0);
   const { effectiveVideoSrc, isVideo, resolvedVideoFormat, useCredentials, crossOrigin } = useResolvedMediaSources({
     documentFormat,
     item,
@@ -255,6 +262,7 @@ export const SgEventVideoPlayer = ({
       });
       playerRef.current.loop(true);
       videoRef.current.removeAttribute("loop");
+      setPlayerElement((playerRef.current.el?.() as HTMLElement | null | undefined) ?? null);
 
       const handleQualityStateChange = () => setPlayerTick((currentValue) => currentValue + 1);
       playerRef.current.on("loadedmetadata", handleQualityStateChange);
@@ -271,6 +279,7 @@ export const SgEventVideoPlayer = ({
         playerRef.current.dispose();
         playerRef.current = null;
       }
+      setPlayerElement(null);
     };
   }, [crossOrigin, isVideo, useCredentials]);
 
@@ -450,6 +459,24 @@ export const SgEventVideoPlayer = ({
 
   useEffect(() => {
     const player = playerRef.current;
+    if (!player || !isVideo) return;
+
+    const updateVideoTime = () => {
+      const currentTime = Number(player.currentTime?.() ?? 0);
+      setCurrentVideoSeconds(Number.isFinite(currentTime) && currentTime > 0 ? currentTime : 0);
+    };
+    const playerEvents = ["durationchange", "loadedmetadata", "seeked", "seeking", "timeupdate"];
+
+    playerEvents.forEach((eventName) => player.on(eventName, updateVideoTime));
+    updateVideoTime();
+
+    return () => {
+      playerEvents.forEach((eventName) => player.off(eventName, updateVideoTime));
+    };
+  }, [effectiveVideoSrc, isVideo, item?.id]);
+
+  useEffect(() => {
+    const player = playerRef.current;
     if (!player || !isFiniteTagClip) return;
 
     const handleEnded = () => {
@@ -571,6 +598,23 @@ export const SgEventVideoPlayer = ({
     player.trigger("qualitychange");
     setPlayerTick((currentValue) => currentValue + 1);
   }, []);
+  const handleAnnotationPause = useCallback(() => {
+    const player = playerRef.current;
+    player?.pause?.();
+  }, []);
+  const handleAnnotationModeChange = useCallback((enabled: boolean) => {
+    const player = playerRef.current;
+    player?.controls?.(!enabled);
+  }, []);
+  const handleSaveVideoAnnotations = useCallback(
+    async (annotations: TCustomPlaylistAnnotation[]) => {
+      if (!item || !onUpdateAnnotations) return annotations;
+
+      const updatedItem = await onUpdateAnnotations(item, annotations);
+      return (updatedItem?.meta?.annotations as TCustomPlaylistAnnotation[] | undefined) ?? annotations;
+    },
+    [item, onUpdateAnnotations]
+  );
 
   if (!item || !isVideo) {
     return (
@@ -602,6 +646,20 @@ export const SgEventVideoPlayer = ({
           {SG_PLAYER_STYLE}
         </style>
         <video ref={videoRef} className="video-js vjs-big-play-centered" playsInline loop />
+        {playerElement
+          ? createPortal(
+              <VideoAnnotationEditor
+                annotationKey={`${item.packageId ?? ""}:${item.id}`}
+                annotations={item.meta?.annotations}
+                canEdit={Boolean(item.packageId && item.id && onUpdateAnnotations)}
+                currentTime={currentVideoSeconds}
+                onModeChange={handleAnnotationModeChange}
+                onRequestPause={handleAnnotationPause}
+                onSave={handleSaveVideoAnnotations}
+              />,
+              playerElement
+            )
+          : null}
         {isSettingsOpen && (
           <div className="absolute bottom-14 right-3 z-10 w-44 rounded-xl border border-custom-border-200 bg-custom-sidebar-background-100 p-3 shadow-2xl">
             <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-custom-text-400">Quality</div>

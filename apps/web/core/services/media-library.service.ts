@@ -158,6 +158,46 @@ export type TCustomPlaylistClip = {
   title: string;
 };
 
+export type TCustomPlaylistAnnotationTool = "text" | "rectangle" | "ellipse" | "line" | "arrow" | "image" | "pen";
+
+export type TCustomPlaylistAnnotationPoint = {
+  x: number;
+  y: number;
+};
+
+export type TCustomPlaylistAnnotationStrokeStyle = "solid" | "dotted";
+
+export type TCustomPlaylistAnnotationStyle = {
+  [key: string]: boolean | number | string | null | undefined;
+  backgroundColor?: string;
+  color?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: number | string;
+  opacity?: number;
+  stroke?: string;
+  strokeStyle?: TCustomPlaylistAnnotationStrokeStyle;
+  strokeWidth?: number;
+};
+
+export type TCustomPlaylistAnnotation = {
+  content?: string;
+  createdAt?: string;
+  endTime: number;
+  height?: number;
+  id: string;
+  points?: TCustomPlaylistAnnotationPoint[];
+  rotation?: number;
+  startTime: number;
+  style?: TCustomPlaylistAnnotationStyle;
+  title?: string;
+  trackIndex?: number;
+  type: TCustomPlaylistAnnotationTool;
+  width?: number;
+  x: number;
+  y: number;
+};
+
 type TCustomPlaylistPayload = {
   event_id: number;
   name: string;

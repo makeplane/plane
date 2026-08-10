@@ -7,6 +7,9 @@ export const PLAYER_STYLE = `
                     position: relative;
                     z-index: 1;
                   }
+                  .media-player .video-js .vjs-tech {
+                    object-fit: contain;
+                  }
                   .media-player .video-js .vjs-control-bar {
                     display: flex;
                     align-items: center;

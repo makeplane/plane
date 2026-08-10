@@ -9,11 +9,13 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type {
   TCustomPlaylist,
+  TCustomPlaylistAnnotation,
   TCustomPlaylistClip,
   TCustomPlaylistUpdatePayload,
 } from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
 import { RosterService } from "@/services/roster.service";
+import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
@@ -129,6 +131,7 @@ export const SgEventDetailPage = ({
     data: sgMediaPayload,
     error: sgMediaError,
     isLoading: isMediaLoading,
+    mutate: mutateSgMediaPayload,
   } = useSWR(
     workspaceSlug && projectId && (resolvedWorkItemId || mediaItem?.id)
       ? `SG_EVENT_MEDIA_${workspaceSlug}_${projectId}_${resolvedWorkItemId || mediaItem?.id}`
@@ -483,6 +486,48 @@ export const SgEventDetailPage = ({
     },
     [mediaLibraryService, mutateCustomPlaylists]
   );
+  const handleUpdateVideoAnnotations = useCallback(
+    async (videoItem: TMediaItem, annotations: TCustomPlaylistAnnotation[]) => {
+      if (!videoItem?.packageId || !videoItem.id) {
+        throw new Error("Uploaded video annotations can only be saved on media library videos.");
+      }
+
+      const nextMeta = {
+        ...(videoItem.meta ?? {}),
+        annotations,
+      };
+      await mediaLibraryService.updateManifestArtifacts(workspaceSlug, projectId, videoItem.packageId, {
+        artifact_id: videoItem.id,
+        artifact: {
+          meta: nextMeta,
+        },
+      });
+      void mutateSgMediaPayload(
+        (currentPayload) => {
+          if (!currentPayload) return currentPayload;
+
+          const updateItem = (currentItem: TMediaItem): TMediaItem =>
+            currentItem.id === videoItem.id && currentItem.packageId === videoItem.packageId
+              ? { ...currentItem, meta: nextMeta }
+              : currentItem;
+
+          return {
+            ...currentPayload,
+            eventItem: currentPayload.eventItem ? updateItem(currentPayload.eventItem) : currentPayload.eventItem,
+            mediaItems: currentPayload.mediaItems.map(updateItem),
+            videoItems: currentPayload.videoItems.map(updateItem),
+          };
+        },
+        { revalidate: false }
+      );
+
+      return {
+        ...videoItem,
+        meta: nextMeta,
+      };
+    },
+    [mediaLibraryService, mutateSgMediaPayload, projectId, workspaceSlug]
+  );
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
       ? kanavioTagsError.message
@@ -510,6 +555,7 @@ export const SgEventDetailPage = ({
       ? timelinePlaylistRows
       : selectedRows;
   const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
+  const canSavePlaybackAnnotations = Boolean(playbackItem?.packageId);
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
@@ -553,6 +599,7 @@ export const SgEventDetailPage = ({
                     item={playbackItem}
                     compactEmpty={!hasPlayableVideo}
                     onPlaybackTimeChange={handlePlaybackTimeChange}
+                    onUpdateAnnotations={canSavePlaybackAnnotations ? handleUpdateVideoAnnotations : undefined}
                     seekRequestId={pendingSeekRequestId}
                     seekToSeconds={pendingSeekSeconds}
                   />
@@ -612,6 +659,7 @@ export const SgEventDetailPage = ({
                         item={playbackItem}
                         compactEmpty={!hasPlayableVideo}
                         onPlaybackTimeChange={handlePlaybackTimeChange}
+                        onUpdateAnnotations={canSavePlaybackAnnotations ? handleUpdateVideoAnnotations : undefined}
                         seekRequestId={pendingSeekRequestId}
                         seekToSeconds={pendingSeekSeconds}
                       />
