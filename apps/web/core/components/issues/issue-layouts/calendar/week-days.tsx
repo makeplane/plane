@@ -40,7 +40,8 @@ type Props = {
     issueId: string | undefined,
     issueProjectId: string | undefined,
     sourceDate: string | undefined,
-    destinationDate: string | undefined
+    destinationDate: string | undefined,
+    destinationHour?: number
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;

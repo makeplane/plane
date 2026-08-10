@@ -6,7 +6,6 @@
 
 import type { FC } from "react";
 import { useCallback, useEffect } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -160,36 +159,12 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
         setToast({
           title: "Error!",
           type: TOAST_TYPE.ERROR,
-          message: err?.detail ?? "Failed to perform this action",
+          message: err?.detail ?? err?.message ?? "Failed to perform this action",
         });
       });
     },
     [issueMap, updateIssue, updateIssuePlan, workspaceSlug, storeType, isProfileCalendar]
   );
-
-  useEffect(() => {
-    return monitorForElements({
-      onDrop({ source, location }) {
-        const destination = location.current.dropTargets.find((target) => typeof target.data?.date === "string");
-        if (!destination) return;
-
-        const sourceData = source.data as { id?: string; date?: string };
-        if (!sourceData?.id || !sourceData?.date) return;
-
-        const issueDetails = issueMap?.[sourceData.id];
-        const destinationHour =
-          typeof destination.data?.hour === "number" ? (destination.data.hour as number) : undefined;
-
-        void handleDragAndDrop(
-          sourceData.id,
-          issueDetails?.project_id ?? undefined,
-          sourceData.date,
-          destination.data.date as string,
-          destinationHour
-        );
-      },
-    });
-  }, [handleDragAndDrop, issueMap]);
 
   const loadMoreIssues = useCallback(
     (dateString: string) => {
@@ -200,20 +175,23 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
 
   const getPaginationData = useCallback(
     (groupId: string | undefined) => issues?.getPaginationData(groupId, undefined),
-    [issues?.getPaginationData]
+    [issues]
   );
 
   const getGroupIssueCount = useCallback(
     (groupId: string | undefined) => issues?.getGroupIssueCount(groupId, undefined, false),
-    [issues?.getGroupIssueCount]
+    [issues]
   );
 
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       if (!enableInlineEditing) return false;
 
+      // Own-profile personal plans only require workspace access (API: UserIssuePlan),
+      // not project MEMBER/ADMIN on every issue's project.
       if (isProfileCalendar) {
         if (!profileUserId || currentUser?.id !== profileUserId) return false;
+        return true;
       }
 
       if (canEditPropertiesBasedOnProject) {

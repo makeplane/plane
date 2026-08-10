@@ -14,7 +14,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import Issue, Project, ProjectMember, User, UserIssuePlan
+from plane.db.models import Issue, IssueAssignee, Project, ProjectMember, User, UserIssuePlan
 
 
 def _make_user(email: str) -> User:
@@ -50,7 +50,12 @@ def project_with_assigned_issue(workspace, create_user):
     )
     _add_project_member(project, create_user, role=20)
     project._issue = _make_issue(project, create_user, name="Planned work item")
-    project._issue.assignees.add(create_user)
+    IssueAssignee.objects.create(
+        issue=project._issue,
+        assignee=create_user,
+        project=project,
+        workspace=project.workspace,
+    )
     return project
 
 
@@ -119,7 +124,26 @@ class TestWorkspaceUserProfileIssuesPlannedGrouping:
         )
 
         assert response.status_code == status.HTTP_200_OK
-        grouped_results = response.data["grouped_results"]
+        grouped_results = response.data["results"]
         assert "2026-08-12" in grouped_results
         issue_payload = grouped_results["2026-08-12"]["results"][0]
         assert issue_payload["planned_at"] is not None
+
+    def test_planned_at_range_includes_unscheduled_issues(self, workspace, project_with_assigned_issue, create_user):
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+        issue = project_with_assigned_issue._issue
+
+        response = client.get(
+            _user_profile_issues_url(workspace.slug, create_user.id),
+            {
+                "group_by": "planned_at",
+                "assignees": str(create_user.id),
+                "planned_at": "2026-08-01;after,2026-08-31;before",
+            },
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        grouped_results = response.data["results"]
+        assert "None" in grouped_results
+        assert grouped_results["None"]["results"][0]["id"] == issue.id

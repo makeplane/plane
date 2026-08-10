@@ -4,10 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import { setHours, setMinutes, parseISO } from "date-fns";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+import type { IPragmaticDropPayload } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
+
+export const CALENDAR_DAY_DROP_TYPE = "CALENDAR_DAY";
+export const CALENDAR_ISSUE_DRAG_TYPE = "CALENDAR_ISSUE";
+
+export type CalendarDropLocation = {
+  id: string;
+  date: string;
+  hour?: number;
+};
 
 export type CalendarDragDropOptions = {
   storeType?: EIssuesStoreType;
@@ -20,6 +29,66 @@ export type CalendarDragDropOptions = {
   existingPlannedAt?: string | null;
 };
 
+/**
+ * Resolve the drag source like kanban columns: issue id from the draggable,
+ * date/group from the drop target that contained the card when the drag started.
+ */
+export const getCalendarSourceFromDropPayload = (payload: IPragmaticDropPayload): CalendarDropLocation | undefined => {
+  const sourceIssueData = payload.source?.data;
+  let sourceDayData: Record<string, unknown> | undefined;
+
+  for (const dropTarget of payload.location?.initial?.dropTargets ?? []) {
+    const dropTargetData = dropTarget?.data;
+    if (!dropTargetData) continue;
+    if (dropTargetData.type === CALENDAR_DAY_DROP_TYPE) {
+      sourceDayData = dropTargetData as Record<string, unknown>;
+    }
+  }
+
+  const issueId = sourceIssueData?.id as string | undefined;
+  const dateFromTarget = sourceDayData?.date as string | undefined;
+  const dateFromSource = sourceIssueData?.date as string | undefined;
+  const date = dateFromTarget ?? dateFromSource;
+
+  if (!issueId || date === undefined) return;
+
+  return {
+    id: issueId,
+    date,
+    hour: typeof sourceDayData?.hour === "number" ? sourceDayData.hour : undefined,
+  };
+};
+
+/**
+ * Resolve the drop destination from current drop targets (innermost CALENDAR_DAY wins).
+ */
+export const getCalendarDestinationFromDropPayload = (
+  payload: IPragmaticDropPayload
+): Omit<CalendarDropLocation, "id"> | undefined => {
+  let destinationDayData: Record<string, unknown> | undefined;
+
+  for (const dropTarget of payload.location?.current?.dropTargets ?? []) {
+    const dropTargetData = dropTarget?.data;
+    if (!dropTargetData) continue;
+    if (dropTargetData.type === CALENDAR_DAY_DROP_TYPE) {
+      destinationDayData = dropTargetData as Record<string, unknown>;
+    }
+  }
+
+  const date = destinationDayData?.date as string | undefined;
+  if (date === undefined) return;
+
+  return {
+    date,
+    hour: typeof destinationDayData?.hour === "number" ? destinationDayData.hour : undefined,
+  };
+};
+
+/**
+ * Build a planned_at ISO string whose yyyy-MM-dd prefix matches the calendar tile key.
+ * Using UTC wall-clock on the destination date avoids local→UTC day shifts that made
+ * optimistic group keys miss the drop target day.
+ */
 const buildPlannedAtForDrop = (
   destinationDate: string,
   existingPlannedAt?: string | null,
@@ -28,18 +97,19 @@ const buildPlannedAtForDrop = (
   const normalizedDestinationDate = renderFormattedPayloadDate(destinationDate);
   if (!normalizedDestinationDate) return new Date().toISOString();
 
-  const dayBase = parseISO(`${normalizedDestinationDate}T00:00:00`);
-
   if (destinationHour !== undefined) {
-    return setMinutes(setHours(dayBase, destinationHour), 0).toISOString();
+    const hour = Math.min(Math.max(destinationHour, 0), 23).toString().padStart(2, "0");
+    return `${normalizedDestinationDate}T${hour}:00:00.000Z`;
   }
 
   if (existingPlannedAt) {
-    const existing = parseISO(existingPlannedAt);
-    return setMinutes(setHours(dayBase, existing.getHours()), existing.getMinutes()).toISOString();
+    const timePortion = existingPlannedAt.includes("T")
+      ? existingPlannedAt.slice(existingPlannedAt.indexOf("T") + 1)
+      : "09:00:00.000Z";
+    return `${normalizedDestinationDate}T${timePortion}`;
   }
 
-  return setMinutes(setHours(dayBase, 9), 0).toISOString();
+  return `${normalizedDestinationDate}T09:00:00.000Z`;
 };
 
 export const handleDragDrop = async (
@@ -52,10 +122,14 @@ export const handleDragDrop = async (
   options?: CalendarDragDropOptions,
   destinationHour?: number
 ) => {
-  if (!workspaceSlug) return;
+  if (!workspaceSlug) {
+    throw new Error("Workspace is required to update the work item plan.");
+  }
 
   if (options?.storeType === EIssuesStoreType.PROFILE) {
-    if (!options.updateIssuePlan) return;
+    if (!options.updateIssuePlan) {
+      throw new Error("Unable to update the personal plan for this work item.");
+    }
 
     if (destinationDate === "None") {
       if (sourceDate === "None") return;
@@ -63,16 +137,14 @@ export const handleDragDrop = async (
     }
 
     const normalizedDestinationDate = renderFormattedPayloadDate(destinationDate);
-    if (!normalizedDestinationDate) return;
+    if (!normalizedDestinationDate) {
+      throw new Error("Invalid destination date for scheduling.");
+    }
 
     const normalizedSourceDate = sourceDate === "None" ? null : renderFormattedPayloadDate(sourceDate);
     if (normalizedSourceDate === normalizedDestinationDate && destinationHour === undefined) return;
 
-    const plannedAt = buildPlannedAtForDrop(
-      normalizedDestinationDate,
-      options.existingPlannedAt,
-      destinationHour
-    );
+    const plannedAt = buildPlannedAtForDrop(normalizedDestinationDate, options.existingPlannedAt, destinationHour);
 
     return options.updateIssuePlan(workspaceSlug, issueId, { planned_at: plannedAt });
   }

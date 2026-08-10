@@ -28,7 +28,7 @@ import type {
 } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
-import { convertToISODateString } from "@plane/utils";
+import { convertToISODateString, renderFormattedPayloadDate } from "@plane/utils";
 // plane web imports
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -1674,7 +1674,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     if (groupByKey === "planned_at") {
       if (!issueObject.planned_at) return ["None"];
-      return [issueObject.planned_at.slice(0, 10)];
+      // Match calendar day-tile keys (yyyy-MM-dd), not a raw UTC ISO prefix that can
+      // diverge when planned_at was built from local wall-clock times.
+      return [renderFormattedPayloadDate(issueObject.planned_at) ?? issueObject.planned_at.slice(0, 10)];
     }
 
     return [value];

@@ -69,7 +69,8 @@ type Props = {
     issueId: string | undefined,
     issueProjectId: string | undefined,
     sourceDate: string | undefined,
-    destinationDate: string | undefined
+    destinationDate: string | undefined,
+    destinationHour?: number
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
@@ -134,7 +135,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
 
   if (!calendarPayload || !formattedDatePayload)
     return (
@@ -167,13 +168,13 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
               {layout === "month" && (
                 <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
                   {allWeeksOfActiveMonth &&
-                    Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
+                    Object.entries(allWeeksOfActiveMonth).map(([weekKey, week]: [string, ICalendarWeek]) => (
                       <CalendarWeekDays
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                         handleDragAndDrop={handleDragAndDrop}
                         issuesFilterStore={issuesFilterStore}
-                        key={weekIndex}
+                        key={weekKey}
                         week={week}
                         issues={issues}
                         groupedIssueIds={groupedIssueIds}
@@ -224,13 +225,15 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                   canEditProperties={canEditProperties}
                   isEpic={isEpic}
                   showDueDateBadge={isProfileCalendar}
+                  handleDragAndDrop={handleDragAndDrop}
                 />
               )}
             </div>
 
-            {isProfileCalendar && layout !== "hours" && (
+            {isProfileCalendar && (
               <CalendarUnscheduledStrip
                 groupedIssueIds={groupedIssueIds}
+                issues={issues}
                 quickActions={quickActions}
                 loadMoreIssues={loadMoreIssues}
                 getPaginationData={getPaginationData}
@@ -238,6 +241,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                 readOnly={readOnly}
                 canEditProperties={canEditProperties}
                 isEpic={isEpic}
+                handleDragAndDrop={handleDragAndDrop}
               />
             )}
 

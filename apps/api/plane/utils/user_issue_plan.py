@@ -5,7 +5,7 @@
 import zoneinfo
 from datetime import datetime
 
-from django.db.models import Exists, OuterRef, QuerySet, Subquery
+from django.db.models import Exists, OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import TruncDate
 
 from plane.db.models import Issue, UserIssuePlan
@@ -90,9 +90,15 @@ def filter_issues_by_planned_at_range(
                 planned_at__lte=_local_date_end(value, user_tz),
             )
 
-    return queryset.filter(
-        id__in=plan_queryset.values("issue_id"),
+    unscheduled_issues = ~Exists(
+        UserIssuePlan.objects.filter(
+            issue_id=OuterRef("id"),
+            user_id=profile_user_id,
+            deleted_at__isnull=True,
+        )
     )
+
+    return queryset.filter(Q(id__in=plan_queryset.values("issue_id")) | unscheduled_issues)
 
 
 def _local_date_start(date_value, user_tz):

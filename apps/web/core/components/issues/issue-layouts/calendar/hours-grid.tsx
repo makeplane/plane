@@ -15,9 +15,23 @@ import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlockRoot } from "./issue-block-root";
+import {
+  CALENDAR_DAY_DROP_TYPE,
+  CALENDAR_ISSUE_DRAG_TYPE,
+  getCalendarDestinationFromDropPayload,
+  getCalendarSourceFromDropPayload,
+} from "./utils";
 
 const WORKDAY_START_HOUR = 8;
 const WORKDAY_END_HOUR = 18;
+
+type HandleDragAndDrop = (
+  issueId: string | undefined,
+  issueProjectId: string | undefined,
+  sourceDate: string | undefined,
+  destinationDate: string | undefined,
+  destinationHour?: number
+) => Promise<void>;
 
 type Props = {
   issues: TIssueMap | undefined;
@@ -26,19 +40,33 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  handleDragAndDrop: HandleDragAndDrop;
 };
 
 const CalendarHourRow = observer(function CalendarHourRow(props: {
   dateString: string;
   hour: number;
   issues: TIssue[];
+  issuesMap: TIssueMap | undefined;
   quickActions: TRenderQuickActions;
   readOnly?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  handleDragAndDrop: HandleDragAndDrop;
 }) {
-  const { dateString, hour, issues, quickActions, readOnly, canEditProperties, isEpic, showDueDateBadge } = props;
+  const {
+    dateString,
+    hour,
+    issues,
+    issuesMap,
+    quickActions,
+    readOnly,
+    canEditProperties,
+    isEpic,
+    showDueDateBadge,
+    handleDragAndDrop,
+  } = props;
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const rowRef = useRef<HTMLDivElement | null>(null);
 
@@ -49,16 +77,30 @@ const CalendarHourRow = observer(function CalendarHourRow(props: {
     return combine(
       dropTargetForElements({
         element,
-        getData: () => ({ date: dateString, hour }),
+        canDrop: ({ source }) => source?.data?.type === CALENDAR_ISSUE_DRAG_TYPE,
+        getData: () => ({ date: dateString, hour, type: CALENDAR_DAY_DROP_TYPE }),
         onDragEnter: () => setIsDraggingOver(true),
         onDragLeave: () => setIsDraggingOver(false),
-        onDrop: ({ source }) => {
+        onDrop: (payload) => {
           setIsDraggingOver(false);
-          highlightIssueOnDrop(source?.element?.id, false);
+
+          const source = getCalendarSourceFromDropPayload(payload);
+          const destination = getCalendarDestinationFromDropPayload(payload);
+          if (!source || !destination) return;
+
+          void handleDragAndDrop(
+            source.id,
+            issuesMap?.[source.id]?.project_id ?? undefined,
+            source.date,
+            destination.date,
+            destination.hour ?? hour
+          );
+
+          highlightIssueOnDrop(payload.source?.element?.id, false);
         },
       })
     );
-  }, [dateString, hour]);
+  }, [dateString, hour, handleDragAndDrop, issuesMap]);
 
   return (
     <div className="grid grid-cols-[56px_1fr] border-b border-subtle-1">
@@ -89,7 +131,7 @@ const CalendarHourRow = observer(function CalendarHourRow(props: {
 });
 
 export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Props) {
-  const { issues, quickActions, readOnly, canEditProperties, isEpic, showDueDateBadge } = props;
+  const { issues, quickActions, readOnly, canEditProperties, isEpic, showDueDateBadge, handleDragAndDrop } = props;
   const issueCalendarView = useCalendarView();
   const activeHoursDate = issueCalendarView.calendarFilters.activeHoursDate;
   const dateString = renderFormattedPayloadDate(activeHoursDate);
@@ -123,11 +165,13 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
           dateString={dateString}
           hour={hour}
           issues={issuesByHour[hour] ?? []}
+          issuesMap={issues}
           quickActions={quickActions}
           readOnly={readOnly}
           canEditProperties={canEditProperties}
           isEpic={isEpic}
           showDueDateBadge={showDueDateBadge}
+          handleDragAndDrop={handleDragAndDrop}
         />
       ))}
     </div>

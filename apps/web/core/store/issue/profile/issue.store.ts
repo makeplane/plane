@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import { action, observable, makeObservable, computed, override, runInAction } from "mobx";
 // base class
 import type {
   TIssue,
@@ -82,7 +82,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       currentView: observable.ref,
       // computed
       viewFlags: computed,
-      groupBy: computed,
+      groupBy: override,
       // action
       setViewId: action.bound,
       fetchIssues: action,
@@ -95,7 +95,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     this.userService = new UserService();
   }
 
-  get groupBy() {
+  override get groupBy() {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters || !displayFilters?.layout) return;
 
@@ -105,9 +105,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       return "planned_at";
     }
 
-    return [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout)
-      ? displayFilters?.group_by
-      : undefined;
+    return [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout) ? displayFilters?.group_by : undefined;
   }
 
   get viewFlags() {
@@ -256,7 +254,9 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     data: { planned_at?: string | null; planned_duration_minutes?: number }
   ) => {
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
-    if (!issueBeforeUpdate) return;
+    if (!issueBeforeUpdate) {
+      throw new Error("Work item not found. Unable to update the personal plan.");
+    }
 
     const updatedIssue = {
       ...issueBeforeUpdate,

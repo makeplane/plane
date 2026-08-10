@@ -10,7 +10,6 @@ import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Popover } from "@plane/propel/popover";
 import type { TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
@@ -25,7 +24,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
-import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
 
@@ -96,97 +94,80 @@ export const CalendarIssueBlock = observer(
       isArchived: !!issue?.archived_at,
     });
 
+    // Match board/kanban: ControlLink is the Pragmatic drag element (via forwarded ref).
+    // Do not wrap it in Popover.Button — that intercepts pointer events and breaks DnD.
     return (
-      <Popover delay={100} openOnHover>
-        <Popover.Button
-          className="w-full"
-          render={
-            <ControlLink
-              id={`issue-${issue.id}`}
-              href={workItemLink}
-              onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
-              disabled={!!issue?.tempId || isMobile}
-              ref={ref}
-            >
-              <>
-                {issue?.tempId !== undefined && (
-                  <div className="absolute top-0 left-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
-                )}
+      <ControlLink
+        id={`issue-${issue.id}`}
+        href={workItemLink}
+        onClick={() => handleIssuePeekOverview(issue)}
+        className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
+        disabled={!!issue?.tempId || isMobile}
+        draggable={false}
+        ref={ref}
+      >
+        <>
+          {issue?.tempId !== undefined && (
+            <div className="absolute top-0 left-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
+          )}
 
-                <div
-                  ref={blockRef}
-                  className={cn(
-                    "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
-                    {
-                      "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
-                      "bg-surface-1 hover:bg-surface-2": !isDragging,
-                      "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
-                    }
-                  )}
-                >
-                  <div className="flex h-full items-center gap-1.5 truncate">
-                    <span
-                      className="h-full w-0.5 flex-shrink-0 rounded-sm"
-                      style={{
-                        backgroundColor: stateColor,
-                      }}
-                    />
-                    {issue.project_id && (
-                      <IssueIdentifier
-                        issueId={issue.id}
-                        projectId={issue.project_id}
-                        size="xs"
-                        variant="tertiary"
-                        displayProperties={issuesFilter?.issueFilters?.displayProperties}
-                      />
-                    )}
-                    <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
-                    {showDueDateBadge && issue.target_date && (
-                      <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
-                        {issue.target_date}
-                      </span>
-                    )}
-                  </div>
-                  {/* Wrapper exists only to stop clicks reaching the ControlLink; the
-                      quick-action menu inside carries its own interactive semantics. */}
-                  <div
-                    role="presentation"
-                    className={cn("size-5 flex-shrink-0", {
-                      "hidden group-hover/calendar-block:block": !isMobile,
-                      block: isMenuActive,
-                    })}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    {quickActions({
-                      issue,
-                      parentRef: blockRef,
-                      customActionButton,
-                      placement,
-                    })}
-                  </div>
-                </div>
-              </>
-            </ControlLink>
-          }
-        />
-        <Popover.Panel side="bottom" align="start">
-          <>
-            {issue.project_id && (
-              <WorkItemPreviewCard
-                projectId={issue.project_id}
-                stateDetails={{
-                  id: issue.state_id ?? undefined,
-                }}
-                workItem={issue}
-              />
+          <div
+            ref={blockRef}
+            className={cn(
+              "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
+              {
+                "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
+                "bg-surface-1 hover:bg-surface-2": !isDragging,
+                "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
+              }
             )}
-          </>
-        </Popover.Panel>
-      </Popover>
+          >
+            <div className="flex h-full items-center gap-1.5 truncate">
+              <span
+                className="h-full w-0.5 flex-shrink-0 rounded-sm"
+                style={{
+                  backgroundColor: stateColor,
+                }}
+              />
+              {issue.project_id && (
+                <IssueIdentifier
+                  issueId={issue.id}
+                  projectId={issue.project_id}
+                  size="xs"
+                  variant="tertiary"
+                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                />
+              )}
+              <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
+              {showDueDateBadge && issue.target_date && (
+                <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                  {issue.target_date}
+                </span>
+              )}
+            </div>
+            {/* Wrapper exists only to stop clicks reaching the ControlLink; the
+                quick-action menu inside carries its own interactive semantics. */}
+            <div
+              role="presentation"
+              className={cn("size-5 flex-shrink-0", {
+                "hidden group-hover/calendar-block:block": !isMobile,
+                block: isMenuActive,
+              })}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              {quickActions({
+                issue,
+                parentRef: blockRef,
+                customActionButton,
+                placement,
+              })}
+            </div>
+          </div>
+        </>
+      </ControlLink>
     );
   })
 );
