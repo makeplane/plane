@@ -21,7 +21,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/manifest/",
-        MediaManifestDetailAPIEndpoint.as_view(http_method_names=["get"]),
+        MediaManifestDetailAPIEndpoint.as_view(http_method_names=["get", "patch"]),
         name="media-library-manifest",
     ),
     path(
