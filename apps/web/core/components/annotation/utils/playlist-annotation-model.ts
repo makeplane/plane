@@ -399,6 +399,18 @@ const getPointToSegmentDistance = (
   return getPointDistance(point, closestPoint);
 };
 
+const isPointNearPolyline = (point: TCustomPlaylistAnnotationPoint, points: TCustomPlaylistAnnotationPoint[]) => {
+  if (points.length === 0) return false;
+  if (points.length === 1) return getPointDistance(point, points[0]) <= 18;
+
+  return points.some((currentPoint, index) => {
+    const nextPoint = points[index + 1];
+    if (!nextPoint) return false;
+
+    return getPointToSegmentDistance(point, currentPoint, nextPoint) <= 18;
+  });
+};
+
 const getResizeHandlePoint = (bounds: AnnotationBounds, handle: AnnotationBoxResizeHandle) => {
   const right = bounds.x + bounds.width;
   const bottom = bounds.y + bounds.height;
@@ -584,6 +596,57 @@ const isPointInAnnotation = (point: TCustomPlaylistAnnotationPoint, annotation: 
   );
 };
 
+const isPointOnAnnotationEdge = (point: TCustomPlaylistAnnotationPoint, annotation: TCustomPlaylistAnnotation) => {
+  if (isLinearAnnotation(annotation)) {
+    const endpoints = getLinearAnnotationEndpoints(annotation);
+    return getPointToSegmentDistance(point, endpoints.start, endpoints.end) <= 18;
+  }
+
+  if (annotation.type === "pen") {
+    return isPointNearPolyline(point, annotation.points ?? []);
+  }
+
+  const bounds = getAnnotationBounds(annotation);
+  const center = getAnnotationCenter(annotation);
+  if (!bounds || !center) return false;
+
+  const hitPadding = annotation.type === "text" ? 12 : 18;
+  const unrotatedPoint = rotatePointAroundCenter(point, center, -getAnnotationRotation(annotation));
+  const isInsidePaddedBounds =
+    unrotatedPoint.x >= bounds.x - hitPadding &&
+    unrotatedPoint.x <= bounds.x + bounds.width + hitPadding &&
+    unrotatedPoint.y >= bounds.y - hitPadding &&
+    unrotatedPoint.y <= bounds.y + bounds.height + hitPadding;
+  if (!isInsidePaddedBounds) return false;
+
+  if (annotation.type === "ellipse") {
+    const radiusX = bounds.width / 2;
+    const radiusY = bounds.height / 2;
+    if (radiusX <= 0 || radiusY <= 0) return false;
+
+    const localX = unrotatedPoint.x - (bounds.x + radiusX);
+    const localY = unrotatedPoint.y - (bounds.y + radiusY);
+    const ellipseAngle = Math.atan2(localY / radiusY, localX / radiusX);
+    const edgePoint = {
+      x: radiusX * Math.cos(ellipseAngle),
+      y: radiusY * Math.sin(ellipseAngle),
+    };
+
+    return getPointDistance({ x: localX, y: localY }, edgePoint) <= hitPadding;
+  }
+
+  const right = bounds.x + bounds.width;
+  const bottom = bounds.y + bounds.height;
+  const distanceToBoxEdge = Math.min(
+    Math.abs(unrotatedPoint.x - bounds.x),
+    Math.abs(unrotatedPoint.x - right),
+    Math.abs(unrotatedPoint.y - bounds.y),
+    Math.abs(unrotatedPoint.y - bottom)
+  );
+
+  return distanceToBoxEdge <= hitPadding;
+};
+
 const moveAnnotation = (
   annotation: TCustomPlaylistAnnotation,
   deltaX: number,
@@ -626,6 +689,7 @@ export {
   isAnnotationValid,
   isLinearAnnotation,
   isPointInAnnotation,
+  isPointOnAnnotationEdge,
   moveAnnotation,
   normalizeAnnotationBox,
   normalizeRotation,

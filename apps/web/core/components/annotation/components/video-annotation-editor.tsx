@@ -45,6 +45,7 @@ export const VideoAnnotationEditor = ({
   isPlaying = false,
   modeResetKey,
   onModeChange,
+  onRegisterSaveHandler,
   onRequestPause,
   onSave,
   onSeek,
@@ -270,7 +271,8 @@ export const VideoAnnotationEditor = ({
   );
 
   const handleSaveAnnotations = useCallback(async () => {
-    if (isSavingAnnotations || !hasAnnotationChanges) return;
+    if (isSavingAnnotations) return false;
+    if (!hasAnnotationChanges) return true;
 
     setIsSavingAnnotations(true);
     try {
@@ -291,16 +293,28 @@ export const VideoAnnotationEditor = ({
         title: "Annotations saved",
         message: "The video annotations were updated.",
       });
+      return true;
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Save annotations failed",
         message: "Unable to save video annotations. Please try again.",
       });
+      return false;
     } finally {
       setIsSavingAnnotations(false);
     }
   }, [annotations, hasAnnotationChanges, isSavingAnnotations, minimumVisibleAnnotationDurationSeconds, onSave]);
+
+  useEffect(() => {
+    if (!onRegisterSaveHandler) return;
+
+    onRegisterSaveHandler(canEdit ? handleSaveAnnotations : null);
+
+    return () => {
+      onRegisterSaveHandler(null);
+    };
+  }, [canEdit, handleSaveAnnotations, onRegisterSaveHandler]);
 
   const timelineContent =
     showTimeline && timelineHostElement ? (
@@ -311,6 +325,7 @@ export const VideoAnnotationEditor = ({
         canZoomTimelineOut={canZoomTimelineOut}
         editingTimelineMoment={editingTimelineMoment}
         effectiveCurrentTime={effectiveCurrentTime}
+        isPlaying={isPlaying}
         onBeginEditingTimelineMoment={beginEditingTimelineMoment}
         onCommitTimelineMomentTitle={commitTimelineMomentTitle}
         onEditingTimelineMomentChange={setEditingTimelineMoment}
@@ -326,6 +341,7 @@ export const VideoAnnotationEditor = ({
         onTimelineSeek={handleTimelineSeek}
         onToggleTimelineMoment={toggleTimelineMoment}
         openTimelineMomentIds={openTimelineMomentIds}
+        playbackRate={playbackRate}
         sortedAnnotations={sortedAnnotations}
         timelineContentWidthPx={timelineContentWidthPx}
         timelineDurationSeconds={timelineDurationSeconds}

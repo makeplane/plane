@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { Check, Download, FileText, FileWarning, Pencil } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ImageFullScreenModal } from "@plane/editor";
+import { Button, EModalWidth, ModalCore } from "@plane/ui";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import {
   buildDownloadUrl,
@@ -29,7 +30,7 @@ type TMediaDetailPreviewProps = {
   onOverlayToggle: () => void;
   onOverlaySeek: (delta: number) => void;
   onOpenVideoAnnotationWorkspace?: () => void;
-  onCloseVideoAnnotationWorkspace?: () => void;
+  onCloseVideoAnnotationWorkspace?: () => boolean | Promise<boolean>;
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
   qualityOptions: TQualityOption[];
@@ -118,6 +119,8 @@ export const MediaDetailPreview = ({
   const [isImagePreviewBroken, setIsImagePreviewBroken] = useState(false);
   const [isVideoPreviewBroken, setIsVideoPreviewBroken] = useState(false);
   const [isDocumentPreviewBroken, setIsDocumentPreviewBroken] = useState(false);
+  const [isVideoAnnotationDoneModalOpen, setIsVideoAnnotationDoneModalOpen] = useState(false);
+  const [isCompletingVideoAnnotation, setIsCompletingVideoAnnotation] = useState(false);
   const [viewport, setViewport] = useState(() => {
     if (typeof window === "undefined") {
       return { width: 0, height: 0 };
@@ -143,6 +146,22 @@ export const MediaDetailPreview = ({
     },
     [onVideoAnnotationPropertiesElementChange]
   );
+  const handleRequestCloseVideoAnnotationWorkspace = useCallback(() => {
+    setIsVideoAnnotationDoneModalOpen(true);
+  }, []);
+  const handleConfirmCloseVideoAnnotationWorkspace = useCallback(async () => {
+    if (!onCloseVideoAnnotationWorkspace || isCompletingVideoAnnotation) return;
+
+    setIsCompletingVideoAnnotation(true);
+    try {
+      const didClose = await onCloseVideoAnnotationWorkspace();
+      if (didClose !== false) {
+        setIsVideoAnnotationDoneModalOpen(false);
+      }
+    } finally {
+      setIsCompletingVideoAnnotation(false);
+    }
+  }, [isCompletingVideoAnnotation, onCloseVideoAnnotationWorkspace]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -158,6 +177,13 @@ export const MediaDetailPreview = ({
     setIsVideoPreviewBroken(false);
     setIsDocumentPreviewBroken(false);
   }, [effectiveDocumentSrc, effectiveImageSrc, item?.id, item?.videoSrc]);
+
+  useEffect(() => {
+    if (isVideoAnnotationWorkspaceOpen) return;
+
+    setIsVideoAnnotationDoneModalOpen(false);
+    setIsCompletingVideoAnnotation(false);
+  }, [isVideoAnnotationWorkspaceOpen]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -349,7 +375,7 @@ export const MediaDetailPreview = ({
               <div className="mb-2 flex h-11 w-full items-center justify-end rounded-lg border border-custom-border-200 bg-custom-background-100 px-3">
                 <button
                   type="button"
-                  onClick={onCloseVideoAnnotationWorkspace}
+                  onClick={handleRequestCloseVideoAnnotationWorkspace}
                   className={VIDEO_ANNOTATION_HEADER_ACTION_CLASS}
                   aria-label="Close annotation editor"
                   title="Close annotation editor"
@@ -600,6 +626,42 @@ export const MediaDetailPreview = ({
           width={`${modalWidth}px`}
         />
       ) : null}
+      <ModalCore
+        isOpen={isVideoAnnotationDoneModalOpen}
+        handleClose={() => {
+          if (isCompletingVideoAnnotation) return;
+          setIsVideoAnnotationDoneModalOpen(false);
+        }}
+        width={EModalWidth.XL}
+      >
+        <div className="flex flex-col gap-2 px-5 py-4">
+          <h3 className="text-lg font-medium text-custom-text-100">Done with annotations?</h3>
+          <p className="text-sm leading-5 text-custom-text-200">
+            Are you sure you are done with the annotated changes? Your annotation changes will be saved before leaving
+            the editor.
+          </p>
+        </div>
+        <div className="flex flex-col-reverse gap-2 border-t border-custom-border-200 px-5 py-4 sm:flex-row sm:justify-end">
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            onClick={() => setIsVideoAnnotationDoneModalOpen(false)}
+            disabled={isCompletingVideoAnnotation}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              void handleConfirmCloseVideoAnnotationWorkspace();
+            }}
+            loading={isCompletingVideoAnnotation}
+          >
+            Done
+          </Button>
+        </div>
+      </ModalCore>
     </>
   );
 };

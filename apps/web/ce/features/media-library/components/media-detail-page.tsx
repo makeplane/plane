@@ -137,6 +137,7 @@ const MediaDetailPage = () => {
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
+  const videoAnnotationSaveBeforeCloseRef = useRef<(() => Promise<boolean>) | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TPipCaptionMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
@@ -905,17 +906,27 @@ const MediaDetailPage = () => {
     setIsVideoAnnotationWorkspaceOpen(true);
     setVideoAnnotationWorkspaceActivationKey((currentValue) => currentValue + 1);
   }, []);
-  const handleCloseVideoAnnotationWorkspace = useCallback(() => {
+  const handleRegisterVideoAnnotationSaveHandler = useCallback((saveAnnotations: (() => Promise<boolean>) | null) => {
+    videoAnnotationSaveBeforeCloseRef.current = saveAnnotations;
+  }, []);
+  const handleCloseVideoAnnotationWorkspace = useCallback(async () => {
+    const saveAnnotations = videoAnnotationSaveBeforeCloseRef.current;
+    if (saveAnnotations) {
+      const canClose = await saveAnnotations();
+      if (!canClose) return false;
+    }
+
     const player = playerRef.current;
 
     setIsVideoAnnotationMode(false);
     player?.controls?.(true);
     if (shouldOpenVideoAnnotationWorkspaceFromQuery) {
       router.push(backHref);
-      return;
+      return true;
     }
 
     setIsVideoAnnotationWorkspaceOpen(false);
+    return true;
   }, [backHref, router, shouldOpenVideoAnnotationWorkspaceFromQuery]);
   const handleAnnotationModeChange = useCallback((enabled: boolean) => {
     setIsVideoAnnotationMode(enabled);
@@ -1155,6 +1166,7 @@ const MediaDetailPage = () => {
                     isPlaying={isPlaying}
                     modeResetKey={`${item.id}:${isFocusedVideoAnnotationWorkspace ? "open" : "closed"}`}
                     onModeChange={handleAnnotationModeChange}
+                    onRegisterSaveHandler={handleRegisterVideoAnnotationSaveHandler}
                     onRequestPause={handleAnnotationPause}
                     onSave={handleSaveVideoAnnotations}
                     onSeek={handleVideoTimelineSeek}

@@ -23,6 +23,7 @@ import {
   getAnnotationTimelineToolLabel,
   getTimelinePercent,
 } from "../utils/video-annotation-timeline";
+import { VideoAnnotationTimelinePlayhead } from "./video-annotation-timeline-playhead";
 
 type VideoAnnotationTimelinePanelProps = {
   activeAnnotationIds: Set<string>;
@@ -31,6 +32,7 @@ type VideoAnnotationTimelinePanelProps = {
   canZoomTimelineOut: boolean;
   editingTimelineMoment: { id: string; value: string } | null;
   effectiveCurrentTime: number;
+  isPlaying: boolean;
   onBeginEditingTimelineMoment: (moment: AnnotationTimelineMoment) => void;
   onCommitTimelineMomentTitle: (moment: AnnotationTimelineMoment, value: string) => void;
   onEditingTimelineMomentChange: (value: { id: string; value: string }) => void;
@@ -49,6 +51,7 @@ type VideoAnnotationTimelinePanelProps = {
   onStepTimelineZoom: (direction: "in" | "out") => void;
   onToggleTimelineMoment: (momentId: string) => void;
   openTimelineMomentIds: Set<string>;
+  playbackRate: number;
   sortedAnnotations: TCustomPlaylistAnnotation[];
   timelineContentWidthPx: number;
   timelineDurationSeconds: number;
@@ -67,6 +70,7 @@ export const VideoAnnotationTimelinePanel = ({
   canZoomTimelineOut,
   editingTimelineMoment,
   effectiveCurrentTime,
+  isPlaying,
   onBeginEditingTimelineMoment,
   onCommitTimelineMomentTitle,
   onEditingTimelineMomentChange,
@@ -82,6 +86,7 @@ export const VideoAnnotationTimelinePanel = ({
   onTimelineSeek,
   onToggleTimelineMoment,
   openTimelineMomentIds,
+  playbackRate,
   sortedAnnotations,
   timelineContentWidthPx,
   timelineDurationSeconds,
@@ -329,12 +334,13 @@ export const VideoAnnotationTimelinePanel = ({
             />
           ))}
 
-          <span
-            className="pointer-events-none absolute bottom-0 top-0 z-20 w-0 -translate-x-1/2 border-l-2 border-[#ef4444] drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]"
-            style={{ left: `${timelineProgressPercent}%` }}
-          >
-            <span className="absolute -top-px left-1/2 h-2 w-2.5 -translate-x-1/2 rounded-[2px] bg-[#ef4444]" />
-          </span>
+          <VideoAnnotationTimelinePlayhead
+            currentTime={effectiveCurrentTime}
+            durationSeconds={timelineDurationSeconds}
+            isPlaying={isPlaying}
+            playbackRate={playbackRate}
+            progressPercent={timelineProgressPercent}
+          />
 
           {annotationTimelineMoments.map((moment) => {
             const isMomentOpen = openTimelineMomentIds.has(moment.id);
