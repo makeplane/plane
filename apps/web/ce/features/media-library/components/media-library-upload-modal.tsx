@@ -592,7 +592,7 @@ export const MediaLibraryUploadModal = () => {
         packageId,
         artifact.name,
         {
-          encoding_profile: "adaptive-standard",
+          encoding_profile: "adaptive-1080p",
           generate_thumbnails: true,
         }
       );
@@ -661,6 +661,7 @@ export const MediaLibraryUploadModal = () => {
     const successCount = results.filter(
       (result): result is PromiseFulfilledResult<boolean> => result.status === "fulfilled" && result.value
     ).length;
+    const allUploadsCompleted = successCount === itemsToUpload.length;
 
     if (successCount > 0) {
       setToast({
@@ -669,6 +670,21 @@ export const MediaLibraryUploadModal = () => {
         message:
           successCount === 1 ? "File finished processing." : `${successCount} files finished uploading or processing.`,
       });
+    }
+
+    if (allUploadsCompleted) {
+      setUploads([]);
+      setIsDragging(false);
+      setSelectionError(null);
+      setIsWorkItemSelectorEnabled(false);
+      setMetaState(createDefaultMeta(currentUserId));
+      setSelectedWorkItem(null);
+      setWorkItemResults([]);
+      setIsWorkItemDetailsLoading(false);
+      setWorkItemQuery("");
+      setTagDraft("");
+      if (inputRef.current) inputRef.current.value = "";
+      closeUpload();
     }
   };
 
@@ -712,7 +728,7 @@ export const MediaLibraryUploadModal = () => {
               item.packageId,
               item.artifact.name,
               {
-                encoding_profile: "adaptive-standard",
+                encoding_profile: "adaptive-1080p",
                 generate_thumbnails: true,
               }
             );
@@ -842,7 +858,7 @@ export const MediaLibraryUploadModal = () => {
       : hasActiveUploads
         ? `Uploading ${Math.max(1, activeIndex + 1)} of ${uploads.length}`
         : `${completedUploads.length} of ${uploads.length} completed`;
-  const uploadButtonLabel = hasActiveUploads ? "Uploading..." : queuedUploads.length > 0 ? "Save & Upload" : "Save";
+  const uploadButtonLabel = hasActiveUploads ? "Uploading..." : "Save & Upload";
 
   if (!isUploadOpen) return null;
 
@@ -1097,9 +1113,6 @@ export const MediaLibraryUploadModal = () => {
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
-            </Button>
-            <Button variant="neutral-primary" size="sm" disabled={hasActiveUploads} onClick={handleClose}>
-              Save
             </Button>
             <Button
               variant="primary"

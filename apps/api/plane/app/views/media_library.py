@@ -1146,7 +1146,7 @@ class MediaArtifactTranscodeAPIView(BaseAPIView):
             if upstream_status < 400 and str(upstream_payload.get("status") or "") not in _TRANSCODE_TERMINAL_STATUSES:
                 return Response(upstream_payload, status=status.HTTP_200_OK)
 
-        encoding_profile = str(request.data.get("encoding_profile") or "adaptive-standard").strip()
+        encoding_profile = str(request.data.get("encoding_profile") or "adaptive-1080p").strip()
         generate_thumbnails = bool(request.data.get("generate_thumbnails", True))
         asset_id = _transcode_asset_id(project_id_str, package_id, artifact_id)
         payload = {
