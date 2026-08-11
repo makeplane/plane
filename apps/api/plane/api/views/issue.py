@@ -47,6 +47,7 @@ from plane.api.serializers import (
     IssueCommentSerializer,
     IssueLinkSerializer,
     IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
     IssueSerializer,
@@ -88,7 +89,7 @@ from plane.utils.order_queryset import (
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_relation_mapper import get_actual_relation, get_inverse_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2587,3 +2588,96 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    serializer_class = IssueRelationRemoveSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove an existing relationship between two work items. The relation is matched in either direction, so the same request works whether it was created from this work item or from the related one.",  # noqa E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Remove relation",
+                    value={"related_issue": "550e8400-e29b-41d4-a716-446655440000"},
+                )
+            ],
+        ),
+        responses={
+            204: OpenApiResponse(description="Work item relation removed successfully"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove work item relation
+
+        Remove the relation between a work item and a related work item.
+        Automatically tracks relation removal activity for both work items.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationRemoveSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue_id = serializer.validated_data["related_issue"]
+
+        # The work item has to live in the project the request is scoped to,
+        # otherwise membership of that project would not authorize the removal.
+        if not Issue.objects.filter(pk=issue_id, project_id=project_id, workspace__slug=slug).exists():
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Relations can cross projects so only workspace scope is enforced.
+        # The pair is matched in both directions since either work item may be
+        # the source of the stored relation.
+        issue_relation = (
+            IssueRelation.objects.filter(
+                Q(issue_id=issue_id, related_issue_id=related_issue_id)
+                | Q(issue_id=related_issue_id, related_issue_id=issue_id),
+                workspace__slug=slug,
+            )
+            .select_related("related_issue__state")
+            .first()
+        )
+
+        if issue_relation is None:
+            return Response(
+                {"error": "Work item relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Stored relations are directional. Report the type as seen from the
+        # work item in the path so the activity feed reads the right way round.
+        relation_type = issue_relation.relation_type
+        if str(issue_relation.related_issue_id) == str(issue_id):
+            relation_type = get_inverse_relation(relation_type)
+
+        current_instance = json.dumps(IssueRelationSerializer(issue_relation).data, cls=DjangoJSONEncoder)
+        issue_relation.delete()
+
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(
+                {"related_issue": str(related_issue_id), "relation_type": relation_type},
+                cls=DjangoJSONEncoder,
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

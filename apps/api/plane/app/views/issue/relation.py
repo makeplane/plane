@@ -277,6 +277,11 @@ class IssueRelationViewSet(BaseViewSet):
             Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
         issue_relations = issue_relations.first()
+        if issue_relations is None:
+            return Response(
+                {"error": "Work item relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()
         issue_activity.delay(
