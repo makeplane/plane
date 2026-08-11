@@ -1,0 +1,141 @@
+{
+  "nodes": [
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "label": "manifest.json",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_name",
+      "label": "name",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_short_name",
+      "label": "short_name",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_icons",
+      "label": "icons",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_theme_color",
+      "label": "theme_color",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_background_color",
+      "label": "background_color",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_start_url",
+      "label": "start_url",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_display",
+      "label": "display",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_public_manifest_orientation",
+      "label": "orientation",
+      "file_type": "code",
+      "source_file": "public/manifest.json",
+      "source_location": "L26"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_short_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_icons",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_theme_color",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_background_color",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_start_url",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_display",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_public_manifest_json",
+      "target": "users_mauro_development_plane_apps_web_public_manifest_orientation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/manifest.json",
+      "source_location": "L26",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "nodes": [
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_json",
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_rootdirs",
+      "label": "rootDirs",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "label": "paths",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_paths",
+      "label": "@/*",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_paths_app",
+      "label": "@/app/*",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_paths_helpers",
+      "label": "@/helpers/*",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_paths_styles",
+      "label": "@/styles/*",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_paths_package_json",
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_strictnullchecks",
+      "label": "strictNullChecks",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_exactoptionalpropertytypes",
+      "label": "exactOptionalPropertyTypes",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_nounusedparameters",
+      "label": "noUnusedParameters",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_nounusedlocals",
+      "label": "noUnusedLocals",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_noimplicitreturns",
+      "label": "noImplicitReturns",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_noimplicitoverride",
+      "label": "noImplicitOverride",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_types",
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L20"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_json",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_rootdirs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_rootdirs",
+      "target": "ref",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_rootdirs",
+      "target": "ref_react_router_types",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_paths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_paths",
+      "target": "ref_core",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_paths_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_paths_app",
+      "target": "ref_app",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_paths_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_paths_helpers",
+      "target": "ref_helpers",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_paths_styles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_paths_styles",
+      "target": "ref_styles",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_paths",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_paths_package_json",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_paths_package_json",
+      "target": "ref_package_json",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_strictnullchecks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_exactoptionalpropertytypes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_nounusedparameters",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_nounusedlocals",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_noimplicitreturns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_noimplicitoverride",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_compileroptions_types",
+      "target": "ref_vite_client",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_json",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_json",
+      "target": "ref_plane_typescript_config_react_router_json",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_json",
+      "target": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "target": "ref",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "target": "ref_server",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "target": "ref_client",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_mauro_development_plane_apps_web_tsconfig_include",
+      "target": "ref_react_router_types",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}
