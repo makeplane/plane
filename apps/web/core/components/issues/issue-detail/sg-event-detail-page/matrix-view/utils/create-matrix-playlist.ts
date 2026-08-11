@@ -1,7 +1,7 @@
 import type { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import type { SgTagRow } from "../../types";
-import { buildArchivedPlaylistUrl, playlistHasMediaSegments } from "../../utils";
+import { buildArchivedPlaylistUrl, getSgTagRowStreamName, playlistHasMediaSegments } from "../../utils";
 
 type MatrixPlaylistEntry = {
   original_stream_name: string;
@@ -11,7 +11,7 @@ type MatrixPlaylistEntry = {
 type CreateMatrixPlaylistArgs = {
   mediaLibraryService: MediaLibraryService;
   rows: SgTagRow[];
-  streamName: string;
+  streamName?: string | null;
 };
 
 export type MatrixPlaylistResult = {
@@ -41,15 +41,25 @@ export const getMatrixPlaylistRows = (rows: SgTagRow[]) => {
   return Array.from(uniqueRows.values());
 };
 
-const buildPlaylistEntries = (rows: SgTagRow[], streamName: string, preferFallback: boolean) => {
+const buildPlaylistCandidate = (rows: SgTagRow[], fallbackStreamName: string, preferFallback: boolean) => {
   const entriesByKey = new Map<string, MatrixPlaylistEntry>();
+  const rowIds: string[] = [];
+
   for (const row of rows) {
     const timestamp = getRowTimestamp(row, preferFallback);
+    const streamName = getSgTagRowStreamName(row, fallbackStreamName);
     if (!timestamp) continue;
+    if (!streamName) continue;
+
     const entry = { original_stream_name: streamName, timestamp };
     entriesByKey.set(`${streamName}\u0000${timestamp}`, entry);
+    rowIds.push(row.id);
   }
-  return Array.from(entriesByKey.values());
+
+  return {
+    entries: Array.from(entriesByKey.values()),
+    rowIds,
+  };
 };
 
 export const createMatrixPlaylist = async ({
@@ -57,32 +67,42 @@ export const createMatrixPlaylist = async ({
   rows,
   streamName,
 }: CreateMatrixPlaylistArgs): Promise<MatrixPlaylistResult> => {
-  const normalizedStreamName = streamName.trim();
+  const normalizedStreamName = streamName?.trim() ?? "";
   const playlistRows = getMatrixPlaylistRows(rows);
-  if (!normalizedStreamName || playlistRows.length === 0) {
+  if (playlistRows.length === 0) {
     throw new Error("The selected tags do not contain playable stream timestamps.");
   }
 
-  const candidateEntries = [
-    buildPlaylistEntries(playlistRows, normalizedStreamName, false),
-    buildPlaylistEntries(playlistRows, normalizedStreamName, true),
+  const playlistCandidates = [
+    buildPlaylistCandidate(playlistRows, normalizedStreamName, false),
+    buildPlaylistCandidate(playlistRows, normalizedStreamName, true),
   ];
+  let firstGeneratedResult: MatrixPlaylistResult | null = null;
   const seenCandidates = new Set<string>();
 
-  for (const entries of candidateEntries) {
+  for (const { entries, rowIds } of playlistCandidates) {
     const candidateKey = JSON.stringify(entries);
     if (entries.length === 0 || seenCandidates.has(candidateKey)) continue;
     seenCandidates.add(candidateKey);
 
     const fileName = await mediaLibraryService.createPlaylist(entries);
     const url = fileName ? buildArchivedPlaylistUrl(fileName) : null;
-    if (!fileName || !url || !(await playlistHasMediaSegments(url))) continue;
+    if (!fileName || !url) continue;
 
-    return {
+    const result = {
       fileName,
-      rowIds: playlistRows.map((row) => row.id),
+      rowIds,
       url,
     };
+    firstGeneratedResult ??= result;
+
+    if (await playlistHasMediaSegments(url)) {
+      return result;
+    }
+  }
+
+  if (firstGeneratedResult) {
+    return firstGeneratedResult;
   }
 
   throw new Error("The selected tags did not produce a playable playlist.");

@@ -50,6 +50,7 @@ export type SgTagRow = {
   secondaryDetail: string;
   sourceTagId: string | null;
   sourceUrl: string;
+  streamName?: string | null;
   team: string;
   thumbnailUrl: string;
   timecode: string;
@@ -64,6 +65,7 @@ export type SgEventDevice = {
   hlsUrl: string | null;
   id: number;
   name: string;
+  streamId: string | null;
   streamName: string;
 };
 

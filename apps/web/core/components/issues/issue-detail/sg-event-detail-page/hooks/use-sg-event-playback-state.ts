@@ -4,12 +4,16 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { getTimelinePanelInputPlayheadSeconds } from "../timeline-view";
 import type { SgEventDevice, SgTagRow } from "../types";
 import {
+  asRecord,
   buildArchivedPlaylistUrl,
+  getSgTagRowStreamName,
   parseTimecodeToSeconds,
   playlistHasMediaSegments,
+  toText,
 } from "../utils";
 
 type UseSgEventPlaybackStateArgs = {
+  eventItem?: TMediaItem | null;
   mediaItem: TMediaItem | null;
   mediaLibraryService: MediaLibraryService;
   primaryStreamName: string;
@@ -18,7 +22,56 @@ type UseSgEventPlaybackStateArgs = {
   viewDevices: SgEventDevice[];
 };
 
+const normalizeComparableMediaValue = (value: unknown) => toText(value).trim().replace(/\/+$/, "").toLowerCase();
+
+const getMediaItemStreamNames = (item: TMediaItem) => {
+  const meta = asRecord(item.meta);
+
+  return [
+    meta.streamName,
+    meta.stream_name,
+    meta.originalStreamName,
+    meta.original_stream_name,
+    meta.primaryStreamName,
+    meta.primary_stream_name,
+  ]
+    .map(normalizeComparableMediaValue)
+    .filter(Boolean);
+};
+
+const getMediaItemSources = (item: TMediaItem) => {
+  const meta = asRecord(item.meta);
+
+  return [
+    item.videoSrc,
+    item.fileSrc,
+    item.downloadSrc,
+    item.link,
+    meta.hlsUrl,
+    meta.hls_url,
+    meta.previewUrl,
+    meta.preview_url,
+    meta.url,
+  ]
+    .map(normalizeComparableMediaValue)
+    .filter(Boolean);
+};
+
+const findSelectedViewVideoItem = (selectedViewDevice: SgEventDevice | null, videoItems: TMediaItem[] | undefined) => {
+  if (!selectedViewDevice || !videoItems?.length) return null;
+
+  const selectedStreamName = normalizeComparableMediaValue(selectedViewDevice.streamName);
+  const selectedHlsUrl = normalizeComparableMediaValue(selectedViewDevice.hlsUrl);
+
+  return (
+    videoItems.find((item) => selectedStreamName && getMediaItemStreamNames(item).includes(selectedStreamName)) ??
+    videoItems.find((item) => selectedHlsUrl && getMediaItemSources(item).includes(selectedHlsUrl)) ??
+    null
+  );
+};
+
 export const useSgEventPlaybackState = ({
+  eventItem = null,
   mediaItem,
   mediaLibraryService,
   primaryStreamName,
@@ -67,6 +120,10 @@ export const useSgEventPlaybackState = ({
   const activeVideo = videoItems?.find((item) => item.id === activeVideoId) ?? videoItems?.[0] ?? null;
   const selectedViewDevice =
     viewDevices.find((device) => String(device.id) === selectedViewId) ?? viewDevices[0] ?? null;
+  const selectedViewVideoItem = useMemo(
+    () => findSelectedViewVideoItem(selectedViewDevice, videoItems),
+    [selectedViewDevice, videoItems]
+  );
   const selectedViewLabel = selectedViewDevice
     ? `View ${Math.max(viewDevices.findIndex((device) => device.id === selectedViewDevice.id) + 1, 1)}`
     : "View 1";
@@ -110,6 +167,8 @@ export const useSgEventPlaybackState = ({
         ...(baseItem.meta ?? {}),
         hls: true,
         hls_direct: true,
+        streamId: selectedViewDevice.streamId,
+        stream_id: selectedViewDevice.streamId,
         streamName: selectedViewDevice.streamName,
         stream_name: selectedViewDevice.streamName,
       },
@@ -132,6 +191,13 @@ export const useSgEventPlaybackState = ({
 
     return null;
   }, [activePlaybackOverride, activeVideo, fullStreamPlaybackItem]);
+  const playbackAnnotationItem = useMemo<TMediaItem | null>(() => {
+    if (activePlaybackOverride) return activePlaybackOverride.packageId ? activePlaybackOverride : null;
+    if (selectedViewDevice) {
+      return selectedViewVideoItem ?? eventItem ?? mediaItem ?? null;
+    }
+    return activeVideo ?? eventItem ?? mediaItem ?? null;
+  }, [activePlaybackOverride, activeVideo, eventItem, mediaItem, selectedViewDevice, selectedViewVideoItem]);
   const activePlaybackOverrideId = activePlaybackOverride?.id ?? null;
   const isPlaybackOverrideActive = Boolean(activePlaybackOverride);
   const hasPlayableVideo = Boolean(playbackItem);
@@ -215,7 +281,7 @@ export const useSgEventPlaybackState = ({
   const handlePlayTagRow = useCallback(
     async (row: SgTagRow) => {
       setActiveTimelineTagId(row.id);
-      const originalStreamName = (selectedViewDevice?.streamName ?? primaryStreamName ?? "").trim();
+      const originalStreamName = getSgTagRowStreamName(row, selectedViewDevice?.streamName || primaryStreamName);
       const playlistTimestamp = row.playlistTimestamp?.trim() || "";
       const playlistFallbackTimestamp = row.playlistFallbackTimestamp?.trim() || "";
       const displayTimecode = (row.timecode.split("-")[0] ?? row.timecode).trim();
@@ -313,11 +379,14 @@ export const useSgEventPlaybackState = ({
     setActiveTimelineTagId((currentValue) => (currentValue === tagId ? null : currentValue));
   }, []);
 
-  const playPlaybackOverride = useCallback((item: TMediaItem) => {
-    requestPlayerSeek(null);
-    setIsPlayerPlaying(false);
-    setActivePlaybackOverride(item);
-  }, [requestPlayerSeek]);
+  const playPlaybackOverride = useCallback(
+    (item: TMediaItem) => {
+      requestPlayerSeek(null);
+      setIsPlayerPlaying(false);
+      setActivePlaybackOverride(item);
+    },
+    [requestPlayerSeek]
+  );
 
   return {
     activePlaybackOverrideId,
@@ -335,6 +404,7 @@ export const useSgEventPlaybackState = ({
     isPlaybackOverrideActive,
     pendingSeekRequestId,
     pendingSeekSeconds,
+    playbackAnnotationItem,
     playbackItem,
     playPlaybackOverride,
     playerDurationSeconds,

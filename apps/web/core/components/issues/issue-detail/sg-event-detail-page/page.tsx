@@ -2,6 +2,7 @@
 
 import type { UIEvent } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
@@ -19,6 +20,11 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
+import {
+  buildSgEventAnnotationVideoItem,
+  buildSgEventAnnotationViewKey,
+  getSgEventMediaReferenceAnnotations,
+} from "./event-annotation-video";
 import { SgEventHeader, SgEventTitleBar } from "./header";
 import { useSgEventPlaybackState } from "./hooks/use-sg-event-playback-state";
 import { useSgEventTagState } from "./hooks/use-sg-event-tag-state";
@@ -45,6 +51,7 @@ import {
   getCpServerBaseUrl,
   getLastPathSegment,
   getSportTableConfig,
+  getSgTagRowStreamName,
   normalizeTagRows,
   pickText,
   toText,
@@ -76,24 +83,99 @@ const pickNumericSgEventId = (sources: Array<Record<string, unknown> | null | un
   return "";
 };
 
+const getEventVideoErrorMessage = (error: unknown, fallbackMessage: string): string => {
+  if (!error) return fallbackMessage;
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message || fallbackMessage;
+  if (Array.isArray(error)) {
+    const message = error
+      .map((entry) => getEventVideoErrorMessage(entry, ""))
+      .filter(Boolean)
+      .join(" ");
+    return message || fallbackMessage;
+  }
+  if (typeof error !== "object") return fallbackMessage;
+
+  const errorRecord = error as Record<string, unknown>;
+  for (const key of ["detail", "error", "message", "errorMessage", "error_message"]) {
+    const value = errorRecord[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+
+  const fieldMessages = Object.entries(errorRecord)
+    .map(([field, value]) => {
+      const message = getEventVideoErrorMessage(value, "");
+      return message ? `${field}: ${message}` : "";
+    })
+    .filter(Boolean);
+
+  return fieldMessages.join(" ") || fallbackMessage;
+};
+
+const CUSTOM_PLAYLIST_MAX_TEXT_LENGTH = 255;
+const CUSTOM_PLAYLIST_MAX_BIGINT = "9223372036854775807";
+
+const truncateCustomPlaylistText = (value: string, maxLength = CUSTOM_PLAYLIST_MAX_TEXT_LENGTH) => {
+  const normalizedValue = value.trim();
+  if (normalizedValue.length <= maxLength) return normalizedValue;
+
+  return normalizedValue.slice(0, maxLength).trimEnd();
+};
+
+const normalizeCustomPlaylistFileName = (value: string | null | undefined) => {
+  const fileName = getLastPathSegment(value);
+  if (!fileName || fileName.length > CUSTOM_PLAYLIST_MAX_TEXT_LENGTH || /[\\/]/.test(fileName)) return "";
+
+  return fileName;
+};
+
+const normalizeCustomPlaylistEventId = (value: string) => {
+  const normalizedValue = value.trim();
+  if (!/^\d+$/.test(normalizedValue)) return null;
+
+  const withoutLeadingZeroes = normalizedValue.replace(/^0+/, "") || "0";
+  if (withoutLeadingZeroes === "0") return null;
+  if (
+    withoutLeadingZeroes.length > CUSTOM_PLAYLIST_MAX_BIGINT.length ||
+    (withoutLeadingZeroes.length === CUSTOM_PLAYLIST_MAX_BIGINT.length &&
+      withoutLeadingZeroes > CUSTOM_PLAYLIST_MAX_BIGINT)
+  ) {
+    return null;
+  }
+
+  const numericEventId = Number(withoutLeadingZeroes);
+  return Number.isSafeInteger(numericEventId) ? numericEventId : normalizedValue;
+};
+
+const buildCustomPlaylistName = (eventTitle: string, clipCount: number) => {
+  const suffix = ` (${clipCount} clip${clipCount === 1 ? "" : "s"})`;
+  const fallbackTitle = "Playlist";
+  const titleLength = Math.max(1, CUSTOM_PLAYLIST_MAX_TEXT_LENGTH - suffix.length);
+  const title = truncateCustomPlaylistText(eventTitle || fallbackTitle, titleLength) || fallbackTitle;
+
+  return truncateCustomPlaylistText(`${title}${suffix}`);
+};
+
 const buildCustomPlaylistClips = (rows: SgTagRow[]): TCustomPlaylistClip[] =>
   rows.map((row, index) => {
-    const title = row.action || row.primaryDetail || `Clip ${index + 1}`;
-    const subtitle = [row.player, row.team, row.groupValue].filter(Boolean).join(" / ");
-    const tags = [row.result, row.primaryDetail, row.secondaryDetail].filter(Boolean);
+    const title = truncateCustomPlaylistText(row.action || row.primaryDetail || `Clip ${index + 1}`);
+    const subtitle = truncateCustomPlaylistText([row.player, row.team, row.groupValue].filter(Boolean).join(" / "));
+    const tags = [row.result, row.primaryDetail, row.secondaryDetail]
+      .map((tag) => truncateCustomPlaylistText(tag))
+      .filter(Boolean);
 
     return {
-      groupValue: row.groupValue,
-      id: row.id,
-      player: row.player,
-      primaryDetail: row.primaryDetail,
-      result: row.result,
+      groupValue: truncateCustomPlaylistText(row.groupValue),
+      id: truncateCustomPlaylistText(row.id),
+      player: truncateCustomPlaylistText(row.player),
+      primaryDetail: truncateCustomPlaylistText(row.primaryDetail),
+      result: truncateCustomPlaylistText(row.result),
       sourceTagId: row.sourceTagId,
       subtitle,
       tags,
-      team: row.team,
-      thumbnail: getLastPathSegment(row.thumbnailUrl) || row.thumbnailUrl || null,
-      timestamp: row.playlistTimestamp,
+      team: truncateCustomPlaylistText(row.team),
+      thumbnail: normalizeCustomPlaylistFileName(row.thumbnailUrl) || null,
+      timestamp: row.playlistTimestamp ?? row.playlistFallbackTimestamp,
       title,
     };
   });
@@ -111,6 +193,8 @@ export const SgEventDetailPage = ({
 }: SgEventDetailPageProps) => {
   const sgIssue = issue as SgIssue | undefined;
   const router = useAppRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { getProjectById } = useProject();
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const rosterService = useMemo(() => new RosterService(), []);
@@ -173,16 +257,19 @@ export const SgEventDetailPage = ({
     normalizeNumericEventId(sgIssue?.sg_event_id) ||
     pickNumericSgEventId([...payloadSources, sgEventMeta, sgEventItemRecord, mediaMeta, asRecord(mediaItem)]);
   const shouldUseKanavioTagApi = Boolean(resolvedSgEventId && isNumericEventId(resolvedSgEventId));
-  const resolvedCustomPlaylistEventId = shouldUseKanavioTagApi ? Number(resolvedSgEventId) : null;
+  const resolvedCustomPlaylistEventId = shouldUseKanavioTagApi ? resolvedSgEventId : null;
   const { data: customPlaylists = [], mutate: mutateCustomPlaylists } = useSWR(
     resolvedCustomPlaylistEventId
       ? `CUSTOM_PLAYLISTS_${workspaceSlug}_${projectId}_${resolvedCustomPlaylistEventId}`
       : null,
-    () =>
-      mediaLibraryService.getCustomPlaylists(String(resolvedCustomPlaylistEventId), {
+    () => {
+      if (!resolvedCustomPlaylistEventId) return Promise.resolve([]);
+
+      return mediaLibraryService.getCustomPlaylists(resolvedCustomPlaylistEventId, {
         projectId,
         workspaceSlug,
-      }),
+      });
+    },
     { revalidateOnFocus: false }
   );
   const {
@@ -246,6 +333,7 @@ export const SgEventDetailPage = ({
     isPlaybackOverrideActive,
     pendingSeekRequestId,
     pendingSeekSeconds,
+    playbackAnnotationItem,
     playbackItem,
     playPlaybackOverride,
     playerDurationSeconds,
@@ -256,6 +344,7 @@ export const SgEventDetailPage = ({
     setSelectedViewId,
     timelinePanelPlayheadSeconds,
   } = useSgEventPlaybackState({
+    eventItem: sgMediaPayload?.eventItem,
     mediaItem,
     mediaLibraryService,
     primaryStreamName,
@@ -375,10 +464,15 @@ export const SgEventDetailPage = ({
         });
         return false;
       }
-      const streamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
+      const streamName = (selectedViewDevice?.streamName || primaryStreamName).trim();
       setIsCreatingCustomPlaylist(true);
 
       try {
+        const customPlaylistEventId = normalizeCustomPlaylistEventId(resolvedCustomPlaylistEventId);
+        if (customPlaylistEventId === null) {
+          throw new Error("A valid service gateway event id is required before creating a playlist.");
+        }
+
         const result = await createCustomPlaylist({ mediaLibraryService, rows, streamName });
         const includedRowIds = new Set(result.rowIds);
         const includedRows = rows.filter((row) => includedRowIds.has(row.id));
@@ -387,16 +481,41 @@ export const SgEventDetailPage = ({
           activeVideo?.thumbnail ||
           mediaItem?.thumbnail ||
           null;
-        const customPlaylist = await mediaLibraryService.createCustomPlaylist({
-          event_id: resolvedCustomPlaylistEventId,
-          name: `${eventTitle} (${includedRows.length} clip${includedRows.length === 1 ? "" : "s"})`,
-          url: result.fileName || getLastPathSegment(result.url),
-          thumbnail: getLastPathSegment(thumbnail),
+        const playlistFileName = normalizeCustomPlaylistFileName(result.fileName || result.url);
+        if (!playlistFileName) {
+          throw new Error("The generated playlist did not include a valid file name.");
+        }
+
+        const thumbnailFileName = normalizeCustomPlaylistFileName(thumbnail);
+        const customPlaylistPayload = {
+          event_id: customPlaylistEventId,
+          name: buildCustomPlaylistName(eventTitle, includedRows.length),
+          url: playlistFileName,
+          ...(thumbnailFileName ? { thumbnail: thumbnailFileName } : {}),
           clip: includedRows.length,
           clips: buildCustomPlaylistClips(includedRows),
           project_id: projectId,
           workspace_slug: workspaceSlug,
-        });
+        };
+        let customPlaylist: TCustomPlaylist;
+        try {
+          customPlaylist = await mediaLibraryService.createCustomPlaylist(customPlaylistPayload);
+        } catch (error) {
+          const message = getEventVideoErrorMessage(error, "");
+          if (!/payload is not valid/i.test(message)) {
+            throw error;
+          }
+
+          customPlaylist = await mediaLibraryService.createCustomPlaylist({
+            event_id: customPlaylistPayload.event_id,
+            name: customPlaylistPayload.name,
+            url: customPlaylistPayload.url,
+            clip: customPlaylistPayload.clip,
+            project_id: customPlaylistPayload.project_id,
+            workspace_slug: customPlaylistPayload.workspace_slug,
+          });
+        }
+
         playPlaybackOverride(
           buildCustomPlaylistItem({
             result,
@@ -414,7 +533,7 @@ export const SgEventDetailPage = ({
         });
         return true;
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unable to create a playlist from the selected tags.";
+        const message = getEventVideoErrorMessage(error, "Unable to create a playlist from the selected tags.");
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Playlist creation failed",
@@ -489,19 +608,52 @@ export const SgEventDetailPage = ({
   const handleUpdateVideoAnnotations = useCallback(
     async (videoItem: TMediaItem, annotations: TCustomPlaylistAnnotation[]) => {
       if (!videoItem?.packageId || !videoItem.id) {
-        throw new Error("Uploaded video annotations can only be saved on media library videos.");
+        throw new Error("Video annotations can only be saved on media library artifacts.");
       }
 
-      const nextMeta = {
-        ...(videoItem.meta ?? {}),
-        annotations,
-      };
-      await mediaLibraryService.updateManifestArtifacts(workspaceSlug, projectId, videoItem.packageId, {
-        artifact_id: videoItem.id,
-        artifact: {
-          meta: nextMeta,
-        },
+      const videoMeta = videoItem.meta ?? {};
+      const eventArtifact = sgMediaPayload?.eventItem?.packageId ? sgMediaPayload.eventItem : videoItem;
+      const eventPackageId = eventArtifact.packageId ?? videoItem.packageId;
+      if (!eventPackageId) {
+        throw new Error("Video annotations can only be saved on media library artifacts.");
+      }
+      const metaViewDeviceId = toText(videoMeta.annotationViewDeviceId);
+      const metaViewStreamId = toText(videoMeta.annotationViewStreamId);
+      const metaViewStreamName = toText(videoMeta.annotationViewStreamName);
+      const metaViewKey = toText(videoMeta.annotationViewKey);
+      const metaVideoSource = toText(videoMeta.annotationVideoSource);
+      const annotationViewKey = buildSgEventAnnotationViewKey({
+        deviceId: selectedViewDevice?.id ?? metaViewDeviceId,
+        streamId: selectedViewDevice?.streamId ?? metaViewStreamId,
+        streamName: selectedViewDevice?.streamName ?? metaViewStreamName,
+        viewKey: metaViewKey,
+        videoSrc: selectedViewDevice?.hlsUrl ?? metaVideoSource,
       });
+      const updatedEvent = await mediaLibraryService.updateEventVideoAnnotations(
+        workspaceSlug,
+        projectId,
+        eventPackageId,
+        eventArtifact.id,
+        {
+          annotations,
+          device_id: selectedViewDevice?.id ?? metaViewDeviceId,
+          stream_id: selectedViewDevice?.streamId ?? metaViewStreamId,
+          stream_name: selectedViewDevice?.streamName ?? metaViewStreamName,
+          view_key: annotationViewKey,
+        }
+      );
+      const updatedAnnotations = getSgEventMediaReferenceAnnotations(videoMeta, {
+        deviceId: selectedViewDevice?.id ?? metaViewDeviceId,
+        eventPayload: updatedEvent.eventPayload,
+        streamId: selectedViewDevice?.streamId ?? metaViewStreamId,
+        streamName: selectedViewDevice?.streamName ?? metaViewStreamName,
+        viewKey: annotationViewKey,
+        videoSrc: selectedViewDevice?.hlsUrl ?? metaVideoSource,
+      });
+      const nextMeta = {
+        ...videoMeta,
+        annotations: updatedAnnotations,
+      };
       void mutateSgMediaPayload(
         (currentPayload) => {
           if (!currentPayload) return currentPayload;
@@ -516,6 +668,7 @@ export const SgEventDetailPage = ({
             eventItem: currentPayload.eventItem ? updateItem(currentPayload.eventItem) : currentPayload.eventItem,
             mediaItems: currentPayload.mediaItems.map(updateItem),
             videoItems: currentPayload.videoItems.map(updateItem),
+            eventPayload: updatedEvent.eventPayload ?? currentPayload.eventPayload,
           };
         },
         { revalidate: false }
@@ -526,7 +679,7 @@ export const SgEventDetailPage = ({
         meta: nextMeta,
       };
     },
-    [mediaLibraryService, mutateSgMediaPayload, projectId, workspaceSlug]
+    [mediaLibraryService, mutateSgMediaPayload, projectId, selectedViewDevice, sgMediaPayload?.eventItem, workspaceSlug]
   );
   const kanavioTagsErrorMessage =
     kanavioTagsError instanceof Error
@@ -548,6 +701,7 @@ export const SgEventDetailPage = ({
     ? (activePlaybackOverrideId?.slice("sg-tag-".length) ?? null)
     : null;
   const matrixStreamName = (selectedViewDevice?.streamName ?? primaryStreamName).trim();
+  const hasMatrixRowStreamName = matrixRows.some((row) => Boolean(getSgTagRowStreamName(row)));
   const isMatrixWorkspaceMode = enableMatrixView && tagViewMode === "matrix";
   const activePlaylistRows = isMatrixWorkspaceMode
     ? playlistPanelRows
@@ -555,7 +709,82 @@ export const SgEventDetailPage = ({
       ? timelinePlaylistRows
       : selectedRows;
   const isTagRowsLoading = isMediaLoading || (shouldUseKanavioTagApi && isKanavioTagsLoading);
-  const canSavePlaybackAnnotations = Boolean(playbackItem?.packageId);
+  const playbackAnnotationPageItem = useMemo(
+    () =>
+      buildSgEventAnnotationVideoItem(playbackAnnotationItem, {
+        deviceId: selectedViewDevice?.id,
+        eventPayload,
+        streamId: selectedViewDevice?.streamId,
+        streamName: selectedViewDevice?.streamName,
+        title: selectedViewDevice?.name,
+        videoSrc: selectedViewDevice?.hlsUrl,
+      }),
+    [
+      eventPayload,
+      playbackAnnotationItem,
+      selectedViewDevice?.hlsUrl,
+      selectedViewDevice?.id,
+      selectedViewDevice?.name,
+      selectedViewDevice?.streamId,
+      selectedViewDevice?.streamName,
+    ]
+  );
+  const canSavePlaybackAnnotations = Boolean(playbackAnnotationPageItem?.packageId);
+  const currentHref = useMemo(() => {
+    const queryString = searchParams.toString();
+    return queryString ? `${pathname}?${queryString}` : pathname;
+  }, [pathname, searchParams]);
+  const playbackAnnotationHref = useMemo(() => {
+    if (!playbackAnnotationPageItem?.packageId || !playbackAnnotationPageItem.id) {
+      return null;
+    }
+
+    const params = new URLSearchParams();
+    params.set("annotation", "open");
+    params.set("from", currentHref);
+    const viewKey = buildSgEventAnnotationViewKey({
+      deviceId: selectedViewDevice?.id,
+      streamId: selectedViewDevice?.streamId,
+      streamName: selectedViewDevice?.streamName,
+      videoSrc: selectedViewDevice?.hlsUrl,
+    });
+    if (viewKey) {
+      params.set("viewKey", viewKey);
+    }
+    if (selectedViewDevice?.id) {
+      params.set("deviceId", String(selectedViewDevice.id));
+    }
+    if (selectedViewDevice?.streamId) {
+      params.set("streamId", selectedViewDevice.streamId);
+    }
+    if (selectedViewDevice?.streamName) {
+      params.set("stream", selectedViewDevice.streamName);
+    }
+    if (selectedViewDevice?.hlsUrl) {
+      params.set("videoSrc", selectedViewDevice.hlsUrl);
+    }
+    if (selectedViewDevice?.name) {
+      params.set("view", selectedViewDevice.name);
+    }
+
+    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(playbackAnnotationPageItem.id)}?${params.toString()}`;
+  }, [
+    currentHref,
+    playbackAnnotationPageItem?.id,
+    playbackAnnotationPageItem?.packageId,
+    projectId,
+    selectedViewDevice?.hlsUrl,
+    selectedViewDevice?.id,
+    selectedViewDevice?.name,
+    selectedViewDevice?.streamId,
+    selectedViewDevice?.streamName,
+    workspaceSlug,
+  ]);
+  const handleOpenPlaybackAnnotationPage = useCallback(() => {
+    if (!playbackAnnotationHref) return;
+
+    router.push(playbackAnnotationHref);
+  }, [playbackAnnotationHref, router]);
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
@@ -597,7 +826,9 @@ export const SgEventDetailPage = ({
                 <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
                   <SgEventVideoPlayer
                     item={playbackItem}
+                    annotationItem={playbackAnnotationPageItem ?? playbackAnnotationItem}
                     compactEmpty={!hasPlayableVideo}
+                    onOpenAnnotationPage={playbackAnnotationHref ? handleOpenPlaybackAnnotationPage : undefined}
                     onPlaybackTimeChange={handlePlaybackTimeChange}
                     onUpdateAnnotations={canSavePlaybackAnnotations ? handleUpdateVideoAnnotations : undefined}
                     seekRequestId={pendingSeekRequestId}
@@ -633,7 +864,7 @@ export const SgEventDetailPage = ({
                 <MatrixView
                   activeRowId={activeMatrixRowId}
                   className="min-h-0"
-                  canCreatePlaylist={Boolean(matrixStreamName)}
+                  canCreatePlaylist={Boolean(matrixStreamName) || hasMatrixRowStreamName}
                   error={matrixError}
                   hasEvent={Boolean(mediaItem || issue || eventDetails || eventPayload)}
                   isCreatingPlaylist={isCreatingCustomPlaylist}
@@ -657,7 +888,9 @@ export const SgEventDetailPage = ({
                     <div className="min-w-0 rounded-[5px] bg-[var(--sg-matrix-video-bg)]">
                       <SgEventVideoPlayer
                         item={playbackItem}
+                        annotationItem={playbackAnnotationPageItem ?? playbackAnnotationItem}
                         compactEmpty={!hasPlayableVideo}
+                        onOpenAnnotationPage={playbackAnnotationHref ? handleOpenPlaybackAnnotationPage : undefined}
                         onPlaybackTimeChange={handlePlaybackTimeChange}
                         onUpdateAnnotations={canSavePlaybackAnnotations ? handleUpdateVideoAnnotations : undefined}
                         seekRequestId={pendingSeekRequestId}

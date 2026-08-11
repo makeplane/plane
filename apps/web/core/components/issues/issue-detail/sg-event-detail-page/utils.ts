@@ -732,6 +732,21 @@ export const playlistHasMediaSegments = async (playlistUrl: string) => {
   }
 };
 
+export const getSgTagRowStreamName = (
+  row: Pick<SgTagRow, "context" | "streamName">,
+  fallbackStreamName?: string | null
+) => {
+  const normalizedFallbackStreamName = toText(fallbackStreamName);
+
+  return (
+    normalizedFallbackStreamName ||
+    row.streamName?.trim() ||
+    row.context.original_stream_name?.trim() ||
+    row.context.stream_name?.trim() ||
+    ""
+  );
+};
+
 const getTagSourceUrl = (tag: Record<string, unknown>) =>
   findTagDataValue(tag, [
     "playlist_url",
@@ -748,6 +763,24 @@ const getTagSourceUrl = (tag: Record<string, unknown>) =>
     "link",
     "path",
   ]);
+
+const getTagStreamName = (tag: Record<string, unknown>) =>
+  findTagDataValue(tag, [
+    "original_stream_name",
+    "originalStreamName",
+    "stream_name",
+    "streamName",
+    "primary_stream_name",
+    "primaryStreamName",
+  ]) ||
+  toText(
+    tag.original_stream_name ??
+      tag.originalStreamName ??
+      tag.stream_name ??
+      tag.streamName ??
+      tag.primary_stream_name ??
+      tag.primaryStreamName
+  );
 
 const getTagThumbnailUrl = (tag: Record<string, unknown>) =>
   findTagDataValue(tag, [
@@ -886,6 +919,7 @@ const getTagRowCompletenessScore = (row: SgTagRow) =>
     row.sourceTagId,
     row.clipId,
     row.sourceUrl,
+    row.streamName,
     row.playlistTimestamp,
     row.playlistFallbackTimestamp,
     row.clipDurationSeconds !== null && row.clipDurationSeconds !== undefined ? "clip-duration" : "",
@@ -923,6 +957,7 @@ const mergeDuplicateTagRows = (currentRow: SgTagRow, nextRow: SgTagRow) => {
     secondaryDetail: preferredRow.secondaryDetail !== "--" ? preferredRow.secondaryDetail : fallbackRow.secondaryDetail,
     sourceTagId: preferredRow.sourceTagId ?? fallbackRow.sourceTagId,
     sourceUrl: preferredRow.sourceUrl || fallbackRow.sourceUrl,
+    streamName: preferredRow.streamName || fallbackRow.streamName,
     team: preferredRow.team !== "--" ? preferredRow.team : fallbackRow.team,
     thumbnailUrl: preferredRow.thumbnailUrl || fallbackRow.thumbnailUrl,
     timecode: preferredRow.timecode !== "--" ? preferredRow.timecode : fallbackRow.timecode,
@@ -1007,6 +1042,7 @@ const buildExactTagRowKey = (row: SgTagRow) =>
     result: row.result,
     secondaryDetail: row.secondaryDetail,
     sourceUrl: row.sourceUrl,
+    streamName: row.streamName,
     team: row.team,
     timecode: row.timecode,
   });
@@ -1118,6 +1154,7 @@ const buildTagRowBySport = (
   const playlistTimestamp = normalizePlaylistTimestamp(rawPlaylistTimestamp, baseEventDateTime);
   const playlistFallbackTimestamp = buildClockOnlyPlaylistTimestampFallback(rawPlaylistTimestamp, baseEventDateTime);
   const sourceUrl = getTagSourceUrl(tag);
+  const streamName = getTagStreamName(tag);
   const thumbnailUrl = getTagThumbnailUrl(tag);
   const explicitSourceTagId = getSourceTagId(tag);
   const explicitClipId = getClipId(tag);
@@ -1459,6 +1496,7 @@ const buildTagRowBySport = (
     secondaryDetail,
     sourceTagId,
     sourceUrl,
+    streamName: streamName || null,
     team: team || "--",
     thumbnailUrl,
     timecode,
@@ -1549,6 +1587,7 @@ export const normalizeTagRows = (
         secondaryDetail: "--",
         sourceTagId,
         sourceUrl: "",
+        streamName: null,
         team,
         thumbnailUrl: "",
         timecode,

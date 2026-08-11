@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import videojs from "video.js";
+import { Pencil } from "lucide-react";
 import { cn } from "@plane/utils";
 import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";
 import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
@@ -13,6 +14,7 @@ import { VideoAnnotationEditor } from "./video-annotation-editor";
 
 type SgEventVideoPlayerProps = {
   item: TMediaItem | null;
+  annotationItem?: TMediaItem | null;
   compactEmpty?: boolean;
   onPlaybackTimeChange?: (
     seconds: number,
@@ -23,6 +25,7 @@ type SgEventVideoPlayerProps = {
     }
   ) => void;
   onUpdateAnnotations?: (item: TMediaItem, annotations: TCustomPlaylistAnnotation[]) => Promise<TMediaItem | void>;
+  onOpenAnnotationPage?: () => void;
   seekRequestId?: number;
   seekToSeconds?: number | null;
 };
@@ -48,9 +51,11 @@ const HLS_MIME_TYPES = ["application/x-mpegURL", "application/vnd.apple.mpegurl"
 
 export const SgEventVideoPlayer = ({
   item,
+  annotationItem = null,
   compactEmpty = false,
   onPlaybackTimeChange,
   onUpdateAnnotations,
+  onOpenAnnotationPage,
   seekRequestId = 0,
   seekToSeconds = null,
 }: SgEventVideoPlayerProps) => {
@@ -69,12 +74,23 @@ export const SgEventVideoPlayer = ({
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const [currentVideoSeconds, setCurrentVideoSeconds] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [, setIsVideoAnnotationMode] = useState(false);
   const { effectiveVideoSrc, isVideo, resolvedVideoFormat, useCredentials, crossOrigin } = useResolvedMediaSources({
     documentFormat,
     item,
     meta,
     normalizedAction,
   });
+  const effectiveAnnotationItem = annotationItem ?? item;
+  const canAnnotateVideo = Boolean(
+    effectiveAnnotationItem?.packageId && effectiveAnnotationItem.id && onOpenAnnotationPage
+  );
+
+  useEffect(() => {
+    setCurrentVideoSeconds(0);
+    setIsVideoAnnotationMode(false);
+  }, [effectiveAnnotationItem?.id, item?.id]);
 
   useEffect(() => {
     if (!isVideo || !videoRef.current) {
@@ -412,6 +428,7 @@ export const SgEventVideoPlayer = ({
       const isPlaying =
         explicitIsPlaying ??
         (!Boolean(player.paused?.()) && !Boolean(player.ended?.()) && Number(player.readyState?.() ?? 0) > 0);
+      setIsPlaying(isPlaying);
 
       onPlaybackTimeChange(
         Number.isFinite(currentTime) ? currentTime : 0,
@@ -603,17 +620,50 @@ export const SgEventVideoPlayer = ({
     player?.pause?.();
   }, []);
   const handleAnnotationModeChange = useCallback((enabled: boolean) => {
+    setIsVideoAnnotationMode(enabled);
+
     const player = playerRef.current;
     player?.controls?.(!enabled);
   }, []);
   const handleSaveVideoAnnotations = useCallback(
     async (annotations: TCustomPlaylistAnnotation[]) => {
-      if (!item || !onUpdateAnnotations) return annotations;
+      if (!effectiveAnnotationItem || !onUpdateAnnotations) return annotations;
 
-      const updatedItem = await onUpdateAnnotations(item, annotations);
+      const updatedItem = await onUpdateAnnotations(effectiveAnnotationItem, annotations);
       return (updatedItem?.meta?.annotations as TCustomPlaylistAnnotation[] | undefined) ?? annotations;
     },
-    [item, onUpdateAnnotations]
+    [effectiveAnnotationItem, onUpdateAnnotations]
+  );
+  const videoAnnotationContent = effectiveAnnotationItem ? (
+    <VideoAnnotationEditor
+      annotationKey={`${effectiveAnnotationItem.packageId ?? "event"}:${effectiveAnnotationItem.id}`}
+      annotations={effectiveAnnotationItem.meta?.annotations}
+      canEdit={false}
+      currentTime={currentVideoSeconds}
+      isPlaying={isPlaying}
+      modeResetKey={`${effectiveAnnotationItem.id}:view`}
+      onModeChange={handleAnnotationModeChange}
+      onRequestPause={handleAnnotationPause}
+      onSave={handleSaveVideoAnnotations}
+      thumbnailUrl={item?.thumbnail || effectiveAnnotationItem.thumbnail}
+    />
+  ) : null;
+  const playerLayerContent = (
+    <>
+      {videoAnnotationContent}
+      {canAnnotateVideo ? (
+        <button
+          type="button"
+          onClick={onOpenAnnotationPage}
+          className="sg-event-annotation-button"
+          aria-label="Open annotation editor"
+          title="Open annotation editor"
+        >
+          <Pencil className="h-4 w-4 shrink-0" />
+          <span className="whitespace-nowrap leading-none">Annotate</span>
+        </button>
+      ) : null}
+    </>
   );
 
   if (!item || !isVideo) {
@@ -646,20 +696,7 @@ export const SgEventVideoPlayer = ({
           {SG_PLAYER_STYLE}
         </style>
         <video ref={videoRef} className="video-js vjs-big-play-centered" playsInline loop />
-        {playerElement
-          ? createPortal(
-              <VideoAnnotationEditor
-                annotationKey={`${item.packageId ?? ""}:${item.id}`}
-                annotations={item.meta?.annotations}
-                canEdit={Boolean(item.packageId && item.id && onUpdateAnnotations)}
-                currentTime={currentVideoSeconds}
-                onModeChange={handleAnnotationModeChange}
-                onRequestPause={handleAnnotationPause}
-                onSave={handleSaveVideoAnnotations}
-              />,
-              playerElement
-            )
-          : null}
+        {playerElement ? createPortal(playerLayerContent, playerElement) : playerLayerContent}
         {isSettingsOpen && (
           <div className="absolute bottom-14 right-3 z-10 w-44 rounded-xl border border-custom-border-200 bg-custom-sidebar-background-100 p-3 shadow-2xl">
             <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-custom-text-400">Quality</div>

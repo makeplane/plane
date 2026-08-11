@@ -10,6 +10,12 @@ import { ArrowLeft } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SgEventDetailPage } from "@/components/issues/issue-detail/sg-event-detail-page";
+import {
+  buildSgEventAnnotationDisplayMeta,
+  buildSgEventAnnotationVideoItem,
+  buildSgEventAnnotationViewKey,
+  getSgEventMediaReferenceAnnotations,
+} from "@/components/issues/issue-detail/sg-event-detail-page/event-annotation-video";
 import { VideoAnnotationEditor } from "@/components/issues/issue-detail/sg-event-detail-page/video-annotation-editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -43,19 +49,52 @@ const MediaDetailPage = () => {
   const { getUserDetails } = useMember();
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from") ?? "";
+  const annotationParam = (searchParams.get("annotation") ?? searchParams.get("annotate") ?? "").toLowerCase();
+  const shouldOpenVideoAnnotationWorkspaceFromQuery = ["1", "true", "open", "video"].includes(annotationParam);
+  const annotationStreamParam = searchParams.get("stream") ?? "";
+  const annotationStreamIdParam = searchParams.get("streamId") ?? "";
+  const annotationDeviceIdParam = searchParams.get("deviceId") ?? "";
+  const annotationViewKeyParam = searchParams.get("viewKey") ?? "";
+  const annotationVideoSrcParam = searchParams.get("videoSrc") ?? "";
+  const annotationViewParam = searchParams.get("view") ?? "";
   const backHref = useMemo(() => {
     const defaultHref = `/${workspaceSlug}/projects/${projectId}/media-library`;
+    const projectHrefPrefix = `/${workspaceSlug}/projects/${projectId}`;
     if (!fromParam || !fromParam.startsWith("/") || fromParam.startsWith("//")) return defaultHref;
-    if (!fromParam.startsWith(defaultHref)) return defaultHref;
+    if (fromParam !== projectHrefPrefix && !fromParam.startsWith(`${projectHrefPrefix}/`)) return defaultHref;
     return fromParam;
   }, [fromParam, projectId, workspaceSlug]);
   const { item: rawItem, isLoading } = useMediaLibraryItem(workspaceSlug, projectId, mediaId);
   const [mediaItemOverrides, setMediaItemOverrides] = useState<Partial<TMediaItem> | null>(null);
   const [isTagsSaving, setIsTagsSaving] = useState(false);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
+  const annotationVideoItem = useMemo(
+    () =>
+      shouldOpenVideoAnnotationWorkspaceFromQuery
+        ? buildSgEventAnnotationVideoItem(rawItem, {
+            deviceId: annotationDeviceIdParam,
+            streamId: annotationStreamIdParam,
+            streamName: annotationStreamParam,
+            title: annotationViewParam,
+            viewKey: annotationViewKeyParam,
+            videoSrc: annotationVideoSrcParam,
+          })
+        : null,
+    [
+      annotationDeviceIdParam,
+      annotationStreamParam,
+      annotationStreamIdParam,
+      annotationVideoSrcParam,
+      annotationViewKeyParam,
+      annotationViewParam,
+      rawItem,
+      shouldOpenVideoAnnotationWorkspaceFromQuery,
+    ]
+  );
+  const baseItem = annotationVideoItem ?? rawItem;
   const item = useMemo(
-    () => (rawItem ? { ...rawItem, ...(mediaItemOverrides ?? {}) } : rawItem),
-    [mediaItemOverrides, rawItem]
+    () => (baseItem ? { ...baseItem, ...(mediaItemOverrides ?? {}) } : baseItem),
+    [baseItem, mediaItemOverrides]
   );
   const isSgEventAsset = useMemo(() => (item ? isEventMediaItem(item) : false), [item]);
   const handleMediaItemUpdated = useCallback((updates?: Partial<TMediaItem>) => {
@@ -101,6 +140,7 @@ const MediaDetailPage = () => {
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TPipCaptionMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
+  const annotationEventJsonSource = rawItem?.fileSrc || rawItem?.downloadSrc || "";
   useEffect(() => {
     setMediaItemOverrides(null);
   }, [rawItem?.id]);
@@ -111,6 +151,71 @@ const MediaDetailPage = () => {
     setIsVideoAnnotationMode(false);
     setIsVideoAnnotationWorkspaceOpen(false);
   }, [item?.id]);
+
+  useEffect(() => {
+    const sourceItem = rawItem;
+    if (!shouldOpenVideoAnnotationWorkspaceFromQuery || !annotationEventJsonSource || !sourceItem) return;
+
+    let isCancelled = false;
+    const loadEventViewAnnotations = async () => {
+      for (const credentials of ["include", "omit"] as const) {
+        try {
+          const response = await fetch(annotationEventJsonSource, { credentials });
+          if (!response.ok) continue;
+
+          const payload = await response.json().catch(() => null);
+          const eventPayload =
+            payload && typeof payload === "object" && !Array.isArray(payload)
+              ? (payload as Record<string, unknown>)
+              : null;
+          if (!eventPayload || isCancelled) return;
+
+          const annotationVideoSource =
+            annotationVideoSrcParam ||
+            (typeof annotationVideoItem?.videoSrc === "string" ? annotationVideoItem.videoSrc : "") ||
+            (typeof annotationVideoItem?.fileSrc === "string" ? annotationVideoItem.fileSrc : "");
+          const nextMeta = buildSgEventAnnotationDisplayMeta(sourceItem.meta ?? {}, {
+            deviceId: annotationDeviceIdParam,
+            eventPayload,
+            streamId: annotationStreamIdParam,
+            streamName: annotationStreamParam,
+            title: annotationViewParam,
+            viewKey: annotationViewKeyParam,
+            videoSrc: annotationVideoSource,
+          });
+          handleMediaItemUpdated({
+            meta: {
+              ...(annotationVideoItem?.meta ?? {}),
+              ...nextMeta,
+            },
+          });
+          return;
+        } catch {
+          continue;
+        }
+      }
+    };
+
+    void loadEventViewAnnotations();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    annotationDeviceIdParam,
+    annotationStreamIdParam,
+    annotationStreamParam,
+    annotationVideoSrcParam,
+    annotationViewKeyParam,
+    annotationViewParam,
+    annotationVideoItem?.fileSrc,
+    annotationVideoItem?.meta,
+    annotationVideoItem?.videoSrc,
+    annotationEventJsonSource,
+    handleMediaItemUpdated,
+    rawItem,
+    shouldOpenVideoAnnotationWorkspaceFromQuery,
+  ]);
 
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
@@ -803,10 +908,15 @@ const MediaDetailPage = () => {
   const handleCloseVideoAnnotationWorkspace = useCallback(() => {
     const player = playerRef.current;
 
-    setIsVideoAnnotationWorkspaceOpen(false);
     setIsVideoAnnotationMode(false);
     player?.controls?.(true);
-  }, []);
+    if (shouldOpenVideoAnnotationWorkspaceFromQuery) {
+      router.push(backHref);
+      return;
+    }
+
+    setIsVideoAnnotationWorkspaceOpen(false);
+  }, [backHref, router, shouldOpenVideoAnnotationWorkspaceFromQuery]);
   const handleAnnotationModeChange = useCallback((enabled: boolean) => {
     setIsVideoAnnotationMode(enabled);
 
@@ -817,6 +927,47 @@ const MediaDetailPage = () => {
     async (annotations: TCustomPlaylistAnnotation[]) => {
       if (!item?.packageId || !item.id) {
         throw new Error("Uploaded video annotations can only be saved on media library videos.");
+      }
+
+      const annotationViewKey = buildSgEventAnnotationViewKey({
+        deviceId: annotationDeviceIdParam,
+        streamId: annotationStreamIdParam,
+        streamName: annotationStreamParam,
+        viewKey: annotationViewKeyParam,
+        videoSrc: annotationVideoSrcParam,
+      });
+      if (shouldOpenVideoAnnotationWorkspaceFromQuery && annotationViewKey) {
+        const updatedEvent = await mediaLibraryService.updateEventVideoAnnotations(
+          workspaceSlug,
+          projectId,
+          item.packageId,
+          item.id,
+          {
+            annotations,
+            device_id: annotationDeviceIdParam,
+            stream_id: annotationStreamIdParam,
+            stream_name: annotationStreamParam,
+            view_key: annotationViewKey,
+          }
+        );
+        const updatedAnnotations = getSgEventMediaReferenceAnnotations(item.meta ?? {}, {
+          deviceId: annotationDeviceIdParam,
+          eventPayload: updatedEvent.eventPayload,
+          streamId: annotationStreamIdParam,
+          streamName: annotationStreamParam,
+          title: annotationViewParam,
+          viewKey: annotationViewKey,
+          videoSrc: annotationVideoSrcParam,
+        });
+        handleMediaItemUpdated({
+          meta: {
+            ...(item.meta ?? {}),
+            annotations: updatedAnnotations.length > 0 ? updatedAnnotations : annotations,
+            annotationViewKey,
+          },
+        });
+
+        return updatedAnnotations.length > 0 ? updatedAnnotations : annotations;
       }
 
       const nextMeta = {
@@ -834,8 +985,36 @@ const MediaDetailPage = () => {
 
       return annotations;
     },
-    [handleMediaItemUpdated, item?.id, item?.meta, item?.packageId, mediaLibraryService, projectId, workspaceSlug]
+    [
+      annotationDeviceIdParam,
+      annotationStreamIdParam,
+      annotationStreamParam,
+      annotationVideoSrcParam,
+      annotationViewKeyParam,
+      annotationViewParam,
+      handleMediaItemUpdated,
+      item?.id,
+      item?.meta,
+      item?.packageId,
+      mediaLibraryService,
+      projectId,
+      shouldOpenVideoAnnotationWorkspaceFromQuery,
+      workspaceSlug,
+    ]
   );
+
+  useEffect(() => {
+    if (!shouldOpenVideoAnnotationWorkspaceFromQuery || !isVideo || !item?.packageId || !item.id) return;
+
+    handleOpenVideoAnnotationWorkspace();
+  }, [
+    handleOpenVideoAnnotationWorkspace,
+    isVideo,
+    item?.id,
+    item?.packageId,
+    shouldOpenVideoAnnotationWorkspaceFromQuery,
+  ]);
+
   if (!item && isLoading) {
     return (
       <div className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
@@ -859,7 +1038,7 @@ const MediaDetailPage = () => {
   const canAnnotateUploadedVideo = isVideo && Boolean(item.packageId && item.id);
   const isFocusedVideoAnnotationWorkspace = isVideo && isVideoAnnotationWorkspaceOpen;
 
-  if (isSgEventAsset) {
+  if (isSgEventAsset && !(shouldOpenVideoAnnotationWorkspaceFromQuery && isVideo)) {
     return (
       <SgEventDetailPage
         enableMatrixView
