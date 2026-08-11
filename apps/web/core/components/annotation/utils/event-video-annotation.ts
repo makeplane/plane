@@ -1,8 +1,8 @@
 "use client";
 
+import { asRecord, buildArchivedStreamUrl, toText } from "@/components/issues/issue-detail/sg-event-detail-page/utils";
 import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
-import { asRecord, buildArchivedStreamUrl, toText } from "./utils";
 
 type TSgEventAnnotationVideoOptions = {
   deviceId?: string | number | null;
