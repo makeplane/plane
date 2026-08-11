@@ -7,7 +7,6 @@
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
-import { GlobalPomodoroTimer } from "@/components/pomodoro/global-pomodoro-timer";
 // plane web components
 import { ProjectAppSidebar } from "./_sidebar";
 import { ExtendedProjectSidebar } from "./extended-project-sidebar";
@@ -26,7 +25,6 @@ function WorkspaceLayout() {
           </main>
         </div>
       </div>
-      <GlobalPomodoroTimer />
     </>
   );
 }

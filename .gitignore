@@ -150,3 +150,10 @@ pnpm-debug.log*
 # Hosting
 # -----------------------------------------------------------------------------
 .vercel
+
+# polaris
+polaris.db
+polaris.db-shm
+polaris.db-wal
+.fastembed_cache/
+.mcp.json

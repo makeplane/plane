@@ -62,4 +62,18 @@ export class PomodoroTimerService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async notifyPhaseEnd(data: {
+    phase: "focus" | "break";
+    title: string;
+    body: string;
+    /** optional override used by the settings test button */
+    webhook_url?: string;
+  }): Promise<void> {
+    return this.post("/api/users/me/pomodoro-timers/notify/", data)
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data ?? error;
+      });
+  }
 }

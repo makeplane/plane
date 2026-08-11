@@ -15,7 +15,7 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // lucide
-import { Check, Pause, Play, Square, Timer } from "lucide-react";
+import { Check, Pause, Play, Timer, Trash2 } from "lucide-react";
 // hooks
 import { usePomodoroTimer } from "@/hooks/pomodoro/use-pomodoro-timer";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -135,7 +135,7 @@ export const PomodoroHeaderButton = observer(function PomodoroHeaderButton({ iss
                   disabled={loader === "mutate"}
                 />
                 <PopoverActionButton
-                  icon={<Square className="size-3.5" />}
+                  icon={<Trash2 className="size-3.5" />}
                   label={t("pomodoro.discard")}
                   onClick={() => void discard()}
                   disabled={loader === "mutate"}
@@ -157,7 +157,7 @@ export const PomodoroHeaderButton = observer(function PomodoroHeaderButton({ iss
                   disabled={loader === "mutate"}
                 />
                 <PopoverActionButton
-                  icon={<Square className="size-3.5" />}
+                  icon={<Trash2 className="size-3.5" />}
                   label={t("pomodoro.discard")}
                   onClick={() => void discard()}
                   disabled={loader === "mutate"}

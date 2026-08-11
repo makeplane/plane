@@ -20,6 +20,8 @@ def get_default_pomodoro_settings():
         "auto_start_break": True,
         "auto_start_focus": True,
         "auto_create_time_log": True,
+        "browser_notifications": False,
+        "discord_webhook_url": "",
     }
 
 

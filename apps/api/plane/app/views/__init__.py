@@ -149,7 +149,7 @@ from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
 
 from .issue.time_log import IssueTimeLogViewSet
 
-from .pomodoro import PomodoroTimerViewSet
+from .pomodoro import PomodoroTimerViewSet, PomodoroNotifyEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

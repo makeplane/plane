@@ -4,12 +4,15 @@
 
 # Python imports
 import json
+import logging
+from urllib.parse import urlparse
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third Party imports
+import requests
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -21,11 +24,69 @@ from plane.app.serializers import (
     TimeLogReadSerializer,
     TimeLogSerializer,
 )
+from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Issue, PomodoroTimer, ProjectMember, TimeLog
+from plane.db.models import Issue, PomodoroTimer, Profile, ProjectMember, TimeLog
 from plane.utils.host import base_host
 
-from .base import BaseViewSet
+logger = logging.getLogger("plane")
+
+DISCORD_WEBHOOK_HOSTS = {"discord.com", "discordapp.com"}
+
+
+class PomodoroNotifyEndpoint(BaseAPIView):
+    """Proxy pomodoro phase-end messages to the user's Discord webhook."""
+
+    def post(self, request):
+        # pomodoro_settings live on Profile (not User)
+        try:
+            settings = request.user.profile.pomodoro_settings or {}
+        except Profile.DoesNotExist:
+            settings = {}
+        # Allow an explicit URL (e.g. settings "Test" button) while still
+        # falling back to the saved profile value for phase-end notifications.
+        webhook_url = (request.data.get("webhook_url") or settings.get("discord_webhook_url") or "").strip()
+        if not webhook_url:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        parsed = urlparse(webhook_url)
+        host = (parsed.hostname or "").lower()
+        if parsed.scheme != "https" or not any(host == h or host.endswith(f".{h}") for h in DISCORD_WEBHOOK_HOSTS):
+            return Response({"error": "Invalid Discord webhook URL."}, status=status.HTTP_400_BAD_REQUEST)
+        if "/api/webhooks/" not in parsed.path:
+            return Response({"error": "Invalid Discord webhook URL."}, status=status.HTTP_400_BAD_REQUEST)
+
+        title = request.data.get("title") or "Pomodoro"
+        body = request.data.get("body") or ""
+        phase = request.data.get("phase") or "focus"
+        color = 0x22C55E if phase == "focus" else 0x8B5CF6
+
+        payload = {
+            "embeds": [
+                {
+                    "title": title,
+                    "description": body,
+                    "color": color,
+                }
+            ]
+        }
+
+        try:
+            response = requests.post(webhook_url, json=payload, timeout=5)
+            if response.status_code >= 400:
+                logger.warning("Discord webhook failed: %s %s", response.status_code, response.text[:200])
+                return Response(
+                    {"error": "Failed to deliver Discord notification."},
+                    status=status.HTTP_502_BAD_GATEWAY,
+                )
+        except requests.RequestException as exc:
+            logger.warning("Discord webhook request error: %s", exc)
+            return Response(
+                {"error": "Failed to deliver Discord notification."},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PomodoroTimerViewSet(BaseViewSet):

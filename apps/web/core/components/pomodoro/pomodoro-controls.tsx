@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // lucide
-import { Check, Pause, Play, SkipForward, Square, Timer } from "lucide-react";
+import { Check, Pause, Play, SkipForward, Timer, Trash2 } from "lucide-react";
 // hooks
 import { usePomodoroTimer } from "@/hooks/pomodoro/use-pomodoro-timer";
 
@@ -32,6 +32,7 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
     isBreak,
     isBreakRunning,
     isNextSessionReady,
+    focusIssueId,
     loader,
     startFocus,
     pause,
@@ -49,6 +50,7 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
     if (response?.time_log) onTimeLogCreated?.();
   };
 
+  const resolvedIssueId = issueId ?? focusIssueId ?? undefined;
   const isLoading = loader === "mutate";
 
   if (compact) {
@@ -78,7 +80,7 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
               <Check className="size-3.5" />
             </IconButton>
             <IconButton label={t("pomodoro.discard")} disabled={isLoading} onClick={() => void discardToBreak()}>
-              <Square className="size-3.5" />
+              <Trash2 className="size-3.5" />
             </IconButton>
           </>
         ) : isTimerPaused ? (
@@ -90,14 +92,14 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
               <Check className="size-3.5" />
             </IconButton>
             <IconButton label={t("pomodoro.discard")} disabled={isLoading} onClick={() => void discardToBreak()}>
-              <Square className="size-3.5" />
+              <Trash2 className="size-3.5" />
             </IconButton>
           </>
         ) : isNextSessionReady ? (
           <IconButton
             label={t("pomodoro.start_focus")}
-            disabled={isLoading}
-            onClick={() => issueId && void startFocus(issueId)}
+            disabled={isLoading || !resolvedIssueId}
+            onClick={() => resolvedIssueId && void startFocus(resolvedIssueId, false)}
           >
             <Timer className="size-3.5" />
           </IconButton>
@@ -132,7 +134,7 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
           <Button variant="tertiary" size="base" prependIcon={<Check />} onClick={handleComplete} loading={isLoading}>
             {t("pomodoro.complete")}
           </Button>
-          <Button variant="ghost" size="base" prependIcon={<Square />} onClick={discard} loading={isLoading}>
+          <Button variant="ghost" size="base" prependIcon={<Trash2 />} onClick={discard} loading={isLoading}>
             {t("pomodoro.discard")}
           </Button>
         </>
@@ -144,7 +146,7 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
           <Button variant="tertiary" size="base" prependIcon={<Check />} onClick={handleComplete} loading={isLoading}>
             {t("pomodoro.complete")}
           </Button>
-          <Button variant="ghost" size="base" prependIcon={<Square />} onClick={discard} loading={isLoading}>
+          <Button variant="ghost" size="base" prependIcon={<Trash2 />} onClick={discard} loading={isLoading}>
             {t("pomodoro.discard")}
           </Button>
         </>
@@ -153,8 +155,8 @@ export const PomodoroControls = observer(function PomodoroControls(props: Props)
           variant="primary"
           size="base"
           prependIcon={<Timer />}
-          onClick={() => issueId && void startFocus(issueId)}
-          disabled={!issueId}
+          onClick={() => resolvedIssueId && void startFocus(resolvedIssueId)}
+          disabled={!resolvedIssueId}
           loading={loader === "start"}
         >
           {t("pomodoro.start_focus")}

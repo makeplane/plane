@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { PreferencesIcon } from "@plane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
+import { cn } from "@plane/utils";
 // components
 import { CustomizeNavigationDialog } from "@/components/navigation/customize-navigation-dialog";
 // hooks
@@ -23,10 +24,11 @@ type TSidebarWrapperProps = {
   title: string;
   children: React.ReactNode;
   quickActions?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWrapperProps) {
-  const { title, children, quickActions } = props;
+  const { title, children, quickActions, footer } = props;
   // state
   const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
@@ -80,13 +82,14 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
         >
           {children}
         </ScrollArea>
-        {/* Help Section */}
-        <div className="flex h-12 items-center justify-between border-t border-subtle bg-surface-1 p-3">
-          {/* TODO: To be checked if we need this */}
-          {/* <div className="flex items-center gap-2">
-          {!shouldRenderAppRail && <HelpMenu />}
-          {!isAppRailEnabled && <AppSidebarToggleButton />}
-        </div> */}
+        {/* Footer */}
+        <div
+          className={cn(
+            "flex items-center border-t border-subtle bg-surface-1 px-3",
+            footer ? "min-h-12 py-2" : "h-12 p-3"
+          )}
+        >
+          {footer}
         </div>
       </div>
     </>

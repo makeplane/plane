@@ -28,6 +28,10 @@ export type TPomodoroSettings = {
   auto_start_focus: boolean;
   /** automatically create a time log when a focus session completes */
   auto_create_time_log: boolean;
+  /** show a browser notification when a focus or break ends */
+  browser_notifications: boolean;
+  /** Discord incoming webhook URL for phase-end messages */
+  discord_webhook_url: string;
 };
 
 export const DEFAULT_POMODORO_SETTINGS: TPomodoroSettings = {
@@ -38,6 +42,8 @@ export const DEFAULT_POMODORO_SETTINGS: TPomodoroSettings = {
   auto_start_break: true,
   auto_start_focus: true,
   auto_create_time_log: true,
+  browser_notifications: false,
+  discord_webhook_url: "",
 };
 
 export type TPomodoroTimer = {

@@ -1,0 +1,35 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TPomodoroSettings } from "@plane/types";
+import { showBrowserPomodoroNotification } from "@/components/pomodoro/notifications";
+import { PomodoroTimerService } from "@/services/pomodoro/pomodoro-timer.service";
+
+export const notifyPomodoroPhaseEnd = async (options: {
+  phase: "focus" | "break";
+  issueName?: string | null;
+  settings: TPomodoroSettings;
+}): Promise<void> => {
+  const issueSuffix = options.issueName ? ` · ${options.issueName}` : "";
+  const title = options.phase === "focus" ? "Focus complete" : "Break over";
+  const body =
+    options.phase === "focus"
+      ? `Focus session finished${issueSuffix}.`
+      : `Break finished${issueSuffix}. Time to focus.`;
+
+  if (options.settings.browser_notifications) {
+    showBrowserPomodoroNotification(title, body);
+  }
+
+  if (options.settings.discord_webhook_url?.trim()) {
+    try {
+      const service = new PomodoroTimerService();
+      await service.notifyPhaseEnd({ phase: options.phase, title, body });
+    } catch {
+      // ignore delivery failures so timer flow is uninterrupted
+    }
+  }
+};
