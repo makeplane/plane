@@ -5,12 +5,12 @@ import { createPortal } from "react-dom";
 import videojs from "video.js";
 import { Pencil } from "lucide-react";
 import { cn } from "@plane/utils";
-import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";
+import { VideoAnnotationEditor } from "@/components/annotation";
+import type { TCustomPlaylistAnnotation } from "@/components/annotation";
 import { useResolvedMediaSources } from "ce/features/media-library/hooks/media-detail-hooks";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getQualitySelection, getVideoRepresentations } from "ce/features/media-library/utils/media-detail-utils";
 import { PLAYER_FRAME_CLASS, PLAYER_STAGE_CLASS, SG_PLAYER_STYLE } from "./constants";
-import { VideoAnnotationEditor } from "./video-annotation-editor";
 
 type SgEventVideoPlayerProps = {
   item: TMediaItem | null;

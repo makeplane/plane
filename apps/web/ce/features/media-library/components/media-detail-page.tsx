@@ -8,15 +8,15 @@ import videojs from "video.js";
 import { ArrowLeft } from "lucide-react";
 // import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { LogoSpinner } from "@/components/common/logo-spinner";
-import { SgEventDetailPage } from "@/components/issues/issue-detail/sg-event-detail-page";
 import {
   buildSgEventAnnotationDisplayMeta,
   buildSgEventAnnotationVideoItem,
   buildSgEventAnnotationViewKey,
   getSgEventMediaReferenceAnnotations,
-} from "@/components/issues/issue-detail/sg-event-detail-page/event-annotation-video";
-import { VideoAnnotationEditor } from "@/components/issues/issue-detail/sg-event-detail-page/video-annotation-editor";
+  VideoAnnotationEditor,
+} from "@/components/annotation";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { SgEventDetailPage } from "@/components/issues/issue-detail/sg-event-detail-page";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TCustomPlaylistAnnotation } from "@/services/media-library.service";

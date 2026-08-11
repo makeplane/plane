@@ -6,11 +6,16 @@ import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
+import {
+  buildSgEventAnnotationVideoItem,
+  buildSgEventAnnotationViewKey,
+  getSgEventMediaReferenceAnnotations,
+} from "@/components/annotation";
+import type { TCustomPlaylistAnnotation } from "@/components/annotation";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type {
   TCustomPlaylist,
-  TCustomPlaylistAnnotation,
   TCustomPlaylistClip,
   TCustomPlaylistUpdatePayload,
 } from "@/services/media-library.service";
@@ -20,11 +25,6 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
-import {
-  buildSgEventAnnotationVideoItem,
-  buildSgEventAnnotationViewKey,
-  getSgEventMediaReferenceAnnotations,
-} from "./event-annotation-video";
 import { SgEventHeader, SgEventTitleBar } from "./header";
 import { useSgEventPlaybackState } from "./hooks/use-sg-event-playback-state";
 import { useSgEventTagState } from "./hooks/use-sg-event-tag-state";
