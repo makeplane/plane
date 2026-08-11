@@ -722,17 +722,104 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
         existing_artifacts = manifest.get("artifacts") or []
         existing_names = {artifact.get("name") for artifact in existing_artifacts if artifact.get("name")}
         incoming_names = set()
+        repair_existing_document_artifact = False
         for artifact in validated_artifacts:
-            artifact_name = artifact.get("name")
-            validate_segment(artifact_name, "artifactId")
-            if artifact_name in existing_names:
+            artifact_payload_name = artifact.get("name")
+            validate_segment(artifact_payload_name, "artifactId")
+            if artifact_payload_name in existing_names:
+                if (
+                    file_obj
+                    and doc_thumbnail_name
+                    and doc_thumbnail_source
+                    and doc_thumbnail_path
+                    and doc_thumbnail_relative_path
+                    and artifact_payload_name == artifact_name
+                ):
+                    repair_existing_document_artifact = True
+                    continue
                 return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
-            if artifact_name in incoming_names:
+            if artifact_payload_name in incoming_names:
                 return Response(
                     {"error": "Duplicate artifact name in request."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            incoming_names.add(artifact_name)
+            incoming_names.add(artifact_payload_name)
+
+        if repair_existing_document_artifact:
+            repaired_artifact = None
+            with manifest_write_lock(manifest_file):
+                manifest = read_manifest(manifest_file)
+                artifacts = manifest.get("artifacts") or []
+                existing_artifact = next(
+                    (
+                        item
+                        for item in artifacts
+                        if isinstance(item, dict) and item.get("name") == artifact_name
+                    ),
+                    None,
+                )
+                if not existing_artifact:
+                    return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+
+                primary_update = validated_artifacts[0]
+                for field in (
+                    "title",
+                    "description",
+                    "format",
+                    "link",
+                    "action",
+                    "metadata_ref",
+                    "meta",
+                    "work_item_id",
+                ):
+                    if field in primary_update:
+                        existing_artifact[field] = primary_update.get(field)
+                existing_artifact["updated_at"] = primary_update.get("updated_at") or timestamp
+
+                attachment_root.mkdir(parents=True, exist_ok=True)
+                thumbnail_created = generate_thumbnail(doc_thumbnail_source, doc_thumbnail_path, seek=None)
+                if thumbnail_created:
+                    thumbnail_entry = next(
+                        (
+                            item
+                            for item in artifacts
+                            if isinstance(item, dict) and item.get("name") == doc_thumbnail_name
+                        ),
+                        None,
+                    )
+                    if thumbnail_entry is None:
+                        thumbnail_entry = {
+                            "name": doc_thumbnail_name,
+                            "created_at": primary_update.get("created_at") or timestamp,
+                        }
+                        artifacts.append(thumbnail_entry)
+                    thumbnail_entry.update(
+                        {
+                            "title": primary_update.get("title") or "Document thumbnail",
+                            "format": "thumbnail",
+                            "path": doc_thumbnail_relative_path,
+                            "link": artifact_name,
+                            "action": doc_thumbnail_action or primary_update.get("action") or "download",
+                            "metadata_ref": primary_update.get("metadata_ref") or artifact_name,
+                            "updated_at": primary_update.get("updated_at")
+                            or primary_update.get("created_at")
+                            or timestamp,
+                        }
+                    )
+                    work_item_id = primary_update.get("work_item_id")
+                    if work_item_id is not None:
+                        thumbnail_entry["work_item_id"] = work_item_id
+
+                manifest["artifacts"] = artifacts
+                manifest["updatedAt"] = _now_iso()
+                normalize_manifest_metadata(manifest)
+                write_manifest_atomic(manifest_file, manifest)
+                repaired_artifact = hydrate_artifacts_with_meta(
+                    [existing_artifact],
+                    manifest.get("metadata") if isinstance(manifest, dict) else {},
+                )[0]
+
+            return Response(repaired_artifact, status=status.HTTP_200_OK)
 
         if thumbnail_name:
             validate_segment(thumbnail_name, "artifactId")

@@ -136,6 +136,8 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ./apps/api/plane/media-library:/data/media-library
+      - ./apps/api/plane/transcode-sources:/data/transcode-sources
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
@@ -160,6 +162,8 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ./apps/api/plane/media-library:/data/media-library
+      - ./apps/api/plane/transcode-sources:/data/transcode-sources
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
@@ -182,6 +186,8 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ./apps/api/plane/media-library:/data/media-library
+      - ./apps/api/plane/transcode-sources:/data/transcode-sources
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
@@ -204,6 +210,8 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ./apps/api/plane/media-library:/data/media-library
+      - ./apps/api/plane/transcode-sources:/data/transcode-sources
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
@@ -240,7 +248,6 @@ volumes:
   uploads:
   pgdata:
   rabbitmq_data:
-
 networks:
   dev_env:
     driver: bridge

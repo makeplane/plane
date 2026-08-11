@@ -3,6 +3,10 @@ from django.urls import path
 from plane.app.views.media_library import (
     MediaArtifactDetailAPIView,
     MediaArtifactFileAPIView,
+    MediaArtifactTranscodeAPIView,
+    MediaArtifactTranscodeJobAPIView,
+    MediaArtifactTranscodeJobCancelAPIView,
+    MediaArtifactTranscodeJobRetryAPIView,
     MediaArtifactsListAPIView,
     MediaLibraryInitAPIView,
     MediaManifestDetailAPIView,
@@ -40,6 +44,26 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/",
         MediaArtifactDetailAPIView.as_view(),
         name="media-library-artifact-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/transcode/",
+        MediaArtifactTranscodeAPIView.as_view(),
+        name="media-library-artifact-transcode",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/transcode/jobs/<str:job_id>/",
+        MediaArtifactTranscodeJobAPIView.as_view(),
+        name="media-library-artifact-transcode-job",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/transcode/jobs/<str:job_id>/retry/",
+        MediaArtifactTranscodeJobRetryAPIView.as_view(),
+        name="media-library-artifact-transcode-job-retry",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/transcode/jobs/<str:job_id>/cancel/",
+        MediaArtifactTranscodeJobCancelAPIView.as_view(),
+        name="media-library-artifact-transcode-job-cancel",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/file/<path:artifact_path>/",

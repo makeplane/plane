@@ -50,6 +50,22 @@ type TEditableMetaKey =
   | "start_time"
   | "opposition";
 
+const HIDDEN_ADDITIONAL_META_KEYS = new Set([
+  "hlspending",
+  "hlsmasterplaylist",
+  "hlsrendition",
+  "hlsrenditions",
+  "poster",
+  "posterurl",
+  "transcodeassetid",
+  "transcodecompletedat",
+  "transcodejobid",
+  "transcodeprofile",
+  "transcodeprogress",
+]);
+
+const normalizeAdditionalMetaKey = (key: string) => key.replace(/[-_\s]+/g, "").toLowerCase();
+
 export const MediaDetailSidebar = ({
   workspaceSlug,
   projectId,
@@ -150,6 +166,7 @@ export const MediaDetailSidebar = ({
         if (baseMetaKeys.has(key)) return false;
         const normalizedKey = key.toLowerCase();
         if (
+          HIDDEN_ADDITIONAL_META_KEYS.has(normalizeAdditionalMetaKey(key)) ||
           normalizedKey === "annotations" ||
           normalizedKey === "kind" ||
           normalizedKey === "thumbnail" ||

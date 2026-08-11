@@ -7,6 +7,7 @@ import mimetypes
 import os
 import re
 from hashlib import sha1
+from urllib import error as urlerror, request as urlrequest
 from urllib.parse import urlparse
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -48,6 +49,7 @@ from plane.utils.media_library import (
     MediaLibraryTranscodeError,
     package_root,
     read_manifest,
+    resolve_artifact_metadata,
     transcode_video_to_mp4,
     transcode_mp4_to_hls,
     validate_segment,
@@ -72,6 +74,8 @@ _IMAGE_FORMATS = {
 }
 _VIDEO_FORMATS = {"mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"}
 _MP4_FASTSTART_FORMATS = {".mp4", ".m4v"}
+_TRANSCODE_SOURCE_FORMATS = {"mp4", "m4v"}
+_TRANSCODE_TERMINAL_STATUSES = {"COMPLETED", "FAILED", "CANCELLED"}
 logger = logging.getLogger(__name__)
 
 
@@ -222,6 +226,71 @@ def _resolve_artifact_disk_path(artifact: dict, base_root: Path) -> Path | None:
     if os.path.commonpath([str(base_root), str(candidate)]) != str(base_root):
         return None
     return candidate
+
+
+def _transcode_source_root() -> Path:
+    return Path(getattr(settings, "MEDIA_TRANSCODE_SOURCE_ROOT", "") or "").resolve(strict=False)
+
+
+def _transcode_source_storage_prefix() -> str:
+    return str(getattr(settings, "MEDIA_TRANSCODE_SOURCE_STORAGE_PREFIX", "transcode-sources") or "").strip("/")
+
+
+def _build_transcode_source_paths(
+    project_id: str,
+    package_id: str,
+    artifact_id: str,
+    extension: str,
+) -> tuple[str, Path]:
+    relative_suffix = f"projects/{project_id}/packages/{package_id}/artifacts/{artifact_id}/source.{extension}"
+    prefix = _transcode_source_storage_prefix()
+    storage_path = f"{prefix}/{relative_suffix}" if prefix else relative_suffix
+    return storage_path, _transcode_source_root() / relative_suffix
+
+
+def _resolve_transcode_source_disk_path(source_path: str | None) -> Path | None:
+    if not isinstance(source_path, str) or not source_path.strip():
+        return None
+    value = source_path.strip()
+    if value.startswith(("http://", "https://")):
+        return None
+    prefix = _transcode_source_storage_prefix()
+    if prefix and value.startswith(f"{prefix}/"):
+        value = value[len(prefix) + 1 :]
+    candidate = Path(value)
+    source_root = _transcode_source_root()
+    if candidate.is_absolute():
+        candidate = candidate.resolve(strict=False)
+    else:
+        candidate = (source_root / candidate).resolve(strict=False)
+    try:
+        common = os.path.commonpath([str(source_root), str(candidate)])
+    except ValueError:
+        return None
+    if common != str(source_root):
+        return None
+    return candidate
+
+
+def _delete_transcode_source(source_path: str | None) -> None:
+    disk_path = _resolve_transcode_source_disk_path(source_path)
+    if not disk_path:
+        return
+    try:
+        if disk_path.is_dir():
+            shutil.rmtree(disk_path, ignore_errors=True)
+        else:
+            disk_path.unlink(missing_ok=True)
+        parent = disk_path.parent
+        source_root = _transcode_source_root()
+        while parent != source_root and parent.exists():
+            try:
+                parent.rmdir()
+            except OSError:
+                break
+            parent = parent.parent
+    except OSError as exc:
+        logger.warning("Could not remove transcode source file: %s", exc)
 
 
 def _delete_artifact_disk_path(path: Path, artifact_name: str | None = None) -> None:
@@ -400,6 +469,264 @@ def _ensure_mp4_faststart(path: Path, artifact_name: str | None = None, force: b
         transcode_video_to_mp4(path, path)
     except MediaLibraryTranscodeError as exc:
         logger.warning("Failed to optimize MP4 for streaming (%s): %s", label, exc)
+
+
+def _transcode_service_url(path: str) -> str:
+    base_url = (getattr(settings, "MEDIA_TRANSCODE_SERVICE_URL", "") or "http://thumbnail-service:5000").rstrip("/")
+    return f"{base_url}/{path.lstrip('/')}"
+
+
+def _transcode_service_headers() -> dict[str, str]:
+    headers = {"Content-Type": "application/json"}
+    token = (getattr(settings, "MEDIA_TRANSCODE_INTERNAL_API_TOKEN", "") or "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+def _call_transcode_service(method: str, path: str, payload: dict | None = None) -> tuple[int, dict]:
+    body = None
+    if payload is not None:
+        body = json.dumps(payload).encode("utf-8")
+    request = urlrequest.Request(
+        _transcode_service_url(path),
+        data=body,
+        headers=_transcode_service_headers(),
+        method=method,
+    )
+    timeout = getattr(settings, "MEDIA_TRANSCODE_REQUEST_TIMEOUT", 10)
+    try:
+        with urlrequest.urlopen(request, timeout=timeout) as response:
+            raw_body = response.read(1024 * 1024)
+            if not raw_body:
+                return response.status, {}
+            try:
+                return response.status, json.loads(raw_body.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                return response.status, {"error": "Transcoding service returned an invalid response."}
+    except urlerror.HTTPError as exc:
+        raw_body = exc.read(1024 * 1024)
+        try:
+            data = json.loads(raw_body.decode("utf-8")) if raw_body else {}
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            data = {"error": "Transcoding service returned an invalid error response."}
+        return exc.code, data
+    except (OSError, TimeoutError, urlerror.URLError) as exc:
+        logger.warning("Transcoding service request failed for %s %s: %s", method, path, exc)
+        return 502, {"error": {"code": "TRANSCODE_SERVICE_UNAVAILABLE", "message": "Transcoding service unavailable."}}
+
+
+def _find_manifest_artifact(manifest: dict, artifact_id: str) -> dict | None:
+    artifacts = manifest.get("artifacts") or []
+    if not isinstance(artifacts, list):
+        return None
+    return next((artifact for artifact in artifacts if isinstance(artifact, dict) and artifact.get("name") == artifact_id), None)
+
+
+def _hydrate_manifest_artifact(manifest: dict, artifact: dict) -> dict:
+    metadata = manifest.get("metadata") if isinstance(manifest, dict) else {}
+    meta = resolve_artifact_metadata(artifact, metadata if isinstance(metadata, dict) else {})
+    if not meta:
+        return artifact
+    hydrated = artifact.copy()
+    hydrated["meta"] = meta
+    return hydrated
+
+
+def _transcode_asset_id(project_id: str, package_id: str, artifact_id: str) -> str:
+    digest = sha1(f"{project_id}:{package_id}:{artifact_id}".encode("utf-8")).hexdigest()
+    return f"media-{digest}"
+
+
+def _artifact_transcode_format(artifact: dict) -> str:
+    meta = artifact.get("meta") if isinstance(artifact.get("meta"), dict) else {}
+    source_path = str(meta.get("transcode_source_path") or "").strip()
+    source_format = str(meta.get("source_format") or "").lower().lstrip(".")
+    if source_path and source_format:
+        return source_format
+    format_value = str(artifact.get("format") or "").lower().lstrip(".")
+    if format_value:
+        return format_value
+    raw_path = str(artifact.get("path") or "")
+    return Path(raw_path.split("?", 1)[0].split("#", 1)[0]).suffix.lower().lstrip(".")
+
+
+def _build_transcode_input_path(artifact: dict) -> str:
+    meta = artifact.get("meta") if isinstance(artifact.get("meta"), dict) else {}
+    source_path = str(meta.get("transcode_source_path") or "").strip()
+    if source_path:
+        return source_path
+    raw_path = str(artifact.get("path") or "").strip()
+    if raw_path.startswith(("http://", "https://")):
+        return raw_path
+    return f"media-library/{raw_path.lstrip('/')}"
+
+
+def _normalize_transcode_output_url(value: str | None) -> str:
+    if not value:
+        return ""
+    output_base_url = (getattr(settings, "MEDIA_TRANSCODE_OUTPUT_BASE_URL", "") or "").rstrip("/")
+    if not output_base_url:
+        return str(value)
+    output_path = str(value).strip()
+    marker = "/data/media/"
+    if marker in output_path:
+        output_path = output_path.split(marker, 1)[1]
+    output_path = output_path.lstrip("/")
+    if output_path.startswith("media/"):
+        output_path = output_path[len("media/") :]
+    return f"{output_base_url}/{output_path.lstrip('/')}"
+
+
+def _build_transcode_output_asset_url(playable_url: str, relative_path: str | None) -> str:
+    if not playable_url or not relative_path:
+        return ""
+    if "/hls/" not in playable_url:
+        return ""
+    asset_base = playable_url.split("/hls/", 1)[0].rstrip("/")
+    return f"{asset_base}/{str(relative_path).lstrip('/')}"
+
+
+def _upsert_manifest_thumbnail_artifact(
+    manifest: dict,
+    artifact: dict,
+    artifact_id: str,
+    thumbnail_path: str | None,
+    *,
+    action: str = "preview",
+    timestamp: str | None = None,
+) -> int:
+    thumbnail_path_value = str(thumbnail_path or "").strip()
+    if not thumbnail_path_value:
+        return 0
+
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list):
+        artifacts = []
+        manifest["artifacts"] = artifacts
+
+    thumbnail_name = f"{artifact_id}-thumbnail"
+    validate_segment(thumbnail_name, "artifactId")
+    updated_at = timestamp or _now_iso()
+    metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref")) or normalize_metadata_ref(artifact.get("name"))
+    if not metadata_ref:
+        metadata_ref = artifact_id
+
+    thumbnail_entry = next(
+        (
+            item
+            for item in artifacts
+            if isinstance(item, dict) and item.get("format") == "thumbnail" and item.get("link") == artifact_id
+        ),
+        None,
+    )
+    if thumbnail_entry is None:
+        thumbnail_entry = next(
+            (
+                item
+                for item in artifacts
+                if isinstance(item, dict) and item.get("name") == thumbnail_name
+            ),
+            None,
+        )
+
+    created_at = (
+        thumbnail_entry.get("created_at")
+        if isinstance(thumbnail_entry, dict) and thumbnail_entry.get("created_at")
+        else artifact.get("created_at") or updated_at
+    )
+    next_thumbnail = {
+        "name": thumbnail_entry.get("name") if isinstance(thumbnail_entry, dict) else thumbnail_name,
+        "title": artifact.get("title") or "Video thumbnail",
+        "format": "thumbnail",
+        "path": thumbnail_path_value,
+        "link": artifact_id,
+        "action": action or "preview",
+        "metadata_ref": metadata_ref,
+        "created_at": created_at,
+        "updated_at": updated_at,
+    }
+    work_item_id = artifact.get("work_item_id")
+    if work_item_id is not None:
+        next_thumbnail["work_item_id"] = work_item_id
+
+    serializer = MediaArtifactSerializer(data=next_thumbnail)
+    serializer.is_valid(raise_exception=True)
+    validated_thumbnail = serializer.validated_data
+
+    if thumbnail_entry is None:
+        artifacts.append(validated_thumbnail)
+        return 1
+
+    changed = False
+    for key, value in validated_thumbnail.items():
+        if thumbnail_entry.get(key) != value:
+            thumbnail_entry[key] = value
+            changed = True
+    return 1 if changed else 0
+
+
+def _update_artifact_transcode_meta(
+    project_id: str,
+    package_id: str,
+    artifact_id: str,
+    updates: dict,
+    artifact_updates: dict | None = None,
+) -> int:
+    manifest_file = manifest_path(project_id, package_id)
+    if not manifest_file.exists():
+        raise NotFound("Manifest not found.")
+    source_to_delete = None
+    with manifest_write_lock(manifest_file):
+        manifest = read_manifest(manifest_file)
+        artifact = _find_manifest_artifact(manifest, artifact_id)
+        if not artifact:
+            raise NotFound("Artifact not found.")
+        metadata = manifest.get("metadata")
+        if not isinstance(metadata, dict):
+            metadata = {}
+            manifest["metadata"] = metadata
+        current_meta = resolve_artifact_metadata(artifact, metadata)
+        next_meta = {**current_meta, **updates}
+        if next_meta.get("transcode_status") in {"COMPLETED", "CANCELLED"}:
+            source_to_delete = str(next_meta.get("transcode_source_path") or "").strip() or None
+            next_meta.pop("transcode_source_path", None)
+        metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref")) or normalize_metadata_ref(artifact.get("name"))
+        updated_count = 0
+        if metadata_ref:
+            artifact["metadata_ref"] = metadata_ref
+            if metadata.get(metadata_ref) != next_meta:
+                metadata[metadata_ref] = next_meta
+                updated_count += 1
+            if "meta" in artifact:
+                artifact.pop("meta", None)
+                updated_count += 1
+            next_artifact_updates = artifact_updates or {}
+        else:
+            next_artifact_updates = {"meta": next_meta}
+            if artifact_updates:
+                next_artifact_updates.update(artifact_updates)
+        if next_artifact_updates:
+            updated_count += update_manifest_artifact_fields(
+                manifest,
+                next_artifact_updates,
+                artifact_id=artifact_id,
+            )
+        if next_meta.get("transcode_status") == "COMPLETED":
+            updated_count += _upsert_manifest_thumbnail_artifact(
+                manifest,
+                artifact,
+                artifact_id,
+                str(next_meta.get("poster_url") or next_meta.get("thumbnail") or "").strip(),
+                action="preview",
+            )
+        if updated_count > 0:
+            manifest["updatedAt"] = _now_iso()
+            normalize_manifest_metadata(manifest)
+            write_manifest_atomic(manifest_file, manifest)
+    if source_to_delete:
+        _delete_transcode_source(source_to_delete)
+    return updated_count
 
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
@@ -924,8 +1251,173 @@ class MediaArtifactDetailAPIView(BaseAPIView):
             resolved_path = _resolve_artifact_disk_path(artifact, base_root)
             if resolved_path:
                 _delete_artifact_disk_path(resolved_path, artifact.get("name"))
+            meta = artifact.get("meta") if isinstance(artifact.get("meta"), dict) else {}
+            _delete_transcode_source(meta.get("transcode_source_path"))
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MediaArtifactTranscodeAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id, package_id, artifact_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        manifest_file = manifest_path(project_id_str, package_id)
+        if not manifest_file.exists():
+            raise NotFound("Manifest not found.")
+
+        manifest = read_manifest(manifest_file)
+        artifact = _find_manifest_artifact(manifest, artifact_id)
+        if not artifact:
+            raise NotFound("Artifact not found.")
+        artifact = _hydrate_manifest_artifact(manifest, artifact)
+
+        artifact_format = _artifact_transcode_format(artifact)
+        if artifact_format not in _TRANSCODE_SOURCE_FORMATS:
+            return Response(
+                {"error": {"code": "SOURCE_UNSUPPORTED", "message": "Only MP4 uploads can be transcoded."}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing_meta = artifact.get("meta") if isinstance(artifact.get("meta"), dict) else {}
+        existing_job_id = str(existing_meta.get("transcode_job_id") or "").strip()
+        if existing_job_id:
+            upstream_status, upstream_payload = _call_transcode_service("GET", f"/transcoding/jobs/{existing_job_id}")
+            if upstream_status < 400 and str(upstream_payload.get("status") or "") not in _TRANSCODE_TERMINAL_STATUSES:
+                return Response(upstream_payload, status=status.HTTP_200_OK)
+
+        encoding_profile = str(request.data.get("encoding_profile") or "adaptive-1080p").strip()
+        generate_thumbnails = bool(request.data.get("generate_thumbnails", True))
+        asset_id = _transcode_asset_id(project_id_str, package_id, artifact_id)
+        payload = {
+            "asset_id": asset_id,
+            "input_path": _build_transcode_input_path(artifact),
+            "encoding_profile": encoding_profile,
+            "generate_thumbnails": generate_thumbnails,
+            "workspace_slug": slug,
+            "project_id": project_id_str,
+            "package_id": package_id,
+            "artifact_id": artifact_id,
+        }
+
+        upstream_status, upstream_payload = _call_transcode_service("POST", "/transcoding/jobs", payload)
+        if upstream_status >= 400:
+            return Response(upstream_payload, status=upstream_status)
+
+        job_id = str(upstream_payload.get("job_id") or "").strip()
+        if job_id:
+            _update_artifact_transcode_meta(
+                project_id_str,
+                package_id,
+                artifact_id,
+                {
+                    "transcode_asset_id": asset_id,
+                    "transcode_job_id": job_id,
+                    "transcode_status": upstream_payload.get("status") or "QUEUED",
+                    "transcode_profile": encoding_profile,
+                },
+            )
+        return Response(upstream_payload, status=status.HTTP_201_CREATED)
+
+
+class MediaArtifactTranscodeJobAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, package_id, artifact_id, job_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        upstream_status, upstream_payload = _call_transcode_service("GET", f"/transcoding/jobs/{job_id}")
+        if upstream_status >= 400:
+            return Response(upstream_payload, status=upstream_status)
+
+        job_status = str(upstream_payload.get("status") or "")
+        meta_updates = {
+            "transcode_job_id": job_id,
+            "transcode_status": job_status,
+            "transcode_progress": upstream_payload.get("progress"),
+        }
+        artifact_updates = None
+        if job_status == "COMPLETED":
+            output = upstream_payload.get("output") if isinstance(upstream_payload.get("output"), dict) else {}
+            output_location = output.get("public_or_internal_url") or output.get("master_playlist_location")
+            playable_url = _normalize_transcode_output_url(output_location)
+            thumbnails = output.get("thumbnails") if isinstance(output.get("thumbnails"), dict) else {}
+            poster_url = _build_transcode_output_asset_url(playable_url, thumbnails.get("poster"))
+            meta_updates.update(
+                {
+                    "transcode_completed_at": upstream_payload.get("completed_at"),
+                    "hls_master_playlist": playable_url or output_location,
+                    "hls_renditions": output.get("renditions"),
+                    "hls_pending": False,
+                    "poster": output.get("thumbnails"),
+                    "poster_url": poster_url,
+                    "thumbnail": poster_url,
+                }
+            )
+            if playable_url:
+                artifact_updates = {"path": playable_url, "format": "m3u8", "action": "play_hls"}
+                upstream_payload["playable_url"] = playable_url
+        elif job_status in {"FAILED", "CANCELLED"}:
+            error = upstream_payload.get("error")
+            if isinstance(error, dict):
+                meta_updates["transcode_error"] = error.get("message") or error.get("code")
+
+        _update_artifact_transcode_meta(project_id_str, package_id, artifact_id, meta_updates, artifact_updates)
+        return Response(upstream_payload, status=status.HTTP_200_OK)
+
+
+class MediaArtifactTranscodeJobRetryAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id, package_id, artifact_id, job_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        upstream_status, upstream_payload = _call_transcode_service("POST", f"/transcoding/jobs/{job_id}/retry", {})
+        if upstream_status >= 400:
+            return Response(upstream_payload, status=upstream_status)
+        _update_artifact_transcode_meta(
+            project_id_str,
+            package_id,
+            artifact_id,
+            {
+                "transcode_job_id": job_id,
+                "transcode_status": upstream_payload.get("status") or "QUEUED",
+                "transcode_progress": upstream_payload.get("progress") or 0,
+                "transcode_error": None,
+            },
+        )
+        return Response(upstream_payload, status=status.HTTP_200_OK)
+
+
+class MediaArtifactTranscodeJobCancelAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id, package_id, artifact_id, job_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        upstream_status, upstream_payload = _call_transcode_service("POST", f"/transcoding/jobs/{job_id}/cancel", {})
+        if upstream_status >= 400:
+            return Response(upstream_payload, status=upstream_status)
+        _update_artifact_transcode_meta(
+            project_id_str,
+            package_id,
+            artifact_id,
+            {
+                "transcode_job_id": job_id,
+                "transcode_status": upstream_payload.get("status") or "CANCEL_REQUESTED",
+                "transcode_progress": upstream_payload.get("progress"),
+            },
+        )
+        return Response(upstream_payload, status=status.HTTP_200_OK)
 
 
 class MediaArtifactsListAPIView(BaseAPIView):
@@ -995,6 +1487,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
         is_bulk = isinstance(payload, list) or (isinstance(payload, dict) and "artifacts" in payload)
         artifacts_payload = []
         file_path = None
+        transcode_source_file_path = None
+        transcode_source_storage_path = None
         artifact_dir = None
         should_transcode = False
         thumbnail_name = None
@@ -1029,6 +1523,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
 
             format_value = (request.data.get("format") or extension).lower()
             artifact_name = request.data.get("name") or base_name
+            validate_segment(artifact_name, "artifactId")
             title = request.data.get("title") or base_name
             primary_artifact_name = artifact_name
             primary_title = title
@@ -1065,6 +1560,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             attachment_root = package_root(project_id_str, package_id) / "attachment"
             is_video_upload = format_value in _VIDEO_FORMATS or extension in _VIDEO_FORMATS
+            is_transcode_source_upload = extension in _TRANSCODE_SOURCE_FORMATS
             # Keep uploaded videos in their original format; do not auto-transcode to HLS on upload.
             should_transcode = False
             if should_transcode:
@@ -1087,12 +1583,29 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 meta.setdefault("source_format", extension)
                 meta.setdefault("hls", True)
             else:
-                artifact_file_name = f"{artifact_name}.{extension}"
-                file_path = artifacts_root / artifact_file_name
-                relative_path = (
-                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
-                )
-                if format_value in _VIDEO_FORMATS and format_value != "m3u8":
+                if is_transcode_source_upload:
+                    transcode_source_storage_path, transcode_source_file_path = _build_transcode_source_paths(
+                        project_id_str,
+                        package_id,
+                        primary_artifact_name,
+                        extension,
+                    )
+                    asset_id = _transcode_asset_id(project_id_str, package_id, primary_artifact_name)
+                    relative_path = _normalize_transcode_output_url(f"media/{asset_id}/hls/master.m3u8")
+                    meta.setdefault("source_format", extension)
+                    meta.setdefault("original_filename", raw_name)
+                    meta.setdefault("source_file_size", file_obj.size)
+                    meta["transcode_source_path"] = transcode_source_storage_path
+                    meta.setdefault("transcode_status", "UPLOAD_COMPLETE")
+                    meta.setdefault("hls_pending", True)
+                    format_value = "m3u8"
+                else:
+                    artifact_file_name = f"{artifact_name}.{extension}"
+                    file_path = artifacts_root / artifact_file_name
+                    relative_path = (
+                        f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
+                    )
+                if not is_transcode_source_upload and format_value in _VIDEO_FORMATS and format_value != "m3u8":
                     video_thumbnail_name = f"{primary_artifact_name}-thumbnail"
                     video_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.webp"
                     video_thumbnail_path = artifacts_root / video_thumbnail_file_name
@@ -1126,6 +1639,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         )
 
             action = request.data.get("action")
+            if is_transcode_source_upload:
+                action = "play_hls"
             if not action:
                 if format_value in _VIDEO_FORMATS:
                     action = "play"
@@ -1255,7 +1770,14 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 )
             incoming_names.add(video_thumbnail_name)
 
-        if file_obj and file_path:
+        if file_obj and transcode_source_file_path:
+            if transcode_source_file_path.exists():
+                return Response({"error": "Artifact source file already exists."}, status=status.HTTP_409_CONFLICT)
+            transcode_source_file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(transcode_source_file_path, "wb") as handle:
+                for chunk in file_obj.chunks():
+                    handle.write(chunk)
+        elif file_obj and file_path:
             if should_transcode:
                 if not artifact_dir:
                     return Response({"error": "Artifact directory missing."}, status=status.HTTP_400_BAD_REQUEST)

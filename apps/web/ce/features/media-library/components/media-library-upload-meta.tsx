@@ -26,8 +26,7 @@ type Props = {
 const FIELD_BUTTON_BASE_CLASS = "h-8 border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-100";
 const getFieldButtonClassName = (hasValue: boolean) =>
   `${FIELD_BUTTON_BASE_CLASS} text-xs ${hasValue ? "text-custom-text-100" : "text-custom-text-400"}`;
-const getFieldButtonContainerClassName = (isLocked: boolean) =>
-  `w-full text-left ${isLocked ? "cursor-default" : ""}`;
+const getFieldButtonContainerClassName = (isLocked: boolean) => `w-full text-left ${isLocked ? "cursor-default" : ""}`;
 const FIELD_LABEL_CLASS = "pl-1";
 
 export const MediaLibraryUploadMetaForm = ({
@@ -43,9 +42,9 @@ export const MediaLibraryUploadMetaForm = ({
   onRemoveTag,
 }: Props) => (
   <div className="mb-4 rounded-lg border border-custom-border-200 bg-custom-background-90 p-4">
-    <div className="text-xs font-semibold text-custom-text-100">Metadata (optional)</div>
+    <div className="text-xs font-semibold text-custom-text-100">Metadata (Optional)</div>
     <div className="mt-2">{workItemSelector}</div>
-    <div className="mt-3 grid grid-flow-col auto-cols-fr gap-3">
+    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3 xl:grid-cols-6">
       <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
         <span className={FIELD_LABEL_CLASS}>Category</span>
         <CategoryDropdown

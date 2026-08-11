@@ -70,9 +70,13 @@ type TMediaManifestMetaUpdatePayload = {
 type TMediaManifestArtifactUpdatePayload = {
   artifact_id: string;
   artifact: {
+    action?: string | null;
     title?: string | null;
     description?: string | null;
+    format?: string | null;
+    link?: string | null;
     meta?: Record<string, unknown>;
+    path?: string | null;
   };
 };
 
@@ -89,6 +93,47 @@ export type TEventVideoAnnotationUpdateResponse = {
   eventPayload?: Record<string, unknown>;
   mediaReference?: Record<string, unknown>;
   updated?: number;
+};
+
+export type TMediaTranscodeJobStatus =
+  | "QUEUED"
+  | "CLAIMED"
+  | "PROBING"
+  | "TRANSCODING"
+  | "PACKAGING"
+  | "VALIDATING"
+  | "COMPLETED"
+  | "FAILED"
+  | "RETRY_PENDING"
+  | "CANCEL_REQUESTED"
+  | "CANCELLED";
+
+export type TMediaTranscodeJobResponse = {
+  job_id: string;
+  asset_id: string;
+  status: TMediaTranscodeJobStatus;
+  progress?: number;
+  attempt_count?: number;
+  max_attempts?: number;
+  created_at?: string;
+  started_at?: string | null;
+  completed_at?: string | null;
+  playable_url?: string | null;
+  output?: {
+    master_playlist_location?: string | null;
+    public_or_internal_url?: string | null;
+    renditions?: unknown;
+    thumbnails?: unknown;
+  } | null;
+  error?: {
+    code?: string;
+    message?: string;
+  } | null;
+};
+
+type TMediaTranscodeEnqueuePayload = {
+  encoding_profile?: string;
+  generate_thumbnails?: boolean;
 };
 
 type TMediaLibraryPackagePayload = {
@@ -359,7 +404,8 @@ export class MediaLibraryService extends APIService {
     packageId: string,
     payload: TMediaArtifactPayload,
     file: File,
-    onUploadProgress?: AxiosRequestConfig["onUploadProgress"]
+    onUploadProgress?: AxiosRequestConfig["onUploadProgress"],
+    config?: AxiosRequestConfig
   ): Promise<TMediaArtifact> {
     const formData = new FormData();
     formData.append("file", file);
@@ -384,9 +430,84 @@ export class MediaLibraryService extends APIService {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
       formData,
-      { onUploadProgress }
+      { ...config, onUploadProgress }
     )
       .then((response) => response?.data as TMediaArtifact)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async enqueueArtifactTranscode(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string,
+    payload: TMediaTranscodeEnqueuePayload = {}
+  ): Promise<TMediaTranscodeJobResponse> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/transcode/`,
+      payload
+    )
+      .then((response) => response?.data as TMediaTranscodeJobResponse)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async getArtifactTranscodeJob(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string,
+    jobId: string
+  ): Promise<TMediaTranscodeJobResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/transcode/jobs/${encodeURIComponent(jobId)}/`
+    )
+      .then((response) => response?.data as TMediaTranscodeJobResponse)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async retryArtifactTranscodeJob(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string,
+    jobId: string
+  ): Promise<TMediaTranscodeJobResponse> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/transcode/jobs/${encodeURIComponent(jobId)}/retry/`,
+      {}
+    )
+      .then((response) => response?.data as TMediaTranscodeJobResponse)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async cancelArtifactTranscodeJob(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string,
+    jobId: string
+  ): Promise<TMediaTranscodeJobResponse> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/transcode/jobs/${encodeURIComponent(jobId)}/cancel/`,
+      {}
+    )
+      .then((response) => response?.data as TMediaTranscodeJobResponse)
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });

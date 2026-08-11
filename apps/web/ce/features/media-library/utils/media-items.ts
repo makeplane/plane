@@ -86,6 +86,8 @@ const buildArtifactFileUrl = (context: TArtifactContext, artifactName: string) =
 const resolveArtifactSource = (artifact: TMediaArtifact, context?: TArtifactContext) => {
   const rawPath = artifact.path ?? "";
   if (rawPath && /^https?:\/\//i.test(rawPath)) return rawPath;
+  const action = (artifact.action ?? "").toLowerCase();
+  if (rawPath && action === "play_hls") return resolveArtifactPath(rawPath);
   if (context && artifact.name) {
     return buildArtifactFileUrl(context, artifact.name);
   }
