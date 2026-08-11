@@ -18,7 +18,13 @@ export const useResolvedMediaSources = ({
   documentFormat,
   normalizedAction,
 }: TUseResolvedMediaSourcesArgs) => {
-  const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
+  const rawVideoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
+  const annotationVideoSource =
+    typeof meta?.annotationVideoSource === "string" ? meta.annotationVideoSource.trim() : "";
+  const shouldUseAnnotationVideoSource = Boolean(
+    annotationVideoSource && (meta?.hls_direct === true || meta?.hlsDirect === true)
+  );
+  const videoSrc = shouldUseAnnotationVideoSource ? annotationVideoSource : rawVideoSrc;
   const rawImageSrc = item?.mediaType === "image" ? item.imageSrc || item.thumbnail : "";
   const [resolvedVideoSrc, setResolvedVideoSrc] = useState<string>("");
   const [resolvedDocumentSrc, setResolvedDocumentSrc] = useState<string>("");
@@ -141,9 +147,13 @@ export const useResolvedMediaSources = ({
     [credentialOrigins]
   );
 
-  const useCredentials = useMemo(() => shouldUseCredentials(effectiveVideoSrc), [effectiveVideoSrc, shouldUseCredentials]);
-  const crossOrigin: "use-credentials" | "anonymous" | "" | undefined =
-  useCredentials ? "use-credentials" : "anonymous";
+  const useCredentials = useMemo(
+    () => shouldUseCredentials(effectiveVideoSrc),
+    [effectiveVideoSrc, shouldUseCredentials]
+  );
+  const crossOrigin: "use-credentials" | "anonymous" | "" | undefined = useCredentials
+    ? "use-credentials"
+    : "anonymous";
 
   const useDocumentCredentials = useMemo(
     () => shouldUseCredentials(effectiveDocumentSrc),
@@ -356,7 +366,14 @@ export const useDocumentPreview = ({
     return () => {
       isMounted = false;
     };
-  }, [documentFormat, effectiveDocumentSrc, isTextDocument, item?.mediaType, isUnsupportedDocument, useDocumentCredentials]);
+  }, [
+    documentFormat,
+    effectiveDocumentSrc,
+    isTextDocument,
+    item?.mediaType,
+    isUnsupportedDocument,
+    useDocumentCredentials,
+  ]);
 
   useEffect(() => {
     let isMounted = true;

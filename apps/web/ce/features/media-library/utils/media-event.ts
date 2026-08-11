@@ -82,6 +82,20 @@ const isCoachCompletedEventArtifactSource = (source: TMediaEventSource) => {
   );
 };
 
+const normalizeLooseLabel = (value: string | null) => value?.trim().toLowerCase().replace(/[_-]+/g, " ") ?? "";
+
+const isCompletedEventCategorySource = (source: TMediaEventSource) => {
+  const meta = toMetaRecord(source);
+  const sourceRecord = toSourceRecord(source);
+  const category = normalizeLooseLabel(toOptionalText(meta.category));
+  const primaryTag = normalizeLooseLabel(toOptionalText(sourceRecord.primaryTag));
+  const secondaryTag = normalizeLooseLabel(toOptionalText(sourceRecord.secondaryTag));
+
+  return [category, primaryTag, secondaryTag].some(
+    (label) => label === "completed event" || label === "completed events"
+  );
+};
+
 const hasEventTagRows = (value: unknown) => Array.isArray(value) && value.length > 0;
 
 const hasEventMediaShape = (source: TMediaEventSource) => {
@@ -208,11 +222,13 @@ export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDeta
   const sourceType = toOptionalText(meta.source);
   const hasEventIdentifiers = Boolean(toOptionalText(meta.event_id)) || Boolean(toOptionalText(meta.plane_event_id));
   const isCoachCompletedEventArtifact = isCoachCompletedEventArtifactSource(source);
+  const isCompletedEventCategory = isCompletedEventCategorySource(source);
   const hasRecognizedEventShape = hasEventMediaShape(source);
 
   if (
     artifactType !== "completed-event-json" &&
     !(sourceType === "plane-coach" && hasEventIdentifiers) &&
+    !isCompletedEventCategory &&
     !isCoachCompletedEventArtifact &&
     !hasRecognizedEventShape
   ) {
@@ -234,7 +250,7 @@ export const getEventMediaDetails = (source: TMediaEventSource): TEventMediaDeta
     program: getMetaString(meta, ["program"], "") || null,
     projectId: getMetaString(meta, ["project_id", "projectId"], "") || null,
     sport: getMetaString(meta, ["sport"], "") || null,
-    status: formatStatusLabel(getMetaString(meta, ["status"], "") || null),
+    status: formatStatusLabel(getMetaString(meta, ["status"], "") || (isCompletedEventCategory ? "Completed" : null)),
     structuredTags,
     tagCount,
     title: getMetaString(meta, ["title"], "") || toOptionalText(sourceRecord.title),

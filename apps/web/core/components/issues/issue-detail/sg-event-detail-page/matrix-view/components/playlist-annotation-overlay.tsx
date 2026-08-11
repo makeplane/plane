@@ -20,6 +20,11 @@ type PlaylistAnnotationOverlayProps = {
   enableAnnotationTransforms?: boolean;
   enabled: boolean;
   fitToVideoBounds?: boolean;
+  imageContent?: string | null;
+  imageHeight: number;
+  imageOpacity: number;
+  imageTitle?: string;
+  imageWidth: number;
   onCreateAnnotation: (annotation: TCustomPlaylistAnnotation) => void;
   onUpdateAnnotation?: (annotation: TCustomPlaylistAnnotation) => void;
   textFontFamily: string;
@@ -1028,6 +1033,11 @@ export const PlaylistAnnotationOverlay = ({
   enableAnnotationTransforms = false,
   enabled,
   fitToVideoBounds = false,
+  imageContent = null,
+  imageHeight,
+  imageOpacity,
+  imageTitle,
+  imageWidth,
   onCreateAnnotation,
   onUpdateAnnotation,
   textFontFamily,
@@ -1234,10 +1244,10 @@ export const PlaylistAnnotationOverlay = ({
 
   const buildAnnotation = useCallback(
     (point: TCustomPlaylistAnnotationPoint, content?: string): TCustomPlaylistAnnotation => ({
-      content,
+      content: tool === "image" ? (imageContent ?? undefined) : content,
       createdAt: new Date().toISOString(),
       endTime: startTime + durationSeconds,
-      height: 0,
+      height: tool === "image" ? imageHeight : 0,
       id: createPlaylistAnnotationId(),
       points: tool === "pen" ? [point] : undefined,
       startTime,
@@ -1246,14 +1256,31 @@ export const PlaylistAnnotationOverlay = ({
         stroke: color,
         strokeStyle,
         strokeWidth,
+        ...(tool === "image" ? { opacity: imageOpacity } : {}),
         ...(tool === "text" ? { fontFamily: textFontFamily, fontSize: textFontSize, fontWeight: textFontWeight } : {}),
       },
+      title: tool === "image" ? imageTitle || "Image" : undefined,
       type: tool,
-      width: 0,
+      width: tool === "image" ? imageWidth : 0,
       x: point.x,
       y: point.y,
     }),
-    [color, durationSeconds, startTime, strokeStyle, strokeWidth, textFontFamily, textFontSize, textFontWeight, tool]
+    [
+      color,
+      durationSeconds,
+      imageContent,
+      imageHeight,
+      imageOpacity,
+      imageTitle,
+      imageWidth,
+      startTime,
+      strokeStyle,
+      strokeWidth,
+      textFontFamily,
+      textFontSize,
+      textFontWeight,
+      tool,
+    ]
   );
 
   const commitTextDraft = useCallback(() => {
@@ -1452,6 +1479,8 @@ export const PlaylistAnnotationOverlay = ({
       const point = getEventPoint(event);
       if (!point) return;
 
+      if (tool === "image" && !imageContent) return;
+
       if (canTransformAnnotations) {
         const annotationToTransform = [...annotations]
           .reverse()
@@ -1477,7 +1506,16 @@ export const PlaylistAnnotationOverlay = ({
       draftOriginRef.current = point;
       setDraftAnnotation(nextDraftAnnotation);
     },
-    [annotations, buildAnnotation, canTransformAnnotations, enabled, getEventPoint, startAnnotationTransform, tool]
+    [
+      annotations,
+      buildAnnotation,
+      canTransformAnnotations,
+      enabled,
+      getEventPoint,
+      imageContent,
+      startAnnotationTransform,
+      tool,
+    ]
   );
 
   const handlePointerMove = useCallback(

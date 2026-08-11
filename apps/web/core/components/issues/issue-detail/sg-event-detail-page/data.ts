@@ -92,6 +92,7 @@ export const fetchSgEventDevices = async (cpServerBaseUrl: string, sgEventId: st
   return parseGatewayRows(payload)
     .map((row) => {
       const id = toNumber(row.id);
+      const streamId = toText(row.stream_id ?? row.streamId);
       const streamName = toText(row.stream_name ?? row.streamName);
 
       if (id === null || !streamName) {
@@ -104,6 +105,7 @@ export const fetchSgEventDevices = async (cpServerBaseUrl: string, sgEventId: st
         hlsUrl: buildArchivedStreamUrl(streamName),
         id,
         name: name || `View ${id}`,
+        streamId: streamId || null,
         streamName,
       } satisfies SgEventDevice;
     })
@@ -119,6 +121,7 @@ export const buildEventPayloadDevices = (payload: Record<string, unknown> | null
   return deviceEntries
     .map((entry, index) => {
       const record = asRecord(entry);
+      const streamId = toText(record.streamId ?? record.stream_id);
       const streamName = toText(record.streamName ?? record.stream_name);
       const previewUrl = toText(record.previewUrl ?? record.preview_url);
 
@@ -140,6 +143,7 @@ export const buildEventPayloadDevices = (payload: Record<string, unknown> | null
         hlsUrl,
         id,
         name,
+        streamId: streamId || null,
         streamName,
       } satisfies SgEventDevice;
     })

@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Circle,
   FastForward,
+  Image as ImageIcon,
   Minus,
   Pencil,
   Plus,
@@ -74,6 +75,11 @@ const VIDEO_ANNOTATION_COLOR_PRESETS = [
   "#ffffff",
   "#111827",
 ] as const;
+const MAX_VIDEO_ANNOTATION_IMAGE_BYTES = 2 * 1024 * 1024;
+const VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS = {
+  max: 600,
+  min: 40,
+};
 const VIDEO_ANNOTATION_DURATIONS = [1, 2, 4, 8];
 const VIDEO_ANNOTATION_STROKE_WIDTHS = [3, 5, 8];
 const VIDEO_ANNOTATION_STROKE_STYLES: { label: string; value: TCustomPlaylistAnnotationStrokeStyle }[] = [
@@ -96,6 +102,7 @@ const VIDEO_ANNOTATION_TIMELINE_CLIP_MIN_WIDTH_PX = 56;
 const VIDEO_ANNOTATION_TIMELINE_CLIP_GAP_PX = 8;
 const VIDEO_ANNOTATION_TIMELINE_MOMENT_COLUMN_WIDTH_PX = 236;
 const VIDEO_ANNOTATION_TIMELINE_MIN_DURATION_SECONDS = 0.1;
+const VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS = 1;
 const VIDEO_ANNOTATION_TOOL_BUTTON_CLASS =
   "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-custom-border-200 bg-custom-background-100 text-custom-text-200 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40 disabled:cursor-not-allowed disabled:opacity-45";
 const VIDEO_ANNOTATION_TOOLS = [
@@ -105,6 +112,7 @@ const VIDEO_ANNOTATION_TOOLS = [
   { icon: Circle, label: "Ellipse", type: "ellipse" },
   { icon: Minus, label: "Line", type: "line" },
   { icon: ArrowUpRight, label: "Arrow", type: "arrow" },
+  { icon: ImageIcon, label: "Image", type: "image" },
 ] satisfies Array<{ icon: typeof Pencil; label: string; type: TCustomPlaylistAnnotationTool }>;
 
 const formatAnnotationTime = (seconds: number) => {
@@ -143,6 +151,20 @@ const getTimelinePercent = (seconds: number, durationSeconds: number) => {
   if (!Number.isFinite(seconds) || !Number.isFinite(durationSeconds) || durationSeconds <= 0) return 0;
 
   return clampTimelineValue((seconds / durationSeconds) * 100, 0, 100);
+};
+
+const getAnnotationStartTimeWithCreationOffset = (playheadTime: number) =>
+  Math.max(0, playheadTime - VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS);
+
+const applyAnnotationCreationStartTimeOffset = (annotation: TCustomPlaylistAnnotation): TCustomPlaylistAnnotation => {
+  const annotationDurationSeconds = Math.max(0, annotation.endTime - annotation.startTime);
+  const startTime = getAnnotationStartTimeWithCreationOffset(annotation.startTime);
+
+  return {
+    ...annotation,
+    endTime: startTime + annotationDurationSeconds,
+    startTime,
+  };
 };
 
 const getAnnotationColor = (annotation: TCustomPlaylistAnnotation) => {
@@ -286,6 +308,7 @@ const getAnnotationTimelineToolLabel = (type: TCustomPlaylistAnnotationTool) => 
 };
 
 const getAnnotationTimelineLabel = (annotation: TCustomPlaylistAnnotation, index: number) => {
+  if (annotation.type === "image") return annotation.title?.trim() || `Image ${index + 1}`;
   if (annotation.content?.trim()) return annotation.content.trim();
 
   if (annotation.type === "pen") return `Draw ${index + 1}`;
@@ -300,16 +323,17 @@ const getAnnotationTimelineLabel = (annotation: TCustomPlaylistAnnotation, index
 const getAnnotationTimelineIcon = (annotation: TCustomPlaylistAnnotation) => {
   if (annotation.type === "arrow") return ArrowUpRight;
   if (annotation.type === "ellipse") return Circle;
+  if (annotation.type === "image") return ImageIcon;
   if (annotation.type === "line") return Minus;
   if (annotation.type === "pen") return Pencil;
-  if (annotation.type === "rectangle" || annotation.type === "image") return Square;
+  if (annotation.type === "rectangle") return Square;
   if (annotation.type === "text") return Type;
 
   return Pencil;
 };
 
 const getAnnotationTimelineMomentTitle = (annotation: TCustomPlaylistAnnotation) =>
-  annotation.title?.trim() || annotation.content?.trim();
+  annotation.title?.trim() || (annotation.type === "image" ? "Image moment" : annotation.content?.trim());
 
 type AnnotationTimelineMomentItem = {
   annotation: TCustomPlaylistAnnotation;
@@ -500,6 +524,11 @@ export const VideoAnnotationEditor = ({
   const [annotationColor, setAnnotationColor] = useState(DEFAULT_VIDEO_ANNOTATION_COLOR);
   const [annotationColorInputValue, setAnnotationColorInputValue] = useState(DEFAULT_VIDEO_ANNOTATION_COLOR);
   const [isAnnotationColorPickerOpen, setIsAnnotationColorPickerOpen] = useState(false);
+  const [annotationImageContent, setAnnotationImageContent] = useState<string | null>(null);
+  const [annotationImageHeight, setAnnotationImageHeight] = useState(120);
+  const [annotationImageName, setAnnotationImageName] = useState("");
+  const [annotationImageOpacity, setAnnotationImageOpacity] = useState(1);
+  const [annotationImageWidth, setAnnotationImageWidth] = useState(180);
   const [annotationStrokeWidth, setAnnotationStrokeWidth] = useState(5);
   const [annotationStrokeStyle, setAnnotationStrokeStyle] = useState<TCustomPlaylistAnnotationStrokeStyle>("solid");
   const [annotationDurationSeconds, setAnnotationDurationSeconds] = useState(2);
@@ -516,6 +545,7 @@ export const VideoAnnotationEditor = ({
     mediaTime: currentTime,
     wallTime: typeof performance !== "undefined" ? performance.now() : Date.now(),
   });
+  const annotationImageInputRef = useRef<HTMLInputElement | null>(null);
   const timelineHeaderScrollableElementRef = useRef<HTMLDivElement | null>(null);
   const timelineScrollableElementRef = useRef<HTMLDivElement | null>(null);
   const timelineResizeStateRef = useRef<AnnotationTimelineResizeState | null>(null);
@@ -684,16 +714,87 @@ export const VideoAnnotationEditor = ({
     onModeChange?.(nextValue);
   }, [isAnnotationMode, onModeChange, onRequestPause]);
 
+  const handleChooseAnnotationImage = useCallback(() => {
+    onRequestPause?.();
+    annotationImageInputRef.current?.click();
+  }, [onRequestPause]);
+
+  const handleAnnotationImageChange = useCallback(
+    (fileList: FileList | null) => {
+      const selectedFile = fileList?.[0];
+      if (!selectedFile) return;
+
+      if (!selectedFile.type.startsWith("image/")) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Image annotation failed",
+          message: "Choose a valid image file.",
+        });
+        return;
+      }
+
+      if (selectedFile.size > MAX_VIDEO_ANNOTATION_IMAGE_BYTES) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Image annotation failed",
+          message: "Use an image smaller than 2 MB.",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result !== "string") return;
+
+        onRequestPause?.();
+        setAnnotationImageContent(reader.result);
+        setAnnotationImageName(selectedFile.name);
+        setAnnotationTool("image");
+        setIsAnnotationMode(true);
+        onModeChange?.(true);
+      };
+      reader.onerror = () => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Image annotation failed",
+          message: "Unable to read this image file.",
+        });
+      };
+      reader.readAsDataURL(selectedFile);
+    },
+    [onModeChange, onRequestPause]
+  );
+
+  const handleAnnotationImageSizeChange = useCallback((dimension: "height" | "width", value: string) => {
+    const nextValue = Math.round(
+      clampTimelineValue(Number(value), VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.min, VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.max)
+    );
+
+    if (dimension === "height") {
+      setAnnotationImageHeight(nextValue);
+      return;
+    }
+
+    setAnnotationImageWidth(nextValue);
+  }, []);
+
+  const handleAnnotationImageOpacityChange = useCallback((value: string) => {
+    setAnnotationImageOpacity(clampTimelineValue(Number(value), 20, 100) / 100);
+  }, []);
+
   const handleSelectAnnotationTool = useCallback(
     (tool: TCustomPlaylistAnnotationTool) => {
       onRequestPause?.();
       setAnnotationTool(tool);
+      if (tool === "image" && !annotationImageContent) {
+        annotationImageInputRef.current?.click();
+      }
       if (isAnnotationMode) return;
 
       setIsAnnotationMode(true);
       onModeChange?.(true);
     },
-    [isAnnotationMode, onModeChange, onRequestPause]
+    [annotationImageContent, isAnnotationMode, onModeChange, onRequestPause]
   );
 
   const handleUndoVisibleAnnotation = useCallback(() => {
@@ -714,10 +815,12 @@ export const VideoAnnotationEditor = ({
 
   const handleCreateAnnotation = useCallback(
     (annotation: TCustomPlaylistAnnotation) => {
+      const offsetAnnotation = applyAnnotationCreationStartTimeOffset(annotation);
+
       setAnnotations((currentAnnotations) =>
         resolveAnnotationTimelineLayers(
-          normalizePlaylistAnnotations([...currentAnnotations, annotation]),
-          annotation.id,
+          normalizePlaylistAnnotations([...currentAnnotations, offsetAnnotation]),
+          offsetAnnotation.id,
           minimumVisibleAnnotationDurationSeconds
         )
       );
@@ -1492,6 +1595,8 @@ export const VideoAnnotationEditor = ({
   const SelectedAnnotationToolIcon = selectedAnnotationToolOption?.icon ?? Pencil;
   const annotationPanelOptionClass =
     "inline-flex h-8 min-w-0 items-center justify-center rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[10px] font-semibold text-custom-text-200 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40";
+  const annotationPreviewStartTime = getAnnotationStartTimeWithCreationOffset(effectiveCurrentTime);
+  const annotationPreviewEndTime = annotationPreviewStartTime + annotationDurationSeconds;
   const annotationPropertyPanelContent = canEdit ? (
     <div className="flex h-full w-full min-w-0 flex-col gap-3 overflow-y-auto rounded-[7px] border border-custom-border-200 bg-custom-background-100 p-2 shadow-sm">
       <div className="min-w-0">
@@ -1737,6 +1842,91 @@ export const VideoAnnotationEditor = ({
                 </div>
               </div>
             </div>
+          ) : annotationTool === "image" ? (
+            <div className="space-y-2">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Image</div>
+              {annotationImageContent ? (
+                <div className="flex h-20 items-center justify-center overflow-hidden rounded-[5px] border border-custom-border-200 bg-custom-background-90">
+                  <img
+                    src={annotationImageContent}
+                    alt=""
+                    className="max-h-full max-w-full object-contain"
+                    style={{ opacity: annotationImageOpacity }}
+                  />
+                </div>
+              ) : null}
+              <button
+                type="button"
+                onClick={handleChooseAnnotationImage}
+                className={[
+                  annotationPanelOptionClass,
+                  "w-full justify-start gap-2 px-2 text-left",
+                  annotationImageContent
+                    ? "border-custom-primary-100 bg-custom-primary-100/15 text-custom-primary-100"
+                    : "",
+                ].join(" ")}
+                aria-label={annotationImageContent ? "Change annotation image" : "Choose annotation image"}
+                title={annotationImageContent ? "Change image" : "Choose image"}
+              >
+                <ImageIcon className="h-3.5 w-3.5 shrink-0" />
+                <span className="min-w-0 truncate">{annotationImageName || "Choose image"}</span>
+              </button>
+              <div className="rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 py-1.5 text-[10px] leading-4 text-custom-text-300">
+                {annotationImageContent
+                  ? "Drag on the video to place and size the image."
+                  : "Choose an image before placing it on the video."}
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">
+                    Opacity
+                  </span>
+                  <span className="font-mono text-[10px] font-semibold text-custom-text-300">
+                    {Math.round(annotationImageOpacity * 100)}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={20}
+                  max={100}
+                  value={Math.round(annotationImageOpacity * 100)}
+                  onChange={(event) => handleAnnotationImageOpacityChange(event.currentTarget.value)}
+                  className="h-1.5 w-full accent-custom-primary-100"
+                  aria-label="Image annotation opacity"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">
+                  Default Size
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <label className="space-y-1">
+                    <span className="text-[10px] font-medium text-custom-text-300">Width</span>
+                    <input
+                      type="number"
+                      min={VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.min}
+                      max={VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.max}
+                      value={annotationImageWidth}
+                      onChange={(event) => handleAnnotationImageSizeChange("width", event.currentTarget.value)}
+                      className="h-8 w-full rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-semibold text-custom-text-100 outline-none transition-colors focus:border-custom-primary-100 focus:ring-2 focus:ring-custom-primary-100/30"
+                      aria-label="Image annotation default width"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[10px] font-medium text-custom-text-300">Height</span>
+                    <input
+                      type="number"
+                      min={VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.min}
+                      max={VIDEO_ANNOTATION_IMAGE_SIZE_LIMITS.max}
+                      value={annotationImageHeight}
+                      onChange={(event) => handleAnnotationImageSizeChange("height", event.currentTarget.value)}
+                      className="h-8 w-full rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-semibold text-custom-text-100 outline-none transition-colors focus:border-custom-primary-100 focus:ring-2 focus:ring-custom-primary-100/30"
+                      aria-label="Image annotation default height"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="space-y-1.5">
               <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Stroke</div>
@@ -1959,6 +2149,16 @@ export const VideoAnnotationEditor = ({
 
   return (
     <>
+      <input
+        ref={annotationImageInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(event) => {
+          handleAnnotationImageChange(event.currentTarget.files);
+          event.currentTarget.value = "";
+        }}
+      />
       <PlaylistAnnotationOverlay
         annotations={activeAnnotations}
         className={["z-10", className].filter(Boolean).join(" ")}
@@ -1967,6 +2167,11 @@ export const VideoAnnotationEditor = ({
         enableAnnotationTransforms={enableAnnotationTransforms}
         enabled={canEdit && isAnnotationMode}
         fitToVideoBounds={fitToVideoBounds}
+        imageContent={annotationImageContent}
+        imageHeight={annotationImageHeight}
+        imageOpacity={annotationImageOpacity}
+        imageTitle={annotationImageName}
+        imageWidth={annotationImageWidth}
         onCreateAnnotation={handleCreateAnnotation}
         onUpdateAnnotation={handleUpdateAnnotation}
         startTime={effectiveCurrentTime}
@@ -1997,8 +2202,7 @@ export const VideoAnnotationEditor = ({
           {isAnnotationMode ? (
             <>
               <span className="inline-flex h-8 shrink-0 items-center rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-medium text-custom-text-200">
-                {formatAnnotationTime(effectiveCurrentTime)}-
-                {formatAnnotationTime(effectiveCurrentTime + annotationDurationSeconds)}
+                {formatAnnotationTime(annotationPreviewStartTime)}-{formatAnnotationTime(annotationPreviewEndTime)}
               </span>
               <span className="mx-0.5 h-6 w-px bg-custom-border-200" />
               {availableAnnotationTools.map((toolOption) => {

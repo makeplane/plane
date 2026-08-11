@@ -76,6 +76,21 @@ type TMediaManifestArtifactUpdatePayload = {
   };
 };
 
+export type TEventVideoAnnotationUpdatePayload = {
+  annotations: TCustomPlaylistAnnotation[];
+  device_id?: string | number | null;
+  stream_id?: string | number | null;
+  stream_name?: string | null;
+  view_key?: string | null;
+};
+
+export type TEventVideoAnnotationUpdateResponse = {
+  annotations?: TCustomPlaylistAnnotation[];
+  eventPayload?: Record<string, unknown>;
+  mediaReference?: Record<string, unknown>;
+  updated?: number;
+};
+
 type TMediaLibraryPackagePayload = {
   id?: string;
   name: string;
@@ -89,7 +104,7 @@ type TCreatePlaylistPayload = {
 
 export type TCustomPlaylist = {
   id: string;
-  event_id: number;
+  event_id: number | string;
   name: string;
   subtitle?: string | null;
   url: string;
@@ -154,7 +169,7 @@ export type TCustomPlaylistAnnotation = {
 };
 
 type TCustomPlaylistPayload = {
-  event_id: number;
+  event_id: number | string;
   name: string;
   subtitle?: string | null;
   url: string;
@@ -180,10 +195,25 @@ type TCustomPlaylistListParams = {
 
 const sanitizePlaylistFileName = (value: string) => {
   const normalizedValue = value.trim();
-  return /^[A-Za-z0-9_-]+\.m3u8$/i.test(normalizedValue) ? normalizedValue : "";
+  if (!normalizedValue) return "";
+
+  let fileName = normalizedValue;
+  try {
+    const parsedUrl = new URL(normalizedValue, "http://localhost");
+    fileName = decodeURIComponent(parsedUrl.pathname.replace(/\/+$/, "").split("/").pop() ?? "");
+  } catch {
+    fileName = decodeURIComponent(normalizedValue.replace(/\\/g, "/").replace(/\/+$/, "").split("/").pop() ?? "");
+  }
+
+  return /^[A-Za-z0-9_-]+\.m3u8$/i.test(fileName) ? fileName : "";
 };
 
 const readPlaylistFileName = (value: unknown): string | null => {
+  if (typeof value === "string") {
+    const normalized = sanitizePlaylistFileName(value);
+    return normalized || null;
+  }
+
   if (Array.isArray(value)) {
     for (const entry of value) {
       const fileName = readPlaylistFileName(entry);
@@ -199,18 +229,43 @@ const readPlaylistFileName = (value: unknown): string | null => {
   }
 
   const record = value as Record<string, unknown>;
-  const directFileName = record["file-name"];
-  if (typeof directFileName === "string") {
-    const normalized = sanitizePlaylistFileName(directFileName);
-    if (normalized) {
-      return normalized;
+  for (const key of [
+    "file-name",
+    "file_name",
+    "fileName",
+    "filename",
+    "file",
+    "name",
+    "playlist",
+    "playlistFile",
+    "playlist_file",
+    "playlistFileName",
+    "playlist_file_name",
+    "playlistUrl",
+    "playlist_url",
+    "url",
+    "path",
+  ]) {
+    const directFileName = readPlaylistFileName(record[key]);
+    if (directFileName) {
+      return directFileName;
     }
   }
 
-  if (record.field === "file-name" && typeof record.value === "string") {
-    const normalized = sanitizePlaylistFileName(record.value);
-    if (normalized) {
-      return normalized;
+  if (typeof record.field === "string") {
+    const normalizedField = record.field
+      .trim()
+      .toLowerCase()
+      .replace(/[\s_-]+/g, "");
+    if (
+      ["filename", "file", "name", "playlist", "playlistfile", "playlistfilename", "url", "path"].includes(
+        normalizedField
+      )
+    ) {
+      const fieldFileName = readPlaylistFileName(record.value);
+      if (fieldFileName) {
+        return fieldFileName;
+      }
     }
   }
 
@@ -443,6 +498,25 @@ export class MediaLibraryService extends APIService {
       payload
     )
       .then((response) => response?.data ?? null)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async updateEventVideoAnnotations(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string,
+    payload: TEventVideoAnnotationUpdatePayload
+  ): Promise<TEventVideoAnnotationUpdateResponse> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/file/`,
+      payload
+    )
+      .then((response) => response?.data ?? {})
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });

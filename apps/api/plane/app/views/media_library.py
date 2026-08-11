@@ -686,6 +686,149 @@ class MediaArtifactFileAPIView(BaseAPIView):
             response["Content-Disposition"] = f'attachment; filename="{download_name}{suffix}"'
         return response
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def patch(self, request, slug, project_id, package_id, artifact_id, artifact_path=None):
+        if artifact_path:
+            return Response(
+                {"error": "Nested artifact files cannot be updated through this endpoint."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        payload = request.data if isinstance(request.data, dict) else {}
+        annotations = payload.get("annotations")
+        if not isinstance(annotations, list):
+            return Response({"error": "annotations must be an array."}, status=status.HTTP_400_BAD_REQUEST)
+
+        def text_value(value):
+            return str(value).strip() if value is not None else ""
+
+        device_id = text_value(payload.get("device_id") or payload.get("deviceId"))
+        stream_id = text_value(payload.get("stream_id") or payload.get("streamId"))
+        stream_name = text_value(payload.get("stream_name") or payload.get("streamName") or payload.get("stream"))
+        view_key = text_value(payload.get("view_key") or payload.get("viewKey"))
+
+        if not any([device_id, stream_id, stream_name, view_key]):
+            return Response(
+                {"error": "device_id, stream_id, stream_name, or view_key is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        manifest_file = manifest_path(project_id_str, package_id)
+        if not manifest_file.exists():
+            raise NotFound("Manifest not found.")
+
+        with manifest_write_lock(manifest_file):
+            manifest = read_manifest(manifest_file)
+            artifacts = manifest.get("artifacts") or []
+            artifact = next((entry for entry in artifacts if entry.get("name") == artifact_id), None)
+            if not artifact:
+                raise NotFound("Artifact not found.")
+
+            format_value = str(artifact.get("format") or "").lower()
+            base_root = media_library_root().resolve(strict=False)
+            file_path = _resolve_artifact_disk_path(artifact, base_root)
+            if not file_path or not file_path.exists() or not file_path.is_file():
+                raise NotFound("Artifact file not found.")
+            if format_value != "json" and file_path.suffix.lower() != ".json":
+                return Response(
+                    {"error": "Only JSON event artifacts can store view annotations."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            try:
+                event_payload = json.loads(file_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                return Response(
+                    {"error": "Artifact file must contain valid JSON."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if not isinstance(event_payload, dict):
+                return Response(
+                    {"error": "Artifact JSON must be an object."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            def build_reference_view_keys(reference):
+                reference_stream_name = text_value(reference.get("streamName") or reference.get("stream_name"))
+                reference_stream_id = text_value(reference.get("streamId") or reference.get("stream_id"))
+                reference_device_id = text_value(
+                    reference.get("deviceId") or reference.get("device_id") or reference.get("activeDeviceId")
+                )
+                keys = []
+                if reference_stream_name:
+                    keys.append(f"stream:{reference_stream_name}")
+                if reference_stream_id:
+                    keys.append(f"stream-id:{reference_stream_id}")
+                if reference_device_id:
+                    keys.append(f"device:{reference_device_id}")
+                existing_key = text_value(reference.get("annotationViewKey"))
+                if existing_key:
+                    keys.append(existing_key)
+                return keys
+
+            def match_score(reference):
+                score = 0
+                reference_stream_id = text_value(reference.get("streamId") or reference.get("stream_id"))
+                reference_stream_name = text_value(reference.get("streamName") or reference.get("stream_name"))
+                reference_device_id = text_value(
+                    reference.get("deviceId") or reference.get("device_id") or reference.get("activeDeviceId")
+                )
+                if view_key and view_key in build_reference_view_keys(reference):
+                    score += 16
+                if stream_id and reference_stream_id == stream_id:
+                    score += 8
+                if stream_name and reference_stream_name == stream_name:
+                    score += 6
+                if device_id and reference_device_id == device_id:
+                    score += 4
+                return score
+
+            best_key = None
+            best_index = -1
+            best_score = 0
+            for collection_key in ("mediaReferences", "media_references", "devices"):
+                collection = event_payload.get(collection_key)
+                if not isinstance(collection, list):
+                    continue
+                for index, reference in enumerate(collection):
+                    if not isinstance(reference, dict):
+                        continue
+                    score = match_score(reference)
+                    if score > best_score:
+                        best_key = collection_key
+                        best_index = index
+                        best_score = score
+
+            if best_key is None or best_index < 0:
+                raise NotFound("Matching media reference view not found.")
+
+            references = event_payload[best_key]
+            media_reference = dict(references[best_index])
+            media_reference["annotations"] = annotations
+            media_reference["annotationsUpdatedAt"] = _now_iso()
+            if view_key:
+                media_reference["annotationViewKey"] = view_key
+            references[best_index] = media_reference
+
+            temporary_path = file_path.with_name(f".{file_path.name}.{uuid4().hex}.tmp")
+            temporary_path.write_text(json.dumps(event_payload, indent=2), encoding="utf-8")
+            os.replace(temporary_path, file_path)
+
+        return Response(
+            {
+                "annotations": annotations,
+                "eventPayload": event_payload,
+                "mediaReference": media_reference,
+                "updated": 1,
+            },
+            status=status.HTTP_200_OK,
+        )
+
 
 class MediaArtifactDetailAPIView(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")

@@ -15,6 +15,53 @@ export const SG_PLAYER_STYLE = `
   .sg-event-player .video-js .vjs-big-play-button {
     display: none;
   }
+  .sg-event-player .video-js .sg-event-annotation-button {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    min-width: 118px;
+    padding: 0 14px;
+    border: 1px solid #2d9fdb;
+    border-radius: 7px;
+    background: #2296d3;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+    cursor: pointer;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+  .sg-event-player .video-js .sg-event-annotation-button:hover {
+    transform: translateY(-1px);
+    border-color: #39aeea;
+    background: #258cca;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.44);
+  }
+  .sg-event-player .video-js .sg-event-annotation-button:active {
+    transform: translateY(0);
+  }
+  .sg-event-player .video-js .sg-event-annotation-button:focus-visible {
+    outline: 2px solid rgba(56, 189, 248, 0.72);
+    outline-offset: 2px;
+  }
+  .sg-event-player .video-js .sg-event-annotation-button svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    stroke-width: 2;
+  }
   .sg-event-player .video-js .vjs-control-bar {
     display: flex;
     align-items: center;
