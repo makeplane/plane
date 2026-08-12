@@ -40,5 +40,6 @@ test("project insight labels use stable API keys instead of backend English name
 
   assert.match(component, /data=\{localizedProjectInsightsData\}/);
   assert.doesNotMatch(component, /data=\{projectInsightsData\}/);
-  assert.doesNotMatch(component, /\{projectInsightsData\?\.map/);
+  assert.match(component, /\{localizedProjectInsightsData\?\.map\(\(item\) => \(/);
+  assert.doesNotMatch(component, /\{projectInsightsData(?:\?\.|\.)map\(\(item\) => \(/);
 });
