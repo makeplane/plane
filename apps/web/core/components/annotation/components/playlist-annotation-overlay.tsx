@@ -25,7 +25,7 @@ import {
   isAnnotationResizable,
   isAnnotationValid,
   isLinearAnnotation,
-  isPointInAnnotation,
+  isPointOnAnnotationEdge,
   moveAnnotation,
   normalizeAnnotationBox,
   normalizePlaylistAnnotations,
@@ -508,7 +508,7 @@ export const PlaylistAnnotationOverlay = ({
       if (canTransformAnnotations) {
         const annotationToTransform = [...annotations]
           .reverse()
-          .find((annotation) => isPointInAnnotation(point, annotation));
+          .find((annotation) => isPointOnAnnotationEdge(point, annotation));
         if (annotationToTransform && startAnnotationTransform(event, annotationToTransform, "move")) return;
         setSelectedAnnotationId(null);
       }
