@@ -7,6 +7,7 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
 import { AlertTriangle, CheckIcon, InfoIcon, XIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "../icons/actions/close-icon";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
@@ -56,10 +57,12 @@ export type ToastProps = {
 const toastManager = BaseToast.createToastManager();
 
 export function Toast(props: ToastProps) {
+  const { t } = useTranslation();
+
   return (
     <BaseToast.Provider toastManager={toastManager}>
       <BaseToast.Portal>
-        <BaseToast.Viewport data-theme={props.theme}>
+        <BaseToast.Viewport data-theme={props.theme} aria-label={t("notifications")}>
           <ToastList />
         </BaseToast.Viewport>
       </BaseToast.Portal>
@@ -112,6 +115,7 @@ function ToastList() {
 }
 
 function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) {
+  const { t } = useTranslation();
   const toastData = toast.data as SetToastProps;
   const type = toastData.type as TOAST_TYPE;
   const data = TOAST_DATA[type];
@@ -163,7 +167,10 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
         e.preventDefault();
       }}
     >
-      <BaseToast.Close className="absolute top-3 right-3 cursor-pointer text-icon-secondary hover:text-icon-tertiary">
+      <BaseToast.Close
+        aria-label={t("close")}
+        className="absolute top-3 right-3 cursor-pointer text-icon-secondary hover:text-icon-tertiary"
+      >
         <CloseIcon strokeWidth={1.5} width={16} height={16} />
       </BaseToast.Close>
       <div className="flex w-full items-start gap-2 p-4">

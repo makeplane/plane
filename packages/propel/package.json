@@ -65,6 +65,7 @@
     "@base-ui-components/react": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/i18n": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tanstack/react-table": "catalog:",
