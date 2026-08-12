@@ -11,7 +11,6 @@ import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import type { TChartData } from "@plane/types";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
@@ -28,6 +27,22 @@ const RadarChart = lazy(function RadarChart() {
 
 const analyticsService = new AnalyticsService();
 
+type TProjectInsightDatum = {
+  key: string;
+  name: string;
+  count: number;
+};
+
+const PROJECT_INSIGHT_LABEL_KEYS: Record<string, string> = {
+  work_items: "common.work_items",
+  cycles: "common.cycles",
+  modules: "common.modules",
+  intake: "intake",
+  members: "common.members",
+  pages: "common.pages",
+  views: "common.views",
+};
+
 const ProjectInsights = observer(function ProjectInsights() {
   const params = useParams();
   const { t } = useTranslation();
@@ -38,7 +53,7 @@ const ProjectInsights = observer(function ProjectInsights() {
   const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(
     `radar-chart-project-insights-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
-      analyticsService.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(
+      analyticsService.getAdvanceAnalyticsCharts<TProjectInsightDatum[]>(
         workspaceSlug,
         "projects",
         {
@@ -50,6 +65,14 @@ const ProjectInsights = observer(function ProjectInsights() {
         isPeekView
       )
   );
+  const localizedProjectInsightsData = projectInsightsData?.map((item) => {
+    const translationKey = PROJECT_INSIGHT_LABEL_KEYS[String(item.key)];
+
+    return {
+      ...item,
+      name: translationKey ? t(translationKey) : item.name,
+    };
+  });
 
   return (
     <AnalyticsSectionWrapper
@@ -68,11 +91,11 @@ const ProjectInsights = observer(function ProjectInsights() {
         />
       ) : (
         <div className="gap-8 lg:flex">
-          {projectInsightsData && (
+          {localizedProjectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
                 className="h-[350px] w-full text-accent-primary lg:w-3/5"
-                data={projectInsightsData}
+                data={localizedProjectInsightsData}
                 dataKey="key"
                 radars={[
                   {
@@ -103,7 +126,7 @@ const ProjectInsights = observer(function ProjectInsights() {
                 <div>{t("workspace_analytics.trend_on_charts")}</div>
                 <div>{t("common.work_items")}</div>
               </div>
-              {projectInsightsData?.map((item) => (
+              {localizedProjectInsightsData?.map((item) => (
                 <div key={item.key} className="flex items-center justify-between text-13 text-primary">
                   <div>{item.name}</div>
                   <div className="flex items-center gap-1">
