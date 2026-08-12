@@ -5,6 +5,7 @@
  */
 
 import type { TPomodoroSettings } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { showBrowserPomodoroNotification } from "@/components/pomodoro/notifications";
 import { PomodoroTimerService } from "@/services/pomodoro/pomodoro-timer.service";
 
@@ -21,7 +22,14 @@ export const notifyPomodoroPhaseEnd = async (options: {
       : `Break finished${issueSuffix}. Time to focus.`;
 
   if (options.settings.browser_notifications) {
-    showBrowserPomodoroNotification(title, body);
+    const shown = await showBrowserPomodoroNotification(title, body);
+    if (!shown) {
+      setToast({
+        type: TOAST_TYPE.INFO,
+        title,
+        message: body,
+      });
+    }
   }
 
   if (options.settings.discord_webhook_url?.trim()) {

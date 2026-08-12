@@ -9,13 +9,17 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, ToggleSwitch } from "@plane/ui";
 import type { TPomodoroSettings } from "@plane/types";
 import { DEFAULT_POMODORO_SETTINGS } from "@plane/types";
 // components
 import { SettingsControlItem } from "@/components/settings/control-item";
 // helpers
-import { requestBrowserNotificationPermission } from "@/components/pomodoro/notifications";
+import {
+  requestBrowserNotificationPermission,
+  showBrowserPomodoroNotification,
+} from "@/components/pomodoro/notifications";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 import { usePomodoroTimer } from "@/hooks/pomodoro/use-pomodoro-timer";
@@ -27,6 +31,7 @@ export const ProfileSettingsPomodoroPreferences = observer(function ProfileSetti
   const { updateUserProfile } = useUserProfile();
   const [discordUrl, setDiscordUrl] = useState(settings.discord_webhook_url || "");
   const [isTesting, setIsTesting] = useState(false);
+  const [isTestingBrowser, setIsTestingBrowser] = useState(false);
   const [testMessage, setTestMessage] = useState<string | null>(null);
 
   const merged: TPomodoroSettings = { ...DEFAULT_POMODORO_SETTINGS, ...settings };
@@ -44,10 +49,68 @@ export const ProfileSettingsPomodoroPreferences = observer(function ProfileSetti
       const permission = await requestBrowserNotificationPermission();
       if (permission !== "granted") {
         await updateSetting("browser_notifications", false);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("pomodoro.browser_notifications"),
+          message:
+            permission === "unsupported"
+              ? t("pomodoro.browser_notifications_unsupported")
+              : t("pomodoro.browser_notifications_denied"),
+        });
         return;
       }
+      await updateSetting("browser_notifications", true);
+      const shown = await showBrowserPomodoroNotification(
+        t("pomodoro.browser_notifications_enabled_title"),
+        t("pomodoro.browser_notifications_enabled_body")
+      );
+      if (!shown) {
+        setToast({
+          type: TOAST_TYPE.INFO,
+          title: t("pomodoro.browser_notifications_enabled_title"),
+          message: t("pomodoro.browser_notifications_enabled_body"),
+        });
+      }
+      return;
     }
-    await updateSetting("browser_notifications", enabled);
+    await updateSetting("browser_notifications", false);
+  };
+
+  const sendTestBrowser = async () => {
+    setIsTestingBrowser(true);
+    try {
+      const permission = await requestBrowserNotificationPermission();
+      if (permission !== "granted") {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("pomodoro.browser_notifications"),
+          message:
+            permission === "unsupported"
+              ? t("pomodoro.browser_notifications_unsupported")
+              : t("pomodoro.browser_notifications_denied"),
+        });
+        return;
+      }
+      const shown = await showBrowserPomodoroNotification(
+        t("pomodoro.notify_test_title"),
+        t("pomodoro.browser_notify_test_body")
+      );
+      if (shown) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("pomodoro.notify_test_title"),
+          message: t("pomodoro.browser_notify_test_success"),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.INFO,
+          title: t("pomodoro.notify_test_title"),
+          message: t("pomodoro.browser_notify_test_body"),
+        });
+      }
+    } finally {
+      setIsTestingBrowser(false);
+    }
   };
 
   const saveDiscordUrl = async () => {
@@ -168,11 +231,16 @@ export const ProfileSettingsPomodoroPreferences = observer(function ProfileSetti
         title={t("pomodoro.browser_notifications")}
         description={t("pomodoro.browser_notifications_description")}
         control={
-          <ToggleSwitch
-            value={merged.browser_notifications}
-            onChange={(value) => void handleBrowserNotifications(value)}
-            size="sm"
-          />
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={() => void sendTestBrowser()} loading={isTestingBrowser}>
+              {t("pomodoro.notify_test")}
+            </Button>
+            <ToggleSwitch
+              value={merged.browser_notifications}
+              onChange={(value) => void handleBrowserNotifications(value)}
+              size="sm"
+            />
+          </div>
         }
       />
       <div className="flex w-full flex-col gap-3 py-3">

@@ -6,7 +6,7 @@
   },
   "/Users/mauro/Development/plane/.claude/settings.json": {
     "size": 2241,
-    "mtime_ns": 1786437582674858885,
+    "mtime_ns": 1786449550801994267,
     "hash": "f65f385819a31dc12fa2c35be158717eab065b5677a31025d5675fb04902a254"
   },
   "/Users/mauro/Development/plane/.husky/_/husky.sh": {
@@ -591,7 +591,7 @@
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/urls/user.py": {
     "size": 3732,
-    "mtime_ns": 1786446693212033713,
+    "mtime_ns": 1786449419797196985,
     "hash": "e98f6b1e5a829c3e6fbe430e863fbbf05c92a878e53dc67a50370041e7876281"
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/urls/views.py": {
@@ -611,7 +611,7 @@
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/views/__init__.py": {
     "size": 6584,
-    "mtime_ns": 1786446689920962468,
+    "mtime_ns": 1786449419797936270,
     "hash": "072d5e356c349453f7e7fc7046007b780e813ccb0574faf8048871be1161e1f9"
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/views/analytic/advance.py": {
@@ -786,7 +786,7 @@
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/views/pomodoro.py": {
     "size": 10545,
-    "mtime_ns": 1786448074677802197,
+    "mtime_ns": 1786449419800778117,
     "hash": "75dc53514d437a4f0a63d3795eebb6670ab8d17fc3c4c558e0728616e385147f"
   },
   "/Users/mauro/Development/plane/apps/api/plane/app/views/project/base.py": {
@@ -2176,7 +2176,7 @@
   },
   "/Users/mauro/Development/plane/apps/api/plane/db/models/pomodoro.py": {
     "size": 2768,
-    "mtime_ns": 1786446618777712997,
+    "mtime_ns": 1786449419801359237,
     "hash": "521b24fd594330d188ffb7e705fd82fa1761e14a9438f775a1eca02247868839"
   },
   "/Users/mauro/Development/plane/apps/api/plane/db/models/project.py": {
@@ -3876,7 +3876,7 @@
   },
   "/Users/mauro/Development/plane/packages/i18n/src/locales/en/common.json": {
     "size": 34538,
-    "mtime_ns": 1786374355310882982,
+    "mtime_ns": 1786464206745611583,
     "hash": "fa36bc6ae371eaf329c1d9397fe00c46e5fd6ddee4de1b790756650405538061"
   },
   "/Users/mauro/Development/plane/packages/i18n/src/locales/en/cycle.json": {
@@ -3930,9 +3930,9 @@
     "hash": "001951b06f14f81e0053c21f7581f7f5877a15367d286859b09933a588dae5d4"
   },
   "/Users/mauro/Development/plane/packages/i18n/src/locales/en/pomodoro.json": {
-    "size": 2489,
-    "mtime_ns": 1786446667178015175,
-    "hash": "33e2e561344cb26a5b138ad73d88844659ded6f1b70d8ee723c5e61e4f09babe"
+    "size": 3047,
+    "mtime_ns": 1786464206745668166,
+    "hash": "d171fb9479912d5fe2b33dbbda7f5acdff9eb8de8bff0ae8b2d6a21daee430b6"
   },
   "/Users/mauro/Development/plane/packages/i18n/src/locales/en/power-k.json": {
     "size": 7904,
