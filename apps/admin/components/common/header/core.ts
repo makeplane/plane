@@ -4,16 +4,19 @@
  * See the LICENSE file for details.
  */
 
+export const CORE_HEADER_SEGMENT_LABEL_KEYS: Record<string, string> = {
+  general: "common.general",
+  email: "email",
+  authentication: "workspace_settings.settings.members.details.authentication",
+  workspace: "common.workspace",
+  create: "common.create",
+};
+
 export const CORE_HEADER_SEGMENT_LABELS: Record<string, string> = {
-  general: "General",
   ai: "Artificial Intelligence",
-  email: "Email",
-  authentication: "Authentication",
   image: "Image",
   google: "Google",
   github: "GitHub",
   gitlab: "GitLab",
   gitea: "Gitea",
-  workspace: "Workspace",
-  create: "Create",
 };

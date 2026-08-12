@@ -10,6 +10,7 @@ import { Telescope } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
 import { Input, ToggleSwitch } from "@plane/ui";
 // components
@@ -25,6 +26,7 @@ export interface IGeneralConfigurationForm {
 export const GeneralConfigurationForm = observer(function GeneralConfigurationForm(props: IGeneralConfigurationForm) {
   const { instance, instanceAdmins } = props;
   // hooks
+  const { t } = useTranslation();
   const { updateInstanceInfo } = useInstance();
 
   // form data
@@ -46,7 +48,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
+          title: t("success"),
           message: "Settings updated successfully",
         })
       )
@@ -70,7 +72,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           />
 
           <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email</h4>
+            <h4 className="text-13 text-tertiary">{t("email")}</h4>
             <Input
               id="email"
               name="email"
@@ -143,7 +145,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           }}
           loading={isSubmitting}
         >
-          {isSubmitting ? "Saving" : "Save changes"}
+          {isSubmitting ? t("saving") : t("save_changes")}
         </Button>
       </div>
     </div>

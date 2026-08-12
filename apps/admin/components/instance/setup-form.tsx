@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
@@ -58,6 +59,7 @@ const defaultFromData: TFormData = {
 };
 
 export function InstanceSetupForm() {
+  const { t } = useTranslation();
   // search params
   const searchParams = useSearchParams();
   const firstNameParam = searchParams?.get("first_name") || undefined;
@@ -163,7 +165,7 @@ export function InstanceSetupForm() {
             <div className="flex flex-col items-center gap-4 sm:flex-row">
               <div className="w-full space-y-1">
                 <label className="text-13 font-medium text-tertiary" htmlFor="first_name">
-                  First name <span className="text-danger-primary">*</span>
+                  {t("first_name")} <span className="text-danger-primary">*</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -186,7 +188,7 @@ export function InstanceSetupForm() {
               </div>
               <div className="w-full space-y-1">
                 <label className="text-13 font-medium text-tertiary" htmlFor="last_name">
-                  Last name <span className="text-danger-primary">*</span>
+                  {t("last_name")} <span className="text-danger-primary">*</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -210,7 +212,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="email">
-                Email <span className="text-danger-primary">*</span>
+                {t("auth.common.email.label")} <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -218,7 +220,7 @@ export function InstanceSetupForm() {
                 name="email"
                 type="email"
                 inputSize="md"
-                placeholder="name@company.com"
+                placeholder={t("auth.common.email.placeholder")}
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
@@ -253,7 +255,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="password">
-                Set a password <span className="text-danger-primary">*</span>
+                {t("auth.common.password.set_password")} <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -262,7 +264,7 @@ export function InstanceSetupForm() {
                   name="password"
                   type={showPassword.password ? "text" : "password"}
                   inputSize="md"
-                  placeholder="New password"
+                  placeholder={t("auth.common.password.new_password.placeholder")}
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
                   hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
@@ -273,7 +275,7 @@ export function InstanceSetupForm() {
                 {showPassword.password ? (
                   <button
                     type="button"
-                    aria-label="Hide password"
+                    aria-label={t("aria_labels.auth_forms.hide_password")}
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
@@ -282,7 +284,7 @@ export function InstanceSetupForm() {
                 ) : (
                   <button
                     type="button"
-                    aria-label="Show password"
+                    aria-label={t("aria_labels.auth_forms.show_password")}
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
@@ -298,7 +300,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
-                Confirm password <span className="text-danger-primary">*</span>
+                {t("auth.common.password.confirm_password.label")} <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -308,7 +310,7 @@ export function InstanceSetupForm() {
                   inputSize="md"
                   value={formData.confirm_password}
                   onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-                  placeholder="Confirm password"
+                  placeholder={t("auth.common.password.confirm_password.placeholder")}
                   className="w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
@@ -317,7 +319,7 @@ export function InstanceSetupForm() {
                 {showPassword.retypePassword ? (
                   <button
                     type="button"
-                    aria-label="Hide password"
+                    aria-label={t("aria_labels.auth_forms.hide_password")}
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
@@ -326,7 +328,7 @@ export function InstanceSetupForm() {
                 ) : (
                   <button
                     type="button"
-                    aria-label="Show password"
+                    aria-label={t("aria_labels.auth_forms.show_password")}
                     className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
@@ -337,7 +339,7 @@ export function InstanceSetupForm() {
               {!!formData.confirm_password &&
                 formData.password !== formData.confirm_password &&
                 renderPasswordMatchError && (
-                  <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>
+                  <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
                 )}
             </div>
 
@@ -366,7 +368,7 @@ export function InstanceSetupForm() {
 
             <div className="py-2">
               <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
               </Button>
             </div>
           </form>
