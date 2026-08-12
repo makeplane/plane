@@ -26,6 +26,7 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 // local components
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
+import { formatHourLabel, formatPlannedDurationLabel, getIssuePlanBounds } from "./utils";
 
 type Props = {
   issue: TIssue;
@@ -33,11 +34,21 @@ type Props = {
   isDragging?: boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
 };
 
 export const CalendarIssueBlock = observer(
   forwardRef(function CalendarIssueBlock(props: Props, ref: React.ForwardedRef<HTMLAnchorElement>) {
-    const { issue, quickActions, isDragging = false, isEpic = false, showDueDateBadge = false } = props;
+    const {
+      issue,
+      quickActions,
+      isDragging = false,
+      isEpic = false,
+      showDueDateBadge = false,
+      showProjectBadge = false,
+      stackProjectBadge = false,
+    } = props;
     // states
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
@@ -51,10 +62,24 @@ export const CalendarIssueBlock = observer(
     const { isMobile } = usePlatformOS();
     const storeType = useIssueStoreType() as CalendarStoreType;
     const { issuesFilter } = useIssues(storeType);
-    const { getProjectIdentifierById } = useProject();
+    const { getProjectById, getProjectIdentifierById } = useProject();
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+    const projectName = showProjectBadge ? getProjectById(issue?.project_id)?.name : undefined;
+
+    // Personal work-item plans (profile calendar only) carry a specific time slot — show the
+    // same "start – end · duration" info here as the scheduled block on the hours grid, so an
+    // item looks the same whether the calendar is in month/week or hours layout.
+    const planBounds = showDueDateBadge
+      ? getIssuePlanBounds(issue?.planned_at, issue?.planned_duration_minutes)
+      : undefined;
+    const timeLabel = planBounds
+      ? `${formatHourLabel(planBounds.startHour)} – ${formatHourLabel(planBounds.endHour)} · ${formatPlannedDurationLabel(planBounds.durationMinutes)}`
+      : undefined;
+    // A time label needs its own line, so lay the block out the same way stacked (badge-row)
+    // items already are, even when the caller didn't explicitly ask for stacking.
+    const isStacked = stackProjectBadge || !!timeLabel;
 
     // handlers
     const handleIssuePeekOverview = (peekIssue: TIssue) =>
@@ -114,44 +139,93 @@ export const CalendarIssueBlock = observer(
           <div
             ref={blockRef}
             className={cn(
-              "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
+              "group/calendar-block flex w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:px-1",
+              isStacked ? "min-h-10 items-start py-2 md:min-h-8" : "h-10 md:h-8",
               {
-                "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
+                "bg-surface-2 shadow-raised-200": isDragging,
+                "opacity-40": isDragging && showDueDateBadge,
                 "bg-surface-1 hover:bg-surface-2": !isDragging,
                 "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
               }
             )}
           >
-            <div className="flex h-full items-center gap-1.5 truncate">
-              <span
-                className="h-full w-0.5 flex-shrink-0 rounded-sm"
-                style={{
-                  backgroundColor: stateColor,
-                }}
-              />
-              {issue.project_id && (
-                <IssueIdentifier
-                  issueId={issue.id}
-                  projectId={issue.project_id}
-                  size="xs"
-                  variant="tertiary"
-                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
+            {isStacked ? (
+              <div className="flex min-w-0 flex-1 items-start gap-1.5">
+                <span
+                  className="mt-1 h-3.5 w-0.5 flex-shrink-0 rounded-sm"
+                  style={{
+                    backgroundColor: stateColor,
+                  }}
                 />
-              )}
-              <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
-              {showDueDateBadge && issue.target_date && (
-                <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
-                  {issue.target_date}
-                </span>
-              )}
-            </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  {issue.project_id && (
+                    <div>
+                      <IssueIdentifier
+                        issueId={issue.id}
+                        projectId={issue.project_id}
+                        size="xs"
+                        variant="tertiary"
+                        displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                      />
+                    </div>
+                  )}
+                  <div className="max-w-[85%] min-w-0 text-13 font-medium text-wrap break-words md:text-11 md:font-regular">
+                    {issue.name}
+                  </div>
+                  {timeLabel && <div className="truncate text-9 text-tertiary">{timeLabel}</div>}
+                  {(projectName || (showDueDateBadge && issue.target_date)) && (
+                    <div className="flex flex-wrap items-center gap-1">
+                      {projectName && (
+                        <span className="max-w-full truncate rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                          {projectName}
+                        </span>
+                      )}
+                      {showDueDateBadge && issue.target_date && (
+                        <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                          {issue.target_date}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-full min-w-0 flex-1 items-center gap-1.5 truncate">
+                <span
+                  className="h-full w-0.5 flex-shrink-0 rounded-sm"
+                  style={{
+                    backgroundColor: stateColor,
+                  }}
+                />
+                {issue.project_id && (
+                  <IssueIdentifier
+                    issueId={issue.id}
+                    projectId={issue.project_id}
+                    size="xs"
+                    variant="tertiary"
+                    displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                  />
+                )}
+                <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
+                {projectName && (
+                  <span className="max-w-20 flex-shrink-0 truncate rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                    {projectName}
+                  </span>
+                )}
+                {showDueDateBadge && issue.target_date && (
+                  <span className="flex-shrink-0 rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                    {issue.target_date}
+                  </span>
+                )}
+              </div>
+            )}
             {/* Wrapper exists only to stop clicks reaching the ControlLink; the
                 quick-action menu inside carries its own interactive semantics. */}
             <div
               role="presentation"
               className={cn("size-5 flex-shrink-0", {
-                "hidden group-hover/calendar-block:block": !isMobile,
-                block: isMenuActive,
+                "invisible group-hover/calendar-block:visible": !isMobile,
+                visible: isMenuActive,
               })}
               onClick={(e) => {
                 e.preventDefault();

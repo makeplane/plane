@@ -26,14 +26,17 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { HIGHLIGHT_CLASS } from "../utils";
 import type { CalendarStoreType } from "./base-calendar-root";
+import { createCalendarDragPreviewHandler } from "./drag-preview";
 import {
   buildPlannedAtForDrop,
   CALENDAR_ISSUE_DRAG_TYPE,
-  HOURS_HALF_ROW_HEIGHT,
+  formatHourLabel,
+  formatPlannedDurationLabel,
   HOURS_MIN_DURATION_MINUTES,
   HOURS_ROW_HEIGHT,
   HOURS_WORKDAY_END,
   HOURS_WORKDAY_START,
+  snapHourDelta,
 } from "./utils";
 
 type ResizeDirection = "top" | "bottom";
@@ -56,22 +59,9 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
   pointerEventsDisabled?: boolean;
   handleResizePlan: HandleResizePlan;
-};
-
-const formatHourLabel = (hour: number) => {
-  const wholeHour = Math.floor(hour);
-  const minutes = Math.round((hour - wholeHour) * 60);
-  return `${wholeHour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-};
-
-const formatDurationLabel = (durationMinutes: number) => {
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-  if (hours === 0) return `${minutes}m`;
-  if (minutes === 0) return `${hours}h`;
-  return `${hours}h ${minutes}m`;
 };
 
 const MIN_SPAN_HOURS = HOURS_MIN_DURATION_MINUTES / 60;
@@ -89,6 +79,7 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
     canEditProperties,
     isEpic = false,
     showDueDateBadge = false,
+    showProjectBadge = false,
     pointerEventsDisabled = false,
     handleResizePlan,
   } = props;
@@ -96,6 +87,7 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
   const cardRef = useRef<HTMLAnchorElement | null>(null);
   const blockRef = useRef<HTMLDivElement | null>(null);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const grabOffsetRef = useRef({ x: 8, y: 8 });
 
   const [isDragging, setIsDragging] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -108,13 +100,15 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
   const { isMobile } = usePlatformOS();
   const storeType = useIssueStoreType() as CalendarStoreType;
   const { issuesFilter } = useIssues(storeType);
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectById, getProjectIdentifierById } = useProject();
+  const projectName = showProjectBadge ? getProjectById(issue.project_id)?.name : undefined;
 
   const canEdit = !readOnly && canEditProperties(issue.project_id ?? undefined);
   const canDrag = canEdit;
 
   const displayStartHour = resizePreview?.startHour ?? startHour;
   const displayEndHour = resizePreview?.endHour ?? endHour;
+  const displayDurationMinutes = Math.round((displayEndHour - displayStartHour) * 60);
   const top = (displayStartHour - HOURS_WORKDAY_START) * HOURS_ROW_HEIGHT;
   const height = Math.max(MIN_SPAN_HOURS, displayEndHour - displayStartHour) * HOURS_ROW_HEIGHT;
   const widthPercent = 100 / Math.max(columnCount, 1);
@@ -142,13 +136,49 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
         element,
         dragHandle: element,
         canDrag: () => canDrag && !resizePreview,
-        getInitialData: () => ({ id: issue.id, date: dateString, type: CALENDAR_ISSUE_DRAG_TYPE }),
+        getInitialData: ({ input, element: dragElement }) => {
+          const rect = dragElement.getBoundingClientRect();
+          grabOffsetRef.current = {
+            x: input.clientX - rect.left,
+            y: input.clientY - rect.top,
+          };
+          return {
+            id: issue.id,
+            date: dateString,
+            type: CALENDAR_ISSUE_DRAG_TYPE,
+            grabOffsetY: grabOffsetRef.current.y,
+            grabOffsetX: grabOffsetRef.current.x,
+            durationMinutes: displayDurationMinutes,
+            issueName: issue.name,
+          };
+        },
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
+        onGenerateDragPreview: showDueDateBadge
+          ? createCalendarDragPreviewHandler(() => ({
+              title: issue.name,
+              subtitle: `${formatHourLabel(displayStartHour)} – ${formatHourLabel(displayEndHour)}`,
+              grabOffsetX: grabOffsetRef.current.x,
+              grabOffsetY: grabOffsetRef.current.y,
+              blockHeight: height,
+              blockWidth: blockRef.current?.getBoundingClientRect().width ?? 160,
+            }))
+          : undefined,
       })
     );
-    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-  }, [cardRef?.current, issue.id, dateString, canDrag, resizePreview]);
+  }, [
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps -- rebind when card node mounts (kanban pattern)
+    cardRef?.current,
+    issue.id,
+    issue.name,
+    dateString,
+    canDrag,
+    resizePreview,
+    showDueDateBadge,
+    displayStartHour,
+    displayEndHour,
+    displayDurationMinutes,
+  ]);
 
   useOutsideClickDetector(cardRef, () => {
     cardRef.current?.classList?.remove(HIGHLIGHT_CLASS);
@@ -171,7 +201,7 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
     let latestEnd = originEnd;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const deltaHours = Math.round((moveEvent.clientY - originY) / HOURS_HALF_ROW_HEIGHT) * 0.5;
+      const deltaHours = snapHourDelta(moveEvent.clientY - originY);
 
       if (direction === "bottom") {
         const maxEnd = HOURS_WORKDAY_END + 1;
@@ -237,9 +267,12 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
 
   return (
     <div
-      className={cn("absolute z-[2] px-0.5", {
+      role="presentation"
+      className={cn("absolute px-0.5", {
         "pointer-events-none": pointerEventsDisabled,
         "pointer-events-auto": !pointerEventsDisabled,
+        "z-[5]": isDragging && showDueDateBadge,
+        "z-[2]": !isDragging || !showDueDateBadge,
       })}
       style={{
         top,
@@ -247,6 +280,9 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
         left: `calc(${leftPercent}% + 1px)`,
         width: `calc(${widthPercent}% - 2px)`,
       }}
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
       onDragStart={() => {
         if (canDrag) return;
         setToast({
@@ -261,7 +297,8 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
         className={cn(
           "group/hours-block relative flex h-full w-full flex-col overflow-hidden rounded-sm border border-subtle bg-surface-1",
           {
-            "border-accent-strong bg-surface-2 shadow-raised-200": isDragging || !!resizePreview,
+            "bg-surface-2 shadow-raised-200": isDragging || !!resizePreview,
+            invisible: isDragging && showDueDateBadge && !resizePreview,
             "border-accent-strong": getIsIssuePeeked(issue.id),
             "cursor-grab active:cursor-grabbing": canDrag && !resizePreview,
           }
@@ -292,8 +329,8 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
               style={{ backgroundColor: stateColor }}
             />
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1 truncate">
-                {issue.project_id && (
+              {issue.project_id && (
+                <div>
                   <IssueIdentifier
                     issueId={issue.id}
                     projectId={issue.project_id}
@@ -301,25 +338,34 @@ export const HoursIssueBlock = observer(function HoursIssueBlock(props: Props) {
                     variant="tertiary"
                     displayProperties={issuesFilter?.issueFilters?.displayProperties}
                   />
-                )}
-                <div className="truncate text-11 font-medium">{issue.name}</div>
-              </div>
+                </div>
+              )}
+              <div className="truncate text-11 font-medium">{issue.name}</div>
               <div className="mt-0.5 truncate text-9 text-tertiary">
                 {formatHourLabel(displayStartHour)} – {formatHourLabel(displayEndHour)}
                 {" · "}
-                {formatDurationLabel(Math.round((displayEndHour - displayStartHour) * 60))}
+                {formatPlannedDurationLabel(Math.round((displayEndHour - displayStartHour) * 60))}
               </div>
-              {showDueDateBadge && issue.target_date && (
-                <span className="mt-0.5 inline-flex rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
-                  {issue.target_date}
-                </span>
+              {(showDueDateBadge || showProjectBadge) && (issue.target_date || projectName) && (
+                <div className="mt-0.5 flex flex-wrap items-center gap-1">
+                  {showDueDateBadge && issue.target_date && (
+                    <span className="inline-flex rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                      {issue.target_date}
+                    </span>
+                  )}
+                  {projectName && (
+                    <span className="inline-flex max-w-24 truncate rounded-sm bg-layer-2 px-1 py-0.5 text-9 text-tertiary">
+                      {projectName}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
             <div
               role="presentation"
               className={cn("size-5 flex-shrink-0", {
-                "hidden group-hover/hours-block:block": !isMobile,
-                block: isMenuActive,
+                "invisible group-hover/hours-block:visible": !isMobile,
+                visible: isMenuActive,
               })}
               onClick={(e) => {
                 e.preventDefault();

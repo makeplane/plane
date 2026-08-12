@@ -43,6 +43,7 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
+import { IssuePlannedScheduleProperty } from "../issue-detail/planned-schedule-property";
 import { formatDuration } from "../issue-detail/time-log/helper";
 import { LogWorkModal } from "../issue-detail/time-log/log-work-modal";
 
@@ -204,6 +205,8 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             </div>
           </SidebarPropertyListItem>
 
+          <IssuePlannedScheduleProperty issue={issue} />
+
           {isEstimateEnabled && (
             <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
               <EstimateDropdown
@@ -239,7 +242,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           {projectDetails?.module_view && (
             <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
               <IssueModuleSelect
-                className="w-full grow"
+                className="h-7.5 w-full grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}

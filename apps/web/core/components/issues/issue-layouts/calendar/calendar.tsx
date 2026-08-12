@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { PanelRight } from "lucide-react";
 import { observer } from "mobx-react";
@@ -30,7 +31,9 @@ import { MONTHS_LIST } from "@plane/constants";
 // helpers
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useUser } from "@/hooks/store/user";
 import useSize from "@/hooks/use-window-size";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
@@ -39,6 +42,7 @@ import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local imports
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarHeader } from "./header";
@@ -47,6 +51,7 @@ import { CalendarIssueBlocks } from "./issue-blocks";
 import { CalendarUnscheduledStrip } from "./unscheduled-strip";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
+import { buildPlannedAtForDrop, CALENDAR_ISSUE_DRAG_TYPE, HOURS_MIN_DURATION_MINUTES } from "./utils";
 
 const UNSCHEDULED_SIDEBAR_COLLAPSED_KEY = "calendar_unscheduled_sidebar_collapsed";
 
@@ -122,12 +127,23 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isUnscheduledSidebarCollapsed, setIsUnscheduledSidebarCollapsed] = useState(readUnscheduledSidebarCollapsed);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createModalDate, setCreateModalDate] = useState<Date | null>(null);
+  const [createModalDuration, setCreateModalDuration] = useState<number | null>(null);
+  const [createModalPlannedAt, setCreateModalPlannedAt] = useState<string | null>(null);
+  const [isCalendarDragActive, setIsCalendarDragActive] = useState(false);
+  const pendingCreatePlanRef = useRef<{
+    plannedAt: string;
+    plannedDurationMinutes?: number;
+  } | null>(null);
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const {
     issues: { viewFlags },
   } = useIssues(storeType);
+  const { data: currentUser } = useUser();
+  const { updateIssue } = useIssuesActions(storeType);
 
   const [windowWidth] = useSize();
 
@@ -138,6 +154,85 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
+
+  const handleCloseCreateModal = useCallback(() => {
+    setIsCreateModalOpen(false);
+    setCreateModalDate(null);
+    setCreateModalDuration(null);
+    setCreateModalPlannedAt(null);
+  }, []);
+
+  const handleDayClick = useCallback((date: Date) => {
+    const dateString = renderFormattedPayloadDate(date);
+    if (dateString) {
+      pendingCreatePlanRef.current = {
+        plannedAt: buildPlannedAtForDrop(dateString, null),
+      };
+    }
+
+    setCreateModalDate(date);
+    setCreateModalDuration(null);
+    setCreateModalPlannedAt(null);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const handleTimeRangeSelect = useCallback((date: Date, startHour: number, endHour: number) => {
+    const dateString = renderFormattedPayloadDate(date);
+    if (!dateString) return;
+
+    const plannedAt = buildPlannedAtForDrop(dateString, null, startHour);
+    const durationMinutes = Math.max((endHour - startHour) * 60, HOURS_MIN_DURATION_MINUTES);
+
+    pendingCreatePlanRef.current = {
+      plannedAt,
+      plannedDurationMinutes: durationMinutes,
+    };
+
+    setCreateModalDate(date);
+    setCreateModalPlannedAt(plannedAt);
+    setCreateModalDuration(durationMinutes);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const createModalData = createModalDate
+    ? {
+        ...(layout === "hours"
+          ? {
+              planned_at:
+                createModalPlannedAt ?? buildPlannedAtForDrop(renderFormattedPayloadDate(createModalDate) ?? "", null),
+              planned_duration_minutes: createModalDuration ?? undefined,
+            }
+          : isProfileCalendar
+            ? {
+                planned_at: buildPlannedAtForDrop(renderFormattedPayloadDate(createModalDate) ?? "", null),
+              }
+            : { target_date: renderFormattedPayloadDate(createModalDate) ?? undefined }),
+        ...(isProfileCalendar && currentUser?.id ? { assignee_ids: [currentUser.id] } : {}),
+      }
+    : undefined;
+
+  const handleCreateModalSubmit = useCallback(
+    async (issue: TIssue) => {
+      if (!isProfileCalendar || !issue.id || !issue.project_id || !currentUser?.id) return;
+
+      try {
+        if (updateIssue && !issue.assignee_ids?.includes(currentUser.id)) {
+          await updateIssue(issue.project_id, issue.id, { assignee_ids: [currentUser.id] });
+        }
+
+        const pendingPlan = pendingCreatePlanRef.current;
+        if (handleResizePlan && pendingPlan) {
+          await handleResizePlan(issue.id, {
+            planned_at: pendingPlan.plannedAt,
+            planned_duration_minutes: pendingPlan.plannedDurationMinutes,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to finalize calendar-created issue:", error);
+      }
+    },
+    [isProfileCalendar, currentUser?.id, updateIssue, handleResizePlan]
+  );
 
   // Enable Auto Scroll for calendar
   useEffect(() => {
@@ -151,6 +246,18 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
       })
     );
   }, []);
+
+  // Profile calendar: track active drags to dim non-target day cells (month/week/hours)
+  useEffect(() => {
+    if (!isProfileCalendar) return;
+
+    return monitorForElements({
+      onDragStart: ({ source }) => {
+        if (source.data.type === CALENDAR_ISSUE_DRAG_TYPE) setIsCalendarDragActive(true);
+      },
+      onDrop: () => setIsCalendarDragActive(false),
+    });
+  }, [isProfileCalendar]);
 
   if (!calendarPayload || !formattedDatePayload)
     return (
@@ -221,6 +328,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                             getGroupIssueCount={getGroupIssueCount}
                             enableQuickIssueCreate={enableQuickAdd}
                             disableIssueCreation={!enableIssueCreation}
+                            enableIssueCreation={enableIssueCreation}
                             quickActions={quickActions}
                             quickAddCallback={quickAddCallback}
                             addIssuesToView={addIssuesToView}
@@ -228,6 +336,10 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                             canEditProperties={canEditProperties}
                             isEpic={isEpic}
                             showDueDateBadge={isProfileCalendar}
+                            showProjectBadge={isProfileCalendar}
+                            stackProjectBadge={isProfileCalendar}
+                            isCalendarDragActive={isCalendarDragActive}
+                            onDayClick={handleDayClick}
                           />
                         ))}
                     </div>
@@ -246,6 +358,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                       getGroupIssueCount={getGroupIssueCount}
                       enableQuickIssueCreate={enableQuickAdd}
                       disableIssueCreation={!enableIssueCreation}
+                      enableIssueCreation={enableIssueCreation}
                       quickActions={quickActions}
                       quickAddCallback={quickAddCallback}
                       addIssuesToView={addIssuesToView}
@@ -253,6 +366,10 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                       canEditProperties={canEditProperties}
                       isEpic={isEpic}
                       showDueDateBadge={isProfileCalendar}
+                      showProjectBadge={isProfileCalendar}
+                      stackProjectBadge={isProfileCalendar}
+                      isCalendarDragActive={isCalendarDragActive}
+                      onDayClick={handleDayClick}
                     />
                   )}
                   {layout === "hours" && handleResizePlan && (
@@ -263,7 +380,13 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                       canEditProperties={canEditProperties}
                       isEpic={isEpic}
                       showDueDateBadge={isProfileCalendar}
+                      showProjectBadge={isProfileCalendar}
                       showWeekends={showWeekends}
+                      disableIssueCreation={!enableIssueCreation}
+                      enableIssueCreation={enableIssueCreation}
+                      onDayClick={isProfileCalendar ? undefined : handleDayClick}
+                      onTimeRangeSelect={handleTimeRangeSelect}
+                      isCalendarDragActive={isCalendarDragActive}
                       handleDragAndDrop={handleDragAndDrop}
                       handleResizePlan={handleResizePlan}
                     />
@@ -297,6 +420,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                     isDragDisabled
                     isMobileView
                     isEpic={isEpic}
+                    showDueDateBadge={isProfileCalendar}
+                    showProjectBadge={isProfileCalendar}
+                    stackProjectBadge={isProfileCalendar}
                   />
                 </div>
               </div>
@@ -347,9 +473,20 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             isDragDisabled
             isMobileView
             isEpic={isEpic}
+            showDueDateBadge={isProfileCalendar}
+            showProjectBadge={isProfileCalendar}
+            stackProjectBadge={isProfileCalendar}
           />
         </div>
       </div>
+
+      <CreateUpdateIssueModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        data={createModalData}
+        storeType={storeType}
+        onSubmit={isProfileCalendar ? handleCreateModalSubmit : undefined}
+      />
     </>
   );
 });

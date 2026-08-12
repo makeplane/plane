@@ -14,8 +14,10 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TRenderQuickActions } from "../list/list-view-types";
+import { cn } from "@plane/utils";
 import { HIGHLIGHT_CLASS } from "../utils";
 import { CalendarIssueBlock } from "./issue-block";
+import { createCalendarDragPreviewHandler } from "./drag-preview";
 import { CALENDAR_ISSUE_DRAG_TYPE } from "./utils";
 
 type Props = {
@@ -26,6 +28,8 @@ type Props = {
   isEpic?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
 };
 
 export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(props: Props) {
@@ -37,11 +41,14 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
     isEpic = false,
     canEditProperties,
     showDueDateBadge,
+    showProjectBadge,
+    stackProjectBadge,
   } = props;
 
   // Match board/kanban: register Pragmatic on the ControlLink <a>, not a wrapper div,
   // so the browser does not start a native link drag that never hits calendar drop targets.
   const cardRef = useRef<HTMLAnchorElement | null>(null);
+  const grabOffsetRef = useRef({ x: 8, y: 8 });
   const [isDragging, setIsDragging] = useState(false);
 
   const {
@@ -61,18 +68,39 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
         element,
         dragHandle: element,
         canDrag: () => canDrag,
-        getInitialData: () => ({ id: issue.id, date: sourceDate, type: CALENDAR_ISSUE_DRAG_TYPE }),
+        getInitialData: ({ input, element: dragElement }) => {
+          const rect = dragElement.getBoundingClientRect();
+          grabOffsetRef.current = {
+            x: input.clientX - rect.left,
+            y: input.clientY - rect.top,
+          };
+          return {
+            id: issue.id,
+            date: sourceDate,
+            type: CALENDAR_ISSUE_DRAG_TYPE,
+            grabOffsetY: grabOffsetRef.current.y,
+            grabOffsetX: grabOffsetRef.current.x,
+            issueName: issue.name,
+          };
+        },
         onDragStart: () => {
           setIsDragging(true);
         },
         onDrop: () => {
           setIsDragging(false);
         },
+        onGenerateDragPreview: showDueDateBadge
+          ? createCalendarDragPreviewHandler(() => ({
+              title: issue.name,
+              grabOffsetX: grabOffsetRef.current.x,
+              grabOffsetY: grabOffsetRef.current.y,
+            }))
+          : undefined,
       })
     );
     // Same dependency pattern as kanban/block.tsx — rebind when the card node mounts.
     // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-  }, [cardRef?.current, issue?.id, sourceDate, canDrag, isDragDisabled]);
+  }, [cardRef?.current, issue?.id, sourceDate, canDrag, isDragDisabled, showDueDateBadge]);
 
   useOutsideClickDetector(cardRef, () => {
     cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
@@ -82,8 +110,12 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
 
   return (
     <div
+      role="presentation"
       id={`issue-${issueId}`}
-      className={canDrag ? "cursor-grab active:cursor-grabbing" : undefined}
+      className={cn(canDrag ? "cursor-grab active:cursor-grabbing" : undefined, {
+        "relative z-[5]": isDragging && showDueDateBadge,
+      })}
+      onClick={(e) => e.stopPropagation()}
       onDragStart={() => {
         if (canDrag) return;
         setToast({
@@ -100,6 +132,8 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
         ref={cardRef}
         isEpic={isEpic}
         showDueDateBadge={showDueDateBadge}
+        showProjectBadge={showProjectBadge}
+        stackProjectBadge={stackProjectBadge}
       />
     </div>
   );

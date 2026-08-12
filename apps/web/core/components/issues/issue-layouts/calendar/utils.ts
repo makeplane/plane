@@ -8,7 +8,7 @@ import { parseISO } from "date-fns";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import type { IPragmaticDropPayload } from "@plane/types";
-import { renderFormattedPayloadDate } from "@plane/utils";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
 
 export const CALENDAR_DAY_DROP_TYPE = "CALENDAR_DAY";
 export const CALENDAR_ISSUE_DRAG_TYPE = "CALENDAR_ISSUE";
@@ -17,13 +17,95 @@ export const HOURS_WORKDAY_START = 6;
 export const HOURS_WORKDAY_END = 23;
 export const HOURS_ROW_HEIGHT = 56;
 export const HOURS_HALF_ROW_HEIGHT = HOURS_ROW_HEIGHT / 2;
-export const HOURS_SNAP_MINUTES = 30;
+export const HOURS_SNAP_MINUTES = 15;
 export const HOURS_MIN_DURATION_MINUTES = 30;
+
+/** Snap total minutes to the calendar grid (default 15-minute steps). */
+export const snapMinutesToGrid = (totalMinutes: number): number =>
+  Math.round(totalMinutes / HOURS_SNAP_MINUTES) * HOURS_SNAP_MINUTES;
+
+/** Convert a Y offset within the hours column to a fractional local hour (snapped to grid). */
+export const yOffsetToHour = (relativeY: number): number => {
+  const rawHour = relativeY / HOURS_ROW_HEIGHT + HOURS_WORKDAY_START;
+  const totalMinutes = snapMinutesToGrid(Math.round(rawHour * 60));
+  const minMinutes = HOURS_WORKDAY_START * 60;
+  const maxMinutes = HOURS_WORKDAY_END * 60 + 59;
+  const clampedMinutes = Math.min(Math.max(totalMinutes, minMinutes), maxMinutes);
+  return clampedMinutes / 60;
+};
+
+/** Resolve drop start hour from pointer position, preserving grab offset within the block. */
+export const resolveDropHour = (pointerY: number, columnTop: number, grabOffsetY = 0): number =>
+  yOffsetToHour(pointerY - columnTop - grabOffsetY);
+
+/** Snap a vertical pixel delta to the calendar grid, returned as fractional hours. */
+export const snapHourDelta = (deltaPixels: number): number =>
+  snapMinutesToGrid(Math.round((deltaPixels / HOURS_ROW_HEIGHT) * 60)) / 60;
+
+/** Read grab offset from pragmatic drag source data. */
+export const getDragGrabOffsetY = (sourceData: Record<string, unknown> | undefined): number =>
+  typeof sourceData?.grabOffsetY === "number" ? sourceData.grabOffsetY : 0;
+
+/** Read duration from pragmatic drag source data (hours blocks). */
+export const getDragDurationMinutes = (sourceData: Record<string, unknown> | undefined): number =>
+  typeof sourceData?.durationMinutes === "number" ? sourceData.durationMinutes : HOURS_MIN_DURATION_MINUTES;
+
+/** Read issue title from pragmatic drag source data. */
+export const getDragIssueName = (sourceData: Record<string, unknown> | undefined): string =>
+  typeof sourceData?.issueName === "string" ? sourceData.issueName : "";
+
+/** Top offset in pixels for a fractional local hour on the hours grid. */
+export const hourToTopOffset = (hour: number): number => (hour - HOURS_WORKDAY_START) * HOURS_ROW_HEIGHT;
 
 export type IssuePlanBounds = {
   startHour: number;
   endHour: number;
   durationMinutes: number;
+};
+
+export type PlannedScheduleDisplay = {
+  dateLabel: string;
+  timeLabel: string;
+  durationLabel: string | null;
+};
+
+/** Format a fractional hour (e.g. 9.5) as HH:mm. */
+export const formatHourLabel = (hour: number) => {
+  const wholeHour = Math.floor(hour);
+  const minutes = Math.round((hour - wholeHour) * 60);
+  return `${wholeHour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+};
+
+/** Format planned duration minutes as a compact label (e.g. 1h 30m). */
+export const formatPlannedDurationLabel = (durationMinutes: number) => {
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+};
+
+/** Format planned_at ISO string as HH:mm in local time. */
+export const formatPlannedTimeLabel = (plannedAt: string) => {
+  const start = parseISO(plannedAt);
+  return `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")}`;
+};
+
+/** Build read-only labels for issue detail scheduled property. */
+export const formatPlannedScheduleDisplay = (
+  plannedAt: string | null | undefined,
+  plannedDurationMinutes?: number | null
+): PlannedScheduleDisplay | null => {
+  if (!plannedAt) return null;
+
+  const dateLabel = renderFormattedDate(plannedAt);
+  if (!dateLabel) return null;
+
+  return {
+    dateLabel,
+    timeLabel: formatPlannedTimeLabel(plannedAt),
+    durationLabel: plannedDurationMinutes != null ? formatPlannedDurationLabel(plannedDurationMinutes) : null,
+  };
 };
 
 /**
@@ -61,9 +143,11 @@ export const buildPlannedAtForDrop = (
   if (!normalizedDestinationDate) return new Date().toISOString();
 
   if (destinationHour !== undefined) {
-    const clamped = Math.min(Math.max(destinationHour, 0), 23.5);
-    const wholeHour = Math.floor(clamped);
-    const minutes = Math.round((clamped - wholeHour) * 60);
+    const totalMinutes = snapMinutesToGrid(
+      Math.round(Math.min(Math.max(destinationHour * 60, HOURS_WORKDAY_START * 60), HOURS_WORKDAY_END * 60 + 59))
+    );
+    const wholeHour = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
     const [year, month, day] = normalizedDestinationDate.split("-").map(Number);
     return new Date(year, month - 1, day, wholeHour, minutes, 0, 0).toISOString();
   }
@@ -75,7 +159,8 @@ export const buildPlannedAtForDrop = (
     return `${normalizedDestinationDate}T${timePortion}`;
   }
 
-  return `${normalizedDestinationDate}T09:00:00.000Z`;
+  const [year, month, day] = normalizedDestinationDate.split("-").map(Number);
+  return new Date(year, month - 1, day, 9, 0, 0, 0).toISOString();
 };
 
 /**
