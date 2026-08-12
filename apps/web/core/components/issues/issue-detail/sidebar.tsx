@@ -45,6 +45,7 @@ import { formatDuration } from "./time-log/helper";
 import { LogWorkModal } from "./time-log/log-work-modal";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
+import { IssuePlannedScheduleProperty } from "./planned-schedule-property";
 import type { TIssueOperations } from "./root";
 
 type Props = {
@@ -201,6 +202,8 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               </div>
             </SidebarPropertyListItem>
 
+            <IssuePlannedScheduleProperty issue={issue} />
+
             {projectId && areEstimateEnabledByProjectId(projectId) && (
               <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
                 <EstimateDropdown
@@ -240,7 +243,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             {projectDetails?.module_view && (
               <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
                 <IssueModuleSelect
-                  className="w-full grow"
+                  className="h-7.5 w-full grow"
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   issueId={issueId}

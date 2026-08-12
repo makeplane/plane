@@ -52,6 +52,9 @@
       "medium": "Medium",
       "low": "Low"
     },
+    "properties": {
+      "scheduled": "Scheduled"
+    },
     "display": {
       "properties": {
         "label": "Display Properties",
@@ -84,7 +87,8 @@
       },
       "calendar": {
         "hours_layout": "Hours layout",
-        "unscheduled": "Unscheduled"
+        "unscheduled": "Unscheduled",
+        "drop_to_unschedule": "Drop here to unschedule"
       }
     },
     "states": {

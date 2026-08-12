@@ -35,6 +35,7 @@ type Props = {
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
@@ -50,6 +51,10 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
+  isCalendarDragActive?: boolean;
+  onDayClick?: (date: Date) => void;
 };
 
 export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
@@ -65,6 +70,7 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
+    enableIssueCreation,
     quickAddCallback,
     addIssuesToView,
     readOnly = false,
@@ -73,6 +79,10 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
     canEditProperties,
     isEpic = false,
     showDueDateBadge = false,
+    showProjectBadge = false,
+    stackProjectBadge = false,
+    isCalendarDragActive = false,
+    onDayClick,
   } = props;
   // hooks
   const { data } = useUserProfile();
@@ -117,6 +127,7 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
             disableIssueCreation={disableIssueCreation}
+            enableIssueCreation={enableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
@@ -124,6 +135,10 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
             canEditProperties={canEditProperties}
             isEpic={isEpic}
             showDueDateBadge={showDueDateBadge}
+            showProjectBadge={showProjectBadge}
+            stackProjectBadge={stackProjectBadge}
+            isCalendarDragActive={isCalendarDragActive}
+            onDayClick={onDayClick}
           />
         );
       })}

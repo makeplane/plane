@@ -45,6 +45,7 @@ type Props = {
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
@@ -61,6 +62,10 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
+  isCalendarDragActive?: boolean;
+  onDayClick?: (date: Date) => void;
 };
 
 export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
@@ -75,6 +80,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
+    enableIssueCreation,
     quickAddCallback,
     addIssuesToView,
     readOnly = false,
@@ -84,6 +90,10 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     canEditProperties,
     isEpic = false,
     showDueDateBadge = false,
+    showProjectBadge = false,
+    stackProjectBadge = false,
+    isCalendarDragActive = false,
+    onDayClick,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -143,12 +153,17 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const normalBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent";
   const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent-hover";
 
+  const isProfileEnhancedDnD = showDueDateBadge;
+  const isDimmedDuringDrag = isProfileEnhancedDnD && isCalendarDragActive && !isDraggingOver;
+
   return (
     <>
       <div
         ref={dayCellRef}
-        className={cn("group relative flex h-full w-full flex-col", {
-          [`${draggingOverBackground} opacity-70`]: isDraggingOver,
+        className={cn("group relative flex h-full w-full flex-col transition-opacity", {
+          "opacity-60": isDimmedDuringDrag,
+          [`${draggingOverBackground} ring-2 ring-accent-strong`]: isProfileEnhancedDnD && isDraggingOver,
+          [`${draggingOverBackground} opacity-70`]: !isProfileEnhancedDnD && isDraggingOver,
         })}
       >
         {/* header */}
@@ -174,12 +189,17 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         {/* content */}
         <div className="hidden h-full w-full md:block">
           <div
-            className={cn(
-              `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
-              {
-                "min-h-[5rem]": true,
+            role="presentation"
+            className={cn(`h-full w-full select-none ${isDraggingOver ? draggingOverBackground : normalBackground}`, {
+              "min-h-[5rem]": true,
+              "ring-2 ring-accent-strong ring-inset": isProfileEnhancedDnD && isDraggingOver,
+              "opacity-70": !isProfileEnhancedDnD && isDraggingOver,
+            })}
+            onClick={() => {
+              if (!readOnly && !disableIssueCreation && enableIssueCreation && onDayClick) {
+                onDayClick(date.date);
               }
-            )}
+            }}
           >
             <CalendarIssueBlocks
               date={date.date}
@@ -197,6 +217,8 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               canEditProperties={canEditProperties}
               isEpic={isEpic}
               showDueDateBadge={showDueDateBadge}
+              showProjectBadge={showProjectBadge}
+              stackProjectBadge={stackProjectBadge}
             />
           </div>
         </div>

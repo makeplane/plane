@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -20,14 +20,21 @@ import { HoursIssueBlock } from "./hours-issue-block";
 import {
   CALENDAR_DAY_DROP_TYPE,
   CALENDAR_ISSUE_DRAG_TYPE,
+  formatHourLabel,
   getCalendarDestinationFromDropPayload,
   getCalendarSourceFromDropPayload,
+  getDragDurationMinutes,
+  getDragGrabOffsetY,
+  getDragIssueName,
   getIssuePlanBounds,
-  HOURS_HALF_ROW_HEIGHT,
+  hourToTopOffset,
+  HOURS_MIN_DURATION_MINUTES,
   HOURS_ROW_HEIGHT,
   HOURS_WORKDAY_END,
   HOURS_WORKDAY_START,
   packOverlappingPlanBlocks,
+  resolveDropHour,
+  yOffsetToHour,
 } from "./utils";
 
 type HandleDragAndDrop = (
@@ -50,7 +57,13 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
   showWeekends?: boolean;
+  disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
+  onDayClick?: (date: Date) => void;
+  onTimeRangeSelect?: (date: Date, startHour: number, endHour: number) => void;
+  isCalendarDragActive?: boolean;
   handleDragAndDrop: HandleDragAndDrop;
   handleResizePlan: HandleResizePlan;
 };
@@ -63,63 +76,68 @@ type DayPlanBlock = {
   durationMinutes: number;
 };
 
-const CalendarHourDropBand = observer(function CalendarHourDropBand(props: {
+type GridDragPreview = {
   dateString: string;
-  hour: number;
-  height: number;
-  showBottomBorder?: boolean;
-  issuesMap: TIssueMap | undefined;
-  handleDragAndDrop: HandleDragAndDrop;
-}) {
-  const { dateString, hour, height, showBottomBorder = false, issuesMap, handleDragAndDrop } = props;
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const bandRef = useRef<HTMLDivElement | null>(null);
+  startHour: number;
+  durationMinutes: number;
+  issueName: string;
+};
 
-  useEffect(() => {
-    const element = bandRef.current;
-    if (!element) return;
+const resolveColumnAtPoint = (
+  clientX: number,
+  clientY: number,
+  columnRefs: Map<string, HTMLDivElement>
+): { dateString: string; element: HTMLDivElement } | null => {
+  const entries = [...columnRefs.entries()];
 
-    return combine(
-      dropTargetForElements({
-        element,
-        canDrop: ({ source }) => source?.data?.type === CALENDAR_ISSUE_DRAG_TYPE,
-        getData: () => ({ date: dateString, hour, type: CALENDAR_DAY_DROP_TYPE }),
-        onDragEnter: () => setIsDraggingOver(true),
-        onDragLeave: () => setIsDraggingOver(false),
-        onDrop: (payload) => {
-          setIsDraggingOver(false);
+  for (const [dateString, element] of entries) {
+    const rect = element.getBoundingClientRect();
+    if (clientX >= rect.left && clientX < rect.right && clientY >= rect.top && clientY < rect.bottom) {
+      return { dateString, element };
+    }
+  }
 
-          const source = getCalendarSourceFromDropPayload(payload);
-          const destination = getCalendarDestinationFromDropPayload(payload);
-          if (!source || !destination) return;
+  let nearest: { dateString: string; element: HTMLDivElement; distance: number } | null = null;
 
-          void handleDragAndDrop(
-            source.id,
-            issuesMap?.[source.id]?.project_id ?? undefined,
-            source.date,
-            destination.date,
-            destination.hour ?? hour
-          );
+  for (const [dateString, element] of entries) {
+    const rect = element.getBoundingClientRect();
+    if (clientY < rect.top || clientY >= rect.bottom) continue;
 
-          highlightIssueOnDrop(payload.source?.element?.id, false);
-        },
-      })
-    );
-  }, [dateString, hour, handleDragAndDrop, issuesMap]);
+    const centerX = (rect.left + rect.right) / 2;
+    const distance = Math.abs(clientX - centerX);
+    if (!nearest || distance < nearest.distance) {
+      nearest = { dateString, element, distance };
+    }
+  }
+
+  return nearest ? { dateString: nearest.dateString, element: nearest.element } : null;
+};
+
+const HoursDropGhost = (props: { startHour: number; durationMinutes: number; issueName: string }) => {
+  const { startHour, durationMinutes, issueName } = props;
+  const spanHours = Math.max(durationMinutes / 60, HOURS_MIN_DURATION_MINUTES / 60);
+  const endHour = startHour + spanHours;
 
   return (
     <div
-      ref={bandRef}
-      className={cn("pointer-events-auto", {
-        "border-b border-subtle-1": showBottomBorder,
-        "bg-layer-transparent-hover opacity-80": isDraggingOver,
-      })}
-      style={{ height }}
-    />
+      className="pointer-events-none absolute right-1 left-1 z-[6] overflow-hidden rounded-sm bg-surface-2/95 shadow-raised-300"
+      style={{
+        top: hourToTopOffset(startHour),
+        height: spanHours * HOURS_ROW_HEIGHT,
+      }}
+    >
+      <div className="flex h-full flex-col px-1.5 py-1">
+        {issueName ? <div className="truncate text-11 font-semibold text-primary">{issueName}</div> : null}
+        <div className={cn("truncate text-9 font-medium text-accent-primary", { "mt-0.5": issueName })}>
+          {formatHourLabel(startHour)} – {formatHourLabel(endHour)}
+        </div>
+      </div>
+    </div>
   );
-});
+};
 
 const CalendarDayColumn = observer(function CalendarDayColumn(props: {
+  date: Date;
   dateString: string;
   hours: number[];
   blocks: Array<DayPlanBlock & { columnIndex: number; columnCount: number }>;
@@ -129,13 +147,22 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
   showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
+  onDayClick?: (date: Date) => void;
+  onTimeRangeSelect?: (date: Date, startHour: number, endHour: number) => void;
   isDraggingIssue: boolean;
+  isCalendarDragActive?: boolean;
+  gridDragPreview?: GridDragPreview | null;
+  registerColumnRef?: (dateString: string, element: HTMLDivElement | null) => void;
   showNowIndicator?: boolean;
   nowTop?: number;
   handleDragAndDrop: HandleDragAndDrop;
   handleResizePlan: HandleResizePlan;
 }) {
   const {
+    date,
     dateString,
     hours,
     blocks,
@@ -145,35 +172,212 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
     canEditProperties,
     isEpic,
     showDueDateBadge,
+    showProjectBadge,
+    disableIssueCreation,
+    enableIssueCreation,
+    onDayClick,
+    onTimeRangeSelect,
     isDraggingIssue,
+    isCalendarDragActive = false,
+    gridDragPreview = null,
+    registerColumnRef,
     showNowIndicator = false,
     nowTop,
     handleDragAndDrop,
     handleResizePlan,
   } = props;
 
+  const columnRef = useRef<HTMLDivElement | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionStartY, setSelectionStartY] = useState(0);
+  const [selectionEndY, setSelectionEndY] = useState(0);
+
+  const dragStartY = useRef(0);
+  const hasMoved = useRef(false);
+  const startSelectionOnMove = useRef(false);
+
+  const isActiveDropColumn = gridDragPreview?.dateString === dateString;
+  const isDimmedDuringDrag = showDueDateBadge && isCalendarDragActive && !isActiveDropColumn;
+
+  const mergedColumnRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      columnRef.current = element;
+      registerColumnRef?.(dateString, element);
+    },
+    [dateString, registerColumnRef]
+  );
+
+  const yToHour = useCallback((relativeY: number): number => yOffsetToHour(relativeY), []);
+
+  useEffect(() => {
+    const element = columnRef.current;
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) => source?.data?.type === CALENDAR_ISSUE_DRAG_TYPE,
+        getData: ({ input, source }) => {
+          const rect = element.getBoundingClientRect();
+          const grabOffsetY = getDragGrabOffsetY(source.data as Record<string, unknown>);
+          const hour = resolveDropHour(input.clientY, rect.top, grabOffsetY);
+          return { date: dateString, hour, type: CALENDAR_DAY_DROP_TYPE };
+        },
+        onDrop: (payload) => {
+          const source = getCalendarSourceFromDropPayload(payload);
+          const destination = getCalendarDestinationFromDropPayload(payload);
+          if (!source || !destination) return;
+
+          void handleDragAndDrop(
+            source.id,
+            issuesMap?.[source.id]?.project_id ?? undefined,
+            source.date,
+            destination.date,
+            destination.hour
+          );
+
+          highlightIssueOnDrop(payload.source?.element?.id, false);
+        },
+      })
+    );
+  }, [dateString, handleDragAndDrop, issuesMap]);
+
+  const canCreate = !readOnly && !disableIssueCreation && enableIssueCreation;
+
+  const handleDragStart = useCallback(
+    (clientY: number) => {
+      if (isDraggingIssue || !canCreate || !columnRef.current) return;
+
+      const rect = columnRef.current.getBoundingClientRect();
+      const relativeY = clientY - rect.top;
+      dragStartY.current = clientY;
+      setSelectionStartY(Math.max(0, Math.min(relativeY, rect.height)));
+      setSelectionEndY(Math.max(0, Math.min(relativeY, rect.height)));
+      hasMoved.current = false;
+      startSelectionOnMove.current = true;
+    },
+    [canCreate, isDraggingIssue]
+  );
+
+  const handleDragMove = useCallback(
+    (clientY: number) => {
+      if (!startSelectionOnMove.current && !isSelecting) return;
+
+      if (startSelectionOnMove.current && Math.abs(clientY - dragStartY.current) > 5) {
+        setIsSelecting(true);
+        startSelectionOnMove.current = false;
+        hasMoved.current = true;
+      }
+
+      if (isSelecting && columnRef.current) {
+        const rect = columnRef.current.getBoundingClientRect();
+        const relativeY = clientY - rect.top;
+        setSelectionEndY(Math.max(0, Math.min(relativeY, rect.height)));
+      }
+    },
+    [isSelecting]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    if (isSelecting && onTimeRangeSelect) {
+      const startHour = yToHour(Math.min(selectionStartY, selectionEndY));
+      const endHour = yToHour(Math.max(selectionStartY, selectionEndY));
+      if (endHour > startHour) {
+        onTimeRangeSelect(date, startHour, endHour);
+      }
+    } else if (!hasMoved.current && !isSelecting && onDayClick) {
+      onDayClick(date);
+    }
+    setIsSelecting(false);
+    startSelectionOnMove.current = false;
+    hasMoved.current = false;
+  }, [isSelecting, onTimeRangeSelect, onDayClick, date, yToHour, selectionStartY, selectionEndY]);
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDraggingIssue || e.button !== 0) return;
+      e.preventDefault();
+      handleDragStart(e.clientY);
+    },
+    [handleDragStart, isDraggingIssue]
+  );
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      handleDragMove(e.clientY);
+    },
+    [handleDragMove]
+  );
+
+  const onMouseUp = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (isDraggingIssue) return;
+      handleDragStart(e.touches[0].clientY);
+    },
+    [handleDragStart, isDraggingIssue]
+  );
+
+  const onTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (isSelecting) e.preventDefault();
+      handleDragMove(e.touches[0].clientY);
+    },
+    [isSelecting, handleDragMove]
+  );
+
+  const onTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
   return (
-    <div className="relative border-l border-subtle-1" style={{ height: hours.length * HOURS_ROW_HEIGHT }}>
-      <div className="absolute inset-0 z-[1]">
+    <div
+      role="presentation"
+      ref={mergedColumnRef}
+      className={cn("relative border-l border-subtle-1 transition-opacity", {
+        "bg-layer-transparent-hover": showDueDateBadge && isActiveDropColumn,
+        "bg-layer-transparent-hover opacity-80": !showDueDateBadge && isActiveDropColumn,
+        "opacity-50": isDimmedDuringDrag,
+      })}
+      style={{ height: hours.length * HOURS_ROW_HEIGHT }}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      <div className="pointer-events-none absolute inset-0 z-[1]">
         {hours.map((hour) => (
-          <div key={`${dateString}-${hour}`} className="border-b border-subtle-1" style={{ height: HOURS_ROW_HEIGHT }}>
-            <CalendarHourDropBand
-              dateString={dateString}
-              hour={hour}
-              height={HOURS_HALF_ROW_HEIGHT}
-              issuesMap={issuesMap}
-              handleDragAndDrop={handleDragAndDrop}
-            />
-            <CalendarHourDropBand
-              dateString={dateString}
-              hour={hour + 0.5}
-              height={HOURS_HALF_ROW_HEIGHT}
-              issuesMap={issuesMap}
-              handleDragAndDrop={handleDragAndDrop}
-            />
-          </div>
+          <div
+            key={`${dateString}-${hour}`}
+            className="border-b border-subtle-1"
+            style={{ height: HOURS_ROW_HEIGHT }}
+          />
         ))}
       </div>
+
+      {showDueDateBadge && isActiveDropColumn && gridDragPreview != null && (
+        <HoursDropGhost
+          startHour={gridDragPreview.startHour}
+          durationMinutes={gridDragPreview.durationMinutes}
+          issueName={gridDragPreview.issueName}
+        />
+      )}
+
+      {isSelecting && (
+        <div
+          className="border-accent-primary pointer-events-none absolute right-0 left-0 border-t border-b bg-accent-primary/20"
+          style={{
+            top: Math.min(selectionStartY, selectionEndY),
+            height: Math.abs(selectionEndY - selectionStartY),
+            zIndex: 2,
+          }}
+        />
+      )}
 
       <div className="pointer-events-none absolute inset-0 z-[2]">
         {blocks.map((block) => (
@@ -191,6 +395,7 @@ const CalendarDayColumn = observer(function CalendarDayColumn(props: {
             canEditProperties={canEditProperties}
             isEpic={isEpic}
             showDueDateBadge={showDueDateBadge}
+            showProjectBadge={showProjectBadge}
             pointerEventsDisabled={isDraggingIssue}
             handleResizePlan={handleResizePlan}
           />
@@ -219,7 +424,13 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
     canEditProperties,
     isEpic,
     showDueDateBadge,
+    showProjectBadge,
     showWeekends = false,
+    disableIssueCreation,
+    enableIssueCreation,
+    onDayClick,
+    onTimeRangeSelect,
+    isCalendarDragActive = false,
     handleDragAndDrop,
     handleResizePlan,
   } = props;
@@ -228,15 +439,63 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
   const startOfWeek = data?.start_of_the_week;
   const { currentTime } = useCurrentTime();
   const [isDraggingIssue, setIsDraggingIssue] = useState(false);
+  const [gridDragPreview, setGridDragPreview] = useState<GridDragPreview | null>(null);
+  const columnRefs = useRef(new Map<string, HTMLDivElement>());
+
+  const registerColumnRef = useCallback((dateString: string, element: HTMLDivElement | null) => {
+    if (element) columnRefs.current.set(dateString, element);
+    else columnRefs.current.delete(dateString);
+  }, []);
+
+  const updateGridDragPreview = useCallback(
+    (clientX: number, clientY: number, sourceData: Record<string, unknown>) => {
+      if (!showDueDateBadge) return;
+
+      const match = resolveColumnAtPoint(clientX, clientY, columnRefs.current);
+      if (!match) {
+        setGridDragPreview(null);
+        return;
+      }
+
+      const rect = match.element.getBoundingClientRect();
+      const grabOffsetY = getDragGrabOffsetY(sourceData);
+      const durationMinutes = getDragDurationMinutes(sourceData);
+      const startHour = resolveDropHour(clientY, rect.top, grabOffsetY);
+
+      setGridDragPreview({
+        dateString: match.dateString,
+        startHour,
+        durationMinutes,
+        issueName: getDragIssueName(sourceData),
+      });
+    },
+    [showDueDateBadge]
+  );
 
   useEffect(
     () =>
       monitorForElements({
         canMonitor: ({ source }) => source.data.type === CALENDAR_ISSUE_DRAG_TYPE,
-        onDragStart: () => setIsDraggingIssue(true),
-        onDrop: () => setIsDraggingIssue(false),
+        onDragStart: ({ location, source }) => {
+          setIsDraggingIssue(true);
+          updateGridDragPreview(
+            location.current.input.clientX,
+            location.current.input.clientY,
+            source.data as Record<string, unknown>
+          );
+        },
+        onDrag: ({ location, source }) =>
+          updateGridDragPreview(
+            location.current.input.clientX,
+            location.current.input.clientY,
+            source.data as Record<string, unknown>
+          ),
+        onDrop: () => {
+          setIsDraggingIssue(false);
+          setGridDragPreview(null);
+        },
       }),
-    []
+    [updateGridDragPreview]
   );
 
   const week = issueCalendarView.allDaysOfActiveWeek;
@@ -372,6 +631,7 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
           return (
             <CalendarDayColumn
               key={dateString}
+              date={day.date}
               dateString={dateString}
               hours={hours}
               blocks={blocksByDate[dateString] ?? []}
@@ -381,7 +641,15 @@ export const CalendarHoursGrid = observer(function CalendarHoursGrid(props: Prop
               canEditProperties={canEditProperties}
               isEpic={isEpic}
               showDueDateBadge={showDueDateBadge}
+              showProjectBadge={showProjectBadge}
+              disableIssueCreation={disableIssueCreation}
+              enableIssueCreation={enableIssueCreation}
+              onDayClick={onDayClick}
+              onTimeRangeSelect={onTimeRangeSelect}
               isDraggingIssue={isDraggingIssue}
+              isCalendarDragActive={isCalendarDragActive}
+              gridDragPreview={gridDragPreview}
+              registerColumnRef={registerColumnRef}
               showNowIndicator={dateString === todayDateString && isNowWithinWorkday}
               nowTop={nowTop}
               handleDragAndDrop={handleDragAndDrop}
