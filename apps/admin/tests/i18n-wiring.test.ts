@@ -73,4 +73,13 @@ test("God Mode reuses shared translations for common fields and actions", () => 
   assert.match(general, /t\("saving"\)/);
   assert.match(newUserPopup, /t\("create_workspace"\)/);
   assert.match(newUserPopup, /t\("close"\)/);
+
+  const importantSurfaceClassCount = [signIn, setup].reduce(
+    (count, source) => count + (source.match(/\bbg-surface-1!/g)?.length ?? 0),
+    0
+  );
+  assert.equal(importantSurfaceClassCount, 8);
+  assert.doesNotMatch(signIn, /!bg-surface-1/);
+  assert.doesNotMatch(setup, /!bg-surface-1/);
+  assert.match(newUserPopup, /Start your journey by creating your first workspace\./);
 });

@@ -138,7 +138,7 @@ export function InstanceSignInForm() {
                 {t("auth.common.email.label")} <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                 id="email"
                 name="email"
                 type="email"
@@ -157,7 +157,7 @@ export function InstanceSignInForm() {
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}

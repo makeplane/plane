@@ -168,7 +168,7 @@ export function InstanceSetupForm() {
                   {t("first_name")} <span className="text-danger-primary">*</span>
                 </label>
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                   id="first_name"
                   name="first_name"
                   type="text"
@@ -191,7 +191,7 @@ export function InstanceSetupForm() {
                   {t("last_name")} <span className="text-danger-primary">*</span>
                 </label>
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                   id="last_name"
                   name="last_name"
                   type="text"
@@ -215,7 +215,7 @@ export function InstanceSetupForm() {
                 {t("auth.common.email.label")} <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                 id="email"
                 name="email"
                 type="email"
@@ -236,7 +236,7 @@ export function InstanceSetupForm() {
                 Company name <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                 id="company_name"
                 name="company_name"
                 type="text"
@@ -259,7 +259,7 @@ export function InstanceSetupForm() {
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  className="w-full border border-subtle bg-surface-1! placeholder:text-placeholder"
                   id="password"
                   name="password"
                   type={showPassword.password ? "text" : "password"}
@@ -311,7 +311,7 @@ export function InstanceSetupForm() {
                   value={formData.confirm_password}
                   onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                   placeholder={t("auth.common.password.confirm_password.placeholder")}
-                  className="w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+                  className="w-full border border-subtle bg-surface-1! pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
                   autoComplete="new-password"
