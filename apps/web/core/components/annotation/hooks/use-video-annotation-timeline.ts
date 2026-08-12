@@ -66,6 +66,8 @@ export const useVideoAnnotationTimeline = ({
     ((VIDEO_ANNOTATION_TIMELINE_CLIP_MIN_WIDTH_PX + VIDEO_ANNOTATION_TIMELINE_CLIP_GAP_PX) /
       Math.max(1, timelineContentWidthPx)) *
     timelineDurationSeconds;
+  const minimumResizableAnnotationDurationSeconds =
+    (VIDEO_ANNOTATION_TIMELINE_CLIP_MIN_WIDTH_PX / Math.max(1, timelineContentWidthPx)) * timelineDurationSeconds;
   const timelineZoomIndex = VIDEO_ANNOTATION_TIMELINE_ZOOM_STEPS.indexOf(timelineZoomPercent);
   const activeTimelineZoomIndex =
     timelineZoomIndex >= 0
@@ -156,13 +158,17 @@ export const useVideoAnnotationTimeline = ({
     timelineHeaderElement.scrollLeft = event.currentTarget.scrollLeft;
   }, []);
 
-  const updateAnnotationTimelineResize = useCallback(
-    (event: PointerEvent) => {
+  const updateAnnotationTimelineResizeByClientX = useCallback(
+    (pointerId: number, clientX: number, preventDefault: () => void) => {
       const resizeState = timelineResizeStateRef.current;
-      if (!resizeState || resizeState.pointerId !== event.pointerId) return;
+      if (!resizeState || resizeState.pointerId !== pointerId) return false;
 
-      event.preventDefault();
-      if (Math.abs(event.clientX - resizeState.startClientX) > 2) {
+      preventDefault();
+      if (!resizeState.hasMoved && Math.abs(clientX - resizeState.startClientX) <= 2) {
+        return true;
+      }
+
+      if (!resizeState.hasMoved) {
         resizeState.hasMoved = true;
       }
 
@@ -170,8 +176,7 @@ export const useVideoAnnotationTimeline = ({
         1,
         timelineScrollableElementRef.current?.scrollWidth ?? timelineContentWidthPx
       );
-      const deltaSeconds =
-        ((event.clientX - resizeState.startClientX) / timelineResizeWidthPx) * timelineDurationSeconds;
+      const deltaSeconds = ((clientX - resizeState.startClientX) / timelineResizeWidthPx) * timelineDurationSeconds;
       const nextEndTime = Number(
         clampTimelineValue(
           resizeState.originalEndTime + deltaSeconds,
@@ -185,35 +190,47 @@ export const useVideoAnnotationTimeline = ({
           annotation.id === resizeState.annotationId ? { ...annotation, endTime: nextEndTime } : annotation
         )
       );
+
+      return true;
     },
     [setAnnotations, timelineContentWidthPx, timelineDurationSeconds]
   );
 
+  const updateAnnotationTimelineResize = useCallback(
+    (event: PointerEvent) => {
+      updateAnnotationTimelineResizeByClientX(event.pointerId, event.clientX, () => event.preventDefault());
+    },
+    [updateAnnotationTimelineResizeByClientX]
+  );
+
+  const finishAnnotationTimelineResize = useCallback((pointerId: number, preventDefault: () => void) => {
+    const resizeState = timelineResizeStateRef.current;
+    if (!resizeState || resizeState.pointerId !== pointerId) return false;
+
+    if (resizeState.hasMoved) {
+      preventDefault();
+    }
+
+    timelineResizeStateRef.current = null;
+    setTimelineResizeId(null);
+    return true;
+  }, []);
+
   useEffect(() => {
-    if (!timelineResizeId) return;
-
-    const finishAnnotationTimelineResize = (event: PointerEvent) => {
-      const resizeState = timelineResizeStateRef.current;
-      if (!resizeState || resizeState.pointerId !== event.pointerId) return;
-
-      if (resizeState.hasMoved) {
-        event.preventDefault();
-      }
-
-      timelineResizeStateRef.current = null;
-      setTimelineResizeId(null);
+    const handleWindowPointerEnd = (event: PointerEvent) => {
+      finishAnnotationTimelineResize(event.pointerId, () => event.preventDefault());
     };
 
     window.addEventListener("pointermove", updateAnnotationTimelineResize);
-    window.addEventListener("pointerup", finishAnnotationTimelineResize);
-    window.addEventListener("pointercancel", finishAnnotationTimelineResize);
+    window.addEventListener("pointerup", handleWindowPointerEnd);
+    window.addEventListener("pointercancel", handleWindowPointerEnd);
 
     return () => {
       window.removeEventListener("pointermove", updateAnnotationTimelineResize);
-      window.removeEventListener("pointerup", finishAnnotationTimelineResize);
-      window.removeEventListener("pointercancel", finishAnnotationTimelineResize);
+      window.removeEventListener("pointerup", handleWindowPointerEnd);
+      window.removeEventListener("pointercancel", handleWindowPointerEnd);
     };
-  }, [timelineResizeId, updateAnnotationTimelineResize]);
+  }, [finishAnnotationTimelineResize, updateAnnotationTimelineResize]);
 
   const handleAnnotationTimelineResizePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLButtonElement>, annotation: TCustomPlaylistAnnotation) => {
@@ -221,17 +238,45 @@ export const useVideoAnnotationTimeline = ({
 
       event.preventDefault();
       event.stopPropagation();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      const resizeStartEndTime = clampTimelineValue(
+        Math.max(annotation.endTime, annotation.startTime + minimumResizableAnnotationDurationSeconds),
+        annotation.startTime + VIDEO_ANNOTATION_TIMELINE_MIN_DURATION_SECONDS,
+        timelineDurationSeconds
+      );
       timelineResizeStateRef.current = {
         annotationId: annotation.id,
         hasMoved: false,
-        originalEndTime: annotation.endTime,
+        originalEndTime: resizeStartEndTime,
         pointerId: event.pointerId,
         startClientX: event.clientX,
         startTime: annotation.startTime,
       };
       setTimelineResizeId(annotation.id);
     },
-    [isSavingAnnotations]
+    [isSavingAnnotations, minimumResizableAnnotationDurationSeconds, timelineDurationSeconds]
+  );
+
+  const handleAnnotationTimelineResizePointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
+      if (updateAnnotationTimelineResizeByClientX(event.pointerId, event.clientX, () => event.preventDefault())) {
+        event.stopPropagation();
+      }
+    },
+    [updateAnnotationTimelineResizeByClientX]
+  );
+
+  const handleAnnotationTimelineResizePointerEnd = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
+      if (finishAnnotationTimelineResize(event.pointerId, () => event.preventDefault())) {
+        event.stopPropagation();
+      }
+
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    },
+    [finishAnnotationTimelineResize]
   );
 
   const stepTimelineZoom = (direction: "in" | "out") => {
@@ -309,6 +354,8 @@ export const useVideoAnnotationTimeline = ({
     canZoomTimelineOut,
     commitTimelineMomentTitle,
     editingTimelineMoment,
+    handleAnnotationTimelineResizePointerEnd,
+    handleAnnotationTimelineResizePointerMove,
     handleAnnotationTimelineResizePointerDown,
     handleTimelineBodyScroll,
     handleTimelineHeaderScroll,

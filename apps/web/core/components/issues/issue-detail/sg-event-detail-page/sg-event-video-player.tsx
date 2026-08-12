@@ -623,7 +623,7 @@ export const SgEventVideoPlayer = ({
     setIsVideoAnnotationMode(enabled);
 
     const player = playerRef.current;
-    player?.controls?.(!enabled);
+    player?.controls?.(true);
   }, []);
   const handleSaveVideoAnnotations = useCallback(
     async (annotations: TCustomPlaylistAnnotation[]) => {

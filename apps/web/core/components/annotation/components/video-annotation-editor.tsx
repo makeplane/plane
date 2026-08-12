@@ -101,6 +101,7 @@ export const VideoAnnotationEditor = ({
     annotationImageInputRef,
     annotationImageName,
     annotationImageOpacity,
+    annotationImagePlacementKey,
     annotationImageWidth,
     handleAnnotationImageChange,
     handleAnnotationImageOpacityChange,
@@ -128,6 +129,7 @@ export const VideoAnnotationEditor = ({
     [activeAnnotations]
   );
   const hasActiveAnnotations = activeAnnotations.length > 0;
+  const annotationInputEnabled = canEdit && isAnnotationMode && !isPlaying;
   const {
     annotationTimelineMoments,
     beginEditingTimelineMoment,
@@ -135,7 +137,9 @@ export const VideoAnnotationEditor = ({
     canZoomTimelineOut,
     commitTimelineMomentTitle,
     editingTimelineMoment,
+    handleAnnotationTimelineResizePointerEnd,
     handleAnnotationTimelineResizePointerDown,
+    handleAnnotationTimelineResizePointerMove,
     handleTimelineBodyScroll,
     handleTimelineHeaderScroll,
     handleTimelineKeyDown,
@@ -199,13 +203,6 @@ export const VideoAnnotationEditor = ({
     setIsAnnotationMode(true);
     onModeChange?.(true);
   }, [autoEnableAnnotationModeKey, canEdit, onModeChange]);
-
-  const handleToggleAnnotationMode = useCallback(() => {
-    const nextValue = !isAnnotationMode;
-    if (nextValue) onRequestPause?.();
-    setIsAnnotationMode(nextValue);
-    onModeChange?.(nextValue);
-  }, [isAnnotationMode, onModeChange, onRequestPause]);
 
   const handleSelectAnnotationTool = useCallback(
     (tool: TCustomPlaylistAnnotationTool) => {
@@ -337,7 +334,9 @@ export const VideoAnnotationEditor = ({
         onTimelineHeaderScroll={handleTimelineHeaderScroll}
         onTimelineKeyDown={handleTimelineKeyDown}
         onTimelinePointerDown={handleTimelinePointerDown}
+        onTimelineResizePointerEnd={handleAnnotationTimelineResizePointerEnd}
         onTimelineResizePointerDown={handleAnnotationTimelineResizePointerDown}
+        onTimelineResizePointerMove={handleAnnotationTimelineResizePointerMove}
         onTimelineSeek={handleTimelineSeek}
         onToggleTimelineMoment={toggleTimelineMoment}
         openTimelineMomentIds={openTimelineMomentIds}
@@ -422,7 +421,6 @@ export const VideoAnnotationEditor = ({
       onSelectAnnotationTool={handleSelectAnnotationTool}
       onStrokeStyleChange={setAnnotationStrokeStyle}
       onStrokeWidthChange={setAnnotationStrokeWidth}
-      onToggleAnnotationMode={handleToggleAnnotationMode}
       onUndoVisibleAnnotation={handleUndoVisibleAnnotation}
       shouldRenderSeparateAnnotationProperties={shouldRenderSeparateAnnotationProperties}
     />
@@ -451,8 +449,10 @@ export const VideoAnnotationEditor = ({
         imageContent={annotationImageContent}
         imageHeight={annotationImageHeight}
         imageOpacity={annotationImageOpacity}
+        imagePlacementKey={annotationImagePlacementKey}
         imageTitle={annotationImageName}
         imageWidth={annotationImageWidth}
+        inputEnabled={annotationInputEnabled}
         onCreateAnnotation={handleCreateAnnotation}
         onUpdateAnnotation={handleUpdateAnnotation}
         startTime={effectiveCurrentTime}
@@ -484,7 +484,6 @@ export const VideoAnnotationEditor = ({
           onSelectAnnotationTool={handleSelectAnnotationTool}
           onStrokeStyleChange={setAnnotationStrokeStyle}
           onStrokeWidthChange={setAnnotationStrokeWidth}
-          onToggleAnnotationMode={handleToggleAnnotationMode}
           onUndoVisibleAnnotation={handleUndoVisibleAnnotation}
         />
       ) : null}

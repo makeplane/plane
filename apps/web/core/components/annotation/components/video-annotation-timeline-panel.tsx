@@ -40,10 +40,12 @@ type VideoAnnotationTimelinePanelProps = {
   onTimelineHeaderScroll: (event: ReactUIEvent<HTMLDivElement>) => void;
   onTimelineKeyDown: (event: ReactKeyboardEvent<HTMLDivElement>) => void;
   onTimelinePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
+  onTimelineResizePointerEnd: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onTimelineResizePointerDown: (
     event: ReactPointerEvent<HTMLButtonElement>,
     annotation: TCustomPlaylistAnnotation
   ) => void;
+  onTimelineResizePointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onTimelineSeek: (seconds: number) => void;
   onJumpToNearestAnnotation: (direction: "next" | "previous") => void;
   onJumpToRelativeTimelineTime: (deltaSeconds: number) => void;
@@ -82,7 +84,9 @@ export const VideoAnnotationTimelinePanel = ({
   onTimelineHeaderScroll,
   onTimelineKeyDown,
   onTimelinePointerDown,
+  onTimelineResizePointerEnd,
   onTimelineResizePointerDown,
+  onTimelineResizePointerMove,
   onTimelineSeek,
   onToggleTimelineMoment,
   openTimelineMomentIds,
@@ -431,7 +435,7 @@ export const VideoAnnotationTimelinePanel = ({
                             }}
                             onPointerDown={(event) => event.stopPropagation()}
                             className={[
-                              "relative inline-flex h-6 w-full cursor-pointer items-center gap-1.5 overflow-hidden rounded-[5px] border px-3 pl-3 pr-4 text-left text-[11px] font-semibold text-custom-text-100 shadow-sm transition-[filter,box-shadow] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40",
+                              "relative inline-flex h-6 w-full cursor-pointer items-center gap-1.5 overflow-hidden rounded-[5px] border px-3 pl-3 pr-5 text-left text-[11px] font-semibold text-custom-text-100 shadow-sm transition-[filter,box-shadow] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40",
                               isResizing ? "shadow-[0_0_0_1px_rgba(255,255,255,0.16)]" : "",
                             ].join(" ")}
                             style={{
@@ -459,14 +463,26 @@ export const VideoAnnotationTimelinePanel = ({
                               event.stopPropagation();
                             }}
                             onPointerDown={(event) => onTimelineResizePointerDown(event, annotation)}
+                            onPointerMove={onTimelineResizePointerMove}
+                            onPointerCancel={onTimelineResizePointerEnd}
+                            onPointerUp={onTimelineResizePointerEnd}
                             className={[
-                              "absolute inset-y-0 right-0 grid w-3 cursor-ew-resize place-items-center rounded-r-[5px] text-custom-text-100/60 transition-colors hover:bg-white/15 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
-                              isResizing ? "bg-white/20 text-custom-text-100" : "",
+                              "absolute inset-y-0 right-0 z-20 flex w-4 cursor-ew-resize touch-none select-none items-center justify-center rounded-r-[5px] border-y border-r border-l transition-[background-color,border-color,box-shadow] hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                              isResizing ? "shadow-[0_0_0_1px_rgba(255,255,255,0.18)]" : "",
                             ].join(" ")}
+                            style={{
+                              backgroundColor: getTimelineColorWithAlpha(color, isResizing ? 0.24 : 0.14),
+                              borderColor: getTimelineColorWithAlpha(color, isResizing ? 0.46 : 0.28),
+                              color: getTimelineColorWithAlpha(color, isResizing ? 0.95 : 0.7),
+                            }}
                             aria-label={`Resize ${annotationLabel} duration`}
                             title="Pull to change duration"
                           >
-                            <span className="h-3 w-px rounded-full bg-current" />
+                            <span className="flex flex-col items-center gap-px" aria-hidden="true">
+                              <span className="h-0.5 w-0.5 rounded-full bg-current" />
+                              <span className="h-0.5 w-0.5 rounded-full bg-current" />
+                              <span className="h-0.5 w-0.5 rounded-full bg-current" />
+                            </span>
                           </button>
                         </div>
                       </div>

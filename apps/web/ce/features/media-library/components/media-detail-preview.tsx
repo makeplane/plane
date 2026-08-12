@@ -78,7 +78,6 @@ export const MediaDetailPreview = ({
   videoRef,
   isPlaying,
   canAnnotateVideo = false,
-  isVideoAnnotationMode = false,
   isVideoAnnotationWorkspaceOpen = false,
   onOverlayToggle,
   onOverlaySeek,
@@ -198,9 +197,7 @@ export const MediaDetailPreview = ({
 
   const overlayContent = (
     <>
-      {!isVideoAnnotationMode ? (
-        <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
-      ) : null}
+      <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
       <PlayerSettingsPanel
         isOpen={isSettingsOpen}
         onClose={onCloseSettings}

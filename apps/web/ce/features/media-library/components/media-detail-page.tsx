@@ -138,6 +138,7 @@ const MediaDetailPage = () => {
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const videoAnnotationSaveBeforeCloseRef = useRef<(() => Promise<boolean>) | null>(null);
+  const videoAnnotationAutoOpenItemIdRef = useRef<string | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TPipCaptionMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
@@ -151,6 +152,7 @@ const MediaDetailPage = () => {
     setCurrentVideoDurationSeconds(null);
     setIsVideoAnnotationMode(false);
     setIsVideoAnnotationWorkspaceOpen(false);
+    videoAnnotationAutoOpenItemIdRef.current = null;
   }, [item?.id]);
 
   useEffect(() => {
@@ -932,7 +934,7 @@ const MediaDetailPage = () => {
     setIsVideoAnnotationMode(enabled);
 
     const player = playerRef.current;
-    player?.controls?.(!enabled);
+    player?.controls?.(true);
   }, []);
   const handleSaveVideoAnnotations = useCallback(
     async (annotations: TCustomPlaylistAnnotation[]) => {
@@ -1013,14 +1015,36 @@ const MediaDetailPage = () => {
       workspaceSlug,
     ]
   );
+  const canAnnotateCurrentVideo = isVideo && Boolean(item?.packageId && item.id);
 
   useEffect(() => {
-    if (!shouldOpenVideoAnnotationWorkspaceFromQuery || !isVideo || !item?.packageId || !item.id) return;
+    if (!shouldOpenVideoAnnotationWorkspaceFromQuery || !canAnnotateCurrentVideo) return;
 
     handleOpenVideoAnnotationWorkspace();
+  }, [canAnnotateCurrentVideo, handleOpenVideoAnnotationWorkspace, shouldOpenVideoAnnotationWorkspaceFromQuery]);
+
+  useEffect(() => {
+    if (
+      shouldOpenVideoAnnotationWorkspaceFromQuery ||
+      !canAnnotateCurrentVideo ||
+      isVideoAnnotationWorkspaceOpen ||
+      isSgEventAsset ||
+      !item?.packageId ||
+      !item.id
+    ) {
+      return;
+    }
+
+    const annotationItemKey = `${item.packageId}:${item.id}`;
+    if (videoAnnotationAutoOpenItemIdRef.current === annotationItemKey) return;
+
+    videoAnnotationAutoOpenItemIdRef.current = annotationItemKey;
+    handleOpenVideoAnnotationWorkspace();
   }, [
+    canAnnotateCurrentVideo,
     handleOpenVideoAnnotationWorkspace,
-    isVideo,
+    isSgEventAsset,
+    isVideoAnnotationWorkspaceOpen,
     item?.id,
     item?.packageId,
     shouldOpenVideoAnnotationWorkspaceFromQuery,
@@ -1046,7 +1070,7 @@ const MediaDetailPage = () => {
   }
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
   const createdByLabel = (createdBy ? (getUserDetails(createdBy)?.display_name ?? createdBy) : "") || item.author;
-  const canAnnotateUploadedVideo = isVideo && Boolean(item.packageId && item.id);
+  const canAnnotateUploadedVideo = canAnnotateCurrentVideo;
   const isFocusedVideoAnnotationWorkspace = isVideo && isVideoAnnotationWorkspaceOpen;
 
   if (isSgEventAsset && !(shouldOpenVideoAnnotationWorkspaceFromQuery && isVideo)) {
