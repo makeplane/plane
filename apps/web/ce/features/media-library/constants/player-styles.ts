@@ -23,6 +23,7 @@ export const PLAYER_STYLE = `
                     padding: 0 12px;
                     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
                     gap: 8px;
+                    z-index: 30;
                   }
                   .media-player.is-settings-open .video-js .vjs-control-bar,
                   .media-player.is-settings-open .video-js.vjs-user-inactive .vjs-control-bar {
@@ -240,7 +241,7 @@ export const PLAYER_STYLE = `
                     pointer-events: none;
                     opacity: 0;
                     visibility: hidden;
-                    z-index: 5;
+                    z-index: 30;
                     transition: opacity 160ms ease, visibility 160ms ease;
                   }
                   .media-player:hover .player-overlay-controls {
@@ -319,7 +320,7 @@ export const PLAYER_STYLE = `
                     border-radius: 10px;
                     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
                     color: #f9fafb;
-                    z-index: 6;
+                    z-index: 31;
                     padding: 8px 12px;
                   }
                   .media-player .player-settings-row {

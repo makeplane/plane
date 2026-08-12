@@ -71,6 +71,7 @@ export const SG_PLAYER_STYLE = `
     background: rgba(12, 12, 12, 0.78);
     inset-inline: 0;
     bottom: 0;
+    z-index: 30;
   }
   .sg-event-player .video-js .vjs-control,
   .sg-event-player .video-js .vjs-time-control {

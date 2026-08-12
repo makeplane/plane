@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Pencil, Save, Trash2, Undo2 } from "lucide-react";
+import { Save, Trash2, Undo2 } from "lucide-react";
 import type { TCustomPlaylistAnnotationStrokeStyle, TCustomPlaylistAnnotationTool } from "../types/annotation.types";
 import type { VIDEO_ANNOTATION_TOOLS } from "../utils/video-annotation-editor-config";
 import {
@@ -30,7 +30,6 @@ type VideoAnnotationToolbarProps = {
   onSelectAnnotationTool: (tool: TCustomPlaylistAnnotationTool) => void;
   onStrokeStyleChange: (strokeStyle: TCustomPlaylistAnnotationStrokeStyle) => void;
   onStrokeWidthChange: (strokeWidth: number) => void;
-  onToggleAnnotationMode: () => void;
   onUndoVisibleAnnotation: () => void;
   shouldRenderSeparateAnnotationProperties: boolean;
 };
@@ -52,7 +51,6 @@ export const VideoAnnotationToolbar = ({
   onSelectAnnotationTool,
   onStrokeStyleChange,
   onStrokeWidthChange,
-  onToggleAnnotationMode,
   onUndoVisibleAnnotation,
   shouldRenderSeparateAnnotationProperties,
 }: VideoAnnotationToolbarProps) => {
@@ -60,23 +58,8 @@ export const VideoAnnotationToolbar = ({
 
   return (
     <div className="flex flex-col items-center gap-1 rounded-[7px] border border-custom-border-200 bg-custom-background-100 p-1 shadow-sm">
-      <button
-        type="button"
-        onClick={onToggleAnnotationMode}
-        className={[
-          annotationButtonClass,
-          isAnnotationMode ? "border-custom-primary-100 bg-custom-primary-100/15 text-custom-primary-100" : "",
-        ].join(" ")}
-        aria-label="Toggle annotation toolbar"
-        aria-pressed={isAnnotationMode}
-        title="Annotate"
-      >
-        <Pencil className="h-4 w-4" />
-      </button>
-
       {isAnnotationMode ? (
         <>
-          <span className="my-0.5 h-px w-6 bg-custom-border-200" />
           {availableAnnotationTools.map((toolOption) => {
             const ToolIcon = toolOption.icon;
             const isSelected = annotationTool === toolOption.type;

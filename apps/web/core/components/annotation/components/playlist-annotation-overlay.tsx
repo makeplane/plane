@@ -25,6 +25,7 @@ import {
   isAnnotationResizable,
   isAnnotationValid,
   isLinearAnnotation,
+  isPointInAnnotation,
   isPointOnAnnotationEdge,
   moveAnnotation,
   normalizeAnnotationBox,
@@ -49,6 +50,36 @@ export {
   normalizePlaylistAnnotations,
 } from "../utils/playlist-annotation-model";
 
+const getAspectLockedImageAnnotation = (
+  annotation: TCustomPlaylistAnnotation,
+  origin: TCustomPlaylistAnnotationPoint,
+  point: TCustomPlaylistAnnotationPoint
+) => {
+  const baseWidth = Math.abs(annotation.width ?? 0);
+  const baseHeight = Math.abs(annotation.height ?? 0);
+  const aspectRatio = baseWidth > 0 && baseHeight > 0 ? baseWidth / baseHeight : 1;
+  const rawWidth = point.x - origin.x;
+  const rawHeight = point.y - origin.y;
+  const widthDistance = Math.abs(rawWidth);
+  const heightDistance = Math.abs(rawHeight);
+
+  if (widthDistance === 0 && heightDistance === 0) return annotation;
+
+  const widthDirection = rawWidth < 0 ? -1 : 1;
+  const heightDirection = rawHeight < 0 ? -1 : 1;
+  const isWidthDominant = widthDistance / aspectRatio >= heightDistance;
+  const width = isWidthDominant ? rawWidth : heightDistance * aspectRatio * widthDirection;
+  const height = isWidthDominant ? (widthDistance / aspectRatio) * heightDirection : rawHeight;
+
+  return normalizeAnnotationBox({
+    ...annotation,
+    height,
+    width,
+    x: origin.x,
+    y: origin.y,
+  });
+};
+
 export const PlaylistAnnotationOverlay = ({
   annotations,
   className,
@@ -60,8 +91,10 @@ export const PlaylistAnnotationOverlay = ({
   imageContent = null,
   imageHeight,
   imageOpacity,
+  imagePlacementKey,
   imageTitle,
   imageWidth,
+  inputEnabled = enabled,
   onCreateAnnotation,
   onUpdateAnnotation,
   textFontFamily,
@@ -79,6 +112,7 @@ export const PlaylistAnnotationOverlay = ({
   const draftAnnotationRef = useRef<TCustomPlaylistAnnotation | null>(null);
   const draftOriginRef = useRef<TCustomPlaylistAnnotationPoint | null>(null);
   const annotationTransformStateRef = useRef<AnnotationTransformState | null>(null);
+  const lastImagePlacementKeyRef = useRef<number | undefined>(undefined);
   const textDraftInputRef = useRef<HTMLInputElement | null>(null);
   const shouldSkipTextDraftCommitRef = useRef(false);
   const [draftAnnotation, setDraftAnnotation] = useState<TCustomPlaylistAnnotation | null>(null);
@@ -92,7 +126,7 @@ export const PlaylistAnnotationOverlay = ({
     () => [...annotations, ...(draftAnnotation ? [draftAnnotation] : [])],
     [annotations, draftAnnotation]
   );
-  const canTransformAnnotations = enabled && enableAnnotationTransforms && Boolean(onUpdateAnnotation);
+  const canTransformAnnotations = inputEnabled && enableAnnotationTransforms && Boolean(onUpdateAnnotation);
   const selectedAnnotation = useMemo(
     () => annotations.find((annotation) => annotation.id === selectedAnnotationId) ?? null,
     [annotations, selectedAnnotationId]
@@ -307,6 +341,26 @@ export const PlaylistAnnotationOverlay = ({
     ]
   );
 
+  useEffect(() => {
+    if (!enabled || tool !== "image" || !imageContent || !imagePlacementKey) return;
+    if (lastImagePlacementKeyRef.current === imagePlacementKey) return;
+
+    lastImagePlacementKeyRef.current = imagePlacementKey;
+    const point = {
+      x: clamp((CANVAS_SIZE - imageWidth) / 2, 0, CANVAS_SIZE),
+      y: clamp((CANVAS_SIZE - imageHeight) / 2, 0, CANVAS_SIZE),
+    };
+    const normalizedAnnotation = normalizePlaylistAnnotations([buildAnnotation(point)])[0];
+    if (!normalizedAnnotation) return;
+
+    draftAnnotationRef.current = null;
+    draftOriginRef.current = null;
+    pointerIdRef.current = null;
+    setDraftAnnotation(null);
+    setSelectedAnnotationId(normalizedAnnotation.id);
+    onCreateAnnotation(normalizedAnnotation);
+  }, [buildAnnotation, enabled, imageContent, imageHeight, imagePlacementKey, imageWidth, onCreateAnnotation, tool]);
+
   const commitTextDraft = useCallback(() => {
     if (shouldSkipTextDraftCommitRef.current) {
       shouldSkipTextDraftCommitRef.current = false;
@@ -359,7 +413,11 @@ export const PlaylistAnnotationOverlay = ({
       const origin = draftOriginRef.current ?? { x: annotation.x, y: annotation.y };
       const width = point.x - origin.x;
       const height = point.y - origin.y;
-      if (annotation.type === "rectangle" || annotation.type === "ellipse" || annotation.type === "image") {
+      if (annotation.type === "image") {
+        return getAspectLockedImageAnnotation(annotation, origin, point);
+      }
+
+      if (annotation.type === "rectangle" || annotation.type === "ellipse") {
         return normalizeAnnotationBox({
           ...annotation,
           height,
@@ -498,7 +556,7 @@ export const PlaylistAnnotationOverlay = ({
 
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLCanvasElement>) => {
-      if (!enabled || event.button !== 0) return;
+      if (!inputEnabled || event.button !== 0) return;
 
       const point = getEventPoint(event);
       if (!point) return;
@@ -508,7 +566,11 @@ export const PlaylistAnnotationOverlay = ({
       if (canTransformAnnotations) {
         const annotationToTransform = [...annotations]
           .reverse()
-          .find((annotation) => isPointOnAnnotationEdge(point, annotation));
+          .find((annotation) =>
+            annotation.type === "image" && tool === "image"
+              ? isPointInAnnotation(point, annotation)
+              : isPointOnAnnotationEdge(point, annotation)
+          );
         if (annotationToTransform && startAnnotationTransform(event, annotationToTransform, "move")) return;
         setSelectedAnnotationId(null);
       }
@@ -534,9 +596,9 @@ export const PlaylistAnnotationOverlay = ({
       annotations,
       buildAnnotation,
       canTransformAnnotations,
-      enabled,
       getEventPoint,
       imageContent,
+      inputEnabled,
       startAnnotationTransform,
       tool,
     ]
@@ -545,7 +607,7 @@ export const PlaylistAnnotationOverlay = ({
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLCanvasElement>) => {
       if (handleAnnotationTransformPointerMove(event)) return;
-      if (!enabled || pointerIdRef.current !== event.pointerId) return;
+      if (!inputEnabled || pointerIdRef.current !== event.pointerId) return;
 
       const point = getEventPoint(event);
       if (!point) return;
@@ -561,7 +623,7 @@ export const PlaylistAnnotationOverlay = ({
       draftAnnotationRef.current = nextDraftAnnotation;
       setDraftAnnotation(nextDraftAnnotation);
     },
-    [enabled, getEventPoint, handleAnnotationTransformPointerMove, updateDraftAnnotation]
+    [getEventPoint, handleAnnotationTransformPointerMove, inputEnabled, updateDraftAnnotation]
   );
 
   const handlePointerUp = useCallback(
@@ -614,7 +676,7 @@ export const PlaylistAnnotationOverlay = ({
       ref={overlayRootRef}
       className={[
         "absolute touch-none select-none bg-transparent",
-        enabled ? "pointer-events-auto" : "pointer-events-none",
+        inputEnabled ? "pointer-events-auto" : "pointer-events-none",
         className,
       ]
         .filter(Boolean)
@@ -626,7 +688,7 @@ export const PlaylistAnnotationOverlay = ({
         aria-label="Video annotations"
         className={[
           "absolute inset-0 h-full w-full touch-none select-none bg-transparent",
-          enabled ? (tool === "text" ? "cursor-text" : "cursor-crosshair") : "",
+          inputEnabled ? (tool === "text" ? "cursor-text" : "cursor-crosshair") : "",
         ]
           .filter(Boolean)
           .join(" ")}

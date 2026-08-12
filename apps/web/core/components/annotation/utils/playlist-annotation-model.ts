@@ -521,6 +521,49 @@ const getResizedTextAnnotation = (
   };
 };
 
+const getAspectLockedResizeBounds = (
+  originalBounds: AnnotationBounds,
+  nextBounds: AnnotationBounds,
+  handle: AnnotationBoxResizeHandle
+): AnnotationBounds => {
+  const aspectRatio =
+    originalBounds.width > 0 && originalBounds.height > 0 ? originalBounds.width / originalBounds.height : 1;
+  const fixedPoint = getResizeHandlePoint(originalBounds, OPPOSITE_RESIZE_HANDLE[handle]);
+  let width = Math.max(MIN_RESIZE_DIMENSION, nextBounds.width);
+  let height = Math.max(MIN_RESIZE_DIMENSION, nextBounds.height);
+
+  if (handle === "e" || handle === "w") {
+    height = width / aspectRatio;
+  } else if (handle === "n" || handle === "s") {
+    width = height * aspectRatio;
+  } else if (width / aspectRatio >= height) {
+    height = width / aspectRatio;
+  } else {
+    width = height * aspectRatio;
+  }
+
+  const maxWidth = handle.includes("w")
+    ? fixedPoint.x
+    : handle.includes("e")
+      ? CANVAS_SIZE - fixedPoint.x
+      : Math.min(fixedPoint.x, CANVAS_SIZE - fixedPoint.x) * 2;
+  const maxHeight = handle.includes("n")
+    ? fixedPoint.y
+    : handle.includes("s")
+      ? CANVAS_SIZE - fixedPoint.y
+      : Math.min(fixedPoint.y, CANVAS_SIZE - fixedPoint.y) * 2;
+  const fitScale = Math.min(maxWidth / Math.max(width, 1), maxHeight / Math.max(height, 1), 1);
+  width = Math.max(MIN_RESIZE_DIMENSION, width * fitScale);
+  height = Math.max(MIN_RESIZE_DIMENSION, height * fitScale);
+
+  return {
+    height,
+    width,
+    x: handle.includes("w") ? fixedPoint.x - width : handle.includes("e") ? fixedPoint.x : fixedPoint.x - width / 2,
+    y: handle.includes("n") ? fixedPoint.y - height : handle.includes("s") ? fixedPoint.y : fixedPoint.y - height / 2,
+  };
+};
+
 const resizeAnnotation = (
   annotation: TCustomPlaylistAnnotation,
   originalBounds: AnnotationBounds,
@@ -564,6 +607,18 @@ const resizeAnnotation = (
       ...nextPointBounds,
       points: nextPoints,
     };
+  }
+
+  if (annotation.type === "image") {
+    const nextImageBounds = getAspectLockedResizeBounds(originalBounds, nextBounds, handle);
+
+    return normalizeAnnotationBox({
+      ...annotation,
+      height: nextImageBounds.height,
+      width: nextImageBounds.width,
+      x: nextImageBounds.x,
+      y: nextImageBounds.y,
+    });
   }
 
   return normalizeAnnotationBox({

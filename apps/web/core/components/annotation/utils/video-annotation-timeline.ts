@@ -242,11 +242,15 @@ const buildAnnotationTimelineTicks = (durationSeconds: number, zoomPercent: numb
   return ticks;
 };
 
+const ANNOTATION_TIMELINE_MAX_WIDTH_AT_DEFAULT_ZOOM_PX = 32000;
+
 const getTimelineContentWidthPx = (durationSeconds: number, zoomPercent: number) => {
   const safeDurationSeconds = Math.max(1, durationSeconds);
+  const zoomScale = clampTimelineValue(zoomPercent / 100, 0.5, 3);
   const baseTimelineWidth = Math.max(960, safeDurationSeconds * 4);
+  const maxTimelineWidth = ANNOTATION_TIMELINE_MAX_WIDTH_AT_DEFAULT_ZOOM_PX * zoomScale;
 
-  return Math.min(32000, Math.max(760, Math.ceil(baseTimelineWidth * (zoomPercent / 100))));
+  return Math.min(maxTimelineWidth, Math.max(760, Math.ceil(baseTimelineWidth * zoomScale)));
 };
 
 export {
