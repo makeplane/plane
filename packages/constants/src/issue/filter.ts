@@ -27,7 +27,9 @@ export enum EServerGroupByToFilterOptions {
   "cycle_id" = "cycle",
   "issue_module__module_id" = "module",
   "target_date" = "target_date",
+  // oxlint-disable-next-line typescript-eslint/no-duplicate-enum-values -- planned_at aliases planned_date for older clients
   "planned_at" = "planned_date",
+  "planned_date" = "planned_date",
   "project_id" = "project",
   "created_by" = "created_by",
 }
