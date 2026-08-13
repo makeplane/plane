@@ -8,6 +8,7 @@ from django.db.models import Q
 from plane.utils.search import (
     ISSUE_SEARCH_FIELDS,
     ISSUE_SEQUENCE_FIELDS,
+    PAGE_SEARCH_FIELDS,
     build_search_query,
 )
 
@@ -118,3 +119,30 @@ class TestBuildSearchQuery:
     def test_no_sequence_fields_yields_no_sequence_leaves(self):
         q = build_search_query("22", fields=["name"])
         assert _children(q) == {("name__icontains", "22")}
+
+
+@pytest.mark.unit
+class TestSearchableFields:
+    """Bodies are searchable, not just titles."""
+
+    def test_issues_search_their_description(self):
+        assert "description_stripped" in ISSUE_SEARCH_FIELDS
+
+    def test_pages_search_their_description(self):
+        assert "description_stripped" in PAGE_SEARCH_FIELDS
+
+    def test_a_word_only_in_the_body_is_matchable(self):
+        q = build_search_query(
+            "sage",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("description_stripped__icontains", "sage") in _children(q)
+
+    def test_words_split_across_title_and_body_still_match(self):
+        """ "payment" and "gateway" from the title, "review" from the body."""
+        q = build_search_query("payment gateway review", fields=ISSUE_SEARCH_FIELDS)
+        leaves = _children(q)
+        for token in ("payment", "gateway", "review"):
+            assert ("name__icontains", token) in leaves
+            assert ("description_stripped__icontains", token) in leaves

@@ -18,13 +18,18 @@ SEQUENCE_PATTERN = re.compile(r"(?<!\d\.)\b\d+\b(?!\.\d)")
 # Searchable fields per entity, shared by every search endpoint so that the
 # global search, the entity search and the project issue search cannot drift
 # apart. Adding a field here widens all of them at once.
+#
+# `description_stripped` is the plain-text projection of an entity's rich-text
+# body, maintained on save, so searching it needs no migration and no new
+# index. It is what makes a work item findable by anything its author wrote
+# rather than only by the words that fit in a title.
 WORKSPACE_SEARCH_FIELDS = ["name"]
 PROJECT_SEARCH_FIELDS = ["name", "identifier"]
-ISSUE_SEARCH_FIELDS = ["name", "project__identifier"]
+ISSUE_SEARCH_FIELDS = ["name", "description_stripped", "project__identifier"]
 ISSUE_SEQUENCE_FIELDS = ["sequence_id"]
 CYCLE_SEARCH_FIELDS = ["name"]
 MODULE_SEARCH_FIELDS = ["name"]
-PAGE_SEARCH_FIELDS = ["name"]
+PAGE_SEARCH_FIELDS = ["name", "description_stripped"]
 VIEW_SEARCH_FIELDS = ["name"]
 USER_MENTION_SEARCH_FIELDS = [
     "member__first_name",
