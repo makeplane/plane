@@ -8,6 +8,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueStateSerializer
+from .project import ProjectLiteSerializer
 from plane.db.models import Cycle, CycleIssue, CycleUserProperties
 from plane.utils.timezone_converter import convert_to_utc
 
@@ -44,6 +45,7 @@ class CycleWriteSerializer(BaseSerializer):
 
 
 class CycleSerializer(BaseSerializer):
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
     # favorite
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
@@ -64,6 +66,7 @@ class CycleSerializer(BaseSerializer):
             "id",
             "workspace_id",
             "project_id",
+            "project_detail",
             # model fields
             "name",
             "description",

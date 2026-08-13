@@ -57,12 +57,14 @@ class TestInstanceCapabilitiesEndpoint:
             "oauth",
             "telemetry",
             "public_projects",
+            "active_cycles",
             "project_features",
         }
         assert response.data["capabilities"]["ai"]["ready"] is True
         assert response.data["capabilities"]["smtp"]["ready"] is True
         assert response.data["capabilities"]["object_storage"]["ready"] is True
         assert response.data["capabilities"]["oauth"]["providers"]["google"]["ready"] is True
+        assert response.data["capabilities"]["active_cycles"] == {"available": True, "enabled": True}
         assert response.data["capabilities"]["project_features"]["cycles"] == {"available": True}
 
         serialized = str(response.data)

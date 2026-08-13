@@ -82,6 +82,8 @@ export type TProgressSnapshot = {
 
 export interface IProjectDetails {
   id: string;
+  identifier?: string;
+  name?: string;
 }
 
 export interface ICycle extends TProgressSnapshot {
