@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-import re
-
 # Django imports
 from django.db import models
 from django.db.models import (
@@ -29,6 +26,18 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import WorkspaceUserPermission
+from plane.utils.search import (
+    CYCLE_SEARCH_FIELDS,
+    ISSUE_SEARCH_FIELDS,
+    ISSUE_SEQUENCE_FIELDS,
+    MODULE_SEARCH_FIELDS,
+    PAGE_SEARCH_FIELDS,
+    PROJECT_SEARCH_FIELDS,
+    USER_MENTION_SEARCH_FIELDS,
+    VIEW_SEARCH_FIELDS,
+    WORKSPACE_SEARCH_FIELDS,
+    build_search_query,
+)
 from plane.db.models import (
     Workspace,
     Project,
@@ -49,11 +58,7 @@ class GlobalSearchEndpoint(BaseAPIView):
     """
 
     def filter_workspaces(self, query, _slug, _project_id, _workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=WORKSPACE_SEARCH_FIELDS)
         return (
             Workspace.objects.filter(q, workspace_member__member=self.request.user)
             .order_by("-created_at")
@@ -62,11 +67,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_projects(self, query, slug, _project_id, _workspace_search):
-        fields = ["name", "identifier"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=PROJECT_SEARCH_FIELDS)
         return (
             Project.objects.filter(
                 q,
@@ -81,17 +82,11 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_issues(self, query, slug, project_id, workspace_search):
-        fields = ["name", "sequence_id", "project__identifier"]
-        q = Q()
-        if query:
-            for field in fields:
-                if field == "sequence_id":
-                    # Match whole integers only (exclude decimal numbers)
-                    sequences = re.findall(r"\b\d+\b", query)
-                    for sequence_id in sequences:
-                        q |= Q(**{"sequence_id": sequence_id})
-                else:
-                    q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(
+            query,
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
 
         issues = Issue.issue_objects.filter(
             q,
@@ -114,11 +109,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )[:100]
 
     def filter_cycles(self, query, slug, project_id, workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=CYCLE_SEARCH_FIELDS)
 
         cycles = Cycle.objects.filter(
             q,
@@ -138,11 +129,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_modules(self, query, slug, project_id, workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=MODULE_SEARCH_FIELDS)
 
         modules = Module.objects.filter(
             q,
@@ -162,11 +149,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_pages(self, query, slug, project_id, workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=PAGE_SEARCH_FIELDS)
 
         pages = (
             Page.objects.filter(
@@ -208,11 +191,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_views(self, query, slug, project_id, workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(query, fields=VIEW_SEARCH_FIELDS)
 
         issue_views = IssueView.objects.filter(
             q,
@@ -232,17 +211,11 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_intakes(self, query, slug, project_id, workspace_search):
-        fields = ["name", "sequence_id", "project__identifier"]
-        q = Q()
-        if query:
-            for field in fields:
-                if field == "sequence_id":
-                    # Match whole integers only (exclude decimal numbers)
-                    sequences = re.findall(r"\b\d+\b", query)
-                    for sequence_id in sequences:
-                        q |= Q(**{"sequence_id": sequence_id})
-                else:
-                    q |= Q(**{f"{field}__icontains": query})
+        q = build_search_query(
+            query,
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
 
         issues = Issue.objects.filter(
             q,
@@ -317,16 +290,7 @@ class SearchEndpoint(BaseAPIView):
         if project_id:
             for query_type in query_types:
                 if query_type == "user_mention":
-                    fields = [
-                        "member__first_name",
-                        "member__last_name",
-                        "member__display_name",
-                    ]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=USER_MENTION_SEARCH_FIELDS)
 
                     users = (
                         ProjectMember.objects.filter(
@@ -366,12 +330,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["user_mention"] = list(users[:count])
 
                 elif query_type == "project":
-                    fields = ["name", "identifier"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=PROJECT_SEARCH_FIELDS)
                     projects = (
                         Project.objects.filter(
                             q,
@@ -385,17 +344,11 @@ class SearchEndpoint(BaseAPIView):
                     response_data["project"] = list(projects)
 
                 elif query_type == "issue":
-                    fields = ["name", "sequence_id", "project__identifier"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            if field == "sequence_id":
-                                sequences = re.findall(r"\b\d+\b", query)
-                                for sequence_id in sequences:
-                                    q |= Q(**{"sequence_id": sequence_id})
-                            else:
-                                q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(
+                        query,
+                        fields=ISSUE_SEARCH_FIELDS,
+                        sequence_fields=ISSUE_SEQUENCE_FIELDS,
+                    )
 
                     issues = (
                         Issue.issue_objects.filter(
@@ -421,12 +374,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["issue"] = list(issues)
 
                 elif query_type == "cycle":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=CYCLE_SEARCH_FIELDS)
 
                     cycles = (
                         Cycle.objects.filter(
@@ -469,12 +417,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["cycle"] = list(cycles)
 
                 elif query_type == "module":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=MODULE_SEARCH_FIELDS)
 
                     modules = (
                         Module.objects.filter(
@@ -498,12 +441,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=PAGE_SEARCH_FIELDS)
 
                     pages = (
                         Page.objects.filter(
@@ -530,16 +468,7 @@ class SearchEndpoint(BaseAPIView):
         else:
             for query_type in query_types:
                 if query_type == "user_mention":
-                    fields = [
-                        "member__first_name",
-                        "member__last_name",
-                        "member__display_name",
-                    ]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=USER_MENTION_SEARCH_FIELDS)
                     users = (
                         WorkspaceMember.objects.filter(
                             q,
@@ -571,12 +500,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["user_mention"] = list(users)
 
                 elif query_type == "project":
-                    fields = ["name", "identifier"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=PROJECT_SEARCH_FIELDS)
                     projects = (
                         Project.objects.filter(
                             q,
@@ -590,17 +514,11 @@ class SearchEndpoint(BaseAPIView):
                     response_data["project"] = list(projects)
 
                 elif query_type == "issue":
-                    fields = ["name", "sequence_id", "project__identifier"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            if field == "sequence_id":
-                                sequences = re.findall(r"\b\d+\b", query)
-                                for sequence_id in sequences:
-                                    q |= Q(**{"sequence_id": sequence_id})
-                            else:
-                                q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(
+                        query,
+                        fields=ISSUE_SEARCH_FIELDS,
+                        sequence_fields=ISSUE_SEQUENCE_FIELDS,
+                    )
 
                     issues = (
                         Issue.issue_objects.filter(
@@ -625,12 +543,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["issue"] = list(issues)
 
                 elif query_type == "cycle":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=CYCLE_SEARCH_FIELDS)
 
                     cycles = (
                         Cycle.objects.filter(
@@ -672,12 +585,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["cycle"] = list(cycles)
 
                 elif query_type == "module":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=MODULE_SEARCH_FIELDS)
 
                     modules = (
                         Module.objects.filter(
@@ -700,12 +608,7 @@ class SearchEndpoint(BaseAPIView):
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
+                    q = build_search_query(query, fields=PAGE_SEARCH_FIELDS)
 
                     pages = (
                         Page.objects.filter(

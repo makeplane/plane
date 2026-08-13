@@ -1,0 +1,120 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+import pytest
+from django.db.models import Q
+
+from plane.utils.search import (
+    ISSUE_SEARCH_FIELDS,
+    ISSUE_SEQUENCE_FIELDS,
+    build_search_query,
+)
+
+
+def _children(q):
+    """Flatten a Q tree into the set of leaf lookups it applies."""
+    leaves = set()
+    for child in q.children:
+        if isinstance(child, Q):
+            leaves |= _children(child)
+        else:
+            leaves.add(child)
+    return leaves
+
+
+@pytest.mark.unit
+class TestBuildSearchQuery:
+    """Multi-word queries must match on words, not on one contiguous string."""
+
+    def test_empty_query_matches_nothing(self):
+        assert build_search_query("", fields=["name"]) == Q()
+        assert build_search_query(None, fields=["name"]) == Q()
+        assert build_search_query("   ", fields=["name"]) == Q()
+
+    def test_single_token_ors_across_fields(self):
+        q = build_search_query("sage", fields=["name", "description_stripped"])
+        assert _children(q) == {
+            ("name__icontains", "sage"),
+            ("description_stripped__icontains", "sage"),
+        }
+        assert q.connector == Q.OR
+
+    def test_tokens_are_anded_not_matched_as_a_phrase(self):
+        q = build_search_query("payment gateway", fields=["name"])
+        # Each token contributes its own leaf; the phrase itself is never a leaf
+        assert _children(q) == {
+            ("name__icontains", "payment"),
+            ("name__icontains", "gateway"),
+        }
+        assert ("name__icontains", "payment gateway") not in _children(q)
+        assert q.connector == Q.AND
+
+    def test_word_order_and_interleaving_are_irrelevant(self):
+        forward = build_search_query("payment gateway", fields=["name"])
+        reversed_ = build_search_query("gateway payment", fields=["name"])
+        assert _children(forward) == _children(reversed_)
+
+    def test_repeated_whitespace_does_not_create_empty_tokens(self):
+        q = build_search_query("  payment   gateway \n", fields=["name"])
+        assert _children(q) == {
+            ("name__icontains", "payment"),
+            ("name__icontains", "gateway"),
+        }
+
+    def test_numeric_token_also_matches_sequence_id(self):
+        q = build_search_query(
+            "22",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("sequence_id", "22") in _children(q)
+
+    def test_sequence_match_is_ored_onto_the_whole_predicate(self):
+        """A bare issue number keeps surfacing the issue even alongside words."""
+        q = build_search_query(
+            "fix 22",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert q.connector == Q.OR
+        assert ("sequence_id", "22") in _children(q)
+
+    def test_decimals_do_not_produce_sequence_matches(self):
+        q = build_search_query(
+            "3.5",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("sequence_id", "3") not in _children(q)
+        assert ("sequence_id", "5") not in _children(q)
+
+    def test_version_strings_do_not_produce_sequence_matches(self):
+        q = build_search_query(
+            "v1.4.0",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert not any(lookup == "sequence_id" for lookup, _ in _children(q))
+
+    def test_trailing_punctuation_still_matches_a_sequence_id(self):
+        q = build_search_query(
+            "issue 22.",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("sequence_id", "22") in _children(q)
+
+    def test_long_queries_are_not_mined_for_sequence_ids(self):
+        query = "the payment gateway on level 3 and its effective rate"
+        q = build_search_query(
+            query,
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+            sequence_query_max_length=20,
+        )
+        assert ("sequence_id", "3") not in _children(q)
+
+    def test_no_sequence_fields_yields_no_sequence_leaves(self):
+        q = build_search_query("22", fields=["name"])
+        assert _children(q) == {("name__icontains", "22")}
