@@ -147,6 +147,16 @@ def transfer_cycle_issues(
             "error": "Source cycle not found",
         }
 
+    # Only transfer issues from cycles that have actually ended.
+    # Draft cycles (end_date is None) or active cycles (end_date >= now)
+    # have not completed, so a progress snapshot would be meaningless and
+    # bulk-moving their issues could corrupt ongoing sprint work.
+    if old_cycle.end_date is None or old_cycle.end_date >= timezone.now():
+        return {
+            "success": False,
+            "error": "Issues can only be transferred from a completed cycle",
+        }
+
     # Check if project uses estimates
     estimate_type = Project.objects.filter(
         workspace__slug=slug,
