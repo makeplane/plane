@@ -274,6 +274,12 @@ class CycleIssueViewSet(BaseViewSet):
                 for issue in new_issues
             ],
             batch_size=10,
+            # Concurrent add-issue requests can both pass the unlocked
+            # existing-issue check above and insert the same (cycle, issue),
+            # violating the cycle_issue_when_deleted_at_null unique constraint.
+            # Skip the duplicates instead of raising, matching the module and
+            # external-API equivalents.
+            ignore_conflicts=True,
         )
 
         # Updated Issues
