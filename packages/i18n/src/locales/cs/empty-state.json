@@ -211,6 +211,10 @@
       "title": "Zatím žádné exporty",
       "description": "Momentálně nemáte žádné záznamy exportu. Jakmile exportujete data, všechny záznamy se zobrazí zde."
     },
+    "imports": {
+      "title": "Zatím žádné importy",
+      "description": "Momentálně nemáte žádné záznamy importu. Jakmile importujete data, všechny záznamy se zobrazí zde."
+    },
     "tokens": {
       "title": "Zatím žádný osobní token",
       "description": "Generujte bezpečné API tokeny pro připojení vašeho pracovního prostoru s externími systémy a aplikacemi.",

@@ -211,6 +211,10 @@
       "title": "Încă nu există exporturi",
       "description": "Nu aveți nicio înregistrare de export în acest moment. Odată ce exportați date, toate înregistrările vor apărea aici."
     },
+    "imports": {
+      "title": "Nu există importuri încă",
+      "description": "Nu ai înregistrări de import momentan. După ce imporți date, toate înregistrările vor apărea aici."
+    },
     "tokens": {
       "title": "Încă nu există token Personal",
       "description": "Generați token-uri API sigure pentru a conecta spațiul dvs. de lucru cu sisteme și aplicații externe.",

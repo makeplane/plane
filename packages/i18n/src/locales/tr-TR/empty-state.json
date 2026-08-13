@@ -211,6 +211,10 @@
       "title": "Henüz dışa aktarma yok",
       "description": "Şu anda hiç dışa aktarma kaydınız yok. Verileri dışa aktardığınızda tüm kayıtlar burada görünecek."
     },
+    "imports": {
+      "title": "Henüz import yok",
+      "description": "Şu anda import kaydınız yok. Veri içe aktardığınızda tüm kayıtlar burada görünür."
+    },
     "tokens": {
       "title": "Henüz Kişisel token yok",
       "description": "Çalışma alanınızı harici sistemler ve uygulamalarla bağlamak için güvenli API token'ları oluşturun.",

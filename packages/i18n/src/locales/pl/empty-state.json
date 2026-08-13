@@ -211,6 +211,10 @@
       "title": "Jeszcze brak eksportów",
       "description": "Obecnie nie masz żadnych rekordów eksportu. Po wyeksportowaniu danych wszystkie rekordy pojawią się tutaj."
     },
+    "imports": {
+      "title": "Brak importów",
+      "description": "Obecnie nie masz żadnych rekordów importu. Po zaimportowaniu danych wszystkie rekordy pojawią się tutaj."
+    },
     "tokens": {
       "title": "Jeszcze brak Tokenu osobistego",
       "description": "Generuj bezpieczne tokeny API, aby połączyć swój obszar roboczy z zewnętrznymi systemami i aplikacjami.",

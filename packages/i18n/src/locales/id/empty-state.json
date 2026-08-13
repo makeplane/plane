@@ -211,6 +211,10 @@
       "title": "Belum ada ekspor",
       "description": "Anda tidak memiliki catatan ekspor saat ini. Setelah Anda mengekspor data, semua catatan akan muncul di sini."
     },
+    "imports": {
+      "title": "Belum ada impor",
+      "description": "Anda tidak memiliki catatan impor saat ini. Setelah Anda mengimpor data, semua catatan akan muncul di sini."
+    },
     "tokens": {
       "title": "Belum ada token Pribadi",
       "description": "Hasilkan token API yang aman untuk menghubungkan ruang kerja Anda dengan sistem dan aplikasi eksternal.",

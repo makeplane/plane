@@ -5,7 +5,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
+import type { IJiraMetadata, IJiraResponse, IJiraImporterForm, IImporterService } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 
@@ -24,7 +24,7 @@ export class JiraImporterService extends APIService {
       });
   }
 
-  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraResponse> {
+  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IImporterService> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
       .then((response) => response?.data)
       .catch((error) => {

@@ -11,31 +11,54 @@ import type { IProjectLite } from "../project";
 // types
 import type { IUserLite } from "../users";
 
+export type TImporterServiceStatus = "queued" | "processing" | "completed" | "failed" | "cancelled";
+
+export type TImporterServiceProvider = "github" | "jira" | string;
+
+export type TImporterMetadata = Partial<{
+  name: string;
+  owner: string;
+  repository_id: number;
+  url: string;
+  cloud_hostname: string;
+  project_key: string;
+  email: string;
+}>;
+
+export type TImporterData = Partial<{
+  users: unknown[];
+  invite_users: boolean;
+  total_issues: number;
+  total_labels: number;
+  total_states: number;
+  total_modules: number;
+}>;
+
+export type TImporterImportedData = Partial<{
+  issues: number;
+  labels: number;
+  states: number;
+  modules: number;
+  users: number;
+}>;
+
 export interface IImporterService {
   created_at: string;
-  config: {
-    sync: boolean;
-  };
+  config: Record<string, unknown>;
   created_by: string | null;
-  data: {
-    users: [];
-  };
+  data: TImporterData;
   id: string;
   initiated_by: string;
   initiated_by_detail: IUserLite;
-  metadata: {
-    name: string;
-    owner: string;
-    repository_id: number;
-    url: string;
-  };
+  imported_data?: TImporterImportedData;
+  metadata: TImporterMetadata;
   project: string;
   project_detail: IProjectLite;
-  service: string;
-  status: "processing" | "completed" | "failed";
+  service: TImporterServiceProvider;
+  status: TImporterServiceStatus;
   updated_at: string;
   updated_by: string;
-  token: string;
+  token?: string;
   workspace: string;
 }
 
