@@ -11,6 +11,7 @@ export default [
   layout("./(all)/(home)/layout.tsx", [index("./(all)/(home)/page.tsx")]),
   layout("./(all)/(dashboard)/layout.tsx", [
     route("general", "./(all)/(dashboard)/general/page.tsx"),
+    route("readiness", "./(all)/(dashboard)/readiness/page.tsx"),
     route("workspace", "./(all)/(dashboard)/workspace/page.tsx"),
     route("workspace/create", "./(all)/(dashboard)/workspace/create/page.tsx"),
     route("email", "./(all)/(dashboard)/email/page.tsx"),

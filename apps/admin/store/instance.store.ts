@@ -17,6 +17,7 @@ import type {
   IFormattedInstanceConfiguration,
   IInstanceInfo,
   IInstanceConfig,
+  IInstanceCapabilities,
 } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
@@ -28,6 +29,7 @@ export interface IInstanceStore {
   instanceStatus: TInstanceStatus | undefined;
   instance: IInstance | undefined;
   config: IInstanceConfig | undefined;
+  capabilities: IInstanceCapabilities | undefined;
   instanceAdmins: IInstanceAdmin[] | undefined;
   instanceConfigurations: IInstanceConfiguration[] | undefined;
   // computed
@@ -48,6 +50,7 @@ export class InstanceStore implements IInstanceStore {
   instanceStatus: TInstanceStatus | undefined = undefined;
   instance: IInstance | undefined = undefined;
   config: IInstanceConfig | undefined = undefined;
+  capabilities: IInstanceCapabilities | undefined = undefined;
   instanceAdmins: IInstanceAdmin[] | undefined = undefined;
   instanceConfigurations: IInstanceConfiguration[] | undefined = undefined;
   // service
@@ -60,6 +63,7 @@ export class InstanceStore implements IInstanceStore {
       error: observable.ref,
       instanceStatus: observable,
       instance: observable,
+      capabilities: observable,
       instanceAdmins: observable,
       instanceConfigurations: observable,
       // computed
@@ -80,6 +84,7 @@ export class InstanceStore implements IInstanceStore {
     if (data) {
       this.instance = data.instance;
       this.config = data.config;
+      this.capabilities = data.capabilities;
     }
   };
 
@@ -112,6 +117,7 @@ export class InstanceStore implements IInstanceStore {
         this.isLoading = false;
         this.instance = instanceInfo.instance;
         this.config = instanceInfo.config;
+        this.capabilities = instanceInfo.capabilities;
       });
       return instanceInfo;
     } catch (error) {
@@ -184,8 +190,8 @@ export class InstanceStore implements IInstanceStore {
       const response = await this.instanceService.updateConfigurations(data);
       runInAction(() => {
         this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
-          const item = response.find((item) => item.key === config.key);
-          if (item) return item;
+          const updatedConfig = response.find((responseConfig) => responseConfig.key === config.key);
+          if (updatedConfig) return updatedConfig;
           return config;
         });
       });
