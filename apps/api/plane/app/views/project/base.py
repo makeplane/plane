@@ -311,6 +311,14 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, slug, pk=None):
+        # urls/project.py routes PUT here, but this viewset never defined `update`,
+        # so it fell through to DRF's ModelViewSet.update under the default
+        # IsAuthenticated while partial_update on the same URL requires workspace
+        # or project admin. Route PUT through partial_update so both verbs enforce
+        # the same rule; a full PUT-replace is not meaningful for projects.
+        return self.partial_update(request, slug=slug, pk=pk)
+
     def partial_update(self, request, slug, pk=None):
         # try:
         is_workspace_admin = WorkspaceMember.objects.filter(
