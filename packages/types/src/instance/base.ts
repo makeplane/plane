@@ -5,6 +5,7 @@
  */
 
 import type { IUserLite } from "../users";
+import type { IInstanceCapabilities } from "./capabilities";
 import type {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
@@ -18,6 +19,7 @@ import type { TExtendedLoginMediums } from "./auth-ee";
 export interface IInstanceInfo {
   instance: IInstance;
   config: IInstanceConfig;
+  capabilities: IInstanceCapabilities;
 }
 
 export interface IInstance {

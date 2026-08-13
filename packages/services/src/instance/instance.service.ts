@@ -10,6 +10,7 @@ import type {
   IFormattedInstanceConfiguration,
   IInstance,
   IInstanceAdmin,
+  IInstanceCapabilities,
   IInstanceConfiguration,
   IInstanceInfo,
   TPage,
@@ -43,6 +44,14 @@ export class InstanceService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  /**
+   * Retrieves sanitized capability state for the current instance.
+   * Capability state is not an authorization decision; backend RBAC still applies to actions.
+   */
+  async capabilities(): Promise<IInstanceCapabilities> {
+    return this.info().then((response) => response.capabilities);
   }
 
   /**

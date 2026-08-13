@@ -19,6 +19,7 @@ from plane.db.models import Workspace
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers import InstanceSerializer
 from plane.license.models import Instance
+from plane.license.utils.capabilities import InstanceCapabilityService
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
@@ -39,7 +40,11 @@ class InstanceEndpoint(BaseAPIView):
         # get the instance
         if instance is None:
             return Response(
-                {"is_activated": False, "is_setup_done": False},
+                {
+                    "is_activated": False,
+                    "is_setup_done": False,
+                    "capabilities": InstanceCapabilityService().get_capabilities(),
+                },
                 status=status.HTTP_200_OK,
             )
         # Return instance
@@ -169,7 +174,11 @@ class InstanceEndpoint(BaseAPIView):
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 
-        response_data = {"config": data, "instance": instance_data}
+        response_data = {
+            "config": data,
+            "instance": instance_data,
+            "capabilities": InstanceCapabilityService().get_capabilities(),
+        }
         return Response(response_data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/instances/", user=False)
