@@ -29,6 +29,7 @@ from .issue import (
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
+    UserIssuePlanSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import (

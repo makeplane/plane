@@ -10,6 +10,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+from django.db.models import Prefetch
 from django.urls import resolve
 from django.utils import timezone
 
@@ -57,6 +58,18 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
+
+    def user_plan_prefetch(self):
+        """Prefetch the requesting user's own calendar schedule for each work item
+        in an issue queryset, so `IssueSerializer.planned_at`/`planned_duration_minutes`
+        can be populated without an N+1 query per issue."""
+        from plane.db.models import UserIssuePlan
+
+        return Prefetch(
+            "user_issue_plans",
+            queryset=UserIssuePlan.objects.filter(user=self.request.user, deleted_at__isnull=True),
+            to_attr="_prefetched_user_plans",
+        )
 
     def get_throttles(self):
         return [ApiKeyRateThrottle()]

@@ -208,6 +208,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related(self.user_plan_prefetch())
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
@@ -280,6 +281,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related(self.user_plan_prefetch())
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
@@ -547,6 +549,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related(self.user_plan_prefetch())
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
