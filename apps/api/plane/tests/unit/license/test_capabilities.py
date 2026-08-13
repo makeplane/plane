@@ -147,3 +147,6 @@ class TestInstanceCapabilityService:
             "pages": {"available": True},
             "intake": {"available": True},
         }
+
+    def test_active_cycles_exposes_self_hosted_implementation_availability(self):
+        assert InstanceCapabilityService()._active_cycles() == {"available": True, "enabled": True}

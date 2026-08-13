@@ -45,5 +45,8 @@ export interface IInstanceCapabilities {
   public_projects: TCapabilityAvailableState & {
     enabled: boolean;
   };
+  active_cycles: TCapabilityAvailableState & {
+    enabled: boolean;
+  };
   project_features: TInstanceProjectFeatureCapabilities;
 }

@@ -38,6 +38,7 @@ class InstanceCapabilityService:
             "oauth": self._oauth(),
             "telemetry": self._telemetry(),
             "public_projects": self._public_projects(),
+            "active_cycles": self._active_cycles(),
             "project_features": self._project_features(),
         }
 
@@ -140,6 +141,9 @@ class InstanceCapabilityService:
         }
 
     def _public_projects(self):
+        return {"available": True, "enabled": True}
+
+    def _active_cycles(self):
         return {"available": True, "enabled": True}
 
     def _project_features(self):
