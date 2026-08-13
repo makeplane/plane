@@ -101,7 +101,7 @@ export const VideoAnnotationTimelinePanel = ({
   timelineTicks,
   timelineZoomPercent,
 }: VideoAnnotationTimelinePanelProps) => (
-  <div className="overflow-hidden rounded-[6px] border border-custom-border-200 bg-[#0c0c0c] shadow-sm">
+  <div className="overflow-hidden rounded-[6px] border border-custom-border-200 bg-custom-background-100 shadow-sm">
     <div className="flex min-h-[52px] flex-wrap items-center gap-2 border-b border-custom-border-200 bg-custom-background-100 px-3 py-2">
       <div className="flex items-center gap-1.5">
         <button
@@ -184,12 +184,12 @@ export const VideoAnnotationTimelinePanel = ({
     </div>
 
     <div
-      className="grid bg-[#0c0c0c]"
+      className="grid bg-custom-background-100"
       style={{
         gridTemplateColumns: `${VIDEO_ANNOTATION_TIMELINE_MOMENT_COLUMN_WIDTH_PX}px minmax(0, 1fr)`,
       }}
     >
-      <div className="flex h-[30px] items-center border-b border-r border-custom-border-200 bg-[#101010] px-4 text-[11px] font-semibold uppercase tracking-[0.05em] text-custom-text-400">
+      <div className="flex h-[30px] items-center border-b border-r border-custom-border-200 bg-custom-background-90 px-4 text-[11px] font-semibold uppercase tracking-[0.05em] text-custom-text-400">
         Moments
       </div>
       <div
@@ -202,7 +202,7 @@ export const VideoAnnotationTimelinePanel = ({
         onScroll={onTimelineHeaderScroll}
       >
         <div
-          className="relative h-[30px] border-b border-custom-border-200 bg-[#0c0c0c]"
+          className="relative h-[30px] border-b border-custom-border-200 bg-custom-background-100"
           style={{ width: `max(100%, ${timelineContentWidthPx}px)` }}
         >
           {timelineTicks.map((seconds) => {
@@ -226,12 +226,12 @@ export const VideoAnnotationTimelinePanel = ({
     </div>
 
     <div
-      className="vertical-scrollbar scrollbar-md grid max-h-[308px] overflow-y-auto overflow-x-hidden bg-[#0c0c0c]"
+      className="vertical-scrollbar scrollbar-md grid max-h-[308px] overflow-y-auto overflow-x-hidden bg-custom-background-100"
       style={{
         gridTemplateColumns: `${VIDEO_ANNOTATION_TIMELINE_MOMENT_COLUMN_WIDTH_PX}px minmax(0, 1fr)`,
       }}
     >
-      <div className="shrink-0 border-r border-custom-border-200 bg-[#101010]">
+      <div className="shrink-0 border-r border-custom-border-200 bg-custom-background-90">
         {annotationTimelineMoments.map((moment) => {
           const isMomentOpen = openTimelineMomentIds.has(moment.id);
           const isEditingMomentTitle = editingTimelineMoment?.id === moment.id;
@@ -240,15 +240,15 @@ export const VideoAnnotationTimelinePanel = ({
             <div key={`moment-label-${moment.id}`}>
               <div
                 className={[
-                  "flex h-11 w-full items-center gap-2 border-b border-[#111] px-3 text-left transition-colors hover:bg-custom-background-90",
-                  isMomentOpen ? "bg-custom-background-90" : "bg-[#101010]",
+                  "flex h-11 w-full items-center gap-2 border-b border-custom-border-200 px-3 text-left transition-colors hover:bg-custom-background-80",
+                  isMomentOpen ? "bg-custom-background-80" : "bg-custom-background-90",
                 ].join(" ")}
                 title={`${formatAnnotationTime(moment.startTime)} - ${moment.title}`}
               >
                 <button
                   type="button"
                   onClick={() => onToggleTimelineMoment(moment.id)}
-                  className="grid h-5 w-5 shrink-0 place-items-center rounded-[4px] text-custom-text-400 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="grid h-5 w-5 shrink-0 place-items-center rounded-[4px] text-custom-text-400 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40"
                   aria-expanded={isMomentOpen}
                   aria-label={`${isMomentOpen ? "Collapse" : "Expand"} ${moment.title}`}
                 >
@@ -259,7 +259,7 @@ export const VideoAnnotationTimelinePanel = ({
                 <button
                   type="button"
                   onClick={() => onTimelineSeek(moment.startTime)}
-                  className="shrink-0 rounded-[6px] border border-custom-border-200 bg-custom-background-100 px-1.5 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-custom-text-100 transition-colors hover:border-custom-text-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="shrink-0 rounded-[6px] border border-custom-border-200 bg-custom-background-100 px-1.5 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-custom-text-100 transition-colors hover:border-custom-text-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40"
                   title={`Seek to ${formatAnnotationTime(moment.startTime)}`}
                 >
                   {formatAnnotationTime(moment.startTime)}
@@ -298,7 +298,7 @@ export const VideoAnnotationTimelinePanel = ({
                       key={`moment-item-label-${annotation.id}`}
                       type="button"
                       onClick={() => onTimelineSeek(annotation.startTime)}
-                      className="flex h-[34px] w-full items-center gap-2 border-b border-[#0a0a0a] bg-custom-background-90 px-3 pl-10 text-left transition-colors hover:bg-custom-background-80"
+                      className="flex h-[34px] w-full items-center gap-2 border-b border-custom-border-200 bg-custom-background-100 px-3 pl-10 text-left transition-colors hover:bg-custom-background-80"
                       title={annotationLabel}
                     >
                       <span className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: color }} />
@@ -329,7 +329,10 @@ export const VideoAnnotationTimelinePanel = ({
         role="slider"
         tabIndex={onSeek ? 0 : -1}
       >
-        <div className="relative min-h-full bg-[#0c0c0c]" style={{ width: `max(100%, ${timelineContentWidthPx}px)` }}>
+        <div
+          className="relative min-h-full bg-custom-background-100"
+          style={{ width: `max(100%, ${timelineContentWidthPx}px)` }}
+        >
           {timelineTicks.map((seconds) => (
             <span
               key={`annotation-grid-${seconds}`}
@@ -351,7 +354,7 @@ export const VideoAnnotationTimelinePanel = ({
 
             return (
               <div key={`moment-track-${moment.id}`}>
-                <div className="relative h-11 border-b border-[#0a0a0a] bg-[#0c0c0c]">
+                <div className="relative h-11 border-b border-custom-border-200 bg-custom-background-100">
                   <button
                     type="button"
                     onClick={(event) => {
@@ -361,10 +364,10 @@ export const VideoAnnotationTimelinePanel = ({
                     }}
                     onPointerDown={(event) => event.stopPropagation()}
                     className={[
-                      "absolute top-1/2 inline-flex h-[26px] max-w-[280px] -translate-y-1/2 items-center gap-2 rounded-[6px] border px-2 text-[11px] font-medium shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                      "absolute top-1/2 inline-flex h-[26px] max-w-[280px] -translate-y-1/2 items-center gap-2 rounded-[6px] border px-2 text-[11px] font-medium shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40",
                       isMomentOpen
                         ? "border-custom-text-400 bg-custom-background-80 text-custom-text-100"
-                        : "border-custom-border-200 bg-custom-background-100 text-custom-text-200 hover:border-custom-text-400 hover:text-custom-text-100",
+                        : "border-custom-border-200 bg-custom-background-90 text-custom-text-200 hover:border-custom-text-400 hover:text-custom-text-100",
                     ].join(" ")}
                     style={{ left: `${getTimelinePercent(moment.startTime, timelineDurationSeconds)}%` }}
                     aria-expanded={isMomentOpen}
@@ -384,7 +387,7 @@ export const VideoAnnotationTimelinePanel = ({
                         return (
                           <span
                             key={`moment-summary-${annotation.id}`}
-                            className="grid h-[18px] w-[18px] place-items-center rounded-[5px] border border-[#0c0c0c]"
+                            className="grid h-[18px] w-[18px] place-items-center rounded-[5px] border border-custom-background-100"
                             style={{
                               backgroundColor: getTimelineColorWithAlpha(color, 0.06),
                               marginLeft: summaryIndex === 0 ? 0 : -5,
@@ -416,7 +419,7 @@ export const VideoAnnotationTimelinePanel = ({
                     return (
                       <div
                         key={`moment-item-track-${annotation.id}`}
-                        className="relative h-[34px] border-b border-[#0a0a0a] bg-custom-background-90"
+                        className="relative h-[34px] border-b border-custom-border-200 bg-custom-background-90"
                       >
                         <div
                           className={["absolute top-1/2 z-10 min-w-14 -translate-y-1/2", isResizing ? "z-30" : ""].join(
@@ -436,7 +439,7 @@ export const VideoAnnotationTimelinePanel = ({
                             onPointerDown={(event) => event.stopPropagation()}
                             className={[
                               "relative inline-flex h-6 w-full cursor-pointer items-center gap-1.5 overflow-hidden rounded-[5px] border px-3 pl-3 pr-5 text-left text-[11px] font-semibold text-custom-text-100 shadow-sm transition-[filter,box-shadow] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40",
-                              isResizing ? "shadow-[0_0_0_1px_rgba(255,255,255,0.16)]" : "",
+                              isResizing ? "shadow-[0_0_0_1px_rgba(37,99,235,0.24)]" : "",
                             ].join(" ")}
                             style={{
                               backgroundColor: getTimelineColorWithAlpha(color, 0.06),
@@ -467,8 +470,8 @@ export const VideoAnnotationTimelinePanel = ({
                             onPointerCancel={onTimelineResizePointerEnd}
                             onPointerUp={onTimelineResizePointerEnd}
                             className={[
-                              "absolute inset-y-0 right-0 z-20 flex w-4 cursor-ew-resize touch-none select-none items-center justify-center rounded-r-[5px] border-y border-r border-l transition-[background-color,border-color,box-shadow] hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
-                              isResizing ? "shadow-[0_0_0_1px_rgba(255,255,255,0.18)]" : "",
+                              "absolute inset-y-0 right-0 z-20 flex w-4 cursor-ew-resize touch-none select-none items-center justify-center rounded-r-[5px] border-y border-r border-l transition-[background-color,border-color,box-shadow] hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40",
+                              isResizing ? "shadow-[0_0_0_1px_rgba(37,99,235,0.26)]" : "",
                             ].join(" ")}
                             style={{
                               backgroundColor: getTimelineColorWithAlpha(color, isResizing ? 0.24 : 0.14),
@@ -493,7 +496,7 @@ export const VideoAnnotationTimelinePanel = ({
           })}
 
           {annotationTimelineMoments.length === 0 && (
-            <div className="relative h-11 border-b border-[#0a0a0a]">
+            <div className="relative h-11 border-b border-custom-border-200 bg-custom-background-100">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] text-custom-text-400">
                 No annotations yet
               </span>
