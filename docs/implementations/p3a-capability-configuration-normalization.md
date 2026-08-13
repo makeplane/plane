@@ -177,3 +177,4 @@ Further validation should use the repository Docker test stack or the configured
 - Object storage readiness reflects the existing settings surface, including defaults, and does not prove bucket access.
 - AI provider readiness follows the existing configured provider/model list; it does not redesign provider adapters.
 - The public boot endpoint remains public because that is the existing application architecture.
+- The requested PR base branch `main` was not available in the configured remotes; this checkout's default branch is `preview`.
