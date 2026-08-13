@@ -5,6 +5,7 @@
 # Python imports
 import copy
 import json
+from uuid import UUID
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -48,6 +49,34 @@ from plane.utils.host import base_host
 from .. import BaseViewSet, BaseAPIView
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
+
+
+BULK_ISSUE_OPERATION_BATCH_SIZE = 100
+
+
+def validate_issue_ids(issue_ids):
+    if not isinstance(issue_ids, list) or not issue_ids:
+        return None, Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(issue_ids) > BULK_ISSUE_OPERATION_BATCH_SIZE:
+        return None, Response(
+            {"error": f"A maximum of {BULK_ISSUE_OPERATION_BATCH_SIZE} issue IDs are allowed per request"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    validated_issue_ids = []
+    seen_issue_ids = set()
+    for issue_id in issue_ids:
+        try:
+            validated_issue_id = UUID(str(issue_id))
+        except (TypeError, ValueError):
+            return None, Response({"error": "Issue IDs must be valid UUIDs"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if validated_issue_id not in seen_issue_ids:
+            seen_issue_ids.add(validated_issue_id)
+            validated_issue_ids.append(validated_issue_id)
+
+    return validated_issue_ids, None
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -307,37 +336,46 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
-        issue_ids = request.data.get("issue_ids", [])
-
-        if not len(issue_ids):
-            return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
+        issue_ids, validation_error = validate_issue_ids(request.data.get("issue_ids", []))
+        if validation_error:
+            return validation_error
 
         issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids).select_related(
             "state"
         )
+
+        if issues.count() != len(issue_ids):
+            return Response({"error": "One or more issues were not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if any(issue.state.group not in ["completed", "cancelled"] for issue in issues):
+            return Response(
+                {
+                    "error_code": ERROR_CODES["INVALID_ARCHIVE_STATE_GROUP"],
+                    "error_message": "INVALID_ARCHIVE_STATE_GROUP",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         bulk_archive_issues = []
+        archived_at = timezone.now().date()
+        epoch = int(timezone.now().timestamp())
         for issue in issues:
-            if issue.state.group not in ["completed", "cancelled"]:
-                return Response(
-                    {
-                        "error_code": ERROR_CODES["INVALID_ARCHIVE_STATE_GROUP"],
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+                requested_data=json.dumps({"archived_at": str(archived_at), "automation": False}),
                 actor_id=str(request.user.id),
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
-                epoch=int(timezone.now().timestamp()),
+                epoch=epoch,
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
-            issue.archived_at = timezone.now().date()
+            issue.archived_at = archived_at
             bulk_archive_issues.append(issue)
-        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
+        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"], batch_size=BULK_ISSUE_OPERATION_BATCH_SIZE)
 
-        return Response({"archived_at": str(timezone.now().date())}, status=status.HTTP_200_OK)
+        return Response(
+            {"archived_at": str(archived_at), "updated": len(bulk_archive_issues), "failed": 0},
+            status=status.HTTP_200_OK,
+        )
