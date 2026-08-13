@@ -225,6 +225,13 @@ from .notification.base import (
 
 from .exporter.base import ExportIssuesEndpoint
 
+from .importer.base import (
+    ImporterDeleteEndpoint,
+    ImporterServiceEndpoint,
+    JiraImporterCreateEndpoint,
+    JiraImporterMetadataEndpoint,
+)
+
 
 from .webhook.base import (
     WebhookEndpoint,

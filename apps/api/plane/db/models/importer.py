@@ -19,6 +19,7 @@ class Importer(ProjectBaseModel):
             ("processing", "Processing"),
             ("completed", "Completed"),
             ("failed", "Failed"),
+            ("cancelled", "Cancelled"),
         ),
         default="queued",
     )
