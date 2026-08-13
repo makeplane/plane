@@ -139,7 +139,24 @@ const buildAnnotationTimelineMoments = (annotations: TCustomPlaylistAnnotation[]
     });
   });
 
-  return [...momentMap.values()].sort((firstMoment, secondMoment) => firstMoment.startTime - secondMoment.startTime);
+  return [...momentMap.values()]
+    .map((moment) => ({
+      ...moment,
+      annotations: [...moment.annotations].sort((firstItem, secondItem) => {
+        const firstTrackIndex = getAnnotationTrackIndex(firstItem.annotation);
+        const secondTrackIndex = getAnnotationTrackIndex(secondItem.annotation);
+
+        if (firstTrackIndex !== null && secondTrackIndex !== null && firstTrackIndex !== secondTrackIndex) {
+          return firstTrackIndex - secondTrackIndex;
+        }
+
+        if (firstTrackIndex !== null && secondTrackIndex === null) return -1;
+        if (firstTrackIndex === null && secondTrackIndex !== null) return 1;
+
+        return firstItem.index - secondItem.index;
+      }),
+    }))
+    .sort((firstMoment, secondMoment) => firstMoment.startTime - secondMoment.startTime);
 };
 
 const getAnnotationTrackIndex = (annotation: TCustomPlaylistAnnotation) => {
