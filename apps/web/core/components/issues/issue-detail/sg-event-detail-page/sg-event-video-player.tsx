@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import videojs from "video.js";
-import { Pencil } from "lucide-react";
+import { Check, Pencil } from "lucide-react";
 import { cn } from "@plane/utils";
 import { VideoAnnotationEditor } from "@/components/annotation";
 import type { TCustomPlaylistAnnotation } from "@/components/annotation";
@@ -69,6 +69,7 @@ export const SgEventVideoPlayer = ({
     Boolean(meta.playlistFileName.trim());
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
+  const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
@@ -90,7 +91,31 @@ export const SgEventVideoPlayer = ({
   useEffect(() => {
     setCurrentVideoSeconds(0);
     setIsVideoAnnotationMode(false);
+    setIsSettingsOpen(false);
+    setQualitySelection(null);
   }, [effectiveAnnotationItem?.id, item?.id]);
+
+  useEffect(() => {
+    if (!isSettingsOpen) return;
+
+    const handlePointer = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (settingsPanelRef.current?.contains(target)) return;
+      if (target.closest(".vjs-settings-button")) return;
+      setIsSettingsOpen(false);
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsSettingsOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointer);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handlePointer);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [isSettingsOpen]);
 
   useEffect(() => {
     if (!isVideo || !videoRef.current) {
@@ -572,15 +597,17 @@ export const SgEventVideoPlayer = ({
         return left.index - right.index;
       });
     const fallbackSelected = qualitySelection === null ? (isAuto ? "auto" : null) : qualitySelection;
-    const options: TQualityOption[] = [
-      {
+    const options: TQualityOption[] = [];
+
+    if (sorted.length > 1) {
+      options.push({
         key: "auto",
         label: "Auto",
         isAuto: true,
         selected: fallbackSelected === "auto" || (qualitySelection === null && isAuto),
         rep: null,
-      },
-    ];
+      });
+    }
 
     sorted.forEach(({ rep, height, bandwidth }) => {
       const label = height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)} kbps` : "Source";
@@ -593,6 +620,10 @@ export const SgEventVideoPlayer = ({
         rep,
       });
     });
+
+    if (sorted.length === 1 && !options.some((option) => option.selected)) {
+      options[0].selected = true;
+    }
 
     return options;
   }, [playerTick, qualitySelection]);
@@ -634,6 +665,39 @@ export const SgEventVideoPlayer = ({
     },
     [effectiveAnnotationItem, onUpdateAnnotations]
   );
+  const settingsPanelContent = isSettingsOpen ? (
+    <div
+      ref={settingsPanelRef}
+      className="sg-event-settings-panel"
+      role="dialog"
+      aria-label="Player settings"
+      onMouseDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className="sg-event-settings-title">Quality</div>
+      <div className="sg-event-settings-options" role="menu" aria-label="Video quality">
+        {qualityOptions.map((option) => (
+          <button
+            key={option.key}
+            type="button"
+            role="menuitemradio"
+            aria-checked={option.selected}
+            disabled={option.disabled}
+            onClick={() => {
+              handleQualitySelect(option);
+              if (!option.disabled) setIsSettingsOpen(false);
+            }}
+            className={cn("sg-event-settings-option", option.selected && "is-active", option.disabled && "is-disabled")}
+          >
+            <span className="sg-event-settings-check" aria-hidden="true">
+              <Check className="h-3.5 w-3.5" />
+            </span>
+            <span className="sg-event-settings-label">{option.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  ) : null;
   const videoAnnotationContent = effectiveAnnotationItem ? (
     <VideoAnnotationEditor
       annotationKey={`${effectiveAnnotationItem.packageId ?? "event"}:${effectiveAnnotationItem.id}`}
@@ -651,6 +715,7 @@ export const SgEventVideoPlayer = ({
   const playerLayerContent = (
     <>
       {videoAnnotationContent}
+      {settingsPanelContent}
       {canAnnotateVideo ? (
         <button
           type="button"
@@ -697,30 +762,6 @@ export const SgEventVideoPlayer = ({
         </style>
         <video ref={videoRef} className="video-js vjs-big-play-centered" playsInline loop />
         {playerElement ? createPortal(playerLayerContent, playerElement) : playerLayerContent}
-        {isSettingsOpen && (
-          <div className="absolute bottom-14 right-3 z-10 w-44 rounded-xl border border-custom-border-200 bg-custom-sidebar-background-100 p-3 shadow-2xl">
-            <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-custom-text-400">Quality</div>
-            <div className="grid grid-cols-2 gap-2">
-              {qualityOptions.map((option) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  disabled={option.disabled}
-                  onClick={() => handleQualitySelect(option)}
-                  className={cn(
-                    "rounded-md border px-2 py-1 text-xs transition-colors",
-                    option.selected
-                      ? "border-custom-primary-100/30 bg-custom-primary-100/15 text-custom-primary-100"
-                      : "border-custom-border-200 bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100",
-                    option.disabled && "cursor-not-allowed opacity-60 hover:text-custom-text-300"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
