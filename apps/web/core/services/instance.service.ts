@@ -6,7 +6,7 @@
 
 // types
 import { API_BASE_URL } from "@plane/constants";
-import type { IInstanceInfo } from "@plane/types";
+import type { IInstanceCapabilities, IInstanceInfo } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";
@@ -30,5 +30,9 @@ export class InstanceService extends APIService {
       .catch((error) => {
         throw error;
       });
+  }
+
+  async getInstanceCapabilities(): Promise<IInstanceCapabilities> {
+    return this.getInstanceInfo().then((response) => response.capabilities);
   }
 }

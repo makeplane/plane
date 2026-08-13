@@ -1,0 +1,152 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Python imports
+import os
+
+# Django imports
+from django.conf import settings
+
+# Module imports
+from plane.app.views.external.base import SUPPORTED_PROVIDERS
+from plane.license.models import Instance
+from plane.license.utils.instance_value import get_configuration_value
+
+
+def _is_enabled(value):
+    return str(value) == "1"
+
+
+def _is_present(configuration_value):
+    return configuration_value is not None and str(configuration_value).strip() != ""
+
+
+class InstanceCapabilityService:
+    """Resolve sanitized deployment-level capability state.
+
+    Capability readiness describes implementation/configuration only. It does not
+    grant authorization; workspace/project RBAC and project settings remain the
+    authority for action-time access.
+    """
+
+    def get_capabilities(self):
+        return {
+            "ai": self._ai(),
+            "smtp": self._smtp(),
+            "object_storage": self._object_storage(),
+            "oauth": self._oauth(),
+            "telemetry": self._telemetry(),
+            "public_projects": self._public_projects(),
+            "project_features": self._project_features(),
+        }
+
+    def _ai(self):
+        api_key, provider_key, model = get_configuration_value(
+            [
+                {"key": "LLM_API_KEY", "default": os.environ.get("LLM_API_KEY", None)},
+                {"key": "LLM_PROVIDER", "default": os.environ.get("LLM_PROVIDER", "openai")},
+                {"key": "LLM_MODEL", "default": os.environ.get("LLM_MODEL", None)},
+            ]
+        )
+        provider_key = str(provider_key or "openai").lower()
+        provider = SUPPORTED_PROVIDERS.get(provider_key)
+        model = model or (provider.default_model if provider else None)
+        configured = bool(provider and _is_present(api_key) and _is_present(model) and model in provider.models)
+
+        return {
+            "available": True,
+            "enabled": True,
+            "configured": configured,
+            "ready": configured,
+        }
+
+    def _smtp(self):
+        enable_smtp, host, port, from_email = get_configuration_value(
+            [
+                {"key": "ENABLE_SMTP", "default": os.environ.get("ENABLE_SMTP", "0")},
+                {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
+                {"key": "EMAIL_PORT", "default": os.environ.get("EMAIL_PORT", "587")},
+                {"key": "EMAIL_FROM", "default": os.environ.get("EMAIL_FROM", "")},
+            ]
+        )
+        enabled = _is_enabled(enable_smtp)
+        configured = _is_present(host) and _is_present(port) and _is_present(from_email)
+
+        return {
+            "available": True,
+            "enabled": enabled,
+            "configured": configured,
+            "ready": enabled and configured,
+        }
+
+    def _object_storage(self):
+        configured = all(
+            [
+                _is_present(getattr(settings, "AWS_ACCESS_KEY_ID", None)),
+                _is_present(getattr(settings, "AWS_SECRET_ACCESS_KEY", None)),
+                _is_present(getattr(settings, "AWS_STORAGE_BUCKET_NAME", None)),
+            ]
+        )
+
+        return {
+            "available": True,
+            "configured": configured,
+            "ready": configured,
+        }
+
+    def _oauth(self):
+        providers = {provider: self._oauth_provider(provider) for provider in ["google", "github", "gitlab", "gitea"]}
+        return {"available": True, "providers": providers}
+
+    def _oauth_provider(self, provider):
+        enabled, client_id, client_secret = self._oauth_provider_credentials(provider)
+        configured = _is_present(client_id) and _is_present(client_secret)
+        if provider in ["gitlab", "gitea"]:
+            configured = configured and _is_present(self._oauth_provider_host(provider))
+
+        return {
+            "available": True,
+            "enabled": _is_enabled(enabled),
+            "configured": configured,
+            "ready": _is_enabled(enabled) and configured,
+        }
+
+    def _oauth_provider_credentials(self, provider):
+        provider_key = provider.upper()
+        return get_configuration_value(
+            [
+                {"key": f"IS_{provider_key}_ENABLED", "default": os.environ.get(f"IS_{provider_key}_ENABLED", "0")},
+                {"key": f"{provider_key}_CLIENT_ID", "default": os.environ.get(f"{provider_key}_CLIENT_ID", "")},
+                {
+                    "key": f"{provider_key}_CLIENT_SECRET",
+                    "default": os.environ.get(f"{provider_key}_CLIENT_SECRET", ""),
+                },
+            ]
+        )
+
+    def _oauth_provider_host(self, provider):
+        provider_key = provider.upper()
+        (host,) = get_configuration_value(
+            [{"key": f"{provider_key}_HOST", "default": os.environ.get(f"{provider_key}_HOST", "")}]
+        )
+        return host
+
+    def _telemetry(self):
+        instance = Instance.objects.first()
+        return {
+            "available": True,
+            "enabled": bool(instance.is_telemetry_enabled) if instance else True,
+        }
+
+    def _public_projects(self):
+        return {"available": True, "enabled": True}
+
+    def _project_features(self):
+        return {
+            "cycles": {"available": True},
+            "modules": {"available": True},
+            "views": {"available": True},
+            "pages": {"available": True},
+            "intake": {"available": True},
+        }
