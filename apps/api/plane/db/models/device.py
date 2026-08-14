@@ -40,7 +40,7 @@ class Device(BaseModel):
     class Meta:
         verbose_name = "Device"
         verbose_name_plural = "Devices"
-        db_table = "devices"
+        db_table = "push_devices"
         ordering = ("-created_at",)
         constraints = [
             models.UniqueConstraint(fields=["user", "apns_token"], name="device_unique_user_token")

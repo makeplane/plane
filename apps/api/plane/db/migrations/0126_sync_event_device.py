@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Device',
                 'verbose_name_plural': 'Devices',
-                'db_table': 'devices',
+                'db_table': 'push_devices',
                 'ordering': ('-created_at',),
             },
         ),
