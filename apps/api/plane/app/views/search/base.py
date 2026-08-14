@@ -41,6 +41,7 @@ from plane.db.models import (
     ProjectPage,
     WorkspaceMember,
 )
+from plane.utils.issue_search import build_search_snippet
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -81,7 +82,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_issues(self, query, slug, project_id, workspace_search):
-        fields = ["name", "sequence_id", "project__identifier"]
+        fields = ["name", "description_stripped", "sequence_id", "project__identifier"]
         q = Q()
         if query:
             for field in fields:
@@ -104,14 +105,24 @@ class GlobalSearchEndpoint(BaseAPIView):
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
 
-        return issues.distinct().values(
-            "name",
-            "id",
-            "sequence_id",
-            "project__identifier",
-            "project_id",
-            "workspace__slug",
-        )[:100]
+        issue_results = list(
+            issues.distinct()
+            .values(
+                "name",
+                "id",
+                "sequence_id",
+                "project__identifier",
+                "project_id",
+                "workspace__slug",
+                "description_stripped",
+            )[:100]
+        )
+
+        for issue in issue_results:
+            description = issue.pop("description_stripped", None)
+            issue["description_snippet"] = build_search_snippet(description, query)
+
+        return issue_results
 
     def filter_cycles(self, query, slug, project_id, workspace_search):
         fields = ["name"]

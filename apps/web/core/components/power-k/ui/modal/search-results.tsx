@@ -18,10 +18,11 @@ import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 type Props = {
   closePalette: () => void;
   results: IWorkspaceSearchResults;
+  searchTerm: string;
 };
 
 export const PowerKModalSearchResults = observer(function PowerKModalSearchResults(props: Props) {
-  const { closePalette, results } = props;
+  const { closePalette, results, searchTerm } = props;
   // router
   const router = useAppRouter();
   const { projectId: routerProjectId } = useParams();
@@ -50,10 +51,15 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
                 value = `${value}-${item.sequence_id}`;
               }
 
+              if ("description_snippet" in item && item.description_snippet) {
+                value = `${value}-${item.description_snippet}`;
+              }
+
               return (
                 <PowerKModalCommandItem
                   key={item.id}
-                  label={currentSection.itemName(item)}
+                  isMultiline={key === "issue"}
+                  label={currentSection.itemName(item, searchTerm)}
                   icon={currentSection.icon}
                   onSelect={() => {
                     closePalette();

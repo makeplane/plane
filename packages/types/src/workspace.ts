@@ -128,6 +128,7 @@ export interface IWorkspaceSearchResult {
 }
 
 export interface IWorkspaceIssueSearchResult {
+  description_snippet: string | null;
   id: string;
   name: string;
   project__identifier: string;

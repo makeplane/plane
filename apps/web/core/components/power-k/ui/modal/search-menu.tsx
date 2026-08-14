@@ -109,7 +109,13 @@ export function PowerKModalSearchMenu(props: Props) {
         />
       )}
 
-      {searchTerm.trim() !== "" && <PowerKModalSearchResults closePalette={handleClosePalette} results={results} />}
+      {searchTerm.trim() !== "" && (
+        <PowerKModalSearchResults
+          closePalette={handleClosePalette}
+          results={results}
+          searchTerm={debouncedSearchTerm}
+        />
+      )}
     </>
   );
 }

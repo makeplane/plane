@@ -18,10 +18,11 @@ import { generateWorkItemLink } from "@plane/utils";
 // components
 import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { highlightSearchMatches } from "./search-highlight";
 
 export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
-  itemName: (item: any) => React.ReactNode;
+  itemName: (item: any, searchTerm: string) => React.ReactNode;
   path: (item: any, projectId: string | undefined) => string;
   title: string;
 };
@@ -29,9 +30,10 @@ export type TPowerKSearchResultGroupDetails = {
 export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
   cycle: {
     icon: ContrastIcon,
-    itemName: (cycle: IWorkspaceDefaultSearchResult) => (
+    itemName: (cycle: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
-        <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
+        <span className="text-11 text-tertiary">{cycle.project__identifier}</span>{" "}
+        {highlightSearchMatches(cycle.name, searchTerm)}
       </p>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -39,16 +41,23 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     title: "Cycles",
   },
   issue: {
-    itemName: (workItem: IWorkspaceIssueSearchResult) => (
-      <div className="flex gap-2">
-        <IssueIdentifier
-          projectId={workItem.project_id}
-          issueTypeId={workItem.type_id}
-          projectIdentifier={workItem.project__identifier}
-          issueSequenceId={workItem.sequence_id}
-          size="xs"
-        />{" "}
-        {workItem.name}
+    itemName: (workItem: IWorkspaceIssueSearchResult, searchTerm: string) => (
+      <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-center gap-2">
+          <IssueIdentifier
+            projectId={workItem.project_id}
+            issueTypeId={workItem.type_id}
+            projectIdentifier={workItem.project__identifier}
+            issueSequenceId={workItem.sequence_id}
+            size="xs"
+          />
+          <span className="truncate">{highlightSearchMatches(workItem.name, searchTerm)}</span>
+        </div>
+        {workItem.description_snippet && (
+          <p className="mt-0.5 line-clamp-2 text-11 text-tertiary">
+            {highlightSearchMatches(workItem.description_snippet, searchTerm)}
+          </p>
+        )}
       </div>
     ),
     path: (workItem: IWorkspaceIssueSearchResult) =>
@@ -63,9 +72,10 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   },
   issue_view: {
     icon: Layers,
-    itemName: (view: IWorkspaceDefaultSearchResult) => (
+    itemName: (view: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
-        <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
+        <span className="text-11 text-tertiary">{view.project__identifier}</span>{" "}
+        {highlightSearchMatches(view.name, searchTerm)}
       </p>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -74,9 +84,10 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   },
   module: {
     icon: DiceIcon,
-    itemName: (module: IWorkspaceDefaultSearchResult) => (
+    itemName: (module: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
-        <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
+        <span className="text-11 text-tertiary">{module.project__identifier}</span>{" "}
+        {highlightSearchMatches(module.name, searchTerm)}
       </p>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -85,9 +96,10 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   },
   page: {
     icon: FileText,
-    itemName: (page: IWorkspacePageSearchResult) => (
+    itemName: (page: IWorkspacePageSearchResult, searchTerm: string) => (
       <p>
-        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
+        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span>{" "}
+        {highlightSearchMatches(page.name, searchTerm)}
       </p>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
@@ -101,13 +113,15 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   },
   project: {
     icon: Briefcase,
-    itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
+    itemName: (project: IWorkspaceProjectSearchResult, searchTerm: string) =>
+      highlightSearchMatches(project?.name, searchTerm),
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
     icon: LayoutGrid,
-    itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
+    itemName: (workspace: IWorkspaceSearchResult, searchTerm: string) =>
+      highlightSearchMatches(workspace?.name, searchTerm),
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",
   },
