@@ -867,5 +867,33 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "worklog": {
+    "log_time": "Înregistrează timp",
+    "duration_placeholder": "ex. 30m, 1h, 1h 30m",
+    "duration_invalid": "Introdu o durată precum 30m, 1h sau 1h 30m.",
+    "description_placeholder": "La ce ai lucrat? (opțional)",
+    "logged_date": "Dată",
+    "disabled": "Urmărirea timpului este dezactivată pentru acest proiect.",
+    "export_type": "Tip de export",
+    "export_work_items": "Elemente de lucru",
+    "toasts": {
+      "created": {
+        "title": "Succes!",
+        "message": "Timpul a fost înregistrat."
+      },
+      "updated": {
+        "title": "Succes!",
+        "message": "Jurnalul a fost actualizat."
+      },
+      "deleted": {
+        "title": "Succes!",
+        "message": "Jurnalul a fost eliminat."
+      },
+      "error": {
+        "title": "Eroare!",
+        "message": "Jurnalul nu a putut fi salvat. Încearcă din nou."
+      }
+    }
   }
 }

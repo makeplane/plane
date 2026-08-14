@@ -867,5 +867,33 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
+  },
+  "worklog": {
+    "log_time": "记录时间",
+    "duration_placeholder": "例如 30m、1h、1h 30m",
+    "duration_invalid": "请输入类似 30m、1h 或 1h 30m 的时长。",
+    "description_placeholder": "你做了什么？（可选）",
+    "logged_date": "日期",
+    "disabled": "此项目已关闭时间跟踪。",
+    "export_type": "导出类型",
+    "export_work_items": "工作项",
+    "toasts": {
+      "created": {
+        "title": "成功！",
+        "message": "已记录时间。"
+      },
+      "updated": {
+        "title": "成功！",
+        "message": "已更新工时记录。"
+      },
+      "deleted": {
+        "title": "成功！",
+        "message": "已删除工时记录。"
+      },
+      "error": {
+        "title": "错误！",
+        "message": "无法保存工时记录，请重试。"
+      }
+    }
   }
 }

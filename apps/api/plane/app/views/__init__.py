@@ -139,6 +139,7 @@ from .issue.attachment import (
 )
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.worklog import IssueWorklogViewSet
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

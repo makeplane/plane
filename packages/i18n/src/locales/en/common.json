@@ -867,5 +867,33 @@
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
     }
+  },
+  "worklog": {
+    "log_time": "Log time",
+    "duration_placeholder": "e.g. 30m, 1h, 1h 30m",
+    "duration_invalid": "Enter a duration like 30m, 1h, or 1h 30m.",
+    "description_placeholder": "What did you work on? (optional)",
+    "logged_date": "Date",
+    "disabled": "Time tracking is disabled for this project.",
+    "export_type": "Export type",
+    "export_work_items": "Work items",
+    "toasts": {
+      "created": {
+        "title": "Success!",
+        "message": "Time logged successfully."
+      },
+      "updated": {
+        "title": "Success!",
+        "message": "Worklog updated successfully."
+      },
+      "deleted": {
+        "title": "Success!",
+        "message": "Worklog removed."
+      },
+      "error": {
+        "title": "Error!",
+        "message": "Could not save the worklog. Please try again."
+      }
+    }
   }
 }

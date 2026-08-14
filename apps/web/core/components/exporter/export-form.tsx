@@ -40,6 +40,7 @@ type FormData = {
   project: string[];
   multiple: boolean;
   filters: TWorkItemFilterExpression;
+  type: "issue_exports" | "issue_worklogs";
 };
 
 // const initialWorkItemFilters = {
@@ -72,6 +73,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       project: [],
       multiple: false,
       filters: {},
+      type: "issue_exports",
     },
   });
 
@@ -105,6 +107,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         project: formData.project,
         multiple: formData.project.length > 1,
         rich_filters: formData.filters,
+        type: formData.type,
       };
       try {
         await projectExportService.csvExport(workspaceSlug, payload);
@@ -202,6 +205,34 @@ export const ExportForm = observer(function ExportForm(props: Props) {
                       <span className="truncate">{t(service.i18n_title)}</span>
                     </CustomSelect.Option>
                   ))}
+                </CustomSelect>
+              )}
+            />
+          }
+        />
+        <SettingsBoxedControlItem
+          className="rounded-none border-0 border-b"
+          title={t("worklog.export_type")}
+          control={
+            <Controller
+              control={control}
+              name="type"
+              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  value={value}
+                  onChange={onChange}
+                  label={value === "issue_worklogs" ? t("common.worklogs") : t("worklog.export_work_items")}
+                  optionsClassName="max-w-48 sm:max-w-[532px]"
+                  placement="bottom-end"
+                  buttonClassName="py-2 text-13"
+                >
+                  <CustomSelect.Option value="issue_exports">
+                    <span className="truncate">{t("worklog.export_work_items")}</span>
+                  </CustomSelect.Option>
+                  <CustomSelect.Option value="issue_worklogs">
+                    <span className="truncate">{t("common.worklogs")}</span>
+                  </CustomSelect.Option>
                 </CustomSelect>
               )}
             />

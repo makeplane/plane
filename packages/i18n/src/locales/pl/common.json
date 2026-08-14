@@ -867,5 +867,33 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
+  },
+  "worklog": {
+    "log_time": "Zarejestruj czas",
+    "duration_placeholder": "np. 30m, 1h, 1h 30m",
+    "duration_invalid": "Podaj czas trwania, np. 30m, 1h lub 1h 30m.",
+    "description_placeholder": "Nad czym pracowałeś? (opcjonalnie)",
+    "logged_date": "Data",
+    "disabled": "Śledzenie czasu jest wyłączone w tym projekcie.",
+    "export_type": "Typ eksportu",
+    "export_work_items": "Elementy pracy",
+    "toasts": {
+      "created": {
+        "title": "Sukces!",
+        "message": "Czas został zarejestrowany."
+      },
+      "updated": {
+        "title": "Sukces!",
+        "message": "Dziennik pracy został zaktualizowany."
+      },
+      "deleted": {
+        "title": "Sukces!",
+        "message": "Dziennik pracy został usunięty."
+      },
+      "error": {
+        "title": "Błąd!",
+        "message": "Nie udało się zapisać dziennika pracy. Spróbuj ponownie."
+      }
+    }
   }
 }

@@ -4,7 +4,7 @@
 
 from .formatters import BaseFormatter, CSVFormatter, JSONFormatter, XLSXFormatter
 from .exporter import DataExporter
-from .serializers import IssueExportSerializer
+from .serializers import IssueExportSerializer, IssueWorklogExportSerializer
 
 __all__ = [
     # Formatters
@@ -16,4 +16,5 @@ __all__ = [
     "DataExporter",
     # Export Serializers
     "IssueExportSerializer",
+    "IssueWorklogExportSerializer",
 ]

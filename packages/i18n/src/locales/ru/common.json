@@ -867,5 +867,33 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
+  },
+  "worklog": {
+    "log_time": "Записать время",
+    "duration_placeholder": "напр. 30m, 1h, 1h 30m",
+    "duration_invalid": "Укажите длительность в формате 30m, 1h или 1h 30m.",
+    "description_placeholder": "Над чем вы работали? (необязательно)",
+    "logged_date": "Дата",
+    "disabled": "Учёт времени для этого проекта отключён.",
+    "export_type": "Тип экспорта",
+    "export_work_items": "Рабочие элементы",
+    "toasts": {
+      "created": {
+        "title": "Готово!",
+        "message": "Время записано."
+      },
+      "updated": {
+        "title": "Готово!",
+        "message": "Запись времени обновлена."
+      },
+      "deleted": {
+        "title": "Готово!",
+        "message": "Запись времени удалена."
+      },
+      "error": {
+        "title": "Ошибка!",
+        "message": "Не удалось сохранить запись времени. Попробуйте ещё раз."
+      }
+    }
   }
 }

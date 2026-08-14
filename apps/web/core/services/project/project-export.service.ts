@@ -21,6 +21,7 @@ export class ProjectExportService extends APIService {
       project: string[];
       multiple?: boolean;
       rich_filters?: TWorkItemFilterExpression;
+      type?: "issue_exports" | "issue_worklogs";
     }
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/export-issues/`, data)

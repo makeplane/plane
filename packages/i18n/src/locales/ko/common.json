@@ -867,5 +867,33 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "worklog": {
+    "log_time": "시간 기록",
+    "duration_placeholder": "예: 30m, 1h, 1h 30m",
+    "duration_invalid": "30m, 1h 또는 1h 30m과 같은 소요 시간을 입력하세요.",
+    "description_placeholder": "어떤 작업을 했나요? (선택)",
+    "logged_date": "날짜",
+    "disabled": "이 프로젝트에서는 시간 추적이 꺼져 있습니다.",
+    "export_type": "내보내기 유형",
+    "export_work_items": "작업 항목",
+    "toasts": {
+      "created": {
+        "title": "성공!",
+        "message": "시간을 기록했습니다."
+      },
+      "updated": {
+        "title": "성공!",
+        "message": "작업 로그를 업데이트했습니다."
+      },
+      "deleted": {
+        "title": "성공!",
+        "message": "작업 로그를 삭제했습니다."
+      },
+      "error": {
+        "title": "오류!",
+        "message": "작업 로그를 저장하지 못했습니다. 다시 시도하세요."
+      }
+    }
   }
 }

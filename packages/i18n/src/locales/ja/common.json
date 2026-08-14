@@ -867,5 +867,33 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "worklog": {
+    "log_time": "時間を記録",
+    "duration_placeholder": "例: 30m、1h、1h 30m",
+    "duration_invalid": "30m、1h、1h 30m のような所要時間を入力してください。",
+    "description_placeholder": "何に取り組みましたか？（任意）",
+    "logged_date": "日付",
+    "disabled": "このプロジェクトでは時間トラッキングが無効です。",
+    "export_type": "エクスポートの種類",
+    "export_work_items": "作業項目",
+    "toasts": {
+      "created": {
+        "title": "成功",
+        "message": "時間を記録しました。"
+      },
+      "updated": {
+        "title": "成功",
+        "message": "作業ログを更新しました。"
+      },
+      "deleted": {
+        "title": "成功",
+        "message": "作業ログを削除しました。"
+      },
+      "error": {
+        "title": "エラー",
+        "message": "作業ログを保存できませんでした。もう一度お試しください。"
+      }
+    }
   }
 }

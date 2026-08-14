@@ -867,5 +867,33 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
+  },
+  "worklog": {
+    "log_time": "Saisir du temps",
+    "duration_placeholder": "ex. 30m, 1h, 1h 30m",
+    "duration_invalid": "Saisissez une durée comme 30m, 1h ou 1h 30m.",
+    "description_placeholder": "Sur quoi avez-vous travaillé ? (facultatif)",
+    "logged_date": "Date",
+    "disabled": "Le suivi du temps est désactivé pour ce projet.",
+    "export_type": "Type d’export",
+    "export_work_items": "Éléments de travail",
+    "toasts": {
+      "created": {
+        "title": "Succès !",
+        "message": "Temps saisi."
+      },
+      "updated": {
+        "title": "Succès !",
+        "message": "Journal de temps mis à jour."
+      },
+      "deleted": {
+        "title": "Succès !",
+        "message": "Journal de temps supprimé."
+      },
+      "error": {
+        "title": "Erreur !",
+        "message": "Impossible d’enregistrer le journal de temps. Réessayez."
+      }
+    }
   }
 }

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
-from plane.bgtasks.export_task import issue_export_task
+from plane.bgtasks.export_task import issue_export_task, issue_worklog_export_task
 from plane.db.models import ExporterHistory, Project, Workspace
 
 # Module imports
@@ -27,6 +27,13 @@ class ExportIssuesEndpoint(BaseAPIView):
         provider = request.data.get("provider", False)
         multiple = request.data.get("multiple", False)
         project_ids = request.data.get("project", [])
+        export_type = request.data.get("type", "issue_exports")
+
+        if export_type not in ("issue_exports", "issue_worklogs"):
+            return Response(
+                {"error": f"Export type '{export_type}' not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if provider in ["csv", "xlsx", "json"]:
             if not project_ids:
@@ -43,10 +50,11 @@ class ExportIssuesEndpoint(BaseAPIView):
                 project=project_ids,
                 initiated_by=request.user,
                 provider=provider,
-                type="issue_exports",
+                type=export_type,
             )
 
-            issue_export_task.delay(
+            task = issue_worklog_export_task if export_type == "issue_worklogs" else issue_export_task
+            task.delay(
                 provider=exporter.provider,
                 workspace_id=workspace.id,
                 project_ids=project_ids,
@@ -66,9 +74,11 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_exports").select_related(
-            "workspace", "initiated_by"
-        )
+        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug)
+        export_type = request.GET.get("type")
+        if export_type in ("issue_exports", "issue_worklogs"):
+            exporter_history = exporter_history.filter(type=export_type)
+        exporter_history = exporter_history.select_related("workspace", "initiated_by")
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(

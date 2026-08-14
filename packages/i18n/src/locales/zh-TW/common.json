@@ -867,5 +867,33 @@
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
     }
+  },
+  "worklog": {
+    "log_time": "記錄時間",
+    "duration_placeholder": "例如 30m、1h、1h 30m",
+    "duration_invalid": "請輸入類似 30m、1h 或 1h 30m 的時長。",
+    "description_placeholder": "你做了什麼？（選填）",
+    "logged_date": "日期",
+    "disabled": "此專案已關閉時間追蹤。",
+    "export_type": "匯出類型",
+    "export_work_items": "工作項",
+    "toasts": {
+      "created": {
+        "title": "成功！",
+        "message": "已記錄時間。"
+      },
+      "updated": {
+        "title": "成功！",
+        "message": "已更新工時紀錄。"
+      },
+      "deleted": {
+        "title": "成功！",
+        "message": "已刪除工時紀錄。"
+      },
+      "error": {
+        "title": "錯誤！",
+        "message": "無法儲存工時紀錄，請再試一次。"
+      }
+    }
   }
 }

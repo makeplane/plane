@@ -867,5 +867,33 @@
       "description": "Exporta elementos de trabajo a un archivo JSON.",
       "short_description": "Exportar como json"
     }
+  },
+  "worklog": {
+    "log_time": "Registrar tiempo",
+    "duration_placeholder": "p. ej. 30m, 1h, 1h 30m",
+    "duration_invalid": "Introduce una duración como 30m, 1h o 1h 30m.",
+    "description_placeholder": "¿En qué trabajaste? (opcional)",
+    "logged_date": "Fecha",
+    "disabled": "El seguimiento de tiempo está desactivado en este proyecto.",
+    "export_type": "Tipo de exportación",
+    "export_work_items": "Elementos de trabajo",
+    "toasts": {
+      "created": {
+        "title": "¡Listo!",
+        "message": "Tiempo registrado correctamente."
+      },
+      "updated": {
+        "title": "¡Listo!",
+        "message": "Registro de trabajo actualizado."
+      },
+      "deleted": {
+        "title": "¡Listo!",
+        "message": "Registro de trabajo eliminado."
+      },
+      "error": {
+        "title": "Error",
+        "message": "No se pudo guardar el registro. Inténtalo de nuevo."
+      }
+    }
   }
 }
