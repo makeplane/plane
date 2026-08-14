@@ -277,6 +277,13 @@
       "success": "Untergeordnetes Arbeitselement erfolgreich entfernt",
       "error": "Fehler beim Entfernen des untergeordneten Elements"
     },
+    "propagate_state": {
+      "modal": {
+        "title": "Update sub-work items?",
+        "description": "This work item has {count, plural, one {# sub-work item} other {# sub-work items}}. You can apply the same state change to them.",
+        "toggle": "Apply state to sub-work items"
+      }
+    },
     "empty_state": {
       "sub_list_filters": {
         "title": "Sie haben keine untergeordneten Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",

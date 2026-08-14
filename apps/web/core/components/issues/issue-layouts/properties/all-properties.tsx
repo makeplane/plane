@@ -16,7 +16,6 @@ import { useTranslation } from "@plane/i18n";
 import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
-// ui
 import {
   cn,
   getDate,
@@ -42,6 +41,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// helpers
+import { updateIssueStateWithPropagation } from "@/helpers/issue-state-update";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
@@ -106,7 +107,13 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   );
 
   const handleState = async (stateId: string) => {
-    if (updateIssue) await updateIssue(issue.project_id, issue.id, { state_id: stateId });
+    if (!updateIssue) return;
+    await updateIssueStateWithPropagation({
+      currentStateId: issue.state_id,
+      newStateId: stateId,
+      subIssuesCount: issue.sub_issues_count ?? 0,
+      onUpdate: async (data) => updateIssue(issue.project_id, issue.id, data),
+    });
   };
 
   const handlePriority = async (value: TIssuePriorities) => {

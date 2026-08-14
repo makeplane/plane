@@ -277,6 +277,13 @@
       "success": "Sous-élément de travail supprimé avec succès",
       "error": "Erreur lors de la suppression du sous-élément de travail"
     },
+    "propagate_state": {
+      "modal": {
+        "title": "Update sub-work items?",
+        "description": "This work item has {count, plural, one {# sub-work item} other {# sub-work items}}. You can apply the same state change to them.",
+        "toggle": "Apply state to sub-work items"
+      }
+    },
     "empty_state": {
       "sub_list_filters": {
         "title": "Vous n’avez pas de sous-éléments de travail qui correspondent aux filtres que vous avez appliqués.",

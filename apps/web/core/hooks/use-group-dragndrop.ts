@@ -9,6 +9,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
 import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
+import { updateIssueStateWithPropagation } from "@/helpers/issue-state-update";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useIssues } from "./store/use-issues";
@@ -92,6 +93,30 @@ export const useGroupIssuesDragNDrop = (
         issueUpdates[moduleKey].REMOVE
       ).catch(() => setToast(errorToastProps));
       delete data[moduleKey];
+    }
+
+    const issue = getIssueById(issueId);
+    const stateId = data.state_id;
+
+    if (stateId && issue && issue.sub_issues_count > 0) {
+      const remainingData = { ...data };
+      delete remainingData.state_id;
+
+      try {
+        await updateIssueStateWithPropagation({
+          currentStateId: issue.state_id,
+          newStateId: stateId,
+          subIssuesCount: issue.sub_issues_count,
+          onUpdate: async (updateData) => {
+            if (updateIssue) {
+              await updateIssue(projectId, issueId, { ...remainingData, ...updateData });
+            }
+          },
+        });
+      } catch {
+        setToast(errorToastProps);
+      }
+      return;
     }
 
     updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
