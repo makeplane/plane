@@ -632,6 +632,11 @@ class IssueViewSet(BaseViewSet):
 
         skip_activity = request.data.pop("skip_activity", False)
         propagate_state_to_sub_issues_flag = request.data.pop("propagate_state_to_sub_issues", False)
+        if not isinstance(propagate_state_to_sub_issues_flag, bool):
+            return Response(
+                {"propagate_state_to_sub_issues": ["This field must be a boolean."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         is_description_update = request.data.get("description_html") is not None
 
         issue = (

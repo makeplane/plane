@@ -73,53 +73,69 @@ export const useGroupIssuesDragNDrop = (
     const isModuleChanged = Object.keys(data).includes(moduleKey);
     const isCycleChanged = Object.keys(data).includes(cycleKey);
 
-    if (isCycleChanged && workspaceSlug) {
-      if (data[cycleKey]) {
-        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(() =>
-          setToast(errorToastProps)
-        );
-      } else {
-        removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps));
-      }
-      delete data[cycleKey];
-    }
-
-    if (isModuleChanged && workspaceSlug && issueUpdates[moduleKey]) {
-      changeModulesInIssue(
-        workspaceSlug.toString(),
-        projectId,
-        issueId,
-        issueUpdates[moduleKey].ADD,
-        issueUpdates[moduleKey].REMOVE
-      ).catch(() => setToast(errorToastProps));
-      delete data[moduleKey];
-    }
-
     const issue = getIssueById(issueId);
     const stateId = data.state_id;
+    const needsPropagationPrompt = Boolean(
+      stateId && issue && issue.sub_issues_count > 0 && stateId !== issue.state_id
+    );
 
-    if (stateId && issue && issue.sub_issues_count > 0) {
-      const remainingData = { ...data };
-      delete remainingData.state_id;
+    const applyCycleAndModuleChanges = async () => {
+      if (!workspaceSlug) return;
 
+      if (isCycleChanged) {
+        if (data[cycleKey]) {
+          await addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId);
+        } else {
+          await removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId);
+        }
+      }
+
+      if (isModuleChanged && issueUpdates[moduleKey]) {
+        await changeModulesInIssue(
+          workspaceSlug.toString(),
+          projectId,
+          issueId,
+          issueUpdates[moduleKey].ADD,
+          issueUpdates[moduleKey].REMOVE
+        );
+      }
+    };
+
+    const issueUpdateData = { ...data };
+    if (isCycleChanged) delete issueUpdateData[cycleKey];
+    if (isModuleChanged) delete issueUpdateData[moduleKey];
+
+    const applyIssueUpdate = async (patchData: Partial<TIssue>) => {
+      if (updateIssue) {
+        await updateIssue(projectId, issueId, patchData);
+      }
+    };
+
+    if (needsPropagationPrompt && issue && stateId) {
       try {
         await updateIssueStateWithPropagation({
           currentStateId: issue.state_id,
           newStateId: stateId,
           subIssuesCount: issue.sub_issues_count,
-          onUpdate: async (updateData) => {
-            if (updateIssue) {
-              await updateIssue(projectId, issueId, { ...remainingData, ...updateData });
-            }
+          onUpdate: async (stateUpdateData) => {
+            await applyCycleAndModuleChanges();
+            await applyIssueUpdate({ ...issueUpdateData, ...stateUpdateData });
           },
         });
-      } catch {
+      } catch (error) {
+        console.error("Error while updating work item during drag-and-drop propagation:", error);
         setToast(errorToastProps);
       }
       return;
     }
 
-    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    try {
+      await applyCycleAndModuleChanges();
+      await applyIssueUpdate(issueUpdateData);
+    } catch (error) {
+      console.error("Error while updating work item during drag-and-drop:", error);
+      setToast(errorToastProps);
+    }
   };
 
   const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {

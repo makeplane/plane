@@ -22,6 +22,7 @@ class PropagateStateStore {
 
   prompt(subIssuesCount: number): Promise<boolean | null> {
     return new Promise((resolve) => {
+      this.promptData?.resolve(null);
       this.propagateToSubIssues = false;
       this.isSubmitting = false;
       this.promptData = { subIssuesCount, resolve };
