@@ -49,12 +49,14 @@ export class IntegrationService extends APIService {
   async getExportsServicesList(
     workspaceSlug: string,
     cursor: string,
-    per_page: number
+    per_page: number,
+    exportType?: "issue_exports" | "issue_worklogs"
   ): Promise<IExportServiceResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/export-issues`, {
       params: {
         per_page,
         cursor,
+        ...(exportType ? { type: exportType } : {}),
       },
     })
       .then((response) => response?.data)

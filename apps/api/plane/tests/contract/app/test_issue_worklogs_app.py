@@ -375,3 +375,28 @@ class TestIssueWorklogAPI:
         mock_export.assert_called_once()
         history = ExporterHistory.objects.get(workspace=workspace, type="issue_worklogs")
         assert history.provider == "csv"
+
+    @pytest.mark.django_db
+    @patch("plane.bgtasks.export_task.issue_export_task.delay")
+    @patch("plane.bgtasks.export_task.issue_worklog_export_task.delay")
+    def test_exporter_list_can_filter_worklog_jobs(self, mock_worklog_export, mock_issue_export, session_client, tracking_setup):
+        workspace, project, _issue, _user = tracking_setup
+        url = f"/api/workspaces/{workspace.slug}/export-issues/"
+        session_client.post(
+            url,
+            {"provider": "csv", "project": [str(project.id)], "type": "issue_exports"},
+            format="json",
+        )
+        session_client.post(
+            url,
+            {"provider": "csv", "project": [str(project.id)], "type": "issue_worklogs"},
+            format="json",
+        )
+
+        response = session_client.get(url, {"per_page": 10, "cursor": "10:0:0", "type": "issue_worklogs"})
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        types = {item["type"] for item in response.data["results"]}
+        assert types == {"issue_worklogs"}
+        mock_worklog_export.assert_called_once()
+        mock_issue_export.assert_called_once()

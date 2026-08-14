@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Arbeitsberichte",
         "heading": "Arbeitsberichte",
-        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter."
+        "description": "Laden Sie erfasste Zeit für Mitglieder und Projekte herunter. Zeit wird an Work Items erfasst, nachdem Time Tracking in den Projektfunktionen aktiviert wurde.",
+        "hint": "Diese Seite lädt vorhandene Worklogs herunter. Sie ist kein Timesheet-, Payroll- oder Utilization-Bericht. Aktivieren Sie Time Tracking in einem Projekt und erfassen Sie Zeit an einem Work Item."
       },
       "group_syncing": {
         "title": "Gruppensynchronisation",

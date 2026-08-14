@@ -250,8 +250,8 @@
       "cta_primary": "Créer un élément de travail récurrent"
     },
     "worklogs": {
-      "title": "Suivez les feuilles de temps pour tous les membres",
-      "description": "Enregistrez le temps sur les éléments de travail pour afficher des feuilles de temps détaillées pour tout membre de l'équipe à travers les projets."
+      "title": "Aucun worklog à télécharger",
+      "description": "Saisissez du temps sur les work items, puis téléchargez les worklogs des projets auxquels vous avez accès."
     },
     "group_syncing": {
       "title": "Aucun mappage de groupe pour le moment"

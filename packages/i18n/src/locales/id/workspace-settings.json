@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Log kerja",
         "heading": "Log kerja",
-        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun."
+        "description": "Unduh waktu yang dicatat untuk anggota dan proyek. Waktu dicatat pada work item setelah Time Tracking diaktifkan di fitur proyek.",
+        "hint": "Halaman ini mengunduh worklog yang ada. Ini bukan timesheet, payroll, atau laporan utilization. Aktifkan Time Tracking pada proyek, lalu catat waktu dari work item."
       },
       "group_syncing": {
         "title": "Sinkronisasi grup",

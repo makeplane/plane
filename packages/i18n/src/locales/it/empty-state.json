@@ -250,8 +250,8 @@
       "cta_primary": "Crea elemento di lavoro ricorrente"
     },
     "worklogs": {
-      "title": "Traccia i fogli ore per tutti i membri",
-      "description": "Registra il tempo sugli elementi di lavoro per visualizzare fogli ore dettagliati per qualsiasi membro del team attraverso i progetti."
+      "title": "Nessun worklog da scaricare",
+      "description": "Registra il tempo sui work item, poi scarica i worklog per qualsiasi progetto a cui hai accesso."
     },
     "group_syncing": {
       "title": "Nessuna mappatura di gruppi ancora"

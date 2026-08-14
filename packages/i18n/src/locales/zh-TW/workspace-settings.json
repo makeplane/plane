@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "工作日誌",
         "heading": "工作日誌",
-        "description": "下載任何專案中任何人的工作日誌（即工時表）。"
+        "description": "下載成員與專案的已記錄時間。在專案功能中啟用 Time Tracking 後，於工作項目上記錄時間。",
+        "hint": "此頁面下載既有 worklog。它不是 timesheet、薪資或 utilization 報表。請在專案中啟用 Time Tracking，然後從工作項目記錄時間。"
       },
       "group_syncing": {
         "title": "群組同步",

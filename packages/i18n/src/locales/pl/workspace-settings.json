@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Logi pracy",
         "heading": "Logi pracy",
-        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
+        "description": "Pobierz zarejestrowany czas członków i projektów. Czas rejestruje się na work items po włączeniu Time Tracking w funkcjach projektu.",
+        "hint": "Ta strona pobiera istniejące worklogi. To nie jest timesheet, payroll ani raport utilization. Włącz Time Tracking w projekcie, a następnie zarejestruj czas na work item."
       },
       "group_syncing": {
         "title": "Synchronizacja grup",

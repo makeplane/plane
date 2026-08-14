@@ -126,8 +126,8 @@ export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
   `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
 
 //export
-export const EXPORT_SERVICES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
-  `EXPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
+export const EXPORT_SERVICES_LIST = (workspaceSlug: string, cursor: string, per_page: string, exportType?: string) =>
+  `EXPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}_${(exportType ?? "all").toUpperCase()}`;
 
 // github-importer
 export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>

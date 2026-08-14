@@ -14,7 +14,12 @@ import { EXPORT_SERVICES_LIST } from "@plane/constants";
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
 
-export const ExportGuide = observer(function ExportGuide() {
+type Props = {
+  exportType?: "issue_exports" | "issue_worklogs";
+};
+
+export const ExportGuide = observer(function ExportGuide(props: Props) {
+  const { exportType } = props;
   // router
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
@@ -29,9 +34,16 @@ export const ExportGuide = observer(function ExportGuide() {
         <ExportForm
           workspaceSlug={workspaceSlug}
           provider={provider}
-          mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`))}
+          lockedType={exportType}
+          mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`, exportType))}
         />
-        <PrevExports workspaceSlug={workspaceSlug} cursor={cursor} per_page={per_page} setCursor={setCursor} />
+        <PrevExports
+          workspaceSlug={workspaceSlug}
+          cursor={cursor}
+          per_page={per_page}
+          setCursor={setCursor}
+          exportType={exportType}
+        />
       </div>
     </>
   );

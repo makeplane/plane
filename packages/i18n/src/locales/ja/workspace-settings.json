@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "作業ログ",
         "heading": "作業ログ",
-        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。"
+        "description": "メンバーとプロジェクトの記録時間をダウンロードします。Time Tracking をプロジェクト機能で有効にしたあと、ワークアイテムに時間を記録します。",
+        "hint": "このページは既存の worklog をダウンロードします。timesheet、給与、utilization レポートではありません。プロジェクトで Time Tracking を有効にし、ワークアイテムから時間を記録してください。"
       },
       "group_syncing": {
         "title": "グループ同期",

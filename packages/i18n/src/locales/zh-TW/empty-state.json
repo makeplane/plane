@@ -250,8 +250,8 @@
       "cta_primary": "建立循環工作項"
     },
     "worklogs": {
-      "title": "追蹤所有成員的工時表",
-      "description": "在工作項上記錄時間以檢視跨專案任何團隊成員的詳細工時表。"
+      "title": "尚無 worklog 可下載",
+      "description": "先在工作項目上記錄時間，再下載你可存取專案的 worklog。"
     },
     "group_syncing": {
       "title": "尚無群組對應"

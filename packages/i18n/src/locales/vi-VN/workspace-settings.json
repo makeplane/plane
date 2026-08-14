@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Nhật ký công việc",
         "heading": "Nhật ký công việc",
-        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
+        "description": "Tải xuống thời gian đã ghi cho thành viên và dự án. Thời gian được ghi trên work item sau khi bật Time Tracking trong tính năng dự án.",
+        "hint": "Trang này tải worklog hiện có. Đây không phải timesheet, payroll hay báo cáo utilization. Bật Time Tracking trên dự án, rồi ghi thời gian từ work item."
       },
       "group_syncing": {
         "title": "Đồng bộ nhóm",

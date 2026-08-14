@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Pracovné záznamy",
         "heading": "Záznamy práce",
-        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte."
+        "description": "Stiahnite zaznamenaný čas pre členov a projekty. Čas sa zaznamenáva na pracovných položkách po zapnutí Time Tracking vo funkciách projektu.",
+        "hint": "Táto stránka sťahuje existujúce worklogs. Nie je to timesheet, výplatný ani utilization report. Zapnite Time Tracking v projekte a potom zaznamenajte čas z pracovnej položky."
       },
       "group_syncing": {
         "title": "Synchronizácia skupín",
