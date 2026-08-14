@@ -148,6 +148,7 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
           phase: "focus",
           issueName,
           settings,
+          timerId: activeTimer.id,
         });
 
         if (settings.auto_start_break) {
@@ -205,6 +206,7 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
       phase: "break",
       issueName: focusIssueName,
       settings,
+      timerId: activeTimer?.id,
     });
 
     const nextFocusIssueId = focusIssueId;
@@ -226,6 +228,7 @@ export const usePomodoroTimer = (): TPomodoroTimerReturn => {
     breakSecondsLeft,
     breakEndsAt,
     sessionCount,
+    activeTimer?.id,
   ]);
 
   const pause = useCallback(async () => {

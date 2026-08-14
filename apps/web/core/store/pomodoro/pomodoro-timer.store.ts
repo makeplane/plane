@@ -80,6 +80,12 @@ export interface IPomodoroTimerStore {
   resumeTimer: () => Promise<void>;
   completeTimer: (createTimeLog?: boolean) => Promise<TCompletePomodoroResponse>;
   discardTimer: () => Promise<void>;
+  skipTimer: () => Promise<void>;
+  /** Applies a `pomodoro_timer` sync event pushed from another device — see
+   * hooks/sync/use-sync-socket.ts. Re-fetches the authoritative timer row
+   * rather than trusting the event payload directly, since remaining time
+   * must always be derived from server timestamps, never patched locally. */
+  applyRemoteSyncEvent: () => Promise<void>;
   // phase actions
   transitionToBreak: () => void;
   startBreak: () => void;
@@ -144,6 +150,8 @@ export class PomodoroTimerStore implements IPomodoroTimerStore {
       resumeTimer: action,
       completeTimer: action,
       discardTimer: action,
+      skipTimer: action,
+      applyRemoteSyncEvent: action,
       transitionToBreak: action,
       startBreak: action,
       pauseBreak: action,
@@ -520,5 +528,26 @@ export class PomodoroTimerStore implements IPomodoroTimerStore {
       this.loader = undefined;
       this.resetCycle();
     });
+  };
+
+  skipTimer = async () => {
+    if (!this.getActiveTimer()) return;
+    this.loader = "mutate";
+    const timer = await this.pomodoroTimerService.skipTimer(this.activeTimer!.id);
+
+    runInAction(() => {
+      this.activeTimer = timer;
+      this.sessionCount = timer.session_index;
+      this.loader = undefined;
+      this.publishSnapshot();
+    });
+  };
+
+  applyRemoteSyncEvent = async () => {
+    // A remote device changed timer state (started/paused/resumed/skipped/
+    // completed). Re-fetch rather than trust the event payload: the payload
+    // is a hint for APNs/UI, the DB row is the single source of truth for
+    // remaining-time calculations everywhere.
+    await this.fetchTimers();
   };
 }

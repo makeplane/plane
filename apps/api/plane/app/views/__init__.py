@@ -150,6 +150,8 @@ from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
 from .issue.time_log import IssueTimeLogViewSet
 
 from .pomodoro import PomodoroTimerViewSet, PomodoroNotifyEndpoint
+from .device import DeviceViewSet
+from .sync import SyncReplayEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

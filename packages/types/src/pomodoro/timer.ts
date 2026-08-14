@@ -63,6 +63,8 @@ export type TPomodoroTimer = {
   paused_seconds: number;
   status: TPomodoroTimerStatus;
   description: string;
+  /** 1-indexed session number within the run leading up to a long break */
+  session_index: number;
   created_at: string;
   updated_at: string;
 };

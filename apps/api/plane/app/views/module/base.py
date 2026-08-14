@@ -50,7 +50,9 @@ from plane.app.serializers import (
     ModuleWriteSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.sync_event_task import sync_event
 from plane.db.models import (
+    SyncEvent,
     Issue,
     Module,
     UserFavorite,
@@ -344,6 +346,14 @@ class ModuleViewSet(BaseViewSet):
                 actor_id=request.user.id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
+            )
+            sync_event.delay(
+                workspace_id=str(module["workspace_id"]),
+                entity_type=SyncEvent.EntityType.MODULE,
+                entity_id=str(module["id"]),
+                action=SyncEvent.Action.CREATED,
+                actor_id=str(request.user.id),
+                payload={"project_id": str(project_id)},
             )
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
@@ -714,6 +724,14 @@ class ModuleViewSet(BaseViewSet):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            sync_event.delay(
+                workspace_id=str(module["workspace_id"]),
+                entity_type=SyncEvent.EntityType.MODULE,
+                entity_id=str(module["id"]),
+                action=SyncEvent.Action.UPDATED,
+                actor_id=str(request.user.id),
+                payload={"project_id": str(project_id), "changed_fields": list(request.data.keys())},
+            )
 
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
@@ -739,6 +757,14 @@ class ModuleViewSet(BaseViewSet):
             )
             for issue in module_issues
         ]
+        sync_event.delay(
+            workspace_id=str(module.workspace_id),
+            entity_type=SyncEvent.EntityType.MODULE,
+            entity_id=str(pk),
+            action=SyncEvent.Action.DELETED,
+            actor_id=str(request.user.id),
+            payload={"project_id": str(project_id)},
+        )
         module.delete()
         # Delete the module issues
         ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()

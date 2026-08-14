@@ -13,6 +13,10 @@ export const notifyPomodoroPhaseEnd = async (options: {
   phase: "focus" | "break";
   issueName?: string | null;
   settings: TPomodoroSettings;
+  /** the timer this phase belongs to — forwarded to the server so it can fan
+   * this phase-end out to the user's other devices (APNs alert push) even
+   * when this device has no Discord webhook configured. */
+  timerId?: string;
 }): Promise<void> => {
   const issueSuffix = options.issueName ? ` · ${options.issueName}` : "";
   const title = options.phase === "focus" ? "Focus complete" : "Break over";
@@ -32,12 +36,14 @@ export const notifyPomodoroPhaseEnd = async (options: {
     }
   }
 
-  if (options.settings.discord_webhook_url?.trim()) {
-    try {
-      const service = new PomodoroTimerService();
-      await service.notifyPhaseEnd({ phase: options.phase, title, body });
-    } catch {
-      // ignore delivery failures so timer flow is uninterrupted
-    }
+  // Always tell the server a phase ended (not gated on Discord being
+  // configured) — it's the server that fans this out to other devices via
+  // sync_event/apns_push_task; the Discord post is just one thing it may
+  // additionally do with it.
+  try {
+    const service = new PomodoroTimerService();
+    await service.notifyPhaseEnd({ phase: options.phase, title, body, timer_id: options.timerId });
+  } catch {
+    // ignore delivery failures so timer flow is uninterrupted
   }
 };

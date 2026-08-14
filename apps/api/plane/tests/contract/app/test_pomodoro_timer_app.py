@@ -393,3 +393,61 @@ class TestPomodoroTimerList:
         timers = response.data
         assert len(timers) == 1
         assert timers[0]["started_by"] == create_user.id
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestPomodoroTimerSyncIdempotency:
+    """A repeated `client_mutation_id` collapses to one state transition —
+    the mechanism that prevents two devices racing the same action (e.g. web
+    and iOS both sending "pause" around the same time) from double-applying
+    it. See PomodoroTimerViewSet._duplicate_mutation."""
+
+    @patch("plane.app.views.pomodoro.sync_event.delay")
+    def test_repeated_pause_with_same_mutation_id_is_a_noop(
+        self, mock_sync_event, workspace, project_with_issue, create_user
+    ):
+        timer = PomodoroTimer.objects.create(
+            workspace=workspace,
+            project=project_with_issue,
+            issue=project_with_issue._issue,
+            started_by=create_user,
+            started_at=timezone.now(),
+            duration_minutes=25,
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+
+        mutation_id = "11111111-1111-1111-1111-111111111111"
+        first = client.post(_pomodoro_url(timer.id, "pause"), {"client_mutation_id": mutation_id}, format="json")
+        assert first.status_code == status.HTTP_200_OK
+        assert first.data["status"] == "paused"
+        first_paused_seconds = first.data["paused_seconds"]
+
+        second = client.post(_pomodoro_url(timer.id, "pause"), {"client_mutation_id": mutation_id}, format="json")
+        assert second.status_code == status.HTTP_200_OK
+        assert second.data["paused_seconds"] == first_paused_seconds
+
+        # Only the first pause should have emitted a sync event.
+        assert mock_sync_event.call_count == 1
+
+    @patch("plane.app.views.pomodoro.sync_event.delay")
+    def test_pause_emits_a_sync_event(self, mock_sync_event, workspace, project_with_issue, create_user):
+        timer = PomodoroTimer.objects.create(
+            workspace=workspace,
+            project=project_with_issue,
+            issue=project_with_issue._issue,
+            started_by=create_user,
+            started_at=timezone.now(),
+            duration_minutes=25,
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+        response = client.post(_pomodoro_url(timer.id, "pause"), format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        mock_sync_event.assert_called_once()
+        assert mock_sync_event.call_args.kwargs["entity_type"] == "pomodoro_timer"
+        assert mock_sync_event.call_args.kwargs["entity_id"] == str(timer.id)

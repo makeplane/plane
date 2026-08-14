@@ -26,7 +26,8 @@ from plane.app.serializers import (
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Issue, PomodoroTimer, Profile, ProjectMember, TimeLog
+from plane.bgtasks.sync_event_task import sync_event
+from plane.db.models import Issue, PomodoroTimer, Profile, ProjectMember, TimeLog, SyncEvent
 from plane.utils.host import base_host
 
 logger = logging.getLogger("plane")
@@ -35,9 +36,35 @@ DISCORD_WEBHOOK_HOSTS = {"discord.com", "discordapp.com"}
 
 
 class PomodoroNotifyEndpoint(BaseAPIView):
-    """Proxy pomodoro phase-end messages to the user's Discord webhook."""
+    """Proxy pomodoro phase-end messages to the user's Discord webhook.
+
+    Also fans the phase-end out as a sync event so other devices (which did not
+    trigger this phase transition locally) get a visible APNs alert instead of
+    silently missing it — see `_notify_stale_devices` / `apns_push_task`.
+    """
 
     def post(self, request):
+        timer_id = request.data.get("timer_id")
+        phase = request.data.get("phase") or "focus"
+        if timer_id:
+            timer = PomodoroTimer.objects.filter(
+                pk=timer_id, started_by=request.user, deleted_at__isnull=True
+            ).first()
+            if timer:
+                sync_event.delay(
+                    workspace_id=str(timer.workspace_id),
+                    entity_type=SyncEvent.EntityType.POMODORO_TIMER,
+                    entity_id=str(timer.id),
+                    action=SyncEvent.Action.UPDATED,
+                    actor_id=str(request.user.id),
+                    payload={
+                        "status": timer.status,
+                        "action": "phase_end",
+                        "phase": phase,
+                        "session_index": timer.session_index,
+                    },
+                )
+
         # pomodoro_settings live on Profile (not User)
         try:
             settings = request.user.profile.pomodoro_settings or {}
@@ -157,7 +184,9 @@ class PomodoroTimerViewSet(BaseViewSet):
             started_at=timezone.now(),
             duration_minutes=serializer.validated_data.get("duration_minutes") or 25,
             description=serializer.validated_data.get("description", ""),
+            client_mutation_id=request.data.get("client_mutation_id"),
         )
+        self._emit_sync(request, timer, "created")
 
         return Response(
             PomodoroTimerReadSerializer(timer).data,
@@ -166,6 +195,35 @@ class PomodoroTimerViewSet(BaseViewSet):
 
     def _get_timer(self, request, pk):
         return PomodoroTimer.objects.get(pk=pk, started_by=request.user, deleted_at__isnull=True)
+
+    def _duplicate_mutation(self, timer, client_mutation_id):
+        """True if this request's client_mutation_id was already applied.
+
+        Two devices racing the same logical action (e.g. web and iOS both send
+        "pause" for the same timer within the same round-trip) collapse to one
+        state transition: the first write wins and stores its
+        client_mutation_id, so a retried/duplicate request carrying the same key
+        is a no-op rather than a second transition.
+        """
+        return bool(client_mutation_id) and str(timer.client_mutation_id) == str(client_mutation_id)
+
+    def _emit_sync(self, request, timer, action_name):
+        sync_event.delay(
+            workspace_id=str(timer.workspace_id),
+            entity_type=SyncEvent.EntityType.POMODORO_TIMER,
+            entity_id=str(timer.id),
+            action=SyncEvent.Action.UPDATED if action_name != "created" else SyncEvent.Action.CREATED,
+            actor_id=str(request.user.id),
+            payload={
+                "status": timer.status,
+                "started_at": timer.started_at.isoformat(),
+                "duration_minutes": timer.duration_minutes,
+                "paused_seconds": timer.paused_seconds,
+                "session_index": timer.session_index,
+                "issue_id": str(timer.issue_id),
+                "action": action_name,
+            },
+        )
 
     def _elapsed_seconds(self, timer):
         """Total elapsed focus time.
@@ -180,6 +238,9 @@ class PomodoroTimerViewSet(BaseViewSet):
     @action(detail=True, methods=["post"])
     def pause(self, request, pk=None):
         timer = self._get_timer(request, pk)
+        client_mutation_id = request.data.get("client_mutation_id")
+        if self._duplicate_mutation(timer, client_mutation_id):
+            return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
         if timer.status != PomodoroTimer.Status.RUNNING:
             return Response(
                 {"error": "Only a running timer can be paused."},
@@ -187,12 +248,17 @@ class PomodoroTimerViewSet(BaseViewSet):
             )
         timer.paused_seconds = self._elapsed_seconds(timer)
         timer.status = PomodoroTimer.Status.PAUSED
+        timer.client_mutation_id = client_mutation_id
         timer.save()
+        self._emit_sync(request, timer, "paused")
         return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"])
     def resume(self, request, pk=None):
         timer = self._get_timer(request, pk)
+        client_mutation_id = request.data.get("client_mutation_id")
+        if self._duplicate_mutation(timer, client_mutation_id):
+            return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
         if timer.status != PomodoroTimer.Status.PAUSED:
             return Response(
                 {"error": "Only a paused timer can be resumed."},
@@ -200,7 +266,33 @@ class PomodoroTimerViewSet(BaseViewSet):
             )
         timer.started_at = timezone.now()
         timer.status = PomodoroTimer.Status.RUNNING
+        timer.client_mutation_id = client_mutation_id
         timer.save()
+        self._emit_sync(request, timer, "resumed")
+        return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"])
+    def skip(self, request, pk=None):
+        """Skip the current phase without recording a time log.
+
+        Distinct from `discard`: the session still advances `session_index` (so
+        the next phase/session numbering stays correct across devices) rather
+        than terminating the whole pomodoro run.
+        """
+        timer = self._get_timer(request, pk)
+        client_mutation_id = request.data.get("client_mutation_id")
+        if self._duplicate_mutation(timer, client_mutation_id):
+            return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
+        if timer.status not in [PomodoroTimer.Status.RUNNING, PomodoroTimer.Status.PAUSED]:
+            return Response(
+                {"error": "Only an active timer can be skipped."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        timer.status = PomodoroTimer.Status.DISCARDED
+        timer.session_index += 1
+        timer.client_mutation_id = client_mutation_id
+        timer.save()
+        self._emit_sync(request, timer, "skipped")
         return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"])
@@ -211,6 +303,12 @@ class PomodoroTimerViewSet(BaseViewSet):
         recording a worklog entry (mirrors the user's pomodoro settings).
         """
         timer = self._get_timer(request, pk)
+        client_mutation_id = request.data.get("client_mutation_id")
+        if self._duplicate_mutation(timer, client_mutation_id):
+            return Response(
+                {"time_log": None, "timer": PomodoroTimerReadSerializer(timer).data},
+                status=status.HTTP_200_OK,
+            )
         if timer.status not in [PomodoroTimer.Status.RUNNING, PomodoroTimer.Status.PAUSED]:
             return Response(
                 {"error": "Only an active timer can be completed."},
@@ -247,7 +345,9 @@ class PomodoroTimerViewSet(BaseViewSet):
             )
 
         timer.status = PomodoroTimer.Status.COMPLETED
+        timer.client_mutation_id = client_mutation_id
         timer.save()
+        self._emit_sync(request, timer, "completed")
 
         return Response(
             {
@@ -261,11 +361,16 @@ class PomodoroTimerViewSet(BaseViewSet):
     def discard(self, request, pk=None):
         """Cancel the focus session without creating a time log."""
         timer = self._get_timer(request, pk)
+        client_mutation_id = request.data.get("client_mutation_id")
+        if self._duplicate_mutation(timer, client_mutation_id):
+            return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)
         if timer.status not in [PomodoroTimer.Status.RUNNING, PomodoroTimer.Status.PAUSED]:
             return Response(
                 {"error": "Only an active timer can be discarded."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         timer.status = PomodoroTimer.Status.DISCARDED
+        timer.client_mutation_id = client_mutation_id
         timer.save()
+        self._emit_sync(request, timer, "discarded")
         return Response(PomodoroTimerReadSerializer(timer).data, status=status.HTTP_200_OK)

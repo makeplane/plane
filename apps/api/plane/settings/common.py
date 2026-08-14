@@ -262,6 +262,15 @@ else:
         }
     }
 
+# APNs (iOS/macOS silent + alert push for real-time sync, see bgtasks/apns_push_task.py)
+# APNS_AUTH_KEY is the raw contents of the .p8 token-signing key from
+# App Store Connect; left unset (falsy) disables APNs delivery entirely and the
+# task becomes a no-op — WS delivery/replay-on-reconnect still covers devices.
+APNS_AUTH_KEY = os.environ.get("APNS_AUTH_KEY")
+APNS_KEY_ID = os.environ.get("APNS_KEY_ID")
+APNS_TEAM_ID = os.environ.get("APNS_TEAM_ID")
+APNS_BUNDLE_ID = os.environ.get("APNS_BUNDLE_ID", "so.plane.ios")
+
 # Password validations
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
