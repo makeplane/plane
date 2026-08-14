@@ -31,6 +31,10 @@ export const PlansComparison = observer(function PlansComparison(props: TPlansCo
   // plan details
   const { planDetails } = PLANE_PLANS;
 
+  // This checkout is the self-hosted Community edition: the plan comparison is
+  // informational and must not surface cloud purchase CTAs.
+  const isSelfManaged = true;
+
   return (
     <PlansComparisonBase
       planeDetails={Object.entries(planDetails).map(([planKey, plan]) => {
@@ -43,10 +47,11 @@ export const PlansComparison = observer(function PlansComparison(props: TPlansCo
             planDetail={plan}
             billingFrequency={getBillingFrequency(plan.id)}
             setBillingFrequency={(frequency) => setBillingFrequency(plan.id, frequency)}
+            isSelfManaged={isSelfManaged}
           />
         );
       })}
-      isSelfManaged
+      isSelfManaged={isSelfManaged}
       isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
       setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
     />

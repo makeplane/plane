@@ -6,10 +6,13 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
 // local components
@@ -23,6 +26,25 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
   const { t } = useTranslation();
   // platform
   const { isMobile } = usePlatformOS();
+  // router params
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { isSelfHosted } = useSelfHostedPolicy();
+
+  // The self-hosted Community edition has no purchasable plan tier: the badge
+  // points at the billing settings page (Community policy) instead of opening
+  // the cloud upgrade modal, which implies missing paid-only features.
+  if (isSelfHosted) {
+    return (
+      <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
+        <Link href={`/${workspaceSlug}/settings/billing`}>
+          <Button variant="tertiary" size="lg" aria-label={t("aria_labels.projects_sidebar.edition_badge")}>
+            Community
+          </Button>
+        </Link>
+      </Tooltip>
+    );
+  }
 
   return (
     <>

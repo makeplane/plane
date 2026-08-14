@@ -23,6 +23,7 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 // hooks
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
@@ -59,6 +60,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
   const { preferences: workspacePreferences, toggleWorkspaceItem } = useWorkspaceNavigationPreferences();
+  const { hasCommercialGating } = useSelfHostedPolicy();
 
   // derived values
   const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? false;
@@ -201,7 +203,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            {item.key === "active_cycles" && (
+            {item.key === "active_cycles" && hasCommercialGating && (
               <div className="flex-shrink-0">
                 <UpgradeBadge />
               </div>
