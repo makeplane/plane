@@ -10,10 +10,16 @@ import { WorkspaceContentWrapper } from "@/components/workspace/content-wrapper"
 import { AppRailVisibilityProvider } from "@/lib/app-rail";
 import { GlobalModals } from "@/components/common/modal/global";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
+import { useSyncSocket } from "@/hooks/sync/use-sync-socket";
 import type { Route } from "./+types/layout";
 
 export default function WorkspaceLayout(props: Route.ComponentProps) {
   const { workspaceSlug } = props.params;
+
+  // Real-time sync: reflects issue/comment/cycle/module/project/pomodoro
+  // changes made on other devices (including the native iOS/macOS apps) into
+  // this workspace's SWR cache and pomodoro store without a manual refresh.
+  useSyncSocket(workspaceSlug);
 
   return (
     <AuthenticationWrapper>

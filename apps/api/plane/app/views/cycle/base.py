@@ -41,7 +41,9 @@ from plane.app.serializers import (
     CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.sync_event_task import sync_event
 from plane.db.models import (
+    SyncEvent,
     Cycle,
     CycleIssue,
     UserFavorite,
@@ -324,6 +326,14 @@ class CycleViewSet(BaseViewSet):
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
+                sync_event.delay(
+                    workspace_id=str(project.workspace_id),
+                    entity_type=SyncEvent.EntityType.CYCLE,
+                    entity_id=str(cycle["id"]),
+                    action=SyncEvent.Action.CREATED,
+                    actor_id=str(request.user.id),
+                    payload={"project_id": str(project_id)},
+                )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -402,6 +412,14 @@ class CycleViewSet(BaseViewSet):
                 actor_id=request.user.id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
+            )
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.CYCLE,
+                entity_id=str(cycle["id"]),
+                action=SyncEvent.Action.UPDATED,
+                actor_id=str(request.user.id),
+                payload={"project_id": str(project_id), "changed_fields": list(request.data.keys())},
             )
 
             return Response(cycle, status=status.HTTP_200_OK)
@@ -496,6 +514,14 @@ class CycleViewSet(BaseViewSet):
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
+        )
+        sync_event.delay(
+            workspace_id=str(cycle.workspace_id),
+            entity_type=SyncEvent.EntityType.CYCLE,
+            entity_id=str(pk),
+            action=SyncEvent.Action.DELETED,
+            actor_id=str(request.user.id),
+            payload={"project_id": str(project_id)},
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()

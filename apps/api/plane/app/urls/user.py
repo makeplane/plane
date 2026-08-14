@@ -6,6 +6,7 @@ from django.urls import path
 
 from plane.app.views import (
     AccountEndpoint,
+    DeviceViewSet,
     PomodoroNotifyEndpoint,
     PomodoroTimerViewSet,
     ProfileEndpoint,
@@ -90,7 +91,24 @@ urlpatterns = [
         PomodoroTimerViewSet.as_view({"post": "discard"}),
         name="pomodoro-timers",
     ),
+    path(
+        "users/me/pomodoro-timers/<uuid:pk>/skip/",
+        PomodoroTimerViewSet.as_view({"post": "skip"}),
+        name="pomodoro-timers",
+    ),
     ## End pomodoro timers
+    # Devices (iOS/macOS APNs registration for real-time sync)
+    path(
+        "users/me/devices/",
+        DeviceViewSet.as_view({"get": "list", "post": "create"}),
+        name="devices",
+    ),
+    path(
+        "users/me/devices/<uuid:pk>/",
+        DeviceViewSet.as_view({"delete": "destroy"}),
+        name="devices",
+    ),
+    ## End devices
     path(
         "users/me/tour-completed/",
         UpdateUserTourCompletedEndpoint.as_view(),

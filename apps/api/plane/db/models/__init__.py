@@ -8,6 +8,7 @@ from .asset import FileAsset
 from .base import BaseModel
 from .cycle import Cycle, CycleIssue, CycleUserProperties
 from .deploy_board import DeployBoard
+from .device import Device, DeviceWorkspaceCursor
 from .draft import (
     DraftIssue,
     DraftIssueAssignee,
@@ -65,6 +66,7 @@ from .social_connection import SocialLoginConnection
 from .state import State, StateGroup, DEFAULT_STATES
 from .time_log import TimeLog
 from .pomodoro import PomodoroTimer
+from .sync_event import SyncEvent, WorkspaceSyncSequence
 from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
@@ -87,8 +89,6 @@ from .issue_type import IssueType
 from .recent_visit import UserRecentVisit
 
 from .label import Label
-
-from .device import Device, DeviceSession
 
 from .sticky import Sticky
 

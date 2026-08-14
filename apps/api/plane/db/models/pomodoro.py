@@ -50,6 +50,17 @@ class PomodoroTimer(BaseModel):
     paused_seconds = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=32, choices=Status.choices, default=Status.RUNNING)
     description = models.TextField(blank=True)
+    # Which focus session (1-indexed) this is within the run leading up to a long
+    # break, i.e. counts up to `sessions_before_long_break` before resetting.
+    # Lets every device render "Session 2 of 4" identically without recomputing
+    # it from TimeLog history.
+    session_index = models.PositiveIntegerField(default=1)
+    # Idempotency key supplied by the client on start/pause/resume/skip/complete.
+    # Two devices racing the same logical action (e.g. both issue "pause" within
+    # the same round-trip) collapse to a single state transition instead of a
+    # double-pause / duplicate TimeLog. Nullable: only the most recent mutation's
+    # key is kept, it is not a log of every key ever seen.
+    client_mutation_id = models.UUIDField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Pomodoro Timer"
