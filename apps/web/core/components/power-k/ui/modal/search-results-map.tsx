@@ -20,14 +20,28 @@ import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { highlightSearchKeywords, highlightSearchMatches } from "./search-highlight";
 
-export type TPowerKSearchResultGroupDetails = {
+export type TPowerKSearchResultItemMap = {
+  workspace: IWorkspaceSearchResult;
+  project: IWorkspaceProjectSearchResult;
+  issue: IWorkspaceIssueSearchResult;
+  cycle: IWorkspaceDefaultSearchResult;
+  module: IWorkspaceDefaultSearchResult;
+  issue_view: IWorkspaceDefaultSearchResult;
+  page: IWorkspacePageSearchResult;
+};
+
+export type TPowerKSearchResultGroupDetails<TKey extends TPowerKSearchResultsKeys> = {
   icon?: React.ComponentType<{ className?: string }>;
-  itemName: (item: any, searchTerm: string) => React.ReactNode;
-  path: (item: any, projectId: string | undefined) => string;
+  itemName: (item: TPowerKSearchResultItemMap[TKey], searchTerm: string) => React.ReactNode;
+  path: (item: TPowerKSearchResultItemMap[TKey], projectId: string | undefined) => string;
   title: string;
 };
 
-export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
+type TPowerKSearchResultGroupsMap = {
+  [TKey in TPowerKSearchResultsKeys]: TPowerKSearchResultGroupDetails<TKey>;
+};
+
+export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
   cycle: {
     icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult, searchTerm: string) => (
