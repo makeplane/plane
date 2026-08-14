@@ -18,7 +18,7 @@ import { generateWorkItemLink } from "@plane/utils";
 // components
 import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
-import { highlightSearchMatches } from "./search-highlight";
+import { highlightSearchKeywords, highlightSearchMatches } from "./search-highlight";
 
 export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
@@ -51,11 +51,11 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
             issueSequenceId={workItem.sequence_id}
             size="xs"
           />
-          <span className="truncate">{highlightSearchMatches(workItem.name, searchTerm)}</span>
+          <span className="truncate">{highlightSearchKeywords(workItem.name, searchTerm)}</span>
         </div>
         {workItem.description_snippet && (
           <p className="mt-0.5 line-clamp-2 text-11 text-tertiary">
-            {highlightSearchMatches(workItem.description_snippet, searchTerm)}
+            {highlightSearchKeywords(workItem.description_snippet, searchTerm)}
           </p>
         )}
       </div>

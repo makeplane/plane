@@ -45,8 +45,12 @@ export function PowerKModalSearchMenu(props: Props) {
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
     setIsSearching(true);
+    setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
+    setResultsCount(0);
 
-    if (debouncedSearchTerm) {
+    const hasSearchTerm = debouncedSearchTerm.trim() !== "";
+
+    if (hasSearchTerm) {
       workspaceService
         .searchWorkspace(workspaceSlug.toString(), {
           ...(projectId ? { project_id: projectId.toString() } : {}),

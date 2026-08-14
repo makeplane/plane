@@ -45,6 +45,29 @@ def search_issues(db, workspace, project):
     return title_match, description_match, no_match
 
 
+@pytest.fixture
+def multi_keyword_search_issues(db, workspace, project):
+    title_and_description_match = Issue.objects.create(
+        name="Alpha title",
+        description_html="<p>Body contains beta.</p>",
+        workspace=workspace,
+        project=project,
+    )
+    description_match = Issue.objects.create(
+        name="Unrelated title",
+        description_html="<p>Alpha and beta are both in the body.</p>",
+        workspace=workspace,
+        project=project,
+    )
+    partial_match = Issue.objects.create(
+        name="Alpha only",
+        description_html="<p>Only alpha appears here.</p>",
+        workspace=workspace,
+        project=project,
+    )
+    return title_and_description_match, description_match, partial_match
+
+
 @pytest.mark.contract
 class TestGlobalSearch:
     @pytest.mark.django_db
@@ -64,3 +87,23 @@ class TestGlobalSearch:
         assert results[str(title_match.id)]["description_snippet"] is None
         assert "needle" in results[str(description_match.id)]["description_snippet"].lower()
         assert "<p>" not in results[str(description_match.id)]["description_snippet"]
+
+    @pytest.mark.django_db
+    def test_requires_all_keywords_across_issue_title_and_description(
+        self, session_client, workspace, project, multi_keyword_search_issues
+    ):
+        title_and_description_match, description_match, partial_match = multi_keyword_search_issues
+        response = session_client.get(
+            reverse("global-search", kwargs={"slug": workspace.slug}),
+            {"search": "  alpha   beta  ", "project_id": str(project.id), "workspace_search": "false"},
+        )
+
+        assert response.status_code == 200
+        results = {str(result["id"]): result for result in response.data["results"]["issue"]}
+
+        assert str(title_and_description_match.id) in results
+        assert str(description_match.id) in results
+        assert str(partial_match.id) not in results
+        assert "beta" in results[str(title_and_description_match.id)]["description_snippet"].lower()
+        assert "alpha" in results[str(description_match.id)]["description_snippet"].lower()
+        assert "beta" in results[str(description_match.id)]["description_snippet"].lower()

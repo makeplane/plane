@@ -41,7 +41,7 @@ from plane.db.models import (
     ProjectPage,
     WorkspaceMember,
 )
-from plane.utils.issue_search import build_search_snippet
+from plane.utils.issue_search import build_search_snippet, split_search_terms
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -85,14 +85,25 @@ class GlobalSearchEndpoint(BaseAPIView):
         fields = ["name", "description_stripped", "sequence_id", "project__identifier"]
         q = Q()
         if query:
-            for field in fields:
-                if field == "sequence_id":
-                    # Match whole integers only (exclude decimal numbers)
-                    sequences = re.findall(r"\b\d+\b", query)
-                    for sequence_id in sequences:
-                        q |= Q(**{"sequence_id": sequence_id})
-                else:
-                    q |= Q(**{f"{field}__icontains": query})
+            search_terms = split_search_terms(query)
+            if not search_terms:
+                q = Q(pk__in=[])
+            elif len(search_terms) == 1:
+                search_term = search_terms[0]
+                for field in fields:
+                    if field == "sequence_id":
+                        # Match whole integers only (exclude decimal numbers)
+                        sequences = re.findall(r"\b\d+\b", search_term)
+                        for sequence_id in sequences:
+                            q |= Q(**{"sequence_id": sequence_id})
+                    else:
+                        q |= Q(**{f"{field}__icontains": search_term})
+            else:
+                # For multi-keyword searches, every term must match either the
+                # work item title or its plain-text description. Sequence IDs
+                # and project identifiers intentionally retain no new behavior.
+                for search_term in search_terms:
+                    q &= Q(name__icontains=search_term) | Q(description_stripped__icontains=search_term)
 
         issues = Issue.issue_objects.filter(
             q,

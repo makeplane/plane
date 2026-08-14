@@ -11,23 +11,34 @@ from django.db.models import Q
 # Module imports
 
 
+def split_search_terms(query):
+    """Split a search query into non-empty terms using any whitespace."""
+    return (query or "").split()
+
+
 def build_search_snippet(content, query, max_length=120):
-    """Return a plain-text snippet centered around the first query match."""
+    """Return a plain-text snippet centered around the first matching term."""
     normalized_content = " ".join((content or "").split())
-    normalized_query = " ".join((query or "").split())
+    search_terms = split_search_terms(query)
 
-    if not normalized_content or not normalized_query:
+    if not normalized_content or not search_terms:
         return None
 
-    match_index = normalized_content.casefold().find(normalized_query.casefold())
-    if match_index == -1:
+    normalized_content_casefolded = normalized_content.casefold()
+    matching_terms = [
+        (normalized_content_casefolded.find(term.casefold()), term)
+        for term in search_terms
+    ]
+    matching_terms = [(index, term) for index, term in matching_terms if index >= 0]
+    if not matching_terms:
         return None
 
-    snippet_length = max(max_length, len(normalized_query))
+    match_index, matched_term = min(matching_terms, key=lambda match: match[0])
+    snippet_length = max(max_length, len(matched_term))
     if len(normalized_content) <= snippet_length:
         return normalized_content
 
-    context_before = max(0, (snippet_length - len(normalized_query)) // 2)
+    context_before = max(0, (snippet_length - len(matched_term)) // 2)
     start_index = max(0, match_index - context_before)
     end_index = min(len(normalized_content), start_index + snippet_length)
 

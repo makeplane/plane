@@ -39,7 +39,7 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
         if (section.length <= 0) return null;
 
         return (
-          <Command.Group key={key} heading={currentSection.title}>
+          <Command.Group key={key} heading={currentSection.title} forceMount={key === "issue"}>
             {section.map((item) => {
               let value = `${key}-${item?.id}-${item.name}`;
 
