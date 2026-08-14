@@ -13,6 +13,7 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
 import { PowerKModalCommandItem } from "./command-item";
+import { POWER_K_SERVER_RESULT_PREFIX } from "./filter";
 import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 
 type Props = {
@@ -40,7 +41,7 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
         return (
           <Command.Group key={key} heading={currentSection.title}>
             {section.map((item) => {
-              let value = `${key}-${item?.id}-${item.name}`;
+              let value = `${POWER_K_SERVER_RESULT_PREFIX}${key}-${item?.id}-${item.name}`;
 
               if ("project__identifier" in item) {
                 value = `${value}-${item.project__identifier}`;
