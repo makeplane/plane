@@ -57,14 +57,11 @@ services:
     image: rabbitmq:3.13.6-management-alpine
     networks:
       - test_env
-    env_file:
-      - ./apps/api/.env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
-    tmpfs:
-      - /var/lib/rabbitmq
+    user: "100:101"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s

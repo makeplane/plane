@@ -184,6 +184,40 @@
         "heading": "Nhập",
         "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc.",
         "previous_imports": "Lần nhập trước",
+        "hub": {
+          "import": "Nhập",
+          "back": "Quay lại phần nhập",
+          "unavailable_title": "Importer không khả dụng",
+          "unavailable_description": "Nhập từ {provider} chưa được triển khai trong cây nguồn Community này. Thẻ này được hiển thị để đạt ngang hàng Import Hub. Plane sẽ không bắt đầu một lần nhập giả."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Nhập work item từ Jira Cloud vào một dự án Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Nhập work item từ phiên bản Jira Server hoặc Data Center tự lưu trữ."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Nhập issue từ các team Linear vào Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Nhập tác vụ từ các dự án Asana vào Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Nhập tác vụ từ các space ClickUp vào Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Đã hủy nhập",
+          "cancel_success_message": "Plane sẽ dừng lần nhập này một cách an toàn.",
+          "cancel_failed_title": "Không hủy được lần nhập",
+          "cancel_failed_message": "Plane không thể hủy lần nhập này. Hãy thử lại."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Xem trước dự án Jira Cloud và nhập các mục công việc, trạng thái, nhãn, mô-đun và người dùng vào Plane.",

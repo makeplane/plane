@@ -21,6 +21,7 @@ export * from "./filter";
 export * from "./gantt-chart";
 export * from "./graph";
 export * from "./icon";
+export * from "./importer";
 export * from "./instance";
 export * from "./intake";
 export * from "./issue";

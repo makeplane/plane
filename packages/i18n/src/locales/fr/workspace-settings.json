@@ -184,6 +184,40 @@
         "heading": "Importations",
         "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail.",
         "previous_imports": "Importations précédentes",
+        "hub": {
+          "import": "Importer",
+          "back": "Retour aux imports",
+          "unavailable_title": "Importateur indisponible",
+          "unavailable_description": "L’import {provider} n’est pas implémenté dans cet arbre source Community. Cette carte est affichée pour la parité Import Hub. Plane ne démarrera pas un faux import."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importez des work items depuis Jira Cloud vers un projet Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importez des work items depuis une instance self-hosted Jira Server ou Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importez des issues des équipes Linear vers Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importez des tâches des projets Asana vers Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importez des tâches des espaces ClickUp vers Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import annulé",
+          "cancel_success_message": "Plane arrêtera cet import en toute sécurité.",
+          "cancel_failed_title": "Import non annulé",
+          "cancel_failed_message": "Plane n’a pas pu annuler cet import. Réessayez."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Prévisualisez un projet Jira Cloud et importez ses éléments de travail, états, étiquettes, modules et utilisateurs dans Plane.",

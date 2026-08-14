@@ -184,6 +184,40 @@
         "heading": "Импорт",
         "description": "Подключайтесь и импортируйте данные из существующих инструментов управления проектами для оптимизации интеграции рабочих процессов.",
         "previous_imports": "Предыдущие импорты",
+        "hub": {
+          "import": "Импортировать",
+          "back": "Назад к импортам",
+          "unavailable_title": "Importer недоступен",
+          "unavailable_description": "Импорт из {provider} не реализован в этом исходном дереве Community. Эта карточка показана для паритета Import Hub. Plane не запустит фиктивный импорт."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Импортируйте work items из Jira Cloud в проект Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Импортируйте work items из self-hosted экземпляра Jira Server или Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Импортируйте issues из команд Linear в Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Импортируйте задачи из проектов Asana в Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Импортируйте задачи из пространств ClickUp в Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Импорт отменён",
+          "cancel_success_message": "Plane безопасно остановит этот импорт.",
+          "cancel_failed_title": "Импорт не отменён",
+          "cancel_failed_message": "Plane не удалось отменить этот импорт. Попробуйте ещё раз."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Просмотрите проект Jira Cloud и импортируйте его рабочие элементы, состояния, метки, модули и пользователей в Plane.",

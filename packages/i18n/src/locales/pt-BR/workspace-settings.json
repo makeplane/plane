@@ -184,6 +184,40 @@
         "heading": "Importações",
         "description": "Conecte e importe dados das suas ferramentas de gerenciamento de projetos existentes para otimizar a integração do seu fluxo de trabalho.",
         "previous_imports": "Importações anteriores",
+        "hub": {
+          "import": "Importar",
+          "back": "Voltar para importações",
+          "unavailable_title": "Importador indisponível",
+          "unavailable_description": "A importação de {provider} não está implementada nesta árvore de código Community. Este cartão é exibido para paridade do Import Hub. O Plane não iniciará uma importação falsa."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importe work items do Jira Cloud para um projeto do Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importe work items de uma instância self-hosted do Jira Server ou Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importe issues de times do Linear para o Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importe tarefas de projetos do Asana para o Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importe tarefas de espaços do ClickUp para o Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Importação cancelada",
+          "cancel_success_message": "O Plane interromperá esta importação com segurança.",
+          "cancel_failed_title": "Importação não cancelada",
+          "cancel_failed_message": "O Plane não conseguiu cancelar esta importação. Tente novamente."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Visualize um projeto do Jira Cloud e importe seus itens de trabalho, estados, etiquetas, módulos e usuários para o Plane.",

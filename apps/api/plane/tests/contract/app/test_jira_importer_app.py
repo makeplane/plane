@@ -70,10 +70,20 @@ class TestJiraImporterApp:
         WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
         api_client.force_authenticate(user=member_user)
 
-        response = api_client.get(JIRA_METADATA_URL.format(slug=workspace.slug), jira_metadata())
+        response = api_client.post(JIRA_METADATA_URL.format(slug=workspace.slug), jira_metadata(), format="json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["issues"] == 1
+
+    @pytest.mark.django_db
+    def test_jira_preview_rejects_get_so_tokens_are_not_query_params(self, api_client, workspace, create_user):
+        member_user = User.objects.create(email="jira-get@plane.so", username="jira-get")
+        WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
+        api_client.force_authenticate(user=member_user)
+
+        response = api_client.get(JIRA_METADATA_URL.format(slug=workspace.slug), jira_metadata())
+
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     @pytest.mark.django_db
     @patch("plane.app.views.importer.base.jira_import_task.delay")
@@ -179,3 +189,33 @@ class TestJiraImporterApp:
         importer.refresh_from_db()
         assert importer.status == "completed"
         assert importer.imported_data["updated"] == 1
+
+    @pytest.mark.django_db
+    def test_list_returns_all_importer_services(self, session_client, workspace, create_user):
+        project = create_project(workspace, create_user)
+        token = APIToken.objects.create(user=create_user, workspace=workspace, is_service=True)
+        Importer.objects.create(
+            service="jira",
+            status="completed",
+            initiated_by=create_user,
+            workspace=workspace,
+            project=project,
+            token=token,
+            metadata={"project_key": "IMP"},
+        )
+        Importer.objects.create(
+            service="github",
+            status="failed",
+            initiated_by=create_user,
+            workspace=workspace,
+            project=project,
+            token=token,
+            metadata={"name": "example-repo"},
+        )
+
+        response = session_client.get(f"/api/workspaces/{workspace.slug}/importers/")
+
+        assert response.status_code == status.HTTP_200_OK
+        services = {item["service"] for item in response.data}
+        assert services == {"jira", "github"}
+        assert all("api_token" not in str(item.get("metadata", {})) for item in response.data)

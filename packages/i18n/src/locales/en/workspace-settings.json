@@ -184,6 +184,40 @@
         "heading": "Imports",
         "description": "Connect and import data from your existing project management tools to streamline your workflow integration.",
         "previous_imports": "Previous imports",
+        "hub": {
+          "import": "Import",
+          "back": "Back to imports",
+          "unavailable_title": "Importer not available",
+          "unavailable_description": "{provider} import is not implemented in this Community source tree. This card is shown for Import Hub parity. Plane will not start a fake import."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Import work items from Jira Cloud into a Plane project."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Import work items from a self-hosted Jira Server or Data Center instance."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Import issues from Linear teams into Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Import tasks from Asana projects into Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Import tasks from ClickUp spaces into Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import cancelled",
+          "cancel_success_message": "Plane will stop this import safely.",
+          "cancel_failed_title": "Import not cancelled",
+          "cancel_failed_message": "Plane could not cancel this import. Try again."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Preview a Jira Cloud project and import its work items, states, labels, modules, and users into Plane.",

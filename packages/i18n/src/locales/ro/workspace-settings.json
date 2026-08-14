@@ -184,6 +184,40 @@
         "heading": "Importuri",
         "description": "Conectează-te și importă date din instrumentele tale existente de gestionare a proiectelor pentru a-ți simplifica integrarea fluxului de lucru.",
         "previous_imports": "Importuri anterioare",
+        "hub": {
+          "import": "Importă",
+          "back": "Înapoi la importuri",
+          "unavailable_title": "Importer indisponibil",
+          "unavailable_description": "Importul {provider} nu este implementat în acest arbore sursă Community. Acest card este afișat pentru paritatea Import Hub. Plane nu va porni un import fals."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importă work items din Jira Cloud într-un proiect Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importă work items dintr-o instanță self-hosted Jira Server sau Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importă issues din echipele Linear în Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importă sarcini din proiectele Asana în Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importă sarcini din spațiile ClickUp în Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import anulat",
+          "cancel_success_message": "Plane va opri acest import în siguranță.",
+          "cancel_failed_title": "Importul nu a fost anulat",
+          "cancel_failed_message": "Plane nu a putut anula acest import. Încearcă din nou."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Previzualizează un proiect Jira Cloud și importă elementele sale de lucru, stările, etichetele, modulele și utilizatorii în Plane.",

@@ -184,6 +184,40 @@
         "heading": "匯入",
         "description": "從您現有的專案管理工具連接並匯入資料，以簡化您的工作流程整合。",
         "previous_imports": "先前的匯入",
+        "hub": {
+          "import": "匯入",
+          "back": "返回匯入",
+          "unavailable_title": "Importer 無法使用",
+          "unavailable_description": "{provider} 匯入尚未在此 Community 原始碼樹中實作。此卡片用於 Import Hub 對等顯示。Plane 不會啟動虛假匯入。"
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "將 Jira Cloud 的工作項目匯入 Plane 專案。"
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "從自架的 Jira Server 或 Data Center 執行個體匯入工作項目。"
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "將 Linear 團隊的 issue 匯入 Plane。"
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "將 Asana 專案的任務匯入 Plane。"
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "將 ClickUp 空間的任務匯入 Plane。"
+          }
+        },
+        "history": {
+          "cancel_success_title": "已取消匯入",
+          "cancel_success_message": "Plane 將安全停止此次匯入。",
+          "cancel_failed_title": "未能取消匯入",
+          "cancel_failed_message": "Plane 無法取消此次匯入。請再試一次。"
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "預覽 Jira Cloud 專案，並將其工作項目、狀態、標籤、模組和使用者匯入 Plane。",

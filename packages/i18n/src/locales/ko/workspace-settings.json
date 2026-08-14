@@ -184,6 +184,40 @@
         "heading": "임포트",
         "description": "기존 프로젝트 관리 도구에서 데이터를 연결하고 가져와 워크플로우 통합을 간소화하세요.",
         "previous_imports": "이전 임포트",
+        "hub": {
+          "import": "가져오기",
+          "back": "가져오기로 돌아가기",
+          "unavailable_title": "Importer를 사용할 수 없음",
+          "unavailable_description": "{provider} 가져오기는 이 Community 소스 트리에 구현되어 있지 않습니다. 이 카드는 Import Hub 패리티를 위해 표시됩니다. Plane은 가짜 가져오기를 시작하지 않습니다."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Jira Cloud의 작업 항목을 Plane 프로젝트로 가져옵니다."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "셀프 호스팅 Jira Server 또는 Data Center 인스턴스에서 작업 항목을 가져옵니다."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Linear 팀의 issue를 Plane으로 가져옵니다."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Asana 프로젝트의 작업을 Plane으로 가져옵니다."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "ClickUp 스페이스의 작업을 Plane으로 가져옵니다."
+          }
+        },
+        "history": {
+          "cancel_success_title": "가져오기가 취소됨",
+          "cancel_success_message": "Plane이 이 가져오기를 안전하게 중지합니다.",
+          "cancel_failed_title": "가져오기가 취소되지 않음",
+          "cancel_failed_message": "Plane이 이 가져오기를 취소하지 못했습니다. 다시 시도하세요."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Jira Cloud 프로젝트를 미리 보고 작업 항목, 상태, 라벨, 모듈, 사용자를 Plane으로 가져옵니다.",

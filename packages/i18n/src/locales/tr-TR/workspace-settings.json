@@ -184,6 +184,40 @@
         "heading": "İmportlar",
         "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın.",
         "previous_imports": "Önceki importlar",
+        "hub": {
+          "import": "İçe aktar",
+          "back": "İçe aktarmalara dön",
+          "unavailable_title": "Importer kullanılamıyor",
+          "unavailable_description": "{provider} içe aktarma bu Community kaynak ağacında uygulanmamıştır. Bu kart Import Hub eşliği için gösterilir. Plane sahte bir içe aktarma başlatmaz."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Jira Cloud’daki work item’ları bir Plane projesine aktarın."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Self-hosted bir Jira Server veya Data Center örneğinden work item aktarın."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Linear ekiplerindeki issue’ları Plane’e aktarın."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Asana projelerindeki görevleri Plane’e aktarın."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "ClickUp space’lerindeki görevleri Plane’e aktarın."
+          }
+        },
+        "history": {
+          "cancel_success_title": "İçe aktarma iptal edildi",
+          "cancel_success_message": "Plane bu içe aktarmayı güvenle durduracak.",
+          "cancel_failed_title": "İçe aktarma iptal edilmedi",
+          "cancel_failed_message": "Plane bu içe aktarmayı iptal edemedi. Yeniden deneyin."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Bir Jira Cloud projesini önizleyin ve iş öğelerini, durumları, etiketleri, modülleri ve kullanıcıları Plane'e içe aktarın.",

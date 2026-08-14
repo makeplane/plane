@@ -184,6 +184,40 @@
         "heading": "Importy",
         "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy.",
         "previous_imports": "Poprzednie importy",
+        "hub": {
+          "import": "Importuj",
+          "back": "Wróć do importów",
+          "unavailable_title": "Importer niedostępny",
+          "unavailable_description": "Import z {provider} nie jest zaimplementowany w tym drzewie źródeł Community. Ta karta jest wyświetlana ze względu na parytet Import Hub. Plane nie rozpocznie fałszywego importu."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importuj work items z Jira Cloud do projektu Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importuj work items z samodzielnie hostowanej instancji Jira Server lub Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importuj issues z zespołów Linear do Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importuj zadania z projektów Asana do Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importuj zadania z przestrzeni ClickUp do Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import anulowany",
+          "cancel_success_message": "Plane bezpiecznie zatrzyma ten import.",
+          "cancel_failed_title": "Import nie został anulowany",
+          "cancel_failed_message": "Plane nie mógł anulować tego importu. Spróbuj ponownie."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Wyświetl podgląd projektu Jira Cloud i zaimportuj jego elementy pracy, stany, etykiety, moduły oraz użytkowników do Plane.",
