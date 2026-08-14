@@ -867,5 +867,33 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "worklog": {
+    "log_time": "Zaman kaydet",
+    "duration_placeholder": "örn. 30m, 1h, 1h 30m",
+    "duration_invalid": "30m, 1h veya 1h 30m gibi bir süre girin.",
+    "description_placeholder": "Ne üzerinde çalıştınız? (isteğe bağlı)",
+    "logged_date": "Tarih",
+    "disabled": "Bu proje için zaman takibi kapalı.",
+    "export_type": "Dışa aktarma türü",
+    "export_work_items": "İş öğeleri",
+    "toasts": {
+      "created": {
+        "title": "Başarılı!",
+        "message": "Zaman kaydedildi."
+      },
+      "updated": {
+        "title": "Başarılı!",
+        "message": "Çalışma kaydı güncellendi."
+      },
+      "deleted": {
+        "title": "Başarılı!",
+        "message": "Çalışma kaydı kaldırıldı."
+      },
+      "error": {
+        "title": "Hata!",
+        "message": "Çalışma kaydı kaydedilemedi. Lütfen yeniden deneyin."
+      }
+    }
   }
 }

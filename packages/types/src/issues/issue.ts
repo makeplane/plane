@@ -57,6 +57,7 @@ export type TBaseIssue = {
   sub_issues_count: number;
   attachment_count: number;
   link_count: number;
+  total_logged_time?: number;
 
   project_id: string | null;
   parent_id: string | null;
@@ -155,7 +156,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | "worklogs";
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 

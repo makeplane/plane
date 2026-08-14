@@ -867,5 +867,33 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
+  },
+  "worklog": {
+    "log_time": "Ghi thời gian",
+    "duration_placeholder": "vd. 30m, 1h, 1h 30m",
+    "duration_invalid": "Nhập thời lượng như 30m, 1h hoặc 1h 30m.",
+    "description_placeholder": "Bạn đã làm gì? (không bắt buộc)",
+    "logged_date": "Ngày",
+    "disabled": "Theo dõi thời gian đang tắt cho dự án này.",
+    "export_type": "Loại xuất",
+    "export_work_items": "Hạng mục công việc",
+    "toasts": {
+      "created": {
+        "title": "Thành công!",
+        "message": "Đã ghi thời gian."
+      },
+      "updated": {
+        "title": "Thành công!",
+        "message": "Đã cập nhật nhật ký công việc."
+      },
+      "deleted": {
+        "title": "Thành công!",
+        "message": "Đã xóa nhật ký công việc."
+      },
+      "error": {
+        "title": "Lỗi!",
+        "message": "Không thể lưu nhật ký công việc. Hãy thử lại."
+      }
+    }
   }
 }

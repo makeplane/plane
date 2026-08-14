@@ -867,5 +867,33 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
+  },
+  "worklog": {
+    "log_time": "Записати час",
+    "duration_placeholder": "напр. 30m, 1h, 1h 30m",
+    "duration_invalid": "Вкажіть тривалість у форматі 30m, 1h або 1h 30m.",
+    "description_placeholder": "Над чим ви працювали? (необов’язково)",
+    "logged_date": "Дата",
+    "disabled": "Облік часу для цього проєкту вимкнено.",
+    "export_type": "Тип експорту",
+    "export_work_items": "Робочі елементи",
+    "toasts": {
+      "created": {
+        "title": "Готово!",
+        "message": "Час записано."
+      },
+      "updated": {
+        "title": "Готово!",
+        "message": "Запис часу оновлено."
+      },
+      "deleted": {
+        "title": "Готово!",
+        "message": "Запис часу видалено."
+      },
+      "error": {
+        "title": "Помилка!",
+        "message": "Не вдалося зберегти запис часу. Спробуйте ще раз."
+      }
+    }
   }
 }

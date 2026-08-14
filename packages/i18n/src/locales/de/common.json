@@ -867,5 +867,33 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "worklog": {
+    "log_time": "Zeit erfassen",
+    "duration_placeholder": "z. B. 30m, 1h, 1h 30m",
+    "duration_invalid": "Geben Sie eine Dauer wie 30m, 1h oder 1h 30m ein.",
+    "description_placeholder": "Woran haben Sie gearbeitet? (optional)",
+    "logged_date": "Datum",
+    "disabled": "Zeiterfassung ist für dieses Projekt deaktiviert.",
+    "export_type": "Exporttyp",
+    "export_work_items": "Arbeitselemente",
+    "toasts": {
+      "created": {
+        "title": "Erfolg!",
+        "message": "Zeit wurde erfasst."
+      },
+      "updated": {
+        "title": "Erfolg!",
+        "message": "Arbeitszeit wurde aktualisiert."
+      },
+      "deleted": {
+        "title": "Erfolg!",
+        "message": "Arbeitszeit wurde entfernt."
+      },
+      "error": {
+        "title": "Fehler!",
+        "message": "Die Arbeitszeit konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+      }
+    }
   }
 }

@@ -5,16 +5,18 @@
  */
 
 import React from "react";
-import { Paperclip } from "lucide-react";
+import { observer } from "mobx-react";
+import { Paperclip, Timer } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
-// plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// local imports
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
+import { IssueWorklogActionButton } from "./worklogs";
 import { IssueDetailWidgetButton } from "./widget-button";
 
 type Props = {
@@ -26,10 +28,12 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export function IssueDetailWidgetActionButtons(props: Props) {
+export const IssueDetailWidgetActionButtons = observer(function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
-  // translation
   const { t } = useTranslation();
+  const { getProjectById } = useProject();
+  const { toggleIssueWorklogModal, setIssueWorklogData, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const isTimeTrackingEnabled = Boolean(getProjectById(projectId)?.is_time_tracking_enabled);
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -90,6 +94,23 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+      {!hideWidgets?.includes("worklogs") && isTimeTrackingEnabled && (
+        <IssueWorklogActionButton
+          customButton={
+            <IssueDetailWidgetButton
+              title={t("worklog.log_time")}
+              icon={<Timer className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              disabled={disabled}
+            />
+          }
+          disabled={disabled}
+          onClick={() => {
+            setIssueWorklogData(null);
+            toggleOpenWidget("worklogs");
+            toggleIssueWorklogModal(true);
+          }}
+        />
+      )}
     </div>
   );
-}
+});

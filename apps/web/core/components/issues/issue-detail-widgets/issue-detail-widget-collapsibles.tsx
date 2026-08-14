@@ -10,12 +10,14 @@ import { observer } from "mobx-react";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { useTimeLineRelationOptions } from "@/components/relations";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
+import { WorklogsCollapsible } from "./worklogs";
 
 type Props = {
   workspaceSlug: string;
@@ -28,13 +30,14 @@ type Props = {
 
 export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidgetCollapsibles(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
-  // store hooks
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
     attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
+    worklog: { getWorklogsByIssueId },
   } = useIssueDetail(issueServiceType);
+  const { getProjectById } = useProject();
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
@@ -49,6 +52,11 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   const shouldRenderAttachments =
     attachmentsCount > 0 ||
     (!!attachmentUploads && attachmentUploads.length > 0 && !hideWidgets?.includes("attachments"));
+  const worklogs = getWorklogsByIssueId(issueId);
+  const isTimeTrackingEnabled = Boolean(getProjectById(projectId)?.is_time_tracking_enabled);
+  const shouldRenderWorklogs =
+    !hideWidgets?.includes("worklogs") &&
+    (isTimeTrackingEnabled || (worklogs && worklogs.length > 0) || (issue?.total_logged_time ?? 0) > 0);
 
   return (
     <div className="flex flex-col">
@@ -80,6 +88,15 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
       )}
       {shouldRenderAttachments && (
         <AttachmentsCollapsible
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {shouldRenderWorklogs && (
+        <WorklogsCollapsible
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}

@@ -867,5 +867,33 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "worklog": {
+    "log_time": "Catat waktu",
+    "duration_placeholder": "mis. 30m, 1h, 1h 30m",
+    "duration_invalid": "Masukkan durasi seperti 30m, 1h, atau 1h 30m.",
+    "description_placeholder": "Apa yang Anda kerjakan? (opsional)",
+    "logged_date": "Tanggal",
+    "disabled": "Pelacakan waktu dinonaktifkan untuk proyek ini.",
+    "export_type": "Jenis ekspor",
+    "export_work_items": "Item kerja",
+    "toasts": {
+      "created": {
+        "title": "Berhasil!",
+        "message": "Waktu berhasil dicatat."
+      },
+      "updated": {
+        "title": "Berhasil!",
+        "message": "Catatan kerja diperbarui."
+      },
+      "deleted": {
+        "title": "Berhasil!",
+        "message": "Catatan kerja dihapus."
+      },
+      "error": {
+        "title": "Kesalahan!",
+        "message": "Catatan kerja tidak dapat disimpan. Coba lagi."
+      }
+    }
   }
 }

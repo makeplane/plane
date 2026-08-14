@@ -65,6 +65,7 @@ from .state import State, StateGroup, DEFAULT_STATES
 from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
+from .worklog import IssueWorklog
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,

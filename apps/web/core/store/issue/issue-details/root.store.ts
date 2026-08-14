@@ -15,6 +15,7 @@ import type {
   TIssueReaction,
   TIssueRelationTypes,
   TIssueServiceType,
+  TIssueWorklog,
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
@@ -31,6 +32,8 @@ import { IssueStore } from "./issue.store";
 import type { IIssueStore, IIssueStoreActions } from "./issue.store";
 import { IssueLinkStore } from "./link.store";
 import type { IIssueLinkStore, IIssueLinkStoreActions } from "./link.store";
+import { IssueWorklogStore } from "./worklog.store";
+import type { IIssueWorklogStore, IIssueWorklogStoreActions } from "./worklog.store";
 import { IssueReactionStore } from "./reaction.store";
 import type { IIssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
 import { IssueRelationStore } from "./relation.store";
@@ -65,6 +68,7 @@ export interface IIssueDetail
     IIssueStoreActions,
     IIssueReactionStoreActions,
     IIssueLinkStoreActions,
+    IIssueWorklogStoreActions,
     IIssueSubIssuesStoreActions,
     IIssueSubscriptionStoreActions,
     IIssueAttachmentStoreActions,
@@ -81,6 +85,8 @@ export interface IIssueDetail
   lastWidgetAction: TWorkItemWidgets | null;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
+  isIssueWorklogModalOpen: boolean;
+  issueWorklogData: TIssueWorklog | null;
   isParentIssueModalOpen: string | null;
   isDeleteIssueModalOpen: string | null;
   isArchiveIssueModalOpen: string | null;
@@ -97,6 +103,8 @@ export interface IIssueDetail
   setIssueLinkData: (issueLinkData: TIssueLink | null) => void;
   toggleCreateIssueModal: (value: boolean) => void;
   toggleIssueLinkModal: (value: boolean) => void;
+  toggleIssueWorklogModal: (value: boolean) => void;
+  setIssueWorklogData: (worklog: TIssueWorklog | null) => void;
   toggleParentIssueModal: (issueId: string | null) => void;
   toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (value: string | null) => void;
@@ -118,6 +126,7 @@ export interface IIssueDetail
   commentReaction: IIssueCommentReactionStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
+  worklog: IIssueWorklogStore;
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
 }
@@ -143,6 +152,8 @@ export class IssueDetail implements IIssueDetail {
   lastWidgetAction: TWorkItemWidgets | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
+  isIssueWorklogModalOpen: boolean = false;
+  issueWorklogData: TIssueWorklog | null = null;
   isParentIssueModalOpen: string | null = null;
   isDeleteIssueModalOpen: string | null = null;
   isArchiveIssueModalOpen: string | null = null;
@@ -158,6 +169,7 @@ export class IssueDetail implements IIssueDetail {
   attachment: IIssueAttachmentStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
+  worklog: IIssueWorklogStore;
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
   activity: IIssueActivityStore;
@@ -173,6 +185,8 @@ export class IssueDetail implements IIssueDetail {
       issueCrudOperationState: observable,
       isCreateIssueModalOpen: observable,
       isIssueLinkModalOpen: observable.ref,
+      isIssueWorklogModalOpen: observable.ref,
+      issueWorklogData: observable,
       isParentIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
       isArchiveIssueModalOpen: observable.ref,
@@ -189,6 +203,8 @@ export class IssueDetail implements IIssueDetail {
       setIssueLinkData: action,
       toggleCreateIssueModal: action,
       toggleIssueLinkModal: action,
+      toggleIssueWorklogModal: action,
+      setIssueWorklogData: action,
       toggleParentIssueModal: action,
       toggleDeleteIssueModal: action,
       toggleArchiveIssueModal: action,
@@ -213,6 +229,7 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
     this.link = new IssueLinkStore(this, serviceType);
+    this.worklog = new IssueWorklogStore(this, serviceType);
     this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
   }
@@ -222,6 +239,7 @@ export class IssueDetail implements IIssueDetail {
     return (
       this.isCreateIssueModalOpen ||
       this.isIssueLinkModalOpen ||
+      this.isIssueWorklogModalOpen ||
       !!this.isParentIssueModalOpen ||
       !!this.isDeleteIssueModalOpen ||
       !!this.isArchiveIssueModalOpen ||
@@ -244,6 +262,8 @@ export class IssueDetail implements IIssueDetail {
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
+  toggleIssueWorklogModal = (value: boolean) => (this.isIssueWorklogModalOpen = value);
+  setIssueWorklogData = (worklog: TIssueWorklog | null) => (this.issueWorklogData = worklog);
   toggleParentIssueModal = (issueId: string | null) => (this.isParentIssueModalOpen = issueId);
   toggleDeleteIssueModal = (issueId: string | null) => (this.isDeleteIssueModalOpen = issueId);
   toggleArchiveIssueModal = (issueId: string | null) => (this.isArchiveIssueModalOpen = issueId);
@@ -255,8 +275,8 @@ export class IssueDetail implements IIssueDetail {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TWorkItemWidgets) => {
-    this.openWidgets = [action];
+  setLastWidgetAction = (widget: TWorkItemWidgets) => {
+    this.openWidgets = [widget];
   };
   toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))
@@ -331,6 +351,20 @@ export class IssueDetail implements IIssueDetail {
   ) => this.link.updateLink(workspaceSlug, projectId, issueId, linkId, data);
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) =>
     this.link.removeLink(workspaceSlug, projectId, issueId, linkId);
+
+  fetchWorklogs = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.worklog.fetchWorklogs(workspaceSlug, projectId, issueId);
+  createWorklog = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueWorklog>) =>
+    this.worklog.createWorklog(workspaceSlug, projectId, issueId, data);
+  updateWorklog = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    data: Partial<TIssueWorklog>
+  ) => this.worklog.updateWorklog(workspaceSlug, projectId, issueId, worklogId, data);
+  removeWorklog = async (workspaceSlug: string, projectId: string, issueId: string, worklogId: string) =>
+    this.worklog.removeWorklog(workspaceSlug, projectId, issueId, worklogId);
 
   // sub issues
   fetchSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) =>

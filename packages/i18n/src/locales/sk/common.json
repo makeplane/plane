@@ -867,5 +867,33 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
     }
+  },
+  "worklog": {
+    "log_time": "Zaznamenať čas",
+    "duration_placeholder": "napr. 30m, 1h, 1h 30m",
+    "duration_invalid": "Zadajte trvanie ako 30m, 1h alebo 1h 30m.",
+    "description_placeholder": "Na čom ste pracovali? (voliteľné)",
+    "logged_date": "Dátum",
+    "disabled": "Sledovanie času je v tomto projekte vypnuté.",
+    "export_type": "Typ exportu",
+    "export_work_items": "Pracovné položky",
+    "toasts": {
+      "created": {
+        "title": "Hotovo!",
+        "message": "Čas bol zaznamenaný."
+      },
+      "updated": {
+        "title": "Hotovo!",
+        "message": "Záznam práce bol aktualizovaný."
+      },
+      "deleted": {
+        "title": "Hotovo!",
+        "message": "Záznam práce bol odstránený."
+      },
+      "error": {
+        "title": "Chyba!",
+        "message": "Záznam práce sa nepodarilo uložiť. Skúste to znova."
+      }
+    }
   }
 }

@@ -19,10 +19,11 @@ from django.utils import timezone
 from django.db.models import Prefetch
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber, IssueWorklog
 from plane.utils.exception_logger import log_exception
 from plane.utils.porters.exporter import DataExporter
 from plane.utils.porters.serializers.issue import IssueExportSerializer
+from plane.utils.porters.serializers.worklog import IssueWorklogExportSerializer
 
 
 def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
@@ -212,6 +213,64 @@ def issue_export_task(
             # Export all issues in a single file
             export_filename = f"{slug}-{workspace_id}"
             filename, content = exporter.export(export_filename, workspace_issues)
+            files.append((filename, content))
+
+        zip_buffer = create_zip_file(files)
+        upload_to_s3(zip_buffer, workspace_id, token_id, slug)
+
+    except Exception as e:
+        exporter_instance = ExporterHistory.objects.get(token=token_id)
+        exporter_instance.status = "failed"
+        exporter_instance.reason = str(e)
+        exporter_instance.save(update_fields=["status", "reason"])
+        log_exception(e)
+        return
+
+
+@shared_task
+def issue_worklog_export_task(
+    provider: str,
+    workspace_id: UUID,
+    project_ids: List[str],
+    token_id: str,
+    multiple: bool,
+    slug: str,
+):
+    """Export issue worklogs from the workspace."""
+    try:
+        exporter_instance = ExporterHistory.objects.get(token=token_id)
+        exporter_instance.status = "processing"
+        exporter_instance.save(update_fields=["status"])
+
+        worklogs = (
+            IssueWorklog.objects.filter(
+                workspace__id=workspace_id,
+                project_id__in=project_ids,
+                project__project_projectmember__member=exporter_instance.initiated_by_id,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
+            .select_related("issue", "project", "workspace", "actor")
+            .order_by("project__identifier", "issue__sequence_id", "logged_at")
+            .distinct()
+        )
+
+        try:
+            exporter = DataExporter(IssueWorklogExportSerializer, format_type=provider)
+        except ValueError as e:
+            exporter_instance.status = "failed"
+            exporter_instance.reason = str(e)
+            exporter_instance.save(update_fields=["status", "reason"])
+            return
+
+        files = []
+        if multiple:
+            for project_id in project_ids:
+                project_worklogs = worklogs.filter(project_id=project_id)
+                filename, content = exporter.export(f"{slug}-worklogs-{project_id}", project_worklogs)
+                files.append((filename, content))
+        else:
+            filename, content = exporter.export(f"{slug}-worklogs-{workspace_id}", worklogs)
             files.append((filename, content))
 
         zip_buffer = create_zip_file(files)

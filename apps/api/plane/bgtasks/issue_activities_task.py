@@ -752,6 +752,90 @@ def delete_comment_activity(
     )
 
 
+def create_worklog_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="logged time",
+            verb="created",
+            actor_id=actor_id,
+            field="worklog",
+            new_value=str(requested_data.get("duration", "")),
+            new_identifier=requested_data.get("id", None),
+            epoch=epoch,
+        )
+    )
+
+
+def update_worklog_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="updated logged time",
+            verb="updated",
+            actor_id=actor_id,
+            field="worklog",
+            old_value=str((current_instance or {}).get("duration", "")),
+            new_value=str((requested_data or {}).get("duration", "")),
+            old_identifier=(current_instance or {}).get("id"),
+            new_identifier=(requested_data or {}).get("id"),
+            epoch=epoch,
+        )
+    )
+
+
+def delete_worklog_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="removed logged time",
+            verb="deleted",
+            actor_id=actor_id,
+            field="worklog",
+            old_value=str((current_instance or {}).get("duration", "")),
+            old_identifier=(current_instance or {}).get("id"),
+            epoch=epoch,
+        )
+    )
+
+
 def create_cycle_issue_activity(
     requested_data,
     current_instance,
@@ -1544,6 +1628,9 @@ def issue_activity(
             "comment.activity.created": create_comment_activity,
             "comment.activity.updated": update_comment_activity,
             "comment.activity.deleted": delete_comment_activity,
+            "worklog.activity.created": create_worklog_activity,
+            "worklog.activity.updated": update_worklog_activity,
+            "worklog.activity.deleted": delete_worklog_activity,
             "cycle.activity.created": create_cycle_issue_activity,
             "cycle.activity.deleted": delete_cycle_issue_activity,
             "module.activity.created": create_module_issue_activity,

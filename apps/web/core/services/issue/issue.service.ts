@@ -17,6 +17,8 @@ import type {
   TIssueServiceType,
   TIssuesResponse,
   TIssueSubIssues,
+  TIssueWorklog,
+  TIssueWorklogListResponse,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -452,6 +454,66 @@ export class IssueService extends APIService {
       })
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  async fetchIssueWorklogs(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    cursor = "100:0:0"
+  ): Promise<TIssueWorklogListResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/`, {
+      params: { cursor, per_page: 100 },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createIssueWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssueWorklog>
+  ): Promise<TIssueWorklog> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateIssueWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    data: Partial<TIssueWorklog>
+  ): Promise<TIssueWorklog> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteIssueWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string
+  ): Promise<void> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }
