@@ -86,7 +86,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
       newStateId: stateId,
       subIssuesCount: issue.sub_issues_count ?? 0,
       onUpdate: async (data) => issueOperations.update(workspaceSlug, projectId, issueId, data),
-      afterPropagate: async () => fetchSubIssues(workspaceSlug, projectId, issueId),
+      afterPropagate: async () => {
+        await fetchSubIssues(workspaceSlug, projectId, issueId);
+      },
     });
   };
 
