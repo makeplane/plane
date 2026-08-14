@@ -15,6 +15,7 @@ import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -42,6 +43,7 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
   const { allowPermissions } = useUserPermissions();
   // store hooks
   const { toggleSidebar } = useAppTheme();
+  const { hasCommercialGating } = useSelfHostedPolicy();
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -66,9 +68,7 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
           />
           <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
         </div>
-        <div className="flex-shrink-0">
-          <UpgradeBadge />
-        </div>
+        <div className="flex-shrink-0">{hasCommercialGating && <UpgradeBadge />}</div>
       </SidebarNavItem>
     </Link>
   );

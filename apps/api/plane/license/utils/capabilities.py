@@ -10,7 +10,7 @@ from django.conf import settings
 
 # Module imports
 from plane.app.views.external.base import SUPPORTED_PROVIDERS
-from plane.license.models import Instance
+from plane.license.models import Instance, InstanceEdition
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -40,6 +40,29 @@ class InstanceCapabilityService:
             "public_projects": self._public_projects(),
             "active_cycles": self._active_cycles(),
             "project_features": self._project_features(),
+            "policy": self._policy(),
+        }
+
+    def _policy(self):
+        """Resolve the commercial feature policy for this deployment.
+
+        The self-hosted Community edition applies no subscription-based feature
+        gates and no seat caps. Limits are reported as ``None`` (semantic
+        unlimited) rather than a fabricated high number, and no fake
+        subscription, invoice, or billing state is ever returned here.
+        """
+        instance = Instance.objects.first()
+        self_hosted = bool(getattr(settings, "IS_SELF_MANAGED", True))
+        edition = getattr(instance, "edition", None) or InstanceEdition.PLANE_COMMUNITY.value
+
+        return {
+            "self_hosted": self_hosted,
+            "edition": edition,
+            "commercial_gating": False,
+            "feature_tier": "unlimited",
+            "seat_limit": None,
+            "member_limit": None,
+            "project_limit": None,
         }
 
     def _ai(self):

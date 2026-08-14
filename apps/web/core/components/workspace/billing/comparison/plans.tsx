@@ -684,10 +684,10 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
           enterprise: "Unlimited",
         },
         "self-hosted": {
-          free: "~50",
-          one: "~50",
-          pro: "~200",
-          business: "~200",
+          free: "Unlimited",
+          one: "Unlimited",
+          pro: "Unlimited",
+          business: "Unlimited",
           enterprise: "Unlimited",
         },
       },
@@ -1301,7 +1301,7 @@ export const PLANE_PLANS: PlanePlans = {
     },
   },
   planHighlights: {
-    free: ["Upto 12 users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
+    free: ["Unlimited users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
     one: ["Upto 50 users", "OIDC and SAML", "Active cycles", "Limited time tracking"],
     pro: ["Unlimited users", "Custom work items + Properties", "Work item templates", "Full Time Tracking"],
     business: ["RBAC", "Project Templates", "Baselines And Deviations", "Custom Reports"],

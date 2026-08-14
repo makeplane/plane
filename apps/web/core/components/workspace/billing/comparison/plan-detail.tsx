@@ -27,10 +27,11 @@ type TPlanDetailProps = {
   planDetail: TPlanDetail;
   billingFrequency: TBillingFrequency | undefined;
   setBillingFrequency: (frequency: TBillingFrequency) => void;
+  isSelfManaged?: boolean;
 };
 
 export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
-  const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
+  const { subscriptionType, planDetail, billingFrequency, setBillingFrequency, isSelfManaged = false } = props;
   // plane hooks
   const { t } = useTranslation();
   // subscription details
@@ -100,9 +101,15 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
 
       {/* Subscription button */}
       <div className="flex flex-col items-start gap-1 py-3">
-        <Button variant="primary" size="lg" onClick={handleRedirection} className="w-full">
-          {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
-        </Button>
+        {isSelfManaged ? (
+          <Button variant="secondary" size="lg" className="w-full" disabled>
+            Self-hosted Community edition
+          </Button>
+        ) : (
+          <Button variant="primary" size="lg" onClick={handleRedirection} className="w-full">
+            {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
+          </Button>
+        )}
       </div>
     </div>
   );

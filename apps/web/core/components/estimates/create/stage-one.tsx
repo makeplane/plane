@@ -16,6 +16,8 @@ import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // components
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 import { RadioInput } from "../radio-select";
+// hooks
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;
@@ -28,6 +30,8 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
 
   // i18n
   const { t } = useTranslation();
+  // self-hosted policy — the self-hosted Community edition has no EE gates
+  const { isSelfHosted } = useSelfHostedPolicy();
 
   const currentEstimateSystem = ESTIMATE_SYSTEMS[estimateSystem] || undefined;
 
@@ -39,7 +43,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
           options={Object.keys(ESTIMATE_SYSTEMS)
             .map((system) => {
               const currentSystem = system as TEstimateSystemKeys;
-              const isEnabled = isEstimateSystemEnabled(currentSystem);
+              const isEnabled = isEstimateSystemEnabled(currentSystem, isSelfHosted);
               if (!isEnabled) return null;
               return {
                 label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
@@ -72,7 +76,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
           onChange={(value) => handleEstimateSystem(value as TEstimateSystemKeys)}
         />
       </div>
-      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && !ESTIMATE_SYSTEMS[estimateSystem]?.is_ee && (
+      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && (!ESTIMATE_SYSTEMS[estimateSystem]?.is_ee || isSelfHosted) && (
         <>
           <div className="space-y-1.5">
             <div className="text-13 font-medium text-secondary">

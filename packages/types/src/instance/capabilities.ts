@@ -27,6 +27,16 @@ export type TInstanceProjectFeatureCapabilities = {
   intake: TCapabilityAvailableState;
 };
 
+export type TInstanceFeaturePolicy = {
+  self_hosted: boolean;
+  edition: string;
+  commercial_gating: boolean;
+  feature_tier: string;
+  seat_limit: number | null;
+  member_limit: number | null;
+  project_limit: number | null;
+};
+
 export interface IInstanceCapabilities {
   ai: TCapabilityEnabledState;
   smtp: TCapabilityEnabledState;
@@ -49,4 +59,5 @@ export interface IInstanceCapabilities {
     enabled: boolean;
   };
   project_features: TInstanceProjectFeatureCapabilities;
+  policy: TInstanceFeaturePolicy;
 }
