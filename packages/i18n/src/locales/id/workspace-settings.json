@@ -184,6 +184,40 @@
         "heading": "Impor",
         "description": "Hubungkan dan impor data dari alat manajemen proyek Anda yang sudah ada untuk menyederhanakan integrasi alur kerja.",
         "previous_imports": "Impor sebelumnya",
+        "hub": {
+          "import": "Impor",
+          "back": "Kembali ke impor",
+          "unavailable_title": "Importer tidak tersedia",
+          "unavailable_description": "Impor {provider} belum diimplementasikan di pohon sumber Community ini. Kartu ini ditampilkan untuk paritas Import Hub. Plane tidak akan memulai impor palsu."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Impor work item dari Jira Cloud ke proyek Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Impor work item dari instance Jira Server atau Data Center yang self-hosted."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Impor issue dari tim Linear ke Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Impor tugas dari proyek Asana ke Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Impor tugas dari space ClickUp ke Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Impor dibatalkan",
+          "cancel_success_message": "Plane akan menghentikan impor ini dengan aman.",
+          "cancel_failed_title": "Impor tidak dibatalkan",
+          "cancel_failed_message": "Plane tidak dapat membatalkan impor ini. Coba lagi."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Pratinjau proyek Jira Cloud dan impor item kerja, status, label, modul, dan pengguna ke Plane.",

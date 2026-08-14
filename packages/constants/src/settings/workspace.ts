@@ -60,7 +60,8 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     i18n_label: "workspace_settings.settings.imports.title",
     href: `/settings/imports`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports/`,
+    highlight: (pathname: string, baseUrl: string) =>
+      pathname === `${baseUrl}/settings/imports/` || pathname.startsWith(`${baseUrl}/settings/imports/`),
   },
   webhooks: {
     key: "webhooks",

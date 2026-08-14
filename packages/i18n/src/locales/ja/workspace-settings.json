@@ -184,6 +184,40 @@
         "heading": "インポート",
         "description": "既存のプロジェクト管理ツールからデータを接続・インポートして、ワークフロー統合を効率化します。",
         "previous_imports": "以前のインポート",
+        "hub": {
+          "import": "インポート",
+          "back": "インポートに戻る",
+          "unavailable_title": "Importer は利用できません",
+          "unavailable_description": "{provider} のインポートはこの Community ソースツリーでは実装されていません。このカードは Import Hub のパリティのために表示されます。Plane は偽のインポートを開始しません。"
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Jira Cloud のワークアイテムを Plane プロジェクトにインポートします。"
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "セルフホストの Jira Server または Data Center インスタンスからワークアイテムをインポートします。"
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Linear チームの issue を Plane にインポートします。"
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Asana プロジェクトのタスクを Plane にインポートします。"
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "ClickUp スペースのタスクを Plane にインポートします。"
+          }
+        },
+        "history": {
+          "cancel_success_title": "インポートをキャンセルしました",
+          "cancel_success_message": "Plane はこのインポートを安全に停止します。",
+          "cancel_failed_title": "インポートをキャンセルできませんでした",
+          "cancel_failed_message": "Plane はこのインポートをキャンセルできませんでした。もう一度お試しください。"
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Jira Cloud プロジェクトをプレビューし、作業項目、状態、ラベル、モジュール、ユーザーを Plane にインポートします。",

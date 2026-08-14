@@ -15,9 +15,7 @@ export class JiraImporterService extends APIService {
   }
 
   async getJiraProjectInfo(workspaceSlug: string, params: IJiraMetadata): Promise<IJiraResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/importers/jira`, {
-      params,
-    })
+    return this.post(`/api/workspaces/${workspaceSlug}/importers/jira`, params)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

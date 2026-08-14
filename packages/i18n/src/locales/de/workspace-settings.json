@@ -184,6 +184,40 @@
         "heading": "Importe",
         "description": "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren.",
         "previous_imports": "Frühere Importe",
+        "hub": {
+          "import": "Importieren",
+          "back": "Zurück zu Importen",
+          "unavailable_title": "Importer nicht verfügbar",
+          "unavailable_description": "Der {provider}-Import ist in diesem Community-Quellcode nicht implementiert. Diese Karte dient der Import-Hub-Parität. Plane startet keinen vorgetäuschten Import."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importieren Sie Arbeitselemente aus Jira Cloud in ein Plane-Projekt."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importieren Sie Arbeitselemente aus einer selbst gehosteten Jira Server- oder Data Center-Instanz."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importieren Sie Issues aus Linear-Teams in Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importieren Sie Aufgaben aus Asana-Projekten in Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importieren Sie Aufgaben aus ClickUp-Spaces in Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import abgebrochen",
+          "cancel_success_message": "Plane stoppt diesen Import sicher.",
+          "cancel_failed_title": "Import nicht abgebrochen",
+          "cancel_failed_message": "Plane konnte diesen Import nicht abbrechen. Versuchen Sie es erneut."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Zeigen Sie eine Vorschau eines Jira Cloud-Projekts an und importieren Sie dessen Werkelemente, Status, Labels, Module und Benutzer in Plane.",

@@ -184,6 +184,40 @@
         "heading": "导入",
         "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。",
         "previous_imports": "以前的导入",
+        "hub": {
+          "import": "导入",
+          "back": "返回导入",
+          "unavailable_title": "Importer 不可用",
+          "unavailable_description": "{provider} 导入尚未在此 Community 源码树中实现。此卡片用于 Import Hub 对等展示。Plane 不会启动虚假导入。"
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "将 Jira Cloud 中的工作项导入 Plane 项目。"
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "从自托管的 Jira Server 或 Data Center 实例导入工作项。"
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "将 Linear 团队中的 issue 导入 Plane。"
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "将 Asana 项目中的任务导入 Plane。"
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "将 ClickUp 空间中的任务导入 Plane。"
+          }
+        },
+        "history": {
+          "cancel_success_title": "已取消导入",
+          "cancel_success_message": "Plane 将安全停止此次导入。",
+          "cancel_failed_title": "未能取消导入",
+          "cancel_failed_message": "Plane 无法取消此次导入。请重试。"
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "预览 Jira Cloud 项目，并将其工作项、状态、标签、模块和用户导入 Plane。",

@@ -184,6 +184,40 @@
         "heading": "Importy",
         "description": "Propojte a importujte data z vašich stávajících nástrojů pro řízení projektů pro zefektivnění integrace pracovního postupu.",
         "previous_imports": "Předchozí importy",
+        "hub": {
+          "import": "Importovat",
+          "back": "Zpět k importům",
+          "unavailable_title": "Importer není k dispozici",
+          "unavailable_description": "Import z {provider} není v tomto Community zdrojovém stromu implementován. Tato karta je zobrazena kvůli paritě Import Hub. Plane nespustí falešný import."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importujte pracovní položky z Jira Cloud do projektu Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importujte pracovní položky z self-hosted instance Jira Server nebo Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importujte issues z týmů Linear do Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importujte úkoly z projektů Asana do Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importujte úkoly z prostorů ClickUp do Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import zrušen",
+          "cancel_success_message": "Plane tento import bezpečně zastaví.",
+          "cancel_failed_title": "Import nebyl zrušen",
+          "cancel_failed_message": "Plane tento import nemohl zrušit. Zkuste to znovu."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Zobrazte náhled projektu Jira Cloud a importujte jeho pracovní položky, stavy, štítky, moduly a uživatele do Plane.",

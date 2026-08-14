@@ -184,6 +184,40 @@
         "heading": "Імпорти",
         "description": "Підключайтеся та імпортуйте дані з ваших наявних інструментів керування проєктами, щоб оптимізувати інтеграцію робочого процесу.",
         "previous_imports": "Попередні імпорти",
+        "hub": {
+          "import": "Імпортувати",
+          "back": "Назад до імпортів",
+          "unavailable_title": "Importer недоступний",
+          "unavailable_description": "Імпорт з {provider} не реалізовано в цьому дереві коду Community. Цю картку показано для паритету Import Hub. Plane не запустить фіктивний імпорт."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Імпортуйте work items з Jira Cloud у проєкт Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Імпортуйте work items із self-hosted екземпляра Jira Server або Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Імпортуйте issues з команд Linear у Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Імпортуйте завдання з проєктів Asana у Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Імпортуйте завдання з просторів ClickUp у Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Імпорт скасовано",
+          "cancel_success_message": "Plane безпечно зупинить цей імпорт.",
+          "cancel_failed_title": "Імпорт не скасовано",
+          "cancel_failed_message": "Plane не зміг скасувати цей імпорт. Спробуйте ще раз."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Перегляньте проєкт Jira Cloud і імпортуйте його робочі елементи, стани, мітки, модулі та користувачів у Plane.",

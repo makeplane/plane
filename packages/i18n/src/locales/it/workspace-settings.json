@@ -184,6 +184,40 @@
         "heading": "Importazioni",
         "description": "Connetti e importa dati dai tuoi strumenti di gestione progetti esistenti per ottimizzare l'integrazione del flusso di lavoro.",
         "previous_imports": "Importazioni precedenti",
+        "hub": {
+          "import": "Importa",
+          "back": "Torna agli import",
+          "unavailable_title": "Importatore non disponibile",
+          "unavailable_description": "L’import da {provider} non è implementato in questo albero sorgente Community. Questa scheda è mostrata per la parità Import Hub. Plane non avvierà un import fittizio."
+        },
+        "providers": {
+          "jira": {
+            "label": "Jira",
+            "description": "Importa work item da Jira Cloud in un progetto Plane."
+          },
+          "jira_server": {
+            "label": "Jira Server/Data Center",
+            "description": "Importa work item da un’istanza self-hosted Jira Server o Data Center."
+          },
+          "linear": {
+            "label": "Linear",
+            "description": "Importa issue dai team Linear in Plane."
+          },
+          "asana": {
+            "label": "Asana",
+            "description": "Importa attività dai progetti Asana in Plane."
+          },
+          "clickup": {
+            "label": "ClickUp",
+            "description": "Importa attività dagli spazi ClickUp in Plane."
+          }
+        },
+        "history": {
+          "cancel_success_title": "Import annullato",
+          "cancel_success_message": "Plane interromperà questo import in modo sicuro.",
+          "cancel_failed_title": "Import non annullato",
+          "cancel_failed_message": "Plane non è riuscito ad annullare questo import. Riprova."
+        },
         "jira": {
           "title": "Jira Cloud",
           "description": "Visualizza l'anteprima di un progetto Jira Cloud e importa elementi di lavoro, stati, etichette, moduli e utenti in Plane.",

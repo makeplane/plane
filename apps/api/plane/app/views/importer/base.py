@@ -35,9 +35,9 @@ class ImporterDeleteEndpoint(BaseAPIView):
 
 class JiraImporterMetadataEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
+    def post(self, request, slug):
         try:
-            summary = JiraClient(request.GET).get_project_summary()
+            summary = JiraClient(request.data).get_project_summary()
             return Response(summary, status=status.HTTP_200_OK)
         except JiraImporterError as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
