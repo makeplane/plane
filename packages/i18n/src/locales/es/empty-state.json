@@ -211,6 +211,10 @@
       "title": "Aún no hay exportaciones",
       "description": "No tienes ningún registro de exportación en este momento. Una vez que exportes datos, todos los registros aparecerán aquí."
     },
+    "imports": {
+      "title": "Aún no hay importaciones",
+      "description": "No tiene ningún registro de importación en este momento. Una vez que importe datos, todos los registros aparecerán aquí."
+    },
     "tokens": {
       "title": "Aún no hay tokens Personales",
       "description": "Genera tokens API seguros para conectar tu espacio de trabajo con sistemas y aplicaciones externos.",

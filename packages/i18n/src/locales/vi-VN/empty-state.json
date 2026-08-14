@@ -211,6 +211,10 @@
       "title": "Chưa có xuất khẩu",
       "description": "Bạn chưa có bản ghi xuất khẩu nào ngay bây giờ. Sau khi bạn xuất dữ liệu, tất cả các bản ghi sẽ xuất hiện ở đây."
     },
+    "imports": {
+      "title": "Chưa có lần nhập nào",
+      "description": "Hiện tại bạn chưa có bản ghi nhập dữ liệu nào. Sau khi bạn nhập dữ liệu, tất cả bản ghi sẽ xuất hiện ở đây."
+    },
     "tokens": {
       "title": "Chưa có token Cá nhân",
       "description": "Tạo token API an toàn để kết nối không gian làm việc của bạn với các hệ thống và ứng dụng bên ngoài.",

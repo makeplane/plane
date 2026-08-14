@@ -211,6 +211,10 @@
       "title": "Nessuna esportazione ancora",
       "description": "Al momento non hai record di esportazione. Una volta esportati i dati, tutti i record appariranno qui."
     },
+    "imports": {
+      "title": "Ancora nessuna importazione",
+      "description": "Al momento non hai record di importazione. Dopo aver importato dati, tutti i record appariranno qui."
+    },
     "tokens": {
       "title": "Nessun token personale ancora",
       "description": "Genera token API sicuri per connettere il tuo workspace con sistemi e applicazioni esterne.",
