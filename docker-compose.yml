@@ -7,6 +7,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
       - api
 
@@ -18,6 +20,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
       - api
       - web
@@ -30,6 +34,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
       - api
       - web
@@ -45,9 +51,15 @@ services:
     command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apps/api/.env
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
-      - plane-db
-      - plane-redis
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   worker:
     container_name: bgworker
@@ -60,10 +72,17 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+      api:
+        condition: service_started
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   beat-worker:
     container_name: beatworker
@@ -76,10 +95,17 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+      api:
+        condition: service_started
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   migrator:
     container_name: plane-migrator
@@ -92,9 +118,13 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh
     env_file:
       - ./apps/api/.env
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
-      - plane-db
-      - plane-redis
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
 
   live:
     container_name: plane-live
@@ -104,6 +134,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
 
   plane-db:
     container_name: plane-db
@@ -119,6 +151,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-redis:
     container_name: plane-redis
@@ -126,6 +163,11 @@ services:
     restart: always
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-mq:
     container_name: plane-mq
@@ -139,6 +181,11 @@ services:
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
   plane-minio:
     container_name: plane-minio
@@ -158,6 +205,8 @@ services:
       context: ./apps/proxy
       dockerfile: Dockerfile.ce
     restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
     ports:
       - ${LISTEN_HTTP_PORT}:80
       - ${LISTEN_HTTPS_PORT}:443
@@ -169,6 +218,21 @@ services:
       - api
       - space
       - admin
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower:1.7.1
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+    environment:
+      REPO_USER: ${DOCKERHUB_USERNAME}
+      REPO_PASS: ${DOCKERHUB_TOKEN}
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-300}
 
 volumes:
   pgdata:
