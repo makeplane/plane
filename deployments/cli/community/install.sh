@@ -4,8 +4,7 @@ BRANCH=${BRANCH:-preview}
 SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
-export APP_RELEASE=preview
-export DOCKERHUB_USER=${DOCKERHUB_USER:-afzidan}
+export APP_RELEASE="${APP_RELEASE:-$BRANCH}"
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 export GH_REPO=${GH_REPO:-AFZidan/plane}
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
@@ -77,9 +76,13 @@ function initialize(){
         return 1
     fi
 
-    local IMAGE_NAME=${DOCKERHUB_USER}/plane-proxy
-    local IMAGE_TAG=${APP_RELEASE}
-    docker manifest inspect "${IMAGE_NAME}:${IMAGE_TAG}" | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
+    local IMAGE_REF="${PLANE_IMAGE_PROXY}"
+    if [ -z "$IMAGE_REF" ]; then
+        echo "PLANE_IMAGE_PROXY is not set. Skipping manifest check." >&2
+        echo "available"
+        return 0
+    fi
+    docker manifest inspect "${IMAGE_REF}" | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
     local pid=$!
     spinner "$pid"
     
@@ -153,10 +156,15 @@ function updateEnvFile() {
 
 function updateCustomVariables(){
     echo "Updating custom variables..." >&2
-    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
     updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
     updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
+    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY IMAGE_POSTGRES IMAGE_VALKEY IMAGE_RABBITMQ IMAGE_MINIO; do
+        image_val="${!image_key}"
+        if [ -n "$image_val" ]; then
+            updateEnvFile "$image_key" "$image_val" "$DOCKER_ENV_PATH"
+        fi
+    done
     echo "Custom variables updated successfully" >&2
 }
 
@@ -185,10 +193,19 @@ function syncEnvFile(){
 function buildYourOwnImage(){
     echo "Building images locally..."
 
-    export DOCKERHUB_USER="myplane"
-    export APP_RELEASE="local"
     export PULL_POLICY="never"
     CUSTOM_BUILD="true"
+
+    if [ -f "$DOCKER_ENV_PATH" ]; then
+        set -a
+        # shellcheck disable=SC1090
+        source "$DOCKER_ENV_PATH"
+        set +a
+    fi
+    if [ -z "$PLANE_IMAGE_FRONTEND" ] || [ -z "$PLANE_IMAGE_BACKEND" ] || [ -z "$PLANE_IMAGE_PROXY" ]; then
+        echo "Set PLANE_IMAGE_* in plane.env before building locally."
+        exit 1
+    fi
 
     # checkout the code to ~/tmp/plane folder and build the images
     local PLANE_TEMP_CODE_DIR=~/tmp/plane
@@ -302,9 +319,19 @@ function download() {
 
     syncEnvFile
 
+    missing_images=""
+    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY IMAGE_POSTGRES IMAGE_VALKEY IMAGE_RABBITMQ IMAGE_MINIO; do
+        if [ -z "$(getEnvValue "$image_key" "$DOCKER_ENV_PATH")" ]; then
+            missing_images="$missing_images $image_key"
+        fi
+    done
+    if [ -n "$missing_images" ]; then
+        echo "Missing image variables in plane.env (set the same GitHub Actions repository variables):$missing_images"
+        echo "Each value must be a full image reference: username/repo-name:tag-name"
+        exit 1
+    fi
+
     if [ "$LOCAL_BUILD" == "true" ]; then
-        export DOCKERHUB_USER="myplane"
-        export APP_RELEASE="local"
         export PULL_POLICY="never"
         CUSTOM_BUILD="true"
 
@@ -684,18 +711,14 @@ elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
 fi
 
 if [ -f "$DOCKER_ENV_PATH" ]; then
-    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
     APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
     PULL_POLICY=$(getEnvValue "PULL_POLICY" "$DOCKER_ENV_PATH")
     CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
-
-    if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=afzidan
-        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
-    fi
+    PLANE_IMAGE_PROXY=$(getEnvValue "PLANE_IMAGE_PROXY" "$DOCKER_ENV_PATH")
+    export PLANE_IMAGE_PROXY
 
     if [ -z "$APP_RELEASE" ]; then
-        APP_RELEASE=preview
+        APP_RELEASE="$BRANCH"
         updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     fi
 

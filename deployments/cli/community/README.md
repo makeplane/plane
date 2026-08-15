@@ -1,15 +1,35 @@
 # Self Hosting
 
-This fork publishes application images to Docker Hub under `afzidan/` (override with `DOCKERHUB_USER`). Default release tag is `preview`, matching the integration branch.
+This fork pulls application and data-store images from full image references
+(`username/repo-name:tag-name`) set as GitHub Actions repository variables and
+copied into `variables.env` / `plane.env`. Compose files do not hardcode an
+owner, image name, or tag.
+
+Set these repository variables (Settings → Secrets and variables → Actions → Variables):
+
+```
+PLANE_IMAGE_FRONTEND
+PLANE_IMAGE_SPACE
+PLANE_IMAGE_ADMIN
+PLANE_IMAGE_LIVE
+PLANE_IMAGE_BACKEND
+PLANE_IMAGE_PROXY
+PLANE_IMAGE_AIO
+PLANE_IMAGE_AIO_FEATURE
+IMAGE_POSTGRES
+IMAGE_VALKEY
+IMAGE_RABBITMQ
+IMAGE_MINIO
+```
+
+Also set secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` so `Branch Build CE`
+can publish those image names. `Branch Build CE` stamps `variables.env` from the
+repository variables before attaching it to a release.
 
 ```bash
-export DOCKERHUB_USER=afzidan
-export APP_RELEASE=preview
 export GH_REPO=AFZidan/plane
 export BRANCH=preview
 ```
-
-Set `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` GitHub secrets so `Branch Build CE` can push `plane-frontend`, `plane-space`, `plane-admin`, `plane-live`, `plane-backend`, `plane-proxy`, and optionally `plane-aio-community`. Optional repository variable `DOCKERHUB_NAMESPACE` overrides the image owner.
 
 Upgrade an existing install with `./setup.sh upgrade` after publishing a new tag. Change `SECRET_KEY` and `LIVE_SERVER_SECRET_KEY` before production. Restrict `ALLOWED_HOSTS` and `CORS_ALLOWED_ORIGINS` to the public hostname.
 

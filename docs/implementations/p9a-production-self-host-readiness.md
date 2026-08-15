@@ -6,41 +6,37 @@ P9A is operations-only. It points the Community install/upgrade path and image-b
 
 P8B (PR #14, merge `5c5e443b85`) is on `preview`. `git remote -v` confirms `origin` is `AFZidan/plane` and `upstream` is `makeplane/plane`. PRs for this fork must target `origin` / `preview`.
 
+## Image references
+
+Compose and install scripts interpolate full image refs only. There is no hardcoded Docker Hub user, repository name, or tag in production or test Compose files.
+
+Set GitHub Actions repository variables (each `username/repo-name:tag-name`):
+
+- `PLANE_IMAGE_FRONTEND`, `PLANE_IMAGE_SPACE`, `PLANE_IMAGE_ADMIN`, `PLANE_IMAGE_LIVE`, `PLANE_IMAGE_BACKEND`, `PLANE_IMAGE_PROXY`
+- `PLANE_IMAGE_AIO` (AIO build/release), `PLANE_IMAGE_AIO_FEATURE` (optional Feature Preview workflow)
+- `IMAGE_POSTGRES`, `IMAGE_VALKEY`, `IMAGE_RABBITMQ`, `IMAGE_MINIO`
+
+`Branch Build CE` parses those variables for push and stamps `deployments/cli/community/variables.env` on the published assets. Install refuses to continue if any of those keys are empty in `plane.env`.
+
+Local/test Compose reads `IMAGE_*` from the project `.env` (copied from `.env.example` by `./setup.sh`).
+
 ## Defaults
 
-| Setting                           | Previous (upstream)   | This fork                                                                                |
-| --------------------------------- | --------------------- | ---------------------------------------------------------------------------------------- |
-| Docker Hub owner                  | `makeplane`           | `afzidan` (`DOCKERHUB_USER` / `vars.DOCKERHUB_NAMESPACE` / `secrets.DOCKERHUB_USERNAME`) |
-| GitHub repo for install downloads | `makeplane/plane`     | `AFZidan/plane`                                                                          |
-| Install branch fallback           | `master`              | `preview`                                                                                |
-| App image tag                     | `stable`              | `preview`                                                                                |
-| Buildx cloud endpoint             | `makeplane/plane-dev` | none (docker-container driver)                                                           |
-
-Override at install time:
+| Setting                           | Previous (upstream)   | This fork                      |
+| --------------------------------- | --------------------- | ------------------------------ |
+| Application images                | `makeplane/plane-*:…` | GitHub repository variables    |
+| GitHub repo for install downloads | `makeplane/plane`     | `AFZidan/plane`                |
+| Install branch fallback           | `master`              | `preview`                      |
+| Buildx cloud endpoint             | `makeplane/plane-dev` | none (docker-container driver) |
 
 ```bash
-export DOCKERHUB_USER=afzidan
-export APP_RELEASE=preview
 export GH_REPO=AFZidan/plane
 export BRANCH=preview
 ```
 
 ## Docker Hub publish
 
-`Branch Build CE` (`.github/workflows/build-branch.yml`) still uses `makeplane/actions/build-push` but sets `docker-image-owner` from:
-
-1. `vars.DOCKERHUB_NAMESPACE` if set
-2. else `secrets.DOCKERHUB_USERNAME`
-3. else `afzidan`
-
-Images:
-
-- `plane-frontend`, `plane-space`, `plane-admin`, `plane-live`, `plane-backend`, `plane-proxy`
-- AIO `plane-aio-community` (when AIO/release is requested), assembled from the same owner via `DOCKERHUB_USER` build-arg
-
-Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Push to `preview` or run the workflow manually. ARM64 no longer depends on Makeplane Docker Build Cloud; it uses QEMU in `docker-container`.
-
-Community Compose previously hardcoded `makeplane/...` even though `install.sh` exported `DOCKERHUB_USER`. Images now interpolate `${DOCKERHUB_USER:-afzidan}/...`.
+Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repository variables: the `PLANE_IMAGE_*` and `IMAGE_*` list above. Push to `preview` or run **Branch Build CE** manually. ARM64 uses QEMU in `docker-container`.
 
 ## Upgrade readiness
 
@@ -49,7 +45,7 @@ Community Compose previously hardcoded `makeplane/...` even though `install.sh` 
 - `APP_RELEASE=stable` still tries GitHub latest release; this fork should keep `preview` until a tagged release exists.
 - Migrator remains `on-failure`. API entrypoint still `wait_for_db` / `wait_for_migrations`.
 - API/worker/beat now wait until Postgres, Valkey, and RabbitMQ healthchecks pass. API has an HTTP healthcheck on `/`.
-- MinIO is pinned to `RELEASE.2024-12-18T13-15-44Z` (no floating `latest`).
+- MinIO image comes from `IMAGE_MINIO` (no floating `latest` in Compose).
 
 Infrastructure backup/restore scripts (`restore.sh`, `restore-airgapped.sh`) are unchanged. No in-product backup UI.
 
@@ -67,16 +63,27 @@ Not changed: RBAC, webhook SSRF, throttles, upload limits, signed URLs.
 ## Validation
 
 ```bash
-DOCKERHUB_USER=afzidan APP_RELEASE=preview PULL_POLICY=if_not_present \
-  SECRET_KEY=test LIVE_SERVER_SECRET_KEY=test \
+set -a
+source .env.example
+set +a
+PULL_POLICY=if_not_present SECRET_KEY=test LIVE_SERVER_SECRET_KEY=test \
+  PLANE_IMAGE_FRONTEND=example/plane-frontend:tag \
+  PLANE_IMAGE_SPACE=example/plane-space:tag \
+  PLANE_IMAGE_ADMIN=example/plane-admin:tag \
+  PLANE_IMAGE_LIVE=example/plane-live:tag \
+  PLANE_IMAGE_BACKEND=example/plane-backend:tag \
+  PLANE_IMAGE_PROXY=example/plane-proxy:tag \
   docker compose -f deployments/cli/community/docker-compose.yml config --quiet
 # community compose: OK
 
 docker compose -f docker-compose.yml config --quiet
 # root compose: OK
+
+docker compose -f docker-compose-test.yml config --quiet
+# test compose: OK
 ```
 
-Resolved app images are `afzidan/plane-*:preview`. No live Docker Hub push was performed from this environment (requires `DOCKERHUB_TOKEN`).
+No live Docker Hub push was performed from this environment (requires `DOCKERHUB_TOKEN` and repository image variables).
 
 ## Files changed
 

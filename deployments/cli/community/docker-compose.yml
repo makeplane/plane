@@ -68,7 +68,7 @@ x-pull-policy: &pull-policy
 
 services:
   web:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-frontend:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_FRONTEND}
     <<: *pull-policy
     deploy:
       replicas: ${WEB_REPLICAS:-1}
@@ -79,7 +79,7 @@ services:
       - worker
 
   space:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-space:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_SPACE}
     <<: *pull-policy
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
@@ -91,7 +91,7 @@ services:
       - web
 
   admin:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-admin:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_ADMIN}
     <<: *pull-policy
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
@@ -102,7 +102,7 @@ services:
       - web
 
   live:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-live:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_LIVE}
     <<: *pull-policy
     environment:
       <<: [*live-env, *redis-env]
@@ -115,7 +115,7 @@ services:
       - web
 
   api:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_BACKEND}
     <<: *pull-policy
     command: ./bin/docker-entrypoint-api.sh
     deploy:
@@ -147,7 +147,7 @@ services:
         condition: service_healthy
 
   worker:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_BACKEND}
     <<: *pull-policy
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
@@ -169,7 +169,7 @@ services:
         condition: service_healthy
 
   beat-worker:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_BACKEND}
     <<: *pull-policy
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
@@ -191,7 +191,7 @@ services:
         condition: service_healthy
 
   migrator:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_BACKEND}
     <<: *pull-policy
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
@@ -210,7 +210,7 @@ services:
 
   # Comment this if you already have a database running
   plane-db:
-    image: postgres:15.7-alpine
+    image: ${IMAGE_POSTGRES}
     command: postgres -c 'max_connections=1000'
     deploy:
       replicas: 1
@@ -227,7 +227,7 @@ services:
       retries: 10
 
   plane-redis:
-    image: valkey/valkey:7.2.11-alpine
+    image: ${IMAGE_VALKEY}
     deploy:
       replicas: 1
       restart_policy:
@@ -241,7 +241,7 @@ services:
       retries: 10
 
   plane-mq:
-    image: rabbitmq:3.13.6-management-alpine
+    image: ${IMAGE_RABBITMQ}
     deploy:
       replicas: 1
       restart_policy:
@@ -258,7 +258,7 @@ services:
 
   # Comment this if you using any external s3 compatible storage
   plane-minio:
-    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    image: ${IMAGE_MINIO}
     command: server /export --console-address ":9090"
     deploy:
       replicas: 1
@@ -277,7 +277,7 @@ services:
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: ${DOCKERHUB_USER:-afzidan}/plane-proxy:${APP_RELEASE:-preview}
+    image: ${PLANE_IMAGE_PROXY}
     <<: *pull-policy
     deploy:
       replicas: 1

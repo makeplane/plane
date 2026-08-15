@@ -123,7 +123,7 @@ services:
 
   plane-db:
     container_name: plane-db
-    image: postgres:15.7-alpine
+    image: ${IMAGE_POSTGRES}
     restart: always
     command: postgres -c 'max_connections=1000'
     volumes:
@@ -143,7 +143,7 @@ services:
 
   plane-redis:
     container_name: plane-redis
-    image: valkey/valkey:7.2.11-alpine
+    image: ${IMAGE_VALKEY}
     restart: always
     volumes:
       - redisdata:/data
@@ -155,7 +155,7 @@ services:
 
   plane-mq:
     container_name: plane-mq
-    image: rabbitmq:3.13.6-management-alpine
+    image: ${IMAGE_RABBITMQ}
     restart: always
     env_file:
       - .env
@@ -173,7 +173,7 @@ services:
 
   plane-minio:
     container_name: plane-minio
-    image: minio/minio
+    image: ${IMAGE_MINIO}
     restart: always
     command: server /export --console-address ":9090"
     volumes:

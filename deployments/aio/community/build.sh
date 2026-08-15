@@ -4,7 +4,7 @@ set -e
 
 DIST_DIR=${DIST_DIR:-./dist}
 CPU_ARCH=$(uname -m)
-IMAGE_NAME=${IMAGE_NAME:-afzidan/plane-aio-community}
+IMAGE_NAME=${PLANE_IMAGE_AIO}
 
 
 # loop though all flags and set the variables
@@ -116,7 +116,12 @@ build_dist_files(){
     echo ""
     echo "docker build -t $IMAGE_NAME \\"
     echo "  -f $(pwd)/Dockerfile \\"
-    echo "  --build-arg PLANE_VERSION=$APP_RELEASE_VERSION \\"
+    echo "  --build-arg PLANE_IMAGE_FRONTEND=\$PLANE_IMAGE_FRONTEND \\"
+    echo "  --build-arg PLANE_IMAGE_BACKEND=\$PLANE_IMAGE_BACKEND \\"
+    echo "  --build-arg PLANE_IMAGE_SPACE=\$PLANE_IMAGE_SPACE \\"
+    echo "  --build-arg PLANE_IMAGE_ADMIN=\$PLANE_IMAGE_ADMIN \\"
+    echo "  --build-arg PLANE_IMAGE_LIVE=\$PLANE_IMAGE_LIVE \\"
+    echo "  --build-arg PLANE_IMAGE_PROXY=\$PLANE_IMAGE_PROXY \\"
     echo "  $(pwd)"
     echo ""
     echo "------------------------------------------------"

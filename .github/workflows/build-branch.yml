@@ -58,14 +58,31 @@ jobs:
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
 
-      dh_owner: ${{ steps.set_env_variables.outputs.DH_OWNER }}
-      dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
-      dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
-      dh_img_admin: ${{ steps.set_env_variables.outputs.DH_IMG_ADMIN }}
-      dh_img_live: ${{ steps.set_env_variables.outputs.DH_IMG_LIVE }}
-      dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
-      dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
-      dh_img_aio: ${{ steps.set_env_variables.outputs.DH_IMG_AIO }}
+      img_web_owner: ${{ steps.set_env_variables.outputs.IMG_WEB_OWNER }}
+      img_web_name: ${{ steps.set_env_variables.outputs.IMG_WEB_NAME }}
+      img_web: ${{ steps.set_env_variables.outputs.IMG_WEB }}
+      img_space_owner: ${{ steps.set_env_variables.outputs.IMG_SPACE_OWNER }}
+      img_space_name: ${{ steps.set_env_variables.outputs.IMG_SPACE_NAME }}
+      img_space: ${{ steps.set_env_variables.outputs.IMG_SPACE }}
+      img_admin_owner: ${{ steps.set_env_variables.outputs.IMG_ADMIN_OWNER }}
+      img_admin_name: ${{ steps.set_env_variables.outputs.IMG_ADMIN_NAME }}
+      img_admin: ${{ steps.set_env_variables.outputs.IMG_ADMIN }}
+      img_live_owner: ${{ steps.set_env_variables.outputs.IMG_LIVE_OWNER }}
+      img_live_name: ${{ steps.set_env_variables.outputs.IMG_LIVE_NAME }}
+      img_live: ${{ steps.set_env_variables.outputs.IMG_LIVE }}
+      img_backend_owner: ${{ steps.set_env_variables.outputs.IMG_BACKEND_OWNER }}
+      img_backend_name: ${{ steps.set_env_variables.outputs.IMG_BACKEND_NAME }}
+      img_backend: ${{ steps.set_env_variables.outputs.IMG_BACKEND }}
+      img_proxy_owner: ${{ steps.set_env_variables.outputs.IMG_PROXY_OWNER }}
+      img_proxy_name: ${{ steps.set_env_variables.outputs.IMG_PROXY_NAME }}
+      img_proxy: ${{ steps.set_env_variables.outputs.IMG_PROXY }}
+      img_aio_owner: ${{ steps.set_env_variables.outputs.IMG_AIO_OWNER }}
+      img_aio_name: ${{ steps.set_env_variables.outputs.IMG_AIO_NAME }}
+      img_aio: ${{ steps.set_env_variables.outputs.IMG_AIO }}
+      image_postgres: ${{ steps.set_env_variables.outputs.IMAGE_POSTGRES }}
+      image_valkey: ${{ steps.set_env_variables.outputs.IMAGE_VALKEY }}
+      image_rabbitmq: ${{ steps.set_env_variables.outputs.IMAGE_RABBITMQ }}
+      image_minio: ${{ steps.set_env_variables.outputs.IMAGE_MINIO }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
@@ -76,7 +93,50 @@ jobs:
     steps:
       - id: set_env_variables
         name: Set Environment Variables
+        env:
+          PLANE_IMAGE_FRONTEND: ${{ vars.PLANE_IMAGE_FRONTEND }}
+          PLANE_IMAGE_SPACE: ${{ vars.PLANE_IMAGE_SPACE }}
+          PLANE_IMAGE_ADMIN: ${{ vars.PLANE_IMAGE_ADMIN }}
+          PLANE_IMAGE_LIVE: ${{ vars.PLANE_IMAGE_LIVE }}
+          PLANE_IMAGE_BACKEND: ${{ vars.PLANE_IMAGE_BACKEND }}
+          PLANE_IMAGE_PROXY: ${{ vars.PLANE_IMAGE_PROXY }}
+          PLANE_IMAGE_AIO: ${{ vars.PLANE_IMAGE_AIO }}
+          IMAGE_POSTGRES: ${{ vars.IMAGE_POSTGRES }}
+          IMAGE_VALKEY: ${{ vars.IMAGE_VALKEY }}
+          IMAGE_RABBITMQ: ${{ vars.IMAGE_RABBITMQ }}
+          IMAGE_MINIO: ${{ vars.IMAGE_MINIO }}
+          AIO_BUILD_INPUT: ${{ env.AIO_BUILD }}
+          BUILD_TYPE_INPUT: ${{ env.BUILD_TYPE }}
         run: |
+          parse_image() {
+            local prefix="$1"
+            local key="$2"
+            local image="$3"
+            local required="$4"
+            if [ -z "$image" ]; then
+              if [ "$required" = "true" ]; then
+                echo "Missing required repository variable $key (username/repo-name:tag-name)" >&2
+                exit 1
+              fi
+              return 0
+            fi
+            if [[ "$image" != *:* ]]; then
+              echo "Invalid $key='$image'. Expected an image reference with a tag" >&2
+              exit 1
+            fi
+            local tag="${image##*:}"
+            local without_tag="${image%:*}"
+            local name="${without_tag##*/}"
+            local owner="${without_tag%/*}"
+            if [ "$owner" = "$without_tag" ]; then
+              owner=""
+            fi
+            echo "${prefix}_OWNER=$owner" >> $GITHUB_OUTPUT
+            echo "${prefix}_NAME=$name" >> $GITHUB_OUTPUT
+            echo "${prefix}_TAG=$tag" >> $GITHUB_OUTPUT
+            echo "${prefix}=$image" >> $GITHUB_OUTPUT
+          }
+
           if [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ env.BUILD_TYPE }}" == "Release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
@@ -90,23 +150,6 @@ jobs:
           fi
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
-
-          DH_OWNER="${{ vars.DOCKERHUB_NAMESPACE }}"
-          if [ -z "$DH_OWNER" ]; then
-            DH_OWNER="${{ secrets.DOCKERHUB_USERNAME }}"
-          fi
-          if [ -z "$DH_OWNER" ]; then
-            DH_OWNER="afzidan"
-          fi
-          echo "DH_OWNER=$DH_OWNER" >> $GITHUB_OUTPUT
-
-          echo "DH_IMG_WEB=plane-frontend" >> $GITHUB_OUTPUT
-          echo "DH_IMG_SPACE=plane-space" >> $GITHUB_OUTPUT
-          echo "DH_IMG_ADMIN=plane-admin" >> $GITHUB_OUTPUT
-          echo "DH_IMG_LIVE=plane-live" >> $GITHUB_OUTPUT
-          echo "DH_IMG_BACKEND=plane-backend" >> $GITHUB_OUTPUT
-          echo "DH_IMG_PROXY=plane-proxy" >> $GITHUB_OUTPUT
-          echo "DH_IMG_AIO=plane-aio-community" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -142,6 +185,18 @@ jobs:
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
           echo "AIO_BUILD=${BUILD_AIO}" >> $GITHUB_OUTPUT
 
+          parse_image IMG_WEB PLANE_IMAGE_FRONTEND "$PLANE_IMAGE_FRONTEND" true
+          parse_image IMG_SPACE PLANE_IMAGE_SPACE "$PLANE_IMAGE_SPACE" true
+          parse_image IMG_ADMIN PLANE_IMAGE_ADMIN "$PLANE_IMAGE_ADMIN" true
+          parse_image IMG_LIVE PLANE_IMAGE_LIVE "$PLANE_IMAGE_LIVE" true
+          parse_image IMG_BACKEND PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND" true
+          parse_image IMG_PROXY PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY" true
+          parse_image IMG_AIO PLANE_IMAGE_AIO "$PLANE_IMAGE_AIO" "$BUILD_AIO"
+          parse_image IMAGE_POSTGRES IMAGE_POSTGRES "$IMAGE_POSTGRES" true
+          parse_image IMAGE_VALKEY IMAGE_VALKEY "$IMAGE_VALKEY" true
+          parse_image IMAGE_RABBITMQ IMAGE_RABBITMQ "$IMAGE_RABBITMQ" true
+          parse_image IMAGE_MINIO IMAGE_MINIO "$IMAGE_MINIO" true
+
       - id: checkout_files
         name: Checkout Files
         uses: actions/checkout@v6
@@ -159,8 +214,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_admin_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_admin_name }}
           build-context: .
           dockerfile-path: ./apps/admin/Dockerfile.admin
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -181,8 +236,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_web_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_web_name }}
           build-context: .
           dockerfile-path: ./apps/web/Dockerfile.web
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -203,8 +258,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_space_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_space_name }}
           build-context: .
           dockerfile-path: ./apps/space/Dockerfile.space
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -225,8 +280,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_live_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_live_name }}
           build-context: .
           dockerfile-path: ./apps/live/Dockerfile.live
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -247,8 +302,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_backend_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_backend_name }}
           build-context: ./apps/api
           dockerfile-path: ./apps/api/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -269,8 +324,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_proxy_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_proxy_name }}
           build-context: ./apps/proxy
           dockerfile-path: ./apps/proxy/Dockerfile.ce
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -296,6 +351,8 @@ jobs:
 
       - name: Prepare AIO Assets
         id: prepare_aio_assets
+        env:
+          PLANE_IMAGE_AIO: ${{ needs.branch_build_setup.outputs.img_aio }}
         run: |
           cd deployments/aio/community
 
@@ -321,8 +378,8 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_aio }}
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_aio_owner }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.img_aio_name }}
           build-context: ./deployments/aio/community
           dockerfile-path: ./deployments/aio/community/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -332,8 +389,12 @@ jobs:
           additional-assets: aio-assets-dist
           additional-assets-dir: ./deployments/aio/community/dist
           build-args: |
-            PLANE_VERSION=${{ steps.prepare_aio_assets.outputs.AIO_BUILD_VERSION }}
-            DOCKERHUB_USER=${{ needs.branch_build_setup.outputs.dh_owner }}
+            PLANE_IMAGE_FRONTEND=${{ needs.branch_build_setup.outputs.img_web }}
+            PLANE_IMAGE_BACKEND=${{ needs.branch_build_setup.outputs.img_backend }}
+            PLANE_IMAGE_SPACE=${{ needs.branch_build_setup.outputs.img_space }}
+            PLANE_IMAGE_ADMIN=${{ needs.branch_build_setup.outputs.img_admin }}
+            PLANE_IMAGE_LIVE=${{ needs.branch_build_setup.outputs.img_live }}
+            PLANE_IMAGE_PROXY=${{ needs.branch_build_setup.outputs.img_proxy }}
 
   upload_build_assets:
     name: Upload Build Assets
@@ -351,6 +412,17 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Update Assets
+        env:
+          PLANE_IMAGE_FRONTEND: ${{ needs.branch_build_setup.outputs.img_web }}
+          PLANE_IMAGE_SPACE: ${{ needs.branch_build_setup.outputs.img_space }}
+          PLANE_IMAGE_ADMIN: ${{ needs.branch_build_setup.outputs.img_admin }}
+          PLANE_IMAGE_LIVE: ${{ needs.branch_build_setup.outputs.img_live }}
+          PLANE_IMAGE_BACKEND: ${{ needs.branch_build_setup.outputs.img_backend }}
+          PLANE_IMAGE_PROXY: ${{ needs.branch_build_setup.outputs.img_proxy }}
+          IMAGE_POSTGRES: ${{ needs.branch_build_setup.outputs.image_postgres }}
+          IMAGE_VALKEY: ${{ needs.branch_build_setup.outputs.image_valkey }}
+          IMAGE_RABBITMQ: ${{ needs.branch_build_setup.outputs.image_rabbitmq }}
+          IMAGE_MINIO: ${{ needs.branch_build_setup.outputs.image_minio }}
         run: |
           if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
             REL_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
@@ -358,9 +430,29 @@ jobs:
             REL_VERSION=${{ needs.branch_build_setup.outputs.gh_branch_name }}
           fi
 
+          ENV_FILE=deployments/cli/community/variables.env
+          stamp() {
+            local key="$1"
+            local value="$2"
+            if grep -q "^${key}=" "$ENV_FILE"; then
+              sed -i "s|^${key}=.*|${key}=${value}|g" "$ENV_FILE"
+            else
+              echo "${key}=${value}" >> "$ENV_FILE"
+            fi
+          }
+          stamp APP_RELEASE "$REL_VERSION"
+          stamp PLANE_IMAGE_FRONTEND "$PLANE_IMAGE_FRONTEND"
+          stamp PLANE_IMAGE_SPACE "$PLANE_IMAGE_SPACE"
+          stamp PLANE_IMAGE_ADMIN "$PLANE_IMAGE_ADMIN"
+          stamp PLANE_IMAGE_LIVE "$PLANE_IMAGE_LIVE"
+          stamp PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND"
+          stamp PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY"
+          stamp IMAGE_POSTGRES "$IMAGE_POSTGRES"
+          stamp IMAGE_VALKEY "$IMAGE_VALKEY"
+          stamp IMAGE_RABBITMQ "$IMAGE_RABBITMQ"
+          stamp IMAGE_MINIO "$IMAGE_MINIO"
+
           cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
-          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deployments/cli/community/docker-compose.yml
-          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deployments/cli/community/variables.env
 
       - name: Upload Assets
         uses: actions/upload-artifact@v7
@@ -395,10 +487,41 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Update Assets
+        env:
+          PLANE_IMAGE_FRONTEND: ${{ needs.branch_build_setup.outputs.img_web }}
+          PLANE_IMAGE_SPACE: ${{ needs.branch_build_setup.outputs.img_space }}
+          PLANE_IMAGE_ADMIN: ${{ needs.branch_build_setup.outputs.img_admin }}
+          PLANE_IMAGE_LIVE: ${{ needs.branch_build_setup.outputs.img_live }}
+          PLANE_IMAGE_BACKEND: ${{ needs.branch_build_setup.outputs.img_backend }}
+          PLANE_IMAGE_PROXY: ${{ needs.branch_build_setup.outputs.img_proxy }}
+          IMAGE_POSTGRES: ${{ needs.branch_build_setup.outputs.image_postgres }}
+          IMAGE_VALKEY: ${{ needs.branch_build_setup.outputs.image_valkey }}
+          IMAGE_RABBITMQ: ${{ needs.branch_build_setup.outputs.image_rabbitmq }}
+          IMAGE_MINIO: ${{ needs.branch_build_setup.outputs.image_minio }}
         run: |
+          ENV_FILE=deployments/cli/community/variables.env
+          stamp() {
+            local key="$1"
+            local value="$2"
+            if grep -q "^${key}=" "$ENV_FILE"; then
+              sed -i "s|^${key}=.*|${key}=${value}|g" "$ENV_FILE"
+            else
+              echo "${key}=${value}" >> "$ENV_FILE"
+            fi
+          }
+          stamp APP_RELEASE "$REL_VERSION"
+          stamp PLANE_IMAGE_FRONTEND "$PLANE_IMAGE_FRONTEND"
+          stamp PLANE_IMAGE_SPACE "$PLANE_IMAGE_SPACE"
+          stamp PLANE_IMAGE_ADMIN "$PLANE_IMAGE_ADMIN"
+          stamp PLANE_IMAGE_LIVE "$PLANE_IMAGE_LIVE"
+          stamp PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND"
+          stamp PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY"
+          stamp IMAGE_POSTGRES "$IMAGE_POSTGRES"
+          stamp IMAGE_VALKEY "$IMAGE_VALKEY"
+          stamp IMAGE_RABBITMQ "$IMAGE_RABBITMQ"
+          stamp IMAGE_MINIO "$IMAGE_MINIO"
+
           cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
-          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deployments/cli/community/docker-compose.yml
-          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deployments/cli/community/variables.env
 
       - name: Create Release
         id: create_release
