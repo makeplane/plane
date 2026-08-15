@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { Popover } from "@plane/propel/popover";
 import { Tooltip } from "@plane/propel/tooltip";
 import { ControlLink } from "@plane/ui";
-import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
@@ -21,6 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { WorkItemPreviewCard } from "../../preview-card";
@@ -45,6 +46,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
   // hooks
   const { isMobile } = usePlatformOS();
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
+  const { suppressPeekOpen } = useTimeLineChartStore();
 
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -53,9 +55,10 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
 
   const { blockStyle } = getBlockViewDetails(issueDetails, stateDetails?.color ?? "");
 
-  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
-
-  const duration = findTotalDaysInRange(issueDetails?.start_date, issueDetails?.target_date) || 0;
+  const handleIssuePeekOverview = () => {
+    if (suppressPeekOpen) return;
+    handleRedirection(workspaceSlug, issueDetails, isMobile);
+  };
 
   return (
     <Popover delay={100} openOnHover>
@@ -113,6 +116,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
 
   // handlers
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
+  const { suppressPeekOpen } = useTimeLineChartStore();
 
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -121,6 +125,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
   const handleIssuePeekOverview = (e: any) => {
     e.stopPropagation(true);
     e.preventDefault();
+    if (suppressPeekOpen) return;
     handleRedirection(workspaceSlug, issueDetails, isMobile);
   };
 

@@ -43,6 +43,7 @@ export interface IBaseTimelineStore {
   activeBlockId: string | null;
   renderView: any;
   isDragging: boolean;
+  suppressPeekOpen: boolean;
   isDependencyEnabled: boolean;
   //
   setBlockIds: (ids: string[]) => void;
@@ -64,6 +65,7 @@ export interface IBaseTimelineStore {
   updateBlockPosition: (id: string, deltaLeft: number, deltaWidth: number, ignoreDependencies?: boolean) => void;
   getNumberOfDaysFromPosition: (position: number | undefined) => number | undefined;
   setIsDragging: (isDragging: boolean) => void;
+  setSuppressPeekOpen: (suppressPeekOpen: boolean) => void;
   initGantt: () => void;
 
   getDateFromPositionOnGantt: (position: number, offsetDays: number) => Date | undefined;
@@ -75,6 +77,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   blockIds: string[] | undefined = undefined;
 
   isDragging: boolean = false;
+  suppressPeekOpen: boolean = false;
   currentView: TGanttViews = "week";
   currentViewData: ChartDataType | undefined = undefined;
   activeBlockId: string | null = null;
@@ -90,12 +93,14 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
       blocksMap: observable,
       blockIds: observable,
       isDragging: observable.ref,
+      suppressPeekOpen: observable.ref,
       currentView: observable.ref,
       currentViewData: observable,
       activeBlockId: observable.ref,
       renderView: observable,
       // actions
       setIsDragging: action,
+      setSuppressPeekOpen: action,
       setBlockIds: action.bound,
       initGantt: action.bound,
       updateCurrentView: action.bound,
@@ -124,6 +129,12 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   setIsDragging = (isDragging: boolean) => {
     runInAction(() => {
       this.isDragging = isDragging;
+    });
+  };
+
+  setSuppressPeekOpen = (suppressPeekOpen: boolean) => {
+    runInAction(() => {
+      this.suppressPeekOpen = suppressPeekOpen;
     });
   };
 
