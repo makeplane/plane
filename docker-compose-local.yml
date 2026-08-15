@@ -74,13 +74,18 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir:ro
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      TESTHUB_RUNNER_URL: http://testhub-runner:8090
+      TESTHUB_WORKDIR: /opt/testhub/workdir
     depends_on:
       - plane-db
       - plane-redis
       - plane-mq
+      - testhub-runner
     ports:
       - "8000:8000"
 
@@ -95,13 +100,18 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
+      - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir:ro
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      TESTHUB_RUNNER_URL: http://testhub-runner:8090
+      TESTHUB_WORKDIR: /opt/testhub/workdir
     depends_on:
       - api
       - plane-db
       - plane-redis
+      - testhub-runner
 
   beat-worker:
     build:
@@ -139,6 +149,28 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+
+  testhub-runner:
+    build:
+      context: ./apps/testhub-runner
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - dev_env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir
+    environment:
+      TESTHUB_WORKDIR: /opt/testhub/workdir
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8090/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
 
 volumes:
   redisdata:

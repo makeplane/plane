@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Test hub",
+    "sidebar": "Test hub",
+    "nav": {
+      "overview": "Overview",
+      "bind": "Repository",
+      "knowledge": "Knowledge",
+      "components": "Components",
+      "tools": "Tools",
+      "actions": "Actions",
+      "tests": "Tests",
+      "jobs": "Jobs"
+    },
+    "bind": {
+      "title": "Bind test repository",
+      "repo_url": "Repository URL",
+      "branch": "Branch",
+      "workdir": "Runner workdir",
+      "save": "Save",
+      "unbound": "This project has no test repository yet.",
+      "cta": "Bind a repository"
+    },
+    "overview": {
+      "sync": "Sync catalog",
+      "syncing": "Syncing…",
+      "head": "HEAD",
+      "status": "Sync status"
+    },
+    "counts": {
+      "ddl": "DDL tables",
+      "sql": "SQL files",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "pytest nodes",
+      "data": "Data files"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Open",
+      "filter": "Filter tables"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filter routes"
+    },
+    "tools": {
+      "run": "Run",
+      "not_whitelisted": "Not in the P2 allowlist",
+      "tables": "Table names",
+      "datasource": "Datasource"
+    },
+    "actions": {
+      "run": "Run",
+      "confirm": "I confirm this writes to the system under test",
+      "params": "Params JSON",
+      "pick": "Select an action word"
+    },
+    "jobs": {
+      "empty": "No jobs yet",
+      "status": "Status"
+    },
+    "file": {
+      "close": "Close"
+    }
+  }
+}

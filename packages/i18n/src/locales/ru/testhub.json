@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Тестовый центр",
+    "sidebar": "Тестовый центр",
+    "nav": {
+      "overview": "Обзор",
+      "bind": "Репозиторий",
+      "knowledge": "Знания",
+      "components": "Компоненты",
+      "tools": "Инструменты",
+      "actions": "Действия",
+      "tests": "Тесты",
+      "jobs": "Задания"
+    },
+    "bind": {
+      "title": "Привязать тестовый репозиторий",
+      "repo_url": "URL репозитория",
+      "branch": "Ветка",
+      "workdir": "Рабочий каталог Runner",
+      "save": "Сохранить",
+      "unbound": "У этого проекта ещё нет тестового репозитория.",
+      "cta": "Привязать репозиторий"
+    },
+    "overview": {
+      "sync": "Синхронизировать каталог",
+      "syncing": "Синхронизация…",
+      "head": "HEAD",
+      "status": "Статус синхронизации"
+    },
+    "counts": {
+      "ddl": "Таблицы DDL",
+      "sql": "Файлы SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "узлы pytest",
+      "data": "Файлы данных"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Открыть",
+      "filter": "Фильтр таблиц"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Фильтр маршрутов"
+    },
+    "tools": {
+      "run": "Запустить",
+      "not_whitelisted": "Не в списке P2",
+      "tables": "Имена таблиц",
+      "datasource": "Источник данных"
+    },
+    "actions": {
+      "run": "Запустить",
+      "confirm": "Подтверждаю запись в тестируемую систему",
+      "params": "JSON параметров",
+      "pick": "Выберите action word"
+    },
+    "jobs": {
+      "empty": "Заданий пока нет",
+      "status": "Статус"
+    },
+    "file": {
+      "close": "Закрыть"
+    }
+  }
+}

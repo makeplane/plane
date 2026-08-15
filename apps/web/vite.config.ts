@@ -28,6 +28,9 @@ export default defineConfig(() => ({
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
+      // Load i18n from source so Vite can glob src/locales/*.json. Bundled
+      // dist/index.js dynamic imports 500 the SSR transformer.
+      "@plane/i18n": path.resolve(__dirname, "../../packages/i18n/src/index.ts"),
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
   },

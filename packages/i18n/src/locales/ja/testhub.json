@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "テストハブ",
+    "sidebar": "テストハブ",
+    "nav": {
+      "overview": "概要",
+      "bind": "リポジトリ",
+      "knowledge": "知識",
+      "components": "コンポーネント",
+      "tools": "ツール",
+      "actions": "アクション",
+      "tests": "テスト",
+      "jobs": "ジョブ"
+    },
+    "bind": {
+      "title": "テストリポジトリをバインド",
+      "repo_url": "リポジトリ URL",
+      "branch": "ブランチ",
+      "workdir": "Runner の作業ディレクトリ",
+      "save": "保存",
+      "unbound": "このプロジェクトにはテストリポジトリがまだありません。",
+      "cta": "リポジトリをバインド"
+    },
+    "overview": {
+      "sync": "カタログを同期",
+      "syncing": "同期中…",
+      "head": "HEAD",
+      "status": "同期ステータス"
+    },
+    "counts": {
+      "ddl": "DDL テーブル",
+      "sql": "SQL ファイル",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Feature",
+      "pytest": "pytest ノード",
+      "data": "データファイル"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "開く",
+      "filter": "テーブルを絞り込む"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "ルートを絞り込む"
+    },
+    "tools": {
+      "run": "実行",
+      "not_whitelisted": "P2 許可リスト外",
+      "tables": "テーブル名",
+      "datasource": "データソース"
+    },
+    "actions": {
+      "run": "実行",
+      "confirm": "被テストシステムへの書き込みを確認します",
+      "params": "パラメータ JSON",
+      "pick": "action word を選択"
+    },
+    "jobs": {
+      "empty": "ジョブはまだありません",
+      "status": "ステータス"
+    },
+    "file": {
+      "close": "閉じる"
+    }
+  }
+}

@@ -5,5 +5,6 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   platform: "neutral",
+  copy: ["src/locales"],
   exports: true,
 });

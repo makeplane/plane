@@ -1,0 +1,35 @@
+---
+description: Innovamed Testhub overlay — 本 fork 的产品目标与隔离约束。打开本仓开发测试中心时始终生效。
+alwaysApply: true
+---
+
+# Testhub overlay
+
+本仓是 **Plane v1.4.1 的 Innovamed fork**（分支 `testhub/v1.4.1`），要做「测试中心」，不是改官方 Issue 产品。
+
+开工先读：
+
+- 根目录 [`TESTHUB.md`](TESTHUB.md) — 目标、两仓分工、阶段
+- [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md) — 架构与计划正文
+- 官方命令仍以根 [`AGENTS.md`](AGENTS.md) 为准（`pnpm dev` / Docker pytest）
+
+## 产品关系
+
+- 测试能力 SSOT = 绑定的测试 git 仓（典型：`C:\dev\repo\innovamed-test-template`），不是本仓数据库
+- 一个 Plane Project 绑定 **一个** `repo_url` + **一个** `branch`
+- Issue/Cycle 只管缺陷与任务；**禁止**把 `.feature` / pytest / 造数参数双写进 Issue
+
+## 实现约束（为了还能 merge 官方 tag）
+
+- 新代码放独立 Django app `plane.testhub` + 独立前端 testhub 目录，尽量 additive
+- 对上游文件的改动压到最小 adapter（侧栏、`extendedRoutes`、`INSTALLED_APPS`）
+- 不改 Issue / Cycle 模型语义
+- 禁止在 API 进程里对任意 shell 做 `subprocess`；执行走白名单 Runner
+- 密钥不进仓库、不进 Job 日志；破坏性操作默认 dry-run
+- 领域逻辑（SQL、Gherkin、action words）在测试仓实现；本仓只绑定、展示、编排
+
+## 不要做
+
+- 不要在 `preview` 或 `C:\dev\sourcecode\plane` 上写自研代码
+- 不要把测试仓 submodule 进本仓
+- 不要重写测试仓的 `packages.db` / 造数实现

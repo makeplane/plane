@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Centre de tests",
+    "sidebar": "Centre de tests",
+    "nav": {
+      "overview": "Aperçu",
+      "bind": "Dépôt",
+      "knowledge": "Connaissances",
+      "components": "Composants",
+      "tools": "Outils",
+      "actions": "Actions",
+      "tests": "Tests",
+      "jobs": "Tâches"
+    },
+    "bind": {
+      "title": "Lier le dépôt de tests",
+      "repo_url": "URL du dépôt",
+      "branch": "Branche",
+      "workdir": "Répertoire de travail du Runner",
+      "save": "Enregistrer",
+      "unbound": "Ce projet n’a pas encore de dépôt de tests.",
+      "cta": "Lier un dépôt"
+    },
+    "overview": {
+      "sync": "Synchroniser le catalogue",
+      "syncing": "Synchronisation…",
+      "head": "HEAD",
+      "status": "État de synchro"
+    },
+    "counts": {
+      "ddl": "Tables DDL",
+      "sql": "Fichiers SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "nœuds pytest",
+      "data": "Fichiers de données"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Ouvrir",
+      "filter": "Filtrer les tables"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtrer les routes"
+    },
+    "tools": {
+      "run": "Exécuter",
+      "not_whitelisted": "Hors liste P2",
+      "tables": "Noms de tables",
+      "datasource": "Source de données"
+    },
+    "actions": {
+      "run": "Exécuter",
+      "confirm": "Je confirme l’écriture sur le système sous test",
+      "params": "JSON des paramètres",
+      "pick": "Sélectionner un action word"
+    },
+    "jobs": {
+      "empty": "Aucune tâche",
+      "status": "Statut"
+    },
+    "file": {
+      "close": "Fermer"
+    }
+  }
+}

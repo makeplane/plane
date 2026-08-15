@@ -33,6 +33,7 @@ export const NAMESPACES = [
   "workflow",
   "workspace",
   "workspace-settings",
+  "testhub",
 ] as const;
 
 export type TNamespace = (typeof NAMESPACES)[number];

@@ -4,21 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import i18n from "i18next";
+import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 import ICU from "i18next-icu";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { SUPPORTED_LANGUAGES, FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "../constants/language";
 import { NAMESPACES, DEFAULT_NAMESPACE } from "../constants/namespaces";
+import { loadLocale } from "../load-locale";
 
 import type { i18n as I18nInstance } from "i18next";
 
-export const i18nInstance: I18nInstance = i18n.createInstance();
+export const i18nInstance: I18nInstance = createInstance();
 
 i18nInstance
   .use(ICU)
   .use(initReactI18next)
-  .use(resourcesToBackend((language: string, namespace: string) => import(`../locales/${language}/${namespace}.json`)));
+  .use(resourcesToBackend((language: string, namespace: string) => loadLocale(language, namespace)));
 
 const initialLng =
   typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || FALLBACK_LANGUAGE : FALLBACK_LANGUAGE;

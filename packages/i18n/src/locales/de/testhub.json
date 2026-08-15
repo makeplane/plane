@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Test-Hub",
+    "sidebar": "Test-Hub",
+    "nav": {
+      "overview": "Übersicht",
+      "bind": "Repository",
+      "knowledge": "Wissen",
+      "components": "Komponenten",
+      "tools": "Werkzeuge",
+      "actions": "Aktionen",
+      "tests": "Tests",
+      "jobs": "Jobs"
+    },
+    "bind": {
+      "title": "Test-Repository binden",
+      "repo_url": "Repository-URL",
+      "branch": "Branch",
+      "workdir": "Runner-Arbeitsverzeichnis",
+      "save": "Speichern",
+      "unbound": "Dieses Projekt hat noch kein Test-Repository.",
+      "cta": "Repository binden"
+    },
+    "overview": {
+      "sync": "Katalog synchronisieren",
+      "syncing": "Synchronisiere…",
+      "head": "HEAD",
+      "status": "Sync-Status"
+    },
+    "counts": {
+      "ddl": "DDL-Tabellen",
+      "sql": "SQL-Dateien",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "pytest-Knoten",
+      "data": "Datendateien"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Öffnen",
+      "filter": "Tabellen filtern"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Routen filtern"
+    },
+    "tools": {
+      "run": "Ausführen",
+      "not_whitelisted": "Nicht auf der P2-Liste",
+      "tables": "Tabellennamen",
+      "datasource": "Datenquelle"
+    },
+    "actions": {
+      "run": "Ausführen",
+      "confirm": "Ich bestätige Schreibzugriff auf das Testsystem",
+      "params": "Parameter-JSON",
+      "pick": "Action word auswählen"
+    },
+    "jobs": {
+      "empty": "Keine Jobs",
+      "status": "Status"
+    },
+    "file": {
+      "close": "Schließen"
+    }
+  }
+}

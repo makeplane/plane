@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Тестовий центр",
+    "sidebar": "Тестовий центр",
+    "nav": {
+      "overview": "Огляд",
+      "bind": "Репозиторій",
+      "knowledge": "Знання",
+      "components": "Компоненти",
+      "tools": "Інструменти",
+      "actions": "Дії",
+      "tests": "Тести",
+      "jobs": "Завдання"
+    },
+    "bind": {
+      "title": "Прив’язати тестовий репозиторій",
+      "repo_url": "URL репозиторію",
+      "branch": "Гілка",
+      "workdir": "Робочий каталог Runner",
+      "save": "Зберегти",
+      "unbound": "У цього проєкту ще немає тестового репозиторію.",
+      "cta": "Прив’язати репозиторій"
+    },
+    "overview": {
+      "sync": "Синхронізувати каталог",
+      "syncing": "Синхронізація…",
+      "head": "HEAD",
+      "status": "Статус синхронізації"
+    },
+    "counts": {
+      "ddl": "Таблиці DDL",
+      "sql": "Файли SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "вузли pytest",
+      "data": "Файли даних"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Відкрити",
+      "filter": "Фільтр таблиць"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Фільтр маршрутів"
+    },
+    "tools": {
+      "run": "Запустити",
+      "not_whitelisted": "Не в списку P2",
+      "tables": "Назви таблиць",
+      "datasource": "Джерело даних"
+    },
+    "actions": {
+      "run": "Запустити",
+      "confirm": "Підтверджую запис у тестовану систему",
+      "params": "JSON параметрів",
+      "pick": "Оберіть action word"
+    },
+    "jobs": {
+      "empty": "Завдань ще немає",
+      "status": "Статус"
+    },
+    "file": {
+      "close": "Закрити"
+    }
+  }
+}

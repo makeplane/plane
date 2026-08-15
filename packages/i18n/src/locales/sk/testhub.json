@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Testovacie centrum",
+    "sidebar": "Testovacie centrum",
+    "nav": {
+      "overview": "Prehľad",
+      "bind": "Repozitár",
+      "knowledge": "Znalosti",
+      "components": "Komponenty",
+      "tools": "Nástroje",
+      "actions": "Akcie",
+      "tests": "Testy",
+      "jobs": "Úlohy"
+    },
+    "bind": {
+      "title": "Pripojiť testovací repozitár",
+      "repo_url": "URL repozitára",
+      "branch": "Vetva",
+      "workdir": "Pracovný adresár Runnera",
+      "save": "Uložiť",
+      "unbound": "Tento projekt ešte nemá testovací repozitár.",
+      "cta": "Pripojiť repozitár"
+    },
+    "overview": {
+      "sync": "Synchronizovať katalóg",
+      "syncing": "Synchronizácia…",
+      "head": "HEAD",
+      "status": "Stav synchronizácie"
+    },
+    "counts": {
+      "ddl": "Tabuľky DDL",
+      "sql": "Súbory SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "uzly pytest",
+      "data": "Dátové súbory"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Otvoriť",
+      "filter": "Filtrovať tabuľky"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtrovať trasy"
+    },
+    "tools": {
+      "run": "Spustiť",
+      "not_whitelisted": "Mimo zoznamu P2",
+      "tables": "Názvy tabuliek",
+      "datasource": "Zdroj dát"
+    },
+    "actions": {
+      "run": "Spustiť",
+      "confirm": "Potvrdzujem zápis do testovaného systému",
+      "params": "JSON parametrov",
+      "pick": "Vyberte action word"
+    },
+    "jobs": {
+      "empty": "Žiadne úlohy",
+      "status": "Stav"
+    },
+    "file": {
+      "close": "Zavrieť"
+    }
+  }
+}

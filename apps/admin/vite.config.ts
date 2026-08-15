@@ -31,6 +31,7 @@ export default defineConfig(() => ({
       // Next.js compatibility shims used within admin
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
+      "@plane/i18n": path.resolve(__dirname, "../../packages/i18n/src/index.ts"),
     },
     dedupe: ["react", "react-dom"],
   },

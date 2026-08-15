@@ -34,3 +34,14 @@ Prereq (once): `./setup.sh` — generates `apps/api/.env` from `.env.example`.
 - Teardown: `docker compose -f docker-compose-test.yml down -v`
 
 See `apps/api/tests/RUNNING_TESTS.md` for the full walkthrough and troubleshooting; see `apps/api/tests/TESTING_GUIDE.md` for test conventions and fixtures.
+
+---
+
+## Innovamed Testhub overlay
+
+This fork adds a **Test Hub** on top of Plane. Product intent, two-repo split, and isolation rules:
+
+- [`TESTHUB.md`](TESTHUB.md)
+- [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md)
+
+Do not fold test cases into Issues. Keep testhub additive so official tags can still be merged.

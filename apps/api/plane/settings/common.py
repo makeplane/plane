@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     "plane.web",
     "plane.middleware",
     "plane.license",
+    "plane.testhub.apps.TesthubConfig",
     "plane.api",
     "plane.authentication",
     # Third-party things
@@ -343,6 +344,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.cleanup_task",
     "plane.license.bgtasks.telemetry_metrics",
+    "plane.testhub.bgtasks",
     # management tasks
     "plane.bgtasks.dummy_data_task",
     # issue version tasks
@@ -351,6 +353,11 @@ CELERY_IMPORTS = (
 )
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# Testhub overlay (Innovamed): sidecar runner + bind-mounted test repo
+TESTHUB_RUNNER_URL = os.environ.get("TESTHUB_RUNNER_URL", "http://testhub-runner:8090")
+TESTHUB_WORKDIR = os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir")
+TESTHUB_FILE_MAX_BYTES = int(os.environ.get("TESTHUB_FILE_MAX_BYTES", 1048576))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

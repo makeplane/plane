@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "测试中心",
+    "sidebar": "测试中心",
+    "nav": {
+      "overview": "总览",
+      "bind": "仓库",
+      "knowledge": "知识",
+      "components": "组件",
+      "tools": "工具",
+      "actions": "造数/动作",
+      "tests": "测试",
+      "jobs": "作业"
+    },
+    "bind": {
+      "title": "绑定测试仓库",
+      "repo_url": "仓库 URL",
+      "branch": "分支",
+      "workdir": "Runner 工作目录",
+      "save": "保存",
+      "unbound": "此项目尚未绑定测试仓库。",
+      "cta": "绑定仓库"
+    },
+    "overview": {
+      "sync": "同步目录",
+      "syncing": "同步中…",
+      "head": "HEAD",
+      "status": "同步状态"
+    },
+    "counts": {
+      "ddl": "DDL 表",
+      "sql": "SQL 文件",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Feature",
+      "pytest": "pytest 节点",
+      "data": "数据文件"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "打开",
+      "filter": "筛选表"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "筛选路由"
+    },
+    "tools": {
+      "run": "运行",
+      "not_whitelisted": "不在 P2 白名单",
+      "tables": "表名",
+      "datasource": "数据源"
+    },
+    "actions": {
+      "run": "运行",
+      "confirm": "我确认此操作会写入被测系统",
+      "params": "参数 JSON",
+      "pick": "选择一个 action word"
+    },
+    "jobs": {
+      "empty": "暂无作业",
+      "status": "状态"
+    },
+    "file": {
+      "close": "关闭"
+    }
+  }
+}

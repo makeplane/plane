@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Central de testes",
+    "sidebar": "Central de testes",
+    "nav": {
+      "overview": "Visão geral",
+      "bind": "Repositório",
+      "knowledge": "Conhecimento",
+      "components": "Componentes",
+      "tools": "Ferramentas",
+      "actions": "Ações",
+      "tests": "Testes",
+      "jobs": "Jobs"
+    },
+    "bind": {
+      "title": "Vincular repositório de testes",
+      "repo_url": "URL do repositório",
+      "branch": "Branch",
+      "workdir": "Diretório de trabalho do Runner",
+      "save": "Salvar",
+      "unbound": "Este projeto ainda não tem um repositório de testes.",
+      "cta": "Vincular repositório"
+    },
+    "overview": {
+      "sync": "Sincronizar catálogo",
+      "syncing": "Sincronizando…",
+      "head": "HEAD",
+      "status": "Status da sincronização"
+    },
+    "counts": {
+      "ddl": "Tabelas DDL",
+      "sql": "Arquivos SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "nós pytest",
+      "data": "Arquivos de dados"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Abrir",
+      "filter": "Filtrar tabelas"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtrar rotas"
+    },
+    "tools": {
+      "run": "Executar",
+      "not_whitelisted": "Fora da lista P2",
+      "tables": "Nomes de tabelas",
+      "datasource": "Fonte de dados"
+    },
+    "actions": {
+      "run": "Executar",
+      "confirm": "Confirmo a gravação no sistema sob teste",
+      "params": "JSON dos parâmetros",
+      "pick": "Selecione um action word"
+    },
+    "jobs": {
+      "empty": "Nenhum job",
+      "status": "Status"
+    },
+    "file": {
+      "close": "Fechar"
+    }
+  }
+}

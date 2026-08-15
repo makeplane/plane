@@ -1,0 +1,106 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+from django.conf import settings
+from django.db import models
+
+from plane.db.models import BaseModel
+
+DEFAULT_BRANCH = "sandbox/jafron"
+DEFAULT_WORKDIR = "/opt/testhub/workdir"
+
+
+class ProjectTestRepo(BaseModel):
+    project = models.OneToOneField(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="testhub_repo",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="testhub_repos",
+    )
+    repo_url = models.CharField(max_length=1024, blank=True, default="")
+    branch = models.CharField(max_length=255, default=DEFAULT_BRANCH)
+    workdir = models.CharField(max_length=1024, default=DEFAULT_WORKDIR)
+    last_sync_sha = models.CharField(max_length=64, blank=True, default="")
+    last_sync_at = models.DateTimeField(null=True, blank=True)
+    last_sync_status = models.CharField(max_length=32, blank=True, default="")
+    last_sync_error = models.TextField(blank=True, default="")
+
+    class Meta:
+        verbose_name = "Project test repo"
+        verbose_name_plural = "Project test repos"
+        db_table = "testhub_project_test_repos"
+        ordering = ("-created_at",)
+
+
+class CatalogSnapshot(BaseModel):
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="testhub_catalogs",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="testhub_catalogs",
+    )
+    sha = models.CharField(max_length=64, blank=True, default="")
+    payload = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Catalog snapshot"
+        verbose_name_plural = "Catalog snapshots"
+        db_table = "testhub_catalog_snapshots"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["project", "-created_at"]),
+        ]
+
+
+class TesthubJob(BaseModel):
+    class Status(models.TextChoices):
+        QUEUED = "queued"
+        RUNNING = "running"
+        SUCCEEDED = "succeeded"
+        FAILED = "failed"
+
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="testhub_jobs",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="testhub_jobs",
+    )
+    kind = models.CharField(max_length=64)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.QUEUED)
+    params = models.JSONField(default=dict)
+    argv = models.JSONField(default=list)
+    confirmed = models.BooleanField(default=False)
+    exit_code = models.IntegerField(null=True, blank=True)
+    stdout = models.TextField(blank=True, default="")
+    stderr = models.TextField(blank=True, default="")
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="testhub_jobs",
+    )
+
+    class Meta:
+        verbose_name = "Testhub job"
+        verbose_name_plural = "Testhub jobs"
+        db_table = "testhub_jobs"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["project", "status"]),
+            models.Index(fields=["project", "-created_at"]),
+        ]

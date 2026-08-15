@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Test merkezi",
+    "sidebar": "Test merkezi",
+    "nav": {
+      "overview": "Özet",
+      "bind": "Depo",
+      "knowledge": "Bilgi",
+      "components": "Bileşenler",
+      "tools": "Araçlar",
+      "actions": "Eylemler",
+      "tests": "Testler",
+      "jobs": "İşler"
+    },
+    "bind": {
+      "title": "Test deposunu bağla",
+      "repo_url": "Depo URL’si",
+      "branch": "Dal",
+      "workdir": "Runner çalışma dizini",
+      "save": "Kaydet",
+      "unbound": "Bu projenin henüz bir test deposu yok.",
+      "cta": "Depo bağla"
+    },
+    "overview": {
+      "sync": "Kataloğu senkronize et",
+      "syncing": "Senkronize ediliyor…",
+      "head": "HEAD",
+      "status": "Senkron durumu"
+    },
+    "counts": {
+      "ddl": "DDL tabloları",
+      "sql": "SQL dosyaları",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "pytest düğümleri",
+      "data": "Veri dosyaları"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Aç",
+      "filter": "Tabloları filtrele"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Rotaları filtrele"
+    },
+    "tools": {
+      "run": "Çalıştır",
+      "not_whitelisted": "P2 listesinde değil",
+      "tables": "Tablo adları",
+      "datasource": "Veri kaynağı"
+    },
+    "actions": {
+      "run": "Çalıştır",
+      "confirm": "Test edilen sisteme yazılacağını onaylıyorum",
+      "params": "Parametre JSON",
+      "pick": "Bir action word seçin"
+    },
+    "jobs": {
+      "empty": "Henüz iş yok",
+      "status": "Durum"
+    },
+    "file": {
+      "close": "Kapat"
+    }
+  }
+}

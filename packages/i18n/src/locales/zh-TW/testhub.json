@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "測試中心",
+    "sidebar": "測試中心",
+    "nav": {
+      "overview": "總覽",
+      "bind": "倉庫",
+      "knowledge": "知識",
+      "components": "元件",
+      "tools": "工具",
+      "actions": "造數/動作",
+      "tests": "測試",
+      "jobs": "作業"
+    },
+    "bind": {
+      "title": "綁定測試倉庫",
+      "repo_url": "倉庫 URL",
+      "branch": "分支",
+      "workdir": "Runner 工作目錄",
+      "save": "儲存",
+      "unbound": "此專案尚未綁定測試倉庫。",
+      "cta": "綁定倉庫"
+    },
+    "overview": {
+      "sync": "同步目錄",
+      "syncing": "同步中…",
+      "head": "HEAD",
+      "status": "同步狀態"
+    },
+    "counts": {
+      "ddl": "DDL 表",
+      "sql": "SQL 檔案",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Feature",
+      "pytest": "pytest 節點",
+      "data": "資料檔案"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "開啟",
+      "filter": "篩選表"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "篩選路由"
+    },
+    "tools": {
+      "run": "執行",
+      "not_whitelisted": "不在 P2 白名單",
+      "tables": "表名",
+      "datasource": "資料源"
+    },
+    "actions": {
+      "run": "執行",
+      "confirm": "我確認此操作會寫入受測系統",
+      "params": "參數 JSON",
+      "pick": "選擇一個 action word"
+    },
+    "jobs": {
+      "empty": "尚無作業",
+      "status": "狀態"
+    },
+    "file": {
+      "close": "關閉"
+    }
+  }
+}

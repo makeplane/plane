@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Centrum testów",
+    "sidebar": "Centrum testów",
+    "nav": {
+      "overview": "Przegląd",
+      "bind": "Repozytorium",
+      "knowledge": "Wiedza",
+      "components": "Komponenty",
+      "tools": "Narzędzia",
+      "actions": "Akcje",
+      "tests": "Testy",
+      "jobs": "Zadania"
+    },
+    "bind": {
+      "title": "Powiąż repozytorium testowe",
+      "repo_url": "URL repozytorium",
+      "branch": "Gałąź",
+      "workdir": "Katalog roboczy Runnera",
+      "save": "Zapisz",
+      "unbound": "Ten projekt nie ma jeszcze repozytorium testowego.",
+      "cta": "Powiąż repozytorium"
+    },
+    "overview": {
+      "sync": "Synchronizuj katalog",
+      "syncing": "Synchronizacja…",
+      "head": "HEAD",
+      "status": "Status synchronizacji"
+    },
+    "counts": {
+      "ddl": "Tabele DDL",
+      "sql": "Pliki SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "węzły pytest",
+      "data": "Pliki danych"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Otwórz",
+      "filter": "Filtruj tabele"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtruj trasy"
+    },
+    "tools": {
+      "run": "Uruchom",
+      "not_whitelisted": "Poza listą P2",
+      "tables": "Nazwy tabel",
+      "datasource": "Źródło danych"
+    },
+    "actions": {
+      "run": "Uruchom",
+      "confirm": "Potwierdzam zapis do systemu testowanego",
+      "params": "JSON parametrów",
+      "pick": "Wybierz action word"
+    },
+    "jobs": {
+      "empty": "Brak zadań",
+      "status": "Status"
+    },
+    "file": {
+      "close": "Zamknij"
+    }
+  }
+}

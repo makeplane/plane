@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "테스트 허브",
+    "sidebar": "테스트 허브",
+    "nav": {
+      "overview": "개요",
+      "bind": "저장소",
+      "knowledge": "지식",
+      "components": "구성 요소",
+      "tools": "도구",
+      "actions": "액션",
+      "tests": "테스트",
+      "jobs": "작업"
+    },
+    "bind": {
+      "title": "테스트 저장소 연결",
+      "repo_url": "저장소 URL",
+      "branch": "브랜치",
+      "workdir": "Runner 작업 디렉터리",
+      "save": "저장",
+      "unbound": "이 프로젝트에는 아직 테스트 저장소가 없습니다.",
+      "cta": "저장소 연결"
+    },
+    "overview": {
+      "sync": "카탈로그 동기화",
+      "syncing": "동기화 중…",
+      "head": "HEAD",
+      "status": "동기화 상태"
+    },
+    "counts": {
+      "ddl": "DDL 테이블",
+      "sql": "SQL 파일",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Feature",
+      "pytest": "pytest 노드",
+      "data": "데이터 파일"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "열기",
+      "filter": "테이블 필터"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "라우트 필터"
+    },
+    "tools": {
+      "run": "실행",
+      "not_whitelisted": "P2 허용 목록 아님",
+      "tables": "테이블 이름",
+      "datasource": "데이터소스"
+    },
+    "actions": {
+      "run": "실행",
+      "confirm": "피시험 시스템에 기록됨을 확인합니다",
+      "params": "파라미터 JSON",
+      "pick": "action word 선택"
+    },
+    "jobs": {
+      "empty": "작업이 없습니다",
+      "status": "상태"
+    },
+    "file": {
+      "close": "닫기"
+    }
+  }
+}

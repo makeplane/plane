@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Trung tâm kiểm thử",
+    "sidebar": "Trung tâm kiểm thử",
+    "nav": {
+      "overview": "Tổng quan",
+      "bind": "Kho mã",
+      "knowledge": "Tri thức",
+      "components": "Thành phần",
+      "tools": "Công cụ",
+      "actions": "Hành động",
+      "tests": "Kiểm thử",
+      "jobs": "Job"
+    },
+    "bind": {
+      "title": "Gắn kho kiểm thử",
+      "repo_url": "URL kho mã",
+      "branch": "Nhánh",
+      "workdir": "Thư mục làm việc Runner",
+      "save": "Lưu",
+      "unbound": "Dự án này chưa gắn kho kiểm thử.",
+      "cta": "Gắn kho mã"
+    },
+    "overview": {
+      "sync": "Đồng bộ catalog",
+      "syncing": "Đang đồng bộ…",
+      "head": "HEAD",
+      "status": "Trạng thái đồng bộ"
+    },
+    "counts": {
+      "ddl": "Bảng DDL",
+      "sql": "Tệp SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "nút pytest",
+      "data": "Tệp dữ liệu"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Mở",
+      "filter": "Lọc bảng"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Lọc tuyến"
+    },
+    "tools": {
+      "run": "Chạy",
+      "not_whitelisted": "Không nằm trong danh sách P2",
+      "tables": "Tên bảng",
+      "datasource": "Nguồn dữ liệu"
+    },
+    "actions": {
+      "run": "Chạy",
+      "confirm": "Tôi xác nhận thao tác này ghi vào hệ thống đang kiểm thử",
+      "params": "JSON tham số",
+      "pick": "Chọn một action word"
+    },
+    "jobs": {
+      "empty": "Chưa có job",
+      "status": "Trạng thái"
+    },
+    "file": {
+      "close": "Đóng"
+    }
+  }
+}

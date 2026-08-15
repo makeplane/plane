@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Centro de pruebas",
+    "sidebar": "Centro de pruebas",
+    "nav": {
+      "overview": "Resumen",
+      "bind": "Repositorio",
+      "knowledge": "Conocimiento",
+      "components": "Componentes",
+      "tools": "Herramientas",
+      "actions": "Acciones",
+      "tests": "Pruebas",
+      "jobs": "Trabajos"
+    },
+    "bind": {
+      "title": "Vincular repositorio de pruebas",
+      "repo_url": "URL del repositorio",
+      "branch": "Rama",
+      "workdir": "Directorio de trabajo del Runner",
+      "save": "Guardar",
+      "unbound": "Este proyecto aún no tiene un repositorio de pruebas.",
+      "cta": "Vincular repositorio"
+    },
+    "overview": {
+      "sync": "Sincronizar catálogo",
+      "syncing": "Sincronizando…",
+      "head": "HEAD",
+      "status": "Estado de sincronización"
+    },
+    "counts": {
+      "ddl": "Tablas DDL",
+      "sql": "Archivos SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "nodos pytest",
+      "data": "Archivos de datos"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Abrir",
+      "filter": "Filtrar tablas"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtrar rutas"
+    },
+    "tools": {
+      "run": "Ejecutar",
+      "not_whitelisted": "Fuera de la lista P2",
+      "tables": "Nombres de tabla",
+      "datasource": "Origen de datos"
+    },
+    "actions": {
+      "run": "Ejecutar",
+      "confirm": "Confirmo que esto escribe en el sistema bajo prueba",
+      "params": "JSON de parámetros",
+      "pick": "Seleccionar un action word"
+    },
+    "jobs": {
+      "empty": "No hay trabajos",
+      "status": "Estado"
+    },
+    "file": {
+      "close": "Cerrar"
+    }
+  }
+}

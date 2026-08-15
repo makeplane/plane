@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Pusat tes",
+    "sidebar": "Pusat tes",
+    "nav": {
+      "overview": "Ringkasan",
+      "bind": "Repositori",
+      "knowledge": "Pengetahuan",
+      "components": "Komponen",
+      "tools": "Alat",
+      "actions": "Aksi",
+      "tests": "Tes",
+      "jobs": "Job"
+    },
+    "bind": {
+      "title": "Tautkan repositori tes",
+      "repo_url": "URL repositori",
+      "branch": "Branch",
+      "workdir": "Direktori kerja Runner",
+      "save": "Simpan",
+      "unbound": "Proyek ini belum memiliki repositori tes.",
+      "cta": "Tautkan repositori"
+    },
+    "overview": {
+      "sync": "Sinkronkan katalog",
+      "syncing": "Menyinkronkan…",
+      "head": "HEAD",
+      "status": "Status sinkronisasi"
+    },
+    "counts": {
+      "ddl": "Tabel DDL",
+      "sql": "File SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "node pytest",
+      "data": "File data"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Buka",
+      "filter": "Filter tabel"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filter rute"
+    },
+    "tools": {
+      "run": "Jalankan",
+      "not_whitelisted": "Tidak dalam daftar P2",
+      "tables": "Nama tabel",
+      "datasource": "Sumber data"
+    },
+    "actions": {
+      "run": "Jalankan",
+      "confirm": "Saya konfirmasi ini menulis ke sistem yang diuji",
+      "params": "JSON parameter",
+      "pick": "Pilih action word"
+    },
+    "jobs": {
+      "empty": "Belum ada job",
+      "status": "Status"
+    },
+    "file": {
+      "close": "Tutup"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "testhub": {
+    "title": "Centru de teste",
+    "sidebar": "Centru de teste",
+    "nav": {
+      "overview": "Prezentare",
+      "bind": "Depozit",
+      "knowledge": "Cunoștințe",
+      "components": "Componente",
+      "tools": "Instrumente",
+      "actions": "Acțiuni",
+      "tests": "Teste",
+      "jobs": "Joburi"
+    },
+    "bind": {
+      "title": "Leagă depozitul de teste",
+      "repo_url": "URL depozit",
+      "branch": "Ramură",
+      "workdir": "Directorul de lucru Runner",
+      "save": "Salvează",
+      "unbound": "Acest proiect nu are încă un depozit de teste.",
+      "cta": "Leagă un depozit"
+    },
+    "overview": {
+      "sync": "Sincronizează catalogul",
+      "syncing": "Se sincronizează…",
+      "head": "HEAD",
+      "status": "Stare sincronizare"
+    },
+    "counts": {
+      "ddl": "Tabele DDL",
+      "sql": "Fișiere SQL",
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "apps": "Apps",
+      "features": "Features",
+      "pytest": "noduri pytest",
+      "data": "Fișiere de date"
+    },
+    "knowledge": {
+      "ddl": "DDL",
+      "sql": "SQL",
+      "open": "Deschide",
+      "filter": "Filtrează tabelele"
+    },
+    "components": {
+      "api_objects": "API objects",
+      "action_words": "Action words",
+      "page_objects": "Page objects",
+      "filter": "Filtrează rute"
+    },
+    "tools": {
+      "run": "Rulează",
+      "not_whitelisted": "În afara listei P2",
+      "tables": "Nume de tabele",
+      "datasource": "Sursă de date"
+    },
+    "actions": {
+      "run": "Rulează",
+      "confirm": "Confirm scrierea în sistemul testat",
+      "params": "JSON parametri",
+      "pick": "Selectează un action word"
+    },
+    "jobs": {
+      "empty": "Niciun job",
+      "status": "Stare"
+    },
+    "file": {
+      "close": "Închide"
+    }
+  }
+}
